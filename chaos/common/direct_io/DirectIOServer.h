@@ -42,8 +42,8 @@ namespace chaos {
 				dio_client---> data message -->dio_server
 			 */
 			class DirectIOServer :
-			public chaos::utility::StartableService,
-			public NamedService,
+			public utility::StartableService,
+			public utility::NamedService,
 			public DirectIOServerPublicInterface {
 				//! handler implementation for the server instance
             protected:

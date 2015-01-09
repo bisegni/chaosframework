@@ -39,13 +39,13 @@ namespace chaos {
 		class ChaosWANProxy :
 		public ChaosCommon<ChaosWANProxy>,
 		public ServerDelegator,
-		public utility::StartableService {
+		public common::utility::StartableService {
 			friend class Singleton<ChaosWANProxy>;
 			
 			static WaitSemaphore waitCloseSemaphore;
 			
 			//! network broker for talk with others chaos node
-			chaos::utility::StartableServiceContainer<NetworkBroker> network_broker_service;
+			chaos::common::utility::StartableServiceContainer<NetworkBroker> network_broker_service;
 			
 			ChaosWANProxy(){};
 			~ChaosWANProxy(){};

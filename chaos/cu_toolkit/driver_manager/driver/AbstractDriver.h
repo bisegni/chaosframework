@@ -61,7 +61,8 @@ namespace chaos{
                     This represent the base class for all driver in !CHOAS. For standardize the comunicacetion 
                     a message queue is used for receive DrvMsg pack.
                  */
-                class AbstractDriver : public utility::InizializableService {
+				class AbstractDriver:
+				public chaos::common::utility::InizializableService {
                     template<typename T>
                     friend class DriverWrapperPlugin;
                     friend class chaos::cu::driver_manager::DriverManager;

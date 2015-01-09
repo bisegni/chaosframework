@@ -21,6 +21,7 @@
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 #include <boost/format.hpp>
 
+using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 
 #define DirectIOServerEndpoint_LOG_HEAD "[DirectIOServerEndpoint-"<<endpoint_route_index<<"] - "
@@ -34,7 +35,9 @@ using namespace chaos::common::direct_io;
 #define LOCK_COUNTER_OFF_USAGE		pack_receiving = 0
 #define UNLOCK_COUNTER_OFF_USAGE	pack_receiving = 1
 
-DirectIOServerEndpoint::DirectIOServerEndpoint(): endpoint_route_index(0), server_public_interface(NULL) {
+DirectIOServerEndpoint::DirectIOServerEndpoint():
+endpoint_route_index(0),
+server_public_interface(NULL) {
 	//allocate slot memory
 	channel_slot = (channel::DirectIOVirtualServerChannel**)calloc(1, (sizeof(channel::DirectIOVirtualServerChannel**)*MAX_ENDPOINT_CHANNEL));
 	//clean all memory
@@ -88,7 +91,7 @@ void DirectIOServerEndpoint::deregisterChannelInstance(channel::DirectIOVirtualS
 
 // New channel allocation by name
 channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::getNewChannelInstance(std::string channel_name) throw (CException) {
-	channel::DirectIOVirtualServerChannel *channel = chaos::ObjectFactoryRegister<channel::DirectIOVirtualServerChannel>::getInstance()->getNewInstanceByName(channel_name);
+	channel::DirectIOVirtualServerChannel *channel = ObjectFactoryRegister<channel::DirectIOVirtualServerChannel>::getInstance()->getNewInstanceByName(channel_name);
 	registerChannelInstance(channel);
 	return channel;
 }

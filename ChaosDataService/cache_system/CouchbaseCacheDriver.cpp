@@ -32,6 +32,8 @@
 #define CCDLDBG_ LDBG_ << CouchbaseCacheDriver_LOG_HEAD << __FUNCTION__ << " - "
 #define CCDLERR_ LERR_ << CouchbaseCacheDriver_LOG_HEAD
 
+using namespace chaos::common::utility;
+
 //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
 static const boost::regex CouchbaseHostNameOnlyRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+");
 //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
@@ -116,7 +118,7 @@ void CouchbaseCacheDriver::deinit() throw (chaos::CException) {
 }
 
 int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  void *value, uint32_t value_len) {
-	CHAOS_ASSERT(getServiceState() == utility::service_state_machine::InizializableServiceType::IS_INITIATED)
+	CHAOS_ASSERT(getServiceState() == common::utility::service_state_machine::InizializableServiceType::IS_INITIATED)
 	//boost::shared_lock<boost::shared_mutex> lock(mutex_server);
 	lcb_store_cmd_t cmd;
     const lcb_store_cmd_t * const commands[] = { &cmd };
@@ -142,7 +144,7 @@ int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  v
 
 int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  void **value, uint32_t& value_len) {
 	//boost::shared_lock<boost::shared_mutex> lock(mutex_server);
-	CHAOS_ASSERT(getServiceState() == utility::service_state_machine::InizializableServiceType::IS_INITIATED)
+	CHAOS_ASSERT(getServiceState() == service_state_machine::InizializableServiceType::IS_INITIATED)
 	lcb_get_cmd_t cmd;
 	lcb_error_t err = LCB_SUCCESS;
 	const lcb_get_cmd_t *commands[1];

@@ -21,7 +21,7 @@
 #include "NamedService.h"
 #include <chaos/common/global.h>
 
-using namespace chaos;
+using namespace chaos::common::utility;
 using namespace std;
 
 #define NamedService_LDBG_ LDBG_ << "[NamedService]- "

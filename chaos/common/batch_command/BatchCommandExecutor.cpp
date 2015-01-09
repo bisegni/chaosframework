@@ -30,6 +30,7 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::batch_command;
 
 #define PURGE_TS_DELAY	500
@@ -161,10 +162,13 @@ void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
 	command_sequence_id = 0;
 		
 	//broadcast init sequence to base class
-    chaos::utility::StartableService::init(initData);
+    StartableService::init(initData);
     
     //initialize the shared channel setting
-    chaos::utility::InizializableService::initImplementation(global_attribute_cache, initData, "global_attribute_cache", "BatchCommandExecutor::init");
+    InizializableService::initImplementation(global_attribute_cache,
+											 initData,
+											 "global_attribute_cache",
+											 __PRETTY_FUNCTION__);
     
     if(sandbox_map.size() == 0) {
         //if not sandbox has been added force to create one
@@ -178,7 +182,10 @@ void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
         BatchCommandSandbox *tmp_ptr =  it->second;
         //init the sand box
         BCELAPP_ << "Initilize instance " << tmp_ptr->identification;
-        chaos::utility::StartableService::initImplementation(tmp_ptr, initData, "BatchCommandSandbox", "BatchCommandExecutor::init");
+        StartableService::initImplementation(tmp_ptr,
+											 initData,
+											 "BatchCommandSandbox",
+											 __PRETTY_FUNCTION__);
     }
 	
 	BCELAPP_ << "Check if we need to use the dafult command or we have pause instance";
@@ -197,7 +204,7 @@ void BatchCommandExecutor::start() throw(chaos::CException) {
 
     try {
         // set thread run flag for work
-        chaos::utility::StartableService::start();
+        StartableService::start();
 		
         BCELAPP_ << "Starting all the instance of sandbox";
         for(std::map<unsigned int, BatchCommandSandbox*>::iterator it = sandbox_map.begin();
@@ -206,7 +213,9 @@ void BatchCommandExecutor::start() throw(chaos::CException) {
             BatchCommandSandbox *tmp_ptr =  it->second;
             BCELAPP_ << "Starting instance " << tmp_ptr->identification;
             //starting the sand box
-            chaos::utility::StartableService::startImplementation(tmp_ptr, "SlowCommandSandbox", "BatchCommandExecutor::start");
+            StartableService::startImplementation(tmp_ptr,
+												  "SlowCommandSandbox",
+												  __PRETTY_FUNCTION__);
         }
 
 		capper_work = true;
@@ -235,9 +244,11 @@ void BatchCommandExecutor::stop() throw(chaos::CException) {
         BCELAPP_ << "Stop instance " << tmp_ptr->identification;
 
         //stopping the sand box
-        chaos::utility::StartableService::stopImplementation(tmp_ptr, "SlowCommandSandbox", "BatchCommandExecutor::stop");
+        StartableService::stopImplementation(tmp_ptr,
+											 "SlowCommandSandbox",
+											 __PRETTY_FUNCTION__);
     }
-    chaos::utility::StartableService::stop();
+    StartableService::stop();
 }
 
 // Deinit the implementation
@@ -251,13 +262,17 @@ void BatchCommandExecutor::deinit() throw(chaos::CException) {
         BatchCommandSandbox *tmp_ptr =  it->second;
         BCELAPP_ << "Deinitializing instance " << tmp_ptr->identification;
         //deinit the sand box
-        chaos::utility::StartableService::deinitImplementation(tmp_ptr, "SlowCommandSandbox", "BatchCommandExecutor::deinit");
+        StartableService::deinitImplementation(tmp_ptr,
+											   "SlowCommandSandbox",
+											   __PRETTY_FUNCTION__);
     }
     
     //initialize the shared channel setting
-    chaos::utility::InizializableService::deinitImplementation(global_attribute_cache, "AttributeCache", "BatchCommandExecutor::deinit");
+    InizializableService::deinitImplementation(global_attribute_cache,
+											   "AttributeCache",
+											   __PRETTY_FUNCTION__);
     
-    chaos::utility::StartableService::deinit();
+    StartableService::deinit();
 }
 
 //command event handler
@@ -387,7 +402,8 @@ boost::shared_ptr<CommandState> BatchCommandExecutor::getCommandState(uint64_t c
 void BatchCommandExecutor::setDefaultCommand(const string& command_alias, unsigned int sandbox_instance) {
     // check if we can set the default, the condition are:
     // the executor and the sandbox are in the init state or in stop state
-    if(chaos::utility::StartableService::serviceState == ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED) {
+    if(StartableService::serviceState ==
+	   service_state_machine::StartableServiceType::SS_STARTED) {
         throw CException(1, "The command infrastructure is in running state", "BatchCommandExecutor::setDefaultCommand");
     }
     
@@ -472,7 +488,8 @@ void BatchCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint6
     if(!commandDescription)
         throw CException(-1, "Invalid parameter", "BatchCommandExecutor::setCommandFeatures");
     
-    if(serviceState != ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED)
+    if(serviceState !=
+	   service_state_machine::StartableServiceType::SS_STARTED)
         throw CException(-2, "Slow command executor is not started", "BatchCommandExecutor::submitCommand");
     
     WriteLock       lock(sandbox_map_mutex);

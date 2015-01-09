@@ -42,8 +42,8 @@ namespace chaos {
              to all CacheDriver instance.
              */
             class CacheDriver :
-			public chaos::NamedService,
-			public chaos::utility::InizializableService {
+			public common::utility::NamedService,
+			public common::utility::InizializableService {
 			protected:
 				CacheDriverSetting *cache_settings;
 				CacheDriver(std::string alias);

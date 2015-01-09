@@ -37,13 +37,15 @@ namespace chaos {
 	
     namespace event{
         
-        class EventServer : public NamedService , chaos::utility::StartableService {
+        class EventServer:
+		public common::utility::NamedService,
+		public chaos::common::utility::StartableService {
             friend class chaos::common::network::NetworkBroker;
                 //! handler that can manage the event reception
             EventHandler *rootEventHandler;
         protected:
                 //Default Server Constructor
-            EventServer(string alias);
+            EventServer(const string& alias);
             
             /*
              init the event adapter

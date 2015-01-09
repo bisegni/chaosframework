@@ -62,8 +62,8 @@ namespace chaos{
     class AbstractCommandDispatcher :
 	public RpcServerHandler,
 	public Configurable,
-	public utility::StartableService,
-	public NamedService {
+	public common::utility::StartableService,
+	public common::utility::NamedService {
         friend class chaos::common::network::NetworkBroker;
         
             //! Rpc Client for action result

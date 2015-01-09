@@ -43,9 +43,9 @@ namespace chaos {
 			 the correct initialization for the adapter instance
 			 */
 			class RpcSyncServer:
-			public chaos::utility::StartableService,
+			public chaos::common::utility::StartableService,
 			public chaos::common::utility::UrlAccessibleService,
-			public NamedService {
+			public chaos::common::utility::NamedService {
 				friend class chaos::common::network::NetworkBroker;
 			protected:
 				int service_port;

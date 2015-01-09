@@ -12,6 +12,7 @@
 #include <zmq.h>
 
 using namespace std;
+using namespace chaos::common::utility;
 using namespace chaos::common::direct_io::impl;
 
 #if (defined (__WINDOWS__))
@@ -56,11 +57,11 @@ int ZMQBaseClass::stringSendMore(void *socket, const char *string) {
 }
 
 int ZMQBaseClass::setID(void *socket) {
-	std::string uid = chaos::UUIDUtil::generateUUIDLite();
+	std::string uid = UUIDUtil::generateUUIDLite();
     return zmq_setsockopt (socket, ZMQ_IDENTITY, uid.c_str(), uid.size());
 }
 
 int ZMQBaseClass::setAndReturnID(void *socket, std::string& new_id) {
-	new_id = chaos::UUIDUtil::generateUUIDLite();
+	new_id = UUIDUtil::generateUUIDLite();
     return zmq_setsockopt (socket, ZMQ_IDENTITY, new_id.c_str(), new_id.size());
 }

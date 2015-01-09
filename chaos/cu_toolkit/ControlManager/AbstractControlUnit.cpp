@@ -41,6 +41,8 @@ using namespace boost::uuids;
 using namespace chaos::common::data;
 using namespace chaos::common::data::cache;
 
+using namespace chaos::common::utility;
+
 using namespace chaos::cu::data_manager;
 using namespace chaos::cu::control_manager;
 using namespace chaos::cu::driver_manager;
@@ -244,7 +246,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration,
 	if(!attribute_value_shared_cache) throw CException(-1, "No Shared cache implementation found", __PRETTY_FUNCTION__);
 	
 	std::vector<string> attribute_names;
-	utility::StartableService::initImplementation(this, static_cast<void*>(initConfiguration), "AbstractControlUnit", __PRETTY_FUNCTION__);
+	StartableService::initImplementation(this, static_cast<void*>(initConfiguration), "AbstractControlUnit", __PRETTY_FUNCTION__);
 	
 	//the init of the implementation unit goes after the infrastructure one
 	ACULDBG_ << "Start internal and custom inititialization";
@@ -310,7 +312,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration,
 CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
 										  bool& detachParam) throw(CException) {
 	//call start method of the startable interface
-	utility::StartableService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
+	StartableService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
 	ACULDBG_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
 	try {
 		unitStart();
@@ -340,7 +342,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
 	}
 
 	//call start method of the startable interface
-	utility::StartableService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
+	StartableService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
 	//first we need to stop the implementation unit
 	return NULL;
 }
@@ -406,7 +408,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
 		
 		//saftely deinititalize the abstract control unit
 		try {
-			utility::StartableService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
+			StartableService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
 		} catch (CException& ex) {
 			ACULDBG_ << "Exception on abstract control l unit deinit:" << ex.what();
 		}
@@ -438,8 +440,8 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 	//check
 	if(!restoreParam || !restoreParam->hasKey(ChaosSystemDomainAndActionLabel::ACTION_CU_RESTORE_PARAM_TAG)) return NULL;
 	
-	if(getServiceState() != chaos::utility::service_state_machine::InizializableServiceType::IS_INITIATED &&
-	   getServiceState() != chaos::utility::service_state_machine::StartableServiceType::SS_STARTED ) {
+	if(getServiceState() != service_state_machine::InizializableServiceType::IS_INITIATED &&
+	   getServiceState() != service_state_machine::StartableServiceType::SS_STARTED ) {
 		throw CException(-1, "Control Unit is not initilized or started", __PRETTY_FUNCTION__);
 	}
 	
@@ -518,7 +520,7 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
 		}
 		//retrive the deviceid
 		string deviceID = datasetAttributeValues->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-		if(utility::StartableService::getServiceState() == CUStateKey::DEINIT) {
+		if(StartableService::getServiceState() == CUStateKey::DEINIT) {
 			throw CException(-3, "The Control Unit is in deinit state", __PRETTY_FUNCTION__);
 		}
 		//send dataset attribute change pack to control unit implementation
@@ -725,7 +727,7 @@ CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam,
 
 	string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
 	
-	stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, static_cast<CUStateKey::ControlUnitState>(utility::StartableService::getServiceState()));
+	stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, static_cast<CUStateKey::ControlUnitState>(StartableService::getServiceState()));
 	return stateResult;
 }
 
@@ -876,7 +878,7 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
 	}
 	
 	//check to see if the device can ben initialized
-	if(utility::StartableService::getServiceState() == INIT_STATE) {
+	if(StartableService::getServiceState() == INIT_STATE) {
 		ACULAPP_ << "device:" << DatasetDB::getDeviceID() << " not initialized";
 		throw CException(-3, "Device Not Initilized", __PRETTY_FUNCTION__);
 	}

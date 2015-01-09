@@ -43,8 +43,8 @@ namespace chaos {
 				
 				//! Caching of the datablock usage
 				class DataBlockCache:
-				public Singleton<DataBlockCache>,
-				public utility::InizializableService,
+				public common::utility::Singleton<DataBlockCache>,
+				public common::utility::InizializableService,
 				public chaos::common::async_central::TimerHandler {
 					friend class Singleton<DataBlockCache>;
 					friend class chaos::data_service::vfs::VFSManager;

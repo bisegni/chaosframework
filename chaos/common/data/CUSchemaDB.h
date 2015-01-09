@@ -70,7 +70,7 @@ namespace chaos {
 				edb::EntityDB *entityDB;
 				
 				//! Timing utils
-				TimingUtil timingUtils;
+				utility::TimingUtil timingUtils;
 				
 				//! Map that contains all device entity
 				EntityPtrMap deviceEntityMap;

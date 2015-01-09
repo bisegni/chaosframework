@@ -27,8 +27,9 @@
 
 #include <string.h>
 
-namespace chaos_data = chaos::common::data;
-namespace chaos_cache = chaos::common::data::cache;
+using namespace chaos::common::data;
+using namespace chaos::common::data::cache;
+using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
@@ -134,7 +135,7 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const std::string& ke
 }
 
 int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key, uint64_t start_ts, uint64_t end_ts, string& query_id) {
-	chaos_data::CDataWrapper query_description;
+	CDataWrapper query_description;
 	//allcoate the data to send direct io pack
 	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
 	DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr query_data_cloud_header =
@@ -151,7 +152,7 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key, uint
 	query_data_cloud_header->field.s_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.s_server_port);
     query_data_cloud_header->field.endpoint = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.endpoint);
 	
-	query_id = chaos::UUIDUtil::generateUUIDLite();
+	query_id = UUIDUtil::generateUUIDLite();
 	query_id.resize(8);
 	//copy the query id on header
 	std::strncpy(query_data_cloud_header->field.query_id, query_id.c_str(), 8);
@@ -160,7 +161,7 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key, uint
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloud);
 	
 	//get the buffer to send
-	auto_ptr<chaos_data::SerializationBuffer> buffer(query_description.getBSONData());
+	auto_ptr<SerializationBuffer> buffer(query_description.getBSONData());
 	
 	//the frre of memeory is managed in this class in async way
 	buffer->disposeOnDelete = false;

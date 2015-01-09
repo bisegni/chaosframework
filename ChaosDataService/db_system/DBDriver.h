@@ -48,7 +48,9 @@ namespace chaos {
 			 of the !CHAOS virtual filesystem. At the end it will help to achive the execution
 			 of query on memoryzed data
 			 */
-			class DBDriver : public NamedService , public chaos::utility::InizializableService {
+			class DBDriver:
+			public common::utility::NamedService,
+			public common::utility::InizializableService {
 			protected:
 				//protected constructor
 				DBDriver(std::string alias);

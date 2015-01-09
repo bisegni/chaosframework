@@ -134,9 +134,9 @@ namespace chaos {
 			 */
 			class ControlManager :
 			public DeclareAction,
-			public chaos::utility::StartableService,
+			public common::utility::StartableService,
 			protected chaos::common::async_central::TimerHandler,
-			public Singleton<ControlManager> {
+			public common::utility::Singleton<ControlManager> {
 				friend class Singleton<ControlManager>;
 				//mutable boost::shared_mutex mutex_registration;
 				

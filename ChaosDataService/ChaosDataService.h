@@ -43,7 +43,7 @@
 #include <chaos/common/utility/StartableService.h>
 
 
-namespace common_utility = chaos::utility;
+namespace common_utility = chaos::common::utility;
 
 namespace chaos{
     namespace data_service {
@@ -62,7 +62,9 @@ namespace chaos{
             
 			RunMode run_mode;
             static WaitSemaphore waitCloseSemaphore;
-            
+			
+			
+			
             ChaosDataService();
             ~ChaosDataService();
             static void signalHanlder(int);
@@ -72,16 +74,16 @@ namespace chaos{
 			
 			
 			//!chaos internal network router
-			utility::StartableServiceContainer<chaos::common::network::NetworkBroker> network_broker;
+			common::utility::StartableServiceContainer<chaos::common::network::NetworkBroker> network_broker;
 			
 			//! CDS virtual file system manager
-			utility::InizializableServiceContainer<vfs::VFSManager> vfs_file_manager;
+			common::utility::InizializableServiceContainer<vfs::VFSManager> vfs_file_manager;
 
 			//! CDS data consumer that respond to data api
-			utility::StartableServiceContainer<QueryDataConsumer> data_consumer;
+			common::utility::StartableServiceContainer<QueryDataConsumer> data_consumer;
 			
 			//! CDS index part that elaborate stage file
-			utility::StartableServiceContainer<StageDataConsumer> stage_data_consumer;
+			common::utility::StartableServiceContainer<StageDataConsumer> stage_data_consumer;
 			
 			//! convert param_key to a string of string hash map
 			void fillKVParameter(std::map<std::string, std::string>& kvmap, const char * param_key);

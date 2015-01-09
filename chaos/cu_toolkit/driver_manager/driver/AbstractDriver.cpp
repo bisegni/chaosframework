@@ -26,8 +26,9 @@
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriver.h>
 #include <chaos/cu_toolkit/driver_manager/driver/DriverAccessor.h>
 
-namespace chaos_thread_ns = chaos::common::thread;
-namespace chaos_driver_ns = chaos::cu::driver_manager::driver;
+using namespace chaos::common::utility;
+//namespace chaos_thread_ns = chaos::common::thread;
+using namespace chaos::cu::driver_manager::driver;
 
 #define ADLAPP_ LAPP_ << "[AbstractDriver-" << driverUUID << "] "
 #define ADLDBG_ LDBG_ << "[AbstractDriver-" << driverUUID << "] "
@@ -36,22 +37,22 @@ namespace chaos_driver_ns = chaos::cu::driver_manager::driver;
 /*------------------------------------------------------
 
 ------------------------------------------------------*/
-chaos_driver_ns::AbstractDriver::AbstractDriver() {
+AbstractDriver::AbstractDriver() {
     accessorCount = 0;
 	driverNeedtoDeinitialize = false;
-    driverUUID = chaos::UUIDUtil::generateUUIDLite();
+    driverUUID = UUIDUtil::generateUUIDLite();
 	commandQueue = new DriverQueueType();
 }
 
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-chaos_driver_ns::AbstractDriver::~AbstractDriver() {
+AbstractDriver::~AbstractDriver() {
     if(commandQueue) delete(commandQueue);
 }
 
 // Initialize instance
-void chaos_driver_ns::AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
+void AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
 	DrvMsg initMsg;
 	std::memset(&initMsg, 0, sizeof(DrvMsg));
 	
@@ -94,7 +95,7 @@ void chaos_driver_ns::AbstractDriver::init(void *initParamPtr) throw(chaos::CExc
 }
 
 // Deinit the implementation
-void chaos_driver_ns::AbstractDriver::deinit() throw(chaos::CException) {
+void AbstractDriver::deinit() throw(chaos::CException) {
     DrvMsg deinitMsg;
 	driverNeedtoDeinitialize = true;
 	ADLAPP_ << "Call custom driver deinitialization";
@@ -119,7 +120,7 @@ void chaos_driver_ns::AbstractDriver::deinit() throw(chaos::CException) {
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-bool chaos_driver_ns::AbstractDriver::getNewAccessor(DriverAccessor **newAccessor) {
+bool AbstractDriver::getNewAccessor(DriverAccessor **newAccessor) {
     
     //allocate new accessor;
     DriverAccessor *result = new DriverAccessor(accessorCount++);
@@ -144,7 +145,7 @@ bool chaos_driver_ns::AbstractDriver::getNewAccessor(DriverAccessor **newAccesso
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-bool chaos_driver_ns::AbstractDriver::releaseAccessor(DriverAccessor *accessor) {
+bool AbstractDriver::releaseAccessor(DriverAccessor *accessor) {
     if(!accessor) return false;
     
 	if(accessor->driver_uuid.compare(driverUUID) != 0) {
@@ -163,7 +164,7 @@ bool chaos_driver_ns::AbstractDriver::releaseAccessor(DriverAccessor *accessor) 
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-void chaos_driver_ns::AbstractDriver::scanForMessage() {
+void AbstractDriver::scanForMessage() {
 	ADLAPP_ << "scanForMessage thread started";
     DrvMsgPtr current_message_ptr;
     MsgManagmentResultType::MsgManagmentResult opcode_submission_result;

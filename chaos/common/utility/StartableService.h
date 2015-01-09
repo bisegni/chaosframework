@@ -23,135 +23,135 @@
 #include <chaos/common/utility/InizializableService.h>
 
 namespace chaos {
-    
-    namespace utility {
-        
-        namespace service_state_machine {
-            //SM Event
-            namespace EventType {
-                struct start {};
-                struct stop {};
-            }
-            
-            // States
-            struct Started : public boost::msm::front::state<> {};
-            struct Stopped : public boost::msm::front::state<> {};
-            
-            // front-end: define the FSM structure
-            struct ss_state_machine : public boost::msm::front::state_machine_def<ss_state_machine>  {
-
-                
-                typedef boost::msm::front::Row <  service_state_machine::Deinitilized  ,  EventType::initialize    , service_state_machine::Initialized   , boost::msm::front::none , boost::msm::front::none > deinit_init_row;
-                typedef boost::msm::front::Row <  service_state_machine::Initialized   ,  EventType::deinitialize  , service_state_machine::Deinitilized  , boost::msm::front::none , boost::msm::front::none > init_deinit_row;
-                typedef boost::msm::front::Row <  service_state_machine::Initialized   ,  EventType::start         , service_state_machine::Started       , boost::msm::front::none , boost::msm::front::none > init_start_row;
-                typedef boost::msm::front::Row <  service_state_machine::Started       ,  EventType::stop          , service_state_machine::Stopped       , boost::msm::front::none , boost::msm::front::none > start_stop_row;
-                typedef boost::msm::front::Row <  service_state_machine::Stopped       ,  EventType::start         , service_state_machine::Started       , boost::msm::front::none , boost::msm::front::none > stop_start_row;
-                typedef boost::msm::front::Row <  service_state_machine::Stopped       ,  EventType::deinitialize  , service_state_machine::Deinitilized  , boost::msm::front::none , boost::msm::front::none > stop_deinit_row;
-
-                // the initial state of the player SM. Must be defined
-                typedef Deinitilized initial_state;
-                
-                // Transition table for Startable services and his subclass
-                struct transition_table : boost::mpl::vector< deinit_init_row, init_deinit_row, init_start_row, start_stop_row, stop_start_row, stop_deinit_row > {};
-                
-                template <class FSM,class Event>
-                void no_transition(Event const& ,FSM&, int ) {}
-            };
-        }
-
-        class StartableService : public InizializableService {
-            boost::msm::back::state_machine< service_state_machine::ss_state_machine > state_machine;
-		protected:
+	namespace common {
+		namespace utility {
 			
-			//! Start the implementation
-            virtual void start() throw(chaos::CException);
-            
-			//! Stop the implementation
-            virtual void stop() throw(chaos::CException);
-			
-        public:
-            StartableService();
-            virtual ~StartableService();
-
-            
-            static bool startImplementation(StartableService& impl, const string & implName,  const string & domainString);
-            static bool stopImplementation(StartableService& impl, const string & implName,  const string & domainString);
-            
-            static bool startImplementation(StartableService *impl, const string & implName,  const string & domainString);
-            static bool stopImplementation(StartableService *impl, const string & implName,  const string & domainString);
-            
-            static bool initImplementation(StartableService& impl, void *initData, const string & implName,  const string & domainString);
-            static bool deinitImplementation(StartableService& impl, const string & implName,  const string & domainString);
-            
-            static bool initImplementation(StartableService *impl, void *initData, const string & implName,  const string & domainString);
-            static bool deinitImplementation(StartableService *impl, const string & implName,  const string & domainString);
-        };
-		
-		template<typename T>
-		class StartableServiceContainer {
-			bool delete_on_dispose;
-            string service_name;
-			T *startable_service_instance;
-		public:
-			StartableServiceContainer():
-			delete_on_dispose(true),
-			startable_service_instance(NULL) {}
-			StartableServiceContainer(bool _delete_on_dispose,
-									  const string & instance_name):
-			delete_on_dispose(_delete_on_dispose),
-			startable_service_instance(new T()),
-			service_name(instance_name) {}
-			StartableServiceContainer(T *instance,
-									  bool _delete_on_dispose,
-									  const string & instance_name):
-			startable_service_instance(instance),
-			delete_on_dispose(_delete_on_dispose),
-			service_name(instance_name) {}
-			~StartableServiceContainer() {
-				if(delete_on_dispose) delete(startable_service_instance);
-			}
-			
-			bool init(void *init_data, const string & domainString) {
-				return StartableService::initImplementation(startable_service_instance, init_data, service_name, domainString);
-			}
-			
-			bool start(const string & domainString) {
-				return StartableService::startImplementation(startable_service_instance, service_name, domainString);
-			}
-			
-			bool stop(const string & domainString) {
-				return StartableService::stopImplementation(startable_service_instance, service_name, domainString);
-			}
-			
-			bool deinit(const string & domainString) {
-				return StartableService::deinitImplementation(startable_service_instance, service_name, domainString);
-			}
-			
-            bool isInstantiated() {
-                return startable_service_instance != NULL;
-            }
-            
-			T* get() {
-				return startable_service_instance;
-			}
-			
-			void reset(T *new_instance, const string & instance_name) {
-				if(startable_service_instance) {
-					delete startable_service_instance;
+			namespace service_state_machine {
+				//SM Event
+				namespace EventType {
+					struct start {};
+					struct stop {};
 				}
-				startable_service_instance = new_instance;
-				service_name = instance_name;
+				
+				// States
+				struct Started : public boost::msm::front::state<> {};
+				struct Stopped : public boost::msm::front::state<> {};
+				
+				// front-end: define the FSM structure
+				struct ss_state_machine : public boost::msm::front::state_machine_def<ss_state_machine>  {
+					
+					
+					typedef boost::msm::front::Row <  service_state_machine::Deinitilized  ,  EventType::initialize    , service_state_machine::Initialized   , boost::msm::front::none , boost::msm::front::none > deinit_init_row;
+					typedef boost::msm::front::Row <  service_state_machine::Initialized   ,  EventType::deinitialize  , service_state_machine::Deinitilized  , boost::msm::front::none , boost::msm::front::none > init_deinit_row;
+					typedef boost::msm::front::Row <  service_state_machine::Initialized   ,  EventType::start         , service_state_machine::Started       , boost::msm::front::none , boost::msm::front::none > init_start_row;
+					typedef boost::msm::front::Row <  service_state_machine::Started       ,  EventType::stop          , service_state_machine::Stopped       , boost::msm::front::none , boost::msm::front::none > start_stop_row;
+					typedef boost::msm::front::Row <  service_state_machine::Stopped       ,  EventType::start         , service_state_machine::Started       , boost::msm::front::none , boost::msm::front::none > stop_start_row;
+					typedef boost::msm::front::Row <  service_state_machine::Stopped       ,  EventType::deinitialize  , service_state_machine::Deinitilized  , boost::msm::front::none , boost::msm::front::none > stop_deinit_row;
+					
+					// the initial state of the player SM. Must be defined
+					typedef Deinitilized initial_state;
+					
+					// Transition table for Startable services and his subclass
+					struct transition_table : boost::mpl::vector< deinit_init_row, init_deinit_row, init_start_row, start_stop_row, stop_start_row, stop_deinit_row > {};
+					
+					template <class FSM,class Event>
+					void no_transition(Event const& ,FSM&, int ) {}
+				};
 			}
 			
-			T& operator*() {
-				return *startable_service_instance;
-			}
-
-			T* operator->() {
-				return startable_service_instance;
-			}
-		};
-    }
-    
+			class StartableService : public InizializableService {
+				boost::msm::back::state_machine< service_state_machine::ss_state_machine > state_machine;
+			protected:
+				
+				//! Start the implementation
+				virtual void start() throw(chaos::CException);
+				
+				//! Stop the implementation
+				virtual void stop() throw(chaos::CException);
+				
+			public:
+				StartableService();
+				virtual ~StartableService();
+				
+				
+				static bool startImplementation(StartableService& impl, const string & implName,  const string & domainString);
+				static bool stopImplementation(StartableService& impl, const string & implName,  const string & domainString);
+				
+				static bool startImplementation(StartableService *impl, const string & implName,  const string & domainString);
+				static bool stopImplementation(StartableService *impl, const string & implName,  const string & domainString);
+				
+				static bool initImplementation(StartableService& impl, void *initData, const string & implName,  const string & domainString);
+				static bool deinitImplementation(StartableService& impl, const string & implName,  const string & domainString);
+				
+				static bool initImplementation(StartableService *impl, void *initData, const string & implName,  const string & domainString);
+				static bool deinitImplementation(StartableService *impl, const string & implName,  const string & domainString);
+			};
+			
+			template<typename T>
+			class StartableServiceContainer {
+				bool delete_on_dispose;
+				string service_name;
+				T *startable_service_instance;
+			public:
+				StartableServiceContainer():
+				delete_on_dispose(true),
+				startable_service_instance(NULL) {}
+				StartableServiceContainer(bool _delete_on_dispose,
+										  const string & instance_name):
+				delete_on_dispose(_delete_on_dispose),
+				startable_service_instance(new T()),
+				service_name(instance_name) {}
+				StartableServiceContainer(T *instance,
+										  bool _delete_on_dispose,
+										  const string & instance_name):
+				startable_service_instance(instance),
+				delete_on_dispose(_delete_on_dispose),
+				service_name(instance_name) {}
+				~StartableServiceContainer() {
+					if(delete_on_dispose) delete(startable_service_instance);
+				}
+				
+				bool init(void *init_data, const string & domainString) {
+					return StartableService::initImplementation(startable_service_instance, init_data, service_name, domainString);
+				}
+				
+				bool start(const string & domainString) {
+					return StartableService::startImplementation(startable_service_instance, service_name, domainString);
+				}
+				
+				bool stop(const string & domainString) {
+					return StartableService::stopImplementation(startable_service_instance, service_name, domainString);
+				}
+				
+				bool deinit(const string & domainString) {
+					return StartableService::deinitImplementation(startable_service_instance, service_name, domainString);
+				}
+				
+				bool isInstantiated() {
+					return startable_service_instance != NULL;
+				}
+				
+				T* get() {
+					return startable_service_instance;
+				}
+				
+				void reset(T *new_instance, const string & instance_name) {
+					if(startable_service_instance) {
+						delete startable_service_instance;
+					}
+					startable_service_instance = new_instance;
+					service_name = instance_name;
+				}
+				
+				T& operator*() {
+					return *startable_service_instance;
+				}
+				
+				T* operator->() {
+					return startable_service_instance;
+				}
+			};
+		}
+	}
 }
 #endif /* defined(__CHAOSFramework__StartableService__) */

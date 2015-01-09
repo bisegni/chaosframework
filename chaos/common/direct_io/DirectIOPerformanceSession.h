@@ -65,7 +65,7 @@ namespace chaos {
 			 using direct io system.
 			 */
 			class DirectIOPerformanceSession :
-			protected chaos::utility::InizializableService,
+			protected utility::InizializableService,
 			protected  channel::DirectIOPerformanceServerChannel::DirectIOPerformanceServerChannelHandler {
 				friend class chaos::common::network::PerformanceManagment;
 				friend class chaos::common::message::PerformanceNodeChannel;

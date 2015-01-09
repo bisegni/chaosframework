@@ -44,7 +44,9 @@ namespace chaos{
 			 * This class manage and organize the creation of output pipeline,
 			 * there is only one instance of this class
 			 */
-			class DataManager : public chaos::utility::StartableService, public Singleton<DataManager> {
+			class DataManager:
+			public common::utility::StartableService,
+			public common::utility::Singleton<DataManager> {
 				friend class Singleton<DataManager>;
 				//mutex for lock operation on service request
 				boost::mutex managing_data_mutex;
@@ -108,7 +110,7 @@ namespace chaos{
 				/*
 				 Get the last CDataWrapper from the live data for the device id key
 				 */
-				ArrayPointer<chaos_data::CDataWrapper> *getLastCDataWrapperForDeviceIdKey(string&)  throw(CException);
+				common::utility::ArrayPointer<chaos_data::CDataWrapper> *getLastCDataWrapperForDeviceIdKey(string&)  throw(CException);
 				/*
 				 return a new instance of CDataWrapper filled with a mandatory data
 				 according to key

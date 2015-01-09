@@ -32,7 +32,7 @@
 #define VFSF_LDBG_ LDBG_ << VFSFile_LOG_HEAD << __FUNCTION__ << " - "
 #define VFSF_LERR_ LERR_ << VFSFile_LOG_HEAD << __FUNCTION__ << " - "
 
-
+using namespace chaos::common::utility;
 using namespace chaos::data_service::vfs;
 
 /*---------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ VFSFile::~VFSFile() {
  ---------------------------------------------------------------------------------*/
 int VFSFile::getNewDataBlock(DataBlock **new_data_block_handler) {
 	DataBlock *new_data_block_ptr = NULL;
-	std::string block_unique_path = boost::str(boost::format("%1%/%2%") % vfs_file_info.vfs_fpath % chaos::UUIDUtil::generateUUID());
+	std::string block_unique_path = boost::str(boost::format("%1%/%2%") % vfs_file_info.vfs_fpath % UUIDUtil::generateUUID());
 	
 	//open new block has writeable
 	if(storage_driver_ptr->openBlock(block_unique_path, block_flag::BlockFlagWriteble, &new_data_block_ptr) || !new_data_block_ptr) {
@@ -118,7 +118,7 @@ int VFSFile::releaseDataBlock(DataBlock *data_block_ptr, int closed_state) {
 		VFSF_LERR_ << "Error setting state on datablock with error " << err;
 	} else if ((err = db_driver_ptr->vfsUpdateDatablockCurrentWorkPosition(this, data_block_ptr))) {
 		VFSF_LERR_ << "Error setting work location on datablock with error " << err;
-	} else if ((err = db_driver_ptr->vfsSetHeartbeatOnDatablock(this, data_block_ptr, chaos::TimingUtil::getTimeStamp()))) {
+	} else if ((err = db_driver_ptr->vfsSetHeartbeatOnDatablock(this, data_block_ptr, TimingUtil::getTimeStamp()))) {
 		VFSF_LERR_ << "Error setting heartbeat on datablock with error " << err;
 	}
 	//close the block
@@ -144,7 +144,7 @@ bool VFSFile::isDataBlockValid(DataBlock *data_block_ptr) {
 	if(!data_block_ptr) return false;
 	
 	//check operational value
-	bool is_valid = data_block_ptr->invalidation_timestamp > chaos::TimingUtil::getTimeStamp();
+	bool is_valid = data_block_ptr->invalidation_timestamp > TimingUtil::getTimeStamp();
 	is_valid = is_valid && data_block_ptr->current_work_position < data_block_ptr->max_reacheable_size;
 	return is_valid;
 }

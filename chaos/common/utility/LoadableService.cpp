@@ -21,7 +21,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/utility/LoadableService.h>
 
-using namespace chaos::utility;
+using namespace chaos::common::utility;
 
 
 #define LS_LAPP LAPP_ << "["<<implName<<"]- "

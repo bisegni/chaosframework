@@ -31,10 +31,6 @@
 
 #include <chaos/common/direct_io/impl/ZMQDirectIOClientConnection.h>
 
-
-#define LMEMDRIVER_ LAPP_ << "[Memcached IO Driver] - "
-
-
 #define IODirectIODriver_LOG_HEAD "[IODirectIODriver] - "
 
 #define IODirectIODriver_LAPP_ LAPP_ << IODirectIODriver_LOG_HEAD
@@ -43,7 +39,7 @@
 
 using namespace chaos;
 using namespace chaos::common::io;
-using namespace chaos::utility;
+using namespace chaos::common::utility;
 
 using namespace std;
 using namespace boost;

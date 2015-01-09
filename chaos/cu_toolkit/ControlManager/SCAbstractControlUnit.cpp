@@ -32,6 +32,7 @@ using namespace chaos::cu::control_manager::slow_command;
 
 using namespace chaos::common::data;
 using namespace chaos::common::data::cache;
+using namespace chaos::common::utility;
 using namespace chaos::common::batch_command;
 
 
@@ -107,7 +108,7 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
 	slow_command_executor->dataset_attribute_db_ptr = this;
  
 	//init executor
-	utility::StartableService::initImplementation(slow_command_executor, (void*)NULL, "Slow Command Executor", __PRETTY_FUNCTION__);
+	StartableService::initImplementation(slow_command_executor, (void*)NULL, "Slow Command Executor", __PRETTY_FUNCTION__);
 	
     SCACU_LAPP_ << "Install default slow command for device " << DatasetDB::getDeviceID();
     installCommand<command::SetAttributeCommand>(chaos_batch::BatchCommandsKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
@@ -129,7 +130,7 @@ void SCAbstractControlUnit::deinit() throw(CException) {
 	
 	if(slow_command_executor) {
 		SCACU_LAPP_ << "Deinitialize the command executor for " << DatasetDB::getDeviceID();
-		utility::StartableService::deinitImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
+		StartableService::deinitImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
 		//deassociate the data storage
 		slow_command_executor->key_data_storage = NULL;
 		slow_command_executor->dataset_attribute_db_ptr = NULL;
@@ -146,8 +147,7 @@ void SCAbstractControlUnit::start() throw(CException) {
 	AbstractControlUnit::start();
 	
     SCACU_LAPP_ << "Start sandbox for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::startImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
-
+    StartableService::startImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
 }
 
 /*
@@ -158,8 +158,7 @@ void SCAbstractControlUnit::stop() throw(CException) {
 	AbstractControlUnit::stop();
 	
     SCACU_LAPP_ << "Stop slow command executor for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::stopImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
-
+    StartableService::stopImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
 }
 
 // Perform a command registration

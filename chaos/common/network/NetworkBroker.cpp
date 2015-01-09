@@ -40,6 +40,7 @@
 using namespace chaos;
 using namespace chaos::event;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::network;
 
 /*!
@@ -96,7 +97,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
 		direct_io_server->setHandler(direct_io_dispatcher = new common::direct_io::DirectIODispatcher());
 		
 		//initialize direct io server
-		chaos::utility::StartableService::initImplementation(direct_io_server, static_cast<void*>(globalConfiguration), direct_io_server->getName(), __PRETTY_FUNCTION__);
+		StartableService::initImplementation(direct_io_server, static_cast<void*>(globalConfiguration), direct_io_server->getName(), __PRETTY_FUNCTION__);
 		
 		//init the my_ip variable for all client
 		common::direct_io::DirectIOClientConnection::my_str_ip = GlobalConfiguration::getInstance()->getLocalServerAddress();
@@ -110,7 +111,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         if(!event_dispatcher)
             throw CException(2, "Event dispatcher implementation not found", __PRETTY_FUNCTION__);
         
-        if(!chaos::utility::StartableService::initImplementation(event_dispatcher, static_cast<void*>(globalConfiguration), "DefaultEventDispatcher", __PRETTY_FUNCTION__))
+        if(!StartableService::initImplementation(event_dispatcher, static_cast<void*>(globalConfiguration), "DefaultEventDispatcher", __PRETTY_FUNCTION__))
             throw CException(3, "Event dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
         
         
@@ -121,14 +122,14 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize Event Server: " << event_server_name;
         event_server = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName(event_server_name);
-        if(chaos::utility::StartableService::initImplementation(event_server, static_cast<void*>(globalConfiguration), event_server->getName(), __PRETTY_FUNCTION__)){
+        if(StartableService::initImplementation(event_server, static_cast<void*>(globalConfiguration), event_server->getName(), __PRETTY_FUNCTION__)){
 			//register the root handler on event server
             event_server->setEventHanlder(event_dispatcher);
         }
         
         MB_LAPP  << "Trying to initilize Event Client: " << event_client_name;
         event_client = ObjectFactoryRegister<EventClient>::getInstance()->getNewInstanceByName(event_client_name);
-        chaos::utility::StartableService::initImplementation(event_client, static_cast<void*>(globalConfiguration), event_client->getName(), __PRETTY_FUNCTION__);
+        StartableService::initImplementation(event_client, static_cast<void*>(globalConfiguration), event_client->getName(), __PRETTY_FUNCTION__);
     }
 	//---------------------------- E V E N T ----------------------------
     
@@ -140,7 +141,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         if(!command_dispatcher)
             throw CException(2, "Command dispatcher implementation not found", __PRETTY_FUNCTION__);
         
-        if(!chaos::utility::StartableService::initImplementation(command_dispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", __PRETTY_FUNCTION__))
+        if(!StartableService::initImplementation(command_dispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", __PRETTY_FUNCTION__))
             throw CException(3, "Command dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
         
         
@@ -154,7 +155,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         rpc_server = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpc_server_name);
 		if(!rpc_server) throw CException(4, "Error allocating rpc server implementation", __PRETTY_FUNCTION__);
 		
-        if(chaos::utility::StartableService::initImplementation(rpc_server, static_cast<void*>(globalConfiguration), rpc_server->getName(), __PRETTY_FUNCTION__)) {
+        if(StartableService::initImplementation(rpc_server, static_cast<void*>(globalConfiguration), rpc_server->getName(), __PRETTY_FUNCTION__)) {
 			//set the handler on the rpc server
             rpc_server->setCommandDispatcher(command_dispatcher);
         }
@@ -164,7 +165,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         rpc_client = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpc_client_name);
 		if(!rpc_client) throw CException(4, "Error allocating rpc client implementation", __PRETTY_FUNCTION__);
 
-        if(chaos::utility::StartableService::initImplementation(rpc_client, static_cast<void*>(globalConfiguration), rpc_client->getName(), __PRETTY_FUNCTION__)) {
+        if(StartableService::initImplementation(rpc_client, static_cast<void*>(globalConfiguration), rpc_client->getName(), __PRETTY_FUNCTION__)) {
 			//set the forwarder into dispatcher for answere
             command_dispatcher->setRpcForwarder(rpc_client);
         }
@@ -186,7 +187,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         sync_rpc_server = ObjectFactoryRegister<sync_rpc::RpcSyncServer>::getInstance()->getNewInstanceByName(rpc_sync_impl_name);
         if(!sync_rpc_server) throw CException(4, "Error allocating rpc sync server implementation", __PRETTY_FUNCTION__);
         
-        if(chaos::utility::StartableService::initImplementation(sync_rpc_server, static_cast<void*>(globalConfiguration), sync_rpc_server->getName(), __PRETTY_FUNCTION__)) {
+        if(StartableService::initImplementation(sync_rpc_server, static_cast<void*>(globalConfiguration), sync_rpc_server->getName(), __PRETTY_FUNCTION__)) {
             //set the handler on the rpc server
             sync_rpc_server->setCommandDispatcher(command_dispatcher);
         }
@@ -195,7 +196,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
     }
     //---------------------------- R P C SYNC ----------------------------
 	MB_LAPP  << "Initialize performance session manager";
-	chaos::utility::StartableService::initImplementation(performance_session_managment, static_cast<void*>(globalConfiguration), "PerformanceManagment",  __PRETTY_FUNCTION__);
+	StartableService::initImplementation(performance_session_managment, static_cast<void*>(globalConfiguration), "PerformanceManagment",  __PRETTY_FUNCTION__);
     
     //get host and port for fastly set it into the requests
     published_host_and_port.clear();
@@ -207,10 +208,10 @@ void NetworkBroker::init(void *initData) throw(CException) {
  */
 void NetworkBroker::deinit() throw(CException) {
 	MB_LAPP  << "Deinitialize performance session manager";
-	chaos::utility::StartableService::deinitImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
+	StartableService::deinitImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
 
 	//---------------------------- D I R E C T I/O ----------------------------
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(direct_io_server, direct_io_server->getName(), "NetworkBroker::deinit");)
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(direct_io_server, direct_io_server->getName(), "NetworkBroker::deinit");)
 	DELETE_OBJ_POINTER(direct_io_server);
 	//---------------------------- D I R E C T I/O ----------------------------
 	
@@ -231,19 +232,19 @@ void NetworkBroker::deinit() throw(CException) {
     MB_LAPP  << "Clear event channel map";
     active_event_channel.clear();
 
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);)
     DELETE_OBJ_POINTER(event_client);
     
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);)
     DELETE_OBJ_POINTER(event_server);
     
     MB_LAPP  << "Deinit Event dispatcher";
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);)
     DELETE_OBJ_POINTER(event_dispatcher);
 	//---------------------------- E V E N T ----------------------------
 	
     //---------------------------- R P C SYNC ----------------------------
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)
     //---------------------------- R P C SYNC ----------------------------
 
     
@@ -264,14 +265,14 @@ void NetworkBroker::deinit() throw(CException) {
     MB_LAPP  << "Clear rpc channel map";
     active_rpc_channel.clear();
     
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
     DELETE_OBJ_POINTER(rpc_client);
     
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)
 	DELETE_OBJ_POINTER(rpc_server);
     
     MB_LAPP  << "Deinit Command Dispatcher";
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
     DELETE_OBJ_POINTER(command_dispatcher);
 	//---------------------------- R P C ----------------------------
 	
@@ -281,30 +282,30 @@ void NetworkBroker::deinit() throw(CException) {
  * all part are started
  */
 void NetworkBroker::start() throw(CException){
-    chaos::utility::StartableService::startImplementation(direct_io_server, direct_io_server->getName(), __PRETTY_FUNCTION__);
-    chaos::utility::StartableService::startImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);
-    chaos::utility::StartableService::startImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);
-    chaos::utility::StartableService::startImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);
-    chaos::utility::StartableService::startImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);
-    chaos::utility::StartableService::startImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);
-    chaos::utility::StartableService::startImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);
-    chaos::utility::StartableService::startImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);
-    chaos::utility::StartableService::startImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
+    StartableService::startImplementation(direct_io_server, direct_io_server->getName(), __PRETTY_FUNCTION__);
+    StartableService::startImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);
+    StartableService::startImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);
+    StartableService::startImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);
+    StartableService::startImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);
+    StartableService::startImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);
+    StartableService::startImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);
+    StartableService::startImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);
+    StartableService::startImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
 }
 
 /*!
  * all part are started
  */
 void NetworkBroker::stop() throw(CException) {
-    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(direct_io_server, direct_io_server->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::stopImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::stopImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::stopImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::stopImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::stopImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::stopImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::stopImplementation(direct_io_server, direct_io_server->getName(), __PRETTY_FUNCTION__);)
 }
 
 /*!

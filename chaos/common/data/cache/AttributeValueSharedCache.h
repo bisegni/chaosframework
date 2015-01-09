@@ -48,7 +48,7 @@ namespace chaos{
 				 cache for the attirbute (input, output, custom).
 				 */
 				class AttributeValueSharedCache :
-				public chaos::utility::InizializableService,
+				public utility::InizializableService,
 				public AbstractSharedDomainCache {
 					AttributeCache input_set;
 					AttributeCache output_set;

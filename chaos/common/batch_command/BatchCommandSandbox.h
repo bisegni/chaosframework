@@ -85,7 +85,8 @@ namespace chaos{
              when they are compatible the current command will be killed or paused and new one
              come in.
              */
-            class BatchCommandSandbox : public chaos::utility::StartableService {
+            class BatchCommandSandbox:
+			public utility::StartableService {
                 friend class BatchCommandExecutor;
                 friend struct AcquireFunctor;
                 friend struct CorrelationFunctor;

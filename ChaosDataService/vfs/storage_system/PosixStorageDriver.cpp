@@ -41,7 +41,7 @@
 #define PSDLDBG_ LDBG_ << PosixStorageDriver_LOG_HEAD << __FUNCTION__ << " - "
 #define PSDLERR_ LERR_ << PosixStorageDriver_LOG_HEAD << __FUNCTION__ << " - "
 
-
+using namespace chaos::common::utility;
 using namespace chaos::data_service::vfs::storage_system;
 namespace boost_fs = boost::filesystem;
 namespace chaos_data = chaos::common::data;

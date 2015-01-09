@@ -27,9 +27,6 @@
 #include <chaos/common/utility/SetupStateManager.h>
 #include <chaos/common/utility/StartableService.h>
 
-#include "ApiProvider.h"
-#include "../data/DataManagment.h"
-
 namespace chaos {
     
     namespace cnd {
@@ -40,10 +37,9 @@ namespace chaos {
              
              */
             class ApiServer :
-			public Singleton<ApiServer>,
-			public utility::StartableService {
+			public common::utility::Singleton<ApiServer>,
+			public common::utility::StartableService {
                 friend class Singleton<ApiServer>;
-                chaos::cnd::data::DataManagment *dm;
                 NetworkBroker *networkBroker;
                 
             public:
@@ -67,16 +63,6 @@ namespace chaos {
                 
                 // Deinit the implementation
                 void deinit() throw(chaos::CException);
-                
-                /*!
-                 Register a class that define some api
-                 */
-                void registerApi(ApiProvider *apiClass);
-                
-                /*!
-                 Deeregister a class that define some api
-                 */
-                void deregisterApi(ApiProvider *apiClass);
             };
         }
     }

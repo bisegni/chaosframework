@@ -31,6 +31,7 @@
 #include "GlobalConfiguration.h"
 
 using namespace chaos;
+using namespace chaos::common::utility;
 using namespace boost;
 namespace po = boost::program_options;
 
@@ -202,7 +203,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     configuration.addInt32Value(InitOption::OPT_LOG_LEVEL, filterLogLevel(logLevel));
     
     CHECK_AND_DEFINE_OPTION(string, publishingIp, InitOption::OPT_PUBLISHING_IP)
-    bool isIp = regex_match(publishingIp, ServerIPRegExp);
+    bool isIp = regex_match(publishingIp, common::utility::ServerIPRegExp);
     if(isIp) configuration.addStringValue(InitOption::OPT_PUBLISHING_IP, publishingIp);
     
     //configure rpc

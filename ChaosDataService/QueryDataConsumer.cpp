@@ -29,6 +29,7 @@
 #include <boost/thread.hpp>
 
 using namespace chaos::data_service;
+using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
@@ -85,8 +86,8 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 	if(!device_data_worker) throw chaos::CException(-5, "Error allocating device workers", __FUNCTION__);
 	
 	//get the cached driver
-	cache_driver_get_last = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
-	chaos::utility::InizializableService::initImplementation(cache_driver_get_last,
+	cache_driver_get_last = ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
+	InizializableService::initImplementation(cache_driver_get_last,
 															 &settings->cache_driver_setting,
 															 "CacheDriver",
 															 __PRETTY_FUNCTION__);
@@ -97,7 +98,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 													 settings->query_manager_thread_poll_size,
 													 vfs_manager_instance);
 		if(!query_engine) throw chaos::CException(-5, "Error allocating Query Engine", __FUNCTION__);
-		chaos::utility::StartableService::initImplementation(query_engine, init_data, "QueryEngine", __PRETTY_FUNCTION__);
+		StartableService::initImplementation(query_engine, init_data, "QueryEngine", __PRETTY_FUNCTION__);
 	}
 	//Sahred data worker
 	chaos::data_service::worker::DeviceSharedDataWorker *tmp = NULL;
@@ -120,7 +121,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 																					   db_driver,
 																					   network_broker);
 		if(!snapshot_data_worker) throw chaos::CException(-5, "Error allocating snapshot worker", __FUNCTION__);
-		chaos::utility::StartableService::initImplementation(snapshot_data_worker, init_data, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
+		StartableService::initImplementation(snapshot_data_worker, init_data, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
 		for(cache_system::CacheServerListIterator iter = settings->cache_driver_setting.startup_chache_servers.begin();
 			iter != settings->cache_driver_setting.startup_chache_servers.end();
 			iter++) {
@@ -148,12 +149,12 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 
 void QueryDataConsumer::start() throw (chaos::CException) {
 	//start query engine
-	if(query_engine) chaos::utility::StartableService::startImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
+	if(query_engine) StartableService::startImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
 	
 	//! start the snapshot creation worker
 	if(!settings->cache_only &&
 	   snapshot_data_worker) {
-		chaos::utility::StartableService::startImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
+		StartableService::startImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
 	}
 }
 
@@ -161,11 +162,11 @@ void QueryDataConsumer::stop() throw (chaos::CException) {
 	//! stop the snapshot creation worker
 	if(!settings->cache_only &&
 	   snapshot_data_worker) {
-		chaos::utility::StartableService::stopImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
+		StartableService::stopImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
 	}
 
 	//stop query engine
-	if(query_engine) chaos::utility::StartableService::stopImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
+	if(query_engine) StartableService::stopImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
 }
 
 void QueryDataConsumer::deinit() throw (chaos::CException) {
@@ -180,7 +181,7 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
     }
 	
 	if(query_engine) {
-		chaos::utility::StartableService::deinitImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
+		StartableService::deinitImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
 		DELETE_OBJ_POINTER(query_engine)
 	}
 	
@@ -197,7 +198,7 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
 	if(!settings->cache_only &&
 	   snapshot_data_worker) {
 		try{
-			chaos::utility::StartableService::deinitImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
+			StartableService::deinitImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
 		} catch(...) {
 		}
 		QDCAPP_ << "Deallocating Snapshot data worker";

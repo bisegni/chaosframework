@@ -36,7 +36,9 @@ namespace chaos {
            // boost::bind(&DirectIOHandler::serviceDataReceived, handler_impl, _1, _2):
            // boost::bind(&DirectIOHandler::priorityDataReceived, handler_impl, _1, _2);
 			//! Default dispatcher for the direct io system
-			class DirectIODispatcher : public common::direct_io::DirectIOHandler, public chaos::utility::StartableService {
+			class DirectIODispatcher:
+			public common::direct_io::DirectIOHandler,
+			public utility::StartableService {
 				friend class DirectIOServer;
 				//! struct for fast delegation
 				struct EndpointFastDelegation {

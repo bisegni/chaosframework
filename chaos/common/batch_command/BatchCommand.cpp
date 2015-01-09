@@ -22,6 +22,7 @@
 #include <chaos/common/batch_command/BatchCommand.h>
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::data::cache;
 using namespace chaos::common::batch_command;
 

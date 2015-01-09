@@ -44,7 +44,8 @@ namespace chaos {
 				unsigned int job_thread_number;
 			} DataWorkerSetting;
 			
-			class DataWorker : public chaos::utility::StartableService  {
+			class DataWorker:
+			public common::utility::StartableService  {
 				//job queue list
 				boost::lockfree::queue<WorkerJobPtr> job_queue;
 				

@@ -31,7 +31,7 @@
 #define StageDataVFileScannerLDBG_ LDBG_ << StageDataVFileScanner_LOG_HEAD << __FUNCTION__ << " - "
 #define StageDataVFileScannerLERR_ LERR_ << StageDataVFileScanner_LOG_HEAD
 
-
+using namespace chaos::common::utility;
 using namespace chaos::data_service;
 using namespace chaos::data_service::indexer;
 namespace vfs=chaos::data_service::vfs;
@@ -94,7 +94,7 @@ int StageDataVFileScanner::startScanHandler() {
 int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack,
 										   vfs::VFSFile *working_data_file) {
 	int err = 0;
-	uint64_t cur_ts = chaos::TimingUtil::getTimeStamp();
+	uint64_t cur_ts = TimingUtil::getTimeStamp();
 	
 	if(!data_pack.hasField(chaos::DataPackCommonKey::DPCK_DEVICE_ID) ||
 	   !data_pack.hasField(chaos::DataPackCommonKey::DPCK_TIMESTAMP) ||

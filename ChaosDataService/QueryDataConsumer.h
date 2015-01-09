@@ -40,7 +40,7 @@
 
 #include <boost/atomic.hpp>
 
-using namespace chaos::utility;
+using namespace chaos::common::utility;
 using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
@@ -56,7 +56,7 @@ namespace chaos{
 		protected chaos::common::async_central::TimerHandler,
 		protected DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
 		protected DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelHandler,
-		public utility::StartableService {
+		public StartableService {
             friend class ChaosDataService;
 			std::string cache_impl_name;
 			std::string db_impl_name;

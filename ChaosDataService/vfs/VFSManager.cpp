@@ -26,6 +26,7 @@
 #include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+using namespace chaos::common::utility;
 using namespace chaos::data_service::vfs;
 
 #define VFSManager_LOG_HEAD "[VFSManager] - "
@@ -64,9 +65,9 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 	//torage driver is interally managed by vfs manage
 	std::string storage_driver_class_name = boost::str(boost::format("%1%StorageDriver") % setting->storage_driver_impl);
 	VFSFM_LAPP_ << "Allocate storage driver of type " << storage_driver_class_name;
-	storage_driver_ptr = chaos::ObjectFactoryRegister<storage_system::StorageDriver>::getInstance()->getNewInstanceByName(storage_driver_class_name);
+	storage_driver_ptr = ObjectFactoryRegister<storage_system::StorageDriver>::getInstance()->getNewInstanceByName(storage_driver_class_name);
 	if(!storage_driver_ptr) throw chaos::CException(-1, "No storage driver found", __PRETTY_FUNCTION__);
-	chaos::utility::InizializableService::initImplementation(storage_driver_ptr, &setting->storage_driver_setting, storage_driver_ptr->getName(), __PRETTY_FUNCTION__);
+	InizializableService::initImplementation(storage_driver_ptr, &setting->storage_driver_setting, storage_driver_ptr->getName(), __PRETTY_FUNCTION__);
 	
 	if(!setting->max_block_size) {
 		VFSFM_LAPP_ << "Use default value for max_block_size";
@@ -92,7 +93,7 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 	
 	//assign the storage driver to the  data block fetcher cache
 	query::DataBlockCache::getInstance()->storage_driver = storage_driver_ptr;
-	chaos::utility::InizializableService::initImplementation(query::DataBlockCache::getInstance(), NULL, "DataBlockCache", __PRETTY_FUNCTION__);
+	InizializableService::initImplementation(query::DataBlockCache::getInstance(), NULL, "DataBlockCache", __PRETTY_FUNCTION__);
 	
 	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, HB_REPEAT_TIME);
 }
@@ -104,12 +105,12 @@ void VFSManager::deinit() throw (chaos::CException) {
 	chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
 	
 	//deinit data block fetcher cache
-	chaos::utility::InizializableService::deinitImplementation(query::DataBlockCache::getInstance(), "DataBlockCache", __PRETTY_FUNCTION__);
+	InizializableService::deinitImplementation(query::DataBlockCache::getInstance(), "DataBlockCache", __PRETTY_FUNCTION__);
 	
 	if(storage_driver_ptr) {
 		VFSFM_LAPP_ << "Deallocate storage driver";
 		try {
-			chaos::utility::InizializableService::deinitImplementation(storage_driver_ptr, storage_driver_ptr->getName(), __PRETTY_FUNCTION__);
+			InizializableService::deinitImplementation(storage_driver_ptr, storage_driver_ptr->getName(), __PRETTY_FUNCTION__);
 		}catch (chaos::CException e) {
 			VFSFM_LDBG_ << e.what();
 			delete (storage_driver_ptr);

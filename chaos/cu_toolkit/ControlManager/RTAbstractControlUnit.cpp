@@ -26,6 +26,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::data::cache;
+using namespace chaos::common::utility;
 
 using namespace chaos::cu;
 using namespace chaos::cu::control_manager;
@@ -105,10 +106,10 @@ void RTAbstractControlUnit::init(void *initData) throw(CException) {
 	scheduler_run = false;
 	last_hearbeat_time = 0;
     //RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
-    //utility::StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", __PRETTY_FUNCTION__);
+    //StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", __PRETTY_FUNCTION__);
 	
 	RTCULAPP_ << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
-	utility::InizializableService::initImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, (void*)NULL, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
+	InizializableService::initImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, (void*)NULL, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
 }
 
 /*!
@@ -149,11 +150,11 @@ void RTAbstractControlUnit::deinit() throw(CException) {
 	AbstractControlUnit::deinit();
 
 	RTCULAPP_ << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
-	utility::InizializableService::deinitImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
+	InizializableService::deinitImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
 
 	
    // RTCULAPP_ << "Deinitializing the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
-   // utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", __PRETTY_FUNCTION__);
+   // StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", __PRETTY_FUNCTION__);
 }
 
 /*!

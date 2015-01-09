@@ -42,127 +42,129 @@ using namespace boost::msm::front;
 namespace mpl = boost::mpl;
 
 namespace chaos {
-    namespace utility {
-        
-        namespace service_state_machine {
-            
-            //SM Event
-            namespace EventType {
-                struct initialize {};
-                struct deinitialize {};
-            }
-            
-            // The list of FSM states
-            struct Deinitilized : public boost::msm::front::state<>{};
-            
-            struct Initialized : public boost::msm::front::state<> {};
-            
-            // front-end: define the FSM structure
-            struct id_states_machine : public boost::msm::front::state_machine_def<id_states_machine> {
-
-                // the initial state of the player SM. Must be defined
-                typedef Deinitilized initial_state;
-                
-                typedef boost::msm::front::Row <  Deinitilized   ,  EventType::initialize  , Initialized, boost::msm::front::none , boost::msm::front::none > deinit_init_row;
-                typedef boost::msm::front::Row <  Initialized   ,  EventType::deinitialize  , Deinitilized, boost::msm::front::none , boost::msm::front::none > init_deinit_row;
-
-                // Transition table for initialization services
-                struct transition_table : boost::mpl::vector<
-                deinit_init_row,
-                init_deinit_row > {};
-                
-                template <class FSM,class Event>
-                void no_transition(Event const& ,FSM&, int )
-                {
-                    std::cout << "no trnasition";
-                }
-            };
-        }
-
-        class InizializableService {
-            boost::msm::back::state_machine< service_state_machine::id_states_machine > state_machine;
-        protected:
-            uint8_t serviceState;
+	namespace common {
+		namespace utility {
 			
-			//! Initialize instance
-            virtual void init(void*) throw(chaos::CException);
-            
-			//! Deinit the implementation
-            virtual void deinit() throw(chaos::CException);
-			
-        public:
-            InizializableService();
-            virtual ~InizializableService();
-                //! Return the state
-            const uint8_t getServiceState() const;
-
-            
-            static bool initImplementation(InizializableService& impl, void *initData, const string & implName,  const string & domainString);
-            static bool deinitImplementation(InizializableService& impl, const string & implName,  const string & domainString);
-            
-            static bool initImplementation(InizializableService *impl, void *initData, const string & implName,  const string & domainString);
-            static bool deinitImplementation(InizializableService *impl, const string & implName,  const string & domainString);
-        };
-		
-		template<typename T>
-		class InizializableServiceContainer {
-			bool delete_on_dispose;
-            string service_name;
-			T *startable_service_instance;
-		public:
-			InizializableServiceContainer():
-			delete_on_dispose(true),
-			startable_service_instance(NULL){}
-			
-			InizializableServiceContainer(bool _delete_on_dispose,
-										  const string & instance_name):
-			delete_on_dispose(_delete_on_dispose),
-			startable_service_instance(new T()),
-			service_name(instance_name) {}
-			
-			InizializableServiceContainer(T *instance,
-										  bool _delete_on_dispose,
-										  const string & instance_name):
-			startable_service_instance(instance),
-			delete_on_dispose(_delete_on_dispose),
-			service_name(instance_name) {}
-			
-			~InizializableServiceContainer() {
-				if(delete_on_dispose) delete(startable_service_instance);
-			}
-			
-			bool init(void *init_data, const string & domainString) {
-				return InizializableService::initImplementation(startable_service_instance, init_data, service_name, domainString);
-			}
-			
-			bool deinit(const string & domainString) {
-				return InizializableService::deinitImplementation(startable_service_instance, service_name, domainString);
-			}
-            
-            bool isInstantiated() {
-                return startable_service_instance != NULL;
-            }
-            
-			T* get() {
-				return startable_service_instance;
-			}
-			void reset(T *new_instance, const string & instance_name) {
-				if(startable_service_instance) {
-					delete startable_service_instance;
+			namespace service_state_machine {
+				
+				//SM Event
+				namespace EventType {
+					struct initialize {};
+					struct deinitialize {};
 				}
-				startable_service_instance = new_instance;
-				service_name = instance_name;
+				
+				// The list of FSM states
+				struct Deinitilized : public boost::msm::front::state<>{};
+				
+				struct Initialized : public boost::msm::front::state<> {};
+				
+				// front-end: define the FSM structure
+				struct id_states_machine : public boost::msm::front::state_machine_def<id_states_machine> {
+					
+					// the initial state of the player SM. Must be defined
+					typedef Deinitilized initial_state;
+					
+					typedef boost::msm::front::Row <  Deinitilized   ,  EventType::initialize  , Initialized, boost::msm::front::none , boost::msm::front::none > deinit_init_row;
+					typedef boost::msm::front::Row <  Initialized   ,  EventType::deinitialize  , Deinitilized, boost::msm::front::none , boost::msm::front::none > init_deinit_row;
+					
+					// Transition table for initialization services
+					struct transition_table : boost::mpl::vector<
+					deinit_init_row,
+					init_deinit_row > {};
+					
+					template <class FSM,class Event>
+					void no_transition(Event const& ,FSM&, int )
+					{
+						std::cout << "no trnasition";
+					}
+				};
 			}
 			
-			T& operator*() {
-				return *startable_service_instance;
-			}
+			class InizializableService {
+				boost::msm::back::state_machine< service_state_machine::id_states_machine > state_machine;
+			protected:
+				uint8_t serviceState;
+				
+				//! Initialize instance
+				virtual void init(void*) throw(chaos::CException);
+				
+				//! Deinit the implementation
+				virtual void deinit() throw(chaos::CException);
+				
+			public:
+				InizializableService();
+				virtual ~InizializableService();
+				//! Return the state
+				const uint8_t getServiceState() const;
+				
+				
+				static bool initImplementation(InizializableService& impl, void *initData, const string & implName,  const string & domainString);
+				static bool deinitImplementation(InizializableService& impl, const string & implName,  const string & domainString);
+				
+				static bool initImplementation(InizializableService *impl, void *initData, const string & implName,  const string & domainString);
+				static bool deinitImplementation(InizializableService *impl, const string & implName,  const string & domainString);
+			};
 			
-			T* operator->() {
-				return startable_service_instance;
-			}
-		};
-    }
+			template<typename T>
+			class InizializableServiceContainer {
+				bool delete_on_dispose;
+				string service_name;
+				T *startable_service_instance;
+			public:
+				InizializableServiceContainer():
+				delete_on_dispose(true),
+				startable_service_instance(NULL){}
+				
+				InizializableServiceContainer(bool _delete_on_dispose,
+											  const string & instance_name):
+				delete_on_dispose(_delete_on_dispose),
+				startable_service_instance(new T()),
+				service_name(instance_name) {}
+				
+				InizializableServiceContainer(T *instance,
+											  bool _delete_on_dispose,
+											  const string & instance_name):
+				startable_service_instance(instance),
+				delete_on_dispose(_delete_on_dispose),
+				service_name(instance_name) {}
+				
+				~InizializableServiceContainer() {
+					if(delete_on_dispose) delete(startable_service_instance);
+				}
+				
+				bool init(void *init_data, const string & domainString) {
+					return InizializableService::initImplementation(startable_service_instance, init_data, service_name, domainString);
+				}
+				
+				bool deinit(const string & domainString) {
+					return InizializableService::deinitImplementation(startable_service_instance, service_name, domainString);
+				}
+				
+				bool isInstantiated() {
+					return startable_service_instance != NULL;
+				}
+				
+				T* get() {
+					return startable_service_instance;
+				}
+				void reset(T *new_instance, const string & instance_name) {
+					if(startable_service_instance) {
+						delete startable_service_instance;
+					}
+					startable_service_instance = new_instance;
+					service_name = instance_name;
+				}
+				
+				T& operator*() {
+					return *startable_service_instance;
+				}
+				
+				T* operator->() {
+					return startable_service_instance;
+				}
+			};
+		}
+	}
 }
 
 #endif /* defined(__CHAOSFramework__InizializableService__) */

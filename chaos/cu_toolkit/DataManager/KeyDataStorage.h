@@ -32,7 +32,7 @@ using namespace std;
 
 namespace chaos_data = chaos::common::data;
 namespace chaos_io = chaos::common::io;
-
+namespace chaos_utility = chaos::common::utility;
 namespace chaos{
     namespace cu {
 		namespace data_manager {
@@ -74,7 +74,7 @@ namespace chaos{
 				/*
 				 Retrive the data from Live Storage
 				 */
-				ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet(KeyDataStorageDomain domain);
+				chaos_utility::ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet(KeyDataStorageDomain domain);
 				
 				//! push a dataset associated to a domain
 				void pushDataSet(KeyDataStorageDomain domain, chaos_data::CDataWrapper *dataset);

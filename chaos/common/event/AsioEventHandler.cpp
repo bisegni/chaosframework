@@ -25,6 +25,7 @@
 #include <netinet/in.h>
 using namespace boost;
 using namespace chaos;
+using namespace chaos::common::utility;
 using namespace chaos::event;
 
 AsioEventHandler::AsioEventHandler(const boost::asio::ip::address& listen_address,

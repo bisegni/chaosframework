@@ -41,13 +41,13 @@ namespace chaos {
         class ChaosMetadataService :
 		public ChaosCommon<ChaosMetadataService>,
 		public ServerDelegator,
-		public utility::StartableService {
+		public common::utility::StartableService {
             friend class Singleton<ChaosMetadataService>;
             
             static WaitSemaphore waitCloseSemaphore;
             
             //! network broker for talk with others chaos node
-            chaos::utility::StartableServiceContainer<NetworkBroker> network_broker_service;
+            common::utility::StartableServiceContainer<NetworkBroker> network_broker_service;
             
             ChaosMetadataService(){};
             ~ChaosMetadataService(){};

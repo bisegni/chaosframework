@@ -45,6 +45,7 @@ namespace chaos_async = chaos::common::async_central;
 namespace cu_driver_manager = chaos::cu::driver_manager;
 
 using namespace chaos;
+using namespace chaos::common::utility;
 using namespace chaos::cu::command_manager;
 using namespace chaos::cu::control_manager;
 using namespace std;

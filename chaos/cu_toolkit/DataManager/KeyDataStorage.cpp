@@ -26,6 +26,7 @@
 using namespace std;
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::cu::data_manager;
 
 #define DEFAULT_OBUFFER_THREAD_NUMEBR   1

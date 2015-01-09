@@ -21,8 +21,9 @@
 #include <chaos/common/action/EventAction.h>
 
 using namespace std;
-using namespace chaos;
 using namespace boost;
+using namespace chaos;
+using namespace chaos::common::utility;
 
 EventAction::EventAction() {
         //create the unique uuid for action, the uuid lite version can work in this context

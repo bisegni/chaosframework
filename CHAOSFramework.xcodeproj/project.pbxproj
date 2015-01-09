@@ -239,7 +239,6 @@
 		326DB48E14B38BC00018A8D0 /* ArrayPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42514B38BC00018A8D0 /* ArrayPointer.h */; };
 		326DB49214B38BC00018A8D0 /* ObjectFactoryRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42914B38BC00018A8D0 /* ObjectFactoryRegister.h */; };
 		326DB49314B38BC00018A8D0 /* Singleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42A14B38BC00018A8D0 /* Singleton.h */; };
-		326DB49414B38BC00018A8D0 /* StdUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42B14B38BC00018A8D0 /* StdUtility.h */; };
 		326DB49514B38BC00018A8D0 /* TimingUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42C14B38BC00018A8D0 /* TimingUtil.h */; };
 		326DB49614B38BC00018A8D0 /* UUIDUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42D14B38BC00018A8D0 /* UUIDUtil.h */; };
 		326DB49714B38BC00018A8D0 /* version.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42E14B38BC00018A8D0 /* version.h */; };
@@ -442,7 +441,6 @@
 		32D421B317271572008A326E /* BsonFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D421B117271572008A326E /* BsonFragment.cpp */; };
 		32D421B417271572008A326E /* BsonFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D421B217271572008A326E /* BsonFragment.h */; };
 		32D5CB32179D233E00A8427E /* chaos_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D5CB31179D233E00A8427E /* chaos_types.h */; };
-		32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D68ACF14D5D5A7009F290A /* SetupStateManager.h */; };
 		32D6C8981815293200E9689B /* DirectIOHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8971815293200E9689B /* DirectIOHandler.h */; };
 		32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8991815294700E9689B /* DirectIOForwarder.h */; };
 		32D72CAB197D196D00512B89 /* WorkUnitManagement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D72CA9197D196D00512B89 /* WorkUnitManagement.h */; };
@@ -791,7 +789,6 @@
 		326DB42514B38BC00018A8D0 /* ArrayPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ArrayPointer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB42914B38BC00018A8D0 /* ObjectFactoryRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ObjectFactoryRegister.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB42A14B38BC00018A8D0 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Singleton.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB42B14B38BC00018A8D0 /* StdUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdUtility.h; sourceTree = "<group>"; };
 		326DB42C14B38BC00018A8D0 /* TimingUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = TimingUtil.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB42D14B38BC00018A8D0 /* UUIDUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = UUIDUtil.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB42E14B38BC00018A8D0 /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
@@ -1031,7 +1028,6 @@
 		32D421B117271572008A326E /* BsonFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BsonFragment.cpp; sourceTree = "<group>"; };
 		32D421B217271572008A326E /* BsonFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BsonFragment.h; sourceTree = "<group>"; };
 		32D5CB31179D233E00A8427E /* chaos_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chaos_types.h; sourceTree = "<group>"; };
-		32D68ACF14D5D5A7009F290A /* SetupStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupStateManager.h; sourceTree = "<group>"; };
 		32D6C8971815293200E9689B /* DirectIOHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOHandler.h; sourceTree = "<group>"; };
 		32D6C8991815294700E9689B /* DirectIOForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOForwarder.h; sourceTree = "<group>"; };
 		32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkUnitManagement.cpp; sourceTree = "<group>"; };
@@ -1839,11 +1835,9 @@
 				326DB42514B38BC00018A8D0 /* ArrayPointer.h */,
 				326DB42914B38BC00018A8D0 /* ObjectFactoryRegister.h */,
 				326DB42A14B38BC00018A8D0 /* Singleton.h */,
-				326DB42B14B38BC00018A8D0 /* StdUtility.h */,
 				326DB42C14B38BC00018A8D0 /* TimingUtil.h */,
 				326DB42D14B38BC00018A8D0 /* UUIDUtil.h */,
 				32AAD78D14CD95FD005A097C /* Atomic.h */,
-				32D68ACF14D5D5A7009F290A /* SetupStateManager.h */,
 				325F86EB14D9E59D00CDF35F /* InetUtility.h */,
 				32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */,
 				32DF603515E14C7700312C94 /* NamedService.cpp */,
@@ -2460,7 +2454,6 @@
 				329603231876B45000CDCADA /* BatchCommand.h in Headers */,
 				326DB49214B38BC00018A8D0 /* ObjectFactoryRegister.h in Headers */,
 				326DB49314B38BC00018A8D0 /* Singleton.h in Headers */,
-				326DB49414B38BC00018A8D0 /* StdUtility.h in Headers */,
 				324A4B4C191A41EF00975394 /* bits.h in Headers */,
 				326DB49514B38BC00018A8D0 /* TimingUtil.h in Headers */,
 				326DB49614B38BC00018A8D0 /* UUIDUtil.h in Headers */,
@@ -2480,7 +2473,6 @@
 				326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */,
 				3253F303189AEF8000959CA7 /* DirectIOVirtualServerChannel.h in Headers */,
 				329603271876B45000CDCADA /* BatchCommandExecutor.h in Headers */,
-				32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */,
 				3206F1AE19C18A8D00C437D8 /* QueryFuture.h in Headers */,
 				32556B0919B5F2FA0004ABC5 /* DBDriver.h in Headers */,
 				32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */,

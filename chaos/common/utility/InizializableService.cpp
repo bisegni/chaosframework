@@ -25,7 +25,7 @@
 #define IS_LAPP LAPP_ << "[InizializableService]- "
 
 
-using namespace chaos::utility;
+using namespace chaos::common::utility;
 
 /*!
  */

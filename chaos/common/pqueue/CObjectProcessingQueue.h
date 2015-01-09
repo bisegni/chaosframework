@@ -111,7 +111,7 @@ namespace chaos {
 		CObjectProcessingQueue():
 		in_deinit(false),
 		eventListener(NULL),
-		uid(chaos::UUIDUtil::generateUUIDLite()){
+		uid(common::utility::UUIDUtil::generateUUIDLite()){
         }
 		
         /*

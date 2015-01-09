@@ -85,7 +85,7 @@ namespace chaos {
 				/*!
 				 Expose the poll api
 				 */
-				common::data::CDataWrapper* pollAnswer(atomic_int_type request_id, uint32_t millisec_to_wait = 0) {
+				common::data::CDataWrapper* pollAnswer(utility::atomic_int_type request_id, uint32_t millisec_to_wait = 0) {
 					return MessageChannel::pollAnswer(request_id, millisec_to_wait);
 				}
 			};

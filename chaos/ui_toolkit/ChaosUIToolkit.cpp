@@ -31,7 +31,7 @@ using namespace chaos::ui;
  
  */
 ChaosUIToolkit::ChaosUIToolkit(){
-	clientInstanceUUID = UUIDUtil::generateUUIDLite();
+	clientInstanceUUID = common::utility::UUIDUtil::generateUUIDLite();
 }
 
 /*

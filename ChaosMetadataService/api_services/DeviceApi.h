@@ -21,8 +21,9 @@
 #ifndef __CHAOSFramework__DeviceApi__
 #define __CHAOSFramework__DeviceApi__
 
-//#include "ApiProvider.h"
 
+#include <chaos/common/action/DeclareAction.h>
+#include <chaos/common/data/CDataWrapper.h>
 namespace chaos_data = chaos::common::data;
 
 namespace chaos {
@@ -32,8 +33,9 @@ namespace chaos {
             /*!
              
              */
-            class DeviceApi: public ApiProvider {
-               
+			class DeviceApi:
+			public DeclareAction {
+				
                 
             public:
                 DeviceApi();

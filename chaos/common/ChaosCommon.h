@@ -45,7 +45,9 @@ namespace chaos {
 	 resource used for the base chaos function
 	 */
 	template<class T>
-	class ChaosCommon : public Singleton<T>, public utility::StartableService {
+	class ChaosCommon:
+	public common::utility::Singleton<T>,
+	public common::utility::StartableService {
 		log::LogManager logManager;
 	protected:
 		//! Constructor Method
@@ -147,7 +149,7 @@ namespace chaos {
 				if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){
 					local_ip = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_IP);
 				} else {
-					local_ip = InetUtility::scanForLocalNetworkAddress();
+					local_ip = common::utility::InetUtility::scanForLocalNetworkAddress();
 				}
 				GlobalConfiguration::getInstance()->addLocalServerAddress(local_ip);
 				
@@ -155,12 +157,12 @@ namespace chaos {
 				
 				//Starting Async centrla
 				LAPP_ << "Initilizing async central";
-				utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), init_data, "AsyncCentralManager", __PRETTY_FUNCTION__);
+				common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), init_data, "AsyncCentralManager", __PRETTY_FUNCTION__);
 				}
 				
 				void deinit() throw (CException) {
 					LAPP_ << "DeInitilizing async central";
-					utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__);
+					common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__);
 				}
 				
 				void start() throw (CException) {

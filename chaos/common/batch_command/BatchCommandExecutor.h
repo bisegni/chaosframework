@@ -66,7 +66,10 @@ namespace chaos {
             /*!
              This class is the environment where the exeecution of the slow command handlers take place.
              */
-            class BatchCommandExecutor : public chaos::utility::StartableService, public chaos::DeclareAction, public BatchCommandSandboxEventHandler {
+            class BatchCommandExecutor:
+			public utility::StartableService,
+			public chaos::DeclareAction,
+			public BatchCommandSandboxEventHandler {
                 typedef boost::shared_mutex			RWMutex;
                 typedef boost::shared_lock<RWMutex>	ReadLock;
                 typedef boost::unique_lock<RWMutex>	WriteLock;

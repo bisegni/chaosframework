@@ -28,9 +28,9 @@
 #define PMLDBG_ LDBG_ << PM_LOG_HEAD << __FUNCTION__
 #define PMLERR_ LERR_ << PM_LOG_HEAD
 
-
+using namespace chaos::common::utility;
 using namespace chaos::common::network;
-namespace chaos_direct_io = chaos::common::direct_io;
+using namespace chaos::common::direct_io;
 
 PerformanceManagment::PerformanceManagment(NetworkBroker *_network_broker):
 network_broker(_network_broker),
@@ -80,12 +80,12 @@ void PerformanceManagment::stop() throw(chaos::CException) {
 	purge_map();
 }
 
-chaos_direct_io::DirectIOClient *PerformanceManagment::getLocalDirectIOClientInstance() {
+DirectIOClient *PerformanceManagment::getLocalDirectIOClientInstance() {
 	boost::unique_lock<boost::mutex>(mutext_client_connection);
 	if(!global_performance_connection) {
 		global_performance_connection = network_broker->getDirectIOClientInstance();
 		if(!global_performance_connection) throw chaos::CException(-1, "Performance direct io client creation error", __PRETTY_FUNCTION__);
-		chaos::utility::InizializableService::initImplementation(global_performance_connection, NULL, global_performance_connection->getName(), __PRETTY_FUNCTION__);
+		InizializableService::initImplementation(global_performance_connection, NULL, global_performance_connection->getName(), __PRETTY_FUNCTION__);
 	}
 	return global_performance_connection;
 }
@@ -96,7 +96,7 @@ void PerformanceManagment::deinit() throw(chaos::CException) {
 	network_broker->deregisterAction(this);
 	
 	if(global_performance_connection) {
-		chaos::utility::InizializableService::deinitImplementation(global_performance_connection, global_performance_connection->getName(), __PRETTY_FUNCTION__);
+		InizializableService::deinitImplementation(global_performance_connection, global_performance_connection->getName(), __PRETTY_FUNCTION__);
 	}
 }
 
@@ -109,7 +109,7 @@ void PerformanceManagment::purge_worker() {
 
 void PerformanceManagment::purge_map() {
 	boost::unique_lock<boost::shared_mutex> lock(mutex_map_purgeable);
-	for(std::map<std::string, chaos_direct_io::DirectIOPerformanceSession*>::iterator iter = map_purgeable_performance_node.begin();
+	for(std::map<std::string, DirectIOPerformanceSession*>::iterator iter = map_purgeable_performance_node.begin();
 		iter != map_purgeable_performance_node.end();) {
 		disposePerformanceNode(iter->second);
 		map_purgeable_performance_node.erase(iter++);
@@ -117,8 +117,9 @@ void PerformanceManagment::purge_map() {
 	
 }
 
-void  PerformanceManagment::handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection, chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
-	if(event != chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected) return;
+void  PerformanceManagment::handleEvent(DirectIOClientConnection *client_connection, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
+	if(event !=
+	   DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected) return;
 	
 	//add to purgeable map
 	boost::unique_lock<boost::shared_mutex> lock(mutex_map_purgeable);
@@ -131,12 +132,12 @@ void  PerformanceManagment::handleEvent(chaos_direct_io::DirectIOClientConnectio
 	
 }
 
-void  PerformanceManagment::disposePerformanceNode(chaos_direct_io::DirectIOPerformanceSession *performance_node) {
+void  PerformanceManagment::disposePerformanceNode(DirectIOPerformanceSession *performance_node) {
 	std::string server_description;
 	try {
 		server_description = performance_node->client_connection->getURL();
 		PMLAPP_ << "Dispose the performance node for "<<server_description;
-		chaos::utility::InizializableService::initImplementation(performance_node, NULL, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
+		InizializableService::initImplementation(performance_node, NULL, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 	}
 	catch(CException ex) {}
 	catch(...) {}
@@ -157,7 +158,7 @@ void  PerformanceManagment::disposePerformanceNode(chaos_direct_io::DirectIOPerf
 	PMKeyObjectContainer::deregisterElementKey(server_description);
 }
 
-void  PerformanceManagment::freeObject(std::string server_description, chaos_direct_io::DirectIOPerformanceSession *performance_node) {
+void  PerformanceManagment::freeObject(std::string server_description, DirectIOPerformanceSession *performance_node) {
 	disposePerformanceNode(performance_node);
 }
 
@@ -178,29 +179,29 @@ chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_da
 	//ensure lcient creation on local instance
 	getLocalDirectIOClientInstance();
 	//get the local connection to the requester form shared client
-	chaos_direct_io::DirectIOClientConnection *client_connection = global_performance_connection->getNewConnection(req_server_description);
+	DirectIOClientConnection *client_connection = global_performance_connection->getNewConnection(req_server_description);
 	client_connection->setEventHandler(this);
 	
 	//get the server endpoint for the requester
-	chaos_direct_io::DirectIOServerEndpoint *server_endpoint = network_broker->getDirectIOServerEndpoint();
+	DirectIOServerEndpoint *server_endpoint = network_broker->getDirectIOServerEndpoint();
 	
 	//alocate new session
-	chaos_direct_io::DirectIOPerformanceSession *performace_node = new chaos_direct_io::DirectIOPerformanceSession(client_connection, server_endpoint);
+	DirectIOPerformanceSession *performace_node = new DirectIOPerformanceSession(client_connection, server_endpoint);
 	try {
 		
-		chaos::utility::InizializableService::initImplementation(performace_node, NULL, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
+		InizializableService::initImplementation(performace_node, NULL, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 		
 		//set the result value to the local endpoint url
 		result = new chaos_data::CDataWrapper();
 		result->addStringValue(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION, server_endpoint->getUrl());
 		
 	} catch(CException ex) {
-		chaos::utility::InizializableService::deinitImplementation(performace_node, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
+		InizializableService::deinitImplementation(performace_node, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 		if(client_connection) global_performance_connection->releaseConnection(client_connection);
 		if(server_endpoint) network_broker->releaseDirectIOServerEndpoint(server_endpoint);
 		throw ex;
 	} catch(...) {
-		chaos::utility::InizializableService::deinitImplementation(performace_node, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
+		InizializableService::deinitImplementation(performace_node, "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 		if(client_connection) global_performance_connection->releaseConnection(client_connection);
 		if(server_endpoint) network_broker->releaseDirectIOServerEndpoint(server_endpoint);
 		throw chaos::CException(-3, "Generic exception on initialization of performance loop", __PRETTY_FUNCTION__);
@@ -223,7 +224,7 @@ chaos_data::CDataWrapper* PerformanceManagment::stopPerformanceSession(chaos_dat
 		throw chaos::CException(-2, "performance sesison for requester already allocated", __PRETTY_FUNCTION__);
 	
 	//we can proceed to the closing of the performance session
-	chaos_direct_io::DirectIOPerformanceSession *performace_node = PMKeyObjectContainer::accessItem(req_server_description);
+	DirectIOPerformanceSession *performace_node = PMKeyObjectContainer::accessItem(req_server_description);
 	
 	// dispose the sesison node
 	disposePerformanceNode(performace_node);

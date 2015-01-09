@@ -89,7 +89,8 @@ namespace chaos {
 			 chaos rpc client and server abstract class and to the message dispatcher abstract class.
 			 It abstract the !CHAOS rule for sending message and wait for answer and other facility.
 			 */
-			class NetworkBroker: public chaos::utility::StartableService {
+			class NetworkBroker:
+			public utility::StartableService {
 				//! performance session managment
 				chaos::common::network::PerformanceManagment performance_session_managment;
 				

@@ -26,7 +26,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
-
+using namespace chaos::common::utility;
 using namespace chaos::common::network;
 using namespace chaos::data_service::worker;
 
@@ -59,16 +59,16 @@ void SnapshotCreationWorker::init(void *init_data) throw (chaos::CException) {
 	if(!mds_channel) throw CException(-2, "No metadataserver channel created", __PRETTY_FUNCTION__);
 	
 	SCW_LAPP_ << "allocating cache driver";
-	cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
+	cache_driver_ptr = ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
 	if(!cache_driver_ptr) throw chaos::CException(-3, "Cached driver not found", __PRETTY_FUNCTION__);
-	chaos::utility::InizializableService::initImplementation(cache_driver_ptr, &ChaosDataService::getInstance()->setting.cache_driver_setting, "CacheDriver", __PRETTY_FUNCTION__);
+	InizializableService::initImplementation(cache_driver_ptr, &ChaosDataService::getInstance()->setting.cache_driver_setting, "CacheDriver", __PRETTY_FUNCTION__);
 }
 
 void SnapshotCreationWorker::deinit() throw (chaos::CException) {
 	SCW_LAPP_ << "deallocating cache driver";
 	if(cache_driver_ptr) {
 		try{
-			chaos::utility::InizializableService::deinitImplementation(cache_driver_ptr, "CacheDriver", __PRETTY_FUNCTION__);
+			InizializableService::deinitImplementation(cache_driver_ptr, "CacheDriver", __PRETTY_FUNCTION__);
 		} catch(...) {
 		}
 		delete(cache_driver_ptr);

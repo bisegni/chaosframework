@@ -31,7 +31,7 @@ namespace chaos {
 			
 			namespace channel {
 				class DirectIOVirtualChannel :
-				public  NamedService {
+				public  utility::NamedService {
 					friend class chaos::common::direct_io::DirectIOClient;
 					
 				protected:

@@ -62,7 +62,11 @@ namespace chaos{
 			 * - Command Manager is the central class for the registration and execution of the custom command
 			 *
 			 */
-			class CommandManager : public DeclareAction,  public Configurable, public Singleton<CommandManager>, public chaos::utility::StartableService {
+			class CommandManager:
+			public DeclareAction,
+			public Configurable,
+			public common::utility::Singleton<CommandManager>,
+			public common::utility::StartableService {
 				friend class data_manager::DataManager;
 				friend class RpcAdapterRegister;
 				friend class CommandDispatcherRegister;

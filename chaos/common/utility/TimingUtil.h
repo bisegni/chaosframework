@@ -22,79 +22,83 @@
 #include <chaos/common/global.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+using namespace boost::posix_time;
 namespace chaos {
-    using namespace boost::posix_time;
-	
-	const std::locale formats[] = {
-		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%S.%f")),
-		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M:%S.%f")),
-		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M:%S")),
-		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%S")),
-		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M")),
-		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M")),
-		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H")),
-		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H")),
-		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d")),
-		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m")),
-		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y"))};
-	const size_t formats_n = sizeof(formats)/sizeof(formats[0]);
-	
-    /*
-     Class for give some method util for timing purpose
-     */
-    class TimingUtil {
-    public:
-        //!Return the current timestamp in milliseconds
-        static inline int64_t getTimeStamp() {
-            return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_milliseconds();
-        }
-		
-		//!Return the current utc timestamp in milliseconds
-		static inline int64_t getUTCTimeStamp() {
-            return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
-        }
-		
-		//!chack if a string is well format for date representation
-		static bool dateWellFormat(const std::string& timestamp) {
-			boost::posix_time::ptime time;
-			size_t i=0;
-			for(; i<formats_n; ++i) {
-				std::istringstream is(timestamp);
-				is.imbue(formats[i]);
-				is >> time;
-				if(time != boost::posix_time::ptime()) break;
-			}
-			return i != formats_n;
+	namespace common {
+		namespace utility {
+			
+			const std::locale formats[] = {
+				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%S.%f")),
+				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M:%S.%f")),
+				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M:%S")),
+				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%S")),
+				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M")),
+				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M")),
+				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H")),
+				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H")),
+				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d")),
+				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m")),
+				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y"))};
+			const size_t formats_n = sizeof(formats)/sizeof(formats[0]);
+			
+			/*
+			 Class for give some method util for timing purpose
+			 */
+			class TimingUtil {
+			public:
+				//!Return the current timestamp in milliseconds
+				static inline int64_t getTimeStamp() {
+					return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_milliseconds();
+				}
+				
+				//!Return the current utc timestamp in milliseconds
+				static inline int64_t getUTCTimeStamp() {
+					return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
+				}
+				
+				//!chack if a string is well format for date representation
+				static bool dateWellFormat(const std::string& timestamp) {
+					boost::posix_time::ptime time;
+					size_t i=0;
+					for(; i<formats_n; ++i) {
+						std::istringstream is(timestamp);
+						is.imbue(formats[i]);
+						is >> time;
+						if(time != boost::posix_time::ptime()) break;
+					}
+					return i != formats_n;
+				}
+				
+				//!convert string timestamp to uint64 ["2012-02-20T00:26:39Z"]
+				static inline uint64_t getTimestampFromString(const std::string& timestamp) {
+					boost::posix_time::ptime time;
+					size_t i=0;
+					for(; i<formats_n; ++i) {
+						std::istringstream is(timestamp);
+						is.imbue(formats[i]);
+						is >> time;
+						if(time != boost::posix_time::ptime()) break;
+					}
+					if(i != formats_n) {
+						return (time-EPOCH).total_milliseconds();
+					} else {
+						return 0;
+					}
+				}
+				
+				//! return the timestam from now to dealy , in the past(false) or future(true)
+				static inline uint64_t getTimestampWithDelay(uint64_t delay,
+															 bool past_future = false) {
+					boost::posix_time::time_duration ts;
+					if(past_future) {
+						ts = boost::posix_time::milliseconds(getTimeStamp() + delay);
+					} else {
+						ts = boost::posix_time::milliseconds(getTimeStamp() - delay);
+					}
+					return ts.total_milliseconds();
+				}
+			};
 		}
-		
-		//!convert string timestamp to uint64 ["2012-02-20T00:26:39Z"]
-		static inline uint64_t getTimestampFromString(const std::string& timestamp) {
-			boost::posix_time::ptime time;
-			size_t i=0;
-			for(; i<formats_n; ++i) {
-				std::istringstream is(timestamp);
-				is.imbue(formats[i]);
-				is >> time;
-				if(time != boost::posix_time::ptime()) break;
-			}
-			if(i != formats_n) {
-				return (time-EPOCH).total_milliseconds();
-			} else {
-				return 0;
-			}
-		}
-		
-		//! return the timestam from now to dealy , in the past(false) or future(true)
-		static inline uint64_t getTimestampWithDelay(uint64_t delay,
-													 bool past_future = false) {
-			boost::posix_time::time_duration ts;
-			if(past_future) {
-				ts = boost::posix_time::milliseconds(getTimeStamp() + delay);
-			} else {
-				ts = boost::posix_time::milliseconds(getTimeStamp() - delay);
-			}
-			return ts.total_milliseconds();
-		}
-	};
+	}
 }
 #endif
