@@ -203,6 +203,7 @@ namespace bson {
 
 
     /* "user assert".  if asserts, user did something wrong, not our code */
+#undef MONGO_uassert
 #define MONGO_uassert(msgid, msg, expr) (void)( MONGO_likely(!!(expr)) || (::bson::uasserted(msgid, msg), 0) )
 
     inline void uassertStatusOK(const Status& status) {
@@ -213,6 +214,7 @@ namespace bson {
     }
 
     /* warning only - keeps going */
+#undef MONGO_wassert
 #define MONGO_wassert(_Expression) (void)( MONGO_likely(!!(_Expression)) || (::bson::wasserted(#_Expression, __FILE__, __LINE__), 0) )
 
     /* display a message, no context, and throw assertionexception
@@ -220,10 +222,13 @@ namespace bson {
        easy way to throw an exception and log something without our stack trace
        display happening.
     */
+#undef MONGO_massert
 #define MONGO_massert(msgid, msg, expr) (void)( MONGO_likely(!!(expr)) || (::bson::msgasserted(msgid, msg), 0) )
     /* same as massert except no msgid */
+#undef MONGO_verify
 #define MONGO_verify(_Expression) (void)( MONGO_likely(!!(_Expression)) || (::bson::verifyFailed(#_Expression, __FILE__, __LINE__), 0) )
 
+#undef MONGO_invariant
 #define MONGO_invariant(_Expression) (void)( MONGO_likely(!!(_Expression)) || (::bson::invariantFailed(#_Expression, __FILE__, __LINE__), 0) )
 
     /* dassert is 'debug assert' -- might want to turn off for production as these
@@ -262,6 +267,7 @@ namespace bson {
 
 } // namespace bson
 
+#undef MONGO_ASSERT_ON_EXCEPTION
 #define MONGO_ASSERT_ON_EXCEPTION( expression ) \
     try { \
         expression; \
@@ -272,7 +278,7 @@ namespace bson {
     } catch ( ... ) { \
         massert( 10437 ,  "unknown exception" , false ); \
     }
-
+#undef MONGO_ASSERT_ON_EXCEPTION_WITH_MSG
 #define MONGO_ASSERT_ON_EXCEPTION_WITH_MSG( expression, msg ) \
     try { \
         expression; \
@@ -285,6 +291,7 @@ namespace bson {
     }
 
 #define DESTRUCTOR_GUARD MONGO_DESTRUCTOR_GUARD
+#undef MONGO_DESTRUCTOR_GUARD
 #define MONGO_DESTRUCTOR_GUARD( expression ) \
     try { \
         expression; \

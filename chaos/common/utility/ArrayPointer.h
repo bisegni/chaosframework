@@ -24,7 +24,7 @@
 #include <vector>
 #include <boost/ptr_container/ptr_vector.hpp>
 using namespace std;
-using namespace boost;
+
 
 namespace chaos {
 	namespace common {

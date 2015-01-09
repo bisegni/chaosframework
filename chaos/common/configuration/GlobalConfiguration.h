@@ -43,7 +43,7 @@ namespace chaos_data = chaos::common::data;
 namespace chaos {
     
     using namespace std;
-    using namespace boost;
+
 
 	
 #define CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(t,x,y,z)\

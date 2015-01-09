@@ -20,7 +20,7 @@
 
 
 #include "DataBlockFetcher.h"
-
+#include <chaos/common/global.h>
 using namespace chaos::data_service::vfs::query;
 
 #define DBF_LOG_HEAD "[DataBlockFetcher] - " << datablock_path << " - "

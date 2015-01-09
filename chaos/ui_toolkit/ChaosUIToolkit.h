@@ -32,7 +32,6 @@
 namespace chaos{
     //! Default chaos namespace used to group all ui api
     namespace ui{
-        using namespace std;
   
         /*! \page page_cuit The Chaos User Interface Toolkit 
          *  \section page_cuit_sec Why an User Interface Toolkit

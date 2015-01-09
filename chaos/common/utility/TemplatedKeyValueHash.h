@@ -218,7 +218,7 @@ namespace chaos {
 					if(!_list_head) return -1;
 					
 					//get the write lock
-					boost::unique_lock<shared_mutex> writeLock(_list_head->mutex_list);
+					boost::unique_lock<boost::shared_mutex> writeLock(_list_head->mutex_list);
 					
 					//allocate new struct for the element
 					HashedStruct *new_element = new HashedStruct();
@@ -259,7 +259,7 @@ namespace chaos {
 					if(!_list_head) return;
 					
 					//get the write lock
-					boost::unique_lock<shared_mutex> writeLock(_list_head->mutex_list);
+					boost::unique_lock<boost::shared_mutex> writeLock(_list_head->mutex_list);
 					
 					HashedStruct *element_to_delete = NULL;
 					HashedStruct *_cur_hash_element = _list_head->head;

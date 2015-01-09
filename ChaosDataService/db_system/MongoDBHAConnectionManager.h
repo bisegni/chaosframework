@@ -29,14 +29,11 @@
 #include <map>
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
-#include <chaos/common/data/CDataWrapper.h>
-
-namespace chaos_data = chaos::common::data;
 
 namespace chaos {
 	namespace data_service {
 		namespace db_system {
-			
+
 			/*!
 			 Class that encapsulat ethe mongodb conenction for safe deallocation
 			 */
@@ -58,7 +55,7 @@ namespace chaos {
 				void onHandedOut( mongo::DBClientBase * conn );
 				void onDestroy( mongo::DBClientBase * conn );
 			public:
-				MongoAuthHook(std::map<string,string>& key_value_custom_param);
+				MongoAuthHook(std::map<std::string,std::string>& key_value_custom_param);
 			};
 			
 			/*!
@@ -79,7 +76,7 @@ namespace chaos {
 				bool getConnection(MongoDBHAConnection *connection_sptr);
 				
 			public:
-				MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list, std::map<string,string>& key_value_custom_param);
+				MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list, std::map<std::string,std::string>& key_value_custom_param);
 				~MongoDBHAConnectionManager();
 				
 				int insert( const std::string &ns , mongo::BSONObj obj , int flags=0);

@@ -9,6 +9,7 @@
 #include <cstring>
 #include "DataWorker.h"
 #include <boost/thread/lock_options.hpp>
+#include <chaos/common/global.h>
 using namespace chaos::data_service::worker;
 
 #define DataWorker_LOG_HEAD "[DataWorker] - "

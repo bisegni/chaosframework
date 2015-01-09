@@ -37,7 +37,7 @@
 //! Default chaos namespace used to group all common api
 namespace chaos {
 	using namespace std;
-	using namespace boost;
+
 	
 	//! Chaos common engine class
 	/*!
@@ -48,7 +48,7 @@ namespace chaos {
 	class ChaosCommon:
 	public common::utility::Singleton<T>,
 	public common::utility::StartableService {
-		log::LogManager logManager;
+	  log::LogManager logManager;
 	protected:
 		//! Constructor Method
 		/*!

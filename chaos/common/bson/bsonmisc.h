@@ -16,7 +16,8 @@
  */
 
 #pragma once
-
+#ifndef __BSONMISC_H__
+#define __BSONMISC_H__
 #include <memory>
 
 #include <chaos/common/bson/bsonelement.h>
@@ -69,6 +70,7 @@ namespace bson {
         BSON( "a" << GT << 23.4 << NE << 30 << "b" << 2 ) produces the object
         { a: { \$gt: 23.4, \$ne: 30 }, b: 2 }.
     */
+#undef BSON
 #define BSON(x) (( ::bson::BSONObjBuilder(64) << x ).obj())
 
     /** Use BSON_ARRAY macro like BSON macro, but without keys
@@ -76,6 +78,7 @@ namespace bson {
         BSONArray arr = BSON_ARRAY( "hello" << 1 << BSON( "foo" << BSON_ARRAY( "bar" << "baz" << "qux" ) ) );
 
      */
+#undef BSON_ARRAY
 #define BSON_ARRAY(x) (( ::bson::BSONArrayBuilder() << x ).arr())
 
     /* Utility class to auto assign object IDs.
@@ -277,3 +280,4 @@ namespace bson {
     // considers order
     bool fieldsMatch(const BSONObj& lhs, const BSONObj& rhs);
 }
+#endif

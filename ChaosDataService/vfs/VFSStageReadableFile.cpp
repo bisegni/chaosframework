@@ -18,7 +18,7 @@
  *    	limitations under the License.
  */
 #include "VFSStageReadableFile.h"
-
+#include <chaos/common/global.h>
 using namespace chaos::data_service::vfs;
 
 #define VFSStageReadableFile_LOG_HEAD "[VFSStageReadableFile] - " << getVFSFileInfo()->vfs_fpath << " - "

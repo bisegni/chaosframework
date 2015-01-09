@@ -75,7 +75,7 @@ int StageDataVFileScanner::closeAllDatafile() {
 	int err = 0;
 	boost::unique_lock<boost::mutex> lock(mutext_did_data_file);
 	//scan as endded with error so we need to clean
-	for(std::map<std::string, shared_ptr<DataFileInfo> >::iterator it =  map_did_data_file.begin();
+	for(std::map<std::string, boost::shared_ptr<DataFileInfo> >::iterator it =  map_did_data_file.begin();
 		it != map_did_data_file.end();
 		it++){
 		StageDataVFileScannerLAPP_ << "closing datafile: " << it->second->data_file_ptr->getVFSFileInfo()->vfs_fpath;
@@ -181,7 +181,7 @@ int StageDataVFileScanner::endScanHandler(int end_scan_error) {
 		boost::unique_lock<boost::mutex> lock(mutext_did_data_file);
 		//all is gone weel but we need to do some mantainance
 		//scan as endded with error so we need to clean
-		for(std::map<std::string, shared_ptr<DataFileInfo> >::iterator it =  map_did_data_file.begin();
+		for(std::map<std::string, boost::shared_ptr<DataFileInfo> >::iterator it =  map_did_data_file.begin();
 			it != map_did_data_file.end();
 			it++){
 			

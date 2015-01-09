@@ -74,7 +74,7 @@ namespace chaos{
 				
 				//!association between did and his data file
 				boost::mutex mutext_did_data_file;
-				std::map<std::string, shared_ptr<DataFileInfo> > map_did_data_file;
+				std::map<std::string, boost::shared_ptr<DataFileInfo> > map_did_data_file;
 
 				
 				int startScanHandler();

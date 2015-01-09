@@ -33,7 +33,6 @@
 #include <boost/msm/front/euml/operator.hpp>
 
 #include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/exception/CException.h>
 
 using namespace std;
@@ -75,7 +74,7 @@ namespace chaos {
 					template <class FSM,class Event>
 					void no_transition(Event const& ,FSM&, int )
 					{
-						std::cout << "no trnasition";
+					  //	std::cout << "no trnasition";
 					}
 				};
 			}

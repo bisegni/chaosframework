@@ -19,7 +19,7 @@
  */
 #ifndef __CHAOSFramework__AttributeSharedCahe__
 #define __CHAOSFramework__AttributeSharedCahe__
-
+#include <chaos/common/global.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
 

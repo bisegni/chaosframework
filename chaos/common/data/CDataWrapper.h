@@ -23,7 +23,6 @@
 #include <string>
 #include <vector>
 #include <chaos/common/bson/bson.h>
-//#include <chaos/common/bson/util/json.h>
 #include <chaos/common/pool/CPoolMemoryObject.h>
 
 #include <boost/scoped_ptr.hpp>
@@ -32,7 +31,7 @@ namespace chaos {
 		namespace data {
 			using namespace std;
 			using namespace bson;
-			using namespace boost;
+
 			
 			class CDataWrapper;
 			/*!

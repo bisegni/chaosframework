@@ -19,6 +19,7 @@
  */
 
 #include <chaos/cu_toolkit/ControlManager/AttributeSharedCacheWrapper.h>
+
 using namespace chaos::cu::control_manager;
 using namespace chaos::common::data::cache;
 

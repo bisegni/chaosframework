@@ -160,6 +160,7 @@ namespace bson {
      *
      */
 
+#undef BSONForEach
 #define BSONForEach(e, obj)                                     \
     BSONObjIterator BOOST_PP_CAT(it_,__LINE__)(obj);            \
     for ( BSONElement e;                                        \
@@ -169,3 +170,4 @@ namespace bson {
             /*nothing*/ )
 
 }
+

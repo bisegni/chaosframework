@@ -90,21 +90,21 @@ fi
 do_make() {
     echo "* make $1 with "$NPROC" processors"
     if [ -n "$CHAOS_DEVELOPMENT" ]; then
-	if !(make -j$NPROC VERBOSE=1 install); then
+	if !(make -j$NPROC VERBOSE=1); then
 	    echo "## error compiling $1 in VERBOSE"
 	    exit 1
 	fi
     else
-	if !(make -j$NPROC install); then
+	if !(make -j$NPROC); then
 	    echo "## error compiling $1"
 	    exit 1
 	fi
     fi
 
-    # if !(make install); then
-    # 	echo "## error installing $1"
-    # 	exit 1
-    # fi
+     if !(make install); then
+     	echo "## error installing $1"
+     	exit 1
+     fi
 }
 
 
@@ -128,19 +128,21 @@ if [ ! -d "$BASE_EXTERNAL" ]; then
 fi
 
 if [ ! -e "$PREFIX/include/zlib.h" ] || [ ! -e "$PREFIX/lib/libz.a" ]; then
-    if !( wget --no-check-certificate -O "$BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz" "http://zlib.net/zlib-$ZLIB_VERSION.tar.gz" ); then
+    if [ ! -d "$BASE_EXTERNAL/zlib-$ZLIB_VERSION" ]; then
+	if !( wget --no-check-certificate -O "$BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz" "http://zlib.net/zlib-$ZLIB_VERSION.tar.gz" ); then
 	echo "## cannot download http://zlib.net/zlib-$ZLIB_VERSION.tar.gz, aborting "
 	exit 1;
-    fi
-    if [ -e "$BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz" ]; then
-	filetar="$BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz";
-	if !( tar xvfz $filetar -C "$BASE_EXTERNAL" > /dev/null ) then
-	    echo "## cannot extract $filetar, aborting "
+	fi
+	if [ -e "$BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz" ]; then
+	    filetar="$BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz";
+	    if !( tar xvfz $filetar -C "$BASE_EXTERNAL" > /dev/null ) then
+		echo "## cannot extract $filetar, aborting "
+		exit 1
+	    fi
+	else
+	    echo "## cannot compile $BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz, aborting"
 	    exit 1
 	fi
-    else
-	echo "## cannot compile $BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz, aborting"
-	exit 1
     fi
 
     if [ -d "$BASE_EXTERNAL/zlib-$ZLIB_VERSION" ]; then
@@ -157,15 +159,16 @@ fi
 
 
 if [ ! -d "$PREFIX/include/boost" ]; then
-    if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
-        echo "Download boost source"
-        if !( wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://downloads.sourceforge.net/project/boost/boost/$BOOST_VERSION_IN_PATH/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F$BOOST_VERSION_IN_PATH%2F&ts=1350734344&use_mirror=freefr" ); then
+    if [ ! -e $BASE_EXTERNAL/boost ]; then
+	if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
+            echo "Download boost source"
+            if !( wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://downloads.sourceforge.net/project/boost/boost/$BOOST_VERSION_IN_PATH/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F$BOOST_VERSION_IN_PATH%2F&ts=1350734344&use_mirror=freefr" ); then
 	    echo "## cannot download boost_$BOOST_VERSION.tar.gz"
 	    exit 1
+	    fi
+	    
 	fi
-
     fi
-
     if [ ! -e $BASE_EXTERNAL/boost ]; then
         tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
         mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
@@ -382,7 +385,11 @@ if [ ! -f $PREFIX/json/json.h ]; then
 		fi
     fi
 	cd $BASE_EXTERNAL/jsoncpp
-	cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF.
+	if [ -n "$CHAOS_STATIC" ]; then
+	    cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF
+	else
+	    cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DJSONCPP_LIB_BUILD_SHARED=ON
+	fi
 	do_make "jsoncpp"
 fi
 
@@ -395,7 +402,14 @@ if [ ! -f $PREFIX/mongoose-cpp/mongoose.h ]; then
 		fi
     fi
 	cd $BASE_EXTERNAL/mongoose-cpp
-	cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON.
+	
+# -DHAS_JSONCPP=ON
+   if [ -n "$CHAOS_STATIC" ]; then
+       cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
+   else
+       cmake $CHAOS_CMAKE_FLAGS -DSHAREDLIB=ON -DHAS_JSONCPP=ON
+   fi
+
 	do_make "mongoose-cpp"
 fi
 

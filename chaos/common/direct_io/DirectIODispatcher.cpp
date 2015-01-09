@@ -20,6 +20,7 @@
 
 #include <cstring>
 #include <chaos/common/direct_io/DirectIODispatcher.h>
+#include <chaos/common/global.h>
 using namespace chaos::common::direct_io;
 
 #define DirectIODispatcher_LOG_HEAD "[DirectIODispatcher] - "

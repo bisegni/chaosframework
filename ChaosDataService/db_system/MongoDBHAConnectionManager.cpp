@@ -42,11 +42,14 @@ default: \
 break; \
 }
 
-namespace chaos_data = chaos::common::data;
+
+
+
+
 using namespace chaos::data_service::db_system;
 //-----------------------------------------------------------------------------------------------------------
 
-MongoAuthHook::MongoAuthHook(std::map<string,string>& key_value_custom_param):
+MongoAuthHook::MongoAuthHook(std::map<std::string,std::string>& key_value_custom_param):
 has_autentication(false) {
 	if(key_value_custom_param.count("user") &&
 	   key_value_custom_param.count("pwd") &&
@@ -90,7 +93,7 @@ DriverScopedConnection::~DriverScopedConnection() {
 //-----------------------------------------------------------------------------------------------------------
 
 MongoDBHAConnectionManager::MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list,
-													   std::map<string,string>& key_value_custom_param):
+													   std::map<std::string,std::string>& key_value_custom_param):
 server_number((uint32_t)monogs_routers_list.size()),
 next_retrive_intervall(0){
 	std::string errmsg;
@@ -408,7 +411,7 @@ int MongoDBHAConnectionManager::ensureIndex( const std::string &database,
 				toSave.append( "name" , name );
 			}
 			else {
-				string nn = conn->conn().genIndexName( keys );
+				std::string nn = conn->conn().genIndexName( keys );
 				toSave.append( "name" , nn );
 			}
 			

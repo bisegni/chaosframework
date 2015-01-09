@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 INFN. All rights reserved.
 //
 
+#include <chaos/common/data/CDataWrapper.h>
 #include "MongoDBDriver.h"
 #include "MongoDBIndexCursor.h"
 
@@ -20,7 +21,7 @@
 
 using namespace chaos::data_service::vfs;
 using namespace chaos::data_service::db_system;
-using namespace chaos;
+
 using namespace chaos::common::utility;
 namespace chaos_data = chaos::common::data;
 

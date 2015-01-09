@@ -24,7 +24,7 @@
 #include <vector>
 #include "../VFSTypes.h"
 #include "../DataBlock.h"
-
+#include <map>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
 
@@ -42,7 +42,7 @@ namespace chaos {
 					vfs::VFSDomain domain;
 					
 					//! kv param for the implementations of the driver
-					std::map<string,string> key_value_custom_param;
+				  std::map<std::string,std::string> key_value_custom_param;
 				} StorageDriverSetting;
 				
 				
