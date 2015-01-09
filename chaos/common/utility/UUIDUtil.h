@@ -24,9 +24,8 @@
 #include <boost/uuid/uuid_generators.hpp> // generators
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 #include <boost/lexical_cast.hpp>
-using namespace std;
-using namespace boost;
-using namespace boost::uuids;
+
+
 namespace chaos {
 	namespace common {
 		namespace utility {
@@ -41,19 +40,19 @@ namespace chaos {
 				/*
 				 Return the first part(of the four) of a random UUID
 				 */
-				static string generateUUIDLite(){
-					uuid uuid = random_generator()();
-					string strUUID = lexical_cast<std::string>(uuid);
-					size_t foundFirstSegment = strUUID.find("-");
-					return (foundFirstSegment!=string::npos)?strUUID.substr(0, foundFirstSegment):strUUID;
+				static std::string generateUUIDLite(){
+					boost::uuids::uuid _uuid = boost::uuids::random_generator()();
+					std::string str_uuid = boost::lexical_cast<std::string>(_uuid);
+					size_t foundFirstSegment = str_uuid.find("-");
+					return (foundFirstSegment!=std::string::npos)?str_uuid.substr(0, foundFirstSegment):str_uuid;
 				}
 				
 				/*
 				 Return the first part(of the four) of a random UUID
 				 */
-				static string generateUUID(){
-					uuid uuid = random_generator()();
-					return lexical_cast<std::string>(uuid);
+				static std::string generateUUID(){
+					boost::uuids::uuid _uuid = boost::uuids::random_generator()();
+					return boost::lexical_cast<std::string>(_uuid);
 				}
 			};
 		}
