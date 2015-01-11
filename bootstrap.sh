@@ -20,13 +20,13 @@ if [ "$ARCH" = "armv7l" ]; then
     echo "ARM architecture detected, using $NPROC processors"
 else
     MEM=1
-    
+
     if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ]; then
 	MEM=$(sysctl -a | grep 'hw.memsize:'| awk '{print $2/(1024*1024*1024)}')
     else
         MEM=$(( $(free -m | grep 'Mem' | awk '{print int(($2/1024)+0.5)}') ))
     fi;
-    
+
     echo "Your system \"$HOST\" has $CORES cpu cores and $MEM gigabytes of physical memory"
     if [ $MEM -ge $CORES ]; then
 	NPROC=$CORES
@@ -71,8 +71,8 @@ fi;
 
 if [ -n "$1" ]; then
     PREFIX=$1/usr/local
-   
-else 
+
+else
     if [ ! -n "$CHAOS_PREFIX" ]; then
 	PREFIX=$CHAOS_DIR/usr/local
     else
@@ -95,7 +95,7 @@ do_make() {
 	    exit 1
 	fi
     else
-	if !(make -j$NPROC); then
+	if !(make -j$NPROC ); then
 	    echo "## error compiling $1"
 	    exit 1
 	fi
@@ -166,7 +166,7 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 	    echo "## cannot download boost_$BOOST_VERSION.tar.gz"
 	    exit 1
 	    fi
-	    
+
 	fi
     fi
     if [ ! -e $BASE_EXTERNAL/boost ]; then
@@ -377,7 +377,7 @@ if [ ! -f "$PREFIX/include/zmq.h" ]; then
 fi
 
 ## json cpp
-if [ ! -f $PREFIX/json/json.h ]; then
+if [ ! -f $PREFIX/include/json/json.h ]; then
     if [ ! -d $BASE_EXTERNAL/jsoncpp ]; then
 		if !(git clone https://github.com/open-source-parsers/jsoncpp.git $BASE_EXTERNAL/jsoncpp) ; then
 			echo "## cannot checkout jsoncpp"
@@ -394,20 +394,23 @@ if [ ! -f $PREFIX/json/json.h ]; then
 fi
 
 ## mongoose install
-if [ ! -f $PREFIX/mongoose-cpp/mongoose.h ]; then
+if [ ! -f $PREFIX/include/mongoose-cpp/mongoose.h ]; then
     if [ ! -f $BASE_EXTERNAL/mongoose-cpp/mongoose.h ]; then
-		if !(git clone https://github.com/bisegni/mongoose-cpp.git $BASE_EXTERNAL/mongoose-cpp) ; then
-			echo "## cannot checkout moongoose-cpp"
-			exit 1
-		fi
+		  if !(git clone https://github.com/bisegni/mongoose-cpp.git $BASE_EXTERNAL/mongoose-cpp) ; then
+			  echo "## cannot checkout moongoose-cpp"
+			  exit 1
+		  else
+        cd $BASE_EXTERNAL/mongoose-cpp
+        git checkout -b chaos_master origin/chaos_master
+      fi
+    else
+      cd $BASE_EXTERNAL/mongoose-cpp
     fi
-	cd $BASE_EXTERNAL/mongoose-cpp
-	
 # -DHAS_JSONCPP=ON
    if [ -n "$CHAOS_STATIC" ]; then
        cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
    else
-       cmake $CHAOS_CMAKE_FLAGS -DSHAREDLIB=ON -DHAS_JSONCPP=ON
+       cmake $CHAOS_CMAKE_FLAGS -DSHAREDLIB=ON -DHAS_JSONCPP=ON -DJSONCPP_DIR=$PREFIX
    fi
 
 	do_make "mongoose-cpp"
