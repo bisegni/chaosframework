@@ -22,6 +22,9 @@
 #define __CHAOSFramework__ChaosWANProxy__
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
+#include "global_type.h"
+#include "wan_interface/AbstractWANInterface.h"
+
 #include <boost/thread/condition.hpp>
 
 #include <chaos/common/global.h>
@@ -32,6 +35,11 @@
 
 namespace chaos {
 	namespace wan_proxy {
+		
+		
+		typedef std::vector<wan_interface::AbstractWANInterface*>			WanInterfaceList;
+		typedef std::vector<wan_interface::AbstractWANInterface*>::iterator WanInterfaceListIterator;
+		
 		//! Chaos Node Directory base class
 		/*!
 		 
@@ -51,7 +59,12 @@ namespace chaos {
 			~ChaosWANProxy(){};
 			static void signalHanlder(int);
 			
+			//! list of all active interface
+			std::vector<wan_interface::AbstractWANInterface*> wan_active_interfaces;
 		public:
+			//gloabl applicaiton settin
+			settings setting;
+			
 			typedef boost::mutex::scoped_lock lock;
 			//! C and C++ attribute parser
 			/*!

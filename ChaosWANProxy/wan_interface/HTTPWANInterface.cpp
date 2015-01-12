@@ -21,21 +21,55 @@
 #include "HTTPWANInterface.h"
 
 #include <boost/regex.hpp>
-#include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::wan_proxy::wan_interface;
-using namespace Mongoose;
 
 #define HTTWANINTERFACE_LOG_HEAD "["<<getName()<<"] - "
 
 #define HTTWAN_INTERFACE_APP_ LAPP_ << HTTWANINTERFACE_LOG_HEAD
-#define HTTWAN_INTERFACE_DBG_ LDBG_ << HTTWANINTERFACE_LOG_HEAD << __FUNCTION__
-#define HTTWAN_INTERFACE_ERR_ LERR_ << HTTWANINTERFACE_LOG_HEAD << __FUNCTION__ << "(" << __LINE__ << ")"
+#define HTTWAN_INTERFACE_DBG_ LDBG_ << HTTWANINTERFACE_LOG_HEAD << __PRETTY_FUNCTION__
+#define HTTWAN_INTERFACE_ERR_ LERR_ << HTTWANINTERFACE_LOG_HEAD << __PRETTY_FUNCTION__ << "(" << __LINE__ << ")"
 
 static const boost::regex REG_API_URL_FORMAT("/api/v1((/[a-zA-Z0-9_]+))*");
+
+static int do_i_handle(struct mg_connection *connection) {
+	if (connection->server_param != NULL) {
+		return ((HTTPWANInterface *)connection->server_param)->handle(connection);
+	}
+	return 0;
+}
+
+/**
+ * The handlers below are written in C to do the binding of the C mongoose with
+ * the C++ API
+ */
+static int event_handler(struct mg_connection *connection) {
+	if (connection->server_param != NULL) {
+		((HTTPWANInterface *)connection->server_param)->process(connection);
+	}
+	return 1;
+}
+
+static void flush_response(struct mg_connection *connection,
+						   HTTPWANInterfaceResponse *response) {
+	CHAOS_ASSERT(connection && response)
+	mg_send_status(connection, response->getCode());
+	
+	for(std::map<std::string, std::string>::const_iterator it = response->getHeader().begin();
+		it != response->getHeader().end();
+		it++){
+		mg_send_header(connection, it->first.c_str(), it->second.c_str());
+	}
+	
+	
+	
+	//mg_send_data(struct mg_connection *, const void *data, int data_len);
+}
 
 DEFINE_CLASS_FACTORY(HTTPWANInterface, AbstractWANInterface);
 HTTPWANInterface::HTTPWANInterface(const string& alias):
@@ -50,42 +84,72 @@ HTTPWANInterface::~HTTPWANInterface() {
 
 //inherited method
 void HTTPWANInterface::init(void *init_data) throw(CException) {
-	CDataWrapper *adapterConfiguration = reinterpret_cast<CDataWrapper*>(init_data);
-	service_port = adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_PORT);
-	http_server = new Mongoose::Server(service_port);
+	//! forward message to superclass
+	AbstractWANInterface::init(init_data);
+	
+	//check for parameter
+	if(!getParameter().hasKey(OPT_HTTP_PORT)) {
+		std::string err = "Port for http interface as not be set!";
+		HTTWAN_INTERFACE_ERR_ << err;
+		throw chaos::CException(-1, err, __PRETTY_FUNCTION__);
+	}
+	//fetch the port
+	service_port = boost::lexical_cast<int>(getParameter().getStringValue(OPT_HTTP_PORT));
+	http_server = mg_create_server(this);
 	if(!http_server) throw chaos::CException(-1, "Http server not instantiated", __PRETTY_FUNCTION__);
 	
-	http_server->registerController(this);
-	http_server->setOption("enable_directory_listing", "false");
-	http_server->setOption("enable_keep_alive", "yes");
+	mg_set_option(http_server, "listening_port", getParameter().getStringValue(OPT_HTTP_PORT).c_str());
+	mg_set_option(http_server, "enable_keep_alive", "yes");
+	mg_set_option(http_server, "enable_directory_listing", "false");
+	
+	mg_add_uri_handler(http_server, "/api/", event_handler);
+	mg_server_do_i_handle(http_server, do_i_handle);
 	
 	//construct the direct io service url
-	service_url = boost::str( boost::format("http://%1%:%2%/rpc/domain/action[post data]") % adapterConfiguration->getStringValue("local_ip") % service_port);
+	service_url = boost::str( boost::format("http://<host>:%1%/rpc/domain/action[post data]") %  service_port);
 	
 }
 
 //inherited method
 void HTTPWANInterface::start() throw(CException) {
 	CHAOS_ASSERT(http_server)
-	http_server->start();
+	run = true;
+	thread_index = 0;
+	http_server_thread.add_thread(new boost::thread(boost::bind(&HTTPWANInterface::pollHttpServer, this, http_server)));
 }
 
 //inherited method
 void HTTPWANInterface::stop() throw(CException) {
 	CHAOS_ASSERT(http_server)
-	http_server->stop();
+	run = false;
+	http_server_thread.join_all();
 }
 
 //inherited method
 void HTTPWANInterface::deinit() throw(CException) {
-	if(http_server){DELETE_OBJ_POINTER(http_server)}
+	if(http_server){
+		mg_destroy_server(&http_server);
+		http_server = NULL;
+	}
 	//clear the service url
 	service_url.clear();
 	service_port = 0;
 }
 
+void HTTPWANInterface::pollHttpServer(struct mg_server *http_server) {
+	int current_index = ++thread_index;
+	HTTWAN_INTERFACE_APP_ << "Entering http thread " << current_index;
+	while (run) {
+		mg_poll_server(http_server, 1000);
+	}
+	HTTWAN_INTERFACE_APP_ << "Leaving http thread " << current_index;
+
+}
+
+
+
+/*
 Response *HTTPWANInterface::process(Request &request) {
-	SerializationBuffer *result_buffer = NULL;
 	StreamResponse *response = new StreamResponse();
 	std::string method  = request.getMethod();
 	std::string url     = request.getUrl();
@@ -134,8 +198,14 @@ Response *HTTPWANInterface::process(Request &request) {
 		*response << htmlEntities("Invalid api call!") << endl;
 	}
 	return response;
+}*/
+
+int HTTPWANInterface::process(struct mg_connection *connection) {
+	mg_printf_data(connection, "Hello! Requested URI is [%s]", connection->uri);
+	return 1;//
 }
 
-bool HTTPWANInterface::handles(string method, string url) {
-	return regex_match(url, REG_API_URL_FORMAT);
+bool HTTPWANInterface::handle(struct mg_connection *connection) {
+	//connection->request_method, connection->uri
+	return regex_match(connection->uri, REG_API_URL_FORMAT);
 }

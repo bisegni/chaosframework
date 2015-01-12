@@ -20,18 +20,24 @@
 #ifndef __CHAOSFramework__AbstractWANInterface__
 #define __CHAOSFramework__AbstractWANInterface__
 
-#include <chaos/common/utility/UrlAccessibleService.h>
-#include <chaos/common/utility/StartableService.h>
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/NamedService.h>
+#include <chaos/common/utility/StartableService.h>
+#include <chaos/common/utility/UrlAccessibleService.h>
 namespace chaos {
 	namespace wan_proxy {
+		//forward declaration
+		class ChaosWANProxy;
+		
 		namespace wan_interface {
 			
-			
 			class AbstractWANInterface:
-			public NamedService,
-			public utility::StartableService,
+			public common::utility::NamedService,
+			public common::utility::StartableService,
 			public common::utility::UrlAccessibleService {
+				friend class chaos::wan_proxy::ChaosWANProxy;
+				
+				chaos::common::data::CDataWrapper wan_interface_parameter;
 			protected:
 				int service_port;
 				
@@ -41,8 +47,10 @@ namespace chaos {
 				
 				~AbstractWANInterface();
 				
+				chaos::common::data::CDataWrapper& getParameter();
 			public:
 				// inherited method
+				//! init data need to be filled with json string
 				void init(void *init_data) throw(chaos::CException);
 				
 				// inherited method

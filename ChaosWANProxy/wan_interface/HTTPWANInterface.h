@@ -22,30 +22,53 @@
 #define __CHAOSFramework__HTTPWANInterface__
 
 #include "AbstractWANInterface.h"
+#include "HTTPWANInterfaceResponse.h"
+
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
-#include <mongoose/Server.h>
-#include <mongoose/WebController.h>
+#include <boost/thread.hpp>
+#include <boost/atomic.hpp>
+
+#include <mongoose.h>
 
 namespace chaos {
+	
+	//forward declaration
+	namespace common {
+		namespace data {
+			class CDataWrapper;
+		}
+	}
+	
 	namespace wan_proxy {
 		namespace wan_interface {
 			
+			//!interface param key
+			static const char * const	OPT_HTTP_PORT   = "HTTP_wi_port";
+
 			/*
 			 Class that implement the Chaos RPC server using HTTP
 			 */
-			DECLARE_CLASS_FACTORY(HTTPWANInterface, AbstractWANInterface),
-			public Mongoose::WebController{
+			DECLARE_CLASS_FACTORY(HTTPWANInterface, AbstractWANInterface) {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(HTTPWANInterface)
 				
 				HTTPWANInterface(const string& alias);
 				~HTTPWANInterface();
 				
-				Mongoose::Server *http_server;
+				bool run;
 				
-				Mongoose::Response *process(Mongoose::Request &request);
+				struct mg_server *http_server;
 				
-				bool handles(string method, string url);
+				boost::atomic<int> thread_index;
+				
+				boost::thread_group http_server_thread;
+				
+				//!poll the http server in a thread
+				void pollHttpServer(struct mg_server *http_server);
+
+			public:
+				int process(struct mg_connection *connection);
+				bool handle(struct mg_connection *connection);
 			protected:
 				
 				//inherited method

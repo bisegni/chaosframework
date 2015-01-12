@@ -32,7 +32,7 @@ AbstractWANInterface::~AbstractWANInterface() {
 
 // inherited method
 void AbstractWANInterface::init(void *init_data) throw(chaos::CException) {
-	
+	if(init_data) wan_interface_parameter.setSerializedJsonData((const char*)init_data);
 }
 
 // inherited method
@@ -53,4 +53,8 @@ void AbstractWANInterface::stop() throw(chaos::CException) {
 //inherited method
 const std::string& AbstractWANInterface::getUrl() {
 	return service_url;
+}
+
+chaos::common::data::CDataWrapper& AbstractWANInterface::getParameter() {
+	return wan_interface_parameter;
 }
