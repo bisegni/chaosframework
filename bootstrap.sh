@@ -88,6 +88,7 @@ if [ -n "$CHAOS_CROSS_HOST" ]; then
 fi
 
 do_make() {
+    make clean
     echo "* make $1 with "$NPROC" processors"
     if [ -n "$CHAOS_DEVELOPMENT" ]; then
 	if !(make -j$NPROC VERBOSE=1); then
@@ -157,6 +158,52 @@ if [ ! -e "$PREFIX/include/zlib.h" ] || [ ! -e "$PREFIX/lib/libz.a" ]; then
     fi
 fi
 
+## json cpp
+if [ ! -f $PREFIX/include/json/json.h ]; then
+    if [ ! -d $BASE_EXTERNAL/jsoncpp ]; then
+		if !(git clone https://github.com/open-source-parsers/jsoncpp.git $BASE_EXTERNAL/jsoncpp) ; then
+			echo "## cannot checkout jsoncpp"
+			exit 1
+		fi
+    fi
+    cd $BASE_EXTERNAL/jsoncpp
+    make clean
+    rm CMakeCache.txt
+    if [ -n "$CHAOS_STATIC" ]; then
+	CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF  
+    else
+	CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DJSONCPP_LIB_BUILD_SHARED=ON 
+    fi
+    do_make "jsoncpp"
+fi
+
+## mongoose install
+if [ ! -f $PREFIX/include/mongoose-cpp/mongoose.h ]; then
+    if [ ! -f $BASE_EXTERNAL/mongoose-cpp/mongoose.h ]; then
+		  if !(git clone https://github.com/bisegni/mongoose-cpp.git $BASE_EXTERNAL/mongoose-cpp) ; then
+			  echo "## cannot checkout moongoose-cpp"
+			  exit 1
+		  else
+        cd $BASE_EXTERNAL/mongoose-cpp
+        git checkout -b chaos_master origin/chaos_master
+      fi
+    else
+      cd $BASE_EXTERNAL/mongoose-cpp
+      git pull
+    fi
+    rm CMakeCache.txt
+    make clean
+# -DHAS_JSONCPP=ON
+   if [ -n "$CHAOS_STATIC" ]; then
+       CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
+   else
+       CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DSHAREDLIB=ON -DHAS_JSONCPP=ON -DJSONCPP_DIR=$PREFIX
+   fi
+
+	do_make "mongoose-cpp"
+fi
+
+##
 
 if [ ! -d "$PREFIX/include/boost" ]; then
     if [ ! -e $BASE_EXTERNAL/boost ]; then
@@ -201,7 +248,6 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 	exit 1;
     fi
 
-    echo "-> $CHAOS_CROSS_HOST"
     if [ -n "$CHAOS_CROSS_HOST" ]; then
 	echo "* Patching project-config.jam to cross compile for $CHAOS_CROSS_HOST"
 	sed -i .bak -e "s/using gcc/using gcc : arm : $CXX/" project-config.jam
@@ -210,7 +256,7 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 
     cd $BASE_EXTERNAL/boost
     echo "Compile and install boost libraries into $PREFIX/"
-
+    ./b2 --clean
     ./b2 $CHAOS_BOOST_FLAGS -j $NPROC
 
 else
@@ -238,7 +284,6 @@ if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; the
 	./configure --enable-shared --prefix=$PREFIX $CROSS_HOST_CONFIGURE
     fi
 
-    make clean
     do_make "MODBUS"
 
     echo "libmodbus done"
@@ -258,7 +303,6 @@ if [ ! -d "$PREFIX/include/event2" ]; then
     git pull
     ./autogen.sh
     ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-    make clean
     do_make "LIBEVENT"
     echo "LIBEVENT done"
 fi
@@ -279,7 +323,6 @@ if [ ! -f "$PREFIX/include/uv.h" ]; then
     fi
     ./autogen.sh
     ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-    make clean
     do_make "LIBUV"
     echo "LIBUV done"
 fi
@@ -293,9 +336,6 @@ if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
 	    exit 1
 	fi
 	tar zxvf $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz -C $BASE_EXTERNAL
-    else
-	cd $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION
-	make dist-clean
     fi
     cd $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION
 #    ./configure --enable-shared --disable-examples --disable-tests --disable-couchbasemock --enable-ssl=no --disable-plugins  --prefix=$PREFIX $CROSS_HOST_CONFIGURE
@@ -336,12 +376,13 @@ fi
 echo "Setup LIBMEMCACHED"
 if [ ! -d "$PREFIX/include/libmemcached" ]; then
     echo "Install libmemcached into  $BASE_EXTERNAL/libmemcached"
-    if !(wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz); then
-	echo "## cannot wget  https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz"
-	exit 1
+    if [ ! -d "$BASE_EXTERNAL/libmemcached-$LMEM_VERSION" ]; then
+	if !(wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz); then
+	    echo "## cannot wget  https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz"
+	    exit 1
+	fi
+	tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
     fi
-
-    tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
     cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
 
     if !(./configure --without-memcached --disable-sasl --prefix=$PREFIX $CROSS_HOST_CONFIGURE); then
@@ -352,7 +393,6 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
     echo "patching memcached.h to use the correct cinttypes"
     sed -i .bak -e "s/include <cinttypes>/include <tr1\/cinttypes>/" libmemcached-1.0/memcached.h
 
-    make clean
     do_make "LIBMEMCACHED"
 fi
 echo "Libmemcached done"
@@ -379,49 +419,6 @@ if [ ! -f "$PREFIX/include/zmq.h" ]; then
     echo "ZMQ done"
 fi
 
-## json cpp
-if [ ! -f $PREFIX/include/json/json.h ]; then
-    if [ ! -d $BASE_EXTERNAL/jsoncpp ]; then
-		if !(git clone https://github.com/open-source-parsers/jsoncpp.git $BASE_EXTERNAL/jsoncpp) ; then
-			echo "## cannot checkout jsoncpp"
-			exit 1
-		fi
-    fi
-	cd $BASE_EXTERNAL/jsoncpp
-	if [ -n "$CHAOS_STATIC" ]; then
-	    cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF
-	else
-	    cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DJSONCPP_LIB_BUILD_SHARED=ON
-	fi
-	do_make "jsoncpp"
-fi
-
-## mongoose install
-if [ ! -f $PREFIX/include/mongoose-cpp/mongoose.h ]; then
-    if [ ! -f $BASE_EXTERNAL/mongoose-cpp/mongoose.h ]; then
-		  if !(git clone https://github.com/bisegni/mongoose-cpp.git $BASE_EXTERNAL/mongoose-cpp) ; then
-			  echo "## cannot checkout moongoose-cpp"
-			  exit 1
-		  else
-        cd $BASE_EXTERNAL/mongoose-cpp
-        git checkout -b chaos_master origin/chaos_master
-      fi
-    else
-      cd $BASE_EXTERNAL/mongoose-cpp
-      git pull
-      make clean
-    fi
-# -DHAS_JSONCPP=ON
-   if [ -n "$CHAOS_STATIC" ]; then
-       cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
-   else
-       cmake $CHAOS_CMAKE_FLAGS -DSHAREDLIB=ON -DHAS_JSONCPP=ON -DJSONCPP_DIR=$PREFIX
-   fi
-
-	do_make "mongoose-cpp"
-fi
-
-##
 
 
 echo "Compile !CHAOS"
