@@ -286,13 +286,16 @@ fi
 
 echo "Setup Couchbase sdk"
 if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
-    if [ ! -f "$BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION" ]; then
+    if [ ! -d "$BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION" ]; then
 	echo "Download couchabse source"
 	if !(wget --no-check-certificate -O $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz http://packages.couchbase.com/clients/c/libcouchbase-$COUCHBASE_VERSION.tar.gz); then
 	    echo "## cannot wget http://packages.couchbase.com/clients/c/libcouchbase-$COUCHBASE_VERSION.tar.gz"
 	    exit 1
 	fi
 	tar zxvf $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz -C $BASE_EXTERNAL
+    else
+	cd $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION
+	make dist-clean
     fi
     cd $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION
 #    ./configure --enable-shared --disable-examples --disable-tests --disable-couchbasemock --enable-ssl=no --disable-plugins  --prefix=$PREFIX $CROSS_HOST_CONFIGURE
@@ -405,6 +408,8 @@ if [ ! -f $PREFIX/include/mongoose-cpp/mongoose.h ]; then
       fi
     else
       cd $BASE_EXTERNAL/mongoose-cpp
+      git pull
+      make clean
     fi
 # -DHAS_JSONCPP=ON
    if [ -n "$CHAOS_STATIC" ]; then
