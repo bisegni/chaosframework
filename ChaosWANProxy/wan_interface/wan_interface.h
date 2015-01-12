@@ -1,9 +1,9 @@
 /*
- *	UrlAccessibleService.h
+ *	wan_interface.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyrigh <year> INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -18,19 +18,9 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_UrlAccessibleService_h
-#define CHAOSFramework_UrlAccessibleService_h
-#include<string>
-namespace chaos {
-	namespace common {
-		namespace utility {
-			
-			//!interface for the service that can be accessed by url
-			class UrlAccessibleService {
-			public:
-				virtual const std::string& getUrl() = 0;
-			};
-		}
-	}
-}
+#ifndef CHAOSFramework_wan_interface_h
+#define CHAOSFramework_wan_interface_h
+
+#include "HTTPWANInterface.h";
+
 #endif

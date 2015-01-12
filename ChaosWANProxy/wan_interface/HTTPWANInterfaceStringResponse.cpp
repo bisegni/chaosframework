@@ -1,9 +1,9 @@
 /*
- *	UrlAccessibleService.h
+ *	HTTPWANInterfaceStringResponse.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyrigh <year> INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,20 +17,22 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#include "HTTPWANInterfaceStringResponse.h"
 
-#ifndef CHAOSFramework_UrlAccessibleService_h
-#define CHAOSFramework_UrlAccessibleService_h
-#include<string>
-namespace chaos {
-	namespace common {
-		namespace utility {
-			
-			//!interface for the service that can be accessed by url
-			class UrlAccessibleService {
-			public:
-				virtual const std::string& getUrl() = 0;
-			};
-		}
-	}
+using namespace chaos::wan_proxy::wan_interface;
+
+HTTPWANInterfaceStringResponse::HTTPWANInterfaceStringResponse():
+std::stringstream(std::ios::in |
+				  std::ios::out){
+	
 }
-#endif
+
+HTTPWANInterfaceStringResponse::~HTTPWANInterfaceStringResponse() {
+	
+}
+
+//std::ios::in | std::ios::out
+void HTTPWANInterfaceStringResponse::getHTTPBody(const void *body_ptr,
+												 uint32_t& body_len) {
+	//&this->stringstream::vector_char.front()
+}

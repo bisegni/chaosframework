@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32033D641A643D95004F1B7D /* HTTPWANInterfaceResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D621A643D95004F1B7D /* HTTPWANInterfaceResponse.cpp */; };
+		32033D671A6443C4004F1B7D /* HTTPWANInterfaceStringResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D651A6443C4004F1B7D /* HTTPWANInterfaceStringResponse.cpp */; };
 		3203D43C1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3203D43A1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp */; };
 		3206F1AD19C18A8D00C437D8 /* QueryFuture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3206F1AB19C18A8D00C437D8 /* QueryFuture.cpp */; };
 		3206F1AE19C18A8D00C437D8 /* QueryFuture.h in Headers */ = {isa = PBXBuildFile; fileRef = 3206F1AC19C18A8D00C437D8 /* QueryFuture.h */; };
@@ -428,6 +430,8 @@
 		32C7EAD71A5D9E450008DFE8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAD61A5D9E450008DFE8 /* main.cpp */; };
 		32C7EADD1A5D9EE30008DFE8 /* ChaosWANProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EADB1A5D9EE30008DFE8 /* ChaosWANProxy.cpp */; };
 		32C7EAE31A5EC1140008DFE8 /* AbstractMSDatabaseDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAE11A5EC1140008DFE8 /* AbstractMSDatabaseDriver.cpp */; };
+		32C7EAE71A5EC9980008DFE8 /* AbstractWANInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */; };
+		32C7EAEA1A5ECC990008DFE8 /* HTTPWANInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAE81A5ECC990008DFE8 /* HTTPWANInterface.cpp */; };
 		32CB736F16FE3432008575F0 /* ReaderDataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB736D16FE3432008575F0 /* ReaderDataService.cpp */; };
 		32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB736E16FE3432008575F0 /* ReaderDataService.h */; };
 		32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB7CDE17099C8D00767FC1 /* DataCache.cpp */; };
@@ -523,6 +527,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		32033D5F1A64016A004F1B7D /* global_type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_type.h; sourceTree = "<group>"; };
+		32033D601A6401B7004F1B7D /* global_constant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_constant.h; sourceTree = "<group>"; };
+		32033D611A6428E2004F1B7D /* wan_interface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wan_interface.h; sourceTree = "<group>"; };
+		32033D621A643D95004F1B7D /* HTTPWANInterfaceResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterfaceResponse.cpp; sourceTree = "<group>"; };
+		32033D631A643D95004F1B7D /* HTTPWANInterfaceResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPWANInterfaceResponse.h; sourceTree = "<group>"; };
+		32033D651A6443C4004F1B7D /* HTTPWANInterfaceStringResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterfaceStringResponse.cpp; sourceTree = "<group>"; };
+		32033D661A6443C4004F1B7D /* HTTPWANInterfaceStringResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPWANInterfaceStringResponse.h; sourceTree = "<group>"; };
 		3203D43A1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnapshotCreationWorker.cpp; sourceTree = "<group>"; };
 		3203D43B1A1BA98D005D29E6 /* SnapshotCreationWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SnapshotCreationWorker.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3206F1AB19C18A8D00C437D8 /* QueryFuture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryFuture.cpp; sourceTree = "<group>"; };
@@ -1015,6 +1026,10 @@
 		32C7EADF1A5E868C0008DFE8 /* UrlAccessibleService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UrlAccessibleService.h; sourceTree = "<group>"; };
 		32C7EAE11A5EC1140008DFE8 /* AbstractMSDatabaseDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractMSDatabaseDriver.cpp; sourceTree = "<group>"; };
 		32C7EAE21A5EC1140008DFE8 /* AbstractMSDatabaseDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractMSDatabaseDriver.h; sourceTree = "<group>"; };
+		32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWANInterface.cpp; sourceTree = "<group>"; };
+		32C7EAE61A5EC9980008DFE8 /* AbstractWANInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWANInterface.h; sourceTree = "<group>"; };
+		32C7EAE81A5ECC990008DFE8 /* HTTPWANInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterface.cpp; sourceTree = "<group>"; };
+		32C7EAE91A5ECC990008DFE8 /* HTTPWANInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPWANInterface.h; sourceTree = "<group>"; };
 		32CB736D16FE3432008575F0 /* ReaderDataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReaderDataService.cpp; sourceTree = "<group>"; };
 		32CB736E16FE3432008575F0 /* ReaderDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReaderDataService.h; sourceTree = "<group>"; };
 		32CB7CDE17099C8D00767FC1 /* DataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataCache.cpp; sourceTree = "<group>"; };
@@ -2294,6 +2309,9 @@
 				32C7EAD61A5D9E450008DFE8 /* main.cpp */,
 				32C7EADB1A5D9EE30008DFE8 /* ChaosWANProxy.cpp */,
 				32C7EADC1A5D9EE30008DFE8 /* ChaosWANProxy.h */,
+				32033D5F1A64016A004F1B7D /* global_type.h */,
+				32033D601A6401B7004F1B7D /* global_constant.h */,
+				32C7EAE41A5EC9590008DFE8 /* wan_interface */,
 			);
 			path = ChaosWANProxy;
 			sourceTree = "<group>";
@@ -2305,6 +2323,22 @@
 				32C7EAE21A5EC1140008DFE8 /* AbstractMSDatabaseDriver.h */,
 			);
 			path = db;
+			sourceTree = "<group>";
+		};
+		32C7EAE41A5EC9590008DFE8 /* wan_interface */ = {
+			isa = PBXGroup;
+			children = (
+				32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */,
+				32C7EAE61A5EC9980008DFE8 /* AbstractWANInterface.h */,
+				32C7EAE81A5ECC990008DFE8 /* HTTPWANInterface.cpp */,
+				32C7EAE91A5ECC990008DFE8 /* HTTPWANInterface.h */,
+				32033D621A643D95004F1B7D /* HTTPWANInterfaceResponse.cpp */,
+				32033D631A643D95004F1B7D /* HTTPWANInterfaceResponse.h */,
+				32033D651A6443C4004F1B7D /* HTTPWANInterfaceStringResponse.cpp */,
+				32033D661A6443C4004F1B7D /* HTTPWANInterfaceStringResponse.h */,
+				32033D611A6428E2004F1B7D /* wan_interface.h */,
+			);
+			path = wan_interface;
 			sourceTree = "<group>";
 		};
 		32CB737116FE40F9008575F0 /* cache */ = {
@@ -3133,7 +3167,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32C7EAEA1A5ECC990008DFE8 /* HTTPWANInterface.cpp in Sources */,
+				32C7EAE71A5EC9980008DFE8 /* AbstractWANInterface.cpp in Sources */,
+				32033D641A643D95004F1B7D /* HTTPWANInterfaceResponse.cpp in Sources */,
 				32C7EADD1A5D9EE30008DFE8 /* ChaosWANProxy.cpp in Sources */,
+				32033D671A6443C4004F1B7D /* HTTPWANInterfaceStringResponse.cpp in Sources */,
 				32C7EAD71A5D9E450008DFE8 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3959,6 +3997,7 @@
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
+					"-lmongoose",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -4019,6 +4058,7 @@
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
+					"-lmongoose",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

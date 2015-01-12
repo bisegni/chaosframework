@@ -174,7 +174,8 @@ void NetworkBroker::init(void *initData) throw(CException) {
     }
 	//---------------------------- R P C ----------------------------
     //---------------------------- R P C SYNC ----------------------------
-    if(globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE)){
+    if(globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE) &&
+	   globalConfiguration->getBoolValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE)){
         //get the dispatcher
         MB_LAPP  << "Setup RPC Sync implementation";
         
@@ -191,8 +192,6 @@ void NetworkBroker::init(void *initData) throw(CException) {
             //set the handler on the rpc server
             sync_rpc_server->setCommandDispatcher(command_dispatcher);
         }
-    } else {
-        throw CException(4, "No RPC Sync Adapter type found in configuration", __PRETTY_FUNCTION__);
     }
     //---------------------------- R P C SYNC ----------------------------
 	MB_LAPP  << "Initialize performance session manager";
@@ -244,7 +243,7 @@ void NetworkBroker::deinit() throw(CException) {
 	//---------------------------- E V E N T ----------------------------
 	
     //---------------------------- R P C SYNC ----------------------------
-    CHAOS_NOT_THROW(StartableService::deinitImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)
+    if(sync_rpc_server) CHAOS_NOT_THROW(StartableService::deinitImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)
     //---------------------------- R P C SYNC ----------------------------
 
     
@@ -289,7 +288,7 @@ void NetworkBroker::start() throw(CException){
     StartableService::startImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);
     StartableService::startImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);
     StartableService::startImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);
-    StartableService::startImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);
+    if(sync_rpc_server)StartableService::startImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);
     StartableService::startImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
 }
 
@@ -298,7 +297,7 @@ void NetworkBroker::start() throw(CException){
  */
 void NetworkBroker::stop() throw(CException) {
     CHAOS_NOT_THROW(StartableService::stopImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(StartableService::stopImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)
+    if(sync_rpc_server)CHAOS_NOT_THROW(StartableService::stopImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
