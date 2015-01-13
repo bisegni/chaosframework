@@ -1,5 +1,5 @@
 /*
- *	wan_interface.h
+ *	HTTPWANInterfaceStringResponse.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,11 +17,27 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#include "HTTPWANInterfaceStringResponse.h"
 
-#ifndef CHAOSFramework_wan_interface_h
-#define CHAOSFramework_wan_interface_h
+using namespace chaos::wan_proxy::wan_interface;
 
-#include "AbstractWANInterface.h"
-#include "http/HTTPWANInterface.h"
+HTTPWANInterfaceStringResponse::HTTPWANInterfaceStringResponse():
+std::stringstream(std::ios::in |
+				  std::ios::out){
+	
+}
 
-#endif
+HTTPWANInterfaceStringResponse::~HTTPWANInterfaceStringResponse() {
+	
+}
+
+//std::ios::in | std::ios::out
+const char * HTTPWANInterfaceStringResponse::getHTTPBody(uint32_t& body_len) {
+	const char * result = NULL;
+	if(!buffer.size()) {
+		buffer = this->str();
+	}
+	result = buffer.c_str();
+	body_len = (uint32_t)buffer.size();
+	return result;
+}
