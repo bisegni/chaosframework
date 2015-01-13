@@ -1,9 +1,9 @@
 /*
- *	wan_interface.h
+ *	DefaultWANInterfaceHandler.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyrigh <year> INFN, National Institute of Nuclear Physics
+ *    	Copyright 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,11 +17,18 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#include "DefaultWANInterfaceHandler.h"
 
-#ifndef CHAOSFramework_wan_interface_h
-#define CHAOSFramework_wan_interface_h
-#include "AbstractWANInterfaceHandler.h"
-#include "AbstractWANInterface.h"
-#include "http/HTTPWANInterface.h"
+using namespace chaos::wan_proxy;
 
-#endif
+DefaultWANInterfaceHandler::DefaultWANInterfaceHandler() {
+    
+}
+
+DefaultWANInterfaceHandler::~DefaultWANInterfaceHandler() {
+    
+}
+
+int DefaultWANInterfaceHandler::handleCall(const std::vector<std::string>& api_tokens, Json::Value input_data, wan_interface::AbstractWANInterfaceResponse& response) {
+    return 0;
+}

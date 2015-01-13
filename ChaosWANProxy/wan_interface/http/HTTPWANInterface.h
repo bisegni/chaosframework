@@ -22,7 +22,6 @@
 #define __CHAOSFramework__HTTPWANInterface__
 
 #include "../AbstractWANInterface.h"
-#include "HTTPWANInterfaceResponse.h"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
@@ -32,66 +31,66 @@
 #include <mongoose.h>
 
 namespace chaos {
-	
-	//forward declaration
-	namespace common {
-		namespace data {
-			class CDataWrapper;
-		}
-	}
-	
-	namespace wan_proxy {
-		namespace wan_interface {
-			
-			typedef std::vector<struct mg_server *>				ServerList;
-			typedef std::vector<struct mg_server *>::iterator	ServerListIterator;
-			
-			//!interface param key
-			static const char * const	OPT_HTTP_PORT			= "HTTP_wi_port";
-			//!
-			static const char * const	OPT_HTTP_THREAD_NUMBER  = "HTTP_wi_thread_number";
-			/*
-			 Class that implement the Chaos RPC server using HTTP
-			 */
-			DECLARE_CLASS_FACTORY(HTTPWANInterface, AbstractWANInterface) {
-				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(HTTPWANInterface)
-				
-				HTTPWANInterface(const string& alias);
-				~HTTPWANInterface();
-				
-				bool run;
-				
-				int thread_number;
-				
-				ServerList http_server_list;
-				
-				boost::atomic<int> thread_index;
-				
-				boost::thread_group http_server_thread;
-				
-				//!poll the http server in a thread
-				void pollHttpServer(struct mg_server *http_server);
-
-			public:
-				int process(struct mg_connection *connection);
-				bool handle(struct mg_connection *connection);
-			protected:
-				
-				//inherited method
-				void init(void*) throw(CException);
-				
-				//inherited method
-				void start() throw(CException);
-				
-				//inherited method
-				void stop() throw(CException);
-				
-				//inherited method
-				void deinit() throw(CException);
-			};
-
-		}
-	}
+    
+    //forward declaration
+    namespace common {
+        namespace data {
+            class CDataWrapper;
+        }
+    }
+    
+    namespace wan_proxy {
+        namespace wan_interface {
+            namespace http {
+                typedef std::vector<struct mg_server *>				ServerList;
+                typedef std::vector<struct mg_server *>::iterator	ServerListIterator;
+                
+                //!interface param key
+                static const char * const	OPT_HTTP_PORT			= "HTTP_wi_port";
+                //!
+                static const char * const	OPT_HTTP_THREAD_NUMBER  = "HTTP_wi_thread_number";
+                /*
+                 Class that implement the Chaos RPC server using HTTP
+                 */
+                DECLARE_CLASS_FACTORY(HTTPWANInterface, AbstractWANInterface) {
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(HTTPWANInterface)
+                    
+                    HTTPWANInterface(const string& alias);
+                    ~HTTPWANInterface();
+                    
+                    bool run;
+                    
+                    int thread_number;
+                    
+                    ServerList http_server_list;
+                    
+                    boost::atomic<int> thread_index;
+                    
+                    boost::thread_group http_server_thread;
+                    
+                    //!poll the http server in a thread
+                    void pollHttpServer(struct mg_server *http_server);
+                    
+                public:
+                    int process(struct mg_connection *connection);
+                    bool handle(struct mg_connection *connection);
+                protected:
+                    
+                    //inherited method
+                    void init(void*) throw(CException);
+                    
+                    //inherited method
+                    void start() throw(CException);
+                    
+                    //inherited method
+                    void stop() throw(CException);
+                    
+                    //inherited method
+                    void deinit() throw(CException);
+                };
+            }
+        }
+    }
 }
 
 #endif /* defined(__CHAOSFramework__HTTPWANInterface__) */

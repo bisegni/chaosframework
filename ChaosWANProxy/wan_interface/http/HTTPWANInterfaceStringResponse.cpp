@@ -19,7 +19,7 @@
  */
 #include "HTTPWANInterfaceStringResponse.h"
 
-using namespace chaos::wan_proxy::wan_interface;
+using namespace chaos::wan_proxy::wan_interface::http;
 
 HTTPWANInterfaceStringResponse::HTTPWANInterfaceStringResponse():
 std::stringstream(std::ios::in |
@@ -32,7 +32,7 @@ HTTPWANInterfaceStringResponse::~HTTPWANInterfaceStringResponse() {
 }
 
 //std::ios::in | std::ios::out
-const char * HTTPWANInterfaceStringResponse::getHTTPBody(uint32_t& body_len) {
+const char * HTTPWANInterfaceStringResponse::getBody(uint32_t& body_len) {
 	const char * result = NULL;
 	if(!buffer.size()) {
 		buffer = this->str();

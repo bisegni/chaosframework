@@ -22,27 +22,29 @@
 #define __CHAOSFramework__HTTPWANInterfaceStringResponse__
 #include <sstream>
 
-#include "HTTPWANInterfaceResponse.h"
+#include "../AbstractWANInterfaceResponse.h"
 namespace chaos{
 	namespace wan_proxy {
 		namespace wan_interface {
-			
-			class HTTPWANInterfaceStringResponse:
-			public std::stringstream,
-			public HTTPWANInterfaceResponse {
-				std::string buffer;
-			public:
-				HTTPWANInterfaceStringResponse();
-				~HTTPWANInterfaceStringResponse();
-				/**
-				 * Gets the response body
-				 *
-				 * @return string the response body
-				 */
-				const char * getHTTPBody(uint32_t& body_len);
-				
-				void writeRawHTTPBody(const char *body_ptr, uint32_t body_len);
-			};
+            namespace http {
+                
+                class HTTPWANInterfaceStringResponse:
+                public std::stringstream,
+                public AbstractWANInterfaceResponse {
+                    std::string buffer;
+                public:
+                    HTTPWANInterfaceStringResponse();
+                    ~HTTPWANInterfaceStringResponse();
+                    /**
+                     * Gets the response body
+                     *
+                     * @return string the response body
+                     */
+                    const char * getBody(uint32_t& body_len);
+                    
+                    void writeRawHTTPBody(const char *body_ptr, uint32_t body_len);
+                };
+            }
 		}
 	}
 }

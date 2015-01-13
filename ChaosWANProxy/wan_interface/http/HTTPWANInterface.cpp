@@ -19,7 +19,6 @@
  */
 
 #include "HTTPWANInterface.h"
-#include "HTTPWANInterfaceRequest.h"
 #include "HTTPWANInterfaceStringResponse.h"
 
 #include <boost/regex.hpp>
@@ -32,6 +31,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::wan_proxy::wan_interface;
+using namespace chaos::wan_proxy::wan_interface::http;
 
 #define HTTWANINTERFACE_LOG_HEAD "["<<getName()<<"] - "
 
@@ -79,7 +79,7 @@ static int event_handler(struct mg_connection *connection) {
 }
 
 static void flush_response(struct mg_connection *connection,
-						   HTTPWANInterfaceResponse *response) {
+						   AbstractWANInterfaceResponse *response) {
 	CHAOS_ASSERT(connection && response)
 	mg_send_status(connection, response->getCode());
 	
@@ -90,7 +90,7 @@ static void flush_response(struct mg_connection *connection,
 	}
 	
 	uint32_t body_len = 0;
-	const char * body = response->getHTTPBody(body_len);
+	const char * body = response->getBody(body_len);
 	mg_send_data(connection, body, body_len);
 }
 

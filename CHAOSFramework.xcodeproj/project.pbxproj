@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		32033D6F1A651DCC004F1B7D /* HTTPWANInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D691A651DCC004F1B7D /* HTTPWANInterface.cpp */; };
-		32033D701A651DCC004F1B7D /* HTTPWANInterfaceResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D6B1A651DCC004F1B7D /* HTTPWANInterfaceResponse.cpp */; };
 		32033D711A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D6D1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp */; };
 		32033D741A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D721A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp */; };
 		3203D43C1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3203D43A1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp */; };
@@ -22,6 +21,9 @@
 		320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0EB18A39E650014CDB3 /* DirectIO.h */; };
 		3211FD1D1698699D00424A3C /* LiveDataFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */; };
 		3211FD1E1698699D00424A3C /* LiveDataFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211FD1C1698699D00424A3C /* LiveDataFetcher.h */; };
+		321237231A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321237211A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp */; };
+		321237261A658404002A2D63 /* DefaultWANInterfaceHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321237241A658404002A2D63 /* DefaultWANInterfaceHandler.cpp */; };
+		3212372A1A658BA9002A2D63 /* AbstractWANInterfaceHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321237281A658BA9002A2D63 /* AbstractWANInterfaceHandler.cpp */; };
 		3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */; };
 		3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3215860E17875FDB0090E7E6 /* DriverPluginLoader.cpp */; };
 		3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */; };
@@ -533,8 +535,6 @@
 		32033D611A6428E2004F1B7D /* wan_interface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wan_interface.h; sourceTree = "<group>"; };
 		32033D691A651DCC004F1B7D /* HTTPWANInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterface.cpp; sourceTree = "<group>"; };
 		32033D6A1A651DCC004F1B7D /* HTTPWANInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPWANInterface.h; sourceTree = "<group>"; };
-		32033D6B1A651DCC004F1B7D /* HTTPWANInterfaceResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterfaceResponse.cpp; sourceTree = "<group>"; };
-		32033D6C1A651DCC004F1B7D /* HTTPWANInterfaceResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPWANInterfaceResponse.h; sourceTree = "<group>"; };
 		32033D6D1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterfaceStringResponse.cpp; sourceTree = "<group>"; };
 		32033D6E1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPWANInterfaceStringResponse.h; sourceTree = "<group>"; };
 		32033D721A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPWANInterfaceRequest.cpp; sourceTree = "<group>"; };
@@ -553,6 +553,12 @@
 		320FB0EB18A39E650014CDB3 /* DirectIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIO.h; sourceTree = "<group>"; };
 		3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveDataFetcher.cpp; sourceTree = "<group>"; };
 		3211FD1C1698699D00424A3C /* LiveDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDataFetcher.h; sourceTree = "<group>"; };
+		321237201A65788E002A2D63 /* AbstractWANInterfaceHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractWANInterfaceHandler.h; sourceTree = "<group>"; };
+		321237211A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWANInterfaceResponse.cpp; sourceTree = "<group>"; };
+		321237221A657BA0002A2D63 /* AbstractWANInterfaceResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWANInterfaceResponse.h; sourceTree = "<group>"; };
+		321237241A658404002A2D63 /* DefaultWANInterfaceHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultWANInterfaceHandler.cpp; sourceTree = "<group>"; };
+		321237251A658404002A2D63 /* DefaultWANInterfaceHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultWANInterfaceHandler.h; sourceTree = "<group>"; };
+		321237281A658BA9002A2D63 /* AbstractWANInterfaceHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWANInterfaceHandler.cpp; sourceTree = "<group>"; };
 		3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriverPlugin.cpp; sourceTree = "<group>"; };
 		3215860E17875FDB0090E7E6 /* DriverPluginLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverPluginLoader.cpp; sourceTree = "<group>"; };
 		3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverPluginLoader.h; sourceTree = "<group>"; };
@@ -1171,8 +1177,6 @@
 			children = (
 				32033D691A651DCC004F1B7D /* HTTPWANInterface.cpp */,
 				32033D6A1A651DCC004F1B7D /* HTTPWANInterface.h */,
-				32033D6B1A651DCC004F1B7D /* HTTPWANInterfaceResponse.cpp */,
-				32033D6C1A651DCC004F1B7D /* HTTPWANInterfaceResponse.h */,
 				32033D6D1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp */,
 				32033D6E1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.h */,
 				32033D721A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp */,
@@ -1222,6 +1226,13 @@
 				3211FD1C1698699D00424A3C /* LiveDataFetcher.h */,
 			);
 			path = caching;
+			sourceTree = "<group>";
+		};
+		321237271A658882002A2D63 /* api */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = api;
 			sourceTree = "<group>";
 		};
 		3223253518EC157000ADBA4D /* storage_system */ = {
@@ -2329,7 +2340,10 @@
 				32C7EADC1A5D9EE30008DFE8 /* ChaosWANProxy.h */,
 				32033D5F1A64016A004F1B7D /* global_type.h */,
 				32033D601A6401B7004F1B7D /* global_constant.h */,
+				321237241A658404002A2D63 /* DefaultWANInterfaceHandler.cpp */,
+				321237251A658404002A2D63 /* DefaultWANInterfaceHandler.h */,
 				32C7EAE41A5EC9590008DFE8 /* wan_interface */,
+				321237271A658882002A2D63 /* api */,
 			);
 			path = ChaosWANProxy;
 			sourceTree = "<group>";
@@ -2349,6 +2363,10 @@
 				32033D681A651D9E004F1B7D /* http */,
 				32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */,
 				32C7EAE61A5EC9980008DFE8 /* AbstractWANInterface.h */,
+				321237211A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp */,
+				321237221A657BA0002A2D63 /* AbstractWANInterfaceResponse.h */,
+				321237281A658BA9002A2D63 /* AbstractWANInterfaceHandler.cpp */,
+				321237201A65788E002A2D63 /* AbstractWANInterfaceHandler.h */,
 				32033D611A6428E2004F1B7D /* wan_interface.h */,
 			);
 			path = wan_interface;
@@ -3180,12 +3198,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3212372A1A658BA9002A2D63 /* AbstractWANInterfaceHandler.cpp in Sources */,
 				32033D6F1A651DCC004F1B7D /* HTTPWANInterface.cpp in Sources */,
+				321237261A658404002A2D63 /* DefaultWANInterfaceHandler.cpp in Sources */,
 				32033D741A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp in Sources */,
 				32C7EAE71A5EC9980008DFE8 /* AbstractWANInterface.cpp in Sources */,
-				32033D701A651DCC004F1B7D /* HTTPWANInterfaceResponse.cpp in Sources */,
 				32C7EADD1A5D9EE30008DFE8 /* ChaosWANProxy.cpp in Sources */,
 				32033D711A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp in Sources */,
+				321237231A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp in Sources */,
 				32C7EAD71A5D9E450008DFE8 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

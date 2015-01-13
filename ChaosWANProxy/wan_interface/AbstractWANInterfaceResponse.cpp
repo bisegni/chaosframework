@@ -1,5 +1,5 @@
 /*
- *	HTTPWANInterfaceResponse.cpp
+ *	AbstractWANInterfaceResponse.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,32 +17,32 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "HTTPWANInterfaceResponse.h"
+#include "AbstractWANInterfaceResponse.h"
 
 using namespace chaos::wan_proxy::wan_interface;
 
-HTTPWANInterfaceResponse::HTTPWANInterfaceResponse():
+AbstractWANInterfaceResponse::AbstractWANInterfaceResponse():
 code(HTTP_OK) {
 }
 
-HTTPWANInterfaceResponse::~HTTPWANInterfaceResponse()
+AbstractWANInterfaceResponse::~AbstractWANInterfaceResponse()
 {
 }
 
 
-const std::map<std::string, std::string>& HTTPWANInterfaceResponse::getHeader() {
+const std::map<std::string, std::string>& AbstractWANInterfaceResponse::getHeader() {
 	return headers;
 }
 
-void HTTPWANInterfaceResponse::addHeaderKeyValue(const std::string& key,
+void AbstractWANInterfaceResponse::addHeaderKeyValue(const std::string& key,
 												 const std::string& value) {
 	headers.insert(make_pair(key, value));
 }
 
-void HTTPWANInterfaceResponse::setCode(int _code) {
+void AbstractWANInterfaceResponse::setCode(int _code) {
 	code = _code;
 }
 
-int HTTPWANInterfaceResponse::getCode() {
+int AbstractWANInterfaceResponse::getCode() {
 	return code;
 }

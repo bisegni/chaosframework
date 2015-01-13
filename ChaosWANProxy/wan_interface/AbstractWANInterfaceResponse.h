@@ -1,5 +1,5 @@
 /*
- *	HTTPWANInterfaceResponse
+ *	AbstractWANInterfaceResponse
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__HTTPWANInterfaceResponse__
-#define __CHAOSFramework__HTTPWANInterfaceResponse__
+#ifndef __CHAOSFramework__AbstractWANInterfaceResponse__
+#define __CHAOSFramework__AbstractWANInterfaceResponse__
 
 #include <string>
 #include <map>
@@ -32,10 +32,10 @@ namespace chaos{
 #define HTTP_FORBIDDEN 403
 #define HTTP_SERVER_ERROR 500
 			
-			class HTTPWANInterfaceResponse {
+			class AbstractWANInterfaceResponse {
 			public:
-				HTTPWANInterfaceResponse();
-				virtual ~HTTPWANInterfaceResponse();
+				AbstractWANInterfaceResponse();
+				virtual ~AbstractWANInterfaceResponse();
 				
 				/**
 				 * Get the data of the response, this will contain headers and
@@ -52,12 +52,12 @@ namespace chaos{
 				 *
 				 * @return string the response body
 				 */
-				virtual const char * getHTTPBody(uint32_t& body_len)=0;
+				virtual const char * getBody(uint32_t& body_len)=0;
 				
 				/**
 				 * Sets the response code
 				 */
-				virtual void setCode(int code);
+				void setCode(int code);
 				
 				int getCode();
 			protected:
@@ -67,4 +67,4 @@ namespace chaos{
 		}
 	}
 }
-#endif /* defined(__CHAOSFramework__HTTPWANInterfaceResponse__) */
+#endif /* defined(__CHAOSFramework__AbstractWANInterfaceResponse__) */
