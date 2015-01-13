@@ -64,8 +64,6 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         
         network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
         network_broker_service.init(NULL, __PRETTY_FUNCTION__);
-        
-        network_broker_service->registerAction(&deviceApi);
 		
 		LAPP_ << "-----------------------------------------";
 		LAPP_ << "!CHAOS Metadata service stardet";
@@ -123,7 +121,6 @@ void ChaosMetadataService::stop()   throw(CException) {
  Deiniti all the manager
  */
 void ChaosMetadataService::deinit()   throw(CException) {
-    network_broker_service->deregisterAction(&deviceApi);
 
     //deinit network brocker
     network_broker_service.deinit(__PRETTY_FUNCTION__);
