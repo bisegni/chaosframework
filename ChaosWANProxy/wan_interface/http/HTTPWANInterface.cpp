@@ -124,21 +124,27 @@ void HTTPWANInterface::init(void *init_data) throw(CException) {
 	
 	if(!getParameter().hasKey(OPT_HTTP_THREAD_NUMBER)) {
 		thread_number = 1;
+	} else {
+		thread_number = boost::lexical_cast<int>(getParameter().getStringValue(OPT_HTTP_THREAD_NUMBER));
 	}
 	
 	//allcoate each server for every thread
-	for(int idx = 0;
-		idx < thread_number;
+	for(int idx = 1;
+		idx <= thread_number;
 		idx++) {
 		struct mg_server *http_server = mg_create_server(this);
 		if(!http_server) continue;
+		
 		//configure server
+		HTTWAN_INTERFACE_APP_ << " Thread " << idx << " allocated";
 		mg_set_option(http_server, "listening_port", getParameter().getStringValue(OPT_HTTP_PORT).c_str());
 		mg_set_option(http_server, "enable_keep_alive", "yes");
 		mg_set_option(http_server, "enable_directory_listing", "false");
+		HTTWAN_INTERFACE_APP_ << " Thread " << idx << " configured";
 		//configure handler
 		mg_add_uri_handler(http_server, "/api/", event_handler);
 		mg_server_do_i_handle(http_server, do_i_handle);
+		HTTWAN_INTERFACE_APP_ << " Thread " << idx << " attached to handler";
 		//add server to the list
 		http_server_list.push_back(http_server);
 	}
