@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__HTTPWANInterface__
 #define __CHAOSFramework__HTTPWANInterface__
 
-#include "AbstractWANInterface.h"
+#include "../AbstractWANInterface.h"
 #include "HTTPWANInterfaceResponse.h"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
@@ -43,9 +43,13 @@ namespace chaos {
 	namespace wan_proxy {
 		namespace wan_interface {
 			
+			typedef std::vector<struct mg_server *>				ServerList;
+			typedef std::vector<struct mg_server *>::iterator	ServerListIterator;
+			
 			//!interface param key
-			static const char * const	OPT_HTTP_PORT   = "HTTP_wi_port";
-
+			static const char * const	OPT_HTTP_PORT			= "HTTP_wi_port";
+			//!
+			static const char * const	OPT_HTTP_THREAD_NUMBER  = "HTTP_wi_thread_number";
 			/*
 			 Class that implement the Chaos RPC server using HTTP
 			 */
@@ -57,7 +61,9 @@ namespace chaos {
 				
 				bool run;
 				
-				struct mg_server *http_server;
+				int thread_number;
+				
+				ServerList http_server_list;
 				
 				boost::atomic<int> thread_index;
 				

@@ -1,9 +1,9 @@
 /*
- *	HTTPWANInterfaceStringResponse.cpp
+ *	HTTPWANInterfaceRequest.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyrigh <year> INFN, National Institute of Nuclear Physics
+ *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,22 +17,18 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "HTTPWANInterfaceStringResponse.h"
+#include "HTTPWANInterfaceRequest.h"
 
-using namespace chaos::wan_proxy::wan_interface;
+using namespace chaos::wan_proxy::wan_interface::http;
 
-HTTPWANInterfaceStringResponse::HTTPWANInterfaceStringResponse():
-std::stringstream(std::ios::in |
-				  std::ios::out){
+HTTPWANInterfaceRequest::HTTPWANInterfaceRequest(struct mg_connection *_connection):
+connection(_connection){
+	
+}
+HTTPWANInterfaceRequest::~HTTPWANInterfaceRequest() {
 	
 }
 
-HTTPWANInterfaceStringResponse::~HTTPWANInterfaceStringResponse() {
-	
-}
-
-//std::ios::in | std::ios::out
-void HTTPWANInterfaceStringResponse::getHTTPBody(const void *body_ptr,
-												 uint32_t& body_len) {
-	//&this->stringstream::vector_char.front()
+const char * HTTPWANInterfaceRequest::getHeaderKeyValue(const char * header_key) {
+	return mg_get_header(connection, header_key);
 }

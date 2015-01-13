@@ -19,11 +19,15 @@
  */
 
 #include "HTTPWANInterface.h"
+#include "HTTPWANInterfaceRequest.h"
+#include "HTTPWANInterfaceStringResponse.h"
 
 #include <boost/regex.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+
+#include <json/json.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -36,6 +40,25 @@ using namespace chaos::wan_proxy::wan_interface;
 #define HTTWAN_INTERFACE_ERR_ LERR_ << HTTWANINTERFACE_LOG_HEAD << __PRETTY_FUNCTION__ << "(" << __LINE__ << ")"
 
 static const boost::regex REG_API_URL_FORMAT("/api/v1((/[a-zA-Z0-9_]+))*");
+
+static string htmlEntities(const string& data) {
+	string buffer;
+	buffer.reserve(data.size());
+	
+	for(size_t pos = 0; pos != data.size(); ++pos) {
+		switch(data[pos]) {
+			case '&':  buffer.append("&amp;");       break;
+			case '\"': buffer.append("&quot;");      break;
+			case '\'': buffer.append("&apos;");      break;
+			case '<':  buffer.append("&lt;");        break;
+			case '>':  buffer.append("&gt;");        break;
+			default:   buffer.append(1, data[pos]); break;
+		}
+	}
+	
+	return buffer;
+}
+
 
 static int do_i_handle(struct mg_connection *connection) {
 	if (connection->server_param != NULL) {
@@ -66,15 +89,15 @@ static void flush_response(struct mg_connection *connection,
 		mg_send_header(connection, it->first.c_str(), it->second.c_str());
 	}
 	
-	
-	
-	//mg_send_data(struct mg_connection *, const void *data, int data_len);
+	uint32_t body_len = 0;
+	const char * body = response->getHTTPBody(body_len);
+	mg_send_data(connection, body, body_len);
 }
 
 DEFINE_CLASS_FACTORY(HTTPWANInterface, AbstractWANInterface);
 HTTPWANInterface::HTTPWANInterface(const string& alias):
 AbstractWANInterface(alias),
-http_server(NULL){
+thread_number(0){
 	
 }
 
@@ -87,50 +110,70 @@ void HTTPWANInterface::init(void *init_data) throw(CException) {
 	//! forward message to superclass
 	AbstractWANInterface::init(init_data);
 	
+	//clear in case last deinit fails
+	http_server_list.clear();
+	
 	//check for parameter
 	if(!getParameter().hasKey(OPT_HTTP_PORT)) {
 		std::string err = "Port for http interface as not be set!";
 		HTTWAN_INTERFACE_ERR_ << err;
 		throw chaos::CException(-1, err, __PRETTY_FUNCTION__);
+	} else {
+		service_port = boost::lexical_cast<int>(getParameter().getStringValue(OPT_HTTP_PORT));
 	}
-	//fetch the port
-	service_port = boost::lexical_cast<int>(getParameter().getStringValue(OPT_HTTP_PORT));
-	http_server = mg_create_server(this);
-	if(!http_server) throw chaos::CException(-1, "Http server not instantiated", __PRETTY_FUNCTION__);
 	
-	mg_set_option(http_server, "listening_port", getParameter().getStringValue(OPT_HTTP_PORT).c_str());
-	mg_set_option(http_server, "enable_keep_alive", "yes");
-	mg_set_option(http_server, "enable_directory_listing", "false");
+	if(!getParameter().hasKey(OPT_HTTP_THREAD_NUMBER)) {
+		thread_number = 1;
+	}
 	
-	mg_add_uri_handler(http_server, "/api/", event_handler);
-	mg_server_do_i_handle(http_server, do_i_handle);
+	//allcoate each server for every thread
+	for(int idx = 0;
+		idx < thread_number;
+		idx++) {
+		struct mg_server *http_server = mg_create_server(this);
+		if(!http_server) continue;
+		//configure server
+		mg_set_option(http_server, "listening_port", getParameter().getStringValue(OPT_HTTP_PORT).c_str());
+		mg_set_option(http_server, "enable_keep_alive", "yes");
+		mg_set_option(http_server, "enable_directory_listing", "false");
+		//configure handler
+		mg_add_uri_handler(http_server, "/api/", event_handler);
+		mg_server_do_i_handle(http_server, do_i_handle);
+		//add server to the list
+		http_server_list.push_back(http_server);
+	}
+	if(!http_server_list.size()) throw chaos::CException(-1, "No http server has been instantiated", __PRETTY_FUNCTION__);
 	
 	//construct the direct io service url
 	service_url = boost::str( boost::format("http://<host>:%1%/rpc/domain/action[post data]") %  service_port);
-	
 }
 
 //inherited method
 void HTTPWANInterface::start() throw(CException) {
-	CHAOS_ASSERT(http_server)
+	
 	run = true;
 	thread_index = 0;
-	http_server_thread.add_thread(new boost::thread(boost::bind(&HTTPWANInterface::pollHttpServer, this, http_server)));
+	for(ServerListIterator it = http_server_list.begin();
+		it != http_server_list.end();
+		it++) {
+		http_server_thread.add_thread(new boost::thread(boost::bind(&HTTPWANInterface::pollHttpServer, this, *it)));
+	}
 }
 
 //inherited method
 void HTTPWANInterface::stop() throw(CException) {
-	CHAOS_ASSERT(http_server)
 	run = false;
 	http_server_thread.join_all();
 }
 
 //inherited method
 void HTTPWANInterface::deinit() throw(CException) {
-	if(http_server){
-		mg_destroy_server(&http_server);
-		http_server = NULL;
+	for(ServerListIterator it = http_server_list.begin();
+		it != http_server_list.end();
+		it++) {
+		mg_destroy_server(&(*it));
 	}
+	http_server_list.clear();
 	//clear the service url
 	service_url.clear();
 	service_port = 0;
@@ -146,16 +189,17 @@ void HTTPWANInterface::pollHttpServer(struct mg_server *http_server) {
 
 }
 
-
-
-/*
-Response *HTTPWANInterface::process(Request &request) {
-	StreamResponse *response = new StreamResponse();
-	std::string method  = request.getMethod();
-	std::string url     = request.getUrl();
-	std::string content = request.getHeaderKeyValue("Content-Type");
-	bool        json    = content.compare("application/json") == 0;
-	bool        bson    = json?false:content.compare("application/bson") == 0;
+int HTTPWANInterface::process(struct mg_connection *connection) {
+	Json::Value json_answer;
+	Json::StyledWriter writer;
+	HTTPWANInterfaceStringResponse response;
+	response.addHeaderKeyValue("Content-Type", "application/json");
+	
+	const std::string method  = connection->request_method;
+	const std::string url     = connection->uri;
+	const std::string content = mg_get_header(connection, "Content-Type");
+	const bool        json    = content.compare("application/json") == 0;
+	const bool        bson    = json?false:content.compare("application/bson") == 0;
 	
 	std::vector<std::string> api_parameter_in_url;
 	algorithm::split(api_parameter_in_url,
@@ -163,16 +207,16 @@ Response *HTTPWANInterface::process(Request &request) {
 					 algorithm::is_any_of("/"),
 					 algorithm::token_compress_on);
 	
-	if(api_parameter_in_url.size()== 4 &&
+	if(api_parameter_in_url.size() > 3 &&
 	   (json || bson)) {
 		CDataWrapper *message_data = NULL;
-		std::string data  = request.getData();
+		std::string content_data(connection->content, connection->content_len);
 		
 		if (json) {
 			message_data = new CDataWrapper();
-			message_data->setSerializedJsonData(data.c_str());
+			message_data->setSerializedJsonData(content_data.c_str());
 		} else if(bson) {
-			message_data = new CDataWrapper(data.c_str());
+			message_data = new CDataWrapper(content_data.c_str());
 		}
 		
 		DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Call api fordomain:" << api_parameter_in_url[2]
@@ -181,27 +225,18 @@ Response *HTTPWANInterface::process(Request &request) {
 		
 		
 		//write response
-		response->setCode(200);
-		//if(result.get()) {
-		//	if (json) {
-		//		result_buffer = result->getJSONData();
-		//		response->setHeader("Content-Type", "application/json");
-		//	} else if(bson) {
-		//		result_buffer = result->getBSONData();
-		//		response->setHeader("Content-Type", "application/bson");
-		//	}
-		//	response->write(result_buffer->getBufferPtr(), result_buffer->getBufferLen());
-		//}
-	//} else {
-		response->setCode(400);
-		response->setHeader("Content-Type", "application/txt");
-		*response << htmlEntities("Invalid api call!") << endl;
+		response.setCode(200);
+		
+		json_answer["Error"] = "Call Succeded";
+		json_answer["input_message"] = message_data->getJSONString();
+	} else {
+		response.setCode(400);
+		response.addHeaderKeyValue("Content-Type", "application/json");
+		json_answer["Error"] = "Invalid uri";
 	}
-	return response;
-}*/
-
-int HTTPWANInterface::process(struct mg_connection *connection) {
-	mg_printf_data(connection, "Hello! Requested URI is [%s]", connection->uri);
+	
+	response << writer.write(json_answer);
+	flush_response(connection, &response);
 	return 1;//
 }
 

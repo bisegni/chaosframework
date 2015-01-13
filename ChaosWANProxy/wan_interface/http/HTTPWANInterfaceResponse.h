@@ -52,7 +52,7 @@ namespace chaos{
 				 *
 				 * @return string the response body
 				 */
-				virtual void getHTTPBody(const void *body_ptr, uint32_t& body_len)=0;
+				virtual const char * getHTTPBody(uint32_t& body_len)=0;
 				
 				/**
 				 * Sets the response code

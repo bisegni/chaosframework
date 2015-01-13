@@ -30,6 +30,7 @@ namespace chaos{
 			class HTTPWANInterfaceStringResponse:
 			public std::stringstream,
 			public HTTPWANInterfaceResponse {
+				std::string buffer;
 			public:
 				HTTPWANInterfaceStringResponse();
 				~HTTPWANInterfaceStringResponse();
@@ -38,7 +39,9 @@ namespace chaos{
 				 *
 				 * @return string the response body
 				 */
-				void getHTTPBody(const void *body_ptr, uint32_t& body_len);
+				const char * getHTTPBody(uint32_t& body_len);
+				
+				void writeRawHTTPBody(const char *body_ptr, uint32_t body_len);
 			};
 		}
 	}
