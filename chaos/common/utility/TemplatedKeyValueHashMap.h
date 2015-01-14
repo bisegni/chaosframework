@@ -1,5 +1,5 @@
 /*
- *	ConcuredUsedItem.h
+ *	TemplatedKeyValueHashMap.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -61,10 +61,12 @@ namespace chaos {
 			/*!
 			 Templated fast key value hash container, made on the desing of
 			 the caching model adopted by Memcached. The collision are managed
-			 by a bidirectional list of element having same hash.
+			 by a bidirectional list of element having same hash. This is a revised
+			 hashing model found on memcached source code
 			 */
-			template<typename T, typename H = chaos::common::data::cache::FastHash>
-			class TemplatedKeyValueHash {
+			template<typename T,
+			typename H = chaos::common::data::cache::FastHash>
+			class TemplatedKeyValueHashMap {
 				//symplify the code read
 				
 				//! List head for hash slot
@@ -127,14 +129,14 @@ namespace chaos {
 						free(hash_vector);
 					}
 				}
-
+				
 			protected:
 				//! template element deallocation user method (to override)
 				virtual void clearHashTableElement(const void *key, uint32_t key_len, T element){};
 				
 			public:
 				//! default contructor
-				TemplatedKeyValueHash():
+				TemplatedKeyValueHashMap():
 				hash_hashpower(16),
 				hash_mask(hashmask(hash_hashpower)),
 				hash_vector(NULL),
@@ -143,7 +145,7 @@ namespace chaos {
 				}
 				
 				//! parametrized
-				TemplatedKeyValueHash(uint32_t _hash_power):
+				TemplatedKeyValueHashMap(uint32_t _hash_power):
 				hash_hashpower(_hash_power),
 				hash_mask(hashmask(hash_hashpower)),
 				hash_vector(NULL),
@@ -152,7 +154,7 @@ namespace chaos {
 				}
 				
 				//! default destructor
-				~TemplatedKeyValueHash() {
+				~TemplatedKeyValueHashMap() {
 					if(hash_vector) {
 						//clear all element
 						clear();
@@ -181,7 +183,7 @@ namespace chaos {
 					//lock the list in read
 					boost::shared_lock<boost::shared_mutex> readLock(_list_head->mutex_list);
 					if(!_list_head->head) return -2;
-
+					
 					//appo var for cicling element
 					HashedStruct *_cur_hash_element = _list_head->head;
 					

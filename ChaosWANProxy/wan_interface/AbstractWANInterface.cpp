@@ -22,7 +22,8 @@
 using namespace chaos::wan_proxy::wan_interface;
 
 AbstractWANInterface::AbstractWANInterface(const std::string& alias):
-NamedService(alias){
+NamedService(alias),
+handler(NULL){
 	
 }
 

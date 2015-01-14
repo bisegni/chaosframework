@@ -69,6 +69,7 @@ cout << "ERROR!! Assert " << #x << " failed\n"; \
 cout << " on line " << __LINE__  << "\n"; \
 cout << " in file " << __FILE__ << "\n";  \
 cout.flush();\
+exit(EXIT_FAILURE);\
 }
 #endif
 

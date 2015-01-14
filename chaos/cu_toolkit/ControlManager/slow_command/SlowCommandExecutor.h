@@ -68,7 +68,8 @@ namespace chaos {
                 class SlowCommand;
                 
                 //! Macro for helping the allocation of the isntancer of the class implementing the slow command
-#define SLOWCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::NestedObjectInstancer<chaos::cu::control_manager::slow_command::SlowCommand, chaos_batch::BatchCommand>(new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::SlowCommand>())
+#define SLOWCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::NestedObjectInstancer<chaos::cu::control_manager::slow_command::SlowCommand, chaos_batch::BatchCommand>(\
+				new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::SlowCommand>())
 				
                 //! Slow command execution sand box
                 /*!

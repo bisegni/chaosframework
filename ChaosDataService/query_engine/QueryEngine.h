@@ -24,7 +24,7 @@
 
 #include <chaos/common/thread/ThreadSemaphore.h>
 #include <chaos/common/utility/StartableService.h>
-#include <chaos/common/utility/TemplatedKeyValueHash.h>
+#include <chaos/common/utility/TemplatedKeyValueHashMap.h>
 
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
@@ -116,7 +116,7 @@ namespace chaos {
 			};
 			
 			//!hash table superclass type definition
-			typedef chaos::common::utility::TemplatedKeyValueHash< ClientConnectionInfo* > DirectIOChannelHashTable;
+			typedef chaos::common::utility::TemplatedKeyValueHashMap< ClientConnectionInfo* > DirectIOChannelHashTable;
 			typedef std::map<string, ClientConnectionInfo*>::iterator MapConnectionIterator;
 			
 			/*!

@@ -33,31 +33,16 @@ using namespace chaos::common::data;
 using namespace chaos::wan_proxy::wan_interface;
 using namespace chaos::wan_proxy::wan_interface::http;
 
+#define API_PREFIX_V1 "/api/v1"
+#define API_PATH_REGEX_V1(p) API_PREFIX_V1 p
+
 #define HTTWANINTERFACE_LOG_HEAD "["<<getName()<<"] - "
 
 #define HTTWAN_INTERFACE_APP_ LAPP_ << HTTWANINTERFACE_LOG_HEAD
 #define HTTWAN_INTERFACE_DBG_ LDBG_ << HTTWANINTERFACE_LOG_HEAD << __PRETTY_FUNCTION__
 #define HTTWAN_INTERFACE_ERR_ LERR_ << HTTWANINTERFACE_LOG_HEAD << __PRETTY_FUNCTION__ << "(" << __LINE__ << ")"
 
-static const boost::regex REG_API_URL_FORMAT("/api/v1((/[a-zA-Z0-9_]+))*");
-
-static string htmlEntities(const string& data) {
-	string buffer;
-	buffer.reserve(data.size());
-	
-	for(size_t pos = 0; pos != data.size(); ++pos) {
-		switch(data[pos]) {
-			case '&':  buffer.append("&amp;");       break;
-			case '\"': buffer.append("&quot;");      break;
-			case '\'': buffer.append("&apos;");      break;
-			case '<':  buffer.append("&lt;");        break;
-			case '>':  buffer.append("&gt;");        break;
-			default:   buffer.append(1, data[pos]); break;
-		}
-	}
-	
-	return buffer;
-}
+static const boost::regex REG_API_URL_FORMAT(API_PATH_REGEX_V1("((/[a-zA-Z0-9_]+))*")); //"/api/v1((/[a-zA-Z0-9_]+))*"
 
 
 static int do_i_handle(struct mg_connection *connection) {
@@ -97,13 +82,9 @@ static void flush_response(struct mg_connection *connection,
 DEFINE_CLASS_FACTORY(HTTPWANInterface, AbstractWANInterface);
 HTTPWANInterface::HTTPWANInterface(const string& alias):
 AbstractWANInterface(alias),
-thread_number(0){
-	
-}
+thread_number(0) {}
 
-HTTPWANInterface::~HTTPWANInterface() {
-	
-}
+HTTPWANInterface::~HTTPWANInterface() {}
 
 //inherited method
 void HTTPWANInterface::init(void *init_data) throw(CException) {
@@ -207,48 +188,45 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 	//scsan for content type request
 	const std::string method  = connection->request_method;
 	const std::string url     = connection->uri;
+	const std::string api_uri = url.substr(strlen(API_PREFIX_V1)+1);
 	const std::string content = mg_get_header(connection, "Content-Type");
 	const bool        json    = content.compare("application/json") == 0;
 	
-	std::vector<std::string> api_parameter_in_url;
-	algorithm::split(api_parameter_in_url,
-					 url,
+	//remove the prefix and tokenize the url
+	std::vector<std::string> api_token_list;
+	algorithm::split(api_token_list,
+					 api_uri,
 					 algorithm::is_any_of("/"),
 					 algorithm::token_compress_on);
 	
-	if(api_parameter_in_url.size() > 3 &&
-	   json) {
+	if(json) {
 		std::string content_data(connection->content, connection->content_len);
 		json_reader.parse(content_data, json_request);
 		
 		//call the handler
-		if((err = handler->handleCall(api_parameter_in_url,
-							   json_request,
-							   response.getHeader(),
-							   json_response))) {
+		if((err = handler->handleCall(1,
+									  api_token_list,
+									  json_request,
+									  response.getHeader(),
+									  json_response))) {
 			DEBUG_CODE(HTTWAN_INTERFACE_ERR_ << "Error on api call :" << connection->uri <<
 					   (content_data.size()? (" with message data: " + content_data):" with no message data");)
 			//return the error for the api call
 			response.setCode(400);
 			json_response["wi_error"] = err;
-			json_response["wi_error_message"].append("Call Error");
+			json_response["wi_error_message"] = "Call Error";
 		}else{
 			json_response["wi_error"] = 0;
 			//return the infromation of api call success
 			response.setCode(200);
-			json_response["Error"].append("Call Succeded");
+			json_response["Error"] = "Call Succeded";
 		}
 	} else {
 		//return the error for bad json or invalid url
 		response.setCode(400);
 		response.addHeaderKeyValue("Content-Type", "application/json");
 		json_response["wi_error"] = -1;
-		if(api_parameter_in_url.size() < 3) {
-			json_response["wi_error_message"].append("The prefix of the uri need to be /api/v1/.....");
-		}
-		if(!json) {
-			json_response["wi_error_message"].append("The content of the request need to be json");
-		}
+		json_response["wi_error_message"] = "The content of the request need to be json";
 	}
 	
 	response << json_writer.write(json_response);

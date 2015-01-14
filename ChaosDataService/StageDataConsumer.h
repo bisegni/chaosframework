@@ -26,7 +26,7 @@
 #include "indexer/StageDataVFileScanner.h"
 
 #include <chaos/common/utility/StartableService.h>
-#include <chaos/common/utility/TemplatedKeyValueHash.h>
+#include <chaos/common/utility/TemplatedKeyValueHashMap.h>
 
 #include <vector>
 

@@ -135,10 +135,17 @@ namespace chaos {
                 }
             };
 			
-			#define ALLOCATE_INSTANCER(ImplClass, BaseClass) new chaos::common::utility::TypedObjectInstancer<ImplClass, BaseClass>()
-			#define ALLOCATE_INSTANCER_P1(ImplClass, BaseClass, p1) new chaos::common::utility::TypedObjectInstancerP1<ImplClass, BaseClass, p1>()
-			#define ALLOCATE_INSTANCER_P2(ImplClass, BaseClass, p1, p2) new chaos::common::utility::TypedObjectInstancerP2<ImplClass, BaseClass, p1, p2>()
-			#define ALLOCATE_INSTANCER_P3(ImplClass, BaseClass, p1, p2, p3) new chaos::common::utility::TypedObjectInstancerP3<ImplClass, BaseClass, p1, p2, p3>()
+			#define INSTANCER(ImplClass, BaseClass) chaos::common::utility::TypedObjectInstancer<ImplClass, BaseClass>
+			#define ALLOCATE_INSTANCER(ImplClass, BaseClass) new INSTANCER(ImplClass, BaseClass)
+			
+			#define INSTANCER_P1(ImplClass, BaseClass, p1) chaos::common::utility::TypedObjectInstancerP1<ImplClass, BaseClass, p1>
+			#define ALLOCATE_INSTANCER_P1(ImplClass, BaseClass, p1) new INSTANCER_P1(ImplClass, BaseClass, p1)
+
+			#define INSTANCER_P2(ImplClass, BaseClass, p1, p2) chaos::common::utility::TypedObjectInstancerP2<ImplClass, BaseClass, p1, p2>
+			#define ALLOCATE_INSTANCER_P2(ImplClass, BaseClass, p1, p2) new INSTANCER_P2(ImplClass, BaseClass, p1, p2)()
+
+			#define INSTANCER_P3(ImplClass, BaseClass, p1, p2, p3) chaos::common::utility::TypedObjectInstancerP3<ImplClass, BaseClass, p1, p2, p3>
+			#define ALLOCATE_INSTANCER_P3(ImplClass, BaseClass, p1, p2, p3) new INSTANCER_P3(ImplClass, BaseClass, p1, p2, p3)
 			
 			typedef boost::shared_mutex						InstancerReadWriteMutexClass;
 			typedef boost::unique_lock<boost::shared_mutex>	InstancerContainerWriteLockClass;

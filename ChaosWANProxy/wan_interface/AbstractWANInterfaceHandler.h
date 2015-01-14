@@ -51,8 +51,15 @@ namespace chaos {
                  http). Each api has a sequence of tokens a json input and a response. The Implementation 
                  needs to scan the token and execute the proper api forwarding the json pack and compose
                  the response.
+				 \param version indicate the version of the api to call.
+				 \param api_tokens identify the list of the tocken of the received api, tipically the first
+				 is the name and the next tocken rpresent the parameter.
+				 \param input_data is the json object representing the input data for the api.
+				 \param output_header is the output header map that help to collect the header of the api result
+				 \param output_data is the json objetc taht will collect the data to forward as response to the request.
                  */
-                virtual int handleCall(const std::vector<std::string>& api_tokens,
+                virtual int handleCall(int version,
+									   const std::vector<std::string>& api_tokens,
 									   const Json::Value& input_data,
 									   std::map<std::string, std::string>& output_header,
 									   Json::Value& output_data) = 0;
