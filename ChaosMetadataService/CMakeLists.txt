@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 2.6)
 include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 # SET(cnd_src main.cpp ChaosMetadataService.cpp)
-SET(cnd_src main.cpp)
-# SET(cnd_src  ${cnd_src}	data/DataManagment.cpp)
 
-# SET(cnd_src  ${cnd_src}	api_services/ApiServer.cpp api_services/DeviceApi.cpp)
+SET(cnd_src				main.cpp
+						ChaosMetadataService.cpp)
+
+SET(cnd_src  ${cnd_src}	db/AbstractMSDatabaseDriver.cpp)
+
+SET(cnd_src  ${cnd_src}	api_services/ApiServer.cpp api_services/DeviceApi.cpp)
 
 
 ADD_EXECUTABLE(ChaosMetadataService ${cnd_src})

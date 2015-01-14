@@ -1,14 +1,22 @@
 cmake_minimum_required(VERSION 2.6)
 include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 
-SET(wp_src main.cpp ChaosWANProxy.cpp DefaultWANInterfaceHandler.cpp)
-SET(wp_src ${wp_src} wan_interface/AbstractWANInterface.cpp
-                     wan_interface/AbstractWANInterfaceResponse.cpp)
-SET(wp_src ${wp_src} wan_interface/http/HTTPWANInterface.cpp
-                     wan_interface/http/HTTPWANInterfaceRequest.cpp
-                     wan_interface/http/HTTPWANInterfaceStringResponse.cpp)
+SET(wp_src main.cpp		main.cpp
+						ChaosWANProxy.cpp
+						DefaultWANInterfaceHandler.cpp)
 
+SET(wp_src ${wp_src}	wan_interface/AbstractWANInterface.cpp
+						wan_interface/AbstractWANInterfaceResponse.cpp
+						wan_interface/AbstractWANInterfaceHandler.cpp)
 
+SET(wp_src ${wp_src}	wan_interface/http/HTTPWANInterface.cpp
+						wan_interface/http/HTTPWANInterfaceRequest.cpp
+						wan_interface/http/HTTPWANInterfaceStringResponse.cpp)
+
+SET(wp_src ${wp_src}	api/AbstractApi.cpp
+						api/AbstractApiGroup.cpp)
+
+SET(wp_src ${wp_src}	persistence/AbstractPersistenceDriver.cpp)
 
 ADD_EXECUTABLE(ChaosWANProxy ${wp_src})
 
