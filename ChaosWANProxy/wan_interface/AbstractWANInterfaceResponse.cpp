@@ -25,12 +25,16 @@ AbstractWANInterfaceResponse::AbstractWANInterfaceResponse():
 code(HTTP_OK) {
 }
 
-AbstractWANInterfaceResponse::~AbstractWANInterfaceResponse()
-{
+AbstractWANInterfaceResponse::AbstractWANInterfaceResponse(const std::string& content_type):
+code(HTTP_OK) {
+		headers.insert(make_pair("Content-Type", content_type));
+}
+
+AbstractWANInterfaceResponse::~AbstractWANInterfaceResponse() {
 }
 
 
-const std::map<std::string, std::string>& AbstractWANInterfaceResponse::getHeader() {
+std::map<std::string, std::string>& AbstractWANInterfaceResponse::getHeader() {
 	return headers;
 }
 

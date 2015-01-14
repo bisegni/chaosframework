@@ -35,6 +35,7 @@ namespace chaos{
 			class AbstractWANInterfaceResponse {
 			public:
 				AbstractWANInterfaceResponse();
+				AbstractWANInterfaceResponse(const std::string& content_type);
 				virtual ~AbstractWANInterfaceResponse();
 				
 				/**
@@ -43,7 +44,7 @@ namespace chaos{
 				 *
 				 * @return string the response data
 				 */
-				virtual const std::map<std::string, std::string>& getHeader();
+				virtual std::map<std::string, std::string>& getHeader();
 				
 				virtual void addHeaderKeyValue(const std::string& key, const std::string& value);
 				

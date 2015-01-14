@@ -26,6 +26,12 @@ std::stringstream(std::ios::in |
 				  std::ios::out){
 	
 }
+HTTPWANInterfaceStringResponse::HTTPWANInterfaceStringResponse(const std::string& content_type):
+AbstractWANInterfaceResponse(content_type),
+std::stringstream(std::ios::in |
+				  std::ios::out){
+	
+}
 
 HTTPWANInterfaceStringResponse::~HTTPWANInterfaceStringResponse() {
 	

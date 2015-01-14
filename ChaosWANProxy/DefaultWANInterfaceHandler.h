@@ -26,11 +26,14 @@ namespace chaos {
    	namespace wan_proxy {
         
         class DefaultWANInterfaceHandler:
-        public wan_interface::AbstractInterfaceHandler {
+        public wan_interface::AbstractWANInterfacelHandler {
         public:
             DefaultWANInterfaceHandler();
             ~DefaultWANInterfaceHandler();
-            int handleCall(const std::vector<std::string>& api_tokens, Json::Value input_data, wan_interface::AbstractWANInterfaceResponse& response);
+            int handleCall(const std::vector<std::string>& api_tokens,
+						   Json::Value input_data,
+						   std::map<std::string, std::string>& output_header,
+						   Json::Value& output_data);
         };
         
     }

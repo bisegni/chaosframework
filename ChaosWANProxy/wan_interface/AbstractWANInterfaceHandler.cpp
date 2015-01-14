@@ -1,5 +1,5 @@
 /*
- *	AbstractInterfaceHandler.cpp
+ *	AbstractWANInterfacelHandler.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -22,11 +22,11 @@
 using namespace chaos::wan_proxy::wan_interface;
 
 //! default constructor
-AbstractInterfaceHandler::AbstractInterfaceHandler() {
+AbstractWANInterfacelHandler::AbstractWANInterfacelHandler() {
     
 }
 
 //! default destructor
-AbstractInterfaceHandler::~AbstractInterfaceHandler() {
+AbstractWANInterfacelHandler::~AbstractWANInterfacelHandler() {
     
 }

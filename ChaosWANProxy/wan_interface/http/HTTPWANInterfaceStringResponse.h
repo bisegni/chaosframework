@@ -34,6 +34,7 @@ namespace chaos{
                     std::string buffer;
                 public:
                     HTTPWANInterfaceStringResponse();
+					HTTPWANInterfaceStringResponse(const std::string& content_type);
                     ~HTTPWANInterfaceStringResponse();
                     /**
                      * Gets the response body

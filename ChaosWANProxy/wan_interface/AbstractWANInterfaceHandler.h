@@ -1,5 +1,5 @@
 /*
- *	AbstractInterfacelHandler.h
+ *	AbstractWANInterfacelHandler.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -37,13 +37,13 @@ namespace chaos {
              subclass of this abstract class. Only on handler at time can be
              installed in the wan interface.
              */
-            class AbstractInterfaceHandler {
+            class AbstractWANInterfacelHandler {
             public:
                 //! default constructor
-                AbstractInterfaceHandler();
+                AbstractWANInterfacelHandler();
                 
                 //! default destructor
-                ~AbstractInterfaceHandler();
+                ~AbstractWANInterfacelHandler();
                 
                 //! execute a wan api
                 /*!
@@ -52,7 +52,10 @@ namespace chaos {
                  needs to scan the token and execute the proper api forwarding the json pack and compose
                  the response.
                  */
-                virtual int handleCall(const std::vector<std::string>& api_tokens, Json::Value input_data, AbstractWANInterfaceResponse& response) = 0;
+                virtual int handleCall(const std::vector<std::string>& api_tokens,
+									   const Json::Value& input_data,
+									   std::map<std::string, std::string>& output_header,
+									   Json::Value& output_data) = 0;
 
             };
             

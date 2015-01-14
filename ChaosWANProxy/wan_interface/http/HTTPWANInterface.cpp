@@ -192,20 +192,23 @@ void HTTPWANInterface::pollHttpServer(struct mg_server *http_server) {
 		mg_poll_server(http_server, 1000);
 	}
 	HTTWAN_INTERFACE_APP_ << "Leaving http thread " << current_index;
-
+	
 }
 
 int HTTPWANInterface::process(struct mg_connection *connection) {
-	Json::Value json_answer;
-	Json::StyledWriter writer;
-	HTTPWANInterfaceStringResponse response;
-	response.addHeaderKeyValue("Content-Type", "application/json");
-	
+	CHAOS_ASSERT(handler)
+	int								err = 0;
+	Json::Value						json_request;
+	Json::Value						json_response;
+	Json::StyledWriter				json_writer;
+	Json::Reader					json_reader;
+	HTTPWANInterfaceStringResponse	response("application/json");
+
+	//scsan for content type request
 	const std::string method  = connection->request_method;
 	const std::string url     = connection->uri;
 	const std::string content = mg_get_header(connection, "Content-Type");
 	const bool        json    = content.compare("application/json") == 0;
-	const bool        bson    = json?false:content.compare("application/bson") == 0;
 	
 	std::vector<std::string> api_parameter_in_url;
 	algorithm::split(api_parameter_in_url,
@@ -214,34 +217,41 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 					 algorithm::token_compress_on);
 	
 	if(api_parameter_in_url.size() > 3 &&
-	   (json || bson)) {
-		CDataWrapper *message_data = NULL;
+	   json) {
 		std::string content_data(connection->content, connection->content_len);
+		json_reader.parse(content_data, json_request);
 		
-		if (json) {
-			message_data = new CDataWrapper();
-			message_data->setSerializedJsonData(content_data.c_str());
-		} else if(bson) {
-			message_data = new CDataWrapper(content_data.c_str());
+		//call the handler
+		if((err = handler->handleCall(api_parameter_in_url,
+							   json_request,
+							   response.getHeader(),
+							   json_response))) {
+			DEBUG_CODE(HTTWAN_INTERFACE_ERR_ << "Error on api call :" << connection->uri <<
+					   (content_data.size()? (" with message data: " + content_data):" with no message data");)
+			//return the error for the api call
+			response.setCode(400);
+			json_response["wi_error"] = err;
+			json_response["wi_error_message"].append("Call Error");
+		}else{
+			json_response["wi_error"] = 0;
+			//return the infromation of api call success
+			response.setCode(200);
+			json_response["Error"].append("Call Succeded");
 		}
-		
-		DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Call api fordomain:" << api_parameter_in_url[2]
-				   << " action:" << api_parameter_in_url[3] << " and message data:"
-				   << (message_data!=NULL?message_data->getJSONString():"No message data");)
-		
-		
-		//write response
-		response.setCode(200);
-		
-		json_answer["Error"] = "Call Succeded";
-		json_answer["input_message"] = message_data->getJSONString();
 	} else {
+		//return the error for bad json or invalid url
 		response.setCode(400);
 		response.addHeaderKeyValue("Content-Type", "application/json");
-		json_answer["Error"] = "Invalid uri";
+		json_response["wi_error"] = -1;
+		if(api_parameter_in_url.size() < 3) {
+			json_response["wi_error_message"].append("The prefix of the uri need to be /api/v1/.....");
+		}
+		if(!json) {
+			json_response["wi_error_message"].append("The content of the request need to be json");
+		}
 	}
 	
-	response << writer.write(json_answer);
+	response << json_writer.write(json_response);
 	flush_response(connection, &response);
 	return 1;//
 }
