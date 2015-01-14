@@ -20,13 +20,13 @@
 #ifndef __CHAOSFramework__DefaultWANInterfaceHandler__
 #define __CHAOSFramework__DefaultWANInterfaceHandler__
 
-#include "wan_interface/AbstractWANInterfaceHandler.h"
+#include "wan_interface/BaseWANInterfaceHandler.h"
 
 namespace chaos {
    	namespace wan_proxy {
         
         class DefaultWANInterfaceHandler:
-        public wan_interface::AbstractWANInterfacelHandler {
+        public wan_interface::BaseWANInterfacelHandler {
         public:
             DefaultWANInterfaceHandler();
             ~DefaultWANInterfaceHandler();

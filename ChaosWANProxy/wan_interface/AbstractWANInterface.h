@@ -21,7 +21,7 @@
 #define __CHAOSFramework__AbstractWANInterface__
 
 
-#include "AbstractWANInterfaceHandler.h"
+#include "BaseWANInterfaceHandler.h"
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/NamedService.h>
@@ -54,7 +54,7 @@ namespace chaos {
 				
 				chaos::common::data::CDataWrapper& getParameter();
 				
-				AbstractWANInterfacelHandler *handler;
+				BaseWANInterfacelHandler *handler;
 			public:
 				// inherited method
 				//! init data need to be filled with json string
@@ -72,7 +72,7 @@ namespace chaos {
 				//inherited method
 				const std::string& getUrl();
 				
-				void setHandler(AbstractWANInterfacelHandler *_handler);
+				void setHandler(BaseWANInterfacelHandler *_handler);
 			};
 		}
 	}

@@ -20,10 +20,15 @@
 #ifndef __CHAOSFramework__AbstractApi__
 #define __CHAOSFramework__AbstractApi__
 
+#include <string>
+#include <vector>
+
 #include <chaos/common/utility/NamedService.h>
 
 #include <boost/thread/lockable_adapter.hpp>
 #include <boost/thread/recursive_mutex.hpp>
+
+#include <json/json.h>
 namespace chaos {
 	namespace wan_proxy {
 		namespace api {
@@ -36,6 +41,11 @@ namespace chaos {
 			public:
 				AbstractApi(const std::string& name);
 				virtual ~AbstractApi();
+				
+				virtual int execute(std::vector<std::string>& api_tokens,
+									const Json::Value& input_data,
+									std::map<std::string, std::string>& output_header,
+									Json::Value& output_data) = 0;
 			};
 			
 		}

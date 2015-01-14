@@ -21,6 +21,7 @@
 #define __CHAOSFramework__AbstractApiGroup__
 
 #include "AbstractApi.h"
+#include "../utility/TypedConstrainedHashMap.h"
 
 #include <string>
 
@@ -28,21 +29,24 @@
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/utility/TemplatedKeyValueHashMap.h>
 
+#include <json/json.h>
+
 namespace chaos {
 	namespace wan_proxy {
 		namespace api {
 			
-			typedef chaos::common::utility::TemplatedKeyValueHashMap<AbstractApi*> AbstractApiHashMap;
+			typedef utility::TypedConstrainedHashMap<AbstractApi*> ApiHashMap;
 			
 			//! define the abstract group of api
 			class AbstractApiGroup:
 			public chaos::common::utility::NamedService,
-			private AbstractApiHashMap {
+			protected ApiHashMap {
 				
 				//! inherited from AbstractApiHashMap
 				void clearHashTableElement(const void *key,
 										   uint32_t key_len,
 										   AbstractApi *element);
+				
 			public:
 				//! construct the group with a name
 				AbstractApiGroup(const std::string& name);
@@ -50,29 +54,16 @@ namespace chaos {
 				//! default destructor
 				virtual ~AbstractApiGroup();
 				
-				//! add a class instance as api with a name
-				template <typename A>
-				void addApi(const std::string& name) {
-					INSTANCER(A, AbstractApi) i = ALLOCATE_INSTANCER(A, AbstractApi);
-					addElement(name.c_str(),
-							   name.size(),
-							   i.getInstance());
-				}
-				
-				//! add a class instance as api the name is got from the service name
-				template <typename A>
-				void addApi() {
-					INSTANCER(A, AbstractApi) i = ALLOCATE_INSTANCER(A, AbstractApi);
-					addElement(i.getName().c_str(),
-							   i.getName().c_str(),
-							   i.getInstance());
-				}
-				
 				//! remove all api
 				void removeAllApi();
 				
 				//! remove by name
 				void removeApiByName(const std::string name);
+				
+				int callApi(std::vector<std::string>& api_tokens,
+							const Json::Value& input_data,
+							std::map<std::string, std::string>& output_header,
+							Json::Value& output_data);
 			};
 			
 		}

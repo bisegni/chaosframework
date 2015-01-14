@@ -25,20 +25,22 @@ using namespace chaos::wan_proxy::api;
 
 
 AbstractApiGroup::AbstractApiGroup(const std::string& name):
-NamedService(name){}
+NamedService(name),
+//set the power of hashmap to 8
+ApiHashMap(8){}
 
 //! default destructor
 AbstractApiGroup::~AbstractApiGroup() {}
 
 void AbstractApiGroup::removeAllApi() {
 	//call hash map clear method
-	clear();
+	ApiHashMap::clear();
 }
 
 //! remove by name
 void AbstractApiGroup::removeApiByName(const std::string api_name) {
 	// call hash map method for remove an element by name
-	removeElement(api_name.c_str(), (uint32_t)api_name.size());
+	ApiHashMap::removeElement(api_name.c_str(), (uint32_t)api_name.size());
 }
 
 #pragma mark Private Method
@@ -47,4 +49,30 @@ void AbstractApiGroup::clearHashTableElement(const void *key,
 											 AbstractApi *element) {
 	//delete the api instance
 	delete(element);
+}
+
+int AbstractApiGroup::callApi(std::vector<std::string>& api_tokens,
+							  const Json::Value& input_data,
+							  std::map<std::string, std::string>& output_header,
+							  Json::Value& output_data) {
+	int err = 0;
+	
+	//the first element is the api name (the group as benn deleted by the Handler
+	const std::string& api_name = api_tokens.front();
+	
+	AbstractApi *api_selected = NULL;
+	if((err = getElement(api_name.c_str(), (uint32_t)api_name.size(), &api_selected)) ||
+	   !api_selected) {
+		//error or not found
+	} else {
+		//remove the group name
+		api_tokens.erase(api_tokens.begin());
+		
+		//forward call to the found group
+		api_selected->execute(api_tokens,
+							  input_data,
+							  output_header,
+							  output_data);
+	}
+	return err;
 }

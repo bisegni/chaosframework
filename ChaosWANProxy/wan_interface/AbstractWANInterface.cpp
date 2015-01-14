@@ -60,6 +60,6 @@ chaos::common::data::CDataWrapper& AbstractWANInterface::getParameter() {
 	return wan_interface_parameter;
 }
 
-void AbstractWANInterface::setHandler(AbstractWANInterfacelHandler *_handler) {
+void AbstractWANInterface::setHandler(BaseWANInterfacelHandler *_handler) {
 	handler = _handler;
 }

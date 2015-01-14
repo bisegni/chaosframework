@@ -20,7 +20,7 @@
 
 #ifndef CHAOSFramework_wan_interface_h
 #define CHAOSFramework_wan_interface_h
-#include "AbstractWANInterfaceHandler.h"
+#include "BaseWANInterfaceHandler.h"
 #include "AbstractWANInterface.h"
 #include "http/HTTPWANInterface.h"
 
