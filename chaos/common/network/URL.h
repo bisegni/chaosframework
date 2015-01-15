@@ -43,9 +43,10 @@ namespace chaos {
                     //! Default contructor
                 URL();
                     //! Default contructor
-                URL(std::string& _url);
+                URL(const std::string& _url);
                     //! constructor with regular expression for check server hostname and port
-                URL(std::vector<boost::regex>& _url_reg, std::string _url);
+                URL(const std::vector<boost::regex>& _url_reg,
+					const std::string& _url);
                 
                     //! Default contructor
                 URL(const URL &_orig_url);

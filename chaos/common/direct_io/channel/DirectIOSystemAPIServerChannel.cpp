@@ -27,7 +27,7 @@ using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
-
+DEFINE_CLASS_FACTORY(DirectIOSystemAPIServerChannel, DirectIOVirtualServerChannel);
 DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannel(std::string alias):
 DirectIOVirtualServerChannel(alias, DIOSystemAPI_Channel_Index),
 handler(NULL) {

@@ -152,12 +152,12 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
 	//get the number of valid server
 	uint32_t valid_server_num = (uint32_t)valid_connection_queue.size();
 	
-	DEBUG_CODE(MDBHAC_LDBG_ << "Try " << valid_server_num << " connection";)
+	DEBUG_CODE(MDBHAC_LDBG_ << "Try " << valid_server_num << " connections";)
 	
 	//try fo find a good conncetion
 	while(!nextCS && cur_index < valid_server_num) {
 		cur_index++;
-		DEBUG_CODE(MDBHAC_LDBG_ << "Try " << cur_index;)
+		DEBUG_CODE(MDBHAC_LDBG_ << "Try server " << cur_index;)
 
 		// get next available server connection string
 		if((nextCS = valid_connection_queue.front())) {

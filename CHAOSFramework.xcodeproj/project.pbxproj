@@ -472,6 +472,10 @@
 		32E0EF3718CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E0EF3518CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp */; };
 		32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */; };
 		32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */; };
+		32E9A5461A67D02900545BB4 /* ProducerGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */; };
+		32E9A5491A67D6D600545BB4 /* ProducerRegisterAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5471A67D6D600545BB4 /* ProducerRegisterAPI.cpp */; };
+		32E9A54C1A6800E900545BB4 /* ProducerInsertDataApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A54A1A6800E900545BB4 /* ProducerInsertDataApi.cpp */; };
+		32E9A5511A68092F00545BB4 /* ChaosBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A54F1A68092F00545BB4 /* ChaosBridge.cpp */; };
 		32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9F48B16485012006EAF37 /* ChaosMetadataService.cpp */; };
 		32EA501218A152BE00782435 /* DirectIOServerEndpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA501018A152BE00782435 /* DirectIOServerEndpoint.cpp */; };
 		32EA501318A152BE00782435 /* DirectIOServerEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EA501118A152BE00782435 /* DirectIOServerEndpoint.h */; };
@@ -1091,6 +1095,14 @@
 		32E9A53D1A66A1B100545BB4 /* AbstractApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
 		32E9A53F1A66A1C300545BB4 /* api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
 		32E9A5421A66C45E00545BB4 /* TypedConstrainedHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedConstrainedHashMap.h; sourceTree = "<group>"; };
+		32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerGroup.cpp; sourceTree = "<group>"; };
+		32E9A5451A67D02900545BB4 /* ProducerGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerGroup.h; sourceTree = "<group>"; };
+		32E9A5471A67D6D600545BB4 /* ProducerRegisterAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerRegisterAPI.cpp; sourceTree = "<group>"; };
+		32E9A5481A67D6D600545BB4 /* ProducerRegisterAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerRegisterAPI.h; sourceTree = "<group>"; };
+		32E9A54A1A6800E900545BB4 /* ProducerInsertDataApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerInsertDataApi.cpp; sourceTree = "<group>"; };
+		32E9A54B1A6800E900545BB4 /* ProducerInsertDataApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerInsertDataApi.h; sourceTree = "<group>"; };
+		32E9A54F1A68092F00545BB4 /* ChaosBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosBridge.cpp; sourceTree = "<group>"; };
+		32E9A5501A68092F00545BB4 /* ChaosBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosBridge.h; sourceTree = "<group>"; };
 		32E9F48B16485012006EAF37 /* ChaosMetadataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosMetadataService.cpp; sourceTree = "<group>"; };
 		32E9F48C16485012006EAF37 /* ChaosMetadataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosMetadataService.h; sourceTree = "<group>"; };
 		32EA501018A152BE00782435 /* DirectIOServerEndpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOServerEndpoint.cpp; sourceTree = "<group>"; };
@@ -1242,6 +1254,7 @@
 		321237271A658882002A2D63 /* api */ = {
 			isa = PBXGroup;
 			children = (
+				32E9A5431A67D00A00545BB4 /* producer */,
 				329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */,
 				329F406B1A669B6300AC318A /* AbstractApiGroup.h */,
 				32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */,
@@ -2367,6 +2380,8 @@
 				32033D601A6401B7004F1B7D /* global_constant.h */,
 				321237241A658404002A2D63 /* DefaultWANInterfaceHandler.cpp */,
 				321237251A658404002A2D63 /* DefaultWANInterfaceHandler.h */,
+				32E9A54F1A68092F00545BB4 /* ChaosBridge.cpp */,
+				32E9A5501A68092F00545BB4 /* ChaosBridge.h */,
 				32C7EAE41A5EC9590008DFE8 /* wan_interface */,
 				321237271A658882002A2D63 /* api */,
 				329F406D1A669F0300AC318A /* persistence */,
@@ -2451,6 +2466,19 @@
 				32E9A5421A66C45E00545BB4 /* TypedConstrainedHashMap.h */,
 			);
 			path = utility;
+			sourceTree = "<group>";
+		};
+		32E9A5431A67D00A00545BB4 /* producer */ = {
+			isa = PBXGroup;
+			children = (
+				32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */,
+				32E9A5451A67D02900545BB4 /* ProducerGroup.h */,
+				32E9A5471A67D6D600545BB4 /* ProducerRegisterAPI.cpp */,
+				32E9A5481A67D6D600545BB4 /* ProducerRegisterAPI.h */,
+				32E9A54A1A6800E900545BB4 /* ProducerInsertDataApi.cpp */,
+				32E9A54B1A6800E900545BB4 /* ProducerInsertDataApi.h */,
+			);
+			path = producer;
 			sourceTree = "<group>";
 		};
 		32EE00CE19387E0B00621776 /* network */ = {
@@ -3240,9 +3268,13 @@
 				321237261A658404002A2D63 /* DefaultWANInterfaceHandler.cpp in Sources */,
 				32033D741A6524BE004F1B7D /* HTTPWANInterfaceRequest.cpp in Sources */,
 				32C7EAE71A5EC9980008DFE8 /* AbstractWANInterface.cpp in Sources */,
+				32E9A5461A67D02900545BB4 /* ProducerGroup.cpp in Sources */,
 				32C7EADD1A5D9EE30008DFE8 /* ChaosWANProxy.cpp in Sources */,
 				32033D711A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp in Sources */,
 				321237231A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp in Sources */,
+				32E9A5511A68092F00545BB4 /* ChaosBridge.cpp in Sources */,
+				32E9A5491A67D6D600545BB4 /* ProducerRegisterAPI.cpp in Sources */,
+				32E9A54C1A6800E900545BB4 /* ProducerInsertDataApi.cpp in Sources */,
 				32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */,
 				32C7EAD71A5D9E450008DFE8 /* main.cpp in Sources */,
 			);

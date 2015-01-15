@@ -30,31 +30,34 @@ namespace chaos {
 			//! define the abstract typede hash map
 			template<typename T>
 			class TypedConstrainedHashMap:
-			protected chaos::common::utility::TemplatedKeyValueHashMap<T> {
+			protected chaos::common::utility::TemplatedKeyValueHashMap<T*> {
 				
 			public:
 				//! construct the group with a name
-				TypedConstrainedHashMap(uint32_t hash_power):common::utility::TemplatedKeyValueHashMap<T>(hash_power){};
+				TypedConstrainedHashMap(uint32_t hash_power):common::utility::TemplatedKeyValueHashMap<T*>(hash_power){};
 				
 				//! default destructor
 				virtual ~TypedConstrainedHashMap(){};
 				
 				//! add a class instance as api with a name
 				template <typename A>
-				void addApi(const std::string& name) {
-					INSTANCER(A, T) i = ALLOCATE_INSTANCER(A, T);
-					addElement(name.c_str(),
-							   name.size(),
-							   i.getInstance());
+				void addType(const std::string& name) {
+					std::auto_ptr<INSTANCER(A, T)> i(ALLOCATE_INSTANCER(A, T));
+					chaos::common::utility::TemplatedKeyValueHashMap<T*>::addElement(name.c_str(),
+																					 name.size(),
+																					 i->getInstance());
 				}
 				
 				//! add a class instance as api the name is got from the service name
 				template <typename A>
-				void addApi() {
-					INSTANCER(A, T) i = ALLOCATE_INSTANCER(A, T);
-					addElement(i.getName().c_str(),
-							   i.getName().c_str(),
-							   i.getInstance());
+				void addType() {
+					std::auto_ptr<INSTANCER(A, T)> i(ALLOCATE_INSTANCER(A, T));
+					T *instance = i->getInstance();
+					if(instance) {
+						chaos::common::utility::TemplatedKeyValueHashMap<T*>::addElement(instance->getName().c_str(),
+																						 (uint32_t)instance->getName().size(),
+																						 instance);
+					}
 				}
 				
 				void removeAll() {

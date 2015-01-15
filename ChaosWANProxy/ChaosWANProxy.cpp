@@ -19,6 +19,7 @@
  */
 #include "ChaosWANProxy.h"
 #include "global_constant.h"
+#include "DefaultWANInterfaceHandler.h"
 #include "wan_interface/wan_interface.h"
 
 #include <csignal>
@@ -38,6 +39,15 @@ WaitSemaphore chaos::wan_proxy::ChaosWANProxy::waitCloseSemaphore;
 #define LCND_LAPP LAPP_ << "[ChaosWANProxy] - "
 #define LCND_LDBG LDBG_ << "[ChaosWANProxy] - " << __PRETTY_FUNCTION__ << " - "
 #define LCND_LERR LERR_ << "[ChaosWANProxy] - " << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
+
+ChaosWANProxy::ChaosWANProxy():
+wan_interface_handler(NULL) {
+	
+}
+
+ChaosWANProxy::~ChaosWANProxy() {
+	
+}
 
 //! C and C++ attribute parser
 /*!
@@ -83,6 +93,12 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 		network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
 		network_broker_service.init(NULL, __PRETTY_FUNCTION__);
 		
+		chaos_bridge = new ChaosBridge(setting.list_cds_server, network_broker_service->getDirectIOClientInstance());
+		if(!chaos_bridge) throw CException(-4, "Error instantiating chaos bridge", __PRETTY_FUNCTION__);
+		
+		//Allcoate the handler
+		wan_interface_handler = new DefaultWANInterfaceHandler();
+		if(!wan_interface_handler) throw CException(-5, "Error instantiating wan interface handler", __PRETTY_FUNCTION__);
 		//start all proxy interface
 		for(SettingStringListIterator it = setting.list_wan_interface_to_enable.begin();
 			it != setting.list_wan_interface_to_enable.end();
@@ -101,6 +117,8 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 												 (void*)setting.parameter_wan_interfaces.c_str(),
 												 tmp_interface_instance->getName(),
 												 __PRETTY_FUNCTION__);
+			//se the handler
+			tmp_interface_instance->setHandler(wan_interface_handler);
 			
 			//add implemetnation to list
 			wan_active_interfaces.push_back(tmp_interface_instance);
@@ -194,6 +212,20 @@ void ChaosWANProxy::deinit()   throw(CException) {
 	
 	//clear the vector
 	wan_active_interfaces.clear();
+	
+	if(wan_interface_handler) {
+		delete(wan_interface_handler);
+		wan_interface_handler = NULL;
+	}
+	
+	if(chaos_bridge) {
+		chaos_bridge->clear();
+		if(chaos_bridge->direct_io_client) {
+			delete(chaos_bridge->direct_io_client);
+		}
+		delete(chaos_bridge);
+		chaos_bridge = NULL;
+	}
 	
 	//deinit network brocker
 	network_broker_service.deinit(__PRETTY_FUNCTION__);

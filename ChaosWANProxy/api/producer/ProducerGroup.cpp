@@ -1,9 +1,9 @@
 /*
- *	DefaultWANInterfaceHandler.cpp
+ *	ProducerGroup.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,17 +17,19 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "DefaultWANInterfaceHandler.h"
+#include "ProducerGroup.h"
+#include "ProducerRegisterAPI.h"
+#include "ProducerInsertDataAPI.h"
+using namespace chaos::wan_proxy::api::producer;
 
-#include "api/producer/ProducerGroup.h"
-
-using namespace chaos::wan_proxy;
-
-DefaultWANInterfaceHandler::DefaultWANInterfaceHandler() {
-	//add group to the version 1
-	addGroupToVersion<api::producer::ProducerGroup>(1);
+ProducerGroup::ProducerGroup():
+AbstractApiGroup("producer"){
+	
+	//ad api to group
+	addType<ProducerRegisterApi>();
+	addType<ProducerInsertDataApi>();
 }
 
-DefaultWANInterfaceHandler::~DefaultWANInterfaceHandler() {
-    
+ProducerGroup::~ProducerGroup() {
+	
 }

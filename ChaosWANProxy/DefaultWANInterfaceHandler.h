@@ -30,10 +30,6 @@ namespace chaos {
         public:
             DefaultWANInterfaceHandler();
             ~DefaultWANInterfaceHandler();
-            int handleCall(const std::vector<std::string>& api_tokens,
-						   Json::Value input_data,
-						   std::map<std::string, std::string>& output_header,
-						   Json::Value& output_data);
         };
         
     }

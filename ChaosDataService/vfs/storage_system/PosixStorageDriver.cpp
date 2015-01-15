@@ -47,7 +47,7 @@ namespace boost_fs = boost::filesystem;
 namespace chaos_data = chaos::common::data;
 
 //---------------------------------------------------------------------------
-
+DEFINE_CLASS_FACTORY(PosixStorageDriver, StorageDriver);
 PosixStorageDriver::PosixStorageDriver(std::string alias):StorageDriver(alias) {
 	
 }

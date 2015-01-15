@@ -30,7 +30,7 @@ namespace chaos_data = chaos::common::data;
 #define MDBID_LDBG_ LDBG_ << MongoDBDriver_LOG_HEAD << __FUNCTION__ << " - "
 #define MDBID_LERR_ LERR_ << MongoDBDriver_LOG_HEAD << __FUNCTION__ << " - "
 
-
+DEFINE_CLASS_FACTORY(MongoDBDriver, DBDriver);
 //!
 MongoDBDriver::MongoDBDriver(std::string alias):DBDriver(alias) {}
 

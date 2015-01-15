@@ -23,7 +23,9 @@
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include "global_type.h"
+#include "ChaosBridge.h"
 #include "wan_interface/AbstractWANInterface.h"
+#include "wan_interface/BaseWANInterfaceHandler.h"
 
 #include <boost/thread/condition.hpp>
 
@@ -55,12 +57,17 @@ namespace chaos {
 			//! network broker for talk with others chaos node
 			chaos::common::utility::StartableServiceContainer<NetworkBroker> network_broker_service;
 			
-			ChaosWANProxy(){};
-			~ChaosWANProxy(){};
+			ChaosWANProxy();
+			~ChaosWANProxy();
 			static void signalHanlder(int);
 			
 			//! list of all active interface
 			std::vector<wan_interface::AbstractWANInterface*> wan_active_interfaces;
+			
+			//!base handler pinter
+			wan_interface::BaseWANInterfacelHandler *wan_interface_handler;
+			
+			ChaosBridge *chaos_bridge;
 		public:
 			//gloabl applicaiton settin
 			settings setting;

@@ -21,6 +21,8 @@ static const boost::regex MemcachedIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]
 
 
 using namespace chaos::data_service::cache_system;
+
+DEFINE_CLASS_FACTORY(MemcachedCacheDriver, CacheDriver);
 MemcachedCacheDriver::MemcachedCacheDriver(std::string alias): CacheDriver(alias), memcache_client(NULL) {
 	
 	//memcached_return_t configResult = MEMCACHED_SUCCESS;

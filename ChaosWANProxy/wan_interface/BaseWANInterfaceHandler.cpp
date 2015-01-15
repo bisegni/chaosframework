@@ -27,12 +27,9 @@ using namespace chaos::wan_proxy::wan_interface;
 #pragma mark ApiGroupVersionDomain
 ApiGroupVersionDomain::ApiGroupVersionDomain():
 //set the hash map power to 8
-ApiGroupHashMap(8){
-	
-}
+ApiGroupHashMap(8){}
 
-ApiGroupVersionDomain::~ApiGroupVersionDomain() {
-}
+ApiGroupVersionDomain::~ApiGroupVersionDomain() {}
 
 // inherited from AbstractApiHashMap
 void ApiGroupVersionDomain::clearHashTableElement(const void *key,
@@ -69,7 +66,8 @@ int ApiGroupVersionDomain::callGroupApi(std::vector<std::string>& api_tokens,
 
 // default constructor
 BaseWANInterfacelHandler::BaseWANInterfacelHandler() {
-    
+	//the element at position 0 is a fake to do a 1 based vector
+	api_group_version_domain_list.push_back(NULL);
 }
 
 // default destructor
@@ -78,7 +76,7 @@ BaseWANInterfacelHandler::~BaseWANInterfacelHandler() {
 	for(GroupVersionListIterator it = api_group_version_domain_list.begin();
 		it != api_group_version_domain_list.end();
 		it++) {
-		delete(*it);
+		if(*it) delete(*it);
 	}
 	api_group_version_domain_list.clear();
 }

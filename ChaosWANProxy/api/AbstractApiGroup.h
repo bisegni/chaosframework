@@ -35,7 +35,7 @@ namespace chaos {
 	namespace wan_proxy {
 		namespace api {
 			
-			typedef utility::TypedConstrainedHashMap<AbstractApi*> ApiHashMap;
+			typedef utility::TypedConstrainedHashMap<AbstractApi> ApiHashMap;
 			
 			//! define the abstract group of api
 			class AbstractApiGroup:

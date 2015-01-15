@@ -62,9 +62,9 @@ ZMQDirectIOServer::~ZMQDirectIOServer(){
 
 //! Initialize instance
 void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
-    DirectIOServer::init(init_data);
-    chaos_data::CDataWrapper *init_cw = static_cast<chaos_data::CDataWrapper*>(init_data);
-    if(!init_cw) throw chaos::CException(0, "No configration has been provided", __FUNCTION__);
+	
+	chaos_data::CDataWrapper *init_cw = static_cast<chaos_data::CDataWrapper*>(init_data);
+	if(!init_cw) throw chaos::CException(0, "No configration has been provided", __FUNCTION__);
 	
 	//get the port from configuration
 	priority_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT);
@@ -72,6 +72,7 @@ void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
 	
 	service_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT);
 	if(service_port <= 0) throw chaos::CException(0, "Bad service port configured", __FUNCTION__);
+    DirectIOServer::init(init_data);
 	
 	//create the endpoint strings
     priority_socket_bind_str = boost::str( boost::format("tcp://*:%1%") % priority_port);

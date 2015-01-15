@@ -126,7 +126,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		   (getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE) > BOTH ||	//check if we have a valid run mode
 		   getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE) < QUERY)) {
 			//no cache server provided
-			throw chaos::CException(-1, "Invalid run mode", __PRETTY_FUNCTION__);
+			throw chaos::CException(-2, "Invalid run mode", __PRETTY_FUNCTION__);
 		}
 		
 		//get the run mode and if we are in cache only.... enable only query mode
@@ -135,11 +135,11 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		//check for mandatory configuration
 		if(!getGlobalConfigurationInstance()->hasOption(OPT_CACHE_SERVER_LIST)) {
 			//no cache server provided
-			throw chaos::CException(-1, "No cache server provided", __PRETTY_FUNCTION__);
+			throw chaos::CException(-3, "No cache server provided", __PRETTY_FUNCTION__);
 		}
 		if(run_mode == !getGlobalConfigurationInstance()->hasOption(OPT_DB_DRIVER_SERVERS)) {
 			//no cache server provided
-			throw chaos::CException(-2, "No index server provided", __PRETTY_FUNCTION__);
+			throw chaos::CException(-4, "No index server provided", __PRETTY_FUNCTION__);
 		}
 		
 		if(getGlobalConfigurationInstance()->hasOption(OPT_CACHE_DRIVER_KVP)) {
@@ -157,7 +157,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		//allocate the network broker
 		CDSLAPP_ << "Allocate Network Brocker";
 		network_broker.reset(new NetworkBroker(), "NetworkBroker");
-		if(!network_broker.get()) throw chaos::CException(-1, "Error instantiating network broker", __PRETTY_FUNCTION__);
+		if(!network_broker.get()) throw chaos::CException(-5, "Error instantiating network broker", __PRETTY_FUNCTION__);
 		network_broker.init(NULL, __PRETTY_FUNCTION__);
 
 		//allocate the db driver
@@ -166,7 +166,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			std::string db_driver_class_name = boost::str(boost::format("%1%DBDriver") % setting.db_driver_impl);
 			CDSLAPP_ << "Allocate index driver of type "<<db_driver_class_name;
 			db_driver_ptr = ObjectFactoryRegister<db_system::DBDriver>::getInstance()->getNewInstanceByName(db_driver_class_name);
-			if(!db_driver_ptr) throw chaos::CException(-1, "No index driver found", __PRETTY_FUNCTION__);
+			if(!db_driver_ptr) throw chaos::CException(-6, "No index driver found", __PRETTY_FUNCTION__);
 			InizializableService::initImplementation(db_driver_ptr, &setting.db_driver_setting, db_driver_ptr->getName(), __PRETTY_FUNCTION__);
 		}
 		
@@ -187,7 +187,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		   run_mode == BOTH) {
 			CDSLAPP_ << "Allocate the Query Data Consumer";
 			data_consumer.reset(new QueryDataConsumer(vfs_file_manager.get(), db_driver_ptr), "QueryDataConsumer");
-			if(!data_consumer.get()) throw chaos::CException(-1, "Error instantiating data consumer", __PRETTY_FUNCTION__);
+			if(!data_consumer.get()) throw chaos::CException(-7, "Error instantiating data consumer", __PRETTY_FUNCTION__);
 			data_consumer->settings = &setting;
 			data_consumer->network_broker = network_broker.get();
 			data_consumer.init(NULL, __PRETTY_FUNCTION__);
@@ -196,7 +196,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		   run_mode == BOTH) {
 			CDSLAPP_ << "Allocate the Data Consumer";
 			stage_data_consumer.reset(new StageDataConsumer(vfs_file_manager.get(), db_driver_ptr, &setting), "StageDataConsumer");
-			if(!stage_data_consumer.get()) throw chaos::CException(-1, "Error instantiating stage data consumer", __PRETTY_FUNCTION__);
+			if(!stage_data_consumer.get()) throw chaos::CException(-8, "Error instantiating stage data consumer", __PRETTY_FUNCTION__);
 			stage_data_consumer.init(NULL, __PRETTY_FUNCTION__);
 		}
     } catch (CException& ex) {

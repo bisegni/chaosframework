@@ -33,11 +33,11 @@ namespace chaos {
     namespace wan_proxy {
         namespace wan_interface {
 			
-			typedef chaos::wan_proxy::utility::TypedConstrainedHashMap<api::AbstractApiGroup*> ApiGroupHashMap;
+			typedef chaos::wan_proxy::utility::TypedConstrainedHashMap<api::AbstractApiGroup> ApiGroupHashMap;
 			
 			//! collect all group of api that respetc a specified version
 			struct ApiGroupVersionDomain:
-			private ApiGroupHashMap {
+			public ApiGroupHashMap {
 				ApiGroupVersionDomain();
 				~ApiGroupVersionDomain();
 				
@@ -88,19 +88,21 @@ namespace chaos {
 				 \param output_header is the output header map that help to collect the header of the api result
 				 \param output_data is the json objetc taht will collect the data to forward as response to the request.
                  */
-                int handleCall(int version,
-							   std::vector<std::string>& api_tokens,
-							   const Json::Value& input_data,
-							   std::map<std::string, std::string>& output_header,
-							   Json::Value& output_data);
+                virtual int handleCall(int version,
+									   std::vector<std::string>& api_tokens,
+									   const Json::Value& input_data,
+									   std::map<std::string, std::string>& output_header,
+									   Json::Value& output_data);
 				
 				
 				template<typename G>
 				void addGroupToVersion(int version) {
-					if(api_group_version_domain_list.size() < version) {
+					if(api_group_version_domain_list.size() < version+1) {
 						//add the new version
 						api_group_version_domain_list.push_back(new ApiGroupVersionDomain());
 					}
+					//add the group to the version
+					api_group_version_domain_list[version]->addType<G>();
 				}
 
             };

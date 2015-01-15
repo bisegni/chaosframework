@@ -44,6 +44,7 @@ static const boost::regex CouchbaseIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]
 
 using namespace chaos::data_service::cache_system;
 
+DEFINE_CLASS_FACTORY(CouchbaseCacheDriver, CacheDriver);
 void CouchbaseCacheDriver::errorCallback(lcb_t instance,
 										  lcb_error_t err,
 										  const char *errinfo) {

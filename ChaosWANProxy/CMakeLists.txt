@@ -3,7 +3,8 @@ include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 
 SET(wp_src main.cpp		main.cpp
 						ChaosWANProxy.cpp
-						DefaultWANInterfaceHandler.cpp)
+						DefaultWANInterfaceHandler.cpp
+						ChaosBridge.cpp)
 
 SET(wp_src ${wp_src}	wan_interface/AbstractWANInterface.cpp
 						wan_interface/AbstractWANInterfaceResponse.cpp
