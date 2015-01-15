@@ -30,7 +30,7 @@
 #define COPPQUEUE_LAPP_ LAPP_ << uid << "[CObjectProcessingPriorityQueue] - "
 
 namespace chaos {
-    using namespace std;
+
     template<typename T>
     class CObjectProcessingPriorityQueue;
     /*
@@ -80,7 +80,7 @@ namespace chaos {
              */
             template<typename T>
             class CObjectProcessingPriorityQueue {
-                string uid;
+                std::string uid;
                 priority_queue< PRIORITY_ELEMENT(T)*, std::vector< PRIORITY_ELEMENT(T)* >, pless< PRIORITY_ELEMENT(T) > > bufferQueue;
                 bool inDeinit;
                 int outputThreadNumber;

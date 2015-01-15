@@ -23,7 +23,7 @@
 #include <boost/program_options/parsers.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
 namespace po = boost::program_options;
-
+using namespace std;
 #define WRITE_THREAD_UPDATE_RATE 2
 #define READ_THREAD_NUMBER 1
 #define READ_THREAD_UPDATE_RATE_MS_MAX 2
@@ -111,7 +111,7 @@ int main(int argc, const char * argv[]) {
         std::cout << "Number of reader " << readersNumber << " at rate of " << rUpdateMs << " ms" << std::endl;
         std::cout << "Garbager at rate of " << gUpdateMs << " ms" << std::endl;
         
-        auto_ptr<chaos::common::data::cache::KeyGroupCache> dsCache(new chaos::common::data::cache::KeyGroupCache());
+	auto_ptr<chaos::common::data::cache::KeyGroupCache> dsCache(new chaos::common::data::cache::KeyGroupCache());
         dsCache->addKeyInfo("ch_i32", chaos::DataType::TYPE_INT32);
         dsCache->init(NULL);
         dsCache->start();

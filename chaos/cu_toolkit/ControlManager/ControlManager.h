@@ -59,14 +59,16 @@
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_DEFAULT	5000
 
 
-//define the type for the Control Unit isntancer
+//define the type for the Control Unit instancer
 
 namespace chaos {
     namespace cu {
 		namespace control_manager {
-			using namespace std;
-			using namespace boost;
-			
+
+
+#define REGISTER_CU(_cu_)						\
+		  chaos::cu::ChaosCUToolkit::getInstance()->registerControlUnit< _cu_ >();
+
 			typedef chaos::common::utility::ObjectInstancerP3<AbstractControlUnit,
 			const std::string&,
 			const std::string&,

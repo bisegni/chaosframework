@@ -35,7 +35,7 @@
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/exception/CException.h>
 
-using namespace std;
+
 using namespace boost::msm::front::euml;
 using namespace boost::msm::front;
 namespace mpl = boost::mpl;
@@ -97,17 +97,17 @@ namespace chaos {
 				const uint8_t getServiceState() const;
 				
 				
-				static bool initImplementation(InizializableService& impl, void *initData, const string & implName,  const string & domainString);
-				static bool deinitImplementation(InizializableService& impl, const string & implName,  const string & domainString);
+				static bool initImplementation(InizializableService& impl, void *initData, const std::string & implName,  const std::string & domainString);
+				static bool deinitImplementation(InizializableService& impl, const std::string & implName,  const std::string & domainString);
 				
-				static bool initImplementation(InizializableService *impl, void *initData, const string & implName,  const string & domainString);
-				static bool deinitImplementation(InizializableService *impl, const string & implName,  const string & domainString);
+				static bool initImplementation(InizializableService *impl, void *initData, const std::string & implName,  const std::string & domainString);
+				static bool deinitImplementation(InizializableService *impl, const std::string & implName,  const std::string & domainString);
 			};
 			
 			template<typename T>
 			class InizializableServiceContainer {
 				bool delete_on_dispose;
-				string service_name;
+				std::string service_name;
 				T *startable_service_instance;
 			public:
 				InizializableServiceContainer():
@@ -115,14 +115,14 @@ namespace chaos {
 				startable_service_instance(NULL){}
 				
 				InizializableServiceContainer(bool _delete_on_dispose,
-											  const string & instance_name):
+											  const std::string & instance_name):
 				delete_on_dispose(_delete_on_dispose),
 				startable_service_instance(new T()),
 				service_name(instance_name) {}
 				
 				InizializableServiceContainer(T *instance,
 											  bool _delete_on_dispose,
-											  const string & instance_name):
+											  const std::string & instance_name):
 				startable_service_instance(instance),
 				delete_on_dispose(_delete_on_dispose),
 				service_name(instance_name) {}
@@ -131,11 +131,11 @@ namespace chaos {
 					if(delete_on_dispose) delete(startable_service_instance);
 				}
 				
-				bool init(void *init_data, const string & domainString) {
+				bool init(void *init_data, const std::string & domainString) {
 					return InizializableService::initImplementation(startable_service_instance, init_data, service_name, domainString);
 				}
 				
-				bool deinit(const string & domainString) {
+				bool deinit(const std::string & domainString) {
 					return InizializableService::deinitImplementation(startable_service_instance, service_name, domainString);
 				}
 				
@@ -146,7 +146,7 @@ namespace chaos {
 				T* get() {
 					return startable_service_instance;
 				}
-				void reset(T *new_instance, const string & instance_name) {
+				void reset(T *new_instance, const std::string & instance_name) {
 					if(startable_service_instance) {
 						delete startable_service_instance;
 					}

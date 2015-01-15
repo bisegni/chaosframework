@@ -65,10 +65,10 @@
 #define CHAOS_ASSERT(x) \
 if (! (x)) \
 { \
-cout << "ERROR!! Assert " << #x << " failed\n"; \
-cout << " on line " << __LINE__  << "\n"; \
-cout << " in file " << __FILE__ << "\n";  \
-cout.flush();\
+  std::cout << "ERROR!! Assert " << #x << " failed\n";	\
+    std::cout << " on line " << __LINE__  << "\n";	\
+    std::cout << " in file " << __FILE__ << "\n";	\
+    std::cout.flush();					\
 }
 #endif
 

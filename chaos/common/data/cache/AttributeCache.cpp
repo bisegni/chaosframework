@@ -21,7 +21,7 @@
 #include <chaos/common/data/cache/AttributeCache.h>
 
 using namespace chaos::common::data::cache;
-
+using namespace std;
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/

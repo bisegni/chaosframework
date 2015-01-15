@@ -23,9 +23,6 @@
 
 #include <vector>
 #include <boost/ptr_container/ptr_vector.hpp>
-using namespace std;
-
-
 namespace chaos {
 	namespace common {
 		namespace utility {
@@ -35,10 +32,10 @@ namespace chaos {
 			 */
 			template <typename T>
 			class ArrayPointer{
-				vector<T*> pointerArray;
+			  std::vector<T*> pointerArray;
 			public:
 				
-				typedef typename vector<T*>::iterator ArrayPointerIterator;
+			  typedef typename std::vector<T*>::iterator ArrayPointerIterator;
 				
 				/*
 				 Destructor
@@ -60,7 +57,7 @@ namespace chaos {
 				 */
 				void clear(){
 					//we need to delete all remainig element
-					for (typename vector<T*>::iterator tIter = pointerArray.begin();
+				  for (typename std::vector<T*>::iterator tIter = pointerArray.begin();
 						 tIter != pointerArray.end();
 						 tIter++) {
 						delete *tIter;
@@ -75,7 +72,7 @@ namespace chaos {
 				/*
 				 return the number of objet pointer managed
 				 */
-				typename vector<T*>::size_type size() const { return pointerArray.size(); };
+				typename std::vector<T*>::size_type size() const { return pointerArray.size(); };
 				
 				ArrayPointerIterator begin(){ return pointerArray.begin(); }
 				

@@ -28,7 +28,6 @@
 #include <chaos/common/utility/ArrayPointer.h>
 
 #include <boost/thread.hpp>
-using namespace std;
 
 namespace chaos_data = chaos::common::data;
 namespace chaos_io = chaos::common::io;
@@ -45,11 +44,11 @@ namespace chaos{
 			} KeyDataStorageDomain;
 			
 			class KeyDataStorage {
-				string key;
-				string output_key;
-				string input_key;
-				string system_key;
-				string custom_key;
+				std::string key;
+				std::string output_key;
+				std::string input_key;
+				std::string system_key;
+				std::string custom_key;
 				
 				//restore poitn map
 				std::map<std::string, std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> > > restore_point_map;

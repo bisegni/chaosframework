@@ -78,7 +78,7 @@ namespace chaos {
 			protected:
 				void forwardEventToClientConnection(DirectIOClientConnection *client, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type);
 			public:
-                DirectIOClient(string alias);
+                DirectIOClient(std::string alias);
 				virtual ~DirectIOClient();
 				
 				//! create a new connection for a server

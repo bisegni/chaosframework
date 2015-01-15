@@ -48,8 +48,8 @@ namespace chaos{
 					
 					boost::dynamic_bitset<BitBlockDimension> bitmapChangedAttribute;
 					
-					map<string, VariableIndexType> mapAttributeNameIndex;
-					map<VariableIndexType, boost::shared_ptr<AttributeValue> > mapAttributeIndex;
+					std::map<std::string, VariableIndexType> mapAttributeNameIndex;
+					std::map<VariableIndexType, boost::shared_ptr<AttributeValue> > mapAttributeIndex;
 					
 					
 				public:

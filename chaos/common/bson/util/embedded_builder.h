@@ -84,8 +84,8 @@ namespace bson {
 
         BSONObjBuilder *back() { return _builders.back().second; }
 
-        vector< pair< string, BSONObjBuilder * > > _builders;
-        vector< boost::shared_ptr< BSONObjBuilder > > _builderStorage;
+	std::vector< std::pair< std::string, BSONObjBuilder * > > _builders;
+	std::vector< boost::shared_ptr< BSONObjBuilder > > _builderStorage;
 
     };
 

@@ -44,15 +44,20 @@ namespace chaos {
 		}
 		namespace driver_manager {
 			
-			#define MATERIALIZE_INSTANCE_AND_INSPECTOR(DriverClass) \
-			boost::shared_ptr< chaos::common::plugin::PluginInspector> DriverClass ## Inspector(GET_PLUGIN_CLASS_DEFINITION(DriverClass)); \
-			boost::shared_ptr< chaos::common::utility::ObjectInstancer< chaos::cu::driver_manager::driver::AbstractDriver > > DriverClass ## Instancer(CU_DRIVER_INSTANCER(DriverClass));
+			#define MATERIALIZE_INSTANCE_AND_INSPECTOR(_DriverClass_) \
+			boost::shared_ptr< chaos::common::plugin::PluginInspector> _DriverClass_ ## Inspector(GET_PLUGIN_CLASS_DEFINITION(_DriverClass_)); \
+			boost::shared_ptr< chaos::common::utility::ObjectInstancer< chaos::cu::driver_manager::driver::AbstractDriver > > _DriverClass_ ## Instancer(CU_DRIVER_INSTANCER(_DriverClass_));
 			
-			#define MATERIALIZE_INSTANCE_AND_INSPECTOR_WITH_NS(n, DriverClass) \
-			boost::shared_ptr< chaos::common::plugin::PluginInspector> DriverClass ## Inspector(GET_PLUGIN_CLASS_DEFINITION(DriverClass)); \
-			boost::shared_ptr< chaos::common::utility::ObjectInstancer< chaos::cu::driver_manager::driver::AbstractDriver > > DriverClass ## Instancer(CU_DRIVER_INSTANCER(n::DriverClass));
+#define MATERIALIZE_INSTANCE_AND_INSPECTOR_WITH_NS(_n_, _DriverClass_)	\
+			boost::shared_ptr< chaos::common::plugin::PluginInspector> _DriverClass_ ## Inspector(GET_PLUGIN_CLASS_DEFINITION(_DriverClass_)); \
+			  boost::shared_ptr< chaos::common::utility::ObjectInstancer< chaos::cu::driver_manager::driver::AbstractDriver > > _DriverClass_ ## Instancer(CU_DRIVER_INSTANCER(_n_::_DriverClass_));
 			
-			#define CU_DRIVER_INSTANCER(DriverClass) new chaos::common::utility::TypedObjectInstancer<DriverClass, chaos::cu::driver_manager::driver::AbstractDriver>()
+#define CU_DRIVER_INSTANCER(_DriverClass_) new chaos::common::utility::TypedObjectInstancer< _DriverClass_, chaos::cu::driver_manager::driver::AbstractDriver >()
+		  
+#define REGISTER_DRIVER(driver) \
+		  MATERIALIZE_INSTANCE_AND_INSPECTOR(driver);\
+		  chaos::cu::driver_manager::driver::DriverManager::getInstance()->registerDriver(driver ##Instancer, driver ##Inspector);
+
 
 			typedef struct DriverPluginInfo {
 				boost::shared_ptr< chaos::common::plugin::PluginInspector > sp_inspector;

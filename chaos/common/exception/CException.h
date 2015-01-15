@@ -26,7 +26,6 @@
 
 #define MSG_ERROR_BUF 255
 
-using namespace std;
 namespace chaos{
     /*
      Base class for exception in control system library
@@ -42,16 +41,16 @@ namespace chaos{
             ss << "Message:" << errorMessage<<std::endl;
             ss << "Error Code;" << errorCode<<std::endl;
             ss << "-----------Exception------------"<<std::endl;
-            const string& strSS = ss.str();
+            const std::string& strSS = ss.str();
             msg = strSS.c_str();
         }
     public:
         //! identify the number for the error
         int errorCode;
         //! describe the error that occour
-        string errorMessage;
+        std::string errorMessage;
         //! identify the domain(ControlUnit, DataManager, ....)
-        string errorDomain;
+        std::string errorDomain;
 
         
         explicit CException(int eCode, const char * eMessage,  const char * eDomain):errorCode(eCode),

@@ -28,7 +28,7 @@
 namespace chaos {
     namespace common{
         namespace plugin {
-            using namespace std;
+
             //! Postifix of the allocator
             /*!
              Define the postifx of the allocator "c" function, exported by the ddl.

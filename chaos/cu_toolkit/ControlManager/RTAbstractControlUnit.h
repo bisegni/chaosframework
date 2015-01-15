@@ -36,7 +36,7 @@ namespace chaos_data = chaos::common::data;
 namespace chaos {
 	using namespace boost;
 	using namespace boost::chrono;
-	using namespace std;
+
     namespace cu {
 		namespace control_manager {
 			class ControManager;

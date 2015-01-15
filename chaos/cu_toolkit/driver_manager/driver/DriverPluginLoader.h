@@ -35,7 +35,7 @@ namespace chaos {
                     PluginLoader subclass for the loading of the control unit driver plugin
                  */
                 class DriverPluginLoader : private chaos::common::plugin::PluginLoader {
-                    std::map<string, boost::function<AbstractDriverPlugin*()> > driverAllocatorFunctions;
+		  std::map<std::string, boost::function<AbstractDriverPlugin*()> > driverAllocatorFunctions;
                 public:
                     //! default constructor
                     DriverPluginLoader(const char *pluginPath);

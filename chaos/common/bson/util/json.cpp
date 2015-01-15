@@ -25,7 +25,7 @@
 #include <chaos/common/bson/util/time_support.h>
 
 namespace bson {
-
+  using namespace std;
 #if 0
 #define MONGO_JSON_DEBUG(message) log() << "JSON DEBUG @ " << __FILE__\
     << ":" << __LINE__ << " " << __FUNCTION__ << ": " << message << endl;

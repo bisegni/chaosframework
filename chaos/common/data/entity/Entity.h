@@ -76,9 +76,9 @@ namespace chaos {
             
             int32_t updateProperty(uint32_t propertyID, uint32_t keyID, const char * propertyVal);
 
-            int32_t addProperty(uint32_t keyID, string& propertyVal);
+            int32_t addProperty(uint32_t keyID, std::string& propertyVal);
 
-            int32_t updateProperty(uint32_t propertyID, uint32_t keyID, string& propertyVal);
+            int32_t updateProperty(uint32_t propertyID, uint32_t keyID, std::string& propertyVal);
 
             int32_t addProperty(uint32_t keyID, int64_t propertyVal);
             
@@ -96,7 +96,7 @@ namespace chaos {
             
             int32_t getPropertyByKeyID(uint32_t keyID, ptr_vector<chaos::edb::KeyIdAndValue>& propertys);
             
-            int32_t getPropertyByKeyID(vector<uint32_t>& keyIDs, ptr_vector<chaos::edb::KeyIdAndValue>& propertys);
+            int32_t getPropertyByKeyID(std::vector<uint32_t>& keyIDs, ptr_vector<chaos::edb::KeyIdAndValue>& propertys);
         };
         
     }

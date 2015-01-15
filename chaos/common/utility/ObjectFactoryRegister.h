@@ -24,7 +24,6 @@
 #include <string>
 #include <chaos/common/utility/Singleton.h>
 
-using namespace std;
 namespace chaos {
 	namespace common{
 		namespace utility {
@@ -34,7 +33,7 @@ namespace chaos {
 				public :
 				ObjectFactory(const std::string & _object_alias):object_alias(_object_alias){};
 				virtual void* createInstance() = 0;
-				const string & getAlias() {
+				const std::string & getAlias() {
 					return object_alias;
 				}
 			};
@@ -66,13 +65,13 @@ namespace chaos {
 			template <typename T>
 			class ObjectFactoryRegister: public Singleton< ObjectFactoryRegister<T> > {
 				//object factories map
-				map<string, ObjectFactory*>  objectFacotoryList;
+			  std::map<std::string, ObjectFactory*>  objectFacotoryList;
 				
 			public:
 				/*
 				 Register the Abstract command factory for a Command associated with an alias
 				 */
-				void registerObjectFactory(const string & alias, ObjectFactory *factoryPtr) {
+				void registerObjectFactory(const std::string & alias, ObjectFactory *factoryPtr) {
 					//register command into map
 					if(objectFacotoryList.count(alias) == 0){
 						objectFacotoryList.insert(make_pair(alias, factoryPtr));
@@ -83,7 +82,7 @@ namespace chaos {
 				/*
 				 Create a new instance for the command identified by input alias
 				 */
-				T *getNewInstanceByName(const string & alias) {
+				T *getNewInstanceByName(const std::string & alias) {
 					T *result=NULL;
 					//get the reference for the className
 					ObjectFactory *acf = objectFacotoryList[alias];
@@ -110,9 +109,9 @@ namespace chaos {
 				
 			};
 			
-#define MAKE_SERVICE_CLASS_CONSTRUCTOR(SERVICE_NAME) SERVICE_NAME(string *alias):NamedService(alias){};
+#define MAKE_SERVICE_CLASS_CONSTRUCTOR(SERVICE_NAME) SERVICE_NAME(std::string *alias):NamedService(alias){};
 			
-#define MAKE_SERVICE_SUBCLASS_CONSTRUCTOR(SERVICE_NAME, BASE_SERVICE_NAME) SERVICE_NAME(string *alias):BASE_SERVICE_NAME(alias)
+#define MAKE_SERVICE_SUBCLASS_CONSTRUCTOR(SERVICE_NAME, BASE_SERVICE_NAME) SERVICE_NAME(std::string *alias):BASE_SERVICE_NAME(alias)
 			/*
 			 Macro for help the Command Dispatcher classes registration
 			 */
