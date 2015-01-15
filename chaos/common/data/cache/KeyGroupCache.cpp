@@ -22,7 +22,7 @@
 
 using namespace chaos::common::utility;
 using namespace chaos::common::data::cache;
-
+using namespace std;
 KeyGroupCache::KeyGroupCache() {
     chCachePtrArray = NULL;
 }

@@ -38,7 +38,7 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManagerDefaultAdapters.h>
 
-using namespace std;
+
 using namespace boost;
 
 namespace chaos_data = chaos::common::data;
@@ -74,7 +74,7 @@ namespace chaos{
 				friend class chaos::cu::ChaosCUToolkit;
 				friend class Singleton<CommandManager>;
 				
-				string metadataServerAddress;
+				std::string metadataServerAddress;
 				bool canUseMetadataServer;
 				NetworkBroker *broker;
 				

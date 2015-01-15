@@ -54,8 +54,8 @@ namespace chaos {
 				/*!
 				 This methdo will take care for network address scan process
 				 */
-				static string scanForLocalNetworkAddress() {
-					string ip_port;
+				static std::string scanForLocalNetworkAddress() {
+					std::string ip_port;
 					struct ifaddrs * ifAddrStruct=NULL;
 					struct ifaddrs * ifa=NULL;
 #if __APPLE__

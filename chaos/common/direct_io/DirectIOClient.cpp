@@ -39,7 +39,7 @@ namespace b_algo = boost::algorithm;
 #define DIOLDBG_ LDBG_ << DIO_LOG_HEAD << __FUNCTION__
 #define DIOLERR_ LERR_ << DIO_LOG_HEAD
 
-DirectIOClient::DirectIOClient(string alias):NamedService(alias) {
+DirectIOClient::DirectIOClient(std::string alias):NamedService(alias) {
 	
 }
 

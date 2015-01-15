@@ -36,7 +36,6 @@
 
 //! Default chaos namespace used to group all common api
 namespace chaos {
-	using namespace std;
 
 	
 	//! Chaos common engine class

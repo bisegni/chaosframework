@@ -76,7 +76,7 @@ namespace chaos {
 				chaos::data_service::db_system::DataPackIndexQuery query;
 				
 				//!the current query cursor
-				auto_ptr<chaos::data_service::db_system::DBIndexCursor> query_cursor_ptr;
+				std::auto_ptr<chaos::data_service::db_system::DBIndexCursor> query_cursor_ptr;
 				
 				//! the map that collect the datablock for path
 				typedef std::map<std::string, query::DataBlockFetcher* >::iterator MapPathDatablockIterator;

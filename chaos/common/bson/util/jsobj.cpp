@@ -25,7 +25,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/static_assert.hpp>
-
+using namespace std;
 #include <chaos/common/bson/bson_validate.h>
 #include <chaos/common/bson/oid.h>
 #include <chaos/common/bson/util/atomic_int.h>

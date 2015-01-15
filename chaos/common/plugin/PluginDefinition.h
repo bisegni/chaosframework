@@ -89,6 +89,8 @@ return inspector; \
              The registration phase of the plugins permit to expose the aslias and the init attribute for all registered plugin
              using the PLuginLoader class
              */
+
+#ifndef CHAOS_STATIC
 #define OPEN_REGISTER_PLUGIN \
 extern "C" \
 chaos::common::plugin::PluginDiscover* BOOST_EXTENSION_EXPORT_DECL \
@@ -110,4 +112,9 @@ return discover;\
         }
     }
 }
+#else
+#define OPEN_REGISTER_PLUGIN
+#define CLOSE_REGISTER_PLUGIN
+#define REGISTER_PLUGIN(a)
+#endif
 #endif

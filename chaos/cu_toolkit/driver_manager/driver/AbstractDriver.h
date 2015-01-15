@@ -26,7 +26,6 @@
 
 #include <boost/thread.hpp>
 
-#include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/thread/TemplatedConcurrentQueue.h>
 

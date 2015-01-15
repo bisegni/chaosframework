@@ -23,7 +23,7 @@
 #include <boost/program_options/parsers.hpp>
 
 namespace po = boost::program_options;
-
+using namespace std;
 #define STRUCT_NUM 10
 
 #define WRITE_THREAD_UPDATE_RATE 2

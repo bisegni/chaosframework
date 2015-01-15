@@ -24,22 +24,22 @@
 namespace chaos {
 	namespace common {
 		namespace utility {
-			using namespace std;
+
 			
 			//! Named service utilityes class
 			/*!
 			 This class is a base class for all service that need to be recognized with an alias
 			 */
 			class NamedService {
-				string type_name;
+				std::string type_name;
 			protected:
-				explicit NamedService(const string & alias);
+				explicit NamedService(const std::string & alias);
 			public:
 				/*
 				 Return the alias of the current instance
 				 \return the alias
 				 */
-				const string & getName() const;
+				const std::string & getName() const;
 			};
 		}
 	}
