@@ -27,6 +27,6 @@ size_t PluginDiscover::getNamesSize() {
 }
 
 const char * const PluginDiscover::getNameForIndex(size_t idx) {
-    std::string result = names[idx];
+    const std::string& result = names[idx];
     return result.c_str();
 }

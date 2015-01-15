@@ -63,7 +63,8 @@ void LFDataCache::garbageCache() {
     int counter = 0;
     bool needToBeGarbaged = false;
     volatile boost::uint32_t *mem;
-    boost::uint32_t oldMem, oldValue;
+	boost::uint32_t oldMem = 0;
+	boost::uint32_t oldValue = 0;
 
     
     if(garbageableSlab.empty()) return;

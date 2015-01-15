@@ -104,15 +104,19 @@ CUSchemaDB::~CUSchemaDB() {
 /*
  Compose the attribute name
 */
-void CUSchemaDB::composeAttributeName(const char *deviceID, const char *attributeName, string& composedName) {
+void CUSchemaDB::composeAttributeName(const string& deviceID,
+									  const string& attributeName,
+									  string& composedName) {
     composedName.assign(deviceID).append(":").append(attributeName);
 } 
 
 /*
  Compose the attribute name
 */ 
-const char * CUSchemaDB::decomposeAttributeName(string& deviceID, string& attributeName) {
-    return attributeName.substr(deviceID.size()+1).c_str();
+void CUSchemaDB::decomposeAttributeName(const string& deviceID,
+										const string& attributeName,
+										std::string& decomposed) {
+    decomposed = attributeName.substr(deviceID.size()+1).c_str();
 }
 
 /*

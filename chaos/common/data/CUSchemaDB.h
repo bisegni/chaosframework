@@ -147,10 +147,14 @@ namespace chaos {
 				void fillDataWrapperWithDataSetDescription(entity::Entity*, CDataWrapper&);
 				
 				//!Compose the name of the attribute
-				inline void composeAttributeName(const char *deviceID, const char *attributeName, string& composedName);
+				inline void composeAttributeName(const string& deviceID,
+												 const string& attributeName,
+												 string& composedName);
 				
 				//!Decompose the attribute name
-				inline const char * decomposeAttributeName(string& deviceID, string& attributeName);
+				inline void decomposeAttributeName(const string& deviceID,
+												   const string& attributeName,
+												   std::string& decomposed);
 			public:
 				//!Default Contructor
 				/*!

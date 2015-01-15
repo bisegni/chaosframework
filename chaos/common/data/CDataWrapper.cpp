@@ -166,7 +166,8 @@ string  CDataWrapper::getStringValue(const char *key) {
 
 //get string value
 const char *  CDataWrapper::getCStringValue(const char *key) {
-    return bsonBuilder->asTempObj().getField(key).String().c_str();
+    //return bsonBuilder->asTempObj().getField(key).String().c_str();
+	return getRawValuePtr(key);
 }
 //add a integer value
 int32_t CDataWrapper::getInt32Value(const char *key) {

@@ -150,7 +150,12 @@ Response *HTTPRpcSyncServer::process(Request &request) {
 				result_buffer = result->getBSONData();
 				response->setHeader("Content-Type", "application/bson");
 			}
-			response->write(result_buffer->getBufferPtr(), result_buffer->getBufferLen());
+			
+			//if we have houtput...send it
+			if(result_buffer) {
+				response->write(result_buffer->getBufferPtr(), result_buffer->getBufferLen());
+				DELETE_OBJ_POINTER(result_buffer)
+			}
 		}
     } else {
         response->setCode(400);
