@@ -126,7 +126,7 @@ void *ZMQDirectIOClient::socketMonitor (void *ctx, const char * address, Connect
 //------------------------------STATIC METHOD---------------------------------
 
 
-ZMQDirectIOClient::ZMQDirectIOClient(string alias):DirectIOClient(alias){
+ZMQDirectIOClient::ZMQDirectIOClient(std::string alias):DirectIOClient(alias){
 	thread_run = false;
 	zmq_context = NULL;
 };
