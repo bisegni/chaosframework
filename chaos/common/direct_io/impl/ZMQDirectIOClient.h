@@ -60,7 +60,7 @@ namespace chaos {
                     
 					std::map<uint32_t, ConnectionMonitorInfo*> map_connection_socket_monitor;
 					
-                    ZMQDirectIOClient(string alias);
+					ZMQDirectIOClient(std::string alias);
                     
                     ~ZMQDirectIOClient();
 					

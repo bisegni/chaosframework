@@ -23,7 +23,7 @@
 using namespace boost;
 using namespace chaos;
 using namespace chaos::entity;
-
+using namespace std;
 #define KIV_MAKE(_n, _i, _t) chaos::edb::KeyIdAndValue _n;\
 _n.keyID = _i;\
 _n.type = _t;\

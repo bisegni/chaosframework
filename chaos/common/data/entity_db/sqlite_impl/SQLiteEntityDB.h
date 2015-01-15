@@ -39,7 +39,7 @@ namespace chaos {
          */
         
         REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(SQLiteEntityDB,EntityDB) {
-            string alias;
+            std::string alias;
             sqlite3 *dbInstance;
             
             boost::mutex seqWorkMutext;
@@ -65,7 +65,7 @@ namespace chaos {
             /*!
              Default constructor
              */
-            SQLiteEntityDB(/*string *_alias*/);
+            SQLiteEntityDB(/*std::string *_alias*/);
 
             /*!
              Default destructor

@@ -61,7 +61,7 @@ namespace chaos {
 					boost::unique_lock<boost::shared_mutex>	Lock(mutex_organizer_map);
 					
 					//associate the instance
-					organizer_map.insert(make_pair(key, item));
+					organizer_map.insert(std::make_pair(key, item));
 				}
 				
 				// dispose the channel instance

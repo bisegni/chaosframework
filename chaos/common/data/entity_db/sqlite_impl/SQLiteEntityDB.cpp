@@ -839,7 +839,7 @@ int16_t SQLiteEntityDB::openDatabase(const char *databasePath) {
   static unsigned long long pnt[1024*1024];
 
   assert(sqlite3_config(SQLITE_CONFIG_HEAP,pnt,sizeof(pnt),8)== SQLITE_OK);
-  LDBG_<<"Opening database:"<<databasePath<<" allocated buffer "<<hex<<pnt<<" size "<<dec<<sizeof(pnt)<<endl;
+  LDBG_<<"Opening database:"<<databasePath<<" allocated buffer "<<hex<<pnt<<" size "<<dec<<sizeof(pnt);
 #endif
   err= sqlite3_open(databasePath, &dbInstance);
 
@@ -855,22 +855,22 @@ int16_t  SQLiteEntityDB::closeDatabase() {
 int16_t SQLiteEntityDB::makeInsertUpdateDelete(const char *sql) {
 	int16_t error = SQLITE_OK;
 	sqlite3_stmt *insertStmt = NULL;
-	LDBG_<<"makeInsertUpdateDelete :"<<sql<<endl;
+	LDBG_<<"makeInsertUpdateDelete :"<<sql;
 	if((error = sqlite3_prepare_v2(dbInstance, sql, -1, &insertStmt, NULL)) != SQLITE_OK) {
-	  LERR_<<"## makeInsertUpdateDelete, preparing statement: err:"<<sqlite3_errmsg(dbInstance)<<endl;
+	  LERR_<<"## makeInsertUpdateDelete, preparing statement: err:"<<sqlite3_errmsg(dbInstance);
 	  return error;
 	}
 #if 0
     error = sqlite3_step(insertStmt);
     if(error!=SQLITE_OK){
-      LERR_<<"## makeInsertUpdateDelete, executing statement: err:"<<sqlite3_errmsg(dbInstance)<<endl;
+      LERR_<<"## makeInsertUpdateDelete, executing statement: err:"<<sqlite3_errmsg(dbInstance);
     }
 #else
     sqlite3_step(insertStmt);
 #endif
     error = sqlite3_finalize(insertStmt);
     if(error!=SQLITE_OK){
-      LERR_<<"## makeInsertUpdateDelete, finalizing statement:\""<<sql<<"\" err:"<<error<<":"<<sqlite3_errmsg(dbInstance)<<endl;
+      LERR_<<"## makeInsertUpdateDelete, finalizing statement:\""<<sql<<"\" err:"<<error<<":"<<sqlite3_errmsg(dbInstance);
       return error;
     } 
     return SQLITE_DONE;
