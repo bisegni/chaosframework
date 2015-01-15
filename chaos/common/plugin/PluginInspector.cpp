@@ -51,7 +51,7 @@ const char * const PluginInspector::getSubclass() {
 }
 
 void PluginInspector::addInitAttributeForName(const char *name, const char * initAttribute) {
-    initAttributeForName.insert(make_pair<string, string>(name, initAttribute));
+  initAttributeForName.insert(std::make_pair<std::string, std::string>(name, initAttribute));
 }
 
 size_t PluginInspector::getInputAttributeByNamesSize(const char *name) {
@@ -63,12 +63,12 @@ const char * const PluginInspector::getInputAttributeForNameAndIndex(const char 
     //check if name exists
     if(!initAttributeForName.count(name)) return NULL;
     
-    pair<multimap<string, string>::iterator, multimap<string, string>::iterator> attributesIterator;
+    std::pair<std::multimap<std::string, std::string>::iterator, std::multimap<std::string, std::string>::iterator> attributesIterator;
     attributesIterator = initAttributeForName.equal_range(name);
     
     //copy all init attribute for name
     int _idx = 0;
-    for (multimap<string, string>::iterator it2 = attributesIterator.first;
+    for (std::multimap<std::string, std::string>::iterator it2 = attributesIterator.first;
          it2 != attributesIterator.second;
          ++it2) {
         if(idx==_idx++) return it2->second.c_str();

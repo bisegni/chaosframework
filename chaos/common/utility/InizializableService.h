@@ -36,9 +36,7 @@
 #include <chaos/common/exception/CException.h>
 
 
-using namespace boost::msm::front::euml;
-using namespace boost::msm::front;
-namespace mpl = boost::mpl;
+
 
 namespace chaos {
 	namespace common {

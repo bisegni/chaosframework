@@ -28,7 +28,6 @@ namespace chaos {
         namespace driver_manager {
             namespace driver {
                 
-                using namespace chaos::common::plugin;
                 
                 //! Control Unit plugin loader
                 /*!
@@ -47,7 +46,7 @@ namespace chaos {
                     bool loaded();
                     
                     //! Get the inspector for the name
-                    PluginInspector* getInspectorForName(const char *pluginName);
+		    chaos::common::plugin::PluginInspector* getInspectorForName(const char *pluginName);
                     
                     //! Return the instance of the driver
                     AbstractDriverPlugin* newDriverInstance(std::string pluginName);

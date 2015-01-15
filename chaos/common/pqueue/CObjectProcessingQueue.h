@@ -35,8 +35,7 @@
 
 #define CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE 1000
 namespace chaos {
-    using namespace std;
-    using namespace boost;
+
     
     typedef struct {
         bool elementHasBeenDetached;
@@ -48,12 +47,12 @@ namespace chaos {
      */
     template<typename T>
     class CObjectProcessingQueue {
-        string uid;
+        std::string uid;
 		//thread group
         //CThreadGroup threadGroup;
 		boost::thread_group t_group;
     protected:
-        queue<T*> bufferQueue;
+		std::queue<T*> bufferQueue;
         //boost::lockfree::queue<T*> bufferQueue;
         bool in_deinit;
         int output_thread_number;

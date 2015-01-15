@@ -108,13 +108,14 @@ discover->addName(#a);
             //!
 #define CLOSE_REGISTER_PLUGIN \
 return discover;\
-}
-        }
-    }
-}
+ }
 #else
 #define OPEN_REGISTER_PLUGIN
 #define CLOSE_REGISTER_PLUGIN
 #define REGISTER_PLUGIN(a)
 #endif
+
+        }
+    }
+}
 #endif

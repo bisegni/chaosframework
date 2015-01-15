@@ -111,7 +111,7 @@ next_retrive_intervall(0){
 	
 	mongo::Status status = mongo::client::initialize();
 	if (!status.isOK()) {
-        std::cout << "failed to initialize the client driver: " << status.toString() << endl;
+	  MDBHAC_LERR_ << "failed to initialize the client driver: " << status.toString();
     }
 }
 
