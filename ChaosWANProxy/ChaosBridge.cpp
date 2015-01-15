@@ -30,19 +30,57 @@
 
 using namespace chaos::wan_proxy;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-ChaosBridge::ChaosBridge(const std::vector<std::string>&			_cds_address_list,
-						 chaos::common::direct_io::DirectIOClient	*_direct_io_client):
+ChaosBridge::ChaosBridge(chaos::common::direct_io::DirectIOClient	*_direct_io_client):
 direct_io_client(_direct_io_client),
 connection_feeder("ChaosBridge", this) {
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+ChaosBridge::~ChaosBridge() {
 	
+}
+
+void ChaosBridge::init(void *init_data) throw (chaos::CException) {
+	
+	InizializableService::initImplementation(direct_io_client,
+											 init_data,
+											 direct_io_client->getName(),
+											 __PRETTY_FUNCTION__);
+}
+
+void ChaosBridge::deinit() throw (chaos::CException) {
+	
+	connection_feeder.clear();
+	
+	if(direct_io_client) {
+		CHAOS_NOT_THROW(InizializableService::deinitImplementation(direct_io_client,
+																   direct_io_client->getName(),
+																   __PRETTY_FUNCTION__);)
+		delete(direct_io_client);
+	}
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+void ChaosBridge::clear() {
+	connection_feeder.clear();
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+void ChaosBridge::addServerList(const std::vector<std::string>& _cds_address_list) {
 	//checkif someone has passed us the device indetification
-	
 	CB_LAPP << "Scan the directio address";
 	
 	for (std::vector<std::string>::const_iterator it = _cds_address_list.begin();
@@ -55,17 +93,6 @@ connection_feeder("ChaosBridge", this) {
 		//add new url to connection feeder
 		connection_feeder.addURL(chaos::common::network::URL(*it));
 	}
-}
-
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-ChaosBridge::~ChaosBridge() {
-	
-}
-
-void ChaosBridge::clear() {
-	connection_feeder.clear();
 }
 
 /*---------------------------------------------------------------------------------
@@ -109,7 +136,7 @@ void* ChaosBridge::serviceForURL(const common::network::URL& url, uint32_t servi
 		//!put the index in the conenction so we can found it wen we receive event from it
 		clients_channel->connection->setCustomStringIdentification(boost::lexical_cast<std::string>(service_index));
 	} else {
-		CB_LDBG << "Error creating client connection for " << url.getURL();
+		CB_LERR << "Error creating client connection for " << url.getURL();
 	}
 	return clients_channel;
 }

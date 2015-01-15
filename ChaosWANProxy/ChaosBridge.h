@@ -28,6 +28,7 @@
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
 #include <chaos/common/network/URLServiceFeeder.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/InizializableService.h>
 
 #include <boost/thread.hpp>
 
@@ -45,7 +46,9 @@ namespace chaos {
 		//! class that realize the bridget versus cds and metadataserver
 		class ChaosBridge:
 		protected common::network::URLServiceFeederHandler,
-		protected chaos::common::direct_io::DirectIOClientConnectionEventHandler {
+		protected chaos::common::direct_io::DirectIOClientConnectionEventHandler,
+		public chaos::common::utility::InizializableService {
+			
 			friend class ChaosWANProxy;
 			chaos::common::direct_io::DirectIOClient	*direct_io_client;
 			chaos::common::message::MDSMessageChannel	*mds_messahe_channel;
@@ -63,9 +66,11 @@ namespace chaos {
 			void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
 							 chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
 		public:
-			ChaosBridge(const std::vector<std::string>&				cds_address_list,
-						chaos::common::direct_io::DirectIOClient	*_direct_io_client);
+			ChaosBridge(chaos::common::direct_io::DirectIOClient	*_direct_io_client);
 			~ChaosBridge();
+			void init(void *init_data) throw (chaos::CException);
+			void deinit() throw (chaos::CException);
+			void addServerList(const std::vector<std::string>& _cds_address_list);
 			
 			void clear();
 			
@@ -76,6 +81,8 @@ namespace chaos {
 			
 			//! get a dataset
 			chaos::common::data::CDataWrapper *getDataset(const std::string& producer_key);
+			
+			
 		};
 		
 	}

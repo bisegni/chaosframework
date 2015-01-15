@@ -30,8 +30,9 @@ int main(int argc, char * argv[]) {
 		//custom start parameter
 		//cache parameter
 		ChaosWANProxy::getInstance()->getGlobalConfigurationInstance()->addOption< SettingStringList >(setting_options::OPT_CDS_ADDR,
-																									   "CDS server lists ( a comma delimited list of host:p_port:s_port|endpoint )",
-																									   &ChaosWANProxy::getInstance()->setting.list_cds_server);
+																									   "CDS server lists [host:p_port:s_port|endpoint]",
+																									   &ChaosWANProxy::getInstance()->setting.list_cds_server,
+																									   true);
 		
 		ChaosWANProxy::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(setting_options::OPT_WAN_INTERFACE_PARAM,
 																								 "a json block of only strings that that contain the parameter for wan interfaces",
@@ -39,7 +40,8 @@ int main(int argc, char * argv[]) {
 		
 		ChaosWANProxy::getInstance()->getGlobalConfigurationInstance()->addOption< SettingStringList >(setting_options::OPT_INTERFACE_TO_ACTIVATE,
 																									   "Specify wich interface to enable",
-																									   &ChaosWANProxy::getInstance()->setting.list_wan_interface_to_enable);
+																									   &ChaosWANProxy::getInstance()->setting.list_wan_interface_to_enable,
+																									   true);
 
 		
 		//Init the Node

@@ -57,6 +57,8 @@ namespace chaos {
 			//! network broker for talk with others chaos node
 			chaos::common::utility::StartableServiceContainer<NetworkBroker> network_broker_service;
 			
+			chaos::common::utility::InizializableServiceContainer<ChaosBridge> chaos_bridge;
+			
 			ChaosWANProxy();
 			~ChaosWANProxy();
 			static void signalHanlder(int);
@@ -66,8 +68,7 @@ namespace chaos {
 			
 			//!base handler pinter
 			wan_interface::BaseWANInterfacelHandler *wan_interface_handler;
-			
-			ChaosBridge *chaos_bridge;
+
 		public:
 			//gloabl applicaiton settin
 			settings setting;

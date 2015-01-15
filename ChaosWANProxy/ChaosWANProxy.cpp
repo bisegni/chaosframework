@@ -93,8 +93,9 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 		network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
 		network_broker_service.init(NULL, __PRETTY_FUNCTION__);
 		
-		chaos_bridge = new ChaosBridge(setting.list_cds_server, network_broker_service->getDirectIOClientInstance());
-		if(!chaos_bridge) throw CException(-4, "Error instantiating chaos bridge", __PRETTY_FUNCTION__);
+		chaos_bridge.reset(new ChaosBridge(network_broker_service->getDirectIOClientInstance()), "ChaosBridge");
+		chaos_bridge.init(NULL, __PRETTY_FUNCTION__);
+		chaos_bridge->addServerList(setting.list_cds_server);
 		
 		//Allcoate the handler
 		wan_interface_handler = new DefaultWANInterfaceHandler();
@@ -185,7 +186,7 @@ void ChaosWANProxy::stop()   throw(CException) {
 															 (*it)->getName(),
 															 __PRETTY_FUNCTION__);)
 	}
-
+	
 	//stop network brocker
 	network_broker_service.stop(__PRETTY_FUNCTION__);
 	
@@ -205,7 +206,6 @@ void ChaosWANProxy::deinit()   throw(CException) {
 		CHAOS_NOT_THROW(StartableService::deinitImplementation(*it,
 															   (*it)->getName(),
 															   __PRETTY_FUNCTION__);)
-		
 		//delete it
 		delete(*it);
 	}
@@ -218,14 +218,7 @@ void ChaosWANProxy::deinit()   throw(CException) {
 		wan_interface_handler = NULL;
 	}
 	
-	if(chaos_bridge) {
-		chaos_bridge->clear();
-		if(chaos_bridge->direct_io_client) {
-			delete(chaos_bridge->direct_io_client);
-		}
-		delete(chaos_bridge);
-		chaos_bridge = NULL;
-	}
+	chaos_bridge.deinit(__PRETTY_FUNCTION__);
 	
 	//deinit network brocker
 	network_broker_service.deinit(__PRETTY_FUNCTION__);
