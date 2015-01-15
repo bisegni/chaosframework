@@ -81,7 +81,7 @@ namespace chaos {
             template<typename T>
             class CObjectProcessingPriorityQueue {
                 std::string uid;
-                priority_queue< PRIORITY_ELEMENT(T)*, std::vector< PRIORITY_ELEMENT(T)* >, pless< PRIORITY_ELEMENT(T) > > bufferQueue;
+		std::priority_queue< PRIORITY_ELEMENT(T)*, std::vector< PRIORITY_ELEMENT(T)* >, pless< PRIORITY_ELEMENT(T) > > bufferQueue;
                 bool inDeinit;
                 int outputThreadNumber;
                 boost::mutex qMutex;

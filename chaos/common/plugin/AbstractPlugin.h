@@ -31,7 +31,7 @@ namespace chaos {
         //! Name space for grupping class for the plugin managment system of !CHOAS framework
         namespace plugin {
             
-            using namespace std;
+
             
             // forward declaration
             template <typename T>

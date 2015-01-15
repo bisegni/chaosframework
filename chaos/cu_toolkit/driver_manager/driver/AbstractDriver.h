@@ -39,7 +39,7 @@ namespace chaos{
         namespace driver_manager {
 			
 			//forward declaration
-			class DriverManager;
+	  class DriverManager;
 			
             namespace driver {
                 

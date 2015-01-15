@@ -43,7 +43,7 @@ namespace chaos {
                 std::string type;
                 std::string version;
                 std::string subclass;
-                std::multimap<string, string> initAttributeForName;
+                std::multimap<std::string, std::string> initAttributeForName;
 
             public:
                 
