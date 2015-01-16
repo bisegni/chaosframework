@@ -473,7 +473,7 @@
 		32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */; };
 		32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */; };
 		32E9A5461A67D02900545BB4 /* ProducerGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */; };
-		32E9A5491A67D6D600545BB4 /* ProducerRegisterDatasetAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetAPI.cpp */; };
+		32E9A5491A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp */; };
 		32E9A54C1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A54A1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp */; };
 		32E9A5541A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5521A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp */; };
 		32E9A5581A69151F00545BB4 /* PersistenceAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5571A69151F00545BB4 /* PersistenceAccessor.cpp */; };
@@ -1099,8 +1099,8 @@
 		32E9A5421A66C45E00545BB4 /* TypedConstrainedHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedConstrainedHashMap.h; sourceTree = "<group>"; };
 		32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerGroup.cpp; sourceTree = "<group>"; };
 		32E9A5451A67D02900545BB4 /* ProducerGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerGroup.h; sourceTree = "<group>"; };
-		32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerRegisterDatasetAPI.cpp; sourceTree = "<group>"; };
-		32E9A5481A67D6D600545BB4 /* ProducerRegisterDatasetAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerRegisterDatasetAPI.h; sourceTree = "<group>"; };
+		32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerRegisterDatasetApi.cpp; sourceTree = "<group>"; };
+		32E9A5481A67D6D600545BB4 /* ProducerRegisterDatasetApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerRegisterDatasetApi.h; sourceTree = "<group>"; };
 		32E9A54A1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerInsertDatasetApi.cpp; sourceTree = "<group>"; };
 		32E9A54B1A6800E900545BB4 /* ProducerInsertDatasetApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerInsertDatasetApi.h; sourceTree = "<group>"; };
 		32E9A5521A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerGetLastDatasetApi.cpp; sourceTree = "<group>"; };
@@ -2481,8 +2481,8 @@
 			children = (
 				32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */,
 				32E9A5451A67D02900545BB4 /* ProducerGroup.h */,
-				32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetAPI.cpp */,
-				32E9A5481A67D6D600545BB4 /* ProducerRegisterDatasetAPI.h */,
+				32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp */,
+				32E9A5481A67D6D600545BB4 /* ProducerRegisterDatasetApi.h */,
 				32E9A54A1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp */,
 				32E9A54B1A6800E900545BB4 /* ProducerInsertDatasetApi.h */,
 				32E9A5521A690AF600545BB4 /* ProducerGetLastDatasetApi.cpp */,
@@ -3284,7 +3284,7 @@
 				32C7EADD1A5D9EE30008DFE8 /* ChaosWANProxy.cpp in Sources */,
 				32033D711A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp in Sources */,
 				321237231A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp in Sources */,
-				32E9A5491A67D6D600545BB4 /* ProducerRegisterDatasetAPI.cpp in Sources */,
+				32E9A5491A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp in Sources */,
 				32E9A54C1A6800E900545BB4 /* ProducerInsertDatasetApi.cpp in Sources */,
 				32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */,
 				32C7EAD71A5D9E450008DFE8 /* main.cpp in Sources */,
