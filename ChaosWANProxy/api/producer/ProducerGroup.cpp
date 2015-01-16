@@ -18,9 +18,9 @@
  *    	limitations under the License.
  */
 #include "ProducerGroup.h"
-#include "ProducerRegisterDatasetAPI.h"
-#include "ProducerGetLastDatasetAPI.h"
-#include "ProducerInsertDatasetAPI.h"
+#include "ProducerRegisterDatasetApi.h"
+#include "ProducerGetLastDatasetApi.h"
+#include "ProducerInsertDatasetApi.h"
 
 using namespace chaos::wan_proxy::api::producer;
 
