@@ -57,7 +57,12 @@ last_error_code(NULL),
 last_error_message(NULL),
 last_error_domain(NULL){}
 
-SlowCommandExecutor::~SlowCommandExecutor(){}
+SlowCommandExecutor::~SlowCommandExecutor(){
+	//delete the wrapper
+	if(attribute_cache) {
+		delete(attribute_cache);
+	}
+}
 
 // Initialize instance
 void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {

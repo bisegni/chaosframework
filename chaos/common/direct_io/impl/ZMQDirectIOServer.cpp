@@ -64,14 +64,14 @@ ZMQDirectIOServer::~ZMQDirectIOServer(){
 void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
 	
 	chaos_data::CDataWrapper *init_cw = static_cast<chaos_data::CDataWrapper*>(init_data);
-	if(!init_cw) throw chaos::CException(0, "No configration has been provided", __FUNCTION__);
+	if(!init_cw) throw chaos::CException(0, "No configration has been provided", __PRETTY_FUNCTION__);
 	
 	//get the port from configuration
 	priority_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT);
-	if(priority_port <= 0) throw chaos::CException(0, "Bad priority port configured", __FUNCTION__);
+	if(priority_port <= 0) throw chaos::CException(0, "Bad priority port configured", __PRETTY_FUNCTION__);
 	
 	service_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT);
-	if(service_port <= 0) throw chaos::CException(0, "Bad service port configured", __FUNCTION__);
+	if(service_port <= 0) throw chaos::CException(0, "Bad service port configured", __PRETTY_FUNCTION__);
     DirectIOServer::init(init_data);
 	
 	//create the endpoint strings
@@ -89,7 +89,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
 	
     //create the ZMQContext
     zmq_context = zmq_ctx_new();
-    if(zmq_context == NULL) throw chaos::CException(0, "Error creating zmq context", __FUNCTION__);
+    if(zmq_context == NULL) throw chaos::CException(0, "Error creating zmq context", __PRETTY_FUNCTION__);
     
     //et the thread number
     zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 2);
@@ -98,8 +98,13 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
     //queue thread
     ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
     ZMQDIO_SRV_LAPP_ << "Allocating threads for manage the requests";
-    server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker, this, false)));
-    server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker, this, true)));
+	try{
+		server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker, this, false)));
+		server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker, this, true)));
+	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >& lock_error_exception) {
+		ZMQDIO_SRV_LERR_ << lock_error_exception.what();
+		throw chaos::CException(0, std::string(lock_error_exception.what()), __PRETTY_FUNCTION__);
+	}
     ZMQDIO_SRV_LAPP_ << "Threads allocated and started";
 }
 

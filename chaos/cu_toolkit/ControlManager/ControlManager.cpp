@@ -491,7 +491,7 @@ CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool
 	return NULL;
 }
 
-CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool &detach) throw (CException){
+CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool &detach) throw (CException) {
     chaos_data::CDataWrapper unit_server_status;
 	unit_server_status.addStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS, unit_server_alias.size()?unit_server_alias:"No Server Defined");
     unit_server_status.addInt32Value(ChaosSystemDomainAndActionLabel::MDS_UNIT_SERVER_HEARTBEAT,  (uint32_t) TimingUtil::getTimeStamp());
@@ -513,7 +513,6 @@ CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool 
 	mds_channel->sendUnitServerCUStates(unit_server_status);
     
     return NULL;
-	
 }
 
 //! ack received for the registration of the uwork unit

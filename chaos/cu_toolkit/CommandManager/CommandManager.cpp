@@ -52,7 +52,7 @@ CommandManager::CommandManager(){
 /*
  */
 CommandManager::~CommandManager(){
-        //if(broker) delete();
+	if(broker) delete(broker);
 }
 
 /*

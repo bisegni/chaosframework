@@ -22,7 +22,12 @@
 #include <chaos/common/global.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-using namespace boost::posix_time;
+#define TU_HEADER "[TimingUtil]- "
+#define TU_LAPP LAPP_ << TU_HEADER
+#define TU_LDBG LDBG_ << TU_HEADER << __PRETTY_FUNCTION__
+#define TU_LERR LERR_ << TU_HEADER << __PRETTY_FUNCTION__ <<"("<<__LINE__<<") "
+
+
 namespace chaos {
 	namespace common {
 		namespace utility {
@@ -48,12 +53,23 @@ namespace chaos {
 			public:
 				//!Return the current timestamp in milliseconds
 				static inline int64_t getTimeStamp() {
-					return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_milliseconds();
+					try{
+						return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_milliseconds();
+					} catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
+						TU_LERR << "Bad day exception";
+						return 0;
+					}
+					
 				}
 				
 				//!Return the current utc timestamp in milliseconds
 				static inline int64_t getUTCTimeStamp() {
-					return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
+					try{
+						return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
+					} catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
+						TU_LERR << "Bad day exception";
+						return 0;
+					}
 				}
 				
 				//!chack if a string is well format for date representation
