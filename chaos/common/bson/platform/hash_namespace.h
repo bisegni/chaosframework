@@ -27,9 +27,9 @@
 
 #include <functional>
 
-#define MONGO_HASH_NAMESPACE_START namespace std {
-#define MONGO_HASH_NAMESPACE_END }
-#define MONGO_HASH_NAMESPACE std
+#define BSON_MONGO_HASH_NAMESPACE_START namespace std {
+#define BSON_MONGO_HASH_NAMESPACE_END }
+#define BSON_MONGO_HASH_NAMESPACE std
 
 #elif defined(_MSC_VER) && _MSC_VER >= 1500
 
@@ -37,17 +37,17 @@
 
 #include <functional>
 
-#define MONGO_HASH_NAMESPACE_START namespace std {
-#define MONGO_HASH_NAMESPACE_END }
-#define MONGO_HASH_NAMESPACE std
+#define BSON_MONGO_HASH_NAMESPACE_START namespace std {
+#define BSON_MONGO_HASH_NAMESPACE_END }
+#define BSON_MONGO_HASH_NAMESPACE std
 
 #else /* Older Visual Studio */
 
 #include <tr1/functional>
 
-#define MONGO_HASH_NAMESPACE_START namespace std { namespace tr1 {
-#define MONGO_HASH_NAMESPACE_END }}
-#define MONGO_HASH_NAMESPACE std::tr1
+#define BSON_MONGO_HASH_NAMESPACE_START namespace std { namespace tr1 {
+#define BSON_MONGO_HASH_NAMESPACE_END }}
+#define BSON_MONGO_HASH_NAMESPACE std::tr1
 
 #endif
 
@@ -55,9 +55,9 @@
 
 #include <tr1/functional>
 
-#define MONGO_HASH_NAMESPACE_START namespace std { namespace tr1 {
-#define MONGO_HASH_NAMESPACE_END }}
-#define MONGO_HASH_NAMESPACE std::tr1
+#define BSON_MONGO_HASH_NAMESPACE_START namespace std { namespace tr1 {
+#define BSON_MONGO_HASH_NAMESPACE_END }}
+#define BSON_MONGO_HASH_NAMESPACE std::tr1
 
 #else
 #error "Cannot determine namespace for 'hash'"

@@ -73,13 +73,13 @@ namespace bson {
 #undef BSON
 #define BSON(x) (( ::bson::BSONObjBuilder(64) << x ).obj())
 
-    /** Use BSON_ARRAY macro like BSON macro, but without keys
+    /** Use BSON_MONGO_ARRAY macro like BSON macro, but without keys
 
-        BSONArray arr = BSON_ARRAY( "hello" << 1 << BSON( "foo" << BSON_ARRAY( "bar" << "baz" << "qux" ) ) );
+        BSONArray arr = BSON_MONGO_ARRAY( "hello" << 1 << BSON( "foo" << BSON_MONGO_ARRAY( "bar" << "baz" << "qux" ) ) );
 
      */
-#undef BSON_ARRAY
-#define BSON_ARRAY(x) (( ::bson::BSONArrayBuilder() << x ).arr())
+#undef BSON_MONGO_ARRAY
+#define BSON_MONGO_ARRAY(x) (( ::bson::BSONArrayBuilder() << x ).arr())
 
     /* Utility class to auto assign object IDs.
        Example:

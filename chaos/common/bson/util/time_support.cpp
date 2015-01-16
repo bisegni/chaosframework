@@ -99,12 +99,12 @@ namespace bson {
         return buf;
     }
 
-#define MONGO_ISO_DATE_FMT_NO_TZ "%Y-%m-%dT%H:%M:%S"
+#define BSON_MONGO_ISO_DATE_FMT_NO_TZ "%Y-%m-%dT%H:%M:%S"
     string timeToISOString(time_t time) {
         struct tm t;
         time_t_to_Struct( time, &t );
 
-        const char* fmt = MONGO_ISO_DATE_FMT_NO_TZ "Z";
+        const char* fmt = BSON_MONGO_ISO_DATE_FMT_NO_TZ "Z";
         char buf[32];
         fassert(16227, strftime(buf, sizeof(buf), fmt, &t) == 20);
         return buf;
@@ -122,7 +122,7 @@ namespace {
         char* const buf = result->data;
         struct tm t;
         time_t_to_Struct(date.toTimeT(), &t, local);
-        int pos = strftime(buf, bufSize, MONGO_ISO_DATE_FMT_NO_TZ, &t);
+        int pos = strftime(buf, bufSize, BSON_MONGO_ISO_DATE_FMT_NO_TZ, &t);
         dassert(0 < pos);
         char* cur = buf + pos;
         int bufRemaining = bufSize - pos;
@@ -660,7 +660,7 @@ namespace {
         return StatusWith<Date_t>(resultMillis);
     }
 
-#undef MONGO_ISO_DATE_FMT_NO_TZ
+#undef BSON_MONGO_ISO_DATE_FMT_NO_TZ
 
     void Date_t::toTm(tm* buf) {
         time_t dtime = toTimeT();
@@ -716,7 +716,7 @@ namespace {
         if ( s <= 0 )
             return;
         boost::xtime xt;
-        boost::xtime_get(&xt, MONGO_BOOST_TIME_UTC);
+        boost::xtime_get(&xt, BSON_MONGO_BOOST_TIME_UTC);
         xt.sec += (int)( s / 1000000 );
         xt.nsec += (int)(( s % 1000000 ) * 1000);
         if ( xt.nsec >= 1000000000 ) {
@@ -728,13 +728,13 @@ namespace {
 #elif defined(__sunos__)
     void sleepsecs(int s) {
         boost::xtime xt;
-        boost::xtime_get(&xt, MONGO_BOOST_TIME_UTC);
+        boost::xtime_get(&xt, BSON_MONGO_BOOST_TIME_UTC);
         xt.sec += s;
         boost::thread::sleep(xt);
     }
     void sleepmillis(long long s) {
         boost::xtime xt;
-        boost::xtime_get(&xt, MONGO_BOOST_TIME_UTC);
+        boost::xtime_get(&xt, BSON_MONGO_BOOST_TIME_UTC);
         xt.sec += (int)( s / 1000 );
         xt.nsec += (int)(( s % 1000 ) * 1000000);
         if ( xt.nsec >= 1000000000 ) {
@@ -747,7 +747,7 @@ namespace {
         if ( s <= 0 )
             return;
         boost::xtime xt;
-        boost::xtime_get(&xt, MONGO_BOOST_TIME_UTC);
+        boost::xtime_get(&xt, BSON_MONGO_BOOST_TIME_UTC);
         xt.sec += (int)( s / 1000000 );
         xt.nsec += (int)(( s % 1000000 ) * 1000);
         if ( xt.nsec >= 1000000000 ) {
@@ -855,12 +855,12 @@ namespace {
 #ifdef _WIN32 // no gettimeofday on windows
     unsigned long long curTimeMillis64() {
         boost::xtime xt;
-        boost::xtime_get(&xt, MONGO_BOOST_TIME_UTC);
+        boost::xtime_get(&xt, BSON_MONGO_BOOST_TIME_UTC);
         return ((unsigned long long)xt.sec) * 1000 + xt.nsec / 1000000;
     }
     Date_t jsTime() {
         boost::xtime xt;
-        boost::xtime_get(&xt, MONGO_BOOST_TIME_UTC);
+        boost::xtime_get(&xt, BSON_MONGO_BOOST_TIME_UTC);
         unsigned long long t = xt.nsec / 1000000;
         return ((unsigned long long) xt.sec * 1000) + t + getJSTimeVirtualSkew() + getJSTimeVirtualThreadSkew();
     }
@@ -939,7 +939,7 @@ namespace {
 
     unsigned curTimeMicros() {
         boost::xtime xt;
-        boost::xtime_get(&xt, MONGO_BOOST_TIME_UTC);
+        boost::xtime_get(&xt, BSON_MONGO_BOOST_TIME_UTC);
         unsigned t = xt.nsec / 1000;
         unsigned secs = xt.sec % 1024;
         return secs*1000000 + t;

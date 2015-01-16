@@ -30,19 +30,19 @@
 #include <chaos/common/bson/util/time_support.h>
 
 // Macro to get line as a string constant
-#define MONGO_STRINGIFY(X) #X
+#define BSON_MONGO_STRINGIFY(X) #X
 // Double-expansion trick to get preproc to actually substitute __LINE__
-#define _MONGO_LINE_STRING(LINE) MONGO_STRINGIFY( LINE )
-#define MONGO_LINE_STRING _MONGO_LINE_STRING( __LINE__ )
+#define _BSON_MONGO_LINE_STRING(LINE) BSON_MONGO_STRINGIFY( LINE )
+#define BSON_MONGO_LINE_STRING _BSON_MONGO_LINE_STRING( __LINE__ )
 
 // Mutex names should be as <file>::<line> string
-#define MONGO_FILE_LINE __FILE__ "::" MONGO_LINE_STRING
+#define BSON_MONGO_FILE_LINE __FILE__ "::" BSON_MONGO_LINE_STRING
 
 namespace bson {
 
     inline boost::xtime incxtimemillis( long long s ) {
         boost::xtime xt;
-        boost::xtime_get(&xt, MONGO_BOOST_TIME_UTC);
+        boost::xtime_get(&xt, BSON_MONGO_BOOST_TIME_UTC);
         xt.sec += (int)( s / 1000 );
         xt.nsec += (int)(( s % 1000 ) * 1000000);
         if ( xt.nsec >= 1000000000 ) {

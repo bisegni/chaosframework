@@ -22,12 +22,12 @@
  *
  * Usage:
  *    class Foo {
- *        MONGO_DISALLOW_COPYING(Foo);
+ *        BSON_MONGO_DISALLOW_COPYING(Foo);
  *    public:
  *        ...
  *    };
  */
-#define MONGO_DISALLOW_COPYING(CLASS) \
+#define BSON_MONGO_DISALLOW_COPYING(CLASS) \
     private:                                    \
     CLASS(const CLASS&);                        \
     CLASS& operator=(const CLASS&)

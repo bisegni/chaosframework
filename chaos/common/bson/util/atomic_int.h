@@ -32,7 +32,7 @@ namespace bson {
      * Many operations on these types depend on natural alignment (4 byte alignment for 4-byte
      * words, i.e.).
      */
-    struct MONGO_COMPILER_ALIGN_TYPE( 4 ) AtomicUInt {
+    struct BSON_MONGO_COMPILER_ALIGN_TYPE( 4 ) AtomicUInt {
         AtomicUInt() : x(0) {}
         AtomicUInt(unsigned z) : x(z) { }
 

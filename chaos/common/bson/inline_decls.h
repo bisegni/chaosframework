@@ -41,10 +41,10 @@ namespace bson {
 #if !defined(__GNUC__)
 
 // branch prediction.  indicate we expect to be true
-# define MONGO_likely(x) ((bool)(x))
+# define BSON_MONGO_likely(x) ((bool)(x))
 
 // branch prediction.  indicate we expect to be false
-# define MONGO_unlikely(x) ((bool)(x))
+# define BSON_MONGO_unlikely(x) ((bool)(x))
 
 # if defined(_WIN32)
     // prefetch data from memory
@@ -59,8 +59,8 @@ namespace bson {
 
 #else
 
-# define MONGO_likely(x) ( __builtin_expect((bool)(x), 1) )
-# define MONGO_unlikely(x) ( __builtin_expect((bool)(x), 0) )
+# define BSON_MONGO_likely(x) ( __builtin_expect((bool)(x), 1) )
+# define BSON_MONGO_unlikely(x) ( __builtin_expect((bool)(x), 0) )
 
     inline void prefetch(void *p) { 
         __builtin_prefetch(p);

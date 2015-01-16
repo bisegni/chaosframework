@@ -256,38 +256,38 @@ namespace bson {
     template <typename Allocator>
     class StringBuilderImpl {
     public:
-        static const size_t MONGO_DBL_SIZE = 3 + DBL_MANT_DIG - DBL_MIN_EXP;
-        static const size_t MONGO_S32_SIZE = 12;
-        static const size_t MONGO_U32_SIZE = 11;
-        static const size_t MONGO_S64_SIZE = 23;
-        static const size_t MONGO_U64_SIZE = 22;
-        static const size_t MONGO_S16_SIZE = 7;
+        static const size_t BSON_MONGO_DBL_SIZE = 3 + DBL_MANT_DIG - DBL_MIN_EXP;
+        static const size_t BSON_MONGO_S32_SIZE = 12;
+        static const size_t BSON_MONGO_U32_SIZE = 11;
+        static const size_t BSON_MONGO_S64_SIZE = 23;
+        static const size_t BSON_MONGO_U64_SIZE = 22;
+        static const size_t BSON_MONGO_S16_SIZE = 7;
 
         StringBuilderImpl() { }
 
         StringBuilderImpl& operator<<( double x ) {
-            return SBNUM( x , MONGO_DBL_SIZE , "%g" );
+            return SBNUM( x , BSON_MONGO_DBL_SIZE , "%g" );
         }
         StringBuilderImpl& operator<<( int x ) {
-            return SBNUM( x , MONGO_S32_SIZE , "%d" );
+            return SBNUM( x , BSON_MONGO_S32_SIZE , "%d" );
         }
         StringBuilderImpl& operator<<( unsigned x ) {
-            return SBNUM( x , MONGO_U32_SIZE , "%u" );
+            return SBNUM( x , BSON_MONGO_U32_SIZE , "%u" );
         }
         StringBuilderImpl& operator<<( long x ) {
-            return SBNUM( x , MONGO_S64_SIZE , "%ld" );
+            return SBNUM( x , BSON_MONGO_S64_SIZE , "%ld" );
         }
         StringBuilderImpl& operator<<( unsigned long x ) {
-            return SBNUM( x , MONGO_U64_SIZE , "%lu" );
+            return SBNUM( x , BSON_MONGO_U64_SIZE , "%lu" );
         }
         StringBuilderImpl& operator<<( long long x ) {
-            return SBNUM( x , MONGO_S64_SIZE , "%lld" );
+            return SBNUM( x , BSON_MONGO_S64_SIZE , "%lld" );
         }
         StringBuilderImpl& operator<<( unsigned long long x ) {
-            return SBNUM( x , MONGO_U64_SIZE , "%llu" );
+            return SBNUM( x , BSON_MONGO_U64_SIZE , "%llu" );
         }
         StringBuilderImpl& operator<<( short x ) {
-            return SBNUM( x , MONGO_S16_SIZE , "%hd" );
+            return SBNUM( x , BSON_MONGO_S16_SIZE , "%hd" );
         }
         StringBuilderImpl& operator<<( char c ) {
             _buf.grow( 1 )[0] = c;

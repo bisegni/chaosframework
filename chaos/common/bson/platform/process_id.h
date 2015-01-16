@@ -103,10 +103,10 @@ namespace bson {
 
 }  // namespace bson
 
-MONGO_HASH_NAMESPACE_START
+BSON_MONGO_HASH_NAMESPACE_START
 template<> struct hash< ::bson::ProcessId > {
     size_t operator()(const ::bson::ProcessId pid) const {
         return hash< ::bson::uint32_t >()(pid.asUInt32());
     }
 };
-MONGO_HASH_NAMESPACE_END
+BSON_MONGO_HASH_NAMESPACE_END

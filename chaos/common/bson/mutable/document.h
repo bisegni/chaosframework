@@ -222,7 +222,7 @@ namespace mutablebson {
 
         // TODO: In principle there is nothing that prevents implementing a deep copy for
         // Document, but for now it is not permitted.
-        MONGO_DISALLOW_COPYING(Document);
+        BSON_MONGO_DISALLOW_COPYING(Document);
 
     public:
 

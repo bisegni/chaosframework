@@ -7,7 +7,7 @@ IF( ($ENV{CHAOS32}) OR (BUILD_FORCE_32) )
     set (CMAKE_CXX_FLAGS "-m32")
     set (CMAKE_LINK_FLAGS "-m32")
 ENDIF()
-ADD_DEFINITIONS(-g -O2 -Wall)
+ADD_DEFINITIONS(-g -O2)
 
 SET(memcache_test MemcachedEmbeddedTest/main.cpp)
 SET(lockfree_test LockfreeCacheEmbeddedTest/main.cpp)
