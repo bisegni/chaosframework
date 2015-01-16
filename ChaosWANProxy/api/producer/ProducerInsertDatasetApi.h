@@ -1,5 +1,5 @@
 /*
- *	ProducerGroup.h
+ *	ProducerInsertDatasetApi.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,22 +17,30 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__ProducerGroup__
-#define __CHAOSFramework__ProducerGroup__
+#ifndef __CHAOSFramework__ProducerInsertDataApi__
+#define __CHAOSFramework__ProducerInsertDataApi__
 
-#include "../AbstractApiGroup.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
 	namespace wan_proxy {
 		namespace api {
 			namespace producer {
 				
-				//! group for all producer api
-				class ProducerGroup:
-				public AbstractApiGroup {
+				class ProducerInsertDatasetApi:
+				public AbstractApi {
 				public:
-					ProducerGroup(persistence::AbstractPersistenceDriver *_persistence_driver);
-					~ProducerGroup();
+					//! default constructor
+					ProducerInsertDatasetApi(persistence::AbstractPersistenceDriver *_persistence_driver);
+					
+					//! default destructor
+					~ProducerInsertDatasetApi();
+					
+					//! execute the api
+					int execute(std::vector<std::string>& api_tokens,
+								const Json::Value& input_data,
+								std::map<std::string, std::string>& output_header,
+								Json::Value& output_data);
 				};
 				
 			}
@@ -40,4 +48,5 @@ namespace chaos {
 	}
 }
 
-#endif /* defined(__CHAOSFramework__ProducerGroup__) */
+
+#endif /* defined(__CHAOSFramework__ProducerInsertDatasetApi__) */

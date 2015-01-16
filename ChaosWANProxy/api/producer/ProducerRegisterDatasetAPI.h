@@ -1,5 +1,5 @@
 /*
- *	ProducerInsertDataApi.h
+ *	ProducerRegisterDatasetApi.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,8 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__ProducerInsertDataApi__
-#define __CHAOSFramework__ProducerInsertDataApi__
+#ifndef __CHAOSFramework__ProducerRegisterAPI__
+#define __CHAOSFramework__ProducerRegisterAPI__
 
 #include "../AbstractApi.h"
 
@@ -27,14 +27,14 @@ namespace chaos {
 		namespace api {
 			namespace producer {
 				
-				class ProducerInsertDataApi:
+				class ProducerRegisterDatasetApi:
 				public AbstractApi {
 				public:
 					//! default constructor
-					ProducerInsertDataApi();
+					ProducerRegisterDatasetApi(persistence::AbstractPersistenceDriver *_persistence_driver);
 					
 					//! default destructor
-					~ProducerInsertDataApi();
+					~ProducerRegisterDatasetApi();
 					
 					//! execute the api
 					int execute(std::vector<std::string>& api_tokens,
@@ -48,5 +48,4 @@ namespace chaos {
 	}
 }
 
-
-#endif /* defined(__CHAOSFramework__ProducerInsertDataApi__) */
+#endif /* defined(__CHAOSFramework__ProducerRegisterDatasetApi__) */

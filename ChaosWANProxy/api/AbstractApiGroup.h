@@ -21,6 +21,8 @@
 #define __CHAOSFramework__AbstractApiGroup__
 
 #include "AbstractApi.h"
+#include "PersistenceAccessor.h"
+
 #include "../utility/TypedConstrainedHashMap.h"
 
 #include <string>
@@ -39,6 +41,7 @@ namespace chaos {
 			
 			//! define the abstract group of api
 			class AbstractApiGroup:
+			public PersistenceAccessor,
 			public chaos::common::utility::NamedService,
 			protected ApiHashMap {
 				
@@ -46,10 +49,15 @@ namespace chaos {
 				void clearHashTableElement(const void *key,
 										   uint32_t key_len,
 										   AbstractApi *element);
-				
+			protected:
+				template<typename A>
+				void addApi() {
+					addTypeWithParam<A, persistence::AbstractPersistenceDriver*>(getPersistenceDriver());
+				}
 			public:
 				//! construct the group with a name
-				AbstractApiGroup(const std::string& name);
+				AbstractApiGroup(const std::string& name,
+								 persistence::AbstractPersistenceDriver *_persistence_driver);
 				
 				//! default destructor
 				virtual ~AbstractApiGroup();
@@ -65,7 +73,6 @@ namespace chaos {
 							std::map<std::string, std::string>& output_header,
 							Json::Value& output_data);
 			};
-			
 		}
 	}
 }

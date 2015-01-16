@@ -18,16 +18,21 @@
  *    	limitations under the License.
  */
 #include "ProducerGroup.h"
-#include "ProducerRegisterAPI.h"
-#include "ProducerInsertDataAPI.h"
+#include "ProducerRegisterDatasetAPI.h"
+#include "ProducerGetLastDatasetAPI.h"
+#include "ProducerInsertDatasetAPI.h"
+
 using namespace chaos::wan_proxy::api::producer;
 
-ProducerGroup::ProducerGroup():
-AbstractApiGroup("producer"){
+ProducerGroup::ProducerGroup(persistence::AbstractPersistenceDriver *_persistence_driver):
+AbstractApiGroup("producer",
+				 _persistence_driver){
 	
 	//ad api to group
-	addType<ProducerRegisterApi>();
-	addType<ProducerInsertDataApi>();
+	addApi<ProducerRegisterDatasetApi>();
+	addApi<ProducerInsertDatasetApi>();
+	addApi<ProducerGetLastDatasetApi>();
+
 }
 
 ProducerGroup::~ProducerGroup() {

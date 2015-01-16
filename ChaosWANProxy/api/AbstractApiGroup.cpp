@@ -24,7 +24,9 @@ using namespace chaos::wan_proxy::api;
 
 
 
-AbstractApiGroup::AbstractApiGroup(const std::string& name):
+AbstractApiGroup::AbstractApiGroup(const std::string& name,
+								   persistence::AbstractPersistenceDriver *_persistence_driver):
+PersistenceAccessor(_persistence_driver),
 NamedService(name),
 //set the power of hashmap to 8
 ApiHashMap(8){}

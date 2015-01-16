@@ -26,6 +26,7 @@
 #include "AbstractWANInterfaceResponse.h"
 #include "../utility/TypedConstrainedHashMap.h"
 #include "../api/AbstractApiGroup.h"
+#include "../api/PersistenceAccessor.h"
 
 #include <json/json.h>
 
@@ -63,14 +64,15 @@ namespace chaos {
              subclass of this abstract class. Only on handler at time can be
              installed in the wan interface.
              */
-            class BaseWANInterfacelHandler {
+			class BaseWANInterfacelHandler:
+			public api::PersistenceAccessor {
 				
 				//! lis of all registered domain for specified version(the index of array is the version 0==v1)
 				GroupVersionList api_group_version_domain_list;
 
             public:
                 //! default constructor
-                BaseWANInterfacelHandler();
+                BaseWANInterfacelHandler(persistence::AbstractPersistenceDriver *_persistence_driver);
                 
                 //! default destructor
                 ~BaseWANInterfacelHandler();
@@ -97,12 +99,14 @@ namespace chaos {
 				
 				template<typename G>
 				void addGroupToVersion(int version) {
+					CHAOS_ASSERT(getPersistenceDriver())
 					if(api_group_version_domain_list.size() < version+1) {
 						//add the new version
 						api_group_version_domain_list.push_back(new ApiGroupVersionDomain());
 					}
+					
 					//add the group to the version
-					api_group_version_domain_list[version]->addType<G>();
+					api_group_version_domain_list[version]->addTypeWithParam<G, persistence::AbstractPersistenceDriver*>(getPersistenceDriver());
 				}
 
             };

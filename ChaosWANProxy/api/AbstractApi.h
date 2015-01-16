@@ -20,6 +20,8 @@
 #ifndef __CHAOSFramework__AbstractApi__
 #define __CHAOSFramework__AbstractApi__
 
+#include "PersistenceAccessor.h"
+
 #include <string>
 #include <vector>
 
@@ -35,11 +37,13 @@ namespace chaos {
 			
 			//! abstract api class definition
 			class AbstractApi:
+			public PersistenceAccessor,
 			public chaos::common::utility::NamedService,
 			//! permit to the Api class to be used as mutex
 			public boost::basic_lockable_adapter<boost::recursive_mutex> {
 			public:
-				AbstractApi(const std::string& name);
+				AbstractApi(const std::string& name,
+							persistence::AbstractPersistenceDriver *_persistence_driver);
 				virtual ~AbstractApi();
 				
 				virtual int execute(std::vector<std::string>& api_tokens,
