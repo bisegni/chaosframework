@@ -39,7 +39,7 @@ std::map<std::string, std::string>& AbstractWANInterfaceResponse::getHeader() {
 }
 
 void AbstractWANInterfaceResponse::addHeaderKeyValue(const std::string& key,
-												 const std::string& value) {
+													 const std::string& value) {
 	headers.insert(make_pair(key, value));
 }
 
