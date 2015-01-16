@@ -23,6 +23,7 @@
 
 #include <string>
 #include <map>
+#include <stdint.h>
 namespace chaos{
 	namespace wan_proxy {
 		namespace wan_interface {
