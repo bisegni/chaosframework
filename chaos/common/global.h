@@ -69,7 +69,6 @@ if (! (x)) \
     std::cout << " on line " << __LINE__  << "\n";	\
     std::cout << " in file " << __FILE__ << "\n";	\
     std::cout.flush();					\
-
 }
 #endif
 
