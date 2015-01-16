@@ -541,7 +541,7 @@ namespace mutablebson {
      *  Document.
      */
     class Document::Impl {
-        MONGO_DISALLOW_COPYING(Impl);
+        BSON_MONGO_DISALLOW_COPYING(Impl);
 
     public:
         Impl(Document::InPlaceMode inPlaceMode)
@@ -2210,14 +2210,14 @@ namespace mutablebson {
 
     void Document::reset() {
         _impl->reset(Document::kInPlaceDisabled);
-        MONGO_COMPILER_VARIABLE_UNUSED const Element newRoot = makeRootElement();
+        BSON_MONGO_COMPILER_VARIABLE_UNUSED const Element newRoot = makeRootElement();
         dassert(newRoot._repIdx == _root._repIdx);
         dassert(_root._repIdx == kRootRepIdx);
     }
 
     void Document::reset(const BSONObj& value, InPlaceMode inPlaceMode) {
         _impl->reset(inPlaceMode);
-        MONGO_COMPILER_VARIABLE_UNUSED const Element newRoot = makeRootElement(value);
+        BSON_MONGO_COMPILER_VARIABLE_UNUSED const Element newRoot = makeRootElement(value);
         dassert(newRoot._repIdx == _root._repIdx);
         dassert(_root._repIdx == kRootRepIdx);
     }

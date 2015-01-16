@@ -161,26 +161,26 @@ namespace bson {
         virtual void appendPrefix( std::stringstream& ss ) const;
     };
 
-    MONGO_COMPILER_NORETURN void verifyFailed(const char *msg, const char *file, unsigned line);
-    MONGO_COMPILER_NORETURN void invariantFailed(const char *msg, const char *file, unsigned line);
+    BSON_MONGO_COMPILER_NORETURN void verifyFailed(const char *msg, const char *file, unsigned line);
+    BSON_MONGO_COMPILER_NORETURN void invariantFailed(const char *msg, const char *file, unsigned line);
     void wasserted(const char *msg, const char *file, unsigned line);
-    MONGO_COMPILER_NORETURN void fassertFailed( int msgid );
-    MONGO_COMPILER_NORETURN void fassertFailedNoTrace( int msgid );
-    MONGO_COMPILER_NORETURN void fassertFailedWithStatus(
+    BSON_MONGO_COMPILER_NORETURN void fassertFailed( int msgid );
+    BSON_MONGO_COMPILER_NORETURN void fassertFailedNoTrace( int msgid );
+    BSON_MONGO_COMPILER_NORETURN void fassertFailedWithStatus(
             int msgid, const Status& status);
 
     /** a "user assertion".  throws UserAssertion.  logs.  typically used for errors that a user
         could cause, such as duplicate key, disk full, etc.
     */
-    MONGO_COMPILER_NORETURN void uasserted(int msgid, const char *msg);
-    MONGO_COMPILER_NORETURN void uasserted(int msgid , const std::string &msg);
+    BSON_MONGO_COMPILER_NORETURN void uasserted(int msgid, const char *msg);
+    BSON_MONGO_COMPILER_NORETURN void uasserted(int msgid , const std::string &msg);
 
     /** msgassert and massert are for errors that are internal but have a well defined error text
         std::string.  a stack trace is logged.
     */
-    MONGO_COMPILER_NORETURN void msgassertedNoTrace(int msgid, const char *msg);
-    MONGO_COMPILER_NORETURN void msgasserted(int msgid, const char *msg);
-    MONGO_COMPILER_NORETURN void msgasserted(int msgid, const std::string &msg);
+    BSON_MONGO_COMPILER_NORETURN void msgassertedNoTrace(int msgid, const char *msg);
+    BSON_MONGO_COMPILER_NORETURN void msgasserted(int msgid, const char *msg);
+    BSON_MONGO_COMPILER_NORETURN void msgasserted(int msgid, const std::string &msg);
 
     /* convert various types of exceptions to strings */
     std::string causedBy( const char* e );
@@ -192,61 +192,61 @@ namespace bson {
 
     /** aborts on condition failure */
     inline void fassert(int msgid, bool testOK) {
-        if (MONGO_unlikely(!testOK)) fassertFailed(msgid);
+        if (BSON_MONGO_unlikely(!testOK)) fassertFailed(msgid);
     }
 
     inline void fassert(int msgid, const Status& status) {
-        if (MONGO_unlikely(!status.isOK())) {
+        if (BSON_MONGO_unlikely(!status.isOK())) {
             fassertFailedWithStatus(msgid, status);
         }
     }
 
 
     /* "user assert".  if asserts, user did something wrong, not our code */
-#undef MONGO_uassert
-#define MONGO_uassert(msgid, msg, expr) (void)( MONGO_likely(!!(expr)) || (::bson::uasserted(msgid, msg), 0) )
+#undef BSON_MONGO_uassert
+#define BSON_MONGO_uassert(msgid, msg, expr) (void)( BSON_MONGO_likely(!!(expr)) || (::bson::uasserted(msgid, msg), 0) )
 
     inline void uassertStatusOK(const Status& status) {
-        if (MONGO_unlikely(!status.isOK())) {
+        if (BSON_MONGO_unlikely(!status.isOK())) {
             uasserted((status.location() != 0 ? status.location() : status.code()),
                       status.reason());
         }
     }
 
     /* warning only - keeps going */
-#undef MONGO_wassert
-#define MONGO_wassert(_Expression) (void)( MONGO_likely(!!(_Expression)) || (::bson::wasserted(#_Expression, __FILE__, __LINE__), 0) )
+#undef BSON_MONGO_wassert
+#define BSON_MONGO_wassert(_Expression) (void)( BSON_MONGO_likely(!!(_Expression)) || (::bson::wasserted(#_Expression, __FILE__, __LINE__), 0) )
 
     /* display a message, no context, and throw assertionexception
 
        easy way to throw an exception and log something without our stack trace
        display happening.
     */
-#undef MONGO_massert
-#define MONGO_massert(msgid, msg, expr) (void)( MONGO_likely(!!(expr)) || (::bson::msgasserted(msgid, msg), 0) )
+#undef BSON_MONGO_massert
+#define BSON_MONGO_massert(msgid, msg, expr) (void)( BSON_MONGO_likely(!!(expr)) || (::bson::msgasserted(msgid, msg), 0) )
     /* same as massert except no msgid */
-#undef MONGO_verify
-#define MONGO_verify(_Expression) (void)( MONGO_likely(!!(_Expression)) || (::bson::verifyFailed(#_Expression, __FILE__, __LINE__), 0) )
+#undef BSON_MONGO_verify
+#define BSON_MONGO_verify(_Expression) (void)( BSON_MONGO_likely(!!(_Expression)) || (::bson::verifyFailed(#_Expression, __FILE__, __LINE__), 0) )
 
-#undef MONGO_invariant
-#define MONGO_invariant(_Expression) (void)( MONGO_likely(!!(_Expression)) || (::bson::invariantFailed(#_Expression, __FILE__, __LINE__), 0) )
+#undef BSON_MONGO_invariant
+#define BSON_MONGO_invariant(_Expression) (void)( BSON_MONGO_likely(!!(_Expression)) || (::bson::invariantFailed(#_Expression, __FILE__, __LINE__), 0) )
 
     /* dassert is 'debug assert' -- might want to turn off for production as these
        could be slow.
     */
 #if defined(_DEBUG)
-# define MONGO_dassert(x) fassert(16199, (x))
+# define BSON_MONGO_dassert(x) fassert(16199, (x))
 #else
-# define MONGO_dassert(x)
+# define BSON_MONGO_dassert(x)
 #endif
 
 
-# define dassert MONGO_dassert
-# define verify MONGO_verify
-# define invariant MONGO_invariant
-# define uassert MONGO_uassert
-# define wassert MONGO_wassert
-# define massert MONGO_massert
+# define dassert BSON_MONGO_dassert
+# define verify BSON_MONGO_verify
+# define invariant BSON_MONGO_invariant
+# define uassert BSON_MONGO_uassert
+# define wassert BSON_MONGO_wassert
+# define massert BSON_MONGO_massert
 
 
     // some special ids that we want to duplicate
@@ -257,7 +257,7 @@ namespace bson {
     enum { ASSERT_ID_DUPKEY = 11000 };
 
     /* throws a uassertion with an appropriate msg */
-    MONGO_COMPILER_NORETURN void streamNotGood( int code, const std::string& msg, std::ios& myios );
+    BSON_MONGO_COMPILER_NORETURN void streamNotGood( int code, const std::string& msg, std::ios& myios );
 
     inline void assertStreamGood(unsigned msgid, const std::string& msg, std::ios& myios) {
         if( !myios.good() ) streamNotGood(msgid, msg, myios);
@@ -267,8 +267,8 @@ namespace bson {
 
 } // namespace bson
 
-#undef MONGO_ASSERT_ON_EXCEPTION
-#define MONGO_ASSERT_ON_EXCEPTION( expression ) \
+#undef BSON_MONGO_ASSERT_ON_EXCEPTION
+#define BSON_MONGO_ASSERT_ON_EXCEPTION( expression ) \
     try { \
         expression; \
     } catch ( const std::exception &e ) { \
@@ -278,8 +278,8 @@ namespace bson {
     } catch ( ... ) { \
         massert( 10437 ,  "unknown exception" , false ); \
     }
-#undef MONGO_ASSERT_ON_EXCEPTION_WITH_MSG
-#define MONGO_ASSERT_ON_EXCEPTION_WITH_MSG( expression, msg ) \
+#undef BSON_MONGO_ASSERT_ON_EXCEPTION_WITH_MSG
+#define BSON_MONGO_ASSERT_ON_EXCEPTION_WITH_MSG( expression, msg ) \
     try { \
         expression; \
     } catch ( const std::exception &e ) { \
@@ -290,9 +290,9 @@ namespace bson {
         msgasserted( 14044 , std::string("unknown exception") + msg );   \
     }
 
-#define DESTRUCTOR_GUARD MONGO_DESTRUCTOR_GUARD
-#undef MONGO_DESTRUCTOR_GUARD
-#define MONGO_DESTRUCTOR_GUARD( expression ) \
+#define DESTRUCTOR_GUARD BSON_MONGO_DESTRUCTOR_GUARD
+#undef BSON_MONGO_DESTRUCTOR_GUARD
+#define BSON_MONGO_DESTRUCTOR_GUARD( expression ) \
     try { \
         expression; \
     } catch ( const std::exception &e ) { \

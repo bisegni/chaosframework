@@ -27,10 +27,10 @@
 namespace bson {
   using namespace std;
 #if 0
-#define MONGO_JSON_DEBUG(message) log() << "JSON DEBUG @ " << __FILE__\
+#define BSON_MONGO_JSON_DEBUG(message) log() << "JSON DEBUG @ " << __FILE__\
     << ":" << __LINE__ << " " << __FUNCTION__ << ": " << message << endl;
 #else
-#define MONGO_JSON_DEBUG(message)
+#define BSON_MONGO_JSON_DEBUG(message)
 #endif
 
 #define ALPHA "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -79,7 +79,7 @@ namespace bson {
     }
 
     Status JParse::value(const StringData& fieldName, BSONObjBuilder& builder) {
-        MONGO_JSON_DEBUG("fieldName: " << fieldName);
+        BSON_MONGO_JSON_DEBUG("fieldName: " << fieldName);
         if (peekToken(LBRACE)) {
             Status ret = object(fieldName, builder);
             if (ret != Status::OK()) {
@@ -180,7 +180,7 @@ namespace bson {
     }
 
     Status JParse::object(const StringData& fieldName, BSONObjBuilder& builder, bool subObject) {
-        MONGO_JSON_DEBUG("fieldName: " << fieldName);
+        BSON_MONGO_JSON_DEBUG("fieldName: " << fieldName);
         if (!readToken(LBRACE)) {
             return parseError("Expecting '{'");
         }
@@ -634,7 +634,7 @@ namespace bson {
     }
 
     Status JParse::array(const StringData& fieldName, BSONObjBuilder& builder) {
-        MONGO_JSON_DEBUG("fieldName: " << fieldName);
+        BSON_MONGO_JSON_DEBUG("fieldName: " << fieldName);
         uint32_t index(0);
         if (!readToken(LBRACKET)) {
             return parseError("Expecting '['");
@@ -883,17 +883,17 @@ namespace bson {
     }
 
     Status JParse::regexPat(std::string* result) {
-        MONGO_JSON_DEBUG("");
+        BSON_MONGO_JSON_DEBUG("");
         return chars(result, "/");
     }
 
     Status JParse::regexOpt(std::string* result) {
-        MONGO_JSON_DEBUG("");
+        BSON_MONGO_JSON_DEBUG("");
         return chars(result, "", JOPTIONS);
     }
 
     Status JParse::regexOptCheck(const StringData& opt) {
-        MONGO_JSON_DEBUG("opt: " << opt);
+        BSON_MONGO_JSON_DEBUG("opt: " << opt);
         std::size_t i;
         for (i = 0; i < opt.size(); i++) {
             if (!match(opt[i], JOPTIONS)) {
@@ -929,17 +929,17 @@ namespace bson {
         if (endptrll < endptrd || errno == ERANGE) {
             // The number either had characters only meaningful for a double or
             // could not fit in a 64 bit int
-            MONGO_JSON_DEBUG("Type: double");
+            BSON_MONGO_JSON_DEBUG("Type: double");
             builder.append(fieldName, retd);
         }
         else if (retll == static_cast<int>(retll)) {
             // The number can fit in a 32 bit int
-            MONGO_JSON_DEBUG("Type: 32 bit int");
+            BSON_MONGO_JSON_DEBUG("Type: 32 bit int");
             builder.append(fieldName, static_cast<int>(retll));
         }
         else {
             // The number can fit in a 64 bit int
-            MONGO_JSON_DEBUG("Type: 64 bit int");
+            BSON_MONGO_JSON_DEBUG("Type: 64 bit int");
             builder.append(fieldName, retll);
         }
         _input = endptrd;
@@ -950,7 +950,7 @@ namespace bson {
     }
 
     Status JParse::field(std::string* result) {
-        MONGO_JSON_DEBUG("");
+        BSON_MONGO_JSON_DEBUG("");
         if (peekToken(DOUBLEQUOTE) || peekToken(SINGLEQUOTE)) {
             // Quoted key
             // TODO: make sure quoted field names cannot contain null characters
@@ -976,7 +976,7 @@ namespace bson {
     }
 
     Status JParse::quotedString(std::string* result) {
-        MONGO_JSON_DEBUG("");
+        BSON_MONGO_JSON_DEBUG("");
         if (readToken(DOUBLEQUOTE)) {
             Status ret = chars(result, "\"");
             if (ret != Status::OK()) {
@@ -1007,13 +1007,13 @@ namespace bson {
      */
     Status JParse::chars(std::string* result, const char* terminalSet,
             const char* allowedSet) {
-        MONGO_JSON_DEBUG("terminalSet: " << terminalSet);
+        BSON_MONGO_JSON_DEBUG("terminalSet: " << terminalSet);
         if (_input >= _input_end) {
             return parseError("Unexpected end of input");
         }
         const char* q = _input;
         while (q < _input_end && !match(*q, terminalSet)) {
-            MONGO_JSON_DEBUG("q: " << q);
+            BSON_MONGO_JSON_DEBUG("q: " << q);
             if (allowedSet != NULL) {
                 if (!match(*q, allowedSet)) {
                     _input = q;
@@ -1109,7 +1109,7 @@ namespace bson {
     }
 
     bool JParse::readTokenImpl(const char* token, bool advance) {
-        MONGO_JSON_DEBUG("token: " << token);
+        BSON_MONGO_JSON_DEBUG("token: " << token);
         const char* check = _input;
         if (token == NULL) {
             return false;
@@ -1133,7 +1133,7 @@ namespace bson {
     }
 
     bool JParse::readField(const StringData& expectedField) {
-        MONGO_JSON_DEBUG("expectedField: " << expectedField);
+        BSON_MONGO_JSON_DEBUG("expectedField: " << expectedField);
         std::string nextField;
         nextField.reserve(FIELD_RESERVE_SIZE);
         Status ret = field(&nextField);
@@ -1157,7 +1157,7 @@ namespace bson {
     }
 
     bool JParse::isHexString(const StringData& str) const {
-        MONGO_JSON_DEBUG("str: " << str);
+        BSON_MONGO_JSON_DEBUG("str: " << str);
         std::size_t i;
         for (i = 0; i < str.size(); i++) {
             if (!isxdigit(str[i])) {
@@ -1168,7 +1168,7 @@ namespace bson {
     }
 
     bool JParse::isBase64String(const StringData& str) const {
-        MONGO_JSON_DEBUG("str: " << str);
+        BSON_MONGO_JSON_DEBUG("str: " << str);
         std::size_t i;
         for (i = 0; i < str.size(); i++) {
             if (!match(str[i], base64::chars)) {
@@ -1179,7 +1179,7 @@ namespace bson {
     }
 
     BSONObj fromjson(const char* jsonString, int* len) {
-        MONGO_JSON_DEBUG("jsonString: " << jsonString);
+        BSON_MONGO_JSON_DEBUG("jsonString: " << jsonString);
         if (jsonString[0] == '\0') {
             if (len) *len = 0;
             return BSONObj();

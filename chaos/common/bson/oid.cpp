@@ -25,7 +25,7 @@
 #include <chaos/common/bson/oid.h>
 #include <chaos/common/bson/util/atomic_int.h>
 
-#define verify MONGO_verify
+#define verify BSON_MONGO_verify
 
 BOOST_STATIC_ASSERT( sizeof(bson::OID) == bson::OID::kOIDSize );
 BOOST_STATIC_ASSERT( sizeof(bson::OID) == 12 );

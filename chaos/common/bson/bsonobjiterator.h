@@ -40,7 +40,7 @@ namespace bson {
         */
         BSONObjIterator(const BSONObj& jso) {
             int sz = jso.objsize();
-            if ( MONGO_unlikely(sz == 0) ) {
+            if ( BSON_MONGO_unlikely(sz == 0) ) {
                 _pos = _theend = 0;
                 return;
             }
@@ -97,7 +97,7 @@ namespace bson {
 
     /** Base class implementing ordered iteration through BSONElements. */
     class BSONIteratorSorted {
-        MONGO_DISALLOW_COPYING(BSONIteratorSorted);
+        BSON_MONGO_DISALLOW_COPYING(BSONIteratorSorted);
     public:
         ~BSONIteratorSorted() {
             verify( _fields );
@@ -148,20 +148,20 @@ namespace bson {
      *  the surrounding scope. Don't do this:
      *
      *  if (foo)
-     *      BSONForEach(e, obj)
+     *      BSON_FOR_EACH(e, obj)
      *          doSomething(e);
      *
      *  but this is OK:
      *
      *  if (foo) {
-     *      BSONForEach(e, obj)
+     *      BSON_FOR_EACH(e, obj)
      *          doSomething(e);
      *  }
      *
      */
 
-#undef BSONForEach
-#define BSONForEach(e, obj)                                     \
+#undef BSON_FOR_EACH
+#define BSON_FOR_EACH(e, obj)                                     \
     BSONObjIterator BOOST_PP_CAT(it_,__LINE__)(obj);            \
     for ( BSONElement e;                                        \
             (BOOST_PP_CAT(it_,__LINE__).more() ?                  \

@@ -42,7 +42,7 @@ namespace bson {
 #endif
 
     /** Utility for creating a BSONObj.
-        See also the BSON() and BSON_ARRAY() macros.
+        See also the BSON() and BSON_MONGO_ARRAY() macros.
     */
     class BSONObjBuilder : public BSONBuilderBase, private boost::noncopyable {
 	protected:
@@ -323,7 +323,7 @@ namespace bson {
         */
         BSONObjBuilder& appendDate(const StringData& fieldName, Date_t dt) {
             /* easy to pass a time_t to this and get a bad result.  thus this warning. */
-#if defined(_DEBUG) && defined(MONGO_EXPOSE_MACROS)
+#if defined(_DEBUG) && defined(BSON_MONGO_EXPOSE_MACROS)
             if( dt > 0 && dt <= 0xffffffff ) {
                 static int n;
                 if( n++ == 0 )
@@ -937,14 +937,14 @@ namespace bson {
 
     // $or helper: OR(BSON("x" << GT << 7), BSON("y" << LT 6));
     inline BSONObj OR(const BSONObj& a, const BSONObj& b)
-    { return BSON( "$or" << BSON_ARRAY(a << b) ); }
+    { return BSON( "$or" << BSON_MONGO_ARRAY(a << b) ); }
     inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c)
-    { return BSON( "$or" << BSON_ARRAY(a << b << c) ); }
+    { return BSON( "$or" << BSON_MONGO_ARRAY(a << b << c) ); }
     inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c, const BSONObj& d)
-    { return BSON( "$or" << BSON_ARRAY(a << b << c << d) ); }
+    { return BSON( "$or" << BSON_MONGO_ARRAY(a << b << c << d) ); }
     inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c, const BSONObj& d, const BSONObj& e)
-    { return BSON( "$or" << BSON_ARRAY(a << b << c << d << e) ); }
+    { return BSON( "$or" << BSON_MONGO_ARRAY(a << b << c << d << e) ); }
     inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c, const BSONObj& d, const BSONObj& e, const BSONObj& f)
-    { return BSON( "$or" << BSON_ARRAY(a << b << c << d << e << f) ); }
+    { return BSON( "$or" << BSON_MONGO_ARRAY(a << b << c << d << e << f) ); }
 
 }

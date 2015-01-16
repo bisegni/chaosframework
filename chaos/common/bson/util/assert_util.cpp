@@ -142,7 +142,7 @@ namespace bson {
         exit(1); // bypass our handler for SIGABRT, which prints a stack trace.
     }
 
-    MONGO_COMPILER_NORETURN void fassertFailedWithStatus(int msgid, const Status& status) {
+    BSON_MONGO_COMPILER_NORETURN void fassertFailedWithStatus(int msgid, const Status& status) {
         LWRN_ << "Fatal assertion " <<  msgid << " " << status;
         LAPP_ << "\n\n***aborting after fassert() failure\n\n";
         abort();

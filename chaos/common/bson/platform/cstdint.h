@@ -22,26 +22,26 @@
 
 #if defined(_MSC_VER)
 #include <cstdint>
-#define _MONGO_STDINT_NAMESPACE std
+#define _BSON_MONGO_STDINT_NAMESPACE std
 #elif defined(__GNUC__)
 #include <stdint.h>
-#define _MONGO_STDINT_NAMESPACE
+#define _BSON_MONGO_STDINT_NAMESPACE
 #else
 #error "Unsupported compiler family"
 #endif
 
 namespace bson {
-    using _MONGO_STDINT_NAMESPACE::int8_t;
-    using _MONGO_STDINT_NAMESPACE::int16_t;
-    using _MONGO_STDINT_NAMESPACE::int32_t;
-    using _MONGO_STDINT_NAMESPACE::int64_t;
-    using _MONGO_STDINT_NAMESPACE::intptr_t;
+    using _BSON_MONGO_STDINT_NAMESPACE::int8_t;
+    using _BSON_MONGO_STDINT_NAMESPACE::int16_t;
+    using _BSON_MONGO_STDINT_NAMESPACE::int32_t;
+    using _BSON_MONGO_STDINT_NAMESPACE::int64_t;
+    using _BSON_MONGO_STDINT_NAMESPACE::intptr_t;
 
-    using _MONGO_STDINT_NAMESPACE::uint8_t;
-    using _MONGO_STDINT_NAMESPACE::uint16_t;
-    using _MONGO_STDINT_NAMESPACE::uint32_t;
-    using _MONGO_STDINT_NAMESPACE::uint64_t;
-    using _MONGO_STDINT_NAMESPACE::uintptr_t;
+    using _BSON_MONGO_STDINT_NAMESPACE::uint8_t;
+    using _BSON_MONGO_STDINT_NAMESPACE::uint16_t;
+    using _BSON_MONGO_STDINT_NAMESPACE::uint32_t;
+    using _BSON_MONGO_STDINT_NAMESPACE::uint64_t;
+    using _BSON_MONGO_STDINT_NAMESPACE::uintptr_t;
 }  // namespace bson
 
-#undef _MONGO_STDINT_NAMESPACE
+#undef _BSON_MONGO_STDINT_NAMESPACE

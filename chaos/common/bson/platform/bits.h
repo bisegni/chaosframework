@@ -20,9 +20,9 @@
 // figure out if we're on a 64 or 32 bit system
 
 #if defined(__x86_64__) || defined(__amd64__) || defined(_WIN64) || defined(__aarch64__) || defined(__powerpc64__)
-#define MONGO_PLATFORM_64
+#define BSON_MONGO_PLATFORM_64
 #elif defined(__i386__) || defined(_WIN32) || defined(__arm__)
-#define MONGO_PLATFORM_32
+#define BSON_MONGO_PLATFORM_32
 #else
 #error "unknown platform"
 #endif
@@ -51,10 +51,10 @@ namespace bson {
 
 #if defined(__linux__)
 #define firstBitSet ffsll
-#define MONGO_SYSTEM_FFS 1
-#elif defined(__MACH__) && defined(MONGO_PLATFORM_64)
+#define BSON_MONGO_SYSTEM_FFS 1
+#elif defined(__MACH__) && defined(BSON_MONGO_PLATFORM_64)
 #define firstBitSet ffsl
-#define MONGO_SYSTEM_FFS 1
+#define BSON_MONGO_SYSTEM_FFS 1
 #else
 #define firstBitSet bson::mongo_firstBitSet
 #endif

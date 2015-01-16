@@ -86,7 +86,7 @@ namespace bson {
        a combination here, with the assumption that reset's are infrequent, so that 
        get's are fast.
     */
-#if defined(MONGO_HAVE___THREAD) || defined(MONGO_HAVE___DECLSPEC_THREAD)
+#if defined(BSON_MONGO_HAVE___THREAD) || defined(BSON_MONGO_HAVE___DECLSPEC_THREAD)
         
     template< class T >
     struct TSP {
@@ -102,7 +102,7 @@ namespace bson {
         }
     };
 
-# if defined(MONGO_HAVE___DECLSPEC_THREAD)
+# if defined(BSON_MONGO_HAVE___DECLSPEC_THREAD)
 
 #  define TSP_DECLARE(T,p) extern TSP<T> p;
 

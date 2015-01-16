@@ -171,7 +171,7 @@ dodouble:
     }
 
     inline BSONObj BSONElement::embeddedObjectUserCheck() const {
-        if ( MONGO_likely(isABSONObj()) )
+        if ( BSON_MONGO_likely(isABSONObj()) )
             return BSONObj(value());
         std::stringstream ss;
         ss << "invalid parameter: expected an object (" << fieldName() << ")";

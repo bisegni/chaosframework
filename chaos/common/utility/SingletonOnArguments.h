@@ -40,17 +40,14 @@ namespace chaos{
 					
 					typename std::map<std::string, boost::shared_ptr<T> >::iterator i = instances.find(initParams);
 					if(i!=instances.end()){
-						LDBG_<<" for parameters "<<initParams<<" RETRIVING instance x"<<hex<<i->second;
-						
 						return (i->second);
 					}
 					T* tmp = new T();
 					
 					boost::shared_ptr<T> ret = boost::shared_ptr<T>(tmp);
-					instances.insert(std::pair<string,boost::shared_ptr<T> >(initParams,ret));
+					instances.insert(std::pair<std::string,boost::shared_ptr<T> >(initParams,ret));
 					
 					dynamic_cast<SingletonOnArguments* >(tmp)->setParams(initParams);
-					LDBG_<<" for parameters "<<initParams<<" CREATING instance x"<<hex<<ret;
 					
 					return instances[initParams];
 				}

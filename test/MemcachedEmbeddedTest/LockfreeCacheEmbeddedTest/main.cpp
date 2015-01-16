@@ -23,14 +23,14 @@
 #include <boost/program_options/parsers.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
 namespace po = boost::program_options;
-using namespace std;
+
 #define WRITE_THREAD_UPDATE_RATE 2
 #define READ_THREAD_NUMBER 1
 #define READ_THREAD_UPDATE_RATE_MS_MAX 2
 #define GARBAGE_THREAD_UPDATE_RATE_MS 100
 #define TEST_DURATION_IN_SEC 10
 
-#define INT32_TEST_VALUE numeric_limits<int32_t>::max()
+#define INT32_TEST_VALUE std::numeric_limits<int32_t>::max()
 
 uint64_t readCount = 0;
 uint64_t writeCount = 0;
@@ -95,7 +95,7 @@ int main(int argc, const char * argv[]) {
     po::notify(vm);
     
     if (vm.count("help")) {
-        cout << desc << "\n";
+      std::cout << desc << "\n";
         return 1;
     }
     
@@ -111,7 +111,7 @@ int main(int argc, const char * argv[]) {
         std::cout << "Number of reader " << readersNumber << " at rate of " << rUpdateMs << " ms" << std::endl;
         std::cout << "Garbager at rate of " << gUpdateMs << " ms" << std::endl;
         
-	auto_ptr<chaos::common::data::cache::KeyGroupCache> dsCache(new chaos::common::data::cache::KeyGroupCache());
+	std::auto_ptr<chaos::common::data::cache::KeyGroupCache> dsCache(new chaos::common::data::cache::KeyGroupCache());
         dsCache->addKeyInfo("ch_i32", chaos::DataType::TYPE_INT32);
         dsCache->init(NULL);
         dsCache->start();
