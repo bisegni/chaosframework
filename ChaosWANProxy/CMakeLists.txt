@@ -7,14 +7,14 @@ SET(wp_src main.cpp		main.cpp
 
 SET(wp_src ${wp_src}	wan_interface/AbstractWANInterface.cpp
 						wan_interface/AbstractWANInterfaceResponse.cpp
-						wan_interface/AbstractWANInterfaceHandler.cpp)
+						wan_interface/BaseWANInterfaceHandler.cpp)
 
 SET(wp_src ${wp_src}	wan_interface/http/HTTPWANInterface.cpp
 						wan_interface/http/HTTPWANInterfaceRequest.cpp
 						wan_interface/http/HTTPWANInterfaceStringResponse.cpp)
 
 SET(wp_src ${wp_src}	api/AbstractApi.cpp
-						api/AbstractApiGroup.cpp,
+						api/AbstractApiGroup.cpp
 						api/PersistenceAccessor.cpp
 						api/producer/ProducerGroup.cpp
 						api/producer/ProducerRegisterDatasetApi.cpp
