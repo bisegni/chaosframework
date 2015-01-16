@@ -28,8 +28,11 @@ namespace chaos {
         class DefaultWANInterfaceHandler:
         public wan_interface::BaseWANInterfacelHandler {
         public:
-            DefaultWANInterfaceHandler();
+            DefaultWANInterfaceHandler(persistence::AbstractPersistenceDriver *_persistence_driver);
             ~DefaultWANInterfaceHandler();
+			
+			//! register the group defined by the handler
+			void registerGroup();
         };
         
     }

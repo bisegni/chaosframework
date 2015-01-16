@@ -65,7 +65,8 @@ int ApiGroupVersionDomain::callGroupApi(std::vector<std::string>& api_tokens,
 #pragma mark BaseWANInterfacelHandler
 
 // default constructor
-BaseWANInterfacelHandler::BaseWANInterfacelHandler() {
+BaseWANInterfacelHandler::BaseWANInterfacelHandler(persistence::AbstractPersistenceDriver *_persistence_driver):
+PersistenceAccessor(_persistence_driver) {
 	//the element at position 0 is a fake to do a 1 based vector
 	api_group_version_domain_list.push_back(NULL);
 }

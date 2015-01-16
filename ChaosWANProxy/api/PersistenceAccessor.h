@@ -1,5 +1,5 @@
 /*
- *	ProducerRegisterAPI.h
+ *	PersistenceAccessor.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,35 +17,32 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__ProducerRegisterAPI__
-#define __CHAOSFramework__ProducerRegisterAPI__
+#ifndef CHAOSFramework_PersistenceAccessor_h
+#define CHAOSFramework_PersistenceAccessor_h
 
-#include "../AbstractApi.h"
-
+#include "../persistence/AbstractPersistenceDriver.h"
 namespace chaos {
 	namespace wan_proxy {
 		namespace api {
-			namespace producer {
+			//! unify the access to the persistence driver
+			class PersistenceAccessor {
 				
-				class ProducerRegisterApi:
-				public AbstractApi {
-				public:
-					//! default constructor
-					ProducerRegisterApi();
-					
-					//! default destructor
-					~ProducerRegisterApi();
-					
-					//! execute the api
-					int execute(std::vector<std::string>& api_tokens,
-								const Json::Value& input_data,
-								std::map<std::string, std::string>& output_header,
-								Json::Value& output_data);
-				};
+			protected:
+				//! persistence driver instance
+				/*!
+				 Thsi instance will be forward to all api that will use it
+				 for make the work.
+				 */
+				persistence::AbstractPersistenceDriver *persistence_driver;
 				
-			}
+			public:
+				PersistenceAccessor(persistence::AbstractPersistenceDriver *_persistence_driver);
+				virtual ~PersistenceAccessor();
+				
+				persistence::AbstractPersistenceDriver *getPersistenceDriver();
+			};
 		}
 	}
 }
 
-#endif /* defined(__CHAOSFramework__ProducerRegisterAPI__) */
+#endif

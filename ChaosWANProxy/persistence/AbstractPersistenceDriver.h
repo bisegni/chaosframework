@@ -19,24 +19,29 @@
  */
 #ifndef __CHAOSFramework__AbstractPersistenceDriver__
 #define __CHAOSFramework__AbstractPersistenceDriver__
-
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/NamedService.h>
-#include <chaos/common/utility/InizializableService.h>
-
 namespace chaos {
 	namespace wan_proxy {
 		namespace persistence {
 			
 			//! define the base class fro all persistence implementation
 			class AbstractPersistenceDriver:
-			public chaos::common::utility::InizializableService,
 			public chaos::common::utility::NamedService {
 			public:
 				AbstractPersistenceDriver(const std::string& name);
 				virtual ~AbstractPersistenceDriver();
+				
+				//! push a dataset
+				virtual int pushNewDataset(const std::string& producer_key,
+										   chaos::common::data::CDataWrapper *new_dataset,
+										   int store_hint) = 0;
+				
+				//! get a dataset
+				virtual int getLastDataset(const std::string& producer_key,
+										   chaos::common::data::CDataWrapper **last_dataset) = 0;
 			};
 		}
 	}
 }
-
 #endif /* defined(__CHAOSFramework__AbstractPersistenceDriver__) */

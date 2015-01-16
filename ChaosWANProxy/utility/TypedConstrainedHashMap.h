@@ -39,20 +39,11 @@ namespace chaos {
 				//! default destructor
 				virtual ~TypedConstrainedHashMap(){};
 				
-				//! add a class instance as api with a name
-				template <typename A>
-				void addType(const std::string& name) {
-					std::auto_ptr<INSTANCER(A, T)> i(ALLOCATE_INSTANCER(A, T));
-					chaos::common::utility::TemplatedKeyValueHashMap<T*>::addElement(name.c_str(),
-																					 name.size(),
-																					 i->getInstance());
-				}
-				
 				//! add a class instance as api the name is got from the service name
-				template <typename A>
-				void addType() {
-					std::auto_ptr<INSTANCER(A, T)> i(ALLOCATE_INSTANCER(A, T));
-					T *instance = i->getInstance();
+				template <typename A, typename P>
+				void addTypeWithParam(P param) {
+					std::auto_ptr<INSTANCER_P1(A, T, P)> i(ALLOCATE_INSTANCER_P1(A, T, P));
+					T *instance = i->getInstance(param);
 					if(instance) {
 						chaos::common::utility::TemplatedKeyValueHashMap<T*>::addElement(instance->getName().c_str(),
 																						 (uint32_t)instance->getName().size(),

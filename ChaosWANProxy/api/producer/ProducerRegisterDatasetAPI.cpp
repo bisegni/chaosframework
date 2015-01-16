@@ -1,5 +1,5 @@
 /*
- *	ProducerInsertDataApi.cpp
+ *	ProducerRegisterAPI.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,24 +17,24 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ProducerInsertDataApi.h"
-
+#include "ProducerRegisterDatasetApi.h"
 
 using namespace chaos::wan_proxy::api::producer;
 
 //! default constructor
-ProducerInsertDataApi::ProducerInsertDataApi():
-AbstractApi("insert"){
+ProducerRegisterDatasetApi::ProducerRegisterDatasetApi(persistence::AbstractPersistenceDriver *_persistence_driver):
+AbstractApi("register",
+			_persistence_driver){
 	
 }
 
 //! default destructor
-ProducerInsertDataApi::~ProducerInsertDataApi() {
+ProducerRegisterDatasetApi::~ProducerRegisterDatasetApi() {
 	
 }
 
 //! execute the api
-int ProducerInsertDataApi::execute(std::vector<std::string>& api_tokens,
+int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 								 const Json::Value& input_data,
 								 std::map<std::string, std::string>& output_header,
 								 Json::Value& output_data) {

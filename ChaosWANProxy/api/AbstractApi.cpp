@@ -10,7 +10,9 @@
 
 using namespace chaos::wan_proxy::api;
 
-AbstractApi::AbstractApi(const std::string& name):
+AbstractApi::AbstractApi(const std::string& name,
+						 persistence::AbstractPersistenceDriver *_persistence_driver):
+PersistenceAccessor(_persistence_driver),
 NamedService(name){}
 
-AbstractApi::~AbstractApi() {}
+AbstractApi::~AbstractApi(){}

@@ -32,6 +32,7 @@ using namespace std;
 using namespace chaos;
 using namespace chaos::common::utility;
 using namespace chaos::wan_proxy;
+using namespace chaos::wan_proxy::persistence;
 using boost::shared_ptr;
 
 WaitSemaphore chaos::wan_proxy::ChaosWANProxy::waitCloseSemaphore;
@@ -93,13 +94,16 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 		network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
 		network_broker_service.init(NULL, __PRETTY_FUNCTION__);
 		
-		chaos_bridge.reset(new ChaosBridge(network_broker_service->getDirectIOClientInstance()), "ChaosBridge");
-		chaos_bridge.init(NULL, __PRETTY_FUNCTION__);
-		chaos_bridge->addServerList(setting.list_cds_server);
+		persistence_driver.reset(new DefaultPersistenceDriver(network_broker_service.get()), "DefaultPresistenceDriver");
+		persistence_driver.init(NULL, __PRETTY_FUNCTION__);
+		persistence_driver->addServerList(setting.list_cds_server);
 		
 		//Allcoate the handler
-		wan_interface_handler = new DefaultWANInterfaceHandler();
+		wan_interface_handler = new DefaultWANInterfaceHandler(persistence_driver.get());
 		if(!wan_interface_handler) throw CException(-5, "Error instantiating wan interface handler", __PRETTY_FUNCTION__);
+
+		((DefaultWANInterfaceHandler*)wan_interface_handler)->registerGroup();
+		
 		//start all proxy interface
 		for(SettingStringListIterator it = setting.list_wan_interface_to_enable.begin();
 			it != setting.list_wan_interface_to_enable.end();
@@ -218,7 +222,7 @@ void ChaosWANProxy::deinit()   throw(CException) {
 		wan_interface_handler = NULL;
 	}
 	
-	chaos_bridge.deinit(__PRETTY_FUNCTION__);
+	persistence_driver.deinit(__PRETTY_FUNCTION__);
 	
 	//deinit network brocker
 	network_broker_service.deinit(__PRETTY_FUNCTION__);

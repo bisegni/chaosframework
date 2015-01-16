@@ -1,5 +1,5 @@
 /*
- *	ChaosBridge.cpp
+ *	DefaultPersistenceDriver.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,47 +17,58 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ChaosBridge.h"
+#include "DefaultPersistenceDriver.h"
 
 #include <chaos/common/network/URL.h>
 
-#define CB_LOG_HEAD "[ChaosBridge] - "
+#define DPD_LOG_HEAD "[DefaultPersistenceDriver] - "
 
-#define CB_LAPP LAPP_ << CB_LOG_HEAD
-#define CB_LDBG LDBG_ << CB_LOG_HEAD << __PRETTY_FUNCTION__
-#define CB_LERR LERR_ << CB_LOG_HEAD << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") "
+#define DPD_LAPP LAPP_ << DPD_LOG_HEAD
+#define DPD_LDBG LDBG_ << DPD_LOG_HEAD << __PRETTY_FUNCTION__
+#define DPD_LERR LERR_ << DPD_LOG_HEAD << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") "
 
 
-using namespace chaos::wan_proxy;
+using namespace chaos::wan_proxy::persistence;
+
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-ChaosBridge::ChaosBridge(chaos::common::direct_io::DirectIOClient	*_direct_io_client):
-direct_io_client(_direct_io_client),
-connection_feeder("ChaosBridge", this) {
+DefaultPersistenceDriver::DefaultPersistenceDriver(NetworkBroker *_network_broker):
+AbstractPersistenceDriver("DefaultPersistenceDriver"),
+network_broker(_network_broker),
+direct_io_client(NULL),
+mds_message_channel(NULL),
+connection_feeder("DefaultPersistenceDriver", this) {
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-ChaosBridge::~ChaosBridge() {
+DefaultPersistenceDriver::~DefaultPersistenceDriver() {
 	
 }
 
-void ChaosBridge::init(void *init_data) throw (chaos::CException) {
+void DefaultPersistenceDriver::init(void *init_data) throw (chaos::CException) {
 	
+	//! get the mds message channel
+	mds_message_channel = network_broker->getMetadataserverMessageChannel();
+	if(!mds_message_channel) throw chaos::CException(-1, "No mds channel found", __PRETTY_FUNCTION__);
+		
+	//! get the direct io client
+	direct_io_client = network_broker->getDirectIOClientInstance();
 	InizializableService::initImplementation(direct_io_client,
 											 init_data,
 											 direct_io_client->getName(),
 											 __PRETTY_FUNCTION__);
 }
 
-void ChaosBridge::deinit() throw (chaos::CException) {
+void DefaultPersistenceDriver::deinit() throw (chaos::CException) {
 	
 	connection_feeder.clear();
 	
@@ -67,27 +78,29 @@ void ChaosBridge::deinit() throw (chaos::CException) {
 																   __PRETTY_FUNCTION__);)
 		delete(direct_io_client);
 	}
+	
+	if(mds_message_channel) network_broker->disposeMessageChannel(mds_message_channel);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void ChaosBridge::clear() {
+void DefaultPersistenceDriver::clear() {
 	connection_feeder.clear();
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void ChaosBridge::addServerList(const std::vector<std::string>& _cds_address_list) {
+void DefaultPersistenceDriver::addServerList(const std::vector<std::string>& _cds_address_list) {
 	//checkif someone has passed us the device indetification
-	CB_LAPP << "Scan the directio address";
+	DPD_LAPP << "Scan the directio address";
 	
 	for (std::vector<std::string>::const_iterator it = _cds_address_list.begin();
 		 it != _cds_address_list.end();
 		 it++ ){
 		if(!common::direct_io::DirectIOClient::checkURL(*it)) {
-			CB_LDBG << "Data proxy server description " << *it << " non well formed";
+			DPD_LDBG << "Data proxy server description " << *it << " non well formed";
 			continue;
 		}
 		//add new url to connection feeder
@@ -98,7 +111,7 @@ void ChaosBridge::addServerList(const std::vector<std::string>& _cds_address_lis
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void ChaosBridge::disposeService(void *service_ptr) {
+void DefaultPersistenceDriver::disposeService(void *service_ptr) {
 	if(!service_ptr) return;
 	DirectIOChannelsInfo	*info = static_cast<DirectIOChannelsInfo*>(service_ptr);
 	
@@ -110,8 +123,8 @@ void ChaosBridge::disposeService(void *service_ptr) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void* ChaosBridge::serviceForURL(const common::network::URL& url, uint32_t service_index) {
-	CB_LDBG << "Add connection for " << url.getURL();
+void* DefaultPersistenceDriver::serviceForURL(const common::network::URL& url, uint32_t service_index) {
+	DPD_LDBG << "Add connection for " << url.getURL();
 	DirectIOChannelsInfo * clients_channel = NULL;
 	chaos_direct_io::DirectIOClientConnection *tmp_connection = direct_io_client->getNewConnection(url.getURL());
 	if(tmp_connection) {
@@ -121,7 +134,7 @@ void* ChaosBridge::serviceForURL(const common::network::URL& url, uint32_t servi
 		//allocate the client channel
 		clients_channel->device_client_channel = (DirectIODeviceClientChannel*)tmp_connection->getNewChannelInstance("DirectIODeviceClientChannel");
 		if(!clients_channel->device_client_channel) {
-			CB_LDBG << "Error creating client device channel for " << url.getURL();
+			DPD_LDBG << "Error creating client device channel for " << url.getURL();
 			
 			//release conenction
 			direct_io_client->releaseConnection(tmp_connection);
@@ -136,7 +149,7 @@ void* ChaosBridge::serviceForURL(const common::network::URL& url, uint32_t servi
 		//!put the index in the conenction so we can found it wen we receive event from it
 		clients_channel->connection->setCustomStringIdentification(boost::lexical_cast<std::string>(service_index));
 	} else {
-		CB_LERR << "Error creating client connection for " << url.getURL();
+		DPD_LERR << "Error creating client connection for " << url.getURL();
 	}
 	return clients_channel;
 }
@@ -144,12 +157,12 @@ void* ChaosBridge::serviceForURL(const common::network::URL& url, uint32_t servi
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void ChaosBridge::handleEvent(DirectIOClientConnection *client_connection,
+void DefaultPersistenceDriver::handleEvent(DirectIOClientConnection *client_connection,
 							  DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
 	//if the channel has bee disconnected turn the relative index offline, if onli reput it online
 	boost::unique_lock<boost::shared_mutex>(mutext_feeder);
 	uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
-	DEBUG_CODE(CB_LDBG << "Manage event for service with index " << service_index << " and url" << client_connection->getURL();)
+	DEBUG_CODE(DPD_LDBG << "Manage event for service with index " << service_index << " and url" << client_connection->getURL();)
 	switch(event) {
 		case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:
 			connection_feeder.setURLOnline(service_index);
@@ -162,13 +175,13 @@ void ChaosBridge::handleEvent(DirectIOClientConnection *client_connection,
 }
 
 // push a dataset
-void ChaosBridge::pushDataset(const std::string& producer_key,
-							  CDataWrapper *dataset,
-							  int store_hint) {
-	CHAOS_ASSERT(dataset)
-	
-	auto_ptr<SerializationBuffer> serialization(dataset->getBSONData());
-	delete(dataset);
+int DefaultPersistenceDriver::pushNewDataset(const std::string& producer_key,
+											 CDataWrapper *new_dataset,
+											 int store_hint) {
+	CHAOS_ASSERT(new_dataset)
+	int err = 0;
+	auto_ptr<SerializationBuffer> serialization(new_dataset->getBSONData());
+	delete(new_dataset);
 	
 	DirectIOChannelsInfo	*next_client = static_cast<DirectIOChannelsInfo*>(connection_feeder.getService());
 	serialization->disposeOnDelete = !next_client;
@@ -182,12 +195,16 @@ void ChaosBridge::pushDataset(const std::string& producer_key,
 																		   (uint32_t)serialization->getBufferLen(),
 																		   (DirectIODeviceClientChannelPutMode)store_hint);
 	} else {
-		DEBUG_CODE(CB_LDBG << "No available socket->loose packet");
+		DEBUG_CODE(DPD_LDBG << "No available socket->loose packet");
 	}
+	
+	return err;
 }
 
 // get a dataset
-CDataWrapper *ChaosBridge::getDataset(const std::string& producer_key) {
+int DefaultPersistenceDriver::getLastDataset(const std::string& producer_key,
+											 chaos::common::data::CDataWrapper **last_dataset) {
+	int err = 0;
 	uint32_t size = 0;
 	char* result = NULL;
 	DirectIOChannelsInfo	*next_client = static_cast<DirectIOChannelsInfo*>(connection_feeder.getService());
@@ -196,5 +213,6 @@ CDataWrapper *ChaosBridge::getDataset(const std::string& producer_key) {
 	boost::shared_lock<boost::shared_mutex>(next_client->connection_mutex);
 	
 	next_client->device_client_channel->requestLastOutputData(producer_key, (void**)&result, size);
-	return new CDataWrapper(result);
+	*last_dataset = new CDataWrapper(result);
+	return err;
 }

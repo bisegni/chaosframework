@@ -1,5 +1,5 @@
 /*
- *	ProducerRegisterAPI.h
+ *	ProducerGetLastDatasetApi.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,35 +17,26 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ProducerRegisterAPI.h"
+#include "ProducerGetLastDatasetApi.h"
 
 using namespace chaos::wan_proxy::api::producer;
 
-//! default constructor
-ProducerRegisterApi::ProducerRegisterApi():
-AbstractApi("register"){
+// default constructor
+ProducerGetLastDatasetApi::ProducerGetLastDatasetApi(persistence::AbstractPersistenceDriver *_persistence_driver):
+AbstractApi("get_last",
+			_persistence_driver){
 	
 }
 
-//! default destructor
-ProducerRegisterApi::~ProducerRegisterApi() {
+// default destructor
+ProducerGetLastDatasetApi::~ProducerGetLastDatasetApi() {
 	
 }
 
-//! execute the api
-int ProducerRegisterApi::execute(std::vector<std::string>& api_tokens,
-								 const Json::Value& input_data,
-								 std::map<std::string, std::string>& output_header,
-								 Json::Value& output_data) {
-	int err = 0;
-	
-	for(std::vector<std::string>::iterator it = api_tokens.begin();
-		it != api_tokens.end();
-		it++) {
-		output_data["register_producer_input"].append(*it);
-	}
-	
-	output_header.insert(std::make_pair("my header", "my header value"));
-	output_data["register_producer_err"] = 0;
-	return err;
+// execute the api
+int ProducerGetLastDatasetApi::execute(std::vector<std::string>& api_tokens,
+									const Json::Value& input_data,
+									std::map<std::string, std::string>& output_header,
+									Json::Value& output_data) {
+	return 0;
 }
