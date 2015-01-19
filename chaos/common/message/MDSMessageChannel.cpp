@@ -150,7 +150,6 @@ int MDSMessageChannel::getLastDatasetForDevice(string& identificationID, CDataWr
     callData->addStringValue(DatasetDefinitionkey::DEVICE_ID, identificationID);
         //send request and wait the response
     auto_ptr<CDataWrapper> deviceInitInformation(MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getCurrentDataset", callData.get(), millisecToWait));
-	LAPP_ << deviceInitInformation->getJSONString();
     CHECK_TIMEOUT_AND_RESULT_CODE(deviceInitInformation, err) 
     if(err == ErrorCode::EC_NO_ERROR) {
         if(deviceInitInformation->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){
