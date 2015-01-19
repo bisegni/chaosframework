@@ -265,7 +265,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
             configuration.appendStringToArray(liveDataServer[idx]);
         }
     }
-    configuration.finalizeArrayForKey(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS);
+    configuration.finalizeArrayForKey(DataProxyConfigurationKey::DS_SERVER_ADDRESS);
     
     //configure metadataserver
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, InitOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")
@@ -347,7 +347,7 @@ void GlobalConfiguration::addMetadataServerAddress(const string& mdsAddress) thr
         throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
     
     //address can be added
-    configuration.addStringValue(DataProxyConfigurationKey::CS_LIB_METADATASET_ADDRESS, mdsAddress);
+    configuration.addStringValue(DataProxyConfigurationKey::MDS_SERVER_ADDRESS, mdsAddress);
 }
 
 /**
@@ -373,7 +373,7 @@ void GlobalConfiguration::addLocalServerBasePort(int32_t localDefaultPort) throw
  return the address of metadataserver
  */
 string GlobalConfiguration::getMetadataServerAddress() {
-    return configuration.getStringValue(DataProxyConfigurationKey::CS_LIB_METADATASET_ADDRESS);
+    return configuration.getStringValue(DataProxyConfigurationKey::MDS_SERVER_ADDRESS);
 }
 
 /*
@@ -402,7 +402,7 @@ string GlobalConfiguration::getLocalServerAddressAnBasePort(){
  return the address of metadataserver
  */
 bool GlobalConfiguration::isMEtadataServerConfigured() {
-    return configuration.hasKey(DataProxyConfigurationKey::CS_LIB_METADATASET_ADDRESS);
+    return configuration.hasKey(DataProxyConfigurationKey::MDS_SERVER_ADDRESS);
 }
 
 const std::map<std::string, std::string>& GlobalConfiguration::getRpcImplKVParam() const {

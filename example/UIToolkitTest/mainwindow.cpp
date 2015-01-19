@@ -292,7 +292,7 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
             deviceController->addAttributeToTrack(attributeName);
             deviceController->getDeviceAttributeRangeValueInfo(attributeName, rangeInfo);
             if(rangeInfo.valueType != chaos::DataType::TYPE_BYTEARRAY){
-                chaos::DataBuffer *attributeBuffer = deviceController->getBufferForAttribute(attributeName);
+                chaos::common::utility::DataBuffer *attributeBuffer = deviceController->getBufferForAttribute(attributeName);
                 if(!attributeBuffer) {
                     QMessageBox* msg = new QMessageBox(this);
                     msg->setText("Errore getting buffer for attribute!");
@@ -301,7 +301,7 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
                 }
                 graphWdg->addNewPlot(attributeBuffer, attributeName, rangeInfo.valueType);
             }else{
-                chaos::PointerBuffer *pointerBuffer = deviceController->getPtrBufferForAttribute(attributeName);
+                chaos::common::utility::PointerBuffer *pointerBuffer = deviceController->getPtrBufferForAttribute(attributeName);
                 if(!pointerBuffer) {
                     QMessageBox* msg = new QMessageBox(this);
                     msg->setText("Errore getting buffer for attribute!");

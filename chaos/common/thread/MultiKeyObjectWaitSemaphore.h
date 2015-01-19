@@ -45,7 +45,7 @@ namespace chaos {
     template<typename T, typename A>
     class MultiKeyObjectWaitSemaphore {
             //! mutex for regulate the multithreading map access
-        boost::mutex mapAccessMutex;
+        boost::shared_mutex mapAccessMutex;
         
             //! Represent the mapping between the key and it semaphore data structure
         map<T, ObjectWaitSemaphore<A> *> keySemaphoreMap;
@@ -77,7 +77,7 @@ namespace chaos {
         void initKey(T keyToInit){
             if(keySemaphoreMap.count(keyToInit)) return;
             
-            boost::unique_lock< boost::mutex >  mapLock(mapAccessMutex);
+            boost::unique_lock< boost::shared_mutex >  mapLock(mapAccessMutex);
             
             keySemaphoreMap.insert(make_pair(keyToInit, new ObjectWaitSemaphore<A>()));
         }
@@ -88,7 +88,7 @@ namespace chaos {
          the struccure is removed from map
          */
         bool setWaithedObjectForKey(T key, A obj){
-            boost::unique_lock< boost::mutex >  mapLock(mapAccessMutex);
+            boost::unique_lock< boost::shared_mutex >  mapLock(mapAccessMutex);
             if(!keySemaphoreMap.count(key)) return false;
             ObjectWaitSemaphore<A> *ks = keySemaphoreMap[key];
             if(!ks) {
@@ -107,14 +107,13 @@ namespace chaos {
          \return the object taht the thread was waiting for
          */
         A wait(T waitOnKey) {
-            boost::unique_lock< boost::mutex >  mapLock(mapAccessMutex);
+            boost::unique_lock< boost::shared_mutex >  mapLock(mapAccessMutex);
             
             A result = NULL;
             
             ObjectWaitSemaphore<A> *ks = keySemaphoreMap[waitOnKey]; mapLock.unlock();
             if(!ks) return NULL;
             result =  ks->wait();
-            
             keySemaphoreMap.erase(waitOnKey);
             delete(ks);
             return result;
@@ -128,7 +127,7 @@ namespace chaos {
         A wait(T waitOnKey, unsigned int millisecToWait) {
             ObjectWaitSemaphore<A> *ks = NULL;
             
-            boost::unique_lock< boost::mutex >  lockMap(mapAccessMutex);
+            boost::unique_lock< boost::shared_mutex >  lockMap(mapAccessMutex);
             ks = keySemaphoreMap[waitOnKey]; 
             lockMap.unlock();
             
@@ -138,8 +137,8 @@ namespace chaos {
             lockMap.lock();
             if(keySemaphoreMap.count(waitOnKey)){
                 keySemaphoreMap.erase(waitOnKey);
-                delete(ks);
             }
+			delete(ks);
             lockMap.unlock();
             return result;
         }

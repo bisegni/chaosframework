@@ -139,7 +139,7 @@ namespace chaos {
 			 Deinitialization method for output buffer
 			 */
 			virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
-				boost::mutex::scoped_lock lock(qMutex);
+				boost::unique_lock<boost::mutex> lock(qMutex);
 				in_deinit = true;
 				COPQUEUE_LDBG_ << " Deinitialization";
                 //stopping the group
@@ -167,7 +167,7 @@ namespace chaos {
 			 push the row value into the buffer
 			 */
 			virtual bool push(T* data) throw(CException) {
-				boost::mutex::scoped_lock lock(qMutex);
+				boost::unique_lock<boost::mutex> lock(qMutex);
 				if(in_deinit || bufferQueue.size() > CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE) return false;
 				bufferQueue.push(data);
 				lock.unlock();
@@ -179,7 +179,7 @@ namespace chaos {
 			 get the last insert data
 			 */
 			T* waitAndPop() {
-				boost::mutex::scoped_lock lock(qMutex);
+				boost::unique_lock<boost::mutex> lock(qMutex);
                 //output result poitner
 				T *oldestElement = NULL;
 				//DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() begin to wait";)
@@ -206,7 +206,7 @@ namespace chaos {
 			 check for empty buffer
 			 */
 			bool isEmpty() const {
-				boost::mutex::scoped_lock lock(qMutex);
+				boost::unique_lock<boost::mutex> lock(qMutex);
 				return bufferQueue.empty();
 			}
 			
@@ -214,7 +214,7 @@ namespace chaos {
 			 check for empty buffer
 			 */
 			void waitForEmpty() {
-				boost::mutex::scoped_lock lock(qMutex);
+				boost::unique_lock<boost::mutex> lock(qMutex);
 				while( bufferQueue.empty()){
 					emptyQueueConditionLock.wait(lock);
 				}
@@ -226,7 +226,7 @@ namespace chaos {
 			 clear the queue, remove all non processed element
 			 */
 			void clear() {
-				boost::mutex::scoped_lock lock(qMutex);
+				boost::unique_lock<boost::mutex> lock(qMutex);
 				
                 //remove all element
 				while (!bufferQueue.empty()) {
@@ -238,7 +238,7 @@ namespace chaos {
 			 Return le number of elementi into live data
 			 */
 			unsigned long elementInLiveBuffer() const {
-				boost::mutex::scoped_lock lock(qMutex);
+				boost::unique_lock<boost::mutex> lock(qMutex);
 				return bufferQueue.size();
 			}
 			

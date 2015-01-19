@@ -33,8 +33,8 @@ public class DeviceDescriptionUtility {
 		Device d = dDA.getDeviceFromDeviceIdentification(deviceIdentification);
 		result = (BasicBSONObject) d.toBson();
 		result.append("cu_uuid", d.getCuInstance());
-		if (checkInitiAtStartup && d.getInitAtStartup())
-			result.append(RPCConstants.CONTROL_UNIT_AUTOSTART, 1);
+//		if (checkInitiAtStartup && d.getInitAtStartup())
+//			result.append(RPCConstants.CONTROL_UNIT_AUTOSTART, 1);
 		// add live server
 		BasicBSONList liveServers = new BasicBSONList();
 		List<DataServer> list = dsDA.getAllDataServer(true);

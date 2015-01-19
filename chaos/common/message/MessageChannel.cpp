@@ -88,6 +88,7 @@ void MessageChannel::deinit() throw(CException) {
  called when a result of a message is received
  */
 CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachData) {
+	LAPP_ << "Received answer";
     if(!responseData->hasKey(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID)) return NULL;
     atomic_int_type requestID = 0;
     try {
@@ -96,15 +97,21 @@ CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachD
         
             //lock lk(waith_asnwer_mutex);
         atomic_int_type requestID = responseData->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
+		
+		LAPP_ << "Received answer with id " << requestID;
+
             //check if the requester is waith the answer
         if(!(detachData = sem.setWaithedObjectForKey(requestID, responseData))){
+			LAPP_ << "No waiting thread for id" << requestID;
             //call the handler
             if((detachData = response_handler)) {
                 response_handler(requestID, responseData);
             } else {
                 LDBG_ << "No one has consumed the response of id " << requestID;
             }
-        }
+		} else {
+			LAPP_ << "Anser forwad to waiting thread detach value->" << detachData;
+		}
     } catch (...) {
         LDBG_ << "An error occuring dispatching the response:" << requestID;
     }

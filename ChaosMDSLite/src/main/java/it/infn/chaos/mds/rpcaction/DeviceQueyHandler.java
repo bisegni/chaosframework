@@ -130,6 +130,7 @@ public class DeviceQueyHandler extends RPCActionHadler {
 		DataServerDA dsDA = null;
 		BasicBSONObject result = null;
 		try {
+			System.out.println("getDeviceDataseFromDeviceID");
 			dDA = getDataAccessInstance(DeviceDA.class);
 			dsDA = getDataAccessInstance(DataServerDA.class);
 			String deviceIdentification = actionData.getString(RPCConstants.DATASET_DEVICE_ID);

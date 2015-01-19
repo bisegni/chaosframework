@@ -80,7 +80,7 @@ GraphWidget::~GraphWidget() {
     delete(d_directPainter);
 }
 
-void GraphWidget::addNewPlot(chaos::PointerBuffer *pointerBuffer, std::string& plotName , chaos::DataType::DataType dataType){
+void GraphWidget::addNewPlot(chaos::common::utility::PointerBuffer *pointerBuffer, std::string& plotName , chaos::DataType::DataType dataType){
     boost::mutex::scoped_lock  lock(manageMutex);
     if(plotMap.count(plotName)>0) return;
     boost::shared_ptr<PlotPtrBufferAndCurve> newPlotInfo(new PlotPtrBufferAndCurve());
@@ -101,7 +101,7 @@ void GraphWidget::addNewPlot(chaos::PointerBuffer *pointerBuffer, std::string& p
     pointerPlotMap.insert(std::make_pair(plotName, newPlotInfo));
 }
 
-void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotName , chaos::DataType::DataType dataType){
+void GraphWidget::addNewPlot(chaos::common::utility::DataBuffer *dataBuffer, std::string& plotName , chaos::DataType::DataType dataType){
     boost::mutex::scoped_lock  lock(manageMutex);
     if(plotMap.count(plotName)>0) return;
     boost::shared_ptr<PlotBufferAndCurve> newPlotInfo(new PlotBufferAndCurve());

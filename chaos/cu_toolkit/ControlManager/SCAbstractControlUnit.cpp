@@ -261,11 +261,11 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
  */
 CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *updatePack, bool& detachParam) throw (CException) {
 	chaos::common::data::CDataWrapper *result = AbstractControlUnit::updateConfiguration(updatePack, detachParam);
-    if(updatePack->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
+    if(updatePack->hasKey(CUDefinitionKey::THREAD_SCHEDULE_DELAY)){
         chaos_batch::features::Features features;
 		std::memset(&features, 0, sizeof(chaos_batch::features::Features));
 		features.featuresFlag &= chaos_batch::features::FeaturesFlagTypes::FF_LOCK_USER_MOD;
-		features.featureSchedulerStepsDelay = (uint32_t)updatePack->getUInt64Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
+		features.featureSchedulerStepsDelay = (uint32_t)updatePack->getUInt64Value(CUDefinitionKey::THREAD_SCHEDULE_DELAY);
 		slow_command_executor->setCommandFeatures(features);
 	}
 	return result;

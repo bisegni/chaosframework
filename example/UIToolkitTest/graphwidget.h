@@ -42,7 +42,7 @@ class GraphWidget : public QWidget
 {
     struct PlotBufferAndCurve{
         chaos::DataType::DataType dataType;
-        chaos::DataBuffer *curveBuffer;
+        chaos::common::utility::DataBuffer *curveBuffer;
         QwtPlotCurve *curve;
         ~PlotBufferAndCurve(){
             if(curve) delete(curve);
@@ -50,7 +50,7 @@ class GraphWidget : public QWidget
     };
     struct PlotPtrBufferAndCurve{
         chaos::DataType::DataType dataType;
-        chaos::PointerBuffer *curvePointer;
+        chaos::common::utility::PointerBuffer *curvePointer;
         QwtPlotCurve *curve;
         ~PlotPtrBufferAndCurve(){
             if(curve) delete(curve);
@@ -72,8 +72,8 @@ public:
     boost::mutex manageMutex;
     explicit GraphWidget(QWidget *parent = 0);
     ~GraphWidget();
-    void addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotName, chaos::DataType::DataType dataType);
-    void addNewPlot(chaos::PointerBuffer *ptrBuffer, std::string& plotName, chaos::DataType::DataType dataType);
+    void addNewPlot(chaos::common::utility::DataBuffer *dataBuffer, std::string& plotName, chaos::DataType::DataType dataType);
+    void addNewPlot(chaos::common::utility::PointerBuffer *ptrBuffer, std::string& plotName, chaos::DataType::DataType dataType);
     void removePlot(std::string& plotName);
     void update();
     bool hasPlot(std::string& plotName);

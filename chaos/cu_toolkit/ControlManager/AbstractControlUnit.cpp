@@ -131,7 +131,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
 	
 	//add the CU isntance, this can be redefinide by user in the unitDefineActionAndDataset method
 	//for let the CU have the same instance at every run
-	setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE, control_unit_instance);
+	setupConfiguration.addStringValue(CUDefinitionKey::CU_INSTANCE, control_unit_instance);
 	
 	//undocumented field
 	setupConfiguration.addStringValue("mds_control_key", control_key);
@@ -738,7 +738,7 @@ CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam,
 											bool& detachParam) throw(CException) {
 	CDataWrapper *stateResult = new CDataWrapper();
 	//set the string representing the type of the control unit
-	stateResult->addStringValue(CUDefinitionKey::CS_CM_CU_TYPE, control_unit_type);
+	stateResult->addStringValue(CUDefinitionKey::CU_TYPE, control_unit_type);
 	return stateResult;
 }
 

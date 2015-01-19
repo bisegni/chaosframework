@@ -86,19 +86,19 @@ namespace chaos {
 		//! the regular expression for check the wel format key/valuparameter list for CS_CMDM_RPC_KV_IMPL_PARAM
 		static const char * const CS_CMDM_RPC_KV_IMPL_PARAM_STRING_REGEX    = "([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+)(\\|([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+))*";
 		//!  specify key/value paramter used by implementations with the template [k=v-k1|v1....]
-		static const char * const CS_CMDM_RPC_KV_IMPL_PARAM                 = "cs|cmdm|rpc_kv_impl_param";
+		static const char * const CS_CMDM_RPC_KV_IMPL_PARAM                 = "rpc_kv_impl_param";
 		//!  specify the type of the adatpre to be used
-		static const char * const CS_CMDM_RPC_ADAPTER_TYPE                  = "cs|cmdm|rpc_adapter_type";
+		static const char * const CS_CMDM_RPC_ADAPTER_TYPE                  = "rpc_adapter_type";
 		//!  specify the port where the rpc must publish the his socket
-		static const char * const CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT          = "cs|cmdm|rpc_adapter_port";
+		static const char * const CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT          = "rpc_adapter_port";
 		//!  the number of the thread to user
-		static const char * const CS_CMDM_RPC_ADAPTER_THREAD_NUMBER         = "cs|cmdm|rpc_adapter_tn";
+		static const char * const CS_CMDM_RPC_ADAPTER_THREAD_NUMBER         = "rpc_adapter_tn";
 		//!  specify when use the rpc synchronous interface
-		static const char * const CS_CMDM_RPC_SYNC_ENABLE                   = "cs|cmdm|rpc_sync_enable";
+		static const char * const CS_CMDM_RPC_SYNC_ENABLE                   = "rpc_sync_enable";
 		//!  specify the type of the adapter to use for syncrhonous rpc server
-		static const char * const CS_CMDM_RPC_SYNC_ADAPTER_TYPE             = "cs|cmdm|rpc_sync_adapter_type";
+		static const char * const CS_CMDM_RPC_SYNC_ADAPTER_TYPE             = "rpc_sync_adapter_type";
 		//!  specify the type of the adapter to use for syncrhonous rpc server
-		static const char * const CS_CMDM_RPC_SYNC_ADAPTER_PORT             = "cs|cmdm|rpc_sync_adapter_port";
+		static const char * const CS_CMDM_RPC_SYNC_ADAPTER_PORT             = "rpc_sync_adapter_port";
 	}
 	/** @} */ // end of RpcConfigurationKey
 	
@@ -131,28 +131,24 @@ namespace chaos {
 	//! Name space for grupping option used for define the control unit
 	namespace CUDefinitionKey {
 		//! delay beetwen a subseguent cu start method call
-		static const char * const CS_CM_THREAD_SCHEDULE_DELAY                   = "cs|cm|cu|thr|sch_del";
-		//! start the CU without metadataserver permission
-		static const char * const CS_CM_CU_AUTOSTART                            = "cs|cm|cu|autostart";
-		//! start the CU without metadataserver presence
-		static const char * const CS_CM_CU_AUTOSTART_NO_MS                      = "cs|cm|cu|autostart_no_ms";
+		static const char * const THREAD_SCHEDULE_DELAY                 = "cu_thr-sch-del";
 		//!key representing the type of parameter
-		static const char * const CS_CM_CU_NAME                                 = "cs|cm|cu_name";
+		static const char * const CU_NAME                               = "cu_name";
 		//!key representing the type of parameter
-		static const char * const CS_CM_CU_INSTANCE                             = "cs|cm|cu_instance";
+		static const char * const CU_INSTANCE                           = "cu_instance";
 		//!Control Unit instance internal address
-		static const char * const CS_CM_CU_INSTANCE_NET_ADDRESS                 = "cs|cm|cu_instance_net_address";
+		static const char * const CU_INSTANCE_NET_ADDRESS               = "cu_instance_net_address";
 		//!key representing the type of parameter
-		static const char * const CS_CM_CU_DESCRIPTION                          = "cs|cm|cu_desc";
+		static const char * const CU_DESCRIPTION                        = "cu_desc";
 		//!key representing the type of parameter
-		static const char * const CS_CM_CU_CLASS                                = "cs|cm|cu_class";
+		static const char * const CU_CLASS                              = "cu_class";
 		//!key representing the type of parameter
-		static const char * const CS_CM_CU_UUID                                 = "cs|cm|cu_uuid";
+		static const char * const CU_UUID								= "cu_uuid";
 		//!key representing the type of control unit
 		/*!
 		 \ingroup CUStateKey
 		 */
-		static const char * const CS_CM_CU_TYPE									= "cs|cm|cu_type";
+		static const char * const CU_TYPE								= "cu_type";
 		
 	}
 	/** @} */ // end of CUDefinitionKey
@@ -321,63 +317,63 @@ namespace chaos {
 		//!command manager rpc tag, this is the tag that rpc subsystem must to use to transfer BSON package between chaos node rpc endpoint
 		static const char * const CS_CMDM_RPC_TAG                             = "chaos_rpc";
 		//!key for action domain descriptors array {[domain, name, paramteres....]}
-		static const char * const CS_CMDM_ACTION_DESC                         = "cs|cmdm|act_desc";
+		static const char * const CS_CMDM_ACTION_DESC                         = "act_desc";
 		
 		//!key for the array of object that represent the action paramteres
 		//!description
-		static const char * const CS_CMDM_ACTION_DESC_PARAM                   = "cs|cmdm|act_desc_param";
+		static const char * const CS_CMDM_ACTION_DESC_PARAM                   = "act_desc_param";
 		
 		//!key representing the name of the parameter
-		static const char * const CS_CMDM_ACTION_DESC_PAR_NAME                = "cs|cmdm|act_desc_par_name";
+		static const char * const CS_CMDM_ACTION_DESC_PAR_NAME                = "act_desc_par_name";
 		
 		//!key representig the information for the parameter
-		static const char * const CS_CMDM_ACTION_DESC_PAR_INFO                = "cs|cmdm|act_desc_par_info";
+		static const char * const CS_CMDM_ACTION_DESC_PAR_INFO                = "act_desc_par_info";
 		
 		//!key representing the type of parameter
-		static const char * const CS_CMDM_ACTION_DESC_PAR_TYPE                = "cs|cmdm|act_desc_par_type";
+		static const char * const CS_CMDM_ACTION_DESC_PAR_TYPE                = "act_desc_par_type";
 		
 		//!comamnd description constant
 		//!key for action domain definition
-		static const char * const CS_CMDM_ACTION_DOMAIN                       = "cs|cmdm|act_domain";
+		static const char * const CS_CMDM_ACTION_DOMAIN                       = "act_domain";
 		
 		//!key for action name definition
-		static const char * const CS_CMDM_ACTION_NAME                         = "cs|cmdm|act_name";
+		static const char * const CS_CMDM_ACTION_NAME                         = "act_name";
 		
 		//!key for action message
-		static const char * const CS_CMDM_ACTION_MESSAGE                      = "cs|cmdm|act_msg";
+		static const char * const CS_CMDM_ACTION_MESSAGE                      = "act_msg";
 		
 		//!key for the specify the id of the request(the current message is an asnwer)
-		static const char * const CS_CMDM_MESSAGE_ID                          = "cs|cmdm|act_msg_id";
+		static const char * const CS_CMDM_MESSAGE_ID                          = "act_msg_id";
 		
 		//!key for action name definition
-		static const char * const CS_CMDM_ACTION_DESCRIPTION                  = "cs|cmdm|act_desc";
+		static const char * const CS_CMDM_ACTION_DESCRIPTION                  = "act_desc";
 		
 		
 		//!key action submission result
-		//static const char * const CS_CMDM_ACTION_SUBMISSION_RESULT            = "cs|cmdm|act_sub_result";
+		//static const char * const CS_CMDM_ACTION_SUBMISSION_RESULT            = "act_sub_result";
 		
 		//!key action submission error message
-		static const char * const CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE     = "cs|cmdm|act_sub_emsg";
+		static const char * const CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE     = "act_sub_emsg";
 		
 		//!key action submission error domain
-		static const char * const CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN      = "cs|cmdm|act_sub_edom";
+		static const char * const CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN      = "act_sub_edom";
 		
 		//!key action submission error code
-		static const char * const CS_CMDM_ACTION_SUBMISSION_ERROR_CODE        = "cs|cmdm|act_sub_ecode";
+		static const char * const CS_CMDM_ACTION_SUBMISSION_ERROR_CODE        = "act_sub_ecode";
 		
 		//!key for action sub command description
-		static const char * const CS_CMDM_SUB_CMD                             = "cs|cmdm|sub_cmd";
+		static const char * const CS_CMDM_SUB_CMD                             = "sub_cmd";
 		
 		//!key for the ip where to send the answer
-		static const char * const CS_CMDM_ANSWER_HOST_IP                      = "cs|cmdm|rh_ans_ip";
+		static const char * const CS_CMDM_ANSWER_HOST_IP                      = "rh_ans_ip";
 		//!key for the ip where to send the answer
-		static const char * const CS_CMDM_ANSWER_DOMAIN                      = "cs|cmdm|rh_ans_domain";
+		static const char * const CS_CMDM_ANSWER_DOMAIN                      = "rh_ans_domain";
 		//!key for the ip where to send the answer
-		static const char * const CS_CMDM_ANSWER_ACTION                      = "cs|cmdm|rh_ans_action";
+		static const char * const CS_CMDM_ANSWER_ACTION                      = "rh_ans_action";
 		//!key for the answer, it is needed byt the requester to recognize the answer
-		static const char * const CS_CMDM_ANSWER_ID                          = "cs|cmdm|rh_ans_msg_id";
+		static const char * const CS_CMDM_ANSWER_ID                          = "rh_ans_msg_id";
 		//!ker ofr the ip where to send the rpc pack
-		static const char * const CS_CMDM_REMOTE_HOST_IP                     = "cs|cmdm|rh_ip";
+		static const char * const CS_CMDM_REMOTE_HOST_IP                     = "rh_ip";
 	}
 	/** @} */ // end of RpcActionDefinitionKey
 	
@@ -534,23 +530,11 @@ namespace chaos {
 	 */
 	//! This is the collection of the key to configura history and live channel
 	namespace DataProxyConfigurationKey {
-		static const char * const CS_LIB_METADATASET_ADDRESS					= "mds_network_addr";
-		//!root key for DataManager Configuration
-		static const char * const CS_DM_CONFIGURATION							= "cs|dm|configuration";
-		//!the numebr of the thread ofr the output buffer
-		static const char * const CS_DM_OUTPUT_BUFFER_THREAD_NUM				= "cs|dm|out_buf_thread_num";
-		//!the numebr of the millisecond to wait untile the next
-		//!data will be send to the live buffer
-		static const char * const CS_DM_OUTPUT_BUFFER_LIVE_TIME					= "cs|dm|out_buf_live_time";
-		//!the numebr of the microsecond to wait untile the next
-		//!data will be send to the hst buffer
-		static const char * const CS_DM_OUTPUT_BUFFER_HST_TIME					= "cs|dm|out_buf_hst_time";
+		static const char * const MDS_SERVER_ADDRESS							= "mds_network_addr";
 		//!live data address
-		static const char * const CS_DM_LD_SERVER_ADDRESS						= "cs|dm|ld|server_address";
+		static const char * const DS_SERVER_ADDRESS								= "ds_server_address";
 		//!key associated with the device identification in a k/v storage ien
 		static const char * const CS_DM_LD_CU_ADDRESS_KEY						= "ld.device_addr_key";
-		//!key associated with the device identification in a k/v storage ien
-		static const char * const DATAPROXY_CLIENT_CONNECTION_MODE				= "chaos:dp:conn_mode";
 	}
 	/** @} */ // end of DataProxyConfigurationKey
 	

@@ -104,6 +104,10 @@ public class JMQRPCServer extends RPCServer implements Runnable {
 
 			RPCActionHadler actionHandler;
 			try {
+				if(domain == null ||
+						action == null) {
+					throw new RefException("No domain or action have been found");
+				}
 				actionHandler = getHandlerForDomainAndAction(domain, action);
 				if (actionHandler == null) {
 					rep_socket.send(getResponseRawType("No action handler", "MSGPackRPCServer", 1));

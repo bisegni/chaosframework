@@ -272,4 +272,13 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
 		//these exception need to be logged
 		DECODE_CHAOS_EXCEPTION(ex);
 	}
+	
+	//check if we need to detach the action message
+	if(action_elementPolicy.elementHasBeenDetached){
+		actionMessage.release();
+	}
+	
+	//set hte action as no fired
+	actionDescriptionPtr->setFired(false);
+
 }

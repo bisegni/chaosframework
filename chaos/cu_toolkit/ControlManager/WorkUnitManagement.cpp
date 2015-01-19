@@ -246,7 +246,7 @@ int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
 	//add action for metadata server
 	//add local ip and port
     
-    mdsPack.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
+    mdsPack.addStringValue(CUDefinitionKey::CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
     
 	//register CU from mds
     return mds_channel->sendUnitDescription(mdsPack);

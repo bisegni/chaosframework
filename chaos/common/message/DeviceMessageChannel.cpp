@@ -109,8 +109,8 @@ int DeviceMessageChannel::getType(std::string& control_unit_type, uint32_t milli
     CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
 	if(err == ErrorCode::EC_NO_ERROR) {
         auto_ptr<CDataWrapper> info_pack(result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
-        if(info_pack.get() && info_pack->hasKey(CUDefinitionKey::CS_CM_CU_TYPE)){
-            control_unit_type = info_pack->getStringValue(CUDefinitionKey::CS_CM_CU_TYPE);
+        if(info_pack.get() && info_pack->hasKey(CUDefinitionKey::CU_TYPE)){
+            control_unit_type = info_pack->getStringValue(CUDefinitionKey::CU_TYPE);
         }
     }
     return err;
@@ -157,7 +157,7 @@ int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy, uint32_t mil
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper message_data;
     message_data.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceNetworkAddress->deviceID);
-    message_data.addInt64Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY, scheduledDealy);
+    message_data.addInt64Value(CUDefinitionKey::THREAD_SCHEDULE_DELAY, scheduledDealy);
     auto_ptr<CDataWrapper> result(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(),
 															  "updateConfiguration",
 															  &message_data,
