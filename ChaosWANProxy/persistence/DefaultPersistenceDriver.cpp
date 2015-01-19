@@ -162,7 +162,7 @@ void DefaultPersistenceDriver::handleEvent(DirectIOClientConnection *client_conn
 	//if the channel has bee disconnected turn the relative index offline, if onli reput it online
 	boost::unique_lock<boost::shared_mutex>(mutext_feeder);
 	uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
-	DEBUG_CODE(DPD_LDBG << "Manage event for service with index " << service_index << " and url" << client_connection->getURL();)
+	DEBUG_CODE(DPD_LDBG << "Manage event for service with index " << service_index << " and url " << client_connection->getURL();)
 	switch(event) {
 		case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:
 			connection_feeder.setURLOnline(service_index);
