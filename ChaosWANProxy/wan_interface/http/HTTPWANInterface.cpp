@@ -215,23 +215,22 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 					   (content_data.size()? (" with message data: " + content_data):" with no message data");)
 			//return the error for the api call
 			response.setCode(400);
-			json_response["wi_error"] = err;
-			json_response["wi_error_message"].append("Call Error");
+			json_response["error"] = err;
+			json_response["error_message"].append("Call Error");
 		}else{
-			json_response["wi_error"] = 0;
 			//return the infromation of api call success
 			response.setCode(200);
-			json_response["Error"].append("Call Succeded");
+			json_response["error"] = 0;
 		}
 	} else {
 		//return the error for bad json or invalid url
 		response.setCode(400);
 		response.addHeaderKeyValue("Content-Type", "application/json");
-		json_response["wi_error"] = -1;
+		json_response["error"] = -1;
 		if(api_token_list.size()<2) {
-			json_response["wi_error_message"].append("The uri need to contains either the domain and name of the api ex: http[s]://host:port/api/vx/domain/name(/param)*");
+			json_response["error_message"].append("The uri need to contains either the domain and name of the api ex: http[s]://host:port/api/vx/domain/name(/param)*");
 		} if(!json) {
-			json_response["wi_error_message"].append("The content of the request need to be json");
+			json_response["error_message"].append("The content of the request need to be json");
 		}
 	}
 	

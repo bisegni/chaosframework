@@ -21,8 +21,9 @@
 #define CHAOSFramework_api_types_h
 
 
-#define MAKE_API_ERR(json_value, err, msg) \
-json_value["rp_err"] = err;\
-json_value["rp_err_msg"] = msg;
+
+#define MAKE_API_ERR(json_value, err_key, err, err_msg_key, msg_string) \
+json_value[err_key] = err;\
+json_value[err_msg_key] = msg_string.c_str();
 
 #endif
