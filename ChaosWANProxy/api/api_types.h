@@ -1,5 +1,5 @@
 /*
- *	api.h
+ *	api_types.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,11 +17,12 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_api_h
-#define CHAOSFramework_api_h
+#ifndef CHAOSFramework_api_types_h
+#define CHAOSFramework_api_types_h
 
 
-#include "AbstractApi.h"
-#include "AbstractApiGroup.h"
-#include "api_types.h"
+#define MAKE_API_ERR(json_value, err, msg) \
+json_value["rp_err"] = err;\
+json_value["rp_err_msg"] = msg;
+
 #endif

@@ -1093,6 +1093,7 @@
 		32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOClientConnection.h; sourceTree = "<group>"; };
 		32E2561717A67564000F4E20 /* FinalStateMachine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FinalStateMachine.cpp; sourceTree = "<group>"; };
 		32E2561817A67564000F4E20 /* FinalStateMachine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FinalStateMachine.h; sourceTree = "<group>"; };
+		32E977561A6E65B800D89C15 /* api_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
 		32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApi.cpp; sourceTree = "<group>"; };
 		32E9A53D1A66A1B100545BB4 /* AbstractApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
 		32E9A53F1A66A1C300545BB4 /* api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
@@ -1268,6 +1269,7 @@
 				32E9A5571A69151F00545BB4 /* PersistenceAccessor.cpp */,
 				32E9A5561A69146C00545BB4 /* PersistenceAccessor.h */,
 				32E9A53F1A66A1C300545BB4 /* api.h */,
+				32E977561A6E65B800D89C15 /* api_types.h */,
 			);
 			path = api;
 			sourceTree = "<group>";

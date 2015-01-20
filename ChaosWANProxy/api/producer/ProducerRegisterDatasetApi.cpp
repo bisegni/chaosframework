@@ -19,12 +19,14 @@
  */
 #include "ProducerRegisterDatasetApi.h"
 
+#include <chaos/common/chaos_constants.h>
+
+using namespace chaos::common::data;
 using namespace chaos::wan_proxy::api::producer;
 
 #define PRA_LAPP LAPP_ << "[ProducerRegisterDatasetApi] - "
 #define PRA_LDBG LDBG_ << "[ProducerRegisterDatasetApi] - " << __PRETTY_FUNCTION__ << " - "
 #define PRA_LERR LERR_ << "[ProducerRegisterDatasetApi] - " << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
-
 
 //! default constructor
 ProducerRegisterDatasetApi::ProducerRegisterDatasetApi(persistence::AbstractPersistenceDriver *_persistence_driver):
@@ -40,11 +42,9 @@ ProducerRegisterDatasetApi::~ProducerRegisterDatasetApi() {
 
 //! execute the api
 /*!
- The json  need to be composed as follow:
- {
- -the name of the producer that we need to register
- "ds_attr_dom": string,
  
+ The name of the producer is given in the uri. The json  need to be composed as follow:
+ {
  - the timestamp of the producer got at the registration time
  "ds_timestamp": string,
  
@@ -87,15 +87,54 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 								 std::map<std::string, std::string>& output_header,
 								 Json::Value& output_data) {
 	int err = 0;
-	Json::FastWriter json_writer;
+	std::string err_msg;
+	if(api_tokens.size() == 0) {
+		err_msg = "no producer name in the uri";
+		PRA_LERR << err_msg;
+		MAKE_API_ERR(output_data, -1, err_msg);
+		return err;
+	} else if(api_tokens.size() > 1) {
+		err_msg = "too many param in the uri";
+		PRA_LERR << err_msg;
+		
+		MAKE_API_ERR(output_data, -2, err_msg);
+		return err;
+	}
+	//we can proceed
+	const std::string& producer_name = api_tokens[0];
+	PRA_LDBG << "Start registration producer registration with id " << producer_name;
+
+	CDataWrapper mds_registration_pack;
+	CDataWrapper dataset_pack;
+	//add the producer id
+	mds_registration_pack.addStringValue(chaos::DatasetDefinitionkey::DEVICE_ID, producer_name);
 	
-	PRA_LDBG << "Start registration with json pack:";
+	//scan the description of the dataset
+	const Json::Value& dataset_element = input_data[chaos::DatasetDefinitionkey::DESCRIPTION];
+	if(!dataset_element.isArray()) {
+		err_msg = "The description of the dataset needs to be an array of object";
+		PRA_LERR << err_msg;
+		
+		MAKE_API_ERR(output_data, -3, err_msg);
+		return err;
+	}
 	
-	Json::Value tmp_json_element;
-	tmp_json_element = input_data["ds_timestamp"];
-	
-	output_header.insert(std::make_pair("my header", "my header value"));
-	output_data["input_data_received"] = input_data;
+	//we have a dataset, perhaps empty...
+	for (Json::ValueConstIterator it = dataset_element.begin();
+		 it != dataset_element.end();
+		 ++it) {
+		if((err = scanDatasetElement(*it, err_msg))) {
+			PRA_LERR << err_msg;
+			
+			MAKE_API_ERR(output_data, err, err_msg);
+			return err;
+		}
+	}
 	output_data["register_producer_err"] = 0;
 	return err;
+}
+
+int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_json_element,
+												   std::string& err_msg) {
+	return 0;
 }

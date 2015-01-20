@@ -29,6 +29,7 @@ namespace chaos {
 				
 				class ProducerRegisterDatasetApi:
 				public AbstractApi {
+					int scanDatasetElement(const Json::Value& dataset_json_element, std::string& err_msg);
 				public:
 					//! default constructor
 					ProducerRegisterDatasetApi(persistence::AbstractPersistenceDriver *_persistence_driver);

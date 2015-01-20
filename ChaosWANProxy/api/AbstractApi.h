@@ -20,6 +20,7 @@
 #ifndef __CHAOSFramework__AbstractApi__
 #define __CHAOSFramework__AbstractApi__
 
+#include "api_types.h"
 #include "PersistenceAccessor.h"
 
 #include <string>
