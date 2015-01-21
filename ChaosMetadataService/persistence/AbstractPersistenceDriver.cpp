@@ -1,5 +1,5 @@
 /*
- *	ProducerGroup.h
+ *	AbstractPersistenceDriver.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,27 +17,15 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__ProducerGroup__
-#define __CHAOSFramework__ProducerGroup__
+#include "AbstractPersistenceDriver.h"
 
-#include "../AbstractGroup.h"
+using namespace chaos::metadata_service::persistence;
 
-namespace chaos {
-	namespace metadata_service {
-		namespace api {
-			namespace producer {
-				
-				//! api group for the managment of the producer
-				class ProducerGroup:
-				public AbstractGroup {
-				public:
-					ProducerGroup();
-					~ProducerGroup();
-				};
-				
-			}
-		}
-	}
+AbstractPersistenceDriver::AbstractPersistenceDriver(const std::string& name):
+NamedService(name){
+	
 }
 
-#endif /* defined(__CHAOSFramework__ProducerGroup__) */
+AbstractPersistenceDriver::~AbstractPersistenceDriver() {
+	
+}

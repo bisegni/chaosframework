@@ -1156,6 +1156,8 @@
 		32FC7EDD1A70064E0029C2A2 /* MongoDBHAConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBHAConnectionManager.h; sourceTree = "<group>"; };
 		32FC7EDF1A7008780029C2A2 /* mds_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_constants.h; sourceTree = "<group>"; };
 		32FC7EE01A7008FA0029C2A2 /* mds_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_types.h; sourceTree = "<group>"; };
+		32FC7EE11A701BE40029C2A2 /* AbstractApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
+		32FC7EE21A701D8E0029C2A2 /* AbstractGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractGroup.h; sourceTree = "<group>"; };
 		53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingletonOnArguments.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2425,6 +2427,8 @@
 			isa = PBXGroup;
 			children = (
 				3235FDC41A6FF40100EC83A9 /* producer */,
+				32FC7EE11A701BE40029C2A2 /* AbstractApi.h */,
+				32FC7EE21A701D8E0029C2A2 /* AbstractGroup.h */,
 			);
 			path = api;
 			sourceTree = "<group>";

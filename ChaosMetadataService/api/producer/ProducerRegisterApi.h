@@ -19,13 +19,20 @@
  */
 #ifndef __CHAOSFramework__ProducerRegisterApi__
 #define __CHAOSFramework__ProducerRegisterApi__
+
+#include "../AbstractApi.h"
+
 namespace chaos {
 	namespace metadata_service {
 		namespace api {
 			namespace producer {
 				
-				class ProducerRegisterApi {
-					
+				class ProducerRegisterApi:
+				public AbstractApi {
+				public:
+					ProducerRegisterApi();
+					~ProducerRegisterApi();
+					chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
 				};
 				
 			}
