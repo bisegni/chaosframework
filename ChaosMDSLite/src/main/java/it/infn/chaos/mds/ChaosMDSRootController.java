@@ -62,6 +62,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.UriFragmentUtility.FragmentChangedEvent;
+import com.vaadin.ui.Window.Notification;
 
 @SuppressWarnings("serial")
 public class ChaosMDSRootController extends RefVaadinApplicationController implements RefAuthneticatorListener {
@@ -74,6 +75,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 	private String					unitServerCUTypeSelected;
 	private UnitServerCuInstance	cuselected	= null;
 	private Application				webapp		= null;
+	private Window errwin = null;
 
 	/*
 	 * (non-Javadoc)
@@ -86,9 +88,40 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		msp = (ManageServerProcess) openProcess(ManageServerProcess.class.getSimpleName(), mdp.getProcessName());
 		musp = (ManageUnitServerProcess) openProcess(ManageUnitServerProcess.class.getSimpleName(), mdp.getProcessName());
 		mds = (MetaDataServerProcess) openProcess(MetaDataServerProcess.class.getSimpleName(), null);
-
+		
+		File init = new File("mds_init.conf");
 		openViewByKeyAndClass("VISTA", MDSAppView.class);
 		EventsToVaadin.getInstance().addListener(this);
+		MDSAppView view = getViewByKey("VISTA");
+
+		if(init.exists()){
+			
+			try {
+				File dest = new File("mds_init.conf.loaded");
+				mds.applyConfig("mds_init.conf", 0);
+				view.getWindow().showNotification("mds_init.conf successfully loaded");
+				init.renameTo(dest);
+		
+			} catch ( java.sql.SQLException e){
+				msp.close();
+				mds.close();
+				mdp.close();
+				musp.close();
+				mdp = (ManageDeviceProcess) openProcess(ManageDeviceProcess.class.getSimpleName(), null);
+				msp = (ManageServerProcess) openProcess(ManageServerProcess.class.getSimpleName(), mdp.getProcessName());
+				musp = (ManageUnitServerProcess) openProcess(ManageUnitServerProcess.class.getSimpleName(), mdp.getProcessName());
+				mds = (MetaDataServerProcess) openProcess(MetaDataServerProcess.class.getSimpleName(), null);
+			} catch (Throwable e){
+				File dest = new File("mds_init.conf.error");
+
+				view.getWindow().showNotification("Error loading \"mds_init.conf\": "+e.getMessage(),Notification.TYPE_ERROR_MESSAGE);
+				init.renameTo(dest);
+
+				e.printStackTrace();
+			}
+		}
+
+		
 		URIHandler uriHandler = new URIHandler() {
 
 			@Override
@@ -144,7 +177,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 	 */
 	@Override
 	public void update(Observable source, Object sourceData) {
-		Window errwin = null;
+		errwin = null;
 		if (sourceData == null)
 			return;
 		try {
@@ -285,12 +318,24 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					openViewByKeyAndClass("VISTA", MDSAppView.class);
 				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_APPLY_CONFIGURATION)) {
 					if (viewEvent.getEventData() != null) {
-						applyConfiguration((Vector<Object>) viewEvent.getEventData());
+						Vector<Object> obj = (Vector<Object>) viewEvent.getEventData();
+						try{
+							applyConfiguration(obj);
+							deleteViewByKey("VISTA_DUE");
+							openViewByKeyAndClass("VISTA", MDSAppView.class);
+							MDSAppView view = getViewByKey("VISTA");
+
+							view.getWindow().showNotification("Configuration successfully applied");
+							updateUnitServerList();
+							updateDeviceList(true);
+							unitServerHasBeenSelected(null);
+						} catch  (Throwable e ){
+							LiveDataPreferenceView  view = getViewByKey("VISTA_DUE");
+
+							view.getWindow().showNotification("Error processing \""+obj.get(0).toString() +"\":"+e.getMessage(), Notification.TYPE_ERROR_MESSAGE);
+						}
 					}
-					deleteViewByKey("VISTA_DUE");
-					openViewByKeyAndClass("VISTA", MDSAppView.class);
-					refreshUnitServer(null);
-					updateDeviceList(true);
+					
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION)) {
 					if (unitServerSelected != null) {
 						loadUnloadAllUnitServerAssociation(true);
@@ -426,10 +471,12 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 	 */
 	private void applyConfiguration(Vector<Object> v) throws Throwable {
 		// TODO Auto-generated method stub
-
-		String configname = (String) v.get(0);
-		Integer replace = (Integer) v.get(1);
-		mds.applyConfig(configname, replace);
+	
+			String configname = (String) v.get(0);
+			Integer replace = (Integer) v.get(1);
+		
+			mds.applyConfig(configname, replace);
+		
 	}
 
 	/**
@@ -636,8 +683,11 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 	 * @throws Throwable
 	 */
 	private void unitServerHasBeenSelected(Object unitServerIdentification) throws Throwable {
-		if (unitServerIdentification == null)
+		if (unitServerIdentification == null){
+			// clean the tab 
+			notifyEventoToViewWithData(MDSUIEvents.EVENT_UPDATE_LIST, this, null);
 			return;
+		}
 		UnitServer us = musp.getUnitServerByIdentification(unitServerIdentification.toString());
 		Vector<UnitServerCuInstance> cuiv = musp.loadAllAssociationForUnitServerAlias(unitServerIdentification.toString());
 		for (UnitServerCuInstance ci : cuiv) {

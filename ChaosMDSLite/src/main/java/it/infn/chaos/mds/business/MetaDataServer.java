@@ -7,6 +7,7 @@ import it.infn.chaos.mds.process.MetaDataServerProcess;
 
 import org.bson.BasicBSONObject;
 import org.bson.types.BasicBSONList;
+import org.ref.common.exception.RefException;
 
 import com.mongodb.util.JSON;
 
@@ -26,6 +27,10 @@ public class MetaDataServer extends BSONBusinessObject {
 		BasicBSONObject bo =(BasicBSONObject)json;
 		dsv=new Vector<DataServer>();
 		blist = (BasicBSONList) bo.get("data_servers");
+		if(blist == null){
+			throw new RefException("parse error missing \"data_servers\"");
+
+		}
 		for (Object object : blist) {
 			DataServer ds = new DataServer();
 			ds.fillFromBson(object);
@@ -34,7 +39,11 @@ public class MetaDataServer extends BSONBusinessObject {
 		
 		dcv=new Vector<DeviceClass>();
 		blist = (BasicBSONList) bo.get("device_classes");
+		if(blist == null){
+			throw new RefException("parse error missing \"device_classes\"");
 
+		}
+		
 		for (Object object : blist) {
 			DeviceClass ds = new DeviceClass();
 			ds.fillFromBson(object);
@@ -43,6 +52,10 @@ public class MetaDataServer extends BSONBusinessObject {
 		
 		usv=new Vector<UnitServer>();
 		blist = (BasicBSONList) bo.get("us");
+		if(blist == null){
+			throw new RefException("parse error missing \"us\"");
+		}
+
 		for (Object object : blist) {
 			UnitServer ds = new UnitServer();
 			ds.fillFromBson(object);
