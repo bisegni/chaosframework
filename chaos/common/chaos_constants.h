@@ -224,8 +224,6 @@ namespace chaos {
 		static const char * const DEVICE_ID                         = "ds_attr_dom";
 		//!key for the name of dataset attribute
 		static const char * const ATTRIBUTE_NAME                    = "ds_attr_name";
-		//!key for the name of dataset attribute
-		static const char * const ATTRIBUTE_VALUE                   = "ds_attr_value";
 		//!key for the tag of the dataset attrbiute
 		static const char * const ATTRIBUTE_TAG                     = "ds_attr_tag";
 		//!key representing the type of parameter

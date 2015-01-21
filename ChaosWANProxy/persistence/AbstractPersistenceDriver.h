@@ -40,6 +40,10 @@ namespace chaos {
 				//! get a dataset
 				virtual int getLastDataset(const std::string& producer_key,
 										   chaos::common::data::CDataWrapper **last_dataset) = 0;
+				
+				//! register the dataset of ap roducer
+				virtual int registerDataset(const std::string& producer_key,
+											chaos::common::data::CDataWrapper& last_dataset) = 0;
 			};
 		}
 	}

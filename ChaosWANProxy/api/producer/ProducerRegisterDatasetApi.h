@@ -22,13 +22,21 @@
 
 #include "../AbstractApi.h"
 
+#include <boost/shared_ptr.hpp>
 namespace chaos {
 	namespace wan_proxy {
 		namespace api {
 			namespace producer {
 				
+				typedef enum ProducerRegisterDatasetApiErrorCode {
+					
+				}ProducerRegisterDatasetApiErrorCode;
+				
 				class ProducerRegisterDatasetApi:
 				public AbstractApi {
+					int scanDatasetElement(const Json::Value& dataset_json_element,
+										   std::string& err_msg,
+										   boost::shared_ptr<chaos::common::data::CDataWrapper>& element);
 				public:
 					//! default constructor
 					ProducerRegisterDatasetApi(persistence::AbstractPersistenceDriver *_persistence_driver);

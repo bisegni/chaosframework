@@ -87,6 +87,10 @@ namespace chaos {
 				//! get a dataset
 				int getLastDataset(const std::string& producer_key,
 								   chaos::common::data::CDataWrapper **last_dataset);
+				
+				//! register the dataset of ap roducer
+				int registerDataset(const std::string& producer_key,
+									chaos::common::data::CDataWrapper& last_dataset);
 			};
 		}
 	}
