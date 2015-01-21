@@ -20,6 +20,7 @@
 #include "DefaultPersistenceDriver.h"
 
 #include <chaos/common/network/URL.h>
+#include <chaos/common/chaos_constants.h>
 
 #define DPD_LOG_HEAD "[DefaultPersistenceDriver] - "
 
@@ -215,4 +216,14 @@ int DefaultPersistenceDriver::getLastDataset(const std::string& producer_key,
 	next_client->device_client_channel->requestLastOutputData(producer_key, (void**)&result, size);
 	*last_dataset = new CDataWrapper(result);
 	return err;
+}
+
+//! register the dataset of ap roducer
+int DefaultPersistenceDriver::registerDataset(const std::string& producer_key,
+											  chaos::common::data::CDataWrapper& last_dataset) {
+	CHAOS_ASSERT(mds_message_channel)
+	last_dataset.addStringValue(chaos::DatasetDefinitionkey::DEVICE_ID, producer_key);
+	last_dataset.addStringValue(chaos::CUDefinitionKey::CU_INSTANCE, "SYNC_WAN");
+	last_dataset.addStringValue("mds_control_key","none");
+	return mds_message_channel->sendUnitDescription(last_dataset, true, 3000);
 }

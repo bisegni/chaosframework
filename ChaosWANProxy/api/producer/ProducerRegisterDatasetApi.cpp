@@ -89,6 +89,7 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 										const Json::Value& input_data,
 										std::map<std::string, std::string>& output_header,
 										Json::Value& output_data) {
+	CHAOS_ASSERT(persistence_driver)
 	int err = 0;
 	std::string err_msg;
 	if(api_tokens.size() == 0) {
@@ -109,8 +110,6 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 	
 	CDataWrapper mds_registration_pack;
 	CDataWrapper dataset_pack;
-	//add the producer id
-	mds_registration_pack.addStringValue(chaos::DatasetDefinitionkey::DEVICE_ID, producer_name);
 	
 	const Json::Value& dataset_timestamp = input_data[chaos::DatasetDefinitionkey::TIMESTAMP];
 	if(dataset_timestamp.isNull()) {
@@ -155,11 +154,21 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 	//close array for all device description
 	mds_registration_pack.finalizeArrayForKey(DatasetDefinitionkey::DESCRIPTION);
 	DEBUG_CODE(PRA_LDBG << mds_registration_pack.getJSONString());
-	output_data["producer_register_err"] = 0;
-	output_data["producer_register_bson"] =  mds_registration_pack.getJSONString();
+	
+	if((err = persistence_driver->registerDataset(producer_name,
+												  mds_registration_pack))) {
+		err_msg = "Error in the dataset registration";
+		PRA_LERR << err_msg;
+		PRODUCER_REGISTER_ERR(output_data, -18, err_msg);
+		return err;
+	}else {
+		output_data["producer_register_err"] = 0;
+		output_data["producer_register_bson"] =  mds_registration_pack.getJSONString();
+	}
 	return err;
 }
 
+//scan a json elemenot of the dataset creating the respective CDataWrapper
 int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_json_element,
 												   std::string& err_msg,
 												   boost::shared_ptr<chaos::common::data::CDataWrapper>& element) {
