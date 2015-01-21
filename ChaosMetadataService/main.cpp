@@ -24,15 +24,28 @@
 
 #include "ChaosMetadataService.h"
 
-using namespace chaos;
+using namespace chaos::metadata_service;
 
 int main(int argc, char * argv[]) {
 	try {
-		//Init the Node
-	  //		chaos::nd::ChaosMetadataService::getInstance()->init(argc, argv);
-		//!Start the node
-	  //		chaos::nd::ChaosMetadataService::getInstance()->start();
-	} catch (CException& ex) {
+		//cache parameter
+		ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_PERSITENCE_IMPL,
+																										"Specify the implementation of the persistence layer",
+																										&ChaosMetadataService::getInstance()->setting.persistence_implementation);
+		
+		ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_PERSITENCE_SERVER_ADDR_LIST,
+																													 "Specify servers where the persistence layer needs to use",
+																													 &ChaosMetadataService::getInstance()->setting.persistence_server_list);
+		
+		ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_PERSITENCE_KV_PARAMTER,
+																										"The key value parameter for storage implementation driver (ex k:v-k1:v1)",
+																										&ChaosMetadataService::getInstance()->setting.persistence_kv_param_string);
+
+		
+		ChaosMetadataService::getInstance()->init(argc, argv);
+		
+		ChaosMetadataService::getInstance()->start();
+	} catch (chaos::CException& ex) {
 		DECODE_CHAOS_EXCEPTION(ex)
 	}
 	return 0;

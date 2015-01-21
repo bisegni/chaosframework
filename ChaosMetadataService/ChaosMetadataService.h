@@ -21,8 +21,10 @@
 #ifndef ChaosMetadataService_H
 #define ChaosMetadataService_H
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
-// TODO 
-///#include "api_services/DeviceApi.h"
+
+#include "mds_constants.h"
+#include "mds_types.h"
+#include "persistence/AbstractPersistenceDriver.h"
 
 #include <boost/thread/condition.hpp>
 
@@ -33,7 +35,7 @@
 #include <chaos/common/utility/StartableService.h>
 
 namespace chaos {
-    namespace nd {
+    namespace metadata_service {
             //! Chaos Node Directory base class
         /*!
          
@@ -45,16 +47,22 @@ namespace chaos {
             friend class Singleton<ChaosMetadataService>;
             
             static WaitSemaphore waitCloseSemaphore;
-            
+			
             //! network broker for talk with others chaos node
             common::utility::StartableServiceContainer<NetworkBroker> network_broker_service;
-            
+			
+			//!persistence driver instance
+            common::utility::InizializableServiceContainer<persistence::AbstractPersistenceDriver> persistence_driver;
+			
             ChaosMetadataService(){};
             ~ChaosMetadataService(){};
             static void signalHanlder(int);
             
-	    //            cnd::api::DeviceApi deviceApi;
-        public:
+			//! convert param_key to a string of string hash map
+			void fillKVParameter(std::map<std::string, std::string>& kvmap, const std::string& param_key);
+        public:			
+			struct setting	setting;
+
             typedef boost::mutex::scoped_lock lock;
                 //! C and C++ attribute parser
             /*!

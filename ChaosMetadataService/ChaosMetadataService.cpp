@@ -18,13 +18,23 @@
  *    	limitations under the License.
  */
 #include "ChaosMetadataService.h"
-#include "api_services/DeviceApi.h"
+#include "mds_constants.h"
+
 #include <csignal>
 #include <chaos/common/exception/CException.h>
+#include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
+
+
+#include <chaos/common/utility/ObjectFactoryRegister.h>
+
+//! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
+static const boost::regex KVParamRegex("[a-zA-Z0-9/_]+:[a-zA-Z0-9/_]+(-[a-zA-Z0-9/_]+:[a-zA-Z0-9/_]+)*");
 
 using namespace std;
 using namespace chaos;
-using namespace chaos::nd;
+using namespace chaos::metadata_service;
+using namespace chaos::common::utility;
 using boost::shared_ptr;
 
 WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
@@ -55,21 +65,43 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
     try {
         ChaosCommon<ChaosMetadataService>::init(init_data);
         if (signal((int) SIGINT, ChaosMetadataService::signalHanlder) == SIG_ERR) {
-            throw CException(0, "Error registering SIGINT signal", __PRETTY_FUNCTION__);
+            throw CException(-1, "Error registering SIGINT signal", __PRETTY_FUNCTION__);
         }
  
         if (signal((int) SIGQUIT, ChaosMetadataService::signalHanlder) == SIG_ERR) {
-            throw CException(0, "Error registering SIG_ERR signal", __PRETTY_FUNCTION__);
+            throw CException(2, "Error registering SIG_ERR signal", __PRETTY_FUNCTION__);
         }
-        
+		
+		//scan the setting
+		if(!getGlobalConfigurationInstance()->hasOption(OPT_PERSITENCE_IMPL)) {
+			//no cache server provided
+			throw chaos::CException(-3, "No persistence implementation provided", __PRETTY_FUNCTION__);
+		}
+		
+		if(!getGlobalConfigurationInstance()->hasOption(OPT_PERSITENCE_SERVER_ADDR_LIST)) {
+			//no cache server provided
+			throw chaos::CException(-4, "No persistence's server list provided", __PRETTY_FUNCTION__);
+		}
+		
+		if(getGlobalConfigurationInstance()->hasOption(OPT_PERSITENCE_KV_PARAMTER)) {
+			fillKVParameter(setting.persistence_kv_param_map, setting.persistence_kv_param_string);
+		}
+		
         network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
         network_broker_service.init(NULL, __PRETTY_FUNCTION__);
 		
+		//get and initilize the presistence driver
+		const std::string persistence_driver_name = setting.persistence_implementation + "PersistenceDriver";
+		persistence::AbstractPersistenceDriver *instance = ObjectFactoryRegister<persistence::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(persistence_driver_name);
+		if(!instance) throw chaos::CException(-5, "No persistence driver instance found", __PRETTY_FUNCTION__);
+		persistence_driver.reset(instance, "AbstractPersistenceDriver");
+		persistence_driver.init((void*)&setting, __PRETTY_FUNCTION__);
+		
 		LAPP_ << "-----------------------------------------";
-		LAPP_ << "!CHAOS Metadata service stardet";
-		LAPP_ << "RPC Server address: " << network_broker_service->getRPCUrl();
+		LAPP_ << "!CHAOS Metadata service started";
+		LAPP_ << "RPC Server address: "	<< network_broker_service->getRPCUrl();
 		LAPP_ << "DirectIO Server address: " << network_broker_service->getDirectIOUrl();
-		LAPP_ << "Sync RPC URL: " << network_broker_service->getSyncRPCUrl();
+		LAPP_ << "Sync RPC URL: "	<< network_broker_service->getSyncRPCUrl();
 		LAPP_ << "-----------------------------------------";
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -122,8 +154,13 @@ void ChaosMetadataService::stop()   throw(CException) {
  */
 void ChaosMetadataService::deinit()   throw(CException) {
 
+	persistence_driver.deinit(__PRETTY_FUNCTION__);
+	
     //deinit network brocker
     network_broker_service.deinit(__PRETTY_FUNCTION__);
+	LAPP_ << "-----------------------------------------";
+	LAPP_ << "Metadata service has been stopped";
+	LAPP_ << "-----------------------------------------";
 }
 
 /*
@@ -134,4 +171,31 @@ void ChaosMetadataService::signalHanlder(int signalNumber) {
         //unlock the condition for end start method
     //endWaithCondition.notify_one();
      waitCloseSemaphore.unlock();
+}
+
+void ChaosMetadataService::fillKVParameter(std::map<std::string, std::string>& kvmap, const std::string& param_key) {
+	
+	if(!regex_match(param_key, KVParamRegex)) {
+		throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);
+	}
+	std::vector<std::string> kvtokens;
+	std::vector<std::string> kv_splitted;
+	boost::algorithm::split(kvtokens,
+							param_key,
+							boost::algorithm::is_any_of("-"),
+							boost::algorithm::token_compress_on);
+	for (int idx = 0;
+		 idx < kvtokens.size();
+		 idx++) {
+		//clear previosly pair
+		kv_splitted.clear();
+		
+		//get new pair
+		boost::algorithm::split(kv_splitted,
+								kvtokens[idx],
+								boost::algorithm::is_any_of(":"),
+								boost::algorithm::token_compress_on);
+		// add key/value pair
+		kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));
+	}
 }
