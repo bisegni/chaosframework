@@ -19,7 +19,11 @@
  */
 #include "ProducerInsertDatasetApi.h"
 
+#include <cstring>
+
 #include <chaos/common/chaos_constants.h>
+
+#include <boost/algorithm/string.hpp>
 
 using namespace chaos::common::data;
 using namespace chaos::wan_proxy::api::producer;
@@ -51,6 +55,8 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 	CHAOS_ASSERT(persistence_driver)
 	int err = 0;
 	std::string err_msg;
+	std::vector<std::string> kv_splitted;
+	
 	if(api_tokens.size() == 0) {
 		err_msg = "no producer name in the uri";
 		PID_LERR << err_msg;
@@ -63,23 +69,73 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 		PRODUCER_INSERT_ERR(output_data, -2, err_msg);
 		return err;
 	}
-	CDataWrapper output_dataset;
-	
-	const Json::Value& dataset_timestamp = input_data[chaos::DataPackCommonKey::DPCK_TIMESTAMP];
-	if(dataset_timestamp.isNull()) {
-		err_msg = "The timestamp is mandatory";
-		PID_LERR << err_msg;
-		PRODUCER_INSERT_ERR(output_data, -3, err_msg);
-		return err;
-	}else if(!dataset_timestamp.isNumeric()) {
-		err_msg = "The timestamp needs to be an int64 number";
-		PID_LERR << err_msg;
-		PRODUCER_INSERT_ERR(output_data, -4, err_msg);
-		return err;
+	//we can proceed
+	auto_ptr<CDataWrapper> output_dataset(new CDataWrapper());
+	const std::string& producer_name = api_tokens[0];
+
+
+	Json::Value::Members members = input_data.getMemberNames();
+	for(Json::Value::Members::iterator it = members.begin();
+		it != members.end();
+		it++) {
+		//get current value
+		const Json::Value& dataset_element = input_data[*it];
+		
+		//check for correctness of the value
+		if(dataset_element.isNull()) {
+			err_msg = "The timestamp is mandatory";
+			PID_LERR << err_msg;
+			PRODUCER_INSERT_ERR(output_data, -3, err_msg);
+			return err;
+		}else if(!dataset_element.isString()) {
+			err_msg = "The dataset element needs to be only string";
+			PID_LERR << err_msg;
+			PRODUCER_INSERT_ERR(output_data, -4, err_msg);
+			return err;
+		}
+
+		//split the value
+		const std::string& attribute_value = dataset_element.asString();
+		boost::algorithm::split(kv_splitted,
+								attribute_value,
+								boost::algorithm::is_any_of(":"),
+								boost::algorithm::token_compress_on);
+		
+		//chec if the value is composed by two token (type and value)
+		if(kv_splitted.size()!=2) {
+			err_msg = "invalid value of the dataset attribute " + *it;
+			PID_LERR << err_msg;
+			PRODUCER_INSERT_ERR(output_data, -5, err_msg);
+			return err;
+		}
+		
+		if((err = setValueFromString(*output_dataset,
+						   kv_splitted[0],
+						   *it,
+						   kv_splitted[1]))) {
+			//there is an error
+			err_msg = "Error during the setting of the value ["+ attribute_value +"] for the attribute ["+ *it +"]";
+			PID_LERR << err_msg;
+			PRODUCER_INSERT_ERR(output_data, err, err_msg);
+			return err;
+
+		}
+		
+		//call persistence api for insert the data
+		if((err = persistence_driver->pushNewDataset(producer_name,
+													 output_dataset.get(),
+													 2))) {
+			err_msg = "Error during push of the dataset";
+			PID_LERR << err_msg;
+			PRODUCER_INSERT_ERR(output_data, err, err_msg);
+			return err;
+		} else {
+			output_dataset.release();
+		}
+		
+		//clear for next check
+		kv_splitted.clear();
 	}
-	output_dataset.addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP,
-								 (int64_t)dataset_timestamp.asInt64());
-	
 	output_data["register_producer_err"] = 0;
 	return err;
 }

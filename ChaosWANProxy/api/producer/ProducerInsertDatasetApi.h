@@ -42,10 +42,13 @@ namespace chaos {
 					 The name of the producer is given in the uri. The json  need to be composed as follow:
 					 {
 					 - the timestamp of the producer got at the registration time
-					 "dpck_ts": number,
+					 "dpck_ts": "uint64:value",
 					 
 					 - the key of the output attribute and is value
 					 "attribute_name":"type:attribute_value"
+					 type neds to be a value of: int32, int64, double, string, binary, boolean
+					 
+					 the binary needs to be sent as base64 encoded string
 					 }
 					 
 					 */

@@ -42,6 +42,11 @@ namespace chaos {
 			public chaos::common::utility::NamedService,
 			//! permit to the Api class to be used as mutex
 			public boost::basic_lockable_adapter<boost::recursive_mutex> {
+			protected:
+				int setValueFromString(chaos::common::data::CDataWrapper& dataset,
+									   const std::string& type,
+									   const std::string& attribute_name,
+									   const std::string& value);
 			public:
 				AbstractApi(const std::string& name,
 							persistence::AbstractPersistenceDriver *_persistence_driver);

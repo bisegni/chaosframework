@@ -191,12 +191,15 @@ int DefaultPersistenceDriver::pushNewDataset(const std::string& producer_key,
 		
 		//free the packet
 		serialization->disposeOnDelete = false;
-		next_client->device_client_channel->storeAndCacheDataOutputChannel(producer_key,
-																		   (void*)serialization->getBufferPtr(),
-																		   (uint32_t)serialization->getBufferLen(),
-																		   (DirectIODeviceClientChannelPutMode)store_hint);
+		if((err =(int)next_client->device_client_channel->storeAndCacheDataOutputChannel(producer_key,
+																						 (void*)serialization->getBufferPtr(),
+																						 (uint32_t)serialization->getBufferLen(),
+																						 (DirectIODeviceClientChannelPutMode)store_hint))) {
+			DPD_LERR << "Error storing dataset with code:" << err;
+		}
 	} else {
 		DEBUG_CODE(DPD_LDBG << "No available socket->loose packet");
+		err = -1;
 	}
 	
 	return err;
