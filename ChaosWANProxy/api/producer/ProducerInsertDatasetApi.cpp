@@ -19,7 +19,9 @@
  */
 #include "ProducerInsertDatasetApi.h"
 
+#include <chaos/common/chaos_constants.h>
 
+using namespace chaos::common::data;
 using namespace chaos::wan_proxy::api::producer;
 
 #define PRODUCER_INSERT_ERR(where, err, msg)\
@@ -61,6 +63,22 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 		PRODUCER_INSERT_ERR(output_data, -2, err_msg);
 		return err;
 	}
+	CDataWrapper output_dataset;
+	
+	const Json::Value& dataset_timestamp = input_data[chaos::DataPackCommonKey::DPCK_TIMESTAMP];
+	if(dataset_timestamp.isNull()) {
+		err_msg = "The timestamp is mandatory";
+		PID_LERR << err_msg;
+		PRODUCER_INSERT_ERR(output_data, -3, err_msg);
+		return err;
+	}else if(!dataset_timestamp.isNumeric()) {
+		err_msg = "The timestamp needs to be an int64 number";
+		PID_LERR << err_msg;
+		PRODUCER_INSERT_ERR(output_data, -4, err_msg);
+		return err;
+	}
+	output_dataset.addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP, dataset_timestamp.asInt64());
+	
 	output_data["register_producer_err"] = 0;
 	return err;
 }

@@ -5,6 +5,8 @@ include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 SET(cnd_src				main.cpp
 						ChaosMetadataService.cpp)
 
+SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp)
+
 SET(cnd_src  ${cnd_src}	api/producer/ProducerApiGroup.cpp
 						api/producer/ProducerRegisterApi.cpp)
 

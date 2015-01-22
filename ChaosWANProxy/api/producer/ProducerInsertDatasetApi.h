@@ -37,6 +37,18 @@ namespace chaos {
 					~ProducerInsertDatasetApi();
 					
 					//! execute the api
+					/*!
+					 
+					 The name of the producer is given in the uri. The json  need to be composed as follow:
+					 {
+					 - the timestamp of the producer got at the registration time
+					 "dpck_ts": number,
+					 
+					 - the key of the output attribute and is value
+					 "attribute_name":"type:attribute_value"
+					 }
+					 
+					 */
 					int execute(std::vector<std::string>& api_tokens,
 								const Json::Value& input_data,
 								std::map<std::string, std::string>& output_header,

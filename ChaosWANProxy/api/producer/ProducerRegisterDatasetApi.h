@@ -45,6 +45,40 @@ namespace chaos {
 					~ProducerRegisterDatasetApi();
 					
 					//! execute the api
+					/*!
+					 The name of the producer is given in the uri. The json  need to be composed as follow:
+					 {
+					 - the timestamp of the producer got at the registration time
+					 "ds_timestamp": number,
+					 
+					 - the dataset of the producer that is an array of json document
+					 "ds_desc": [ {
+					 -the name of the attribute
+					 "ds_attr_name": string,
+					 
+					 -the description fo the attribute
+					 "ds_attr_desc": string,
+					 
+					 -the type of the attribute as: int32, int64, double, string, binary, boolean
+					 "ds_attr_type": string
+					 
+					 - the direction of the attribute o for "input" attribute "output" otherwise.
+					 
+					 - output are the attribute the are emitted by producer
+					 "ds_attr_dir": string,
+					 
+					 - the maximum value of the attribute (when applicable)[optional only for input attribute]
+					 "ds_max_range": string,
+					 
+					 - the minimum value of the attribute (when applicable)[optional only for input attribute]
+					 "ds_min_range": string,
+					 
+					 - the default value of the attribute (when applicable)[optional only for input attribute]
+					 "ds_default_value": "1"
+					 }]
+					 }
+					 
+					 */
 					int execute(std::vector<std::string>& api_tokens,
 								const Json::Value& input_data,
 								std::map<std::string, std::string>& output_header,
