@@ -22,6 +22,13 @@
 
 using namespace chaos::wan_proxy::api::producer;
 
+#define PRODUCER_INSERT_ERR(where, err, msg)\
+MAKE_API_ERR(where, "producer_insert_err", err, "producer_insert_err_msg", msg)
+
+#define PID_LAPP LAPP_ << "[ProducerInsertDatasetApi] - "
+#define PID_LDBG LDBG_ << "[ProducerInsertDatasetApi] - "
+#define PID_LERR LERR_ << "[ProducerInsertDatasetApi] - " << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
+
 //! default constructor
 ProducerInsertDatasetApi::ProducerInsertDatasetApi(persistence::AbstractPersistenceDriver *_persistence_driver):
 AbstractApi("insert",
@@ -36,18 +43,24 @@ ProducerInsertDatasetApi::~ProducerInsertDatasetApi() {
 
 //! execute the api
 int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
-								 const Json::Value& input_data,
-								 std::map<std::string, std::string>& output_header,
-								 Json::Value& output_data) {
+									  const Json::Value& input_data,
+									  std::map<std::string, std::string>& output_header,
+									  Json::Value& output_data) {
+	CHAOS_ASSERT(persistence_driver)
 	int err = 0;
-	
-	for(std::vector<std::string>::iterator it = api_tokens.begin();
-		it != api_tokens.end();
-		it++) {
-		output_data["register_producer_input"].append(*it);
+	std::string err_msg;
+	if(api_tokens.size() == 0) {
+		err_msg = "no producer name in the uri";
+		PID_LERR << err_msg;
+		PRODUCER_INSERT_ERR(output_data, -1, err_msg);
+		return err;
+	} else if(api_tokens.size() > 1) {
+		err_msg = "too many param in the uri";
+		PID_LERR << err_msg;
+		
+		PRODUCER_INSERT_ERR(output_data, -2, err_msg);
+		return err;
 	}
-	
-	output_header.insert(std::make_pair("my header", "my header value"));
 	output_data["register_producer_err"] = 0;
 	return err;
 }

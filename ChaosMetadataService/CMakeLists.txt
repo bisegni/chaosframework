@@ -15,7 +15,7 @@ SET(cnd_src  ${cnd_src}	persistence/data_access/ProducerDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBHAConnectionManager.cpp
 						persistence/mongodb/MongoDBPersistenceDriver.cpp
-						persistence/mongodb/MOngoDBProducerDataAccess.cpp)
+						persistence/mongodb/MongoDBProducerDataAccess.cpp)
 
 
 ADD_EXECUTABLE(ChaosMetadataService ${cnd_src})
