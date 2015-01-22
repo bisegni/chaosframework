@@ -45,6 +45,8 @@ if(var != SQLITE_OK) throw CException(var, sqlite3_errstr(var), "SQLiteEntityDB:
 #define CREATE_ENTITY_RELATION_TABLE \
 "create table if not exists entity_group (id_entity_parent integer, id_entity_child integer, primary key (id_entity_parent, id_entity_child), FOREIGN KEY(id_entity_parent) REFERENCES entity(id) ON DELETE CASCADE, FOREIGN KEY(id_entity_child) REFERENCES entity(id) ON DELETE RESTRICT)"
 
+
+DEFINE_CLASS_FACTORY_NO_ALIAS(SQLiteEntityDB, EntityDB)
 /*!
  Default constructor
  */

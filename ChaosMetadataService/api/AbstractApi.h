@@ -14,11 +14,20 @@ namespace chaos {
 	namespace metadata_service {
 		namespace api {
 			
+			//! Api abstraction
+			/*!
+			 This class define the rule for the api development
+			 */
 			class AbstractApi:
 			public chaos::common::utility::NamedService {
 			public:
+				//! defaukt constructor with the alias of the api
 				AbstractApi(const std::string& name):NamedService(name){};
-				~AbstractApi(){};
+				
+				//d! efault destructor
+				virtual ~AbstractApi(){};
+				
+				//! execute the api
 				virtual chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) = 0;
 			};
 			

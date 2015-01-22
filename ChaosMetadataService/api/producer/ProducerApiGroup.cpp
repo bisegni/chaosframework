@@ -1,5 +1,5 @@
 /*
- *	ProducerGroup.cpp
+ *	ProducerApiGroup.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,17 +17,18 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ProducerGroup.h"
+#include "ProducerApiGroup.h"
 #include "ProducerRegisterApi.h"
 
 using namespace chaos::metadata_service::api::producer;
+DEFINE_CLASS_FACTORY_NO_ALIAS(ProducerApiGroup, chaos::metadata_service::api::AbstractApiGroup);
 
-ProducerGroup::ProducerGroup():
-AbstractGroup("producer"){
+ProducerApiGroup::ProducerApiGroup():
+AbstractApiGroup("producer"){
 	//add api for producer registration
 	addApi<ProducerRegisterApi>();
 }
 
-ProducerGroup::~ProducerGroup() {
+ProducerApiGroup::~ProducerApiGroup() {
 	
 }

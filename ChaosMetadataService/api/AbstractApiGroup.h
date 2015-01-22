@@ -24,6 +24,7 @@
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/action/DeclareAction.h>
+#include <chaos/common/utility/ObjectFactoryRegister.h>
 
 #include <vector>
 
@@ -31,19 +32,27 @@ namespace chaos {
 	namespace metadata_service {
 		namespace api {
 			
-			class AbstractGroup:
+			class AbstractApiGroup:
 			public common::utility::NamedService,
 			public chaos::DeclareAction {
 				std::vector<AbstractApi*> api_instance;
 			public:
-				AbstractGroup(const std::string& name):NamedService(name){};
-				~AbstractGroup(){};
+				AbstractApiGroup(const std::string& name):NamedService(name){};
+				~AbstractApiGroup(){};
 				
+				//! install a class as api
+				/*!
+				 The alias of the action to be call si got by api itself
+				 */
 				template<typename T>
 				void addApi() {
+					//allcoate the instsancer for the AbstractApi depending by the template
 					std::auto_ptr<INSTANCER(T, AbstractApi)> i(ALLOCATE_INSTANCER(T, AbstractApi));
+					
+					//get api instance
 					T *instance = (T*)i->getInstance();
 					if(instance) {
+						//we have an instance so we can register that action
 						api_instance.push_back(instance);
 						DeclareAction::addActionDescritionInstance<T>(instance,
 																	  &T::execute,

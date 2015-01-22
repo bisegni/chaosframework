@@ -55,7 +55,7 @@
 		3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */; };
 		3235110A17B3EAE500E39E14 /* TemplatedConcurrentQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */; };
 		3235425C1923A5C70090B8F6 /* StageDataConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */; };
-		3235FDC71A6FF43000EC83A9 /* ProducerGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDC51A6FF43000EC83A9 /* ProducerGroup.cpp */; };
+		3235FDC71A6FF43000EC83A9 /* ProducerApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDC51A6FF43000EC83A9 /* ProducerApiGroup.cpp */; };
 		3235FDCA1A6FF45600EC83A9 /* ProducerRegisterApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDC81A6FF45600EC83A9 /* ProducerRegisterApi.cpp */; };
 		3235FDCF1A6FF56D00EC83A9 /* AbstractDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDCD1A6FF56D00EC83A9 /* AbstractDataAccess.cpp */; };
 		3235FDD31A6FF71600EC83A9 /* ProducerDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDD11A6FF71600EC83A9 /* ProducerDataAccess.cpp */; };
@@ -510,6 +510,7 @@
 		32FB20201A3F2E7300307A86 /* AbstractSharedDomainCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB201E1A3F2E7300307A86 /* AbstractSharedDomainCache.cpp */; };
 		32FB20211A3F2E7300307A86 /* AbstractSharedDomainCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FB201F1A3F2E7300307A86 /* AbstractSharedDomainCache.h */; };
 		32FC7EDE1A70064E0029C2A2 /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EDC1A70064E0029C2A2 /* MongoDBHAConnectionManager.cpp */; };
+		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
 		53DADAAF19C8676C00E13DB2 /* SingletonOnArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */; };
 /* End PBXBuildFile section */
 
@@ -615,8 +616,8 @@
 		3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedConcurrentQueue.h; sourceTree = "<group>"; };
 		3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StageDataConsumer.cpp; sourceTree = "<group>"; };
 		3235425B1923A5C70090B8F6 /* StageDataConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StageDataConsumer.h; sourceTree = "<group>"; };
-		3235FDC51A6FF43000EC83A9 /* ProducerGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerGroup.cpp; sourceTree = "<group>"; };
-		3235FDC61A6FF43000EC83A9 /* ProducerGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerGroup.h; sourceTree = "<group>"; };
+		3235FDC51A6FF43000EC83A9 /* ProducerApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerApiGroup.cpp; sourceTree = "<group>"; };
+		3235FDC61A6FF43000EC83A9 /* ProducerApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerApiGroup.h; sourceTree = "<group>"; };
 		3235FDC81A6FF45600EC83A9 /* ProducerRegisterApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerRegisterApi.cpp; sourceTree = "<group>"; };
 		3235FDC91A6FF45600EC83A9 /* ProducerRegisterApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerRegisterApi.h; sourceTree = "<group>"; };
 		3235FDCB1A6FF51D00EC83A9 /* persistence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = persistence.h; sourceTree = "<group>"; };
@@ -1157,7 +1158,9 @@
 		32FC7EDF1A7008780029C2A2 /* mds_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_constants.h; sourceTree = "<group>"; };
 		32FC7EE01A7008FA0029C2A2 /* mds_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_types.h; sourceTree = "<group>"; };
 		32FC7EE11A701BE40029C2A2 /* AbstractApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
-		32FC7EE21A701D8E0029C2A2 /* AbstractGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractGroup.h; sourceTree = "<group>"; };
+		32FC7EE21A701D8E0029C2A2 /* AbstractApiGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractApiGroup.h; sourceTree = "<group>"; };
+		32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiManagment.cpp; sourceTree = "<group>"; };
+		32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiManagment.h; sourceTree = "<group>"; };
 		53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingletonOnArguments.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1376,8 +1379,8 @@
 		3235FDC41A6FF40100EC83A9 /* producer */ = {
 			isa = PBXGroup;
 			children = (
-				3235FDC51A6FF43000EC83A9 /* ProducerGroup.cpp */,
-				3235FDC61A6FF43000EC83A9 /* ProducerGroup.h */,
+				3235FDC51A6FF43000EC83A9 /* ProducerApiGroup.cpp */,
+				3235FDC61A6FF43000EC83A9 /* ProducerApiGroup.h */,
 				3235FDC81A6FF45600EC83A9 /* ProducerRegisterApi.cpp */,
 				3235FDC91A6FF45600EC83A9 /* ProducerRegisterApi.h */,
 			);
@@ -2428,7 +2431,9 @@
 			children = (
 				3235FDC41A6FF40100EC83A9 /* producer */,
 				32FC7EE11A701BE40029C2A2 /* AbstractApi.h */,
-				32FC7EE21A701D8E0029C2A2 /* AbstractGroup.h */,
+				32FC7EE21A701D8E0029C2A2 /* AbstractApiGroup.h */,
+				32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */,
+				32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */,
 			);
 			path = api;
 			sourceTree = "<group>";
@@ -3100,8 +3105,9 @@
 				3235FDD61A6FF8A800EC83A9 /* MongoDBProducerDataAccess.cpp in Sources */,
 				3235FDCF1A6FF56D00EC83A9 /* AbstractDataAccess.cpp in Sources */,
 				32FC7EDE1A70064E0029C2A2 /* MongoDBHAConnectionManager.cpp in Sources */,
+				32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
-				3235FDC71A6FF43000EC83A9 /* ProducerGroup.cpp in Sources */,
+				3235FDC71A6FF43000EC83A9 /* ProducerApiGroup.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

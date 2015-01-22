@@ -35,6 +35,7 @@ using namespace std;
 using namespace chaos;
 using namespace chaos::metadata_service;
 using namespace chaos::common::utility;
+using namespace chaos::metadata_service::api;
 using boost::shared_ptr;
 
 WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
@@ -90,6 +91,9 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
         network_broker_service.init(NULL, __PRETTY_FUNCTION__);
 		
+		api_managment_service.reset(new ApiManagment(network_broker_service.get()), "ApiManagment");
+		api_managment_service.init(NULL, __PRETTY_FUNCTION__);
+									
 		//get and initilize the presistence driver
 		const std::string persistence_driver_name = setting.persistence_implementation + "PersistenceDriver";
 		persistence::AbstractPersistenceDriver *instance = ObjectFactoryRegister<persistence::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(persistence_driver_name);
@@ -154,10 +158,12 @@ void ChaosMetadataService::stop()   throw(CException) {
  */
 void ChaosMetadataService::deinit()   throw(CException) {
 
-	persistence_driver.deinit(__PRETTY_FUNCTION__);
+	CHAOS_NOT_THROW(persistence_driver.deinit(__PRETTY_FUNCTION__);)
+	
+	CHAOS_NOT_THROW(api_managment_service.deinit(__PRETTY_FUNCTION__);)
 	
     //deinit network brocker
-    network_broker_service.deinit(__PRETTY_FUNCTION__);
+    CHAOS_NOT_THROW(network_broker_service.deinit(__PRETTY_FUNCTION__);)
 	LAPP_ << "-----------------------------------------";
 	LAPP_ << "Metadata service has been stopped";
 	LAPP_ << "-----------------------------------------";

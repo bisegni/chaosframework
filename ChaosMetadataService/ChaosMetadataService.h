@@ -24,6 +24,7 @@
 
 #include "mds_constants.h"
 #include "mds_types.h"
+#include "api/ApiManagment.h"
 #include "persistence/AbstractPersistenceDriver.h"
 
 #include <boost/thread/condition.hpp>
@@ -53,6 +54,9 @@ namespace chaos {
 			
 			//!persistence driver instance
             common::utility::InizializableServiceContainer<persistence::AbstractPersistenceDriver> persistence_driver;
+			
+			//!persistence driver instance
+			common::utility::InizializableServiceContainer<api::ApiManagment> api_managment_service;
 			
             ChaosMetadataService(){};
             ~ChaosMetadataService(){};

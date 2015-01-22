@@ -1,5 +1,5 @@
 /*
- *	ProducerGroup.h
+ *	ProducerApiGroup.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,10 +17,10 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__ProducerGroup__
-#define __CHAOSFramework__ProducerGroup__
+#ifndef __CHAOSFramework__ProducerApiGroup__
+#define __CHAOSFramework__ProducerApiGroup__
 
-#include "../AbstractGroup.h"
+#include "../AbstractApiGroup.h"
 
 namespace chaos {
 	namespace metadata_service {
@@ -28,11 +28,11 @@ namespace chaos {
 			namespace producer {
 				
 				//! api group for the managment of the producer
-				class ProducerGroup:
-				public AbstractGroup {
+				DECLARE_CLASS_FACTORY(ProducerApiGroup, AbstractApiGroup) {
+					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ProducerApiGroup)
 				public:
-					ProducerGroup();
-					~ProducerGroup();
+					ProducerApiGroup();
+					~ProducerApiGroup();
 				};
 				
 			}

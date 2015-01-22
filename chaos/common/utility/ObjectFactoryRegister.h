@@ -65,7 +65,9 @@ namespace chaos {
 			template <typename T>
 			class ObjectFactoryRegister: public Singleton< ObjectFactoryRegister<T> > {
 				//object factories map
-			  std::map<std::string, ObjectFactory*>  objectFacotoryList;
+				typedef std::map<std::string, ObjectFactory*>			ObjectFactoryMap;
+				typedef std::map<std::string, ObjectFactory*>::iterator ObjectFactoryMapIterator;
+				ObjectFactoryMap  object_factory_map;
 				
 			public:
 				/*
@@ -73,10 +75,19 @@ namespace chaos {
 				 */
 				void registerObjectFactory(const std::string & alias, ObjectFactory *factoryPtr) {
 					//register command into map
-					if(objectFacotoryList.count(alias) == 0){
-						objectFacotoryList.insert(make_pair(alias, factoryPtr));
+					if(object_factory_map.count(alias) == 0){
+						object_factory_map.insert(make_pair(alias, factoryPtr));
 					}
 					
+				}
+				
+				//! return all registered name for the type T
+				void getAllRegisteredName(std::vector<std::string>& registered_name_list) {
+					for(ObjectFactoryMapIterator it = object_factory_map.begin();
+						it != object_factory_map.end();
+						it++) {
+						registered_name_list.push_back(it->first);
+					}
 				}
 				
 				/*
@@ -85,7 +96,7 @@ namespace chaos {
 				T *getNewInstanceByName(const std::string & alias) {
 					T *result=NULL;
 					//get the reference for the className
-					ObjectFactory *acf = objectFacotoryList[alias];
+					ObjectFactory *acf = object_factory_map[alias];
 					//return null ora create instance
 					if(acf){
 						result=(T*)acf->createInstance();
@@ -125,14 +136,14 @@ class CMD_CLASS_NAME : public BASE_CLASS_NAME
 			
 #define DEFINE_CLASS_FACTORY(CMD_CLASS_NAME,BASE_CLASS_NAME) \
 chaos::common::utility::ObjectFactoryInstancer<BASE_CLASS_NAME> CMD_CLASS_NAME ## ObjectFactoryInstancer(new chaos::common::utility::ObjectFactoryAliasInstantiation<CMD_CLASS_NAME>(#CMD_CLASS_NAME));
+
+#define DEFINE_CLASS_FACTORY_NO_ALIAS(CMD_CLASS_NAME,BASE_CLASS_NAME) \
+chaos::common::utility::ObjectFactoryInstancer<BASE_CLASS_NAME> CMD_CLASS_NAME ## ObjectFactoryInstancer(new chaos::common::utility::ObjectFactoryInstantiation<CMD_CLASS_NAME>(#CMD_CLASS_NAME));
+
 			
 #define REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(t) \
 friend class chaos::common::utility::ObjectFactoryAliasInstantiation<t>;
-			
-			
-#define REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(CMD_CLASS_NAME, BASE_CLASS_NAME) class CMD_CLASS_NAME;\
-static const chaos::common::utility::ObjectFactoryInstancer<BASE_CLASS_NAME> CMD_CLASS_NAME ## ObjectFactoryInstancer(new chaos::common::utility::ObjectFactoryInstantiation<CMD_CLASS_NAME>(#CMD_CLASS_NAME));\
-class CMD_CLASS_NAME : public BASE_CLASS_NAME
+
 		}
 	}
 }

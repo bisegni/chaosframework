@@ -38,7 +38,7 @@ namespace chaos {
          SQLite implementation for the entity db
          */
         
-        REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(SQLiteEntityDB,EntityDB) {
+        DECLARE_CLASS_FACTORY(SQLiteEntityDB,EntityDB) {
             std::string alias;
             sqlite3 *dbInstance;
             
