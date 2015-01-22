@@ -77,7 +77,8 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 		PRODUCER_INSERT_ERR(output_data, -4, err_msg);
 		return err;
 	}
-	output_dataset.addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP, dataset_timestamp.asInt64());
+	output_dataset.addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP,
+								 (int64_t)dataset_timestamp.asInt64());
 	
 	output_data["register_producer_err"] = 0;
 	return err;

@@ -88,7 +88,7 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 		return err;
 	}
 	mds_registration_pack.addInt64Value(chaos::DatasetDefinitionkey::TIMESTAMP,
-										dataset_timestamp.asUInt64());
+										(int64_t)dataset_timestamp.asUInt64());
 	
 	//scan the description of the dataset
 	const Json::Value& dataset_elements = input_data[chaos::DatasetDefinitionkey::DESCRIPTION];
