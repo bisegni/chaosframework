@@ -69,6 +69,15 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 		PRODUCER_INSERT_ERR(output_data, -2, err_msg);
 		return err;
 	}
+	
+	if(input_data[chaos::DataPackCommonKey::DPCK_TIMESTAMP].isNull()) {
+		err_msg = "The timestamp is mandatory";
+		PID_LERR << err_msg;
+		
+		PRODUCER_INSERT_ERR(output_data, -3, err_msg);
+		return err;
+	}
+	
 	//we can proceed
 	auto_ptr<CDataWrapper> output_dataset(new CDataWrapper());
 	const std::string& producer_name = api_tokens[0];
@@ -83,14 +92,14 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 		
 		//check for correctness of the value
 		if(dataset_element.isNull()) {
-			err_msg = "The timestamp is mandatory";
+			err_msg = "The dataset attribute cant be null";
 			PID_LERR << err_msg;
-			PRODUCER_INSERT_ERR(output_data, -3, err_msg);
+			PRODUCER_INSERT_ERR(output_data, -4, err_msg);
 			return err;
 		}else if(!dataset_element.isString()) {
 			err_msg = "The dataset element needs to be only string";
 			PID_LERR << err_msg;
-			PRODUCER_INSERT_ERR(output_data, -4, err_msg);
+			PRODUCER_INSERT_ERR(output_data, -5, err_msg);
 			return err;
 		}
 
@@ -120,22 +129,22 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 			return err;
 
 		}
-		
-		//call persistence api for insert the data
-		if((err = persistence_driver->pushNewDataset(producer_name,
-													 output_dataset.get(),
-													 2))) {
-			err_msg = "Error during push of the dataset";
-			PID_LERR << err_msg;
-			PRODUCER_INSERT_ERR(output_data, err, err_msg);
-			return err;
-		} else {
-			output_dataset.release();
-		}
-		
 		//clear for next check
 		kv_splitted.clear();
 	}
+	
+	//call persistence api for insert the data
+	if((err = persistence_driver->pushNewDataset(producer_name,
+												 output_dataset.get(),
+												 2))) {
+		err_msg = "Error during push of the dataset";
+		PID_LERR << err_msg;
+		PRODUCER_INSERT_ERR(output_data, err, err_msg);
+		return err;
+	} else {
+		output_dataset.release();
+	}
+	
 	output_data["register_producer_err"] = 0;
 	return err;
 }

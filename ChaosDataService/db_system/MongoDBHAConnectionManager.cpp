@@ -13,7 +13,7 @@
 #include <boost/format.hpp>
 
 #define RETRIVE_MIN_TIME 500
-#define RETRIVE_MAX_TIME 5000
+#define RETRIVE_MAX_TIME 10000
 
 #define MongoDBHAConnection_LOG_HEAD "[MongoDBHAConnection] - "
 #define MDBHAC_LAPP_ LAPP_ << MongoDBHAConnection_LOG_HEAD
@@ -82,8 +82,13 @@ void MongoAuthHook::onDestroy( mongo::DBClientBase * conn ) {
 	MDBHAC_LAPP_ << "MongoDBHAConnectionManager::onDestroy - " << conn->getServerAddress();
 }
 
+//-----------------------------------------------------------------------------------
 DriverScopedConnection::DriverScopedConnection(mongo::ConnectionString _conn):
 ScopedDbConnection(_conn) {}
+
+DriverScopedConnection::DriverScopedConnection(mongo::ConnectionString _conn,
+											   double timeout):
+ScopedDbConnection(_conn, timeout) {}
 
 DriverScopedConnection::~DriverScopedConnection() {
 	ScopedDbConnection::done();
@@ -164,7 +169,7 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
 			//remove invalid connection string form queue and put it into the offline one
 			valid_connection_queue.pop();
 			try {
-				DriverScopedConnection c(*nextCS);
+				DriverScopedConnection c(*nextCS, 1);
 				connection_is_good = c.ok();
 				DEBUG_CODE(MDBHAC_LDBG_ << "(idx:" << cur_index << ") connection_is_good:" << connection_is_good;)
 				if(connection_is_good) {

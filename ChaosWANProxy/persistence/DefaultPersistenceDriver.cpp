@@ -181,6 +181,9 @@ int DefaultPersistenceDriver::pushNewDataset(const std::string& producer_key,
 											 int store_hint) {
 	CHAOS_ASSERT(new_dataset)
 	int err = 0;
+	//ad producer key
+	new_dataset->addStringValue(chaos::DataPackCommonKey::DPCK_DEVICE_ID, producer_key);
+	new_dataset->addInt32Value(chaos::DataPackCommonKey::DPCK_DATASET_TYPE, chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT);
 	auto_ptr<SerializationBuffer> serialization(new_dataset->getBSONData());
 	delete(new_dataset);
 	

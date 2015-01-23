@@ -41,6 +41,8 @@ namespace chaos {
 				
 			public:
 				DriverScopedConnection(mongo::ConnectionString _conn);
+				DriverScopedConnection(mongo::ConnectionString _conn,
+									   double timeout);
 				~DriverScopedConnection();
 			};
 			
