@@ -128,15 +128,19 @@ int main(int argc, char * argv[]) {
 		//
         ChaosDataService::getInstance()->start();
     } catch(chaos::CException& ex) {
-        DECODE_CHAOS_EXCEPTION(ex)
+      DECODE_CHAOS_EXCEPTION(ex);
+      return -1;
     } catch(boost::program_options::unknown_option& ex) {
         std::cerr << ex.what() << std::endl;
+	return -2;
     } catch(std::exception& ex) {
         std::cerr << ex.what() << std::endl;
+	return -3;
     } catch( ... ) {
         std::cerr <<
         "Unrecognized exception, diagnostic information follows\n" <<
         boost::current_exception_diagnostic_information();
+	return -4;
     }
     return 0;
 }
