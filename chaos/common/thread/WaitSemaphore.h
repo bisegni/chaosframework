@@ -50,10 +50,9 @@ namespace chaos {
         /*! 
          Default Constructor, initialize all internal variable
          */
-        WaitSemaphore(){
-            answered = false;
-            inWait = false;
-        }
+        WaitSemaphore():
+        answered(false),
+        inWait(false){}
         
         //!~WaitSemaphore
         /*! 
@@ -72,7 +71,7 @@ namespace chaos {
             boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
             if(inWait) return;
             inWait = true;
-            while(!answered) {wait_answer_condition.wait(lock);};
+            do {wait_answer_condition.wait(lock);} while(!answered);
             inWait = false;
             answered = false;
         }

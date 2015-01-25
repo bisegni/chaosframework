@@ -26,7 +26,8 @@ namespace chaos {
             protected:
                 
                 void disposeService(void *service_ptr);
-                void* serviceForURL(const common::network::URL& url, uint32_t service_index);
+                void* serviceForURL(const common::network::URL& url,
+                                    uint32_t service_index);
 				
 				void test_feeder_logic();
 				void test_feeder_logic_equal_priority();

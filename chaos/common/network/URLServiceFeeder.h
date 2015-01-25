@@ -41,7 +41,8 @@ namespace chaos {
             protected:
                 friend class URLServiceFeeder;
                 virtual void  disposeService(void *service_ptr) = 0;
-                virtual void* serviceForURL(const URL& url, uint32_t service_index) = 0;
+                virtual void* serviceForURL(const URL& url,
+                                            uint32_t service_index) = 0;
             };
             
                 //! Service feeder helper class

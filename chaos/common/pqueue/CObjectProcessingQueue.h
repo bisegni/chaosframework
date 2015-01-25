@@ -26,6 +26,7 @@
 #include <chaos/common/utility/UUIDUtil.h>
 
 #include <queue>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/thread.hpp>
 
@@ -110,9 +111,13 @@ namespace chaos {
 		CObjectProcessingQueue():
 		in_deinit(false),
 		eventListener(NULL),
-		uid(common::utility::UUIDUtil::generateUUIDLite()){
-        }
-		
+		uid(common::utility::UUIDUtil::generateUUIDLite()){}
+        
+        CObjectProcessingQueue(CObjectProcessingQueueListener<T> *_eventListener):
+        in_deinit(false),
+        eventListener(_eventListener),
+        uid(common::utility::UUIDUtil::generateUUIDLite()){}
+
         /*
          Set the internal thread delay for execute new task
 		 
@@ -140,24 +145,22 @@ namespace chaos {
 			 */
 			virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
 				boost::unique_lock<boost::mutex> lock(qMutex);
-				in_deinit = true;
 				COPQUEUE_LDBG_ << " Deinitialization";
-                //stopping the group
-				COPQUEUE_LDBG_ << " Deinitializing Threads";
-				
+   			
 				if(waithForEmptyQueue){
 					COPQUEUE_LDBG_ << " wait until queue is empty";
 					while( !bufferQueue.empty()){
-						emptyQueueConditionLock.wait(lock);
+                        emptyQueueConditionLock.timed_wait(lock,
+                                                           boost::posix_time::milliseconds(500));
+                        
 					}
 					COPQUEUE_LDBG_ << " queue is empty";
 				}
 				
 				COPQUEUE_LDBG_ << " Stopping thread";
-				//threadGroup.stopGroup(false);
-				lock.unlock();
-				
+                in_deinit = true;
 				liveThreadConditionLock.notify_all();
+                lock.unlock();
 				COPQUEUE_LDBG_ << " join internal thread group";
 				t_group.join_all();
 				COPQUEUE_LDBG_ << " deinitlized";
@@ -170,8 +173,8 @@ namespace chaos {
 				boost::unique_lock<boost::mutex> lock(qMutex);
 				if(in_deinit || bufferQueue.size() > CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE) return false;
 				bufferQueue.push(data);
-				lock.unlock();
-				liveThreadConditionLock.notify_all();
+				//lock.unlock();
+				liveThreadConditionLock.notify_one();
 				return true;
 			}
 			
@@ -179,18 +182,18 @@ namespace chaos {
 			 get the last insert data
 			 */
 			T* waitAndPop() {
+                DEBUG_CODE(COPQUEUE_LDBG_<< "Entering in waitAndPop";)
 				boost::unique_lock<boost::mutex> lock(qMutex);
                 //output result poitner
 				T *oldestElement = NULL;
 				//DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() begin to wait";)
 				while(bufferQueue.empty() && !in_deinit) {
-					emptyQueueConditionLock.notify_one();
 					liveThreadConditionLock.wait(lock);
 				}
 				//DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() wakeup";)
                 //get the oldest data ad copy the ahsred_ptr
 				if(bufferQueue.empty()) {
-					//DEBUG_CODE(COPQUEUE_LDBG_<< " bufferQueue.empty() is empy so we go out";)
+					DEBUG_CODE(COPQUEUE_LDBG_<< " bufferQueue.empty() is empy so we go out";)
 					return NULL;
 				}
                 //get the last pointer from the queue
@@ -199,6 +202,7 @@ namespace chaos {
                 //remove the oldest data
 				bufferQueue.pop();
 				DEBUG_CODE(COPQUEUE_LDBG_<< " Element still in queue " << bufferQueue.size();)
+                DEBUG_CODE(COPQUEUE_LDBG_<< "Leaving in waitAndPop";)
 				return oldestElement;
 			}
 			
@@ -215,8 +219,9 @@ namespace chaos {
 			 */
 			void waitForEmpty() {
 				boost::unique_lock<boost::mutex> lock(qMutex);
-				while( bufferQueue.empty()){
-					emptyQueueConditionLock.wait(lock);
+				while(!bufferQueue.empty()){
+                    emptyQueueConditionLock.timed_wait(lock,
+                                                       boost::posix_time::milliseconds(500));
 				}
 				return bufferQueue.empty();
 			}

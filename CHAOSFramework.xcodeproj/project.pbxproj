@@ -367,6 +367,7 @@
 		32AB51CA1A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AB51C81A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h */; };
 		32AB51CD1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AB51CB1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp */; };
 		32AB51CE1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AB51CC1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h */; };
+		32ABC26B1A73FB83008DB3A7 /* ObjectQueueTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ABC2691A73FB83008DB3A7 /* ObjectQueueTest.h */; };
 		32AF7D4018DAEAF300537DE6 /* PerformanceNodeChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AF7D3E18DAEAF300537DE6 /* PerformanceNodeChannel.cpp */; };
 		32AF7D4118DAEAF300537DE6 /* PerformanceNodeChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AF7D3F18DAEAF300537DE6 /* PerformanceNodeChannel.h */; };
 		32AFEB3919BDDACF00AF49F4 /* QueryEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AFEB3719BDDACF00AF49F4 /* QueryEngine.cpp */; };
@@ -475,6 +476,7 @@
 		32DF604815E1505F00312C94 /* CustomEventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF604615E1505F00312C94 /* CustomEventDescriptor.h */; };
 		32E0EF3718CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E0EF3518CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp */; };
 		32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */; };
+		32E5D24D1A75664C0001E97F /* ObjectQueueTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32ABC2681A73FB83008DB3A7 /* ObjectQueueTest.cpp */; };
 		32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */; };
 		32E9A5461A67D02900545BB4 /* ProducerGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */; };
 		32E9A5491A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5471A67D6D600545BB4 /* ProducerRegisterDatasetApi.cpp */; };
@@ -976,6 +978,8 @@
 		32AB51C81A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DirectIOSystemAPIClientChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32AB51CB1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOSystemAPIServerChannel.cpp; sourceTree = "<group>"; };
 		32AB51CC1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOSystemAPIServerChannel.h; sourceTree = "<group>"; };
+		32ABC2681A73FB83008DB3A7 /* ObjectQueueTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectQueueTest.cpp; sourceTree = "<group>"; };
+		32ABC2691A73FB83008DB3A7 /* ObjectQueueTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectQueueTest.h; sourceTree = "<group>"; };
 		32AF7D3E18DAEAF300537DE6 /* PerformanceNodeChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceNodeChannel.cpp; sourceTree = "<group>"; };
 		32AF7D3F18DAEAF300537DE6 /* PerformanceNodeChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceNodeChannel.h; sourceTree = "<group>"; };
 		32AFEB3719BDDACF00AF49F4 /* QueryEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryEngine.cpp; sourceTree = "<group>"; };
@@ -1538,6 +1542,7 @@
 				3258AF091935EE9700A66D44 /* CMakeList.txt */,
 				3258AF021935EE4D00A66D44 /* main.cpp */,
 				32EE00CE19387E0B00621776 /* network */,
+				32ABC2671A73FB43008DB3A7 /* thread */,
 			);
 			name = ArchitectureTest;
 			path = ArchitectureTests;
@@ -2252,6 +2257,15 @@
 			path = message;
 			sourceTree = "<group>";
 		};
+		32ABC2671A73FB43008DB3A7 /* thread */ = {
+			isa = PBXGroup;
+			children = (
+				32ABC2681A73FB83008DB3A7 /* ObjectQueueTest.cpp */,
+				32ABC2691A73FB83008DB3A7 /* ObjectQueueTest.h */,
+			);
+			path = thread;
+			sourceTree = "<group>";
+		};
 		32B1090E188C1D6200969D3D /* TestAsyncRpc */ = {
 			isa = PBXGroup;
 			children = (
@@ -2814,6 +2828,7 @@
 				324A4B4F191A41EF00975394 /* compiler.h in Headers */,
 				32640A34169DCC5800450962 /* CommonBuffer.h in Headers */,
 				32C5A42818D9959800C0435C /* DirectIOPerformanceSession.h in Headers */,
+				32ABC26B1A73FB83008DB3A7 /* ObjectQueueTest.h in Headers */,
 				32640A35169DCC5800450962 /* AbstractDataElement.h in Headers */,
 				32640A36169DCC5800450962 /* DataElement.h in Headers */,
 				32640A37169DCC5800450962 /* SmartData.h in Headers */,
@@ -3152,6 +3167,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32E5D24D1A75664C0001E97F /* ObjectQueueTest.cpp in Sources */,
 				3258AF0C1935F46D00A66D44 /* FeederTest.cpp in Sources */,
 				3258AF031935EE4D00A66D44 /* main.cpp in Sources */,
 			);

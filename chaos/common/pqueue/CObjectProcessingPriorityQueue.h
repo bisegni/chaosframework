@@ -46,7 +46,12 @@ namespace chaos {
     public:
         int priority;
         T *element;
-        PriorityQueuedElement(T *_element, int _priority = 50, bool _disposeOnDestroy = true):disposeOnDestroy(_disposeOnDestroy), priority(_priority), element(_element) {}
+        PriorityQueuedElement(T *_element,
+                              int _priority = 50,
+                              bool _disposeOnDestroy = true):
+        disposeOnDestroy(_disposeOnDestroy),
+        priority(_priority),
+        element(_element) {}
         ~PriorityQueuedElement(){
             if (disposeOnDestroy && element) {
                 delete(element);
@@ -83,7 +88,6 @@ namespace chaos {
                 std::string uid;
 		std::priority_queue< PRIORITY_ELEMENT(T)*, std::vector< PRIORITY_ELEMENT(T)* >, pless< PRIORITY_ELEMENT(T) > > bufferQueue;
                 bool inDeinit;
-                int outputThreadNumber;
                 boost::mutex qMutex;
                 boost::condition_variable liveThreadConditionLock;
                 boost::condition_variable emptyQueueConditionLock;
@@ -106,7 +110,7 @@ namespace chaos {
                         //retrive the oldest element
                     dataRow = waitAndPop();
                         if(!dataRow) {
-                            DEBUG_CODE(COPPQUEUE_LAPP_<<" waitAndPop() return NULL object so we return";)
+                            DEBUG_CODE(COPPQUEUE_LDBG_<<" waitAndPop() return NULL object so we return";)
                             continue;
                         }
                         //Process the element
@@ -129,7 +133,7 @@ namespace chaos {
                     
                     DELETE_OBJ_POINTER(dataRow);
                 }
-                    DEBUG_CODE(COPPQUEUE_LAPP_<< " executeOnThread ended";)
+                    DEBUG_CODE(COPPQUEUE_LDBG_<< " executeOnThread ended";)
                 }
                 /*
                  Process the oldest element in buffer
@@ -142,9 +146,8 @@ namespace chaos {
 				CObjectProcessingPriorityQueue():
 				inDeinit(false),
 				eventListener(NULL),
-				uid(common::utility::UUIDUtil::generateUUIDLite()) {
-					
-                }
+				uid(common::utility::UUIDUtil::generateUUIDLite()),
+                tag(0) {}
                 
                 
                 /*

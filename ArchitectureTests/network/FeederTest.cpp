@@ -38,7 +38,8 @@ void FeederTest::disposeService(void *service_ptr) {
     delete ((ServiceForURL*)service_ptr);
 }
 
-void* FeederTest::serviceForURL(const common::network::URL& url) {
+void* FeederTest::serviceForURL(const common::network::URL& url,
+                                uint32_t service_index) {
     ServiceForURL *result = new ServiceForURL();
     result->url = url.getURL();
     return (void*)result;
