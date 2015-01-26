@@ -63,7 +63,8 @@ namespace chaos {
             static void signalHanlder(int);
             
 			//! convert param_key to a string of string hash map
-			void fillKVParameter(std::map<std::string, std::string>& kvmap, const std::string& param_key);
+			void fillKVParameter(std::map<std::string, std::string>& kvmap,
+								 const std::vector<std::string>& multitoken_param);
         public:			
 			struct setting	setting;
 

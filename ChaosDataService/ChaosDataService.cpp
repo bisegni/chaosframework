@@ -32,8 +32,8 @@ using namespace chaos::common::utility;
 using namespace chaos::data_service;
 using boost::shared_ptr;
 
-//! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
-static const boost::regex KVParamRegex("[a-zA-Z0-9/_]+:[a-zA-Z0-9/_]+(-[a-zA-Z0-9/_]+:[a-zA-Z0-9/_]+)*");
+//! Regular expression fro token parameter check
+static const boost::regex KVParamRegex("[a-zA-Z0-9/_-]+:[a-zA-Z0-9/_-]+");
 
 #define ChaosDataService_LOG_HEAD "[ChaosDataService] - "
 
@@ -58,59 +58,59 @@ ChaosDataService::~ChaosDataService() {
  Specialized option for startup c and cpp program main options parameter
  */
 void ChaosDataService::init(int argc, char* argv[]) throw (CException) {
-    ChaosCommon<ChaosDataService>::init(argc, argv);
+	ChaosCommon<ChaosDataService>::init(argc, argv);
 }
 //!stringbuffer parser
 /*
  specialized option for string stream buffer with boost semantics
  */
 void ChaosDataService::init(istringstream &initStringStream) throw (CException) {
-    ChaosCommon<ChaosDataService>::init(initStringStream);
+	ChaosCommon<ChaosDataService>::init(initStringStream);
 }
 
-void ChaosDataService::fillKVParameter(std::map<std::string, std::string>& kvmap, const char * param_key) {
+void ChaosDataService::fillKVParameter(std::map<std::string, std::string>& kvmap,
+									   const std::vector<std::string>& multitoken_parameter) {
 	//no cache server provided
-	std::string kv_param_value = getGlobalConfigurationInstance()->getOption<std::string>(param_key);
-	
-	if(!regex_match(kv_param_value, KVParamRegex)) {
-		throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);
-	}
-	std::vector<std::string> kvtokens;
+	//clear previosly pair
 	std::vector<std::string> kv_splitted;
-	boost::algorithm::split(kvtokens,
-							kv_param_value,
-							boost::algorithm::is_any_of("-"),
-							boost::algorithm::token_compress_on);
-	for (int idx = 0;
-		 idx < kvtokens.size();
-		 idx++) {
+	for(std::vector<std::string>::const_iterator it = multitoken_parameter.begin();
+		it != multitoken_parameter.end();
+		it++) {
+		
+		const std::string& kv_param_value = *it;
+		
+		if(!regex_match(kv_param_value, KVParamRegex)) {
+			throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);
+		}
+		
 		//clear previosly pair
 		kv_splitted.clear();
 		
 		//get new pair
 		boost::algorithm::split(kv_splitted,
-								kvtokens[idx],
+								kv_param_value,
 								boost::algorithm::is_any_of(":"),
 								boost::algorithm::token_compress_on);
 		// add key/value pair
 		kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));
 	}
+	
 }
 
 /*
  *
  */
 void ChaosDataService::init(void *init_data)  throw(CException) {
-    try {
-        ChaosCommon<ChaosDataService>::init(init_data);
+	try {
+		ChaosCommon<ChaosDataService>::init(init_data);
 		CDSLAPP_ << "Initializing CHAOS Control System Library";
-        if (signal((int) SIGINT, ChaosDataService::signalHanlder) == SIG_ERR) {
-            CDSLERR_ << "SIGINT Signal handler registraiton error";
-        }
-        
-        if (signal((int) SIGQUIT, ChaosDataService::signalHanlder) == SIG_ERR) {
-            CDSLERR_ << "SIGQUIT Signal handler registraiton error";
-        }
+		if (signal((int) SIGINT, ChaosDataService::signalHanlder) == SIG_ERR) {
+			CDSLERR_ << "SIGINT Signal handler registraiton error";
+		}
+		
+		if (signal((int) SIGQUIT, ChaosDataService::signalHanlder) == SIG_ERR) {
+			CDSLERR_ << "SIGQUIT Signal handler registraiton error";
+		}
 		
 		if (signal((int) SIGTERM, ChaosDataService::signalHanlder) == SIG_ERR) {
 			CDSLERR_ << "SIGTERM Signal handler registraiton error";
@@ -124,10 +124,10 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		
 		if(!setting.cache_only &&																		//we aren't in cache only
 		   (getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE) > BOTH ||	//check if we have a valid run mode
-		   getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE) < QUERY)) {
-			//no cache server provided
-			throw chaos::CException(-2, "Invalid run mode", __PRETTY_FUNCTION__);
-		}
+			getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE) < QUERY)) {
+			   //no cache server provided
+			   throw chaos::CException(-2, "Invalid run mode", __PRETTY_FUNCTION__);
+		   }
 		
 		//get the run mode and if we are in cache only.... enable only query mode
 		run_mode = setting.cache_only?QUERY:(RunMode)getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE);
@@ -143,15 +143,18 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		}
 		
 		if(getGlobalConfigurationInstance()->hasOption(OPT_CACHE_DRIVER_KVP)) {
-			fillKVParameter(setting.cache_driver_setting.key_value_custom_param, OPT_CACHE_DRIVER_KVP);
+			fillKVParameter(setting.cache_driver_setting.key_value_custom_param,
+							getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_CACHE_DRIVER_KVP));
 		}
 		
 		if(!setting.cache_only && getGlobalConfigurationInstance()->hasOption(OPT_VFS_STORAGE_DRIVER_KVP)) {
-			fillKVParameter(setting.file_manager_setting.storage_driver_setting.key_value_custom_param, OPT_VFS_STORAGE_DRIVER_KVP);
+			fillKVParameter(setting.file_manager_setting.storage_driver_setting.key_value_custom_param,
+							getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_VFS_STORAGE_DRIVER_KVP));
 		}
 		
 		if(!setting.cache_only && getGlobalConfigurationInstance()->hasOption(OPT_DB_DRIVER_KVP)) {
-			fillKVParameter(setting.db_driver_setting.key_value_custom_param, OPT_DB_DRIVER_KVP);
+			fillKVParameter(setting.db_driver_setting.key_value_custom_param,
+							getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_DB_DRIVER_KVP));
 		}
 		
 		//allocate the network broker
@@ -159,7 +162,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		network_broker.reset(new NetworkBroker(), "NetworkBroker");
 		if(!network_broker.get()) throw chaos::CException(-5, "Error instantiating network broker", __PRETTY_FUNCTION__);
 		network_broker.init(NULL, __PRETTY_FUNCTION__);
-
+		
 		//allocate the db driver
 		if(!setting.cache_only && setting.db_driver_impl.compare("")) {
 			//we have a db driver setuped
@@ -175,7 +178,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			//configure the domain url equal to the directio io server one plus the deafult endpoint "0"
 			setting.file_manager_setting.storage_driver_setting.domain.local_url = network_broker->getDirectIOUrl();
 			setting.file_manager_setting.storage_driver_setting.domain.local_url.append("|0");
-		
+			
 			//initialize vfs file manager
 			CDSLAPP_ << "Allocate VFS Manager";
 			vfs_file_manager.reset(new vfs::VFSManager(db_driver_ptr), "VFSFileManager");
@@ -199,20 +202,20 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			if(!stage_data_consumer.get()) throw chaos::CException(-8, "Error instantiating stage data consumer", __PRETTY_FUNCTION__);
 			stage_data_consumer.init(NULL, __PRETTY_FUNCTION__);
 		}
-    } catch (CException& ex) {
-        DECODE_CHAOS_EXCEPTION(ex)
-        exit(1);
-    }
+	} catch (CException& ex) {
+		DECODE_CHAOS_EXCEPTION(ex)
+		exit(1);
+	}
 }
 
 /*
  *
  */
 void ChaosDataService::start() throw(CException) {
-    try {
+	try {
 		network_broker.start(__PRETTY_FUNCTION__);
 		
-        if(run_mode == QUERY ||
+		if(run_mode == QUERY ||
 		   run_mode == BOTH) {
 			data_consumer.start( __PRETTY_FUNCTION__);
 		}
@@ -226,20 +229,20 @@ void ChaosDataService::start() throw(CException) {
 		CDSLAPP_ << "Chaos Data Service publisched with url: " << network_broker->getDirectIOUrl() << "|0";
 		CDSLAPP_ << "--------------------------------------------------------------------------------------";
 		
-        waitCloseSemaphore.wait();
-    } catch (CException& ex) {
-        DECODE_CHAOS_EXCEPTION(ex)
-    }
-    
-    try {
-        CDSLAPP_ << "Stoppping CHAOS Data Service";
-        stop();
-        
-        deinit();
-    } catch (CException& ex) {
-        DECODE_CHAOS_EXCEPTION(ex)
-        exit(1);
-    }
+		waitCloseSemaphore.wait();
+	} catch (CException& ex) {
+		DECODE_CHAOS_EXCEPTION(ex)
+	}
+	
+	try {
+		CDSLAPP_ << "Stoppping CHAOS Data Service";
+		stop();
+		
+		deinit();
+	} catch (CException& ex) {
+		DECODE_CHAOS_EXCEPTION(ex)
+		exit(1);
+	}
 }
 
 /*
@@ -266,14 +269,14 @@ void ChaosDataService::deinit() throw(CException) {
 	
 	if((run_mode == QUERY ||
 		run_mode == BOTH ) &&
-		data_consumer.get()) {
+	   data_consumer.get()) {
 		data_consumer.deinit(__PRETTY_FUNCTION__);
 		CDSLAPP_ << "Release the endpoint associated to the Data Consumer";
 		network_broker->releaseDirectIOServerEndpoint(data_consumer->server_endpoint);
 	}
 	if((run_mode == INDEXER ||
 		run_mode == BOTH ) &&
-		stage_data_consumer.get()) {
+	   stage_data_consumer.get()) {
 		stage_data_consumer.deinit(__PRETTY_FUNCTION__);
 	}
 	if(network_broker.get()) {
@@ -296,7 +299,7 @@ void ChaosDataService::deinit() throw(CException) {
 	
 	ChaosCommon<ChaosDataService>::deinit();
 	
-    CDSLAPP_ << "Chaos Data service will exit now";
+	CDSLAPP_ << "Chaos Data service will exit now";
 }
 
 
@@ -304,5 +307,5 @@ void ChaosDataService::deinit() throw(CException) {
  *
  */
 void ChaosDataService::signalHanlder(int signalNumber) {
-    waitCloseSemaphore.unlock();
+	waitCloseSemaphore.unlock();
 }

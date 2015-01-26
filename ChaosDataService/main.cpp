@@ -58,8 +58,9 @@ int main(int argc, char * argv[]) {
 																								 1,
 																								 &ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_setting.job_thread_number);
 		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CACHE_DRIVER_KVP,
-																									"The key value parameter for cache implementation driver (ex k:v-k1:v1)");
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CACHE_DRIVER_KVP,
+																												 "The key value parameter for cache implementation driver (ex k:v-k1:v1)",
+																												 true);
 		
 		//query consumer
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_QUERY_CONSUMER_VFILE_MANTAINANCE_DELAY,
@@ -93,8 +94,9 @@ int main(int argc, char * argv[]) {
 																									"CHAOS_DOMAIN",
 																									&ChaosDataService::getInstance()->setting.file_manager_setting.storage_driver_setting.domain.name);
 		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DRIVER_KVP,
-																									"The key value parameter for storage implementation driver (ex k:v-k1:v1)");
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_VFS_STORAGE_DRIVER_KVP,
+																												 "The key value parameter for storage implementation driver (ex k:v-k1:v1)",
+																												 true);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_VFS_STORAGE_MAX_BLOCK_LIFETIME,
 																								 "Is the lifetime that every bloc is valid to accept data",
@@ -116,8 +118,9 @@ int main(int argc, char * argv[]) {
 																												 "The list of the index servers",
 																												 &ChaosDataService::getInstance()->setting.db_driver_setting.servers);
 		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_DB_DRIVER_KVP,
-																									"The key value parameter for database implementation driver (ex k:v-k1:v1)");
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_DB_DRIVER_KVP,
+																												 "The key value multitoken for database implementation driver (k:v)",
+																												 true);
 		
 		//preparse for blow custom option
 		ChaosDataService::getInstance()->preparseCommandOption(argc, argv);

@@ -86,7 +86,8 @@ namespace chaos{
 			common::utility::StartableServiceContainer<StageDataConsumer> stage_data_consumer;
 			
 			//! convert param_key to a string of string hash map
-			void fillKVParameter(std::map<std::string, std::string>& kvmap, const char * param_key);
+			void fillKVParameter(std::map<std::string, std::string>& kvmap,
+								 const std::vector<std::string>& multitoken_parameter);
         public:
 			
 			ChaosDataServiceSetting setting;

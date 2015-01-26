@@ -37,9 +37,9 @@ int main(int argc, char * argv[]) {
 																													 "Specify servers where the persistence layer needs to use",
 																													 &ChaosMetadataService::getInstance()->setting.persistence_server_list);
 		
-		ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_PERSITENCE_KV_PARAMTER,
+		ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_PERSITENCE_KV_PARAMTER,
 																										"The key value parameter for storage implementation driver (ex k:v-k1:v1)",
-																										&ChaosMetadataService::getInstance()->setting.persistence_kv_param_string);
+																										true);
 
 		
 		ChaosMetadataService::getInstance()->init(argc, argv);
