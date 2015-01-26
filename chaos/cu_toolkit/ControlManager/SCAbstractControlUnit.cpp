@@ -103,7 +103,7 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
 	
 	
 	//associate the data storage and dataset database..this need to be associated before the executor initialization
-	slow_command_executor->key_data_storage = AbstractControlUnit::keyDataStorage;
+	slow_command_executor->key_data_storage = AbstractControlUnit::key_data_storage;
 	//control unit is it'self the database
 	slow_command_executor->dataset_attribute_db_ptr = this;
  

@@ -61,7 +61,8 @@ void ZMQServer::init(void *init_data) throw(CException) {
         ZMQS_LAPP << "thread number:" << threadNumber;
 
             //create the ZMQContext
-        CHAOS_ASSERT(zmqContext = zmq_ctx_new())
+		zmqContext = zmq_ctx_new();
+        CHAOS_ASSERT(zmqContext)
 
             //et the thread number
         zmq_ctx_set(zmqContext, ZMQ_IO_THREADS, threadNumber);
@@ -83,7 +84,12 @@ void ZMQServer::init(void *init_data) throw(CException) {
 	//queue thread
 	ZMQS_LAPP << "Allocating thread for manage the request";
 	for (int idx = 0; idx<1; idx++) {
-        threadGroup.add_thread(new thread(boost::bind(&ZMQServer::executeOnThread, this)));
+		try{
+			threadGroup.add_thread(new thread(boost::bind(&ZMQServer::executeOnThread, this)));
+		}catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >& ex) {
+			ZMQS_LERR << ex.what();
+			throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
+		}
     }
 	ZMQS_LAPP << "Thread allocated";
 }

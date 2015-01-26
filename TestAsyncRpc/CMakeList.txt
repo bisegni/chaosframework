@@ -1,5 +1,8 @@
 SET(ArchitectureTests main.cpp)
-#SET(src  ${ArchitectureTests} )
+SET(src  ${ArchitectureTests} utility/HashMapTest.cpp)
+SET(src  ${ArchitectureTests} network/FeederTest.cpp)
+SET(src  ${ArchitectureTests} thread/ObjectQueueTest.cpp
+							  thread/ObjectPriorityQueueTest.cpp)
 
 ADD_EXECUTABLE(ArchitectureTests ${ArchitectureTests})
 

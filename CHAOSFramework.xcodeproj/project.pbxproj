@@ -150,6 +150,9 @@
 		32502C7F1923BAF30073E4AB /* VFSStageFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32502C7D1923BAF30073E4AB /* VFSStageFile.cpp */; };
 		32502C831923C6F60073E4AB /* VFSStageWriteableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32502C811923C6F60073E4AB /* VFSStageWriteableFile.cpp */; };
 		3250884D18E49975001C9733 /* VFSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3250884B18E49975001C9733 /* VFSFile.cpp */; };
+		3251B5131A768A9E00EF3F82 /* HashMapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3251B5111A768A9E00EF3F82 /* HashMapTest.cpp */; };
+		3251B5141A768A9E00EF3F82 /* HashMapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3251B5111A768A9E00EF3F82 /* HashMapTest.cpp */; };
+		3251B5151A768A9E00EF3F82 /* HashMapTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 3251B5121A768A9E00EF3F82 /* HashMapTest.h */; };
 		3253E09515F27A180079B40E /* EventTypeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3253E09315F27A180079B40E /* EventTypeScheduler.h */; };
 		3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3253E09715F28A270079B40E /* EventTypeScheduler.cpp */; };
 		3253F2FE189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3253F2FC189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp */; };
@@ -728,6 +731,8 @@
 		3250884418E46C4B001C9733 /* vfs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vfs.h; sourceTree = "<group>"; };
 		3250884B18E49975001C9733 /* VFSFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSFile.cpp; sourceTree = "<group>"; };
 		3250884C18E49975001C9733 /* VFSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSFile.h; sourceTree = "<group>"; };
+		3251B5111A768A9E00EF3F82 /* HashMapTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HashMapTest.cpp; sourceTree = "<group>"; };
+		3251B5121A768A9E00EF3F82 /* HashMapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashMapTest.h; sourceTree = "<group>"; };
 		3253E09315F27A180079B40E /* EventTypeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTypeScheduler.h; sourceTree = "<group>"; };
 		3253E09715F28A270079B40E /* EventTypeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTypeScheduler.cpp; sourceTree = "<group>"; };
 		3253F2FC189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOVirtualClientChannel.cpp; sourceTree = "<group>"; };
@@ -1501,6 +1506,15 @@
 			path = vfs;
 			sourceTree = "<group>";
 		};
+		3251B5101A768A0C00EF3F82 /* utility */ = {
+			isa = PBXGroup;
+			children = (
+				3251B5111A768A9E00EF3F82 /* HashMapTest.cpp */,
+				3251B5121A768A9E00EF3F82 /* HashMapTest.h */,
+			);
+			path = utility;
+			sourceTree = "<group>";
+		};
 		3253F2FB189AEECA00959CA7 /* channel */ = {
 			isa = PBXGroup;
 			children = (
@@ -1544,6 +1558,7 @@
 			children = (
 				3258AF091935EE9700A66D44 /* CMakeList.txt */,
 				3258AF021935EE4D00A66D44 /* main.cpp */,
+				3251B5101A768A0C00EF3F82 /* utility */,
 				32EE00CE19387E0B00621776 /* network */,
 				32ABC2671A73FB43008DB3A7 /* thread */,
 			);
@@ -2726,6 +2741,7 @@
 				3272FE1715E1053100B096FB /* EventForwarder.h in Headers */,
 				32DF603815E14C7700312C94 /* NamedService.h in Headers */,
 				32DF603C15E14D5F00312C94 /* AlertEventDescriptor.h in Headers */,
+				3251B5151A768A9E00EF3F82 /* HashMapTest.h in Headers */,
 				32DF604015E14F5A00312C94 /* InstrumentEventDescriptor.h in Headers */,
 				32DF604415E1502700312C94 /* CommandEventDescriptor.h in Headers */,
 				324A4B2B191A405700975394 /* damage_vector.h in Headers */,
@@ -3173,6 +3189,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				32E5D24D1A75664C0001E97F /* ObjectQueueTest.cpp in Sources */,
+				3251B5141A768A9E00EF3F82 /* HashMapTest.cpp in Sources */,
 				3258AF0C1935F46D00A66D44 /* FeederTest.cpp in Sources */,
 				32F1FC6B1A7652BE000C9B0C /* ObjectPriorityQueueTest.cpp in Sources */,
 				3258AF031935EE4D00A66D44 /* main.cpp in Sources */,
@@ -3293,6 +3310,7 @@
 				329603221876B45000CDCADA /* BatchCommand.cpp in Sources */,
 				32A91FCA1A49AF0700DCF364 /* RpcSyncServer.cpp in Sources */,
 				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
+				3251B5131A768A9E00EF3F82 /* HashMapTest.cpp in Sources */,
 				32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */,
 				32279F8416F8DEAF009EC7B9 /* DataBroker.cpp in Sources */,
 				3264BBD51784887900E2F5A0 /* AbstractPlugin.cpp in Sources */,

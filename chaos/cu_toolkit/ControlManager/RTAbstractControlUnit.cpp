@@ -33,16 +33,18 @@ using namespace chaos::cu::control_manager;
 
 using namespace boost;
 using namespace boost::chrono;
-
-#define RTCULAPP_ LAPP_ << "[Real Time Control Unit:"<<getCUInstance()<<"] - "
+#define RTCUL_HEAD "[Real Time Control Unit:"<<getCUInstance()<<"] - "
+#define RTCULAPP_ LAPP_ << RTCUL_HEAD
+#define RTCULDBG_ LDBG_ << RTCUL_HEAD
+#define RTCULERR_ LERR_ << RTCUL_HEAD << __PRETTY_FUNCTION__ <<"(" << __LINE__ << ") - "
 
 RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _control_unit_id,
 											 const std::string& _control_unit_param):
 AbstractControlUnit(CUType::RTCU,
 					_control_unit_id,
 					_control_unit_param) {
-    //allocate the handler engine
-   // attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
+	//allocate the handler engine
+	// attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
 	
 	//associate the shared cache of the executor to the asbtract control unit one
 	attribute_value_shared_cache = new AttributeValueSharedCache();
@@ -60,8 +62,8 @@ AbstractControlUnit(CUType::RTCU,
 					_control_unit_id,
 					_control_unit_param,
 					_control_unit_drivers) {
-    //allocate the handler engine
-    //attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
+	//allocate the handler engine
+	//attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
 	
 	//associate the shared cache of the executor to the asbtract control unit one
 	attribute_value_shared_cache = new AttributeValueSharedCache();
@@ -73,14 +75,14 @@ RTAbstractControlUnit::~RTAbstractControlUnit() {
 		delete(attribute_value_shared_cache);
 	}
 	
-    //release handler engine
-    //if(attributeHandlerEngine) {
-    //    delete attributeHandlerEngine;
-    //}
+	//release handler engine
+	//if(attributeHandlerEngine) {
+	//    delete attributeHandlerEngine;
+	//}
 }
 
 void RTAbstractControlUnit::setDefaultScheduleDelay(uint64_t _schedule_dalay) {
-    schedule_dalay = _schedule_dalay;
+	schedule_dalay = _schedule_dalay;
 }
 
 /*
@@ -89,12 +91,12 @@ void RTAbstractControlUnit::setDefaultScheduleDelay(uint64_t _schedule_dalay) {
  are defined the action for the input element of the dataset
  */
 void RTAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfiguration)  throw(CException) {
-    AbstractControlUnit::_defineActionAndDataset(setupConfiguration);
-    //add the scekdule dalay for the sandbox
-    if(schedule_dalay){
-        //in this case ovverrride the config file
-    	setupConfiguration.addInt64Value(CUDefinitionKey::THREAD_SCHEDULE_DELAY , schedule_dalay);
-    }
+	AbstractControlUnit::_defineActionAndDataset(setupConfiguration);
+	//add the scekdule dalay for the sandbox
+	if(schedule_dalay){
+		//in this case ovverrride the config file
+		setupConfiguration.addInt64Value(CUDefinitionKey::THREAD_SCHEDULE_DELAY , schedule_dalay);
+	}
 }
 
 /*!
@@ -105,8 +107,8 @@ void RTAbstractControlUnit::init(void *initData) throw(CException) {
 	AbstractControlUnit::init(initData);
 	scheduler_run = false;
 	last_hearbeat_time = 0;
-    //RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
-    //StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", __PRETTY_FUNCTION__);
+	//RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
+	//StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", __PRETTY_FUNCTION__);
 	
 	RTCULAPP_ << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
 	InizializableService::initImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, (void*)NULL, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
@@ -124,9 +126,9 @@ void RTAbstractControlUnit::start() throw(CException) {
 	run_acquisition_ts_handle = reinterpret_cast<uint64_t**>(&attribute_value_shared_cache->getAttributeValue(DOMAIN_OUTPUT,
 																											  DataPackCommonKey::DPCK_TIMESTAMP)->value_buffer);
 	
-    RTCULAPP_ << "Starting thread for device:" << DatasetDB::getDeviceID();
-    threadStartStopManagment(true);
-    RTCULAPP_ << "Thread started for device:" << DatasetDB::getDeviceID();
+	RTCULAPP_ << "Starting thread for device:" << DatasetDB::getDeviceID();
+	threadStartStopManagment(true);
+	RTCULAPP_ << "Thread started for device:" << DatasetDB::getDeviceID();
 }
 
 /*!
@@ -136,10 +138,10 @@ void RTAbstractControlUnit::stop() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::stop();
 	
-    //manage the thread
-    RTCULAPP_ << "Stopping thread for device:" << DatasetDB::getDeviceID();
-    threadStartStopManagment(false);
-    RTCULAPP_ << "Thread for device stopped:" << DatasetDB::getDeviceID();
+	//manage the thread
+	RTCULAPP_ << "Stopping thread for device:" << DatasetDB::getDeviceID();
+	threadStartStopManagment(false);
+	RTCULAPP_ << "Thread for device stopped:" << DatasetDB::getDeviceID();
 }
 
 /*!
@@ -148,55 +150,60 @@ void RTAbstractControlUnit::stop() throw(CException) {
 void RTAbstractControlUnit::deinit() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::deinit();
-
+	
 	RTCULAPP_ << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
 	InizializableService::deinitImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
-
 	
-   // RTCULAPP_ << "Deinitializing the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
-   // StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", __PRETTY_FUNCTION__);
+	
+	// RTCULAPP_ << "Deinitializing the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
+	// StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", __PRETTY_FUNCTION__);
 }
 
 /*!
  return the appropriate thread for the device
  */
 void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CException) {
-    if(startAction) {
-        if(scheduler_thread.get() && scheduler_run){
-            RTCULAPP_ << "thread already running";
-            throw CException(-5, "Thread for device already running", "RTAbstractControlUnit::threadStartStopManagment");
-        }
-        scheduler_run = true;
-        scheduler_thread.reset(new boost::thread(boost::bind(&RTAbstractControlUnit::executeOnThread, this)));
+	try{
+		if(startAction) {
+			if(scheduler_thread.get() && scheduler_run){
+				RTCULAPP_ << "thread already running";
+				throw CException(-5, "Thread for device already running", "RTAbstractControlUnit::threadStartStopManagment");
+			}
+			scheduler_run = true;
+			scheduler_thread.reset(new boost::thread(boost::bind(&RTAbstractControlUnit::executeOnThread, this)));
 #if defined(__linux__) || defined(__APPLE__)
-		int retcode;
-		int policy;
-		struct sched_param param;
-		pthread_t threadID = (pthread_t) scheduler_thread->native_handle();
-		if ((retcode = pthread_getschedparam(threadID, &policy, &param)) != 0)  {
-			return;
-		}
-		
-		policy = SCHED_RR;
-		param.sched_priority = sched_get_priority_max(SCHED_RR);
-		if ((retcode = pthread_setschedparam(threadID, policy, &param)) != 0) {
-			errno = retcode;
-		}
-		
-		if ((retcode = pthread_getschedparam(threadID, &policy, &param)) != 0) {
-			errno = retcode;
-			return;
-		}
+			int retcode;
+			int policy;
+			struct sched_param param;
+			pthread_t threadID = (pthread_t) scheduler_thread->native_handle();
+			if ((retcode = pthread_getschedparam(threadID, &policy, &param)) != 0)  {
+				return;
+			}
+			
+			policy = SCHED_RR;
+			param.sched_priority = sched_get_priority_max(SCHED_RR);
+			if ((retcode = pthread_setschedparam(threadID, policy, &param)) != 0) {
+				errno = retcode;
+			}
+			
+			if ((retcode = pthread_getschedparam(threadID, &policy, &param)) != 0) {
+				errno = retcode;
+				return;
+			}
 #endif
-	} else {
-		if(!scheduler_run){
-			RTCULAPP_ << "thread already runnign";
-			throw CException(-5, "Thread for device already running", "RTAbstractControlUnit::threadStartStopManagment");
+		} else {
+			if(!scheduler_run){
+				RTCULAPP_ << "thread already runnign";
+				throw CException(-5, "Thread for device already running", "RTAbstractControlUnit::threadStartStopManagment");
+			}
+			RTCULAPP_ << "Stopping and joining scheduling thread";
+			scheduler_run = false;
+			scheduler_thread->join();
+			RTCULAPP_ << "Thread stopped";
 		}
-		RTCULAPP_ << "Stopping and joining scheduling thread";
-		scheduler_run = false;
-		scheduler_thread->join();
-		RTCULAPP_ << "Thread stopped";
+	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::thread_resource_error> >& exc) {
+		RTCULERR_ << exc.what();
+		throw CException(-1, exc.what(), std::string(__PRETTY_FUNCTION__));
 	}
 }
 

@@ -157,21 +157,6 @@ x = hasOption(y);
 		}
 		
 		/*
-		 Add a custom option
-		 */
-		template<typename T>
-		void addOption(const char* name,
-					   const char* description,
-					   bool multivalue)  throw (CException) {
-			try{//po::value<T>(&timeout)->default_value(2000)
-				const po::value_semantic* s = multivalue?po::value<T>()->multitoken():po::value<T>();
-				desc.add_options()(name, s, description);
-			}catch (po::error &e) {
-				throw CException(0, e.what(), "GlobalConfiguration::addOption");
-			}
-		}
-		
-		/*
          Add a custom option
          */
 		template<typename T>

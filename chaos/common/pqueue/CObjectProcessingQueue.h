@@ -34,6 +34,7 @@
 #define LOG_HEAD "[CObjectProcessingQueue] - "
 #define COPQUEUE_LAPP_ LAPP_ << LOG_HEAD
 #define COPQUEUE_LDBG_ LDBG_ << LOG_HEAD
+#define COPQUEUE_LERR_ LERR_ << LOG_HEAD << "(" << __LINE__ << ")"
 
 #define CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE 1000
 namespace chaos {
@@ -232,7 +233,7 @@ namespace chaos {
 			 clear the queue, remove all non processed element
 			 */
 			void clear() {
-				boost::unique_lock<boost::mutex> lock(qMutex);
+				CHAOS_BOOST_LOCK_ERR(boost::unique_lock<boost::mutex> lock(qMutex);, COPQUEUE_LERR_ << "Error on lock";)
 				
 				//remove all element
 				while (!bufferQueue.empty()) {

@@ -211,7 +211,7 @@ namespace chaos{
 				string control_unit_instance;
 				
 				//! Momentary driver for push data into the central memory
-				data_manager::KeyDataStorage*  keyDataStorage;
+				data_manager::KeyDataStorage*  key_data_storage;
 				
 				//! Event channel to permit the fire of the device event
 				event::channel::InstrumentEventChannel *device_event_channel;
