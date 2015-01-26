@@ -9,17 +9,21 @@
 
 #include "network/FeederTest.h"
 #include "thread/ObjectQueueTest.h"
+#include "thread/ObjectPriorityQueueTest.h"
 #include <cassert>
 
 
 int main(int argc, const char * argv[])
 {
-    //chaos::test::network::FeederTest fd;
-	//fd.test(100000);
+    chaos::test::network::FeederTest fd;
+	fd.test(100000);
     
     chaos::common::pqueue::test::ObjectQueueTest oqt;
-    assert((oqt.test(10, 1000, 100, 0, true) == true));
-    
+    assert((oqt.test(10, 100, 100, 0, true) == true));
+	
+	chaos::common::pqueue::test::ObjectPriorityQueueTest opqt;
+	assert((oqt.test(10, 100, 100, 0, true) == true));
+
     return 0;
 }
 

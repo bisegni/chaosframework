@@ -17,8 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__PriorityObjectQueueTest__
-#define __CHAOSFramework__PriorityObjectQueueTest__
+#ifndef __CHAOSFramework__ObjectQueueTest__
+#define __CHAOSFramework__ObjectQueueTest__
 
 #include <chaos/common/pqueue/CObjectProcessingQueue.h>
 

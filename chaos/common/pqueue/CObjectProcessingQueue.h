@@ -20,12 +20,13 @@
 #ifndef CObjectProcessingQueue_H
 #define CObjectProcessingQueue_H
 
-#include "CObjectProcessingQueueListener.h"
+#include <chaos/common/pqueue/CObjectProcessingQueueListener.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
 
 #include <queue>
+
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/thread.hpp>
@@ -36,50 +37,51 @@
 
 #define CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE 1000
 namespace chaos {
-
-    
-    typedef struct {
-        bool elementHasBeenDetached;
-    } ElementManagingPolicy;
-    
 	
-    /*
+	
+	typedef struct {
+		bool elementHasBeenDetached;
+	} ElementManagingPolicy;
+	
+	
+	/*
 	 Base class for the Output Buffer structure
-     */
-    template<typename T>
-    class CObjectProcessingQueue {
-        std::string uid;
+	 */
+	template<typename T>
+	class CObjectProcessingQueue {
+		std::string uid;
 		//thread group
-        //CThreadGroup threadGroup;
+		//CThreadGroup threadGroup;
 		boost::thread_group t_group;
-    protected:
+	protected:
 		std::queue<T*> bufferQueue;
-        //boost::lockfree::queue<T*> bufferQueue;
-        bool in_deinit;
-        int output_thread_number;
-        mutable boost::mutex qMutex;
-        boost::condition_variable liveThreadConditionLock;
-        boost::condition_variable emptyQueueConditionLock;
+		//boost::lockfree::queue<T*> bufferQueue;
+		bool in_deinit;
+		int output_thread_number;
+		mutable boost::mutex qMutex;
+		boost::condition_variable liveThreadConditionLock;
+		boost::condition_variable emptyQueueConditionLock;
 		
-        CObjectProcessingQueueListener<T> *eventListener;
-        
-        /*
-         Thread method that work on buffer item
-         */
-        void executeOnThread() {
+		CObjectProcessingQueueListener<T> *eventListener;
+		
+		/*
+		 Thread method that work on buffer item
+		 */
+		void executeOnThread() {
 			//get the oldest element
 			while(!in_deinit) {
 				T* dataRow = NULL;
 				ElementManagingPolicy elementPolicy;
-                //retrive the oldest element
+				//retrive the oldest element
 				dataRow = waitAndPop();
 				if(!dataRow) {
-					DEBUG_CODE(COPQUEUE_LDBG_<<" waitAndPop() return NULL object so we return";)
+					DEBUG_CODE(COPQUEUE_LDBG_<<"waitAndPop() return NULL object so we return";)
 					continue;
 				}
-                //Process the element
+				//Process the element
 				try {
-					if(eventListener && !(*eventListener).elementWillBeProcessed(tag, dataRow)){
+					if(eventListener &&
+					   !(*eventListener).elementWillBeProcessed(tag, dataRow)){
 						DELETE_OBJ_POINTER(dataRow);
 						continue;
 					}
@@ -89,55 +91,55 @@ namespace chaos {
 				} catch (CException& ex) {
 					DECODE_CHAOS_EXCEPTION(ex)
 				} catch (...) {
-					COPQUEUE_LAPP_ << " Unkown exception";
+					COPQUEUE_LAPP_ << "Unkown exception";
 				}
 				
-                //if weg got a listener notify it
-				if(eventListener && !(*eventListener).elementWillBeDiscarded(tag, dataRow))return;
+				//if weg got a listener notify it
+				if(eventListener && !(*eventListener).elementWillBeDiscarded(tag, dataRow))continue;
 				
 				DELETE_OBJ_POINTER(dataRow);
 			}
-			DEBUG_CODE(COPQUEUE_LDBG_<< " executeOnThread ended";)
-        }
-        
-        /*
+			DEBUG_CODE(COPQUEUE_LDBG_<< "executeOnThread ended";)
+		}
+		
+		/*
 		 Process the oldest element in buffer
-         */
-        virtual void processBufferElement(T*, ElementManagingPolicy&) throw(CException) = 0;
-        
-    public:
-        int tag;
-        
+		 */
+		virtual void processBufferElement(T*, ElementManagingPolicy&) throw(CException) = 0;
+		
+	public:
+		int tag;
+		
 		CObjectProcessingQueue():
 		in_deinit(false),
 		eventListener(NULL),
 		uid(common::utility::UUIDUtil::generateUUIDLite()){}
-        
-        CObjectProcessingQueue(CObjectProcessingQueueListener<T> *_eventListener):
-        in_deinit(false),
-        eventListener(_eventListener),
-        uid(common::utility::UUIDUtil::generateUUIDLite()){}
-
-        /*
-         Set the internal thread delay for execute new task
+		
+		CObjectProcessingQueue(CObjectProcessingQueueListener<T> *_eventListener):
+		in_deinit(false),
+		eventListener(_eventListener),
+		uid(common::utility::UUIDUtil::generateUUIDLite()){}
+		
+		/*
+		 Set the internal thread delay for execute new task
 		 
 		 void setDelayBeetwenTask(long threadDelay){
 		 threadGroup.setDelayBeetwenTask(threadDelay);
 		 } */
-        
-        /*
+		
+		/*
 		 Initialization method for output buffer
-         */
-        virtual void init(int threadNumber) throw(CException) {
-            in_deinit = false;
-            COPQUEUE_LDBG_ << " init";
+		 */
+		virtual void init(int threadNumber) throw(CException) {
+			in_deinit = false;
+			COPQUEUE_LDBG_ << "init";
 			//add the n thread on the threadgroup
-            COPQUEUE_LDBG_ << " creating and starting" << threadNumber << " thread";
-            for (int idx = 0; idx<threadNumber; idx++) {
-                t_group.create_thread(boost::bind(&CObjectProcessingQueue<T>::executeOnThread, this));
-            }
-            
-            COPQUEUE_LDBG_ << " Initialized";
+			COPQUEUE_LDBG_ << "creating and starting" << threadNumber << " thread";
+			for (int idx = 0; idx<threadNumber; idx++) {
+				t_group.create_thread(boost::bind(&CObjectProcessingQueue<T>::executeOnThread, this));
+			}
+			
+			COPQUEUE_LDBG_ << "Initialized";
 			}
 			
 			/*
@@ -145,25 +147,25 @@ namespace chaos {
 			 */
 			virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
 				boost::unique_lock<boost::mutex> lock(qMutex);
-				COPQUEUE_LDBG_ << " Deinitialization";
-   			
+				COPQUEUE_LDBG_ << "Deinitialization";
+				
 				if(waithForEmptyQueue){
 					COPQUEUE_LDBG_ << " wait until queue is empty";
 					while( !bufferQueue.empty()){
-                        emptyQueueConditionLock.timed_wait(lock,
-                                                           boost::posix_time::milliseconds(500));
-                        
+						emptyQueueConditionLock.timed_wait(lock,
+														   boost::posix_time::milliseconds(500));
+						
 					}
-					COPQUEUE_LDBG_ << " queue is empty";
+					COPQUEUE_LDBG_ << "queue is empty";
 				}
 				
-				COPQUEUE_LDBG_ << " Stopping thread";
-                in_deinit = true;
+				COPQUEUE_LDBG_ << "Stopping thread";
+				in_deinit = true;
 				liveThreadConditionLock.notify_all();
-                lock.unlock();
-				COPQUEUE_LDBG_ << " join internal thread group";
+				lock.unlock();
+				COPQUEUE_LDBG_ << "join internal thread group";
 				t_group.join_all();
-				COPQUEUE_LDBG_ << " deinitlized";
+				COPQUEUE_LDBG_ << "deinitlized";
 			}
 			
 			/*
@@ -171,9 +173,9 @@ namespace chaos {
 			 */
 			virtual bool push(T* data) throw(CException) {
 				boost::unique_lock<boost::mutex> lock(qMutex);
-				if(in_deinit || bufferQueue.size() > CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE) return false;
+				if(in_deinit ||
+				   bufferQueue.size() > CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE) return false;
 				bufferQueue.push(data);
-				//lock.unlock();
 				liveThreadConditionLock.notify_one();
 				return true;
 			}
@@ -182,27 +184,26 @@ namespace chaos {
 			 get the last insert data
 			 */
 			T* waitAndPop() {
-                DEBUG_CODE(COPQUEUE_LDBG_<< "Entering in waitAndPop";)
+				DEBUG_CODE(COPQUEUE_LDBG_<< "Entering in waitAndPop";)
 				boost::unique_lock<boost::mutex> lock(qMutex);
-                //output result poitner
+				//output result poitner
 				T *oldestElement = NULL;
 				//DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() begin to wait";)
 				while(bufferQueue.empty() && !in_deinit) {
 					liveThreadConditionLock.wait(lock);
 				}
 				//DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() wakeup";)
-                //get the oldest data ad copy the ahsred_ptr
+				//get the oldest data ad copy the ahsred_ptr
 				if(bufferQueue.empty()) {
-					DEBUG_CODE(COPQUEUE_LDBG_<< " bufferQueue.empty() is empy so we go out";)
+					DEBUG_CODE(COPQUEUE_LDBG_<< "bufferQueue.empty() is empty so we go out";)
 					return NULL;
 				}
-                //get the last pointer from the queue
+				//get the last pointer from the queue
 				oldestElement = bufferQueue.front();
 				
-                //remove the oldest data
+				//remove the oldest data
 				bufferQueue.pop();
-				DEBUG_CODE(COPQUEUE_LDBG_<< " Element still in queue " << bufferQueue.size();)
-                DEBUG_CODE(COPQUEUE_LDBG_<< "Leaving in waitAndPop";)
+				DEBUG_CODE(COPQUEUE_LDBG_<< "Leaving in waitAndPop";)
 				return oldestElement;
 			}
 			
@@ -220,8 +221,8 @@ namespace chaos {
 			void waitForEmpty() {
 				boost::unique_lock<boost::mutex> lock(qMutex);
 				while(!bufferQueue.empty()){
-                    emptyQueueConditionLock.timed_wait(lock,
-                                                       boost::posix_time::milliseconds(500));
+					emptyQueueConditionLock.timed_wait(lock,
+													   boost::posix_time::milliseconds(500));
 				}
 				return bufferQueue.empty();
 			}
@@ -233,16 +234,18 @@ namespace chaos {
 			void clear() {
 				boost::unique_lock<boost::mutex> lock(qMutex);
 				
-                //remove all element
+				//remove all element
 				while (!bufferQueue.empty()) {
+					T* to_delete = bufferQueue.front();
 					bufferQueue.pop();
+					CHK_AND_DELETE_OBJ_POINTER(to_delete)
 				}
 			}
 			
 			/*
 			 Return le number of elementi into live data
 			 */
-			unsigned long elementInLiveBuffer() const {
+			unsigned long queueSize() {
 				boost::unique_lock<boost::mutex> lock(qMutex);
 				return bufferQueue.size();
 			}

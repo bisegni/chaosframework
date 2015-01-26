@@ -62,10 +62,10 @@ bool ObjectQueueTest::test(int _number_of_producer,
     //print statistic
     std::cout << "Error in job = " << error_in_job << std::endl;
     std::cout << "Job not done = " << job_to_do << std::endl;
-    std::cout << "end whit element number = " << elementInLiveBuffer() << std::endl;
+    std::cout << "end whit element number = " << queueSize() << std::endl;
     return  (job_to_do == 0) &&
             (error_in_job == 0) &&
-            (elementInLiveBuffer() == 0);
+            (queueSize() == 0);
 }
 
 void ObjectQueueTest::processBufferElement(TestJobStruct *job,

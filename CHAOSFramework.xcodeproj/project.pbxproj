@@ -497,6 +497,7 @@
 		32EE8980191A792000DE2F29 /* stringutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EE897E191A792000DE2F29 /* stringutils.h */; };
 		32EFCD6618BDE3A400B5EB77 /* IODirectIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EFCD6418BDE3A400B5EB77 /* IODirectIODriver.cpp */; };
 		32EFCD6718BDE3A400B5EB77 /* IODirectIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */; };
+		32F1FC6B1A7652BE000C9B0C /* ObjectPriorityQueueTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F1FC691A7652BE000C9B0C /* ObjectPriorityQueueTest.cpp */; };
 		32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */; };
 		32F2241C179AE3BC00853F62 /* RTAbstractControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */; };
 		32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */; };
@@ -1142,6 +1143,8 @@
 		32EE897E191A792000DE2F29 /* stringutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stringutils.h; sourceTree = "<group>"; };
 		32EFCD6418BDE3A400B5EB77 /* IODirectIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IODirectIODriver.cpp; sourceTree = "<group>"; };
 		32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IODirectIODriver.h; sourceTree = "<group>"; };
+		32F1FC691A7652BE000C9B0C /* ObjectPriorityQueueTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectPriorityQueueTest.cpp; sourceTree = "<group>"; };
+		32F1FC6A1A7652BE000C9B0C /* ObjectPriorityQueueTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectPriorityQueueTest.h; sourceTree = "<group>"; };
 		32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTAbstractControlUnit.cpp; sourceTree = "<group>"; };
 		32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTAbstractControlUnit.h; sourceTree = "<group>"; };
 		32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SCAbstractControlUnit.cpp; sourceTree = "<group>"; };
@@ -2262,6 +2265,8 @@
 			children = (
 				32ABC2681A73FB83008DB3A7 /* ObjectQueueTest.cpp */,
 				32ABC2691A73FB83008DB3A7 /* ObjectQueueTest.h */,
+				32F1FC691A7652BE000C9B0C /* ObjectPriorityQueueTest.cpp */,
+				32F1FC6A1A7652BE000C9B0C /* ObjectPriorityQueueTest.h */,
 			);
 			path = thread;
 			sourceTree = "<group>";
@@ -3169,6 +3174,7 @@
 			files = (
 				32E5D24D1A75664C0001E97F /* ObjectQueueTest.cpp in Sources */,
 				3258AF0C1935F46D00A66D44 /* FeederTest.cpp in Sources */,
+				32F1FC6B1A7652BE000C9B0C /* ObjectPriorityQueueTest.cpp in Sources */,
 				3258AF031935EE4D00A66D44 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
