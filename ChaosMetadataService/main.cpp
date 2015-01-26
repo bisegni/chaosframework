@@ -38,8 +38,7 @@ int main(int argc, char * argv[]) {
 																													 &ChaosMetadataService::getInstance()->setting.persistence_server_list);
 		
 		ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_PERSITENCE_KV_PARAMTER,
-																										"The key value parameter for storage implementation driver (ex k:v-k1:v1)",
-																										true);
+																													 "The key value parameter for storage implementation driver (ex k:v-k1:v1)");
 
 		
 		ChaosMetadataService::getInstance()->init(argc, argv);

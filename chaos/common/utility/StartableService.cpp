@@ -26,6 +26,7 @@ using namespace chaos::common::utility;
 using namespace std;
 #define SS_LAPP LAPP_ << "["<<implName<<"]- "
 #define SS_LDBG LDBG_ << "["<<implName<<"]- "
+#define SS_LERR LERR_ << "["<<implName<<"]- "
 
 StartableService::StartableService() {
 }
@@ -84,7 +85,10 @@ bool StartableService::initImplementation(StartableService *impl, void *initData
     } catch (CException& ex) {
         SS_LAPP  << "Error initializing " << implName;
         throw ex;
-    }
+	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
+		SS_LERR  << "Error Deinitializing " << ex.what();
+		throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
+	}
     return result;
 }
 
@@ -104,9 +108,12 @@ bool StartableService::deinitImplementation(StartableService *impl, const string
         }
         SS_LDBG  << implName << "Deinitialized";
     } catch (CException& ex) {
-        SS_LAPP  << "Error Deinitializing " << implName;
+        SS_LERR  << "Error Deinitializing " << implName;
         throw ex;
-    }
+	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
+		SS_LERR  << "Error Deinitializing " << ex.what();
+		throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
+	}
     return result;
 }
 /*!
@@ -132,7 +139,10 @@ bool StartableService::startImplementation(StartableService *impl, const string 
     } catch (CException& ex) {
         SS_LAPP  << "Error Starting " << implName;
         throw ex;
-    }
+	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
+		SS_LERR  << "Error Deinitializing " << ex.what();
+		throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
+	}
     return result;
 }
 
@@ -159,6 +169,9 @@ bool StartableService::stopImplementation(StartableService *impl, const string &
     } catch (CException& ex) {
         SS_LAPP  << "Error Starting " << implName;
         throw ex;
-    }
+	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
+		SS_LERR  << "Error Deinitializing " << ex.what();
+		throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
+	}
     return result;
 }

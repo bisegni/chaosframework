@@ -65,7 +65,8 @@ control_unit_param(_control_unit_param),
 attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
-device_event_channel(NULL){
+device_event_channel(NULL),
+key_data_storage(NULL){
 }
 
 //! Contructor with driver
@@ -82,7 +83,8 @@ control_unit_param(_control_unit_param),
 attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
-device_event_channel(NULL){
+device_event_channel(NULL),
+key_data_storage(NULL){
 	//copy array
 	for (int idx = 0; idx < _control_unit_drivers.size(); idx++){
 		control_unit_drivers.push_back(_control_unit_drivers[idx]);
@@ -113,8 +115,8 @@ const string& AbstractControlUnit::getCUParam() {
 /*
  Add a new KeyDataStorage for a specific key
  */
-void AbstractControlUnit::setKeyDataStorage(KeyDataStorage* _keyDatStorage) {
-	keyDataStorage = _keyDatStorage;
+void AbstractControlUnit::setKeyDataStorage(KeyDataStorage* _key_data_storage) {
+	key_data_storage = _key_data_storage;
 }
 
 /*
@@ -445,7 +447,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 		throw CException(-1, "Control Unit is not initilized or started", __PRETTY_FUNCTION__);
 	}
 	
-	if(!keyDataStorage) throw CException(-2, "Key data storage driver not allocated", __PRETTY_FUNCTION__);
+	if(!key_data_storage) throw CException(-2, "Key data storage driver not allocated", __PRETTY_FUNCTION__);
 	
 	boost::shared_ptr<AttributeValueSharedCache> attribute_value_shared_cache( new AttributeValueSharedCache());
 	if(!attribute_value_shared_cache.get()) throw CException(-3, "failed to allocate restore cache", __PRETTY_FUNCTION__);
@@ -457,7 +459,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 	ACULDBG_ << "Start restoring snapshot tag for: " << restore_snapshot_tag;
 	
 	//load snapshot to restore
-	if((err = keyDataStorage->loadRestorePoint(restore_snapshot_tag))) {
+	if((err = key_data_storage->loadRestorePoint(restore_snapshot_tag))) {
 		ACULERR_ << "Error loading dataset form snapshot tag: " << restore_snapshot_tag;
 		throw CException(err, "Error loading dataset form snapshot", __PRETTY_FUNCTION__);
 	} else {
@@ -467,8 +469,8 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 		
 		for(int idx = 0; idx < 4; idx++) {
 			//dataset loading sucessfull
-			dataset_at_tag = keyDataStorage->getDatasetFromRestorePoint(restore_snapshot_tag,
-																		(KeyDataStorageDomain)idx);
+			dataset_at_tag = key_data_storage->getDatasetFromRestorePoint(restore_snapshot_tag,
+																		  (KeyDataStorageDomain)idx);
 			if(dataset_at_tag.get()) {
 				//fill cache with dataset key/value
 				fillRestoreCacheWithDatasetFromTag((KeyDataStorageDomain)idx,
@@ -495,7 +497,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 		}
 		
 		//! clear snapshoted dataset to free memeory
-		keyDataStorage->clearRestorePoint(restore_snapshot_tag);
+		key_data_storage->clearRestorePoint(restore_snapshot_tag);
 	}
 	return NULL;
 }
@@ -571,10 +573,10 @@ void AbstractControlUnit::init(void *initData) throw(CException) {
 	
 	//initialize key data storage for device id
 	ACULAPP_ << "Create KeyDataStorage device:" << deviceID;
-	keyDataStorage = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
+	key_data_storage = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
 	
 	ACULAPP_ << "Call KeyDataStorage init implementation for deviceID:" << deviceID;
-	keyDataStorage->init(initConfiguration);
+	key_data_storage->init(initConfiguration);
 }
 
 // Startable Service method
@@ -599,11 +601,11 @@ void AbstractControlUnit::stop() throw(CException) {
 // Startable Service method
 void AbstractControlUnit::deinit() throw(CException) {
 	//remove key data storage
-	if(keyDataStorage) {
+	if(key_data_storage) {
 		ACULDBG_ << "Delete data storage driver for device:" << DatasetDB::getDeviceID();
-		keyDataStorage->deinit();
-		delete(keyDataStorage);
-		keyDataStorage = NULL;
+		key_data_storage->deinit();
+		delete(key_data_storage);
+		key_data_storage = NULL;
 	}
 	
 	//clear the accessor of the driver
@@ -884,8 +886,8 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
 	}
 	
 	//check to see if the device can ben initialized
-	if(keyDataStorage) {
-		keyDataStorage->updateConfiguration(updatePack);
+	if(key_data_storage) {
+		key_data_storage->updateConfiguration(updatePack);
 	}
 	
 	return NULL;
@@ -910,7 +912,7 @@ void AbstractControlUnit::pushOutputDataset() {
 	//check if something as changed
 	if(!output_attribute_cache.hasChanged()) return;
 	
-	CDataWrapper *output_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
+	CDataWrapper *output_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
 	if(!output_attribute_dataset) return;
 	
 	//write acq ts for second
@@ -946,7 +948,7 @@ void AbstractControlUnit::pushOutputDataset() {
 	}
 	
 	//now we nede to push the outputdataset
-	keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainOutput, output_attribute_dataset);
+	key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, output_attribute_dataset);
 	
 	//reset chagned attribute into output dataset
 	output_attribute_cache.resetChangedIndex();
@@ -957,7 +959,7 @@ void AbstractControlUnit::pushInputDataset() {
 	AttributeCache& input_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
 	if(!input_attribute_cache.hasChanged()) return;
 	//get the cdatawrapper for the pack
-	CDataWrapper *input_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
+	CDataWrapper *input_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
 	if(input_attribute_dataset) {
 		//input dataset timestamp is added only when pushed on cache
 		input_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
@@ -969,7 +971,7 @@ void AbstractControlUnit::pushInputDataset() {
 		fillCDatawrapperWithCachedValue(cache_input_attribute_vector, *input_attribute_dataset);
 		
 		//push out the system dataset
-		keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainInput, input_attribute_dataset);
+		key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainInput, input_attribute_dataset);
 	}
 }
 
@@ -978,7 +980,7 @@ void AbstractControlUnit::pushCustomDataset() {
 	AttributeCache& custom_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM);
 	if(!custom_attribute_cache.hasChanged()) return;
 	//get the cdatawrapper for the pack
-	CDataWrapper *custom_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
+	CDataWrapper *custom_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
 	if(custom_attribute_dataset) {
 		//custom dataset timestamp is added only when pushed on cache
 		custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
@@ -990,7 +992,7 @@ void AbstractControlUnit::pushCustomDataset() {
 		fillCDatawrapperWithCachedValue(cache_custom_attribute_vector, *custom_attribute_dataset);
 		
 		//push out the system dataset
-		keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainCustom, custom_attribute_dataset);
+		key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainCustom, custom_attribute_dataset);
 	}
 }
 
@@ -998,7 +1000,7 @@ void AbstractControlUnit::pushSystemDataset() {
 	AttributeCache& systemm_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
 	if(!systemm_attribute_cache.hasChanged()) return;
 	//get the cdatawrapper for the pack
-	CDataWrapper *system_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
+	CDataWrapper *system_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
 	if(system_attribute_dataset) {
 		//system dataset timestamp is added when pushed on cache laso if contain the hearbeat field
 		//! the dataaset can be pushed also in other moment
@@ -1009,7 +1011,7 @@ void AbstractControlUnit::pushSystemDataset() {
 		fillCDatawrapperWithCachedValue(cache_system_attribute_vector, *system_attribute_dataset);
 		
 		//push out the system dataset
-		keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainSystem, system_attribute_dataset);
+		key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainSystem, system_attribute_dataset);
 	}
 	//reset changed index
 	systemm_attribute_cache.resetChangedIndex();

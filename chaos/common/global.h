@@ -119,6 +119,13 @@ LAPP_ << "-----------------------------------------";
 try {x} catch (chaos::CException& ex) { \
 DECODE_CHAOS_EXCEPTION(ex)\
 } catch (...) {}
+
+#define CHAOS_BOOST_LOCK_ERR(l, x)\
+try{\
+l\
+}catch(...){\
+	x\
+}
 /*
  Abstraction for the server delegator
  */

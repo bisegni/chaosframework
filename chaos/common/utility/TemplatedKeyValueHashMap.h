@@ -191,13 +191,16 @@ namespace chaos {
 					while (_cur_hash_element) {
 						
 						//!compare the length of the key and the memory
-						if ((key_len == _cur_hash_element->key_len) && (memcmp(key, _cur_hash_element->key, key_len) == 0)) {
+						if ((key_len == _cur_hash_element->key_len) &&
+							(memcmp(key, _cur_hash_element->key, key_len) == 0)) {
 							*element_ptr = _cur_hash_element->element;
 							err = 0;
 							break;
 						}
 						_cur_hash_element = _cur_hash_element->next;
 					}
+					
+					element_ptr = NULL;
 					return err;
 					
 				}
@@ -209,7 +212,7 @@ namespace chaos {
 					T *element_ptr = NULL;
 					//we can't add two times the same key to hash
 					if(!getElement(key, key_len, element_ptr)) {
-						//another elemento with the same key is preset
+						//another element with the same key is preset
 						return -1;
 					}
 					

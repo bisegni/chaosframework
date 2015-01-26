@@ -51,7 +51,8 @@ DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator DirectIODevi
 
 
 DirectIODeviceClientChannel::DirectIODeviceClientChannel(std::string alias):
-DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index) {
+DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index),
+answer_server_info(){
 	//associate the default static allocator
 	header_deallocator = &STATIC_DirectIODeviceClientChannelDeallocator;
 }

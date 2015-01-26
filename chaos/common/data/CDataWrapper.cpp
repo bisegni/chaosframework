@@ -71,13 +71,15 @@ CDataWrapper *CDataWrapper::clone() {
 void CDataWrapper::addCSDataValue(const char *key, CDataWrapper& csData) {
     if(csData.bsonBuilder->len()==0) return;
     bsonBuilder->append(key, csData.bsonBuilder->asTempObj());
-    //reset the added object
-    //csData.bsonBuilder.reset(new BSONObjBuilder());
 }
 
 //add a string value
 void CDataWrapper::addStringValue(const char *key, const string& strValue) {
-    bsonBuilder->append(key, strValue);
+	try{
+		bsonBuilder->append(key, strValue);
+	}catch(bson::MsgAssertionException& ex) {
+		LERR_<< "[" <<__PRETTY_FUNCTION__<< "]" << ex.what();
+	}
 }
 
 //append a strin gto an open array
@@ -119,7 +121,11 @@ void CDataWrapper::finalizeArrayForKey(const char *key) {
 
 //return a vectorvalue for a key
 CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const char *key) {
-    return new CMultiTypeDataArrayWrapper(bsonBuilder->asTempObj().getField(key).Array());
+	try {
+		return new CMultiTypeDataArrayWrapper(bsonBuilder->asTempObj().getField(key).Array());
+	} catch (bson::UserException& ex) {
+	}
+	return NULL;
 }
 
 //add a long value

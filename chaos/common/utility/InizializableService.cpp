@@ -23,6 +23,8 @@
 #include <chaos/common/utility/InizializableService.h>
 
 #define IS_LAPP LAPP_ << "[InizializableService]- "
+#define IS_LDBG LDBG_ << "[InizializableService]- "
+#define IS_LERR LERR_ << "[InizializableService]- "
 
 
 using namespace chaos::common::utility;
@@ -85,7 +87,10 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
         IS_LAPP  << "Error initializing " << implName;
         impl->state_machine.process_event(service_state_machine::EventType::deinitialize());
         throw ex;
-    }
+	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
+		IS_LERR  << "Error Deinitializing " << ex.what();
+		throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
+	}
     return result;
 }
 
@@ -106,6 +111,9 @@ bool InizializableService::deinitImplementation(InizializableService *impl, cons
     } catch (CException& ex) {
         IS_LAPP  << "Error Deinitializing " << implName;
         throw ex;
-    }
+	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
+		IS_LERR  << "Error Deinitializing " << ex.what();
+		throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
+	}
     return result;
 }
