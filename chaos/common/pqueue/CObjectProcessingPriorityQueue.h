@@ -223,7 +223,7 @@ namespace chaos {
 				
 				while(bufferQueue.empty() &&
 					  !in_deinit) {
-					emptyQueueConditionLock.notify_one();
+                    liveThreadConditionLock.wait(lock);
 				}
 				//get the oldest data ad copy the ahsred_ptr
 				if(bufferQueue.empty()) {
