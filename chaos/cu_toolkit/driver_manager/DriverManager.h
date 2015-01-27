@@ -54,9 +54,9 @@ namespace chaos {
 			
 #define CU_DRIVER_INSTANCER(_DriverClass_) new chaos::common::utility::TypedObjectInstancer< _DriverClass_, chaos::cu::driver_manager::driver::AbstractDriver >()
 		  
-#define REGISTER_DRIVER(driver) \
-		  MATERIALIZE_INSTANCE_AND_INSPECTOR(driver);\
-		  chaos::cu::driver_manager::driver::DriverManager::getInstance()->registerDriver(driver ##Instancer, driver ##Inspector);
+#define REGISTER_DRIVER(_n_,_driver_)				\
+		  MATERIALIZE_INSTANCE_AND_INSPECTOR_WITH_NS(_n_,_driver_); \
+		  chaos::cu::driver_manager::DriverManager::getInstance()->registerDriver(_driver_ ##Instancer, _driver_ ##Inspector);
 
 
 			typedef struct DriverPluginInfo {
