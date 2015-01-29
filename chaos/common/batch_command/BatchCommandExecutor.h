@@ -146,7 +146,7 @@ namespace chaos {
                  an exception are fired
                  \param commandAlias the alias of the command
                  */
-                virtual BatchCommand *instanceCommandInfo(std::string& commandAlias);
+                virtual BatchCommand *instanceCommandInfo(const std::string& commandAlias);
 
                 
                 //! Get the statistic for the current running command rpc action
@@ -191,7 +191,7 @@ namespace chaos {
             public:
                 
                 //! Private constructor
-                BatchCommandExecutor(std::string _executorID);
+                BatchCommandExecutor(const std::string& _executorID);
                 
                 //! Private deconstructor
                 virtual ~BatchCommandExecutor();
@@ -227,7 +227,7 @@ namespace chaos {
                  \param alias the name associated to the command
                  \param instancer the instance of the instancer that will produce the "instance" of the command
                  */
-                void installCommand(string alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer);
+                void installCommand(const string& alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer);
 				
 				//!return all the aliases of the installe batch command
 				/*!

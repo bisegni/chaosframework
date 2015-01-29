@@ -43,7 +43,7 @@ using namespace chaos::common::batch_command;
 using namespace chaos::common::data::cache;
 using namespace chaos::common::batch_command;
 
-SlowCommandExecutor::SlowCommandExecutor(std::string _executorID,
+SlowCommandExecutor::SlowCommandExecutor(const std::string& _executorID,
 										 DatasetDB *_dataset_attribute_db_ptr,
 										 SCAbstractControlUnit *_control_unit_instance):
 BatchCommandExecutor(_executorID),
@@ -116,14 +116,15 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
 }
 
 //! Install a command associated with a type
-void SlowCommandExecutor::installCommand(string alias, chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer) {
+void SlowCommandExecutor::installCommand(const string& alias,
+                                         chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer) {
 	//call superclss method
 	BatchCommandExecutor::installCommand(alias, instancer);
 }
 
 
 //! Check if the waithing command can be installed
-BatchCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias) {
+BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& commandAlias) {
 	//install command into the batch command executor root class
 	SlowCommand *result = (SlowCommand*) BatchCommandExecutor::instanceCommandInfo(commandAlias);
 	

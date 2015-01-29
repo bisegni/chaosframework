@@ -107,15 +107,15 @@ namespace chaos {
                 protected:
                     
                     //! Private constructor
-                    SlowCommandExecutor(std::string _executorID,
+                    SlowCommandExecutor(const std::string& _executorID,
 										chaos_data::DatasetDB *_deviceSchemaDbPtr,
 										SCAbstractControlUnit *_control_unit_instance);
                     
                     //! Private deconstructor
                     ~SlowCommandExecutor();
                     
-                    //Check if the waithing command can be installed
-                    chaos_batch::BatchCommand *instanceCommandInfo(std::string& commandAlias);
+                    //allocate a new command
+                    chaos_batch::BatchCommand *instanceCommandInfo(const std::string& commandAlias);
 					
 					//overlodaed command event handler
 					void handleCommandEvent(uint64_t command_seq,
@@ -125,7 +125,7 @@ namespace chaos {
 					
 					//! general sandbox event handler
 					void handleSandboxEvent(const std::string& sandbox_id,
-											common::batch_command::BatchSandboxEventType::BatchSandboxEventType type,
+											chaos_batch::BatchSandboxEventType::BatchSandboxEventType type,
 											void* type_value_ptr,
 											uint32_t type_value_size);
                 public:
@@ -143,7 +143,7 @@ namespace chaos {
 					void deinit() throw(chaos::CException);
 
 					//! Install a command associated with a type
-                    void installCommand(std::string alias,
+                    void installCommand(const std::string& alias,
 										chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer);
                 };
             }

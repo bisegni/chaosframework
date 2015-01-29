@@ -41,7 +41,7 @@ using namespace chaos::common::batch_command;
 #define BCELDBG_ LDBG_ << LOG_HEAD_SBE
 #define BCELERR_ LERR_ << LOG_HEAD_SBE
 
-BatchCommandExecutor::BatchCommandExecutor(std::string _executorID):
+BatchCommandExecutor::BatchCommandExecutor(const std::string& _executorID):
 executorID(_executorID),
 default_command_sandbox_instance(1),
 command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE),
@@ -417,7 +417,7 @@ const std::string& BatchCommandExecutor::getDefaultCommand() {
 }
 
 //! Install a command associated with a type
-void BatchCommandExecutor::installCommand(string alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer) {
+void BatchCommandExecutor::installCommand(const string& alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer) {
     BCELAPP_ << "Install new command with alias -> " << alias;
     mapCommandInstancer.insert(make_pair<string, chaos::common::utility::ObjectInstancer<BatchCommand>* >(alias, instancer));
 }
@@ -466,7 +466,7 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(CDataWrapper *submission
 }
 
 //! Check if the waithing command can be installed
-BatchCommand *BatchCommandExecutor::instanceCommandInfo(std::string& commandAlias) {
+BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& commandAlias) {
     BatchCommand *result = NULL;
     if(mapCommandInstancer.count(commandAlias)) {
         result = mapCommandInstancer[commandAlias]->getInstance();

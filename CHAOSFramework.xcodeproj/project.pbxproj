@@ -387,6 +387,7 @@
 		32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B159D418B38CA50096B58B /* DirectIODeviceServerChannel.h */; };
 		32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159D818B4B9F90096B58B /* DataWorker.cpp */; };
 		32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159DC18B4D4200096B58B /* MemcachedCacheDriver.cpp */; };
+		32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */; };
 		32B571ED168E02C30002A198 /* bson_builder_base.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E4168E02C20002A198 /* bson_builder_base.h */; };
 		32B571EE168E02C30002A198 /* bson_db.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E5168E02C20002A198 /* bson_db.h */; };
 		32B571F0168E02C30002A198 /* bson_field.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E7168E02C20002A198 /* bson_field.h */; };
@@ -509,6 +510,7 @@
 		32F7FEA118A4FD9B00FC03AB /* DirectIOEndpointHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */; };
 		32F7FEAB18A5066600FC03AB /* FastDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA218A5066600FC03AB /* FastDelegate.h */; };
 		32F7FEAC18A5066600FC03AB /* FastDelegateBind.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA318A5066600FC03AB /* FastDelegateBind.h */; };
+		32FA1EF31A7A462200A46800 /* MDSBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FA1EF11A7A462200A46800 /* MDSBatchCommand.cpp */; };
 		32FB20181A3F0FAB00307A86 /* AttributeValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB20161A3F0FAB00307A86 /* AttributeValue.cpp */; };
 		32FB20191A3F0FAB00307A86 /* AttributeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FB20171A3F0FAB00307A86 /* AttributeValue.h */; };
 		32FB201C1A3F11C400307A86 /* AttributeCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB201A1A3F11C400307A86 /* AttributeCache.cpp */; };
@@ -1009,6 +1011,8 @@
 		32B159DD18B4D4210096B58B /* MemcachedCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemcachedCacheDriver.h; sourceTree = "<group>"; };
 		32B159DF18B4F0DE0096B58B /* dataservice_global.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dataservice_global.h; sourceTree = "<group>"; };
 		32B159E318B635580096B58B /* cache_system.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cache_system.h; sourceTree = "<group>"; };
+		32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSBatchExecutor.cpp; sourceTree = "<group>"; };
+		32B3E11C1A7A3923007B7802 /* MDSBatchExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSBatchExecutor.h; sourceTree = "<group>"; };
 		32B571E4168E02C20002A198 /* bson_builder_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_builder_base.h; sourceTree = "<group>"; };
 		32B571E5168E02C20002A198 /* bson_db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_db.h; sourceTree = "<group>"; };
 		32B571E7168E02C20002A198 /* bson_field.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_field.h; sourceTree = "<group>"; };
@@ -1158,6 +1162,8 @@
 		32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOEndpointHandler.h; sourceTree = "<group>"; };
 		32F7FEA218A5066600FC03AB /* FastDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegate.h; sourceTree = "<group>"; };
 		32F7FEA318A5066600FC03AB /* FastDelegateBind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegateBind.h; sourceTree = "<group>"; };
+		32FA1EF11A7A462200A46800 /* MDSBatchCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSBatchCommand.cpp; sourceTree = "<group>"; };
+		32FA1EF21A7A462200A46800 /* MDSBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSBatchCommand.h; sourceTree = "<group>"; };
 		32FB20031A31B5DA00307A86 /* cache_system_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cache_system_types.h; sourceTree = "<group>"; };
 		32FB20161A3F0FAB00307A86 /* AttributeValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttributeValue.cpp; sourceTree = "<group>"; };
 		32FB20171A3F0FAB00307A86 /* AttributeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeValue.h; sourceTree = "<group>"; };
@@ -1358,6 +1364,7 @@
 				32E9F48C16485012006EAF37 /* ChaosMetadataService.h */,
 				32FC7EDF1A7008780029C2A2 /* mds_constants.h */,
 				32FC7EE01A7008FA0029C2A2 /* mds_types.h */,
+				32B3E11A1A7A385C007B7802 /* batch */,
 				32C7B8FA16DD35D7005B3B21 /* api */,
 				32C7EAE01A5EC0D60008DFE8 /* persistence */,
 			);
@@ -2324,6 +2331,17 @@
 			path = worker;
 			sourceTree = "<group>";
 		};
+		32B3E11A1A7A385C007B7802 /* batch */ = {
+			isa = PBXGroup;
+			children = (
+				32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */,
+				32B3E11C1A7A3923007B7802 /* MDSBatchExecutor.h */,
+				32FA1EF11A7A462200A46800 /* MDSBatchCommand.cpp */,
+				32FA1EF21A7A462200A46800 /* MDSBatchCommand.h */,
+			);
+			path = batch;
+			sourceTree = "<group>";
+		};
 		32B5714A168DF4750002A198 /* util */ = {
 			isa = PBXGroup;
 			children = (
@@ -3138,8 +3156,10 @@
 				3235FDD91A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp in Sources */,
 				32C7EAE31A5EC1140008DFE8 /* AbstractPersistenceDriver.cpp in Sources */,
 				323236CB164573C60052CE06 /* main.cpp in Sources */,
+				32FA1EF31A7A462200A46800 /* MDSBatchCommand.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBProducerDataAccess.cpp in Sources */,
 				3235FDCF1A6FF56D00EC83A9 /* AbstractDataAccess.cpp in Sources */,
+				32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */,
 				32FC7EDE1A70064E0029C2A2 /* MongoDBHAConnectionManager.cpp in Sources */,
 				32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
