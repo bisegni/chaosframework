@@ -21,6 +21,7 @@
 #define __CHAOSFramework__ApiManagment__
 
 #include "AbstractApiGroup.h"
+#include "../persistence/AbstractPersistenceDriver.h"
 
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/network/NetworkBroker.h>
@@ -31,21 +32,26 @@ namespace chaos {
 	namespace metadata_service {
 		namespace api {
 			//!typedef for the group list
-			typedef std::vector< boost::shared_ptr<AbstractApiGroup> > ApiGroupList;
-			typedef std::vector< boost::shared_ptr<AbstractApiGroup> >::iterator ApiGroupListIterator;
+            typedef boost::shared_ptr<AbstractApiGroup>          ApiGroupListElement;
+			typedef std::vector< ApiGroupListElement >           ApiGroupList;
+			typedef std::vector< ApiGroupListElement >::iterator ApiGroupListIterator;
 			
 			class ApiManagment:
 			public chaos::common::utility::InizializableService {
 				//! network broker pointer
 				chaos::common::network::NetworkBroker *network_broker_instance;
 				
+                //! persistence driver instance
+                persistence::AbstractPersistenceDriver *persistence_driver;
+                
 				//! api group list
 				ApiGroupList installed_api_group_list;
 				
 				void clearGroupList();
 			public:
 				//! default consturctor
-				ApiManagment(chaos::common::network::NetworkBroker *_network_broker_instance);
+				ApiManagment(chaos::common::network::NetworkBroker *_network_broker_instance,
+                             persistence::AbstractPersistenceDriver *_persistence_driver);
 				
 				//! default destructor
 				~ApiManagment();

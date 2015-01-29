@@ -1,5 +1,5 @@
 /*
- *	ProducerApiGroup.cpp
+ *	UnitServerApiGroup.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,18 +17,18 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ProducerApiGroup.h"
-#include "ProducerRegisterApi.h"
+#include "UnitServerApiGroup.h"
+#include "UnitServerRegisterApi.h"
 
-using namespace chaos::metadata_service::api::producer;
-DEFINE_CLASS_FACTORY_NO_ALIAS(ProducerApiGroup, chaos::metadata_service::api::AbstractApiGroup);
+using namespace chaos::metadata_service::api::unit_server;
+DEFINE_CLASS_FACTORY_NO_ALIAS(UnitServerApiGroup, chaos::metadata_service::api::AbstractApiGroup);
 
-ProducerApiGroup::ProducerApiGroup():
+UnitServerApiGroup::UnitServerApiGroup():
 AbstractApiGroup("system"){
-	//add api for producer registration
-	addApi<ProducerRegisterApi>();
+    //add api for UnitServer registration
+    addApi<UnitServerRegisterApi>();
 }
 
-ProducerApiGroup::~ProducerApiGroup() {
-	
+UnitServerApiGroup::~UnitServerApiGroup() {
+    
 }

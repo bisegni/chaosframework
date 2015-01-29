@@ -21,17 +21,23 @@
 #define __CHAOSFramework__AbstractMSDatabaseDriver__
 
 #include "AbstractDataAccess.h"
-#include "data_access/ProducerDataAccess.h"
+#include "data_access/DataAccess.h"
 
 #include <string>
 
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
+
 namespace chaos {
 	namespace metadata_service{
 		namespace persistence {
 			
 			//! Abstract base persistence driver
+            /*!
+             Define the rule for the persistence sublcass implementation.
+             The scope of this class i instantiate the implementation of 
+             the DataAccess base class
+             */
 			class AbstractPersistenceDriver:
 			public common::utility::NamedService,
 			public common::utility::InizializableService {
@@ -40,7 +46,11 @@ namespace chaos {
 				AbstractPersistenceDriver(const std::string& name);
 				virtual ~AbstractPersistenceDriver();
 				
+                //! return the implementation of the producer data access
 				virtual data_access::ProducerDataAccess *getProducerDataAccess() = 0;
+                
+                //! return the implementation of the unit server data access
+                virtual data_access::UnitServerDataAccess *getUnitServerDataAccess() = 0;
 			};
 			
 		}

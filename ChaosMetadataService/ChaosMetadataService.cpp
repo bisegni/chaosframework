@@ -92,22 +92,16 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
 		network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
 		network_broker_service.init(NULL, __PRETTY_FUNCTION__);
 		
-		api_managment_service.reset(new ApiManagment(network_broker_service.get()), "ApiManagment");
-		api_managment_service.init(NULL, __PRETTY_FUNCTION__);
-		
 		//get and initilize the presistence driver
 		const std::string persistence_driver_name = setting.persistence_implementation + "PersistenceDriver";
 		persistence::AbstractPersistenceDriver *instance = ObjectFactoryRegister<persistence::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(persistence_driver_name);
 		if(!instance) throw chaos::CException(-5, "No persistence driver instance found", __PRETTY_FUNCTION__);
 		persistence_driver.reset(instance, "AbstractPersistenceDriver");
 		persistence_driver.init((void*)&setting, __PRETTY_FUNCTION__);
-		
-		LAPP_ << "-----------------------------------------";
-		LAPP_ << "!CHAOS Metadata service started";
-		LAPP_ << "RPC Server address: "	<< network_broker_service->getRPCUrl();
-		LAPP_ << "DirectIO Server address: " << network_broker_service->getDirectIOUrl();
-		LAPP_ << "Sync RPC URL: "	<< network_broker_service->getSyncRPCUrl();
-		LAPP_ << "-----------------------------------------";
+        
+        api_managment_service.reset(new ApiManagment(network_broker_service.get(), persistence_driver.get()), "ApiManagment");
+        api_managment_service.init(NULL, __PRETTY_FUNCTION__);
+
 	} catch (CException& ex) {
 		DECODE_CHAOS_EXCEPTION(ex)
 		exit(1);
@@ -123,7 +117,12 @@ void ChaosMetadataService::start()  throw(CException) {
 	try {
 		//start network brocker
 		network_broker_service.start(__PRETTY_FUNCTION__);
-		
+        LAPP_ << "-----------------------------------------";
+        LAPP_ << "!CHAOS Metadata service started";
+        LAPP_ << "RPC Server address: "	<< network_broker_service->getRPCUrl();
+        LAPP_ << "DirectIO Server address: " << network_broker_service->getDirectIOUrl();
+        LAPP_ << "Sync RPC URL: "	<< network_broker_service->getSyncRPCUrl();
+        LAPP_ << "-----------------------------------------";
 		//at this point i must with for end signal
 		waitCloseSemaphore.wait();
 	} catch (CException& ex) {

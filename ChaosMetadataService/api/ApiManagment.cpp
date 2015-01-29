@@ -27,8 +27,10 @@ using namespace chaos::common::utility;
 using namespace chaos::metadata_service::api;
 
 //! default consturctor
-ApiManagment::ApiManagment(chaos::common::network::NetworkBroker *_network_broker_instance):
-network_broker_instance(_network_broker_instance){}
+ApiManagment::ApiManagment(chaos::common::network::NetworkBroker *_network_broker_instance,
+                           persistence::AbstractPersistenceDriver *_persistence_driver):
+network_broker_instance(_network_broker_instance),
+persistence_driver(_persistence_driver){}
 
 //! default destructor
 ApiManagment::~ApiManagment() {
@@ -36,14 +38,22 @@ ApiManagment::~ApiManagment() {
 }
 
 void ApiManagment::init(void* init_data) throw (chaos::CException) {
+    if(!persistence_driver) throw chaos::CException(-1, "NO persistence driver set", __PRETTY_FUNCTION__);
+    
 	//register all available api group
 	std::vector<std::string> all_registered_groups;
 	ObjectFactoryRegister<AbstractApiGroup>::getInstance()->getAllRegisteredName(all_registered_groups);
 	BOOST_FOREACH( std::string name, all_registered_groups ) {
+        //get the api group instance
 		AbstractApiGroup * instance = ObjectFactoryRegister<AbstractApiGroup>::getInstance()->getNewInstanceByName(name);
-		if(instance) {
-			addApiAgroup(instance);
-		}
+        
+        //initialize the api group
+        InizializableService::initImplementation(instance,
+                                                 static_cast<void*>(persistence_driver),
+                                                 instance->getName(),
+                                                 __PRETTY_FUNCTION__);
+        //register the api group
+		addApiAgroup(instance);
 	}
 }
 void ApiManagment::deinit() throw (chaos::CException) {
@@ -55,6 +65,15 @@ void ApiManagment::clearGroupList() {
 	for(ApiGroupListIterator it = installed_api_group_list.begin();
 		it != installed_api_group_list.end();
 		it++) {
+        //get api group reference
+        ApiGroupListElement group = *it;
+        
+        //deregister the action
 		network_broker_instance->deregisterAction((*it).get());
+        
+        //initialize the api group
+        InizializableService::deinitImplementation(group.get(),
+                                                   group->getName(),
+                                                   __PRETTY_FUNCTION__);
 	}
 }

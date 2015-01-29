@@ -319,6 +319,12 @@
 		328E36ED1786C00D00C1564D /* PluginDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E36EC1786C00D00C1564D /* PluginDefinition.h */; };
 		328E405D17287B82004E5938 /* LFDataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E405B17287B82004E5938 /* LFDataCache.cpp */; };
 		328E405E17287B82004E5938 /* LFDataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E405C17287B82004E5938 /* LFDataCache.h */; };
+		328E77FF1A7A94140008C070 /* UnitServerApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E77FD1A7A94140008C070 /* UnitServerApiGroup.cpp */; };
+		328E78021A7A94810008C070 /* UnitServerRegisterApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78001A7A94810008C070 /* UnitServerRegisterApi.cpp */; };
+		328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78031A7A9F430008C070 /* AbstractApiGroup.cpp */; };
+		328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78051A7A9FE40008C070 /* AbstractApi.cpp */; };
+		328E78091A7AAA070008C070 /* UnitServerDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78071A7AAA070008C070 /* UnitServerDataAccess.cpp */; };
+		328E780C1A7AAB640008C070 /* MongoDBUnitServerDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E780A1A7AAB640008C070 /* MongoDBUnitServerDataAccess.cpp */; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
 		32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32919A091764E68F00724874 /* DriverAccessor.cpp */; };
 		32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32919A0A1764E68F00724874 /* DriverAccessor.h */; };
@@ -456,6 +462,7 @@
 		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
 		32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95E15E4DBD3005D607E /* EventFactory.h */; };
+		32D24FB21A7AAEF8002D65CE /* MongoDBAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D24FB01A7AAEF8002D65CE /* MongoDBAccessor.cpp */; };
 		32D421B317271572008A326E /* BsonFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D421B117271572008A326E /* BsonFragment.cpp */; };
 		32D421B417271572008A326E /* BsonFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D421B217271572008A326E /* BsonFragment.h */; };
 		32D5CB32179D233E00A8427E /* chaos_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D5CB31179D233E00A8427E /* chaos_types.h */; };
@@ -927,6 +934,16 @@
 		328E36EC1786C00D00C1564D /* PluginDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDefinition.h; sourceTree = "<group>"; };
 		328E405B17287B82004E5938 /* LFDataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LFDataCache.cpp; sourceTree = "<group>"; };
 		328E405C17287B82004E5938 /* LFDataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFDataCache.h; sourceTree = "<group>"; };
+		328E77FD1A7A94140008C070 /* UnitServerApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitServerApiGroup.cpp; sourceTree = "<group>"; };
+		328E77FE1A7A94140008C070 /* UnitServerApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitServerApiGroup.h; sourceTree = "<group>"; };
+		328E78001A7A94810008C070 /* UnitServerRegisterApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitServerRegisterApi.cpp; sourceTree = "<group>"; };
+		328E78011A7A94810008C070 /* UnitServerRegisterApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitServerRegisterApi.h; sourceTree = "<group>"; };
+		328E78031A7A9F430008C070 /* AbstractApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApiGroup.cpp; sourceTree = "<group>"; };
+		328E78051A7A9FE40008C070 /* AbstractApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApi.cpp; sourceTree = "<group>"; };
+		328E78071A7AAA070008C070 /* UnitServerDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitServerDataAccess.cpp; sourceTree = "<group>"; };
+		328E78081A7AAA070008C070 /* UnitServerDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitServerDataAccess.h; sourceTree = "<group>"; };
+		328E780A1A7AAB640008C070 /* MongoDBUnitServerDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBUnitServerDataAccess.cpp; sourceTree = "<group>"; };
+		328E780B1A7AAB640008C070 /* MongoDBUnitServerDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBUnitServerDataAccess.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
 		32919A091764E68F00724874 /* DriverAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DriverAccessor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32919A0A1764E68F00724874 /* DriverAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DriverAccessor.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1090,6 +1107,9 @@
 		32CFF95A15E4D950005D607E /* EventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDescriptor.h; sourceTree = "<group>"; };
 		32CFF95D15E4DBD3005D607E /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
 		32CFF95E15E4DBD3005D607E /* EventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventFactory.h; sourceTree = "<group>"; };
+		32D24FAF1A7AAD15002D65CE /* DataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataAccess.h; sourceTree = "<group>"; };
+		32D24FB01A7AAEF8002D65CE /* MongoDBAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBAccessor.cpp; sourceTree = "<group>"; };
+		32D24FB11A7AAEF8002D65CE /* MongoDBAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBAccessor.h; sourceTree = "<group>"; };
 		32D421B117271572008A326E /* BsonFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BsonFragment.cpp; sourceTree = "<group>"; };
 		32D421B217271572008A326E /* BsonFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BsonFragment.h; sourceTree = "<group>"; };
 		32D5CB31179D233E00A8427E /* chaos_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chaos_types.h; sourceTree = "<group>"; };
@@ -1413,8 +1433,12 @@
 				32FC7EDD1A70064E0029C2A2 /* MongoDBHAConnectionManager.h */,
 				3235FDD71A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp */,
 				3235FDD81A6FFA6600EC83A9 /* MongoDBPersistenceDriver.h */,
+				32D24FB01A7AAEF8002D65CE /* MongoDBAccessor.cpp */,
+				32D24FB11A7AAEF8002D65CE /* MongoDBAccessor.h */,
 				3235FDD41A6FF8A800EC83A9 /* MongoDBProducerDataAccess.cpp */,
 				3235FDD51A6FF8A800EC83A9 /* MongoDBProducerDataAccess.h */,
+				328E780A1A7AAB640008C070 /* MongoDBUnitServerDataAccess.cpp */,
+				328E780B1A7AAB640008C070 /* MongoDBUnitServerDataAccess.h */,
 			);
 			path = mongodb;
 			sourceTree = "<group>";
@@ -1424,6 +1448,9 @@
 			children = (
 				3235FDD11A6FF71600EC83A9 /* ProducerDataAccess.cpp */,
 				3235FDD21A6FF71600EC83A9 /* ProducerDataAccess.h */,
+				328E78071A7AAA070008C070 /* UnitServerDataAccess.cpp */,
+				328E78081A7AAA070008C070 /* UnitServerDataAccess.h */,
+				32D24FAF1A7AAD15002D65CE /* DataAccess.h */,
 			);
 			path = data_access;
 			sourceTree = "<group>";
@@ -2195,6 +2222,17 @@
 			path = driver;
 			sourceTree = "<group>";
 		};
+		328E77FC1A7A937D0008C070 /* unit_server */ = {
+			isa = PBXGroup;
+			children = (
+				328E77FD1A7A94140008C070 /* UnitServerApiGroup.cpp */,
+				328E77FE1A7A94140008C070 /* UnitServerApiGroup.h */,
+				328E78001A7A94810008C070 /* UnitServerRegisterApi.cpp */,
+				328E78011A7A94810008C070 /* UnitServerRegisterApi.h */,
+			);
+			path = unit_server;
+			sourceTree = "<group>";
+		};
 		32954969176B90A800B5A064 /* driver_manager */ = {
 			isa = PBXGroup;
 			children = (
@@ -2481,8 +2519,11 @@
 		32C7B8FA16DD35D7005B3B21 /* api */ = {
 			isa = PBXGroup;
 			children = (
+				328E77FC1A7A937D0008C070 /* unit_server */,
 				3235FDC41A6FF40100EC83A9 /* producer */,
+				328E78051A7A9FE40008C070 /* AbstractApi.cpp */,
 				32FC7EE11A701BE40029C2A2 /* AbstractApi.h */,
+				328E78031A7A9F430008C070 /* AbstractApiGroup.cpp */,
 				32FC7EE21A701D8E0029C2A2 /* AbstractApiGroup.h */,
 				32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */,
 				32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */,
@@ -3151,18 +3192,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
 				3235FDD31A6FF71600EC83A9 /* ProducerDataAccess.cpp in Sources */,
+				328E77FF1A7A94140008C070 /* UnitServerApiGroup.cpp in Sources */,
 				3235FDCA1A6FF45600EC83A9 /* ProducerRegisterApi.cpp in Sources */,
 				3235FDD91A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp in Sources */,
+				32D24FB21A7AAEF8002D65CE /* MongoDBAccessor.cpp in Sources */,
+				328E78021A7A94810008C070 /* UnitServerRegisterApi.cpp in Sources */,
 				32C7EAE31A5EC1140008DFE8 /* AbstractPersistenceDriver.cpp in Sources */,
 				323236CB164573C60052CE06 /* main.cpp in Sources */,
 				32FA1EF31A7A462200A46800 /* MDSBatchCommand.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBProducerDataAccess.cpp in Sources */,
 				3235FDCF1A6FF56D00EC83A9 /* AbstractDataAccess.cpp in Sources */,
 				32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */,
+				328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */,
 				32FC7EDE1A70064E0029C2A2 /* MongoDBHAConnectionManager.cpp in Sources */,
 				32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */,
+				328E780C1A7AAB640008C070 /* MongoDBUnitServerDataAccess.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
+				328E78091A7AAA070008C070 /* UnitServerDataAccess.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* ProducerApiGroup.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

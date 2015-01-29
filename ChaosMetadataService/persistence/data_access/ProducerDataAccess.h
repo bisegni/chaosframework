@@ -32,13 +32,26 @@ namespace chaos {
 				class ProducerDataAccess:
 				public AbstractDataAccess {
 				public:
+                    //! default constructor
 					ProducerDataAccess();
+                    
+                    //! defautl destructor
 					~ProducerDataAccess();
+                    
+                    //! insert a new device with name and property
+                    virtual int insertNewProducer(const std::string& producer_unique_name,
+                                                  chaos::common::data::CDataWrapper& producer_property) = 0;
+                    
+                    //! check if a device is registered on persistence layer
+                    virtual int checkProducerPresence(const std::string& producer_unique_name, bool& found) = 0;
+                    
 					//! save the new dataset of a producer
-					virtual int saveDataset(chaos::common::data::CDataWrapper& dataset_to_register) = 0;
+					virtual int saveDataset(const std::string& producer_unique_name,
+                                            chaos::common::data::CDataWrapper& dataset_to_register) = 0;
 					
-					virtual int loadLastDataset(const std::string& producer_name,
-												chaos::common::data::CDataWrapper **dataset_to_register) = 0;
+                    //! return last dataaset of a producer
+					virtual int loadLastDataset(const std::string& producer_unique_name,
+												chaos::common::data::CDataWrapper **dataset_to_load) = 0;
 					
 					
 				};

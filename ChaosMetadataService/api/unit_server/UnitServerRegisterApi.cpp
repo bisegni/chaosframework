@@ -1,5 +1,5 @@
 /*
- *	ProducerRegisterApi.cpp
+ *	UnitServerRegisterApi.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,25 +17,26 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ProducerRegisterApi.h"
+#include "UnitServerRegisterApi.h"
 
-#define PRA_INFO INFO_LOG(MongoDBProducerDataAccess)
-#define PRA_DBG  INFO_DBG(MongoDBProducerDataAccess)
-#define PRA_ERR  INFO_ERR(MongoDBProducerDataAccess)
+#define USRA_INFO INFO_LOG(MongoDBUnitServerDataAccess)
+#define USRA_DBG  INFO_DBG(MongoDBUnitServerDataAccess)
+#define USRA_ERR  INFO_ERR(MongoDBUnitServerDataAccess)
 
 using namespace chaos::common::data;
-using namespace chaos::metadata_service::api::producer;
+using namespace chaos::metadata_service::api::unit_server;
 
-ProducerRegisterApi::ProducerRegisterApi():
-AbstractApi("registerControlUnit"){
-	
+UnitServerRegisterApi::UnitServerRegisterApi():
+AbstractApi("registerUnitServer"){
+    
 }
 
-ProducerRegisterApi::~ProducerRegisterApi() {
-	
+UnitServerRegisterApi::~UnitServerRegisterApi() {
+    
 }
 
-chaos::common::data::CDataWrapper *ProducerRegisterApi::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
-    PRA_INFO << api_data->getJSONString();
-	return NULL;
+chaos::common::data::CDataWrapper *UnitServerRegisterApi::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+    USRA_INFO << api_data->getJSONString();
+    getPersistenceDriver()->getProducerDataAccess();
+    return NULL;
 }

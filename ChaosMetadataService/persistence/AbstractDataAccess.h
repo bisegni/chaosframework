@@ -26,6 +26,13 @@ namespace chaos {
 	namespace metadata_service{
 		namespace persistence {
 
+            //! Data Access base class
+            /*!
+             The data access are those class the directly work on data.
+             Every implementation will perform the data opration 
+             on different persistence engine. The sublclass of first level need to define
+             the api on the data and the second level subclass needs to define the implementation
+             */
 			class AbstractDataAccess:
 			public chaos::common::utility::NamedService {
 				

@@ -1,9 +1,9 @@
 /*
- *	ProducerApiGroup.cpp
+ *	DataAccess.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,18 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ProducerApiGroup.h"
-#include "ProducerRegisterApi.h"
-
-using namespace chaos::metadata_service::api::producer;
-DEFINE_CLASS_FACTORY_NO_ALIAS(ProducerApiGroup, chaos::metadata_service::api::AbstractApiGroup);
-
-ProducerApiGroup::ProducerApiGroup():
-AbstractApiGroup("system"){
-	//add api for producer registration
-	addApi<ProducerRegisterApi>();
-}
-
-ProducerApiGroup::~ProducerApiGroup() {
-	
-}
+#ifndef CHAOSFramework_DataAccess_h
+#define CHAOSFramework_DataAccess_h
+#include "ProducerDataAccess.h"
+#include "UnitServerDataAccess.h"
+#endif

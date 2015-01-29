@@ -20,7 +20,7 @@
 #ifndef __CHAOSFramework__MongoDBProducerDataAccess__
 #define __CHAOSFramework__MongoDBProducerDataAccess__
 
-#include "MongoDBHAConnectionManager.h"
+#include "MongoDBAccessor.h"
 #include "../data_access/ProducerDataAccess.h"
 
 #include <boost/shared_ptr.hpp>
@@ -33,21 +33,30 @@ namespace chaos {
 				//forward declaration
 				class MongoDBPersistenceDriver;
 				
+                //! Data Access for producer manipulation data
 				class MongoDBProducerDataAccess:
+                protected MongoDBAccessor,
 				protected data_access::ProducerDataAccess {
 					friend class MongoDBPersistenceDriver;
 					
-					boost::shared_ptr<MongoDBHAConnectionManager> mongodb_connection;
-					
 				protected:
-					MongoDBProducerDataAccess(boost::shared_ptr<MongoDBHAConnectionManager>& _mongodb_connection);
+					MongoDBProducerDataAccess();
 					~MongoDBProducerDataAccess();
 				public:
-					int saveDataset(chaos::common::data::CDataWrapper& dataset_to_register);
-					
-					
-					int loadLastDataset(const std::string& producer_name,
-										chaos::common::data::CDataWrapper **dataset_to_register);
+                    //! insert a new device with name and property
+                    virtual int insertNewProducer(const std::string& producer_unique_name,
+                                                  chaos::common::data::CDataWrapper& producer_property);
+                    
+                    //! check if a device is registered on persistence layer
+                    virtual int checkProducerPresence(const std::string& producer_unique_name, bool& found);
+                    
+                    //! save the new dataset of a producer
+                    virtual int saveDataset(const std::string& producer_unique_name,
+                                            chaos::common::data::CDataWrapper& dataset_to_register);
+                    
+                    //! return last dataaset of a producer
+                    virtual int loadLastDataset(const std::string& producer_unique_name,
+                                                chaos::common::data::CDataWrapper **dataset_to_load);
 				};
 			}
 		}

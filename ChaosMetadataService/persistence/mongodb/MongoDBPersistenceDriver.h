@@ -33,18 +33,33 @@ namespace chaos {
 			namespace mongodb {
 					
 				//! mongodb implementation of persistence driver
+                /*!
+                 The driver is define as class in the object factor
+                 */
 				DECLARE_CLASS_FACTORY(MongoDBPersistenceDriver, AbstractPersistenceDriver) {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBPersistenceDriver)
 					
+                    //!keep track of the allocated connection
 					boost::shared_ptr<MongoDBHAConnectionManager> connection;
 				protected:
+                    //! Construct the driver
 					MongoDBPersistenceDriver(const std::string& name);
+                    
+                    //!dispose the driver
 					~MongoDBPersistenceDriver();
 					
 				public:
+                    //! Initialize the driver
 					void init(void *init_data) throw (chaos::CException);
+                    
+                    //!deinitialize the driver
 					void deinit() throw (chaos::CException);
+                    
+                    // inherited method
 					data_access::ProducerDataAccess *getProducerDataAccess();
+                    
+                    // inherited method
+                    data_access::UnitServerDataAccess *getUnitServerDataAccess();
 
 				};
 			}

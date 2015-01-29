@@ -5,20 +5,29 @@ include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 SET(cnd_src				main.cpp
 						ChaosMetadataService.cpp)
 
-SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp)
+SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
+                        api/ApiGroup.cpp
+                        api/AbstractApiGroup.cpp)
 
 SET(cnd_src  ${cnd_src}	api/producer/ProducerApiGroup.cpp
 						api/producer/ProducerRegisterApi.cpp)
 
+SET(cnd_src  ${cnd_src}	api/unit_server/UnitServerApiGroup.cpp
+                        api/unit_server/UnitServerRegisterApi.cpp)
+
 SET(cnd_src  ${cnd_src}	persistence/AbstractPersistenceDriver.cpp
 						persistence/AbstractDataAccess.cpp)
 
-SET(cnd_src  ${cnd_src}	persistence/data_access/ProducerDataAccess.cpp)
+SET(cnd_src  ${cnd_src}	persistence/data_access/ProducerDataAccess.cpp
+                        persistence/data_access/UnitServerDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBHAConnectionManager.cpp
 						persistence/mongodb/MongoDBPersistenceDriver.cpp
-						persistence/mongodb/MongoDBProducerDataAccess.cpp)
+						persistence/mongodb/MongoDBProducerDataAccess.cpp
+                        persistence/mongodb/MongoDBUnitServerDataAccess.cpp)
 
+SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
+                        batch/MDSBatchCommand.cpp)
 
 ADD_EXECUTABLE(ChaosMetadataService ${cnd_src})
 

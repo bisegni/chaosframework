@@ -553,13 +553,22 @@ MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel() {
  Performe the creation of device channel
  \param deviceNetworkAddress device node address
  */
-DeviceMessageChannel *NetworkBroker::getDeviceMessageChannelFromAddress(CDeviceNetworkAddress *deviceNetworkAddress) {
-    return static_cast<DeviceMessageChannel*>(getNewMessageChannelForRemoteHost(deviceNetworkAddress, DEVICE));
+DeviceMessageChannel *NetworkBroker::getDeviceMessageChannelFromAddress(CDeviceNetworkAddress *node_network_address) {
+    return static_cast<DeviceMessageChannel*>(getNewMessageChannelForRemoteHost(node_network_address, DEVICE));
 }
 
 //!performance channel creation
 chaos::common::message::PerformanceNodeChannel *NetworkBroker::getPerformanceChannelFromAddress(CNetworkAddress  *node_network_address) {
 	return static_cast<chaos::common::message::PerformanceNodeChannel*>(getNewMessageChannelForRemoteHost(node_network_address, PERFORMANCE));
+}
+
+//! Return a raw message channel
+/*!
+ Performe the creation of a raw channel
+ \param deviceNetworkAddress device node address
+ */
+MessageChannel *NetworkBroker::getRawMessageChannelFromAddress(CDeviceNetworkAddress  *node_network_address) {
+   	return getNewMessageChannelForRemoteHost(node_network_address, RAW);
 }
 
 //!Channel deallocation

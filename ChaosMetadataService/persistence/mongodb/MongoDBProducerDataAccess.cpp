@@ -21,8 +21,13 @@
 
 using namespace chaos::metadata_service::persistence::mongodb;
 
-MongoDBProducerDataAccess::MongoDBProducerDataAccess(boost::shared_ptr<MongoDBHAConnectionManager>& _mongodb_connection):
-mongodb_connection(_mongodb_connection) {
+//DEFINE_LOGS_VARIABLE(MDBPDA, MongoDBProducerDataAccess)
+
+#define MDBPDA_INFO INFO_LOG(MongoDBProducerDataAccess)
+#define MDBPDA_DBG  INFO_DBG(MongoDBProducerDataAccess)
+#define MDBPDA_ERR  INFO_ERR(MongoDBProducerDataAccess)
+
+MongoDBProducerDataAccess::MongoDBProducerDataAccess(){
 	
 }
 
@@ -30,11 +35,31 @@ MongoDBProducerDataAccess::~MongoDBProducerDataAccess() {
 	
 }
 
-int MongoDBProducerDataAccess::saveDataset(chaos::common::data::CDataWrapper& dataset_to_register) {
-	return 0;
+//! insert a new device with name and property
+int MongoDBProducerDataAccess::insertNewProducer(const std::string& producer_unique_name,
+                                                 chaos::common::data::CDataWrapper& producer_property) {
+    MDBPDA_INFO << producer_unique_name;
+    MDBPDA_INFO << producer_property.getJSONString();
+    return 0;
 }
 
-int MongoDBProducerDataAccess::loadLastDataset(const std::string& producer_name,
-											   chaos::common::data::CDataWrapper **dataset_to_register) {
-	return 0;
+//! check if a device is registered on persistence layer
+int MongoDBProducerDataAccess::checkProducerPresence(const std::string& producer_unique_name,
+                                                     bool& found) {
+    MDBPDA_INFO << producer_unique_name;
+    return 0;
+}
+
+//! save the new dataset of a producer
+int MongoDBProducerDataAccess::saveDataset(const std::string& producer_unique_name,
+                                           chaos::common::data::CDataWrapper& dataset_to_register) {
+    MDBPDA_INFO << producer_unique_name;
+    return 0;
+}
+
+//! return last dataaset of a producer
+int MongoDBProducerDataAccess::loadLastDataset(const std::string& producer_unique_name,
+                                               chaos::common::data::CDataWrapper **dataset_to_load) {
+    MDBPDA_INFO << producer_unique_name;
+    return 0;
 }

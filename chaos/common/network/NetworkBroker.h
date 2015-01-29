@@ -316,6 +316,14 @@ namespace chaos {
 				 */
 				DeviceMessageChannel *getDeviceMessageChannelFromAddress(CDeviceNetworkAddress  *deviceNetworkAddress);
     
+                //! Return a raw message channel
+                /*!
+                 Performe the creation of a raw channel
+                 \param deviceNetworkAddress device node address
+                 */
+                MessageChannel *getRawMessageChannelFromAddress(CDeviceNetworkAddress  *deviceNetworkAddress);
+                
+                
 				//!performance channel creation
 				/*!
 				 Performe the creation of performance channel thowards a network node

@@ -55,6 +55,11 @@
 #define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLNotice)
 #define LAPP_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLInfo)
 
+#define DEFINE_LOG_HEADER(x) "[" #x "] - "
+#define INFO_LOG(x) LAPP_ << DEFINE_LOG_HEADER(x)
+#define DGB_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x)
+#define ERR_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION << "(" << __LINE__ << ") - "
+
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true
 #ifndef DEBUG

@@ -21,24 +21,38 @@
 #define CHAOSFramework_AbstractGroup_h
 
 #include "AbstractApi.h"
+#include "../persistence/AbstractPersistenceDriver.h"
+
 #include <chaos/common/utility/NamedService.h>
+#include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
 #include <vector>
 
+#include <boost/shared_ptr.hpp>
+
 namespace chaos {
 	namespace metadata_service {
 		namespace api {
-			
+            
+            typedef std::vector< boost::shared_ptr<AbstractApi> >           ApiList;
+            typedef std::vector< boost::shared_ptr<AbstractApi> >::iterator ApiListIterator;
+            
 			class AbstractApiGroup:
 			public common::utility::NamedService,
+            public chaos::common::utility::InizializableService,
 			public chaos::DeclareAction {
-				std::vector<AbstractApi*> api_instance;
+                //! the instace of the persistence driver
+                persistence::AbstractPersistenceDriver *persistence_driver;
+                
+                //! list of all installed api in the group
+                ApiList api_instance;
 			public:
-				AbstractApiGroup(const std::string& name):NamedService(name){};
-				~AbstractApiGroup(){};
+				AbstractApiGroup(const std::string& name);
+                
+				~AbstractApiGroup();
 				
 				//! install a class as api
 				/*!
@@ -53,7 +67,7 @@ namespace chaos {
 					T *instance = (T*)i->getInstance();
 					if(instance) {
 						//we have an instance so we can register that action
-						api_instance.push_back(instance);
+						api_instance.push_back(boost::shared_ptr<AbstractApi>(instance));
 						DeclareAction::addActionDescritionInstance<T>(instance,
 																	  &T::execute,
 																	  getName().c_str(),
@@ -61,6 +75,10 @@ namespace chaos {
 																	  instance->getName().c_str());
 					}
 				}
+                
+                void init(void *init_data) throw (chaos::CException);
+                
+                void deinit()  throw (chaos::CException);
 			};
 			
 		}

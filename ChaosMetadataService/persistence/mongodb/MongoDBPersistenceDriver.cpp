@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 #include "MongoDBPersistenceDriver.h"
-
 #include "MongoDBProducerDataAccess.h"
+#include "MongoDBUnitServerDataAccess.h"
 
 #include "../../mds_types.h"
 
@@ -50,5 +50,13 @@ void MongoDBPersistenceDriver::deinit() throw (chaos::CException) {
 }
 
 data_access::ProducerDataAccess *MongoDBPersistenceDriver::getProducerDataAccess() {
-	return new MongoDBProducerDataAccess(connection);
+    MongoDBProducerDataAccess *result = new MongoDBProducerDataAccess();
+    result->setConnection(connection);
+	return result;
+}
+
+data_access::UnitServerDataAccess *MongoDBPersistenceDriver::getUnitServerDataAccess() {
+    MongoDBUnitServerDataAccess *result = new MongoDBUnitServerDataAccess();
+    result->setConnection(connection);
+    return result;
 }
