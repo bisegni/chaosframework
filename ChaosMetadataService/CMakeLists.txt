@@ -24,6 +24,7 @@ SET(cnd_src  ${cnd_src}	persistence/data_access/ProducerDataAccess.cpp
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBHAConnectionManager.cpp
 						persistence/mongodb/MongoDBPersistenceDriver.cpp
 						persistence/mongodb/MongoDBProducerDataAccess.cpp
+					persistence/mongodb/MongoDBAccessor.cpp
                         persistence/mongodb/MongoDBUnitServerDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
