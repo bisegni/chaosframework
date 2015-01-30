@@ -21,6 +21,10 @@
 
 using namespace chaos::metadata_service::persistence;
 
+#define APD_INFO INFO_LOG(AbstractPersistenceDriver)
+#define APD_DBG  INFO_DBG(AbstractPersistenceDriver)
+#define APD_ERR  INFO_ERR(AbstractPersistenceDriver)
+
 AbstractPersistenceDriver::AbstractPersistenceDriver(const std::string& name):
 NamedService(name){
 	
@@ -30,14 +34,33 @@ AbstractPersistenceDriver::~AbstractPersistenceDriver() {
 	
 }
 
-//! return the implementation of the producer data access
+
+// Initialize the driver
+void AbstractPersistenceDriver::init(void *init_data) throw (chaos::CException) {
+    
+}
+
+// deinitialize the driver
+void AbstractPersistenceDriver::deinit() throw (chaos::CException) {
+    for(DataAccessMapIterator it = map_dataaccess_instances.begin();
+        it != map_dataaccess_instances.end();
+        it++) {
+        AbstractDataAccess *instance = static_cast<AbstractDataAccess*>(it->second);
+        if(instance){
+            APD_INFO << "Disposing data access " << instance->getName();
+            delete(instance);
+        }
+    }
+}
+
+// return the implementation of the producer data access
 data_access::ProducerDataAccess *AbstractPersistenceDriver::getProducerDataAccess() {
     CHAOS_ASSERT(map_dataaccess_instances[data_access_type::DataAccessTypeProducer])
     boost::shared_lock<boost::shared_mutex> rl(map_mutex);
     return static_cast<data_access::ProducerDataAccess*>(map_dataaccess_instances[data_access_type::DataAccessTypeProducer]);
 }
 
-//! return the implementation of the unit server data access
+// return the implementation of the unit server data access
 data_access::UnitServerDataAccess *AbstractPersistenceDriver::getUnitServerDataAccess() {
     CHAOS_ASSERT(map_dataaccess_instances[data_access_type::DataAccessTypeProducer])
     boost::shared_lock<boost::shared_mutex> rl(map_mutex);

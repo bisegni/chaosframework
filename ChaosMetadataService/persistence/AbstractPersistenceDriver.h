@@ -45,6 +45,8 @@ namespace chaos {
                 } DataAccessType;
             }
             
+            typedef std::map<data_access_type::DataAccessType, void* >              DataAccessMap;
+            typedef std::map<data_access_type::DataAccessType, void* >::iterator    DataAccessMapIterator;
             //! Abstract base persistence driver
             /*!
              Define the rule for the persistence sublcass implementation.
@@ -56,7 +58,7 @@ namespace chaos {
             public common::utility::InizializableService {
                 
                 //! map for the dataaccess allocation
-                std::map<data_access_type::DataAccessType, void* > map_dataaccess_instances;
+                DataAccessMap map_dataaccess_instances;
                 
                 //! muthex for DA instances access
                 boost::shared_mutex map_mutex;
@@ -75,6 +77,7 @@ namespace chaos {
                     //get api instance
                     T *instance = (T*)i->getInstance(param_1);
                     if(instance) {
+                        boost::unique_lock<boost::shared_mutex> wl(map_mutex);
                         map_dataaccess_instances.insert(make_pair(da_type, instance));
                     }
                     
@@ -84,11 +87,18 @@ namespace chaos {
                 AbstractPersistenceDriver(const std::string& name);
                 virtual ~AbstractPersistenceDriver();
                 
+                //! Initialize the driver
+                void init(void *init_data) throw (chaos::CException);
+                
+                //!deinitialize the driver
+                void deinit() throw (chaos::CException);
+                
                 //! return the implementation of the producer data access
-                virtual data_access::ProducerDataAccess *getProducerDataAccess();
+                data_access::ProducerDataAccess *getProducerDataAccess();
                 
                 //! return the implementation of the unit server data access
-                virtual data_access::UnitServerDataAccess *getUnitServerDataAccess();
+                data_access::UnitServerDataAccess *getUnitServerDataAccess();
+
             };
             
         }

@@ -38,6 +38,9 @@ MongoDBPersistenceDriver::~MongoDBPersistenceDriver() {
 }
 
 void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
+    //call sublcass
+    AbstractPersistenceDriver::init(init_data);
+    
 	struct setting *_setting = static_cast<struct setting *>(init_data);
 	if(!_setting) throw CException(-1, "No setting forwarded", __PRETTY_FUNCTION__);
 	
@@ -45,9 +48,15 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
 	connection.reset(new MongoDBHAConnectionManager(_setting->persistence_server_list,
 													_setting->persistence_kv_param_map));
     
-    //register the dataacess implementation
-    registerDataAccess<MongoDBProducerDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>& >(data_access_type::DataAccessTypeProducer, connection);
+    //register the data access implementations
+    registerDataAccess<MongoDBProducerDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>& >(data_access_type::DataAccessTypeProducer,
+                                                                                                         connection);
+    registerDataAccess<MongoDBUnitServerDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>& >(data_access_type::DataAccessTypeUnitServer,
+                                                                                                           connection);
 }
 void MongoDBPersistenceDriver::deinit() throw (chaos::CException) {
 	connection.reset();
+    //call sublcass
+    AbstractPersistenceDriver::deinit();
+
 }
