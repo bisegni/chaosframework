@@ -41,13 +41,18 @@ chaos::common::data::CDataWrapper *UnitServerRegisterApi::execute(chaos::common:
     bool is_present = false;
     int err = 0;
     persistence::data_access::UnitServerDataAccess *us_da = getPersistenceDriver()->getUnitServerDataAccess();
-    if((err = us_da->checkUnitServerPresence("test", is_present))) {
+    if(!api_data->hasKey(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS)) {
+        throw CException(-1, "Unit server alias not found", __PRETTY_FUNCTION__);
+    }
+    const std::string unit_server_alias = api_data->getStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS);
+    if((err = us_da->checkUnitServerPresence(unit_server_alias, is_present))) {
         //err
     }if(is_present) {
         //presente
+        err = us_da->updateUnitServer(*api_data);
     }else {
         //non presente
-        us_da->insertNewUnitServer(*api_data);
+        err = us_da->insertNewUnitServer(*api_data);
     }
     
     return NULL;

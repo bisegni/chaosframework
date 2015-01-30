@@ -57,12 +57,12 @@ void AbstractPersistenceDriver::deinit() throw (chaos::CException) {
 data_access::ProducerDataAccess *AbstractPersistenceDriver::getProducerDataAccess() {
     CHAOS_ASSERT(map_dataaccess_instances[data_access_type::DataAccessTypeProducer])
     boost::shared_lock<boost::shared_mutex> rl(map_mutex);
-    return static_cast<data_access::ProducerDataAccess*>(map_dataaccess_instances[data_access_type::DataAccessTypeProducer]);
+    return (data_access::ProducerDataAccess*)(map_dataaccess_instances[data_access_type::DataAccessTypeProducer]);
 }
 
 // return the implementation of the unit server data access
 data_access::UnitServerDataAccess *AbstractPersistenceDriver::getUnitServerDataAccess() {
     CHAOS_ASSERT(map_dataaccess_instances[data_access_type::DataAccessTypeProducer])
     boost::shared_lock<boost::shared_mutex> rl(map_mutex);
-    return static_cast<data_access::UnitServerDataAccess*>(map_dataaccess_instances[data_access_type::DataAccessTypeUnitServer]);
+    return (data_access::UnitServerDataAccess*)(map_dataaccess_instances[data_access_type::DataAccessTypeUnitServer]);
 }

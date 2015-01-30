@@ -53,7 +53,7 @@ namespace chaos {
                         // is the rpc address where server respond
                         "cu_instance_net_address": "unit server RPC address host:port"
                      }
-
+                    \param unit_server_description unit server key,value description
                      */
                     virtual int insertNewUnitServer(chaos::common::data::CDataWrapper& unit_server_description) = 0;
                     
@@ -64,6 +64,11 @@ namespace chaos {
                      */
                     virtual int checkUnitServerPresence(const std::string& unit_server_alias, bool& presence) = 0;
                     
+                    //! update the unit server information
+                    /*!
+                     \param unit_server_description unit server key,value description
+                     */
+                    virtual int updateUnitServer(chaos::common::data::CDataWrapper& unit_server_description) = 0;
                 };
                 
             }

@@ -45,6 +45,9 @@ namespace chaos {
                     // inherited method
                     int checkUnitServerPresence(const std::string& unit_server_alias,
                                                 bool& presence);
+                    
+                    //! inherited method
+                    int updateUnitServer(chaos::common::data::CDataWrapper& unit_server_description);
                 };
 
                 
