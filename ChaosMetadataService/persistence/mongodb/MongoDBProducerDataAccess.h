@@ -45,20 +45,19 @@ namespace chaos {
                     MongoDBProducerDataAccess(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection);
 					~MongoDBProducerDataAccess();
 				public:
-                    //! insert a new device with name and property
-                    virtual int insertNewProducer(const std::string& producer_unique_name,
-                                                  chaos::common::data::CDataWrapper& producer_property);
+                    // inherited method
+                    int insertNewProducer(chaos::common::data::CDataWrapper& producer_property);
                     
-                    //! check if a device is registered on persistence layer
-                    virtual int checkProducerPresence(const std::string& producer_unique_name, bool& found);
+                    // inherited method
+                    int checkProducerPresence(const std::string& producer_unique_name, bool& found);
                     
-                    //! save the new dataset of a producer
-                    virtual int saveDataset(const std::string& producer_unique_name,
-                                            chaos::common::data::CDataWrapper& dataset_to_register);
+                    // inherited method
+                    int saveDataset(const std::string& producer_unique_name,
+                                    chaos::common::data::CDataWrapper& dataset_to_register);
                     
-                    //! return last dataaset of a producer
-                    virtual int loadLastDataset(const std::string& producer_unique_name,
-                                                chaos::common::data::CDataWrapper **dataset_to_load);
+                    // inherited method
+                    int loadLastDataset(const std::string& producer_unique_name,
+                                        chaos::common::data::CDataWrapper **dataset_to_load);
 				};
 			}
 		}

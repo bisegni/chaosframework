@@ -40,9 +40,11 @@ namespace chaos {
                     ~MongoDBUnitServerDataAccess();
                 public:
                     //inherited method
-                    int insertNewUnitServer(const std::string& unit_server_name,
-                                            const std::string& unit_server_rpc_url,
-                                            std::vector<std::string> hosted_cu_class);
+                    int insertNewUnitServer(chaos::common::data::CDataWrapper& unit_server_description);
+                    
+                    // inherited method
+                    int checkUnitServerPresence(const std::string& unit_server_alias,
+                                                bool& presence);
                 };
 
                 

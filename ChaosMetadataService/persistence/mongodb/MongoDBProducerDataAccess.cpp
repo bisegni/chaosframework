@@ -36,31 +36,24 @@ MongoDBProducerDataAccess::~MongoDBProducerDataAccess() {
 	
 }
 
-//! insert a new device with name and property
-int MongoDBProducerDataAccess::insertNewProducer(const std::string& producer_unique_name,
-                                                 chaos::common::data::CDataWrapper& producer_property) {
-    MDBPDA_INFO << producer_unique_name;
-    MDBPDA_INFO << producer_property.getJSONString();
+// inherited method
+int MongoDBProducerDataAccess::insertNewProducer(chaos::common::data::CDataWrapper& producer_property) {
     return 0;
 }
 
-//! check if a device is registered on persistence layer
-int MongoDBProducerDataAccess::checkProducerPresence(const std::string& producer_unique_name,
-                                                     bool& found) {
-    MDBPDA_INFO << producer_unique_name;
+// inherited method
+int MongoDBProducerDataAccess::checkProducerPresence(const std::string& producer_unique_name, bool& found) {
     return 0;
 }
 
-//! save the new dataset of a producer
+// inherited method
 int MongoDBProducerDataAccess::saveDataset(const std::string& producer_unique_name,
                                            chaos::common::data::CDataWrapper& dataset_to_register) {
-    MDBPDA_INFO << producer_unique_name;
     return 0;
 }
 
-//! return last dataaset of a producer
+// inherited method
 int MongoDBProducerDataAccess::loadLastDataset(const std::string& producer_unique_name,
                                                chaos::common::data::CDataWrapper **dataset_to_load) {
-    MDBPDA_INFO << producer_unique_name;
     return 0;
 }

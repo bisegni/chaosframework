@@ -1110,6 +1110,7 @@
 		32D24FAF1A7AAD15002D65CE /* DataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataAccess.h; sourceTree = "<group>"; };
 		32D24FB01A7AAEF8002D65CE /* MongoDBAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBAccessor.cpp; sourceTree = "<group>"; };
 		32D24FB11A7AAEF8002D65CE /* MongoDBAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBAccessor.h; sourceTree = "<group>"; };
+		32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mongo_db_constants.h; sourceTree = "<group>"; };
 		32D421B117271572008A326E /* BsonFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BsonFragment.cpp; sourceTree = "<group>"; };
 		32D421B217271572008A326E /* BsonFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BsonFragment.h; sourceTree = "<group>"; };
 		32D5CB31179D233E00A8427E /* chaos_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chaos_types.h; sourceTree = "<group>"; };
@@ -1439,6 +1440,7 @@
 				3235FDD51A6FF8A800EC83A9 /* MongoDBProducerDataAccess.h */,
 				328E780A1A7AAB640008C070 /* MongoDBUnitServerDataAccess.cpp */,
 				328E780B1A7AAB640008C070 /* MongoDBUnitServerDataAccess.h */,
+				32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */,
 			);
 			path = mongodb;
 			sourceTree = "<group>";

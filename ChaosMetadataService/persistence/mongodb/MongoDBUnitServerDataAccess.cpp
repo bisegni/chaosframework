@@ -19,11 +19,13 @@
  */
 
 #include "MongoDBUnitServerDataAccess.h"
+#include "mongo_db_constants.h"
 
-#define MDBUSDA_INFO INFO_LOG(MongoDBProducerDataAccess)
-#define MDBUSDA_DBG  INFO_DBG(MongoDBProducerDataAccess)
-#define MDBUSDA_ERR  INFO_ERR(MongoDBProducerDataAccess)
+#define MDBUSDA_INFO INFO_LOG(MongoDBUnitServerDataAccess)
+#define MDBUSDA_DBG  INFO_DBG(MongoDBUnitServerDataAccess)
+#define MDBUSDA_ERR  INFO_ERR(MongoDBUnitServerDataAccess)
 
+using namespace chaos::common::data;
 using namespace chaos::metadata_service::persistence::mongodb;
 
 MongoDBUnitServerDataAccess::MongoDBUnitServerDataAccess(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection):
@@ -36,30 +38,31 @@ MongoDBUnitServerDataAccess::~MongoDBUnitServerDataAccess() {
 }
 
 //inherited method
-int MongoDBUnitServerDataAccess::insertNewUnitServer(const std::string& unit_server_name,
-                                                     const std::string& unit_server_rpc_url,
-                                                     std::vector<std::string> hosted_cu_class) {
+int MongoDBUnitServerDataAccess::insertNewUnitServer(CDataWrapper& unit_server_description) {
     int err = 0;
-    bool f_exists = false;
-    
     
     //allocate data block on vfat
-    mongo::BSONObjBuilder bson_insert_unit_server;
+    mongo::BSONObjBuilder bson_insert;
     
     try {
-        //bson_insert_unit_server <<
-        //bson_search.append(MONGO_DB_FIELD_FILE_VFS_PATH, vfs_file->getVFSFileInfo()->vfs_fpath);
-        //bson_search.append(MONGO_DB_FIELD_FILE_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
-       // mongo::BSONObj q = bson_search.obj();
-       // DEBUG_CODE(MDBUSDA_DBG << "vfsAddNewDataBlock update ---------------------------------------------";)
-       // DEBUG_CODE(MDBUSDA_DBG << "Query: "  << q.jsonString();)
-       // DEBUG_CODE(MDBUSDA_DBG << "vfsAddNewDataBlock update ---------------------------------------------";)
+        std::auto_ptr<SerializationBuffer> ser(unit_server_description.getBSONData());
+        mongo::BSONObj obj_to_insert(ser->getBufferPtr());
 
-       // ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_VFS_VBLOCK),  i);
+      // DEBUG_CODE(MDBUSDA_DBG << "insertNewUnitServer update ---------------------------------------------";)
+      // DEBUG_CODE(MDBUSDA_DBG << "Query: "  << obj_to_insert.jsonString();)
+//DEBUG_CODE(MDBUSDA_DBG << "insertNewUnitServer update ---------------------------------------------";)
+
+       connection->insert(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_UNIT_SERVER),  obj_to_insert);
 
     } catch (const mongo::DBException &e) {
-       // MDBID_LERR_ << e.what();
-        err = -5;
+       // MDBUSDA_ERR << e.what();
+        err = -1;
     }
     return err;
+}
+
+//inherited method
+int MongoDBUnitServerDataAccess::checkUnitServerPresence(const std::string& unit_server_alias,
+                                                         bool& presence) {
+    return 0;
 }

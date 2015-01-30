@@ -41,9 +41,28 @@ namespace chaos {
                     ~UnitServerDataAccess();
                     
                     //! insert a new device with name and property
-                    virtual int insertNewUnitServer(const std::string& unit_server_name,
-                                                    const std::string& unit_server_rpc_url,
-                                                    std::vector<std::string> hosted_cu_class) = 0;
+                    /*!
+                     the API receive a pack like the following one:
+                     { 
+                        //is the alias of the remote unit server
+                        "unit_server_alias": "unit server alias",
+                        
+                        //are the control unit that are hosted on remote server
+                        "unit_server_cu_alias": [ "Control Unit Class", "Control Unit Class" ],
+                     
+                        // is the rpc address where server respond
+                        "cu_instance_net_address": "unit server RPC address host:port"
+                     }
+
+                     */
+                    virtual int insertNewUnitServer(chaos::common::data::CDataWrapper& unit_server_description) = 0;
+                    
+                    //! check if a unit server identified by unique id is preset
+                    /*!
+                     \param unit_server_alias unit server unique id
+                     \param presence = true if the unit server is present
+                     */
+                    virtual int checkUnitServerPresence(const std::string& unit_server_alias, bool& presence) = 0;
                     
                 };
                 

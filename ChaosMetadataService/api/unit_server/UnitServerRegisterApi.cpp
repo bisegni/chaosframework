@@ -35,8 +35,20 @@ UnitServerRegisterApi::~UnitServerRegisterApi() {
     
 }
 
-chaos::common::data::CDataWrapper *UnitServerRegisterApi::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+chaos::common::data::CDataWrapper *UnitServerRegisterApi::execute(chaos::common::data::CDataWrapper *api_data,
+                                                                  bool& detach_data) {
     USRA_INFO << api_data->getJSONString();
-    getPersistenceDriver()->getProducerDataAccess();
+    bool is_present = false;
+    int err = 0;
+    persistence::data_access::UnitServerDataAccess *us_da = getPersistenceDriver()->getUnitServerDataAccess();
+    if((err = us_da->checkUnitServerPresence("test", is_present))) {
+        //err
+    }if(is_present) {
+        //presente
+    }else {
+        //non presente
+        us_da->insertNewUnitServer(*api_data);
+    }
+    
     return NULL;
 }

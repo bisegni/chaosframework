@@ -31,15 +31,13 @@ namespace chaos {
                 
                 class MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
-                    std::string database_name;
-                    
-                    boost::shared_ptr<MongoDBHAConnectionManager> connection;
                 protected:
-
-                    
+                    boost::shared_ptr<MongoDBHAConnectionManager> connection;
                 public:
                     MongoDBAccessor(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection);
                     virtual ~MongoDBAccessor();
+                    
+                    const std::string& getDatabaseName();
                 };
                 
             }

@@ -6,7 +6,7 @@ SET(cnd_src				main.cpp
 						ChaosMetadataService.cpp)
 
 SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
-                        api/ApiGroup.cpp
+                        api/AbstractApi.cpp
                         api/AbstractApiGroup.cpp)
 
 SET(cnd_src  ${cnd_src}	api/producer/ProducerApiGroup.cpp

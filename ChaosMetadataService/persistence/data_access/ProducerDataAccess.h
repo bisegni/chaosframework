@@ -39,8 +39,7 @@ namespace chaos {
 					~ProducerDataAccess();
                     
                     //! insert a new device with name and property
-                    virtual int insertNewProducer(const std::string& producer_unique_name,
-                                                  chaos::common::data::CDataWrapper& producer_property) = 0;
+                    virtual int insertNewProducer(chaos::common::data::CDataWrapper& producer_property) = 0;
                     
                     //! check if a device is registered on persistence layer
                     virtual int checkProducerPresence(const std::string& producer_unique_name, bool& found) = 0;

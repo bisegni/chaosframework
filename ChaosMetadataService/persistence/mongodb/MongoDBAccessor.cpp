@@ -29,3 +29,7 @@ connection(_connection) {
 MongoDBAccessor::~MongoDBAccessor() {
     
 }
+
+const std::string& MongoDBAccessor::getDatabaseName() {
+    return connection->getDatabaseName();
+}
