@@ -57,6 +57,8 @@ namespace chaos {
 					void onDestroy( mongo::DBClientBase * conn );
 				public:
 					MongoAuthHook(std::map<std::string,std::string>& key_value_custom_param);
+                    const std::string& getDatabaseName();
+                    const std::string& getDatabaseUsername();
 				};
 				
 				/*!
@@ -64,6 +66,7 @@ namespace chaos {
 				 mongos router instance
 				 */
 				class MongoDBHAConnectionManager {
+                    MongoAuthHook *hook;
 					uint32_t server_number;
 					
 					uint64_t next_retrive_intervall;
@@ -81,6 +84,8 @@ namespace chaos {
 											   std::map<std::string,std::string>& key_value_custom_param);
 					~MongoDBHAConnectionManager();
 					
+                    const std::string& getDatabaseName();
+                    
 					int insert( const std::string &ns , mongo::BSONObj obj , int flags=0);
 					int findOne( mongo::BSONObj& result, const std::string &ns, const mongo::Query& query, const mongo::BSONObj *fieldsToReturn = 0, int queryOptions = 0);
 					void findN(std::vector<mongo::BSONObj>& out, const std::string& ns, mongo::Query query, int nToReturn, int nToSkip = 0, const mongo::BSONObj *fieldsToReturn = 0, int queryOptions = 0);

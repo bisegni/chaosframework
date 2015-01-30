@@ -21,10 +21,11 @@
 
 using namespace chaos::metadata_service::persistence::mongodb;
 
-void MongoDBAccessor::setConnection(boost::shared_ptr<MongoDBHAConnectionManager>& _connection) {
-    connection = _connection;
+MongoDBAccessor::MongoDBAccessor(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection):
+connection(_connection) {
+    
 }
 
-void MongoDBAccessor::setDatabaseName(const std::string& _database_name) {
-    database_name = _database_name;
+MongoDBAccessor::~MongoDBAccessor() {
+    
 }

@@ -34,10 +34,9 @@ namespace chaos {
                 class MongoDBUnitServerDataAccess:
                 protected MongoDBAccessor,
                 protected data_access::UnitServerDataAccess {
-                    friend class MongoDBPersistenceDriver;
-                    
+                    friend class INSTANCER_P1(MongoDBUnitServerDataAccess, AbstractDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>&);
                 protected:
-                    MongoDBUnitServerDataAccess();
+                    MongoDBUnitServerDataAccess(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection);
                     ~MongoDBUnitServerDataAccess();
                 public:
                     //inherited method

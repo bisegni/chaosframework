@@ -26,7 +26,8 @@
 
 using namespace chaos::metadata_service::persistence::mongodb;
 
-MongoDBUnitServerDataAccess::MongoDBUnitServerDataAccess() {
+MongoDBUnitServerDataAccess::MongoDBUnitServerDataAccess(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection):
+MongoDBAccessor(_connection){
     
 }
 

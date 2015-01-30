@@ -27,7 +27,8 @@ using namespace chaos::metadata_service::persistence::mongodb;
 #define MDBPDA_DBG  INFO_DBG(MongoDBProducerDataAccess)
 #define MDBPDA_ERR  INFO_ERR(MongoDBProducerDataAccess)
 
-MongoDBProducerDataAccess::MongoDBProducerDataAccess(){
+MongoDBProducerDataAccess::MongoDBProducerDataAccess(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection):
+MongoDBAccessor(_connection){
 	
 }
 

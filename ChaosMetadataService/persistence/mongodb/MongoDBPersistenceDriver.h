@@ -25,13 +25,14 @@
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
-#include <boost/shared_ptr.hpp>
-
 namespace chaos {
 	namespace metadata_service {
 		namespace persistence {
 			namespace mongodb {
 					
+
+#define DB_NAME "db"
+                
 				//! mongodb implementation of persistence driver
                 /*!
                  The driver is define as class in the object factor
@@ -41,7 +42,7 @@ namespace chaos {
 					
                     //!keep track of the allocated connection
 					boost::shared_ptr<MongoDBHAConnectionManager> connection;
-				protected:
+
                     //! Construct the driver
 					MongoDBPersistenceDriver(const std::string& name);
                     
@@ -54,13 +55,6 @@ namespace chaos {
                     
                     //!deinitialize the driver
 					void deinit() throw (chaos::CException);
-                    
-                    // inherited method
-					data_access::ProducerDataAccess *getProducerDataAccess();
-                    
-                    // inherited method
-                    data_access::UnitServerDataAccess *getUnitServerDataAccess();
-
 				};
 			}
 		}

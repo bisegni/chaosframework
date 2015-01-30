@@ -44,19 +44,10 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
 	//we can configura the connection
 	connection.reset(new MongoDBHAConnectionManager(_setting->persistence_server_list,
 													_setting->persistence_kv_param_map));
+    
+    //register the dataacess implementation
+    registerDataAccess<MongoDBProducerDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>& >(data_access_type::DataAccessTypeProducer, connection);
 }
 void MongoDBPersistenceDriver::deinit() throw (chaos::CException) {
 	connection.reset();
-}
-
-data_access::ProducerDataAccess *MongoDBPersistenceDriver::getProducerDataAccess() {
-    MongoDBProducerDataAccess *result = new MongoDBProducerDataAccess();
-    result->setConnection(connection);
-	return result;
-}
-
-data_access::UnitServerDataAccess *MongoDBPersistenceDriver::getUnitServerDataAccess() {
-    MongoDBUnitServerDataAccess *result = new MongoDBUnitServerDataAccess();
-    result->setConnection(connection);
-    return result;
 }

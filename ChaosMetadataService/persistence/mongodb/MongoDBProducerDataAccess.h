@@ -23,6 +23,8 @@
 #include "MongoDBAccessor.h"
 #include "../data_access/ProducerDataAccess.h"
 
+#include <chaos/common/utility/ObjectINstancer.h>
+
 #include <boost/shared_ptr.hpp>
 
 namespace chaos {
@@ -37,10 +39,10 @@ namespace chaos {
 				class MongoDBProducerDataAccess:
                 protected MongoDBAccessor,
 				protected data_access::ProducerDataAccess {
-					friend class MongoDBPersistenceDriver;
-					
+					friend class INSTANCER_P1(MongoDBProducerDataAccess, AbstractDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>&);
+
 				protected:
-					MongoDBProducerDataAccess();
+                    MongoDBProducerDataAccess(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection);
 					~MongoDBProducerDataAccess();
 				public:
                     //! insert a new device with name and property

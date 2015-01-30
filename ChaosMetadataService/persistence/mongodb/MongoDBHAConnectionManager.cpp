@@ -83,6 +83,15 @@ void MongoAuthHook::onDestroy( mongo::DBClientBase * conn ) {
 	MDBHAC_LAPP_ << "MongoDBHAConnectionManager::onDestroy - " << conn->getServerAddress();
 }
 
+const std::string& MongoAuthHook::getDatabaseName() {
+    return db;
+}
+
+const std::string& MongoAuthHook::getDatabaseUsername() {
+    return user;
+}
+
+//-----------------------
 DriverScopedConnection::DriverScopedConnection(mongo::ConnectionString _conn):
 ScopedDbConnection(_conn) {}
 
@@ -96,7 +105,8 @@ DriverScopedConnection::~DriverScopedConnection() {
 MongoDBHAConnectionManager::MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list,
 													   std::map<std::string,std::string>& key_value_custom_param):
 server_number((uint32_t)monogs_routers_list.size()),
-next_retrive_intervall(0){
+next_retrive_intervall(0),
+hook(NULL){
 	std::string errmsg;
 	std::string complete_url;
 	for (std::vector<std::string>::iterator iter = monogs_routers_list.begin();
@@ -108,7 +118,7 @@ next_retrive_intervall(0){
 		valid_connection_queue.push(cs_ptr);
 	}
 	
-	mongo::pool.addHook(new MongoAuthHook(key_value_custom_param));
+	mongo::pool.addHook(hook = new MongoAuthHook(key_value_custom_param));
 	
 	mongo::Status status = mongo::client::initialize();
 	if (!status.isOK()) {
@@ -122,6 +132,10 @@ MongoDBHAConnectionManager::~MongoDBHAConnectionManager() {
 	std::swap(valid_connection_queue, empty_queue);
 	std::swap(offline_connection_queue, empty_queue);
 	
+}
+
+const std::string& MongoDBHAConnectionManager::getDatabaseName() {
+    return hook->getDatabaseName();
 }
 
 inline bool MongoDBHAConnectionManager::canRetry() {
