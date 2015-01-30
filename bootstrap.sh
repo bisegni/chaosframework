@@ -165,8 +165,10 @@ if [ ! -f $PREFIX/include/json/json.h ]; then
 			echo "## cannot checkout jsoncpp"
 			exit 1
 		fi
+
     fi
     cd $BASE_EXTERNAL/jsoncpp
+    git checkout pre-C++11
     make clean
     rm CMakeCache.txt
     if [ -n "$CHAOS_STATIC" ]; then
