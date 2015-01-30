@@ -23,7 +23,7 @@
 #include "MongoDBAccessor.h"
 #include "../data_access/ProducerDataAccess.h"
 
-#include <chaos/common/utility/ObjectINstancer.h>
+#include <chaos/common/utility/ObjectInstancer.h>
 
 #include <boost/shared_ptr.hpp>
 

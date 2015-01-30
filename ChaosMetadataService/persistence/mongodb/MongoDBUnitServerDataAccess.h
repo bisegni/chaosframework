@@ -22,7 +22,7 @@
 
 #include "MongoDBAccessor.h"
 #include "../data_access/UnitServerDataAccess.h"
-
+#include <chaos/common/utility/ObjectInstancer.h>
 namespace chaos {
     namespace metadata_service {
         namespace persistence {
