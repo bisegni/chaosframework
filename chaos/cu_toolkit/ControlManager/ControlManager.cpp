@@ -313,7 +313,7 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
 					LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance is erased becase has been successfully unpublished";
 					break;
 				case UnitStatePublished:
-					LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance has been sucessfully registered ("<<i->first<<", "<< i->second<<")";
+					LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance has been successfully registered ("<<i->first<<", "<< i->second<<")";
 					map_cuid_registered_instance.insert(make_pair(i->first, i->second));
 					break;
 				default:
