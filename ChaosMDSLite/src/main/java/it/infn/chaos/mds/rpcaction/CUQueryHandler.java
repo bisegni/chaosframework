@@ -386,7 +386,11 @@ public class CUQueryHandler extends RPCActionHadler {
 					dDA.insertNewDataset(d.getDataset());
 				} else {
 					usDA.configuraDataseAttributestForCUID(d.getDeviceIdentification(), d.getDataset().getAttributes());
-					dDA.updateDatasetAttributeValue(d.getDataset());
+					try {
+						dDA.updateDatasetAttributeValue(d.getDataset());
+					} catch (Throwable e){
+						System.out.println("Error Updating dataset from device of \""+ d.getDeviceIdentification()+"\" failed:"+e.getMessage());
+					}
 				}
 				// update the CU id for this device, it can be changed
 				dDA.updateCUInstanceAndAddressForDeviceID(d.getDeviceIdentification(), d.getCuInstance(), d.getNetAddress());
@@ -413,6 +417,7 @@ public class CUQueryHandler extends RPCActionHadler {
 			}
 		} catch (RefException e) {
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
+			System.out.println("Register of \""+ d.getDeviceIdentification()+"\" failed:"+e.getMessage());
 			try {
 				closeDataAccess(dDA, false);
 			} catch (SQLException e1) {
@@ -424,6 +429,9 @@ public class CUQueryHandler extends RPCActionHadler {
 			throw new RefException(e.getMessage(), 3, "CUQueryHandler::registerControUnit");
 		} catch (Throwable e) {
 			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
+			System.out.println("Register of \""+ d.getDeviceIdentification()+"\" failed:"+e.getMessage());
+			e.printStackTrace();
+
 			try {
 				closeDataAccess(dDA, false);
 			} catch (SQLException e1) {

@@ -57,11 +57,11 @@ public class UnitServerDA extends DataAccess {
 			}
 		
 		} catch (IllegalArgumentException e) {
-			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 1, "UnitServerDA::getAlUnitServer");
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 1, "UnitServerDA::getAllUnitServer:"+e.getMessage());
 		} catch (IllegalAccessException e) {
-			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::getAlUnitServer");
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::getAllUnitServer:"+e.getMessage());
 		} catch (SQLException e) {
-			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 3, "UnitServerDA::getAlUnitServer");
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 3, "UnitServerDA::getAllUnitServer SQL:"+e.getMessage());
 		} finally {
 		}
 		return result;
