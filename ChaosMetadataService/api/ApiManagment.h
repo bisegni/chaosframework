@@ -22,7 +22,7 @@
 
 #include "AbstractApiGroup.h"
 #include "../persistence/AbstractPersistenceDriver.h"
-
+#include "../batch/mds_service_batch.h"
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <vector>
@@ -43,6 +43,9 @@ namespace chaos {
 				
                 //! persistence driver instance
                 persistence::AbstractPersistenceDriver *persistence_driver;
+                
+                //! batch executor engine
+                batch::MDSBatchExecutor *batch_executor;
                 
 				//! api group list
 				ApiGroupList installed_api_group_list;

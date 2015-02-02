@@ -321,7 +321,7 @@ namespace chaos {
                  Performe the creation of a raw channel
                  \param deviceNetworkAddress device node address
                  */
-                MessageChannel *getRawMessageChannelFromAddress(CDeviceNetworkAddress  *deviceNetworkAddress);
+                MessageChannel *getRawMessageChannelFromAddress(CNetworkAddress  *deviceNetworkAddress);
                 
                 
 				//!performance channel creation

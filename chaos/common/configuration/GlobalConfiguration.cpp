@@ -118,7 +118,6 @@ void GlobalConfiguration::loadStartupParameter(int argc, char* argv[]) throw (CE
         //write error also on cerr
         std::cerr << e.what();
         throw CException(0, e.what(), __PRETTY_FUNCTION__);
-        
     }
 }
 

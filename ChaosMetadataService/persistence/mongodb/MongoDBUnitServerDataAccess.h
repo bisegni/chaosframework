@@ -32,8 +32,8 @@ namespace chaos {
                 
                 //! Data Access for producer manipulation data
                 class MongoDBUnitServerDataAccess:
-                protected MongoDBAccessor,
-                protected data_access::UnitServerDataAccess {
+                public data_access::UnitServerDataAccess,
+                protected MongoDBAccessor {
                     friend class INSTANCER_P1(MongoDBUnitServerDataAccess, AbstractDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>&);
                 protected:
                     MongoDBUnitServerDataAccess(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection);

@@ -42,27 +42,18 @@ void AbstractPersistenceDriver::init(void *init_data) throw (chaos::CException) 
 
 // deinitialize the driver
 void AbstractPersistenceDriver::deinit() throw (chaos::CException) {
-    for(DataAccessMapIterator it = map_dataaccess_instances.begin();
-        it != map_dataaccess_instances.end();
-        it++) {
-        AbstractDataAccess *instance = static_cast<AbstractDataAccess*>(it->second);
-        if(instance){
-            APD_INFO << "Disposing data access " << instance->getName();
-            delete(instance);
-        }
-    }
+    CHK_AND_DELETE_OBJ_POINTER(producer_da_instance)
+    CHK_AND_DELETE_OBJ_POINTER(unit_server_da_instance)
 }
 
 // return the implementation of the producer data access
 data_access::ProducerDataAccess *AbstractPersistenceDriver::getProducerDataAccess() {
-    CHAOS_ASSERT(map_dataaccess_instances[data_access_type::DataAccessTypeProducer])
-    boost::shared_lock<boost::shared_mutex> rl(map_mutex);
-    return (data_access::ProducerDataAccess*)(map_dataaccess_instances[data_access_type::DataAccessTypeProducer]);
+    CHAOS_ASSERT(producer_da_instance)
+    return (data_access::ProducerDataAccess *)producer_da_instance;
 }
 
 // return the implementation of the unit server data access
 data_access::UnitServerDataAccess *AbstractPersistenceDriver::getUnitServerDataAccess() {
-    CHAOS_ASSERT(map_dataaccess_instances[data_access_type::DataAccessTypeProducer])
-    boost::shared_lock<boost::shared_mutex> rl(map_mutex);
-    return (data_access::UnitServerDataAccess*)(map_dataaccess_instances[data_access_type::DataAccessTypeUnitServer]);
+    CHAOS_ASSERT(unit_server_da_instance);
+    return (data_access::UnitServerDataAccess *)unit_server_da_instance;
 }

@@ -17,37 +17,69 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__BatchCommand__
-#define __CHAOSFramework__BatchCommand__
+#ifndef __CHAOSFramework__MDSBatchCommand__
+#define __CHAOSFramework__MDSBatchCommand__
+
+#include <chaos/common/network/NetworkBroker.h>
+#include <chaos/common/message/MessageChannel.h>
+#include <chaos/common/batch_command/BatchCommand.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
+#include <chaos/common/message/DeviceMessageChannel.h>
 
 namespace chaos{
     namespace metadata_service {
         namespace batch {
             
             //forward declaration
-            class BatchExecutor;
+            class MDSBatchExecutor;
 
             
             //! base class for all metadata service batch command
             /*!
-             Repressent the base class for all metadata server command. Every 
+             Represent the base class for all metadata server command. Every 
              command is na instance of this class ans o many egual command can be launched
              with different parameter
              */
-            class MDSBatchCommand {
-                friend class BatchExecutor;
+            class MDSBatchCommand:
+            public chaos::common::batch_command::BatchCommand {
+                friend class MDSBatchExecutor;
                 
+                //!message channel for communitcation with other node
+                chaos::common::network::NetworkBroker *network_broker;
+            protected:
                 //! default constructor
                 MDSBatchCommand();
                 
                 //! default destructor
                 virtual ~MDSBatchCommand();
                 
-            protected:
+                //! return a raw message channel for a specific node address
+                chaos::common::message::MessageChannel *getNewMessageChannelForAddress(chaos::common::network::CNetworkAddress *node_network_address);
+                
+                //! return a device message channel for a specific node address
+                chaos::common::message::DeviceMessageChannel *getNewDeviceMessageChannelForAddress(chaos::common::network::CDeviceNetworkAddress *device_network_address);
+                
+                // inherited method
+                void releaseChannel(chaos::common::message::MessageChannel *message_channel);
+                
+                // return the implemented handler
+                uint8_t implementedHandler();
+                
+                // inherited method
+                void setHandler(chaos_data::CDataWrapper *data);
+                
+                // inherited method
+                void acquireHandler();
+                
+                // inherited method
+                void ccHandler();
+                
+                // inherited method
+                bool timeoutHandler();
             };
             
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__BatchCommand__) */
+#endif /* defined(__CHAOSFramework__MDSBatchCommand__) */

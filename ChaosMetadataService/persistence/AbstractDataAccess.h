@@ -38,7 +38,7 @@ namespace chaos {
 				
 			public:
 				AbstractDataAccess(const std::string& name);
-				~AbstractDataAccess();
+				virtual ~AbstractDataAccess();
 			};
 		}
 	}

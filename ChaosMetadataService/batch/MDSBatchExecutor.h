@@ -21,6 +21,7 @@
 #define __CHAOSFramework__BatchExecutor__
 
 #include "MDSBatchCommand.h"
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 #include <chaos/common/batch_command/BatchCommandExecutor.h>
 
@@ -34,6 +35,7 @@ namespace chaos{
              */
             class MDSBatchExecutor:
             private common::batch_command::BatchCommandExecutor {
+                chaos::common::network::NetworkBroker *network_broker;
             protected:
                 //allocate a new command
                 common::batch_command::BatchCommand *instanceCommandInfo(const std::string& command_alias);
@@ -51,7 +53,8 @@ namespace chaos{
                                         uint32_t type_value_size);
                 
             public:
-                MDSBatchExecutor(const std::string& executor_id);
+                MDSBatchExecutor(const std::string& executor_id,
+                                 chaos::common::network::NetworkBroker *_network_broker);
                 ~MDSBatchExecutor();
                 
                 //! Install a command associated with a type

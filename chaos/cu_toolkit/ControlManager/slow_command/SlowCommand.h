@@ -67,7 +67,8 @@ namespace chaos{
                  - Acquire Handler, acquire the data for the command (if needed)
                  - Correlation and Commit handler, make the neccessary correlation and send the necessary command to the driver
                  */
-                class SlowCommand: public chaos::common::batch_command::BatchCommand {
+                class SlowCommand:
+                public chaos::common::batch_command::BatchCommand {
                     friend class SlowCommandExecutor;
 					friend class command::SetAttributeCommand;
                     

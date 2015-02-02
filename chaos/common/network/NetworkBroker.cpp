@@ -567,7 +567,7 @@ chaos::common::message::PerformanceNodeChannel *NetworkBroker::getPerformanceCha
  Performe the creation of a raw channel
  \param deviceNetworkAddress device node address
  */
-MessageChannel *NetworkBroker::getRawMessageChannelFromAddress(CDeviceNetworkAddress  *node_network_address) {
+MessageChannel *NetworkBroker::getRawMessageChannelFromAddress(CNetworkAddress  *node_network_address) {
    	return getNewMessageChannelForRemoteHost(node_network_address, RAW);
 }
 

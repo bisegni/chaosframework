@@ -1,5 +1,5 @@
 /*
- *	persistence.h
+ *	mds_service_batch.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,10 +17,22 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_persistence_h
-#define CHAOSFramework_persistence_h
+#ifndef CHAOSFramework_mds_service_batch_h
+#define CHAOSFramework_mds_service_batch_h
 
-#include "AbstractPersistenceDriver.h"
-#include "AbstractDataAccess.h"
+#include "MDSBatchExecutor.h"
+#include "MDSBatchCommand.h"
+
+#define DECLARE_MDS_COMMAND_ALIAS \
+public:\
+static const char * const command_alias;\
+private:
+
+
+#define DEFINE_MDS_COMAMND_ALIAS(class)\
+const char * const class::command_alias = #class;
+
+#define GET_MDS_COMMAND_ASLIAS(class)\
+class::command_alias
 
 #endif

@@ -30,9 +30,6 @@
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/utility/InizializableService.h>
 
-#include <boost/thread.hpp>
-#include <boost/shared_ptr.hpp>
-
 namespace chaos {
     namespace metadata_service{
         namespace persistence {
@@ -41,12 +38,10 @@ namespace chaos {
             namespace data_access_type {
                 typedef enum DataAccessType {
                     DataAccessTypeProducer = 0,
-                    DataAccessTypeUnitServer
+                    DataAccessTypeUnitServer = 1
                 } DataAccessType;
             }
             
-            typedef std::map<data_access_type::DataAccessType, void* >              DataAccessMap;
-            typedef std::map<data_access_type::DataAccessType, void* >::iterator    DataAccessMapIterator;
             //! Abstract base persistence driver
             /*!
              Define the rule for the persistence sublcass implementation.
@@ -57,28 +52,33 @@ namespace chaos {
             public common::utility::NamedService,
             public common::utility::InizializableService {
                 
-                //! map for the dataaccess allocation
-                DataAccessMap map_dataaccess_instances;
-                
-                //! muthex for DA instances access
-                boost::shared_mutex map_mutex;
+                //!data access instances
+                AbstractDataAccess *producer_da_instance;
+                AbstractDataAccess *unit_server_da_instance;
             protected:
                 
                 //!register a dataaccess implementation with base name ampping
                 template<typename T, typename p1>
                 void registerDataAccess(data_access_type::DataAccessType da_type,
                                         p1 param_1) {
-                    //!che if dataaccess already present
-                    if(map_dataaccess_instances.count(da_type)) return;
-                    
                     //allocate the instancer for the AbstractApi depending by the template
                     std::auto_ptr<INSTANCER_P1(T, AbstractDataAccess, p1)> i(ALLOCATE_INSTANCER_P1(T, AbstractDataAccess, p1));
                     
                     //get api instance
                     T *instance = (T*)i->getInstance(param_1);
                     if(instance) {
-                        boost::unique_lock<boost::shared_mutex> wl(map_mutex);
-                        map_dataaccess_instances.insert(make_pair(da_type, instance));
+                        switch(da_type) {
+                            case data_access_type::DataAccessTypeProducer:
+                                producer_da_instance = instance;
+                                break;
+                                
+                            case data_access_type::DataAccessTypeUnitServer:
+                                unit_server_da_instance = instance;
+                                break;
+                            
+                            default:
+                                break;
+                        }
                     }
                     
                 }

@@ -1,5 +1,5 @@
 /*
- *	persistence.h
+ *	unit_server_batch.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,10 +17,9 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_persistence_h
-#define CHAOSFramework_persistence_h
+#ifndef CHAOSFramework_unit_server_batch_h
+#define CHAOSFramework_unit_server_batch_h
 
-#include "AbstractPersistenceDriver.h"
-#include "AbstractDataAccess.h"
+#include "UnitServerAckBatchCommand.h"
 
 #endif

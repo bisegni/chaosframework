@@ -24,6 +24,11 @@
 #include <vector>
 #include <string>
 
+#include "batch/mds_service_batch.h"
+#include "persistence/AbstractPersistenceDriver.h"
+
+#include <chaos/common/utility/StartableService.h>
+
 namespace chaos{
 	namespace metadata_service {
 		
@@ -32,6 +37,14 @@ namespace chaos{
 			std::vector<std::string>			persistence_server_list;
 			std::map<std::string, std::string>	persistence_kv_param_map;
 		};
+        
+        struct ApiSubserviceAccessor {
+            //! batch executor engine
+            common::utility::StartableServiceContainer<batch::MDSBatchExecutor> batch_executor;
+            
+            //! persistence driver instance
+            common::utility::InizializableServiceContainer<persistence::AbstractPersistenceDriver> persistence_driver;
+        };
 		
 	}
 }

@@ -29,7 +29,7 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBHAConnectionManager.cpp
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
-
+SET(cnd_src  ${cnd_src}	batch/unit_server/UnitServerAckCommand.cpp)
 ADD_EXECUTABLE(ChaosMetadataService ${cnd_src})
 
 IF(BUILD_FORCE_STATIC)
