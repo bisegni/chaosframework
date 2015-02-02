@@ -33,7 +33,7 @@ using namespace chaos::data_service;
 using boost::shared_ptr;
 
 //! Regular expression fro token parameter check
-static const boost::regex KVParamRegex("[a-zA-Z0-9/_-]+:[a-zA-Z0-9/_-]+");
+static const boost::regex KVParamRegex("[a-zA-Z0-9/_-]+:.+");
 
 #define ChaosDataService_LOG_HEAD "[ChaosDataService] - "
 
