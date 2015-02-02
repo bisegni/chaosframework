@@ -34,7 +34,7 @@ namespace chaos{
              the metadataserver batch job
              */
             class MDSBatchExecutor:
-            private common::batch_command::BatchCommandExecutor {
+            public common::batch_command::BatchCommandExecutor {
                 chaos::common::network::NetworkBroker *network_broker;
             protected:
                 //allocate a new command

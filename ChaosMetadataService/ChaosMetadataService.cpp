@@ -36,6 +36,7 @@ using namespace chaos;
 using namespace chaos::metadata_service;
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service::api;
+using namespace chaos::metadata_service::batch;
 using boost::shared_ptr;
 
 WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
@@ -89,17 +90,25 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
 							getGlobalConfigurationInstance()->getOption< std::vector< std::string> >(OPT_PERSITENCE_KV_PARAMTER));
 		}
 		
-		network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
-		network_broker_service.init(NULL, __PRETTY_FUNCTION__);
+        // network broker
+		api_subsystem_accessor.network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
+		api_subsystem_accessor.network_broker_service.init(NULL, __PRETTY_FUNCTION__);
 		
-		//get and initilize the presistence driver
+        //! batch system
+        api_subsystem_accessor.batch_executor.reset(new MDSBatchExecutor("MDSBatchExecutor",
+                                                                         api_subsystem_accessor.network_broker_service.get()),
+                                                    "MDSBatchExecutor");
+        api_subsystem_accessor.batch_executor.init(NULL, __PRETTY_FUNCTION__);
+        
+		// persistence driver system
 		const std::string persistence_driver_name = setting.persistence_implementation + "PersistenceDriver";
 		persistence::AbstractPersistenceDriver *instance = ObjectFactoryRegister<persistence::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(persistence_driver_name);
 		if(!instance) throw chaos::CException(-5, "No persistence driver instance found", __PRETTY_FUNCTION__);
-		persistence_driver.reset(instance, "AbstractPersistenceDriver");
-		persistence_driver.init((void*)&setting, __PRETTY_FUNCTION__);
+		api_subsystem_accessor.persistence_driver.reset(instance, "AbstractPersistenceDriver");
+		api_subsystem_accessor.persistence_driver.init((void*)&setting, __PRETTY_FUNCTION__);
         
-        api_managment_service.reset(new ApiManagment(network_broker_service.get(), persistence_driver.get()), "ApiManagment");
+        //api system
+        api_managment_service.reset(new ApiManagment(api_subsystem_accessor.network_broker_service.get(), api_subsystem_accessor.persistence_driver.get()), "ApiManagment");
         api_managment_service.init(NULL, __PRETTY_FUNCTION__);
 
 	} catch (CException& ex) {
@@ -116,12 +125,16 @@ void ChaosMetadataService::start()  throw(CException) {
 	//lock o monitor for waith the end
 	try {
 		//start network brocker
-		network_broker_service.start(__PRETTY_FUNCTION__);
+		api_subsystem_accessor.network_broker_service.start(__PRETTY_FUNCTION__);
+        
+        //start batch system
+        api_subsystem_accessor.batch_executor.start(__PRETTY_FUNCTION__);
+
         LAPP_ << "-----------------------------------------";
         LAPP_ << "!CHAOS Metadata service started";
-        LAPP_ << "RPC Server address: "	<< network_broker_service->getRPCUrl();
-        LAPP_ << "DirectIO Server address: " << network_broker_service->getDirectIOUrl();
-        LAPP_ << "Sync RPC URL: "	<< network_broker_service->getSyncRPCUrl();
+        LAPP_ << "RPC Server address: "	<< api_subsystem_accessor.network_broker_service->getRPCUrl();
+        LAPP_ << "DirectIO Server address: " << api_subsystem_accessor.network_broker_service->getDirectIOUrl();
+        LAPP_ << "Sync RPC URL: "	<< api_subsystem_accessor.network_broker_service->getSyncRPCUrl();
         LAPP_ << "-----------------------------------------";
 		//at this point i must with for end signal
 		waitCloseSemaphore.wait();
@@ -146,8 +159,11 @@ void ChaosMetadataService::start()  throw(CException) {
  Stop the toolkit execution
  */
 void ChaosMetadataService::stop()   throw(CException) {
-	//stop network brocker
-	network_broker_service.stop(__PRETTY_FUNCTION__);
+    //stop batch system
+    api_subsystem_accessor.batch_executor.stop(__PRETTY_FUNCTION__);
+    
+	//stop network broker
+	api_subsystem_accessor.network_broker_service.stop(__PRETTY_FUNCTION__);
 	
 	//endWaithCondition.notify_one();
 	waitCloseSemaphore.unlock();
@@ -157,13 +173,18 @@ void ChaosMetadataService::stop()   throw(CException) {
  Deiniti all the manager
  */
 void ChaosMetadataService::deinit()   throw(CException) {
+    
+    //deinit api system
+    CHAOS_NOT_THROW(api_managment_service.deinit(__PRETTY_FUNCTION__);)
 	
-	CHAOS_NOT_THROW(persistence_driver.deinit(__PRETTY_FUNCTION__);)
+    //deinit batch system
+    CHAOS_NOT_THROW(api_subsystem_accessor.batch_executor.deinit(__PRETTY_FUNCTION__);)
+    
+    //deinit persistence driver system
+	CHAOS_NOT_THROW(api_subsystem_accessor.persistence_driver.deinit(__PRETTY_FUNCTION__);)
 	
-	CHAOS_NOT_THROW(api_managment_service.deinit(__PRETTY_FUNCTION__);)
-	
-	//deinit network brocker
-	CHAOS_NOT_THROW(network_broker_service.deinit(__PRETTY_FUNCTION__);)
+	//deinit network broker
+	CHAOS_NOT_THROW(api_subsystem_accessor.network_broker_service.deinit(__PRETTY_FUNCTION__);)
 	LAPP_ << "-----------------------------------------";
 	LAPP_ << "Metadata service has been stopped";
 	LAPP_ << "-----------------------------------------";

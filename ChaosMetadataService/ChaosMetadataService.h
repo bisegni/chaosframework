@@ -25,7 +25,6 @@
 #include "mds_constants.h"
 #include "mds_types.h"
 #include "api/ApiManagment.h"
-#include "persistence/AbstractPersistenceDriver.h"
 
 #include <boost/thread/condition.hpp>
 
@@ -49,14 +48,12 @@ namespace chaos {
             
             static WaitSemaphore waitCloseSemaphore;
 			
-            //! network broker for talk with others chaos node
-            common::utility::StartableServiceContainer<NetworkBroker> network_broker_service;
-			
-			//!persistence driver instance
-            common::utility::InizializableServiceContainer<persistence::AbstractPersistenceDriver> persistence_driver;
-			
+            //! subsystem needed by the api
+            ApiSubserviceAccessor api_subsystem_accessor;
+            
 			//!persistence driver instance
 			common::utility::InizializableServiceContainer<api::ApiManagment> api_managment_service;
+
 			
             ChaosMetadataService(){};
             ~ChaosMetadataService(){};
