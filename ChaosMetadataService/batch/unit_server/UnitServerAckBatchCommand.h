@@ -25,17 +25,21 @@
 namespace chaos {
     namespace metadata_service{
         namespace batch {
+            class MDSBatchExcecutor;
+            
             namespace unit_server {
+                
+                
                 
                 class UnitServerAckCommand:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
-                    
                     chaos::common::data::CDataWrapper *message_data;
                     chaos::common::message::MessageChannel *message_channel;
-                protected:
+                public:
                     UnitServerAckCommand();
                     ~UnitServerAckCommand();
+                protected:
                     // inherited method
                     void setHandler(chaos_data::CDataWrapper *data);
                     

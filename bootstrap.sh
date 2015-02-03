@@ -59,7 +59,7 @@ if [ ! -n "$ZMQ_VERSION" ]; then
 fi;
 
 if [ ! -n "$COUCHBASE_VERSION" ]; then
-    COUCHBASE_VERSION=2.3.0
+    COUCHBASE_VERSION=2.4.6
 fi;
 
 if [ ! -n "$CHAOS_LINK_LIBRARY" ]; then
@@ -331,23 +331,17 @@ fi
 
 echo "Setup Couchbase sdk"
 if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
-    if [ ! -d "$BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION" ]; then
+    if [ ! -d "$BASE_EXTERNAL/libcouchbase" ]; then
 	echo "Download couchabse source"
-	if !(wget --no-check-certificate -O $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz http://packages.couchbase.com/clients/c/libcouchbase-$COUCHBASE_VERSION.tar.gz); then
+	if !(git clone https://github.com/couchbase/libcouchbase.git $BASE_EXTERNAL/libcouchbase); then
 	    echo "## cannot wget http://packages.couchbase.com/clients/c/libcouchbase-$COUCHBASE_VERSION.tar.gz"
 	    exit 1
 	fi
-	tar zxvf $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz -C $BASE_EXTERNAL
+    cd $BASE_EXTERNAL/libcouchbase
+    git checkout -b good_for_chaos $COUCHBASE_VERSION
     fi
-    cd $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION
-#    ./configure --enable-shared --disable-examples --disable-tests --disable-couchbasemock --enable-ssl=no --disable-plugins  --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-
-   if [ -n "$CHAOS_STATIC" ]; then
-   	./configure --enable-static --disable-shared --disable-examples --disable-tests --disable-couchbasemock --enable-ssl=no --disable-plugins  --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-    else
-   	./configure --enable-shared --disable-examples --disable-tests --disable-couchbasemock --enable-ssl=no --disable-plugins  --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-    fi
-
+    cd $BASE_EXTERNAL/libcouchbase
+    ./configure.pl --prefix=$PREFIX $CROSS_HOST_CONFIGURE
     do_make "COUCHBASE"
     echo "Couchbase done"
 fi

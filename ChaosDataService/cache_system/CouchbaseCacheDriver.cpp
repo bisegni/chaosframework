@@ -233,13 +233,13 @@ int CouchbaseCacheDriver::updateConfig() {
 	};
 	
 	//create_options
-	create_options.version = 2;
-	create_options.v.v2.transports = transports;
-	if(bucket_user.size()) create_options.v.v2.user = bucket_user.c_str();
-	if(bucket_pwd.size()) create_options.v.v2.passwd = bucket_pwd.c_str();
-	if(bucket_name.size()) create_options.v.v2.bucket = bucket_name.c_str();
+	create_options.version = 3;
+	//create_options.v.v3.transports = transports;
+	if(bucket_user.size()) create_options.v.v3.username = bucket_user.c_str();
+	if(bucket_pwd.size()) create_options.v.v3.passwd = bucket_pwd.c_str();
+	//if(bucket_name.size()) create_options.v.v3.bucket = bucket_name.c_str();
 	
-	all_server_str.assign("");
+	all_server_str.assign("couchbase://");
 	for (ServerIterator iter = all_server_to_use.begin();
 		 iter!=all_server_to_use.end();
 		 iter++) {
@@ -250,10 +250,11 @@ int CouchbaseCacheDriver::updateConfig() {
 		//remove the last ';' character
 		all_server_str.resize(all_server_str.size()-1);
 	}
-	
+	all_server_str.append("/");
+    all_server_str.append(bucket_name);
 	CCDLAPP_ << "Create new session";
 	//assign the host string to the configuration
-	create_options.v.v2.host = all_server_str.c_str();
+	create_options.v.v3.connstr = all_server_str.c_str();
 	
 	//create the instance
 	last_err = lcb_create(&instance, &create_options);
