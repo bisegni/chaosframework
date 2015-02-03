@@ -274,7 +274,7 @@ void IODirectIODriver::disposeService(void *service_ptr) {
  
  ---------------------------------------------------------------------------------*/
 void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t service_index) {
-	IODirectIODriver_LAPP_ << "Add connection for " << url.getURL();
+	IODirectIODriver_LAPP_ << "try to add connection for " << url.getURL();
 	IODirectIODriverClientChannels * clients_channel = NULL;
 	chaos_direct_io::DirectIOClientConnection *tmp_connection = init_parameter.client_instance->getNewConnection(url.getURL());
 	if(tmp_connection) {
@@ -284,7 +284,7 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
 		//allocate the client channel
 		clients_channel->device_client_channel = (chaos_dio_channel::DirectIODeviceClientChannel*)tmp_connection->getNewChannelInstance("DirectIODeviceClientChannel");
 		if(!clients_channel->device_client_channel) {
-			IODirectIODriver_DLDBG_ << "Error creating client device channel for " << url.getURL();
+			IODirectIODriver_LERR_ << "Error creating client device channel for " << url.getURL();
 			
 			//release conenction
 			init_parameter.client_instance->releaseConnection(tmp_connection);
@@ -296,7 +296,7 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
 		
 		clients_channel->system_client_channel = (chaos_dio_channel::DirectIOSystemAPIClientChannel*)tmp_connection->getNewChannelInstance("DirectIOSystemAPIClientChannel");
 		if(!clients_channel->system_client_channel) {
-			IODirectIODriver_DLDBG_ << "Error creating client system api channel for " << url.getURL();
+			IODirectIODriver_LERR_ << "Error creating client system api channel for " << url.getURL();
 			
 			//releasing device channel
 			tmp_connection->releaseChannelInstance(clients_channel->device_client_channel);
@@ -314,8 +314,9 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
 		clients_channel->connection->setEventHandler(this);
 		clients_channel->connection->setCustomStringIdentification(boost::lexical_cast<std::string>(service_index));
 	} else {
-		IODirectIODriver_DLDBG_ << "Error creating client connection for " << url.getURL();
+		IODirectIODriver_LERR_ << "Error creating client connection for " << url.getURL();
 	}
+    IODirectIODriver_LAPP_ << "connection for " << url.getURL() << " added succesfully";
 	return clients_channel;
 }
 
