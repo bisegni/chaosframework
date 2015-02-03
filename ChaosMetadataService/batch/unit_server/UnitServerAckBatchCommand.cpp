@@ -19,18 +19,52 @@
  */
 #include "UnitServerAckBatchCommand.h"
 
+using namespace chaos::common::data;
+using namespace chaos::common::network;
 using namespace chaos::metadata_service::batch::unit_server;
+
 #define USAC_INFO INFO_LOG(UnitServerAckCommand)
-#define USAC_DBG  INFO_DBG(UnitServerAckCommand)
-#define USAC_ERR  INFO_ERR(UnitServerAckCommand)
+#define USAC_DBG  DBG_LOG(UnitServerAckCommand)
+#define USAC_ERR  ERR_LOG(UnitServerAckCommand)
 
 DEFINE_MDS_COMAMND_ALIAS(UnitServerAckCommand)
 
+static const char * const NET_ADDR_ALLOC_ERR = "CNetworkAddress allocation error";
+static const char * const MESS_CHNL_ALLO_ERR = "Message channel allocation error";
+
+UnitServerAckCommand::UnitServerAckCommand():
+message_channel(NULL),
+message_data(NULL){
+    
+}
+UnitServerAckCommand::~UnitServerAckCommand() {
+    if(message_channel) {
+        USAC_INFO << "Release message channel";
+        releaseChannel(message_channel);
+    }
+}
+
 // inherited method
-void UnitServerAckCommand::setHandler(chaos_data::CDataWrapper *data) {
+void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
-    USAC_INFO << "execute set handler";
-    //message_channel = network_broker->getRawMessageChannelFromAddress(<#chaos::common::network::CNetworkAddress *deviceNetworkAddress#>);
+    if(data  && data->hasKey(chaos::CUDefinitionKey::CU_INSTANCE_NET_ADDRESS)) {
+        CNetworkAddress * na = new CNetworkAddress();
+        if(na) {
+            na->ipPort = data->hasKey(chaos::CUDefinitionKey::CU_INSTANCE_NET_ADDRESS);
+            USAC_INFO << "fetch the message channel for:"<<na->ipPort;
+            message_channel = getNewMessageChannelForAddress(na);
+            if(!message_channel) {
+                USAC_ERR << MESS_CHNL_ALLO_ERR;
+                throw chaos::CException(-1, MESS_CHNL_ALLO_ERR, __PRETTY_FUNCTION__);
+            }
+        } else {
+            USAC_ERR << NET_ADDR_ALLOC_ERR;
+            throw chaos::CException(-2, NET_ADDR_ALLOC_ERR, __PRETTY_FUNCTION__);
+        }
+        
+        message_data = data;
+    }
+
 }
 
 // inherited method
@@ -43,6 +77,7 @@ void UnitServerAckCommand::acquireHandler() {
 void UnitServerAckCommand::ccHandler() {
     MDSBatchCommand::ccHandler();
     USAC_INFO << "execute ccHandler";
+   // message_channel->sendMessage("system", chaos::ChaosSystemDomainAndActionLabel::ACTION_WORK_UNIT_REG_ACK, message_channel);
     BC_END_RUNNIG_PROPERTY;
 }
 

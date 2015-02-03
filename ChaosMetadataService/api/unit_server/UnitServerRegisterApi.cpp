@@ -73,6 +73,7 @@ chaos::common::data::CDataWrapper *UnitServerRegisterApi::execute(chaos::common:
         //now we can send back the received message with the ack result
         api_data->addInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT, ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK);
     } catch (chaos::CException& ex) {
+        USRA_DBG << "Send ack for registration denied to the unit server " << unit_server_alias;
         getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ASLIAS(batch::unit_server::UnitServerAckCommand)),
                                           api_data,
                                           command_id);

@@ -274,7 +274,7 @@ void IODirectIODriver::disposeService(void *service_ptr) {
  
  ---------------------------------------------------------------------------------*/
 void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t service_index) {
-	IODirectIODriver_DLDBG_ << "Add connection for " << url.getURL();
+	IODirectIODriver_LAPP_ << "Add connection for " << url.getURL();
 	IODirectIODriverClientChannels * clients_channel = NULL;
 	chaos_direct_io::DirectIOClientConnection *tmp_connection = init_parameter.client_instance->getNewConnection(url.getURL());
 	if(tmp_connection) {
