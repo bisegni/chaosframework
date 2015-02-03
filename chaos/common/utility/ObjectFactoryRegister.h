@@ -112,7 +112,7 @@ namespace chaos {
 			class ObjectFactoryInstancer {
 			public:
 				ObjectFactoryInstancer(ObjectFactory *commandFactory) {
-					LDBG_<<" instancing "<<commandFactory->getAlias();
+				  //					LDBG_<<" instancing "<<commandFactory->getAlias();
 					if(commandFactory){
 						ObjectFactoryRegister<T>::getInstance()->registerObjectFactory(commandFactory->getAlias(), commandFactory);
 					}

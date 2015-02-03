@@ -23,7 +23,7 @@
 
 
 #define MDBUSDA_INFO INFO_LOG(MongoDBUnitServerDataAccess)
-#define MDBUSDA_DBG  DGB_LOG(MongoDBUnitServerDataAccess)
+#define MDBUSDA_DBG  DBG_LOG(MongoDBUnitServerDataAccess)
 #define MDBUSDA_ERR  ERR_LOG(MongoDBUnitServerDataAccess)
 
 using namespace chaos::common::data;
