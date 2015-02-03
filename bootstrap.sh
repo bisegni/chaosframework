@@ -341,7 +341,7 @@ if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
     git checkout -b good_for_chaos $COUCHBASE_VERSION
     fi
     cd $BASE_EXTERNAL/libcouchbase
-    ./configure.pl --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+    cmake $CHAOS_CMAKE_FLAGS .
     do_make "COUCHBASE"
     echo "Couchbase done"
 fi
