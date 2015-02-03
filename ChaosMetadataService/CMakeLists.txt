@@ -24,12 +24,12 @@ SET(cnd_src  ${cnd_src}	persistence/data_access/ProducerDataAccess.cpp
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBHAConnectionManager.cpp
 						persistence/mongodb/MongoDBPersistenceDriver.cpp
 						persistence/mongodb/MongoDBProducerDataAccess.cpp
-					persistence/mongodb/MongoDBAccessor.cpp
+                        persistence/mongodb/MongoDBAccessor.cpp
                         persistence/mongodb/MongoDBUnitServerDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
-SET(cnd_src  ${cnd_src}	batch/unit_server/UnitServerAckCommand.cpp)
+SET(cnd_src  ${cnd_src}	batch/unit_server/UnitServerAckBatchCommand.cpp)
 ADD_EXECUTABLE(ChaosMetadataService ${cnd_src})
 
 IF(BUILD_FORCE_STATIC)
