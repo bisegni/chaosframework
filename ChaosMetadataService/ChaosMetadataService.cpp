@@ -108,8 +108,8 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
 		api_subsystem_accessor.persistence_driver.init((void*)&setting, __PRETTY_FUNCTION__);
         
         //api system
-        api_managment_service.reset(new ApiManagment(api_subsystem_accessor.network_broker_service.get(), api_subsystem_accessor.persistence_driver.get()), "ApiManagment");
-        api_managment_service.init(NULL, __PRETTY_FUNCTION__);
+        api_managment_service.reset(new ApiManagment(), "ApiManagment");
+        api_managment_service.init(static_cast<void*>(&api_subsystem_accessor), __PRETTY_FUNCTION__);
 
 	} catch (CException& ex) {
 		DECODE_CHAOS_EXCEPTION(ex)

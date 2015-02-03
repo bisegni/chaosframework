@@ -226,7 +226,7 @@ void ChaosDataService::start() throw(CException) {
 		
 		//print information header on CDS address
 		CDSLAPP_ << "--------------------------------------------------------------------------------------";
-		CDSLAPP_ << "Chaos Data Service publisched with url: " << network_broker->getDirectIOUrl() << "|0";
+		CDSLAPP_ << "Chaos Data Service published with url: " << network_broker->getDirectIOUrl() << "|0";
 		CDSLAPP_ << "--------------------------------------------------------------------------------------";
 		
 		waitCloseSemaphore.wait();

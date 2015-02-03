@@ -287,18 +287,28 @@ namespace chaos {
 	 */
 	//! Name space for grupping the definition of the chaos error code
 	namespace ErrorCode {
-		//!typede for datatype
+		//!the list of principal chaos error code
 		typedef enum {
-			//!Integer 32 bit length
+			//!no error
 			EC_NO_ERROR = 0,
+            //! rpc timeout
 			EC_TIMEOUT = 1,
+            //! dataset attribute not found
 			EC_ATTRIBUTE_NOT_FOUND = 2,
+            //! dataset attribute bad direction
 			EC_ATTRIBUTE_BAD_DIR = 3,
+            //!dataset attribute not supported
 			EC_ATTRIBUTE_TYPE_NOT_SUPPORTED = 4,
+            
+            //!unit server registration is gone well
 			EC_MDS_UNIT_SERV_REGISTRATION_OK = 5,
+            //!unit server registration has failed for invalid alias
 			EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_INVALID_ALIAS = 6,
+            //!unit server registration for duplicated alias
 			EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_DUPLICATE_ALIAS = 7,
+            //! unit server bad state machine state
 			EC_MDS_UNIT_SERV_BAD_US_SM_STATE = 8,
+            //!work unit is not self manageable and need to be loaded within an unit server
 			EC_MDS_WOR_UNIT_ID_NOT_SELF_MANAGEABLE = 9
 		} ErrorCode;
 	}

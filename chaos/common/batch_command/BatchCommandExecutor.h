@@ -236,12 +236,25 @@ namespace chaos {
 				 */
 				void getAllCommandAlias(std::vector<std::string>& commands_alias);
 				
-                //! Submite the new slow command information
+                //! Submit a batch command
                 /*!
                  The information for the command are contained into the DataWrapper data serialization,
                  they are put into the commandSubmittedQueue for to wait to be executed.
                  */
-                void submitCommand(chaos_data::CDataWrapper *commandDescription, uint64_t& command_id)  throw (CException) ;
+                void submitCommand(chaos_data::CDataWrapper *commandDescription,
+                                   uint64_t& command_id)  throw (CException);
+                
+                //! Submit a batch command
+                /*!
+                 The information for the command are contained into the DataWrapper data serialization,
+                 they are put into the commandSubmittedQueue for to wait to be executed.
+                 \param batch_command_alias alias of the batch command to submit
+                 \param command_data the data of the command
+                 \param command_id return the associated command id
+                 */
+                void submitCommand(const std::string& batch_command_alias,
+                                   chaos_data::CDataWrapper *command_data,
+                                   uint64_t& command_id)  throw (CException);
                 
                 //! Add a number of sandobx to this instance of executor
                 void addSandboxInstance(unsigned int _sandbox_number);

@@ -30,7 +30,7 @@ DEFINE_MDS_COMAMND_ALIAS(UnitServerAckCommand)
 void UnitServerAckCommand::setHandler(chaos_data::CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
     USAC_INFO << "execute set handler";
-    //message_channel = getNew
+    //message_channel = network_broker->getRawMessageChannelFromAddress(<#chaos::common::network::CNetworkAddress *deviceNetworkAddress#>);
 }
 
 // inherited method

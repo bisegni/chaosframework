@@ -57,7 +57,7 @@
 
 #define DEFINE_LOG_HEADER(x) "[" #x "] - "
 #define INFO_LOG(x) LAPP_ << DEFINE_LOG_HEADER(x)
-#define DGB_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x)
+#define DBG_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x)
 #define ERR_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
 
     //define for chaos assert macro, it print the basiclay infromation to find

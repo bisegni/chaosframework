@@ -483,7 +483,19 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& comma
     return result;
 }
 
-//! Submite the new sloc command information
+// Submite a batch command
+
+void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
+                                         chaos_data::CDataWrapper *command_data,
+                                         uint64_t& command_id)  throw (CException) {
+    //add command alias to the command data
+    command_data->addStringValue(BatchCommandSubmissionKey::COMMAND_ALIAS_STR, batch_command_alias);
+    
+    //sybmit the command
+    submitCommand(command_data, command_id);
+}
+
+// Submite a batch command
 void BatchCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint64_t& command_id)  throw (CException) {
     if(!commandDescription)
         throw CException(-1, "Invalid parameter", "BatchCommandExecutor::setCommandFeatures");

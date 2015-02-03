@@ -21,7 +21,7 @@
 #define CHAOSFramework_AbstractGroup_h
 
 #include "AbstractApi.h"
-#include "../persistence/AbstractPersistenceDriver.h"
+#include "../mds_types.h"
 
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
@@ -45,7 +45,7 @@ namespace chaos {
             public chaos::common::utility::InizializableService,
 			public chaos::DeclareAction {
                 //! the instace of the persistence driver
-                persistence::AbstractPersistenceDriver *persistence_driver;
+                ApiSubserviceAccessor *subservice;
                 
                 //! list of all installed api in the group
                 ApiList api_instance;

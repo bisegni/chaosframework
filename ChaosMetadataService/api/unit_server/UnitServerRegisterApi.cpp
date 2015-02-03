@@ -18,10 +18,10 @@
  *    	limitations under the License.
  */
 #include "UnitServerRegisterApi.h"
-
-#define USRA_INFO INFO_LOG(MongoDBUnitServerDataAccess)
-#define USRA_DBG  INFO_DBG(MongoDBUnitServerDataAccess)
-#define USRA_ERR  INFO_ERR(MongoDBUnitServerDataAccess)
+#include "../../batch/unit_server/UnitServerAckBatchCommand.h"
+#define USRA_INFO INFO_LOG(UnitServerRegisterApi)
+#define USRA_DBG  DBG_LOG(UnitServerRegisterApi)
+#define USRA_ERR  ERR_LOG(UnitServerRegisterApi)
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::unit_server;
@@ -36,24 +36,54 @@ UnitServerRegisterApi::~UnitServerRegisterApi() {
 }
 
 chaos::common::data::CDataWrapper *UnitServerRegisterApi::execute(chaos::common::data::CDataWrapper *api_data,
-                                                                  bool& detach_data) {
+                                                                  bool& detach_data) throw (chaos::CException){
     USRA_INFO << api_data->getJSONString();
-    bool is_present = false;
     int err = 0;
+    uint64_t command_id;
+    bool is_present = false;
     persistence::data_access::UnitServerDataAccess *us_da = getPersistenceDriver()->getUnitServerDataAccess();
     if(!api_data->hasKey(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS)) {
         throw CException(-1, "Unit server alias not found", __PRETTY_FUNCTION__);
     }
+    //fetch the unit server alias
     const std::string unit_server_alias = api_data->getStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS);
-    if((err = us_da->checkUnitServerPresence(unit_server_alias, is_present))) {
-        //err
-    }if(is_present) {
-        //presente
-        err = us_da->updateUnitServer(*api_data);
-    }else {
-        //non presente
-        err = us_da->insertNewUnitServer(*api_data);
+    
+    detach_data = true;
+    try {
+        if((err = us_da->checkUnitServerPresence(unit_server_alias, is_present))) {
+            //err
+            api_data->addInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT,
+                                    ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_INVALID_ALIAS);
+            LOG_AND_TROW(USRA_ERR, -2, "error checking the unit server presence")
+        }if(is_present) {
+            //present
+            if((err = us_da->updateUnitServer(*api_data))) {
+                api_data->addInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT,
+                                        ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_INVALID_ALIAS);
+                LOG_AND_TROW(USRA_ERR, -3, "error updating the unit server information")
+            }
+        }else {
+            //unit server not found
+            if((err = us_da->insertNewUnitServer(*api_data))) {
+                api_data->addInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT,
+                                        ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_INVALID_ALIAS);
+                LOG_AND_TROW(USRA_ERR, -4, "error saving the new unit server information")
+            }
+        }
+        //now we can send back the received message with the ack result
+        api_data->addInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT, ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK);
+    } catch (chaos::CException& ex) {
+        getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ASLIAS(batch::unit_server::UnitServerAckCommand)),
+                                          api_data,
+                                          command_id);
+        throw ex;
     }
+
+    //all is gone weel
+    USRA_DBG << "Send ack for registration ok to the unit server " << unit_server_alias;
+    getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ASLIAS(batch::unit_server::UnitServerAckCommand)),
+                                      api_data,
+                                      command_id);
     
     return NULL;
 }

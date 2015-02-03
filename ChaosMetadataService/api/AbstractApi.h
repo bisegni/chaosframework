@@ -19,13 +19,17 @@
  */
 #ifndef CHAOSFramework_AbstractApi_h
 #define CHAOSFramework_AbstractApi_h
-#include "../persistence/AbstractPersistenceDriver.h"
+#include "../mds_types.h"
+
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/data/CDataWrapper.h>
 namespace chaos {
 	namespace metadata_service {
 		namespace api {
+#define LOG_AND_TROW(log, num, err)\
+log << "("<<num<<") " << err;\
+throw chaos::CException(-1, err, __PRETTY_FUNCTION__);
             
 			//! Api abstraction
 			/*!
@@ -35,11 +39,12 @@ namespace chaos {
             public chaos::common::utility::NamedService,
             public chaos::common::utility::InizializableService {
                 //! the instace of the persistence driver
-                persistence::AbstractPersistenceDriver *persistence_driver;
+                ApiSubserviceAccessor *subservice;
                 
             protected:
                 persistence::AbstractPersistenceDriver *getPersistenceDriver();
-                
+                batch::MDSBatchExecutor *getBatchExecutor();
+                chaos::common::network::NetworkBroker *getNetworkBroker();
 			public:
 				//! defaukt constructor with the alias of the api
                 AbstractApi(const std::string& name);
@@ -52,7 +57,8 @@ namespace chaos {
                 void deinit()  throw (chaos::CException);
                 
 				//! execute the api
-				virtual chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) = 0;
+				virtual chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
+                                                                   bool& detach_data) = 0;
 			};
 			
 		}

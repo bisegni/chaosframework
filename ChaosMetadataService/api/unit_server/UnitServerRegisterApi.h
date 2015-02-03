@@ -32,7 +32,7 @@ namespace chaos {
                 public:
                     UnitServerRegisterApi();
                     ~UnitServerRegisterApi();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
+                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) throw(chaos::CException);
                 };
                 
             }
