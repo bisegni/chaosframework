@@ -159,11 +159,14 @@ namespace chaos {
 					}
 					COPQUEUE_LDBG_ << "queue is empty";
 				}
-				
 				COPQUEUE_LDBG_ << "Stopping thread";
 				in_deinit = true;
 				liveThreadConditionLock.notify_all();
-				lock.unlock();
+                try {
+                   if(lock.owns_lock()) lock.unlock();
+                }catch(...) {
+                    COPQUEUE_LERR_ << "Error unlocking";
+                }
 				COPQUEUE_LDBG_ << "join internal thread group";
 				t_group.join_all();
 				COPQUEUE_LDBG_ << "deinitlized";

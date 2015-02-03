@@ -191,7 +191,11 @@ namespace chaos {
 					}
 					COPPQUEUE_LAPP_ << "queue is empty";
 				}
-				
+                try {
+                     if(lock.owns_lock()) lock.unlock();
+                }catch(...) {
+                    COPQUEUE_LERR_ << "Error unlocking";
+                }
 				COPPQUEUE_LAPP_ << "Stopping thread";
 				in_deinit = true;
 				liveThreadConditionLock.notify_all();
