@@ -1,6 +1,6 @@
 /*
- *	UIToolkitCMDLineExample.cpp
- *	!CHOAS
+ *	ChaosCLI
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -202,7 +202,7 @@ int main (int argc, char* argv[] )
 			} else {
 				controller->fetchCurrentDatatasetFromDomain((DatasetDomain)print_domain_current_value);
 				if(controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value) != NULL) {
-					std::cout << controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value)->getJSONString() <<std::endl;
+				  std::cout << controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value)->getJSONString() <<std::endl;
 				}
 			}
 		}
@@ -216,7 +216,7 @@ int main (int argc, char* argv[] )
                     err = controller->initDevice();
                     if(err == ErrorCode::EC_TIMEOUT) throw CException(6, "Time out on connection", "Set device to init state");
                 }else{
-                    throw CException(7, "The device is not in the deinitlizied state", "Set device to init state");
+                    throw CException(7, "The device is not in the deinitialized state", "Set device to init state");
                 }
                 break;
             case 2:
@@ -419,11 +419,12 @@ int main (int argc, char* argv[] )
             std::cout << std::endl;
         }
         
-		if(controller)
-			HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
+	if(controller)
+	  HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
 		
     } catch (CException& e) {
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
+	return -4;
     }
     try {
         //! [UIToolkit Deinit]
@@ -431,6 +432,7 @@ int main (int argc, char* argv[] )
         //! [UIToolkit Deinit]
     } catch (CException& e) {
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
+	return -3;
     }
     return 0;
 }
