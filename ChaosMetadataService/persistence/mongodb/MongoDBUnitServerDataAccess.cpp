@@ -21,7 +21,7 @@
 #include "MongoDBUnitServerDataAccess.h"
 #include "mongo_db_constants.h"
 
-
+#include <chaos/common/utility/TimingUtil.h>
 #define MDBUSDA_INFO INFO_LOG(MongoDBUnitServerDataAccess)
 #define MDBUSDA_DBG  DBG_LOG(MongoDBUnitServerDataAccess)
 #define MDBUSDA_ERR  ERR_LOG(MongoDBUnitServerDataAccess)
@@ -93,7 +93,8 @@ int MongoDBUnitServerDataAccess::updateUnitServer(chaos::common::data::CDataWrap
     mongo::BSONObjBuilder bson_update;
     try {
         bson_find << MONGODB_KEY_UNIT_SERVER_ALIAS << unit_server_description.getStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS);
-        updated_field << MONGODB_KEY_UNIT_SERVER_RPC_ADDR << unit_server_description.getStringValue(CUDefinitionKey::CU_INSTANCE_NET_ADDRESS);
+        updated_field << MONGODB_KEY_UNIT_SERVER_RPC_ADDR << unit_server_description.getStringValue(CUDefinitionKey::CU_INSTANCE_NET_ADDRESS)
+        << "ts" << mongo::Date_t(chaos::common::utility::TimingUtil::getTimeStamp());
         
         mongo::BSONArrayBuilder bab;
         auto_ptr<CMultiTypeDataArrayWrapper> cu_type_array(unit_server_description.getVectorValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS));

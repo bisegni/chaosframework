@@ -52,8 +52,9 @@ void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     if(data  && data->hasKey(chaos::CUDefinitionKey::CU_INSTANCE_NET_ADDRESS)) {
         CNetworkAddress * na = new CNetworkAddress();
         if(na) {
-            remote_unitserver_ip_port = na->ipPort = data->hasKey(chaos::CUDefinitionKey::CU_INSTANCE_NET_ADDRESS);
+            remote_unitserver_ip_port = na->ipPort = data->getStringValue(chaos::CUDefinitionKey::CU_INSTANCE_NET_ADDRESS);
             USAC_INFO << "fetch the message channel for:"<<na->ipPort;
+            //delete(na);
             message_channel = getNewMessageChannelForAddress(na);
             if(!message_channel) {
                 USAC_ERR << MESS_CHNL_ALLO_ERR;
@@ -86,7 +87,7 @@ void UnitServerAckCommand::ccHandler() {
     }
     
     result.reset(message_channel->sendRequest("system",
-                                              chaos::ChaosSystemDomainAndActionLabel::ACTION_WORK_UNIT_REG_ACK,
+                                              chaos::ChaosSystemDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
                                               message_data,
                                               1000));
     if(message_channel->getLastErrorCode() != 0) {
