@@ -28,7 +28,8 @@ using namespace chaos::metadata_service;
 using namespace chaos::metadata_service::api;
 
 //! default consturctor
-ApiManagment::ApiManagment(){}
+ApiManagment::ApiManagment():
+subservices(NULL){}
 
 //! default destructor
 ApiManagment::~ApiManagment() {

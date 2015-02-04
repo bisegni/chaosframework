@@ -46,9 +46,8 @@ chaos::common::data::CDataWrapper *UnitServerRegisterApi::execute(chaos::common:
         throw CException(-1, "Unit server alias not found", __PRETTY_FUNCTION__);
     }
     //fetch the unit server alias
-    const std::string unit_server_alias = api_data->getStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS);
-    
     detach_data = true;
+    const std::string unit_server_alias = api_data->getStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS);
     try {
         if((err = us_da->checkUnitServerPresence(unit_server_alias, is_present))) {
             //err
@@ -73,12 +72,19 @@ chaos::common::data::CDataWrapper *UnitServerRegisterApi::execute(chaos::common:
         //now we can send back the received message with the ack result
         api_data->addInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT, ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK);
     } catch (chaos::CException& ex) {
-        USRA_DBG << "Send ack for registration denied to the unit server " << unit_server_alias;
+        api_data->addInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT, ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK);
         getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ASLIAS(batch::unit_server::UnitServerAckCommand)),
                                           api_data,
                                           command_id);
+        USRA_ERR << "Sent ack for registration denied to the unit server " << unit_server_alias;
         throw ex;
-    }
+    } catch (...) {
+        getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ASLIAS(batch::unit_server::UnitServerAckCommand)),
+                                          api_data,
+                                          command_id);
+        LOG_AND_TROW(USRA_ERR, -5, "Unknown exception")
+        USRA_ERR << "Sent ack for registration denied to the unit server " << unit_server_alias;
+   }
 
     //all is gone weel
     USRA_DBG << "Send ack for registration ok to the unit server " << unit_server_alias;

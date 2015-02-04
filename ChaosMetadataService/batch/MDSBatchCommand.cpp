@@ -27,7 +27,8 @@ using namespace chaos::common::batch_command;
 #define MDSBC_ERR  INFO_ERR(MDSBatchCommand)
 
 //! default constructor
-MDSBatchCommand::MDSBatchCommand() {
+MDSBatchCommand::MDSBatchCommand():
+BatchCommand(){
     
 }
 

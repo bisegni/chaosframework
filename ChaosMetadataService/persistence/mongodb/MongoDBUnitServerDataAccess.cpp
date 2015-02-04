@@ -73,10 +73,11 @@ int MongoDBUnitServerDataAccess::checkUnitServerPresence(const std::string& unit
         DEBUG_CODE(MDBUSDA_DBG << "Query: "  << q.jsonString();)
         DEBUG_CODE(MDBUSDA_DBG << "checkUnitServerPresence find ---------------------------------------------";)
         if((err = connection->findOne(result,
-                            MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_UNIT_SERVER),
-                                     q))){
+                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_UNIT_SERVER),
+                                      q))){
              MDBUSDA_ERR << "Error sercing unit server unit server" << unit_server_alias;
         }
+        presence = !result.isEmpty();
     } catch (const mongo::DBException &e) {
         MDBUSDA_ERR << e.what();
         err = -1;
@@ -107,7 +108,7 @@ int MongoDBUnitServerDataAccess::updateUnitServer(chaos::common::data::CDataWrap
         mongo::BSONObj query = bson_find.obj();
         
         //set the update
-        bson_update << "$set" << bson_update.obj();
+        bson_update << "$set" << updated_field.obj();
         mongo::BSONObj update = bson_update.obj();
         DEBUG_CODE(MDBUSDA_DBG << "updateUnitServer find ---------------------------------------------";)
         DEBUG_CODE(MDBUSDA_DBG << "Query: "  << query.jsonString();)

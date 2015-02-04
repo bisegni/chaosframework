@@ -212,7 +212,9 @@ CDataWrapper* MessageChannel::sendRequest(const char * const nodeID,
         result = sem.wait(currentRequestID, millisecToWait);
     else
         result = sem.wait(currentRequestID);
-    
+    if(result){
+        MC_PARSE_CDWPTR_RESULT(result)
+    }
     return result;
 }
 

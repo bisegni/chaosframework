@@ -52,8 +52,8 @@ e = ErrorCode::EC_TIMEOUT;\
 e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
 }
 			
-#define MC_PARSE_RESULT(x) \
-if(!x.get()) {\
+#define MC_PARSE_CDWPTR_RESULT(x) \
+if(x==NULL) {\
 last_error_code = ErrorCode::EC_TIMEOUT;\
 } else {\
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) last_error_code = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\

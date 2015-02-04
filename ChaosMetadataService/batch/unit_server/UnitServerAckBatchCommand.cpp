@@ -33,6 +33,8 @@ static const char * const NET_ADDR_ALLOC_ERR = "CNetworkAddress allocation error
 static const char * const MESS_CHNL_ALLO_ERR = "Message channel allocation error";
 
 UnitServerAckCommand::UnitServerAckCommand():
+MDSBatchCommand(),
+retry_number(0),
 message_channel(NULL),
 message_data(NULL){
     
@@ -50,7 +52,7 @@ void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     if(data  && data->hasKey(chaos::CUDefinitionKey::CU_INSTANCE_NET_ADDRESS)) {
         CNetworkAddress * na = new CNetworkAddress();
         if(na) {
-            na->ipPort = data->hasKey(chaos::CUDefinitionKey::CU_INSTANCE_NET_ADDRESS);
+            remote_unitserver_ip_port = na->ipPort = data->hasKey(chaos::CUDefinitionKey::CU_INSTANCE_NET_ADDRESS);
             USAC_INFO << "fetch the message channel for:"<<na->ipPort;
             message_channel = getNewMessageChannelForAddress(na);
             if(!message_channel) {
@@ -76,9 +78,22 @@ void UnitServerAckCommand::acquireHandler() {
 // inherited method
 void UnitServerAckCommand::ccHandler() {
     MDSBatchCommand::ccHandler();
+    auto_ptr<CDataWrapper> result;
     USAC_INFO << "execute ccHandler";
-   // message_channel->sendMessage("system", chaos::ChaosSystemDomainAndActionLabel::ACTION_WORK_UNIT_REG_ACK, message_channel);
-    BC_END_RUNNIG_PROPERTY;
+    if(retry_number++ > 3) {
+        USAC_INFO << "We have exeeced the number of retry this is the last retry for unit server act to " << remote_unitserver_ip_port;
+        BC_END_RUNNIG_PROPERTY;
+    }
+    
+    result.reset(message_channel->sendRequest("system",
+                                              chaos::ChaosSystemDomainAndActionLabel::ACTION_WORK_UNIT_REG_ACK,
+                                              message_data,
+                                              1000));
+    if(message_channel->getLastErrorCode() != 0) {
+        USAC_INFO << "error sending message to the unit server " << remote_unitserver_ip_port;
+    } else {
+        BC_END_RUNNIG_PROPERTY;
+    }
 }
 
 // inherited method

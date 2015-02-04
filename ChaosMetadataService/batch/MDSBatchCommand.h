@@ -51,7 +51,7 @@ namespace chaos{
                 MDSBatchCommand();
                 
                 //! default destructor
-                virtual ~MDSBatchCommand();
+                ~MDSBatchCommand();
                 
                 //! return a raw message channel for a specific node address
                 chaos::common::message::MessageChannel *getNewMessageChannelForAddress(chaos::common::network::CNetworkAddress *node_network_address);

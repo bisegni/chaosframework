@@ -23,7 +23,8 @@ using namespace chaos::common::utility;
 using namespace chaos::metadata_service::api;
 
 AbstractApiGroup::AbstractApiGroup(const std::string& name):
-NamedService(name){}
+NamedService(name),
+subservice(NULL){}
 
 AbstractApiGroup::~AbstractApiGroup(){}
 
