@@ -341,7 +341,11 @@ if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
     git checkout -b good_for_chaos $COUCHBASE_VERSION
     fi
     cd $BASE_EXTERNAL/libcouchbase
-    cmake $CHAOS_CMAKE_FLAGS .
+    if [ -n "$CHAOS_STATIC" ]; then
+	cmake $CHAOS_CMAKE_FLAGS -DLCB_BUILD_STATIC=true .
+    else
+	cmake $CHAOS_CMAKE_FLAGS .
+    fi
     do_make "COUCHBASE"
     echo "Couchbase done"
 fi
