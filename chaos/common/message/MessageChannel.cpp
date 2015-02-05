@@ -178,15 +178,18 @@ const std::string& MessageChannel::getLastErrorDomain() {
 /*!
  called when a result of an
  */
-void MessageChannel::sendMessage(const char * const nodeID,const char * const actionName, CDataWrapper * const messagePack,  bool onThisThread) {
-    CHAOS_ASSERT(nodeID && actionName)
-    CDataWrapper *dataPack = new CDataWrapper();
+void MessageChannel::sendMessage(const char * const node_id,
+                                 const char * const action_name,
+                                 CDataWrapper * const message_pack,
+                                 bool on_this_thread) {
+    CHAOS_ASSERT(node_id && action_name)
+    CDataWrapper *data_pack = new CDataWrapper();
     //add the action and dommain name
-    dataPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, nodeID);
-    dataPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, actionName);
-    if(messagePack)dataPack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *messagePack);
+    data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, node_id);
+    data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
+    if(message_pack)data_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *message_pack);
     //send the request
-    broker->submitMessage(remoteNodeAddress, dataPack, NULL, NULL, 0, onThisThread);
+    broker->submitMessage(remoteNodeAddress, data_pack, NULL, NULL, 0, on_this_thread);
 }
 
 /*
@@ -212,9 +215,7 @@ CDataWrapper* MessageChannel::sendRequest(const char * const nodeID,
         result = sem.wait(currentRequestID, millisecToWait);
     else
         result = sem.wait(currentRequestID);
-    if(result){
-        MC_PARSE_CDWPTR_RESULT(result)
-    }
+    MC_PARSE_CDWPTR_RESULT(result)
     return result;
 }
 
