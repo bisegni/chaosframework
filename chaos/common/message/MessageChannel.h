@@ -172,10 +172,13 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 				NetworkBroker * getBroker();
 				
 			public:
+                //! return last sendxxx error code
 				int32_t getLastErrorCode();
-				
+                
+                //! return last sendxxx error message
 				const std::string& getLastErrorMessage();
-				
+                
+				//! return last sendxxx error domain
 				const std::string& getLastErrorDomain();
 				
 				/*!
