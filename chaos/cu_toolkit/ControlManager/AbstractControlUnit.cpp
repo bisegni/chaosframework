@@ -89,12 +89,39 @@ key_data_storage(NULL){
 	for (int idx = 0; idx < _control_unit_drivers.size(); idx++){
 		control_unit_drivers.push_back(_control_unit_drivers[idx]);
 	}
+
+	ACULAPP_ << "Initializating Driver Accessors";
+	//at this point and before the unit implementation init i need to get
+	//the infromation about the needed drivers
+	std::vector<DrvRequestInfo> unitNeededDrivers;
+	
+	//got the needded driver definition
+	unitDefineDriver(unitNeededDrivers);
+	
+	accessorInstances.clear();
+	
+	for (int idx = 0;
+	     idx != unitNeededDrivers.size();
+	     idx++) {
+	  driver_manager::driver::DriverAccessor *accessorInstance = driver_manager::DriverManager::getInstance()->getNewAccessorForDriverInstance(unitNeededDrivers[idx]);
+	  accessorInstances.push_back(accessorInstance);
+	}
+	
 }
 
 /*!
  Destructor a new CU with an identifier
  */
 AbstractControlUnit::~AbstractControlUnit() {
+  //clear the accessor of the driver
+  for (int idx = 0;
+       idx != accessorInstances.size();
+       idx++) {
+    driver_manager::DriverManager::getInstance()->releaseAccessor(accessorInstances[idx]);
+  }
+  //clear the vector
+  accessorInstances.clear();
+  
 }
 
 /*
@@ -549,22 +576,6 @@ void AbstractControlUnit::init(void *initData) throw(CException) {
 		ACULERR_ << "device:" << deviceID << "not known by this Work Unit";
 		throw CException(-2, "Device not known by this control unit", __PRETTY_FUNCTION__);
 	}
-	ACULAPP_ << "Initializating Phase for device:" << deviceID;
-	//at this point and before the unit implementation init i need to get
-	//the infromation about the needed drivers
-	std::vector<DrvRequestInfo> unitNeededDrivers;
-	
-	//got the needded driver definition
-	unitDefineDriver(unitNeededDrivers);
-	
-	accessorInstances.clear();
-	
-	for (int idx = 0;
-		 idx != unitNeededDrivers.size();
-		 idx++) {
-		driver_manager::driver::DriverAccessor *accessorInstance = driver_manager::DriverManager::getInstance()->getNewAccessorForDriverInstance(unitNeededDrivers[idx]);
-		accessorInstances.push_back(accessorInstance);
-	}
 	
 	//cast to the CDatawrapper instance
 	
@@ -608,14 +619,6 @@ void AbstractControlUnit::deinit() throw(CException) {
 		key_data_storage = NULL;
 	}
 	
-	//clear the accessor of the driver
-	for (int idx = 0;
-		 idx != accessorInstances.size();
-		 idx++) {
-		driver_manager::DriverManager::getInstance()->releaseAccessor(accessorInstances[idx]);
-	}
-	//clear the vector
-	accessorInstances.clear();
 	
 
 }

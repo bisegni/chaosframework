@@ -215,7 +215,7 @@ int DefaultPersistenceDriver::getLastDataset(const std::string& producer_key,
 	uint32_t size = 0;
 	char* result = NULL;
 	DirectIOChannelsInfo	*next_client = static_cast<DirectIOChannelsInfo*>(connection_feeder.getService());
-	if(!next_client) return NULL;
+	if(!next_client) return err;
 	
 	boost::shared_lock<boost::shared_mutex>(next_client->connection_mutex);
 	
