@@ -62,3 +62,4 @@ ChaosMDSLite/RefCommon.jardesc
 ChaosMDSLite/RefServer.jardesc
 /example/UIToolkitTest/powersupply/nbproject/private/
 *.json
+/ccs/ChaosControlStudio/NodeSearchView/nbproject/private/
