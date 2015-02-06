@@ -52,8 +52,8 @@ e = ErrorCode::EC_TIMEOUT;\
 e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
 }
 			
-#define MC_PARSE_RESULT(x) \
-if(!x.get()) {\
+#define MC_PARSE_CDWPTR_RESULT(x) \
+if(x==NULL) {\
 last_error_code = ErrorCode::EC_TIMEOUT;\
 } else {\
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) last_error_code = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
@@ -172,17 +172,26 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 				NetworkBroker * getBroker();
 				
 			public:
+                //! return last sendxxx error code
 				int32_t getLastErrorCode();
-				
+                
+                //! return last sendxxx error message
 				const std::string& getLastErrorMessage();
-				
+                
+				//! return last sendxxx error domain
 				const std::string& getLastErrorDomain();
 				
 				/*!
 				 \brief send a message
-				 \param messagePack the data to send, the pointer is not deallocated and i scopied into the pack
+                 \param node_id id of the remote node within a network broker interface
+                 \param action_name the name of the action to call
+				 \param message_pack the data to send, the pointer is not deallocated and i scopied into the pack
+                 \param on_this_thread notify when the message need to be sent syncronously or in async  way
 				 */
-				void sendMessage(const char * const, const char * const, common::data::CDataWrapper* const, bool onThisThread = false);
+				void sendMessage(const char * const node_id,
+                                 const char * const action_name,
+                                 CDataWrapper * const message_pack,
+                                 bool on_this_thread = false);
 				
 				/*!
 				 \brief Set the handler for manage the rpc answer

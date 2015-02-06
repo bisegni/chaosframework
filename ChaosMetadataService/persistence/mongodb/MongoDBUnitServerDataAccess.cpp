@@ -21,7 +21,7 @@
 #include "MongoDBUnitServerDataAccess.h"
 #include "mongo_db_constants.h"
 
-
+#include <chaos/common/utility/TimingUtil.h>
 #define MDBUSDA_INFO INFO_LOG(MongoDBUnitServerDataAccess)
 #define MDBUSDA_DBG  DBG_LOG(MongoDBUnitServerDataAccess)
 #define MDBUSDA_ERR  ERR_LOG(MongoDBUnitServerDataAccess)
@@ -73,10 +73,11 @@ int MongoDBUnitServerDataAccess::checkUnitServerPresence(const std::string& unit
         DEBUG_CODE(MDBUSDA_DBG << "Query: "  << q.jsonString();)
         DEBUG_CODE(MDBUSDA_DBG << "checkUnitServerPresence find ---------------------------------------------";)
         if((err = connection->findOne(result,
-                            MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_UNIT_SERVER),
-                                     q))){
+                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_UNIT_SERVER),
+                                      q))){
              MDBUSDA_ERR << "Error sercing unit server unit server" << unit_server_alias;
         }
+        presence = !result.isEmpty();
     } catch (const mongo::DBException &e) {
         MDBUSDA_ERR << e.what();
         err = -1;
@@ -92,7 +93,8 @@ int MongoDBUnitServerDataAccess::updateUnitServer(chaos::common::data::CDataWrap
     mongo::BSONObjBuilder bson_update;
     try {
         bson_find << MONGODB_KEY_UNIT_SERVER_ALIAS << unit_server_description.getStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS);
-        updated_field << MONGODB_KEY_UNIT_SERVER_RPC_ADDR << unit_server_description.getStringValue(CUDefinitionKey::CU_INSTANCE_NET_ADDRESS);
+        updated_field << MONGODB_KEY_UNIT_SERVER_RPC_ADDR << unit_server_description.getStringValue(CUDefinitionKey::CU_INSTANCE_NET_ADDRESS)
+        << "ts" << mongo::Date_t(chaos::common::utility::TimingUtil::getTimeStamp());
         
         mongo::BSONArrayBuilder bab;
         auto_ptr<CMultiTypeDataArrayWrapper> cu_type_array(unit_server_description.getVectorValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS));
@@ -107,7 +109,7 @@ int MongoDBUnitServerDataAccess::updateUnitServer(chaos::common::data::CDataWrap
         mongo::BSONObj query = bson_find.obj();
         
         //set the update
-        bson_update << "$set" << bson_update.obj();
+        bson_update << "$set" << updated_field.obj();
         mongo::BSONObj update = bson_update.obj();
         DEBUG_CODE(MDBUSDA_DBG << "updateUnitServer find ---------------------------------------------";)
         DEBUG_CODE(MDBUSDA_DBG << "Query: "  << query.jsonString();)
