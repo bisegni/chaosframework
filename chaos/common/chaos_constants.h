@@ -122,8 +122,25 @@ namespace chaos {
 			}
 		}
 	}
-	/** @} */ // end of DirectIOConfigurationKey
-	
+    /** @} */ // end of DirectIOConfigurationKey
+ 
+    /** @defgroup NodeDefinitionKey Control Unit Definition
+     *  This is the collection of the key for the general node information
+     *  @{
+     */
+    //! Name space for grupping key for the node infromation
+    namespace NodeDefinitionKey {
+        //! define the node type
+        static const char * const NODE_TYPE             = "ndk_type";
+        
+        //! identify the node rpc address
+        static const char * const NODE_RPC_ADDR         = "ndk_rpc_addr";
+        
+        //! identify the domain within the rpc infrastructure
+        static const char * const NODE_RPC_DOMAIN_ID    = "ndk_rpc_dom_id";
+    }
+	/** @} */ // end of NodeDefinitionKey
+    
 	/** @defgroup CUDefinitionKey Control Unit Definition
 	 *  This is the collection of the key for the control unit definition
 	 *  @{

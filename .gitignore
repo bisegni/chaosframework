@@ -1,3 +1,5 @@
+ccs/ChaosControlStudio/nbproject/private/*
+ccs/ChaosControlStudio/CCSRoot/nbproject/private/*
 build
 CUSchemaDB*
 ChaosMDSLite/RecCommon.jardesc
@@ -62,4 +64,3 @@ ChaosMDSLite/RefCommon.jardesc
 ChaosMDSLite/RefServer.jardesc
 /example/UIToolkitTest/powersupply/nbproject/private/
 *.json
-/ccs/ChaosControlStudio/NodeSearchView/nbproject/private/
