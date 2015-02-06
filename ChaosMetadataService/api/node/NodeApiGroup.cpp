@@ -1,5 +1,5 @@
 /*
- *	DeviceDataAccess.cpp
+ *	NodeApiGroup.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,15 +17,18 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ProducerDataAccess.h"
+#include "NodeApiGroup.h"
+#include "NodeRegisterApi.h"
 
-using namespace chaos::metadata_service::persistence::data_access;
+using namespace chaos::metadata_service::api::node;
+DEFINE_CLASS_FACTORY_NO_ALIAS(NodeApiGroup, chaos::metadata_service::api::AbstractApiGroup);
 
-ProducerDataAccess::ProducerDataAccess():
-AbstractDataAccess("ProducerDataAccess") {
-	
+NodeApiGroup::NodeApiGroup():
+AbstractApiGroup("system"){
+    //add api for UnitServer registration
+    addApi<NodeRegisterApi>();
 }
 
-ProducerDataAccess::~ProducerDataAccess() {
-	
+NodeApiGroup::~NodeApiGroup() {
+    
 }

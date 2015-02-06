@@ -1,9 +1,9 @@
 /*
- *	ProducerRegisterApi.cpp
+ *	NodeSearchAPI.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,25 +17,21 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ProducerRegisterApi.h"
-
-#define PRA_INFO INFO_LOG(MongoDBUnitServerDataAccess)
-#define PRA_DBG  INFO_DBG(MongoDBUnitServerDataAccess)
-#define PRA_ERR  INFO_ERR(MongoDBUnitServerDataAccess)
+#include "NodeSearchAPI.h"
 
 using namespace chaos::common::data;
-using namespace chaos::metadata_service::api::producer;
+using namespace chaos::metadata_service::api::node;
 
-ProducerRegisterApi::ProducerRegisterApi():
-AbstractApi("registerControlUnit"){
-	
+NodeSearchApi::NodeSearchApi():
+AbstractApi("search"){
+    
 }
 
-ProducerRegisterApi::~ProducerRegisterApi() {
-	
+NodeSearchApi::~NodeSearchApi() {
+    
 }
 
-chaos::common::data::CDataWrapper *ProducerRegisterApi::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
-    PRA_INFO << api_data->getJSONString();
-	return NULL;
+chaos::common::data::CDataWrapper *NodeSearchApi::execute(chaos::common::data::CDataWrapper *api_data,
+                                                          bool& detach_data) throw(chaos::CException) {
+    return NULL;
 }

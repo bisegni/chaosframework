@@ -1,5 +1,5 @@
 /*
- *	UnitServerApiGroup.cpp
+ *	NodeRegisterApi.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,18 +17,15 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "UnitServerApiGroup.h"
-#include "UnitServerRegisterApi.h"
+#include "NodeDataAccess.h"
 
-using namespace chaos::metadata_service::api::unit_server;
-DEFINE_CLASS_FACTORY_NO_ALIAS(UnitServerApiGroup, chaos::metadata_service::api::AbstractApiGroup);
+using namespace chaos::metadata_service::persistence::data_access;
 
-UnitServerApiGroup::UnitServerApiGroup():
-AbstractApiGroup("system"){
-    //add api for UnitServer registration
-    addApi<UnitServerRegisterApi>();
+NodeDataAccess::NodeDataAccess():
+AbstractDataAccess("NodeDataAccess") {
+    
 }
 
-UnitServerApiGroup::~UnitServerApiGroup() {
+NodeDataAccess::~NodeDataAccess() {
     
 }

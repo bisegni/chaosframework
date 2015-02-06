@@ -21,39 +21,47 @@
 #define __CHAOSFramework__MongoDBUnitServerDataAccess__
 
 #include "MongoDBAccessor.h"
+#include "MongoDBNodeDataAccess.h"
 #include "../data_access/UnitServerDataAccess.h"
+
 #include <chaos/common/utility/ObjectInstancer.h>
+
+#include <boost/shared_ptr.hpp>
+
 namespace chaos {
-    namespace metadata_service {
-        namespace persistence {
-            namespace mongodb {
-                //forward declaration
-                class MongoDBPersistenceDriver;
-                
+	namespace metadata_service {
+		namespace persistence {
+			namespace mongodb {
+				
+				//forward declaration
+				class MongoDBPersistenceDriver;
+				
                 //! Data Access for producer manipulation data
-                class MongoDBUnitServerDataAccess:
-                public data_access::UnitServerDataAccess,
+				class MongoDBUnitServerDataAccess:
+				public data_access::UnitServerDataAccess,
                 protected MongoDBAccessor {
-                    friend class INSTANCER_P1(MongoDBUnitServerDataAccess, AbstractDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>&);
-                protected:
+                    friend class MongoDBPersistenceDriver;
+					friend class INSTANCER_P1(MongoDBUnitServerDataAccess, AbstractDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>&);
+                    
+                    MongoDBNodeDataAccess *node_data_access = NULL;
+				protected:
                     MongoDBUnitServerDataAccess(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection);
-                    ~MongoDBUnitServerDataAccess();
-                public:
+					~MongoDBUnitServerDataAccess();
+				public:
                     //inherited method
-                    int insertNewUnitServer(chaos::common::data::CDataWrapper& unit_server_description);
+                    int insertNewUS(chaos::common::data::CDataWrapper& unit_server_description);
                     
-                    // inherited method
-                    int checkUnitServerPresence(const std::string& unit_server_alias,
-                                                bool& presence);
+                    //inherited method
+                    int checkUSPresence(const std::string& unit_server_unique_id,
+                                        bool& presence);
+                    //inherited method
+                    int updateUS(chaos::common::data::CDataWrapper& unit_server_description);
                     
-                    //! inherited method
-                    int updateUnitServer(chaos::common::data::CDataWrapper& unit_server_description);
-                };
-
-                
-            }
-        }
-    }
+                    //inherited method
+                    int deleteUS(const std::string& unit_server_unique_id);
+				};
+			}
+		}
+	}	
 }
-
-#endif /* defined(__CHAOSFramework__MongoDBUnitServerDataAccess__) */
+#endif /* defined(__CHAOSFramework__MongoDBProducerDataAccess__) */

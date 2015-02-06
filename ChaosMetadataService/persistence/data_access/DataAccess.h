@@ -19,6 +19,6 @@
  */
 #ifndef CHAOSFramework_DataAccess_h
 #define CHAOSFramework_DataAccess_h
-#include "ProducerDataAccess.h"
 #include "UnitServerDataAccess.h"
+#include "NodeDataAccess.h"
 #endif

@@ -1,9 +1,9 @@
 /*
- *	UnitServerRegisterApi.cpp
+ *	UnitServerDataAccess.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.

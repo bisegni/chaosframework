@@ -132,27 +132,100 @@ namespace chaos {
     //! Name space for grupping key for the node infromation
     namespace NodeDefinitionKey {
         //! define the node unique identification[string]
+        /*!
+         Identify in a unique way the node within a domain. A node can be
+         every node except the metadata server.
+         */
         static const char * const NODE_UNIQUE_ID        = "ndk_uid";
         
+        //! defines the domain where the node belong
+        /*!
+         Identify an unique set that enclose one or more producer, consumer and user interfaces.
+         */
+        static const char * const NODE_PARENT_SET       = "ndk_parent_set";
+        
         //! define the node type[string]
+        /*!
+         The type permit to identify kind of node is. For example
+         contorl unit(slow or realtime) ui, eu, etc...
+         */
         static const char * const NODE_TYPE             = "ndk_type";
         
         //! identify the node rpc address[string:string]
+        /*!
+         Permit to assciate to the node the address of the rpc interface 
+         hta is given by the network brocker where the node si attacched.
+         */
         static const char * const NODE_RPC_ADDR         = "ndk_rpc_addr";
         
         //! identify the domain within the rpc infrastructure [string]
+        /*!
+         Identify the domain where the node has registered his api.
+         */
         static const char * const NODE_RPC_DOMAIN       = "ndk_rpc_dom";
+        
+        //! identify the node security key[string]
+        /*!
+         the security key is a public and private key standard
+         thank permit to a node to be securily identifyed.
+         */
+        static const char * const NODE_SECURITY_KEY     = "ndk_sec_key";
+        
+        
+        //! is the hartbeat of the node for the current request
+        static const char * const NODE_TIMESTAMP        = "ndk_hearbeat";
     }
 	/** @} */ // end of NodeDefinitionKey
     
+    /** @defgroup NodeType List of default chaos node type
+     *  this is the list of the all default node type recognized automatically by !CHAOS
+     * infrastructure
+     *  @{
+     */
+    //! Name space for grupping key for the node type
+    namespace NodeType {
+        //! identify an unit server node
+        /*!
+         A unit server node is a specialized node that act as server for many configurable
+         constrol unit.
+         */
+        static const char * const NODE_TYPE_UNIT_SERVER     = "nt_unit_server";
+        //! identify a control unit node
+        /*!
+         A CU node is a tipical !CHAOS node that act as controller of hardware of
+         other chaos node.
+         */
+        static const char * const NODE_TYPE_CONTROL_UNIT    = "nt_control_unit";
+        //! identify an user itnerface node
+        /*!
+         An user interface node is that node thac can control over node and show
+         data from node, tipically a node taht need to monitor the system and 
+         send command to change the system state.
+         */
+        static const char * const NODE_TYPE_USER_INTERFACE  = "nt_user_interface";
+        //! identify a data service node
+        /*!
+         A data service node is a !CHAOS service that manage the query on producer data
+         */
+        static const char * const NODE_TYPE_DATA_SERVICE    = "nt_data_service";
+        
+        //! identify a wan proxy node
+        /*!
+         A wan proxy node is a node that permit to adapt the wan syncrhonous worls to
+         !CHAOS async one.
+         */
+        static const char * const NODE_TYPE_WAN_PROXY       = "nt_wan_proxy";
+    }
+    
+    /** @} */ // end of NodeType
 	/** @defgroup CUDefinitionKey Control Unit Definition
 	 *  This is the collection of the key for the control unit definition
 	 *  @{
 	 */
 	//! Name space for grupping option used for define the control unit
 	namespace CUDefinitionKey {
-		//! delay beetwen a subseguent cu start method call
-		static const char * const THREAD_SCHEDULE_DELAY   = "cu_thr-sch-del";
+		//! represent the delay beetwen a subseguent cu start method call
+		static const char * const THREAD_SCHEDULE_DELAY   = "cudk_thr_sch_delay";
 	}
 	/** @} */ // end of CUDefinitionKey
 	
@@ -202,6 +275,88 @@ namespace chaos {
 	}
 	/** @} */ // end of CUStateKey
 	
+    
+    /** @defgroup DataPackPrefixID Chaos Data Prefix
+     This collection is a set for the prefix used for identify the domain
+     for the unique id key in chaos data cloud
+     @{
+     */
+    //! Namespace for the domain for the unique identification key
+    namespace DataPackPrefixID {
+        static const char * const OUTPUT_DATASE_PREFIX = "_o";
+        static const char * const INPUT_DATASE_PREFIX = "_i";
+        static const char * const CUSTOM_DATASE_PREFIX = "_c";
+        static const char * const SYSTEM_DATASE_PREFIX = "_s";
+    }
+    /** @} */ // end of DataPackPrefixID
+    
+    /** @defgroup DataPackCommonKey Chaos Data Pack common key
+     This is the collection of the common key that are contained into the
+     all the dataset of a data producer
+     @{
+     */
+    namespace DataPackCommonKey {
+        //!define the device unique key, this represent the primary key of the producer[string]
+        static const char * const DPCK_DEVICE_ID                       = chaos::NodeDefinitionKey::NODE_UNIQUE_ID;
+        
+        //!this define the acquisition timestamp of the data represented by the dataset[uint64_t]
+        static const char * const DPCK_TIMESTAMP                       = chaos::NodeDefinitionKey::NODE_TIMESTAMP;
+        
+        //!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) int32_t]
+        static const char * const DPCK_DATASET_TYPE                    = "dpck_ds_type";
+        //! the constant that represent the output dataset type
+        static const unsigned int DPCK_DATASET_TYPE_OUTPUT             = 0;
+        //! the constant that represent the input dataset type
+        static const unsigned int DPCK_DATASET_TYPE_INPUT              = 1;
+        //! the constant that represent the custom dataset type
+        static const unsigned int DPCK_DATASET_TYPE_CUSTOM             = 2;
+        //! the constant that represent the system dataset type
+        static const unsigned int DPCK_DATASET_TYPE_SYSTEM             = 3;
+    }
+    /** @} */ // end of DataPackCommonKey
+    
+    /** @defgroup DataPackKey Chaos Data Pack output attirbute
+     This is the collection of the standard key that are contained into the output
+     attribute data pack that describe a producer state
+     @{
+     */
+    //! Namespace for standard constant used for output attribute of a producer
+    namespace DataPackOutputKey {
+        //!this define key associated to the trigger
+        static const char * const DPOK_TRIGGER_CODE                   = "dpok_trigger_key";
+    }
+    /** @} */ // end of DataPackKey
+    
+    /** @defgroup DataPackSystemKey Chaos Data Pack for System Attribute
+     @{
+     these are the stantdard key for chaos system attirbute
+     */
+    //! Namespace for standard constant used for system attribute
+    namespace DataPackSystemKey{
+        //!is the ehartbeat of a data producer
+        static const char * const DP_SYS_HEARTBEAT			= "dp_sys_hp";
+        
+        //!is the last error message occurred into data producer
+        static const char * const DP_SYS_UNIT_TYPE			= "dp_sys_unit_type";
+        
+        //!is the last error occurred into the data producer
+        static const char * const DP_SYS_LAST_ERROR			= "dp_sys_lerr";
+        
+        //!is the last error message occurred into data producer
+        static const char * const DP_SYS_LAST_ERROR_MESSAGE	= "dp_sys_lerr_msg";
+        
+        //!is the domain where the last error has occurred into data producer
+        static const char * const DP_SYS_LAST_ERROR_DOMAIN	= "dp_sys_lerr_domain";
+        
+        //!is the number of run unit
+        static const char * const DP_SYS_RUN_UNIT_AVAILABLE	= "dp_sys_ru_available";
+        
+        //!is the run unit identifier
+        static const char * const DP_SYS_RUN_UNIT_ID		= "dp_sys_ru_id";
+        
+    }
+    /** @} */ // end of DataPackSystemKey
+    
 	/** @defgroup CUType Control Unit Default Type
 	 *  This is the collection of the key for the classification of the control unit types
 	 *  @{
@@ -306,15 +461,15 @@ namespace chaos {
 			EC_ATTRIBUTE_TYPE_NOT_SUPPORTED = 4,
             
             //!unit server registration is gone well
-			EC_MDS_UNIT_SERV_REGISTRATION_OK = 5,
+			EC_MDS_NODE_REGISTRATION_OK = 5,
             //!unit server registration has failed for invalid alias
-			EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_INVALID_ALIAS = 6,
+			EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS = 6,
             //!unit server registration for duplicated alias
-			EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_DUPLICATE_ALIAS = 7,
+			EC_MDS_NODE_REGISTRATION_FAILURE_DUPLICATE_ALIAS = 7,
             //! unit server bad state machine state
-			EC_MDS_UNIT_SERV_BAD_US_SM_STATE = 8,
+			EC_MDS_NODE_BAD_SM_STATE = 8,
             //!work unit is not self manageable and need to be loaded within an unit server
-			EC_MDS_WOR_UNIT_ID_NOT_SELF_MANAGEABLE = 9
+			EC_MDS_NODE_ID_NOT_SELF_MANAGEABLE = 9
 		} ErrorCode;
 	}
 	/** @} */ // end of ChaosDataType
@@ -393,34 +548,19 @@ namespace chaos {
 	
 	/** @defgroup ChaosSystemDomainAndActionLabel Chaos System Action Label
 	 *  This is the collection of the label that identify the name of the action defined at system level(doman "system")
-	 *  These are the action that are used by chaos to interact with standard node(CUToolkti, UIToolkit, Metadata Server)
+	 *  These are the action that are  managed by meta data service to permit the base interaction with other node.
+     *  Every node need to register itself through mds for interact with other !CHAOS node
 	 *  @{
 	 */
 	namespace ChaosSystemDomainAndActionLabel {
 		//! The chaos action domain for system message
 		static const char * const SYSTEM_DOMAIN									= "system";
+        
+        //! this is the alias of the mds register node api
+        static const char * const ACTION_REGISTER_NODE                          = "registerNode";
 		
-		//! this action perform the registration for the unit server service
-		static const char * const MDS_REGISTER_UNIT_SERVER						= "registerUnitServer";
-		
-		//! key for the server alias used by the instance [string]
-		static const char * const MDS_REGISTER_UNIT_SERVER_ALIAS				= "unit_server_alias";
-		
-		//! key for the server rsa public key [string]
-		static const char * const MDS_REGISTER_UNIT_SERVER_KEY					= "unit_server_key";
-		
-		//! key for the control unit aliases published by the unit server [array fo string]
-		static const char * const MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS	= "unit_server_cu_alias";
-		
-		//! key that idetify the result of unit server registration[int32]
-		static const char * const MDS_REGISTER_UNIT_SERVER_RESULT				= "reg_unit_serv_result";
-		
-		//! this action perform the registration for the control unit dataset
-		static const char * const MDS_REGISTER_CONTROL_UNIT						= "registerControlUnit";
-		
-		//! key the addresses the list of the states of the CU for a given Unit Serve   string]
-		static const char * const UNIT_SERVER_CU_STATES                            = "unit_server_cu_states";
-		
+        //! key that idetify the result of unit server registration[int32]
+        static const char * const ATTRIBUTE_MDS_REGISTER_NODE_RESULT            = "reg_unit_serv_result";
 		
 		//! Action to retrive all device id
 		static const char * const MDS_GET_ALL_DEVICE							= "getAllActiveDevice";
@@ -428,96 +568,101 @@ namespace chaos {
 		//! Perform the heart beat of the cu
 		static const char * const MDS_CU_HEARTBEAT								= "heartbeatControlUnit";
 		
-		//! Perform the heart beat of the cu
-		static const char * const MDS_UNIT_SERVER_HEARTBEAT							= "heartbeatUnitServer";
-		
-		
 		//! Perform request of the network address for a node identified by a device id
 		static const char * const MDS_GET_NODE_ADDRESS							= "getNodeNetworkAddress";
 		
 		//! This action provide to the shutdown porcess of the enteir daemon
 		//! that runt the active contorl units. All it will be gracefull shutten down
 		//! before daemon exit
-		static const char * const ACTION_SYSTEM_SHUTDOWN		= "shutdownUnitServer";
+		static const char * const ACTION_SYSTEM_SHUTDOWN                        = "shutdownUnitServer";
 		
-		//! Action called by mds for ack message in the unit server registration process
-		static const char * const ACTION_UNIT_SERVER_REG_ACK	= "unitServerRegistrationACK";
-		
-		//! Action called by mds to retrieve unit server status (the status of all cointained CUs)
-		static const char * const ACTION_UNIT_SERVER_STATUS_REQ	= "unitServerStatusREQ";
+		//! Action called by mds to retrieve node status (the status of all cointained CUs)
+		static const char * const ACTION_NODE_STATUS_REQ                        = "unitServerStatusREQ";
 		
 		//! key for the server alias used by the instance [string]
-		static const char * const UNIT_SERVER_STATES_ANSWER				= "unit_server_states";
-		
+		static const char * const UNIT_SERVER_STATES_ANSWER                     = "unit_server_states";
 		
 		//! Action called by mds for ack message in the unit server registration process
-		static const char * const ACTION_WORK_UNIT_REG_ACK		= "workUnitRegistrationACK";
+		static const char * const ACTION_NODE_REG_ACK                           = "nodeRegistrationACK";
 		
-		//! is the device id received by the work unit registration ack message from the mds
-		static const char * const PARAM_WORK_UNIT_REG_ACK_DEVICE_ID	= NodeDefinitionKey::NODE_UNIQUE_ID;
-		
-		//! Load the control unit
-		static const char * const ACTION_LOAD_CONTROL_UNIT		= "loadControlUnit";
-		
-		//! Alias to the intancer of the control unit to allocate [string]
-		static const char * const PARAM_LOAD_CONTROL_UNIT_TYPE_ALIAS	= "controlUnitTypeAlias";
-		
-		//! unique id to associate to the work unit instance [string]
-		static const char * const PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID	= PARAM_WORK_UNIT_REG_ACK_DEVICE_ID;
-		
-		//! param to pass to the control unit during load operation[ string]
-		static const char * const PARAM_LOAD_CONTROL_UNIT_PARAM	= "loadControlUnitParam";
-		
-		//! Description for the control unit dirvers [vector[string, string, string]*]
-		static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC				= "DriverDescription";
-		
-		//! The name of the driver to use[strig]
-		static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME			= "DriverDescriptionName";
-		
-		//! The version of the driver to use[strig]
-		static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION		= "DriverDescriptionVersion";
-		
-		//! The version of the driver to use[strig]
-		static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM	= "DriverDescriptionInitParam";
-		
-		//! Unload the control unit
-		static const char * const ACTION_UNLOAD_CONTROL_UNIT	= "unloadControlUnit";
-		
-		//! Alias for the control unit to load/unload
-		static const char * const PARAM_CU_LOAD_UNLOAD_ALIAS	= "controlUnitAlias";
-		
-		//! driver params passed during load operation for a specified control unit
-		static const char * const PARAM_CU_LOAD_DRIVER_PARAMS	= "controlUnitDriverParams";
-		
+        //! Load the control unit
+        static const char * const ACTION_NODE_LOAD                                  = "loadNode";
+        
+        //! Unload the control unit
+        static const char * const ACTION_NODE_UNLOAD                                = "unloadNode";
+        
 		//! Start the control unit intialization, the action need the default value
 		//! of the input attribute for a determinate device
-		static const char * const ACTION_CU_INIT				= "initControlUnit";
+		static const char * const ACTION_NODE_INIT                                  = "initNode";
 		
 		//! Deinitialization of a control unit, if it is in run, the stop phase
 		//! is started befor deinitialization one
-		static const char * const ACTION_CU_DEINIT				= "deinitControlUnit";
+		static const char * const ACTION_NODE_DEINIT                                = "deinitNodeUnit";
 		
 		//! start the run method schedule for a determinated device
-		static const char * const ACTION_CU_START				= "startControlUnit";
+		static const char * const ACTION_NODE_START                                 = "startNodeUnit";
 		
 		//! pause the run method for a determinated device
-		static const char * const ACTION_CU_STOP				= "stopControlUnit";
+		static const char * const ACTION_NODE_STOP                                  = "stopNodeUnit";
 		
 		//! pause the run method for a determinated device
-		static const char * const ACTION_CU_RESTORE				= "restoreControlUnit";
+		static const char * const ACTION_NODE_RESTORE                               = "restoreNodeUnit";
 		
 		//! restore the control unit to a determinate temporal tag
-		static const char * const ACTION_CU_RESTORE_PARAM_TAG	= "restoreControlUnitTag";
+		static const char * const ACTION_NODE_RESTORE_PARAM_TAG                     = "restoreNodeTag";
 		
 		//! is the name of the temporal tag to use as restore point
-		static const char * const ACTION_CU_GET_STATE			= "getControlUnitState";
+		static const char * const ACTION_NODE_GET_STATE                             = "getNodeState";
 		
 		//! return the control unit information
-		static const char * const ACTION_CU_GET_INFO			= "getControlUnitInfo";
+		static const char * const ACTION_CU_GET_INFO                                = "getNodeInfo";
 		
 	}
-	
-	
+	/** @} */ // end of ChaosSystemDomainAndActionLabel
+    
+    //! enclose all label used by unit server node
+    /** @defgroup UnitServerNodeDomainAndActionLabel Unit Server custom rcp key
+     *  This is the collection of all key used only by unit server
+     *  @{
+     */
+    namespace UnitServerNodeDomainAndActionLabel {
+        
+        //! Action called by mds for ack message in the unit server registration process
+        static const char * const ACTION_UNIT_SERVER_REG_ACK                    = "unitServerRegistrationACK";
+        
+        //! key for the control unit aliases published by the unit server [array fo string]
+        static const char * const MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS       = "unit_server_cu_alias";
+        
+        //! key the addresses the list of the states of the CU for a given Unit Serve   string]
+        static const char * const UNIT_SERVER_CU_STATES                             = "unit_server_cu_states";
+        
+        //! driver params passed during load operation for a specified control unit
+        static const char * const PARAM_CU_LOAD_DRIVER_PARAMS                       = "controlUnitDriverParams";
+        
+        //! Alias to the intancer of the control unit to allocate [string]
+        /*!
+         Represent the control unit type to be load or unload
+         */
+        static const char * const PARAM_CONTROL_UNIT_TYPE_ALIAS                     = "controlUnitTypeAlias";
+        
+        //! param to pass to the control unit during load operation[ string]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_PARAM                     = "loadControlUnitParam";
+        
+        //! Description for the control unit dirvers [vector[string, string, string]*]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC				= "DriverDescription";
+        
+        //! The name of the driver to use[strig]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME			= "DriverDescriptionName";
+        
+        //! The version of the driver to use[strig]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION		= "DriverDescriptionVersion";
+        
+        //! The version of the driver to use[strig]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM	= "DriverDescriptionInitParam";
+
+    }
+	/** @} */ // end of UnitServerNodeDomainAndActionLabel
+    
 	/** @defgroup PerformanceSystemRpcKey Chaos performance system
 	 * this is the collection of the rpc key for interacting with
 	 * internal performance system
@@ -550,87 +695,7 @@ namespace chaos {
 		static const char * const CS_DM_LD_CU_ADDRESS_KEY						= "ld.device_addr_key";
 	}
 	/** @} */ // end of DataProxyConfigurationKey
-	
-	/** @defgroup DataPackPrefixID Chaos Data Prefix
-	 This collection is a set for the prefix used for identify the domain
-	 for the unique id key in chaos data cloud
-	 @{
-	 */
-	//! Namespace for the domain for the unique identification key
-	namespace DataPackPrefixID {
-		static const char * const OUTPUT_DATASE_PREFIX = "_o";
-		static const char * const INPUT_DATASE_PREFIX = "_i";
-		static const char * const CUSTOM_DATASE_PREFIX = "_c";
-		static const char * const SYSTEM_DATASE_PREFIX = "_s";
-	}
-	/** @} */ // end of DataPackPrefixID
-	
-	/** @defgroup DataPackCommonKey Chaos Data Pack common key
-	 This is the collection of the common key that are contained into the
-	 all the dataset of a data producer
-	 @{
-	 */
-	namespace DataPackCommonKey {
-		//!define the device unique key, this represent the primary key of the producer[string]
-		static const char * const DPCK_DEVICE_ID                       = "dpck_device_id";
-		
-		//!this define the acquisition timestamp of the data represented by the dataset[uint64_t]
-		static const char * const DPCK_TIMESTAMP                       = "dpck_ts";
-		
-		//!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) int32_t]
-		static const char * const DPCK_DATASET_TYPE                    = "dpck_ds_type";
-		//! the constant that represent the output dataset type
-		static const unsigned int DPCK_DATASET_TYPE_OUTPUT             = 0;
-		//! the constant that represent the input dataset type
-		static const unsigned int DPCK_DATASET_TYPE_INPUT              = 1;
-		//! the constant that represent the custom dataset type
-		static const unsigned int DPCK_DATASET_TYPE_CUSTOM             = 2;
-		//! the constant that represent the system dataset type
-		static const unsigned int DPCK_DATASET_TYPE_SYSTEM             = 3;
-	}
-	/** @} */ // end of DataPackCommonKey
-	
-	/** @defgroup DataPackKey Chaos Data Pack output attirbute
-	 This is the collection of the standard key that are contained into the output
-	 attribute data pack that describe a producer state
-	 @{
-	 */
-	//! Namespace for standard constant used for output attribute of a producer
-	namespace DataPackOutputKey {
-		//!this define key associated to the trigger
-		static const char * const DPOK_TRIGGER_CODE                   = "dpok_trigger_key";
-	}
-	/** @} */ // end of DataPackKey
-	
-	/** @defgroup DataPackSystemKey Chaos Data Pack for System Attribute
-	 @{
-	 these are the stantdard key for chaos system attirbute
-	 */
-	//! Namespace for standard constant used for system attribute
-	namespace DataPackSystemKey{
-		//!is the ehartbeat of a data producer
-		static const char * const DP_SYS_HEARTBEAT			= "dp_sys_hp";
-		
-		//!is the last error message occurred into data producer
-		static const char * const DP_SYS_UNIT_TYPE			= "dp_sys_unit_type";
-		
-		//!is the last error occurred into the data producer
-		static const char * const DP_SYS_LAST_ERROR			= "dp_sys_lerr";
-		
-		//!is the last error message occurred into data producer
-		static const char * const DP_SYS_LAST_ERROR_MESSAGE	= "dp_sys_lerr_msg";
-		
-		//!is the domain where the last error has occurred into data producer
-		static const char * const DP_SYS_LAST_ERROR_DOMAIN	= "dp_sys_lerr_domain";
-		
-		//!is the number of run unit
-		static const char * const DP_SYS_RUN_UNIT_AVAILABLE	= "dp_sys_ru_available";
-		
-		//!is the run unit identifier
-		static const char * const DP_SYS_RUN_UNIT_ID		= "dp_sys_ru_id";
-		
-	}
-	/** @} */ // end of DataPackSystemKey
+
 	
 	namespace event {
 		/** @defgroup EventConfiguration Chaos event constant for server

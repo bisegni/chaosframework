@@ -37,7 +37,7 @@ namespace chaos {
             //! namespace for data access type collection
             namespace data_access_type {
                 typedef enum DataAccessType {
-                    DataAccessTypeProducer = 0,
+                    DataAccessTypeNode = 0,
                     DataAccessTypeUnitServer = 1
                 } DataAccessType;
             }
@@ -51,9 +51,9 @@ namespace chaos {
             class AbstractPersistenceDriver:
             public common::utility::NamedService,
             public common::utility::InizializableService {
-                
+            protected:
                 //!data access instances
-                AbstractDataAccess *producer_da_instance;
+                AbstractDataAccess *node_da_instance;
                 AbstractDataAccess *unit_server_da_instance;
             protected:
                 
@@ -68,8 +68,8 @@ namespace chaos {
                     T *instance = (T*)i->getInstance(param_1);
                     if(instance) {
                         switch(da_type) {
-                            case data_access_type::DataAccessTypeProducer:
-                                producer_da_instance = instance;
+                            case data_access_type::DataAccessTypeNode:
+                                node_da_instance = instance;
                                 break;
                                 
                             case data_access_type::DataAccessTypeUnitServer:
@@ -94,10 +94,10 @@ namespace chaos {
                 void deinit() throw (chaos::CException);
                 
                 //! return the implementation of the producer data access
-                data_access::ProducerDataAccess *getProducerDataAccess();
+                virtual data_access::UnitServerDataAccess *getUnitServerDataAccess();
                 
                 //! return the implementation of the unit server data access
-                data_access::UnitServerDataAccess *getUnitServerDataAccess();
+                virtual data_access::NodeDataAccess *getNodeDataAccess();
 
             };
             

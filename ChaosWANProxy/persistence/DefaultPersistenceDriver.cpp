@@ -231,5 +231,5 @@ int DefaultPersistenceDriver::registerDataset(const std::string& producer_key,
 	last_dataset.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, producer_key);
 	last_dataset.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN, chaos::common::utility::UUIDUtil::generateUUIDLite());
 	last_dataset.addStringValue("mds_control_key","none");
-	return mds_message_channel->sendUnitDescription(last_dataset, true, 3000);
+	return mds_message_channel->sendNodeRegistration(last_dataset, true, 3000);
 }

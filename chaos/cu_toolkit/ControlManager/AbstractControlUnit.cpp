@@ -164,6 +164,9 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
 	
 	//undocumented field
 	setupConfiguration.addStringValue("mds_control_key", control_key);
+    
+    //add the control unit type with semantonc type::subtype
+    setupConfiguration.addStringValue(NodeDefinitionKey::NODE_TYPE, boost::str(boost::format("%1%:%2%") % NodeType::NODE_TYPE_CONTROL_UNIT % control_unit_type));
 	
 	//check if as been setuped a file for configuration
 	//LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
@@ -193,34 +196,34 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
 	ACULDBG_ << "Register initDevice action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_init,
-													 ChaosSystemDomainAndActionLabel::ACTION_CU_INIT,
+													 ChaosSystemDomainAndActionLabel::ACTION_NODE_INIT,
 													 "Perform the control unit initialization");
 	
 	ACULDBG_ << "Register deinitDevice action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_deinit,
-													 ChaosSystemDomainAndActionLabel::ACTION_CU_DEINIT,
+													 ChaosSystemDomainAndActionLabel::ACTION_NODE_DEINIT,
 													 "Perform the control unit deinitialization");
 	ACULDBG_ << "Register startDevice action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_start,
-													 ChaosSystemDomainAndActionLabel::ACTION_CU_START,
+													 ChaosSystemDomainAndActionLabel::ACTION_NODE_START,
 													 "Start the control unit scheduling");
 	
 	ACULDBG_ << "Register stopDevice action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_stop,
-													 ChaosSystemDomainAndActionLabel::ACTION_CU_STOP,
+													 ChaosSystemDomainAndActionLabel::ACTION_NODE_STOP,
 													 "Stop the control unit scheduling");
 	ACULDBG_ << "Register restoreDevice action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_unitRestoreToSnapshot,
-													 ChaosSystemDomainAndActionLabel::ACTION_CU_RESTORE,
+													 ChaosSystemDomainAndActionLabel::ACTION_NODE_RESTORE,
 													 "Restore contorl unit to a snapshot tag");
 	ACULDBG_ << "Register getState action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_getState,
-													 ChaosSystemDomainAndActionLabel::ACTION_CU_GET_STATE,
+													 ChaosSystemDomainAndActionLabel::ACTION_NODE_GET_STATE,
 													 "Get the state of the running control unit");
 	ACULDBG_ << "Register getInfo action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
@@ -472,7 +475,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 														  bool& detachParam) throw(CException) {
 	int err = 0;
 	//check
-	if(!restoreParam || !restoreParam->hasKey(ChaosSystemDomainAndActionLabel::ACTION_CU_RESTORE_PARAM_TAG)) return NULL;
+	if(!restoreParam || !restoreParam->hasKey(ChaosSystemDomainAndActionLabel::ACTION_NODE_RESTORE_PARAM_TAG)) return NULL;
 	
 	if(getServiceState() != service_state_machine::InizializableServiceType::IS_INITIATED &&
 	   getServiceState() != service_state_machine::StartableServiceType::SS_STARTED ) {
@@ -486,7 +489,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 	
 	boost::shared_ptr<CDataWrapper> dataset_at_tag;
 	//get tag alias
-	const std::string restore_snapshot_tag = restoreParam->getStringValue(ChaosSystemDomainAndActionLabel::ACTION_CU_RESTORE_PARAM_TAG);
+	const std::string restore_snapshot_tag = restoreParam->getStringValue(ChaosSystemDomainAndActionLabel::ACTION_NODE_RESTORE_PARAM_TAG);
 	
 	ACULDBG_ << "Start restoring snapshot tag for: " << restore_snapshot_tag;
 	

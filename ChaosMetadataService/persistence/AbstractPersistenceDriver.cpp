@@ -42,14 +42,14 @@ void AbstractPersistenceDriver::init(void *init_data) throw (chaos::CException) 
 
 // deinitialize the driver
 void AbstractPersistenceDriver::deinit() throw (chaos::CException) {
-    CHK_AND_DELETE_OBJ_POINTER(producer_da_instance)
+    CHK_AND_DELETE_OBJ_POINTER(node_da_instance)
     CHK_AND_DELETE_OBJ_POINTER(unit_server_da_instance)
 }
 
 // return the implementation of the producer data access
-data_access::ProducerDataAccess *AbstractPersistenceDriver::getProducerDataAccess() {
-    CHAOS_ASSERT(producer_da_instance)
-    return (data_access::ProducerDataAccess *)producer_da_instance;
+data_access::NodeDataAccess *AbstractPersistenceDriver::getNodeDataAccess() {
+    CHAOS_ASSERT(node_da_instance)
+    return (data_access::NodeDataAccess *)node_da_instance;
 }
 
 // return the implementation of the unit server data access

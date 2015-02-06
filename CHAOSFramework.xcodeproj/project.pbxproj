@@ -59,8 +59,7 @@
 		3235FDC71A6FF43000EC83A9 /* ProducerApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDC51A6FF43000EC83A9 /* ProducerApiGroup.cpp */; };
 		3235FDCA1A6FF45600EC83A9 /* ProducerRegisterApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDC81A6FF45600EC83A9 /* ProducerRegisterApi.cpp */; };
 		3235FDCF1A6FF56D00EC83A9 /* AbstractDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDCD1A6FF56D00EC83A9 /* AbstractDataAccess.cpp */; };
-		3235FDD31A6FF71600EC83A9 /* ProducerDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDD11A6FF71600EC83A9 /* ProducerDataAccess.cpp */; };
-		3235FDD61A6FF8A800EC83A9 /* MongoDBProducerDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDD41A6FF8A800EC83A9 /* MongoDBProducerDataAccess.cpp */; };
+		3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServderDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDD41A6FF8A800EC83A9 /* MongoDBUnitServderDataAccess.cpp */; };
 		3235FDD91A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDD71A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
@@ -316,18 +315,18 @@
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */; };
 		328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 328CC9D51763CCC7000B30B6 /* AbstractDriver.h */; };
-		328D0FFC1A936C45001A2001 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D0FFB1A936C45001A2001 /* main.cpp */; };
-		328D10021A936DB4001A2001 /* QueryTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D10001A936DB4001A2001 /* QueryTest.cpp */; };
+		328D0FF11A8A034E001A2001 /* NodeSearchAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D0FEF1A8A034E001A2001 /* NodeSearchAPI.cpp */; };
+		328D0FF41A8A0862001A2001 /* UnitServerDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D0FF21A8A0862001A2001 /* UnitServerDataAccess.cpp */; };
 		328E36EB1786B89500C1564D /* PluginLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E36EA1786B89500C1564D /* PluginLoader.cpp */; };
 		328E36ED1786C00D00C1564D /* PluginDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E36EC1786C00D00C1564D /* PluginDefinition.h */; };
 		328E405D17287B82004E5938 /* LFDataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E405B17287B82004E5938 /* LFDataCache.cpp */; };
 		328E405E17287B82004E5938 /* LFDataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E405C17287B82004E5938 /* LFDataCache.h */; };
-		328E77FF1A7A94140008C070 /* UnitServerApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E77FD1A7A94140008C070 /* UnitServerApiGroup.cpp */; };
-		328E78021A7A94810008C070 /* UnitServerRegisterApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78001A7A94810008C070 /* UnitServerRegisterApi.cpp */; };
+		328E77FF1A7A94140008C070 /* NodeApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E77FD1A7A94140008C070 /* NodeApiGroup.cpp */; };
+		328E78021A7A94810008C070 /* NodeRegisterApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78001A7A94810008C070 /* NodeRegisterApi.cpp */; };
 		328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78031A7A9F430008C070 /* AbstractApiGroup.cpp */; };
 		328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78051A7A9FE40008C070 /* AbstractApi.cpp */; };
-		328E78091A7AAA070008C070 /* UnitServerDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78071A7AAA070008C070 /* UnitServerDataAccess.cpp */; };
-		328E780C1A7AAB640008C070 /* MongoDBUnitServerDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E780A1A7AAB640008C070 /* MongoDBUnitServerDataAccess.cpp */; };
+		328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78071A7AAA070008C070 /* NodeDataAccess.cpp */; };
+		328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E780A1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp */; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
 		32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32919A091764E68F00724874 /* DriverAccessor.cpp */; };
 		32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32919A0A1764E68F00724874 /* DriverAccessor.h */; };
@@ -542,15 +541,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		328D0FF71A936C45001A2001 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 		32B1090B188C1D6200969D3D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -654,10 +644,8 @@
 		3235FDCB1A6FF51D00EC83A9 /* persistence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = persistence.h; sourceTree = "<group>"; };
 		3235FDCD1A6FF56D00EC83A9 /* AbstractDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDataAccess.cpp; sourceTree = "<group>"; };
 		3235FDCE1A6FF56D00EC83A9 /* AbstractDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDataAccess.h; sourceTree = "<group>"; };
-		3235FDD11A6FF71600EC83A9 /* ProducerDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProducerDataAccess.cpp; sourceTree = "<group>"; };
-		3235FDD21A6FF71600EC83A9 /* ProducerDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProducerDataAccess.h; sourceTree = "<group>"; };
-		3235FDD41A6FF8A800EC83A9 /* MongoDBProducerDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBProducerDataAccess.cpp; sourceTree = "<group>"; };
-		3235FDD51A6FF8A800EC83A9 /* MongoDBProducerDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBProducerDataAccess.h; sourceTree = "<group>"; };
+		3235FDD41A6FF8A800EC83A9 /* MongoDBUnitServderDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBUnitServderDataAccess.cpp; sourceTree = "<group>"; };
+		3235FDD51A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBUnitServerDataAccess.h; sourceTree = "<group>"; };
 		3235FDD71A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBPersistenceDriver.cpp; sourceTree = "<group>"; };
 		3235FDD81A6FFA6600EC83A9 /* MongoDBPersistenceDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBPersistenceDriver.h; sourceTree = "<group>"; };
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
@@ -946,24 +934,24 @@
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
 		328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriver.cpp; sourceTree = "<group>"; };
 		328CC9D51763CCC7000B30B6 /* AbstractDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDriver.h; sourceTree = "<group>"; };
-		328D0FF91A936C45001A2001 /* TestCDSQuery */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestCDSQuery; sourceTree = BUILT_PRODUCTS_DIR; };
-		328D0FFB1A936C45001A2001 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		328D10001A936DB4001A2001 /* QueryTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryTest.cpp; sourceTree = "<group>"; };
-		328D10011A936DB4001A2001 /* QueryTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryTest.h; sourceTree = "<group>"; };
+		328D0FEF1A8A034E001A2001 /* NodeSearchAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeSearchAPI.cpp; sourceTree = "<group>"; };
+		328D0FF01A8A034E001A2001 /* NodeSearchAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeSearchAPI.h; sourceTree = "<group>"; };
+		328D0FF21A8A0862001A2001 /* UnitServerDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitServerDataAccess.cpp; sourceTree = "<group>"; };
+		328D0FF31A8A0862001A2001 /* UnitServerDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitServerDataAccess.h; sourceTree = "<group>"; };
 		328E36EA1786B89500C1564D /* PluginLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginLoader.cpp; sourceTree = "<group>"; };
 		328E36EC1786C00D00C1564D /* PluginDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDefinition.h; sourceTree = "<group>"; };
 		328E405B17287B82004E5938 /* LFDataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LFDataCache.cpp; sourceTree = "<group>"; };
 		328E405C17287B82004E5938 /* LFDataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFDataCache.h; sourceTree = "<group>"; };
-		328E77FD1A7A94140008C070 /* UnitServerApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitServerApiGroup.cpp; sourceTree = "<group>"; };
-		328E77FE1A7A94140008C070 /* UnitServerApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitServerApiGroup.h; sourceTree = "<group>"; };
-		328E78001A7A94810008C070 /* UnitServerRegisterApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitServerRegisterApi.cpp; sourceTree = "<group>"; };
-		328E78011A7A94810008C070 /* UnitServerRegisterApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitServerRegisterApi.h; sourceTree = "<group>"; };
+		328E77FD1A7A94140008C070 /* NodeApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeApiGroup.cpp; sourceTree = "<group>"; };
+		328E77FE1A7A94140008C070 /* NodeApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeApiGroup.h; sourceTree = "<group>"; };
+		328E78001A7A94810008C070 /* NodeRegisterApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeRegisterApi.cpp; sourceTree = "<group>"; };
+		328E78011A7A94810008C070 /* NodeRegisterApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRegisterApi.h; sourceTree = "<group>"; };
 		328E78031A7A9F430008C070 /* AbstractApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApiGroup.cpp; sourceTree = "<group>"; };
 		328E78051A7A9FE40008C070 /* AbstractApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApi.cpp; sourceTree = "<group>"; };
-		328E78071A7AAA070008C070 /* UnitServerDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitServerDataAccess.cpp; sourceTree = "<group>"; };
-		328E78081A7AAA070008C070 /* UnitServerDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitServerDataAccess.h; sourceTree = "<group>"; };
-		328E780A1A7AAB640008C070 /* MongoDBUnitServerDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBUnitServerDataAccess.cpp; sourceTree = "<group>"; };
-		328E780B1A7AAB640008C070 /* MongoDBUnitServerDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBUnitServerDataAccess.h; sourceTree = "<group>"; };
+		328E78071A7AAA070008C070 /* NodeDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeDataAccess.cpp; sourceTree = "<group>"; };
+		328E78081A7AAA070008C070 /* NodeDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeDataAccess.h; sourceTree = "<group>"; };
+		328E780A1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBNodeDataAccess.cpp; sourceTree = "<group>"; };
+		328E780B1A7AAB640008C070 /* MongoDBNodeDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBNodeDataAccess.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
 		32919A091764E68F00724874 /* DriverAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DriverAccessor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32919A0A1764E68F00724874 /* DriverAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DriverAccessor.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1216,7 +1204,7 @@
 		32FC7EDD1A70064E0029C2A2 /* MongoDBHAConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBHAConnectionManager.h; sourceTree = "<group>"; };
 		32FC7EDF1A7008780029C2A2 /* mds_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_constants.h; sourceTree = "<group>"; };
 		32FC7EE01A7008FA0029C2A2 /* mds_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_types.h; sourceTree = "<group>"; };
-		32FC7EE11A701BE40029C2A2 /* AbstractApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
+		32FC7EE11A701BE40029C2A2 /* AbstractApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AbstractApi.h; path = ../AbstractApi.h; sourceTree = "<group>"; };
 		32FC7EE21A701D8E0029C2A2 /* AbstractApiGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractApiGroup.h; sourceTree = "<group>"; };
 		32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiManagment.cpp; sourceTree = "<group>"; };
 		32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiManagment.h; sourceTree = "<group>"; };
@@ -1260,13 +1248,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		3260278414B307DA00C906CE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		328D0FF61A936C45001A2001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1473,10 +1454,10 @@
 				3235FDD81A6FFA6600EC83A9 /* MongoDBPersistenceDriver.h */,
 				32D24FB01A7AAEF8002D65CE /* MongoDBAccessor.cpp */,
 				32D24FB11A7AAEF8002D65CE /* MongoDBAccessor.h */,
-				3235FDD41A6FF8A800EC83A9 /* MongoDBProducerDataAccess.cpp */,
-				3235FDD51A6FF8A800EC83A9 /* MongoDBProducerDataAccess.h */,
-				328E780A1A7AAB640008C070 /* MongoDBUnitServerDataAccess.cpp */,
-				328E780B1A7AAB640008C070 /* MongoDBUnitServerDataAccess.h */,
+				3235FDD41A6FF8A800EC83A9 /* MongoDBUnitServderDataAccess.cpp */,
+				3235FDD51A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.h */,
+				328E780A1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp */,
+				328E780B1A7AAB640008C070 /* MongoDBNodeDataAccess.h */,
 				32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */,
 			);
 			path = mongodb;
@@ -1485,10 +1466,10 @@
 		3235FDD01A6FF66100EC83A9 /* data_access */ = {
 			isa = PBXGroup;
 			children = (
-				3235FDD11A6FF71600EC83A9 /* ProducerDataAccess.cpp */,
-				3235FDD21A6FF71600EC83A9 /* ProducerDataAccess.h */,
-				328E78071A7AAA070008C070 /* UnitServerDataAccess.cpp */,
-				328E78081A7AAA070008C070 /* UnitServerDataAccess.h */,
+				328E78071A7AAA070008C070 /* NodeDataAccess.cpp */,
+				328E78081A7AAA070008C070 /* NodeDataAccess.h */,
+				328D0FF21A8A0862001A2001 /* UnitServerDataAccess.cpp */,
+				328D0FF31A8A0862001A2001 /* UnitServerDataAccess.h */,
 				32D24FAF1A7AAD15002D65CE /* DataAccess.h */,
 			);
 			path = data_access;
@@ -1674,7 +1655,6 @@
 				323236D8164573F50052CE06 /* ChaosDataService */,
 				32B1090E188C1D6200969D3D /* TestAsyncRpc */,
 				3258AF011935EE4D00A66D44 /* ArchitectureTest */,
-				328D0FFA1A936C45001A2001 /* TestCDSQuery */,
 				3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */,
 				3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */,
 				3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */,
@@ -1683,7 +1663,6 @@
 				32B1090D188C1D6200969D3D /* TestAsyncRpc */,
 				3258AF001935EE4D00A66D44 /* EchitectureTests */,
 				32C7EAD41A5D9E450008DFE8 /* ChaosWANProxy */,
-				328D0FF91A936C45001A2001 /* TestCDSQuery */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2263,25 +2242,18 @@
 			path = driver;
 			sourceTree = "<group>";
 		};
-		328D0FFA1A936C45001A2001 /* TestCDSQuery */ = {
+		328E77FC1A7A937D0008C070 /* node */ = {
 			isa = PBXGroup;
 			children = (
-				328D0FFB1A936C45001A2001 /* main.cpp */,
-				328D10001A936DB4001A2001 /* QueryTest.cpp */,
-				328D10011A936DB4001A2001 /* QueryTest.h */,
+				328E77FD1A7A94140008C070 /* NodeApiGroup.cpp */,
+				328E77FE1A7A94140008C070 /* NodeApiGroup.h */,
+				328E78001A7A94810008C070 /* NodeRegisterApi.cpp */,
+				328E78011A7A94810008C070 /* NodeRegisterApi.h */,
+				328D0FEF1A8A034E001A2001 /* NodeSearchAPI.cpp */,
+				328D0FF01A8A034E001A2001 /* NodeSearchAPI.h */,
+				32FC7EE11A701BE40029C2A2 /* AbstractApi.h */,
 			);
-			path = TestCDSQuery;
-			sourceTree = "<group>";
-		};
-		328E77FC1A7A937D0008C070 /* unit_server */ = {
-			isa = PBXGroup;
-			children = (
-				328E77FD1A7A94140008C070 /* UnitServerApiGroup.cpp */,
-				328E77FE1A7A94140008C070 /* UnitServerApiGroup.h */,
-				328E78001A7A94810008C070 /* UnitServerRegisterApi.cpp */,
-				328E78011A7A94810008C070 /* UnitServerRegisterApi.h */,
-			);
-			path = unit_server;
+			path = node;
 			sourceTree = "<group>";
 		};
 		32954969176B90A800B5A064 /* driver_manager */ = {
@@ -2572,10 +2544,9 @@
 		32C7B8FA16DD35D7005B3B21 /* api */ = {
 			isa = PBXGroup;
 			children = (
-				328E77FC1A7A937D0008C070 /* unit_server */,
+				328E77FC1A7A937D0008C070 /* node */,
 				3235FDC41A6FF40100EC83A9 /* producer */,
 				328E78051A7A9FE40008C070 /* AbstractApi.cpp */,
-				32FC7EE11A701BE40029C2A2 /* AbstractApi.h */,
 				328E78031A7A9F430008C070 /* AbstractApiGroup.cpp */,
 				32FC7EE21A701D8E0029C2A2 /* AbstractApiGroup.h */,
 				32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */,
@@ -3152,23 +3123,6 @@
 			productReference = 3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		328D0FF81A936C45001A2001 /* TestCDSQuery */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 328D0FFF1A936C45001A2001 /* Build configuration list for PBXNativeTarget "TestCDSQuery" */;
-			buildPhases = (
-				328D0FF51A936C45001A2001 /* Sources */,
-				328D0FF61A936C45001A2001 /* Frameworks */,
-				328D0FF71A936C45001A2001 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = TestCDSQuery;
-			productName = TestCDSQuery;
-			productReference = 328D0FF91A936C45001A2001 /* TestCDSQuery */;
-			productType = "com.apple.product-type.tool";
-		};
 		32B1090C188C1D6200969D3D /* TestAsyncRpc */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 32B10913188C1D6200969D3D /* Build configuration list for PBXNativeTarget "TestAsyncRpc" */;
@@ -3212,9 +3166,6 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = INFN;
 				TargetAttributes = {
-					328D0FF81A936C45001A2001 = {
-						CreatedOnToolsVersion = 6.1.1;
-					};
 					32C7EAD31A5D9E450008DFE8 = {
 						CreatedOnToolsVersion = 6.1;
 					};
@@ -3240,7 +3191,6 @@
 				323236D5164573F50052CE06 /* ChaosDataService */,
 				32B1090C188C1D6200969D3D /* TestAsyncRpc */,
 				3258AEFF1935EE4C00A66D44 /* EchitectureTests */,
-				328D0FF81A936C45001A2001 /* TestCDSQuery */,
 			);
 		};
 /* End PBXProject section */
@@ -3267,25 +3217,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
-				3235FDD31A6FF71600EC83A9 /* ProducerDataAccess.cpp in Sources */,
-				328E77FF1A7A94140008C070 /* UnitServerApiGroup.cpp in Sources */,
+				328E77FF1A7A94140008C070 /* NodeApiGroup.cpp in Sources */,
 				320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */,
 				3235FDCA1A6FF45600EC83A9 /* ProducerRegisterApi.cpp in Sources */,
 				3235FDD91A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp in Sources */,
 				32D24FB21A7AAEF8002D65CE /* MongoDBAccessor.cpp in Sources */,
-				328E78021A7A94810008C070 /* UnitServerRegisterApi.cpp in Sources */,
+				328E78021A7A94810008C070 /* NodeRegisterApi.cpp in Sources */,
 				32C7EAE31A5EC1140008DFE8 /* AbstractPersistenceDriver.cpp in Sources */,
 				323236CB164573C60052CE06 /* main.cpp in Sources */,
 				32FA1EF31A7A462200A46800 /* MDSBatchCommand.cpp in Sources */,
-				3235FDD61A6FF8A800EC83A9 /* MongoDBProducerDataAccess.cpp in Sources */,
+				328D0FF41A8A0862001A2001 /* UnitServerDataAccess.cpp in Sources */,
+				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServderDataAccess.cpp in Sources */,
 				3235FDCF1A6FF56D00EC83A9 /* AbstractDataAccess.cpp in Sources */,
 				32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */,
+				328D0FF11A8A034E001A2001 /* NodeSearchAPI.cpp in Sources */,
 				328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */,
 				32FC7EDE1A70064E0029C2A2 /* MongoDBHAConnectionManager.cpp in Sources */,
 				32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */,
-				328E780C1A7AAB640008C070 /* MongoDBUnitServerDataAccess.cpp in Sources */,
+				328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
-				328E78091A7AAA070008C070 /* UnitServerDataAccess.cpp in Sources */,
+				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* ProducerApiGroup.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3512,15 +3463,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		328D0FF51A936C45001A2001 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				328D10021A936DB4001A2001 /* QueryTest.cpp in Sources */,
-				328D0FFC1A936C45001A2001 /* main.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		32B10909188C1D6200969D3D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3584,13 +3526,8 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
-					/usr/local/include,
-					/usr/include,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/usr/local/lib",
-					/usr/local/lib,
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
@@ -3633,13 +3570,8 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
-					/usr/local/include,
-					/usr/include,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/usr/local/lib",
-					/usr/local/lib,
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
@@ -3687,13 +3619,8 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
-					/usr/local/include,
-					/usr/include,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"$(SRCROOT)/usr/local/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
@@ -3737,13 +3664,8 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
-					/usr/local/include,
-					/usr/include,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"$(SRCROOT)/usr/local/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
@@ -3924,11 +3846,14 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
+					/usr/local/include,
+					/usr/include,
 				);
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3970,11 +3895,14 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
+					/usr/local/include,
+					/usr/include,
 				);
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
@@ -4004,7 +3932,7 @@
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /;
 				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -4021,9 +3949,14 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
+					/usr/local/include,
+					/usr/include,
 				);
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
@@ -4053,7 +3986,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DSTROOT = /;
 				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -4063,9 +3996,14 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
+					/usr/local/include,
+					/usr/include,
 				);
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
@@ -4110,9 +4048,14 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
+					/usr/local/include,
+					/usr/include,
 				);
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
@@ -4152,9 +4095,14 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
+					/usr/local/include,
+					/usr/include,
 				);
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
@@ -4174,132 +4122,11 @@
 			};
 			name = Release;
 		};
-		328D0FFD1A936C45001A2001 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
-				CLANG_CXX_LIBRARY = "libstdc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					.,
-					usr/local/include,
-					/usr/local/include,
-					/usr/include,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"$(SRCROOT)/usr/local/lib",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
-					"-lchaos_common",
-					"-lboost_log_setup",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		328D0FFE1A936C45001A2001 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
-				CLANG_CXX_LIBRARY = "libstdc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					.,
-					usr/local/include,
-					/usr/local/include,
-					/usr/include,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"$(SRCROOT)/usr/local/lib",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
-					"-lchaos_common",
-					"-lboost_log_setup",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
 		32B10914188C1D6200969D3D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -4361,7 +4188,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -4604,15 +4431,6 @@
 			buildConfigurations = (
 				3260278914B307DA00C906CE /* Debug */,
 				3260278A14B307DA00C906CE /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		328D0FFF1A936C45001A2001 /* Build configuration list for PBXNativeTarget "TestCDSQuery" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				328D0FFD1A936C45001A2001 /* Debug */,
-				328D0FFE1A936C45001A2001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -60,33 +60,17 @@ int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset, bool 
 
 
 //! Send unit server description to MDS
-int MDSMessageChannel::sendUnitServerRegistration(CDataWrapper& deviceDataset, bool requestCheck, uint32_t millisecToWait) {
+int MDSMessageChannel::sendNodeRegistration(CDataWrapper& deviceDataset, bool requestCheck, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     string currentBrokerIpPort;
     getBroker()->getPublishedHostAndPort(currentBrokerIpPort);
     deviceDataset.addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort.c_str());
     if(requestCheck){
-        auto_ptr<CDataWrapper> deviceRegistrationCheck( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER, &deviceDataset, millisecToWait));
+        auto_ptr<CDataWrapper> deviceRegistrationCheck( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_REGISTER_NODE, &deviceDataset, millisecToWait));
         CHECK_TIMEOUT_AND_RESULT_CODE(deviceRegistrationCheck, err)
     } else {
-        MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER, &deviceDataset);
+        MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_REGISTER_NODE, &deviceDataset);
     }
-    return err;
-}
-
-    //! Send dataset to MDS
-int MDSMessageChannel::sendUnitDescription(CDataWrapper& deviceDataset, bool requestCheck, uint32_t millisecToWait) {
-    int err = ErrorCode::EC_NO_ERROR;
-    string currentBrokerIpPort;
-    getBroker()->getPublishedHostAndPort(currentBrokerIpPort);
-    deviceDataset.addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort.c_str());
-    if(requestCheck){
-        auto_ptr<CDataWrapper> deviceRegistrationCheck( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_REGISTER_CONTROL_UNIT, &deviceDataset, millisecToWait));
-        CHECK_TIMEOUT_AND_RESULT_CODE(deviceRegistrationCheck, err)
-    } else {
-        MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), "registerControlUnit", &deviceDataset);
-    }
-    
     return err;
 }
 

@@ -1,9 +1,9 @@
 /*
- *	UnitServerRegisterApi.h
+ *	NodeSearchAPI.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,22 +17,24 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__UnitServerRegisterApi__
-#define __CHAOSFramework__UnitServerRegisterApi__
+#ifndef __CHAOSFramework__NodeSearchAPI__
+#define __CHAOSFramework__NodeSearchAPI__
 
 #include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {
         namespace api {
-            namespace unit_server {
+            namespace node {
                 
-                class UnitServerRegisterApi:
+                class NodeSearchApi:
                 public AbstractApi {
+                    
                 public:
-                    UnitServerRegisterApi();
-                    ~UnitServerRegisterApi();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) throw(chaos::CException);
+                    NodeSearchApi();
+                    ~NodeSearchApi();
+                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
+                                                               bool& detach_data) throw(chaos::CException);
                 };
                 
             }
@@ -41,6 +43,4 @@ namespace chaos {
 }
 
 
-
-
-#endif /* defined(__CHAOSFramework__UnitServerRegisterApi__) */
+#endif /* defined(__CHAOSFramework__NodeSearchAPI__) */

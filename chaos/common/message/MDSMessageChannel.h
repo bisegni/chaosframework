@@ -62,7 +62,7 @@ namespace chaos {
 				 \param requestCheck flasg the message has request if it is true
 				 \param millisecToWait delay after wich the wait is interrupt
 				 */
-				int sendUnitServerRegistration(CDataWrapper& unitServerDescription, bool requestCheck = false, uint32_t millisecToWait = 0);
+				int sendNodeRegistration(CDataWrapper& unitServerDescription, bool requestCheck = false, uint32_t millisecToWait = 0);
 				
                 //! Send Unit server CU states to MDS
 				/*!
@@ -73,16 +73,6 @@ namespace chaos {
 				 */
 
                 int sendUnitServerCUStates(CDataWrapper& deviceDataset, bool requestCheck= false, uint32_t millisecToWait=0);
-                    
-                    
-				//! Send dataset to MDS
-				/*!
-				 Perform the registration of the control unit dataaset
-				 \param deviceDataset the CDatawrapper representi the device dataset infromation, th epointer is not disposed
-				 \param requestCheck flasg the message has request if it is true
-				 \param millisecToWait delay after wich the wait is interrupt
-				 */
-				int sendUnitDescription(CDataWrapper& deviceDataset, bool requestCheck=false, uint32_t millisecToWait=0);
 				
 				//! Get all active device id
 				/*!

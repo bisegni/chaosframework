@@ -81,17 +81,17 @@ void UnitServerAckCommand::ccHandler() {
     MDSBatchCommand::ccHandler();
     auto_ptr<CDataWrapper> result;
     USAC_INFO << "execute ccHandler";
-    if(retry_number++ > 3) {
-        USAC_INFO << "We have exeeced the number of retry this is the last retry for unit server act to " << remote_unitserver_ip_port;
-        BC_END_RUNNIG_PROPERTY;
-    }
-    
+    retry_number++;
     result.reset(message_channel->sendRequest("system",
-                                              chaos::ChaosSystemDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
+                                              UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
                                               message_data,
                                               1000));
     if(message_channel->getLastErrorCode() != 0) {
         USAC_INFO << "error sending message to the unit server " << remote_unitserver_ip_port;
+        if(retry_number > 3) {
+            USAC_INFO << "We have exeeced the number of retry this is the last retry for unit server act to " << remote_unitserver_ip_port;
+            BC_END_RUNNIG_PROPERTY;
+        }
     } else {
         BC_END_RUNNIG_PROPERTY;
     }

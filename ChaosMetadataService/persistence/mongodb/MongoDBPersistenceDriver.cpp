@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 #include "MongoDBPersistenceDriver.h"
-#include "MongoDBProducerDataAccess.h"
 #include "MongoDBUnitServerDataAccess.h"
+#include "MongoDBNodeDataAccess.h"
 
 #include "../../mds_types.h"
 
@@ -49,10 +49,13 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
 													_setting->persistence_kv_param_map));
     
     //register the data access implementations
-    registerDataAccess<MongoDBProducerDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>& >(data_access_type::DataAccessTypeProducer,
-                                                                                                         connection);
     registerDataAccess<MongoDBUnitServerDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>& >(data_access_type::DataAccessTypeUnitServer,
+                                                                                                         connection);
+    registerDataAccess<MongoDBNodeDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>& >(data_access_type::DataAccessTypeNode,
                                                                                                            connection);
+    
+    //connec usda with nda
+    ((MongoDBUnitServerDataAccess*) unit_server_da_instance)->node_data_access = (MongoDBNodeDataAccess*) node_da_instance;
 }
 void MongoDBPersistenceDriver::deinit() throw (chaos::CException) {
 	connection.reset();

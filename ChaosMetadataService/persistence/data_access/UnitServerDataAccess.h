@@ -18,7 +18,6 @@
  *    	limitations under the License.
  */
 
-
 #ifndef __CHAOSFramework__UnitServerDataAccess__
 #define __CHAOSFramework__UnitServerDataAccess__
 
@@ -37,39 +36,28 @@ namespace chaos {
                     //! default constructor
                     UnitServerDataAccess();
                     
-                    //! defautl destructor
+                    //!default destructor
                     ~UnitServerDataAccess();
-                    
-                    //! insert a new device with name and property
-                    /*!
-                     the API receive a pack like the following one:
-                     { 
-                        //is the alias of the remote unit server
-                        "unit_server_alias": "unit server alias",
-                        
-                        //are the control unit that are hosted on remote server
-                        "unit_server_cu_alias": [ "Control Unit Class", "Control Unit Class" ],
-                     
-                        // is the rpc address where server respond
-                        "cu_instance_net_address": "unit server RPC address host:port"
-                     }
-                    \param unit_server_description unit server key,value description
-                     */
-                    virtual int insertNewUnitServer(chaos::common::data::CDataWrapper& unit_server_description) = 0;
-                    
-                    //! check if a unit server identified by unique id is preset
-                    /*!
-                     \param unit_server_alias unit server unique id
-                     \param presence = true if the unit server is present
-                     */
-                    virtual int checkUnitServerPresence(const std::string& unit_server_alias, bool& presence) = 0;
                     
                     //! update the unit server information
                     /*!
                      \param unit_server_description unit server key,value description
                      */
-                    virtual int updateUnitServer(chaos::common::data::CDataWrapper& unit_server_description) = 0;
+                    virtual int insertNewUS(chaos::common::data::CDataWrapper& unit_server_description) = 0;
+                    
+                    //!check if the unit server is present
+                    virtual int checkUSPresence(const std::string& unit_server_alias, bool& presence) = 0;
+                    
+                    //! update the unit server information
+                    /*!
+                     \param unit_server_description unit server key,value description
+                     */
+                    virtual int updateUS(chaos::common::data::CDataWrapper& unit_server_description) = 0;
+                    
+                    //! delete a unit server
+                    virtual int deleteUS(const std::string& unit_server_unique_id) = 0;
                 };
+                
                 
             }
         }

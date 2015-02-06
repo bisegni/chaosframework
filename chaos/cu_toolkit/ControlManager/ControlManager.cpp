@@ -67,23 +67,23 @@ ControlManager::~ControlManager() {
  */
 void ControlManager::init(void *initParameter) throw(CException) {
 	//control manager action initialization
-    
+
 	AbstActionDescShrPtr actionDescription;
 	use_unit_server =	GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ENABLE) &&
 	GlobalConfiguration::getInstance()->getOption<bool>(CONTROL_MANAGER_UNIT_SERVER_ENABLE);
-	
+
 	LCMAPP_ << "Get the Metadataserver channel";
 	mds_channel = CommandManager::getInstance()->getMetadataserverChannel();
 	if(mds_channel) LCMAPP_ << "Metadataserver has been allocated";
 	else throw CException(-2, "Error allcoating metadata server channel", __PRETTY_FUNCTION__);
-	
+
     if(use_unit_server) {
 		LCMAPP_  << "Enable unit server";
-		
+
 		if(!GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ALIAS)) {
 			throw CException(-1, "No server alias param found", __PRETTY_FUNCTION__);
 		}
-		
+
 		if(GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_KEY)) {
 			//a key file need to be used to publish the server
 			fs::path key_file_path(GlobalConfiguration::getInstance()->getOption<string>(CONTROL_MANAGER_UNIT_SERVER_KEY));
@@ -100,51 +100,54 @@ void ControlManager::init(void *initParameter) throw(CException) {
 			} else {
 				LCMERR_ << "Key file not found";
 			}
-			
-			
+
+
 		}
-		
+
 		unit_server_alias = GlobalConfiguration::getInstance()->getOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
-		
+
 		//init CU action
 		actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
 																					   &ControlManager::loadControlUnit,
 																					   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
-																					   ChaosSystemDomainAndActionLabel::ACTION_LOAD_CONTROL_UNIT,
+																					   ChaosSystemDomainAndActionLabel::ACTION_NODE_LOAD,
 																					   "Control Unit load system action");
 		//add parameter for control unit name
-		actionDescription->addParam(ChaosSystemDomainAndActionLabel::PARAM_CU_LOAD_UNLOAD_ALIAS,
+		actionDescription->addParam(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE_ALIAS,
 									DataType::TYPE_STRING,
-									"Alias of the control unit to load");
+									"The type of the control unit to load");
 		//add parameter for driver initialization string
-		actionDescription->addParam(ChaosSystemDomainAndActionLabel::PARAM_CU_LOAD_DRIVER_PARAMS,
+		actionDescription->addParam(UnitServerNodeDomainAndActionLabel::PARAM_CU_LOAD_DRIVER_PARAMS,
 									DataType::TYPE_STRING,
 									"Driver params (pipe separated '|') to pass to the control unit instance");
-		
+
 		//deinit CU action
 		actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
 																					   &ControlManager::unloadControlUnit,
 																					   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
-																					   ChaosSystemDomainAndActionLabel::ACTION_UNLOAD_CONTROL_UNIT,
+																					   ChaosSystemDomainAndActionLabel::ACTION_NODE_UNLOAD,
 																					   "Control Unit unload system action");
 		//add parameter for control unit name
-		actionDescription->addParam(ChaosSystemDomainAndActionLabel::PARAM_CU_LOAD_UNLOAD_ALIAS,
+		actionDescription->addParam(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE_ALIAS,
 									DataType::TYPE_STRING,
 									"Alias of the control unit to unload");
-		
+        actionDescription->addParam(NodeDefinitionKey::NODE_UNIQUE_ID,
+                                    DataType::TYPE_STRING,
+                                    "The unique id of the control unit to unload");
+
 		actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
 																					   &ControlManager::unitServerRegistrationACK,
 																					   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
-																					   ChaosSystemDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
+																					   UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
 																					   "Unit server registration ack message");
 	}
-	
+
 	actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
 																				   &ControlManager::unitServerStatus,
 																				   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
-																				   ChaosSystemDomainAndActionLabel::ACTION_UNIT_SERVER_STATUS_REQ,
-																				   "Unit server states");
-	
+																				   ChaosSystemDomainAndActionLabel::ACTION_NODE_STATUS_REQ,
+                                                                                   "Unit server states");
+
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
                                                                                    &ControlManager::updateConfiguration,
                                                                                    "commandManager",
@@ -153,7 +156,7 @@ void ControlManager::init(void *initParameter) throw(CException) {
 	actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
                                                                                    &ControlManager::workUnitRegistrationACK,
                                                                                    ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
-                                                                                   ChaosSystemDomainAndActionLabel::ACTION_WORK_UNIT_REG_ACK,
+                                                                                   ChaosSystemDomainAndActionLabel::ACTION_NODE_REG_ACK,
                                                                                    "Update Command Manager Configuration");
 	//register command manager action
     CommandManager::getInstance()->registerAction(this);
@@ -205,30 +208,30 @@ void ControlManager::deinit() throw(CException) {
 	//deregistering the action
     CommandManager::getInstance()->deregisterAction(this);
     LCMAPP_  << "system action deinitialized";
-    
-    
+
+
     LCMAPP_  << "Deinit all the submitted Control Unit";
-	
+
     for (map<string, shared_ptr<WorkUnitManagement> >::iterator cuIter = map_cuid_registered_instance.begin();
 		 cuIter != map_cuid_registered_instance.end();
 		 cuIter++ ){
         shared_ptr<WorkUnitManagement> cu = (*cuIter).second;
-        
+
         LCMAPP_  << "Deregister RPC action for cu whith instance:" << WU_IDENTIFICATION(cu->work_unit_instance);
         cu->work_unit_instance->_getDeclareActionInstance(cuDeclareActionsInstance);
         for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
             CommandManager::getInstance()->deregisterAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
         }
-        
+
 		//load all device id for this cu
         allCUDeviceIDToStop.push_back(cu->work_unit_instance->getDeviceID());
-        
+
         for (vector<string>::iterator iter =  allCUDeviceIDToStop.begin();
              iter != allCUDeviceIDToStop.end();
              iter++) {
-            
+
 			//stop all itnerna device
-            
+
             CDataWrapper fakeDWForDeinit;
             fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_TYPE, *iter);
             try{
@@ -240,7 +243,7 @@ void ControlManager::deinit() throw(CException) {
                     DECODE_CHAOS_EXCEPTION(ex);
                 }
             }
-            
+
             try{
                 LCMAPP_  << "Deiniting Control Unit: " << WU_IDENTIFICATION(cu->work_unit_instance);
                 cu->work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
@@ -268,7 +271,7 @@ void ControlManager::deinit() throw(CException) {
     }
     map_cuid_registered_instance.clear();
 	map_cuid_reg_unreg_instance.clear();
-	
+
 	if(mds_channel) {
 		CommandManager::getInstance()->deleteMDSChannel(mds_channel);
 		mds_channel = NULL;
@@ -284,7 +287,7 @@ void ControlManager::submitControlUnit(AbstractControlUnit *data) throw(CExcepti
 	//lock the hastable of cu instance and managmer
     boost::unique_lock<boost::shared_mutex> lock(mutex_queue_submitted_cu);
     queue_submitted_cu.push(data);
-	
+
 	//unlock thread
 	thread_waith_semaphore.unlock();
 }
@@ -294,16 +297,16 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
 	//get the upgradeable lock
 	UpgradeableLock registering_lock(mutex_map_cuid_reg_unreg_instance);
 	UpgradeableLock registered_lock(mutex_map_cuid_registered_instance);
-	
+
         //used the Mark Ransom Technique for avoid the temporary iterator
         //http://stackoverflow.com/questions/180516/how-to-filter-items-from-a-stdmap/180616#180616
     for (map<string, shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
          i != map_cuid_reg_unreg_instance.end();) {
-		
+
 		if(!i->second->smNeedToSchedule()) {
 			UpgradeReadToWriteLock registering_wlock(registering_lock);
 			UpgradeReadToWriteLock registered_wlock(registered_lock);
-			
+
 			//now i can write on the two map
 			switch (i->second->getCurrentState()) {
 				case UnitStatePublishingFailure:
@@ -333,7 +336,7 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
 void ControlManager::makeSMSteps() {
 	//lock for read the registering map
 	ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
-	
+
 	for (map<string, shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
 		 i != map_cuid_reg_unreg_instance.end();
 		 i++ ){
@@ -350,32 +353,32 @@ void ControlManager::makeSMSteps() {
 
 void ControlManager::manageControlUnit() {
 	//initialize the Control Unit
- 	
+
 	boost::unique_lock<boost::shared_mutex> lock(mutex_queue_submitted_cu, boost::defer_lock);
 	while(thread_run) {
 		//lock queue
 		lock.lock();
-		
+
 		//try to consume all the submitted control unit instance (after the lock no other thread can submit new on)
 		while(!queue_submitted_cu.empty()) {
 			//we have new instance to manage
 			shared_ptr<WorkUnitManagement> wui(new WorkUnitManagement(queue_submitted_cu.front()));
 			LCMAPP_  << "We have a new control unit instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
-			
+
 			//remove the oldest data
 			queue_submitted_cu.pop();
-			
+
 			//give a beat to the state machine
 			wui->scheduleSM();
-			
+
 			//activate the sm for register the control unit instance
 			wui->turnOn();
 			LCMAPP_  << "Create manager for new control unit:" << WU_IDENTIFICATION(wui->work_unit_instance);
-			
+
 			//! lock the hastable
 			ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
 			ReadLock read_registered_lock(mutex_map_cuid_registered_instance);
-			
+
 			// we can't have two different work unit with the same unique identifier within the same process
 			if(map_cuid_reg_unreg_instance.count(wui->work_unit_instance->getCUID()) ||
 			   map_cuid_registered_instance.count(wui->work_unit_instance->getCUID())) {
@@ -383,18 +386,18 @@ void ControlManager::manageControlUnit() {
 				continue;
 			}
 			LCMDBG_  << "Added to registering map" << WU_IDENTIFICATION(wui->work_unit_instance);
-			
+
 			//now we can proceed, add the network broker instance to the managment class of the work unit
 			wui->mds_channel = mds_channel;
-			
+
 			//add sandbox to all map of running cu
 			map_cuid_reg_unreg_instance.insert(make_pair(wui->work_unit_instance->getCUID(), wui));
 		}
 		lock.unlock();
-		
+
 		//migrate stable <-> unstable
 		migrateStableAndUnstableSMCUInstance();
-		
+
 		//! lock the registering (unstable sm) hastable
 		ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
 		//schedule unstable state machine steps
@@ -417,49 +420,50 @@ void ControlManager::manageControlUnit() {
 CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& detach) throw (CException) {
 	//check param
 	IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
-	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_TYPE_ALIAS), -2, "No instancer alias")
-	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID), -3, "No id for the work unit instance found")
-	
-	std::string work_unit_type = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_TYPE_ALIAS);
+	IN_ACTION_PARAM_CHECK(!message_data->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE_ALIAS), -2, "No instancer alias")
+	IN_ACTION_PARAM_CHECK(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID), -3, "No id for the work unit instance found")
+
+	std::string work_unit_type = message_data->getStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE_ALIAS);
 	LCMAPP_ << "Get new request for instance the work unit with alias:" << work_unit_type;
-	
+
 	WriteLock write_instancer_lock(mutex_map_cu_instancer);
 	IN_ACTION_PARAM_CHECK(!map_cu_alias_instancer.count(work_unit_type), -2, "No work unit instancer's found for the alias")
-	
-	std::string work_unit_id = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
-	std::string load_options = CDW_STR_KEY(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_PARAM);
-	
+
+	std::string work_unit_id = message_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+	std::string load_options = CDW_STR_KEY(UnitServerNodeDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_PARAM);
+
 	//check if cuid is already present
 	ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
 	ReadLock read_registered_lock(mutex_map_cuid_registered_instance);
-	
+
 	// we can't have two different work unit with the same unique identifier within the same process
 	IN_ACTION_PARAM_CHECK(map_cuid_reg_unreg_instance.count(work_unit_id), -3, "Another work unit use the same id")
 	IN_ACTION_PARAM_CHECK(map_cuid_registered_instance.count(work_unit_id), -4, "Another work unit use the same id")
-	
+
 	LCMDBG_ << "instantiate work unit ->" << "device_id:" <<work_unit_id<< " load_options:"<< load_options;
-	
+
 	//scan all the driver description forwarded
 	std::vector<cu_driver_manager::driver::DrvRequestInfo> driver_params;
-	if(message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC)) {
+	if(message_data->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC)) {
 		LCMDBG_ << "Driver param has been supplied";
-		boost::scoped_ptr<CMultiTypeDataArrayWrapper> driver_descriptions(message_data->getVectorValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC));
+		boost::scoped_ptr<CMultiTypeDataArrayWrapper> driver_descriptions(message_data->getVectorValue(UnitServerNodeDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC));
 		//scan all the driver description
 		LCMDBG_ << "scan " << driver_descriptions->size() << " driver descriptions";
 		for( int idx = 0; idx < driver_descriptions->size(); idx++) {
 			LCMDBG_ << "scan " << idx << " driver";
 			boost::scoped_ptr<CDataWrapper> driver_desc(driver_descriptions->getCDataWrapperElementAtIndex(idx));
-			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME), -4, "No driver name found")
-			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION), -5, "No driver version found")
-			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM), -6, "No driver init param name found")
-			cu_driver_manager::driver::DrvRequestInfo drv = {driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME),
-															driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION),
-															driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM)};
+			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME), -4, "No driver name found")
+			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION), -5, "No driver version found")
+			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM), -6, "No driver init param name found")
+			LCMDBG_ << "scan " << idx << " driver";
+			cu_driver_manager::driver::DrvRequestInfo drv = {driver_desc->getStringValue(UnitServerNodeDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME),
+															driver_desc->getStringValue(UnitServerNodeDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION),
+															driver_desc->getStringValue(UnitServerNodeDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM)};
 			LCMDBG_ << "adding driver  " << drv.alias << "["<<drv.version << "-" << drv.init_parameter<<"]";
 			driver_params.push_back(drv);
 		}
 	}
-	
+
 	//submit new instance of the requested control unit
 	AbstractControlUnit *instance = map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params);
 	IN_ACTION_PARAM_CHECK(instance==NULL, -7, "Error creating work unit instance")
@@ -471,12 +475,12 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 //! message for unload operation
 CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool& detach) throw (CException) {
 	IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
-	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_TYPE_ALIAS), -2, "No instancer alias")
-	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID), -3, "No id for the work unit instance found")
-	
-	std::string work_unit_type = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_TYPE_ALIAS);
-	std::string work_unit_id = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
-	
+	IN_ACTION_PARAM_CHECK(!message_data->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE_ALIAS), -2, "No instancer alias")
+	IN_ACTION_PARAM_CHECK(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID), -3, "No id for the work unit instance found")
+
+	std::string work_unit_type = message_data->getStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE_ALIAS);
+	std::string work_unit_id = message_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+
 	LCMAPP_ << "Unload operation for: " << work_unit_id << " of type "<<work_unit_type;
 	WriteLock write_instancer_lock(mutex_map_cuid_registered_instance);
 	IN_ACTION_PARAM_CHECK(!map_cuid_registered_instance.count(work_unit_id), -2, "Work unit not found on registered's map")
@@ -486,7 +490,7 @@ CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool
 
 	//migrate the workunit into the map for registering and unregistering instance
 	map_cuid_reg_unreg_instance.insert(make_pair(work_unit_id, map_cuid_registered_instance[work_unit_id]));
-	
+
 	//turn of the instance
 	iter->second->turnOFF();
 	map_cuid_registered_instance.erase(iter);
@@ -498,8 +502,8 @@ CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool
 
 CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool &detach) throw (CException) {
     chaos_data::CDataWrapper unit_server_status;
-	unit_server_status.addStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS, unit_server_alias.size()?unit_server_alias:"No Server Defined");
-    unit_server_status.addInt32Value(ChaosSystemDomainAndActionLabel::MDS_UNIT_SERVER_HEARTBEAT,  (uint32_t) TimingUtil::getTimeStamp());
+	unit_server_status.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_alias.size()?unit_server_alias:"No Server Defined");
+    unit_server_status.addInt32Value(NodeDefinitionKey::NODE_TIMESTAMP,  (uint32_t) TimingUtil::getTimeStamp());
     LCMDBG_ << "[Action] Get Unit State";
 
 	map<string, shared_ptr<WorkUnitManagement> >::iterator iter;
@@ -514,23 +518,23 @@ CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool 
 		LCMDBG_ << "[Action] Get CU state, \""<<iter->first<<"\" ="<<(uint32_t)iter->second->work_unit_instance->getServiceState();
         unit_server_status.appendCDataWrapperToArray(item);
     }
-    unit_server_status.finalizeArrayForKey(ChaosSystemDomainAndActionLabel::UNIT_SERVER_CU_STATES);
+    unit_server_status.finalizeArrayForKey(UnitServerNodeDomainAndActionLabel::UNIT_SERVER_CU_STATES);
 	mds_channel->sendUnitServerCUStates(unit_server_status);
-    
+
     return NULL;
 }
 
 //! ack received for the registration of the uwork unit
 CDataWrapper* ControlManager::workUnitRegistrationACK(CDataWrapper *message_data, bool &detach) throw (CException) {
 	IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
-	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID), -2, "No device id found")
-	
+	IN_ACTION_PARAM_CHECK(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID), -2, "No device id found")
+
 	//lock the registering control unit map
 	ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
-	std::string device_id = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
-	
+	std::string device_id = message_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+
 	IN_ACTION_PARAM_CHECK(!map_cuid_reg_unreg_instance.count(device_id), -3, "No registering work unit found with the device id:"+device_id)
-	
+
 	//we can process the ack into the right manager
 	map_cuid_reg_unreg_instance[device_id]->manageACKPack(*message_data);
 	return NULL;
@@ -571,7 +575,7 @@ void ControlManager::timeout() {
 		case 2:
 			LCMDBG_ << "[Published] Unit server registration completed, turn off the timer";
 			chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
-			
+
 			LCMDBG_ << "[Published] Start control units registration state machine";
 			startControlUnitSMThread();
 			break;
@@ -588,21 +592,22 @@ void ControlManager::timeout() {
 void ControlManager::sendUnitServerRegistration() {
 	chaos_data::CDataWrapper unit_server_registration_pack;
 	//set server alias
-	unit_server_registration_pack.addStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS, unit_server_alias);
-	
+	unit_server_registration_pack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, unit_server_alias);
+    unit_server_registration_pack.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_UNIT_SERVER);
+
 	if(unit_server_key.size()) {
 		//the key need to be forwarded
-		unit_server_registration_pack.addStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_KEY, unit_server_key);
+		unit_server_registration_pack.addStringValue(NodeDefinitionKey::NODE_SECURITY_KEY, unit_server_key);
 	}
-	
+
 	//add control unit alias
 	for(MapCUAliasInstancerIterator iter = map_cu_alias_instancer.begin();
 		iter != map_cu_alias_instancer.end();
 		iter++) {
 		unit_server_registration_pack.appendStringToArray(iter->first);
 	}
-	unit_server_registration_pack.finalizeArrayForKey(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS);
-	mds_channel->sendUnitServerRegistration(unit_server_registration_pack);
+	unit_server_registration_pack.finalizeArrayForKey(UnitServerNodeDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS);
+	mds_channel->sendNodeRegistration(unit_server_registration_pack);
 }
 
 // Server registration ack message
@@ -611,17 +616,17 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
 	boost::unique_lock<boost::shared_mutex> lock_sm(unit_server_sm_mutex);
 	LCMAPP_ << "Unit server registration ack message received";
 	detach = false;
-	if(!message_data->hasKey(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS))
+	if(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID))
 		throw CException(-1, "No alias forwarder", __PRETTY_FUNCTION__);
-	
-	string server_alias = message_data->getStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS);
+
+	string server_alias = message_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
 	if(server_alias.compare(unit_server_alias) != 0) {
 		throw CException(-2, "Server alias not found", __PRETTY_FUNCTION__);
 	}
-	if(message_data->hasKey(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT)) {
+	if(message_data->hasKey(ChaosSystemDomainAndActionLabel::ATTRIBUTE_MDS_REGISTER_NODE_RESULT)) {
 		//registration has been ended
-		switch(message_data->getInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT)){
-			case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK:
+		switch(message_data->getInt32Value(ChaosSystemDomainAndActionLabel::ATTRIBUTE_MDS_REGISTER_NODE_RESULT)){
+			case ErrorCode::EC_MDS_NODE_REGISTRATION_OK:
 
 			  if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()) == boost::msm::back::HANDLED_TRUE){
 			    LCMAPP_ << "Registration is gone well";
@@ -631,26 +636,26 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
 			    throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for published event", __PRETTY_FUNCTION__);
 			  }
 			  break;
-				
-			case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_DUPLICATE_ALIAS:
+
+			case ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_DUPLICATE_ALIAS:
 				LCMERR_ << "The " << unit_server_alias << " is already used";
 				//turn of unit server
 				if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
 					//we have problem
 				} else {
-					throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for unpublishing event", __PRETTY_FUNCTION__);
+					throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for unpublishing event", __PRETTY_FUNCTION__);
 				}
 				break;
-				
-			case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_INVALID_ALIAS:
+
+			case ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS:
 				LCMERR_ << "The " << unit_server_alias << " is invalid";
 				//turn of unit server
 				LCMDBG_ << "Turning of unit server";
 				if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
 					//we have problem
-					
+
 				} else {
-					throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for unpublished event", __PRETTY_FUNCTION__);
+					throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for unpublished event", __PRETTY_FUNCTION__);
 				}
 				break;
 		}

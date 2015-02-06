@@ -1,5 +1,5 @@
 /*
- *	UnitServerApiGroup.h
+ *	NodeApiGroup.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -25,14 +25,14 @@
 namespace chaos {
     namespace metadata_service {
         namespace api {
-            namespace unit_server {
+            namespace node {
                 
                 //! api group for the managment of the UnitServer
-                DECLARE_CLASS_FACTORY(UnitServerApiGroup, AbstractApiGroup) {
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(UnitServerApiGroup)
+                DECLARE_CLASS_FACTORY(NodeApiGroup, AbstractApiGroup) {
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(NodeApiGroup)
                 public:
-                    UnitServerApiGroup();
-                    ~UnitServerApiGroup();
+                    NodeApiGroup();
+                    ~NodeApiGroup();
                 };
                 
             }
