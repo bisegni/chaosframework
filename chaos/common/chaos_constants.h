@@ -120,9 +120,10 @@ namespace chaos {
 				static const char * const DIRECT_IO_SERVICE_PORT					= "direct_io_service_port";
 				
 			}
+            /** @} */ // end of DirectIOConfigurationKey
 		}
 	}
-    /** @} */ // end of DirectIOConfigurationKey
+
  
     /** @defgroup NodeDefinitionKey Control Unit Definition
      *  This is the collection of the key for the general node information
@@ -130,14 +131,17 @@ namespace chaos {
      */
     //! Name space for grupping key for the node infromation
     namespace NodeDefinitionKey {
-        //! define the node type
+        //! define the node unique identification[string]
+        static const char * const NODE_UNIQUE_ID        = "ndk_uid";
+        
+        //! define the node type[string]
         static const char * const NODE_TYPE             = "ndk_type";
         
-        //! identify the node rpc address
+        //! identify the node rpc address[string:string]
         static const char * const NODE_RPC_ADDR         = "ndk_rpc_addr";
         
-        //! identify the domain within the rpc infrastructure
-        static const char * const NODE_RPC_DOMAIN_ID    = "ndk_rpc_dom_id";
+        //! identify the domain within the rpc infrastructure [string]
+        static const char * const NODE_RPC_DOMAIN       = "ndk_rpc_dom";
     }
 	/** @} */ // end of NodeDefinitionKey
     
@@ -148,25 +152,7 @@ namespace chaos {
 	//! Name space for grupping option used for define the control unit
 	namespace CUDefinitionKey {
 		//! delay beetwen a subseguent cu start method call
-		static const char * const THREAD_SCHEDULE_DELAY                 = "cu_thr-sch-del";
-		//!key representing the type of parameter
-		static const char * const CU_NAME                               = "cu_name";
-		//!key representing the type of parameter
-		static const char * const CU_INSTANCE                           = "cu_instance";
-		//!Control Unit instance internal address
-		static const char * const CU_INSTANCE_NET_ADDRESS               = "cu_instance_net_address";
-		//!key representing the type of parameter
-		static const char * const CU_DESCRIPTION                        = "cu_desc";
-		//!key representing the type of parameter
-		static const char * const CU_CLASS                              = "cu_class";
-		//!key representing the type of parameter
-		static const char * const CU_UUID								= "cu_uuid";
-		//!key representing the type of control unit
-		/*!
-		 \ingroup CUStateKey
-		 */
-		static const char * const CU_TYPE								= "cu_type";
-		
+		static const char * const THREAD_SCHEDULE_DELAY   = "cu_thr-sch-del";
 	}
 	/** @} */ // end of CUDefinitionKey
 	
@@ -237,8 +223,6 @@ namespace chaos {
 		static const char * const DESCRIPTION                       = "ds_desc";
 		//!key for dataset timestampt validity
 		static const char * const TIMESTAMP                         = "ds_timestamp";
-		//!key for the domain of the attribute dataset
-		static const char * const DEVICE_ID                         = "ds_attr_dom";
 		//!key for the name of dataset attribute
 		static const char * const ATTRIBUTE_NAME                    = "ds_attr_name";
 		//!key for the tag of the dataset attrbiute
@@ -470,7 +454,7 @@ namespace chaos {
 		static const char * const ACTION_WORK_UNIT_REG_ACK		= "workUnitRegistrationACK";
 		
 		//! is the device id received by the work unit registration ack message from the mds
-		static const char * const PARAM_WORK_UNIT_REG_ACK_DEVICE_ID	= DatasetDefinitionkey::DEVICE_ID;
+		static const char * const PARAM_WORK_UNIT_REG_ACK_DEVICE_ID	= NodeDefinitionKey::NODE_UNIQUE_ID;
 		
 		//! Load the control unit
 		static const char * const ACTION_LOAD_CONTROL_UNIT		= "loadControlUnit";

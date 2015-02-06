@@ -40,11 +40,11 @@ const string & DatasetDB::getDeviceID() {
 
 //! Add device dataset definitio by serialized form
 void DatasetDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& serializedDW) {
-	if(!serializedDW.hasKey(DatasetDefinitionkey::DEVICE_ID)) return;
+	if(!serializedDW.hasKey(NodeDefinitionKey::NODE_TYPE)) return;
 	if(!deviceID.length())
-		setDeviceID(serializedDW.getStringValue(DatasetDefinitionkey::DEVICE_ID));
+		setDeviceID(serializedDW.getStringValue(NodeDefinitionKey::NODE_TYPE));
 	else {
-		std::string tmp_dev_id = serializedDW.getStringValue(DatasetDefinitionkey::DEVICE_ID);
+		std::string tmp_dev_id = serializedDW.getStringValue(NodeDefinitionKey::NODE_TYPE);
 		if(deviceID.compare(tmp_dev_id) != 0) return;
 	}
     CUSchemaDB::addAttributeToDataSetFromDataWrapper(serializedDW);

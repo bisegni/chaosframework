@@ -192,7 +192,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
         case UnitStateUnpublishing: {
             CDataWrapper fakeDWForDeinit;
             bool detachFake;
-            fakeDWForDeinit.addStringValue(DatasetDefinitionkey::DEVICE_ID, work_unit_instance->getCUID());
+            fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_TYPE, work_unit_instance->getCUID());
             try{
                 WUMAPP_  << "Stopping Wor Unit";
                 work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
@@ -253,7 +253,7 @@ int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
     //add action for metadata server
     //add local ip and port
     
-    mdsPack.addStringValue(CUDefinitionKey::CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
+    mdsPack.addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
     
     //register CU from mds
     return mds_channel->sendUnitDescription(mdsPack);

@@ -230,7 +230,7 @@ void ControlManager::deinit() throw(CException) {
 			//stop all itnerna device
             
             CDataWrapper fakeDWForDeinit;
-            fakeDWForDeinit.addStringValue(DatasetDefinitionkey::DEVICE_ID, *iter);
+            fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_TYPE, *iter);
             try{
                 LCMAPP_  << "Stopping Control Unit: " << WU_IDENTIFICATION(cu->work_unit_instance);
                 cu->work_unit_instance->_stop(&fakeDWForDeinit, detachFake);

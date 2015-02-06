@@ -93,7 +93,7 @@ int MongoDBUnitServerDataAccess::updateUnitServer(chaos::common::data::CDataWrap
     mongo::BSONObjBuilder bson_update;
     try {
         bson_find << MONGODB_KEY_UNIT_SERVER_ALIAS << unit_server_description.getStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS);
-        updated_field << MONGODB_KEY_UNIT_SERVER_RPC_ADDR << unit_server_description.getStringValue(CUDefinitionKey::CU_INSTANCE_NET_ADDRESS)
+        updated_field << MONGODB_KEY_UNIT_SERVER_RPC_ADDR << unit_server_description.getStringValue(NodeDefinitionKey::NODE_RPC_ADDR)
         << "ts" << mongo::Date_t(chaos::common::utility::TimingUtil::getTimeStamp());
         
         mongo::BSONArrayBuilder bab;

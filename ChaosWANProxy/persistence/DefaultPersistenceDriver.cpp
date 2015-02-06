@@ -228,8 +228,8 @@ int DefaultPersistenceDriver::getLastDataset(const std::string& producer_key,
 int DefaultPersistenceDriver::registerDataset(const std::string& producer_key,
 											  chaos::common::data::CDataWrapper& last_dataset) {
 	CHAOS_ASSERT(mds_message_channel)
-	last_dataset.addStringValue(chaos::DatasetDefinitionkey::DEVICE_ID, producer_key);
-    last_dataset.addStringValue(chaos::CUDefinitionKey::CU_INSTANCE, chaos::common::utility::UUIDUtil::generateUUIDLite());
+	last_dataset.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, producer_key);
+	last_dataset.addStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN, chaos::common::utility::UUIDUtil::generateUUIDLite());
 	last_dataset.addStringValue("mds_control_key","none");
 	return mds_message_channel->sendUnitDescription(last_dataset, true, 3000);
 }

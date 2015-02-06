@@ -49,10 +49,10 @@ UnitServerAckCommand::~UnitServerAckCommand() {
 // inherited method
 void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
-    if(data  && data->hasKey(chaos::CUDefinitionKey::CU_INSTANCE_NET_ADDRESS)) {
+    if(data  && data->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
         CNetworkAddress * na = new CNetworkAddress();
         if(na) {
-            remote_unitserver_ip_port = na->ipPort = data->getStringValue(chaos::CUDefinitionKey::CU_INSTANCE_NET_ADDRESS);
+            remote_unitserver_ip_port = na->ipPort = data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
             USAC_INFO << "fetch the message channel for:"<<na->ipPort;
             //delete(na);
             message_channel = getNewMessageChannelForAddress(na);

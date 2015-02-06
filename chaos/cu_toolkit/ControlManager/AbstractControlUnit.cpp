@@ -160,7 +160,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
 	
 	//add the CU isntance, this can be redefinide by user in the unitDefineActionAndDataset method
 	//for let the CU have the same instance at every run
-	setupConfiguration.addStringValue(CUDefinitionKey::CU_INSTANCE, control_unit_instance);
+	setupConfiguration.addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, control_unit_instance);
 	
 	//undocumented field
 	setupConfiguration.addStringValue("mds_control_key", control_key);
@@ -549,11 +549,11 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
 		ACULDBG_ << datasetAttributeValues->getJSONString();
 #endif
 		
-		if(!datasetAttributeValues->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
+		if(!datasetAttributeValues->hasKey(NodeDefinitionKey::NODE_TYPE)) {
 			throw CException(-2, "No Device Defined in param", __PRETTY_FUNCTION__);
 		}
 		//retrive the deviceid
-		string deviceID = datasetAttributeValues->getStringValue(DatasetDefinitionkey::DEVICE_ID);
+		string deviceID = datasetAttributeValues->getStringValue(NodeDefinitionKey::NODE_TYPE);
 		if(StartableService::getServiceState() == CUStateKey::DEINIT) {
 			throw CException(-3, "The Control Unit is in deinit state", __PRETTY_FUNCTION__);
 		}
@@ -572,11 +572,11 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
 void AbstractControlUnit::init(void *initData) throw(CException) {
 	CDataWrapper *initConfiguration = static_cast<CDataWrapper*>(initData);
 	if(!initConfiguration ||
-	   !initConfiguration->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
+	   !initConfiguration->hasKey(NodeDefinitionKey::NODE_TYPE)) {
 		throw CException(-1, "No Device Init information in param", __PRETTY_FUNCTION__);
 	}
 	
-	std::string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
+	std::string deviceID = initConfiguration->getStringValue(NodeDefinitionKey::NODE_TYPE);
 	if(deviceID.compare(DatasetDB::getDeviceID())) {
 		ACULERR_ << "device:" << deviceID << "not known by this Work Unit";
 		throw CException(-2, "Device not known by this control unit", __PRETTY_FUNCTION__);
@@ -730,12 +730,12 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
 CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam,
 											 bool& detachParam) throw(CException) {
    
-	if(!getStatedParam->hasKey(DatasetDefinitionkey::DEVICE_ID)){
+	if(!getStatedParam->hasKey(NodeDefinitionKey::NODE_TYPE)){
         throw CException(-1, "Get State Pack without DeviceID", __PRETTY_FUNCTION__);
 	}
     CDataWrapper *stateResult = new CDataWrapper();
 
-	string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
+	string deviceID = getStatedParam->getStringValue(NodeDefinitionKey::NODE_TYPE);
 	
 	stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, static_cast<CUStateKey::ControlUnitState>(StartableService::getServiceState()));
 	return stateResult;
@@ -748,7 +748,7 @@ CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam,
 											bool& detachParam) throw(CException) {
 	CDataWrapper *stateResult = new CDataWrapper();
 	//set the string representing the type of the control unit
-	stateResult->addStringValue(CUDefinitionKey::CU_TYPE, control_unit_type);
+	stateResult->addStringValue(NodeDefinitionKey::NODE_TYPE, control_unit_type);
 	return stateResult;
 }
 
@@ -795,8 +795,8 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
 		//get all input attribute name
 		getDatasetAttributesName(DataType::Input , in_attribute_name);
 		
-		if(dataset_attribute_values->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
-			std::string _messageDeviceID = dataset_attribute_values->getStringValue(DatasetDefinitionkey::DEVICE_ID);
+		if(dataset_attribute_values->hasKey(NodeDefinitionKey::NODE_TYPE)) {
+			std::string _messageDeviceID = dataset_attribute_values->getStringValue(NodeDefinitionKey::NODE_TYPE);
 			//compare the message device id and the local
 			for (std::vector<std::string>::iterator iter = in_attribute_name.begin();
 				 iter != in_attribute_name.end();
@@ -876,11 +876,11 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
  */
 CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack, bool& detachParam) throw (CException) {
 	//load all keyDataStorageMap for the registered devices
-	if(!updatePack || !updatePack->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
+	if(!updatePack || !updatePack->hasKey(NodeDefinitionKey::NODE_TYPE)) {
 		throw CException(-1, "Update pack without DeviceID", __PRETTY_FUNCTION__);
 	}
 	
-	string deviceID = updatePack->getStringValue(DatasetDefinitionkey::DEVICE_ID);
+	string deviceID = updatePack->getStringValue(NodeDefinitionKey::NODE_TYPE);
 	
 	if(deviceID.compare(DatasetDB::getDeviceID())) {
 		ACULAPP_ << "device:" << DatasetDB::getDeviceID() << "not known by this ContorlUnit";

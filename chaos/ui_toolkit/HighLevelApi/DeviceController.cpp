@@ -408,7 +408,7 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 	if(submission_checker_steps_delay) localCommandPack.addInt32Value(chaos_batch::BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, submission_checker_steps_delay);
 	
 	//err = deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
-	localCommandPack.addStringValue(DatasetDefinitionkey::DEVICE_ID, device_id);
+	localCommandPack.addStringValue(NodeDefinitionKey::NODE_TYPE, device_id);
 	err = deviceChannel->sendCustomRequest("setDatasetAttribute", &localCommandPack, &resultData, millisecToWait);
 	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id
@@ -443,7 +443,7 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 	if(submission_checker_steps_delay) localCommandPack.addInt32Value(chaos_batch::BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submission_checker_steps_delay);
 	
 	//forward the request
-	localCommandPack.addStringValue(DatasetDefinitionkey::DEVICE_ID, device_id);
+	localCommandPack.addStringValue(NodeDefinitionKey::NODE_TYPE, device_id);
 	err = deviceChannel->sendCustomRequest("setDatasetAttribute", &localCommandPack, &resultData, millisecToWait);
 	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id

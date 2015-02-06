@@ -72,7 +72,7 @@ void CUSchemaDB::initDB(const char *name, bool onMemory) {
     composeName.append(utility::UUIDUtil::generateUUIDLite());
     entityDB->initDB(composeName.c_str(), onMemory);
     
-    MAKE_KEY(DatasetDefinitionkey::DEVICE_ID, keyTmp);
+    MAKE_KEY(NodeDefinitionKey::NODE_UNIQUE_ID, keyTmp);
     MAKE_KEY(DatasetDefinitionkey::ATTRIBUTE_NAME, keyTmp);
     MAKE_KEY(DatasetDefinitionkey::DESCRIPTION, keyTmp);
     MAKE_KEY(DatasetDefinitionkey::TIMESTAMP, keyTmp);
@@ -140,7 +140,7 @@ void CUSchemaDB::addDeviceId(const string& deviceID) {
         return;
     }
     edb::KeyIdAndValue kiv;
-    kiv.keyID = mapDatasetKeyForID[DatasetDefinitionkey::DEVICE_ID];
+    kiv.keyID = mapDatasetKeyForID[NodeDefinitionKey::NODE_TYPE];
     kiv.type = chaos::edb::KEY_STR_VALUE;
     strcpy(kiv.value.strValue, deviceID.c_str());
         //add the entity for device
@@ -371,8 +371,8 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     auto_ptr<CDataWrapper> elementDescription;
     auto_ptr<CMultiTypeDataArrayWrapper> elementsDescriptions;
     
-    if(!attributeDataWrapper.hasKey(DatasetDefinitionkey::DEVICE_ID)) return;
-    attributeDeviceID = attributeDataWrapper.getStringValue(DatasetDefinitionkey::DEVICE_ID);
+    if(!attributeDataWrapper.hasKey(NodeDefinitionKey::NODE_TYPE)) return;
+    attributeDeviceID = attributeDataWrapper.getStringValue(NodeDefinitionKey::NODE_TYPE);
     //get the entity for device
     entity::Entity *deviceEntity = getDeviceEntity(attributeDeviceID);
     
@@ -494,7 +494,7 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEnt
     ptr_vector<entity::Entity> deviceDatasetAttribute;
     
     //add deviceID to description data
-    deviceDatasetDescription.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceEntity->getKeyInfo().value.strValue);
+    deviceDatasetDescription.addStringValue(NodeDefinitionKey::NODE_TYPE, deviceEntity->getKeyInfo().value.strValue);
     
     //set the registered timestamp
     deviceEntity->getPropertyByKeyID(mapDatasetKeyForID[DatasetDefinitionkey::TIMESTAMP], attrProperty);
