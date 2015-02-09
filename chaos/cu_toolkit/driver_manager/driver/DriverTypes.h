@@ -102,6 +102,9 @@ namespace chaos{
                     void					*inputData;         /**< the pointer to the memory containing the data for and from the command */
 					uint32_t				resultDataLength;   /**< the length of the data (input/output) contained into the "data" field. */
                     void					*resultData;        /**< the pointer to the memory containing the data for and from the command */
+                    int32_t parm[2];/**< eventual call parameters es. addr and size, to avoid to encode in inputdata buffer*/
+                    int32_t ret;/**< eventual return code of the code */
+                    
                 } *DrvMsgPtr;
             }
         }
