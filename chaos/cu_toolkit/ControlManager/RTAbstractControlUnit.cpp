@@ -42,7 +42,8 @@ RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _control_unit_id
 											 const std::string& _control_unit_param):
 AbstractControlUnit(CUType::RTCU,
 					_control_unit_id,
-					_control_unit_param) {
+					_control_unit_param),
+schedule_dalay(1000000){
 	//allocate the handler engine
 	// attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
 	
@@ -61,7 +62,8 @@ RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _control_unit_id
 AbstractControlUnit(CUType::RTCU,
 					_control_unit_id,
 					_control_unit_param,
-					_control_unit_drivers) {
+					_control_unit_drivers),
+schedule_dalay(1000000){
 	//allocate the handler engine
 	//attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
 	
