@@ -138,7 +138,7 @@ namespace chaos {
          */
         static const char * const NODE_UNIQUE_ID        = "ndk_uid";
         
-        //! defines the domain where the node belong
+        //! defines the domain where the node belong[string]
         /*!
          Identify an unique set that enclose one or more producer, consumer and user interfaces.
          */
@@ -172,7 +172,7 @@ namespace chaos {
         static const char * const NODE_SECURITY_KEY     = "ndk_sec_key";
         
         
-        //! is the hartbeat of the node for the current request
+        //! is the hartbeat of the node for the current request[uint64]
         static const char * const NODE_TIMESTAMP        = "ndk_hearbeat";
     }
 	/** @} */ // end of NodeDefinitionKey
