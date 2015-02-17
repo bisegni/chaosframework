@@ -22,5 +22,6 @@
 
 #include "AbstractPersistenceDriver.h"
 #include "AbstractDataAccess.h"
+#include "persistence_types.h"
 
 #endif

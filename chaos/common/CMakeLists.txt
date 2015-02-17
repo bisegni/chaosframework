@@ -48,7 +48,11 @@ SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/Dir
 
 SET(common_lib_src  ${common_lib_src}	io/IODataDriver.cpp io/IOMemcachedIODriver.cpp io/IODirectIODriver.cpp io/QueryFuture.cpp)
 
-SET(common_lib_src  ${common_lib_src}	message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp message/MessageChannel.cpp message/PerformanceNodeChannel.cpp)
+SET(common_lib_src  ${common_lib_src}	message/DeviceMessageChannel.cpp
+                                        message/MDSMessageChannel.cpp
+                                        message/MessageChannel.cpp
+                                        message/NodeMessageChannel.cpp
+                                        message/PerformanceNodeChannel.cpp)
 
 SET(common_lib_src  ${common_lib_src}	network/NetworkBroker.cpp network/PerformanceManagment.cpp network/URLServiceFeeder.cpp network/URL.cpp)
 

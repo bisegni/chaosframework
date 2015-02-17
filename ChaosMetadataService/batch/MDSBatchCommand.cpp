@@ -38,9 +38,9 @@ MDSBatchCommand::~MDSBatchCommand() {
 }
 
 chaos::common::message::MessageChannel*
-MDSBatchCommand::getNewMessageChannelForAddress(chaos::common::network::CNetworkAddress *node_network_address) {
+MDSBatchCommand::getNewMessageChannel() {
     CHAOS_ASSERT(network_broker)
-    return network_broker->getRawMessageChannelFromAddress(node_network_address);
+    return network_broker->getRawMessageChannelFromAddress();
 }
 
 //! return a device message channel for a specific node address

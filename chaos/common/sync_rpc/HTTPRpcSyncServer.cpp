@@ -55,7 +55,7 @@ HTTPRpcSyncServer::~HTTPRpcSyncServer() {
 //inherited method
 void HTTPRpcSyncServer::init(void *init_data) throw(CException) {
 	CDataWrapper *adapterConfiguration = reinterpret_cast<CDataWrapper*>(init_data);
-	service_port = adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_PORT);
+	service_port = adapterConfiguration->getInt32Value(InitOption::OPT_RPC_SYNC_PORT);
 	http_server = new Mongoose::Server(service_port);
 	if(!http_server) throw chaos::CException(-1, "Http server not instantiated", __PRETTY_FUNCTION__);
 	

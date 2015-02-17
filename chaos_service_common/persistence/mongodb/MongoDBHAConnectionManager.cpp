@@ -13,7 +13,7 @@
 #include <boost/format.hpp>
 
 #define RETRIVE_MIN_TIME 500
-#define RETRIVE_MAX_TIME 5000
+#define RETRIVE_MAX_TIME 10000
 
 #define MongoDBHAConnection_LOG_HEAD "[MongoDBHAConnection] - "
 #define MDBHAC_LAPP_ LAPP_ << MongoDBHAConnection_LOG_HEAD
@@ -21,10 +21,16 @@
 #define MDBHAC_LERR_ LERR_ << MongoDBHAConnection_LOG_HEAD << __FUNCTION__ << " - "
 
 #define MONGO_DB_CHECK_ERROR_CODE(b) b["code"].numberInt()
+#define MONGO_DB_CHECK_ERROR_MESSAGE(b) b["errmsg"].valuestrsafe()
+
 #define MONGO_DB_GET_ERROR(c, e) \
 mongo::BSONObj _error = c->conn().getLastErrorDetailed(); \
 e = MONGO_DB_CHECK_ERROR_CODE(_error);
 
+#define MONGO_DB_GET_ERROR_WHIT_MESSAGE(c, e, m) \
+mongo::BSONObj _error = c->conn().getLastErrorDetailed(); \
+e = MONGO_DB_CHECK_ERROR_CODE(_error);\
+m = MONGO_DB_CHECK_ERROR_MESSAGE(_error);
 
 #define CONTINUE_ON_NEXT_CONNECTION(x) \
 switch(x) { \
@@ -46,8 +52,7 @@ break; \
 
 
 
-using namespace chaos::metadata_service::persistence::mongodb;
-
+using namespace chaos::service_common::persistence::mongodb;
 //-----------------------------------------------------------------------------------------------------------
 
 MongoAuthHook::MongoAuthHook(std::map<std::string,std::string>& key_value_custom_param):
@@ -90,10 +95,13 @@ const std::string& MongoAuthHook::getDatabaseName() {
 const std::string& MongoAuthHook::getDatabaseUsername() {
     return user;
 }
-
-//-----------------------
+//-----------------------------------------------------------------------------------
 DriverScopedConnection::DriverScopedConnection(mongo::ConnectionString _conn):
 ScopedDbConnection(_conn) {}
+
+DriverScopedConnection::DriverScopedConnection(mongo::ConnectionString _conn,
+											   double timeout):
+ScopedDbConnection(_conn, timeout) {}
 
 DriverScopedConnection::~DriverScopedConnection() {
 	ScopedDbConnection::done();
@@ -179,7 +187,7 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
 			//remove invalid connection string form queue and put it into the offline one
 			valid_connection_queue.pop();
 			try {
-				DriverScopedConnection c(*nextCS);
+				DriverScopedConnection c(*nextCS, 1);
 				connection_is_good = c.ok();
 				DEBUG_CODE(MDBHAC_LDBG_ << "(idx:" << cur_index << ") connection_is_good:" << connection_is_good;)
 				if(connection_is_good) {

@@ -24,6 +24,8 @@
 #include <string>
 #include <vector>
 
+#include <chaos/common/message/MessageRequestFuture.h>
+
 #include <chaos/common/utility/Atomic.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/data/CDataWrapper.h>
@@ -34,16 +36,16 @@
 #include <chaos/common/network/NetworkBroker.h>
 #include <boost/function.hpp>
 #include <boost/thread.hpp>
-
+#include <boost/thread/future.hpp>
 namespace chaos {
 	namespace common {
 		namespace message {
-			
+
 			/*! \name Check Request Result Macro
 			 These macros are used to check the result of a syncronous request operation.
 			 */
 			/*! \{ */
-			
+
 			/*! Check for delay error or application error */
 #define CHECK_TIMEOUT_AND_RESULT_CODE(x,e) \
 if(!x.get()) {\
@@ -51,7 +53,7 @@ e = ErrorCode::EC_TIMEOUT;\
 } else if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {\
 e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
 }
-			
+
 #define MC_PARSE_CDWPTR_RESULT(x) \
 if(x==NULL) {\
 last_error_code = ErrorCode::EC_TIMEOUT;\
@@ -60,15 +62,15 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) last
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE)) last_error_message = x->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE);\
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN)) last_error_domain = x->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN);\
 }
-			
+
 #define MC_GET_RESULT_DATA(x)\
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
-			
+
 			/*! \} */
-			
+
 			typedef void (*MessageHandler)(chaos::common::utility::atomic_int_type, common::data::CDataWrapper*);
-			
-			
+            typedef map<chaos::common::utility::atomic_int_type, boost::shared_ptr<boost::promise<common::data::CDataWrapper*> > >              MapPromises;
+            typedef map<chaos::common::utility::atomic_int_type, boost::shared_ptr<boost::promise<common::data::CDataWrapper*> > >::iterator    MapPromisesIterator;
 			//! MessageChannel
 			/*!
 			 This is the basic channel for comunicate with other chaos rpc server. It can be instantiated only by
@@ -80,150 +82,126 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 			 */
 			class MessageChannel : public DeclareAction {
 				friend class chaos::common::network::NetworkBroker;
-				
+
+				//! the domain associate to this domain for get the answers
+                std::string channel_reponse_domain;
+
 				//! atomic int for request id
 				chaos::common::utility::atomic_int_type channelRequestIDCounter;
-				
-				//! remote host where send the message and request
-				
-				string remoteNodeAddress;
-				
-				//! channel id (action domain)
-				string channelID;
-				
-				//!multi key semaphore for manage the return of the action and result association to the reqeust id
-				MultiKeyObjectWaitSemaphore<chaos::common::utility::atomic_int_type,common::data::CDataWrapper*> sem;
-				
+
 				//! Mutex for managing the maps manipulation
 				boost::shared_mutex mutext_answer_managment;
-				
-				//!map to async request and handler
-				MessageHandler response_handler;
-				
-				//!map to sync request and result
-				map<chaos::common::utility::atomic_int_type, common::data::CDataWrapper* > response_id_sync_map;
-				
+
+                MapPromises map_request_id_promises;
+
 				/*!
 				 Initialization phase of the channel
 				 */
 				virtual void init() throw(CException);
-				
+
 				/*!
 				 Initialization phase of the channel
 				 */
 				virtual void deinit() throw(CException);
-				
+
 				/*!
-				 \brief called when a response to a request is received, it will manage thesearch of
-				 hanlder specified for request id request
+				 Called when a response to a request is received, it will manage the search of
+				 the apprioriate handler for the request
 				 */
-				chaos_data::CDataWrapper* response(common::data::CDataWrapper*, bool&);
-				
-				/*!
-				 Set the reqeust id into the CDataWrapper
-				 \param requestPack the request pack to send
-				 \return the unique request id
-				 */
-				chaos::common::utility::atomic_int_type prepareRequestPackAndSend(bool async,
-																				  const char * const nodeID,
-																				  const char * const actionName,
-																				  CDataWrapper *requestPack,
-																				  bool onThisThread);
-				
+                chaos::common::data::CDataWrapper* response(common::data::CDataWrapper *reposnse_data,
+                                                            bool& detach);
+
 			protected:
 				//! Message broker associated with the channel instance
 				NetworkBroker *broker;
-				
+
 				//!last error domain
 				std::string last_error_domain;
-				
+
 				//!last error message
 				std::string last_error_message;
-				
+
 				//!error code
 				int32_t last_error_code;
-				
-				/*!
-				 Private constructor called by NetworkBroker
-				 \param _borker the broker instance that has created the channel
-				 \param _remote_host the remote host where send the message
-				 */
-				MessageChannel(NetworkBroker *_broker,
-							   const std::string& _remote_host);
-				
+
 				/*!
 				 Private constructor called by NetworkBroker
 				 */
 				MessageChannel(NetworkBroker *_broker);
-				
+
 				/*!
 				 Private destructor called by NetworkBroker
 				 */
 				virtual ~MessageChannel();
-				
-				/*!
-				 Update the address of the channel
-				 */
-				void setRemoteNodeAddress(const std::string& remote_addr);
-				
+
 				/*!
 				 Return the broker for that channel
 				 */
 				NetworkBroker * getBroker();
-				
+
 			public:
                 //! return last sendxxx error code
 				int32_t getLastErrorCode();
-                
+
                 //! return last sendxxx error message
 				const std::string& getLastErrorMessage();
-                
+
 				//! return last sendxxx error domain
 				const std::string& getLastErrorDomain();
-				
+
+                    //! Sena an rpc message to a remote node
 				/*!
-				 \brief send a message
+				 send a message
+                 \param remote_host is the host:port string that identify the remote server where send the rpc message
                  \param node_id id of the remote node within a network broker interface
                  \param action_name the name of the action to call
 				 \param message_pack the data to send, the pointer is not deallocated and i scopied into the pack
                  \param on_this_thread notify when the message need to be sent syncronously or in async  way
 				 */
-				void sendMessage(const char * const node_id,
-                                 const char * const action_name,
-                                 CDataWrapper * const message_pack,
+				void sendMessage(const std::string& remote_host,
+                                 const std::string& node_id,
+                                 const std::string& action_name,
+                                 CDataWrapper * message_pack,
                                  bool on_this_thread = false);
-				
-				/*!
-				 \brief Set the handler for manage the rpc answer
-				 \param async_handler the handler to be used
-				 */
-				void setHandler(MessageHandler async_handler);
-				
-				/*!
-				 remove the handler
-				 */
-				void clearHandler();
-				
-				/*!
-				 Poll for see if the response is arrived
-				 */
-				common::data::CDataWrapper* pollAnswer(chaos::common::utility::atomic_int_type request_id, uint32_t millisec_to_wait = 0);
-				
-				/*!
-				 \brief send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
-				 been received the method return with a NULL pointer
-				 \param nodeID id of the node into remote chaos rpc system
-				 \param actionName name of the actio to call
-				 \param requestPack the data to send, the pointer is not deallocated and i scopied into the pack
-				 \param millisecToWait waith the response for onli these number of millisec then return
-				 \return the answer of the request, a null value mean that the wait time is expired
-				 */
-				common::data::CDataWrapper* sendRequest(const char * const nodeID,
-														const char * const actionName,
-														CDataWrapper * const requestPack,
-														uint32_t millisecToWait=0,
-														bool async = false,
-														bool onThisThread = false);
+
+
+                    //!send an rpc request to a remote node
+                /*!
+                 send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
+                 been received the method return with a NULL pointer
+                 \param remote_host is the host:port string that identify the remote server where send the rpc request
+                 \param node_id id of the node into remote chaos rpc system
+                 \param action_name name of the actio to call
+                 \param request_pack the data to send, the pointer is not deallocated and i scopied into the pack
+                 \param millisec_to_wait waith the response for onli these number of millisec then return
+                 \param on_this_thread notify when the message need to be sent syncronously or in async  way
+                 \return the answer of the request, a null value mean that the wait time is expired
+                 */
+                common::data::CDataWrapper* sendRequest(const std::string& remote_host,
+                                                        const std::string& node_id,
+                                                        const std::string& action_name,
+                                                        CDataWrapper *request_pack,
+                                                        int32_t millisec_to_wait=-1,
+                                                        bool async = false,
+                                                        bool on_this_thread = false);
+
+                    //!send an rpc request to a remote node
+                /*!
+                 send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
+                 been received the method return with a NULL pointer
+                 \param remote_host is the host:port string that identify the remote server where send the rpc request
+                 \param node_id id of the node into remote chaos rpc system
+                 \param action_name name of the actio to call
+                 \param request_pack the data to send, the pointer is not deallocated and i scopied into the pack
+                 \return the future object to inspec and whait the result
+                 */
+                virtual std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string& remote_host,
+                                                                                  const std::string& node_id,
+                                                                                  const std::string& action_name,
+                                                                                  CDataWrapper *request_pack);
+
+                //! get the rpc published host and port
+                void getRpcPublishedHostAndPort(std::string& rpc_published_host_port);
 			};
 		}
 	}

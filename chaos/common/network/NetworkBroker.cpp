@@ -134,7 +134,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
 	//---------------------------- E V E N T ----------------------------
     
 	//---------------------------- R P C ----------------------------
-    if(globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE)){
+    if(globalConfiguration->hasKey(InitOption::OPT_RPC_IMPLEMENTATION)){
 		//get the dispatcher
         MB_LAPP  << "Get DefaultCommandDispatcher implementation";
         command_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
@@ -146,10 +146,10 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         
 		// get the rpc type to instantiate
-        string rpc_adapter_type = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE);
+        string rpc_impl = globalConfiguration->getStringValue(InitOption::OPT_RPC_IMPLEMENTATION);
 		//construct the rpc server and client name
-        string rpc_server_name = rpc_adapter_type+"Server";
-        string rpc_client_name = rpc_adapter_type+"Client";
+        string rpc_server_name = rpc_impl+"Server";
+        string rpc_client_name = rpc_impl+"Client";
         
         MB_LAPP  << "Trying to initilize RPC Server: " << rpc_server_name;
         rpc_server = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpc_server_name);
@@ -174,13 +174,13 @@ void NetworkBroker::init(void *initData) throw(CException) {
     }
 	//---------------------------- R P C ----------------------------
     //---------------------------- R P C SYNC ----------------------------
-    if(globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE) &&
-	   globalConfiguration->getBoolValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE)){
+    if(globalConfiguration->hasKey(InitOption::OPT_RPC_SYNC_ENABLE) &&
+	   globalConfiguration->getBoolValue(InitOption::OPT_RPC_SYNC_ENABLE)){
         //get the dispatcher
         MB_LAPP  << "Setup RPC Sync implementation";
         
         // get the rpc type to instantiate
-        string rpc_sync_impl = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_TYPE);
+        string rpc_sync_impl = globalConfiguration->getStringValue(InitOption::OPT_RPC_SYNC_IMPLEMENTATION);
         //construct the rpc server and client name
         string rpc_sync_impl_name = rpc_sync_impl+"RpcSyncServer";
         
@@ -474,7 +474,7 @@ void NetworkBroker::deregisterAction(DeclareAction* declare_action_class) {
 /*!
  Submit a message specifing the destination
  */
-bool NetworkBroker::submitMessage(string& host,
+bool NetworkBroker::submitMessage(const string& host,
                                   CDataWrapper *message,
                                   NetworkErrorHandler handler,
                                   const char * sender_identifier,
@@ -491,7 +491,7 @@ bool NetworkBroker::submitMessage(string& host,
 /*!
  Submite a new request to send to the remote host
  */
-bool NetworkBroker::submiteRequest(string& host,
+bool NetworkBroker::submiteRequest(const string& host,
                                    CDataWrapper *request,
                                    NetworkErrorHandler handler,
                                    const char * sender_identifier,
@@ -513,26 +513,31 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
     MessageChannel *channel = NULL;
     switch (type) {
         case RAW:
-            channel = new MessageChannel(this, node_network_aAddress->ipPort);
+            channel = new MessageChannel(this);
             delete(node_network_aAddress);
             break;
             
         case MDS:
+            if(!node_network_aAddress) return NULL;
             channel = new MDSMessageChannel(this, static_cast<CNodeNetworkAddress*>(node_network_aAddress));
             break;
             
         case DEVICE:
+            if(!node_network_aAddress) return NULL;
             channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(node_network_aAddress));
             break;
 		case PERFORMANCE:
-			channel = new common::message::PerformanceNodeChannel(this, node_network_aAddress, performance_session_managment.getLocalDirectIOClientInstance());
+            if(!node_network_aAddress) return NULL;
+			channel = new common::message::PerformanceNodeChannel(this,
+                                                                  node_network_aAddress,
+                                                                  performance_session_managment.getLocalDirectIOClientInstance());
             break;
     }
 	//check if the channel has been created
     if(channel){
         channel->init();
         boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
-        active_rpc_channel.insert(make_pair(channel->channelID, channel));
+        active_rpc_channel.insert(make_pair(channel->channel_reponse_domain, channel));
     }
     return channel;
 }
@@ -544,7 +549,7 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
 MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel() {
     CNodeNetworkAddress *mdsNodeAddr = new CNodeNetworkAddress();
     mdsNodeAddr->ipPort = GlobalConfiguration::getInstance()->getMetadataServerAddress();
-    mdsNodeAddr->nodeID = ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN;
+    mdsNodeAddr->nodeID = NodeDefinitionKeyRPC::RPC_DOMAIN;
     return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(mdsNodeAddr, MDS));
 }
 
@@ -567,8 +572,8 @@ chaos::common::message::PerformanceNodeChannel *NetworkBroker::getPerformanceCha
  Performe the creation of a raw channel
  \param deviceNetworkAddress device node address
  */
-MessageChannel *NetworkBroker::getRawMessageChannelFromAddress(CNetworkAddress  *node_network_address) {
-   	return getNewMessageChannelForRemoteHost(node_network_address, RAW);
+MessageChannel *NetworkBroker::getRawMessageChannelFromAddress() {
+   	return getNewMessageChannelForRemoteHost(NULL, RAW);
 }
 
 //!Channel deallocation
@@ -581,10 +586,10 @@ void NetworkBroker::disposeMessageChannel(MessageChannel *message_channel_to_dis
     boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
     
 	//check if the channel is active
-    if(active_rpc_channel.count(message_channel_to_dispose->channelID) == 0) return;
+    if(active_rpc_channel.count(message_channel_to_dispose->channel_reponse_domain) == 0) return;
     
 	//remove the channel as active
-    active_rpc_channel.erase(message_channel_to_dispose->channelID);
+    active_rpc_channel.erase(message_channel_to_dispose->channel_reponse_domain);
     
 	//deallocate it
     message_channel_to_dispose->deinit();

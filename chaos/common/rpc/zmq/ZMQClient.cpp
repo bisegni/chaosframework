@@ -56,7 +56,7 @@ ZMQClient::~ZMQClient(){
 void ZMQClient::init(void *init_data) throw(CException) {
 	CDataWrapper *cfg = reinterpret_cast<CDataWrapper*>(init_data);
 	ZMQC_LAPP << "initialization";
-	int32_t threadNumber = cfg->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
+	int32_t threadNumber = cfg->hasKey(InitOption::OPT_RPC_SERVER_THREAD_NUMBER)? cfg->getInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER):1;
 	ZMQC_LAPP << "ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
 	CObjectProcessingQueue<NetworkForwardInfo>::init(threadNumber);
 	ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> initialized";

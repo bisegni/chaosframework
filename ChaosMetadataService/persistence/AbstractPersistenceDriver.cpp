@@ -57,3 +57,15 @@ data_access::UnitServerDataAccess *AbstractPersistenceDriver::getUnitServerDataA
     CHAOS_ASSERT(unit_server_da_instance);
     return (data_access::UnitServerDataAccess *)unit_server_da_instance;
 }
+
+// return the implementation of the producer data access
+data_access::ControlUnitDataAccess *AbstractPersistenceDriver::getControlUnitDataAccess() {
+    CHAOS_ASSERT(control_unit_da_instance)
+    return (data_access::ControlUnitDataAccess *)control_unit_da_instance;
+}
+
+// return the implementation of the unit server data access
+data_access::UtilityDataAccess *AbstractPersistenceDriver::getUtilityDataAccess() {
+    CHAOS_ASSERT(utility_da_instance)
+    return (data_access::UtilityDataAccess *)utility_da_instance;
+}

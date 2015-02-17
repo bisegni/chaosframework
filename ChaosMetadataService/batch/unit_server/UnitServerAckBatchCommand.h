@@ -35,7 +35,8 @@ namespace chaos {
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
                     uint32_t retry_number;
-                    std::string remote_unitserver_ip_port;
+                    
+                    CNetworkAddress * remote_unitserver_address;
                     chaos::common::data::CDataWrapper *message_data;
                     chaos::common::message::MessageChannel *message_channel;
 

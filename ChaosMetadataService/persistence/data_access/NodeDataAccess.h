@@ -42,32 +42,49 @@ namespace chaos {
                     //! defautl destructor
                     ~NodeDataAccess();
                     
-                    //! insert a new device with name and property
+                    //! insert a new node
                     /*!
-                     the API receive a pack like the following one:
-                     { 
-                        //is the alias of the remote unit server
-                        "unit_server_alias": "unit server alias",
-                        
-                        //are the control unit that are hosted on remote server
-                        "unit_server_cu_alias": [ "Control Unit Class", "Control Unit Class" ],
-                     
-                        // is the rpc address where server respond
-                        "cu_instance_net_address": "unit server RPC address host:port"
-                     }
-                    \param unit_server_description unit server key,value description
+                     The API receive a data pack with one or more key listed in chaos::NodeDefinitionKey namespace,
+                     the mandatory key are:
+                     NODE_UNIQUE_ID,
+                     NODE_TYPE [values need to be one of the @chaos::NodeType],
+                     NODE_RPC_ADDR,
+                     NODE_RPC_DOMAIN,
+                     NODE_TIMESTAMP.
+                     \param node_description the node description
+                     \return 0 for no error otherwhise a negative value
                      */
                     virtual int insertNewNode(chaos::common::data::CDataWrapper& node_description) = 0;
                     
+                    //! update the node information
+                    /*!
+                     The API receive a data pack with one or more key listed in chaos::NodeDefinitionKey namespace.
+                     The mandatory key are the NODE_UNIQUE_ID need to find the description and the only updateable key are:
+                     NODE_RPC_ADDR,
+                     NODE_RPC_DOMAIN,
+                     NODE_TIMESTAMP.
+                     The NODE_TYPE key can't be updated
+                     \param node_description the node description
+                     \return 0 for no error otherwhise a negative value
+                     */
+                    virtual int updateNode(chaos::common::data::CDataWrapper& node_description) = 0;
+                    
+                    
                     //! check if a unit server identified by unique id is preset
                     /*!
+                     The API check is the description of the node has been created. The variable represent the answer to the
+                     request only if the result of the api is 0;
                      \param unit_server_alias unit server unique id
                      \param presence = true if the unit server is present
+                     \return 0 for no error otherwhise a negative value
                      */
                     virtual int checkNodePresence(const std::string& node_unique_id,
                                                   bool& presence) = 0;
                     
                     //! delete the node description
+                    /*
+                     The API delete the node description.
+                     */
                     virtual int deleteNode(const std::string& node_unique_id) = 0;
                 };
                 

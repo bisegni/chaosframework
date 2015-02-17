@@ -54,7 +54,7 @@ namespace chaos{
                 ~MDSBatchCommand();
                 
                 //! return a raw message channel for a specific node address
-                chaos::common::message::MessageChannel *getNewMessageChannelForAddress(chaos::common::network::CNetworkAddress *node_network_address);
+                chaos::common::message::MessageChannel *getNewMessageChannel();
                 
                 //! return a device message channel for a specific node address
                 chaos::common::message::DeviceMessageChannel *getNewDeviceMessageChannelForAddress(chaos::common::network::CDeviceNetworkAddress *device_network_address);

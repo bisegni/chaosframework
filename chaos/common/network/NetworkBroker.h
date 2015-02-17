@@ -276,7 +276,7 @@ namespace chaos {
 				 \param message the message coded into key/value semantics
 				 \param onThisThread if true the message is forwarded in the same thread of the caller
 				 */
-				bool submitMessage(string& serverAndPort,
+				bool submitMessage(const string& serverAndPort,
 								   chaos_data::CDataWrapper *message,
 								   NetworkErrorHandler handler = NULL,
 								   const char * senderIdentifier = NULL,
@@ -290,7 +290,7 @@ namespace chaos {
 				 \param request the request coded into key/value semantics
 				 \param onThisThread if true the message is forwarded in the same thread of the caller
 				 */
-				bool submiteRequest(string& serverAndPort,
+				bool submiteRequest(const string& serverAndPort,
 									chaos_data::CDataWrapper *request,
 									NetworkErrorHandler handler = NULL,
 									const char * senderIdentifier = NULL,
@@ -321,7 +321,7 @@ namespace chaos {
                  Performe the creation of a raw channel
                  \param deviceNetworkAddress device node address
                  */
-                MessageChannel *getRawMessageChannelFromAddress(CNetworkAddress  *deviceNetworkAddress);
+                MessageChannel *getRawMessageChannelFromAddress();
                 
                 
 				//!performance channel creation

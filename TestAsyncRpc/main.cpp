@@ -31,11 +31,17 @@ int main(int argc, char* argv[] ) {
     chaos::ui::DeviceController *controller = chaos::ui::HLDataApi::getInstance()->getControllerForDeviceID(std::string("sc_dev_a"), 10000);
     if(!controller) throw chaos::CException(4, "Error allcoating decive controller", "device controller creation");
 
-    MessageHandler mh = &handler;
-    controller->setHandler(mh);
     //simulate bad init call
-    controller->sendCustomRequest(chaos::ChaosSystemDomainAndActionLabel::ACTION_NODE_INIT, NULL, NULL, true);
-    sleep(5);
+    std::auto_ptr<MessageRequestFuture> result = controller->sendCustomRequestWithFuture(chaos::ChaosSystemDomainAndActionLabel::ACTION_NODE_INIT, NULL);
+    if(result->wait(1000)) {
+        std::cout << "Error code:" << result->getError() << std::endl;
+        std::cout << "Error message:" << result->getErrorMessage() << std::endl;
+        std::cout << "Error domain:" << result->getErrorDomain() << std::endl;
+        if(result->getResult()) {
+            std::cout << "Result:" << result->getResult()->getJSONString() << std::endl;
+        }
+
+    }
     chaos::ui::ChaosUIToolkit::getInstance()->deinit();
     return 0;
 }

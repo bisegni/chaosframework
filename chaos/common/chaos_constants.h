@@ -22,57 +22,56 @@
 
 #include <chaos/common/batch_command/BatchCommandConstants.h>
 
-//Constant for sandbox
+
 namespace chaos {
 	
 	/** @defgroup CommonParamOption Common Layer Configuration Option
 	 *  This is the collection of the parameter for common layer to customize the initial setup
 	 *  @{
 	 */
-	
-	//! Name space for grupping option used for commandline or in config file
+	//! groups the default !CHAOS option keys used in command line or config file
 	namespace InitOption{
-		//!  for print the help
+		//! for print the help
 		static const char * const	OPT_HELP                            = "help";
 		//! config file parameter
 		static const char * const   OPT_CONF_FILE						= "conf_file";
-		//!   Specify the implementation to use for rp messaging
+		//! Specify the implementation to use for rp messaging
 		static const char * const   OPT_RPC_IMPL_KV_PARAM               = "rpc-kv-param";
-		//!   Specify the implementation to use for rp messaging
+		//! Specify the implementation to use for rp messaging
 		static const char * const   OPT_RPC_IMPLEMENTATION              = "rpc-server-impl";
-		//!   Specify the implementation to use for rp messaging
+		//! Specify the implementation to use for rp messaging
 		static const char * const   OPT_RPC_SYNC_ENABLE                 = "rpc-syncserver-enable";
-		//!   Specify the implementation to use for rp messaging
+		//! Specify the implementation to use for rp messaging
 		static const char * const   OPT_RPC_SYNC_IMPLEMENTATION         = "rpc-syncserver-impl";
-		//!   Specify the implementation to use for rp messaging
+		//! Specify the implementation to use for rp messaging
 		static const char * const   OPT_RPC_SYNC_PORT					= "rpc-syncserver-port";
-		//!   Specify the network port where rpc system will publish al the service
+		//! Specify the network port where rpc system will publish al the service
 		static const char * const   OPT_RPC_SERVER_PORT                 = "rpc-server-port";
-		//!  Specify the number of the thread that the rpc ssytem must use to process the request
+		//! Specify the number of the thread that the rpc ssytem must use to process the request
 		static const char * const   OPT_RPC_SERVER_THREAD_NUMBER        = "rpc-server-thread-number";
-		//!   Specify the network port where the direct io subsystem publish i's priority channel
+		//! Specify the network port where the direct io subsystem publish i's priority channel
 		static const char * const   OPT_DIRECT_IO_PRIORITY_SERVER_PORT  = "direct_io-priority-server-port";
-		//!   Specify the network port where the direct io subsystem publish i's priority channel
+		//! Specify the network port where the direct io subsystem publish i's priority channel
 		static const char * const   OPT_DIRECT_IO_SERVICE_SERVER_PORT   = "direct_io-service-server-port";
-		//!  Specify the number of the thread that the direct io subsystem must use to process the request
+		//! Specify the number of the thread that the direct io subsystem must use to process the request
 		static const char * const   OPT_DIRECT_IO_SERVER_THREAD_NUMBER  = "direct_io-server-thread-number";
-		//!   Specify the implementation to use for the direct io subsystem
+		//! Specify the implementation to use for the direct io subsystem
 		static const char * const   OPT_DIRECT_IO_IMPLEMENTATION		= "direct_io-impl";
-		//!  Specify the live data servers address with the type host:port it is a multitoken parameter
+		//! Specify the live data servers address with the type host:port it is a multitoken parameter
 		static const char * const   OPT_LIVE_DATA_SERVER_ADDRESS        = "live-data-servers";
-		//!  Specify the metadata address for the metadataserver
+		//! Specify the metadata address for the metadataserver
 		static const char * const   OPT_METADATASERVER_ADDRESS          = "metadata-server";
-		//!  Specify when the log must be forwarded on console
+		//! Specify when the log must be forwarded on console
 		static const char * const   OPT_LOG_ON_CONSOLE                  = "log-on-console";
-		//!  Specify when the log must be forwarded on file
+		//! Specify when the log must be forwarded on file
 		static const char * const   OPT_LOG_ON_FILE                     = "log-on-file";
-		//!  Specify when the file path of the log
+		//! Specify when the file path of the log
 		static const char * const   OPT_LOG_FILE                        = "log-file";
-		//!  Specifi the level of the log going
+		//! Specifi the level of the log going
 		static const char * const   OPT_LOG_LEVEL                       = "log-level";
-		//!  Specify the ip where publish the framework
+		//! Specify the ip where publish the framework
 		static const char * const   OPT_PUBLISHING_IP                   = "publishing-ip";
-		//!  Specify the ip where publish the framework
+		//! Specify the ip where publish the framework
 		static const char * const   OPT_DATA_IO_IMPL					= "data-io-impl";
 	}
 	/** @} */ // end of ParamOption
@@ -81,24 +80,10 @@ namespace chaos {
 	 *  This is the collection of the key for the parameter used to configura rpc system
 	 *  @{
 	 */
-	//! Name space for grupping option used for rpc system configuration
+	//! Name space for grupping the options used for the rpc system configuration
 	namespace RpcConfigurationKey {
-		//! the regular expression for check the wel format key/valuparameter list for CS_CMDM_RPC_KV_IMPL_PARAM
-		static const char * const CS_CMDM_RPC_KV_IMPL_PARAM_STRING_REGEX    = "([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+)(\\|([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+))*";
-		//!  specify key/value paramter used by implementations with the template [k=v-k1|v1....]
-		static const char * const CS_CMDM_RPC_KV_IMPL_PARAM                 = "rpc_kv_impl_param";
-		//!  specify the type of the adatpre to be used
-		static const char * const CS_CMDM_RPC_ADAPTER_TYPE                  = "rpc_adapter_type";
-		//!  specify the port where the rpc must publish the his socket
-		static const char * const CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT          = "rpc_adapter_port";
-		//!  the number of the thread to user
-		static const char * const CS_CMDM_RPC_ADAPTER_THREAD_NUMBER         = "rpc_adapter_tn";
-		//!  specify when use the rpc synchronous interface
-		static const char * const CS_CMDM_RPC_SYNC_ENABLE                   = "rpc_sync_enable";
-		//!  specify the type of the adapter to use for syncrhonous rpc server
-		static const char * const CS_CMDM_RPC_SYNC_ADAPTER_TYPE             = "rpc_sync_adapter_type";
-		//!  specify the type of the adapter to use for syncrhonous rpc server
-		static const char * const CS_CMDM_RPC_SYNC_ADAPTER_PORT             = "rpc_sync_adapter_port";
+		//! the regular expression for check the wel format key/valuparameter list for CS_CMDM_OPT_RPC_IMPL_KV_PARAM
+		static const char * const OPT_RPC_IMPL_KV_PARAM_STRING_REGEX    = "([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+)(\\|([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+))*";
 	}
 	/** @} */ // end of RpcConfigurationKey
 	
@@ -123,9 +108,8 @@ namespace chaos {
             /** @} */ // end of DirectIOConfigurationKey
 		}
 	}
-
  
-    /** @defgroup NodeDefinitionKey Control Unit Definition
+    /** @defgroup NodeDefinitionKey !CHAOS node key description
      *  This is the collection of the key for the general node information
      *  @{
      */
@@ -177,7 +161,7 @@ namespace chaos {
     }
 	/** @} */ // end of NodeDefinitionKey
     
-    /** @defgroup NodeType List of default chaos node type
+    /** @defgroup NodeType !CHAOS node type value description
      *  this is the list of the all default node type recognized automatically by !CHAOS
      * infrastructure
      *  @{
@@ -198,9 +182,9 @@ namespace chaos {
         static const char * const NODE_TYPE_CONTROL_UNIT    = "nt_control_unit";
         //! identify an user itnerface node
         /*!
-         An user interface node is that node thac can control over node and show
-         data from node, tipically a node taht need to monitor the system and 
-         send command to change the system state.
+         An user interface is a node that can control other nodes and show
+         data from it, tipically a program achieve to monitor the system and
+         send command to change the his state.
          */
         static const char * const NODE_TYPE_USER_INTERFACE  = "nt_user_interface";
         //! identify a data service node
@@ -216,21 +200,196 @@ namespace chaos {
          */
         static const char * const NODE_TYPE_WAN_PROXY       = "nt_wan_proxy";
     }
-    
     /** @} */ // end of NodeType
-	/** @defgroup CUDefinitionKey Control Unit Definition
-	 *  This is the collection of the key for the control unit definition
-	 *  @{
-	 */
-	//! Name space for grupping option used for define the control unit
-	namespace CUDefinitionKey {
-		//! represent the delay beetwen a subseguent cu start method call
-		static const char * const THREAD_SCHEDULE_DELAY   = "cudk_thr_sch_delay";
-	}
-	/** @} */ // end of CUDefinitionKey
-	
-	/** @} */ // end of RpcConfigurationKey
-	
+    
+    /** @defgroup NodeDefinitionKeyRPC !CHAOS node rpc key description
+     *  @{
+     */
+    //! Name space for grupping the key for action published by the node
+    namespace NodeDefinitionKeyRPC {
+        //! The domain for the rpc action for every nodes (and sublcass)
+        static const char * const RPC_DOMAIN                    = "system";
+        //! Action that needs to answer with the status of the node(specialized for  every node)
+        static const char * const ACTION_NODE_STATUS            = "ndk_rpc_request_status";
+    }
+    /** @} */ // end of NodeDefinitionKeyRPC
+    
+    /** @defgroup UnitServerNodeDefinitionKey !CHAOS unit server node key description
+     *  @{
+     */
+    //! Name space for grupping key for the node type
+    namespace UnitServerNodeDefinitionKey {
+        //! key for the control unit aliases published by the unit server [array fo string]
+        static const char * const UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS       = "usndk_hosted_cu_class";
+        
+        //! key the addresses the list of the states of the CU for a given Unit Serve   string]
+        static const char * const UNIT_SERVER_HOSTED_CU_STATES                = "usndk_hosted_cu_states";
+    }
+    /** @} */ // end of UnitServerNodeDefinitionKey
+    
+    
+    /** @defgroup UnitServerNodeDomainAndActionLabel !CHAOS unit server rpc key description
+     *  This is the collection of all key used only by unit server
+     *  @{
+     */
+    namespace UnitServerNodeDomainAndActionLabel {
+        
+        //! Action called by mds for ack message in the unit server registration process
+        static const char * const ACTION_UNIT_SERVER_REG_ACK                        = "unitServerRegistrationACK";
+        
+        //! driver params passed during load operation for a specified control unit
+        static const char * const PARAM_CU_LOAD_DRIVER_PARAMS                       = "controlUnitDriverParams";
+        
+        //! Alias to the intancer of the control unit to allocate [string]
+        /*!
+         Represent the control unit type to be load or unload
+         */
+        static const char * const PARAM_CONTROL_UNIT_TYPE_ALIAS                     = "controlUnitTypeAlias";
+    }
+    /** @} */ // end of UnitServerNodeDomainAndActionLabel
+    
+    
+    /** @defgroup DataServiceNodeDefinitionKey !CHAOS data service node key description
+     *  This is the collection of the key used to configure the DataProxy server
+     *  address and port and how the client's(cu and ui) need to access to it (round robin or fail over)
+     *  @{
+     */
+    //! This is the collection of the key to configura history and live channel
+    namespace DataServiceNodeDefinitionKey {
+        //!live data addresses vector of string
+        static const char * const DS_SERVER_ADDRESS                                 = "dsndk_server_address";
+    }
+    /** @} */ // end of DataServiceNodeDefinitionKey
+    
+    /** @defgroup ControlUnitNodeDefinitionKey List of control unit node type attribute key
+     *  @{
+     */
+    //! Name space for grupping key for the control unit node type
+    namespace ControlUnitNodeDefinitionKey {
+        //! represent the delay beetwen a subseguent cu start method call
+        static const char * const THREAD_SCHEDULE_DELAY                             = "cudk_thr_sch_delay";
+        
+        //! param to pass to the control unit during load operation[ string]
+        static const char * const CONTROL_UNIT_LOAD_PARAM                           = "cudk_load_param";
+        
+        //! Description for the control unit dirvers [vector[string, string, string]*]
+        static const char * const CONTROL_UNIT_DRIVER_DESCRIPTION                   = "cudk_driver_description";
+        
+        //! The name of the driver to use[strig]
+        static const char * const CONTROL_UNIT_DRIVER_DESCRIPTION_NAME              = "cudk_driver_description_name";
+        
+        //! The version of the driver to use[strig]
+        static const char * const CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION           = "cudk_driver_description_version";
+        
+        //! The version of the driver to use[strig]
+        static const char * const CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER	= "cudk_driver_description_init_parameter";
+        
+        //!key for dataset description (array of per-attribute document)
+        static const char * const CONTROL_UNIT_DATASET_DESCRIPTION                  = "cudk_ds_desc";
+        //!key for dataset timestampt validity[uint64_t]
+        static const char * const CONTROL_UNIT_DATASET_TIMESTAMP                    = "cudk_ds_timestamp";
+        //!key for the name of dataset attribute
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_NAME               = "cudk_ds_attr_name";
+        //!key representing the type of parameter
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE               = "cudk_ds_attr_type";
+        //!key for the units ofr the attrbiute (ampere, volts)
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT               = "cudk_ds_attr_unit";
+        //!key representing the name of the parameter
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION        = "cudk_ds_attr_desc";
+        //!key representig the information for the parameter
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION          = "cudk_ds_attr_dir";
+        //!key representing the value max size where need (type different from raw data type ex: int32)
+        static const char * const CONTROL_UNIT_DATASET_VALUE_MAX_SIZE               = "cudk_ds_max_size";
+        //!key representing the default value
+        static const char * const CONTROL_UNIT_DATASET_DEFAULT_VALUE                = "cudk_default_value";
+        //!key representing the default value
+        static const char * const CONTROL_UNIT_DATASET_MAX_RANGE                    = "cudk_ds_max_range";
+        //!key representing the default value
+        static const char * const CONTROL_UNIT_DATASET_MIN_RANGE                    = "cudk_ds_min_range";
+    }
+    /** @} */ // end of ControlUnitNodeDefinitionKey
+    
+    /** @defgroup CUType Control Unit Default Type
+     *  This is the collection of the key for the classification of the control unit types
+     *  @{
+     */
+    //! Name space for grupping control unit types
+    namespace CUType {
+        static const char * const RTCU	= "rtcu";
+        static const char * const SCCU  = "sccu";
+    }
+    /** @} */ // end of CUType
+    
+    /** @defgroup ChaosDataType Chaos Basic datatype
+     *  This is the collection of the definition of the chaos basic datatype
+     *  @{
+     */
+    //! Name space for grupping the definition of the chaos basic datatype
+    namespace DataType {
+        //!typede for datatype
+        typedef enum DataType{
+            //!Integer 32 bit length
+            TYPE_INT32 = 0,
+            //!Integer 64 bit length
+            TYPE_INT64,
+            //!Double 64 bit length
+            TYPE_DOUBLE,
+            //!C string variable length
+            TYPE_STRING,
+            //!byte array variable length
+            TYPE_BYTEARRAY,
+            //!bool variable length
+            TYPE_BOOLEAN
+        } DataType;
+        
+        //!define the direction of dataset element
+        typedef enum DataSetAttributeIOAttribute{
+            //!define an atribute in input
+            Input = 0,
+            //!define an atribute in output
+            Output=1,
+            //!define an atribute either two direction
+            Bidirectional=2,
+        } DataSetAttributeIOAttribute;
+    }
+    
+    /** @defgroup CUStateKey Control Unit State
+     *  This is the collection of the key for the control unit state definition
+     *  @{
+     */
+    //! Name space for grupping option used for define the control unit state
+    namespace CUStateKey {
+        //! The state of the control unit
+        static const char * const CONTROL_UNIT_STATE    = "cu_state";
+        
+        //!define states of the control unit
+        /*!
+         These enumeration represents the state of the control unit, the order match permit to map these to
+         those of the stat machine internally defined into teh chaos::utility::StartableService.
+         */
+        typedef enum {
+            DEINIT  = 0,
+            INIT    = 1,
+            START   = 2,
+            STOP    = 3
+        } ControlUnitState;
+    }
+    /** @} */ // end of CUStateKey
+    
+    /** @defgroup MetadataServerNodeDefinitionKeyRPC List of mds node rpc action
+     *  @{
+     */
+    //! Name space for grupping the key for action published by the mds node
+    namespace MetadataServerNodeDefinitionKeyRPC {
+        
+        //! the key for the node registration[specific bson pack for every kind of node]
+        static const char * const ACTION_REGISTER_NODE            = "mdsndk_rpc_a_reg_node";
+        
+        //! key that idetify the result of the node registration[int32]
+        static const char * const PARAM_REGISTER_NODE_RESULT      = "mdsndk_rpc_p_reg_result";
+    }
+    /** @} */ // end of NodeDefinitionKeyRPC
+
 	namespace common {
 		namespace utility {
 			namespace service_state_machine {
@@ -251,29 +410,6 @@ namespace chaos {
 			}
 		}
 	}
-	
-	/** @defgroup CUStateKey Control Unit State
-	 *  This is the collection of the key for the control unit state definition
-	 *  @{
-	 */
-	//! Name space for grupping option used for define the control unit state
-	namespace CUStateKey {
-		//! The state of the control unit
-		static const char * const CONTROL_UNIT_STATE    = "cu_state";
-		
-		//!define states of the control unit
-		/*!
-		 These enumeration represents the state of the control unit, the order match permit to map these to
-		 those of the stat machine internally defined into teh chaos::utility::StartableService.
-		 */
-		typedef enum {
-			DEINIT  = 0,
-			INIT    = 1,
-			START   = 2,
-			STOP    = 3
-		} ControlUnitState;
-	}
-	/** @} */ // end of CUStateKey
 	
     
     /** @defgroup DataPackPrefixID Chaos Data Prefix
@@ -356,6 +492,7 @@ namespace chaos {
         
     }
     /** @} */ // end of DataPackSystemKey
+	
     
 	/** @defgroup CUType Control Unit Default Type
 	 *  This is the collection of the key for the classification of the control unit types
@@ -466,7 +603,7 @@ namespace chaos {
 			EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS = 6,
             //!unit server registration for duplicated alias
 			EC_MDS_NODE_REGISTRATION_FAILURE_DUPLICATE_ALIAS = 7,
-            //! unit server bad state machine state
+            //! node bad state machine state in response to mds ack event
 			EC_MDS_NODE_BAD_SM_STATE = 8,
             //!work unit is not self manageable and need to be loaded within an unit server
 			EC_MDS_NODE_ID_NOT_SELF_MANAGEABLE = 9
@@ -476,11 +613,11 @@ namespace chaos {
 	
 	/** @} */ // end of ChaosDataType
 	
-	/** @defgroup RpcActionDefinitionKey Action Rpc Sharing Definition key
-	 *  This is the collection of the key for the Action Rpc Sharing Definition key
+	/** @defgroup RpcActionDefinitionKey Action Rpc Protocol key
+	 *  This is the collection of the key used for the intere rpc protocol
 	 *  @{
 	 */
-	//! Name space for grupping option used for define the custom action to share via RPC chaos system
+	//! Name space for grupping option used for define the custom action to share via RPC !CHAOS system
 	namespace RpcActionDefinitionKey {
 		//!command manager rpc tag, this is the tag that rpc subsystem must to use to transfer BSON package between chaos node rpc endpoint
 		static const char * const CS_CMDM_RPC_TAG                             = "chaos_rpc";
@@ -555,12 +692,6 @@ namespace chaos {
 	namespace ChaosSystemDomainAndActionLabel {
 		//! The chaos action domain for system message
 		static const char * const SYSTEM_DOMAIN									= "system";
-        
-        //! this is the alias of the mds register node api
-        static const char * const ACTION_REGISTER_NODE                          = "registerNode";
-		
-        //! key that idetify the result of unit server registration[int32]
-        static const char * const ATTRIBUTE_MDS_REGISTER_NODE_RESULT            = "reg_unit_serv_result";
 		
 		//! Action to retrive all device id
 		static const char * const MDS_GET_ALL_DEVICE							= "getAllActiveDevice";
@@ -575,9 +706,7 @@ namespace chaos {
 		//! that runt the active contorl units. All it will be gracefull shutten down
 		//! before daemon exit
 		static const char * const ACTION_SYSTEM_SHUTDOWN                        = "shutdownUnitServer";
-		
-		//! Action called by mds to retrieve node status (the status of all cointained CUs)
-		static const char * const ACTION_NODE_STATUS_REQ                        = "unitServerStatusREQ";
+
 		
 		//! key for the server alias used by the instance [string]
 		static const char * const UNIT_SERVER_STATES_ANSWER                     = "unit_server_states";
@@ -620,49 +749,6 @@ namespace chaos {
 	}
 	/** @} */ // end of ChaosSystemDomainAndActionLabel
     
-    //! enclose all label used by unit server node
-    /** @defgroup UnitServerNodeDomainAndActionLabel Unit Server custom rcp key
-     *  This is the collection of all key used only by unit server
-     *  @{
-     */
-    namespace UnitServerNodeDomainAndActionLabel {
-        
-        //! Action called by mds for ack message in the unit server registration process
-        static const char * const ACTION_UNIT_SERVER_REG_ACK                    = "unitServerRegistrationACK";
-        
-        //! key for the control unit aliases published by the unit server [array fo string]
-        static const char * const MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS       = "unit_server_cu_alias";
-        
-        //! key the addresses the list of the states of the CU for a given Unit Serve   string]
-        static const char * const UNIT_SERVER_CU_STATES                             = "unit_server_cu_states";
-        
-        //! driver params passed during load operation for a specified control unit
-        static const char * const PARAM_CU_LOAD_DRIVER_PARAMS                       = "controlUnitDriverParams";
-        
-        //! Alias to the intancer of the control unit to allocate [string]
-        /*!
-         Represent the control unit type to be load or unload
-         */
-        static const char * const PARAM_CONTROL_UNIT_TYPE_ALIAS                     = "controlUnitTypeAlias";
-        
-        //! param to pass to the control unit during load operation[ string]
-        static const char * const PARAM_LOAD_CONTROL_UNIT_PARAM                     = "loadControlUnitParam";
-        
-        //! Description for the control unit dirvers [vector[string, string, string]*]
-        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC				= "DriverDescription";
-        
-        //! The name of the driver to use[strig]
-        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME			= "DriverDescriptionName";
-        
-        //! The version of the driver to use[strig]
-        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION		= "DriverDescriptionVersion";
-        
-        //! The version of the driver to use[strig]
-        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM	= "DriverDescriptionInitParam";
-
-    }
-	/** @} */ // end of UnitServerNodeDomainAndActionLabel
-    
 	/** @defgroup PerformanceSystemRpcKey Chaos performance system
 	 * this is the collection of the rpc key for interacting with
 	 * internal performance system
@@ -680,21 +766,6 @@ namespace chaos {
 		static const char * const KEY_REQUEST_SERVER_DESCRITPION = "sp::req_serv_desc";
 	}
 	/** @} */ // end of PerformanceSystemRpcKey
-	
-	/** @defgroup DataProxyConfigurationKey Chaos data proxy configuration
-	 *  This is the collection of the key used to configure the DataProxy server
-	 *  address and port and how the client's(cu and ui) need to access to it (round robin or fail over)
-	 *  @{
-	 */
-	//! This is the collection of the key to configura history and live channel
-	namespace DataProxyConfigurationKey {
-		static const char * const MDS_SERVER_ADDRESS							= "mds_network_addr";
-		//!live data address
-		static const char * const DS_SERVER_ADDRESS								= "ds_server_address";
-		//!key associated with the device identification in a k/v storage ien
-		static const char * const CS_DM_LD_CU_ADDRESS_KEY						= "ld.device_addr_key";
-	}
-	/** @} */ // end of DataProxyConfigurationKey
 
 	
 	namespace event {

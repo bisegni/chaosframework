@@ -1,8 +1,8 @@
-/*	
+/*
  *	MessageChannel.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,54 +28,40 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 #define MessageChannel_LOG_HEAD "[MessageChannel] - "
 
-#define MCAPP_ LAPP_ << MessageChannel_LOG_HEAD
-#define MCDBG_ LDBG_ << MessageChannel_LOG_HEAD << __FUNCTION__ << " - "
-#define MCERR_ LERR_ << MessageChannel_LOG_HEAD << __FUNCTION__ << "(" << __LINE__ << ") - "
+#define MCAPP_ INFO_LOG()
+#define MCDBG_ DBG_LOG()
+#define MCERR_ ERR_LOG()
 
-
-MessageChannel::MessageChannel(NetworkBroker *_broker,
-							   const std::string& _remote_host):
-broker(_broker),
-response_handler(NULL) {
-    //create the network address
-    remoteNodeAddress = _remote_host;
-}
 
 MessageChannel::MessageChannel(NetworkBroker *_broker):
 broker(_broker){
-
+    
 }
 
 MessageChannel::~MessageChannel() {
-	for(map<atomic_int_type, common::data::CDataWrapper* >::iterator it =  response_id_sync_map.begin();
-		it != response_id_sync_map.end();
-		it++){
-		MCAPP_ << "Cleanup unforwarded message responf for id " << it->first;
-		delete(it->second);
-		
-	}
+    
 }
 
 /*!
-  Initialization phase
+ Initialization phase
  */
 void MessageChannel::init() throw(CException) {
     //reset request id
     channelRequestIDCounter= 0;
     //create a new channel id
-    channelID = UUIDUtil::generateUUIDLite();
-
-        //register the action for the response
-    DeclareAction::addActionDescritionInstance<MessageChannel>(this, 
-                                                               &MessageChannel::response, 
-                                                               channelID.c_str(), 
-                                                               "response", 
+    channel_reponse_domain = UUIDUtil::generateUUIDLite();
+    
+    //register the action for the response
+    DeclareAction::addActionDescritionInstance<MessageChannel>(this,
+                                                               &MessageChannel::response,
+                                                               channel_reponse_domain.c_str(),
+                                                               "response",
                                                                "Receive the reponse for a request");
     
     broker->registerAction(this);
 }
 
-/*! 
+/*!
  Deinitialization phase
  */
 void MessageChannel::deinit() throw(CException) {
@@ -87,158 +73,147 @@ void MessageChannel::deinit() throw(CException) {
 /*!
  called when a result of a message is received
  */
-CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachData) {
-	MCDBG_ << "Received answer";
-    if(!responseData->hasKey(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID)) return NULL;
-    atomic_int_type requestID = 0;
+CDataWrapper *MessageChannel::response(CDataWrapper *response_data, bool& detach) {
+    DEBUG_CODE(MCDBG_ << "Received answer";)
+    if(!response_data->hasKey(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID)) return NULL;
+    atomic_int_type request_id = response_data->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
     try {
-        
+        //lock the map
         boost::shared_lock< boost::shared_mutex > lock(mutext_answer_managment);
         
-            //lock lk(waith_asnwer_mutex);
-        atomic_int_type requestID = responseData->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
-		
-		MCDBG_ << "Received answer with id " << requestID;
-
-            //check if the requester is waith the answer
-        if(!(detachData = sem.setWaithedObjectForKey(requestID, responseData))){
-			MCDBG_ << "No waiting thread for id" << requestID;
-            //call the handler
-            if((detachData = response_handler)) {
-                response_handler(requestID, responseData);
-            } else {
-                MCDBG_ << "No one has consumed the response of id " << requestID;
-            }
-		} else {
-			MCDBG_ << "Anser forwad to waiting thread detach value->" << detachData;
-		}
+        DEBUG_CODE(MCDBG_ << "Received answer with id:" << request_id;)
+        
+        //check if the requester is waith the answer
+        MapPromisesIterator p_iter = map_request_id_promises.find(request_id);
+        
+        if((detach = (p_iter != map_request_id_promises.end()))) {
+            DEBUG_CODE(MCDBG_ << "We have promises for id:" << request_id);
+            
+            //set the valu ein promises
+            p_iter->second->set_value(response_data);
+            
+            //delete the promises after have been set the data
+            map_request_id_promises.erase(p_iter);
+            
+            //we have the promises
+            lock.unlock();
+        } else {
+            DEBUG_CODE(MCDBG_ << "No promises found for id:" << request_id;)
+        }
     } catch (...) {
-        MCDBG_ << "An error occuring dispatching the response:" << requestID;
+        DEBUG_CODE(MCDBG_ << "An error occuring dispatching the response:" << request_id;)
     }
     return NULL;
 }
 
-/*
- */
-atomic_int_type MessageChannel::prepareRequestPackAndSend(bool async,
-														  const char * const nodeID,
-														  const char * const actionName,
-														  CDataWrapper *requestPack,
-														  bool onThisThread) {
-    CHAOS_ASSERT(nodeID && actionName && requestPack)
-        //get new reqeust id
-    atomic_int_type currentRequestID = atomic_increment(&channelRequestIDCounter);
-
-    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, nodeID);
-    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, actionName);
-
-    //register the handler
-    if(!async) {
-        sem.initKey(currentRequestID);
-    }
-    
-        //add current server as
-    requestPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID, currentRequestID);
-    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN, channelID);
-    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION, "response");
-    
-    //the message need to be put in a subobject with the current key: CS_CMDM_ACTION_MESSAGE
-    
-    broker->submiteRequest(remoteNodeAddress, requestPack, NULL, NULL, 0, onThisThread);
-    
-    return currentRequestID;
-}
-
-/*!
- Update the address of the channel
- */
-void MessageChannel::setRemoteNodeAddress(const std::string& remote_addr) {
-	remoteNodeAddress = remote_addr;
-}
 
 /*!
  Return the broker for that channel
  */
 NetworkBroker* MessageChannel::getBroker(){
-	return broker;
+    return broker;
 }
 
 int32_t MessageChannel::getLastErrorCode() {
-	return last_error_code;
+    return last_error_code;
 }
 
 const std::string& MessageChannel::getLastErrorMessage() {
-	return last_error_message;
+    return last_error_message;
 }
 
 const std::string& MessageChannel::getLastErrorDomain() {
-	return last_error_domain;
+    return last_error_domain;
 }
 
 /*!
  called when a result of an
  */
-void MessageChannel::sendMessage(const char * const node_id,
-                                 const char * const action_name,
-                                 CDataWrapper * const message_pack,
+void MessageChannel::sendMessage(const std::string& remote_host,
+                                 const std::string& node_id,
+                                 const std::string& action_name,
+                                 CDataWrapper *message_pack,
                                  bool on_this_thread) {
-    CHAOS_ASSERT(node_id && action_name)
     CDataWrapper *data_pack = new CDataWrapper();
     //add the action and dommain name
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, node_id);
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
     if(message_pack)data_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *message_pack);
     //send the request
-    broker->submitMessage(remoteNodeAddress, data_pack, NULL, NULL, 0, on_this_thread);
+    broker->submitMessage(remote_host.c_str(), data_pack, NULL, NULL, 0, on_this_thread);
 }
 
 /*
  */
-CDataWrapper* MessageChannel::sendRequest(const char * const nodeID,
-										  const char * const actionName,
-										  CDataWrapper * const requestPack,
-										  uint32_t millisecToWait,
-										  bool async,
-										  bool onThisThread) {
-    CHAOS_ASSERT(nodeID && actionName)
-    CDataWrapper *result = NULL;
-    CDataWrapper *dataPack = new CDataWrapper();
+CDataWrapper* MessageChannel::sendRequest(const std::string& remote_host,
+                                          const std::string& node_id,
+                                          const std::string& action_name,
+                                          CDataWrapper *request_pack,
+                                          int32_t millisec_to_wait,
+                                          bool async,
+                                          bool on_this_thread) {
+    CHAOS_ASSERT(broker)    auto_ptr<MessageRequestFuture> request_future(sendRequestWithFuture(remote_host,
+                                                                                                node_id,
+                                                                                                action_name,
+                                                                                                request_pack));
+    
+    
+    
+    //wait for some time or, if == 0, forever
+    if(request_future->wait(millisec_to_wait)) {
+        return request_future->detachResult();
+    } else {
+        return NULL;
+    }
+   
+}
+
+//!send an rpc request to a remote node
+/*!
+ send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
+ been received the method return with a NULL pointer
+ \param remote_host is the host:port string that identify the remote server where send the rpc request
+ \param node_id id of the node into remote chaos rpc system
+ \param action_name name of the actio to call
+ \param request_pack the data to send, the pointer is not deallocated and i scopied into the pack
+ \return the future object to inspec and whait the result
+ */
+std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const std::string& remote_host,
+                                                                          const std::string& node_id,
+                                                                          const std::string& action_name,
+                                                                          CDataWrapper *request_pack) {
+    CHAOS_ASSERT(broker)
+    auto_ptr<MessageRequestFuture> result;
+    CDataWrapper *data_pack = new CDataWrapper();
+    
     //lock lk(waith_asnwer_mutex);
-    if(requestPack)dataPack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *requestPack);
-    atomic_int_type currentRequestID =  prepareRequestPackAndSend(async, nodeID, actionName, dataPack, onThisThread);
+    if(request_pack)data_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *request_pack);
+    atomic_int_type current_request_id = atomic_increment(&channelRequestIDCounter);
     
-    //waith the answer
-    //waith_asnwer_condition.wait(lk);
-    if(async) return result;
+    data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, node_id);
+    data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
     
-    if(millisecToWait)
-        result = sem.wait(currentRequestID, millisecToWait);
-    else
-        result = sem.wait(currentRequestID);
-    MC_PARSE_CDWPTR_RESULT(result)
+    //add current server as
+    data_pack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID, current_request_id);
+    data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN, channel_reponse_domain);
+    data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION, "response");
+    //prepare the promises and future
+    boost::shared_ptr<boost::promise<common::data::CDataWrapper*> > promises_ptr(new boost::promise<common::data::CDataWrapper*>());
+    
+    //lock the map
+    boost::shared_lock< boost::shared_mutex > lock(mutext_answer_managment);
+    //insert into themap the promises
+    map_request_id_promises.insert(make_pair(current_request_id, promises_ptr));
+    //get the future
+    result.reset(new  MessageRequestFuture(current_request_id,
+                                           promises_ptr->get_future()));
+    //if(async) return result;
+    //submit the request
+    broker->submiteRequest(remote_host, data_pack, NULL, NULL, 0, true);
     return result;
 }
 
-/*! 
- called when a result of an 
- */
-void MessageChannel::setHandler(MessageHandler handler) {
-    boost::unique_lock< boost::shared_mutex > uniqueLock(mutext_answer_managment);
-    response_handler = handler;
-}
-
-/*!
- Remove request id
- */
-void MessageChannel::clearHandler() {
-    boost::unique_lock< boost::shared_mutex > uniqueLock(mutext_answer_managment);
-    response_handler = NULL;
-}
-
-
-/*!
- Poll for see if the response is arrived
- */
-CDataWrapper* MessageChannel::pollAnswer(atomic_int_type request_id, uint32_t millisec_to_wait) {
-    return sem.wait(request_id, millisec_to_wait);
+//! get the rpc published host and port
+void MessageChannel::getRpcPublishedHostAndPort(std::string& rpc_published_host_port) {
+    return broker->getPublishedHostAndPort(rpc_published_host_port);
 }

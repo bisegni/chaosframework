@@ -19,5 +19,4 @@
 #define MONGODB_COLLECTION_NODES            "nodes"
 #define MONGODB_COLLECTION_DATASET          "dataset"
 
-
 #endif

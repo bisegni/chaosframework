@@ -136,8 +136,6 @@ int main (int argc, char* argv[] ) {
     } catch (CException& e) {
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
     }
-	
-	if(device_network_address) delete(device_network_address);
     return 0;
 }
 

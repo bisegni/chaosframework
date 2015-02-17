@@ -39,17 +39,29 @@ namespace chaos {
                     //!default destructor
                     ~UnitServerDataAccess();
                     
-                    //! update the unit server information
+                    //! Insert the unit server information
                     /*!
+                     Insert a new Unit Server node. After calling the NodeDataAccess method for insert new node it update the created node with the value of the
+                     keys from the namespace chaos::UnitServerNodeDefinitionKey:
+                     UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS(mandatory) that is a vector of string that represent the hosted unit server control unit class.
+                     
                      \param unit_server_description unit server key,value description
                      */
                     virtual int insertNewUS(chaos::common::data::CDataWrapper& unit_server_description) = 0;
                     
                     //!check if the unit server is present
+                    /*!
+                     Call directly the node data access to check if the node exist
+                     */
                     virtual int checkUSPresence(const std::string& unit_server_alias, bool& presence) = 0;
                     
-                    //! update the unit server information
+                    //! Update the unit server information
                     /*!
+                     Perform the update operation on the unit server description, the DA frist need to call the update of the node data
+                     access to update node information next needs to update the unit server custom property from the namespace 
+                     chaos::UnitServerNodeDefinitionKey.
+                     UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS(mandatory)
+                     
                      \param unit_server_description unit server key,value description
                      */
                     virtual int updateUS(chaos::common::data::CDataWrapper& unit_server_description) = 0;

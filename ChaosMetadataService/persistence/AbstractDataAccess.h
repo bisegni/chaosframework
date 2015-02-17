@@ -20,6 +20,8 @@
 #ifndef __CHAOSFramework__AbstractDataAccess__
 #define __CHAOSFramework__AbstractDataAccess__
 
+#include "persistence_types.h"
+
 #include <chaos/common/utility/NamedService.h>
 
 namespace chaos {

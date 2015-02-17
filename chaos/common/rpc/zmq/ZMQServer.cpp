@@ -53,9 +53,9 @@ void ZMQServer::init(void *init_data) throw(CException) {
     try {
         runServer = true;
 
-        portNumber = adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT);
+        portNumber = adapterConfiguration->getInt32Value(InitOption::OPT_RPC_SERVER_PORT);
 
-        threadNumber = adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER);
+        threadNumber = adapterConfiguration->getInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER);
 
         ZMQS_LAPP << "port number:" << portNumber;
         ZMQS_LAPP << "thread number:" << threadNumber;

@@ -41,22 +41,23 @@ namespace chaos {
 				public data_access::UnitServerDataAccess,
                 protected MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
-					friend class INSTANCER_P1(MongoDBUnitServerDataAccess, AbstractDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>&);
+					friend class INSTANCER_P1(MongoDBUnitServerDataAccess, AbstractDataAccess, const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>&);
                     
                     MongoDBNodeDataAccess *node_data_access = NULL;
 				protected:
-                    MongoDBUnitServerDataAccess(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection);
+                    MongoDBUnitServerDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
 					~MongoDBUnitServerDataAccess();
 				public:
                     //inherited method
                     int insertNewUS(chaos::common::data::CDataWrapper& unit_server_description);
                     
                     //inherited method
-                    int checkUSPresence(const std::string& unit_server_unique_id,
-                                        bool& presence);
-                    //inherited method
                     int updateUS(chaos::common::data::CDataWrapper& unit_server_description);
                     
+                    //inherited method
+                    int checkUSPresence(const std::string& unit_server_unique_id,
+                                        bool& presence);
+
                     //inherited method
                     int deleteUS(const std::string& unit_server_unique_id);
 				};

@@ -97,7 +97,7 @@ void RTAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigura
 	//add the scekdule dalay for the sandbox
 	if(schedule_dalay){
 		//in this case ovverrride the config file
-		setupConfiguration.addInt64Value(CUDefinitionKey::THREAD_SCHEDULE_DELAY , schedule_dalay);
+		setupConfiguration.addInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY , schedule_dalay);
 	}
 }
 
@@ -214,9 +214,9 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
  */
 CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePack, bool& detachParam) throw (CException) {
 	CDataWrapper *result = AbstractControlUnit::updateConfiguration(updatePack, detachParam);
-	if(updatePack->hasKey(CUDefinitionKey::THREAD_SCHEDULE_DELAY)){
+	if(updatePack->hasKey(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY)){
 		//we need to configure the delay  from a run() call and the next
-		uint64_t uSecdelay = updatePack->getUInt64Value(CUDefinitionKey::THREAD_SCHEDULE_DELAY);
+		uint64_t uSecdelay = updatePack->getUInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
 		//check if we need to update the scehdule time
 		if(uSecdelay != schedule_dalay){
 			RTCULAPP_ << "Update schedule delay in:" << uSecdelay << " microsecond";

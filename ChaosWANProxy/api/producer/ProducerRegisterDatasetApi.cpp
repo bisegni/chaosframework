@@ -89,7 +89,7 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 	CDataWrapper mds_registration_pack;
 	CDataWrapper dataset_pack;
 	
-	const Json::Value& dataset_timestamp = input_data[chaos::DatasetDefinitionkey::TIMESTAMP];
+	const Json::Value& dataset_timestamp = input_data[chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP];
 	if(dataset_timestamp.isNull()) {
 		err_msg = "The timestamp is mandatory";
 		PRA_LERR << err_msg;
@@ -101,11 +101,11 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 		PRODUCER_REGISTER_ERR(output_data, -4, err_msg);
 		return err;
 	}
-	mds_registration_pack.addInt64Value(chaos::DatasetDefinitionkey::TIMESTAMP,
-										(int64_t)dataset_timestamp.asUInt64());
+	mds_registration_pack.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,
+                                        (int64_t)dataset_timestamp.asUInt64());
 	
 	//scan the description of the dataset
-	const Json::Value& dataset_elements = input_data[chaos::DatasetDefinitionkey::DESCRIPTION];
+	const Json::Value& dataset_elements = input_data[chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION];
 	if(!dataset_elements.isArray()) {
 		err_msg = "The description of the dataset needs to be an array of object";
 		PRA_LERR << err_msg;
@@ -130,7 +130,7 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 	}
 	
 	//close array for all device description
-	mds_registration_pack.finalizeArrayForKey(DatasetDefinitionkey::DESCRIPTION);
+	mds_registration_pack.finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
 	DEBUG_CODE(PRA_LDBG << mds_registration_pack.getJSONString());
 	
 	if((err = persistence_driver->registerDataset(producer_name,
@@ -154,7 +154,7 @@ int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_js
 	/*-the name of the attribute
 	 "ds_attr_name": string,
 	 */
-	const Json::Value&  attribute_name = dataset_json_element[chaos::DatasetDefinitionkey::ATTRIBUTE_NAME];
+	const Json::Value&  attribute_name = dataset_json_element[chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME];
 	if(attribute_name.isNull()) {
 		err_msg = "no attribute name found";
 		return -6;
@@ -163,13 +163,13 @@ int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_js
 		return -7;
 	}
 	
-	element->addStringValue(chaos::DatasetDefinitionkey::ATTRIBUTE_NAME,
+	element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME,
 							attribute_name.asString());
 	/*
 	 -the description fo the attribute
 	 "ds_attr_desc": string,
 	 */
-	const Json::Value&  attribute_description = dataset_json_element[chaos::DatasetDefinitionkey::ATTRIBUTE_DESCRIPTION];
+	const Json::Value&  attribute_description = dataset_json_element[chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION];
 	if(attribute_description.isNull()) {
 		err_msg = "no attribute description found";
 		return -8;
@@ -177,7 +177,7 @@ int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_js
 		err_msg = "the description of the attribute needs to be a string";
 		return -9;
 	}
-	element->addStringValue(chaos::DatasetDefinitionkey::ATTRIBUTE_DESCRIPTION,
+	element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION,
 							attribute_description.asString());
 	/*
 	 -the type of the attribute as in @chaos::DataType::DataType
@@ -189,7 +189,7 @@ int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_js
 	 - TYPE_BOOLEAN		= 5
 	 "ds_attr_type": number
 	 */
-	const Json::Value&  attribute_type = dataset_json_element[chaos::DatasetDefinitionkey::ATTRIBUTE_TYPE];
+	const Json::Value&  attribute_type = dataset_json_element[chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE];
 	if(attribute_type.isNull()) {
 		err_msg = "the attribute type is mandatory";
 		return -10;
@@ -201,22 +201,22 @@ int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_js
 	std::transform(type.begin(), type.end(), type.begin(), ::tolower);
 	
 	if(type.compare("int32") == 0) {
-		element->addInt32Value(chaos::DatasetDefinitionkey::ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
 							   chaos::DataType::TYPE_INT32);
 	}else if(type.compare("int64") == 0) {
-		element->addInt32Value(chaos::DatasetDefinitionkey::ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
 							   chaos::DataType::TYPE_INT64);
 	}else if(type.compare("double") == 0) {
-		element->addInt32Value(chaos::DatasetDefinitionkey::ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
 							   chaos::DataType::TYPE_DOUBLE);
 	}else if(type.compare("string") == 0) {
-		element->addInt32Value(chaos::DatasetDefinitionkey::ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
 							   chaos::DataType::TYPE_STRING);
 	}else if(type.compare("binary") == 0) {
-		element->addInt32Value(chaos::DatasetDefinitionkey::ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
 							   chaos::DataType::TYPE_BYTEARRAY);
 	}else if(type.compare("boolean") == 0) {
-		element->addInt32Value(chaos::DatasetDefinitionkey::ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
 							   chaos::DataType::TYPE_BOOLEAN);
 	}else{
 		err_msg = "Bad attribute type";
@@ -230,7 +230,7 @@ int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_js
 		"ds_attr_dir": string,
 		
 	 */
-	const Json::Value&  attribute_direction = dataset_json_element[chaos::DatasetDefinitionkey::ATTRIBUTE_DIRECTION];
+	const Json::Value&  attribute_direction = dataset_json_element[chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION];
 	if(attribute_direction.isNull()) {
 		err_msg = "the attribute direction is mandatory";
 		return -13;
@@ -243,10 +243,10 @@ int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_js
 	std::transform(direction.begin(), direction.end(), direction.begin(), ::tolower);
 	
 	if(direction.compare("input") == 0) {
-		element->addInt32Value(chaos::DatasetDefinitionkey::ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
 							   chaos::DataType::Input);
 	} else if(direction.compare("output") == 0) {
-		element->addInt32Value(chaos::DatasetDefinitionkey::ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
 							   chaos::DataType::Output);
 	}
 	
@@ -254,39 +254,39 @@ int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_js
 		- the maximum value of the attribute (when applicable)[optional only for input attribute]
 		"ds_max_range": string,
 		*/
-	const Json::Value&  attribute_max_range = dataset_json_element[chaos::DatasetDefinitionkey::MAX_RANGE];
+	const Json::Value&  attribute_max_range = dataset_json_element[chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE];
 	if(!attribute_max_range.isNull()) {
 		if(!attribute_max_range.isString()) {
 			err_msg = "the attribute max value range needs to be a string";
 			return -15;
 		}
-		element->addStringValue(chaos::DatasetDefinitionkey::MAX_RANGE,
+		element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE,
 								attribute_max_range.asString());
 	}
 	/*
 		- the minimum value of the attribute (when applicable)[optional only for input attribute]
 		"ds_min_range": string,
 		*/
-	const Json::Value&  attribute_min_range = dataset_json_element[chaos::DatasetDefinitionkey::MIN_RANGE];
+	const Json::Value&  attribute_min_range = dataset_json_element[chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE];
 	if(!attribute_min_range.isNull()) {
 		if(!attribute_min_range.isString()) {
 			err_msg = "the attribute max value range needs to be a string";
 			return -16;
 		}
-		element->addStringValue(chaos::DatasetDefinitionkey::MIN_RANGE,
+		element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE,
 								attribute_min_range.asString());
 	}
 	/*
 		- the default value of the attribute (when applicable)[optional only for input attribute]
 		"ds_default_value": "1"
 	 */
-	const Json::Value&  attribute_default_range = dataset_json_element[chaos::DatasetDefinitionkey::DEFAULT_VALUE];
+	const Json::Value&  attribute_default_range = dataset_json_element[chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE];
 	if(!attribute_default_range.isNull()) {
 		if(!attribute_default_range.isString()) {
 			err_msg = "the attribute max value range needs to be a string";
 			return -17;
 		}
-		element->addStringValue(chaos::DatasetDefinitionkey::DEFAULT_VALUE,
+		element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE,
 								attribute_default_range.asString());
 	}
 	return 0;

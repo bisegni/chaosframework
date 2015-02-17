@@ -209,32 +209,32 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerPort, InitOption::OPT_RPC_SERVER_PORT, 8888)
     int32_t freeFoundPort = InetUtility::scanForLocalFreePort(rpcServerPort);
     addLocalServerBasePort(freeFoundPort);
-    configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT, freeFoundPort);
+    configuration.addInt32Value(InitOption::OPT_RPC_SERVER_PORT, freeFoundPort);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerThreadNumber, InitOption::OPT_RPC_SERVER_THREAD_NUMBER, 1)
-    configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER, rpcServerThreadNumber);
+    configuration.addInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, rpcServerThreadNumber);
     
     CHECK_AND_DEFINE_OPTION(string, rpcImpl, InitOption::OPT_RPC_IMPLEMENTATION)
-    configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE, rpcImpl);
+    configuration.addStringValue(InitOption::OPT_RPC_IMPLEMENTATION, rpcImpl);
     
-    CHECK_AND_DEFINE_OPTION(bool, rpc_sync_enable, InitOption::OPT_RPC_SYNC_ENABLE)
+    CHECK_AND_DEFINE_OPTION(bool, OPT_RPC_SYNC_ENABLE, InitOption::OPT_RPC_SYNC_ENABLE)
     else{
-        rpc_sync_enable = false;
+        OPT_RPC_SYNC_ENABLE = false;
     }
-    configuration.addBoolValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE, rpc_sync_enable);
+    configuration.addBoolValue(InitOption::OPT_RPC_SYNC_ENABLE, OPT_RPC_SYNC_ENABLE);
 	
 	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpc_sync_port, InitOption::OPT_RPC_SYNC_PORT, 8080)
-	configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_PORT, InetUtility::scanForLocalFreePort(rpc_sync_port));
+	configuration.addInt32Value(InitOption::OPT_RPC_SYNC_PORT, InetUtility::scanForLocalFreePort(rpc_sync_port));
 	
     CHECK_AND_DEFINE_OPTION(string, rpc_sync_impl, InitOption::OPT_RPC_SYNC_IMPLEMENTATION)
-    configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_TYPE, rpc_sync_impl);
+    configuration.addStringValue(InitOption::OPT_RPC_SYNC_IMPLEMENTATION, rpc_sync_impl);
     
     CHECK_AND_DEFINE_OPTION(string, rpc_impl_kv_param, InitOption::OPT_RPC_IMPL_KV_PARAM)
-    configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_KV_IMPL_PARAM_STRING_REGEX, rpc_sync_impl);
+    configuration.addStringValue(InitOption::OPT_RPC_IMPL_KV_PARAM, rpc_sync_impl);
     
     //fill the key value list
     if(rpc_impl_kv_param.size()) {
-        fillKVParameter(map_kv_param_rpc_impl, rpc_impl_kv_param, std::string(RpcConfigurationKey::CS_CMDM_RPC_KV_IMPL_PARAM_STRING_REGEX));
+        fillKVParameter(map_kv_param_rpc_impl, rpc_impl_kv_param, std::string(RpcConfigurationKey::OPT_RPC_IMPL_KV_PARAM_STRING_REGEX));
     }
     
     //direct io
@@ -264,7 +264,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
             configuration.appendStringToArray(liveDataServer[idx]);
         }
     }
-    configuration.finalizeArrayForKey(DataProxyConfigurationKey::DS_SERVER_ADDRESS);
+    configuration.finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_SERVER_ADDRESS);
     
     //configure metadataserver
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, InitOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")
@@ -346,7 +346,7 @@ void GlobalConfiguration::addMetadataServerAddress(const string& mdsAddress) thr
         throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
     
     //address can be added
-    configuration.addStringValue(DataProxyConfigurationKey::MDS_SERVER_ADDRESS, mdsAddress);
+    configuration.addStringValue(InitOption::OPT_METADATASERVER_ADDRESS, mdsAddress);
 }
 
 /**
@@ -372,7 +372,7 @@ void GlobalConfiguration::addLocalServerBasePort(int32_t localDefaultPort) throw
  return the address of metadataserver
  */
 string GlobalConfiguration::getMetadataServerAddress() {
-    return configuration.getStringValue(DataProxyConfigurationKey::MDS_SERVER_ADDRESS);
+    return configuration.getStringValue(InitOption::OPT_METADATASERVER_ADDRESS);
 }
 
 /*
@@ -401,7 +401,7 @@ string GlobalConfiguration::getLocalServerAddressAnBasePort(){
  return the address of metadataserver
  */
 bool GlobalConfiguration::isMEtadataServerConfigured() {
-    return configuration.hasKey(DataProxyConfigurationKey::MDS_SERVER_ADDRESS);
+    return configuration.hasKey(InitOption::OPT_METADATASERVER_ADDRESS);
 }
 
 const std::map<std::string, std::string>& GlobalConfiguration::getRpcImplKVParam() const {

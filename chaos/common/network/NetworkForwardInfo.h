@@ -65,7 +65,10 @@ namespace chaos {
 				}
 				
 				~NetworkForwardInfo(){
-					if(message) delete(message);
+                    if(message) {
+                        delete(message);
+                        message = NULL;
+                    }
 				}
 				
 				chaos_data::CDataWrapper *detachMessage() {

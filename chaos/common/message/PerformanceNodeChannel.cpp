@@ -25,10 +25,12 @@ using namespace chaos::common::message;
 using namespace chaos::common::direct_io;
 
 //! base constructor
-PerformanceNodeChannel::PerformanceNodeChannel(NetworkBroker *msg_broker, CNetworkAddress *node_network_address, DirectIOClient *_client_instance):
-MessageChannel(msg_broker), client_instance(_client_instance) {
-	setRemoteNodeAddress(node_network_address->ipPort);
-}
+PerformanceNodeChannel::PerformanceNodeChannel(NetworkBroker *msg_broker,
+                                               CNetworkAddress *_node_network_address,
+                                               DirectIOClient *_client_instance):
+MessageChannel(msg_broker),
+node_network_address(_node_network_address),
+client_instance(_client_instance) {}
 
 PerformanceNodeChannel::~PerformanceNodeChannel() {
 	releasePerformanceSession(local_performance_session);
@@ -52,10 +54,11 @@ int PerformanceNodeChannel::getPerformanceSession(DirectIOPerformanceSession **p
 												  local_session_endpoint->getUrl());
 	
 	//sent the request and waith the ansewer for startp local session
-	auto_ptr<CDataWrapper> init_session_result(MessageChannel::sendRequest(PerformanceSystemRpcKey::SYSTEM_PERFORMANCE_DOMAIN,
-																					   PerformanceSystemRpcKey::ACTION_PERFORMANCE_INIT_SESSION,
-																					   &init_performance_session_param,
-																					   ms_timeout));
+	auto_ptr<CDataWrapper> init_session_result(sendRequest(node_network_address->ipPort,
+                                                           PerformanceSystemRpcKey::SYSTEM_PERFORMANCE_DOMAIN,
+                                                           PerformanceSystemRpcKey::ACTION_PERFORMANCE_INIT_SESSION,
+                                                           &init_performance_session_param,
+                                                           ms_timeout));
 	CHECK_TIMEOUT_AND_RESULT_CODE(init_session_result, err)
 	if(err == ErrorCode::EC_NO_ERROR) {
         auto_ptr<CDataWrapper> info_pack(init_session_result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
@@ -105,10 +108,11 @@ int PerformanceNodeChannel::releasePerformanceSession(DirectIOPerformanceSession
 													  performance_session->server_endpoint->getUrl());
 
 		//sent the request and waith the ansewer for startp local session
-		auto_ptr<CDataWrapper> init_session_result(MessageChannel::sendRequest(PerformanceSystemRpcKey::SYSTEM_PERFORMANCE_DOMAIN,
-																						   PerformanceSystemRpcKey::ACTION_PERFORMANCE_CLOSE_SESSION,
-																						   &init_performance_session_param,
-																						   ms_timeout));
+		auto_ptr<CDataWrapper> init_session_result(sendRequest(node_network_address->ipPort,
+                                                               PerformanceSystemRpcKey::SYSTEM_PERFORMANCE_DOMAIN,
+                                                               PerformanceSystemRpcKey::ACTION_PERFORMANCE_CLOSE_SESSION,
+                                                               &init_performance_session_param,
+                                                               ms_timeout));
 
 		
 		InizializableService::deinitImplementation(performance_session,  "DirectIOPerformanceSession", __PRETTY_FUNCTION__);

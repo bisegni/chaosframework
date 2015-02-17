@@ -22,9 +22,10 @@
 
 #include "DBDriver.h"
 #include "mongo_db_types.h"
-#include "MongoDBHAConnectionManager.h"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+
+#include <chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.h>
 
 #include <boost/format.hpp>
 
@@ -43,7 +44,7 @@ namespace chaos {
 					std::string db_name;
 				protected:
 					//! ha mongodb driver
-					MongoDBHAConnectionManager *ha_connection_pool;
+					service_common::persistence::mongodb::MongoDBHAConnectionManager *ha_connection_pool;
 					
 					//! protected methdo that perform the real paged query on index called by the cursor
 					int idxSearchDataPack(const DataPackIndexQuery & data_pack_index_query, std::vector<mongo::BSONObj>& found_element, uint32_t limit_to = 100);

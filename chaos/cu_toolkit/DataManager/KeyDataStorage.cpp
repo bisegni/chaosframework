@@ -223,8 +223,6 @@ boost::shared_ptr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestor
  
  */
 CDataWrapper* KeyDataStorage::updateConfiguration(CDataWrapper *newConfiguration) {
-	//add in the configuration the key for the device
-	newConfiguration->addStringValue(DataProxyConfigurationKey::CS_DM_LD_CU_ADDRESS_KEY, key);
 	//update the driver configration
 	if(io_data_driver) io_data_driver->updateConfiguration(newConfiguration);
 	return NULL;

@@ -524,6 +524,13 @@ void DeviceController::sendCustomMessage(const char * const action, common::data
 }
 
 //---------------------------------------------------------------------------------------------------
+std::auto_ptr<MessageRequestFuture>  DeviceController::sendCustomRequestWithFuture(const std::string& action_name,
+                                                                                   common::data::CDataWrapper *request_date) {
+   return deviceChannel->sendCustomRequestWithFuture(action_name,
+                                                     request_date);
+}
+
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(string& attributeName, string& attributeValue) {
 	return setAttributeValue(attributeName, attributeValue.c_str(),(uint32_t)attributeValue.size());
 }
@@ -871,21 +878,6 @@ void DeviceController::fetchCurrentDeviceValue() {
 
 CDataWrapper *DeviceController::getCurrentData(){
 	return current_output_dataset.get();
-}
-/*!
- Set the handler for all answer received by the device
- */
-void DeviceController::setHandler(MessageHandler async_handler) {
-	if(!deviceChannel) return;
-	deviceChannel->setHandler(async_handler);
-}
-
-/*!
- Remove the handler for all answer received by the device
- */
-void DeviceController::clearHandler() {
-	if(!deviceChannel) return;
-	deviceChannel->clearHandler();
 }
 
 //! get datapack between time itervall

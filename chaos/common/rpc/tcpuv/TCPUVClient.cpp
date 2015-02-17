@@ -267,7 +267,7 @@ TCPUVClient::~TCPUVClient(){
  */
 void TCPUVClient::init(void *init_data) throw(CException) {
 	chaos::common::data::CDataWrapper *cfg = reinterpret_cast<chaos::common::data::CDataWrapper*>(init_data);
-	int32_t threadNumber = cfg->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
+	int32_t threadNumber = cfg->hasKey(InitOption::OPT_RPC_SERVER_THREAD_NUMBER)? cfg->getInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER):1;
 	TCPUVClientLAPP << "ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
 	//CObjectProcessingQueue<NetworkForwardInfo>::init(threadNumber);
 	TCPUVClientLAPP << "ObjectProcessingQueue<NetworkForwardInfo> initialized";

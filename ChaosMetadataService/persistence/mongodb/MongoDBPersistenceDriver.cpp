@@ -18,14 +18,18 @@
  *    	limitations under the License.
  */
 #include "MongoDBPersistenceDriver.h"
-#include "MongoDBUnitServerDataAccess.h"
 #include "MongoDBNodeDataAccess.h"
+#include "MongoDBUtilityDataAccess.h"
+#include "MongoDBUnitServerDataAccess.h"
+#include "MongoDBControlUnitDataAccess.h"
 
 #include "../../mds_types.h"
 
 using namespace chaos;
 using namespace chaos::metadata_service::persistence;
 using namespace chaos::metadata_service::persistence::mongodb;
+
+using namespace chaos::service_common::persistence::mongodb;
 
 DEFINE_CLASS_FACTORY(MongoDBPersistenceDriver, AbstractPersistenceDriver);
 
@@ -53,9 +57,14 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
                                                                                                          connection);
     registerDataAccess<MongoDBNodeDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>& >(data_access_type::DataAccessTypeNode,
                                                                                                            connection);
+    registerDataAccess<MongoDBControlUnitDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>& >(data_access_type::DataAccessTypeControlUnit,
+                                                                                                            connection);
+    registerDataAccess<MongoDBUtilityDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>& >(data_access_type::DataAccessTypeUtility,
+                                                                                                     connection);
     
     //connec usda with nda
     ((MongoDBUnitServerDataAccess*) unit_server_da_instance)->node_data_access = (MongoDBNodeDataAccess*) node_da_instance;
+    ((MongoDBControlUnitDataAccess*) control_unit_da_instance)->node_data_access = (MongoDBNodeDataAccess*) node_da_instance;
 }
 void MongoDBPersistenceDriver::deinit() throw (chaos::CException) {
 	connection.reset();

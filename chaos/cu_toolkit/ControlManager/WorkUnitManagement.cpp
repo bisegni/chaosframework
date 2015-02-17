@@ -28,7 +28,7 @@
 
 #define SWITCH_SM_TO(e)\
 if(wu_instance_sm.process_event(e) != boost::msm::back::HANDLED_TRUE){\
-throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for failure event", __PRETTY_FUNCTION__);\
+throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for failure event", __PRETTY_FUNCTION__);\
 }
 
 using namespace chaos::common::data;
@@ -36,7 +36,7 @@ using namespace chaos::cu::command_manager;
 using namespace chaos::cu::control_manager;
 
 /*---------------------------------------------------------------------------------
-
+ 
  ---------------------------------------------------------------------------------*/
 WorkUnitManagement::WorkUnitManagement(AbstractControlUnit *_work_unit_instance):
 mds_channel(NULL),
@@ -46,7 +46,7 @@ publishing_counter_delay(0){
 }
 
 /*---------------------------------------------------------------------------------
-
+ 
  ---------------------------------------------------------------------------------*/
 WorkUnitManagement::~WorkUnitManagement(){
 }
@@ -97,7 +97,7 @@ void WorkUnitManagement::turnOn() throw (CException) {
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublish()) == boost::msm::back::HANDLED_TRUE){
         //we are switched state
     } else {
-        throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for UnitEventTypePublish event", __PRETTY_FUNCTION__);
+        throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for UnitEventTypePublish event", __PRETTY_FUNCTION__);
     }
 }
 
@@ -109,9 +109,9 @@ void WorkUnitManagement::turnOFF() throw (CException) {
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublish()) == boost::msm::back::HANDLED_TRUE){
         //we are switched state
     } else {
-        throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for UnitEventTypeUnpublish event", __PRETTY_FUNCTION__);
+        throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for UnitEventTypeUnpublish event", __PRETTY_FUNCTION__);
     }
-
+    
 }
 
 /*---------------------------------------------------------------------------------
@@ -124,7 +124,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             WUMAPP_ << "Work unit in unpublished";
             active = false;
             break;
-
+            
         case UnitStateStartPublishing: {
             active = true;
             //reset the delay for the forwarding of the registration datapack
@@ -147,7 +147,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypePublishing())
             break;
         }
-
+            
         case UnitStatePublishing: {
             // don't pollute, ask every 20s
             if((publishing_counter_delay%10) == 0){
@@ -159,7 +159,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             publishing_counter_delay++;
             break;
         }
-
+            
         case UnitStatePublished: {
             active = false;
             WUMAPP_ << "work unit has been successfully published";
@@ -183,7 +183,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublishing())
             break;
         }
-
+            
         case UnitStatePublishingFailure: {
             WUMAPP_  << "there was been error during control unit registration we end here";
             active = false;
@@ -192,7 +192,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
         case UnitStateUnpublishing: {
             CDataWrapper fakeDWForDeinit;
             bool detachFake;
-            fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_TYPE, work_unit_instance->getCUID());
+            fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, work_unit_instance->getCUID());
             try{
                 WUMAPP_  << "Stopping Wor Unit";
                 work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
@@ -221,13 +221,13 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                     DECODE_CHAOS_EXCEPTION(ex);
                 }
             }
-
-
+            
+            
             if(work_unit_instance->device_event_channel) {
                 CommandManager::getInstance()->deleteInstrumentEventChannel(work_unit_instance->device_event_channel);
                 work_unit_instance->device_event_channel = NULL;
             }
-
+            
             WUMAPP_  << "work unit is going to be unpublished";
             SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublished())
             break;
@@ -241,7 +241,7 @@ bool WorkUnitManagement::smNeedToSchedule() {
     return	active || ( s != UnitStatePublished &&
                        s != UnitStateUnpublished &&
                        s != UnitStatePublishingFailure);
-
+    
 }
 
 int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
@@ -255,43 +255,43 @@ int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
 
     mdsPack.addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
 
-	//register CU from mds
+    //register CU from mds
     return mds_channel->sendNodeRegistration(mdsPack);
 }
 
 bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
-	bool result = false;
-	WUMAPP_ << "Work unit registration ack message received";
-
-	if(!ack_pack.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID))
-		throw CException(-1, "No device id found", __PRETTY_FUNCTION__);
-
-	string device_id = ack_pack.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-	if(device_id.compare(work_unit_instance->getCUID()) != 0) {
-	  throw CException(-2, "received id :"+std::string(work_unit_instance->getCUID())+ std::string(" not equal to work unit instance id:")+device_id, __PRETTY_FUNCTION__);
-	}
-	if(ack_pack.hasKey(ChaosSystemDomainAndActionLabel::ATTRIBUTE_MDS_REGISTER_NODE_RESULT)) {
-		//registration has been ended
-
-        int ack_val=ack_pack.getInt32Value(ChaosSystemDomainAndActionLabel::ATTRIBUTE_MDS_REGISTER_NODE_RESULT);
-		switch(ack_val){
-			case ErrorCode::EC_MDS_NODE_REGISTRATION_OK:
+    bool result = false;
+    WUMAPP_ << "Work unit registration ack message received";
+    
+    if(!ack_pack.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID))
+        throw CException(-1, "No device id found", __PRETTY_FUNCTION__);
+    
+    string device_id = ack_pack.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+    if(device_id.compare(work_unit_instance->getCUID()) != 0) {
+        throw CException(-2, "received id :"+std::string(work_unit_instance->getCUID())+ std::string(" not equal to work unit instance id:")+device_id, __PRETTY_FUNCTION__);
+    }
+    if(ack_pack.hasKey(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)) {
+        //registration has been ended
+        
+        int ack_val=ack_pack.getInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT);
+        switch(ack_val){
+            case ErrorCode::EC_MDS_NODE_REGISTRATION_OK:
                 SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypePublished())
-		  WUMAPP_ << "work unit has been registered:"<<device_id;
-		result = true;
-		break;
-
-		case ErrorCode::EC_MDS_WOR_UNIT_ID_NOT_SELF_MANAGEABLE:
-		  WUMAPP_ << "id is not self manageable";
-		default:
-		  WUMERR_ << "work unit "<< device_id<<" failed to register, error ack:"<<ack_val;
-		  SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
-
-		  break;
-		}
-	} else {
-		WUMERR_ << "No result received";
-		throw CException(-3, "No result received", __PRETTY_FUNCTION__);
-	}
-	return result;
+                WUMAPP_ << "work unit has been registered:"<<device_id;
+                result = true;
+                break;
+                
+            case ErrorCode::EC_MDS_NODE_ID_NOT_SELF_MANAGEABLE:
+                WUMAPP_ << "id is not self manageable";
+            default:
+                WUMERR_ << "work unit "<< device_id<<" failed to register, error ack:"<<ack_val;
+                SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
+                
+                break;
+        }
+    } else {
+        WUMERR_ << "No result received";
+        throw CException(-3, "No result received", __PRETTY_FUNCTION__);
+    }
+    return result;
 }

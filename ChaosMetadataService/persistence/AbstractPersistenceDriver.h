@@ -38,7 +38,9 @@ namespace chaos {
             namespace data_access_type {
                 typedef enum DataAccessType {
                     DataAccessTypeNode = 0,
-                    DataAccessTypeUnitServer = 1
+                    DataAccessTypeUnitServer,
+                    DataAccessTypeControlUnit,
+                    DataAccessTypeUtility
                 } DataAccessType;
             }
             
@@ -55,6 +57,8 @@ namespace chaos {
                 //!data access instances
                 AbstractDataAccess *node_da_instance;
                 AbstractDataAccess *unit_server_da_instance;
+                AbstractDataAccess *control_unit_da_instance;
+                AbstractDataAccess *utility_da_instance;
             protected:
                 
                 //!register a dataaccess implementation with base name ampping
@@ -75,7 +79,14 @@ namespace chaos {
                             case data_access_type::DataAccessTypeUnitServer:
                                 unit_server_da_instance = instance;
                                 break;
-                            
+                                
+                            case data_access_type::DataAccessTypeControlUnit:
+                                control_unit_da_instance = instance;
+                                break;
+                                
+                            case data_access_type::DataAccessTypeUtility:
+                                utility_da_instance = instance;
+                                break;
                             default:
                                 break;
                         }
@@ -93,12 +104,17 @@ namespace chaos {
                 //!deinitialize the driver
                 void deinit() throw (chaos::CException);
                 
+                //! return the implementation of the unit server data access
+                virtual data_access::NodeDataAccess *getNodeDataAccess();
+                
+                //! return the implementation of the producer data access
+                virtual data_access::ControlUnitDataAccess *getControlUnitDataAccess();
+                
                 //! return the implementation of the producer data access
                 virtual data_access::UnitServerDataAccess *getUnitServerDataAccess();
                 
-                //! return the implementation of the unit server data access
-                virtual data_access::NodeDataAccess *getNodeDataAccess();
-
+                //! return the implementation of the producer data access
+                virtual data_access::UtilityDataAccess *getUtilityDataAccess();
             };
             
         }

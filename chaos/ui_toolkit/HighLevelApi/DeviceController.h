@@ -386,19 +386,14 @@ namespace chaos {
             common::utility::DataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
             
             CDataWrapper *getCurrentData();
-            /*!
-                Set the handler for all answer received by the device
-             */
-            void setHandler(MessageHandler async_handler);
-            
-            /*!
-                Remove the handler for all answer received by the device
-             */
-            void clearHandler();
             
 			//! send custom request to device
             int sendCustomRequest(const char * const action, common::data::CDataWrapper * const param, common::data::CDataWrapper**const result, bool async = false,  bool queued = true);
 			
+            //! send custom request to device and return a future
+            std::auto_ptr<MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
+                                                                             common::data::CDataWrapper *request_date);
+            
 			//! send custom message to device
 			void sendCustomMessage(const char * const action, common::data::CDataWrapper * const param, bool queued = true);
             

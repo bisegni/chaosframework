@@ -20,7 +20,7 @@
 #ifndef __CHAOSFramework__MongoDBAccessor__
 #define __CHAOSFramework__MongoDBAccessor__
 
-#include "MongoDBHAConnectionManager.h"
+#include <chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.h>
 
 namespace chaos {
     namespace metadata_service {
@@ -32,9 +32,9 @@ namespace chaos {
                 class MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
                 protected:
-                    boost::shared_ptr<MongoDBHAConnectionManager> connection;
+                    boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager> connection;
                 public:
-                    MongoDBAccessor(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection);
+                    MongoDBAccessor(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     virtual ~MongoDBAccessor();
                     
                     const std::string& getDatabaseName();

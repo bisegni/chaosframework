@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.6)
 include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 
 SET(src main.cpp)
+
+SET(src  ${src} ../chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp)
+
 SET(src  ${src} ChaosDataService.cpp QueryDataConsumer.cpp StageDataConsumer.cpp)
 
 SET(src  ${src} worker/DataWorker.cpp worker/DeviceSharedDataWorker.cpp worker/SnapshotCreationWorker.cpp)
@@ -9,7 +12,7 @@ SET(src  ${src} worker/DataWorker.cpp worker/DeviceSharedDataWorker.cpp worker/S
 SET(src  ${src} cache_system/CacheDriver.cpp cache_system/MemcachedCacheDriver.cpp 
 				cache_system/CouchbaseCacheDriver.cpp)
 
-SET(src  ${src} db_system/DBDriver.cpp db_system/MongoDBDriver.cpp db_system/MongoDBHAConnectionManager.cpp
+SET(src  ${src} db_system/DBDriver.cpp db_system/MongoDBDriver.cpp
 				db_system/DBIndexCursor.cpp db_system/MongoDBIndexCursor.cpp)
 
 SET(src  ${src} query_engine/QueryEngine.cpp)

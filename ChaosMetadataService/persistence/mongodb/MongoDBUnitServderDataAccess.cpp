@@ -30,7 +30,7 @@ using namespace chaos::metadata_service::persistence::mongodb;
 #define MDBUSDA_DBG  DBG_LOG(MongoDBUnitServerDataAccess)
 #define MDBUSDA_ERR  ERR_LOG(MongoDBUnitServerDataAccess)
 
-MongoDBUnitServerDataAccess::MongoDBUnitServerDataAccess(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection):
+MongoDBUnitServerDataAccess::MongoDBUnitServerDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection){
 	
 }
@@ -42,18 +42,11 @@ MongoDBUnitServerDataAccess::~MongoDBUnitServerDataAccess() {
 //! insert the unit server information
 int MongoDBUnitServerDataAccess::insertNewUS(chaos::common::data::CDataWrapper& unit_server_description) {
     CHAOS_ASSERT(node_data_access)
-    //checn if the nedded field are present on datapack
-    //if(unit_server_description)
+    //check if the nedded field are present on data pack
+    if(!unit_server_description.hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) return -1;
     
-    //cal node data access for insert abstract node
+    //we have all filed so we can call the node data access api
     return node_data_access->insertNewNode(unit_server_description);
-}
-
-int MongoDBUnitServerDataAccess::checkUSPresence(const std::string& unit_server_unique_id,
-                                                 bool& presence) {
-    CHAOS_ASSERT(node_data_access)
-    return node_data_access->checkNodePresence(unit_server_unique_id,
-                                               presence);
 }
 
 //! update the unit server information
@@ -62,26 +55,28 @@ int MongoDBUnitServerDataAccess::checkUSPresence(const std::string& unit_server_
  */
 int MongoDBUnitServerDataAccess::updateUS(chaos::common::data::CDataWrapper& unit_server_description) {
     int err = 0;
+    CHAOS_ASSERT(node_data_access)
     //allocate data block on vfat
     mongo::BSONObjBuilder bson_find;
     mongo::BSONObjBuilder updated_field;
     mongo::BSONObjBuilder bson_update;
     try {
+        //check if the nedded field are present on data pack
+        if(!unit_server_description.hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) return -1;
+        
         //serach criteria
         bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << unit_server_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-        //update field
-        updated_field << NodeDefinitionKey::NODE_RPC_ADDR << unit_server_description.getStringValue(NodeDefinitionKey::NODE_RPC_ADDR)
-        << "ts" << mongo::Date_t(chaos::common::utility::TimingUtil::getTimeStamp());
+
         //get the contained control unit type
         mongo::BSONArrayBuilder bab;
-        auto_ptr<CMultiTypeDataArrayWrapper> cu_type_array(unit_server_description.getVectorValue(UnitServerNodeDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS));
+        auto_ptr<CMultiTypeDataArrayWrapper> cu_type_array(unit_server_description.getVectorValue(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
         for(int idx = 0;
             idx < cu_type_array->size();
             idx++) {
             bab.append(cu_type_array->getStringElementAtIndex(idx));
         }
         
-        updated_field.appendArray(UnitServerNodeDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS, bab.arr());
+        updated_field.appendArray(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS, bab.arr());
         
         mongo::BSONObj query = bson_find.obj();
         
@@ -92,7 +87,12 @@ int MongoDBUnitServerDataAccess::updateUS(chaos::common::data::CDataWrapper& uni
         DEBUG_CODE(MDBUSDA_DBG << "Query: "  << query.jsonString();)
         DEBUG_CODE(MDBUSDA_DBG << "Update: "  << update.jsonString();)
         DEBUG_CODE(MDBUSDA_DBG << "updateUS update ---------------------------------------------";)
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+        
+        //first update thenode part then the unit server
+        if((err = node_data_access->updateNode(unit_server_description))) {
+            MDBUSDA_ERR << "Error updating node information";
+            return err;
+        } else if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
             MDBUSDA_ERR << "Error updating unit server";
@@ -100,10 +100,19 @@ int MongoDBUnitServerDataAccess::updateUS(chaos::common::data::CDataWrapper& uni
     } catch (const mongo::DBException &e) {
         MDBUSDA_ERR << e.what();
         err = -1;
+    } catch (const chaos::CException &e) {
+        MDBUSDA_ERR << e.what();
+        err = e.errorCode;
     }
     return err;
 }
 
+int MongoDBUnitServerDataAccess::checkUSPresence(const std::string& unit_server_unique_id,
+                                                 bool& presence) {
+    CHAOS_ASSERT(node_data_access)
+    return node_data_access->checkNodePresence(unit_server_unique_id,
+                                               presence);
+}
 
 //! delete a unit server
 int MongoDBUnitServerDataAccess::deleteUS(const std::string& unit_server_unique_id) {

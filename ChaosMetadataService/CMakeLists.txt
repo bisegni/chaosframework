@@ -5,6 +5,8 @@ include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 SET(cnd_src				main.cpp
 						ChaosMetadataService.cpp)
 
+SET(src  ${src}         ../chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp)
+
 SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
                         api/AbstractApi.cpp
                         api/AbstractApiGroup.cpp)
@@ -19,13 +21,17 @@ SET(cnd_src  ${cnd_src}	persistence/AbstractPersistenceDriver.cpp
 						persistence/AbstractDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/data_access/ProducerDataAccess.cpp
-                        persistence/data_access/NodeDataAccess.cpp)
+                        persistence/data_access/NodeDataAccess.cpp
+                        persistence/data_access/UtilityDataAccess.cpp
+                        persistence/data_access/ControlUnitDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBHAConnectionManager.cpp
 						persistence/mongodb/MongoDBPersistenceDriver.cpp
 						persistence/mongodb/MongoDBUnitServerDataAccess.cpp
                         persistence/mongodb/MongoDBAccessor.cpp
-                        persistence/mongodb/MongoDBNodeDataAccess.cpp)
+                        persistence/mongodb/MongoDBNodeDataAccess.cpp
+                        persistence/mongodb/MongoDBUtilityDataAccess.cpp
+                        persistence/mongodb/MongoDBControlUnitDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)

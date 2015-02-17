@@ -20,6 +20,7 @@
 #include "MongoDBAccessor.h"
 
 using namespace chaos::metadata_service::persistence::mongodb;
+using namespace chaos::service_common::persistence::mongodb;
 
 MongoDBAccessor::MongoDBAccessor(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection):
 connection(_connection) {

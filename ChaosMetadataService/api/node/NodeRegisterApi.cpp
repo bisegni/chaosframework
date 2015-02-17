@@ -27,7 +27,7 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
 
 NodeRegisterApi::NodeRegisterApi():
-AbstractApi(chaos::ChaosSystemDomainAndActionLabel::ACTION_REGISTER_NODE){
+AbstractApi(chaos::MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE){
     
 }
 
@@ -54,6 +54,8 @@ chaos::common::data::CDataWrapper *NodeRegisterApi::execute(chaos::common::data:
         //perform unit server registration
         result = unitServerRegistration(api_data,
                                         detach_data);
+    } else {
+        throw CException(-3, "Bad unit server type forwarded", __PRETTY_FUNCTION__);
     }
     
     return result;
@@ -73,36 +75,38 @@ chaos::common::data::CDataWrapper *NodeRegisterApi::unitServerRegistration(chaos
     try {
         if((err = us_da->checkUSPresence(unit_server_alias, is_present))) {
             //err
-            api_data->addInt32Value(ChaosSystemDomainAndActionLabel::ATTRIBUTE_MDS_REGISTER_NODE_RESULT,
+            api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                     ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
             LOG_AND_TROW(USRA_ERR, -2, "error checking the unit server presence")
         }if(is_present) {
             //present
             if((err = us_da->updateUS(*api_data))) {
-                api_data->addInt32Value(ChaosSystemDomainAndActionLabel::ATTRIBUTE_MDS_REGISTER_NODE_RESULT,
+                api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                         ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
                 LOG_AND_TROW(USRA_ERR, -3, "error updating the unit server information")
             }
         }else {
             //unit server not found, so we need to register new one
             if((err = us_da->insertNewUS(*api_data))) {
-                api_data->addInt32Value(ChaosSystemDomainAndActionLabel::ATTRIBUTE_MDS_REGISTER_NODE_RESULT,
+                api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                         ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
                 LOG_AND_TROW(USRA_ERR, -4, "error saving the new unit server information")
             }
         }
         //now we can send back the received message with the ack result
-        api_data->addInt32Value(ChaosSystemDomainAndActionLabel::ATTRIBUTE_MDS_REGISTER_NODE_RESULT,
+        api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                 ErrorCode::EC_MDS_NODE_REGISTRATION_OK);
     } catch (chaos::CException& ex) {
-        api_data->addInt32Value(ChaosSystemDomainAndActionLabel::ATTRIBUTE_MDS_REGISTER_NODE_RESULT,
-                                ErrorCode::EC_MDS_NODE_REGISTRATION_OK);
+        api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
         getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ASLIAS(batch::unit_server::UnitServerAckCommand)),
                                           api_data,
                                           command_id);
         USRA_ERR << "Sent ack for registration denied to the unit server " << unit_server_alias;
         throw ex;
     } catch (...) {
+        api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
         getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ASLIAS(batch::unit_server::UnitServerAckCommand)),
                                           api_data,
                                           command_id);
