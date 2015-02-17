@@ -233,6 +233,16 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
 	return err;
 }
 
+void IODirectIODriver::addServerURL(const std::string& url) {
+    if(!common::direct_io::DirectIOClient::checkURL(url)) {
+        IODirectIODriver_LERR_ << "Url " << url << " non well formed";
+        return;
+    }
+    IODirectIODriver_LAPP_ << "Adding url" << url;
+    //add new url to connection feeder
+    connectionFeeder.addURL(chaos::common::network::URL(url));
+}
+
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/

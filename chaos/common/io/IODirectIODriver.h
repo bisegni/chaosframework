@@ -120,6 +120,7 @@ namespace chaos{
 				
 				void setDirectIOParam(IODirectIODriverInitParam& _init_parameter);
 				
+                void addServerURL(const std::string& url);
 				/*
 				 * Init method
 				 */

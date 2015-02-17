@@ -28,7 +28,7 @@ namespace chaos_direct_io = chaos::common::direct_io;
 namespace chaos_direct_io_ch = chaos::common::direct_io::channel;
 
 #define QueryEngine_FORWARDING_PAGE_DIMENSION 50
-#define QueryEngine_LOG_HEAD "[QueryDataConsumer] - "
+#define QueryEngine_LOG_HEAD "[QueryEngine] - "
 
 #define QEAPP_ LAPP_ << QueryEngine_LOG_HEAD
 #define QEDBG_ LDBG_ << QueryEngine_LOG_HEAD << __FUNCTION__ << " - "
@@ -388,7 +388,7 @@ void QueryEngine::process_query() {
 					
 				case DataCloudQuery::DataCloudQueryPhaseFetchData:
                     CHAOS_ASSERT(query->vfs_query)
-					QEDBG_ << "Answer "<< QUERY_INFO((*query));
+					DEBUG_CODE(QEDBG_ << "Fetch data for "<< QUERY_INFO((*query)));
 					if((err = query->vfs_query->readDataPackPage(query->fetchedAndForwadInfo.fetched_data_vector, 100))) {
 						query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
 						query_error = -2;
@@ -408,6 +408,7 @@ void QueryEngine::process_query() {
 					break;
 					
 				case DataCloudQuery::DataCloudQueryPhaseForwardData:
+                    DEBUG_CODE(QEDBG_ << "Forward data for "<< QUERY_INFO((*query));)
 					if((err = sendDataToClient(query))) {
 						//if there is an error sending data back to client remove the query
 						query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
@@ -435,7 +436,7 @@ void QueryEngine::process_query() {
 				//print thre reason for the query deallocation
 				switch(query->query_phase) {
 					case DataCloudQuery::DataCloudQueryPhaseError:
-						QEDBG_ << "Error on "<< QUERY_INFO((*query));
+						QEERR_ << "Error on "<< QUERY_INFO((*query));
 						sendEndResultFaseToClient(query, query_error);
 						break;
 						

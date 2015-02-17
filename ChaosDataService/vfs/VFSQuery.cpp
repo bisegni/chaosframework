@@ -70,13 +70,13 @@ int VFSQuery::getDataPackForIndex(const db_system::DataPackIndexQueryResult& ind
 	int err = 0;
 	query::DataBlockFetcher *db_fetcher = NULL;
 	if((err = getDatablockFetcherForIndex(index, &db_fetcher))){
-		VFSQ_LERR_ << "Error retriving the datablock fetcher for path:" << DataPackIndexQueryResult_PRINT_INFO(index);
+		VFSQ_LERR_ << "Error (" << err <<") retriving the datablock fetcher for path:" << DataPackIndexQueryResult_PRINT_INFO(index);
 	} else if(!db_fetcher) {
 		VFSQ_LERR_ << "no error and no datablock fetcher for " << DataPackIndexQueryResult_PRINT_INFO(index);
 	} else {
 		//we have the fetcher
 		if((err = db_fetcher->readData(index.dst_location->getOffset(), (data_len = index.datapack_size), data))) {
-			VFSQ_LERR_ << "Error fetching data for " << DataPackIndexQueryResult_PRINT_INFO(index);
+			VFSQ_LERR_ << "Error (" << err <<") fetching data for " << DataPackIndexQueryResult_PRINT_INFO(index);
 		}
 	}
 	return err;
