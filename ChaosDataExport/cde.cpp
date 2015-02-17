@@ -322,21 +322,28 @@ int main(int argc, char* argv[])
 					std::cout << "Exporting ";
 					printPercendDone(computePercent(query_future->getCurrentElementIndex(), query_future->getTotalElementFound()));
 					std::cout << std::endl;
-				}
+				} 
 
 			};
 						//print the statistic
 			printStat(query_future);
+			int rett=0;
+			if(query_future->getTotalElementFound()==0){
+			  rett=10;
+			}
 			std::cout << "Releasing query" << std::endl;
 			//release the query
 			controller->releaseQuery(query_future);
 			std::cout << "Releasing controller" << std::endl;
 			HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
+			return rett;
 		}
 	} catch (CException& e) {
 		std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
+		return -1;
 	} catch (...) {
 		std::cerr << "General error " << std::endl;
+		return -2;
 	}
 	std::cout << "\e[?25h";
 	try {
@@ -345,6 +352,7 @@ int main(int argc, char* argv[])
 		//! [UIToolkit Deinit]
 	} catch (CException& e) {
 		std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
+		return -3;
 	}
 	std::cout << std::endl << "Export done"<< std::endl;
 	return 0;
