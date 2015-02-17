@@ -103,11 +103,25 @@ int VFSDataWriteableFile::prefetchData() {
  
  ---------------------------------------------------------------------------------*/
 int VFSDataWriteableFile::write(void *data, uint32_t data_len) {
-	int err = 0;
-	if(!isDataBlockValid(current_data_block)) {
+    //check validation
+    int err = 0
+
+    //write data before fiel validation
+    //this is needed because data writeable file is used into index and
+    //the write is done after got the file location for indexing purphose
+    //For this reason, some times, the datapack is wrote in a new chunk
+    //different for one that as been used for get the future datapack position
+    if(err = VFSDataFile::write(data, data_len)) {
+        VFSWF_LERR_ << "Error writing on datablock " << err;
+        return err;
+    }
+    
+    //check if datablock is still valid
+    if(!isDataBlockValid(current_data_block)) {
+        //datablock is not more valid so switch a new block
 		if((err = switchDataBlock())) {
 			VFSWF_LERR_ << "Error switching datablock " << err;
 		}
 	}
-	return VFSDataFile::write(data, data_len);
+	return err;
 }

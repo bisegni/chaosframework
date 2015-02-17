@@ -169,11 +169,12 @@ namespace chaos {
 				
 				//! perform the matainance of the virtual file
 				/*!
-				 vrtiual fiel has many block that can be open one at time
-				 or many at time(depending on sublcass) anyway any datta block
+				 virtual file has many block that can be opened one at time
+				 or many at time(depending on sublcass). Any vfile type
 				 as some logic for keep datablock open. With this method a check is
-				 done closing the datablock that needs to be closed according to their
-				 rules.
+				 done on validity and it is false the current datablock is closed 
+                 using a state
+                 \param closed_state state to set the closed datablock
 				 */
 				int mantain(int closed_state = data_block_state::DataBlockStateNone);
 				
