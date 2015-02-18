@@ -90,7 +90,7 @@ cc_data::CDataWrapper *QueryFuture::getDataPack(bool wait, uint32_t timeout) {
 			//try to get next
 			data_pack_queue.pop(result);
 		} else {
-			DEBUG_CODE(QFLDBG_ << "no data received";)
+            DEBUG_CODE(if(!result){QFLDBG_ << "no data received";})
 		}
 	}else{
 		//cicle and waith untile we have a data
