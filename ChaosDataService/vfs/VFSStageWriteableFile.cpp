@@ -29,40 +29,42 @@ using namespace chaos::data_service::vfs;
 
 
 VFSStageWriteableFile::VFSStageWriteableFile(storage_system::StorageDriver *_storage_driver_ptr,
-											 db_system::DBDriver *_db_driver_ptr,
-											 std::string stage_vfs_relative_path):
+                                             db_system::DBDriver *_db_driver_ptr,
+                                             std::string stage_vfs_relative_path):
 VFSStageFile(_storage_driver_ptr,
-			 _db_driver_ptr,
-			 stage_vfs_relative_path,
-			 VFSStageFileOpenModeWrite) {
-	
+             _db_driver_ptr,
+             stage_vfs_relative_path,
+             VFSStageFileOpenModeWrite) {
+    
 }
 
 
 //! check if datablock is valid according to internal logic
 bool VFSStageWriteableFile::isDataBlockValid(DataBlock *new_data_block_ptr) {
-	check_validity_counter++;
-	if(!new_data_block_ptr) return false;
-	
-	if((check_validity_counter % 16)) return true;
-	
-	//check standard check
-	return VFSStageFile::isDataBlockValid(new_data_block_ptr);
+    check_validity_counter++;
+    
+    if(!new_data_block_ptr) return false;
+    
+    if((check_validity_counter % 16)) return true;
+    
+    //check standard check
+    return VFSStageFile::isDataBlockValid(new_data_block_ptr);
 }
 
 // write data on the current data block
 int VFSStageWriteableFile::write(void *data, uint32_t data_len) {
-	int err = 0;
-	if(!isDataBlockValid(current_data_block)) {
-		if((err = releaseDataBlock(current_data_block))) {
-			VFSWF_LERR_ << "Error releaseing datablock " << err;
-		} else if((err = getNewDataBlock(&current_data_block))) {
-			VFSWF_LERR_ << "Error creating datablock " << err;
-		}
-	}
-	
-	if( err || (err = VFSStageFile::write(data, data_len))) {
-		VFSWF_LERR_ << "Error writing to datablock " << err;
-	}
-	return err ;
+    int err = 0;
+    if(!isDataBlockValid(current_data_block)) {
+        if((current_data_block != NULL) &&
+           (err = releaseDataBlock(current_data_block))) {
+            VFSWF_LERR_ << "Error releaseing datablock " << err;
+        } else if((err = getNewDataBlock(&current_data_block))) {
+            VFSWF_LERR_ << "Error creating datablock " << err;
+        }
+    }
+    
+    if( err || (err = VFSStageFile::write(data, data_len))) {
+        VFSWF_LERR_ << "Error writing to datablock " << err;
+    }
+    return err ;
 }

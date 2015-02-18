@@ -42,6 +42,9 @@ namespace chaos{
 		namespace indexer {
 			
 			typedef struct DataFileInfo {
+                //file mutex
+                boost::mutex mutex_file;
+                
 				//!  pointer to writeable data file
 				vfs::VFSDataWriteableFile *data_file_ptr;
 				

@@ -35,7 +35,7 @@ int main(int argc, char * argv[]) {
         //test on localhost
         QueryTest::getInstance()->addURL("localhost:1672:30175|0");
         
-        QueryTest::getInstance()->doQuery("rt_sin_a", "2015-02-17T10","2015-02-17T11");
+        QueryTest::getInstance()->doQuery("rt_sin_a", "","");
 
         QueryTest::getInstance()->stop();
     }catch(...) {

@@ -55,7 +55,7 @@ namespace chaos {
 				/*!
 					usefullt to get the current lcoation before write the first data pack.
 				 */
-				int prefetchData();
+				int ensureDatablock(bool force_switch = false);
 				
 				// write data on the current data block
 				int write(void *data, uint32_t data_len);

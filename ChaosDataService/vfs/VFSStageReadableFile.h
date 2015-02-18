@@ -63,7 +63,7 @@ namespace chaos {
 				int read(void *data, uint32_t data_len);
 				
 				//! prefetch data
-				int prefetchData();
+				int ensureDatablock(bool force_switch = false);
 			};
 		}
 	}

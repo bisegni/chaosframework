@@ -71,7 +71,7 @@ int DataPackScanner::scan(vfs::VFSFile *working_data_file) {
 	//call start handler
 	if((err = startScanHandler())) return err;
 	
-	if((err = working_data_file->prefetchData())) {
+	if((err = working_data_file->ensureDatablock())) {
 		DataPackScannerLERR_ << "error " << err << "prefetching data on working file " << working_data_file->getVFSFileInfo()->vfs_fpath;
 	} else if((err = working_data_file->hasData(has_data))) {
 		DataPackScannerLERR_ << "errr checking if data is available on" << working_data_file->getVFSFileInfo()->vfs_fpath;

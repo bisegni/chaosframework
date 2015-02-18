@@ -51,6 +51,10 @@ StageDataVFileScanner::~StageDataVFileScanner() {
 
 boost::shared_ptr<DataFileInfo> StageDataVFileScanner::getWriteableFileForDID(const std::string& did) {
 	boost::shared_ptr<DataFileInfo> result;
+    //lock the map
+    boost::unique_lock<boost::mutex> lock(mutext_did_data_file);
+    
+    //get or create a new file
 	if(map_did_data_file.count(did)) {
 		result = map_did_data_file[did];
 	} else {
@@ -58,7 +62,6 @@ boost::shared_ptr<DataFileInfo> StageDataVFileScanner::getWriteableFileForDID(co
 		
 		//we need to create a new data file for new readed unique identifier
 		if(!vfs_manager->getWriteableDataFile(did, &result->data_file_ptr) && result->data_file_ptr){
-			boost::unique_lock<boost::mutex> lock(mutext_did_data_file);
 			//insert file into the hasmap
 			map_did_data_file.insert(make_pair(did, result));
 		}else {
@@ -66,8 +69,7 @@ boost::shared_ptr<DataFileInfo> StageDataVFileScanner::getWriteableFileForDID(co
 		}
 	}
 	//we need to ensure that datablock is not null for determinate correct first block location
-	if(result.get())result->data_file_ptr->prefetchData();
-	
+	if(result.get())result->data_file_ptr->ensureDatablock();
 	return result;
 }
 
@@ -105,7 +107,6 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack,
 	//collect idnex information
 	db_system::DataPackIndex new_data_pack_index;
 	
-	
 	//get values for key that are mandatory for default index
 	new_data_pack_index.did = data_pack.getField(chaos::DataPackCommonKey::DPCK_DEVICE_ID).String();
 	new_data_pack_index.ds_type = data_pack.getField(chaos::DataPackCommonKey::DPCK_DATASET_TYPE).numberInt();
@@ -118,6 +119,18 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack,
 		StageDataVFileScannerLERR_ << "No vfs got for unique id " << new_data_pack_index.did;
 		return -1;
 	}
+    
+    
+    //lock the file
+    boost::unique_lock<boost::mutex> lock(data_file_info->mutex_file);
+    
+    //!check if we have an old datapack respect to the last inserted datapack
+    if(data_file_info->last_wrote_ts > new_data_pack_index.acquisition_ts) {
+        StageDataVFileScannerLDBG_ << "We are indicizing and old datapack so we need to switch datablock";
+        //force datablock to switch
+        data_file_info->data_file_ptr->ensureDatablock(true);
+    }
+    
 	//! write get data file phase
 	if((err = working_data_file->appendValueToJournal("gdf"))){
 		StageDataVFileScannerLERR_ << "Error writing gdf tag";
@@ -155,6 +168,7 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack,
 	//write data pack on data file
 	if((err = data_file_info->data_file_ptr->write((void*)data_pack.objdata(), new_data_pack_index.datapack_size))) {
 		StageDataVFileScannerLERR_ << "Error writing datafile "<< err;
+        return err;
 	}
 	//! write journal
 	if((err = working_data_file->appendValueToJournal("wpack"))){
@@ -162,6 +176,10 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack,
 		return err;
 	}
 	
+    //all is gone weel so i can remember the last timetamp stored in file
+    data_file_info->last_wrote_ts = new_data_pack_index.acquisition_ts;
+    
+    
 	//give heartbeat on datafile
 	if(cur_ts > last_hb_on_vfile + 2000) {
 		if((err = data_file_info->data_file_ptr->giveHeartbeat(cur_ts))) {
@@ -184,9 +202,11 @@ int StageDataVFileScanner::endScanHandler(int end_scan_error) {
 		for(std::map<std::string, boost::shared_ptr<DataFileInfo> >::iterator it =  map_did_data_file.begin();
 			it != map_did_data_file.end();
 			it++){
-			
+            //lock the file for mantainance
+			boost::unique_lock<boost::mutex> lock(it->second->mutex_file);
+            
 			// we need to maintin datablock on to long idle datafile so datablock no more valid(time/size) are closed
-			// and prefetchData call ensure that one valida databloc is allocated if mantainance close an old one.
+			// and mantain api call ensure that one valid datablock is allocated if mantainance close an old one.
 			StageDataVFileScannerLAPP_ << "Mantainance for datafile: " << it->second->data_file_ptr->getVFSFileInfo()->vfs_fpath;
 			if((err = it->second->data_file_ptr->mantain(vfs::data_block_state::DataBlockStateQuerable))) {
 				StageDataVFileScannerLERR_ << "error mantaining datafile " << it->second->data_file_ptr->getVFSFileInfo()->vfs_fpath;

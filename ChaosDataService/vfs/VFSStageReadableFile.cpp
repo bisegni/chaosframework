@@ -140,7 +140,7 @@ int VFSStageReadableFile::read(void *data, uint32_t data_len) {
 }
 
 //! prefetch data
-int VFSStageReadableFile::prefetchData() {
+int VFSStageReadableFile::ensureDatablock(bool force_switch) {
 	if(!current_data_block) {
 		return checkForBlockChange(overlaped_block_read);
 	}

@@ -3924,14 +3924,11 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
-					/usr/local/include,
-					/usr/include,
 				);
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/usr/local/lib",
-					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3973,14 +3970,11 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
-					/usr/local/include,
-					/usr/include,
 				);
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/usr/local/lib",
-					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
@@ -4010,7 +4004,7 @@
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /;
 				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -4027,14 +4021,9 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
-					/usr/local/include,
-					/usr/include,
 				);
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
-				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/usr/local/lib",
-					/usr/local/lib,
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
@@ -4064,7 +4053,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DSTROOT = /;
 				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -4074,14 +4063,9 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
-					/usr/local/include,
-					/usr/include,
 				);
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
-				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/usr/local/lib",
-					/usr/local/lib,
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
@@ -4126,14 +4110,9 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
-					/usr/local/include,
-					/usr/include,
 				);
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
-				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/usr/local/lib",
-					/usr/local/lib,
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
@@ -4173,14 +4152,9 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
-					/usr/local/include,
-					/usr/include,
 				);
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
-				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/usr/local/lib",
-					/usr/local/lib,
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
@@ -4641,6 +4615,7 @@
 				328D0FFE1A936C45001A2001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		32B10913188C1D6200969D3D /* Build configuration list for PBXNativeTarget "TestAsyncRpc" */ = {
 			isa = XCConfigurationList;

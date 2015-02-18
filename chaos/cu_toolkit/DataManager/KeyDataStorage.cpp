@@ -18,11 +18,8 @@
  *    	limitations under the License.
  */
 
-#include "KeyDataStorage.h"
-#include "../../common/global.h"
-#include "../../common/chaos_constants.h"
-
-
+#include <chaos/common/chaos_constants.h>
+#include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 using namespace std;
 using namespace chaos;
 using namespace chaos::common::data;
@@ -42,7 +39,7 @@ KeyDataStorage::KeyDataStorage(const std::string& _key,
 							   chaos_io::IODataDriver *_io_data_driver):
 key(_key),
 io_data_driver(_io_data_driver) {
-	output_key	= _key + DataPackPrefixID::OUTPUT_DATASE_PREFIX;
+    output_key	= _key + DataPackPrefixID::OUTPUT_DATASE_PREFIX;
 	input_key	= _key + DataPackPrefixID::INPUT_DATASE_PREFIX;
 	system_key	= _key + DataPackPrefixID::SYSTEM_DATASE_PREFIX;
 	custom_key	= _key + DataPackPrefixID::CUSTOM_DATASE_PREFIX;
