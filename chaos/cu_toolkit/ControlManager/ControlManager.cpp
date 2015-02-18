@@ -617,13 +617,15 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
 		//registration has been ended
 		switch(message_data->getInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT)){
 			case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK:
-				LCMAPP_ << "Registration is gone well";
-				if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()) == boost::msm::back::HANDLED_TRUE){
-					//we are published and it is ok!
-				} else {
-					throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for published event", __PRETTY_FUNCTION__);
-				}
-				break;
+
+			  if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()) == boost::msm::back::HANDLED_TRUE){
+			    LCMAPP_ << "Registration is gone well";
+			    //we are published and it is ok!
+			  } else {
+			    LCMAPP_ << "Registration ACK received,bad  SM state "<<(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()));
+			    throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for published event", __PRETTY_FUNCTION__);
+			  }
+			  break;
 				
 			case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_DUPLICATE_ALIAS:
 				LCMERR_ << "The " << unit_server_alias << " is already used";

@@ -216,8 +216,13 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
 	auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
 	try{
 		socket_info = getSocketForNFI(messageInfo);
+		if(socket_info == NULL){
+		  ZMQC_LERR << "GetSocketForNFI failed";
+		  return;
+		}
+		
 		//now we can use the socket
-        boost::unique_lock<boost::shared_mutex> lock_socket(socket_info->socket_mutex);
+		boost::unique_lock<boost::shared_mutex> lock_socket(socket_info->socket_mutex);
 		ZMQC_LDBG << "Lock acquired on socket mutex";
 		
 		if(!(socket_info.get() && socket_info->socket)) {
