@@ -99,7 +99,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
                 ZMQDIO_CONNECTION_LERR_ << "Error sending header part code:"<< zmq_strerror(err);
                 delete (data_pack);
             } else {
-                err = 0
+                err = 0;
             }
 			break;
 		case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
@@ -110,7 +110,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
 				delete (data_pack);
 				return err;
             } else {
-                err = 0
+                err = 0;
             }
 			err = zmq_msg_init_data (&msg_header_data,
 									 data_pack->channel_header_data,
@@ -127,7 +127,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
                 err = zmq_errno();
                 ZMQDIO_CONNECTION_LERR_ << "Error sending message for header data part with code:"<< zmq_strerror(err);
             } else {
-                err = 0
+                err = 0;
             }
 			zmq_msg_close(&msg_header_data);
 			break;
@@ -140,7 +140,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
 				delete (data_pack);
 				return err;
             } else {
-                err = 0
+                err = 0;
             }
 			err = zmq_msg_init_data (&msg_data,
 									 data_pack->channel_data,
@@ -152,7 +152,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
                 err = zmq_errno();
                 ZMQDIO_CONNECTION_LERR_ << "Error sending data part code:"<< zmq_strerror(err);
             } else {
-                err = 0
+                err = 0;
             }
 			zmq_msg_close(&msg_data);
 			break;
@@ -166,7 +166,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
 				delete (data_pack);
 				return err;
             } else {
-                err = 0
+                err = 0;
             }
 			err = zmq_msg_init_data (&msg_header_data,
 									 data_pack->channel_header_data,
@@ -184,7 +184,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
 				ZMQDIO_CONNECTION_LERR_ << "Data resurce are been deallocated";
 				return err;
             } else {
-                err = 0
+                err = 0;
             }
 			err = zmq_msg_init_data (&msg_data,
 									 data_pack->channel_data,
@@ -202,7 +202,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
                 err = zmq_errno();
                 ZMQDIO_CONNECTION_LERR_ << "Error sending data part with code:"<< zmq_strerror(err);
             } else {
-                err = 0
+                err = 0;
             }
 			//check if we need to espect async answer
 			err = zmq_msg_close(&msg_header_data);
