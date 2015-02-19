@@ -158,7 +158,8 @@ boost::shared_ptr<SocketInfo> ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi
 		//this implementation is too slow, client for ip need to be cached
 		if(!socket_info_ptr->socket) {
 			ZMQC_LERR << "Error creating socket";
-			err = -1;
+			socket_info_ptr.reset();
+			return socket_info_ptr;
 		} else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_LINGER, &linger, sizeof(int)))) {
 			ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
 		} else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_RCVHWM, &water_mark, sizeof(int)))) {
@@ -173,7 +174,7 @@ boost::shared_ptr<SocketInfo> ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi
 			string url = "tcp://";
 			url.append(nfi->destinationAddr);
 			if((err = zmq_connect(socket_info_ptr->socket, url.c_str()))) {
-				ZMQC_LERR << "Error connectiong socket";
+			  ZMQC_LERR << "Error connecting to remote socket:" <<url;
 			}
 		}
 		
