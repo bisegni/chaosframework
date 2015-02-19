@@ -16,7 +16,8 @@ namespace chaos {
             namespace impl {
                 
 				const char * const EmptyMessage = "";
-
+                
+#define ZMQ_DO_AGAIN(x) do{x}while(err == EAGAIN);
 				
                 class ZMQBaseClass {
                 protected:

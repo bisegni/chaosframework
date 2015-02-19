@@ -354,9 +354,10 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 					ZMQDIO_SRV_LAPP_ << "Error creating message for asnwer";
 					DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
 				} else {
-					err = zmq_sendmsg(socket, &answer_data, 0);
+					ZMQ_DO_AGAIN(err = zmq_sendmsg(socket, &answer_data, 0);)
 					if(err == -1) {
-						ZMQDIO_SRV_LAPP_ << "Error sending answer";
+                        err = zmq_errno();
+						ZMQDIO_SRV_LAPP_ << "Error sending answer whit error:" << zmq_strerror(err);
 						DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
 					}
 				}

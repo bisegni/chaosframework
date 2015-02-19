@@ -60,35 +60,39 @@ void MongoDBDriver::init(void *init_data) throw (chaos::CException) {
 	mongo::BSONObj index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<
 										  MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE<<1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_VFS_DOMAINS, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(-1, "Error creating domain collection index", __PRETTY_FUNCTION__);
+	if(err) throw chaos::CException(err, "Error creating domain collection index", __PRETTY_FUNCTION__);
 	
 	//domain url index
 	index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<
 						   MONGO_DB_FIELD_DOMAIN_URL<<1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_VFS_DOMAINS_URL, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(-1, "Error creating domain urls collection index", __PRETTY_FUNCTION__);
+	if(err) throw chaos::CException(err, "Error creating domain urls collection index", __PRETTY_FUNCTION__);
 	
 	index_on_domain = BSON(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH<<1<<
 						   MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN<<1<<
 						   MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS<<1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_VFS_VBLOCK, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(-1, "Error creating data block index", __PRETTY_FUNCTION__);
+	if(err) throw chaos::CException(err, "Error creating data block index", __PRETTY_FUNCTION__);
 	
 	index_on_domain = BSON(MONGO_DB_FIELD_IDX_DATA_PACK_DID<<1<<
 						   MONGO_DB_FIELD_IDX_DATA_PACK_TYPE<<1<<
 						   MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS<<1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_IDX_DATA_PACK, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(-1, "Error creating data pack index collection index", __PRETTY_FUNCTION__);
+	if(err) throw chaos::CException(err, "Error creating data pack index collection index", __PRETTY_FUNCTION__);
 	
+    index_on_domain = BSON(MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC<<1);
+    err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_IDX_DATA_PACK, index_on_domain, true, "", true);
+    if(err) throw chaos::CException(err, "Error creating data pack index collection index on numeric timestamp", __PRETTY_FUNCTION__);
+    
 	index_on_domain = BSON(MONGO_DB_FIELD_SNAPSHOT_NAME<< 1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_SNAPSHOT, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(-1, "Error creating snapshot collection index", __PRETTY_FUNCTION__);
+	if(err) throw chaos::CException(err, "Error creating snapshot collection index", __PRETTY_FUNCTION__);
 	
 	index_on_domain = BSON(MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << 1 <<
 						   MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << 1 <<
 						   MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID << 1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(-1, "Error creating snapshot data collection index", __PRETTY_FUNCTION__);
+	if(err !=0 && err != 85) throw chaos::CException(err, "Error creating snapshot data collection index", __PRETTY_FUNCTION__);
 	
 }
 

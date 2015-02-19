@@ -250,7 +250,6 @@ int64_t DirectIODeviceClientChannel::endQueryDataCloudResult(const std::string& 
 	}
 	//send message
 	return sendServiceData(data_pack);
-	return 0;
 }
 
 //! default data deallocator implementation

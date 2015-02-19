@@ -21,10 +21,16 @@
 #define MDBHAC_LERR_ LERR_ << MongoDBHAConnection_LOG_HEAD << __FUNCTION__ << " - "
 
 #define MONGO_DB_CHECK_ERROR_CODE(b) b["code"].numberInt()
+#define MONGO_DB_CHECK_ERROR_MESSAGE(b) b["errmsg"].valuestrsafe()
+
 #define MONGO_DB_GET_ERROR(c, e) \
 mongo::BSONObj _error = c->conn().getLastErrorDetailed(); \
 e = MONGO_DB_CHECK_ERROR_CODE(_error);
 
+#define MONGO_DB_GET_ERROR_WHIT_MESSAGE(c, e, m) \
+mongo::BSONObj _error = c->conn().getLastErrorDetailed(); \
+e = MONGO_DB_CHECK_ERROR_CODE(_error);\
+m = MONGO_DB_CHECK_ERROR_MESSAGE(_error);
 
 #define CONTINUE_ON_NEXT_CONNECTION(x) \
 switch(x) { \

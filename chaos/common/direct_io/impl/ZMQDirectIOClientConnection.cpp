@@ -26,7 +26,7 @@ using namespace chaos::common::direct_io::impl;
 
 #define ZMQDIO_CONNECTION_LAPP_ LAPP_ << ZMQDIO_CONNECTION_LOG_HEAD
 #define ZMQDIO_CONNECTION_LDBG_ LDBG_ << ZMQDIO_CONNECTION_LOG_HEAD << __FUNCTION__ << " - "
-#define ZMQDIO_CONNECTION_LERR_ LERR_ << ZMQDIO_CONNECTION_LOG_HEAD << __FUNCTION__ << " - " << __LINE__ << " - "
+#define ZMQDIO_CONNECTION_LERR_ LERR_ << ZMQDIO_CONNECTION_LOG_HEAD << __FUNCTION__ << "(" << __LINE__ << ") - "
 
 ZMQDirectIOClientConnection::ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service, uint16_t endpoint):
 DirectIOClientConnection(server_description, endpoint),
@@ -93,75 +93,126 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
 	//check what send
 	switch(data_pack->header.dispatcher_header.fields.channel_part) {
 		case DIRECT_IO_CHANNEL_PART_EMPTY:
-			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_no_wait_flag);
+			ZMQ_DO_AGAIN(err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_no_wait_flag);)
+            if(err == -1) {
+                err = zmq_errno();
+                ZMQDIO_CONNECTION_LERR_ << "Error sending header part code:"<< zmq_strerror(err);
+                delete (data_pack);
+            } else {
+                err = 0
+            }
 			break;
 		case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
-			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);
+			ZMQ_DO_AGAIN(err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);)
 			if(err == -1) {
+                err = zmq_errno();
+                ZMQDIO_CONNECTION_LERR_ << "Error sending header part code:"<< zmq_strerror(err);
 				delete (data_pack);
 				return err;
-			}
+            } else {
+                err = 0
+            }
 			err = zmq_msg_init_data (&msg_header_data,
 									 data_pack->channel_header_data,
 									 data_pack->header.channel_header_size,
 									 DirectIOForwarder::freeSentData,
 									 new DisposeSentMemoryInfo(header_deallocation_handler, DisposeSentMemoryInfo::SentPartHeader, sending_opcode));
-			err = zmq_sendmsg(socket, &msg_header_data, _send_no_wait_flag);
-			if(err > 0) {
-				err = 0; //keep error to default behaviour
-			}
+            if (err == -1) {
+                ZMQDIO_CONNECTION_LERR_ << "Error initializing emssage for message header";
+                delete (data_pack);
+                break;
+            }
+			ZMQ_DO_AGAIN(err = zmq_sendmsg(socket, &msg_header_data, _send_no_wait_flag);)
+			if(err == -1) {
+                err = zmq_errno();
+                ZMQDIO_CONNECTION_LERR_ << "Error sending message for header data part with code:"<< zmq_strerror(err);
+            } else {
+                err = 0
+            }
 			zmq_msg_close(&msg_header_data);
 			break;
 		case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
-			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);
+			ZMQ_DO_AGAIN(err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);)
 			if(err == -1) {
+                err = zmq_errno();
+                ZMQDIO_CONNECTION_LERR_ << "Error sending header part code:"<< zmq_strerror(err);
 				DirectIOForwarder::freeSentData(data_pack->channel_data, new DisposeSentMemoryInfo(data_deallocation_handler, DisposeSentMemoryInfo::SentPartData, sending_opcode));
 				delete (data_pack);
 				return err;
-			}
+            } else {
+                err = 0
+            }
 			err = zmq_msg_init_data (&msg_data,
 									 data_pack->channel_data,
 									 data_pack->header.channel_data_size,
 									 DirectIOForwarder::freeSentData,
 									 new DisposeSentMemoryInfo(data_deallocation_handler, DisposeSentMemoryInfo::SentPartData, sending_opcode));
-			err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);
-			if(err > 0) {
-				err = 0; //keep error to default behaviour
-			}
+			ZMQ_DO_AGAIN(err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);)
+			if(err == -1) {
+                err = zmq_errno();
+                ZMQDIO_CONNECTION_LERR_ << "Error sending data part code:"<< zmq_strerror(err);
+            } else {
+                err = 0
+            }
 			zmq_msg_close(&msg_data);
 			break;
 			
 		case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
-			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);
+			ZMQ_DO_AGAIN(err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);)
 			if(err == -1) {
+                err = zmq_errno();
+                ZMQDIO_CONNECTION_LERR_ << "Error sending header with code:"<< zmq_strerror(err);
 				DirectIOForwarder::freeSentData(data_pack->channel_data, new DisposeSentMemoryInfo(data_deallocation_handler, DisposeSentMemoryInfo::SentPartData, sending_opcode));
 				delete (data_pack);
 				return err;
-			}
+            } else {
+                err = 0
+            }
 			err = zmq_msg_init_data (&msg_header_data,
 									 data_pack->channel_header_data,
 									 data_pack->header.channel_header_size,
 									 DirectIOForwarder::freeSentData,
 									 new DisposeSentMemoryInfo(header_deallocation_handler, DisposeSentMemoryInfo::SentPartHeader, sending_opcode));
-			err = zmq_sendmsg(socket, &msg_header_data, _send_more_no_wait_flag);
+            ZMQ_DO_AGAIN(err = zmq_sendmsg(socket, &msg_header_data, _send_more_no_wait_flag);)
 			if(err == -1) {
-				ZMQDIO_CONNECTION_LERR_ << "Error sending header part befor data part";
+                err = zmq_errno();
+				ZMQDIO_CONNECTION_LERR_ << "Error sending header part befor data part with code:"<< zmq_strerror(err);
 				//delete the data part simulating the zmq behaviour
 				DirectIOForwarder::freeSentData(data_pack->channel_data, new DisposeSentMemoryInfo(data_deallocation_handler, DisposeSentMemoryInfo::SentPartData, sending_opcode));
 				delete (data_pack);
 				zmq_msg_close(&msg_header_data);
 				ZMQDIO_CONNECTION_LERR_ << "Data resurce are been deallocated";
 				return err;
-			}
+            } else {
+                err = 0
+            }
 			err = zmq_msg_init_data (&msg_data,
 									 data_pack->channel_data,
 									 data_pack->header.channel_data_size,
 									 DirectIOForwarder::freeSentData,
 									 new DisposeSentMemoryInfo(data_deallocation_handler, DisposeSentMemoryInfo::SentPartData, sending_opcode));
-			err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);
+            if(err == -1) {
+                ZMQDIO_CONNECTION_LERR_ << "Error initializing data message";
+                zmq_msg_close(&msg_header_data);
+                ZMQDIO_CONNECTION_LERR_ << "Header message has been deallocated";
+                return err;
+            }
+			ZMQ_DO_AGAIN(err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);)
+            if(err == -1) {
+                err = zmq_errno();
+                ZMQDIO_CONNECTION_LERR_ << "Error sending data part with code:"<< zmq_strerror(err);
+            } else {
+                err = 0
+            }
 			//check if we need to espect async answer
 			err = zmq_msg_close(&msg_header_data);
+            if(err == -1) {
+                ZMQDIO_CONNECTION_LERR_ << "Error closing header data message";
+            }
 			err = zmq_msg_close(&msg_data);
+            if(err == -1) {
+                ZMQDIO_CONNECTION_LERR_ << "Error closing data message";
+            }
 			break;
 	}
 	

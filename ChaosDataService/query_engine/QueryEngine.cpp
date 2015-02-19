@@ -437,17 +437,26 @@ void QueryEngine::process_query() {
 				switch(query->query_phase) {
 					case DataCloudQuery::DataCloudQueryPhaseError:
 						QEERR_ << "Error on "<< QUERY_INFO((*query));
-						sendEndResultFaseToClient(query, query_error);
+						err = sendEndResultFaseToClient(query, query_error);
+                        if(err) {
+                            QEERR_ << "Error sending error result on client for "<< QUERY_INFO((*query));
+                        }
 						break;
 						
 					case DataCloudQuery::DataCloudQueryPhaseEnd:
 						QEDBG_ << "End on "<< QUERY_INFO((*query));
-						sendEndResultFaseToClient(query, 0);
+						err = sendEndResultFaseToClient(query, 0);
+                        if(err) {
+                            QEERR_ << "Error sending end query message on client for "<< QUERY_INFO((*query));
+                        }
 						break;
 						
 					case DataCloudQuery::DataCloudQueryPhaseClientDisconnected:
 						QEDBG_ << "Client disconnection for "<< QUERY_INFO((*query));
-						sendEndResultFaseToClient(query, -3);
+						err = sendEndResultFaseToClient(query, -3);
+                        if(err) {
+                            QEERR_ << "Error on managing client disconnected "<< QUERY_INFO((*query));
+                        }
 						break;
 						
 					default:
