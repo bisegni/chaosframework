@@ -277,9 +277,9 @@ int main(int argc, char* argv[])
 		}
 		
 		if(query_future) {
+            bool run = true;
 			query_future->waitForBeginResult();
-			while(query_future->getState() ==chaos::common::io::QueryFutureStateStartResult ||
-				  query_future->getState() ==chaos::common::io::QueryFutureStateReceivingResult){
+			do{
 				auto_ptr<CDataWrapper> q_result(query_future->getDataPack(true, timeout));
 				if(q_result.get()) {
 					retry = 0;
@@ -316,17 +316,17 @@ int main(int argc, char* argv[])
 					printPercendDone(computePercent(query_future->getCurrentElementIndex(), query_future->getTotalElementFound()));
 					sendBackOnRow();
 				}
-				
-				//print last percent
-				if(query_future->getState() != chaos::common::io::QueryFutureStateError) {
-					std::cout << "Exporting ";
-					printPercendDone(computePercent(query_future->getCurrentElementIndex(), query_future->getTotalElementFound()));
-					std::cout << std::endl;
-				} 
 
-			};
+                run = q_result.get()!=NULL?true:(query_future->getState() != chaos::common::io::QueryFutureStateError);
+            }while(run);
 						//print the statistic
-			printStat(query_future);
+            //print last percent
+            if(query_future->getState() != chaos::common::io::QueryFutureStateError) {
+                std::cout << "Exporting ";
+                printPercendDone(computePercent(query_future->getCurrentElementIndex(), query_future->getTotalElementFound()));
+                std::cout << std::endl;
+            }
+            printStat(query_future);
 			int rett=0;
 			if(query_future->getTotalElementFound()==0){
 			  rett=10;
