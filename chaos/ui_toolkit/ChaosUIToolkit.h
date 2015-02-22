@@ -44,7 +44,7 @@ namespace chaos{
          allocate and instantiate other api pachage
          */
         class ChaosUIToolkit : public ChaosCommon<ChaosUIToolkit> {
-            friend class Singleton<ChaosUIToolkit>;
+            friend class common::utility::Singleton<ChaosUIToolkit>;
             /** \brief Client unique id */
             string clientInstanceUUID;
             /** \brief point to the class the need to be allert when this UIToolkit must exit*/

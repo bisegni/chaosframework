@@ -34,7 +34,7 @@ namespace chaos {
 		class HLDataApi:
 		public common::utility::Singleton<HLDataApi> {
             friend class ChaosUIToolkit;
-            friend class Singleton<HLDataApi>;
+            friend class common::utility::Singleton<HLDataApi>;
             
             std::map<string, DeviceController* > controllerMap;
             /*

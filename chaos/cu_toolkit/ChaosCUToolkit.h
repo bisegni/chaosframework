@@ -45,7 +45,7 @@ namespace chaos{
          add Custom Control unit, and start all Contro Unit environment
          */
         class ChaosCUToolkit : public ChaosCommon<ChaosCUToolkit>, public ServerDelegator {
-            friend class Singleton<ChaosCUToolkit>;
+	friend class common::utility::Singleton<ChaosCUToolkit>;
             //static boost::mutex monitor;
             //static boost::condition endWaithCondition;
             

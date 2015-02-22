@@ -76,7 +76,7 @@ namespace chaos {
 		class LLRpcApi:
 		public common::utility::Singleton<LLRpcApi> {
 			friend class ChaosUIToolkit;
-			friend class Singleton<LLRpcApi>;
+			friend class common::utility::Singleton<LLRpcApi>;
 			//!chaos network router
 			chaos_network::NetworkBroker *network_broker;
 			

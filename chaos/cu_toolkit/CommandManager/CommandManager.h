@@ -72,7 +72,7 @@ namespace chaos{
 				friend class CommandDispatcherRegister;
 				friend class ServerDelegator;
 				friend class chaos::cu::ChaosCUToolkit;
-				friend class Singleton<CommandManager>;
+				friend class common::utility::Singleton<CommandManager>;
 				
 				std::string metadataServerAddress;
 				bool canUseMetadataServer;

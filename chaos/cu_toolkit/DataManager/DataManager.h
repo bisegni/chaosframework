@@ -46,7 +46,7 @@ namespace chaos{
 			class DataManager:
 			public common::utility::StartableService,
 			public common::utility::Singleton<DataManager> {
-				friend class Singleton<DataManager>;
+				friend class common::utility::Singleton<DataManager>;
 				//mutex for lock operation on service request
 				boost::mutex managing_data_mutex;
 				shared_ptr<chaos_io::IODataDriver> liveDriver;

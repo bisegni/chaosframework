@@ -139,7 +139,7 @@ namespace chaos {
 			public common::utility::StartableService,
 			protected chaos::common::async_central::TimerHandler,
 			public common::utility::Singleton<ControlManager> {
-				friend class Singleton<ControlManager>;
+			  friend class common::utility::Singleton<ControlManager>;
 				//mutable boost::shared_mutex mutex_registration;
 				
 				//unit server state machine

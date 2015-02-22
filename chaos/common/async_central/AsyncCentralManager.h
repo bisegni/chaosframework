@@ -45,7 +45,7 @@ namespace chaos {
 			class AsyncCentralManager :
 			public utility::Singleton<AsyncCentralManager>,
 			public utility::InizializableService {
-				friend class Singleton<AsyncCentralManager>;
+			  friend class utility::Singleton<AsyncCentralManager>;
 				uv_thread_t	thread_loop_id;
 				uv_loop_t *uv_l;
 				static bool looping;

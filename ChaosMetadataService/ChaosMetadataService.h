@@ -44,7 +44,7 @@ namespace chaos {
 		public ChaosCommon<ChaosMetadataService>,
 		public ServerDelegator,
 		public common::utility::StartableService {
-            friend class Singleton<ChaosMetadataService>;
+            friend class common::utility::Singleton<ChaosMetadataService>;
             
             static WaitSemaphore waitCloseSemaphore;
 			
