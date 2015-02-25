@@ -102,6 +102,7 @@ namespace chaos {
 		 Specialized option for startup c and cpp program main options parameter
 		 */
 		void init(int argc, char* argv[]) throw (CException) {
+            preparseCommandOption(argc, argv);
 			if(argv != NULL) {
 				GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
 			}

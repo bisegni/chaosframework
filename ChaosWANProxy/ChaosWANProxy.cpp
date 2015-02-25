@@ -72,11 +72,6 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 	std::string tmp_interface_name;
 	try {
 		ChaosCommon<ChaosWANProxy>::init(init_data);
-		
-		//check startup parameter
-		//if(!getGlobalConfigurationInstance()->hasOption(setting_options::OPT_CDS_ADDR)){
-		//	throw CException(-1, "The cds server address are mandatory", __PRETTY_FUNCTION__);
-		//}
 		   
 		if(!getGlobalConfigurationInstance()->hasOption(setting_options::OPT_INTERFACE_TO_ACTIVATE)) {
 			throw CException(-1, "The interface protocol are mandatory", __PRETTY_FUNCTION__);

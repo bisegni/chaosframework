@@ -119,11 +119,8 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_DB_DRIVER_KVP,
 																												 "The key value multitoken for database implementation driver (k:v)");
 		
-		//preparse for blow custom option
-		ChaosDataService::getInstance()->preparseCommandOption(argc, argv);
-		
 		//initilize the faramework
-		ChaosDataService::getInstance()->init(NULL);
+		ChaosDataService::getInstance()->init(argc, argv);
 		
 		//
         ChaosDataService::getInstance()->start();

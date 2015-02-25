@@ -39,9 +39,6 @@ int main(int argc, char * argv[]) {
 		
 		ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_PERSITENCE_KV_PARAMTER,
 																													 "The key value parameter for storage implementation driver (ex k:v-k1:v1)");
-
-        //preparse for blow custom option
-        ChaosMetadataService::getInstance()->preparseCommandOption(argc, argv);
         
 		ChaosMetadataService::getInstance()->init(argc, argv);
 		

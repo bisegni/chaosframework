@@ -42,8 +42,6 @@ int main(int argc, char * argv[]) {
 																									   "Specify wich interface to enable",
 																									   &ChaosWANProxy::getInstance()->setting.list_wan_interface_to_enable,
 																									   true);
-
-		
 		//Init the Node
 		chaos::wan_proxy::ChaosWANProxy::getInstance()->init(argc, argv);
 		//!Start the node
