@@ -26,6 +26,11 @@
 #define WUMDBG_ LDBG_ << WUMHADER
 #define WUMERR_ LERR_ << WUMHADER<<"("<<__LINE__<<") "
 
+#define SWITCH_SM_TO(e)\
+if(wu_instance_sm.process_event(e) != boost::msm::back::HANDLED_TRUE){\
+    throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for failure event", __PRETTY_FUNCTION__);\
+}
+
 using namespace chaos::common::data;
 using namespace chaos::cu::command_manager;
 using namespace chaos::cu::control_manager;
@@ -127,14 +132,16 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 			work_unit_instance->device_event_channel = CommandManager::getInstance()->getInstrumentEventChannel();
 			
 			WUMAPP_ << "Setup Control Unit Sanbox for cu with instance";
-			work_unit_instance->_defineActionAndDataset(mds_registration_message);
-			
-			//sendConfPackToMDS(cuPtr->defaultInternalConf.get());
-			if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublishing()) == boost::msm::back::HANDLED_TRUE){
-				//we are switched state
-			} else {
-				throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for publishing event", __PRETTY_FUNCTION__);
-			}
+            try{
+                work_unit_instance->_defineActionAndDataset(mds_registration_message);
+            }catch(chaos::CException& e) {
+                DECODE_CHAOS_EXCEPTION(e)
+                SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
+            }catch(...) {
+                WUMERR_ << "Unexpected error during control unit definition";
+                SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
+            }
+            SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypePublishing())
 			break;
 		}
 			
@@ -166,11 +173,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 			for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
 				CommandManager::getInstance()->deregisterAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
 			}
-			if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublishing()) == boost::msm::back::HANDLED_TRUE){
-				//we are switched state
-			} else {
-				throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for unpublish event", __PRETTY_FUNCTION__);
-			}
+            SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublishing())
 			break;
 		}
 			
@@ -219,11 +222,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 			}
 			
 			WUMAPP_  << "work unit is going to be unpublished";
-			if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublished()) == boost::msm::back::HANDLED_TRUE) {
-				//we are switched state
-			} else {
-				throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for unpublishing event", __PRETTY_FUNCTION__);
-			}
+            SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublished())
 			break;
 		}
 	}
@@ -269,25 +268,16 @@ bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
         int ack_val=ack_pack.getInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT);
 		switch(ack_val){
 			case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK:
+                SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypePublished())
 				WUMAPP_ << "work unit has been registered";
-				if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublished()) == boost::msm::back::HANDLED_TRUE){
-					//we are published and it is ok!
-				} else {
-					throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for UnitEventTypePublished event", __PRETTY_FUNCTION__);
-				}
 				result = true;
 				break;
 			
 			case ErrorCode::EC_MDS_WOR_UNIT_ID_NOT_SELF_MANAGEABLE:
 				WUMAPP_ << "id is not self manageable";
 			default:
+                SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
 				WUMERR_ << "work unit "<< device_id<<" failed to register, error ack:"<<ack_val;
-				//turn of unit server
-				if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
-					//we have problem
-				} else {
-					throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for UnitEventTypeFailure event", __PRETTY_FUNCTION__);
-				}
 				break;
 		}
 	} else {

@@ -338,7 +338,13 @@ void ControlManager::makeSMSteps() {
 		 i != map_cuid_reg_unreg_instance.end();
 		 i++ ){
 		//make step
-		if(i->second->smNeedToSchedule()) i->second->scheduleSM();
+        try {
+            if(i->second->smNeedToSchedule()) i->second->scheduleSM();
+        } catch(chaos::CException& e) {
+            DECODE_CHAOS_EXCEPTION(e)
+        } catch(...) {
+            LCMERR_ << "Undefined error";
+        }
 	}
 }
 

@@ -83,7 +83,7 @@ namespace chaos {
 					typedef boost::msm::front::Row <  StartUnpublishing ,  UnitEventType::UnitEventTypeUnpublishing , Unpublishing		, boost::msm::front::none , boost::msm::front::none > sunpubing_unpubing_row;
 					typedef boost::msm::front::Row <  Unpublishing		,  UnitEventType::UnitEventTypeUnpublished  , Unpublished		, boost::msm::front::none , boost::msm::front::none > unpubing_unpub_row;
 					typedef boost::msm::front::Row <  Publishing		,  UnitEventType::UnitEventTypeFailure		, PublishingFailure	, boost::msm::front::none , boost::msm::front::none > pubbing_pubfail_row;
-					
+					typedef boost::msm::front::Row <  StartPublishing	,  UnitEventType::UnitEventTypeFailure		, PublishingFailure	, boost::msm::front::none , boost::msm::front::none > spubing_pubfail_row;
 					// Transition table for initialization services
 					struct transition_table : boost::mpl::vector<
 					unpub_spubing_row,
@@ -92,7 +92,8 @@ namespace chaos {
 					pub_sunpubing_row,
 					sunpubing_unpubing_row,
 					unpubing_unpub_row,
-					pubbing_pubfail_row> {};
+					pubbing_pubfail_row,
+                    spubing_pubfail_row> {};
 					
 					template <class FSM,class Event>
 					void no_transition(Event const& ,FSM&, int ){}
