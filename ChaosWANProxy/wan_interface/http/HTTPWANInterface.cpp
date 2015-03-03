@@ -95,18 +95,20 @@ void HTTPWANInterface::init(void *init_data) throw(CException) {
 	http_server_list.clear();
 	
 	//check for parameter
-	if(!getParameter().hasKey(OPT_HTTP_PORT)) {
+	if(getParameter()[OPT_HTTP_PORT].isNull() ||
+       !getParameter()[OPT_HTTP_PORT].isInt()) {
 		std::string err = "Port for http interface as not be set!";
 		HTTWAN_INTERFACE_ERR_ << err;
 		throw chaos::CException(-1, err, __PRETTY_FUNCTION__);
 	} else {
-		service_port = boost::lexical_cast<int>(getParameter().getStringValue(OPT_HTTP_PORT));
+		service_port = getParameter()[OPT_HTTP_PORT].asInt();
 	}
 	
-	if(!getParameter().hasKey(OPT_HTTP_THREAD_NUMBER)) {
+	if(getParameter()[OPT_HTTP_THREAD_NUMBER].isNull() ||
+       !getParameter()[OPT_HTTP_THREAD_NUMBER].isInt()) {
 		thread_number = 1;
 	} else {
-		thread_number = boost::lexical_cast<int>(getParameter().getStringValue(OPT_HTTP_THREAD_NUMBER));
+		thread_number = getParameter()[OPT_HTTP_THREAD_NUMBER].asInt();
 	}
 	
 	//allcoate each server for every thread
@@ -118,7 +120,8 @@ void HTTPWANInterface::init(void *init_data) throw(CException) {
 		
 		//configure server
 		HTTWAN_INTERFACE_APP_ << " Thread " << idx << " allocated";
-		mg_set_option(http_server, "listening_port", getParameter().getStringValue(OPT_HTTP_PORT).c_str());
+        std::string str_port = boost::lexical_cast<std::string>(service_port);
+        mg_set_option(http_server, "listening_port", str_port.c_str());
 		mg_set_option(http_server, "enable_keep_alive", "yes");
 		mg_set_option(http_server, "enable_directory_listing", "false");
 		HTTWAN_INTERFACE_APP_ << " Thread " << idx << " configured";

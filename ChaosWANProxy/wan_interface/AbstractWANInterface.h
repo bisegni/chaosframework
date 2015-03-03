@@ -28,6 +28,7 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/UrlAccessibleService.h>
 
+#include <json/json.h>
 
 namespace chaos {
 	namespace wan_proxy {
@@ -41,8 +42,8 @@ namespace chaos {
 			public common::utility::StartableService,
 			public common::utility::UrlAccessibleService {
 				friend class chaos::wan_proxy::ChaosWANProxy;
-				
-				chaos::common::data::CDataWrapper wan_interface_parameter;
+                Json::Value						wan_interface_parameter;
+                Json::Reader					json_reader;
 			protected:
 				int service_port;
 				
@@ -52,7 +53,7 @@ namespace chaos {
 				
 				~AbstractWANInterface();
 				
-				chaos::common::data::CDataWrapper& getParameter();
+				Json::Value& getParameter();
 				
 				BaseWANInterfacelHandler *handler;
 			public:

@@ -33,7 +33,10 @@ AbstractWANInterface::~AbstractWANInterface() {
 
 // inherited method
 void AbstractWANInterface::init(void *init_data) throw(chaos::CException) {
-	if(init_data) wan_interface_parameter.setSerializedJsonData((const char*)init_data);
+    std::string param_str = (char*)init_data;
+    if(!json_reader.parse(param_str, wan_interface_parameter)) {
+        throw chaos::CException(-1, "Error reading json parameter", __PRETTY_FUNCTION__);
+    }
 }
 
 // inherited method
@@ -56,7 +59,7 @@ const std::string& AbstractWANInterface::getUrl() {
 	return service_url;
 }
 
-chaos::common::data::CDataWrapper& AbstractWANInterface::getParameter() {
+Json::Value& AbstractWANInterface::getParameter() {
 	return wan_interface_parameter;
 }
 
