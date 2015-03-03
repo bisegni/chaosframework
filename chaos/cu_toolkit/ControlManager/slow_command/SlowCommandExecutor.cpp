@@ -55,7 +55,9 @@ last_ru_id_cache(NULL),
 last_acq_ts_cache(NULL),
 last_error_code(NULL),
 last_error_message(NULL),
-last_error_domain(NULL){}
+last_error_domain(NULL),
+key_data_storage(NULL),
+driverAccessorsErogator(NULL){}
 
 SlowCommandExecutor::~SlowCommandExecutor(){
 	//delete the wrapper
