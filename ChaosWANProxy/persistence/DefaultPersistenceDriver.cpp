@@ -19,6 +19,7 @@
  */
 #include "DefaultPersistenceDriver.h"
 
+#include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/network/URL.h>
 #include <chaos/common/chaos_constants.h>
 
@@ -229,7 +230,7 @@ int DefaultPersistenceDriver::registerDataset(const std::string& producer_key,
 											  chaos::common::data::CDataWrapper& last_dataset) {
 	CHAOS_ASSERT(mds_message_channel)
 	last_dataset.addStringValue(chaos::DatasetDefinitionkey::DEVICE_ID, producer_key);
-	last_dataset.addStringValue(chaos::CUDefinitionKey::CU_INSTANCE, "SYNC_WAN");
+    last_dataset.addStringValue(chaos::CUDefinitionKey::CU_INSTANCE, chaos::common::utility::UUIDUtil::generateUUIDLite());
 	last_dataset.addStringValue("mds_control_key","none");
 	return mds_message_channel->sendUnitDescription(last_dataset, true, 3000);
 }

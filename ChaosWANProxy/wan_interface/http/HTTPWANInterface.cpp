@@ -111,6 +111,9 @@ void HTTPWANInterface::init(void *init_data) throw(CException) {
 		thread_number = getParameter()[OPT_HTTP_THREAD_NUMBER].asInt();
 	}
 	
+    HTTWAN_INTERFACE_APP_ << "HTTP server listen on port: " << service_port;
+    HTTWAN_INTERFACE_APP_ << "HTTP server thread used: " << thread_number;
+    
 	//allcoate each server for every thread
 	for(int idx = 1;
 		idx <= thread_number;
@@ -201,40 +204,51 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 					 api_uri,
 					 algorithm::is_any_of("/"),
 					 algorithm::token_compress_on);
-	
 	//check if we havethe domain and api name in the uri and the content is json
 	if(api_token_list.size()>= 2 &&
 	   json) {
 		std::string content_data(connection->content, connection->content_len);
-		json_reader.parse(content_data, json_request);
+        if(json_reader.parse(content_data, json_request)) {
+            //print the received JSON document
+            DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Received JSON pack:" <<json_writer.write(json_request);)
+
+            //call the handler
+            if((err = handler->handleCall(1,
+                                          api_token_list,
+                                          json_request,
+                                          response.getHeader(),
+                                          json_response))) {
+                DEBUG_CODE(HTTWAN_INTERFACE_ERR_ << "Error on api call :" << connection->uri <<
+                           (content_data.size()? (" with message data: " + content_data):" with no message data");)
+                //return the error for the api call
+                response.setCode(400);
+                json_response["error"] = err;
+                json_response["error_message"].append("Call Error");
+            }else{
+                //return the infromation of api call success
+                response.setCode(200);
+                json_response["error"] = 0;
+            }
+        }else{
+            response.setCode(400);
+            json_response["error"] = -1;
+            json_response["error_message"].append("Error parsing the json post data");
+            DEBUG_CODE(HTTWAN_INTERFACE_ERR_ << "Error decoding the request:" << json_writer.write(json_response);)
+        }
 		
-		//call the handler
-		if((err = handler->handleCall(1,
-									  api_token_list,
-									  json_request,
-									  response.getHeader(),
-									  json_response))) {
-			DEBUG_CODE(HTTWAN_INTERFACE_ERR_ << "Error on api call :" << connection->uri <<
-					   (content_data.size()? (" with message data: " + content_data):" with no message data");)
-			//return the error for the api call
-			response.setCode(400);
-			json_response["error"] = err;
-			json_response["error_message"].append("Call Error");
-		}else{
-			//return the infromation of api call success
-			response.setCode(200);
-			json_response["error"] = 0;
-		}
+		
 	} else {
 		//return the error for bad json or invalid url
 		response.setCode(400);
 		response.addHeaderKeyValue("Content-Type", "application/json");
 		json_response["error"] = -1;
-		if(api_token_list.size()<2) {
-			json_response["error_message"].append("The uri need to contains either the domain and name of the api ex: http[s]://host:port/api/vx/domain/name(/param)*");
-		} if(!json) {
-			json_response["error_message"].append("The content of the request need to be json");
-		}
+        if(api_token_list.size()<2) {
+            json_response["error_message"].append("The uri need to contains either the domain and name of the api ex: http[s]://host:port/api/vx/domain/name(/param)*");
+        }
+        if(!json) {
+            json_response["error_message"].append("The content of the request need to be json");
+        }
+        DEBUG_CODE(HTTWAN_INTERFACE_ERR_ << "Error decoding the request:" <<json_writer.write(json_response);)
 	}
 	
 	response << json_writer.write(json_response);
@@ -243,6 +257,9 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 }
 
 bool HTTPWANInterface::handle(struct mg_connection *connection) {
-	//connection->request_method, connection->uri
-	return regex_match(connection->uri, REG_API_URL_FORMAT);
+    bool accepted = false;
+    if(!(accepted = regex_match(connection->uri, REG_API_URL_FORMAT))) {
+        HTTWAN_INTERFACE_ERR_ << "URI:" << connection->uri << ", not accepted";
+    }
+	return accepted;
 }

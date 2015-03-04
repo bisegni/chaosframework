@@ -81,7 +81,7 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 		PRA_LERR << err_msg;
 		PRODUCER_REGISTER_ERR(output_data, -3, err_msg);
 		return err;
-	}else if(!dataset_timestamp.isNumeric()) {
+	} else if(!dataset_timestamp.isInt64()) {
 		err_msg = "The timestamp needs to be an int64 number";
 		PRA_LERR << err_msg;
 		PRODUCER_REGISTER_ERR(output_data, -4, err_msg);

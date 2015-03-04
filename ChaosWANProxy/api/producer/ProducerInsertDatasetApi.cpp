@@ -73,11 +73,15 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 	if(input_data[chaos::DataPackCommonKey::DPCK_TIMESTAMP].isNull()) {
 		err_msg = "The timestamp is mandatory";
 		PID_LERR << err_msg;
-		
 		PRODUCER_INSERT_ERR(output_data, -3, err_msg);
 		return err;
-	}
-	
+    } else if(!input_data[chaos::DataPackCommonKey::DPCK_TIMESTAMP].isInt64()) {
+        err_msg = "The timestamp needs to be an int64 number";
+        PID_LERR << err_msg;
+        PRODUCER_INSERT_ERR(output_data, -4, err_msg);
+        return err;
+    }
+    
 	//we can proceed
 	auto_ptr<CDataWrapper> output_dataset(new CDataWrapper());
 	const std::string& producer_name = api_tokens[0];
