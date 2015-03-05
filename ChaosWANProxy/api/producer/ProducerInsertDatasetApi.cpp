@@ -75,12 +75,12 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 		PID_LERR << err_msg;
 		PRODUCER_INSERT_ERR(output_data, -3, err_msg);
 		return err;
-    } else if(!input_data[chaos::DataPackCommonKey::DPCK_TIMESTAMP].isInt64()) {
-        err_msg = "The timestamp needs to be an int64 number";
-        PID_LERR << err_msg;
-        PRODUCER_INSERT_ERR(output_data, -4, err_msg);
-        return err;
-    }
+	} else if(!input_data[chaos::DataPackCommonKey::DPCK_TIMESTAMP].isString()) {
+	  err_msg = "The timestamp needs to be an int64 number," + input_data[chaos::DataPackCommonKey::DPCK_TIMESTAMP].asString();
+	  PID_LERR << err_msg;
+	  PRODUCER_INSERT_ERR(output_data, -4, err_msg);
+	  return err;
+	}
     
 	//we can proceed
 	auto_ptr<CDataWrapper> output_dataset(new CDataWrapper());
@@ -101,7 +101,7 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 			PRODUCER_INSERT_ERR(output_data, -4, err_msg);
 			return err;
 		}else if(!dataset_element.isString()) {
-			err_msg = "The dataset element needs to be only string";
+		  err_msg = "The dataset element needs to be only string:"+dataset_element.asString();
 			PID_LERR << err_msg;
 			PRODUCER_INSERT_ERR(output_data, -5, err_msg);
 			return err;
