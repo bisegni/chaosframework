@@ -69,24 +69,32 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 		PRODUCER_INSERT_ERR(output_data, -2, err_msg);
 		return err;
 	}
-	
-	if(input_data[chaos::DataPackCommonKey::DPCK_TIMESTAMP].isNull()) {
+
+        //we nned to remove the timestamp because is th eonly one that need to be int64
+    const Json::Value& dp_timestamp = const_cast<Json::Value&>(input_data).removeMember(chaos::DataPackCommonKey::DPCK_TIMESTAMP);
+
+	if(dp_timestamp.isNull()) {
 		err_msg = "The timestamp is mandatory";
 		PID_LERR << err_msg;
 		PRODUCER_INSERT_ERR(output_data, -3, err_msg);
 		return err;
-    } else if(!input_data[chaos::DataPackCommonKey::DPCK_TIMESTAMP].isInt64()) {
+    } else if(!dp_timestamp.isInt64()) {
         err_msg = "The timestamp needs to be an int64 number";
         PID_LERR << err_msg;
         PRODUCER_INSERT_ERR(output_data, -4, err_msg);
         return err;
     }
-    
+
 	//we can proceed
 	auto_ptr<CDataWrapper> output_dataset(new CDataWrapper());
 	const std::string& producer_name = api_tokens[0];
 
+        // add the node unique id
+    output_dataset->addStringValue(chaos::DataPackCommonKey::DPCK_DEVICE_ID, producer_name);
+        // add timestamp of the datapack
+    output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP, dp_timestamp.asUInt64());
 
+        //scan other memebrs to create the datapack
 	Json::Value::Members members = input_data.getMemberNames();
 	for(Json::Value::Members::iterator it = members.begin();
 		it != members.end();
@@ -100,7 +108,7 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 			PID_LERR << err_msg;
 			PRODUCER_INSERT_ERR(output_data, -4, err_msg);
 			return err;
-		}else if(!dataset_element.isString()) {
+		} else if(!dataset_element.isString()) {
 			err_msg = "The dataset element needs to be only string";
 			PID_LERR << err_msg;
 			PRODUCER_INSERT_ERR(output_data, -5, err_msg);

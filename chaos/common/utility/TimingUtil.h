@@ -61,6 +61,17 @@ namespace chaos {
 					}
 					
 				}
+
+                    //!Return the current timestamp in milliseconds
+                static inline int64_t getTimeStampInMicrosends() {
+                    try{
+                        return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_microseconds();
+                    } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
+                        TU_LERR << "Bad day exception";
+                        return 0;
+                    }
+                    
+                }
 				
 				//!Return the current utc timestamp in milliseconds
 				static inline int64_t getUTCTimeStamp() {
@@ -71,7 +82,17 @@ namespace chaos {
 						return 0;
 					}
 				}
-				
+
+                				//!Return the current utc timestamp in milliseconds
+                static inline int64_t getUTCTimeStampInMicroseconds() {
+                    try{
+                        return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_microseconds();
+                    } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
+                        TU_LERR << "Bad day exception";
+                        return 0;
+                    }
+                }
+
 				//!chack if a string is well format for date representation
 				static bool dateWellFormat(const std::string& timestamp) {
 					boost::posix_time::ptime time;

@@ -33,6 +33,11 @@ namespace chaos {
 				virtual ~AbstractPersistenceDriver();
 				
 				//! push a dataset
+                /*!
+                 \param producer_key the producer key
+                 \param new_dataset the dataset to store (the pointer remain owned by the creator)
+                 \param hint for storage option
+                 */
 				virtual int pushNewDataset(const std::string& producer_key,
 										   chaos::common::data::CDataWrapper *new_dataset,
 										   int store_hint) = 0;

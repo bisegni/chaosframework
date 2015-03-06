@@ -21,6 +21,8 @@
 #include "HTTPWANInterface.h"
 #include "HTTPWANInterfaceStringResponse.h"
 
+#include <chaos/common/utility/TimingUtil.h>
+
 #include <boost/regex.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -30,6 +32,7 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::wan_proxy::wan_interface;
 using namespace chaos::wan_proxy::wan_interface::http;
 
@@ -38,9 +41,9 @@ using namespace chaos::wan_proxy::wan_interface::http;
 
 #define HTTWANINTERFACE_LOG_HEAD "["<<getName()<<"] - "
 
-#define HTTWAN_INTERFACE_APP_ LAPP_ << HTTWANINTERFACE_LOG_HEAD
-#define HTTWAN_INTERFACE_DBG_ LDBG_ << HTTWANINTERFACE_LOG_HEAD << __PRETTY_FUNCTION__
-#define HTTWAN_INTERFACE_ERR_ LERR_ << HTTWANINTERFACE_LOG_HEAD << __PRETTY_FUNCTION__ << "(" << __LINE__ << ")"
+#define HTTWAN_INTERFACE_APP_ INFO_LOG(HTTPWANInterface)
+#define HTTWAN_INTERFACE_DBG_ DBG_LOG(HTTPWANInterface)
+#define HTTWAN_INTERFACE_ERR_ ERR_LOG(HTTPWANInterface)
 
 static const boost::regex REG_API_URL_FORMAT(API_PATH_REGEX_V1("((/[a-zA-Z0-9_]+))*")); //"/api/v1((/[a-zA-Z0-9_]+))*"
 
@@ -185,6 +188,8 @@ void HTTPWANInterface::pollHttpServer(struct mg_server *http_server) {
 int HTTPWANInterface::process(struct mg_connection *connection) {
 	CHAOS_ASSERT(handler)
 	int								err = 0;
+    DEBUG_CODE(uint64_t                        execution_time_start = TimingUtil::getTimeStampInMicrosends();)
+    DEBUG_CODE(uint64_t                        execution_time_end = 0;)
 	Json::Value						json_request;
 	Json::Value						json_response;
 	Json::StyledWriter				json_writer;
@@ -253,6 +258,9 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 	
 	response << json_writer.write(json_response);
 	flush_response(connection, &response);
+    DEBUG_CODE(execution_time_end = TimingUtil::getTimeStampInMicrosends();)
+    DEBUG_CODE(uint64_t duration = execution_time_end - execution_time_start;)
+    DEBUG_CODE(HTTWAN_INTERFACE_DBG_ << "Execution time is:" << duration << " microseconds";)
 	return 1;//
 }
 

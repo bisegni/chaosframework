@@ -124,6 +124,9 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
                     if(err == -1) {
                         err = zmq_errno();
                         ZMQDIO_CONNECTION_LERR_ << "Error sending message for header data part with code:"<< zmq_strerror(err);
+                    } else {
+                            //with the last write if there are no error we put the err to 0
+                        err = 0;
                     }
                     //close the zmq message for channel custom header
                     zmq_msg_close(&msg_header_data);
@@ -154,6 +157,9 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
                     if(err == -1) {
                         err = zmq_errno();
                         ZMQDIO_CONNECTION_LERR_ << "Error sending channel data with code:"<< zmq_strerror(err);
+                    } else {
+                        //with the last write if there are no error we put the err to 0
+                        err = 0;
                     }
                 }
                 //close the zmq message for channel data
@@ -207,6 +213,9 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
                             if(err == -1) {
                                 err = zmq_errno();
                                 ZMQDIO_CONNECTION_LERR_ << "Error sending channel data with code:"<< zmq_strerror(err);
+                            } else {
+                                    //with the last write if there are no error we put the err to 0
+                                err = 0;
                             }
                             
                             //close the zmq message for channel custom header
