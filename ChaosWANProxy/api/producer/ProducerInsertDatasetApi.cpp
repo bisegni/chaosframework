@@ -92,7 +92,7 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
         // add the node unique id
     output_dataset->addStringValue(chaos::DataPackCommonKey::DPCK_DEVICE_ID, producer_name);
         // add timestamp of the datapack
-    output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP, dp_timestamp.asUInt64());
+    output_dataset->addInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP, (uint64_t)dp_timestamp.asUInt64());
 
         //scan other memebrs to create the datapack
 	Json::Value::Members members = input_data.getMemberNames();
