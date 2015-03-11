@@ -176,13 +176,14 @@ int main (int argc, char* argv[] )
         DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(deviceID, timeout);
         if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
         
-		//get the actual state of device
-        err = controller->getState(deviceState);
-        if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");
 		
 		controller->fetchCurrentDeviceValue();
 		
         if(printState) {
+            //get the actual state of device
+            err = controller->getState(deviceState);
+            if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");
+
             std::cout << "Current state:";
             print_state(deviceState);
             std::cout << std::endl;

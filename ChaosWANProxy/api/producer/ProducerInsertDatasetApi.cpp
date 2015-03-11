@@ -88,6 +88,7 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 	//we can proceed
 	auto_ptr<CDataWrapper> output_dataset(new CDataWrapper());
 	const std::string& producer_name = api_tokens[0];
+    const std::string& producer_key = api_tokens[0]+"_o";
 
         // add the node unique id
     output_dataset->addStringValue(chaos::DataPackCommonKey::DPCK_DEVICE_ID, producer_name);
@@ -146,7 +147,7 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 	}
 	
 	//call persistence api for insert the data
-	if((err = persistence_driver->pushNewDataset(producer_name,
+	if((err = persistence_driver->pushNewDataset(producer_key,
 												 output_dataset.get(),
 												 2))) {
 		err_msg = "Error during push of the dataset";
