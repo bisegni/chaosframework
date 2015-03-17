@@ -56,19 +56,29 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 	int err = 0;
 	std::string err_msg;
 	std::vector<std::string> kv_splitted;
-	
+	std::string producer_name;
+	int cnt;
 	if(api_tokens.size() == 0) {
 		err_msg = "no producer name in the uri";
 		PID_LERR << err_msg;
 		PRODUCER_INSERT_ERR(output_data, -1, err_msg);
 		return err;
-	} else if(api_tokens.size() > 1) {
+	} /*else if(api_tokens.size() > 1) {
 		err_msg = "too many param in the uri";
 		PID_LERR << err_msg;
 		
 		PRODUCER_INSERT_ERR(output_data, -2, err_msg);
 		return err;
+		}*/
+	for(cnt = 0;cnt<api_tokens.size();cnt++){
+	  
+	  if(cnt<api_tokens.size()-1){
+	    producer_name=producer_name + api_tokens[cnt] + "/";
+	  } else {
+	    producer_name=producer_name + api_tokens[cnt] ;
+	  }
 	}
+
 
         //we nned to remove the timestamp because is th eonly one that need to be int64
     const Json::Value& dp_timestamp = const_cast<Json::Value&>(input_data).removeMember(chaos::DataPackCommonKey::DPCK_TIMESTAMP);
@@ -87,8 +97,8 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 
 	//we can proceed
 	auto_ptr<CDataWrapper> output_dataset(new CDataWrapper());
-	const std::string& producer_name = api_tokens[0];
-    const std::string& producer_key = api_tokens[0]+"_o";
+	//	const std::string& producer_name = api_tokens[0];
+    const std::string& producer_key = producer_name+"_o";
 
         // add the node unique id
     output_dataset->addStringValue(chaos::DataPackCommonKey::DPCK_DEVICE_ID, producer_name);

@@ -56,20 +56,34 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 	CHAOS_ASSERT(persistence_driver)
 	int err = 0;
 	std::string err_msg;
+	std::string producer_name;
+	int cnt;
 	if(api_tokens.size() == 0) {
 		err_msg = "no producer name in the uri";
 		PRA_LERR << err_msg;
 		PRODUCER_REGISTER_ERR(output_data, -1, err_msg);
 		return err;
-	} else if(api_tokens.size() > 1) {
+	} /*else if(api_tokens.size() > 1) {
 		err_msg = "too many param in the uri";
-		PRA_LERR << err_msg;
+		PRA_LERR << api_tokens.size()<<" producer:"<<api_tokens[0]<<" other:"<<api_tokens[1]<<err_msg;
 		
 		PRODUCER_REGISTER_ERR(output_data, -2, err_msg);
 		return err;
+		}*/
+
+	for(cnt = 0;cnt<api_tokens.size();cnt++){
+	  
+	  if(cnt<api_tokens.size()-1){
+	    producer_name=producer_name + api_tokens[cnt] + "/";
+	  } else {
+	    producer_name=producer_name + api_tokens[cnt] ;
+	  }
 	}
+
+	 
+
 	//we can proceed
-	const std::string& producer_name = api_tokens[0];
+	//const std::string& producer_name = api_tokens[0];
 	PRA_LDBG << "Start producer registration with id " << producer_name;
 	
 	CDataWrapper mds_registration_pack;
