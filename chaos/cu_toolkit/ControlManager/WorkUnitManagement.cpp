@@ -260,25 +260,26 @@ bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
 	
 	string device_id = ack_pack.getStringValue(ChaosSystemDomainAndActionLabel::PARAM_WORK_UNIT_REG_ACK_DEVICE_ID);
 	if(device_id.compare(work_unit_instance->getCUID()) != 0) {
-		throw CException(-2, "received id not equal to work unit instance id", __PRETTY_FUNCTION__);
+	  throw CException(-2, "received id :"+std::string(work_unit_instance->getCUID())+ std::string(" not equal to work unit instance id:")+device_id, __PRETTY_FUNCTION__);
 	}
 	if(ack_pack.hasKey(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT)) {
 		//registration has been ended
 
         int ack_val=ack_pack.getInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT);
 		switch(ack_val){
-			case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK:
+		case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK:
                 SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypePublished())
-				WUMAPP_ << "work unit has been registered";
-				result = true;
-				break;
+		  WUMAPP_ << "work unit has been registered:"<<device_id;
+		result = true;
+		break;
 			
-			case ErrorCode::EC_MDS_WOR_UNIT_ID_NOT_SELF_MANAGEABLE:
-				WUMAPP_ << "id is not self manageable";
-			default:
-                SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
-				WUMERR_ << "work unit "<< device_id<<" failed to register, error ack:"<<ack_val;
-				break;
+		case ErrorCode::EC_MDS_WOR_UNIT_ID_NOT_SELF_MANAGEABLE:
+		  WUMAPP_ << "id is not self manageable";
+		default:
+		  WUMERR_ << "work unit "<< device_id<<" failed to register, error ack:"<<ack_val;
+		  SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
+		  
+		  break;
 		}
 	} else {
 		WUMERR_ << "No result received";

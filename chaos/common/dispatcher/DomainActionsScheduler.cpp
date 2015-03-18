@@ -227,7 +227,7 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
 				remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
 			}
 		} catch (CException& ex) {
-			LAPP_ << "Error during action execution";
+		  LAPP_ << "Error during action execution:"<<ex.what();
 			DECODE_CHAOS_EXCEPTION(ex)
 			//set error in response is it's needed
 			if(needAnswer && remoteActionResult.get()) {

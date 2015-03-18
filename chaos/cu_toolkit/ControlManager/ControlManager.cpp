@@ -530,7 +530,7 @@ CDataWrapper* ControlManager::workUnitRegistrationACK(CDataWrapper *message_data
 	ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
 	std::string device_id = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
 	
-	IN_ACTION_PARAM_CHECK(!map_cuid_reg_unreg_instance.count(device_id), -3, "No registering work unit found with the device id")
+	IN_ACTION_PARAM_CHECK(!map_cuid_reg_unreg_instance.count(device_id), -3, "No registering work unit found with the device id:"+device_id)
 	
 	//we can process the ack into the right manager
 	map_cuid_reg_unreg_instance[device_id]->manageACKPack(*message_data);

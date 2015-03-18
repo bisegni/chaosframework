@@ -272,15 +272,15 @@ void AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::Dec
  */
 CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration,
 										 bool& detachParam) throw(CException) {
-	if(!attribute_value_shared_cache) throw CException(-1, "No Shared cache implementation found", __PRETTY_FUNCTION__);
+	if(!attribute_value_shared_cache) throw CException(-1, "No Shared cache implementation found for:"+DatasetDB::getDeviceID(), __PRETTY_FUNCTION__);
 	
 	std::vector<string> attribute_names;
 	StartableService::initImplementation(this, static_cast<void*>(initConfiguration), "AbstractControlUnit", __PRETTY_FUNCTION__);
 	
 	//the init of the implementation unit goes after the infrastructure one
-	ACULDBG_ << "Start internal and custom inititialization";
+	ACULDBG_ << "Start internal and custom inititialization:"+DatasetDB::getDeviceID();
 	try {
-		ACULAPP_ << "Allocate the user cache wrapper";
+		ACULAPP_ << "Allocate the user cache wrapper for:"+DatasetDB::getDeviceID();
 		attribute_shared_cache_wrapper = new AttributeSharedCacheWrapper(attribute_value_shared_cache);
 		
 		ACULAPP_ << "Populating shared attribute cache for input attribute";
@@ -326,6 +326,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration,
 	}catch(CException& ex) {
 		//inthis case i need to deinit the state of the abstract control unit
 		try{
+		  ACULAPP_ <<"Exception initializing  \""<< DatasetDB::getDeviceID()<< "\":"<<ex.what()<<", deinit...";
 			bool detach;
 			_deinit(NULL, detach);
 		} catch(CException& sub_ex) {}
@@ -341,15 +342,17 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration,
 CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
 										  bool& detachParam) throw(CException) {
 	//call start method of the startable interface
+  ACULDBG_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
 	StartableService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
-	ACULDBG_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
+
 	try {
 		unitStart();
 	}catch(CException& ex) {
 		//inthis case i need to stop the abstract control unit
 		try{
-			bool detach;
-			_stop(NULL, detach);
+		  bool detach;
+		  ACULAPP_ <<"Exception starting  \""<< DatasetDB::getDeviceID()<< "\":"<<ex.what()<<", stopping...";
+		  _stop(NULL, detach);
 		} catch(CException& sub_ex) {}
 		
 		throw ex;
@@ -367,7 +370,8 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
 		ACULDBG_ << "Stop sublass for deviceID:" << DatasetDB::getDeviceID();
 		unitStop();
 	} catch (CException& ex) {
-		ACULDBG_ << "Exception on unit deinit:" << ex.what();
+	  ACULAPP_ <<"Exception stopping  \""<< DatasetDB::getDeviceID()<< "\""<<ex.what()<<", stopping...";
+	  ACULDBG_ << "Exception on unit deinit:" << ex.what();
 	}
 
 	//call start method of the startable interface
@@ -439,7 +443,8 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
 		try {
 			StartableService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
 		} catch (CException& ex) {
-			ACULDBG_ << "Exception on abstract control l unit deinit:" << ex.what();
+		  ACULAPP_ <<"Exception de-initializing  \""<< DatasetDB::getDeviceID()<< "\":"<<ex.what();
+
 		}
 
 		//clear all cache sub_structure
