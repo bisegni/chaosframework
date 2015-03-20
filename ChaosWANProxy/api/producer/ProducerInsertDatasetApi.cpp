@@ -164,10 +164,7 @@ int ProducerInsertDatasetApi::execute(std::vector<std::string>& api_tokens,
 		PID_LERR << err_msg;
 		PRODUCER_INSERT_ERR(output_data, err, err_msg);
 		return err;
-	} else {
-		output_dataset.release();
 	}
-	
 	output_data["register_insert_err"] = 0;
 	return err;
 }
