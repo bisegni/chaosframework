@@ -1,9 +1,9 @@
 /*
- *	NodeApiGroup.h
+ *	NodeGetDescription.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,22 +17,24 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__UnitServerApiGroup__
-#define __CHAOSFramework__UnitServerApiGroup__
+#ifndef __CHAOSFramework__NodeGetDescription__
+#define __CHAOSFramework__NodeGetDescription__
 
-#include "../AbstractApiGroup.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
                 
-                //! api group for the managment of the UnitServer
-                DECLARE_CLASS_FACTORY(NodeApiGroup, AbstractApiGroup) {
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(NodeApiGroup)
+                class NodeGetDescription:
+                public AbstractApi {
+                    
                 public:
-                    NodeApiGroup();
-                    ~NodeApiGroup();
+                    NodeGetDescription();
+                    ~NodeGetDescription();
+                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
+                                                               bool& detach_data) throw(chaos::CException);
                 };
                 
             }
@@ -40,4 +42,5 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__UnitServerGroup__) */
+
+#endif /* defined(__CHAOSFramework__NodeGetDescription__) */

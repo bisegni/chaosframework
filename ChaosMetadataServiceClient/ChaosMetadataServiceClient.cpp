@@ -17,28 +17,46 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ChaosMetadataServiceClient.h"
-
-#include <csignal>
-#include <chaos/common/exception/CException.h>
-#include <boost/format.hpp>
-#include <boost/algorithm/string.hpp>
+#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+#include <ChaosMetadataServiceClient/metadata_service_client_constants.h>
 
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+
+#include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
+#include <chaos/common/exception/CException.h>
 
 //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
 static const boost::regex KVParamRegex("[a-zA-Z0-9/_-]+:[a-zA-Z0-9/_-]+");
 
 using namespace std;
 using namespace chaos;
-using namespace chaos::metadata_service_client;
 using namespace chaos::common::utility;
+using namespace chaos::metadata_service_client;
+using namespace chaos::metadata_service_client::api_proxy;
 using boost::shared_ptr;
 
 #define CMSC_LAPP INFO_LOG(ChaosMetadataServiceClient)
 #define CMSC_LDBG DBG_LOG(ChaosMetadataServiceClient)
 #define CMSC_LERR ERR_LOG(ChaosMetadataServiceClient)
+
+    //!default constructor
+ChaosMetadataServiceClient::ChaosMetadataServiceClient() {
+    setClientInitParameter();
+}
+
+    //! default destructor
+ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {
+
+}
+
+    //! set the custom client init parameter
+void ChaosMetadataServiceClient::setClientInitParameter() {
+    getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_MDS_ADDRESS,
+                                                               OPT_MDS_ADDRESS_DESCRIPTION,
+                                                               &setting.mds_backend_servers);
+}
 
 //! C and C++ attribute parser
 /*!
@@ -46,13 +64,6 @@ using boost::shared_ptr;
  */
 void ChaosMetadataServiceClient::init(int argc, char* argv[]) throw (CException) {
     ChaosCommon<ChaosMetadataServiceClient>::init(argc, argv);
-}
-//!stringbuffer parser
-/*
- specialized option for string stream buffer with boost semantics
- */
-void ChaosMetadataServiceClient::init(istringstream &initStringStream) throw (CException) {
-    ChaosCommon<ChaosMetadataServiceClient>::init(initStringStream);
 }
 
 /*
@@ -64,6 +75,9 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
         // network broker
         network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
         network_broker_service.init(NULL, __PRETTY_FUNCTION__);
+
+        api_proxy_manager.reset(new ApiProxyManager(network_broker_service.get(), &setting), "ApiProxyManager");
+        api_proxy_manager.init(NULL, __PRETTY_FUNCTION__);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         throw ex;
@@ -74,7 +88,6 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
  *
  */
 void ChaosMetadataServiceClient::start()  throw(CException) {
-    //lock o monitor for waith the end
     try {
         //start network brocker
         network_broker_service.start(__PRETTY_FUNCTION__);
@@ -109,7 +122,9 @@ void ChaosMetadataServiceClient::deinit()   throw(CException) {
     
     //deinit api system
     try{
-        network_broker_service.deinit(__PRETTY_FUNCTION__);
+        CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__);)
+
+        CHAOS_NOT_THROW(network_broker_service.deinit(__PRETTY_FUNCTION__);)
         CMSC_LAPP << "-------------------------------------------------------------------------";
         CMSC_LAPP << "Metadata service client has been stopped";
         CMSC_LAPP << "-------------------------------------------------------------------------";

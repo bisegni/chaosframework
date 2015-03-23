@@ -84,15 +84,80 @@ namespace chaos {
                     MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list, std::map<std::string,std::string>& key_value_custom_param);
                     ~MongoDBHAConnectionManager();
                     const std::string& getDatabaseName();
-                    int insert( const std::string &ns , mongo::BSONObj obj , int flags=0);
-                    int findOne( mongo::BSONObj& result, const std::string &ns, const mongo::Query& query, const mongo::BSONObj *fieldsToReturn = 0, int queryOptions = 0);
-                    void findN(std::vector<mongo::BSONObj>& out, const std::string& ns, mongo::Query query, int nToReturn, int nToSkip = 0, const mongo::BSONObj *fieldsToReturn = 0, int queryOptions = 0);
-                    int runCommand( mongo::BSONObj& result, const std::string &ns, const mongo::BSONObj& comand, int queryOptions = 0);
-                    int update( const std::string &ns, mongo::Query query, mongo::BSONObj obj, bool upsert = false, bool multi = false, const mongo::WriteConcern* wc=NULL );
-                    int remove( const std::string &ns , mongo::Query q , bool justOne = 0, const mongo::WriteConcern* wc=NULL );
-                    int ensureIndex(  const std::string &database, const std::string &collection, mongo::BSONObj keys, bool unique = false, const std::string &name = "", bool dropDup = false, bool background = false, int v = -1, int ttl = 0 );
-                    std::auto_ptr<mongo::DBClientCursor> query(const std::string &ns, mongo::Query query, int nToReturn = 0, int nToSkip = 0, const mongo::BSONObj *fieldsToReturn = 0, int queryOptions = 0 , int batchSize = 0 );
-                    int count(unsigned long long & result, const std::string &ns, const mongo::Query& query = mongo::Query(), int options=0, int limit=0, int skip=0 );
+                    int insert(const std::string &ns,
+                               mongo::BSONObj obj,
+                               int flags=0);
+
+                    int findOne(mongo::BSONObj& result,
+                                const std::string &ns,
+                                const mongo::Query& query,
+                                const mongo::BSONObj *fieldsToReturn = 0,
+                                int queryOptions = 0);
+
+                    void findN(std::vector<mongo::BSONObj>& out,
+                               const std::string& ns,
+                               mongo::Query query,
+                               int nToReturn,
+                               int nToSkip = 0,
+                               const mongo::BSONObj *fieldsToReturn = 0,
+                               int queryOptions = 0);
+
+                    int findAndModify(mongo::BSONObj& result,
+                                      const std::string& ns,
+                                      const mongo::BSONObj& query,
+                                      const mongo::BSONObj& update,
+                                      bool upsert = false,
+                                      bool returnNew = false,
+                                      const mongo::BSONObj& sort = mongo::BSONObj(),
+                                      const mongo::BSONObj& fields = mongo::BSONObj());
+
+                    int findAndRemove(mongo::BSONObj& result,
+                                      const std::string& ns,
+                                      const mongo::BSONObj& query,
+                                      const mongo::BSONObj& sort = mongo::BSONObj(),
+                                      const mongo::BSONObj& fields = mongo::BSONObj());
+
+                    int runCommand(mongo::BSONObj& result,
+                                   const std::string &ns,
+                                   const mongo::BSONObj& comand,
+                                   int queryOptions = 0);
+
+                    int update(const std::string &ns,
+                               mongo::Query query,
+                               mongo::BSONObj obj,
+                               bool upsert = false,
+                               bool multi = false,
+                               const mongo::WriteConcern* wc=NULL );
+
+                    int remove(const std::string &ns ,
+                               mongo::Query q,
+                               bool justOne = 0,
+                               const mongo::WriteConcern* wc=NULL );
+
+                    int ensureIndex(const std::string &database,
+                                    const std::string &collection,
+                                    mongo::BSONObj keys,
+                                    bool unique = false,
+                                    const std::string &name = "",
+                                    bool dropDup = false,
+                                    bool background = false,
+                                    int v = -1,
+                                    int ttl = 0 );
+
+                    std::auto_ptr<mongo::DBClientCursor> query(const std::string &ns,
+                                                               mongo::Query query,
+                                                               int nToReturn = 0,
+                                                               int nToSkip = 0,
+                                                               const mongo::BSONObj *fieldsToReturn = 0,
+                                                               int queryOptions = 0,
+                                                               int batchSize = 0 );
+
+                    int count(unsigned long long & result,
+                              const std::string &ns,
+                              const mongo::Query& query = mongo::Query(),
+                              int options=0,
+                              int limit=0,
+                              int skip=0);
                 };
             }
         }

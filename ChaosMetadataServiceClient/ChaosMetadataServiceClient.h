@@ -20,6 +20,8 @@
 #ifndef __CHAOSFramework__MetadataServiceClient__
 #define __CHAOSFramework__MetadataServiceClient__
 
+#include <ChaosMetadataServiceClient/metadata_service_client_types.h>
+#include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 
 #include <boost/thread/condition.hpp>
 
@@ -31,41 +33,47 @@
 
 namespace chaos {
     namespace metadata_service_client {
-        //! Chaos Node Directory base class
+            //! Chaos Node Directory base class
         /*!
-         
+         Singleton class that act as main entry for mds client library
          */
         class ChaosMetadataServiceClient :
         public ChaosCommon<ChaosMetadataServiceClient>,
         public ServerDelegator,
         public common::utility::StartableService {
             friend class common::utility::Singleton<ChaosMetadataServiceClient>;
-            
-            //!network broker service
+
+                //!network broker service
             common::utility::StartableServiceContainer<chaos::common::network::NetworkBroker> network_broker_service;
-            
-            //!default constructor
-            ChaosMetadataServiceClient(){};
-            
-            //! default destructor
-            ~ChaosMetadataServiceClient(){};
+
+                //!network broker service
+            common::utility::InizializableServiceContainer<chaos::metadata_service_client::api_proxy::ApiProxyManager> api_proxy_manager;
+
+                //!default constructor
+            ChaosMetadataServiceClient();
+
+                //! default destructor
+            ~ChaosMetadataServiceClient();
+
+                //! set the custom client init parameter
+            void setClientInitParameter();
         public:
-            
-            typedef boost::mutex::scoped_lock lock;
-            
-            //! C and C++ attribute parser
+                //! the client setting
+            ClientSetting setting;
+
+                //! C and C++ attribute parser
             /*!
              Specialized option for startup c and cpp program main options parameter
              */
             void init(int argc, char* argv[]) throw (CException);
-            //!stringbuffer parser
-            /*
-             specialized option for string stream buffer with boost semantics
-             */
-            void init(istringstream &initStringStream) throw (CException);
+
+                //! StartableService inherited method
             void init(void *init_data)  throw(CException);
+                //! StartableService inherited method
             void start()throw(CException);
+                //! StartableService inherited method
             void stop()throw(CException);
+                //! StartableService inherited method
             void deinit()throw(CException);
         };
     }

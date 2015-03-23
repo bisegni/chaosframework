@@ -22,6 +22,7 @@
 
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/message/MessageChannel.h>
+#include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/message/DeviceMessageChannel.h>
@@ -53,9 +54,12 @@ namespace chaos{
                 //! default destructor
                 ~MDSBatchCommand();
                 
-                //! return a raw message channel for a specific node address
+                //! return a raw message channel
                 chaos::common::message::MessageChannel *getNewMessageChannel();
-                
+
+                    //! return a raw multinode message channel
+                chaos::common::message::MultiAddressMessageChannel *getNewMultinodeMessageChannel();
+
                 //! return a device message channel for a specific node address
                 chaos::common::message::DeviceMessageChannel *getNewDeviceMessageChannelForAddress(chaos::common::network::CDeviceNetworkAddress *device_network_address);
                 

@@ -54,7 +54,7 @@ int PerformanceNodeChannel::getPerformanceSession(DirectIOPerformanceSession **p
 												  local_session_endpoint->getUrl());
 	
 	//sent the request and waith the ansewer for startp local session
-	auto_ptr<CDataWrapper> init_session_result(sendRequest(node_network_address->ipPort,
+	auto_ptr<CDataWrapper> init_session_result(sendRequest(node_network_address->ip_port,
                                                            PerformanceSystemRpcKey::SYSTEM_PERFORMANCE_DOMAIN,
                                                            PerformanceSystemRpcKey::ACTION_PERFORMANCE_INIT_SESSION,
                                                            &init_performance_session_param,
@@ -108,7 +108,7 @@ int PerformanceNodeChannel::releasePerformanceSession(DirectIOPerformanceSession
 													  performance_session->server_endpoint->getUrl());
 
 		//sent the request and waith the ansewer for startp local session
-		auto_ptr<CDataWrapper> init_session_result(sendRequest(node_network_address->ipPort,
+		auto_ptr<CDataWrapper> init_session_result(sendRequest(node_network_address->ip_port,
                                                                PerformanceSystemRpcKey::SYSTEM_PERFORMANCE_DOMAIN,
                                                                PerformanceSystemRpcKey::ACTION_PERFORMANCE_CLOSE_SESSION,
                                                                &init_performance_session_param,

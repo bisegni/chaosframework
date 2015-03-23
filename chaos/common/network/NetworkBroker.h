@@ -60,27 +60,29 @@ namespace chaos {
 		namespace message {
 			class MessageChannel;
 			class NodeMessageChannel;
+            class MultiAddressMessageChannel;
 			class MDSMessageChannel;
 			class DeviceMessageChannel;
 			class PerformanceNodeChannel;
 		}
 
 		namespace network {
-			using namespace std;
-			using namespace boost;
-			using namespace chaos::common::message;
-			using namespace chaos::common::data;
-			using namespace chaos::common::direct_io;
+                //using namespace std;
+                //using namespace boost;
+                //using namespace chaos::common::message;
+                //using namespace chaos::common::data;
+                //using namespace chaos::common::direct_io;
 			
 			//! Channel Type Enumeration
 			/*!
 			 Constants that identify the type of the channel to create
 			 */
 			typedef enum {
-				RAW = 0,		/*!< Identify a raw channel used to send data pack to remote server */
-				MDS,			/*!< Identify a mds specific channel used to send data pack to the metadataserver */
-				DEVICE,			/*!< Identify a device specific channel used to send data pack to the target control unit */
-				PERFORMANCE		/*!< Identify a performance specific channel used to send and receive various performance information and test between two chaos node using directio system */
+				RAW = 0,            /*!< Identify a raw channel used to send data pack to remote server */
+                RAW_MULTI_ADDRESS,	/*!< Identify a multinode raw channel used to send data pack to one or more remote server */
+				MDS,                /*!< Identify a mds specific channel used to send data pack to the metadataserver */
+				DEVICE,             /*!< Identify a device specific channel used to send data pack to the target control unit */
+				PERFORMANCE         /*!< Identify a performance specific channel used to send and receive various performance information and test between two chaos node using directio system */
 			} EntityType;
 			
 			//! Message Broker
@@ -106,25 +108,25 @@ namespace chaos {
                 std::string direct_io_client_impl;
                 
 				//!Direct IO server interface
-				direct_io::DirectIOServer *direct_io_server;
+				chaos::common::direct_io::DirectIOServer *direct_io_server;
                 
 				//! Direct IO dispatcher
-				direct_io::DirectIODispatcher *direct_io_dispatcher;
+				chaos::common::direct_io::DirectIODispatcher *direct_io_dispatcher;
 				
 				//!Event Client for event forwarding
-				event::EventClient *event_client;
+				chaos::event::EventClient *event_client;
 				
 				//!Event server for event handlind
-				event::EventServer *event_server;
+                chaos::event::EventServer *event_server;
 				
 				//! Rpc client for message forwarding
-				RpcClient *rpc_client;
+                chaos::RpcClient *rpc_client;
 				
 				//! Rpc server for message listening
-				RpcServer *rpc_server;
+                chaos::RpcServer *rpc_server;
 
                 //! Rpc sync interface
-                sync_rpc::RpcSyncServer *sync_rpc_server;
+                chaos::common::sync_rpc::RpcSyncServer *sync_rpc_server;
                 
 				//rpc action dispatcher
 				AbstractCommandDispatcher *command_dispatcher;
@@ -133,12 +135,12 @@ namespace chaos {
 				AbstractEventDispatcher *event_dispatcher;
 				
 				//!keep track of active channel
-				map<string, MessageChannel*> active_rpc_channel;
+                map<std::string, chaos::common::message::MessageChannel*> active_rpc_channel;
 				//!Mutex for rpc channel managment
 				boost::mutex mutex_map_rpc_channel_acces;
 				
 				//!keep track of active channel
-				map<string, chaos::event::channel::EventChannel*> active_event_channel;
+                map<std::string, chaos::event::channel::EventChannel*> active_event_channel;
 				
 				//!Mutex for event channel managment
 				boost::mutex muext_map_event_channel_access;
@@ -150,8 +152,8 @@ namespace chaos {
 				 \param nodeNetworkAddress node address info
 				 \param type channel type to create
 				 */
-				MessageChannel *getNewMessageChannelForRemoteHost(CNetworkAddress *nodeNetworkAddress, EntityType type);
-				
+                chaos::common::message::MessageChannel *getNewMessageChannelForRemoteHost(chaos::common::network::CNetworkAddress *node_network_address,
+                                                                                          EntityType type);
 			public:
 				
 				//! Basic Constructor
@@ -221,13 +223,15 @@ namespace chaos {
 				 \param eventAction the actio to register
 				 \param eventType a type for the event for which the user want to register
 				 */
-				void registerEventAction(EventAction *eventAction, chaos::event::EventType eventType, const char * const identification = NULL);
+                void registerEventAction(EventAction *eventAction,
+                                         chaos::event::EventType eventType,
+                                         const char * const identification = NULL);
 				
 				//!Event Action deregistration
 				/*!
 				 Deregister an event action
 				 */
-				void deregisterEventAction(EventAction *eventAction);
+                void deregisterEventAction(EventAction *eventAction);
 				
 				//!Event channel creation
 				/*!
@@ -277,8 +281,8 @@ namespace chaos {
 				 \param onThisThread if true the message is forwarded in the same thread of the caller
 				 */
 				bool submitMessage(const string& serverAndPort,
-								   chaos_data::CDataWrapper *message,
-								   NetworkErrorHandler handler = NULL,
+								   chaos::common::data::CDataWrapper *message,
+                                   chaos::common::network::NetworkErrorHandler handler = NULL,
 								   const char * senderIdentifier = NULL,
 								   int64_t senderTag = (int64_t)0,
 								   bool onThisThread=false);
@@ -291,8 +295,8 @@ namespace chaos {
 				 \param onThisThread if true the message is forwarded in the same thread of the caller
 				 */
 				bool submiteRequest(const string& serverAndPort,
-									chaos_data::CDataWrapper *request,
-									NetworkErrorHandler handler = NULL,
+                                    chaos::common::data::CDataWrapper *request,
+                                    chaos::common::network::NetworkErrorHandler handler = NULL,
 									const char * senderIdentifier = NULL,
 									int64_t senderTag = (int64_t)0,
 									bool onThisThread=false);
@@ -307,55 +311,65 @@ namespace chaos {
 				/*!
 				 Performe the creation of metadata server
 				 */
-				MDSMessageChannel *getMetadataserverMessageChannel();
+                chaos::common::message::MDSMessageChannel *getMetadataserverMessageChannel();
 				
 				//!Device channel creation
 				/*!
 				 Performe the creation of device channel
 				 \param deviceNetworkAddress device node address
 				 */
-				DeviceMessageChannel *getDeviceMessageChannelFromAddress(CDeviceNetworkAddress  *deviceNetworkAddress);
+				chaos::common::message::DeviceMessageChannel *getDeviceMessageChannelFromAddress(chaos::common::network::CDeviceNetworkAddress  *deviceNetworkAddress);
     
                 //! Return a raw message channel
                 /*!
                  Performe the creation of a raw channel
-                 \param deviceNetworkAddress device node address
                  */
-                MessageChannel *getRawMessageChannelFromAddress();
+                chaos::common::message::MessageChannel *getRawMessageChannel();
                 
-                
+                    //! Return a raw multinode message channel
+                /*!
+                 Performe the creation of a raw multinode message channel
+                 */
+                chaos::common::message::MultiAddressMessageChannel *getRawMultiAddressMessageChannel();
+
 				//!performance channel creation
 				/*!
 				 Performe the creation of performance channel thowards a network node
 				 \param note_network_address the address of the chaos node(network broker)
 				 */
-				chaos::common::message::PerformanceNodeChannel *getPerformanceChannelFromAddress(CNetworkAddress  *node_network_address);
+				chaos::common::message::PerformanceNodeChannel *getPerformanceChannelFromAddress(chaos::common::network::CNetworkAddress  *node_network_address);
 				
 				//!Rpc Channel deallocation
 				/*!
 				 Perform the message channel deallocation
 				 */
-				void disposeMessageChannel(MessageChannel *messageChannelToDispose);
+				void disposeMessageChannel(chaos::common::message::MessageChannel *messageChannelToDispose);
 				
 				//!Rpc Channel deallocation
 				/*!
 				 Perform the node message channel deallocation
 				 */
-				void disposeMessageChannel(NodeMessageChannel *messageChannelToDispose);
-				
+				void disposeMessageChannel(chaos::common::message::NodeMessageChannel *messageChannelToDispose);
+
+                //!Rpc Channel deallocation
+                /*!
+                 Perform the node message channel deallocation
+                 */
+                void disposeMessageChannel(chaos::common::message::MultiAddressMessageChannel *messageChannelToDispose);
+
 				//!Allocate a new endpoint in the direct io server
 				/*!
 				 Allcoate a new endpoint into the server act to receive directio data pack.
 				 \return The endpoint class or NULL in case the maximum number of endpoint is reached.
 				 */
-				DirectIOServerEndpoint *getDirectIOServerEndpoint();
+				chaos::common::direct_io::DirectIOServerEndpoint *getDirectIOServerEndpoint();
 				
 				//!Dispose an endpoint of the direct io server
 				/*!
 				 Allcoate a new endpoint into the server act to receive directio data pack.
 				 \param end_point The endpoint to relase
 				 */
-				void releaseDirectIOServerEndpoint(DirectIOServerEndpoint *end_point);
+                void releaseDirectIOServerEndpoint(chaos::common::direct_io::DirectIOServerEndpoint *end_point);
 				
 				//!Return a new direct io client instance
 				/*!
@@ -363,7 +377,7 @@ namespace chaos {
 				 by the class that request for it. His deallocation is not done in automatic.
 				 \return A new instance of the direct io client
 				 */
-				DirectIOClient *getDirectIOClientInstance();
+				chaos::common::direct_io::DirectIOClient *getDirectIOClientInstance();
 			};
 		}
 	}

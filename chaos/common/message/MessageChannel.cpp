@@ -161,7 +161,11 @@ CDataWrapper* MessageChannel::sendRequest(const std::string& remote_host,
     
     //wait for some time or, if == 0, forever
     if(request_future->wait(millisec_to_wait)) {
-        return request_future->detachResult();
+        CDataWrapper *result = request_future->detachResult();
+        last_error_code = request_future->getError();
+        last_error_domain = request_future->getErrorDomain();
+        last_error_message = request_future->getErrorMessage();
+        return result;
     } else {
         return NULL;
     }

@@ -52,6 +52,7 @@ SET(common_lib_src  ${common_lib_src}	message/DeviceMessageChannel.cpp
                                         message/MDSMessageChannel.cpp
                                         message/MessageChannel.cpp
                                         message/NodeMessageChannel.cpp
+                                        message/MultiAddressMessageChannel.cpp
                                         message/PerformanceNodeChannel.cpp)
 
 SET(common_lib_src  ${common_lib_src}	network/NetworkBroker.cpp network/PerformanceManagment.cpp network/URLServiceFeeder.cpp network/URL.cpp)

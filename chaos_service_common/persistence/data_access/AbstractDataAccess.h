@@ -25,25 +25,26 @@
 #include <chaos/common/utility/NamedService.h>
 
 namespace chaos {
-	namespace metadata_service{
-		namespace persistence {
-
-            //! Data Access base class
-            /*!
-             The data access are those class the directly work on data.
-             Every implementation will perform the data opration 
-             on different persistence engine. The sublclass of first level need to define
-             the api on the data and the second level subclass needs to define the implementation
-             */
-			class AbstractDataAccess:
-			public chaos::common::utility::NamedService {
-				
-			public:
-				AbstractDataAccess(const std::string& name);
-				virtual ~AbstractDataAccess();
-			};
-		}
-	}
+    namespace service_common {
+        namespace persistence {
+            namespace data_access {
+                //! Data Access base class
+                /*!
+                 The data access are those class the directly work on data.
+                 Every implementation will perform the data operation
+                 on different persistence engine. The sublclass of first level need to define
+                 the api on the data and the second level subclass needs to define the implementation
+                 */
+                class AbstractDataAccess:
+                public chaos::common::utility::NamedService {
+                   
+                public:
+                    AbstractDataAccess(const std::string& name);
+                    virtual ~AbstractDataAccess();
+                };
+            }
+        }
+    }
 }
 
 #endif /* defined(__CHAOSFramework__AbstractDataAccess__) */

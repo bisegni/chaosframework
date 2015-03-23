@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__NodeDataAccess__
 #define __CHAOSFramework__NodeDataAccess__
 
-#include "../AbstractDataAccess.h"
+#include "../persistence.h"
 
 #include <chaos/common/data/CDataWrapper.h>
 
@@ -34,13 +34,22 @@ namespace chaos {
                  Perform the basic operation on abstract node infomation
                  */
                 class NodeDataAccess:
-                public AbstractDataAccess {
+                public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 public:
                     //! default constructor
                     NodeDataAccess();
                     
                     //! defautl destructor
                     ~NodeDataAccess();
+                    
+                    //! return the whole node description
+                    /*!
+                     return the whole node description as is on database
+                     \param node_unique_id the unique id of the node
+                     \param node_description the handler to the node description
+                     */
+                    virtual int getNodeDescription(const std::string& node_unique_id,
+                                                   chaos::common::data::CDataWrapper **node_description) = 0;
                     
                     //! insert a new node
                     /*!

@@ -34,10 +34,6 @@
 #include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/chaos_types.h>
 
-namespace chaos_io = chaos::common::io;
-namespace chaos_batch = chaos::common::batch_command;
-namespace chaos_message = chaos::common::message;
-namespace chaos_network = chaos::common::network;
 
 namespace chaos {
     namespace ui{
@@ -61,44 +57,44 @@ namespace chaos {
                 //!time to waith for the answer to an request;
             uint32_t millisecToWait;
                 //! represent the device id controlled by this instance
-            string device_id;
-			string output_key;
-			string input_key;
-			string system_key;
-			string custom_key;
+            std::string device_id;
+            std::string output_key;
+            std::string input_key;
+            std::string system_key;
+            std::string custom_key;
 				//!cached cu type
-			string cu_type;
+            std::string cu_type;
 			
                 //! Metadata Server channel for get device information
-			chaos_message::MDSMessageChannel *mdsChannel;
+			chaos::common::message::MDSMessageChannel *mdsChannel;
                 //! Device MEssage channel to control via chaos rpc the device
-            chaos_message::DeviceMessageChannel *deviceChannel;
+            chaos::common::message::DeviceMessageChannel *deviceChannel;
                 //! The io driver for accessing live data of the device
-			chaos_io::IODataDriver *ioLiveDataDriver;
+			chaos::common::io::IODataDriver *ioLiveDataDriver;
                 //!Dataset database
-            DatasetDB datasetDB;
+            chaos::common::data::DatasetDB datasetDB;
                 //!point to the freashest live value for this device dataset
             //auto_ptr<CDataWrapper> lastDeviceDefinition;
             
                 //!point to the freashest live value for this device dataset
-            auto_ptr<CDataWrapper> current_output_dataset;
-			auto_ptr<CDataWrapper> current_input_dataset;
-			auto_ptr<CDataWrapper> current_custom_dataset;
-			auto_ptr<CDataWrapper> current_system_dataset;
+            auto_ptr<chaos::common::data::CDataWrapper> current_output_dataset;
+			auto_ptr<chaos::common::data::CDataWrapper> current_input_dataset;
+			auto_ptr<chaos::common::data::CDataWrapper> current_custom_dataset;
+			auto_ptr<chaos::common::data::CDataWrapper> current_system_dataset;
 			
                 //mutext for multi threading track operation
             boost::recursive_mutex trackMutext;
             
                 //!store the type of the attribute for fast retrieve
-            std::map<string, DataType::DataSetAttributeIOAttribute> attributeDirectionMap;
-            std::map<string, DataType::DataType> attributeTypeMap;
-            std::vector<string> trackingAttribute;
+            std::map<std::string, DataType::DataSetAttributeIOAttribute> attributeDirectionMap;
+            std::map<std::string, DataType::DataType> attributeTypeMap;
+            std::vector<std::string> trackingAttribute;
             
                 //!map for live data circular buffer
-            std::map<string,  common::utility::SingleBufferCircularBuffer<int32_t> *> int32AttributeLiveBuffer;
-            std::map<string,  common::utility::SingleBufferCircularBuffer<int64_t> *> int64AttributeLiveBuffer;
-            std::map<string,  common::utility::SingleBufferCircularBuffer<double_t> *> doubleAttributeLiveBuffer;
-            std::map<string,  common::utility::PointerBuffer*> pointerAttributeLiveBuffer;
+            std::map<std::string,  common::utility::SingleBufferCircularBuffer<int32_t> *> int32AttributeLiveBuffer;
+            std::map<std::string,  common::utility::SingleBufferCircularBuffer<int64_t> *> int64AttributeLiveBuffer;
+            std::map<std::string,  common::utility::SingleBufferCircularBuffer<double_t> *> doubleAttributeLiveBuffer;
+            std::map<std::string,  common::utility::PointerBuffer*> pointerAttributeLiveBuffer;
             
                 //! Defautl Constructor
             /*!
@@ -134,10 +130,10 @@ namespace chaos {
             /*
              
              */
-            void allocateNewLiveBufferForAttributeAndType(string& attributeName, DataType::DataSetAttributeIOAttribute type, DataType::DataType attrbiuteType);
+            void allocateNewLiveBufferForAttributeAndType(std::string& attributeName, DataType::DataSetAttributeIOAttribute type, DataType::DataType attrbiuteType);
         protected:
                 //! the fetcher thread method
-            void executeOnThread(const string&) throw(CException);
+            void executeOnThread(const std::string&) throw(CException);
         public:
 
             //!Return the deviceID of the device
@@ -145,7 +141,7 @@ namespace chaos {
                 Return the deviceID that identify the device managed by this controller
                 \param dID the string that will be filled with the device id
              */
-            void getDeviceId(string& dId);
+            void getDeviceId(std::string& dId);
             
             //!Set the request wait time 
             /*!
@@ -170,7 +166,7 @@ namespace chaos {
             /*!
              Get attribute name filtered by direction type
              */
-            void getDeviceDatasetAttributesName(vector<string>& attributesName);
+            void getDeviceDatasetAttributesName(vector<std::string>& attributesName);
 
 			/*!
              Get time stamp of last packet
@@ -179,26 +175,26 @@ namespace chaos {
             /*!
              Get description for attribute name
              */
-            void getAttributeDescription(const string& attributesName, string& attributeDescription);
+            void getAttributeDescription(const std::string& attributesName, std::string& attributeDescription);
             /*!
              Get all attribute name
              */
-            void getDeviceDatasetAttributesName(vector<string>& attributesName, DataType::DataSetAttributeIOAttribute directionType);
+            void getDeviceDatasetAttributesName(std::vector<std::string>& attributesName, DataType::DataSetAttributeIOAttribute directionType);
             /*!
              Get range valu einfo for attrbiute name
              */
-			void getDeviceAttributeRangeValueInfo(const string& attributesName, chaos::common::data::RangeValueInfo& rangeInfo);
+			void getDeviceAttributeRangeValueInfo(const std::string& attributesName, chaos::common::data::RangeValueInfo& rangeInfo);
             /*!
              Get the direction of the attribute
              */
-            int getDeviceAttributeDirection(const string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
+            int getDeviceAttributeDirection(const std::string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
             /*!
              Get the direction of the attribute
              */
-            int getDeviceAttributeType(const string& attributesName, DataType::DataType& type);
+            int getDeviceAttributeType(const std::string& attributesName, DataType::DataType& type);
 			
 			//!
-			int getAttributeStrValue(const string attributesName, string& attribute_value);
+            int getAttributeStrValue(const std::string attributesName, std::string& attribute_value);
 			
 			//! Get the type of the control unit
 			/*!
@@ -234,16 +230,16 @@ namespace chaos {
 			//! resto the device to a saved tag
 			int restoreDeviceToTag(const std::string& restore_tag);
 			
-            int setAttributeValue(string& attributeName, int32_t attributeValue);
+            int setAttributeValue(std::string& attributeName, int32_t attributeValue);
             int setAttributeValue(const char *attributeName, int32_t attributeValue);
             
-            int setAttributeValue(string& attributeName, double attributeValue);
+            int setAttributeValue(std::string& attributeName, double attributeValue);
             int setAttributeValue(const char *attributeName, double attributeValue);
             
-            int setAttributeValue(string& attributeName, string& attributeValue);
-            int setAttributeValue(string& attributeName, const char* attributeValue);
+            int setAttributeValue(std::string& attributeName, std::string& attributeValue);
+            int setAttributeValue(std::string& attributeName, const char* attributeValue);
             // buffer
-            int setAttributeValue(string& attributeName, const char* attributeValue, uint32_t size);
+            int setAttributeValue(std::string& attributeName, const char* attributeValue, uint32_t size);
             
 			int setAttributeToValue(const char *attributeName, const char *attributeValue, bool noWait);
 			int setAttributeToValue(const char *attributeName, void *attributeValue, bool noWait, int32_t bufferValuedDim);
@@ -266,13 +262,13 @@ namespace chaos {
                         take palce. The memory of that parameter is not free
              */
             int submitSlowControlCommand(string commandAlias,
-										 chaos_batch::SubmissionRuleType::SubmissionRule submissionRule,
+                                         chaos::common::batch_command::SubmissionRuleType::SubmissionRule submissionRule,
 										 uint32_t priority,
 										 uint64_t& command_id,
                                          uint32_t execution_channel = 0,
 										 uint64_t scheduler_steps_delay = 0,
 										 uint32_t submission_checker_steps_delay = 0,
-										 CDataWrapper *slow_command_data = NULL);
+										 chaos::common::data::CDataWrapper *slow_command_data = NULL);
             
             //! Submit a new slow command
             /*!
@@ -289,12 +285,12 @@ namespace chaos {
 						take palce. The memory of that parameter is not free
              */
             int submitSlowControlCommand(string commandAlias,
-										 chaos_batch::SubmissionRuleType::SubmissionRule submissionRule,
+										 chaos::common::batch_command::SubmissionRuleType::SubmissionRule submissionRule,
 										 uint64_t& command_id,
                                          uint32_t execution_channel = 0,
 										 uint64_t scheduler_steps_delay = 0,
 										 uint32_t submission_checker_steps_delay = 0,
-										 CDataWrapper *slow_command_data = NULL);
+										 chaos::common::data::CDataWrapper *slow_command_data = NULL);
             
 			//! Set the current slow command features
 			/*!
@@ -306,7 +302,7 @@ namespace chaos {
 				\param lock_features set the lock on all features
                 \param execution_channel set the execution channel where set the features
 			 */
-			int setSlowCommandFeatures(chaos_batch::features::Features& features, bool lock_features, uint32_t execution_channel = 0);
+			int setSlowCommandFeatures(chaos::common::batch_command::features::Features& features, bool lock_features, uint32_t execution_channel = 0);
 			
 			//! Set the lock on slow command features
 			/*!
@@ -323,7 +319,7 @@ namespace chaos {
 			 \param command_state will be filled with the state of the command on success
 			 \return result of the execution
 			 */
-			int getCommandState(chaos_batch::CommandState& command_state);
+			int getCommandState(chaos::common::batch_command::CommandState& command_state);
 			
 			//! Kill the current executing command
 			/*!
@@ -360,7 +356,7 @@ namespace chaos {
             /*!
              Add attribute to tracking
              */
-            void addAttributeToTrack(string& attributeName);
+            void addAttributeToTrack(std::string& attributeName);
             
             //get the CDatawrapper for the live value
             /*!
@@ -368,10 +364,10 @@ namespace chaos {
 			 \deprecated use new api getCurrentDatasetForDomain
              */
 			__attribute__((__deprecated__))
-            CDataWrapper * getLiveCDataWrapperPtr();
+            chaos::common::data::CDataWrapper * getLiveCDataWrapperPtr();
 			
 			//!return the last fetched dataset for the domain
-			CDataWrapper * getCurrentDatasetForDomain(DatasetDomain domain);
+			chaos::common::data::CDataWrapper * getCurrentDatasetForDomain(DatasetDomain domain);
 			
 			//! fetch from the chaso central cache the dataset associated to the domain
 			void fetchCurrentDatatasetFromDomain(DatasetDomain domain);
@@ -385,23 +381,23 @@ namespace chaos {
             common::utility::PointerBuffer *getPtrBufferForAttribute(string& attributeName);
             common::utility::DataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
             
-            CDataWrapper *getCurrentData();
+            chaos::common::data::CDataWrapper *getCurrentData();
             
 			//! send custom request to device
             int sendCustomRequest(const char * const action, common::data::CDataWrapper * const param, common::data::CDataWrapper**const result, bool async = false,  bool queued = true);
 			
             //! send custom request to device and return a future
-            std::auto_ptr<MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
-                                                                             common::data::CDataWrapper *request_date);
+            std::auto_ptr<chaos::common::message::MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
+                                                                                                     common::data::CDataWrapper *request_date);
             
 			//! send custom message to device
 			void sendCustomMessage(const char * const action, common::data::CDataWrapper * const param, bool queued = true);
             
 			//! get datapack between time itervall
-			void executeTimeIntervallQuery(uint64_t start_ts, uint64_t end_ts, chaos_io::QueryFuture **query_future);
+			void executeTimeIntervallQuery(uint64_t start_ts, uint64_t end_ts, chaos::common::io::QueryFuture **query_future);
 			
 			//! release a query
-			void releaseQuery(chaos_io::QueryFuture *query_future);
+			void releaseQuery(chaos::common::io::QueryFuture *query_future);
         };
     }
 }

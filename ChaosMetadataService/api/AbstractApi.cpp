@@ -41,7 +41,7 @@ void AbstractApi::deinit()  throw (chaos::CException) {
     
 }
 
-AbstractPersistenceDriver *AbstractApi::getPersistenceDriver() {
+chaos::service_common::persistence::data_access::AbstractPersistenceDriver *AbstractApi::getPersistenceDriver() {
     CHAOS_ASSERT(subservice)
     return subservice->persistence_driver.get();
 }

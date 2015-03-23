@@ -24,6 +24,7 @@
 #include <chaos/common/message/DeviceMessageChannel.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/MessageChannel.h>
+#include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <chaos/common/message/PerformanceNodeChannel.h>
 #include <chaos/common/event/EventServer.h>
 #include <chaos/common/event/EventClient.h>
@@ -42,7 +43,7 @@ using namespace chaos::event;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::network;
-
+using namespace chaos::common::message;
 /*!
  
  */
@@ -507,29 +508,31 @@ bool NetworkBroker::submiteRequest(const string& host,
 
 /*
  */
-MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress *node_network_aAddress,
+MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress *node_network_address,
                                                                  EntityType type) {
-    CHAOS_ASSERT(node_network_aAddress)
     MessageChannel *channel = NULL;
     switch (type) {
         case RAW:
+            CHAOS_ASSERT(!node_network_address)
             channel = new MessageChannel(this);
-            delete(node_network_aAddress);
             break;
-            
+        case RAW_MULTI_ADDRESS:
+            CHAOS_ASSERT(!node_network_address)
+            channel = new MultiAddressMessageChannel(this);
+            break;
         case MDS:
-            if(!node_network_aAddress) return NULL;
-            channel = new MDSMessageChannel(this, static_cast<CNodeNetworkAddress*>(node_network_aAddress));
+            if(!node_network_address) return NULL;
+            channel = new MDSMessageChannel(this, static_cast<CNodeNetworkAddress*>(node_network_address));
             break;
             
         case DEVICE:
-            if(!node_network_aAddress) return NULL;
-            channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(node_network_aAddress));
+            if(!node_network_address) return NULL;
+            channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(node_network_address));
             break;
 		case PERFORMANCE:
-            if(!node_network_aAddress) return NULL;
+            if(!node_network_address) return NULL;
 			channel = new common::message::PerformanceNodeChannel(this,
-                                                                  node_network_aAddress,
+                                                                  node_network_address,
                                                                   performance_session_managment.getLocalDirectIOClientInstance());
             break;
     }
@@ -548,8 +551,8 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
  */
 MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel() {
     CNodeNetworkAddress *mdsNodeAddr = new CNodeNetworkAddress();
-    mdsNodeAddr->ipPort = GlobalConfiguration::getInstance()->getMetadataServerAddress();
-    mdsNodeAddr->nodeID = NodeDefinitionKeyRPC::RPC_DOMAIN;
+    mdsNodeAddr->ip_port = GlobalConfiguration::getInstance()->getMetadataServerAddress();
+    mdsNodeAddr->node_id = NodeDefinitionKeyRPC::RPC_DOMAIN;
     return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(mdsNodeAddr, MDS));
 }
 
@@ -563,17 +566,18 @@ DeviceMessageChannel *NetworkBroker::getDeviceMessageChannelFromAddress(CDeviceN
 }
 
 //!performance channel creation
-chaos::common::message::PerformanceNodeChannel *NetworkBroker::getPerformanceChannelFromAddress(CNetworkAddress  *node_network_address) {
+PerformanceNodeChannel *NetworkBroker::getPerformanceChannelFromAddress(CNetworkAddress  *node_network_address) {
 	return static_cast<chaos::common::message::PerformanceNodeChannel*>(getNewMessageChannelForRemoteHost(node_network_address, PERFORMANCE));
 }
 
 //! Return a raw message channel
-/*!
- Performe the creation of a raw channel
- \param deviceNetworkAddress device node address
- */
-MessageChannel *NetworkBroker::getRawMessageChannelFromAddress() {
+MessageChannel *NetworkBroker::getRawMessageChannel() {
    	return getNewMessageChannelForRemoteHost(NULL, RAW);
+}
+
+    //! Return a raw multinode message channel
+MultiAddressMessageChannel *NetworkBroker::getRawMultiAddressMessageChannel() {
+   	return static_cast<MultiAddressMessageChannel*>(getNewMessageChannelForRemoteHost(NULL, RAW_MULTI_ADDRESS));
 }
 
 //!Channel deallocation
@@ -598,12 +602,15 @@ void NetworkBroker::disposeMessageChannel(MessageChannel *message_channel_to_dis
     delete(message_channel_to_dispose);
 }
 //!Channel deallocation
-/*!
- Perform the message channel deallocation
- */
 void NetworkBroker::disposeMessageChannel(NodeMessageChannel *messageChannelToDispose) {
     NetworkBroker::disposeMessageChannel((MessageChannel*)messageChannelToDispose);
 }
+
+    //!Rpc Channel deallocation
+void NetworkBroker::disposeMessageChannel(chaos::common::message::MultiAddressMessageChannel *messageChannelToDispose) {
+    NetworkBroker::disposeMessageChannel((MessageChannel*)messageChannelToDispose);
+}
+
 //Allocate a new endpoint in the direct io server
 chaos_direct_io::DirectIOServerEndpoint *NetworkBroker::getDirectIOServerEndpoint() {
     CHAOS_ASSERT(direct_io_dispatcher)

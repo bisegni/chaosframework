@@ -1,5 +1,5 @@
 /*
- *	NodeRegisterApi.cpp
+ *	NodeRegister.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,25 +17,25 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "NodeRegisterApi.h"
+#include "NodeRegister.h"
 #include "../../batch/unit_server/UnitServerAckBatchCommand.h"
-#define USRA_INFO INFO_LOG(NodeRegisterApi)
-#define USRA_DBG  DBG_LOG(NodeRegisterApi)
-#define USRA_ERR  ERR_LOG(NodeRegisterApi)
+#define USRA_INFO INFO_LOG(NodeRegister)
+#define USRA_DBG  DBG_LOG(NodeRegister)
+#define USRA_ERR  ERR_LOG(NodeRegister)
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
 
-NodeRegisterApi::NodeRegisterApi():
+NodeRegister::NodeRegister():
 AbstractApi(chaos::MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE){
     
 }
 
-NodeRegisterApi::~NodeRegisterApi() {
+NodeRegister::~NodeRegister() {
     
 }
 
-chaos::common::data::CDataWrapper *NodeRegisterApi::execute(chaos::common::data::CDataWrapper *api_data,
+chaos::common::data::CDataWrapper *NodeRegister::execute(chaos::common::data::CDataWrapper *api_data,
                                                             bool& detach_data) throw (chaos::CException){
     CHAOS_ASSERT(api_data)
     USRA_INFO << api_data->getJSONString();
@@ -61,7 +61,7 @@ chaos::common::data::CDataWrapper *NodeRegisterApi::execute(chaos::common::data:
     return result;
 }
 
-chaos::common::data::CDataWrapper *NodeRegisterApi::unitServerRegistration(chaos::common::data::CDataWrapper *api_data,
+chaos::common::data::CDataWrapper *NodeRegister::unitServerRegistration(chaos::common::data::CDataWrapper *api_data,
                                                                            bool& detach_data) throw(chaos::CException) {
 
     int err = 0;
@@ -69,7 +69,7 @@ chaos::common::data::CDataWrapper *NodeRegisterApi::unitServerRegistration(chaos
     bool is_present = false;
     detach_data = true;
     //fetch the unit server data access
-    persistence::data_access::UnitServerDataAccess *us_da = getPersistenceDriver()->getUnitServerDataAccess();
+    persistence::data_access::UnitServerDataAccess *us_da = getPersistenceDriver()->getDataAccess<persistence::data_access::UnitServerDataAccess>("UnitServerDataAccess");
 
     const std::string unit_server_alias = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     try {

@@ -52,8 +52,8 @@ void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     if(data  && data->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
         remote_unitserver_address = new CNetworkAddress();
         if(remote_unitserver_address) {
-            remote_unitserver_address->ipPort = data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
-            USAC_INFO << "fetch the message channel for:"<<remote_unitserver_address->ipPort;
+            remote_unitserver_address->ip_port = data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
+            USAC_INFO << "fetch the message channel for:"<<remote_unitserver_address->ip_port;
             //delete(na);
             message_channel = getNewMessageChannel();
             if(!message_channel) {
@@ -82,15 +82,15 @@ void UnitServerAckCommand::ccHandler() {
     auto_ptr<CDataWrapper> result;
     USAC_INFO << "execute ccHandler";
     retry_number++;
-    result.reset(message_channel->sendRequest(remote_unitserver_address->ipPort,
+    result.reset(message_channel->sendRequest(remote_unitserver_address->ip_port,
                                               "system",
                                               UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
                                               message_data,
                                               1000));
     if(message_channel->getLastErrorCode() != 0) {
-        USAC_INFO << "error sending message to the unit server " << remote_unitserver_address->ipPort;
+        USAC_INFO << "error sending message to the unit server " << remote_unitserver_address->ip_port;
         if(retry_number > 3) {
-            USAC_INFO << "We have exeeced the number of retry this is the last retry for unit server act to " << remote_unitserver_address->ipPort;
+            USAC_INFO << "We have exeeced the number of retry this is the last retry for unit server act to " << remote_unitserver_address->ip_port;
             BC_END_RUNNIG_PROPERTY;
         }
     } else {

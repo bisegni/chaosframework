@@ -154,7 +154,7 @@ namespace chaos {
 				boost::scoped_ptr<boost::thread> thread_registration;
 				
 				//! metadata server channel for control unit registration
-				MDSMessageChannel *mds_channel;
+				chaos::common::message::MDSMessageChannel *mds_channel;
 				
 				//!queue for control unit waiting to be published
 				mutable boost::shared_mutex		mutex_queue_submitted_cu;

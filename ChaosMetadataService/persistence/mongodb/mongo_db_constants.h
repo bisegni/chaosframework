@@ -16,7 +16,8 @@
 #define MONGO_DB_COLLECTION_NAME(db,coll)	boost::str(boost::format("%1%.%2%") % db % coll)
 
 //-------unit server------
-#define MONGODB_COLLECTION_NODES            "nodes"
-#define MONGODB_COLLECTION_DATASET          "dataset"
+static const char * const MONGODB_COLLECTION_NODES       = "nodes";
+static const char * const MONGODB_COLLECTION_DATASETS    = "datasets";
+static const char * const MONGODB_COLLECTION_SEQUENCES   = "sequences";
 
 #endif

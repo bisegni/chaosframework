@@ -41,6 +41,27 @@ MongoDBUtilityDataAccess::~MongoDBUtilityDataAccess() {
 
 int MongoDBUtilityDataAccess::getNextSequenceValue(const std::string& sequence_name, uint64_t& next_value) {
     int err = 0;
-    
+    mongo::BSONObj          result;
+    mongo::BSONObjBuilder   query;
+    mongo::BSONObjBuilder   update;
+    try {
+        query << "seq" << sequence_name;
+        mongo::BSONObj q = query.obj();
+        
+
+        update << "$inc" << BSON("value" << 1);
+        mongo::BSONObj u = update.obj();
+        
+        DEBUG_CODE(MDBUDA_DBG << "getNextSequenceValue findAndModify ---------------------------------------------";)
+        DEBUG_CODE(MDBUDA_DBG << "Query: "  << q.jsonString();)
+        DEBUG_CODE(MDBUDA_DBG << "Update: "  << u.jsonString();)
+        DEBUG_CODE(MDBUDA_DBG << "getNextSequenceValue findAndModify ---------------------------------------------";)
+        if((err = connection->findAndModify(result, MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES), q, u, true, true))) {
+            MDBUDA_ERR << "Error updating ";
+        }
+    } catch (const mongo::DBException &e) {
+        MDBUDA_ERR << e.what();
+        err = -1;
+    }
     return err;
 }

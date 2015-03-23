@@ -25,9 +25,10 @@
 using namespace boost;
 
 using namespace chaos;
-using namespace chaos::common::io;
-using namespace chaos::common::utility;
 using namespace chaos::ui;
+using namespace chaos::common::io;
+using namespace chaos::common::message;
+using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 #define LLRA_LAPP_ LAPP_ << "[LLRpcApi] - "
 

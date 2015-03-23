@@ -1,9 +1,9 @@
 /*
- *	NodeSearchAPI.cpp
+ *	NodeApi.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,21 +17,19 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "NodeSearchAPI.h"
-
-using namespace chaos::common::data;
+#include "NodeGroup.h"
+#include "NodeRegister.h"
+#include "NodeCreateUnitServer.h"
 using namespace chaos::metadata_service::api::node;
+DEFINE_CLASS_FACTORY_NO_ALIAS(NodeGroup, chaos::metadata_service::api::AbstractApiGroup);
 
-NodeSearchApi::NodeSearchApi():
-AbstractApi("search"){
-    
+NodeGroup::NodeGroup():
+AbstractApiGroup("system"){
+    //add api for UnitServer registration
+    addApi<NodeRegister>();
+    addApi<NodeCreateUnitServer>();
 }
 
-NodeSearchApi::~NodeSearchApi() {
+NodeGroup::~NodeGroup() {
     
-}
-
-chaos::common::data::CDataWrapper *NodeSearchApi::execute(chaos::common::data::CDataWrapper *api_data,
-                                                          bool& detach_data) throw(chaos::CException) {
-    return NULL;
 }

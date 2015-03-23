@@ -348,7 +348,7 @@ extern "C" {
 		try{
 			DeviceController *dCtrl = getDeviceControllerFromID(devID);
 			if(dCtrl && dsAttrName && dsAttrValueHandle) {
-				CDataWrapper *  dataWrapper = ((DeviceController*)dCtrl)->getCurrentDatasetForDomain(DatasetDomainOutput);
+				chaos::common::data::CDataWrapper *  dataWrapper = ((DeviceController*)dCtrl)->getCurrentDatasetForDomain(DatasetDomainOutput);
 				if(dataWrapper) {
 					if(dataWrapper->hasKey(dsAttrName)){
 						DataType::DataType attributeType;

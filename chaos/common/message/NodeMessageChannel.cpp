@@ -22,7 +22,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::common::network;
-
+using namespace chaos::common::message;
 //!Base constructor
 NodeMessageChannel::NodeMessageChannel(NetworkBroker *msgBroker,
                                        CNodeNetworkAddress *_nodeAddress):
@@ -55,7 +55,7 @@ void NodeMessageChannel::sendMessage(const std::string& node_id,
                                      const std::string& action_name,
                                      CDataWrapper *message_pack,
                                      bool on_this_thread) {
-    MessageChannel::sendMessage(nodeAddress->ipPort,
+    MessageChannel::sendMessage(nodeAddress->ip_port,
                                 node_id,
                                 action_name,
                                 message_pack,
@@ -78,7 +78,7 @@ CDataWrapper* NodeMessageChannel::sendRequest(const std::string& node_id,
                                                             int32_t millisec_to_wait,
                                                             bool async,
                                                             bool on_this_thread) {
-    return MessageChannel::sendRequest(nodeAddress->ipPort,
+    return MessageChannel::sendRequest(nodeAddress->ip_port,
                                        node_id,
                                        action_name,
                                        request_pack,
@@ -91,7 +91,7 @@ CDataWrapper* NodeMessageChannel::sendRequest(const std::string& node_id,
 std::auto_ptr<MessageRequestFuture> NodeMessageChannel::sendRequestWithFuture(const std::string& node_id,
                                                                               const std::string& action_name,
                                                                               CDataWrapper *request_pack) {
-    return MessageChannel::sendRequestWithFuture(nodeAddress->ipPort,
+    return MessageChannel::sendRequestWithFuture(nodeAddress->ip_port,
                                                  node_id,
                                                  action_name,
                                                  request_pack);

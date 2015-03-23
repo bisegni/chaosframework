@@ -37,6 +37,7 @@ using namespace chaos::metadata_service;
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service::api;
 using namespace chaos::metadata_service::batch;
+using namespace chaos::service_common::persistence::data_access;
 using boost::shared_ptr;
 
 WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
@@ -102,7 +103,7 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         
 		// persistence driver system
 		const std::string persistence_driver_name = setting.persistence_implementation + "PersistenceDriver";
-		persistence::AbstractPersistenceDriver *instance = ObjectFactoryRegister<persistence::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(persistence_driver_name);
+		AbstractPersistenceDriver *instance = ObjectFactoryRegister<AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(persistence_driver_name);
 		if(!instance) throw chaos::CException(-5, "No persistence driver instance found", __PRETTY_FUNCTION__);
 		api_subsystem_accessor.persistence_driver.reset(instance, "AbstractPersistenceDriver");
 		api_subsystem_accessor.persistence_driver.init((void*)&setting, __PRETTY_FUNCTION__);

@@ -1,9 +1,9 @@
 /*
- *	AbstractDataAccess.cpp
+ *	NodeSearch.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,14 +17,21 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "AbstractDataAccess.h"
+#include "NodeSearch.h"
 
-using namespace chaos::metadata_service::persistence;
+using namespace chaos::common::data;
+using namespace chaos::metadata_service::api::node;
 
-AbstractDataAccess::AbstractDataAccess(const std::string& name):
-NamedService(name){
-	
+NodeSearch::NodeSearch():
+AbstractApi("searchNode"){
+    
 }
-AbstractDataAccess::~AbstractDataAccess() {
-	
+
+NodeSearch::~NodeSearch() {
+    
+}
+
+chaos::common::data::CDataWrapper *NodeSearch::execute(chaos::common::data::CDataWrapper *api_data,
+                                                          bool& detach_data) throw(chaos::CException) {
+    return NULL;
 }

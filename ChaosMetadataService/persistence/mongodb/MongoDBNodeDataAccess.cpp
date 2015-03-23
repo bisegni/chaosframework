@@ -30,12 +30,37 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::persistence::mongodb;
 
 MongoDBNodeDataAccess::MongoDBNodeDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
-MongoDBAccessor(_connection){
-    
-}
+MongoDBAccessor(_connection){}
 
-MongoDBNodeDataAccess::~MongoDBNodeDataAccess() {
-    
+MongoDBNodeDataAccess::~MongoDBNodeDataAccess() {}
+
+int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
+                                              chaos::common::data::CDataWrapper **node_description) {
+    int err = 0;
+    mongo::BSONObj result;
+    mongo::BSONObjBuilder query_builder;
+    try {
+        if(node_unique_id.size() == 0) return -1; //invalid unique id
+        query_builder << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_unique_id;
+        
+        mongo::BSONObj q = query_builder.obj();
+        DEBUG_CODE(MDBNDA_DBG << "getNodeDescription findOne ---------------------------------------------";)
+        DEBUG_CODE(MDBNDA_DBG << "Query: "  << q.jsonString();)
+        DEBUG_CODE(MDBNDA_DBG << "getNodeDescription findOne ---------------------------------------------";)
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES), q))){
+            MDBNDA_ERR << "Error fetching node description";
+        } else if(result.isEmpty()) {
+            MDBNDA_ERR << "No node description has been found";
+            err = -2;
+        } else {
+            *node_description = new CDataWrapper(result.objdata());
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
 }
 
 //inherited method
@@ -60,7 +85,7 @@ int MongoDBNodeDataAccess::insertNewNode(CDataWrapper& node_description) {
         }
     } catch (const mongo::DBException &e) {
         MDBNDA_ERR << e.what();
-        err = -1;
+        err = e.getCode();
     }
     return err;
 }
@@ -106,7 +131,7 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
         }
     } catch (const mongo::DBException &e) {
         MDBNDA_ERR << e.what();
-        err = -1;
+        err = e.getCode();
     }
     return err;
 }
@@ -133,7 +158,7 @@ int MongoDBNodeDataAccess::checkNodePresence(const std::string& node_unique_id,
     } catch (const mongo::DBException &e) {
         presence = false;
         MDBNDA_ERR << e.what();
-        err = -1;
+        err = e.getCode();
     }
     return err;
 }
@@ -154,7 +179,7 @@ int MongoDBNodeDataAccess::deleteNode(const std::string& node_unique_id) {
         }
     } catch (const mongo::DBException &e) {
         MDBNDA_ERR << e.what();
-        err = -1;
+        err = e.getCode();
     }
     return err;
 }

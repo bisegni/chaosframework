@@ -22,6 +22,8 @@
 
 #include <chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.h>
 
+#include <boost/format.hpp>
+
 namespace chaos {
     namespace metadata_service {
         namespace persistence {
@@ -33,11 +35,27 @@ namespace chaos {
                     friend class MongoDBPersistenceDriver;
                 protected:
                     boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager> connection;
+                    
                 public:
                     MongoDBAccessor(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     virtual ~MongoDBAccessor();
                     
                     const std::string& getDatabaseName();
+                    
+                    //! perform a paged query
+                    /*!
+                     perform a query using paging logic
+                     \param paged_result a vectorot that will be filled with all found data
+                     \param q is the query that perform tath filter the result
+                     \param prj is the set of field that we whant to be returned
+                     \param from is the last value that we have found on previous searh
+                     \param limit is the number of the element that we need to retrieve
+                     */
+                    int performPagedQuery(std::vector<mongo::BSONObj>& paged_result,
+                                          mongo::BSONObj q,
+                                          mongo::BSONObj *prj = NULL,
+                                          mongo::BSONObj *from = NULL,
+                                          uint32_t limit = 50);
                 };
                 
             }

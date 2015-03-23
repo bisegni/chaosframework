@@ -110,10 +110,10 @@ namespace chaos{
 				/*
 				 Get MEtadataserver channel
 				 */
-				MDSMessageChannel *getMetadataserverChannel();
+                chaos::common::message::MDSMessageChannel *getMetadataserverChannel();
 				
 				//! delete an mds message channel
-				void deleteMDSChannel(MDSMessageChannel *mds_channel);
+				void deleteMDSChannel(chaos::common::message::MDSMessageChannel *mds_channel);
 				
 				/*
 				 Get Device event channel

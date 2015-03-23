@@ -33,7 +33,7 @@ using namespace boost;
 using namespace chaos;
 
 using namespace chaos::common::data;
-
+using namespace chaos::common::message;
 using namespace chaos::cu::command_manager;
 
 

@@ -20,8 +20,12 @@
 #ifndef CHAOSFramework_persistence_h
 #define CHAOSFramework_persistence_h
 
-#include "AbstractPersistenceDriver.h"
-#include "AbstractDataAccess.h"
+#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
+#include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
+#include "data_access/NodeDataAccess.h"
+#include "data_access/UnitServerDataAccess.h"
+#include "data_access/ControlUnitDataAccess.h"
+#include "data_access/UtilityDataAccess.h"
 #include "persistence_types.h"
 
 #endif

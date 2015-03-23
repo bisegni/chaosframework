@@ -17,9 +17,10 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "AbstractPersistenceDriver.h"
+#include <chaos/common/global.h>
+#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
 
-using namespace chaos::metadata_service::persistence;
+using namespace chaos::service_common::persistence::data_access;
 
 #define APD_INFO INFO_LOG(AbstractPersistenceDriver)
 #define APD_DBG  INFO_DBG(AbstractPersistenceDriver)
@@ -31,7 +32,7 @@ NamedService(name){
 }
 
 AbstractPersistenceDriver::~AbstractPersistenceDriver() {
-	
+   
 }
 
 
@@ -42,30 +43,10 @@ void AbstractPersistenceDriver::init(void *init_data) throw (chaos::CException) 
 
 // deinitialize the driver
 void AbstractPersistenceDriver::deinit() throw (chaos::CException) {
-    CHK_AND_DELETE_OBJ_POINTER(node_da_instance)
-    CHK_AND_DELETE_OBJ_POINTER(unit_server_da_instance)
-}
-
-// return the implementation of the producer data access
-data_access::NodeDataAccess *AbstractPersistenceDriver::getNodeDataAccess() {
-    CHAOS_ASSERT(node_da_instance)
-    return (data_access::NodeDataAccess *)node_da_instance;
-}
-
-// return the implementation of the unit server data access
-data_access::UnitServerDataAccess *AbstractPersistenceDriver::getUnitServerDataAccess() {
-    CHAOS_ASSERT(unit_server_da_instance);
-    return (data_access::UnitServerDataAccess *)unit_server_da_instance;
-}
-
-// return the implementation of the producer data access
-data_access::ControlUnitDataAccess *AbstractPersistenceDriver::getControlUnitDataAccess() {
-    CHAOS_ASSERT(control_unit_da_instance)
-    return (data_access::ControlUnitDataAccess *)control_unit_da_instance;
-}
-
-// return the implementation of the unit server data access
-data_access::UtilityDataAccess *AbstractPersistenceDriver::getUtilityDataAccess() {
-    CHAOS_ASSERT(utility_da_instance)
-    return (data_access::UtilityDataAccess *)utility_da_instance;
+    for(MapDAIterator i = map_data_access.begin();
+        i != map_data_access.end();
+        i++) {
+        APD_INFO << "Delete data access:" << i->first;
+        deleteDataAccess((AbstractDataAccess*)i->second);
+    }
 }

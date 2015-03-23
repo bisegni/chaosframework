@@ -1,5 +1,5 @@
 /*
- *	NodeRegisterApi.h
+ *	NodeRegister.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -35,15 +35,15 @@ namespace chaos {
                  Otherwhise the datapack will be saved in node structure without further 
                  considerations.
                  */
-                class NodeRegisterApi:
+                class NodeRegister:
                 public AbstractApi {
                     //! perform registration for specific unit server
                     chaos::common::data::CDataWrapper *unitServerRegistration(chaos::common::data::CDataWrapper *api_data,
                                                                               bool& detach_data) throw(chaos::CException);
                     
                 public:
-                    NodeRegisterApi();
-                    ~NodeRegisterApi();
+                    NodeRegister();
+                    ~NodeRegister();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException);
                 };

@@ -30,8 +30,8 @@ namespace chaos {
 			class NetworkBroker;
 		}
 		namespace message {
-			using namespace std;
-			using namespace chaos::common::network;
+                //using namespace std;
+                //using namespace chaos::common::network;
 			//! Message Channel constructed with a node address
 			/*!
 			 This represent a subclass of MessageChannel that is addess with an instance of
@@ -43,7 +43,7 @@ namespace chaos {
 
 			protected:
 				//! node address for metadata server
-				auto_ptr<CNodeNetworkAddress> nodeAddress;
+				auto_ptr<chaos::common::network::CNodeNetworkAddress> nodeAddress;
 				
 			public:
 				//!Base constructor
@@ -52,8 +52,8 @@ namespace chaos {
 				 \param msgBroker the broker used by this channel
 				 \param mdsIpAddress the address of metdataserver
 				 */
-                NodeMessageChannel(NetworkBroker *msgBroker,
-                                   CNodeNetworkAddress *_nodeAddress);
+                NodeMessageChannel(chaos::common::network::NetworkBroker *msgBroker,
+                                   chaos::common::network::CNodeNetworkAddress *_nodeAddress);
 				
                 virtual ~NodeMessageChannel();
 				
@@ -61,7 +61,7 @@ namespace chaos {
 				 Set a new addres for the channel
 				 \param _nodeAddress the pointer to a strcture of type CNodeNetworkAddress. The mermory is managed internally by the channel
 				 */
-                void setNewAddress(CNodeNetworkAddress *_nodeAddress);
+                void setNewAddress(chaos::common::network::CNodeNetworkAddress *_nodeAddress);
 				
                 //! get the rpc published host and port
                 void getRpcPublishedHostAndPort(std::string& rpc_published_host_port);
@@ -75,7 +75,7 @@ namespace chaos {
                  */
                 void sendMessage(const std::string& node_id,
                                  const std::string& action_name,
-                                 CDataWrapper * const message_pack,
+                                 chaos::common::data::CDataWrapper * const message_pack,
                                  bool on_this_thread = false);
                 /*!
                  \brief send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
@@ -89,7 +89,7 @@ namespace chaos {
                  */
                 common::data::CDataWrapper* sendRequest(const std::string& node_id,
                                                         const std::string& action_name,
-                                                        CDataWrapper *request_pack,
+                                                        chaos::common::data::CDataWrapper *request_pack,
                                                         int32_t millisec_to_wait=-1,
                                                         bool async = false,
                                                         bool on_this_thread = false);
@@ -97,7 +97,7 @@ namespace chaos {
                 //!send an rpc request to a remote node
                 std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string& node_id,
                                                                           const std::string& action_name,
-                                                                          CDataWrapper *request_pack);
+                                                                          chaos::common::data::CDataWrapper *request_pack);
 			};
 		}
 	}

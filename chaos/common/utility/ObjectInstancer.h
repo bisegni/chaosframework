@@ -28,7 +28,6 @@
 namespace chaos {
     namespace common {
         namespace utility {
-            
             /*!
              Templated interface that give rule for the the instantiation of a class.
              */

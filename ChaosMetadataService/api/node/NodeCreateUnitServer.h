@@ -1,5 +1,5 @@
 /*
- *	NodeSearchAPI.h
+ *	NodeCreateUnitServer.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,8 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__NodeSearchAPI__
-#define __CHAOSFramework__NodeSearchAPI__
+#ifndef __CHAOSFramework__NodeCreateUnitServer__
+#define __CHAOSFramework__NodeCreateUnitServer__
 
 #include "../AbstractApi.h"
 
@@ -27,12 +27,12 @@ namespace chaos {
         namespace api {
             namespace node {
                 
-                class NodeSearchApi:
+                class NodeCreateUnitServer:
                 public AbstractApi {
                     
                 public:
-                    NodeSearchApi();
-                    ~NodeSearchApi();
+                    NodeCreateUnitServer();
+                    ~NodeCreateUnitServer();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException);
                 };
@@ -43,4 +43,4 @@ namespace chaos {
 }
 
 
-#endif /* defined(__CHAOSFramework__NodeSearchAPI__) */
+#endif /* defined(__CHAOSFramework__NodeCreateUnitServer__) */

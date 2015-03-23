@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__UnitServerDataAccess__
 #define __CHAOSFramework__UnitServerDataAccess__
 
-#include "../AbstractDataAccess.h"
+#include "../persistence.h"
 
 #include <chaos/common/data/CDataWrapper.h>
 
@@ -31,7 +31,7 @@ namespace chaos {
             namespace data_access {
                 
                 class UnitServerDataAccess:
-                public AbstractDataAccess {
+                public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 public:
                     //! default constructor
                     UnitServerDataAccess();

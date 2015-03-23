@@ -45,18 +45,18 @@ int VFSStageReadableFile::getNextAvailbaleBlock() {
 	//get next available datablock
 	while (!current_data_block && !err) {
 		err = db_driver_ptr->vfsFindSinceTimeDataBlock(this,
-														  current_block_creation_ts,
-														  true,
-														  vfs::data_block_state::DataBlockStateNone,
-														  &current_data_block);
+                                                       current_block_creation_ts,
+                                                       true,
+                                                       vfs::data_block_state::DataBlockStateNone,
+                                                       &current_data_block);
 		if(err || !current_data_block)	break; //break on error
 		
 		//try to update the current state to processing
 		err = db_driver_ptr->vfsSetStateOnDataBlock(this,
-													   current_data_block,
-													   vfs::data_block_state::DataBlockStateNone,
-													   vfs::data_block_state::DataBlockStateProcessing,
-													   success);
+                                                    current_data_block,
+                                                    vfs::data_block_state::DataBlockStateNone,
+                                                    vfs::data_block_state::DataBlockStateProcessing,
+                                                    success);
 		if((err || !success) ||
 		   (success && (err = storage_driver_ptr->openBlock(current_data_block, block_flag::BlockFlagReadeable)))) {
 			//the state has not been changed for some reason

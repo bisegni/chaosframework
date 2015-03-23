@@ -35,7 +35,6 @@ namespace chaos {
                 public data_access::UtilityDataAccess,
                 protected MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
-                    friend class INSTANCER_P1(MongoDBUtilityDataAccess, AbstractDataAccess, const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>&);
                 protected:
                     MongoDBUtilityDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBUtilityDataAccess();

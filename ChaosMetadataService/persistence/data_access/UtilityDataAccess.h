@@ -20,7 +20,7 @@
 #ifndef __CHAOSFramework__UtilityDataAccess__
 #define __CHAOSFramework__UtilityDataAccess__
 
-#include "../AbstractDataAccess.h"
+#include "../persistence.h"
 
 namespace chaos {
     namespace metadata_service {
@@ -28,7 +28,7 @@ namespace chaos {
             namespace data_access {
                 
                 class UtilityDataAccess:
-                public AbstractDataAccess{
+                public chaos::service_common::persistence::data_access::AbstractDataAccess{
                 public:
                     //! default constructor
                     UtilityDataAccess();

@@ -67,8 +67,6 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN)) la
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
 
 			/*! \} */
-
-			typedef void (*MessageHandler)(chaos::common::utility::atomic_int_type, common::data::CDataWrapper*);
             typedef map<chaos::common::utility::atomic_int_type, boost::shared_ptr<boost::promise<common::data::CDataWrapper*> > >              MapPromises;
             typedef map<chaos::common::utility::atomic_int_type, boost::shared_ptr<boost::promise<common::data::CDataWrapper*> > >::iterator    MapPromisesIterator;
 			//! MessageChannel
@@ -161,7 +159,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 				void sendMessage(const std::string& remote_host,
                                  const std::string& node_id,
                                  const std::string& action_name,
-                                 CDataWrapper * message_pack,
+                                 chaos::common::data::CDataWrapper * message_pack,
                                  bool on_this_thread = false);
 
 
@@ -180,7 +178,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 common::data::CDataWrapper* sendRequest(const std::string& remote_host,
                                                         const std::string& node_id,
                                                         const std::string& action_name,
-                                                        CDataWrapper *request_pack,
+                                                        chaos::common::data::CDataWrapper *request_pack,
                                                         int32_t millisec_to_wait=-1,
                                                         bool async = false,
                                                         bool on_this_thread = false);
@@ -198,7 +196,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 virtual std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string& remote_host,
                                                                                   const std::string& node_id,
                                                                                   const std::string& action_name,
-                                                                                  CDataWrapper *request_pack);
+                                                                                  chaos::common::data::CDataWrapper *request_pack);
 
                 //! get the rpc published host and port
                 void getRpcPublishedHostAndPort(std::string& rpc_published_host_port);

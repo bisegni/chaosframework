@@ -1,5 +1,5 @@
 /*
- *	NodeApiGroup.cpp
+ *	NodeApiGroup.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,18 +17,27 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "NodeApiGroup.h"
-#include "NodeRegisterApi.h"
+#ifndef __CHAOSFramework__UnitServerApiGroup__
+#define __CHAOSFramework__UnitServerApiGroup__
 
-using namespace chaos::metadata_service::api::node;
-DEFINE_CLASS_FACTORY_NO_ALIAS(NodeApiGroup, chaos::metadata_service::api::AbstractApiGroup);
+#include "../AbstractApiGroup.h"
 
-NodeApiGroup::NodeApiGroup():
-AbstractApiGroup("system"){
-    //add api for UnitServer registration
-    addApi<NodeRegisterApi>();
+namespace chaos {
+    namespace metadata_service {
+        namespace api {
+            namespace node {
+                
+                //! api group for the managment of the UnitServer
+                DECLARE_CLASS_FACTORY(NodeGroup, AbstractApiGroup) {
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(NodeGroup)
+                public:
+                    NodeGroup();
+                    ~NodeGroup();
+                };
+                
+            }
+        }
+    }
 }
 
-NodeApiGroup::~NodeApiGroup() {
-    
-}
+#endif /* defined(__CHAOSFramework__UnitServerGroup__) */

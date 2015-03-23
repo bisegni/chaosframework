@@ -35,11 +35,14 @@ namespace chaos {
                 public data_access::NodeDataAccess,
                 protected MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
-                    friend class INSTANCER_P1(MongoDBNodeDataAccess, AbstractDataAccess, const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>&);
                 protected:
                     MongoDBNodeDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBNodeDataAccess();
                 public:
+                    //inherited method
+                    int getNodeDescription(const std::string& node_unique_id,
+                                           chaos::common::data::CDataWrapper **node_description);
+                    
                     //inherited method
                     int insertNewNode(chaos::common::data::CDataWrapper& node_description);
                     

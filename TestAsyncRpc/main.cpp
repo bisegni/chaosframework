@@ -14,6 +14,8 @@
 
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 
+using namespace chaos::common::message;
+
 void handler(chaos::common::utility::atomic_int_type message_id, chaos::common::data::CDataWrapper *result) {
     LAPP_ << message_id;
     if(result) {

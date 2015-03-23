@@ -20,7 +20,7 @@
 #ifndef CHAOSFramework_AbstractApi_h
 #define CHAOSFramework_AbstractApi_h
 #include "../mds_types.h"
-
+#include "../persistence/persistence.h"
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/data/CDataWrapper.h>
@@ -42,7 +42,7 @@ throw chaos::CException(-1, err, __PRETTY_FUNCTION__);
                 ApiSubserviceAccessor *subservice;
                 
             protected:
-                persistence::AbstractPersistenceDriver *getPersistenceDriver();
+                service_common::persistence::data_access::AbstractPersistenceDriver *getPersistenceDriver();
                 batch::MDSBatchExecutor *getBatchExecutor();
                 chaos::common::network::NetworkBroker *getNetworkBroker();
 			public:

@@ -57,15 +57,20 @@ using namespace chaos::service_common::persistence::mongodb;
 
 MongoAuthHook::MongoAuthHook(std::map<std::string,std::string>& key_value_custom_param):
 has_autentication(false) {
-	if(key_value_custom_param.count("user") &&
-	   key_value_custom_param.count("pwd") &&
-	   key_value_custom_param.count("db") ) {
-		//configura for autentication
-		user = key_value_custom_param["user"];
-		pwd = key_value_custom_param["pwd"];
-		db = key_value_custom_param["db"];
-		has_autentication = true;
-	}
+    if(key_value_custom_param.count("user")) {
+        user = key_value_custom_param["user"];
+    }
+    
+    if(key_value_custom_param.count("pwd")){
+        pwd = key_value_custom_param["pwd"];
+    }
+	   
+    if(key_value_custom_param.count("db")) {
+        db = key_value_custom_param["db"];
+    }
+		
+		
+    has_autentication = key_value_custom_param.count("user") || key_value_custom_param.count("pwd");
 }
 
 void MongoAuthHook::onCreate( mongo::DBClientBase * conn ) {
@@ -367,6 +372,65 @@ int MongoDBHAConnectionManager::update( const std::string &ns,
 	}
 	if(conn) delete(conn);
 	return err;
+}
+
+int MongoDBHAConnectionManager::findAndModify(mongo::BSONObj& result,
+                                              const std::string& ns,
+                                              const mongo::BSONObj& query,
+                                              const mongo::BSONObj& update,
+                                              bool upsert,
+                                              bool returnNew,
+                                              const mongo::BSONObj& sort,
+                                              const mongo::BSONObj& fields) {
+    int err = -1;
+    MongoDBHAConnection conn = NULL;
+    while (getConnection(&conn)) {
+        try {
+            result = conn->conn().findAndModify(ns,
+                                                query,
+                                                update,
+                                                upsert,
+                                                returnNew,
+                                                sort,
+                                                fields);
+            MONGO_DB_GET_ERROR(conn, err);
+        } catch (std::exception& ex) {
+            MDBHAC_LERR_ << "MongoDBHAConnectionManager::findAndModify" << " -> " << ex.what();
+            MONGO_DB_GET_ERROR(conn, err);
+            DELETE_OBJ_POINTER(conn)
+            CONTINUE_ON_NEXT_CONNECTION(err)
+        }
+        break;
+    }
+    if(conn) delete(conn);
+    return err;
+}
+
+
+int MongoDBHAConnectionManager::findAndRemove(mongo::BSONObj& result,
+                                              const std::string& ns,
+                                              const mongo::BSONObj& query,
+                                              const mongo::BSONObj& sort,
+                                              const mongo::BSONObj& fields) {
+    int err = -1;
+    MongoDBHAConnection conn = NULL;
+    while (getConnection(&conn)) {
+        try {
+            result = conn->conn().findAndRemove(ns,
+                                                query,
+                                                sort,
+                                                fields);
+            MONGO_DB_GET_ERROR(conn, err);
+        } catch (std::exception& ex) {
+            MDBHAC_LERR_ << "MongoDBHAConnectionManager::findAndRemove" << " -> " << ex.what();
+            MONGO_DB_GET_ERROR(conn, err);
+            DELETE_OBJ_POINTER(conn)
+            CONTINUE_ON_NEXT_CONNECTION(err)
+        }
+        break;
+    }
+    if(conn) delete(conn);
+    return err;
 }
 
 int MongoDBHAConnectionManager::remove( const std::string &ns , mongo::Query q , bool justOne, const mongo::WriteConcern* wc) {
