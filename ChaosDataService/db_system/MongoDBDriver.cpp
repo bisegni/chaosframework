@@ -174,14 +174,14 @@ int MongoDBDriver::vfsAddDomain(vfs::VFSDomain domain) {
 int MongoDBDriver::vfsDomainHeartBeat(vfs::VFSDomain domain) {
 	int err = 0;
 	mongo::BSONObjBuilder b_query;
-	mongo::BSONObjBuilder b_update_filed;
+	mongo::BSONObjBuilder b_update_field;
 	mongo::BSONObjBuilder b_update;
 	try {
 		//compose file search criteria
 		b_query.append(MONGO_DB_FIELD_DOMAIN_NAME, domain.name);
 		b_query.append(MONGO_DB_FIELD_DOMAIN_URL, domain.local_url);
-		b_update_filed.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(TimingUtil::getTimeStamp()));
-		b_update.append("$set", b_update_filed.obj());
+		b_update_field.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(TimingUtil::getTimeStamp()));
+		b_update.append("$set", b_update_field.obj());
 		
 		mongo::BSONObj q = b_query.obj();
 		mongo::BSONObj u = b_update.obj();
@@ -558,7 +558,7 @@ int MongoDBDriver::vfsGetFilePathForOldestBlockState(const std::string& domain,
 		//search for state
 		query_master << MONGO_DB_FIELD_DATA_BLOCK_STATE << state;
 		//search on the timestamp
-		query_master << MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS << mongo::BSONObjBuilder().appendDate("$gt", TimingUtil::getTimestampFromString("1970-01-01")).obj();
+        //query_master << MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS << mongo::BSONObjBuilder().appendDate("$gt", TimingUtil::getTimestampFromString("1970-01-01")).obj();
 		
 		mongo::BSONObj q = query_master.obj();
 		DEBUG_CODE(MDBID_LDBG_ << "vfsGetFilePathForOldestBlockState query ---------------------------------------------";)

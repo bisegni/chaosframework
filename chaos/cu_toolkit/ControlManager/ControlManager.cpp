@@ -402,7 +402,7 @@ void ControlManager::manageControlUnit() {
 			//whe have control unit isntance with unstable state machine
 			makeSMSteps();
 			//waith some time to retry the state machine
-			thread_waith_semaphore.wait(2500);
+			thread_waith_semaphore.wait(2000);
 		} else {
 			//we don'need to do anything else
 			thread_waith_semaphore.wait();
