@@ -1,6 +1,9 @@
 ccs/ChaosControlStudio/nbproject/private/*
 ccs/ChaosControlStudio/CCSRoot/nbproject/private/*
 build
+*.txt
+*~
+#*
 CUSchemaDB*
 ChaosMDSLite/RecCommon.jardesc
 ChaosMDSLite/RecServer.jardesc
