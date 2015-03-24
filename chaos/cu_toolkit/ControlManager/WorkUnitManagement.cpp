@@ -92,7 +92,7 @@ string WorkUnitManagement::getCurrentStateString() {
  turn on the control unit
  ---------------------------------------------------------------------------------*/
 void WorkUnitManagement::turnOn() throw (CException) {
-    LAPP_ << "Turn ON";
+    WUMDBG_ << "Turn ON";
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublish()) == boost::msm::back::HANDLED_TRUE){
             //we are switched state
     } else {
@@ -104,7 +104,7 @@ void WorkUnitManagement::turnOn() throw (CException) {
  turn off the control unit
  ---------------------------------------------------------------------------------*/
 void WorkUnitManagement::turnOFF() throw (CException) {
-    LAPP_ << "Turn OFF";
+    WUMDBG_ << "Turn OFF";
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublish()) == boost::msm::back::HANDLED_TRUE){
             //we are switched state
     } else {
@@ -273,7 +273,7 @@ bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
                     WUMAPP_ << "work unit " << device_id << " has been registered.";
                     result = true;
                 } else {
-                    WUMAPP_ << "work unit " << device_id << "already have been registered";
+                    WUMAPP_ << "work unit " << device_id << " already registered";
                 }
                 break;
                 

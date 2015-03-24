@@ -452,7 +452,6 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME), -4, "No driver name found")
 			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION), -5, "No driver version found")
 			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM), -6, "No driver init param name found")
-			LCMDBG_ << "scan " << idx << " driver";
 			cu_driver_manager::driver::DrvRequestInfo drv = {driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME),
 															driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION),
 															driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM)};
