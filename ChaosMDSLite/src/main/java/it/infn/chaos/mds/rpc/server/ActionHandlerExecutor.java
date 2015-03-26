@@ -36,6 +36,9 @@ public class ActionHandlerExecutor/* implements Runnable*/ {
 	 */
 	public void submitAction(RPCActionHadler h, BasicBSONObject d) throws InterruptedException {
 		executionService.execute(new ActionHandlerExecutionUnit(h, d));
+		//executionService.awaitTermination(500, TimeUnit.MILLISECONDS);
+		//ActionHandlerExecutionUnit a= new ActionHandlerExecutionUnit(h, d);
+		//a.run();
 	}
 
 	/**

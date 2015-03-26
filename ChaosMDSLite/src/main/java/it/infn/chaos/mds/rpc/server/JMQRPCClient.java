@@ -43,14 +43,15 @@ public class JMQRPCClient extends RPCClient {
 			} else {
 				SocketSlot socketSlot = new SocketSlot();
 				socketSlot.socket = context.createSocket(ZMQ.ZMQ_REQ);
-				socketSlot.socket.setSendTimeOut(5000);
+				socketSlot.socket.setSendTimeOut(0);
 				// socketSlot.socket.setSendTimeOut(10000);
-				socketSlot.socket.setReceiveTimeOut(5000);
+				socketSlot.socket.setReceiveTimeOut(1000);
 				// socketSlot.socket.setReceiveTimeOut(0);
-				socketSlot.socket.setSndHWM(3);
-				socketSlot.socket.setLinger(1000);
-				// socketSlot.socket.setLinger(0);
+				socketSlot.socket.setSndHWM(1);
+				socketSlot.socket.setRcvHWM(1);
 
+				socketSlot.socket.setLinger(0);
+				socketSlot.socket.setTCPKeepAlive(0);
 				socketSlot.socket.connect(serverAddress);
 				serverSlotHashtable.put(serverAddress, socketSlot);
 				return socketSlot;
@@ -95,7 +96,7 @@ public class JMQRPCClient extends RPCClient {
 						// System.out.println("Submission result->" + bsonResult);
 						// socketSlot.socket.disconnect(serverAddress);
 					} catch (Throwable e) {
-						//System.out.println("Exception->" + ExceptionHelper.getInstance().printExceptionStack(e));
+					//	System.out.println("Exception->" + ExceptionHelper.getInstance().printExceptionStack(e));
 
 						synchronized (serverSlotHashtable) {
 							try {
@@ -112,8 +113,9 @@ public class JMQRPCClient extends RPCClient {
 					}
 				}
 			} catch (Throwable e) {
+			//	System.out.println("an error occurred");
 				e.printStackTrace();
-
+				throw e;
 			}
 		}
 	}

@@ -19,8 +19,10 @@ public class GetCUState extends SlowExecutionJob {
 	 * @see it.infn.chaos.mds.slowexecution.SlowExecution.SlowExecutioJob#executeJob()
 	 */
 	protected void executeJob() throws Throwable {
-		BasicBSONObject data = (BasicBSONObject) getInputData();
-		sendMessage(data.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS), "system", "unitServerStatusREQ", data);
+		synchronized(this){
+			BasicBSONObject data = (BasicBSONObject) getInputData();
+			sendMessage(data.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS), "system", "unitServerStatusREQ", data);
+		}
 	}
 
 }

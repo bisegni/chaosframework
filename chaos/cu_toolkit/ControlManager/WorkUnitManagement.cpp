@@ -146,11 +146,16 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
         }
 
         case UnitStatePublishing: {
-            WUMAPP_  << "send registration to mds";
+	  static int counter=0;
+	  // don't pollute, ask every 20s
+	  if((counter%10) == 0){
+            WUMAPP_  << "send " << counter<<" registration to mds";
             if(sendConfPackToMDS(mds_registration_message)) {
-                WUMERR_ << "Error forwarding registration message to mds";
+	      WUMERR_ << "Error forwarding registration message to mds";
             }
-            break;
+	  }
+	  counter++;
+	  break;
         }
 
         case UnitStatePublished: {
@@ -227,6 +232,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
         }
     }
     WUMDBG_ << "End state machine step";
+
 }
 bool WorkUnitManagement::smNeedToSchedule() {
     UnitState s = getCurrentState();

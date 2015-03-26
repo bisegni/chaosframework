@@ -15,6 +15,7 @@ import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.business.DeviceClass;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
+import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.event.EventsToVaadin;
 import it.infn.chaos.mds.process.ManageDeviceProcess;
 import it.infn.chaos.mds.process.ManageServerProcess;
@@ -93,7 +94,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		openViewByKeyAndClass("VISTA", MDSAppView.class);
 		EventsToVaadin.getInstance().addListener(this);
 		MDSAppView view = getViewByKey("VISTA");
-
+		
 		if(init.exists()){
 			
 			try {
@@ -103,6 +104,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 				init.renameTo(dest);
 		
 			} catch ( java.sql.SQLException e){
+				System.out.println("closing and reopen SQL ");
 				msp.close();
 				mds.close();
 				mdp.close();
@@ -135,7 +137,16 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			}
 
 		};
-
+		Vector<UnitServerCuInstance> instanceForUnitServer = null;
+		List<UnitServer> allUnitServer = musp.getAllUnitServer();
+		for (UnitServer us : allUnitServer) {
+			instanceForUnitServer = musp.loadAllAssociationForUnitServerAlias(us.getAlias());
+			for(UnitServerCuInstance i:instanceForUnitServer){
+				mdp.deleteDeviceByInstance(i.getCuId());
+			}
+		}
+	
+		
 		AbstractComponent ac = (AbstractComponent) getViewByKey("VISTA");
 		ac.getWindow().addURIHandler(uriHandler);
 

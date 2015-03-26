@@ -130,11 +130,13 @@ public class DeviceQueyHandler extends RPCActionHadler {
 		DataServerDA dsDA = null;
 		BasicBSONObject result = null;
 		try {
-			System.out.println("getDeviceDataseFromDeviceID");
+		    
 			dDA = getDataAccessInstance(DeviceDA.class);
 			dsDA = getDataAccessInstance(DataServerDA.class);
 			String deviceIdentification = actionData.getString(RPCConstants.DATASET_DEVICE_ID);
 			result = DeviceDescriptionUtility.composeStartupCommandForDeviceIdentification(deviceIdentification, dDA, dsDA, false);
+			System.out.println("getDeviceDataseFromDeviceID :\""+deviceIdentification + "\"");
+			//result:"+result.toString());
 		} catch (Throwable e) {
 			throw new RefException("getDeviceDataseFromDeviceID error", 1, "CUQueryHandler::getDeviceDataseFromDeviceID");
 		} finally {

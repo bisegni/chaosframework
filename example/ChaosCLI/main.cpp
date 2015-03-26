@@ -72,18 +72,22 @@ inline ptime utcToLocalPTime(ptime utcPTime){
 void print_state(CUStateKey::ControlUnitState state) {
   switch (state) {
   case CUStateKey::INIT:
-    std::cout << "Initialized";
+    std::cout << "Initialized:"<<state;
     break;
   case CUStateKey::START:
-    std::cout << "Started";
+    std::cout << "Started:"<<state;
     break;
   case CUStateKey::STOP:
-    std::cout << "Stopped";
+    std::cout << "Stopped:"<<state;
     break;
   case CUStateKey::DEINIT:
-    std::cout << "Deinitilized";
+    std::cout << "Deinitilized:"<<state;
     break;
+  default:
+    std::cout << "Uknown:"<<state;
+    
   }
+  std::cout<<std::endl;
 }
 
 int checkSubmissionRule(std::string scSubmissionRule) {
@@ -195,6 +199,8 @@ int main (int argc, char* argv[] )
     if((control_unit_type =="rtcu") || (control_unit_type =="sccu")){
       err = controller->getState(deviceState);
       if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");
+      std::cout << control_unit_type<<" device, state:";
+      print_state(deviceState);
     } else {
       std::cout << "State-less device"<<std::endl;
       deviceState = CUStateKey::START;
@@ -227,61 +233,73 @@ int main (int argc, char* argv[] )
 	}
       }
     }
-	
+
     switch (op) {
     case 1:
-      if(deviceState == CUStateKey::DEINIT) {
-	/*
-	  Start the control unit
+      	/*
+	  Init the control unit
 	*/
-	err = controller->initDevice();
-	if(err == ErrorCode::EC_TIMEOUT) throw CException(6, "Time out on connection", "Set device to init state");
-      }else{
-	throw CException(7, "The device is not in the deinitialized state", "Set device to init state");
+
+      err = controller->initDevice();
+      if(err == ErrorCode::EC_TIMEOUT) throw CException(6, "Time out on connection", "Set device to init state");
+      
+      
+      if((deviceState == CUStateKey::START)||(deviceState == CUStateKey::STOP)) {
+	print_state(deviceState);
+	throw CException(deviceState, "%% The device is in start or stop state.", "Setting device to init state");
+      
       }
       break;
     case 2:
-      if(deviceState == CUStateKey::INIT || deviceState == CUStateKey::STOP) {
-	/*
+      	/*
 	  Start the control unit
 	*/
-	err = controller->startDevice();
+      
+      	err = controller->startDevice();
 	if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to start state");
-      }else{
-	throw CException(7, "The device is not in the init or stop state", "Set device to start state");
-      }
-      break;
+	if(deviceState == CUStateKey::DEINIT ) {
+	  print_state(deviceState);
+	  throw CException(deviceState, "%% The device is in deinit state, cannot change state", "Set device to start state");
+	}
+	break;
     case 3:
-      if(deviceState == CUStateKey::START) {
-	/*
-	  Start the control unit
+      /*
+	  Stop the control unit
 	*/
-	err = controller->stopDevice();
-	if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to stop state");
-      } else {
-	throw CException(8, "The device is not in the start", "Set device to stop state");
+
+
+      err = controller->stopDevice();
+      if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to stop state");
+      if((deviceState == CUStateKey::INIT)||(deviceState == CUStateKey::DEINIT)) {
+	print_state(deviceState);
+	throw CException(deviceState, "%% The device is not in the start/stop", "Set device to stop state");
       }
       break;
     case 4:
-      if(deviceState == CUStateKey::STOP || deviceState == CUStateKey::INIT) {
-	/*
-	  Start the control unit
+      /*
+	  deinit the control unit
 	*/
-	err = controller->deinitDevice();
-	if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
-      } else {
-	throw CException(29, "Device is not in stop or init state", "Set device to start");
+      
+      err = controller->deinitDevice();
+      if(err == ErrorCode::EC_TIMEOUT){
+	throw CException(2, "Time out on connection", "Set device to deinit state");
       }
+      if(deviceState == CUStateKey::START){
+	print_state(deviceState);
+	throw CException(deviceState, "%% Device is in start cannot change state", "Set device to deinit");
+      }
+    
       break;
     case 5:
-      if(deviceState != CUStateKey::DEINIT) {
-	/*
-	  Start the control unit
+      	/*
+	  change schedule
 	*/
-	err = controller->setScheduleDelay(scheduleTime);
-	if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
-      } else {
-	throw CException(29, "Device can't be in deinit state", "Set device schedule time");
+
+      err = controller->setScheduleDelay(scheduleTime);
+      if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
+      if(deviceState == CUStateKey::DEINIT) {
+	print_state(deviceState);
+	throw CException(29, "%% Device can't be in deinit state", "Set device schedule time");
       }
       break;
     case 6: {

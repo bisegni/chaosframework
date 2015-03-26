@@ -139,8 +139,8 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static ChaosEventComponent	chaosEventComponent					= ChaosEventComponent.getInstance();
 	private String				selectedUnit								= null;
 	private static int			nrepaint									= 0; 
-	private static 	long		time_to_dead								= 10*1000;
-	private static 	long 		refresh_ms									= 5000;
+	private static 	long		time_to_dead								= 120*1000;
+	private static 	long 		refresh_ms									= 10000;
 	private static String 		stateRegex									= "\\w+\\:(.+)\\s+\\w+\\:(.+)";
 	@Override
 	public void initGui() {

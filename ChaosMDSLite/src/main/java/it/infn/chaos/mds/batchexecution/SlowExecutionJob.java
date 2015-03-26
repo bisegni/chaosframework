@@ -39,6 +39,7 @@ abstract public class SlowExecutionJob extends RPCActionHadler implements Runnab
 			executeJob();
 		} catch (Throwable e1) {
 			errorExecuting = e1.toString();
+			System.out.println("Error executing MDS command:"+errorExecuting);
 			e1.printStackTrace();
 		}
 		try {

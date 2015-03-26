@@ -108,7 +108,7 @@ public class CUQueryHandler extends RPCActionHadler {
 			instanceForUnitServer = usDA.returnAllUnitServerCUAssociationbyUSAlias(us.getAlias());
 			for (UnitServerCuInstance cu : instanceForUnitServer) {
 				usDA.setState(cu.getCuId(), "---");
-
+			
 			}
 			BasicBSONList bsonAttributesArray = (BasicBSONList) actionData.get(RPCConstants.UNIT_SERVER_CU_STATES);
 			if (bsonAttributesArray != null) {
@@ -164,8 +164,7 @@ public class CUQueryHandler extends RPCActionHadler {
 						if (cu_state != null) {
 							dDA.performDeviceHB(cu_id);
 							usDA.setState(cu_id, String.format("%s %s", str_cu_state, str_cu_sm_state));
-
-						}
+						} 
 					}
 				}
 				us.setCuInstances(instanceForUnitServer);
@@ -257,7 +256,22 @@ public class CUQueryHandler extends RPCActionHadler {
 			instanceForUnitServer = usDA.loadAllAssociationForUnitServerAliasInAutoload(us.getAlias());
 			us.setState(5);
 			usDA.updateUnitServerTSAndIP(us);
+			DeviceDA dDA = null;
+			dDA = getDataAccessInstance(DeviceDA.class);
+			for(UnitServerCuInstance i:instanceForUnitServer){
+				try {
+					dDA.deleteDeviceByDeviceIdentification(i.getCuId());
+					System.out.println("deleting :"+i.getCuId());
 
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					closeDataAccess(dDA, false);
+				}
+			}
+			closeDataAccess(dDA, true);
+
+		
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
 			closeDataAccess(usDA, true);
 			try {
@@ -361,20 +375,19 @@ public class CUQueryHandler extends RPCActionHadler {
 			d.setCuInstance(controlUnitInstance);
 			d.setNetAddress(controlUnitNetAddress);
 			d.fillFromBson(actionData);
-
+			System.out.println("Query to register \""+ d.getDeviceIdentification()+"\"");
 			// add device id into ack pack
 			ackPack.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS));
 			ackPack.append(RPCConstants.DATASET_DEVICE_ID, actionData.getString(RPCConstants.DATASET_DEVICE_ID));
 			sendACK = true;
 			if (usDA.cuIDIsMDSManaged(actionData.getString(RPCConstants.DATASET_DEVICE_ID)) && !control_key.equals("mds")) {
-				ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 9);
-				return null;
+			    ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 9);
 			}
 			// check for deviceID presence
 			if (dDA.isDeviceIDPresent(d.getDeviceIdentification())) {
 				// the device is already present i need to check for dataset
 				// change
-
+			    System.out.println("Device  \""+ d.getDeviceIdentification()+"\" already in DB, updating");
 				if (dDA.isDSChanged(d.getDeviceIdentification(), d.getDataset().getAttributes())) {
 					Integer deviceID = dDA.getDeviceIdFormInstance(d.getDeviceIdentification());
 					d.getDataset().setDeviceID(deviceID);
@@ -396,9 +409,10 @@ public class CUQueryHandler extends RPCActionHadler {
 				dDA.updateCUInstanceAndAddressForDeviceID(d.getDeviceIdentification(), d.getCuInstance(), d.getNetAddress());
 			} else {
 				// configure the dataset
-				usDA.configuraDataseAttributestForCUID(d.getDeviceIdentification(), d.getDataset().getAttributes());
+			    System.out.println("Inserting Device  \""+ d.getDeviceIdentification()+"\" in DB");
+			    usDA.configuraDataseAttributestForCUID(d.getDeviceIdentification(), d.getDataset().getAttributes());
 
-				dDA.insertDevice(d);
+			    dDA.insertDevice(d);
 			}
 
 			if (d != null) {
@@ -409,47 +423,50 @@ public class CUQueryHandler extends RPCActionHadler {
 			closeDataAccess(dDA, true);
 			closeDataAccess(usDA, true);
 			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
-			try {
-				ChaosEventComponent ev = ChaosEventComponent.getInstance();
-				ev.deviceRegistrationEvent(controlUnitInstance);
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}
-		} catch (RefException e) {
-			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
-			System.out.println("Register of \""+ d.getDeviceIdentification()+"\" failed:"+e.getMessage());
-			try {
-				closeDataAccess(dDA, false);
-			} catch (SQLException e1) {
-			}
-			try {
-				closeDataAccess(usDA, false);
-			} catch (SQLException e1) {
-			}
-			throw new RefException(e.getMessage(), 3, "CUQueryHandler::registerControUnit");
-		} catch (Throwable e) {
-			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
-			System.out.println("Register of \""+ d.getDeviceIdentification()+"\" failed:"+e.getMessage());
-			e.printStackTrace();
 
 			try {
-				closeDataAccess(dDA, false);
-			} catch (SQLException e1) {
+			    ChaosEventComponent ev = ChaosEventComponent.getInstance();
+			    ev.deviceRegistrationEvent(controlUnitInstance);
+			} catch (Throwable e) {
+			    e.printStackTrace();
 			}
-			try {
-				closeDataAccess(usDA, false);
-			} catch (SQLException e1) {
+		} catch (RefException e) {
+		    actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
+		    System.out.println("Register of \""+ d.getDeviceIdentification()+"\" failed:"+e.getMessage());
+		    try {
+			closeDataAccess(dDA, false);
+		    } catch (SQLException e1) {
 			}
-			throw new RefException(e.getMessage(), 4, "CUQueryHandler::registerControUnit");
+		    try {
+			closeDataAccess(usDA, false);
+		    } catch (SQLException e1) {
+		    }
+		    throw new RefException(e.getMessage(), 3, "CUQueryHandler::registerControUnit");
+		} catch (Throwable e) {
+		    ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
+		    System.out.println("Register of \""+ d.getDeviceIdentification()+"\" failed:"+e.getMessage());
+		    e.printStackTrace();
+		    
+		    try {
+			closeDataAccess(dDA, false);
+		    } catch (SQLException e1) {
+		    }
+		    try {
+			closeDataAccess(usDA, false);
+		    } catch (SQLException e1) {
+		    }
+		    throw new RefException(e.getMessage(), 4, "CUQueryHandler::registerControUnit");
 		} finally {
-			try {
-				if (sendACK == true)
-					SingletonServices.getInstance().getSlowExecution().submitJob(WorkUnitACK.class.getName(), ackPack);
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+		    try {
+			if (sendACK == true){
+			    System.out.println("Sending to \""+ d.getDeviceIdentification()+"\" ACK: "+ackPack.toString());
+			    SingletonServices.getInstance().getSlowExecution().submitJob(WorkUnitACK.class.getName(), ackPack);
 			}
+		    } catch (InstantiationException e) {
+			e.printStackTrace();
+		    } catch (IllegalAccessException e) {
+			e.printStackTrace();
+		    }
 		}
 		return result;
 	}

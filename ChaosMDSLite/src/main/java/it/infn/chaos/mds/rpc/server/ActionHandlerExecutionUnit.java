@@ -68,6 +68,7 @@ public class ActionHandlerExecutionUnit implements Runnable {
 			//System.out.println(resultMessage.toString());
 			SingletonServices.getInstance().getMdsRpcClient().sendMessage(resultMessage);
 		} catch (Throwable e) {
+		
 		}
 		
 		//System.out.println("Done executing ActionHandlerExecutionUnit");
