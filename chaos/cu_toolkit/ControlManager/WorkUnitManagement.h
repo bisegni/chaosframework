@@ -130,7 +130,9 @@ namespace chaos {
                     //! state machine for the control unit instance
                 WorkUnitStateMachine	wu_instance_sm;
 
-                bool active;
+                bool    active;
+                int     publishing_counter_delay;
+                
                 int sendConfPackToMDS(CDataWrapper& dataToSend);
                 inline string getCurrentStateString();
             public:
