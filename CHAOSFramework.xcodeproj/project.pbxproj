@@ -667,6 +667,7 @@
 		322DE35418D467E5006F1551 /* ConcuredUsedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcuredUsedItem.h; sourceTree = "<group>"; };
 		322E1578161B629700C3003C /* NetworkBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = NetworkBroker.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		322E157C161B62A900C3003C /* NetworkBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NetworkBroker.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		322E26721AC6E437002E5DA4 /* api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
 		3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_cutoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_uitoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2326,6 +2327,7 @@
 				3274A90B1AC2F214000C6A4D /* ApiProxyManager.h */,
 				3208AAB71AC56A51000860D9 /* ApiProxy.cpp */,
 				3208AAB81AC56A51000860D9 /* ApiProxy.h */,
+				322E26721AC6E437002E5DA4 /* api.h */,
 				3208AAB61AC55EA3000860D9 /* node */,
 			);
 			path = api_proxy;
@@ -3864,13 +3866,13 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
-					"-lmemcached",
 					"-lboost_system",
 					"-lboost_thread",
 					"-lboost_program_options",
 					"-lboost_filesystem",
 					"-lboost_regex",
-					"-levent",
+					"-luv",
+					"-lzmq",
 					"-lboost_log",
 					"-lchaos_metadata_service_client",
 					"-lchaos_common",
@@ -3919,13 +3921,13 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
-					"-lmemcached",
 					"-lboost_system",
 					"-lboost_thread",
 					"-lboost_program_options",
 					"-lboost_filesystem",
 					"-lboost_regex",
-					"-levent",
+					"-luv",
+					"-lzmq",
 					"-lboost_log",
 					"-lchaos_metadata_service_client",
 					"-lchaos_common",
@@ -4986,6 +4988,7 @@
 				322085DF1AC5A0E200F1B71A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		323236D0164573C60052CE06 /* Build configuration list for PBXNativeTarget "ChaosMetadataService" */ = {
 			isa = XCConfigurationList;

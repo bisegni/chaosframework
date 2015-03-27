@@ -21,22 +21,32 @@
 #ifndef __CHAOSFramework__ApiProxy__
 #define __CHAOSFramework__ApiProxy__
 
+#include <chaos/common/utility/NamedService.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 
 #include <boost/atomic.hpp>
 
+#define API_PROXY_CLASS(x) friend class INSTANCER_P1(x, ApiProxy, chaos::common::message::MultiAddressMessageChannel*);
+
 namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
-
+            
+            //! define the result of an api like shared pointer of @chaos::common::message::MessageRequestFuture
+            typedef auto_ptr<chaos::common::message::MessageRequestFuture> ApiProxyResult;
+            
+            class ApiProxyManager;
                 //! base class for all proxy api
-            class ApiProxy {
+            class ApiProxy:
+            public chaos::common::utility::NamedService {
+                friend class ApiProxyManager;
                     //!keep track on how many access are done to the proxy
                 boost::atomic<int> access_counter;
                     //!channel for mds communication
                 chaos::common::message::MultiAddressMessageChannel *mn_message;
+            protected:
                     //! default constructor
-                ApiProxy(chaos::common::message::MultiAddressMessageChannel *_mn_message);
+                ApiProxy(const std::string& api_name, chaos::common::message::MultiAddressMessageChannel *_mn_message);
                     //! default destructor
                 ~ApiProxy();
             protected:
@@ -45,9 +55,9 @@ namespace chaos {
                  preform an call of an api and return the opportune future
                  that permit to inspect the result or error
                  */
-                auto_ptr<chaos::common::message::MessageRequestFuture> callApi(const std::string& api_group,
-                                                                               const std::string& api_name,
-                                                                               chaos::common::data::CDataWrapper *api_message);
+                ApiProxyResult callApi(const std::string& api_group,
+                                       const std::string& api_name,
+                                       chaos::common::data::CDataWrapper *api_message);
             };
         }
     }

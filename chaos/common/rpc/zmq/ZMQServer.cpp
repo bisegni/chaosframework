@@ -23,9 +23,9 @@
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/exception/CException.h>
 
-#define ZMQS_LAPP LAPP_ << "[ZMQServer] - "
-#define ZMQS_LDBG LDBG_ << "[ZMQServer] - "
-#define ZMQS_LERR LERR_ << "[ZMQServer] - "
+#define ZMQS_LAPP INFO_LOG(ZMQServer)
+#define ZMQS_LDBG DBG_LOG(ZMQServer)
+#define ZMQS_LERR ERR_LOG(ZMQServer)
 #define DEFAULT_MSGPACK_DISPATCHER_PORT             8888
 #define DEFAULT_MSGPACK_DISPATCHER_THREAD_NUMBER    4
 
@@ -48,7 +48,7 @@ ZMQServer::~ZMQServer() {
     //init the server getting the configuration value
 void ZMQServer::init(void *init_data) throw(CException) {
         //get portnumber and thread number
-	CDataWrapper *adapterConfiguration = reinterpret_cast<CDataWrapper*>(init_data);
+    CDataWrapper *adapterConfiguration = reinterpret_cast<CDataWrapper*>(init_data);
     ZMQS_LAPP << "initialization";
     try {
         runServer = true;
@@ -61,7 +61,7 @@ void ZMQServer::init(void *init_data) throw(CException) {
         ZMQS_LAPP << "thread number:" << threadNumber;
 
             //create the ZMQContext
-		zmqContext = zmq_ctx_new();
+        zmqContext = zmq_ctx_new();
         CHAOS_ASSERT(zmqContext)
 
             //et the thread number
@@ -80,18 +80,18 @@ void ZMQServer::init(void *init_data) throw(CException) {
     } catch (...) {
         throw CException(-3, "generic error", "ZMQServer::init");
     }
-	runServer = true;
-	//queue thread
-	ZMQS_LAPP << "Allocating thread for manage the request";
-	for (int idx = 0; idx<1; idx++) {
-		try{
-			threadGroup.add_thread(new thread(boost::bind(&ZMQServer::executeOnThread, this)));
-		}catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >& ex) {
-			ZMQS_LERR << ex.what();
-			throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
-		}
+    runServer = true;
+        //queue thread
+    ZMQS_LAPP << "Allocating thread for manage the request";
+    for (int idx = 0; idx<1; idx++) {
+        try{
+            threadGroup.add_thread(new thread(boost::bind(&ZMQServer::executeOnThread, this)));
+        }catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >& ex) {
+            ZMQS_LERR << ex.what();
+            throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
+        }
     }
-	ZMQS_LAPP << "Thread allocated";
+    ZMQS_LAPP << "Thread allocated";
 }
 
     //start the rpc adapter
@@ -105,15 +105,15 @@ void ZMQServer::stop() throw(CException) {
 
     //deinit the rpc adapter
 void ZMQServer::deinit() throw(CException) {
-	runServer = false;
+    runServer = false;
     ZMQS_LAPP << "Stopping thread";
-	zmq_ctx_shutdown(zmqContext);
-	zmq_ctx_destroy(zmqContext);
-	//wiath all thread
+    zmq_ctx_shutdown(zmqContext);
+    zmq_ctx_destroy(zmqContext);
+        //wiath all thread
     threadGroup.join_all();
     ZMQS_LAPP << "Thread stopped";
 }
-
+#define ZMQ_DO_AGAIN(x) do{x}while(err == EAGAIN);
 /*
  Thread method that work on buffer item
  */
@@ -121,13 +121,12 @@ void ZMQServer::executeOnThread(){
 
         //data pack pointer
     int err = 0;
-	int	linger = 500;
-	int	water_mark = 100;
-	int	send_timeout = 100;
-    zmq_msg_t response;
-	CDataWrapper *cdataWrapperPack = NULL;
+    int	linger = 500;
+    int	water_mark = 100;
+    int	send_timeout = 2000;
+    auto_ptr<CDataWrapper> cdataWrapperPack;
 
-	void *receiver = zmq_socket (zmqContext, ZMQ_REP);
+    void *receiver = zmq_socket (zmqContext, ZMQ_REP);
     if(!receiver) return;
 
     err = zmq_bind(receiver, bindStr.str().c_str());
@@ -137,55 +136,73 @@ void ZMQServer::executeOnThread(){
         ZMQS_LERR << "Thread id:" << boost::lexical_cast<std::string>(boost::this_thread::get_id()) << "binded with error";
         return;
     }
-	err = zmq_setsockopt(receiver, ZMQ_LINGER, &linger, sizeof(int));
-	if(err) {
-		ZMQS_LERR << "Error setting ZMQ_LINGER value";
-		return;
-	}
-	err = zmq_setsockopt(receiver, ZMQ_RCVHWM, &water_mark, sizeof(int));
-	if(err) {
-		ZMQS_LERR << "Error setting ZMQ_RCVHWM value";
-		return;
-	}
-	err = zmq_setsockopt(receiver, ZMQ_SNDHWM, &water_mark, sizeof(int));
-	if(err) {
-		ZMQS_LERR << "Error setting ZMQ_SNDHWM value";
-		return;
-	}
-	err = zmq_setsockopt(receiver, ZMQ_SNDTIMEO, &send_timeout, sizeof(int));
-	if(err) {
-		ZMQS_LERR << "Error setting ZMQ_SNDHWM value";
-		return;
-	}
+    err = zmq_setsockopt(receiver, ZMQ_LINGER, &linger, sizeof(int));
+    if(err) {
+        ZMQS_LERR << "Error setting ZMQ_LINGER value";
+        return;
+    }
+    err = zmq_setsockopt(receiver, ZMQ_RCVHWM, &water_mark, sizeof(int));
+    if(err) {
+        ZMQS_LERR << "Error setting ZMQ_RCVHWM value";
+        return;
+    }
+    err = zmq_setsockopt(receiver, ZMQ_SNDHWM, &water_mark, sizeof(int));
+    if(err) {
+        ZMQS_LERR << "Error setting ZMQ_SNDHWM value";
+        return;
+    }
+    err = zmq_setsockopt(receiver, ZMQ_SNDTIMEO, &send_timeout, sizeof(int));
+    if(err) {
+        ZMQS_LERR << "Error setting ZMQ_SNDHWM value";
+        return;
+    }
     while (runServer) {
         try {
             zmq_msg_t request;
+            zmq_msg_t response;
+
             err = zmq_msg_init(&request);
-			ZMQS_LDBG << "Start Receive";
-            err = zmq_recvmsg(receiver, &request, 0);
-            if(err == -1 || zmq_msg_size(&request)==0) {
-				ZMQS_LDBG << "Received empty message";
-				zmq_msg_close(&request);
-                continue;
+
+            ZMQS_LDBG << "Wait for message";
+            ZMQ_DO_AGAIN(zmq_recvmsg(receiver, &request, 0);)
+            if(err == -1 ) {
+                int32_t sent_error = zmq_errno();
+                std::string error_message =zmq_strerror(sent_error);
+                ZMQS_LERR << "Error receiving message with code:" << sent_error << " message:" <<error_message;
+            } else {
+                if(zmq_msg_size(&request)>0) {
+                    ZMQS_LDBG << "Message Received";
+                        //  Send reply back to client
+                        //dispatch the command
+                    cdataWrapperPack.reset(commandHandler->dispatchCommand(new CDataWrapper((const char*)zmq_msg_data(&request))));
+                    auto_ptr<SerializationBuffer> result(cdataWrapperPack->getBSONData());
+                    result->disposeOnDelete = false;
+                    err = zmq_msg_init_data(&response, (void*)result->getBufferPtr(), result->getBufferLen(), my_free, NULL);
+                    if(err == -1) {
+                        int32_t sent_error = zmq_errno();
+                        std::string error_message = zmq_strerror(sent_error);
+                        ZMQS_LERR << "Error initializing the response message with code:" << sent_error << " message:" <<error_message;
+                    } else {
+                        ZMQS_LDBG << "Send ack";
+                        auto_ptr<SerializationBuffer> result(cdataWrapperPack->getBSONData());
+                        result->disposeOnDelete = false;
+                        ZMQ_DO_AGAIN(zmq_sendmsg(receiver, &response, ZMQ_NOBLOCK);)
+                        if(err == -1) {
+                            int32_t sent_error = zmq_errno();
+                            std::string error_message =zmq_strerror(sent_error);
+                            ZMQS_LERR << "Error sending ack with code:" << sent_error << " message:" <<error_message;
+                        }else {
+                            ZMQS_LDBG << "ACK Sent";
+                        }
+                    }
+                }else {
+                    ZMQS_LDBG << "Empty message received";
+                }
             }
-			ZMQS_LDBG << "Received";
-                //  Send reply back to client
-                //dispatch the command
-            cdataWrapperPack = commandHandler->dispatchCommand(new CDataWrapper((const char*)zmq_msg_data(&request)));
-
-
-            auto_ptr<SerializationBuffer> result(cdataWrapperPack->getBSONData());
-            result->disposeOnDelete = false;
-            err = zmq_msg_init_data(&response, (void*)result->getBufferPtr(), result->getBufferLen(), my_free, NULL);
-            ZMQS_LDBG << "Send ACK";
-            err = zmq_sendmsg(receiver, &response, ZMQ_NOBLOCK);
-			ZMQS_LDBG << "ACK Sent";
-			err = zmq_msg_close(&request);
-
-                //deallocate the data wrapper pack if it has been allocated
-            if(cdataWrapperPack) delete(cdataWrapperPack);
-			cdataWrapperPack = NULL;
-
+            
+            err = zmq_msg_close(&request);
+            err = zmq_msg_close(&response);
+            
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
         }

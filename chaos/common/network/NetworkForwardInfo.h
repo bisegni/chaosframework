@@ -30,41 +30,35 @@ namespace chaos_data = chaos::common::data;
 namespace chaos {
 	namespace common {
 		namespace network {
-			
-			//! Pointer function for error handler
-			typedef void (*NetworkErrorHandler)(const char *  emitterIdentifier, int64_t tag, ErrorCode::ErrorCode errorCode);
-			
-			//! Pointer function for finisced operation handler
-			typedef void (*NetworkFinischedHandler)(const char *  emitterIdentifier, int64_t tag);
-			
 			/*!
 			 Structure used to contain information for
 			 message forward
 			 */
 			typedef struct NetworkForwardInfo {
+                bool is_request;
 				//!Define the information ip:port used to reach a remote chaos network broker
 				std::string destinationAddr;
 				//! the message data
 				chaos_data::CDataWrapper *message;
-				//! the error handler
-				NetworkErrorHandler errorOpHandler;
-				//! the handlet to informa the finisched operation
-				NetworkFinischedHandler endOpHandler;
 				//! the information for the emitter returned in all hadnler call
 				const char *emitterIdentifier;
 				//! tag returned in all handler call used by emitter
 				int64_t tag;
-				
-				NetworkForwardInfo():
+				//! the ndoe id of the sender channel
+                std::string sender_node_id;
+                //! the sender request count
+                uint32_t sender_request_id;
+                
+				NetworkForwardInfo(bool _is_request):
+                is_request(_is_request),
 				destinationAddr(""),
 				message(NULL),
-				errorOpHandler(NULL),
-				endOpHandler(NULL),
 				emitterIdentifier(NULL),
-				tag(0) {
-				}
-				
-				~NetworkForwardInfo(){
+				tag(0),
+                sender_node_id(""),
+                sender_request_id(0){}
+
+                ~NetworkForwardInfo(){
                     if(message) {
                         delete(message);
                         message = NULL;

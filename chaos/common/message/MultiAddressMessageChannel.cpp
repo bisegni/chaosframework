@@ -85,9 +85,7 @@ void  MultiAddressMessageChannel::disposeService(void *service_ptr) {
 
 void* MultiAddressMessageChannel::serviceForURL(const URL& url,
                                              uint32_t service_index) {
-    CHAOS_ASSERT(map_url_node_id.count(url.getURL()) == 1)
-    const CNetworkAddressInfo& addr_info = map_url_node_id[url.getURL()];
-    MMCFeederService *service = new MMCFeederService(addr_info.network_address.ip_port);
+    MMCFeederService *service = new MMCFeederService(url.getURL());
     return static_cast<void*>(service);
 }
 

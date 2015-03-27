@@ -37,8 +37,8 @@ namespace chaos {
 
         namespace api_proxy {
                 //type
-            typedef std::vector< boost::shared_ptr<ApiProxy> >           ApiProxyList;
-            typedef std::vector< boost::shared_ptr<ApiProxy> >::iterator ApiProxyListIterator;
+            typedef std::vector< ApiProxy* >           ApiProxyList;
+            typedef std::vector< ApiProxy* >::iterator ApiProxyListIterator;
 
                 //! Manager for the creation of the appi proxy and thei managment
             /*!
@@ -70,10 +70,10 @@ namespace chaos {
                 ~ApiProxyManager();
             public:
                 template<typename P>
-                void getProxyApi() {
+                P* getApiProxy() {
                         //! there was a type for every tempalte expantion
                     static P* instance = NULL;
-                    if(instance) {
+                    if(instance == NULL) {
                         //allcoate the instsancer for the AbstractApi depending by the template
                         std::auto_ptr<INSTANCER_P1(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*)> i(ALLOCATE_INSTANCER_P1(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*));
 
@@ -81,7 +81,7 @@ namespace chaos {
                         instance = (P*)i->getInstance(mn_message_channel);
 
                             //add new instance to the list of all instances
-                        api_instance.push_back(boost::shared_ptr<ApiProxy>(instance));
+                        api_instance.push_back(instance);
                     }
                     return instance;
                 };

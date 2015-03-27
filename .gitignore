@@ -1,8 +1,7 @@
-ccs/ChaosControlStudio/NodeSearch/nbproject/private/
-ccs/ChaosControlStudio/NodeCommander/nbproject/private/
+example/build-UIToolkitTest-*
+ccs/ccs.pro.user
+build-ccs-*
 *nbproject/private/*
-ccs/ChaosControlStudio/nbproject/private/*
-ccs/ChaosControlStudio/CCSRoot/nbproject/private/*
 build
 *.txt
 *~
@@ -70,5 +69,3 @@ ChaosMDSLite/RefCommon.jardesc
 ChaosMDSLite/RefServer.jardesc
 /example/UIToolkitTest/powersupply/nbproject/private/
 *.json
-ccs/ChaosControlStudio/NodeCommander/nbproject/private/private.xml
-ccs/ChaosControlStudio/NodeSearch/nbproject/private/private.xml

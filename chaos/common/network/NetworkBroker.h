@@ -282,9 +282,6 @@ namespace chaos {
 				 */
 				bool submitMessage(const string& serverAndPort,
 								   chaos::common::data::CDataWrapper *message,
-                                   chaos::common::network::NetworkErrorHandler handler = NULL,
-								   const char * senderIdentifier = NULL,
-								   int64_t senderTag = (int64_t)0,
 								   bool onThisThread=false);
 				
 				//!message request
@@ -296,9 +293,8 @@ namespace chaos {
 				 */
 				bool submiteRequest(const string& serverAndPort,
                                     chaos::common::data::CDataWrapper *request,
-                                    chaos::common::network::NetworkErrorHandler handler = NULL,
-									const char * senderIdentifier = NULL,
-									int64_t senderTag = (int64_t)0,
+                                    std::string sender_node_id,
+                                    uint32_t sender_request_id0,
 									bool onThisThread=false);
 				
 				//!message submition

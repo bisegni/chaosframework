@@ -27,7 +27,7 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
 
 NodeGetDescription::NodeGetDescription():
-AbstractApi("newNode"){
+AbstractApi("getNodeDescription"){
     
 }
 

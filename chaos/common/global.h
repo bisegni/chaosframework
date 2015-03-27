@@ -42,6 +42,7 @@
 #include <chaos/common/endian.h>
 #include <chaos/common/log/LogManager.h>
 
+#include <cassert>
 #if BOOST_VERSION > 105300
     //allocate the logger
     BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
@@ -57,7 +58,7 @@
 
 #define DEFINE_LOG_HEADER(x) "[" #x "] - "
 #define INFO_LOG(x) LAPP_ << DEFINE_LOG_HEADER(x)
-#define DBG_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x)
+#define DBG_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x) << __FUNCTION__ << " - "
 #define ERR_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
 
     //define for chaos assert macro, it print the basiclay infromation to find
@@ -68,13 +69,14 @@
 #else
 #define DEBUG_CODE(x) x
 #define CHAOS_ASSERT(x) \
-if (! (x)) \
+if (!(x)) \
 { \
     std::cout << "ERROR!! Assert " << #x << " failed\n";	\
     std::cout << " on line " << __LINE__  << "\n";	\
     std::cout << " in file " << __FILE__ << "\n";	\
     std::cout.flush();					\
-}
+}\
+assert(x);
 #endif
 
 

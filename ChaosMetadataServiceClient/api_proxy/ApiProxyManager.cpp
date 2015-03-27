@@ -19,6 +19,10 @@
  */
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 
+#define APM_LAPP INFO_LOG(ChaosMetadataServiceClient)
+#define APM_LDBG DBG_LOG(ChaosMetadataServiceClient)
+#define APM_LERR ERR_LOG(ChaosMetadataServiceClient)
+
 using namespace chaos::metadata_service_client::api_proxy;
 
     //! default private constructor called only by ChaosMetadataServiceClient class
@@ -38,13 +42,28 @@ ApiProxyManager::~ApiProxyManager() {
 void ApiProxyManager::init(void *init_data) throw (chaos::CException) {
     if(!network_broker) throw chaos::CException(-1, "NetworkBroker has not been set", __PRETTY_FUNCTION__);
 
+    APM_LAPP << "Get multi address message channel";
     mn_message_channel = network_broker->getRawMultiAddressMessageChannel();
     if(!mn_message_channel) throw chaos::CException(-1, "Error multinode message channel creation", __PRETTY_FUNCTION__);
+    if(setting->mds_backend_servers.size() == 0) throw chaos::CException(-2, "No metadata server endpoint has been set", __PRETTY_FUNCTION__);
+    
+    for(BackendServerListIterator it = setting->mds_backend_servers.begin();
+        it != setting->mds_backend_servers.end();
+        it++) {
+        APM_LAPP << "Add " << *it;
+        CNetworkAddress cna(*it);
+        mn_message_channel->addNode(cna);
+    }
+    
 }
 
 void ApiProxyManager::deinit() throw (chaos::CException) {
         //clear all instances
-    api_instance.clear();
+    for(ApiProxyListIterator i = api_instance.begin();
+        i != api_instance.end();
+        i++) {
+        delete(*i);
+    }
 
     if(mn_message_channel) {
         network_broker->disposeMessageChannel(mn_message_channel);

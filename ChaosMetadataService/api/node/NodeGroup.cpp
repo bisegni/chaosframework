@@ -20,14 +20,19 @@
 #include "NodeGroup.h"
 #include "NodeRegister.h"
 #include "NodeCreateUnitServer.h"
+#include "NodeSearch.h"
+#include "NodeGetDescription.h"
+
 using namespace chaos::metadata_service::api::node;
 DEFINE_CLASS_FACTORY_NO_ALIAS(NodeGroup, chaos::metadata_service::api::AbstractApiGroup);
 
 NodeGroup::NodeGroup():
 AbstractApiGroup("system"){
     //add api for UnitServer registration
+    addApi<NodeSearch>();
     addApi<NodeRegister>();
     addApi<NodeCreateUnitServer>();
+    addApi<NodeGetDescription>();
 }
 
 NodeGroup::~NodeGroup() {

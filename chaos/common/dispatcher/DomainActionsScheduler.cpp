@@ -58,7 +58,8 @@ void DomainActionsScheduler::deinit() throw(CException) {
  override the push method for ObjectProcessingQueue<CDataWrapper> superclass
  */
 bool DomainActionsScheduler::push(CDataWrapper *actionParam) throw(CException) {
-	if(!armed) throw CException(0, "Action can't be submitted, scheduler is not armed", "DomainActionsScheduler::push");
+	if(!armed) throw CException(-1, "Action can't be submitted, scheduler is not armed", "DomainActionsScheduler::push");
+    if(!domainActionsContainer->hasActionName(actionParam->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))) throw CException(-2, "The action requested is not present in the domain", __PRETTY_FUNCTION__);
 	return CObjectProcessingQueue<CDataWrapper>::push(actionParam);
 }
 

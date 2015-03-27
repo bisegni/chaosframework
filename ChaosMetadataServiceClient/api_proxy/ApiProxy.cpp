@@ -20,7 +20,9 @@
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 using namespace chaos::metadata_service_client::api_proxy;
     //! default constructor
-ApiProxy::ApiProxy(chaos::common::message::MultiAddressMessageChannel *_mn_message):
+ApiProxy::ApiProxy(const std::string& api_name,
+                   chaos::common::message::MultiAddressMessageChannel *_mn_message):
+NamedService(api_name),
 access_counter(0),
 mn_message(_mn_message) {
 
@@ -32,9 +34,9 @@ ApiProxy::~ApiProxy() {
 
     //! execute an api call
 
-auto_ptr<chaos::common::message::MessageRequestFuture> ApiProxy::callApi(const std::string& api_group,
-                                                                         const std::string& api_name,
-                                                                         chaos::common::data::CDataWrapper *api_message) {
+ApiProxyResult ApiProxy::callApi(const std::string& api_group,
+                                 const std::string& api_name,
+                                 chaos::common::data::CDataWrapper *api_message) {
     CHAOS_ASSERT(mn_message)
     return  mn_message->sendRequestWithFuture(api_group, api_name, api_message);
 }

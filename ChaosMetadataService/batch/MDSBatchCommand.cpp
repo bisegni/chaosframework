@@ -44,9 +44,9 @@ MDSBatchCommand::getNewMessageChannel() {
 }
 
 chaos::common::message::MultiAddressMessageChannel*
-MDSBatchCommand::getNewMultinodeMessageChannel() {
+MDSBatchCommand::getNewMultiAddressMessageChannel() {
     CHAOS_ASSERT(network_broker)
-    return network_broker->getRawMultinodeMessageChannel();
+    return network_broker->getRawMultiAddressMessageChannel();
 }
 
 //! return a device message channel for a specific node address

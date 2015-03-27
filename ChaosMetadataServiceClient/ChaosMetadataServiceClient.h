@@ -21,7 +21,7 @@
 #define __CHAOSFramework__MetadataServiceClient__
 
 #include <ChaosMetadataServiceClient/metadata_service_client_types.h>
-#include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
+#include <ChaosMetadataServiceClient/api_proxy/api.h>
 
 #include <boost/thread/condition.hpp>
 
@@ -75,6 +75,11 @@ namespace chaos {
             void stop()throw(CException);
                 //! StartableService inherited method
             void deinit()throw(CException);
+            
+            template<typename D>
+            D* getApiProxy() {
+                return api_proxy_manager->getApiProxy<D>();
+            }
         };
     }
 }

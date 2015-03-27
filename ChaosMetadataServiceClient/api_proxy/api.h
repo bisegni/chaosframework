@@ -1,5 +1,5 @@
 /*
- *	metadata_service_types.h
+ *	api.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,21 +17,15 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_metadata_service_types_h
-#define CHAOSFramework_metadata_service_types_h
-#include <vector>
-#include <string>
-namespace chaos {
-    namespace metadata_service_client {
+#ifndef CHAOSFramework_api_proxy_h
+#define CHAOSFramework_api_proxy_h
 
-        typedef std::vector<std::string>            BackendServerList;
-        typedef std::vector<std::string>::iterator  BackendServerListIterator;
-        typedef struct ClientSetting {
-                //! is the list of the backend server to use for comunication
-            BackendServerList mds_backend_servers;
-        } ClientSetting;
+#include <ChaosMetadataServiceClient/api_proxy/api.h>
+#include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
+#include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 
-    }
-}
+//---include all api header
+#include <ChaosMetadataServiceClient/api_proxy/node/GetNodeDescription.h>
+
 
 #endif

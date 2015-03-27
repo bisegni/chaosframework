@@ -26,7 +26,6 @@
 
 #include <chaos/common/message/MessageRequestFuture.h>
 
-#include <chaos/common/utility/Atomic.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
@@ -34,9 +33,11 @@
 #include <chaos/common/thread/MultiKeyObjectWaitSemaphore.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/network/NetworkBroker.h>
+
 #include <boost/function.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/future.hpp>
+#include <boost/atomic.hpp>
 namespace chaos {
 	namespace common {
 		namespace message {
@@ -85,7 +86,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 std::string channel_reponse_domain;
 
 				//! atomic int for request id
-				chaos::common::utility::atomic_int_type channelRequestIDCounter;
+                boost::atomic<uint32_t> channel_request_id_counter;
 
 				//! Mutex for managing the maps manipulation
 				boost::shared_mutex mutext_answer_managment;

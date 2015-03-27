@@ -28,13 +28,14 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 #define MessageChannel_LOG_HEAD "[MessageChannel] - "
 
-#define MCAPP_ INFO_LOG()
-#define MCDBG_ DBG_LOG()
-#define MCERR_ ERR_LOG()
+#define MCAPP_ INFO_LOG(MessageChannel)
+#define MCDBG_ DBG_LOG(MessageChannel)
+#define MCERR_ ERR_LOG(MessageChannel)
 
 
 MessageChannel::MessageChannel(NetworkBroker *_broker):
-broker(_broker){
+broker(_broker),
+channel_request_id_counter(0){
     
 }
 
@@ -46,8 +47,6 @@ MessageChannel::~MessageChannel() {
  Initialization phase
  */
 void MessageChannel::init() throw(CException) {
-    //reset request id
-    channelRequestIDCounter= 0;
     //create a new channel id
     channel_reponse_domain = UUIDUtil::generateUUIDLite();
     
@@ -74,9 +73,9 @@ void MessageChannel::deinit() throw(CException) {
  called when a result of a message is received
  */
 CDataWrapper *MessageChannel::response(CDataWrapper *response_data, bool& detach) {
-    DEBUG_CODE(MCDBG_ << "Received answer";)
+    DEBUG_CODE(MCDBG_ << "Received answer:" << response_data->getJSONString();)
     if(!response_data->hasKey(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID)) return NULL;
-    atomic_int_type request_id = response_data->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
+    uint32_t request_id = response_data->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
     try {
         //lock the map
         boost::shared_lock< boost::shared_mutex > lock(mutext_answer_managment);
@@ -140,7 +139,7 @@ void MessageChannel::sendMessage(const std::string& remote_host,
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
     if(message_pack)data_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *message_pack);
     //send the request
-    broker->submitMessage(remote_host.c_str(), data_pack, NULL, NULL, 0, on_this_thread);
+    broker->submitMessage(remote_host.c_str(), data_pack, on_this_thread);
 }
 
 /*
@@ -192,7 +191,7 @@ std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const 
     
     //lock lk(waith_asnwer_mutex);
     if(request_pack)data_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *request_pack);
-    atomic_int_type current_request_id = atomic_increment(&channelRequestIDCounter);
+    uint32_t current_request_id = channel_request_id_counter++;
     
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, node_id);
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
@@ -213,7 +212,11 @@ std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const 
                                            promises_ptr->get_future()));
     //if(async) return result;
     //submit the request
-    broker->submiteRequest(remote_host, data_pack, NULL, NULL, 0, true);
+    broker->submiteRequest(remote_host,
+                           data_pack,
+                           channel_reponse_domain,
+                           current_request_id,
+                           true);
     return result;
 }
 

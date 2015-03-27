@@ -165,7 +165,10 @@ void NetworkBroker::init(void *initData) throw(CException) {
         MB_LAPP  << "Trying to initilize RPC Client: " << rpc_client_name;
         rpc_client = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpc_client_name);
 		if(!rpc_client) throw CException(4, "Error allocating rpc client implementation", __PRETTY_FUNCTION__);
-
+        
+        //! connect dispatch to manage error durign request forwarding
+        rpc_client->server_handler = command_dispatcher;
+        
         if(StartableService::initImplementation(rpc_client, static_cast<void*>(globalConfiguration), rpc_client->getName(), __PRETTY_FUNCTION__)) {
 			//set the forwarder into dispatcher for answere
             command_dispatcher->setRpcForwarder(rpc_client);
@@ -477,12 +480,9 @@ void NetworkBroker::deregisterAction(DeclareAction* declare_action_class) {
  */
 bool NetworkBroker::submitMessage(const string& host,
                                   CDataWrapper *message,
-                                  NetworkErrorHandler handler,
-                                  const char * sender_identifier,
-                                  int64_t sendet_tag,
                                   bool on_this_thread) {
     CHAOS_ASSERT(message && rpc_client)
-    NetworkForwardInfo *nfi = new NetworkForwardInfo();
+    NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
     nfi->destinationAddr = host;
     nfi->message = message;
 	//add answer id to datawrapper
@@ -494,14 +494,15 @@ bool NetworkBroker::submitMessage(const string& host,
  */
 bool NetworkBroker::submiteRequest(const string& host,
                                    CDataWrapper *request,
-                                   NetworkErrorHandler handler,
-                                   const char * sender_identifier,
-                                   int64_t sender_tag,
+                                   std::string sender_node_id,
+                                   uint32_t sender_request_id,
                                    bool on_this_thread) {
     CHAOS_ASSERT(request && rpc_client)
     request->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP, published_host_and_port);
-    NetworkForwardInfo *nfi = new NetworkForwardInfo();
+    NetworkForwardInfo *nfi = new NetworkForwardInfo(true);
     nfi->destinationAddr = host;
+    nfi->sender_node_id = sender_node_id;
+    nfi->sender_request_id = sender_request_id;
     nfi->message = request;
     return rpc_client->submitMessage(nfi, on_this_thread);
 }

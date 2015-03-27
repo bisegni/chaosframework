@@ -34,7 +34,7 @@ namespace chaos {
 		namespace utility {
 #if defined(__GNUC__) && ((__GNUC__*10 + __GNUC_MINOR__) < 41)
 			
-			typedef int atomic_int_type;
+			typedef unsigned int atomic_int_type;
 			
 			static inline
 			atomic_int_type atomic_increment(volatile atomic_int_type* p)
@@ -50,7 +50,7 @@ namespace chaos {
 			
 #elif defined(__GNUC__) && ((__GNUC__*10 + __GNUC_MINOR__) >= 41)
 			
-			typedef int atomic_int_type;
+			typedef unsigned int atomic_int_type;
 			
 			static inline
 			atomic_int_type atomic_increment(volatile atomic_int_type* p) {

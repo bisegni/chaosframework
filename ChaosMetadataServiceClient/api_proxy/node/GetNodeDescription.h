@@ -17,7 +17,8 @@ namespace chaos {
             namespace node {
 
                 class GetNodeDescription:
-                protected chaos::metadata_service_client::api_proxy::ApiProxy {
+                public chaos::metadata_service_client::api_proxy::ApiProxy {
+                    API_PROXY_CLASS(GetNodeDescription)
                 protected:
                         //! default constructor
                     GetNodeDescription(chaos::common::message::MultiAddressMessageChannel *_mn_message);
@@ -26,10 +27,10 @@ namespace chaos {
                 public:
 
                     /*!
-                     
+                     Return the description of the node
+                     \param unique_node_id unique id of the node for which we need the colpete description
                      */
-                    void execute(auto_ptr<chaos::common::message::MessageRequestFuture>& result,
-                                 const std::string& unique_node_id);
+                    ApiProxyResult execute(const std::string& unique_node_id);
                 };
 
             }

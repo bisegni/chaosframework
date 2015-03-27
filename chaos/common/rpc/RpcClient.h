@@ -31,6 +31,7 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/rpc/RpcMessageForwarder.h>
+#include <chaos/common/rpc/RpcServerHandler.h>
 
 using namespace chaos::common::network;
 namespace chaos_data = chaos::common::data;
@@ -61,8 +62,9 @@ namespace chaos {
 	public common::utility::StartableService,
 	public common::utility::NamedService {
 		friend class chaos::common::network::NetworkBroker;
+        //! handler to the dispatcher to forward error on data forwarding
+        RpcServerHandler *server_handler;
     protected:
-        
         /*!
          init the rpc adapter
          */
@@ -79,14 +81,20 @@ namespace chaos {
         virtual void deinit() throw(CException) = 0;
         
         /*!
-         manage the call for the handler when nd error occours
+         Forward to dispatcher the error durngi the forwarding of the request message
          */
-        inline void callErrorHandler(NetworkForwardInfo *fInfo, ErrorCode::ErrorCode eCode);
+        void forwadSubmissionResultError(const std::string& channel_node_id,
+                                         uint32_t message_request,
+                                         chaos::common::data::CDataWrapper *submission_result);
         
         /*!
-         manage the call for the handler when the operation has ended
+         Forward to dispatcher the error durngi the forwarding of the request message
          */
-        inline void callEndOpHandler(NetworkForwardInfo *fInfo);
+        void forwadSubmissionResultError(const std::string& channel_node_id,
+                                         uint32_t message_request,
+                                         int32_t error_code,
+                                         const std::string& error_message,
+                                         const std::string& error_domain);
     public:
         /*!
          Constructor di default per i

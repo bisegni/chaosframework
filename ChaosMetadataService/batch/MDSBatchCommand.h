@@ -58,7 +58,7 @@ namespace chaos{
                 chaos::common::message::MessageChannel *getNewMessageChannel();
 
                     //! return a raw multinode message channel
-                chaos::common::message::MultiAddressMessageChannel *getNewMultinodeMessageChannel();
+                chaos::common::message::MultiAddressMessageChannel *getNewMultiAddressMessageChannel();
 
                 //! return a device message channel for a specific node address
                 chaos::common::message::DeviceMessageChannel *getNewDeviceMessageChannelForAddress(chaos::common::network::CDeviceNetworkAddress *device_network_address);
