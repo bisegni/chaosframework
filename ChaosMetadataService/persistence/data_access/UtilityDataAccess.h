@@ -30,12 +30,14 @@ namespace chaos {
                 class UtilityDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess{
                 public:
+                    DECLARE_DA_NAME
+
                     //! default constructor
                     UtilityDataAccess();
                     
                     //!default destructor
                     ~UtilityDataAccess();
-                    
+
                     virtual int getNextSequenceValue(const std::string& sequence_name, uint64_t& next_value) = 0;
                 };
                 

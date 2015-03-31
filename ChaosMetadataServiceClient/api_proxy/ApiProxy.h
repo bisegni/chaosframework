@@ -46,7 +46,8 @@ namespace chaos {
                 chaos::common::message::MultiAddressMessageChannel *mn_message;
             protected:
                     //! default constructor
-                ApiProxy(const std::string& api_name, chaos::common::message::MultiAddressMessageChannel *_mn_message);
+                ApiProxy(const std::string& api_name,
+                         chaos::common::message::MultiAddressMessageChannel *_mn_message);
                     //! default destructor
                 ~ApiProxy();
             protected:

@@ -26,6 +26,6 @@
 
 //---include all api header
 #include <ChaosMetadataServiceClient/api_proxy/node/GetNodeDescription.h>
-
+#include <ChaosMetadataServiceClient/api_proxy/node/NodeSearch.h>
 
 #endif

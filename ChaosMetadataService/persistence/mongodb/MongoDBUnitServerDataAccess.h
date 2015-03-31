@@ -20,11 +20,13 @@
 #ifndef __CHAOSFramework__MongoDBUnitServerDataAccess__
 #define __CHAOSFramework__MongoDBUnitServerDataAccess__
 
-#include "MongoDBAccessor.h"
+
 #include "MongoDBNodeDataAccess.h"
 #include "../data_access/UnitServerDataAccess.h"
 
 #include <chaos/common/utility/ObjectInstancer.h>
+
+#include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -39,7 +41,7 @@ namespace chaos {
                 //! Data Access for producer manipulation data
 				class MongoDBUnitServerDataAccess:
 				public data_access::UnitServerDataAccess,
-                protected MongoDBAccessor {
+                protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
                     
                     MongoDBNodeDataAccess *node_data_access = NULL;

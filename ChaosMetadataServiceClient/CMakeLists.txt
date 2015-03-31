@@ -1,6 +1,9 @@
 SET(mds_client_lib_src ChaosMetadataServiceClient.cpp)
 
-SET(mds_client_lib_src api_proxy ApiProxyManager.cpp)
+SET(mds_client_lib_src  api_proxy/ApiProxyManager.cpp
+                        api_proxy/ApiProxy.cpp
+                        api_proxy/node/GetNodeDescription.cpp
+                        api_proxy/node/NodeSearch.cpp)
 
 IF(BUILD_FORCE_STATIC)
 ADD_LIBRARY(chaos_metadata_service_client STATIC ${mds_client_lib_src})
@@ -20,6 +23,9 @@ INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient)
 
 FILE(GLOB files "api_proxy/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy)
+
+FILE(GLOB files "api_proxy/node/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/node)
 
 INSTALL(TARGETS chaos_metadata_service_client
 DESTINATION "lib"

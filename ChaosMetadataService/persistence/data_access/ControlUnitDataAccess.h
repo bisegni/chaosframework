@@ -30,6 +30,8 @@ namespace chaos {
                 class ControlUnitDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 public:
+                    DECLARE_DA_NAME
+
                     //! default constructor
                     ControlUnitDataAccess();
                     

@@ -20,6 +20,8 @@
 #include "ControlUnitDataAccess.h"
 using namespace chaos::metadata_service::persistence::data_access;
 
+DEFINE_DA_NAME(ControlUnitDataAccess)
+
 //! default constructor
 ControlUnitDataAccess::ControlUnitDataAccess():
 AbstractDataAccess("ControlUnitDataAccess") {

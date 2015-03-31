@@ -20,8 +20,9 @@
 #ifndef __CHAOSFramework__MetadataServiceClient__
 #define __CHAOSFramework__MetadataServiceClient__
 
-#include <ChaosMetadataServiceClient/metadata_service_client_types.h>
 #include <ChaosMetadataServiceClient/api_proxy/api.h>
+#include <ChaosMetadataServiceClient/metadata_service_client_types.h>
+
 
 #include <boost/thread/condition.hpp>
 

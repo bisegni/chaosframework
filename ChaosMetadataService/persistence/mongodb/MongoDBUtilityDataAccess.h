@@ -20,9 +20,11 @@
 #ifndef __CHAOSFramework__MongoDBUtilityDataAccess__
 #define __CHAOSFramework__MongoDBUtilityDataAccess__
 
-#include "MongoDBAccessor.h"
 #include "../data_access/UtilityDataAccess.h"
+
 #include <chaos/common/utility/ObjectInstancer.h>
+#include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
+
 namespace chaos {
     namespace metadata_service {
         namespace persistence {
@@ -33,7 +35,7 @@ namespace chaos {
                 //! Data Access for producer manipulation data
                 class MongoDBUtilityDataAccess:
                 public data_access::UtilityDataAccess,
-                protected MongoDBAccessor {
+                protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
                 protected:
                     MongoDBUtilityDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);

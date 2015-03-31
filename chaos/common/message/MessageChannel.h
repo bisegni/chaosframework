@@ -103,14 +103,14 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 				 */
 				virtual void deinit() throw(CException);
 
-				/*!
-				 Called when a response to a request is received, it will manage the search of
-				 the apprioriate handler for the request
-				 */
-                chaos::common::data::CDataWrapper* response(common::data::CDataWrapper *reposnse_data,
-                                                            bool& detach);
-
 			protected:
+                /*!
+                 Called when a response to a request is received, it will manage the search of
+                 the apprioriate handler for the request
+                 */
+                virtual chaos::common::data::CDataWrapper* response(common::data::CDataWrapper *reposnse_data,
+                                                                    bool& detach);
+                
 				//! Message broker associated with the channel instance
 				NetworkBroker *broker;
 

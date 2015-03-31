@@ -24,6 +24,10 @@
 
 #include <chaos/common/utility/NamedService.h>
 
+
+#define DECLARE_DA_NAME static const char * const name;
+#define DEFINE_DA_NAME(x) const char * const x::name=#x;
+
 namespace chaos {
     namespace service_common {
         namespace persistence {

@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #ifndef __CHAOSFramework__MongoDBAccessor__
 #define __CHAOSFramework__MongoDBAccessor__
 
@@ -24,13 +25,22 @@
 
 #include <boost/format.hpp>
 
+
+    //! add a regex on a field
+/*!
+ create a return a BSON object with a query expresion with a regular expression like:
+ { field_name: {$regex:regex}}
+ */
+#define MONGODB_REGEX_ON_FILED(field_name, regex) BSON(field_name << BSON("$regex" << regex))
+
 namespace chaos {
-    namespace metadata_service {
+    namespace service_common {
         namespace persistence {
             namespace mongodb {
-                
-                class MongoDBPersistenceDriver;
-                
+
+                typedef std::vector<mongo::BSONObj>             SearchResult;
+                typedef std::vector<mongo::BSONObj>::iterator   SearchResultIterator;
+
                 class MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
                 protected:
@@ -51,8 +61,9 @@ namespace chaos {
                      \param from is the last value that we have found on previous searh
                      \param limit is the number of the element that we need to retrieve
                      */
-                    int performPagedQuery(std::vector<mongo::BSONObj>& paged_result,
-                                          mongo::BSONObj q,
+                    int performPagedQuery(SearchResult& paged_result,
+                                          const std::string& db_collection,
+                                          mongo::Query q,
                                           mongo::BSONObj *prj = NULL,
                                           mongo::BSONObj *from = NULL,
                                           uint32_t limit = 50);

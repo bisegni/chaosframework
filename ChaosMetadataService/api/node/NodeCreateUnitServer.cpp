@@ -53,7 +53,7 @@ chaos::common::data::CDataWrapper *NodeCreateUnitServer::execute(chaos::common::
     }
     
     //!get the unit server data access
-    persistence::data_access::UnitServerDataAccess *us_da = getPersistenceDriver()->getDataAccess<persistence::data_access::UnitServerDataAccess>("UnitServerDataAccess");
+    persistence::data_access::UnitServerDataAccess *us_da = getPersistenceDriver()->getDataAccess<persistence::data_access::UnitServerDataAccess>();
     if(us_da->checkUSPresence(api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), presence)) {
         
     }

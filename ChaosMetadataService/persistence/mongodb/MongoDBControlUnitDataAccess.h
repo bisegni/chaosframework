@@ -21,10 +21,12 @@
 #define __CHAOSFramework__MongoDBControlUnitDataAccess__
 
 
-#include "MongoDBAccessor.h"
 #include "MongoDBNodeDataAccess.h"
 #include "../data_access/ControlUnitDataAccess.h"
+
 #include <chaos/common/utility/ObjectInstancer.h>
+#include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
+
 namespace chaos {
     namespace metadata_service {
         namespace persistence {
@@ -35,7 +37,7 @@ namespace chaos {
                 //! Data Access for producer manipulation data
                 class MongoDBControlUnitDataAccess:
                 public data_access::ControlUnitDataAccess,
-                protected MongoDBAccessor {
+                protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
                     
                     MongoDBNodeDataAccess *node_data_access = NULL;

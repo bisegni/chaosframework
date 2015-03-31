@@ -25,11 +25,30 @@ LIBS +=     -lzmq\
             -lboost_system\
             -lboost_thread\
             -lboost_program_options\
-            -lboost_regex
+            -lboost_regex\
+            -lboost_filesystem
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    search/SearchNodeResult.cpp \
+    search/SearchNode.cpp \
+    presenter/PresenterWidget.cpp \
+    presenter/CommandPresenter.cpp \
+    async_worker/AsyncWorker.cpp \
+    async_worker/ApiWorker.cpp \
+    data/ChaosData.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    search/SearchNodeResult.h \
+    search/SearchNode.h \
+    presenter/PresenterWidget.h \
+    presenter/CommandPresenter.h \
+    async_worker/AsyncWorker.h \
+    async_worker/ApiWorker.h \
+    data/ChaosData.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    search/searchnoderesult.ui \
+    search/searchnode.ui
+
+DISTFILES +=

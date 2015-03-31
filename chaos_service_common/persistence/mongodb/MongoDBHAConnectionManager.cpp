@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 INFN. All rights reserved.
 //
 
-#include "MongoDBHAConnectionManager.h"
+#include <chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.h>
 
 #include <chaos/common/utility/TimingUtil.h>
 

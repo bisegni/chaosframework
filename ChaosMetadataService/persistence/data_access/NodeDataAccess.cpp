@@ -21,6 +21,8 @@
 
 using namespace chaos::metadata_service::persistence::data_access;
 
+DEFINE_DA_NAME(NodeDataAccess)
+
 NodeDataAccess::NodeDataAccess():
 AbstractDataAccess("NodeDataAccess") {
     

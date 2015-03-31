@@ -53,14 +53,14 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
 													_setting->persistence_kv_param_map));
     
     //register the data access implementations
-    registerDataAccess<data_access::UnitServerDataAccess>("UnitServerDataAccess", new MongoDBUnitServerDataAccess(connection));
-    registerDataAccess<data_access::NodeDataAccess>("NodeDataAccess", new MongoDBNodeDataAccess(connection));
-    registerDataAccess<data_access::ControlUnitDataAccess>("ControlUnitDataAccess", new MongoDBControlUnitDataAccess(connection));
-    registerDataAccess<data_access::UtilityDataAccess>("UtilityDataAccess", new MongoDBUtilityDataAccess(connection));
+    registerDataAccess<data_access::UnitServerDataAccess>(new MongoDBUnitServerDataAccess(connection));
+    registerDataAccess<data_access::NodeDataAccess>(new MongoDBNodeDataAccess(connection));
+    registerDataAccess<data_access::ControlUnitDataAccess>(new MongoDBControlUnitDataAccess(connection));
+    registerDataAccess<data_access::UtilityDataAccess>(new MongoDBUtilityDataAccess(connection));
     
     //connec usda with nda
-    getDataAccess<MongoDBUnitServerDataAccess>("UnitServerDataAccess")->node_data_access = getDataAccess<MongoDBNodeDataAccess>("NodeDataAccess");
-    getDataAccess<MongoDBControlUnitDataAccess>("ControlUnitDataAccess")->node_data_access = getDataAccess<MongoDBNodeDataAccess>("NodeDataAccess");
+    getDataAccess<MongoDBUnitServerDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
+    getDataAccess<MongoDBControlUnitDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
 }
 void MongoDBPersistenceDriver::deinit() throw (chaos::CException) {
 	connection.reset();

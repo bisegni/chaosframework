@@ -17,13 +17,13 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "MongoDBAccessor.h"
+
+#include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
 #include <chaos/common/global.h>
 #define MDBACC_INFO INFO_LOG(MongoDBAccessor)
 #define MDBACC_DBG  DBG_LOG(MongoDBAccessor)
 #define MDBACC_ERR  ERR_LOG(MongoDBAccessor)
 
-using namespace chaos::metadata_service::persistence::mongodb;
 using namespace chaos::service_common::persistence::mongodb;
 
 MongoDBAccessor::MongoDBAccessor(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection):
@@ -39,28 +39,25 @@ const std::string& MongoDBAccessor::getDatabaseName() {
     return connection->getDatabaseName();
 }
 
-int MongoDBAccessor::performPagedQuery(std::vector<mongo::BSONObj>& paged_result,
-                                       mongo::BSONObj q,
+int MongoDBAccessor::performPagedQuery(SearchResult& paged_result,
+                                       const std::string& db_collection,
+                                       mongo::Query q,
                                        mongo::BSONObj *prj,
                                        mongo::BSONObj *from,
                                        uint32_t limit) {
     int err = 0;
     try {
-        
         //set the update
-    
-            
         DEBUG_CODE(MDBACC_DBG << "performPagedQuery ---------------------------------------------";)
-        DEBUG_CODE(MDBACC_DBG << "Query: "  << q.jsonString();)
-        if(prj) DEBUG_CODE(MDBACC_DBG << "Projection: "  << prj->jsonString();)
-        if(from) DEBUG_CODE(MDBACC_DBG << "Starting from: "  << from->jsonString();)
+        DEBUG_CODE(MDBACC_DBG << "Query: "  << q.toString();)
+        if(prj) DEBUG_CODE(MDBACC_DBG << "Projection: "  << prj->toString();)
+        if(from) DEBUG_CODE(MDBACC_DBG << "Starting from: "  << from->toString();)
         DEBUG_CODE(MDBACC_DBG << "Limit: "  << limit;)
         DEBUG_CODE(MDBACC_DBG << "performPagedQuery ---------------------------------------------";)
-        
-        
+        connection->findN(paged_result, db_collection, q, limit, 0, prj);
     } catch (const mongo::DBException &e) {
         MDBACC_ERR << e.what();
-        err = -1;
+        err = e.getCode();
     } catch (const chaos::CException &e) {
         MDBACC_ERR << e.what();
         err = e.errorCode;

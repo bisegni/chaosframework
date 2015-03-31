@@ -25,6 +25,10 @@ using namespace chaos::common::data;
 using namespace chaos::common::message;
 using namespace chaos::common::network;
 
+#define MAMC_APP INFO_LOG(MultiAddressMessageChannel)
+#define MAMC_DBG DBG_LOG(MultiAddressMessageChannel)
+#define MAMC_ERR ERR_LOG(MultiAddressMessageChannel)
+
     //! default constructor
 MultiAddressMessageChannel::MultiAddressMessageChannel(NetworkBroker *message_broker):
 MessageChannel(message_broker),
@@ -52,10 +56,27 @@ service_feeder("MultiAddressMessageChannel", this) {
     }
 }
 
+//
 MultiAddressMessageChannel::~MultiAddressMessageChannel() {
     service_feeder.clear();
 }
 
+//
+chaos::common::data::CDataWrapper* MultiAddressMessageChannel::response(common::data::CDataWrapper *response_data,
+                                                                        bool& detach) {
+    MAMC_DBG << "MultiAddressMessageChannel HA managment";
+    if(response_data && response_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_SERVER_ADDR)) {
+        // i need to resend the data to another server
+        const std::string server_addr = response_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_SERVER_ADDR);
+        const uint32_t message_request_id = response_data->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
+    } else {
+         MessageChannel::response(response_data,
+                                        detach);
+    }
+    return NULL;
+}
+
+//
 void MultiAddressMessageChannel::addNode(const CNetworkAddress& node_address) {
     if(map_url_node_id.count(node_address.ip_port) > 0) {
         //node already present
@@ -68,6 +89,7 @@ void MultiAddressMessageChannel::addNode(const CNetworkAddress& node_address) {
                                                                                node_address)));
 }
 
+//
 void MultiAddressMessageChannel::removeNode(const CNetworkAddress& node_address) {
     if(map_url_node_id.count(node_address.ip_port) == 0) {
         //node not present
@@ -78,11 +100,13 @@ void MultiAddressMessageChannel::removeNode(const CNetworkAddress& node_address)
     map_url_node_id.erase(node_address.ip_port);
 }
 
+//
 void  MultiAddressMessageChannel::disposeService(void *service_ptr) {
     MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);
     if(service) delete(service);
 }
 
+//
 void* MultiAddressMessageChannel::serviceForURL(const URL& url,
                                              uint32_t service_index) {
     MMCFeederService *service = new MMCFeederService(url.getURL());

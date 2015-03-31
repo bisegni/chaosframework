@@ -30,7 +30,11 @@ namespace chaos {
 #define LOG_AND_TROW(log, num, err)\
 log << "("<<num<<") " << err;\
 throw chaos::CException(-1, err, __PRETTY_FUNCTION__);
-            
+
+#define GET_DATA_ACCESS(x,v, err)\
+x *v = getPersistenceDriver()->getDataAccess<x>();\
+if(v == NULL) throw CException(err, "Error allocating " #x, __PRETTY_FUNCTION__);
+
 			//! Api abstraction
 			/*!
 			 This class define the rule for the api development

@@ -19,7 +19,10 @@
  */
 #include "UtilityDataAccess.h"
 using namespace chaos::metadata_service::persistence::data_access;
-//! default constructor
+
+DEFINE_DA_NAME(UtilityDataAccess)
+
+    //! default constructor
 UtilityDataAccess::UtilityDataAccess():
 AbstractDataAccess("UtilityDataAccess") {
     

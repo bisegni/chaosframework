@@ -23,6 +23,7 @@
 #include "MongoDBAccessor.h"
 #include "../data_access/NodeDataAccess.h"
 #include <chaos/common/utility/ObjectInstancer.h>
+#include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
 namespace chaos {
     namespace metadata_service {
         namespace persistence {
@@ -33,7 +34,7 @@ namespace chaos {
                 //! Data Access for producer manipulation data
                 class MongoDBNodeDataAccess:
                 public data_access::NodeDataAccess,
-                protected MongoDBAccessor {
+                protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
                 protected:
                     MongoDBNodeDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
@@ -55,6 +56,13 @@ namespace chaos {
                     
                     //! inherited method
                     int deleteNode(const std::string& node_unique_id);
+
+                    //! inherited method
+                    int searchNode(chaos::common::data::CDataWrapper **result,
+                                   const std::string& criteria,
+                                   uint32_t search_type,
+                                   uint32_t last_unique_id,
+                                   uint32_t page_length);
                 };
 
                 

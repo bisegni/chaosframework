@@ -132,7 +132,6 @@ void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClas
     
     //call superclass method
     AbstractCommandDispatcher::deregisterAction(declareActionClass);
-    //BUG
     
     chaos::common::thread::WriteLock w_lock(das_map_mutex);
     

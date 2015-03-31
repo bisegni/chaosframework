@@ -22,10 +22,9 @@
 #define CHAOSFramework_NetworkForwardInfo_h
 #include <stdint.h>
 #include <string>
+#include <memory>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
-
-namespace chaos_data = chaos::common::data;
 
 namespace chaos {
 	namespace common {
@@ -39,9 +38,7 @@ namespace chaos {
 				//!Define the information ip:port used to reach a remote chaos network broker
 				std::string destinationAddr;
 				//! the message data
-				chaos_data::CDataWrapper *message;
-				//! the information for the emitter returned in all hadnler call
-				const char *emitterIdentifier;
+                std::auto_ptr<chaos::common::data::CDataWrapper> message;
 				//! tag returned in all handler call used by emitter
 				int64_t tag;
 				//! the ndoe id of the sender channel
@@ -53,23 +50,24 @@ namespace chaos {
                 is_request(_is_request),
 				destinationAddr(""),
 				message(NULL),
-				emitterIdentifier(NULL),
 				tag(0),
                 sender_node_id(""),
                 sender_request_id(0){}
 
                 ~NetworkForwardInfo(){
-                    if(message) {
-                        delete(message);
-                        message = NULL;
-                    }
 				}
 				
-				chaos_data::CDataWrapper *detachMessage() {
-					chaos_data::CDataWrapper *result = message;
-					message = NULL;
-					return result;
+                void setMessage(chaos::common::data::CDataWrapper *_message) {
+                    message.reset(_message);
+                }
+                
+				chaos::common::data::CDataWrapper *detachMessage() {
+					return message.release();
 				}
+                
+                bool hasMessage() {
+                    return message.get() != NULL;
+                }
 			} NetworkForwardInfo;
 		}
 	}

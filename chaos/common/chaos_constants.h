@@ -666,6 +666,13 @@ namespace chaos {
 		//!key action submission error code
 		static const char * const CS_CMDM_ACTION_SUBMISSION_ERROR_CODE        = "act_sub_ecode";
 		
+        //!key action submission error server address
+        /*!
+         Identify the address of the server that can be reached or that don't have sent the ack
+         message
+         */
+        static const char * const CS_CMDM_ACTION_SUBMISSION_ERROR_SERVER_ADDR = "act_sub_e_srv_addr";
+        
 		//!key for action sub command description
 		static const char * const CS_CMDM_SUB_CMD                             = "sub_cmd";
 		

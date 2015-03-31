@@ -99,6 +99,13 @@ namespace chaos {
                 void  disposeService(void *service_ptr);
                 void* serviceForURL(const chaos::common::network::URL& url,
                                     uint32_t service_index);
+                
+                //!overloading of the response message for the HA feature
+                /*!
+                 On error the address need to be tagged as offline
+                 */
+                chaos::common::data::CDataWrapper* response(common::data::CDataWrapper *response_data,
+                                                            bool& detach);
             public:
                 //! add a new node to the channel
                 void addNode(const chaos::common::network::CNetworkAddress& node_address);

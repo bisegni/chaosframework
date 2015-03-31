@@ -484,7 +484,7 @@ bool NetworkBroker::submitMessage(const string& host,
     CHAOS_ASSERT(message && rpc_client)
     NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
     nfi->destinationAddr = host;
-    nfi->message = message;
+    nfi->setMessage(message);
 	//add answer id to datawrapper
     return rpc_client->submitMessage(nfi, on_this_thread);
 }
@@ -503,7 +503,7 @@ bool NetworkBroker::submiteRequest(const string& host,
     nfi->destinationAddr = host;
     nfi->sender_node_id = sender_node_id;
     nfi->sender_request_id = sender_request_id;
-    nfi->message = request;
+    nfi->setMessage(request);
     return rpc_client->submitMessage(nfi, on_this_thread);
 }
 

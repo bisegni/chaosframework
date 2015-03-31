@@ -92,9 +92,11 @@ namespace chaos {
          */
         void forwadSubmissionResultError(const std::string& channel_node_id,
                                          uint32_t message_request,
+                                         const std::string& server_address,
                                          int32_t error_code,
                                          const std::string& error_message,
-                                         const std::string& error_domain);
+                                         const std::string& error_domain,
+                                         chaos::common::data::CDataWrapper *message_in_error);
     public:
         /*!
          Constructor di default per i

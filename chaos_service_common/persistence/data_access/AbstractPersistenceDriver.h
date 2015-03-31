@@ -72,7 +72,8 @@ namespace chaos {
                     
                     //!register a dataaccess implementation with base name ampping
                     template<typename S>
-                    void registerDataAccess(const std::string& alias, S *instance) {
+                    void registerDataAccess(S *instance) {
+                        const std::string alias = S::name;
                         map_data_access.insert(make_pair(alias, new DAInstanceContainer<S>(instance)));
                     }
                     virtual void deleteDataAccess(void *instance) = 0;
@@ -88,8 +89,8 @@ namespace chaos {
                     
                     //! return the implementation of the unit server data access
                     template<typename D>
-                    D *getDataAccess(const std::string& alias) {
-                        return static_cast<D*>(map_data_access[alias]->getInstance());
+                    D *getDataAccess() {
+                        return static_cast<D*>(map_data_access[D::name]->getInstance());
                     }
 
                 };

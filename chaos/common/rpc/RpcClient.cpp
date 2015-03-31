@@ -62,9 +62,11 @@ void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
  */
 void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
                                             uint32_t message_request_id,
+                                            const std::string& server_address,
                                             int32_t error_code,
                                             const std::string& error_message,
-                                            const std::string& error_domain) {
+                                            const std::string& error_domain,
+                                            chaos::common::data::CDataWrapper *message_in_error) {
     RPCC_LDBG << "Error on sending (code:" <<error_code << " Message:" << error_message << ")";
     
     CDataWrapper *answer = new CDataWrapper();
@@ -82,7 +84,7 @@ void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
     submission_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, error_code);
     submission_result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, error_domain);
     submission_result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, error_message);
-    
+    submission_result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_SERVER_ADDR, server_address);
     answer->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result.get());
     //forward answer to channel
     auto_ptr<CDataWrapper> to_delete(server_handler->dispatchCommand(answer));
