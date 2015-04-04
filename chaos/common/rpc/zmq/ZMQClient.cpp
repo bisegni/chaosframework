@@ -149,8 +149,8 @@ bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread
 boost::shared_ptr<SocketInfo> ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi) {
     int	err = 0;
     int linger = 500;
-    int water_mark = 100;
-    int timeout = 2000;
+    int water_mark = 10;
+    int timeout = 5000;
     boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
     if(!map_socket.count(nfi->destinationAddr)) {
         ZMQC_LDBG << "Create new socket for " << nfi->destinationAddr;
@@ -239,13 +239,10 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
             std::string error_message =zmq_strerror(sent_error);
             ZMQC_LERR << "Error allcoating zmq messagecode:" << sent_error << " message:" <<error_message;
             if(messageInfo->is_request) {
-                forwadSubmissionResultError(messageInfo->sender_node_id,
-                                            messageInfo->sender_request_id,
-                                            messageInfo->destinationAddr,
+                forwadSubmissionResultError(messageInfo,
                                             -1,
                                             "Error initializiend rcp message",
-                                            __PRETTY_FUNCTION__,
-                                            messageInfo->detachMessage());
+                                            __PRETTY_FUNCTION__);
             }
         } else {
             ZMQC_LDBG << "Try to send message";
@@ -255,13 +252,10 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                 std::string error_message =zmq_strerror(sent_error);
                 ZMQC_LERR << "Error sending message with code:" << sent_error << " message:" <<error_message;
                 if(messageInfo->is_request) {
-                    forwadSubmissionResultError(messageInfo->sender_node_id,
-                                                messageInfo->sender_request_id,
-                                                messageInfo->destinationAddr,
+                    forwadSubmissionResultError(messageInfo,
                                                 sent_error,
                                                 error_message,
-                                                __PRETTY_FUNCTION__,
-                                                messageInfo->detachMessage());
+                                                __PRETTY_FUNCTION__);
                 }
             }else{
                 ZMQC_LDBG << "Message sent now wait for ack";
@@ -272,33 +266,29 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                     std::string error_message = zmq_strerror(sent_error);
                     ZMQC_LERR << "Error receiving ack for message message with code:" << sent_error << " message:" <<error_message;
                     if(messageInfo->is_request) {
-                        forwadSubmissionResultError(messageInfo->sender_node_id,
-                                                    messageInfo->sender_request_id,
-                                                    messageInfo->destinationAddr,
+                        forwadSubmissionResultError(messageInfo,
                                                     sent_error,
                                                     error_message,
-                                                    __PRETTY_FUNCTION__,
-                                                    messageInfo->detachMessage());
+                                                    __PRETTY_FUNCTION__);
                     }
                 } else {
                     //decode result of the posting message operation
                     if(messageInfo->is_request) {
                         if(zmq_msg_size(&reply)>0){
-                            ZMQC_LDBG << "ACK Received";
+                            ZMQC_LDBG << "ACK Received for request";
                             //there is a reply so we need to check if all ok or in case answer to request
                             forwadSubmissionResultError(messageInfo->sender_node_id,
                                                         messageInfo->sender_request_id,
                                                         new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
                         } else {
                             ZMQC_LDBG << "Bad ACK received";
-                            forwadSubmissionResultError(messageInfo->sender_node_id,
-                                                        messageInfo->sender_request_id,
-                                                        messageInfo->destinationAddr,
+                            forwadSubmissionResultError(messageInfo,
                                                         -1,
                                                         "bad ack received",
-                                                        __PRETTY_FUNCTION__,
-                                                        messageInfo->detachMessage());
+                                                        __PRETTY_FUNCTION__);
                         }
+                    } else {
+                        ZMQC_LDBG << "ACK Received for message";
                     }
                 }
             }

@@ -81,10 +81,10 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 			 */
 			class MessageChannel : public DeclareAction {
 				friend class chaos::common::network::NetworkBroker;
-
-				//! the domain associate to this domain for get the answers
-                std::string channel_reponse_domain;
-
+                
+                //! Message broker associated with the channel instance
+                NetworkBroker *broker;
+                
 				//! atomic int for request id
                 boost::atomic<uint32_t> channel_request_id_counter;
 
@@ -110,10 +110,10 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  */
                 virtual chaos::common::data::CDataWrapper* response(common::data::CDataWrapper *reposnse_data,
                                                                     bool& detach);
-                
-				//! Message broker associated with the channel instance
-				NetworkBroker *broker;
 
+                //! the domain associate to this domain for get the answers
+                std::string channel_reponse_domain;
+                
 				//!last error domain
 				std::string last_error_domain;
 
@@ -197,7 +197,8 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 virtual std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string& remote_host,
                                                                                   const std::string& node_id,
                                                                                   const std::string& action_name,
-                                                                                  chaos::common::data::CDataWrapper *request_pack);
+                                                                                  chaos::common::data::CDataWrapper *request_pack = NULL,
+                                                                                  bool on_this_thread = false);
 
                 //! get the rpc published host and port
                 void getRpcPublishedHostAndPort(std::string& rpc_published_host_port);

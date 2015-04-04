@@ -27,9 +27,10 @@ MessageRequestFuture::MessageRequestFuture(chaos::common::utility::atomic_int_ty
 request_id(_request_id),
 future(_future),
 request_result(NULL),
-error_code(0),
+error_code(-1),
 error_message(""),
-error_domain(""){
+error_domain(""),
+local_result(false) {
 
 }
     //!private destructor
@@ -47,31 +48,28 @@ bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
     } else {
         future.wait();
     }
-    
-    return future.is_ready();
+
+    if(future.is_ready() &&
+                future.has_value()) {
+        MRF_PARSE_CDWPTR_RESULT(future.get())
+        return true;
+    } else {
+        return false;
+    }
 }
 
     //! try to get the result waiting for a determinate period of time
 chaos::common::data::CDataWrapper *MessageRequestFuture::getResult() {
-        //! see if we have already the result
-    if(request_result.get()) {
-        return request_result.get();
-    }
         //! wait for result
-    if(future.is_ready() &&
-       future.has_value()) {
-        MRF_PARSE_CDWPTR_RESULT(future.get())
-        return request_result.get();
-    } else {
-        return NULL;
-    }
+    return request_result.get();
+
 }
 
 chaos::common::data::CDataWrapper *MessageRequestFuture::detachResult() {
     return request_result.release();
 }
 
-const chaos::common::utility::atomic_int_type& MessageRequestFuture::getRequestID() {
+uint32_t const & MessageRequestFuture::getRequestID() {
     return request_id;
 }
 
@@ -85,4 +83,8 @@ const std::string& MessageRequestFuture::getErrorDomain() const {
 
 const std::string& MessageRequestFuture::getErrorMessage() const {
     return error_message;
+}
+
+bool MessageRequestFuture::isRemoteMeaning() {
+    return !local_result;
 }

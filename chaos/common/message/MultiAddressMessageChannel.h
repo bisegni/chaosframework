@@ -20,6 +20,7 @@
 #ifndef __CHAOSFramework__MultiAddressMessageChannel__
 #define __CHAOSFramework__MultiAddressMessageChannel__
 #include <chaos/common/message/MessageChannel.h>
+#include <chaos/common/message/MultiAddressMessageRequestFuture.h>
 #include <chaos/common/network/URLServiceFeeder.h>
 
 #include <map>
@@ -67,6 +68,7 @@ namespace chaos {
             private MessageChannel,
             private chaos::common::network::URLServiceFeederHandler {
                 friend class chaos::common::network::NetworkBroker;
+                friend class chaos::common::message::MultiAddressMessageRequestFuture;
 
                 //! url manager
                 chaos::common::network::URLServiceFeeder service_feeder;
@@ -92,6 +94,20 @@ namespace chaos {
                                         const std::vector<chaos::common::network::CNetworkAddress>& node_address);
                 
                 ~MultiAddressMessageChannel();
+
+                    //!internal send request method
+                /*!
+                 send an rpc request with url feeder rule for servec choice and return the future.
+                 IMPORTANT: the memory for request data is internally managed by the channel for permitting the
+                 retransmission on timeout
+                 \param action_name the name of the action to call
+                 \param request_pack the request pack to forward to the action
+                 \return the future of the request or null if no server has been found
+                 */
+                std::auto_ptr<MessageRequestFuture> _sendRequestWithFuture(const std::string& action_domain,
+                                                                           const std::string& action_name,
+                                                                           chaos::common::data::CDataWrapper *request_pack,
+                                                                           std::string& used_remote_address);
             protected:
                 //! the map link the url with the ndoe id
                 std::map<std::string, CNetworkAddressInfo> map_url_node_id;
@@ -100,20 +116,16 @@ namespace chaos {
                 void* serviceForURL(const chaos::common::network::URL& url,
                                     uint32_t service_index);
                 
-                //!overloading of the response message for the HA feature
-                /*!
-                 On error the address need to be tagged as offline
-                 */
-                chaos::common::data::CDataWrapper* response(common::data::CDataWrapper *response_data,
-                                                            bool& detach);
             public:
+                const CNetworkAddressInfo& getRemoteAddressInfo(const std::string& remote_address);
+
                 //! add a new node to the channel
                 void addNode(const chaos::common::network::CNetworkAddress& node_address);
                 //! remove a node from the channel
                 void removeNode(const chaos::common::network::CNetworkAddress& node_address);
                 //! get the rpc published host and port
                 void getRpcPublishedHostAndPort(std::string& rpc_published_host_port);
-                
+
                 /*!
                  \brief send a message
                  \param node_id id of the remote node within a network broker interface
@@ -128,14 +140,17 @@ namespace chaos {
                 
                 //!send an rpc request to a remote node
                 /*!
-                 send an rpc request with url feeder rule for servec choice and return the future
+                 send an rpc request with url feeder rule for servec choice and return the future.
+                 IMPORTANT: the memory for request data is internally managed by the channel for permitting the
+                 retransmission on timeout
                  \param action_name the name of the action to call
                  \param request_pack the request pack to forward to the action
                  \return the future of the request or null if no server has been found
                  */
-                std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string& action_domain,
-                                                                          const std::string& action_name,
-                                                                          chaos::common::data::CDataWrapper *request_pack);
+                std::auto_ptr<MultiAddressMessageRequestFuture> sendRequestWithFuture(const std::string& action_domain,
+                                                                                      const std::string& action_name,
+                                                                                      chaos::common::data::CDataWrapper *request_pack,
+                                                                                      int32_t request_timeout = 1000);
             };
         }
     }

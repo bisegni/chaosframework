@@ -78,8 +78,8 @@ namespace chaos {
             void deinit()throw(CException);
             
             template<typename D>
-            D* getApiProxy() {
-                return api_proxy_manager->getApiProxy<D>();
+            D* getApiProxy(int32_t timeout_in_milliseconds = 1000) {
+                return api_proxy_manager->getApiProxy<D>(timeout_in_milliseconds);
             }
         };
     }

@@ -35,6 +35,7 @@ using namespace chaos::common::utility;
 
 MessageChannel::MessageChannel(NetworkBroker *_broker):
 broker(_broker),
+channel_reponse_domain(UUIDUtil::generateUUIDLite()),
 channel_request_id_counter(0){
     
 }
@@ -47,9 +48,7 @@ MessageChannel::~MessageChannel() {
  Initialization phase
  */
 void MessageChannel::init() throw(CException) {
-    //create a new channel id
-    channel_reponse_domain = UUIDUtil::generateUUIDLite();
-    
+
     //register the action for the response
     DeclareAction::addActionDescritionInstance<MessageChannel>(this,
                                                                &MessageChannel::response,
@@ -184,7 +183,8 @@ CDataWrapper* MessageChannel::sendRequest(const std::string& remote_host,
 std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const std::string& remote_host,
                                                                           const std::string& node_id,
                                                                           const std::string& action_name,
-                                                                          CDataWrapper *request_pack) {
+                                                                          CDataWrapper *request_pack,
+                                                                          bool on_this_thread) {
     CHAOS_ASSERT(broker)
     auto_ptr<MessageRequestFuture> result;
     CDataWrapper *data_pack = new CDataWrapper();
@@ -216,7 +216,7 @@ std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const 
                            data_pack,
                            channel_reponse_domain,
                            current_request_id,
-                           true);
+                           on_this_thread);
     return result;
 }
 

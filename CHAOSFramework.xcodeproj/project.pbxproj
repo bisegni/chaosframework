@@ -62,6 +62,8 @@
 		323386B11ACD731E008863DC /* NodeSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323386AF1ACD731E008863DC /* NodeSearch.cpp */; };
 		323386B21ACD731E008863DC /* NodeSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = 323386B01ACD731E008863DC /* NodeSearch.h */; };
 		323386B71AD3C4C6008863DC /* MongoDBAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323386B31AD3C45E008863DC /* MongoDBAccessor.cpp */; };
+		323386BA1AD3D78E008863DC /* MultiAddressMessageRequestFuture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323386B81AD3D78E008863DC /* MultiAddressMessageRequestFuture.cpp */; };
+		323386BB1AD3D78E008863DC /* MultiAddressMessageRequestFuture.h in Headers */ = {isa = PBXBuildFile; fileRef = 323386B91AD3D78E008863DC /* MultiAddressMessageRequestFuture.h */; };
 		3235110A17B3EAE500E39E14 /* TemplatedConcurrentQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */; };
 		3235425C1923A5C70090B8F6 /* StageDataConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */; };
 		3235FDC71A6FF43000EC83A9 /* ProducerApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDC51A6FF43000EC83A9 /* ProducerApiGroup.cpp */; };
@@ -687,6 +689,8 @@
 		323386B01ACD731E008863DC /* NodeSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeSearch.h; sourceTree = "<group>"; };
 		323386B31AD3C45E008863DC /* MongoDBAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBAccessor.cpp; sourceTree = "<group>"; };
 		323386B41AD3C45E008863DC /* MongoDBAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBAccessor.h; sourceTree = "<group>"; };
+		323386B81AD3D78E008863DC /* MultiAddressMessageRequestFuture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiAddressMessageRequestFuture.cpp; sourceTree = "<group>"; };
+		323386B91AD3D78E008863DC /* MultiAddressMessageRequestFuture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiAddressMessageRequestFuture.h; sourceTree = "<group>"; };
 		3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedConcurrentQueue.h; sourceTree = "<group>"; };
 		3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StageDataConsumer.cpp; sourceTree = "<group>"; };
 		3235425B1923A5C70090B8F6 /* StageDataConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StageDataConsumer.h; sourceTree = "<group>"; };
@@ -2537,12 +2541,14 @@
 			children = (
 				32AAD78B14CD773F005A097C /* MessageChannel.cpp */,
 				32AAD78914CD772F005A097C /* MessageChannel.h */,
+				32661C731AA867E100F1A721 /* MessageRequestFuture.cpp */,
+				32661C741AA867E100F1A721 /* MessageRequestFuture.h */,
 				32661C6F1AA74E4700F1A721 /* NodeMessageChannel.cpp */,
 				3297F22A14D96F8D004FFE4F /* NodeMessageChannel.h */,
 				32963A1F1AC08F7200FA72FA /* MultiAddressMessageChannel.cpp */,
 				32963A201AC08F7200FA72FA /* MultiAddressMessageChannel.h */,
-				32661C731AA867E100F1A721 /* MessageRequestFuture.cpp */,
-				32661C741AA867E100F1A721 /* MessageRequestFuture.h */,
+				323386B81AD3D78E008863DC /* MultiAddressMessageRequestFuture.cpp */,
+				323386B91AD3D78E008863DC /* MultiAddressMessageRequestFuture.h */,
 				32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */,
 				32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */,
 				3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */,
@@ -3182,6 +3188,7 @@
 				324A4B46191A41EF00975394 /* atomic_intrinsics_gcc_generic.h in Headers */,
 				32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */,
 				329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */,
+				323386BB1AD3D78E008863DC /* MultiAddressMessageRequestFuture.h in Headers */,
 				327CFF0A1708C4EB0069497B /* FastHash.h in Headers */,
 				327CFF121708D7760069497B /* CacheGlobal.h in Headers */,
 				32EE897C191A78DB00DE2F29 /* embedded_builder.h in Headers */,
@@ -3618,6 +3625,7 @@
 				3296031E1876B45000CDCADA /* AttributeValueSharedCache.cpp in Sources */,
 				326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */,
 				326DB46D14B38BC00018A8D0 /* DomainActionsScheduler.cpp in Sources */,
+				323386BA1AD3D78E008863DC /* MultiAddressMessageRequestFuture.cpp in Sources */,
 				326DB47414B38BC00018A8D0 /* IOMemcachedIODriver.cpp in Sources */,
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,
 				32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */,

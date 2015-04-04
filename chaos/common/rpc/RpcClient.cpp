@@ -60,31 +60,31 @@ void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
 /*!
  Forward to dispatcher the error durngi the forwarding of the request message
  */
-void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
-                                            uint32_t message_request_id,
-                                            const std::string& server_address,
+void RpcClient::forwadSubmissionResultError(NetworkForwardInfo *message_info,
                                             int32_t error_code,
                                             const std::string& error_message,
-                                            const std::string& error_domain,
-                                            chaos::common::data::CDataWrapper *message_in_error) {
-    RPCC_LDBG << "Error on sending (code:" <<error_code << " Message:" << error_message << ")";
+                                            const std::string& error_domain) {
+    RPCC_LDBG << "Error on sending (code:" << error_code << " Message:" << error_message << ")";
     
     CDataWrapper *answer = new CDataWrapper();
     
     //set the domain and action name
-    answer->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, channel_node_id);
+    answer->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, message_info->sender_node_id);
     answer->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, "response");
     
     
     auto_ptr<CDataWrapper> submission_result(new CDataWrapper());
     //set the request id
-    submission_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, message_request_id);
+    submission_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, message_info->sender_request_id);
     
     //! set the error information
-    submission_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, error_code);
+    submission_result->addInt32Value("__internal_redirect__", 1);
+    submission_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, (error_code));
     submission_result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, error_domain);
     submission_result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, error_message);
-    submission_result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_SERVER_ADDR, server_address);
+    submission_result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_SERVER_ADDR, message_info->destinationAddr);
+        //if(message_info->message.get())submission_result->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *message_info->message.get());
+    
     answer->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result.get());
     //forward answer to channel
     auto_ptr<CDataWrapper> to_delete(server_handler->dispatchCommand(answer));

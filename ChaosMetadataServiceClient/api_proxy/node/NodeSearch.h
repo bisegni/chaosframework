@@ -32,9 +32,8 @@ namespace chaos {
                     API_PROXY_CLASS(NodeSearch)
                 protected:
                         //! default constructor
-                    NodeSearch(chaos::common::message::MultiAddressMessageChannel *_mn_message);
-                        //! default destructor
-                    ~NodeSearch();
+                    API_PROXY_CD_DECLARATION(NodeSearch)
+
                 public:
 
                     /*!

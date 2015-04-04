@@ -26,14 +26,22 @@
 
 #include <boost/atomic.hpp>
 
-#define API_PROXY_CLASS(x) friend class INSTANCER_P1(x, ApiProxy, chaos::common::message::MultiAddressMessageChannel*);
-
 namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
-            
+
+#define API_PROXY_CLASS(x) friend class INSTANCER_P2(x, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t);
+
+#define API_PROXY_CD_DECLARATION(x)\
+explicit x(chaos::common::message::MultiAddressMessageChannel *_mn_message, int32_t timeout_in_milliseconds);\
+~x();
+
+#define API_PROXY_CD_DEFINITION(x, alias)\
+x::x(chaos::common::message::MultiAddressMessageChannel *_mn_message, int32_t timeout_in_milliseconds):ApiProxy(alias, _mn_message, timeout_in_milliseconds){}\
+x::~x(){}
+
             //! define the result of an api like shared pointer of @chaos::common::message::MessageRequestFuture
-            typedef auto_ptr<chaos::common::message::MessageRequestFuture> ApiProxyResult;
+            typedef auto_ptr<chaos::common::message::MultiAddressMessageRequestFuture> ApiProxyResult;
             
             class ApiProxyManager;
                 //! base class for all proxy api
@@ -42,12 +50,16 @@ namespace chaos {
                 friend class ApiProxyManager;
                     //!keep track on how many access are done to the proxy
                 boost::atomic<int> access_counter;
+
+                int32_t timeout_in_milliseconds;
+
                     //!channel for mds communication
                 chaos::common::message::MultiAddressMessageChannel *mn_message;
             protected:
                     //! default constructor
-                ApiProxy(const std::string& api_name,
-                         chaos::common::message::MultiAddressMessageChannel *_mn_message);
+                explicit ApiProxy(const std::string& api_name,
+                                  chaos::common::message::MultiAddressMessageChannel *_mn_message,
+                                  int32_t _timeout_in_milliseconds = 1000);
                     //! default destructor
                 ~ApiProxy();
             protected:

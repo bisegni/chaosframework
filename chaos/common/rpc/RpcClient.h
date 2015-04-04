@@ -37,6 +37,8 @@ using namespace chaos::common::network;
 namespace chaos_data = chaos::common::data;
 
 namespace chaos {
+#define RPC_CLIENT_SET_ERROR_OFFSET 100000
+
     /*!
      Define the information for send a message to some server
      */
@@ -90,13 +92,10 @@ namespace chaos {
         /*!
          Forward to dispatcher the error durngi the forwarding of the request message
          */
-        void forwadSubmissionResultError(const std::string& channel_node_id,
-                                         uint32_t message_request,
-                                         const std::string& server_address,
+        void forwadSubmissionResultError(NetworkForwardInfo *message_info,
                                          int32_t error_code,
                                          const std::string& error_message,
-                                         const std::string& error_domain,
-                                         chaos::common::data::CDataWrapper *message_in_error);
+                                         const std::string& error_domain);
     public:
         /*!
          Constructor di default per i

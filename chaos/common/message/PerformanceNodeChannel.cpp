@@ -43,7 +43,7 @@ int PerformanceNodeChannel::getPerformanceSession(DirectIOPerformanceSession **p
 	if(!performance_session_handler) return  -100;
 	
 	//get the local endpoint
-	DirectIOServerEndpoint *local_session_endpoint = broker->getDirectIOServerEndpoint();
+	DirectIOServerEndpoint *local_session_endpoint = getBroker()->getDirectIOServerEndpoint();
 	if(!local_session_endpoint) return -101;
 	
 	std::string remote_endpoint_url;
@@ -68,7 +68,7 @@ int PerformanceNodeChannel::getPerformanceSession(DirectIOPerformanceSession **p
             DirectIOClientConnection *local_session_client_connection = client_instance->getNewConnection(remote_endpoint_url);
 			if(!local_session_client_connection) {
 				//i need to release the enpoint
-				broker->releaseDirectIOServerEndpoint(local_session_endpoint);
+				getBroker()->releaseDirectIOServerEndpoint(local_session_endpoint);
 			}
 			
 			// i can create session
@@ -76,7 +76,7 @@ int PerformanceNodeChannel::getPerformanceSession(DirectIOPerformanceSession **p
 			if(!*performance_session_handler) {
 				client_instance->releaseConnection(local_session_client_connection);
 				//i need to release the enpoint
-				broker->releaseDirectIOServerEndpoint(local_session_endpoint);
+				getBroker()->releaseDirectIOServerEndpoint(local_session_endpoint);
 				
 				err = -103;
 			} else {
@@ -90,7 +90,7 @@ int PerformanceNodeChannel::getPerformanceSession(DirectIOPerformanceSession **p
         }
     } else {
 		//i need to release the enpoint
-		broker->releaseDirectIOServerEndpoint(local_session_endpoint);
+		getBroker()->releaseDirectIOServerEndpoint(local_session_endpoint);
 		err = -102;
 	}
     return err;
@@ -118,7 +118,7 @@ int PerformanceNodeChannel::releasePerformanceSession(DirectIOPerformanceSession
 		InizializableService::deinitImplementation(performance_session,  "DirectIOPerformanceSession", __PRETTY_FUNCTION__);
 		if(performance_session->client_connection) client_instance->releaseConnection(performance_session->client_connection);
 		//i need to release the enpoint
-		if(performance_session->server_endpoint) broker->releaseDirectIOServerEndpoint(performance_session->server_endpoint);
+		if(performance_session->server_endpoint) getBroker()->releaseDirectIOServerEndpoint(performance_session->server_endpoint);
 		
 	} catch(chaos::CException ex) {
 		return -100;

@@ -29,7 +29,9 @@
 #define MRF_PARSE_CDWPTR_RESULT(x) \
 if(x==NULL) {\
 error_code = ErrorCode::EC_TIMEOUT;\
+local_result = true;\
 } else {\
+local_result = x->hasKey("__internal_redirect__");\
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) request_result.reset(x->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));\
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) error_code = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE)) error_message = x->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE);\
@@ -66,6 +68,8 @@ namespace chaos {
                     //!last error domain
                 std::string error_domain;
 
+                bool local_result;
+
                     //! set the result fo the request
                 void setResult(chaos::common::data::CDataWrapper *_request_result);
 
@@ -85,14 +89,21 @@ namespace chaos {
 
                 
                 chaos::common::data::CDataWrapper *detachResult();
-                
-                const chaos::common::utility::atomic_int_type& getRequestID();
 
+                    //!return the request id
+                uint32_t const & getRequestID();
+
+                    //! return the code of the error
                 int getError() const;
 
+                    //! return the message of the error
                 const std::string& getErrorDomain() const;
 
+                    //! return the domain of the error
                 const std::string& getErrorMessage() const;
+
+                    //! identify a remote error o local remote
+                bool isRemoteMeaning();
             };
         }
     }

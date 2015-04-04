@@ -122,8 +122,8 @@ void ZMQServer::executeOnThread(){
         //data pack pointer
     int err = 0;
     int	linger = 500;
-    int	water_mark = 100;
-    int	send_timeout = 2000;
+    int	water_mark = 10;
+    int	send_timeout = 5000;
     auto_ptr<CDataWrapper> cdataWrapperPack;
 
     void *receiver = zmq_socket (zmqContext, ZMQ_REP);

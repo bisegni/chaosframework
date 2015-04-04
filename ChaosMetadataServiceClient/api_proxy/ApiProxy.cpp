@@ -21,10 +21,12 @@
 using namespace chaos::metadata_service_client::api_proxy;
     //! default constructor
 ApiProxy::ApiProxy(const std::string& api_name,
-                   chaos::common::message::MultiAddressMessageChannel *_mn_message):
+                   chaos::common::message::MultiAddressMessageChannel *_mn_message,
+                   int32_t _timeout_in_milliseconds):
 NamedService(api_name),
 access_counter(0),
-mn_message(_mn_message) {
+timeout_in_milliseconds(_timeout_in_milliseconds),
+mn_message(_mn_message){
 
 }
     //! default destructor
@@ -38,5 +40,8 @@ ApiProxyResult ApiProxy::callApi(const std::string& api_group,
                                  const std::string& api_name,
                                  chaos::common::data::CDataWrapper *api_message) {
     CHAOS_ASSERT(mn_message)
-    return  mn_message->sendRequestWithFuture(api_group, api_name, api_message);
+    return  mn_message->sendRequestWithFuture(api_group,
+                                              api_name,
+                                              api_message,
+                                              timeout_in_milliseconds);
 }

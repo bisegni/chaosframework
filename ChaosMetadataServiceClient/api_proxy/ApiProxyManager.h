@@ -70,15 +70,15 @@ namespace chaos {
                 ~ApiProxyManager();
             public:
                 template<typename P>
-                P* getApiProxy() {
+                P* getApiProxy(int32_t timeout_in_milliseconds = 1000) {
                         //! there was a type for every tempalte expantion
                     static P* instance = NULL;
                     if(instance == NULL) {
                         //allcoate the instsancer for the AbstractApi depending by the template
-                        std::auto_ptr<INSTANCER_P1(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*)> i(ALLOCATE_INSTANCER_P1(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*));
+                        std::auto_ptr<INSTANCER_P2(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t)> i(ALLOCATE_INSTANCER_P2(P, ApiProxy, chaos::common::message::MultiAddressMessageChannel*, int32_t));
 
                         //get api instance
-                        instance = (P*)i->getInstance(mn_message_channel);
+                        instance = (P*)i->getInstance(mn_message_channel, timeout_in_milliseconds);
 
                             //add new instance to the list of all instances
                         api_instance.push_back(instance);

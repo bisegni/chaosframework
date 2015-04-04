@@ -91,7 +91,7 @@ void SearchNodeResult::updateResult() {
                                          search_type,
                                          current_page*current_page_length,
                                          current_page_length);
-    if(r->wait(2000)) {
+    if(r->wait()) {
         if(r->getError()) {
             //QMessageBox::critical(this, r->getErrorDomain(), r->getErrorMessage());
         } else {

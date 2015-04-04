@@ -20,10 +20,7 @@ namespace chaos {
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
                     API_PROXY_CLASS(GetNodeDescription)
                 protected:
-                        //! default constructor
-                    GetNodeDescription(chaos::common::message::MultiAddressMessageChannel *_mn_message);
-                        //! default destructor
-                    ~GetNodeDescription();
+                    API_PROXY_CD_DECLARATION(GetNodeDescription)
                 public:
 
                     /*!
