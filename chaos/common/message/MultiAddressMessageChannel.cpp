@@ -18,21 +18,25 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
-#include <boost/format.hpp>
 
+#include <boost/format.hpp>
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::message;
 using namespace chaos::common::network;
 
-#define MAMC_APP INFO_LOG(MultiAddressMessageChannel)
+#define MAMC_INFO INFO_LOG(MultiAddressMessageChannel)
 #define MAMC_DBG DBG_LOG(MultiAddressMessageChannel)
 #define MAMC_ERR ERR_LOG(MultiAddressMessageChannel)
 
+#define RETRY_DELAY 30000
     //! default constructor
 MultiAddressMessageChannel::MultiAddressMessageChannel(NetworkBroker *message_broker):
 MessageChannel(message_broker),
-service_feeder("MultiAddressMessageChannel", this) {
+service_feeder("MultiAddressMessageChannel", this),
+last_retry(0){
 
 }
 
@@ -40,7 +44,8 @@ service_feeder("MultiAddressMessageChannel", this) {
 MultiAddressMessageChannel::MultiAddressMessageChannel(NetworkBroker *message_broker,
                                                        CNetworkAddress& node_address):
 MessageChannel(message_broker),
-service_feeder("MultiAddressMessageChannel", this) {
+service_feeder("MultiAddressMessageChannel", this),
+last_retry(0){
     addNode(node_address);
 }
 
@@ -48,7 +53,8 @@ service_feeder("MultiAddressMessageChannel", this) {
 MultiAddressMessageChannel::MultiAddressMessageChannel(NetworkBroker *message_broker,
                                                        const std::vector<CNetworkAddress>& node_address):
 MessageChannel(message_broker),
-service_feeder("MultiAddressMessageChannel", this) {
+service_feeder("MultiAddressMessageChannel", this),
+last_retry(0){
     for(std::vector<CNetworkAddress>::const_iterator it = node_address.begin();
         it != node_address.end();
         it++) {
@@ -59,6 +65,45 @@ service_feeder("MultiAddressMessageChannel", this) {
     //
 MultiAddressMessageChannel::~MultiAddressMessageChannel() {
     service_feeder.clear();
+}
+
+void MultiAddressMessageChannel::retryOfflineServer(bool force) {
+    uint64_t now = TimingUtil::getTimeStamp();
+    if(force||
+       ((now - last_retry) > RETRY_DELAY)) {
+        MAMC_DBG << "Retry on all server";
+        last_retry = now;
+        std::set<uint32_t>::iterator it = set_off_line_servers.begin();
+        while(it != set_off_line_servers.end()) {
+            service_feeder.setURLOnline(*it);
+            set_off_line_servers.erase(it++);
+            MAMC_DBG << *it << " index in online";
+        }
+    }
+}
+
+void MultiAddressMessageChannel::setAddressOffline(const std::string& remote_address) {
+    if(!map_url_node_id.count(remote_address)) return;
+        //get the server index
+    uint32_t index = map_url_node_id[remote_address].feeder_index;
+    service_feeder.setURLOffline(index);
+    std::set<uint32_t>::iterator it = set_off_line_servers.find(index);
+    if(it == set_off_line_servers.end()) {
+        set_off_line_servers.insert(index);
+    }
+    MAMC_DBG << remote_address << " in offline";
+}
+
+void MultiAddressMessageChannel::setAddressOnline(const std::string& remote_address) {
+    if(!map_url_node_id.count(remote_address)) return;
+        //get the server index
+    uint32_t index = map_url_node_id[remote_address].feeder_index;
+    service_feeder.setURLOnline(index);
+    std::set<uint32_t>::iterator it = set_off_line_servers.find(index);
+    if(it != set_off_line_servers.end()) {
+        set_off_line_servers.erase(it);
+    }
+    MAMC_DBG << remote_address << " in online";
 }
 
 const CNetworkAddressInfo& MultiAddressMessageChannel::getRemoteAddressInfo(const std::string& remote_address) {
@@ -155,3 +200,4 @@ std::auto_ptr<MultiAddressMessageRequestFuture> MultiAddressMessageChannel::send
                                                                                                 request_pack,
                                                                                                 request_timeout));
 }
+

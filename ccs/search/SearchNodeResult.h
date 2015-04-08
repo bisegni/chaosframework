@@ -2,13 +2,10 @@
 #define SEARCHNODERESULT_H
 
 #include "../presenter/PresenterWidget.h"
-
 #include <QWidget>
 #include <QTableView>
 #include <QItemDelegate>
 #include <QStandardItemModel>
-
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 namespace Ui {
 class SearchNodeResult;
@@ -18,9 +15,7 @@ class SearchNodeResult :
 public PresenterWidget
 {
     Q_OBJECT
-
     //! search property
-
     int search_type;
     QString search_criteria;
 
@@ -29,11 +24,12 @@ public PresenterWidget
 
     //query proxy
     chaos::metadata_service_client::api_proxy::node::NodeSearch *ns_proxy;
-
-
+    //api has ben called successfully
+    void onApiDone(QString tag,
+                        QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 protected:
     void getSearchTypeAsString(QString& type_description);
-    void updateUI();
+    void initUI();
     bool canClose();
 
 public:
@@ -41,17 +37,16 @@ public:
     ~SearchNodeResult();
 
 signals:
-    void startUpdateResult();
 
 private slots:
-
-    void updateResult();
-
     void on_pushButtonNextPage_clicked();
 
     void on_pushButtonPrevPage_clicked();
 
     void on_pushButtonOpenNodeInEditor_clicked();
+
+    void on_tableViewResult_clicked(const QModelIndex &index);
+
 
 private:
     Ui::SearchNodeResult *ui;

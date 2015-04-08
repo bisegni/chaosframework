@@ -6,15 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>927</width>
-    <height>615</height>
+    <width>1178</width>
+    <height>682</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>!CHAOS Control Studio</string>
   </property>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
   <property name="dockOptions">
    <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks|QMainWindow::VerticalTabs</set>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -59,17 +65,17 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>927</width>
+     <width>1178</width>
      <height>22</height>
     </rect>
    </property>
    <property name="nativeMenuBar">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <widget class="QMenu" name="menuNodes">
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>11</pointsize>
      </font>
     </property>
     <property name="title">
@@ -87,12 +93,18 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+  </widget>
   <widget class="QDockWidget" name="dockCommand">
    <property name="minimumSize">
     <size>
-     <width>0</width>
-     <height>0</height>
+     <width>27</width>
+     <height>38</height>
     </size>
    </property>
    <property name="features">
@@ -133,7 +145,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>11</pointsize>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="shortcut">

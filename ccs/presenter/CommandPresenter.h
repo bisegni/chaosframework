@@ -1,7 +1,6 @@
 #ifndef COMMANDPRESENTER_H
 #define COMMANDPRESENTER_H
 
-#include "PresenterWidget.h"
 
 #include <QObject>
 #include <QMdiArea>
@@ -11,7 +10,7 @@
  * \brief Usually every command panel need to rpesent the result f his operation
  * these operation are shown into the default tabbed pane
  */
-
+class PresenterWidget;
 class CommandPresenter : public QObject
 {
     Q_OBJECT

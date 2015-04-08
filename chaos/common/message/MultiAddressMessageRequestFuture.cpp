@@ -26,7 +26,7 @@
 #define ERROR_MESS_DOMAIN_IN_STR(e,m,d)\
 boost::str(boost::format("%1%-%2%(%3%)") % e % m % d)
 
-#define MAMRF_APP INFO_LOG(MultiAddressMessageRequestFuture)
+#define MAMRF_INFO INFO_LOG(MultiAddressMessageRequestFuture)
 #define MAMRF_DBG DBG_LOG(MultiAddressMessageRequestFuture)
 #define MAMRF_ERR ERR_LOG(MultiAddressMessageRequestFuture)
 
@@ -61,20 +61,18 @@ void MultiAddressMessageRequestFuture::resetErrorResult() {
     current_error_domain.clear();
 }
 
-
 void MultiAddressMessageRequestFuture::setTimeout(int32_t _timeout_in_milliseconds) {
     timeout_in_milliseconds = _timeout_in_milliseconds;
 }
 
     //! wait until data is received
 bool MultiAddressMessageRequestFuture::wait() {
-    CHAOS_ASSERT(parent_mn_message_channel &&
-                 current_future.get())
+    CHAOS_ASSERT(parent_mn_message_channel)
+    int retry_on_same_server = 0;
     bool working = true;
-    
+    bool force_to_reuse = false;
         //reset error
     resetErrorResult();
-
         //unitle we have valid future and don't have have answer
     while(current_future.get() &&
           working) {
@@ -85,27 +83,46 @@ bool MultiAddressMessageRequestFuture::wait() {
                     //we have received from remote server somenthing
                 working = false;
             }
+        } else if((retry_on_same_server++ % 3) != 0) {
+            MAMRF_INFO << "Retry to wait on same server";
+            continue;
+        } else {
+            MAMRF_INFO << "Whe have retryed " << retry_on_same_server << " times on "<<last_used_address;
         }
 
         if(working){
-            MAMRF_DBG << "Error "<< ERROR_MESS_DOMAIN_IN_STR(current_future->getError(),
+            MAMRF_ERR << "Error "<< ERROR_MESS_DOMAIN_IN_STR(current_future->getError(),
                                                              current_future->getErrorMessage(),
                                                              current_future->getErrorDomain())<<" during forward on " << last_used_address;
-                //put offline current remote server
+                //set index offline
+            parent_mn_message_channel->setAddressOffline(last_used_address);
+            MAMRF_INFO << "Server " << last_used_address << " put offline";
 
-            parent_mn_message_channel->service_feeder.setURLOffline(parent_mn_message_channel->map_url_node_id[last_used_address].feeder_index);
-            MAMRF_DBG << "Server " << last_used_address << " put offline";
-
+                //retrasmission of the datapack
             current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                                action_name,
                                                                                message_pack.get(),
                                                                                last_used_address);
             if(current_future.get()) {
-                MAMRF_DBG << "Retransmission on " << last_used_address;
+                MAMRF_INFO << "Retransmission on " << last_used_address;
+            } else if(force_to_reuse) {
+                MAMRF_INFO << "No more server for retrasmission, I can't force anymore";
+            } else {
+                MAMRF_INFO << "No more server for retrasmission, Retry using all offline server for one time";
+                force_to_reuse = true;
+                    //reuse all server
+                parent_mn_message_channel->retryOfflineServer(true);
+                    //retrasmission of the datapack
+                current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
+                                                                                   action_name,
+                                                                                   message_pack.get(),
+                                                                                   last_used_address);
             }
         }
     }
-
+        //retry logic
+    parent_mn_message_channel->retryOfflineServer();
+    
     return working == false;
 }
 

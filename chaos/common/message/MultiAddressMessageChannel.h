@@ -25,6 +25,7 @@
 
 #include <map>
 #include <string>
+#include <set>
 namespace chaos {
     namespace common {
         namespace network {
@@ -69,6 +70,15 @@ namespace chaos {
             private chaos::common::network::URLServiceFeederHandler {
                 friend class chaos::common::network::NetworkBroker;
                 friend class chaos::common::message::MultiAddressMessageRequestFuture;
+
+                uint64_t last_retry;
+                    //!list of the offline server index
+                /*!
+                 during the wait the server that are in error are put offline, when
+                 a new wait is executed all offline server are put online to try
+                 if the are available
+                 */
+                std::set<uint32_t> set_off_line_servers;
 
                 //! url manager
                 chaos::common::network::URLServiceFeeder service_feeder;
@@ -115,17 +125,16 @@ namespace chaos {
                 void  disposeService(void *service_ptr);
                 void* serviceForURL(const chaos::common::network::URL& url,
                                     uint32_t service_index);
-                
+
+                void retryOfflineServer(bool force = false);
             public:
                 const CNetworkAddressInfo& getRemoteAddressInfo(const std::string& remote_address);
-
                 //! add a new node to the channel
                 void addNode(const chaos::common::network::CNetworkAddress& node_address);
                 //! remove a node from the channel
                 void removeNode(const chaos::common::network::CNetworkAddress& node_address);
                 //! get the rpc published host and port
                 void getRpcPublishedHostAndPort(std::string& rpc_published_host_port);
-
                 /*!
                  \brief send a message
                  \param node_id id of the remote node within a network broker interface
@@ -137,7 +146,6 @@ namespace chaos {
                                  const std::string& action_name,
                                  chaos::common::data::CDataWrapper * const message_pack,
                                  bool on_this_thread = false);
-                
                 //!send an rpc request to a remote node
                 /*!
                  send an rpc request with url feeder rule for servec choice and return the future.
@@ -151,6 +159,9 @@ namespace chaos {
                                                                                       const std::string& action_name,
                                                                                       chaos::common::data::CDataWrapper *request_pack,
                                                                                       int32_t request_timeout = 1000);
+
+                void setAddressOffline(const std::string& remote_address);
+                void setAddressOnline(const std::string& remote_address);
             };
         }
     }

@@ -1,3 +1,4 @@
+ccs/*.autosave
 ccs/moc_*
 ccs/ui_*
 ccs/.qmake.stash

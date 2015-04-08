@@ -10,6 +10,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ccs
 TEMPLATE = app
+RESOURCES = qdarkstyle/style.qrc \
+    dark_orange/dark_orange_style.qrc
 
 INCLUDEPATH += $$PWD/../
 INCLUDEPATH += $$PWD/../usr/local/include
@@ -34,21 +36,32 @@ SOURCES += main.cpp\
     search/SearchNode.cpp \
     presenter/PresenterWidget.cpp \
     presenter/CommandPresenter.cpp \
-    async_worker/AsyncWorker.cpp \
-    async_worker/ApiWorker.cpp \
-    data/ChaosData.cpp
+    data/ChaosData.cpp \
+    api_async_processor/ApiAsyncProcessor.cpp \
+    api_async_processor/ApiAsyncRunnable.cpp \
+    MainController.cpp \
+    node/unit_server/UnitServerEditor.cpp \
+    node/control_unit/ControUnitInstanceEditor.cpp
 
 HEADERS  += mainwindow.h \
     search/SearchNodeResult.h \
     search/SearchNode.h \
     presenter/PresenterWidget.h \
     presenter/CommandPresenter.h \
-    async_worker/AsyncWorker.h \
-    async_worker/ApiWorker.h \
-    data/ChaosData.h
+    data/ChaosData.h \
+    api_async_processor/ApiAsyncProcessor.h \
+    api_async_processor/ApiAsyncRunnable.h \
+    MainController.h \
+    node/unit_server/UnitServerEditor.h \
+    node/control_unit/ControUnitInstanceEditor.h
 
 FORMS    += mainwindow.ui \
     search/searchnoderesult.ui \
-    search/searchnode.ui
+    search/searchnode.ui \
+    node/unit_server/UnitServerEditor.ui \
+    node/control_unit/ControUnitInstanceEditor.ui
 
-DISTFILES +=
+DISTFILES += \
+    dark_orange.stylesheet \
+    node/unit_server/Test.qml \
+    node/unit_server/TestForm.ui.qml

@@ -89,7 +89,7 @@ namespace chaos {
                      */
                     typedef	union DirectIODeviceChannelHeaderGetOpcode {
                         //raw data representation of the header
-                        char raw_data[14];
+                        char raw_data[16];
                         struct header {
                             //! The endpoint where the channel is published
                             uint16_t	endpoint;

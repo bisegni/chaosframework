@@ -112,7 +112,6 @@ void ZMQClient::deinit() throw(CException) {
     zmq_ctx_shutdown(zmqContext);
     zmq_ctx_destroy(zmqContext);
     ZMQC_LAPP << "ZMQ Destroyed";
-    
 }
 
 /*
@@ -149,7 +148,7 @@ bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread
 boost::shared_ptr<SocketInfo> ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi) {
     int	err = 0;
     int linger = 500;
-    int water_mark = 10;
+    int water_mark = 1;
     int timeout = 5000;
     boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
     if(!map_socket.count(nfi->destinationAddr)) {

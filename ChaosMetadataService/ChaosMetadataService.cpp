@@ -42,10 +42,9 @@ using boost::shared_ptr;
 
 WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
 
-#define LCND_LAPP LAPP_ << "[ChaosMetadataService] - "
-#define LCND_LDBG LDBG_ << "[ChaosMetadataService] - " << __PRETTY_FUNCTION << " - "
-#define LCND_LERR LERR_ << "[ChaosMetadataService] - " << __PRETTY_FUNCTION << "(" << __LINE__ << ") - "
-
+#define LCND_LAPP   INFO_LOG(ChaosMetadataService)
+#define LCND_LDBG   DBG_LOG(ChaosMetadataService)
+#define LCND_LERR   ERR_LOG(ChaosMetadataService)
 //! C and C++ attribute parser
 /*!
  Specialized option for startup c and cpp program main options parameter

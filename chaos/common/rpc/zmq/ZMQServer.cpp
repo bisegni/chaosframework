@@ -122,7 +122,7 @@ void ZMQServer::executeOnThread(){
         //data pack pointer
     int err = 0;
     int	linger = 500;
-    int	water_mark = 10;
+    int	water_mark = 1;
     int	send_timeout = 5000;
     auto_ptr<CDataWrapper> cdataWrapperPack;
 
@@ -164,7 +164,7 @@ void ZMQServer::executeOnThread(){
             err = zmq_msg_init(&request);
 
             ZMQS_LDBG << "Wait for message";
-            ZMQ_DO_AGAIN(zmq_recvmsg(receiver, &request, 0);)
+            err = zmq_recvmsg(receiver, &request, 0);
             if(err == -1 ) {
                 int32_t sent_error = zmq_errno();
                 std::string error_message =zmq_strerror(sent_error);
