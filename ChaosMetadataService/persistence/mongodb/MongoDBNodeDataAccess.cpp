@@ -1,6 +1,6 @@
 /*
  *	MongoDBNodeDataAccess.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -69,12 +69,22 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
     //inherited method
 int MongoDBNodeDataAccess::insertNewNode(CDataWrapper& node_description) {
     int err = 0;
+    uint64_t sequence_id = 0;
     try {
         if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) return -1;
         if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_TYPE)) return -2;
-        if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) return -3;
+        if(!node_description.hasKey("seq")) {
+            CHAOS_ASSERT(utility_data_access)
+            if(utility_data_access->getNextSequenceValue("nodes", sequence_id)) {
+                MDBNDA_ERR << "Error getting new sequence for node";
+                return err;
+            } else {
+                node_description.addInt64Value("seq", sequence_id);
+            }
+        }
+            //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) return -3;
             //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)) return -4;
-        if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) return -5;
+            //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) return -5;
 
         std::auto_ptr<SerializationBuffer> ser(node_description.getBSONData());
         mongo::BSONObj obj_to_insert(ser->getBufferPtr());
@@ -84,7 +94,7 @@ int MongoDBNodeDataAccess::insertNewNode(CDataWrapper& node_description) {
         DEBUG_CODE(MDBNDA_DBG << "insertNewNode insert ---------------------------------------------";)
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
                                      obj_to_insert))) {
-            MDBNDA_ERR << "Error inserting new unit server";
+            MDBNDA_ERR << "Error creating new node";
         }
     } catch (const mongo::DBException &e) {
         MDBNDA_ERR << e.what();

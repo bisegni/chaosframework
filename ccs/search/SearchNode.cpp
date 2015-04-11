@@ -25,5 +25,5 @@ void SearchNode::on_pushButtonStartSearch_clicked()
 {
     int idx =  ui->comboBoxSearchType->currentIndex();
     qDebug() << "Start search with type:" << idx << " and search criteria:" << ui->lineEditSearchCriteria->text();
-    presenter->showCommandPresenter(new SearchNodeResult(idx, ui->lineEditSearchCriteria->text()));
+    presenter->showCommandPresenter(new SearchNodeResult());
 }

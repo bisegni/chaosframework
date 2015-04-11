@@ -1,6 +1,6 @@
 /*
  *	MultiAddressMessageChannel.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -68,6 +68,7 @@ MultiAddressMessageChannel::~MultiAddressMessageChannel() {
 }
 
 void MultiAddressMessageChannel::retryOfflineServer(bool force) {
+    boost::lock_guard<boost::mutex> l(mutex_server_usage);
     uint64_t now = TimingUtil::getTimeStamp();
     if(force||
        ((now - last_retry) > RETRY_DELAY)) {
@@ -194,6 +195,7 @@ std::auto_ptr<MultiAddressMessageRequestFuture> MultiAddressMessageChannel::send
                                                                                                   const std::string& action_name,
                                                                                                   CDataWrapper *request_pack,
                                                                                                   int32_t request_timeout) {
+    retryOfflineServer(true);
     return std::auto_ptr<MultiAddressMessageRequestFuture>(new MultiAddressMessageRequestFuture(this,
                                                                                                 action_domain,
                                                                                                 action_name,

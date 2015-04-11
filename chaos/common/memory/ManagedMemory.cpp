@@ -1,6 +1,6 @@
 /*
  *	ManagedMemory.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Assembled by Bisegni Claudio getting the code from http://www.memcached.org
  *
  *    	Copyright 2013 INFN, National Institute of Nuclear Physics

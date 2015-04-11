@@ -1,6 +1,6 @@
 /*
  *	MongoDBNodeDataAccess.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -19,8 +19,7 @@
  */
 #ifndef __CHAOSFramework__MongoDBNodeDataAccess__
 #define __CHAOSFramework__MongoDBNodeDataAccess__
-
-#include "MongoDBAccessor.h"
+#include "MongoDBUtilityDataAccess.h"
 #include "../data_access/NodeDataAccess.h"
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
@@ -30,12 +29,14 @@ namespace chaos {
             namespace mongodb {
                 //forward declaration
                 class MongoDBPersistenceDriver;
-                
+
                 //! Data Access for producer manipulation data
                 class MongoDBNodeDataAccess:
                 public data_access::NodeDataAccess,
                 protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
+
+                    MongoDBUtilityDataAccess *utility_data_access = NULL;
                 protected:
                     MongoDBNodeDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBNodeDataAccess();
@@ -43,17 +44,17 @@ namespace chaos {
                     //inherited method
                     int getNodeDescription(const std::string& node_unique_id,
                                            chaos::common::data::CDataWrapper **node_description);
-                    
+
                     //inherited method
                     int insertNewNode(chaos::common::data::CDataWrapper& node_description);
-                    
+
                     //! update the node updatable feature
                     int updateNode(chaos::common::data::CDataWrapper& node_description);
-                    
+
                     // inherited method
                     int checkNodePresence(const std::string& node_unique_id,
                                           bool& presence);
-                    
+
                     //! inherited method
                     int deleteNode(const std::string& node_unique_id);
 
@@ -65,7 +66,7 @@ namespace chaos {
                                    uint32_t page_length);
                 };
 
-                
+
             }
         }
     }

@@ -10,40 +10,18 @@ using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::node;
 
-SearchNodeResult::SearchNodeResult(int _search_type,
-                                   const QString &_search_criteria) :
+SearchNodeResult::SearchNodeResult() :
     PresenterWidget(NULL),
-    search_type(_search_type),
-    search_criteria(_search_criteria),
     current_page(0),
     current_page_length(30),
     ui(new Ui::SearchNodeResult)
 {
     ui->setupUi(this);
-
-    //fetch the api porxy
-    ns_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<NodeSearch>();
 }
 
 SearchNodeResult::~SearchNodeResult()
 {
     delete ui;
-}
-
-void SearchNodeResult::getSearchTypeAsString(QString& type_description) {
-    switch (search_type) {
-    case 0:
-        type_description = "All type";
-        break;
-    case 1:
-        type_description = "Unit server";
-        break;
-    case 2:
-        type_description = "Control unit";
-        break;
-    default:
-        break;
-    }
 }
 
 bool SearchNodeResult::canClose() {
@@ -52,10 +30,13 @@ bool SearchNodeResult::canClose() {
 
 void SearchNodeResult::initUI() {
     setTabTitle("Search Result");
-    QString search_type_desc;
-    getSearchTypeAsString(search_type_desc);
-    ui->labelType->setText(search_type_desc);
-    ui->labelCriteria->setText(search_criteria);
+
+    //fetch the api porxy
+    ns_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<NodeSearch>();
+
+    QStringList search_types;
+    search_types << "All types" << "Unit server" << "Control unit";
+    ui->comboBoxSearchType->addItems(search_types);
 
     // Create a new model
     // QStandardItemModel(int rows, int columns, QObject * parent = 0)
@@ -72,16 +53,6 @@ void SearchNodeResult::initUI() {
     //finisch to configure table
     ui->tableViewResult->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableViewResult->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-    //start the query
-    ApiProxyResult api_result = ns_proxy->execute(search_criteria.toStdString(),
-                                                  search_type,
-                                                  current_page*current_page_length,
-                                                  current_page_length);
-
-    //submit api
-    submitApiResult(QString::fromUtf8("search_result"),
-                    api_result);
 }
 
 void SearchNodeResult::onApiDone(QString tag,
@@ -89,10 +60,9 @@ void SearchNodeResult::onApiDone(QString tag,
     qDebug() << "Received asyncApiResult event of tag:" << tag;
 
     if(tag.compare(tr("search_result"))==0) {
-        setEnabled(true);
 
         //clear the model
-        table_model->clear();
+        table_model->setRowCount(0);
         if(api_result->hasKey("node_search_result_page")) {
             //we have result
             CMultiTypeDataArrayWrapper *arr =  api_result->getVectorValue("node_search_result_page");
@@ -133,10 +103,10 @@ void SearchNodeResult::on_pushButtonOpenNodeInEditor_clicked()
     foreach (QModelIndex index, indexes) {
         QStandardItem *node_uid = table_model->item(index.row(), 0);
         QStandardItem *node_type = table_model->item(index.row(), 1);
-       if(node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
-           qDebug() << "Open unit server editor for" << node_uid->text();
-           addWidgetToPresenter(new UnitServerEditor(node_uid->text()));
-       }
+        if(node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
+            qDebug() << "Open unit server editor for" << node_uid->text();
+            addWidgetToPresenter(new UnitServerEditor(node_uid->text()));
+        }
     }
 }
 
@@ -144,4 +114,16 @@ void SearchNodeResult::on_tableViewResult_clicked(const QModelIndex &index)
 {
     QModelIndexList indexes = ui->tableViewResult->selectionModel()->selectedIndexes();
     ui->pushButtonOpenNodeInEditor->setEnabled(indexes.size()>0);
+}
+
+void SearchNodeResult::on_pushButtonStartSearch_clicked()
+{
+    //submit api
+    submitApiResult(QString("search_result"),
+                    //start the query
+                    ns_proxy->execute(ui->lineEditSearchCriteria->text().toStdString(),
+                                      ui->comboBoxSearchType->currentIndex(),
+                                      current_page*current_page_length,
+                                      current_page_length)
+                    );
 }

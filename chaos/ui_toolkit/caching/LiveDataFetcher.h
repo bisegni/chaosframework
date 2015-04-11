@@ -28,7 +28,7 @@ namespace chaos {
         namespace chaching {
             
             /*!
-             Class that implemnt the CDatawrapper fetcher from !CHOAS live data.
+             Class that implemnt the CDatawrapper fetcher from !CHAOS live data.
              */
             class LiveDataFetcher :
 			public chaos::caching_system::DataFetcherInterface<chaos_data::CDataWrapper>,

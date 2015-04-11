@@ -1,6 +1,6 @@
 /*
  *	BatchCommand.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -38,7 +38,7 @@ namespace chaos{
     
     namespace common {
         
-        //! The name space that group all foundamental class need by slow control !CHOAS implementation
+        //! The name space that group all foundamental class need by slow control !CHAOS implementation
         namespace batch_command {
             
             //forward declaration

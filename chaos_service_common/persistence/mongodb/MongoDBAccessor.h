@@ -1,6 +1,6 @@
 /*
  *	MongoDBAccessor.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -51,7 +51,23 @@ namespace chaos {
                     virtual ~MongoDBAccessor();
                     
                     const std::string& getDatabaseName();
-                    
+
+                    mongo::BSONObj regexOnField(const std::string& field_name,
+                                                const std::string& regex);
+
+                        //! search within an array with a list of simple query()key/value
+                    /*!
+                     \param search_keys_values the key valu epairs that are the simple mongodb query(key/value)
+                     */
+                    mongo::BSONObj arrayMatch(const std::vector<std::pair<std::string, std::string> >& search_keys_values);
+
+                        //! search within an array with simple query key/value
+                    /*!
+                     \param serach_key the key for the field
+                     \param search_value the value corresponding to the key
+                     */
+                    mongo::BSONObj arrayMatch(const std::string& serach_key, const std::string& search_value);
+
                     //! perform a paged query
                     /*!
                      perform a query using paging logic

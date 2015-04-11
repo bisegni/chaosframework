@@ -1,6 +1,6 @@
 /*
  *	FastHash.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Modified by Bisegni Claudio.
  *
  * The hash function used here is by Bob Jenkins, 1996:

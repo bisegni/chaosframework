@@ -1,6 +1,6 @@
 /*
  *	ManagedMemory.h
- *	!CHOAS
+ *	!CHAOS
  *	Assembled by Bisegni Claudio getting the code from http://www.memcached.org
  *  Update by Bisegni Claudio.
  *

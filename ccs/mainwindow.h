@@ -17,7 +17,9 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_actionOpen_Node_triggered();
+    void on_actionOpenNode_triggered();
+
+    void on_actionSearch_Node_triggered();
 
 private:
     Ui::MainWindow *ui;

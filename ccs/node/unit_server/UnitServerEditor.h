@@ -3,8 +3,10 @@
 
 #include "../../presenter/PresenterWidget.h"
 
+#include <QItemSelection>
 #include <QStringListModel>
 #include <QStandardItemModel>
+
 namespace Ui {
 class UnitServerEditor;
 }
@@ -18,7 +20,8 @@ class UnitServerEditor :
     QStringListModel *list_model_cu_type;
     //query proxy
     chaos::metadata_service_client::api_proxy::node::GetNodeDescription *gnd_proxy;
-
+    chaos::metadata_service_client::api_proxy::control_unit::SearchInstancesByUS *cu_si_proxy;
+    chaos::metadata_service_client::api_proxy::control_unit::DeleteInstance *cu_di_proxy;
 public:
     explicit UnitServerEditor(const QString& _node_unique_id);
     ~UnitServerEditor();
@@ -26,10 +29,22 @@ public:
 private slots:
     void customMenuRequested(QPoint pos);
 
-    void updateUSInfo();
+    void updateAll();
 
     void on_pushButtonCreateNewInstance_clicked();
 
+    void handleSelectionChanged(const QItemSelection& selection);
+
+    void on_pushButtonUpdateAllInfo_clicked();
+
+    void on_pushButtonRemoveInstance_clicked();
+
+    void on_pushButtonEditInstance_clicked();
+
+    void tableCurrentChanged(const QModelIndex &current,
+                             const QModelIndex &previous);
+    void tableSelectionChanged(const QItemSelection& selected,
+                               const QItemSelection& unselected);
 protected:
     void initUI();
     bool canClose();

@@ -1,6 +1,6 @@
 /*
  *	cde.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -40,6 +40,7 @@
 
 using namespace std;
 using namespace chaos;
+using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::ui;
 using namespace bson;

@@ -1,6 +1,6 @@
 /*
  *	AbstractPlugin.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2013 INFN, National Institute of Nuclear Physics
@@ -28,7 +28,7 @@
 namespace chaos {
     namespace common {
         
-        //! Name space for grupping class for the plugin managment system of !CHOAS framework
+        //! Name space for grupping class for the plugin managment system of !CHAOS framework
         namespace plugin {
             
 

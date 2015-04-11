@@ -1,6 +1,6 @@
 /*
  *	NodeSearch.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -22,7 +22,7 @@
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::node;
 
-API_PROXY_CD_DEFINITION(NodeSearch, "nodeSearch")
+API_PROXY_CD_DEFINITION(NodeSearch, "system", "nodeSearch")
 
 /*!
 
@@ -36,5 +36,5 @@ ApiProxyResult NodeSearch::execute(const std::string& unique_id_filter,
     message->addInt32Value("node_type_filter", node_type_filter);
     message->addInt32Value("last_node_sequence_id", last_node_sequence_id);
     message->addInt32Value("result_page_length", page_length);
-    return callApi("system", getName(), message);
+    return callApi(message);
 }

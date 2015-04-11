@@ -1,6 +1,6 @@
 /*
  *	ControlUnitDataAccess.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -21,7 +21,11 @@
 #define __CHAOSFramework__ControlUnitDataAccess__
 
 #include "../persistence.h"
+
 #include <chaos/common/data/CDatawrapper.h>
+
+#include <boost/smart_ptr.hpp>
+
 namespace chaos {
     namespace metadata_service {
         namespace persistence {
@@ -47,6 +51,22 @@ namespace chaos {
                     virtual int checkDatasetPresence(chaos::common::data::CDataWrapper& dataset_description) = 0;
                     
                     virtual int getLastDataset(chaos::common::data::CDataWrapper& dataset_description) = 0;
+
+                    virtual int setInstanceDescription(const std::string& cu_unique_id,
+                                                       chaos::common::data::CDataWrapper& instance_description) = 0;
+
+                    virtual int searchInstanceForUnitServer(std::vector<boost::shared_ptr<common::data::CDataWrapper> >& result_page,
+                                                            const std::string& unit_server_uid,
+                                                            std::vector<std::string> cu_type_filter,
+                                                            uint32_t last_sequence_id,
+                                                            uint32_t results_for_page) = 0;
+
+                    virtual int getInstanceDescription(const std::string& unit_server_uid,
+                                                       const std::string& control_unit_uid,
+                                                       chaos::common::data::CDataWrapper **result) = 0;
+
+                    virtual int deleteInstanceDescription(const std::string& unit_server_uid,
+                                                          const std::string& control_unit_uid) = 0;
                 };
                 
             }

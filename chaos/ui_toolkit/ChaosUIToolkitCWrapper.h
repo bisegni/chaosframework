@@ -1,6 +1,6 @@
 /*
  *	ChaosUIToolkitCWrapper.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -24,7 +24,7 @@
  *  \section page_cuit_sec Why an a "C" language wrapper?
  *  Some applications used in scentific experiment (as for example LabView) can be
  *  can be customized with the use of shared library written in "C" language. At this
- *  scope, !CHOAS give a simple interface to a DeviceController managed by user interface
+ *  scope, !CHAOS give a simple interface to a DeviceController managed by user interface
  *  toolkit \link UIToolkitCWrapper wrapped with few simple "C" function\endlink.
  */
 

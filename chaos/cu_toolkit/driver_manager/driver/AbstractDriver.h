@@ -1,6 +1,6 @@
 /*
  *	AbstractDriver.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -57,7 +57,7 @@ namespace chaos{
 				
                     //! !CHAOS Device Driver abstract class
                 /*!
-                    This represent the base class for all driver in !CHOAS. For standardize the comunicacetion 
+                    This represent the base class for all driver in !CHAOS. For standardize the comunicacetion 
                     a message queue is used for receive DrvMsg pack.
                  */
 				class AbstractDriver:

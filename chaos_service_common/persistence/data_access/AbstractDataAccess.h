@@ -1,6 +1,6 @@
 /*
  *	AbstractDataAccess.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -20,10 +20,7 @@
 #ifndef __CHAOSFramework__AbstractDataAccess__
 #define __CHAOSFramework__AbstractDataAccess__
 
-#include "persistence_types.h"
-
 #include <chaos/common/utility/NamedService.h>
-
 
 #define DECLARE_DA_NAME static const char * const name;
 #define DEFINE_DA_NAME(x) const char * const x::name=#x;
@@ -41,7 +38,7 @@ namespace chaos {
                  */
                 class AbstractDataAccess:
                 public chaos::common::utility::NamedService {
-                   
+
                 public:
                     AbstractDataAccess(const std::string& name);
                     virtual ~AbstractDataAccess();

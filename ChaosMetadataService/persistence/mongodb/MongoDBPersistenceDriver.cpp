@@ -1,6 +1,6 @@
 /*
  *	MongoDBPersistenceDriver.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -59,6 +59,7 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
     registerDataAccess<data_access::UtilityDataAccess>(new MongoDBUtilityDataAccess(connection));
     
     //connec usda with nda
+    getDataAccess<MongoDBNodeDataAccess>()->utility_data_access = getDataAccess<MongoDBUtilityDataAccess>();
     getDataAccess<MongoDBUnitServerDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
     getDataAccess<MongoDBControlUnitDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
 }

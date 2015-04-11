@@ -1,6 +1,6 @@
 /*
  *	ApiProxy.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__ApiProxy__
 #define __CHAOSFramework__ApiProxy__
 
-#include <chaos/common/utility/NamedService.h>
+    //#include <chaos/common/utility/NamedService.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 
 #include <boost/atomic.hpp>
@@ -36,41 +36,45 @@ namespace chaos {
 explicit x(chaos::common::message::MultiAddressMessageChannel *_mn_message, int32_t timeout_in_milliseconds);\
 ~x();
 
-#define API_PROXY_CD_DEFINITION(x, alias)\
-x::x(chaos::common::message::MultiAddressMessageChannel *_mn_message, int32_t timeout_in_milliseconds):ApiProxy(alias, _mn_message, timeout_in_milliseconds){}\
+#define API_PROXY_CD_DEFINITION(x, group, name)\
+x::x(chaos::common::message::MultiAddressMessageChannel *_mn_message, int32_t timeout_in_milliseconds):ApiProxy(group, name, _mn_message, timeout_in_milliseconds){}\
 x::~x(){}
 
+#define API_PROXY_CD_DEFINITION_WITH_INIT(x, group, name, init)\
+x::x(chaos::common::message::MultiAddressMessageChannel *_mn_message, int32_t timeout_in_milliseconds):ApiProxy(group, name, _mn_message, timeout_in_milliseconds){init}\
+x::~x(){}
             //! define the result of an api like shared pointer of @chaos::common::message::MessageRequestFuture
             typedef auto_ptr<chaos::common::message::MultiAddressMessageRequestFuture> ApiProxyResult;
             
             class ApiProxyManager;
                 //! base class for all proxy api
-            class ApiProxy:
-            public chaos::common::utility::NamedService {
+            class ApiProxy {
                 friend class ApiProxyManager;
                     //!keep track on how many access are done to the proxy
                 boost::atomic<int> access_counter;
-
+                    //!is the timeout for the future
                 int32_t timeout_in_milliseconds;
-
                     //!channel for mds communication
                 chaos::common::message::MultiAddressMessageChannel *mn_message;
             protected:
+                    //! point to api group name
+                std::string     group_name;
+                    //! point to the api name
+                std::string     api_name;
+
                     //! default constructor
-                explicit ApiProxy(const std::string& api_name,
+                explicit ApiProxy(const std::string& _group_name,
+                                  const std::string& _api_name,
                                   chaos::common::message::MultiAddressMessageChannel *_mn_message,
                                   int32_t _timeout_in_milliseconds = 1000);
                     //! default destructor
                 ~ApiProxy();
-            protected:
                     //! execute an api call
                 /*!
                  preform an call of an api and return the opportune future
                  that permit to inspect the result or error
                  */
-                ApiProxyResult callApi(const std::string& api_group,
-                                       const std::string& api_name,
-                                       chaos::common::data::CDataWrapper *api_message);
+                ApiProxyResult callApi(chaos::common::data::CDataWrapper *api_message);
             };
         }
     }

@@ -1,6 +1,6 @@
 /*
  *	MessageChannel.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -34,6 +34,7 @@
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/network/NetworkBroker.h>
 
+#include <boost/smart_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/future.hpp>
@@ -68,8 +69,10 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN)) la
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
 
 			/*! \} */
-            typedef map<chaos::common::utility::atomic_int_type, boost::shared_ptr<boost::promise<common::data::CDataWrapper*> > >              MapPromises;
-            typedef map<chaos::common::utility::atomic_int_type, boost::shared_ptr<boost::promise<common::data::CDataWrapper*> > >::iterator    MapPromisesIterator;
+            typedef boost::shared_ptr<common::data::CDataWrapper>                                                       FuturePromiseData;
+            typedef boost::promise< FuturePromiseData >                                                             MessageFuturePromise;
+            typedef map<chaos::common::utility::atomic_int_type, boost::shared_ptr<MessageFuturePromise> >              MapPromises;
+            typedef map<chaos::common::utility::atomic_int_type, boost::shared_ptr<MessageFuturePromise> >::iterator    MapPromisesIterator;
 			//! MessageChannel
 			/*!
 			 This is the basic channel for comunicate with other chaos rpc server. It can be instantiated only by
@@ -89,7 +92,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 boost::atomic<uint32_t> channel_request_id_counter;
 
 				//! Mutex for managing the maps manipulation
-				boost::shared_mutex mutext_answer_managment;
+				boost::mutex mutext_answer_managment;
 
                 MapPromises map_request_id_promises;
 

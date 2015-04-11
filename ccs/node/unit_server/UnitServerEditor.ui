@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
    <property name="spacing">
     <number>2</number>
    </property>
@@ -45,9 +45,9 @@
        <number>2</number>
       </property>
       <item>
-       <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0" rowminimumheight="0,0,0" columnminimumwidth="0,0,0">
+       <layout class="QGridLayout" name="gridLayout" columnstretch="0,0" rowminimumheight="0,0,0" columnminimumwidth="0,0">
         <property name="spacing">
-         <number>-1</number>
+         <number>6</number>
         </property>
         <item row="1" column="0" alignment="Qt::AlignRight">
          <widget class="QLabel" name="label_2">
@@ -121,18 +121,6 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="2">
-         <widget class="QPushButton" name="pushButtonUpdateUnitServerInfo">
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Update</string>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="1">
          <widget class="QLabel" name="labelRegistrationTimestamp">
           <property name="font">
@@ -187,7 +175,19 @@
         </widget>
        </item>
        <item>
-        <widget class="QListView" name="listViewCUType"/>
+        <widget class="QListView" name="listViewCUType">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="showDropIndicator" stdset="0">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QFrame" name="frameCUTypeControl">
@@ -205,7 +205,7 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="spacing">
-           <number>-1</number>
+           <number>6</number>
           </property>
           <property name="leftMargin">
            <number>2</number>
@@ -271,7 +271,19 @@
         </widget>
        </item>
        <item>
-        <widget class="QTableView" name="tableView"/>
+        <widget class="QTableView" name="tableView">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::MultiSelection</enum>
+         </property>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>20</number>
+         </attribute>
+        </widget>
        </item>
        <item>
         <widget class="QFrame" name="frameCUInstanceControl">
@@ -304,6 +316,30 @@
            <number>2</number>
           </property>
           <item>
+           <widget class="QPushButton" name="pushButtonCUInstancePrevPage">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>&lt;&lt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonCUInstanceNextPage">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>&gt;&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer_3">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -324,7 +360,22 @@
              </font>
             </property>
             <property name="text">
-             <string>remove instance</string>
+             <string>remove</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonEditInstance">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>edit</string>
             </property>
            </widget>
           </item>
@@ -336,7 +387,7 @@
              </font>
             </property>
             <property name="text">
-             <string>add instance</string>
+             <string>add</string>
             </property>
            </widget>
           </item>
@@ -362,6 +413,35 @@
       </layout>
      </widget>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonUpdateAllInfo">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Update All</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

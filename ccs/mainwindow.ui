@@ -72,18 +72,23 @@
    <property name="nativeMenuBar">
     <bool>true</bool>
    </property>
-   <widget class="QMenu" name="menuNodes">
-    <property name="font">
-     <font>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
+   <widget class="QMenu" name="menuNode">
     <property name="title">
-     <string>Nodes</string>
+     <string>Node</string>
     </property>
-    <addaction name="actionOpen_Node"/>
+    <addaction name="actionOpenNode"/>
+    <addaction name="actionSearch_Node"/>
    </widget>
-   <addaction name="menuNodes"/>
+   <widget class="QMenu" name="menuWindows">
+    <property name="title">
+     <string>Windows</string>
+    </property>
+    <addaction name="actionCascade"/>
+    <addaction name="actionNext_window"/>
+    <addaction name="actionPrev_Window"/>
+   </widget>
+   <addaction name="menuNode"/>
+   <addaction name="menuWindows"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -139,21 +144,97 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents"/>
   </widget>
-  <action name="actionOpen_Node">
+  <action name="actionOpenNode">
    <property name="text">
     <string>Open Node</string>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>12</pointsize>
-    </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
   </action>
+  <action name="actionSearch_Node">
+   <property name="text">
+    <string>Search Node</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionCascade">
+   <property name="text">
+    <string>Cascade</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionNext_window">
+   <property name="text">
+    <string>Next Window</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+Ctrl+Left</string>
+   </property>
+  </action>
+  <action name="actionPrev_Window">
+   <property name="text">
+    <string>Prev Window</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+Ctrl+Right</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionCascade</sender>
+   <signal>triggered()</signal>
+   <receiver>mdiAreaEditor</receiver>
+   <slot>cascadeSubWindows()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>602</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionPrev_Window</sender>
+   <signal>triggered()</signal>
+   <receiver>mdiAreaEditor</receiver>
+   <slot>activatePreviousSubWindow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>602</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNext_window</sender>
+   <signal>triggered()</signal>
+   <receiver>mdiAreaEditor</receiver>
+   <slot>activateNextSubWindow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>602</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

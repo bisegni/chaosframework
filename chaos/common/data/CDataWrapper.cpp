@@ -1,6 +1,6 @@
 /*
  *	CDataWrapper.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -293,6 +293,22 @@ SerializationBuffer* CDataWrapper::getBSONData(){
     SerializationBuffer *result = new SerializationBuffer(bsonObject.objdata(), bsonObject.objsize());
     //recreate bson builder for next fill
     return result;
+}
+
+/*
+ Return the pointer of the data and the size. th eownership of data remain
+ of the CDataWrapper
+ */
+const char* CDataWrapper::getBSONRawData(int& size) {
+        //finalize the bson object
+    if( bsonBuilder->len()==0 ) return NULL;
+
+        //get the object
+    BSONObj bsonObject = bsonBuilder->asTempObj();
+        //we have some data
+    size = bsonObject.objsize();
+        //recreate bson builder for next fill
+    return bsonObject.objdata();
 }
 
 //return the json data

@@ -1,6 +1,6 @@
 /*
  *	MultiAddressMessageChannel.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -22,6 +22,8 @@
 #include <chaos/common/message/MessageChannel.h>
 #include <chaos/common/message/MultiAddressMessageRequestFuture.h>
 #include <chaos/common/network/URLServiceFeeder.h>
+
+#include <boost/thread.hpp>
 
 #include <map>
 #include <string>
@@ -70,6 +72,8 @@ namespace chaos {
             private chaos::common::network::URLServiceFeederHandler {
                 friend class chaos::common::network::NetworkBroker;
                 friend class chaos::common::message::MultiAddressMessageRequestFuture;
+                    //!mutex for the managment of rescheduling server
+                boost::mutex mutex_server_usage;
 
                 uint64_t last_retry;
                     //!list of the offline server index

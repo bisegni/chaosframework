@@ -1,6 +1,6 @@
 /*
  *	CDataWrapper.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -166,7 +166,9 @@ namespace chaos {
 				
 				//return the bson data
 				SerializationBuffer* getBSONData();
-				
+
+                const char* getBSONRawData(int& size);
+
 				//return the json data
 				SerializationBuffer* getJSONData();
 				

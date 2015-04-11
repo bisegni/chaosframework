@@ -27,11 +27,6 @@ public:
     virtual bool canClose() = 0;
     virtual void initUI() = 0;
 
-protected:
-    //!submit api result for async wait termination
-    void submitApiResult(const QString& api_tag,
-                         chaos::metadata_service_client::api_proxy::ApiProxyResult& api_result);
-
 private:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
     void setSubWindow(QMdiSubWindow *_editor_subwindow);
@@ -49,7 +44,14 @@ private slots:
 protected:
     ApiAsyncProcessor api_processor;
     void setTabTitle(const QString& title);
+
+    void closeTab();
+
     void addWidgetToPresenter(PresenterWidget *p_w);
+
+    //!submit api result for async wait termination
+    void submitApiResult(const QString& api_tag,
+                         chaos::metadata_service_client::api_proxy::ApiProxyResult api_result);
 
     //!Api has ben called successfully
     virtual void onApiDone(QString tag,

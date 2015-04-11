@@ -31,6 +31,11 @@ void PresenterWidget::setTabTitle(const QString& title) {
     editor_subwindow->setWindowTitle(title);
 }
 
+void PresenterWidget::closeTab() {
+    if(!editor_subwindow) return;
+    editor_subwindow->close();
+}
+
 void PresenterWidget::closeEvent(QCloseEvent *event) {
     if(canClose()){
         event->accept();
@@ -43,7 +48,7 @@ void PresenterWidget::addWidgetToPresenter(PresenterWidget *p_w) {
 }
 
 void PresenterWidget::submitApiResult(const QString& api_tag,
-                                      ApiProxyResult& api_result) {
+                                      ApiProxyResult api_result) {
     api_processor.submitApiResult(api_tag,
                                   api_result,
                                   this,

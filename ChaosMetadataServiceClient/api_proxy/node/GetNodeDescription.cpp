@@ -1,6 +1,6 @@
 /*
  *	GetNodeDescription.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -22,7 +22,9 @@
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::node;
 
-API_PROXY_CD_DEFINITION(GetNodeDescription, "getNodeDescription")
+API_PROXY_CD_DEFINITION(GetNodeDescription,
+                        "system",
+                        "getNodeDescription")
 
 /*!
 
@@ -30,5 +32,5 @@ API_PROXY_CD_DEFINITION(GetNodeDescription, "getNodeDescription")
 ApiProxyResult GetNodeDescription::execute(const std::string& unique_node_id) {
     chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, unique_node_id);
-    return callApi("system", getName(), message);
+    return callApi(message);
 }

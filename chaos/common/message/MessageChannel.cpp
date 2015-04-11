@@ -1,6 +1,6 @@
 /*
  *	MessageChannel.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -77,7 +77,7 @@ CDataWrapper *MessageChannel::response(CDataWrapper *response_data, bool& detach
     uint32_t request_id = response_data->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
     try {
         //lock the map
-        boost::shared_lock< boost::shared_mutex > lock(mutext_answer_managment);
+         boost::lock_guard<boost::mutex> lock(mutext_answer_managment);
         
         DEBUG_CODE(MCDBG_ << "Received answer with id:" << request_id;)
         
@@ -88,13 +88,10 @@ CDataWrapper *MessageChannel::response(CDataWrapper *response_data, bool& detach
             DEBUG_CODE(MCDBG_ << "We have promises for id:" << request_id);
             
             //set the valu ein promises
-            p_iter->second->set_value(response_data);
+            p_iter->second->set_value(FuturePromiseData(response_data));
             
             //delete the promises after have been set the data
             map_request_id_promises.erase(p_iter);
-            
-            //we have the promises
-            lock.unlock();
         } else {
             DEBUG_CODE(MCDBG_ << "No promises found for id:" << request_id;)
         }
@@ -201,15 +198,15 @@ std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const 
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN, channel_reponse_domain);
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION, "response");
     //prepare the promises and future
-    boost::shared_ptr<boost::promise<common::data::CDataWrapper*> > promises_ptr(new boost::promise<common::data::CDataWrapper*>());
+    boost::shared_ptr<MessageFuturePromise> promise(new MessageFuturePromise());
     
     //lock the map
-    boost::shared_lock< boost::shared_mutex > lock(mutext_answer_managment);
+    boost::lock_guard<boost::mutex> lock(mutext_answer_managment);
     //insert into themap the promises
-    map_request_id_promises.insert(make_pair(current_request_id, promises_ptr));
+    map_request_id_promises.insert(make_pair(current_request_id, promise));
     //get the future
     result.reset(new  MessageRequestFuture(current_request_id,
-                                           promises_ptr->get_future()));
+                                           promise->get_future()));
     //if(async) return result;
     //submit the request
     broker->submiteRequest(remote_host,

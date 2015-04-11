@@ -1,6 +1,6 @@
 /*	
  *	global.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *	
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -24,7 +24,7 @@
  *
  * \section intro_sec Introduction
  *
- * !CHOAS is a new idea on Control System software architecture, more information cam be found
+ * !CHAOS is a new idea on Control System software architecture, more information cam be found
  * on http://chaos.infn.it/
  *
  * \section install_sec Installation

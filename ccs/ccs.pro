@@ -41,7 +41,9 @@ SOURCES += main.cpp\
     api_async_processor/ApiAsyncRunnable.cpp \
     MainController.cpp \
     node/unit_server/UnitServerEditor.cpp \
-    node/control_unit/ControUnitInstanceEditor.cpp
+    node/control_unit/ControUnitInstanceEditor.cpp \
+    node/control_unit/DriverDescriptionInputDialog.cpp \
+    node/control_unit/AttributeValueRangeDialog.cpp
 
 HEADERS  += mainwindow.h \
     search/SearchNodeResult.h \
@@ -53,15 +55,17 @@ HEADERS  += mainwindow.h \
     api_async_processor/ApiAsyncRunnable.h \
     MainController.h \
     node/unit_server/UnitServerEditor.h \
-    node/control_unit/ControUnitInstanceEditor.h
+    node/control_unit/ControUnitInstanceEditor.h \
+    node/control_unit/DriverDescriptionInputDialog.h \
+    node/control_unit/AttributeValueRangeDialog.h
 
 FORMS    += mainwindow.ui \
     search/searchnoderesult.ui \
     search/searchnode.ui \
     node/unit_server/UnitServerEditor.ui \
-    node/control_unit/ControUnitInstanceEditor.ui
+    node/control_unit/ControUnitInstanceEditor.ui \
+    node/control_unit/DriverDescriptionInputDialog.ui \
+    node/control_unit/AttributeValueRangeDialog.ui
 
 DISTFILES += \
-    dark_orange.stylesheet \
-    node/unit_server/Test.qml \
-    node/unit_server/TestForm.ui.qml
+    dark_orange.stylesheet

@@ -1,6 +1,6 @@
 /*
  *	MongoDBControlUnitDataAccess.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -26,6 +26,9 @@
 
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
+
+#include <string>
+#include <vector>
 
 namespace chaos {
     namespace metadata_service {
@@ -54,8 +57,24 @@ namespace chaos {
                     int checkDatasetPresence(chaos::common::data::CDataWrapper& dataset_description);
                     
                     int getLastDataset(chaos::common::data::CDataWrapper& dataset_description);
+
+                    int setInstanceDescription(const std::string& cu_unique_id,
+                                               chaos::common::data::CDataWrapper& instance_description);
+
+                    int searchInstanceForUnitServer(std::vector<boost::shared_ptr<chaos::common::data::CDataWrapper> >& result_page,
+                                                    const std::string& unit_server_uid,
+                                                    std::vector<std::string> cu_type_filter,
+                                                    uint32_t last_sequence_id,
+                                                    uint32_t results_for_page);
+
+                    int getInstanceDescription(const std::string& unit_server_uid,
+                                               const std::string& control_unit_uid,
+                                               chaos::common::data::CDataWrapper **result);
+
+                    int deleteInstanceDescription(const std::string& unit_server_uid,
+                                                  const std::string& control_unit_uid);
                 };
-                
+
                 
             }
         }

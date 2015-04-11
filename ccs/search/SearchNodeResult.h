@@ -16,9 +16,6 @@ public PresenterWidget
 {
     Q_OBJECT
     //! search property
-    int search_type;
-    QString search_criteria;
-
     int current_page;
     int current_page_length;
 
@@ -28,12 +25,11 @@ public PresenterWidget
     void onApiDone(QString tag,
                         QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 protected:
-    void getSearchTypeAsString(QString& type_description);
     void initUI();
     bool canClose();
 
 public:
-    explicit SearchNodeResult(int _search_type, const QString& _search_criteria);
+    explicit SearchNodeResult();
     ~SearchNodeResult();
 
 signals:
@@ -47,6 +43,7 @@ private slots:
 
     void on_tableViewResult_clicked(const QModelIndex &index);
 
+    void on_pushButtonStartSearch_clicked();
 
 private:
     Ui::SearchNodeResult *ui;

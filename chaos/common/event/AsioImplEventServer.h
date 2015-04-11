@@ -1,6 +1,6 @@
 /*
  *	AsioImplEventServer.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -38,7 +38,7 @@ namespace chaos {
         const short multicast_port = 30001;
         class AsioEventHandler;
         
-        //! Asio impleentation for the !CHOAS event server
+        //! Asio impleentation for the !CHAOS event server
         /*!
          
          */

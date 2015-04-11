@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "search/SearchNode.h"
 #include "node/unit_server/UnitServerEditor.h"
+#include "search/SearchNodeResult.h"
 
 #include <QInputDialog>
 MainWindow::MainWindow(QWidget *parent) :
@@ -30,7 +31,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_actionOpen_Node_triggered()
+void MainWindow::on_actionOpenNode_triggered()
 {
     //opena a specified node, knowing the unique identifier
     bool ok;
@@ -53,6 +54,9 @@ void MainWindow::on_actionOpen_Node_triggered()
             command_presenter->showCommandPresenter(new UnitServerEditor(node_uid));
         }
     }
+}
 
-
+void MainWindow::on_actionSearch_Node_triggered()
+{
+    command_presenter->showCommandPresenter(new SearchNodeResult());
 }

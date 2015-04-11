@@ -122,12 +122,18 @@ namespace chaos {
          */
         static const char * const NODE_UNIQUE_ID        = "ndk_uid";
         
-        //! defines the domain where the node belong[string]
+        //! defines the unique id that is parent of target node [string]
         /*!
-         Identify an unique set that enclose one or more producer, consumer and user interfaces.
+         Identify an unique id that is the parent of the node
          */
-        static const char * const NODE_PARENT_SET       = "ndk_parent_set";
-        
+        static const char * const NODE_PARENT           = "ndk_parent";
+
+            //! defines at which group the node belong [array of unique id]
+        /*!
+         Every entry of the array is a unique id of a group
+         */
+        static const char * const NODE_GROUP_SET       = "ndk_group_set";
+
         //! define the node type[string]
         /*!
          The type permit to identify kind of node is. For example

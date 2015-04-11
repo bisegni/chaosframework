@@ -1,6 +1,6 @@
 /*
  *	MessageRequestFuture.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -24,6 +24,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/Atomic.h>
 
+#include <boost/smart_ptr.hpp>
 #include <boost/thread/future.hpp>
 
 #define MRF_PARSE_CDWPTR_RESULT(x) \
@@ -54,9 +55,9 @@ namespace chaos {
                 chaos::common::utility::atomic_int_type request_id;
 
                     //shared future for the answer
-                boost::shared_future<chaos::common::data::CDataWrapper*> future;
+                boost::shared_future< boost::shared_ptr<chaos::common::data::CDataWrapper> > future;
 
-                    //! the result fo the request
+                    //! the result for the request
                 std::auto_ptr<chaos::common::data::CDataWrapper> request_result;
 
                     //!error code
@@ -75,7 +76,7 @@ namespace chaos {
 
                     //!private constructor
                 MessageRequestFuture(chaos::common::utility::atomic_int_type _request_id,
-                                     boost::unique_future<chaos::common::data::CDataWrapper*> _future);
+                                     boost::unique_future< boost::shared_ptr<chaos::common::data::CDataWrapper> > _future);
 
             public:
                 //!private destructor

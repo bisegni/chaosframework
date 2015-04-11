@@ -1,6 +1,6 @@
 /*
  *	api.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -25,6 +25,11 @@
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 
 //---include all api header
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/GetInstance.h>
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/DeleteInstance.h>
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/SearchInstancesByUS.h>
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInstanceDescription.h>
+
 #include <ChaosMetadataServiceClient/api_proxy/node/GetNodeDescription.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/NodeSearch.h>
 

@@ -1,6 +1,6 @@
 /*
  *	SlowCommand.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -49,7 +49,7 @@ namespace chaos{
         
         namespace control_manager {
             
-            //! The name space that group all foundamental class need by slow control !CHOAS implementation
+            //! The name space that group all foundamental class need by slow control !CHAOS implementation
             namespace slow_command {
 				
 				namespace command {

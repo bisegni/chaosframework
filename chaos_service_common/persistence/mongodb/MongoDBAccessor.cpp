@@ -1,6 +1,6 @@
 /*
  *	MongoDBAccessor.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -37,6 +37,27 @@ MongoDBAccessor::~MongoDBAccessor() {
 
 const std::string& MongoDBAccessor::getDatabaseName() {
     return connection->getDatabaseName();
+}
+
+mongo::BSONObj MongoDBAccessor::regexOnField(const std::string& field_name,
+                                             const std::string& regex) {
+    return MONGODB_REGEX_ON_FILED(field_name, regex);
+}
+
+mongo::BSONObj MongoDBAccessor::arrayMatch(const std::string& serach_key, const std::string& search_value) {
+    return BSON("$elemMatch" << BSON(serach_key << search_value));
+}
+
+mongo::BSONObj MongoDBAccessor::arrayMatch(const std::vector<std::pair<std::string, std::string> >& search_keys_values) {
+    mongo::BSONObjBuilder q_math_build;
+        //scan all search info within array
+    for(std::vector<std::pair<std::string, std::string> >::const_iterator it = search_keys_values.begin();
+        it != search_keys_values.end();
+        it++){
+        q_math_build << it->first << it->second;
+    }
+
+    return BSON("$elemMatch" << q_math_build.obj());
 }
 
 int MongoDBAccessor::performPagedQuery(SearchResult& paged_result,

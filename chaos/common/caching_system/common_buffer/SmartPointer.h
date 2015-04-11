@@ -1,6 +1,6 @@
 /*
  *	SmartPointer.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Antonucci Flaminio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics

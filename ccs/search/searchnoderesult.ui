@@ -30,8 +30,8 @@
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="1" alignment="Qt::AlignRight">
-        <widget class="QLabel" name="label_3">
+       <item row="0" column="1" alignment="Qt::AlignRight">
+        <widget class="QLabel" name="label_2">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
@@ -42,27 +42,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <widget class="QLabel" name="labelType">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>type</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" alignment="Qt::AlignRight">
+       <item row="1" column="1" alignment="Qt::AlignRight">
         <widget class="QLabel" name="label">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -80,17 +60,31 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="3">
-        <widget class="QLabel" name="labelCriteria">
+       <item row="0" column="3">
+        <widget class="QLineEdit" name="lineEditSearchCriteria"/>
+       </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="pushButtonStartSearch">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
           </font>
          </property>
          <property name="text">
-          <string>criteria</string>
+          <string>Search</string>
+         </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QComboBox" name="comboBoxSearchType">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
         </widget>
        </item>
@@ -116,6 +110,9 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <property name="spacing">
+        <number>4</number>
+       </property>
        <item>
         <widget class="QPushButton" name="pushButtonPrevPage">
          <property name="enabled">
