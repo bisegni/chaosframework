@@ -20,7 +20,7 @@
 #include "SearchInstancesByUS.h"
 
 using namespace chaos::common::data;
-using namespace chaos::metadata_service::api::node;
+using namespace chaos::metadata_service::api::control_unit;
 
 #define CU_SI_INFO INFO_LOG(SearchInstancesByUS)
 #define CU_SI_DBG  DBG_LOG(SearchInstancesByUS)

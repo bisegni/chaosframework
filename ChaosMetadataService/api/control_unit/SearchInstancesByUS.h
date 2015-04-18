@@ -25,7 +25,7 @@
 namespace chaos {
     namespace metadata_service {
         namespace api {
-            namespace node {
+            namespace control_unit {
 
                 class SearchInstancesByUS:
                 public AbstractApi {

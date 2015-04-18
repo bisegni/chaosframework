@@ -22,6 +22,8 @@
 
 #include <chaos/common/utility/NamedService.h>
 
+#include <boost/format.hpp>
+
 #define DECLARE_DA_NAME static const char * const name;
 #define DEFINE_DA_NAME(x) const char * const x::name=#x;
 
@@ -29,7 +31,40 @@ namespace chaos {
     namespace service_common {
         namespace persistence {
             namespace data_access {
-                //! Data Access base class
+
+#define DATA_ACCESS_LOG_ENTRY(x, i)\
+x ": %" #i "%"
+
+#define DATA_ACCESS_NEXT_ENTRY()\
+"\n"
+
+#define DATA_ACCESS_LOG_VALUE(v)\
+% v
+
+#define DATA_ACCESS_LOG_1_ENTRY(x,v)\
+DATA_ACCESS_LOG_ENTRIES(DATA_ACCESS_LOG_ENTRY(x,1), DATA_ACCESS_LOG_VALUE(v))
+
+#define DATA_ACCESS_LOG_2_ENTRY(x_1, x_2, v_1, v_2)\
+DATA_ACCESS_LOG_ENTRIES(DATA_ACCESS_LOG_ENTRY(x_1,1)\
+                        DATA_ACCESS_NEXT_ENTRY()\
+                        DATA_ACCESS_LOG_ENTRY(x_2,2),\
+                        DATA_ACCESS_LOG_VALUE(v_1)\
+                        DATA_ACCESS_LOG_VALUE(v_2))
+
+#define DATA_ACCESS_LOG_3_ENTRY(x_1, x_2, x_3, v_1, v_2, v_3)\
+DATA_ACCESS_LOG_ENTRIES(DATA_ACCESS_LOG_ENTRY(x_1,1)\
+                        DATA_ACCESS_NEXT_ENTRY()\
+                        DATA_ACCESS_LOG_ENTRY(x_2,2)\
+                        DATA_ACCESS_NEXT_ENTRY()\
+                        DATA_ACCESS_LOG_ENTRY(x_3,3),\
+                        DATA_ACCESS_LOG_VALUE(v_1)\
+                        DATA_ACCESS_LOG_VALUE(v_2)\
+                        DATA_ACCESS_LOG_VALUE(v_3))
+
+#define DATA_ACCESS_LOG_ENTRIES(entries,values)\
+boost::str(boost::format(entries) values)
+
+                    //! Data Access base class
                 /*!
                  The data access are those class the directly work on data.
                  Every implementation will perform the data operation
@@ -38,6 +73,11 @@ namespace chaos {
                  */
                 class AbstractDataAccess:
                 public chaos::common::utility::NamedService {
+
+                protected:
+                    std::string log_message(const std::string& section,
+                                            const std::string& subsection,
+                                            const std::string& log_message);
 
                 public:
                     AbstractDataAccess(const std::string& name);

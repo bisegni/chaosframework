@@ -23,7 +23,7 @@
 #include <boost/format.hpp>
 
 using namespace chaos::common::data;
-using namespace chaos::metadata_service::api::node;
+using namespace chaos::metadata_service::api::control_unit;
 
 #define CU_DI_INFO INFO_LOG(GetInstance)
 #define CU_DI_DBG  DBG_LOG(GetInstance)

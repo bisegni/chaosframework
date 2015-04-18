@@ -19,9 +19,13 @@ class UnitServerEditor :
     //list model
     QStringListModel *list_model_cu_type;
     //query proxy
-    chaos::metadata_service_client::api_proxy::node::GetNodeDescription *gnd_proxy;
+    chaos::metadata_service_client::api_proxy::unit_server::LoadUnloadControlUnit *us_load_unload_cu_proxy;
+    chaos::metadata_service_client::api_proxy::unit_server::GetDescription *us_get_description_proxy;
     chaos::metadata_service_client::api_proxy::control_unit::SearchInstancesByUS *cu_si_proxy;
     chaos::metadata_service_client::api_proxy::control_unit::DeleteInstance *cu_di_proxy;
+
+    //the lis tof the isntances setuped for the unit server
+    std::vector<QSharedPointer<chaos::common::data::CDataWrapper> > instance_list;
 public:
     explicit UnitServerEditor(const QString& _node_unique_id);
     ~UnitServerEditor();
@@ -45,6 +49,15 @@ private slots:
                              const QModelIndex &previous);
     void tableSelectionChanged(const QItemSelection& selected,
                                const QItemSelection& unselected);
+//----------control unti slot----------------
+    void cuInstanceLoadSelected();
+    void cuInstanceUnloadSelected();
+    void cuInstanceInitSelected();
+    void cuInstanceDeinitSelected();
+    void cuInstanceStartSelected();
+    void cuInstanceStopSelected();
+    void on_pushButtonUpdateControlUnitType_clicked();
+
 protected:
     void initUI();
     bool canClose();

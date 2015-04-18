@@ -34,6 +34,7 @@ BatchCommandExecutor(executor_id),
 network_broker(_network_broker){
     //register unit server command
     installCommand(unit_server::UnitServerAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::UnitServerAckCommand));
+    installCommand(unit_server::LoadUnloadControlUnit::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::LoadUnloadControlUnit));
 }
 
 MDSBatchExecutor::~MDSBatchExecutor() {

@@ -161,11 +161,12 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         mongo::BSONObj query = bson_find.obj();
         mongo::BSONObj update = BSON("$set" << BSON("instance_description" << updated_field.obj()));
 
-        DEBUG_CODE(MDBCUDA_DBG << "setInstanceDescription update ---------------------------------------------";)
-        DEBUG_CODE(MDBCUDA_DBG << "Query: "  << query.jsonString();)
-        DEBUG_CODE(MDBCUDA_DBG << "Update: "  << update.jsonString();)
-        DEBUG_CODE(MDBCUDA_DBG << "setInstanceDescription update ---------------------------------------------";)
-
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
+                                            "findOne",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "Update",
+                                                                    query.toString(),
+                                                                    update.jsonString()));)
             //set the instance parameter within the node representing the control unit
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
                                      query,
@@ -213,10 +214,10 @@ int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost:
 
     mongo::BSONObj q = bson_find.obj();
         // mongo::BSONObj p =  BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID<<1);
-    DEBUG_CODE(MDBCUDA_DBG << "searchInstanceForUnitServer performPagedQuery ---------------------------------------------";)
-    DEBUG_CODE(MDBCUDA_DBG << "Query: "  << q.jsonString();)
-    DEBUG_CODE(MDBCUDA_DBG << "searchInstanceForUnitServer performPagedQuery ---------------------------------------------";)
-
+    DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
+                                        "findOne",
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                q.toString()));)
         //perform the search for the query page
     if((err = performPagedQuery(paged_result,
                                 MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
@@ -244,6 +245,11 @@ int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost:
     return err;
 }
 
+int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& control_unit_uid,
+                                                         chaos::common::data::CDataWrapper **result) {
+    return getInstanceDescription("", control_unit_uid, result);
+}
+
 int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit_server_uid,
                                                          const std::string& control_unit_uid,
                                                          chaos::common::data::CDataWrapper **result) {
@@ -253,11 +259,17 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
     SearchResult            paged_result;
 
     bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_uid;
-    bson_find << boost::str(boost::format("instance_description.%1%") % chaos::NodeDefinitionKey::NODE_PARENT) << unit_server_uid;
+    if(unit_server_uid.size()>0) {
+            //ad also unit server for search the instance description
+        bson_find << boost::str(boost::format("instance_description.%1%") % chaos::NodeDefinitionKey::NODE_PARENT) << unit_server_uid;
+    }
     mongo::BSONObj q = bson_find.obj();
-    DEBUG_CODE(MDBCUDA_DBG << "getInstanceDescription findOne ---------------------------------------------";)
-    DEBUG_CODE(MDBCUDA_DBG << "Query: "  << q.jsonString();)
-    DEBUG_CODE(MDBCUDA_DBG << "getInstanceDescription findOne ---------------------------------------------";)
+
+    DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
+                           "findOne",
+                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                   q.toString()));)
+
     if((err = connection->findOne(q_result,
                                   MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
                                   q))){
@@ -312,10 +324,13 @@ int MongoDBControlUnitDataAccess::deleteInstanceDescription(const std::string& u
     bson_find << boost::str(boost::format("instance_description.%1%") % chaos::NodeDefinitionKey::NODE_PARENT) << unit_server_uid;
     mongo::BSONObj q = bson_find.obj();
     mongo::BSONObj u = BSON("$unset" << BSON("instance_description" << ""));
-    DEBUG_CODE(MDBCUDA_DBG << "deleteInstanceDescription update ---------------------------------------------";)
-    DEBUG_CODE(MDBCUDA_DBG << "Query: "  << q.jsonString();)
-    DEBUG_CODE(MDBCUDA_DBG << "Update: "  << u.jsonString();)
-    DEBUG_CODE(MDBCUDA_DBG << "deleteInstanceDescription update ---------------------------------------------";)
+
+    DEBUG_CODE(MDBCUDA_DBG<<log_message("deleteInstanceDescription",
+                           "update",
+                           DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                   "Update",
+                                                   q.toString(),
+                                                   u.jsonString()));)
         //remove the field of the document
     if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
                                  q,

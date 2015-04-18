@@ -255,13 +255,13 @@ int MongoDBHAConnectionManager::insert( const std::string &ns,
 int MongoDBHAConnectionManager::findOne(mongo::BSONObj& result,
 										const std::string &ns,
 										const mongo::Query& query,
-										const mongo::BSONObj *fieldsToReturn,
+										const mongo::BSONObj *fields_to_return,
 										int queryOptions) {
 	int err = -1;
 	MongoDBHAConnection conn = NULL;
 	while (getConnection(&conn)) {
 		try {
-			result = conn->conn().findOne(ns, query, fieldsToReturn, queryOptions);
+			result = conn->conn().findOne(ns, query, fields_to_return, queryOptions);
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
 			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
@@ -280,13 +280,13 @@ void MongoDBHAConnectionManager::findN(std::vector<mongo::BSONObj>& out,
 									   mongo::Query query,
 									   int nToReturn,
 									   int nToSkip,
-									   const mongo::BSONObj *fieldsToReturn,
+									   const mongo::BSONObj *fields_to_return,
 									   int queryOptions) {
 	int err = -1;
 	MongoDBHAConnection conn = NULL;
 	while (getConnection(&conn)) {
 		try {
-			conn->conn().findN(out, ns, query, nToReturn, nToSkip, fieldsToReturn, queryOptions);
+			conn->conn().findN(out, ns, query, nToReturn, nToSkip, fields_to_return, queryOptions);
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
 			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();

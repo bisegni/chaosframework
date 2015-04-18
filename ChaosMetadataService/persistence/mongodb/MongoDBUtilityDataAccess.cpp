@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #include "mongo_db_constants.h"
 #include "MongoDBUtilityDataAccess.h"
 
@@ -50,10 +51,13 @@ int MongoDBUtilityDataAccess::getNextSequenceValue(const std::string& sequence_n
 
             //try to sse if we need to initialize
         mongo::BSONObj ui = BSON("$setOnInsert" << BSON("value" << (int32_t)0));
-        DEBUG_CODE(MDBUDA_DBG << "getNextSequenceValue init sequence ---------------------------------------------";)
-        DEBUG_CODE(MDBUDA_DBG << "Query: "  << q.toString();)
-        DEBUG_CODE(MDBUDA_DBG << "Update[upsert]: "  << ui.toString();)
-        DEBUG_CODE(MDBUDA_DBG << "getNextSequenceValue init sequence ---------------------------------------------";)
+
+        DEBUG_CODE(MDBUDA_DBG<<log_message("getNextSequenceValue",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                   "Update[upsert]",
+                                                                   q.toString(),
+                                                                   ui.toString()));)
 
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_SEQUENCES), q, ui, true))) {
             MDBUDA_ERR << "Error initilizing ";
@@ -61,10 +65,13 @@ int MongoDBUtilityDataAccess::getNextSequenceValue(const std::string& sequence_n
             update << "$inc" << BSON("value" << 1);
             mongo::BSONObj u = update.obj();
 
-            DEBUG_CODE(MDBUDA_DBG << "getNextSequenceValue findAndModify ---------------------------------------------";)
-            DEBUG_CODE(MDBUDA_DBG << "Query: "  << q.jsonString();)
-            DEBUG_CODE(MDBUDA_DBG << "Update: "  << u.jsonString();)
-            DEBUG_CODE(MDBUDA_DBG << "getNextSequenceValue findAndModify ---------------------------------------------";)
+            DEBUG_CODE(MDBUDA_DBG<<log_message("getNextSequenceValue",
+                                               "findAndModify",
+                                               DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                       "Update",
+                                                                       q.toString(),
+                                                                       u.toString()));)
+
             if((err = connection->findAndModify(result, MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_SEQUENCES), q, u, false, false))) {
                 MDBUDA_ERR << "Error updating ";
             } else if (!result.hasField("value")){

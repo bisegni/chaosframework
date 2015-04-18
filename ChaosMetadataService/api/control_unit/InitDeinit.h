@@ -1,9 +1,9 @@
 /*
- *	ControlUnitGroup.h
+ *	InitDeinit.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
- *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,27 +17,27 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__UnitServerApiGroup__
-#define __CHAOSFramework__UnitServerApiGroup__
+#ifndef __CHAOSFramework__InitDeinit__
+#define __CHAOSFramework__InitDeinit__
 
-#include "../AbstractApiGroup.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace control_unit {
+                class InitDeinit:
+                public AbstractApi {
 
-                    //! api group for the managment of the UnitServer
-                DECLARE_CLASS_FACTORY(ControlUnitGroup, AbstractApiGroup) {
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ControlUnitGroup)
                 public:
-                    ControlUnitGroup();
-                    ~ControlUnitGroup();
+                    InitDeinit();
+                    ~InitDeinit();
+                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
+                                                               bool& detach_data) throw(chaos::CException);
                 };
-
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__UnitServerGroup__) */
+#endif /* defined(__CHAOSFramework__InitDeinit__) */

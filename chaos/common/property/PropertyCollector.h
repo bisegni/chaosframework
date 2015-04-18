@@ -24,6 +24,8 @@
 #include <chaos/common/property/Property.h>
 
 #include <map>
+#include <string>
+#include <vector>
 
 #define DECLARE_CHAOS_PROPERTY(own, type, access_type, name)\
 chaos::common::property::Property<own, type, access_type> name;
@@ -50,41 +52,28 @@ namespace chaos{
              */
             class PropertyCollector {
                     //!associate a section name to a property list
-                PropertySections property_sections;
+                PropertySections map_property_sections;
 
             protected:
                     //! add a new property to a section
                 void addPropertyToSection(const std::string& section_name,
-                                          AbstractProperty *property_for_section) throw (chaos::CException) {
-                    if(property_sections.count(section_name) == 0) {
-                        property_sections.insert(make_pair(section_name, PropertyMap()));
-                    }
-                    if(property_sections[section_name].count(property_for_section->getName()) > 0) {
-                        throw chaos::CException(-1, "Property already registerd", __PRETTY_FUNCTION__);
-                    }
-                    property_sections[section_name].insert(make_pair(property_for_section->getName(), property_for_section));
-                }
+                                          AbstractProperty *property_for_section) throw (chaos::CException);
 
             public:
-                void setSectionProperty(const std::string& section,
-                                        const std::string& property_name,
-                                        const std::string& property_value)  throw (chaos::CException) {
-                    if((property_sections.count(section) > 0) &&
-                       (property_sections[section].count(property_name) > 0)){
-                        property_sections[section][property_name]->setStrValue(property_value);
-                    }
-                }
+                void setSectionPropertyStrValue(const std::string& section,
+                                                const std::string& property_name,
+                                                const std::string& property_value)  throw (chaos::CException);
 
-                std::string getSectionProperty(const std::string& section,
-                                               const std::string& property_name) {
-                    if((property_sections.count(section) > 0) &&
-                       (property_sections[section].count(property_name) > 0)){
-                        return property_sections[section][property_name]->getStrValue();
-                    } else {
-                        return std::string();
-                    }
-                }
+                std::string getSectionPropertyStrValue(const std::string& section,
+                                                       const std::string& property_name);
                 
+                void getAllSection(std::vector<std::string>& sections);
+                
+                void getAllPropertyForSection(const std::string& section,
+                                              std::vector<std::string>& sections);
+                
+                const AbstractProperty *getAbstractProperty(const std::string& section,
+                                                            const std::string& property);
             };
         }
     }

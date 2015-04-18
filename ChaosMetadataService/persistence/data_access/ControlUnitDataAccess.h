@@ -65,6 +65,9 @@ namespace chaos {
                                                        const std::string& control_unit_uid,
                                                        chaos::common::data::CDataWrapper **result) = 0;
 
+                    virtual int getInstanceDescription(const std::string& control_unit_uid,
+                                                       chaos::common::data::CDataWrapper **result) = 0;
+
                     virtual int deleteInstanceDescription(const std::string& unit_server_uid,
                                                           const std::string& control_unit_uid) = 0;
                 };

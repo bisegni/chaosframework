@@ -225,11 +225,13 @@ namespace chaos {
      */
     //! Name space for grupping key for the node type
     namespace UnitServerNodeDefinitionKey {
+
         //! key for the control unit aliases published by the unit server [array fo string]
         static const char * const UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS       = "usndk_hosted_cu_class";
         
         //! key the addresses the list of the states of the CU for a given Unit Serve   string]
         static const char * const UNIT_SERVER_HOSTED_CU_STATES                = "usndk_hosted_cu_states";
+
     }
     /** @} */ // end of UnitServerNodeDefinitionKey
     
@@ -239,7 +241,15 @@ namespace chaos {
      *  @{
      */
     namespace UnitServerNodeDomainAndActionLabel {
-        
+            //! The domain for unit server rpc action
+        static const char * const RPC_DOMAIN                                        = "unit_server";
+
+            //! action called for load operation of the hosted control unit type
+        static const char * const ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT              = "unitServerLoadControlUnit";
+
+            //! action called for load operation of the hosted control unit type
+        static const char * const ACTION_UNIT_SERVER_UNLOAD_CONTROL_UNIT            = "unitServerUnloadControlUnit";
+
         //! Action called by mds for ack message in the unit server registration process
         static const char * const ACTION_UNIT_SERVER_REG_ACK                        = "unitServerRegistrationACK";
         
@@ -250,7 +260,7 @@ namespace chaos {
         /*!
          Represent the control unit type to be load or unload
          */
-        static const char * const PARAM_CONTROL_UNIT_TYPE_ALIAS                     = "controlUnitTypeAlias";
+        static const char * const PARAM_CONTROL_UNIT_TYPE                     = "usn_rpc_par_control_unit_type";
     }
     /** @} */ // end of UnitServerNodeDomainAndActionLabel
     
@@ -726,12 +736,6 @@ namespace chaos {
 		
 		//! Action called by mds for ack message in the unit server registration process
 		static const char * const ACTION_NODE_REG_ACK                           = "nodeRegistrationACK";
-		
-        //! Load the control unit
-        static const char * const ACTION_NODE_LOAD                                  = "loadNode";
-        
-        //! Unload the control unit
-        static const char * const ACTION_NODE_UNLOAD                                = "unloadNode";
         
 		//! Start the control unit intialization, the action need the default value
 		//! of the input attribute for a determinate device

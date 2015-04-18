@@ -61,9 +61,13 @@ namespace chaos {
 
                     //inherited method
                     int deleteUS(const std::string& unit_server_unique_id);
+
+                    //inherited method
+                    int getDescription(const std::string& unit_server_uid,
+                                       chaos::common::data::CDataWrapper **unit_server_description);
 				};
 			}
 		}
-	}	
+	}
 }
 #endif /* defined(__CHAOSFramework__MongoDBProducerDataAccess__) */

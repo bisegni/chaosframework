@@ -19,7 +19,8 @@ SET(cnd_src  ${cnd_src}	api/producer/ProducerApiGroup.cpp
 SET(cnd_src  ${cnd_src}	api/control_unit/ControlUnitGroup.cpp
                         api/control_unit/SetInstanceDescription.cpp
                         api/control_unit/SearchInstancesByUS.cpp
-                        api/control_unit/GetInstance.cpp)
+                        api/control_unit/GetInstance.cpp
+												api/control_unit/DeleteInstance.cpp)
 
 SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/NodeCreateUnitServer.cpp
@@ -40,7 +41,11 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
-SET(cnd_src  ${cnd_src}	batch/unit_server/UnitServerAckBatchCommand.cpp)
+
+SET(cnd_src  ${cnd_src}	batch/unit_server/UnitServerAckBatchCommand.cpp
+                        batch/unit_server/LoadUnloadControlUnit.cpp)
+
+
 ADD_EXECUTABLE(ChaosMetadataService ${cnd_src})
 
 IF(BUILD_FORCE_STATIC)

@@ -1,5 +1,5 @@
 /*
- *	GetInstance.cpp
+ *	StartStop.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,32 +18,32 @@
  *    	limitations under the License.
  */
 
-#include "GetInstance.h"
+#include "StartStop.h"
 
 #include <boost/format.hpp>
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::control_unit;
 
-#define CU_GI_INFO INFO_LOG(GetInstance)
-#define CU_GI_DBG  DBG_LOG(GetInstance)
-#define CU_GI_ERR  ERR_LOG(GetInstance)
+#define CU_STASTO_INFO INFO_LOG(StartStop)
+#define CU_STASTO_DBG  DBG_LOG(StartStop)
+#define CU_STASTO_ERR  ERR_LOG(StartStop)
 
-GetInstance::GetInstance():
-AbstractApi("getInstance"){
-
-}
-
-GetInstance::~GetInstance() {
+StartStop::StartStop():
+AbstractApi("startStop"){
 
 }
 
-CDataWrapper *GetInstance::execute(CDataWrapper *api_data,
-                                   bool& detach_data) throw(chaos::CException) {
+StartStop::~StartStop() {
 
-    if(!api_data) {LOG_AND_TROW(CU_GI_ERR, -1, "Search parameter are needed");}
-    if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) {LOG_AND_TROW(CU_GI_ERR, -2, "The ndk_unique_id key (representing the control unit uid) is mandatory");}
-    if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {LOG_AND_TROW(CU_GI_ERR, -3, "The ndk_parent key (representing the unit server uid) is mandatory");}
+}
+
+CDataWrapper *StartStop::execute(CDataWrapper *api_data,
+                                  bool& detach_data) throw(chaos::CException) {
+
+    if(!api_data) {LOG_AND_TROW(CU_STASTO_ERR, -1, "Search parameter are needed");}
+    if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) {LOG_AND_TROW(CU_STASTO_ERR, -2, "The ndk_unique_id key (representing the control unit uid) is mandatory");}
+    if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {LOG_AND_TROW(CU_STASTO_ERR, -3, "The ndk_parent key (representing the unit server uid) is mandatory");}
 
     int err = 0;
     CDataWrapper *result = NULL;
@@ -53,7 +53,7 @@ CDataWrapper *GetInstance::execute(CDataWrapper *api_data,
     if((err = cu_da->getInstanceDescription(us_uid,
                                             cu_uid,
                                             &result))){
-        LOG_AND_TROW(CU_GI_ERR, err, boost::str(boost::format("Error fetching the control unit instance description for cuid:%1% and usuid:%2%") % cu_uid % cu_uid));
+        LOG_AND_TROW(CU_STASTO_ERR, err, boost::str(boost::format("Error fetching the control unit instance description for cuid:%1% and usuid:%2%") % cu_uid % cu_uid));
     }
     return result;
 }

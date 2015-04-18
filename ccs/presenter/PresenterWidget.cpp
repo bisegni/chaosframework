@@ -87,22 +87,26 @@ void PresenterWidget::onApiDone(QString tag,
 void PresenterWidget::onApiError(QString tag,
                                  QSharedPointer<CException> api_exception) {
     qDebug() << "onApiError event of tag:" << tag << " of error:" << api_exception->what();
-    QString title(tr("Api Error "));
-    title.append("[");
-    title.append(tag);
-    title.append("]");
-    QMessageBox::information(this,
-                             tr("Api Error"),
-                             api_exception->what());
+    showInformation(tr("Api Error"),
+                    tag,
+                    api_exception->what());
 }
 
 void PresenterWidget::onApiTimeout(QString tag) {
     qDebug() << "onApiTimeout event of tag:" << tag;
-    QString title(tr("Api Error"));
-    title.append("[");
-    title.append(tag);
-    title.append("]");
-    QMessageBox::information(this,
-                             title,
-                             tr("Timeout reached (Possible no server available)!"));
+    showInformation(tr("Api Error"),
+                    tag,
+                    tr("Timeout reached (Possible no server available)!"));
 }
+
+ void PresenterWidget::showInformation(const QString& title,
+                                       const QString& sub_title,
+                                       const QString& information) {
+     QString title_(title);
+     title_.append("[");
+     title_.append(sub_title);
+     title_.append("]");
+     QMessageBox::information(this,
+                              title_,
+                              information);
+ }

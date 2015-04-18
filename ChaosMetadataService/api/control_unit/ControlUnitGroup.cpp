@@ -22,8 +22,10 @@
 #include "SearchInstancesByUS.h"
 #include "GetInstance.h"
 #include "DeleteInstance.h"
+#include "InitDeinit.h"
+#include "StartStop.h"
 
-using namespace chaos::metadata_service::api::node;
+using namespace chaos::metadata_service::api::control_unit;
 DEFINE_CLASS_FACTORY_NO_ALIAS(ControlUnitGroup, chaos::metadata_service::api::AbstractApiGroup);
 
 ControlUnitGroup::ControlUnitGroup():
@@ -33,6 +35,8 @@ AbstractApiGroup("control_unit"){
     addApi<SearchInstancesByUS>();
     addApi<GetInstance>();
     addApi<DeleteInstance>();
+    addApi<InitDeinit>();
+    addApi<StartStop>();
 }
 
 ControlUnitGroup::~ControlUnitGroup() {

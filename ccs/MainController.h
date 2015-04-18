@@ -4,12 +4,14 @@
 #include "mainwindow.h"
 
 #include <QApplication>
+#include <QSplashScreen>
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 class MainController
 {
          MainWindow w;
+         std::auto_ptr<QSplashScreen> splash;
 public:
     MainController();
     ~MainController();

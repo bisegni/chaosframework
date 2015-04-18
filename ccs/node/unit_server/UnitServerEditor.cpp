@@ -14,8 +14,6 @@
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
-using namespace chaos::metadata_service_client::api_proxy::node;
-using namespace chaos::metadata_service_client::api_proxy::control_unit;
 
 UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
     PresenterWidget(NULL),
@@ -30,11 +28,12 @@ UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
     connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(customMenuRequested(QPoint)));
 
-    gnd_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<GetNodeDescription>();
-    cu_si_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<SearchInstancesByUS>();
+    //----------------fetch the key------------------
+    us_load_unload_cu_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<unit_server::LoadUnloadControlUnit>();
+    us_get_description_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<unit_server::GetDescription>();
+    cu_si_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<control_unit::SearchInstancesByUS>();
     cu_si_proxy->unit_server_uid = _node_unique_id.toStdString();
-
-    cu_di_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<DeleteInstance>();
+    cu_di_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<control_unit::DeleteInstance>();
 }
 
 UnitServerEditor::~UnitServerEditor()
@@ -94,27 +93,36 @@ bool UnitServerEditor::canClose() {
 }
 
 void UnitServerEditor::customMenuRequested(QPoint pos){
-    QModelIndex index=ui->tableView->indexAt(pos);
+    //QModelIndex index=ui->tableView->indexAt(pos);
+    QModelIndexList selected = ui->tableView->selectionModel()->selectedRows();
+    if(selected.size()) {
+        QMenu *menu=new QMenu(this);
+        QAction *menuL = new QAction("Load", this);
+        QAction *menuUL = new QAction("Unload", this);
+        QAction *menuI = new QAction("Init", this);
+        QAction *menuDI = new QAction("Deinit", this);
+        QAction *menuStart = new QAction("Start", this);
+        QAction *menuStop = new QAction("Stop", this);
+        connect(menuL, SIGNAL(triggered()), this, SLOT(cuInstanceLoadSelected()));
+        connect(menuUL, SIGNAL(triggered()), this, SLOT(cuInstanceUnloadSelected()));
+        connect(menuI, SIGNAL(triggered()), this, SLOT(cuInstanceInitSelected()));
+        connect(menuDI, SIGNAL(triggered()), this, SLOT(cuInstanceDeinitSelected()));
+        connect(menuStart, SIGNAL(triggered()), this, SLOT(cuInstanceStartSelected()));
+        connect(menuStop, SIGNAL(triggered()), this, SLOT(cuInstanceStopSelected()));
+        menu->addAction(menuL);
+        menu->addAction(menuUL);
+        menu->addAction(menuI);
+        menu->addAction(menuDI);
+        menu->addAction(menuStart);
+        menu->addAction(menuStop);
+        menu->popup(ui->tableView->viewport()->mapToGlobal(pos));
+    }
 
-    QMenu *menu=new QMenu(this);
-    QAction *menuL = new QAction("Load", this);
-    QAction *menuUL = new QAction("Unload", this);
-    QAction *menuI = new QAction("Init", this);
-    QAction *menuDI = new QAction("Deinit", this);
-    QAction *menuStart = new QAction("Start", this);
-    QAction *menuStop = new QAction("Stop", this);
-    menu->addAction(menuL);
-    menu->addAction(menuUL);
-    menu->addAction(menuI);
-    menu->addAction(menuDI);
-    menu->addAction(menuStart);
-    menu->addAction(menuStop);
-    menu->popup(ui->tableView->viewport()->mapToGlobal(pos));
 }
 
 void UnitServerEditor::updateAll() {
-    submitApiResult(QString("gnd"),
-                    gnd_proxy->execute(node_unique_id.toStdString()));
+    submitApiResult(QString("get_description"),
+                    us_get_description_proxy->execute(node_unique_id.toStdString()));
     submitApiResult(QString("cu_si"),
                     cu_si_proxy->execute(0, 100));
 }
@@ -149,7 +157,7 @@ void UnitServerEditor::tableSelectionChanged(const QItemSelection& selected,
 void UnitServerEditor::onApiDone(QString tag,
                                  QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     qDebug() << "Received asyncApiResult event of tag:" << tag;
-    if(tag.compare("gnd") == 0) {
+    if(tag.compare("get_description") == 0) {
         //uid
         ui->labelUnitServerUID->setText(node_unique_id);
         //address
@@ -187,12 +195,15 @@ void UnitServerEditor::onApiDone(QString tag,
     } else if(tag.compare("cu_si") == 0) {
         //whe have the result for the control unit searchs
         table_model->setRowCount(0);
+        instance_list.clear();
+
         if(!api_result.isNull() && api_result->hasKey("node_search_result_page")) {
             CMultiTypeDataArrayWrapper *arr =  api_result->getVectorValue("node_search_result_page");
             for(int i = 0;
                 i < arr->size();
                 i++) {
-                auto_ptr<CDataWrapper> found_node(arr->getCDataWrapperElementAtIndex(i));
+                QSharedPointer<CDataWrapper> found_node(arr->getCDataWrapperElementAtIndex(i));
+                instance_list.push_back(found_node);
 
                 QList<QStandardItem *> row_item;
                 QStandardItem *item = NULL;
@@ -211,6 +222,8 @@ void UnitServerEditor::onApiDone(QString tag,
                 table_model->appendRow(row_item);
             }
         }
+    } else if(tag.compare("cu_load") == 0) {
+        qDebug() << "Load sucessfull";
     }
 }
 
@@ -258,4 +271,44 @@ void UnitServerEditor::on_pushButtonEditInstance_clicked()
                                                           cu_inst_id,
                                                           true));
     }
+}
+
+
+void UnitServerEditor::on_pushButtonUpdateControlUnitType_clicked()
+{
+    submitApiResult(QString("get_description"),
+                    us_get_description_proxy->execute(node_unique_id.toStdString()));
+}
+
+
+//------------------------------control unit slot------------------------
+void UnitServerEditor::cuInstanceLoadSelected() {
+    qDebug() << "cuInstanceLoadSelected";
+    foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
+       QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+       //load the selected cu
+       submitApiResult(QString("cu_load"),
+                       us_load_unload_cu_proxy->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
+                                                        true));
+    }
+}
+
+void UnitServerEditor::cuInstanceUnloadSelected() {
+    qDebug() << "cuInstanceUnloadSelected";
+}
+
+void UnitServerEditor::cuInstanceInitSelected() {
+    qDebug() << "cuInstanceInitSelected";
+}
+
+void UnitServerEditor::cuInstanceDeinitSelected() {
+    qDebug() << "cuInstanceDeinitSelected";
+}
+
+void UnitServerEditor::cuInstanceStartSelected() {
+    qDebug() << "cuInstanceStartSelected";
+}
+
+void UnitServerEditor::cuInstanceStopSelected() {
+    qDebug() << "cuInstanceStopSelected";
 }

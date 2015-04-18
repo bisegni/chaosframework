@@ -11,7 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ccs
 TEMPLATE = app
 RESOURCES = qdarkstyle/style.qrc \
-    dark_orange/dark_orange_style.qrc
+    dark_orange/dark_orange_style.qrc \
+    image/image.qrc
 
 INCLUDEPATH += $$PWD/../
 INCLUDEPATH += $$PWD/../usr/local/include

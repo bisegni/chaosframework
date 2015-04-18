@@ -55,7 +55,7 @@ namespace chaos {
                     /*!
                      Call directly the node data access to check if the node exist
                      */
-                    virtual int checkUSPresence(const std::string& unit_server_alias, bool& presence) = 0;
+                    virtual int checkUSPresence(const std::string& unit_server_uid, bool& presence) = 0;
                     
                     //! Update the unit server information
                     /*!
@@ -70,6 +70,10 @@ namespace chaos {
                     
                     //! delete a unit server
                     virtual int deleteUS(const std::string& unit_server_unique_id) = 0;
+
+                        //! return the full unit server description
+                    virtual int getDescription(const std::string& unit_server_uid,
+                                               chaos::common::data::CDataWrapper **unit_server_description) = 0;
                 };
                 
                 

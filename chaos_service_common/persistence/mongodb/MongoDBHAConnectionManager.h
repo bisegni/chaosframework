@@ -91,7 +91,7 @@ namespace chaos {
                     int findOne(mongo::BSONObj& result,
                                 const std::string &ns,
                                 const mongo::Query& query,
-                                const mongo::BSONObj *fieldsToReturn = 0,
+                                const mongo::BSONObj *fields_to_return = 0,
                                 int queryOptions = 0);
 
                     void findN(std::vector<mongo::BSONObj>& out,
@@ -99,7 +99,7 @@ namespace chaos {
                                mongo::Query query,
                                int nToReturn,
                                int nToSkip = 0,
-                               const mongo::BSONObj *fieldsToReturn = 0,
+                               const mongo::BSONObj *fields_to_return = 0,
                                int queryOptions = 0);
 
                     int findAndModify(mongo::BSONObj& result,

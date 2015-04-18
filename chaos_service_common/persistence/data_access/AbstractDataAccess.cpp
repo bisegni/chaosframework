@@ -28,3 +28,14 @@ NamedService(name){
 AbstractDataAccess::~AbstractDataAccess() {
 	
 }
+
+
+
+std::string AbstractDataAccess::log_message(const std::string& section,
+                                            const std::string& subsection,
+                                            const std::string& log_message) {
+    return boost::str(boost::format("\n%1% %2%----------------------------------------------\n%3%\n%1% %2%----------------------------------------------\n") %
+                      section %
+                      subsection %
+                      log_message);
+}

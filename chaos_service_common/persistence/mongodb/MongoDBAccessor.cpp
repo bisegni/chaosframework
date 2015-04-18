@@ -69,12 +69,6 @@ int MongoDBAccessor::performPagedQuery(SearchResult& paged_result,
     int err = 0;
     try {
         //set the update
-        DEBUG_CODE(MDBACC_DBG << "performPagedQuery ---------------------------------------------";)
-        DEBUG_CODE(MDBACC_DBG << "Query: "  << q.toString();)
-        if(prj) DEBUG_CODE(MDBACC_DBG << "Projection: "  << prj->toString();)
-        if(from) DEBUG_CODE(MDBACC_DBG << "Starting from: "  << from->toString();)
-        DEBUG_CODE(MDBACC_DBG << "Limit: "  << limit;)
-        DEBUG_CODE(MDBACC_DBG << "performPagedQuery ---------------------------------------------";)
         connection->findN(paged_result, db_collection, q, limit, 0, prj);
     } catch (const mongo::DBException &e) {
         MDBACC_ERR << e.what();

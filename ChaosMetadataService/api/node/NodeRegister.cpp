@@ -38,7 +38,6 @@ NodeRegister::~NodeRegister() {
 chaos::common::data::CDataWrapper *NodeRegister::execute(chaos::common::data::CDataWrapper *api_data,
                                                          bool& detach_data) throw (chaos::CException){
     CHAOS_ASSERT(api_data)
-    USRA_INFO << api_data->getJSONString();
 
     chaos::common::data::CDataWrapper *result = NULL;
     if(!api_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {

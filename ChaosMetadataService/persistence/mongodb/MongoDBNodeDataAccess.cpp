@@ -47,11 +47,21 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
         query_builder << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_unique_id;
 
         mongo::BSONObj q = query_builder.obj();
-        DEBUG_CODE(MDBNDA_DBG << "getNodeDescription findOne ---------------------------------------------";)
-        DEBUG_CODE(MDBNDA_DBG << "Query: "  << q.jsonString();)
-        DEBUG_CODE(MDBNDA_DBG << "getNodeDescription findOne ---------------------------------------------";)
+        mongo::BSONObj p = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
+                                chaos::NodeDefinitionKey::NODE_TYPE << 1 <<
+                                chaos::NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
+                                chaos::NodeDefinitionKey::NODE_RPC_DOMAIN << 1 <<
+                                chaos::NodeDefinitionKey::NODE_TIMESTAMP << 1);
+
+        DEBUG_CODE(MDBNDA_DBG<<log_message("getNodeDescription",
+                                           "findOne",
+                                           DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                   "Projection",
+                                                                   q.jsonString(),
+                                                                   p.jsonString()));)
+
         if((err = connection->findOne(result,
-                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES), q))){
+                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES), q, &p))){
             MDBNDA_ERR << "Error fetching node description";
         } else if(result.isEmpty()) {
             MDBNDA_ERR << "No node description has been found";
@@ -89,9 +99,11 @@ int MongoDBNodeDataAccess::insertNewNode(CDataWrapper& node_description) {
         std::auto_ptr<SerializationBuffer> ser(node_description.getBSONData());
         mongo::BSONObj obj_to_insert(ser->getBufferPtr());
 
-        DEBUG_CODE(MDBNDA_DBG << "insertNewNode insert ---------------------------------------------";)
-        DEBUG_CODE(MDBNDA_DBG << "Query: "  << obj_to_insert.jsonString();)
-        DEBUG_CODE(MDBNDA_DBG << "insertNewNode insert ---------------------------------------------";)
+        DEBUG_CODE(MDBNDA_DBG<<log_message("insertNewNode",
+                                           "insert",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   obj_to_insert));)
+
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
                                      obj_to_insert))) {
             MDBNDA_ERR << "Error creating new node";
@@ -133,10 +145,14 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
             //set the update
         bson_update << "$set" << updated_field.obj();
         mongo::BSONObj update = bson_update.obj();
-        DEBUG_CODE(MDBNDA_DBG << "updateUS update ---------------------------------------------";)
-        DEBUG_CODE(MDBNDA_DBG << "Query: "  << query.jsonString();)
-        DEBUG_CODE(MDBNDA_DBG << "Update: "  << update.jsonString();)
-        DEBUG_CODE(MDBNDA_DBG << "updateUS update ---------------------------------------------";)
+
+        DEBUG_CODE(MDBNDA_DBG<<log_message("updateUS",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                   "Update",
+                                                                   query.jsonString(),
+                                                                   update.jsonString()));)
+
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
@@ -159,9 +175,12 @@ int MongoDBNodeDataAccess::checkNodePresence(const std::string& node_unique_id,
     try {
         bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_unique_id;
         mongo::BSONObj q = bson_find.obj();
-        DEBUG_CODE(MDBNDA_DBG << "checkNodePresence find ---------------------------------------------";)
-        DEBUG_CODE(MDBNDA_DBG << "Query: "  << q.jsonString();)
-        DEBUG_CODE(MDBNDA_DBG << "checkNodePresence find ---------------------------------------------";)
+
+        DEBUG_CODE(MDBNDA_DBG<<log_message("checkNodePresence",
+                                           "find",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()));)
+
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
                                       q))){
@@ -183,9 +202,12 @@ int MongoDBNodeDataAccess::deleteNode(const std::string& node_unique_id) {
     try {
         bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_unique_id;
         mongo::BSONObj q = bson_find.obj();
-        DEBUG_CODE(MDBNDA_DBG << "deleteNode delete ---------------------------------------------";)
-        DEBUG_CODE(MDBNDA_DBG << "Query: "  << q.jsonString();)
-        DEBUG_CODE(MDBNDA_DBG << "deleteNode delete ---------------------------------------------";)
+
+        DEBUG_CODE(MDBNDA_DBG<<log_message("deleteNode",
+                                           "delete",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()));)
+
         if((err = connection->remove(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
                                      q))){
             MDBNDA_ERR << "Error deleting unit server" << node_unique_id;
@@ -247,6 +269,12 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
     bson_find_and << BSON("$or" << bson_find_or.arr());
     bson_find.appendArray("$and", bson_find_and.obj());
     mongo::BSONObj q = bson_find.obj();
+
+    DEBUG_CODE(MDBNDA_DBG<<log_message("searchNode",
+                                       "performPagedQuery",
+                                       DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                               q.jsonString()));)
+
         //perform the search for the query page
     if((err = performPagedQuery(paged_result,
                                 MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),

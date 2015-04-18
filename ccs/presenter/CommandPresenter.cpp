@@ -16,8 +16,17 @@ void CommandPresenter::showCommandPresenter(PresenterWidget *pwidget) {
     pwidget->setParent(mdi_area_editors);
     QRect mdi_rec = mdi_area_editors->geometry();
     QMdiSubWindow *sub_win = mdi_area_editors->addSubWindow(pwidget);
-    int x = (mdi_rec.width()-sub_win->width()) / 2;
-    int y = (mdi_rec.height()-sub_win->height()) / 2;
+
+    //----------------------------------------------------------------
+    int x = 0;
+    int y = 0;
+    if(mdi_area_editors->activeSubWindow()==NULL) {
+        x = (mdi_rec.width()-sub_win->width()) / 2;
+        y = (mdi_rec.height()-sub_win->height()) / 2;
+    } else {
+        x = mdi_area_editors->activeSubWindow()->geometry().x() + 20;
+        y = mdi_area_editors->activeSubWindow()->geometry().y() + 20;
+    }
     sub_win->move(x, y);
     pwidget->setSubWindow(sub_win);
     sub_win->show();

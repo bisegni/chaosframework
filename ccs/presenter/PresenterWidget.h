@@ -49,6 +49,10 @@ protected:
 
     void addWidgetToPresenter(PresenterWidget *p_w);
 
+    void showInformation(const QString& title,
+                         const QString& sub_title,
+                         const QString& information);
+
     //!submit api result for async wait termination
     void submitApiResult(const QString& api_tag,
                          chaos::metadata_service_client::api_proxy::ApiProxyResult api_result);

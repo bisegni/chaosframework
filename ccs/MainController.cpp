@@ -2,6 +2,7 @@
 
 #include <QStyleFactory>
 #include <QThreadPool>
+#include <QTimer>
 #include <QTextStream>
 #include <QDebug>
 #include <QFile>
@@ -25,6 +26,9 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qRegisterMetaType< QSharedPointer<chaos::common::data::CDataWrapper> >();
     //set the dark fusion style
     a.setStyle(QStyleFactory::create("Fusion"));
+
+    QPixmap pixmap(":splash/main_splash.png");
+
     /* QFile f(":dark_orange/style.qss");
     if (!f.exists())
     {
@@ -58,7 +62,8 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     QApplication::setOrganizationName("INFN-LNF");
 
     a.setStyle(QStyleFactory::create("Fusion"));
-    QColor dark_main(80,80,80);
+    QColor dark_main(95,95,95);
+    QColor dark_main_desktop(43,43,43);
 
     QPalette darkPalette;
     darkPalette.setColor(QPalette::Window, dark_main);
@@ -89,7 +94,13 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qDebug() << "Thread pool of size:" << QThreadPool::globalInstance()->maxThreadCount();
 
     //show main window
-    w.show();
+    splash.reset(new QSplashScreen(pixmap));
+
+    splash->showMessage(QObject::tr("Starting !CHAOS Control Studio..."),
+                        Qt::AlignLeft | Qt::AlignTop, Qt::lightGray);
+    a.processEvents();
+    splash->show();
+    QTimer::singleShot(1500, &w, SLOT(show()));
 }
 
 void MainController::deinit() {

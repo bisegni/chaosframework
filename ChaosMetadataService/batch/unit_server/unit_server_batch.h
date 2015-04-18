@@ -21,5 +21,5 @@
 #define CHAOSFramework_unit_server_batch_h
 
 #include "UnitServerAckBatchCommand.h"
-
+#include "LoadUnloadControlUnit.h"
 #endif

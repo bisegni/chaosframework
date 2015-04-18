@@ -25,11 +25,17 @@
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 
 //---include all api header
+    //----------------------------control unit nodes---------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/GetInstance.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/DeleteInstance.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SearchInstancesByUS.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInstanceDescription.h>
 
+    //----------------------------unit server nodes----------------------------------------
+#include <ChaosMetadataServiceClient/api_proxy/unit_server/GetDescription.h>
+#include <ChaosMetadataServiceClient/api_proxy/unit_server/LoadUnloadControlUnit.h>
+
+    //------------------------------abstract nodes-----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/node/GetNodeDescription.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/NodeSearch.h>
 

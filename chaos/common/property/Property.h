@@ -48,15 +48,15 @@ namespace chaos{
                 std::string description;
 
             public:
-                virtual void setStrValue(std::string str_value) = 0;
+                virtual void setStrValue(const std::string& str_value) = 0;
 
                 virtual std::string getStrValue() = 0;
 
-                const std::string& getName() {
+                const std::string& getName() const {
                     return name;
                 }
 
-                const std::string& getDescritption() {
+                const std::string& getDescritption() const {
                     return description;
                 }
             };
@@ -69,13 +69,13 @@ namespace chaos{
             int AccessType >
             class Property :
             public AbstractProperty {
-
+                ValueType value;
                     //-- Pointer to the module that contains the property --
                 ClassOwner* class_owner_instance;
                     //-- Pointer to set member function --
-                void (ClassOwner::*set)(ValueType value);
+                //void (ClassOwner::*set)(ValueType value);
                     //-- Pointer to get member function --
-                ValueType (ClassOwner::*get)();
+                //ValueType (ClassOwner::*get)();
 
             public:
                 Property(){}
@@ -90,40 +90,45 @@ namespace chaos{
                     class_owner_instance = _class_owner_instance;
                     name = _name;
                     description = _description;
-                    set = _set;
-                    get = _get;
+                    //set = _set;
+                    //get = _get;
                     return this;
                 }
-
-
+                
+                void  operator =(const std::string& _value) throw (chaos::CException)  {
+                    //if(class_owner_instance == NULL) throw chaos::CException(-1, "No class sinstance defined", __PRETTY_FUNCTION__);
+                    setStrValue(_value);
+                }
+                
                     //-- Overload the = operator to set the value using the set member --
-                ValueType operator =(const ValueType& value) throw (chaos::CException)  {
-                    if(class_owner_instance == NULL) throw chaos::CException(-1, "No class sinstance defined", __PRETTY_FUNCTION__);
-                    if((AccessType == CHAOS_PROPERTY_WRITE_ONLY) ||
-                       (AccessType == CHAOS_PROPERTY_READ_WRITE)) {
-                        (class_owner_instance->*set)(value);
-                    }else{
-                        throw chaos::CException(-1, "Variable can't be set", __PRETTY_FUNCTION__);
-                    }
-                    return value;
+                void operator =(const ValueType& _value) throw (chaos::CException)  {
+                    //if(class_owner_instance == NULL) throw chaos::CException(-1, "No class sinstance defined", __PRETTY_FUNCTION__);
+                    if(AccessType == CHAOS_PROPERTY_READ_ONLY) throw chaos::CException(-1, "Variable can't be set", __PRETTY_FUNCTION__);
+                        value = _value;
                 }
 
-                    //-- Cast the property class to the internal type --
+                
+                //-- Cast the property class to the internal type --
                 operator ValueType() throw (chaos::CException) {
-                    assert(class_owner_instance != NULL);
-                    if((AccessType == CHAOS_PROPERTY_READ_ONLY) ||
-                       (AccessType == CHAOS_PROPERTY_READ_WRITE))
-                        return (class_owner_instance->*get)();
-                    else
-                        throw chaos::CException(-1, "Variable can't be read", __PRETTY_FUNCTION__);
+                    //assert(class_owner_instance != NULL);
+                    if(AccessType == CHAOS_PROPERTY_WRITE_ONLY) throw chaos::CException(-1, "Variable can't be read", __PRETTY_FUNCTION__);
+                        return value;
                 }
-
-                void setStrValue(std::string str_value) {
-                    set(boost::lexical_cast<ValueType>(str_value));
+                
+                operator std::string() throw (chaos::CException) {
+                    //assert(class_owner_instance != NULL);
+                    return getStrValue();
+                }
+                
+                void setStrValue(const std::string& str_value) {
+                    if(AccessType == CHAOS_PROPERTY_READ_ONLY) throw chaos::CException(-1, "Variable can't be set", __PRETTY_FUNCTION__);
+                    value = boost::lexical_cast<ValueType>(str_value);
                 }
                 
                 std::string getStrValue() {
-                    return boost::lexical_cast<std::string>(get());
+                    if(AccessType == CHAOS_PROPERTY_WRITE_ONLY) throw chaos::CException(-1, "Variable can't be read", __PRETTY_FUNCTION__);
+                    //((*class_owner_instance).*get)()
+                    return boost::lexical_cast<std::string>(value);
                 }
             };
         }
