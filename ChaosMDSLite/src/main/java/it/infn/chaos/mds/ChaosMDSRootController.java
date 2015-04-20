@@ -77,7 +77,8 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 	private UnitServerCuInstance	cuselected	= null;
 	private Application				webapp		= null;
 	private Window errwin = null;
-
+	private long lastStatus=0;
+	static private long maxRefreshStatus = 20*1000;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -89,7 +90,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		msp = (ManageServerProcess) openProcess(ManageServerProcess.class.getSimpleName(), mdp.getProcessName());
 		musp = (ManageUnitServerProcess) openProcess(ManageUnitServerProcess.class.getSimpleName(), mdp.getProcessName());
 		mds = (MetaDataServerProcess) openProcess(MetaDataServerProcess.class.getSimpleName(), null);
-		
+		lastStatus=0;
 		File init = new File("mds_init.conf");
 		openViewByKeyAndClass("VISTA", MDSAppView.class);
 		EventsToVaadin.getInstance().addListener(this);
@@ -137,7 +138,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			}
 
 		};
-		Vector<UnitServerCuInstance> instanceForUnitServer = null;
+		/*Vector<UnitServerCuInstance> instanceForUnitServer = null;
 		List<UnitServer> allUnitServer = musp.getAllUnitServer();
 		for (UnitServer us : allUnitServer) {
 			instanceForUnitServer = musp.loadAllAssociationForUnitServerAlias(us.getAlias());
@@ -145,7 +146,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 				mdp.deleteDeviceByInstance(i.getCuId());
 			}
 		}
-	
+		*/
 		
 		AbstractComponent ac = (AbstractComponent) getViewByKey("VISTA");
 		ac.getWindow().addURIHandler(uriHandler);
@@ -583,6 +584,11 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 	 */
 	private void getUnitState() throws Throwable {
 		List<UnitServer> allUnitServer = musp.getAllUnitServer();
+		Date dat =new Date();
+		if((dat.getTime() - lastStatus)< maxRefreshStatus){
+			return;
+		}
+		lastStatus=dat.getTime();
 		for (UnitServer us : allUnitServer) {
 			BasicBSONObject actionData = new BasicBSONObject();
 			if (us.getIp_port() != null) {
