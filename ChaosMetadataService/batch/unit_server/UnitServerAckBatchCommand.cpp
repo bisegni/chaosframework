@@ -37,7 +37,10 @@ MDSBatchCommand(),
 retry_number(0),
 message_channel(NULL),
 message_data(NULL){
-    
+         //set default scheduler delay 1 second
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
+        //set the timeout to 10 seconds
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
 }
 UnitServerAckCommand::~UnitServerAckCommand() {
     if(message_channel) {
@@ -83,7 +86,7 @@ void UnitServerAckCommand::ccHandler() {
     USAC_INFO << "execute ccHandler";
     retry_number++;
     result.reset(message_channel->sendRequest(remote_unitserver_address->ip_port,
-                                              "system",
+                                              UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
                                               UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
                                               message_data,
                                               1000));

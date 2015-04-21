@@ -26,6 +26,9 @@ class UnitServerEditor :
 
     //the lis tof the isntances setuped for the unit server
     std::vector<QSharedPointer<chaos::common::data::CDataWrapper> > instance_list;
+
+    //add an instance to the table
+    void fillTableWithInstance(QSharedPointer<chaos::common::data::CDataWrapper> cu_instance);
 public:
     explicit UnitServerEditor(const QString& _node_unique_id);
     ~UnitServerEditor();
@@ -61,7 +64,7 @@ private slots:
 protected:
     void initUI();
     bool canClose();
-    void onApiDone(QString tag,
+    void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
 private:

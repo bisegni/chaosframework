@@ -42,7 +42,7 @@ public:
 protected:
     void initUI();
     bool canClose();
-    void onApiDone(QString tag,
+    void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
 private slots:

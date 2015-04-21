@@ -25,14 +25,14 @@
 
 #define DECLARE_MDS_COMMAND_ALIAS \
 public:\
-static const char * const command_alias;\
+static const std::string command_alias;\
 private:
 
 
 #define DEFINE_MDS_COMAMND_ALIAS(class)\
-const char * const class::command_alias = #class;
+const std::string class::command_alias = #class;
 
-#define GET_MDS_COMMAND_ASLIAS(class)\
+#define GET_MDS_COMMAND_ALIAS(class)\
 class::command_alias
 
 #endif

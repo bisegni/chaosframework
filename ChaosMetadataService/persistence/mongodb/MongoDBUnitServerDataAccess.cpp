@@ -110,11 +110,12 @@ int MongoDBUnitServerDataAccess::updateUS(chaos::common::data::CDataWrapper& uni
     return err;
 }
 
-int MongoDBUnitServerDataAccess::checkUSPresence(const std::string& unit_server_unique_id,
-                                                 bool& presence) {
+int MongoDBUnitServerDataAccess::checkPresence(const std::string& unit_server_unique_id,
+                                               bool& presence) {
     CHAOS_ASSERT(node_data_access)
-    return node_data_access->checkNodePresence(unit_server_unique_id,
-                                               presence);
+    return node_data_access->checkNodePresence(presence,
+                                               unit_server_unique_id,
+                                               chaos::NodeType::NODE_TYPE_UNIT_SERVER);
 }
 
     //! delete a unit server

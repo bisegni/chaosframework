@@ -3,6 +3,7 @@
 #include "node/unit_server/UnitServerEditor.h"
 
 #include <QDebug>
+#include <QPair>
 #include <QMessageBox>
 #include <QHeaderView>
 using namespace chaos::common::data;
@@ -10,10 +11,13 @@ using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::node;
 
-SearchNodeResult::SearchNodeResult() :
+SearchNodeResult::SearchNodeResult(bool _selection_mode,
+                                   const QString &_tag) :
     PresenterWidget(NULL),
     current_page(0),
     current_page_length(30),
+    selection_mode(_selection_mode),
+    tag(_tag),
     ui(new Ui::SearchNodeResult)
 {
     ui->setupUi(this);
@@ -29,7 +33,13 @@ bool SearchNodeResult::canClose() {
 }
 
 void SearchNodeResult::initUI() {
-    setTabTitle("Search Result");
+    setTabTitle("Search Nodes");
+
+    if(selection_mode){
+        ui->pushButtonActionOnSelected->setText(tr("select"));
+    } else {
+        ui->pushButtonActionOnSelected->setText(tr("open editor"));
+    }
 
     //fetch the api porxy
     ns_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<NodeSearch>();
@@ -55,7 +65,7 @@ void SearchNodeResult::initUI() {
     ui->tableViewResult->setSelectionBehavior(QAbstractItemView::SelectRows);
 }
 
-void SearchNodeResult::onApiDone(QString tag,
+void SearchNodeResult::onApiDone(const QString& tag,
                                  QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     qDebug() << "Received asyncApiResult event of tag:" << tag;
 
@@ -97,23 +107,10 @@ void SearchNodeResult::on_pushButtonPrevPage_clicked()
     qDebug() << "Fetch prev";
 }
 
-void SearchNodeResult::on_pushButtonOpenNodeInEditor_clicked()
-{
-    QModelIndexList indexes = ui->tableViewResult->selectionModel()->selectedRows();
-    foreach (QModelIndex index, indexes) {
-        QStandardItem *node_uid = table_model->item(index.row(), 0);
-        QStandardItem *node_type = table_model->item(index.row(), 1);
-        if(node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
-            qDebug() << "Open unit server editor for" << node_uid->text();
-            addWidgetToPresenter(new UnitServerEditor(node_uid->text()));
-        }
-    }
-}
-
 void SearchNodeResult::on_tableViewResult_clicked(const QModelIndex &index)
 {
     QModelIndexList indexes = ui->tableViewResult->selectionModel()->selectedIndexes();
-    ui->pushButtonOpenNodeInEditor->setEnabled(indexes.size()>0);
+    ui->pushButtonActionOnSelected->setEnabled(indexes.size()>0);
 }
 
 void SearchNodeResult::on_pushButtonStartSearch_clicked()
@@ -126,4 +123,33 @@ void SearchNodeResult::on_pushButtonStartSearch_clicked()
                                       current_page*current_page_length,
                                       current_page_length)
                     );
+}
+
+void SearchNodeResult::on_pushButtonActionOnSelected_clicked()
+{
+    QModelIndexList indexes = ui->tableViewResult->selectionModel()->selectedRows();
+    if(selection_mode) {
+        QVector<QPair<QString,QString> > selected_nodes;
+        foreach (QModelIndex index, indexes) {
+            QStandardItem *node_uid = table_model->item(index.row(), 0);
+            QStandardItem *node_type = table_model->item(index.row(), 1);
+            //add the selectged element
+            selected_nodes.push_back(qMakePair(node_uid->text(), node_type->text()));
+        }
+        //emit signal
+        emit  selectedNodes(tag,
+                            selected_nodes);
+
+        closeTab();
+    } else {
+        foreach (QModelIndex index, indexes) {
+            QStandardItem *node_uid = table_model->item(index.row(), 0);
+            QStandardItem *node_type = table_model->item(index.row(), 1);
+            if(node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
+                qDebug() << "Open unit server editor for" << node_uid->text();
+                addWidgetToPresenter(new UnitServerEditor(node_uid->text()));
+            }
+        }
+    }
+
 }

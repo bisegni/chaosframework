@@ -27,9 +27,17 @@
 namespace chaos {
 	namespace metadata_service {
 		namespace api {
-#define LOG_AND_TROW(log, num, err)\
-log << "("<<num<<") " << err;\
-throw chaos::CException(-1, err, __PRETTY_FUNCTION__);
+
+#define LOG_AND_TROW(log, num, msg)\
+log << "("<<num<<") " << msg;\
+throw chaos::CException(num, msg, __PRETTY_FUNCTION__);
+
+#define CHECK_CDW_THROW_AND_LOG(cdw, log, num, msg)\
+if(cdw == NULL) {LOG_AND_TROW(log, num, msg)}
+
+
+#define CHECK_KEY_THROW_AND_LOG(cdw, key, log, num, msg)\
+if(cdw->hasKey(key) == false) {LOG_AND_TROW(log, num, msg)}
 
 #define GET_DATA_ACCESS(x,v, err)\
 x *v = getPersistenceDriver()->getDataAccess<x>();\

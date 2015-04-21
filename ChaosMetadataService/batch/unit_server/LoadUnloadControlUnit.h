@@ -31,7 +31,8 @@ namespace chaos {
             namespace unit_server {
 
                 typedef enum LoadUnloadPhase {
-                    LUL_SEND_COMMAND,
+                    LUL_SEND_LOAD_COMMAND,
+                    LUL_SEND_UNLOAD_COMMAND,
                     LUL_WAIT_ANSWER,
                     LUL_END,
                     LUL_ERR
@@ -47,8 +48,6 @@ namespace chaos {
                     std::string cu_type;
                     std::string us_address;
 
-                    std::string action_to_call;
-                    chaos::common::data::CDataWrapper *message_data;
                     chaos::common::message::MessageChannel *message_channel;
                     std::auto_ptr<chaos::common::message::MessageRequestFuture> request_future;
 

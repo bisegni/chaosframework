@@ -59,7 +59,7 @@ void PresenterWidget::submitApiResult(const QString& api_tag,
     emit onStartWaitApi(api_tag);
 }
 
-void PresenterWidget::asyncApiResult(QString tag,
+void PresenterWidget::asyncApiResult(const QString& tag,
                                      QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     onApiDone(tag,
               api_result);
@@ -67,7 +67,7 @@ void PresenterWidget::asyncApiResult(QString tag,
     emit onEndWaitApi(tag);
 }
 
-void PresenterWidget::asyncApiError(QString tag,
+void PresenterWidget::asyncApiError(const QString& tag,
                                     QSharedPointer<chaos::CException> api_exception) {
     onApiError(tag,
                api_exception);
@@ -75,16 +75,20 @@ void PresenterWidget::asyncApiError(QString tag,
     emit onEndWaitApi(tag);
 }
 
-void PresenterWidget::asyncApiTimeout(QString tag) {
+void PresenterWidget::asyncApiTimeout(const QString& tag) {
     onApiTimeout(tag);
+    emit onEndWaitApi(tag);
 }
 
-void PresenterWidget::onApiDone(QString tag,
+void PresenterWidget::onApiDone(const QString& tag,
                                 QSharedPointer<CDataWrapper> api_result) {
     qDebug() << "onApiDone event of tag:" << tag << " of error:" << QString::fromStdString(api_result->getJSONString());
+    showInformation(tr("Api Error"),
+                    tag,
+                    "Success");
 }
 
-void PresenterWidget::onApiError(QString tag,
+void PresenterWidget::onApiError(const QString& tag,
                                  QSharedPointer<CException> api_exception) {
     qDebug() << "onApiError event of tag:" << tag << " of error:" << api_exception->what();
     showInformation(tr("Api Error"),
@@ -92,7 +96,7 @@ void PresenterWidget::onApiError(QString tag,
                     api_exception->what());
 }
 
-void PresenterWidget::onApiTimeout(QString tag) {
+void PresenterWidget::onApiTimeout(const QString& tag) {
     qDebug() << "onApiTimeout event of tag:" << tag;
     showInformation(tr("Api Error"),
                     tag,

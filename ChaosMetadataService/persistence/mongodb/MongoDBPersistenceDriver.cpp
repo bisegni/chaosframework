@@ -22,6 +22,7 @@
 #include "MongoDBUtilityDataAccess.h"
 #include "MongoDBUnitServerDataAccess.h"
 #include "MongoDBControlUnitDataAccess.h"
+#include "MongoDBDataServiceDataAccess.h"
 
 #include "../../mds_types.h"
 
@@ -57,11 +58,12 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
     registerDataAccess<data_access::NodeDataAccess>(new MongoDBNodeDataAccess(connection));
     registerDataAccess<data_access::ControlUnitDataAccess>(new MongoDBControlUnitDataAccess(connection));
     registerDataAccess<data_access::UtilityDataAccess>(new MongoDBUtilityDataAccess(connection));
-    
+    registerDataAccess<data_access::DataServiceDataAccess>(new MongoDBDataServiceDataAccess(connection));
     //connec usda with nda
     getDataAccess<MongoDBNodeDataAccess>()->utility_data_access = getDataAccess<MongoDBUtilityDataAccess>();
     getDataAccess<MongoDBUnitServerDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
     getDataAccess<MongoDBControlUnitDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
+    getDataAccess<MongoDBDataServiceDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
 }
 void MongoDBPersistenceDriver::deinit() throw (chaos::CException) {
 	connection.reset();

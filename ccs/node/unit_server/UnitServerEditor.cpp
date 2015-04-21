@@ -11,6 +11,7 @@
 #include <QMenu>
 #include <QMessageBox>
 
+using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -58,6 +59,8 @@ void UnitServerEditor::initUI() {
     table_model = new QStandardItemModel(this);
     table_model->setHorizontalHeaderItem(0, new QStandardItem(QString("UID")));
     table_model->setHorizontalHeaderItem(1, new QStandardItem(QString("Implementation")));
+    table_model->setHorizontalHeaderItem(1, new QStandardItem(QString("RPC Address")));
+    table_model->setHorizontalHeaderItem(1, new QStandardItem(QString("RPC Domain")));
     table_model->setHorizontalHeaderItem(2, new QStandardItem(QString("State")));
     table_model->setHorizontalHeaderItem(3, new QStandardItem(QString("State SM")));
 
@@ -154,7 +157,7 @@ void UnitServerEditor::tableSelectionChanged(const QItemSelection& selected,
 }
 
 
-void UnitServerEditor::onApiDone(QString tag,
+void UnitServerEditor::onApiDone(const QString& tag,
                                  QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     qDebug() << "Received asyncApiResult event of tag:" << tag;
     if(tag.compare("get_description") == 0) {
@@ -171,7 +174,7 @@ void UnitServerEditor::onApiDone(QString tag,
         if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) {
             uint64_t ts = api_result->getUInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP);
             QDateTime timestamp;
-            timestamp.setTime_t(ts);
+            timestamp.setMSecsSinceEpoch(ts);
             ui->labelRegistrationTimestamp->setText(timestamp.toString(Qt::SystemLocaleLongDate));
         } else {
             ui->labelRegistrationTimestamp->setText(tr("No registration timestamp found!"));
@@ -204,27 +207,38 @@ void UnitServerEditor::onApiDone(QString tag,
                 i++) {
                 QSharedPointer<CDataWrapper> found_node(arr->getCDataWrapperElementAtIndex(i));
                 instance_list.push_back(found_node);
-
-                QList<QStandardItem *> row_item;
-                QStandardItem *item = NULL;
-                row_item.append(item = new QStandardItem(QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID))));
-                item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-                row_item.append(item = new QStandardItem(QString::fromStdString(found_node->getStringValue("control_unit_implementation"))));
-                item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-                row_item.append(item = new QStandardItem(QString::fromStdString("---")));
-                item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-                row_item.append(item = new QStandardItem(QString::fromStdString("---")));
-                item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-                table_model->appendRow(row_item);
+                fillTableWithInstance(found_node);
             }
         }
     } else if(tag.compare("cu_load") == 0) {
         qDebug() << "Load sucessfull";
+    } else if(tag.compare("cu_unload") == 0) {
+        qDebug() << "unload sucessfull";
     }
+}
+
+void UnitServerEditor::fillTableWithInstance( QSharedPointer<CDataWrapper> cu_instance) {
+    QList<QStandardItem *> row_item;
+    QStandardItem *item = NULL;
+    row_item.append(item = new QStandardItem(QString::fromStdString(CHK_STR_AND_GET(cu_instance, NodeDefinitionKey::NODE_UNIQUE_ID, "no found"))));
+    item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+    row_item.append(item = new QStandardItem(QString::fromStdString(CHK_STR_AND_GET(cu_instance, "control_unit_implementation", "no found"))));
+    item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+    row_item.append(item = new QStandardItem(QString::fromStdString(CHK_STR_AND_GET(cu_instance, NodeDefinitionKey::NODE_RPC_ADDR, "--nr--"))));
+    item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+    row_item.append(item = new QStandardItem(QString::fromStdString(CHK_STR_AND_GET(cu_instance, NodeDefinitionKey::NODE_RPC_DOMAIN, "--nr--"))));
+    item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+    row_item.append(item = new QStandardItem(QString::fromStdString("---")));
+    item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+    row_item.append(item = new QStandardItem(QString::fromStdString("---")));
+    item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+    table_model->appendRow(row_item);
 }
 
 void UnitServerEditor::on_pushButtonCreateNewInstance_clicked()
@@ -283,18 +297,25 @@ void UnitServerEditor::on_pushButtonUpdateControlUnitType_clicked()
 
 //------------------------------control unit slot------------------------
 void UnitServerEditor::cuInstanceLoadSelected() {
-    qDebug() << "cuInstanceLoadSelected";
     foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
-       QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
-       //load the selected cu
-       submitApiResult(QString("cu_load"),
-                       us_load_unload_cu_proxy->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
-                                                        true));
+        QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+        qDebug() << "Send load message for " << QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        //load the selected cu
+        submitApiResult(QString("cu_load"),
+                        us_load_unload_cu_proxy->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
+                                                         true));
     }
 }
 
 void UnitServerEditor::cuInstanceUnloadSelected() {
-    qDebug() << "cuInstanceUnloadSelected";
+    foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
+        QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+        qDebug() << "Send unload message for " << QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        //load the selected cu
+        submitApiResult(QString("cu_unload"),
+                        us_load_unload_cu_proxy->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
+                                                         false));
+    }
 }
 
 void UnitServerEditor::cuInstanceInitSelected() {

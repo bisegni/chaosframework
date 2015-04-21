@@ -1,22 +1,37 @@
-SET(mds_client_lib_src ChaosMetadataServiceClient.cpp)
+cmake_minimum_required(VERSION 2.6)
+include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 
-SET(mds_client_lib_src  api_proxy/ApiProxyManager.cpp
-                        api_proxy/ApiProxy.cpp
-                        api_proxy/node/GetNodeDescription.cpp
-                        api_proxy/node/NodeSearch.cpp)
+SET(mcl_src ChaosMetadataServiceClient.cpp)
+
+SET(mcl_src ${mcl_src}   api_proxy/ApiProxyManager.cpp
+                            api_proxy/ApiProxy.cpp)
+
+SET(mcl_src ${mcl_src}   api_proxy/node/GetNodeDescription.cpp
+                            api_proxy/node/NodeSearch.cpp)
+
+SET(mcl_src ${mcl_src}   api_proxy/data_service/NewDS.cpp
+                            api_proxy/data_service/UpdateDS.cpp
+                            api_proxy/data_service/DeleteDS.cpp
+                            api_proxy/data_service/AssociationControlUnit.cpp
+                            api_proxy/data_service/GetAssociationByDS.cpp
+                            api_proxy/data_service/GetAllDS.cpp)
+
+SET(mcl_src ${mcl_src}   api_proxy/control_unit/SetInstanceDescription.cpp
+                            api_proxy/control_unit/SearchInstancesByUS.cpp
+                            api_proxy/control_unit/GetInstance.cpp
+                            api_proxy/control_unit/DeleteInstance.cpp)
+
+SET(mcl_src ${mcl_src}   api_proxy/unit_server/GetDescription.cpp
+                            api_proxy/unit_server/LoadUnloadControlUnit.cpp)
 
 IF(BUILD_FORCE_STATIC)
-ADD_LIBRARY(chaos_metadata_service_client STATIC ${mds_client_lib_src})
+ADD_LIBRARY(chaos_metadata_service_client STATIC ${mcl_src})
 ELSE()
-ADD_LIBRARY(chaos_metadata_service_client SHARED ${mds_client_lib_src})
+ADD_LIBRARY(chaos_metadata_service_client SHARED ${mcl_src})
 ENDIF()
 
 
-SET(chaos_metadata_service_client_lib $ENV{CHAOS_LINK_LIBRARY})
-separate_arguments(chaos_metadata_service_client_lib)
-TARGET_LINK_LIBRARIES(chaos_metadata_service_client  chaos_common ${chaos_metadata_service_client_lib})
-
-
+TARGET_LINK_LIBRARIES(chaos_metadata_service_client  chaos_common ${FrameworkLib})
 
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient)
@@ -25,6 +40,12 @@ FILE(GLOB files "api_proxy/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy)
 
 FILE(GLOB files "api_proxy/control_unit/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/control_unit)
+
+FILE(GLOB files "api_proxy/unit_server/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/control_unit)
+
+FILE(GLOB files "api_proxy/data_service/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/control_unit)
 
 FILE(GLOB files "api_proxy/node/*.h")

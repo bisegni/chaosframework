@@ -322,7 +322,7 @@ void BatchCommandSandbox::checkNextCommand() {
 				// cehck waht we need to do with current and submitted command
 				next_available_command = command_submitted_queue.top();
 				DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] got next command";)
-				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] check installation for enw command with pointer =" << std::hex << next_available_command;)
+				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] check installation for enw command with pointer =" << std::hex << next_available_command << std::dec;)
 				
 				if(next_available_command->element->cmdImpl->implementedHandler()<=1) {
 					DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] we have only a set handler";)
@@ -370,7 +370,7 @@ void BatchCommandSandbox::checkNextCommand() {
 						DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in command_submitted_queue " << command_submitted_queue.size();)
 						tmp_command = currentExecutingCommand;
 						if(installHandler(next_available_command)) {
-							DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] installed command with pointer " << std::hex << next_available_command;)
+							DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] installed command with pointer " << std::hex << next_available_command<< std::dec;)
 							DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] push last command into stack";)
 							commandStack.push(tmp_command);
 							DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in commandStack " << commandStack.size();)
@@ -402,7 +402,7 @@ void BatchCommandSandbox::checkNextCommand() {
 						removeHandler(tmp_command);
 						
 						if(installHandler(next_available_command)) {
-							DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] installed command with pointer " << std::hex << next_available_command;)
+							DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] installed command with pointer " << std::hex << next_available_command<< std::dec;)
 							command_to_delete = tmp_command;
 						} else {
 							//install has not been done
@@ -416,7 +416,7 @@ void BatchCommandSandbox::checkNextCommand() {
 								}
 								DELETE_OBJ_POINTER(next_available_command);
 							}
-							DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] something goes wrong n set handler reinstall command wit pointer " << std::hex << tmp_command;)
+							DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] something goes wrong n set handler reinstall command wit pointer " << std::hex << tmp_command<< std::dec;)
 							installHandler(tmp_command);
 						}
 						
@@ -455,7 +455,7 @@ void BatchCommandSandbox::checkNextCommand() {
 			} else {
 				PRIORITY_ELEMENT(CommandInfoAndImplementation)  *nextAvailableCommand = command_submitted_queue.top();
 				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] there isn't any current runnig command";)
-				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Install command with pointer " << std::hex << nextAvailableCommand;)
+				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Install command with pointer " << std::hex << nextAvailableCommand<< std::dec;)
 				installHandler(nextAvailableCommand);
 				command_submitted_queue.pop();
 				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in command_submitted_queue " << command_submitted_queue.size();)
@@ -475,7 +475,7 @@ void BatchCommandSandbox::checkNextCommand() {
 					PRIORITY_ELEMENT(CommandInfoAndImplementation)  *command_to_delete = currentExecutingCommand;
 					DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] get and install paused command";)
 					PRIORITY_ELEMENT(CommandInfoAndImplementation)  *nextAvailableCommand = commandStack.top();
-					DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Install command with pointer " << std::hex << nextAvailableCommand;)
+					DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Install command with pointer " << std::hex << nextAvailableCommand<< std::dec;)
 					removeHandler(command_to_delete);
 					installHandler(nextAvailableCommand);
 					commandStack.pop();
@@ -611,7 +611,7 @@ void BatchCommandSandbox::runCommand() {
 				DEBUG_CODE(SCSLDBG_ << "[runCommand] - lock lockForCurrentCommand";)
 			}
 			lockForCurrentCommand.lock();
-			DEBUG_CODE(SCSLDBG_ << "[runCommand] - lockForCurrentCommand acquired with currentExecutingCommand pointer ="<< std::hex << currentExecutingCommand;)
+			DEBUG_CODE(SCSLDBG_ << "[runCommand] - lockForCurrentCommand acquired with currentExecutingCommand pointer ="<< std::hex << currentExecutingCommand << std::dec;)
 		}else {
 			//unloc
 			if(!scheduleWorkFlag) {
@@ -632,7 +632,7 @@ void BatchCommandSandbox::runCommand() {
 				DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler is awaked - 2";)
 				DEBUG_CODE(SCSLDBG_ << "[runCommand] - lock lockForCurrentCommand";)
 				lockForCurrentCommand.lock();
-				DEBUG_CODE(SCSLDBG_ << "[runCommand] - lockForCurrentCommand acquired with currentExecutingCommand pointer ="<< std::hex << currentExecutingCommand;)
+				DEBUG_CODE(SCSLDBG_ << "[runCommand] - lockForCurrentCommand acquired with currentExecutingCommand pointer ="<< std::hex << currentExecutingCommand<< std::dec;)
 			}
 		}
 		

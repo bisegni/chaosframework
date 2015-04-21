@@ -52,7 +52,7 @@ namespace chaos {
 			class TimingUtil {
 			public:
 				//!Return the current timestamp in milliseconds
-				static inline int64_t getTimeStamp() {
+				static inline uint64_t getTimeStamp() {
 					try{
 						return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_milliseconds();
 					} catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
@@ -63,7 +63,7 @@ namespace chaos {
 				}
 
                     //!Return the current timestamp in milliseconds
-                static inline int64_t getTimeStampInMicrosends() {
+                static inline uint64_t getTimeStampInMicrosends() {
                     try{
                         return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_microseconds();
                     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
@@ -74,7 +74,7 @@ namespace chaos {
                 }
 				
 				//!Return the current utc timestamp in milliseconds
-				static inline int64_t getUTCTimeStamp() {
+				static inline uint64_t getUTCTimeStamp() {
 					try{
 						return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
 					} catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
@@ -84,7 +84,7 @@ namespace chaos {
 				}
 
                 				//!Return the current utc timestamp in milliseconds
-                static inline int64_t getUTCTimeStampInMicroseconds() {
+                static inline uint64_t getUTCTimeStampInMicroseconds() {
                     try{
                         return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_microseconds();
                     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {

@@ -51,7 +51,8 @@ chaos::common::data::CDataWrapper *SetInstanceDescription::execute(chaos::common
         //!get the unit server data access
     persistence::data_access::ControlUnitDataAccess *cu_da = getPersistenceDriver()->getDataAccess<persistence::data_access::ControlUnitDataAccess>();
     persistence::data_access::NodeDataAccess *n_da = getPersistenceDriver()->getDataAccess<persistence::data_access::NodeDataAccess>();
-    if((err = n_da->checkNodePresence(api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), presence))){
+    if((err = n_da->checkNodePresence(presence,
+                                      api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)))){
         LOG_AND_TROW(CUCUI_ERR, err, "Error checking node presence")
     }
     if (!presence) {

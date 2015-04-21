@@ -97,11 +97,17 @@
          <pointsize>11</pointsize>
         </font>
        </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragOnly</enum>
+       </property>
        <property name="wordWrap">
         <bool>false</bool>
        </property>
        <attribute name="horizontalHeaderMinimumSectionSize">
-        <number>19</number>
+        <number>20</number>
        </attribute>
        <attribute name="verticalHeaderDefaultSectionSize">
         <number>20</number>
@@ -157,7 +163,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButtonOpenNodeInEditor">
+        <widget class="QPushButton" name="pushButtonActionOnSelected">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -167,7 +173,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Open Node Editor</string>
+          <string>action</string>
          </property>
         </widget>
        </item>

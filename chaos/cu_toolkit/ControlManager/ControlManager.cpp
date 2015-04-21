@@ -137,7 +137,7 @@ void ControlManager::init(void *initParameter) throw(CException) {
 
 		actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
 																					   &ControlManager::unitServerRegistrationACK,
-																					   NodeDefinitionKeyRPC::RPC_DOMAIN,
+																					   UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
 																					   UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
 																					   "Unit server registration ack message");
 	}
@@ -155,8 +155,8 @@ void ControlManager::init(void *initParameter) throw(CException) {
                                                                                    "Update Command Manager Configuration");
 	actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
                                                                                    &ControlManager::workUnitRegistrationACK,
-                                                                                   NodeDefinitionKeyRPC::RPC_DOMAIN,
-                                                                                   ChaosSystemDomainAndActionLabel::ACTION_NODE_REG_ACK,
+                                                                                   UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
+                                                                                   UnitServerNodeDomainAndActionLabel::ACTION_REGISTRATION_CONTROL_UNIT_ACK,
                                                                                    "Update Command Manager Configuration");
 	//register command manager action
     CommandManager::getInstance()->registerAction(this);
@@ -233,7 +233,7 @@ void ControlManager::deinit() throw(CException) {
 			//stop all itnerna device
 
             CDataWrapper fakeDWForDeinit;
-            fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_TYPE, *iter);
+            fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, *iter);
             try{
                 LCMAPP_  << "Stopping Control Unit: " << WU_IDENTIFICATION(cu->work_unit_instance);
                 cu->work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
@@ -474,15 +474,15 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 //! message for unload operation
 CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool& detach) throw (CException) {
 	IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
-	IN_ACTION_PARAM_CHECK(!message_data->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE), -2, "No instancer alias")
-	IN_ACTION_PARAM_CHECK(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID), -3, "No id for the work unit instance found")
+        //IN_ACTION_PARAM_CHECK(!message_data->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE), -2, "No instancer alias")
+	IN_ACTION_PARAM_CHECK(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID), -2, "No id for the work unit instance found")
 
-	std::string work_unit_type = message_data->getStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE);
+        //std::string work_unit_type = message_data->getStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE);
 	std::string work_unit_id = message_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
 
-	LCMAPP_ << "Unload operation for: " << work_unit_id << " of type "<<work_unit_type;
+    LCMAPP_ << "Unload operation for: " << work_unit_id;// << " of type "<<work_unit_type;
 	WriteLock write_instancer_lock(mutex_map_cuid_registered_instance);
-	IN_ACTION_PARAM_CHECK(!map_cuid_registered_instance.count(work_unit_id), -2, "Work unit not found on registered's map")
+	IN_ACTION_PARAM_CHECK(!map_cuid_registered_instance.count(work_unit_id), -3, "Work unit not found on registered's map")
 
 	//get the iterator for the work unit managment class
 	map<string, shared_ptr<WorkUnitManagement> >::iterator iter = map_cuid_registered_instance.find(work_unit_id);

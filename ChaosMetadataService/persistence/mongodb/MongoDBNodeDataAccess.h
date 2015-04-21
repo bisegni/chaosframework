@@ -52,11 +52,13 @@ namespace chaos {
                     int updateNode(chaos::common::data::CDataWrapper& node_description);
 
                     // inherited method
-                    int checkNodePresence(const std::string& node_unique_id,
-                                          bool& presence);
+                    int checkNodePresence(bool& presence,
+                                          const std::string& node_unique_id,
+                                          const std::string& node_unique_type = std::string());
 
                     //! inherited method
-                    int deleteNode(const std::string& node_unique_id);
+                    int deleteNode(const std::string& node_unique_id,
+                                   const std::string& node_type = std::string());
 
                     //! inherited method
                     int searchNode(chaos::common::data::CDataWrapper **result,

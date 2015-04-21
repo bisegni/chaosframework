@@ -39,9 +39,8 @@ static const char * const LoadUnloadControlUnit_NO_MESSAGE_CHANNEL = "No message
 LoadUnloadControlUnit::LoadUnloadControlUnit():
 MDSBatchCommand(),
 retry_number(0),
-message_channel(NULL),
-message_data(NULL){
-        //set default scheduler delay 50 milliseconds, the delay is expressed in microseconds
+message_channel(NULL){
+        //set default scheduler delay 1 second
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
         //set the timeout to 10 seconds
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
@@ -69,11 +68,21 @@ void LoadUnloadControlUnit::setHandler(CDataWrapper *data) {
         cu_id = data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     }
 
-    if(!data->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE)){
-        BATHC_CU_LUL_ERR << LoadUnloadControlUnit_NO_CU_TYPE;
-        throw chaos::CException(-3, LoadUnloadControlUnit_NO_CU_TYPE, __PRETTY_FUNCTION__);
+    if(!data->hasKey("load")) {
+        BATHC_CU_LUL_ERR << LoadUnloadControlUnit_NO_LOAD_UNLOAD;
+        throw chaos::CException(-5, LoadUnloadControlUnit_NO_LOAD_UNLOAD, __PRETTY_FUNCTION__);
+
     } else {
-        cu_type = data->getStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE);
+        load = data->getBoolValue("load");
+    }
+
+    if(load) {
+        if(!data->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE)){
+            BATHC_CU_LUL_ERR << LoadUnloadControlUnit_NO_CU_TYPE;
+            throw chaos::CException(-3, LoadUnloadControlUnit_NO_CU_TYPE, __PRETTY_FUNCTION__);
+        } else {
+            cu_type = data->getStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE);
+        }
     }
 
     if(!data->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
@@ -84,13 +93,7 @@ void LoadUnloadControlUnit::setHandler(CDataWrapper *data) {
         us_address = data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
     }
 
-    if(!data->hasKey("load")) {
-        BATHC_CU_LUL_ERR << LoadUnloadControlUnit_NO_LOAD_UNLOAD;
-        throw chaos::CException(-5, LoadUnloadControlUnit_NO_LOAD_UNLOAD, __PRETTY_FUNCTION__);
 
-    } else {
-        load = data->getBoolValue("load");
-    }
 
     message_channel = getNewMessageChannel();
     if(!message_channel) {
@@ -98,22 +101,24 @@ void LoadUnloadControlUnit::setHandler(CDataWrapper *data) {
         throw chaos::CException(-6, LoadUnloadControlUnit_NO_MESSAGE_CHANNEL, __PRETTY_FUNCTION__);
     }
 
-    action_to_call = load?UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT:
-    UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_UNLOAD_CONTROL_UNIT;
-
-        //set the start phase
-    phase = LUL_SEND_COMMAND;
+        //set the send command phase
+    phase = load?LUL_SEND_LOAD_COMMAND:LUL_SEND_UNLOAD_COMMAND;
 }
 
     // inherited method
 void LoadUnloadControlUnit::acquireHandler() {
     MDSBatchCommand::acquireHandler();
     switch(phase) {
-        case LUL_SEND_COMMAND:
-            BATHC_CU_LUL_DBG << "Send command to load control unit " << cu_id << " of type" << cu_type;
-                request_future = message_channel->sendRequestWithFuture(us_address,
-                                                                        UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
-                                                                        action_to_call);
+        case LUL_SEND_LOAD_COMMAND:{
+            CDataWrapper message;
+            message.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
+            message.addStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE, cu_type);
+
+            BATHC_CU_LUL_DBG << "Send command to load control unit '" << cu_id << "' of type '" << cu_type << "'";
+            request_future = message_channel->sendRequestWithFuture(us_address,
+                                                                    UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
+                                                                    UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT,
+                                                                    &message);
             if(!request_future.get()) {
                 BATHC_CU_LUL_ERR << "request with no future";
                 throw chaos::CException(-1, "request with no future", __PRETTY_FUNCTION__);
@@ -121,6 +126,24 @@ void LoadUnloadControlUnit::acquireHandler() {
                 phase = LUL_WAIT_ANSWER;
             }
             break;
+        }
+        case LUL_SEND_UNLOAD_COMMAND:{
+            CDataWrapper message;
+            message.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
+
+            BATHC_CU_LUL_DBG << "Send command to unload control unit '" << cu_id << "' of type '" << cu_type << "'";
+            request_future = message_channel->sendRequestWithFuture(us_address,
+                                                                    UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
+                                                                    UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_UNLOAD_CONTROL_UNIT,
+                                                                    &message);
+            if(!request_future.get()) {
+                BATHC_CU_LUL_ERR << "request with no future";
+                throw chaos::CException(-1, "request with no future", __PRETTY_FUNCTION__);
+            } else {
+                phase = LUL_WAIT_ANSWER;
+            }
+            break;
+        }
         default:
             break;
     }
@@ -137,17 +160,22 @@ void LoadUnloadControlUnit::ccHandler() {
                     //we have hd answer
                 if(request_future->getError()) {
                     BATHC_CU_LUL_DBG << "We have had answer with error"
-                    << request_future->getError() << "\n and message "
+                    << request_future->getError() << " \n and message "
                     << request_future->getErrorMessage() << "\n on domain "
                     << request_future->getErrorDomain();
                 } else {
                     BATHC_CU_LUL_DBG << "Request send with success";
-
                 }
                 BC_END_RUNNIG_PROPERTY
             } else {
                     //we need to retry
-                phase = LUL_WAIT_ANSWER;
+                if((retry_number % 3) != 0) {
+                    BATHC_CU_LUL_DBG << "Retry counter";
+                    phase = LUL_WAIT_ANSWER;
+                } else {
+                    BATHC_CU_LUL_DBG << "No more retry";
+                    BC_END_RUNNIG_PROPERTY
+                }
             }
             break;
         }

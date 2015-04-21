@@ -19,6 +19,7 @@
  */
 #include "MDSBatchExecutor.h"
 #include "unit_server/unit_server_batch.h"
+#include "control_unit/control_unit_batch.h"
 
 using namespace chaos::metadata_service::batch;
 #define BCE_INFO INFO_LOG(BatchCommandExecutor)
@@ -32,9 +33,12 @@ MDSBatchExecutor::MDSBatchExecutor(const std::string& executor_id,
                                    chaos::common::network::NetworkBroker *_network_broker):
 BatchCommandExecutor(executor_id),
 network_broker(_network_broker){
-    //register unit server command
+        //unit server command
     installCommand(unit_server::UnitServerAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::UnitServerAckCommand));
     installCommand(unit_server::LoadUnloadControlUnit::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::LoadUnloadControlUnit));
+
+        //control unit command
+    installCommand(control_unit::RegistrationAckBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::RegistrationAckBatchCommand));
 }
 
 MDSBatchExecutor::~MDSBatchExecutor() {

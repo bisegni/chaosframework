@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "search/SearchNode.h"
 #include "node/unit_server/UnitServerEditor.h"
+#include "node/data_service/DataServiceEditor.h"
 #include "search/SearchNodeResult.h"
 
 #include <QInputDialog>
@@ -59,4 +60,9 @@ void MainWindow::on_actionOpenNode_triggered()
 void MainWindow::on_actionSearch_Node_triggered()
 {
     command_presenter->showCommandPresenter(new SearchNodeResult());
+}
+
+void MainWindow::on_actionData_Services_triggered()
+{
+    command_presenter->showCommandPresenter(new DataServiceEditor());
 }

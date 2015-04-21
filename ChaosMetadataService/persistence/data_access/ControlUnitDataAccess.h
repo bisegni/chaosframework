@@ -41,12 +41,15 @@ namespace chaos {
                     
                     //!default destructor
                     ~ControlUnitDataAccess();
-                    
+
+                        //!check if the control unit node is present
+                    virtual int checkPresence(const std::string& control_unit_id, bool& presence) = 0;
+
                     virtual int insertNewControlUnit(chaos::common::data::CDataWrapper& control_unit_description) = 0;
                     
                     virtual int updateControlUnit(chaos::common::data::CDataWrapper& control_unit_description) = 0;
                     
-                    virtual int addNewDataset(chaos::common::data::CDataWrapper& dataset_description) = 0;
+                    virtual int setDataset(chaos::common::data::CDataWrapper& dataset_description) = 0;
                     
                     virtual int checkDatasetPresence(chaos::common::data::CDataWrapper& dataset_description) = 0;
                     

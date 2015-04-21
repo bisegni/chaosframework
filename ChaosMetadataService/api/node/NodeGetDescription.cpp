@@ -46,7 +46,8 @@ chaos::common::data::CDataWrapper *NodeGetDescription::execute(chaos::common::da
     
     //!get the unit server data access
     persistence::data_access::NodeDataAccess *n_da = getPersistenceDriver()->getDataAccess<persistence::data_access::NodeDataAccess>();
-    if((err = n_da->checkNodePresence(api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), presence))) {
+    if((err = n_da->checkNodePresence(presence,
+                                      api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)))) {
         LOG_AND_TROW(USRA_ERR, err, "Error checking node presence")
     } else if(presence){
         if((err = n_da->getNodeDescription(api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), &result))) {

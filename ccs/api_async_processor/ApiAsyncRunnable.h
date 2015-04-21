@@ -20,9 +20,9 @@ public:
     ~ApiAsyncRunnable();
     void run();
 signals:
-    void asyncApiResult(QString tag, QSharedPointer<chaos::common::data::CDataWrapper> api_result);
-    void asyncApiError(QString tag, QSharedPointer<chaos::CException> api_exception);
-    void asyncApiTimeout(QString tag);
+    void asyncApiResult(const QString& tag, QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+    void asyncApiError(const QString& tag, QSharedPointer<chaos::CException> api_exception);
+    void asyncApiTimeout(const QString& tag);
 public slots:
 };
 

@@ -56,8 +56,8 @@ namespace chaos {
                     int updateUS(chaos::common::data::CDataWrapper& unit_server_description);
                     
                     //inherited method
-                    int checkUSPresence(const std::string& unit_server_unique_id,
-                                        bool& presence);
+                    int checkPresence(const std::string& unit_server_unique_id,
+                                      bool& presence);
 
                     //inherited method
                     int deleteUS(const std::string& unit_server_unique_id);

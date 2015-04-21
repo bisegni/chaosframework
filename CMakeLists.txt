@@ -42,6 +42,7 @@ ADD_SUBDIRECTORY(ChaosMetadataServiceClient bin/bin_metadata_service_client)
 message(STATUS "Configure Chaos WAN Proxy")
 ADD_SUBDIRECTORY(ChaosWANProxy bin/bin_wan_proxy)
 
+IF (NOT CHAOS_NO_MONGO)
 message(STATUS "Configure Chaos Data Service")
 ADD_SUBDIRECTORY(ChaosDataService bin/bin_cds)
 ENDIF()

@@ -64,15 +64,17 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     a.setStyle(QStyleFactory::create("Fusion"));
     QColor dark_main(95,95,95);
     QColor dark_main_desktop(43,43,43);
+    QColor default_text(220,220,220);
+    QColor disable_color(155,155,155);
 
     QPalette darkPalette;
     darkPalette.setColor(QPalette::Window, dark_main);
-    darkPalette.setColor(QPalette::WindowText, QColor(220,220,220));
+    darkPalette.setColor(QPalette::WindowText, default_text);
     darkPalette.setColor(QPalette::Base, QColor(25,25,25));
     darkPalette.setColor(QPalette::AlternateBase, dark_main);
     darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
     darkPalette.setColor(QPalette::ToolTipText, Qt::white);
-    darkPalette.setColor(QPalette::Text, QColor(220,220,220));
+    darkPalette.setColor(QPalette::Text, default_text);
     darkPalette.setColor(QPalette::Button, dark_main);
     darkPalette.setColor(QPalette::ButtonText, Qt::white);
     darkPalette.setColor(QPalette::BrightText, Qt::red);
@@ -80,25 +82,31 @@ void MainController::init(int argc, char **argv, QApplication& a) {
 
     darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
     darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-    darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(155,155,155));
+    darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, disable_color);
+    darkPalette.setColor(QPalette::Disabled, QPalette::Text, disable_color);
 
     a.setPalette(darkPalette);
     a.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 
     QApplication::setOrganizationDomain("http://chaos.infn.it");
 
-    //initialize !CHAOS metadata service client
-    ChaosMetadataServiceClient::getInstance()->init(argc, argv);
-
-    //set thread pool thread size
-    qDebug() << "Thread pool of size:" << QThreadPool::globalInstance()->maxThreadCount();
-
     //show main window
     splash.reset(new QSplashScreen(pixmap));
 
-    splash->showMessage(QObject::tr("Starting !CHAOS Control Studio..."),
-                        Qt::AlignLeft | Qt::AlignTop, Qt::lightGray);
+    splash->showMessage(QObject::tr("Starting !CHAOS layer..."),
+                        Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
     a.processEvents();
+    //initialize !CHAOS metadata service client
+    ChaosMetadataServiceClient::getInstance()->init(argc, argv);
+
+    splash->showMessage(QObject::tr("!CHAOS Control Studio Initilized!"),
+                        Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
+    a.processEvents();
+    //set thread pool thread size
+    qDebug() << "Thread pool of size:" << QThreadPool::globalInstance()->maxThreadCount();
+
+
+
     splash->show();
     QTimer::singleShot(1500, &w, SLOT(show()));
 }

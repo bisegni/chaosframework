@@ -48,11 +48,14 @@ namespace chaos {
                     MongoDBControlUnitDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBControlUnitDataAccess();
                 public:
+
+                    int checkPresence(const std::string& control_unit_id, bool& presence);
+
                     int insertNewControlUnit(chaos::common::data::CDataWrapper& control_unit_description);
                     
                     int updateControlUnit(chaos::common::data::CDataWrapper& control_unit_description);
                     
-                    int addNewDataset(chaos::common::data::CDataWrapper& dataset_description);
+                    int setDataset(chaos::common::data::CDataWrapper& dataset_description);
                     
                     int checkDatasetPresence(chaos::common::data::CDataWrapper& dataset_description);
                     

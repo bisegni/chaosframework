@@ -22,10 +22,7 @@
 
 #include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
 #include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
-#include "data_access/NodeDataAccess.h"
-#include "data_access/UnitServerDataAccess.h"
-#include "data_access/ControlUnitDataAccess.h"
-#include "data_access/UtilityDataAccess.h"
+#include "data_access/DataAccess.h"
 #include "persistence_types.h"
 
 #endif

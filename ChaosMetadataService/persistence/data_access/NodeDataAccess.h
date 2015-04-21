@@ -88,14 +88,16 @@ namespace chaos {
                      \param presence = true if the unit server is present
                      \return 0 for no error otherwhise a negative value
                      */
-                    virtual int checkNodePresence(const std::string& node_unique_id,
-                                                  bool& presence) = 0;
+                    virtual int checkNodePresence(bool& presence,
+                                                  const std::string& node_unique_id,
+                                                  const std::string& node_unique_type = std::string()) = 0;
 
                         //! delete the node description
                     /*
                      The API delete the node description.
                      */
-                    virtual int deleteNode(const std::string& node_unique_id) = 0;
+                    virtual int deleteNode(const std::string& node_unique_id,
+                                           const std::string& node_type = std::string()) = 0;
 
                         //!Make simple paged query on node
                     /*!

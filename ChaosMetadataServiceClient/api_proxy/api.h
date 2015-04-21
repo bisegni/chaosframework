@@ -25,6 +25,14 @@
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 
 //---include all api header
+//----------------------------data service nodes---------------------------------------
+#include <ChaosMetadataServiceClient/api_proxy/data_service/NewDS.h>
+#include <ChaosMetadataServiceClient/api_proxy/data_service/UpdateDS.h>
+#include <ChaosMetadataServiceClient/api_proxy/data_service/DeleteDS.h>
+#include <ChaosMetadataServiceClient/api_proxy/data_service/GetAllDS.h>
+#include <ChaosMetadataServiceClient/api_proxy/data_service/GetAssociationByDS.h>
+#include <ChaosMetadataServiceClient/api_proxy/data_service/AssociationControlUnit.h>
+
     //----------------------------control unit nodes---------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/GetInstance.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/DeleteInstance.h>

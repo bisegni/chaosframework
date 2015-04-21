@@ -244,7 +244,7 @@ bool ControUnitInstanceEditor::canClose() {
     return true;
 }
 
-void ControUnitInstanceEditor::onApiDone(QString tag,
+void ControUnitInstanceEditor::onApiDone(const QString& tag,
                                          QSharedPointer<CDataWrapper> api_result) {
     if(tag.compare("save_instance") == 0) {
         QMessageBox::information(this,

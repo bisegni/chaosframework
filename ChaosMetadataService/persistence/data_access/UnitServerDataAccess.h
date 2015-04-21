@@ -55,7 +55,7 @@ namespace chaos {
                     /*!
                      Call directly the node data access to check if the node exist
                      */
-                    virtual int checkUSPresence(const std::string& unit_server_uid, bool& presence) = 0;
+                    virtual int checkPresence(const std::string& unit_server_uid, bool& presence) = 0;
                     
                     //! Update the unit server information
                     /*!

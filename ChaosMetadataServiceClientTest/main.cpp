@@ -1,10 +1,10 @@
-//
-//  main.cpp
-//  ChaosMetadataServiceClientTest
-//
-//  Created by Claudio Bisegni on 27/03/15.
-//  Copyright (c) 2015 INFN. All rights reserved.
-//
+    //
+    //  main.cpp
+    //  ChaosMetadataServiceClientTest
+    //
+    //  Created by Claudio Bisegni on 27/03/15.
+    //  Copyright (c) 2015 INFN. All rights reserved.
+    //
 
 #include <iostream>
 #include <chaos/common/data/CDataWrapper.h>
@@ -28,14 +28,14 @@ class EchoTestProxy:
 public chaos::metadata_service_client::api_proxy::ApiProxy {
     API_PROXY_CLASS(EchoTestProxy)
 protected:
-    //! default constructor
+        //! default constructor
     EchoTestProxy(chaos::common::message::MultiAddressMessageChannel *_mn_message,
                   int32_t timeout_in_milliseconds):
-    ApiProxy("echo", _mn_message, timeout_in_milliseconds){};
-    //! default destructor
+    ApiProxy("test", "echo", _mn_message, timeout_in_milliseconds){};
+        //! default destructor
     ~EchoTestProxy(){};
 public:
-    
+
     /*!
      Return the description of the node
      */
@@ -43,7 +43,7 @@ public:
                            const std::string& echo_test_value) {
         chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
         message->addStringValue(echo_test_key.c_str(), echo_test_value);
-        return callApi("test", getName(), message);
+        return callApi(message);
     };
 };
 
@@ -61,21 +61,21 @@ void asyncTest(EchoTestProxy *echo_proxy_test) {
             std::cout << "Waint for result pass:" << i++<< "\n" << std::flush;
             if(i>2) break;
         }
-        
+
         if(r->getResult() != NULL) {
-            //std::cout << r->getResult()->getJSONString() << "\n" << std::flush;
+                //std::cout << r->getResult()->getJSONString() << "\n" << std::flush;
             assert(value.compare(r->getResult()->getStringValue("key_echo")) == 0);
         } else if(r->getError()){
             error_count++;
-            //std::cerr << "Error code:"<<r->getError() << "\n" << std::flush;
-            //std::cerr << "Error Message:"<<r->getErrorMessage() <<  "\n" << std::flush;
-            //std::cerr << "Error Domain:"<<r->getErrorDomain() <<  "\n" << std::flush;
+                //std::cerr << "Error code:"<<r->getError() << "\n" << std::flush;
+                //std::cerr << "Error Message:"<<r->getErrorMessage() <<  "\n" << std::flush;
+                //std::cerr << "Error Domain:"<<r->getErrorDomain() <<  "\n" << std::flush;
         } else {
             no_result_count++;
-            //std::cerr << "No result found";
+                //std::cerr << "No result found";
         }
-        //sleep for 100ms
-        //usleep(1000);
+            //sleep for 100ms
+            //usleep(1000);
     }
 }
 
@@ -96,7 +96,7 @@ int main(int argc, char * argv[]) {
         std::cout << "global_counter"<<global_counter<<"\n" << std::flush;
         std::cout << "error_count"<<error_count<<"\n" << std::flush;
         std::cout << "no_result_count"<<no_result_count<<"\n" << std::flush;
-        //sleep(5);
+            //sleep(5);
         ChaosMetadataServiceClient::getInstance()->stop();
         ChaosMetadataServiceClient::getInstance()->deinit();
     }catch(chaos::CException& ex) {

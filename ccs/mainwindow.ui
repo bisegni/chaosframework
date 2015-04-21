@@ -78,6 +78,7 @@
     </property>
     <addaction name="actionOpenNode"/>
     <addaction name="actionSearch_Node"/>
+    <addaction name="actionData_Services"/>
    </widget>
    <widget class="QMenu" name="menuWindows">
     <property name="title">
@@ -182,6 +183,14 @@
    </property>
    <property name="shortcut">
     <string>Meta+Ctrl+Right</string>
+   </property>
+  </action>
+  <action name="actionData_Services">
+   <property name="text">
+    <string>Data Services</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
  </widget>

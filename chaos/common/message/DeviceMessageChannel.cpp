@@ -52,7 +52,7 @@ int DeviceMessageChannel::initDevice(CDataWrapper *initData, uint32_t millisecTo
 int DeviceMessageChannel::deinitDevice(uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper message_data;
-    message_data.addStringValue(NodeDefinitionKey::NODE_TYPE, deviceNetworkAddress->device_id);
+    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
                                               ChaosSystemDomainAndActionLabel::ACTION_NODE_DEINIT,
                                               &message_data,
@@ -65,7 +65,7 @@ int DeviceMessageChannel::deinitDevice(uint32_t millisecToWait) {
 int DeviceMessageChannel::startDevice(uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper message_data;
-    message_data.addStringValue(NodeDefinitionKey::NODE_TYPE, deviceNetworkAddress->device_id);
+    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
                                               ChaosSystemDomainAndActionLabel::ACTION_NODE_START,
                                               &message_data,
@@ -78,7 +78,7 @@ int DeviceMessageChannel::startDevice(uint32_t millisecToWait) {
 int DeviceMessageChannel::stopDevice(uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper message_data;
-    message_data.addStringValue(NodeDefinitionKey::NODE_TYPE, deviceNetworkAddress->device_id);
+    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
                                               ChaosSystemDomainAndActionLabel::ACTION_NODE_STOP,
 											  &message_data,
@@ -91,7 +91,7 @@ int DeviceMessageChannel::stopDevice(uint32_t millisecToWait) {
 int DeviceMessageChannel::restoreDeviceToTag(const std::string& restore_tag, uint32_t millisecToWait) {
 	int err = ErrorCode::EC_NO_ERROR;
 	CDataWrapper message_data;
-	message_data.addStringValue(NodeDefinitionKey::NODE_TYPE, deviceNetworkAddress->device_id);
+	message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
 	message_data.addStringValue(ChaosSystemDomainAndActionLabel::ACTION_NODE_RESTORE_PARAM_TAG, restore_tag);
 	auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
                                               ChaosSystemDomainAndActionLabel::ACTION_NODE_RESTORE,
@@ -122,7 +122,7 @@ int DeviceMessageChannel::getType(std::string& control_unit_type, uint32_t milli
 int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper message_data;
-    message_data.addStringValue(NodeDefinitionKey::NODE_TYPE, deviceNetworkAddress->device_id);
+    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
 											  ChaosSystemDomainAndActionLabel::ACTION_NODE_GET_STATE,
 											  &message_data,
@@ -143,7 +143,7 @@ int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues, bool
         //create the pack
     //CDataWrapper deviceAttributeValues;
         //setup with the device_id code
-    attributesValues.addStringValue(NodeDefinitionKey::NODE_TYPE, deviceNetworkAddress->device_id);
+    attributesValues.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     //deviceAttributeValues.addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, attributesValues);
     if(noWait){
         sendMessage(deviceNetworkAddress->node_id, "setDatasetAttribute", &attributesValues);
@@ -161,7 +161,7 @@ int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues, bool
 int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper message_data;
-    message_data.addStringValue(NodeDefinitionKey::NODE_TYPE, deviceNetworkAddress->device_id);
+    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     message_data.addInt64Value(
                                ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY, scheduledDealy);
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,

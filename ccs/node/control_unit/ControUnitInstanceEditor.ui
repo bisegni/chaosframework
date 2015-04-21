@@ -336,6 +336,12 @@
               <attribute name="horizontalHeaderDefaultSectionSize">
                <number>20</number>
               </attribute>
+              <attribute name="horizontalHeaderMinimumSectionSize">
+               <number>20</number>
+              </attribute>
+              <attribute name="verticalHeaderDefaultSectionSize">
+               <number>20</number>
+              </attribute>
              </widget>
             </item>
             <item>
@@ -464,6 +470,12 @@
               <pointsize>11</pointsize>
              </font>
             </property>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>20</number>
+            </attribute>
+            <attribute name="verticalHeaderDefaultSectionSize">
+             <number>20</number>
+            </attribute>
            </widget>
           </item>
           <item>

@@ -50,10 +50,15 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
     uint64_t command_id = 0;
     CDataWrapper *us_base_description = NULL;
     CDataWrapper *cu_base_descirption = NULL;
-    CDataWrapper *cu_instance_descirption = NULL;
+    CDataWrapper *cu_instance_description = NULL;
+    std::auto_ptr<CDataWrapper> load_unload_data_pack(new CDataWrapper());
+
         //get the parameter
     const std::string cu_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     const bool load_unload = api_data->getBoolValue("load");
+
+    load_unload_data_pack->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
+    load_unload_data_pack->addBoolValue("load", load_unload);
 
         //get data access
     GET_DATA_ACCESS(persistence::data_access::NodeDataAccess, n_da, -3)
@@ -76,44 +81,44 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
         }
             //we have the information, ad need to add the load attribute to this.
         cu_inf->addBoolValue("load", load_unload);
-        if(load_unload) {
-                //now we need to fetch the instance configuratio
-            if((err = cu_da->getInstanceDescription(cu_uid,
-                                                    &cu_instance_descirption)) ||
-               (cu_instance_descirption == NULL)) {
-                    //we haven't found an instance for the node
-                LOG_AND_TROW(CU_LOUNLO_ERR, -8, "The node doesn't has an instance configured");
-            } else {
-                std::auto_ptr<CDataWrapper> cu_instance(cu_instance_descirption);
+            //now we need to fetch the instance configuratio
+        if((err = cu_da->getInstanceDescription(cu_uid,
+                                                &cu_instance_description)) ||
+           (cu_instance_description == NULL)) {
+                //we haven't found an instance for the node
+            LOG_AND_TROW(CU_LOUNLO_ERR, -8, "The node doesn't has an instance configured");
+        } else {
+            std::auto_ptr<CDataWrapper> cu_instance(cu_instance_description);
 
-                if(!cu_instance->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {
-                    LOG_AND_TROW(CU_LOUNLO_ERR, -9, "Control unit isntace lake of parent key(unit server)");
-                }
-
-                if(!cu_instance->hasKey("control_unit_implementation")) {
-                    LOG_AND_TROW(CU_LOUNLO_ERR, -10, "No implementation found into control unit instances");
-                }
-
-                if((err = n_da->getNodeDescription(cu_instance->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT), &us_base_description)) ||
-                   us_base_description == NULL){
-                    LOG_AND_TROW(CU_LOUNLO_ERR, err, "Error fetching unit server information");
-                }
-
-                std::auto_ptr<CDataWrapper> us_instance(us_base_description);
-                if(!us_base_description->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
-                    LOG_AND_TROW(CU_LOUNLO_ERR, -11, "No rpc address for unit server found");
-                }
-
-                    //set the type of the control unit to instance and the rpc addres sof the unit server
-                cu_inf->addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, us_base_description->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR));
-                cu_inf->addStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE, cu_instance->getStringValue("control_unit_implementation"));
+            if(!cu_instance->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {
+                LOG_AND_TROW(CU_LOUNLO_ERR, -9, "Control unit isntace lake of parent key(unit server)");
             }
-        }
 
-            //perform phase in background
-        getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ASLIAS(batch::unit_server::LoadUnloadControlUnit)),
-                                          cu_inf.release(),
-                                          command_id);
+            if(!cu_instance->hasKey("control_unit_implementation")) {
+                LOG_AND_TROW(CU_LOUNLO_ERR, -10, "No implementation found into control unit instances");
+            }
+
+            if((err = n_da->getNodeDescription(cu_instance->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT), &us_base_description)) ||
+               us_base_description == NULL){
+                LOG_AND_TROW(CU_LOUNLO_ERR, err, "Error fetching unit server information");
+            }
+
+            std::auto_ptr<CDataWrapper> us_instance(us_base_description);
+            if(!us_instance->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
+                LOG_AND_TROW(CU_LOUNLO_ERR, -11, "No rpc address for unit server found");
+            }
+
+                //set the type of the control unit to instance and the rpc addres sof the unit server
+            load_unload_data_pack->addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, us_instance->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR));
+            if(load_unload) {
+                    //in load phase we need the type to instantiate the control unit
+                load_unload_data_pack->addStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE, cu_instance->getStringValue("control_unit_implementation"));
+            }
+                //perform phase in background
+            getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::unit_server::LoadUnloadControlUnit)),
+                                              load_unload_data_pack.release(),
+                                              command_id);
+        }
     }
     return NULL;
 }

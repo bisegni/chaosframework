@@ -21,6 +21,8 @@ private slots:
 
     void on_actionSearch_Node_triggered();
 
+    void on_actionData_Services_triggered();
+
 private:
     Ui::MainWindow *ui;
 };

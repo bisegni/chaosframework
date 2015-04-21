@@ -18,7 +18,12 @@
  *    	limitations under the License.
  */
 #include "NodeRegister.h"
+
 #include "../../batch/unit_server/UnitServerAckBatchCommand.h"
+#include "../../batch/control_unit/RegistrationAckBatchCommand.h"
+
+#include <boost/algorithm/string/predicate.hpp>
+
 #define USRA_INFO INFO_LOG(NodeRegister)
 #define USRA_DBG  DBG_LOG(NodeRegister)
 #define USRA_ERR  ERR_LOG(NodeRegister)
@@ -48,13 +53,21 @@ chaos::common::data::CDataWrapper *NodeRegister::execute(chaos::common::data::CD
         throw CException(-2, "Node type not found", __PRETTY_FUNCTION__);
     }
 
+    if(!api_data->hasKey(NodeDefinitionKey::NODE_RPC_ADDR)) {
+        throw CException(-2, "RPC address not found", __PRETTY_FUNCTION__);
+    }
+
     const std::string node_type = api_data->getStringValue(NodeDefinitionKey::NODE_TYPE);
     if(node_type.compare(NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
             //perform unit server registration
         result = unitServerRegistration(api_data,
                                         detach_data);
+    } else if(boost::starts_with(node_type, NodeType::NODE_TYPE_CONTROL_UNIT)) {
+            //the control units type value start with the default but are followe by custom type
+        result = controlUnitRegistration(api_data,
+                                         detach_data);
     } else {
-        throw CException(-3, "Bad unit server type forwarded", __PRETTY_FUNCTION__);
+        throw CException(-3, "Type of node not managed for registration", __PRETTY_FUNCTION__);
     }
 
     return result;
@@ -75,7 +88,7 @@ chaos::common::data::CDataWrapper *NodeRegister::unitServerRegistration(chaos::c
 
     const std::string unit_server_alias = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     try {
-        if((err = us_da->checkUSPresence(unit_server_alias, is_present))) {
+        if((err = us_da->checkPresence(unit_server_alias, is_present))) {
                 //err
             api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                     ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
@@ -109,7 +122,7 @@ chaos::common::data::CDataWrapper *NodeRegister::unitServerRegistration(chaos::c
     } catch (chaos::CException& ex) {
         api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                 ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
-        getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ASLIAS(batch::unit_server::UnitServerAckCommand)),
+        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::unit_server::UnitServerAckCommand),
                                           api_data,
                                           command_id);
         USRA_ERR << "Sent ack for registration denied to the unit server " << unit_server_alias;
@@ -117,7 +130,7 @@ chaos::common::data::CDataWrapper *NodeRegister::unitServerRegistration(chaos::c
     } catch (...) {
         api_data->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                 ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
-        getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ASLIAS(batch::unit_server::UnitServerAckCommand)),
+        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::unit_server::UnitServerAckCommand),
                                           api_data,
                                           command_id);
         LOG_AND_TROW(USRA_ERR, -7, "Unknown exception")
@@ -126,9 +139,85 @@ chaos::common::data::CDataWrapper *NodeRegister::unitServerRegistration(chaos::c
 
         //all is gone weel
     USRA_DBG << "Send ack for registration ok to the unit server " << unit_server_alias;
-    getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ASLIAS(batch::unit_server::UnitServerAckCommand)),
+    getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::unit_server::UnitServerAckCommand),
                                       api_data,
                                       command_id);
-    
+
+    return NULL;
+}
+
+    //! perform specific registration for control unit
+chaos::common::data::CDataWrapper *NodeRegister::controlUnitRegistration(chaos::common::data::CDataWrapper *api_data,
+                                                                         bool& detach_data) throw(chaos::CException) {
+    int         err = 0;
+    uint64_t    command_id;
+    bool        is_present = false;
+
+    if(!api_data->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)) {
+        throw CException(-1, "RPC domain not found", __PRETTY_FUNCTION__);
+    }
+        //fetch the unit server data access
+    GET_DATA_ACCESS(persistence::data_access::ControlUnitDataAccess, cu_da, -2)
+    GET_DATA_ACCESS(persistence::data_access::NodeDataAccess, n_da, -3)
+
+
+        //allocate datapack for batch command
+    std::auto_ptr<CDataWrapper> ack_command(new CDataWrapper());
+    const std::string cu_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+        //set cu id to the batch command datapack
+    ack_command->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
+                                cu_uid);
+        //aset rpc address
+    ack_command->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR,
+                                api_data->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR));
+        //aset rpc address
+    ack_command->addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN,
+                                api_data->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN));
+
+    try {
+            //check if the node is rpresent
+        if((err = cu_da->checkPresence(cu_uid, is_present))) {
+            LOG_AND_TROW(USRA_ERR, -4, "error checking the unit server presence")
+        }if(is_present) {
+            if((err = n_da->updateNode(*api_data))) {
+                LOG_AND_TROW(USRA_ERR, err, "Error updating default node field")
+            }
+
+            if((err = cu_da->setDataset(*api_data))){
+                LOG_AND_TROW(USRA_ERR, err, "error setting the dataset")
+            }
+                //ok->registered
+            ack_command->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                       ErrorCode::EC_MDS_NODE_REGISTRATION_OK);
+        } else {
+                //actiually only the control unit hosted by unit server can be registered
+            ack_command->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                       ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+        }
+
+            //set the code to inform cu that all is gone well
+        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::control_unit::RegistrationAckBatchCommand),
+                                          ack_command.release(),
+                                          command_id);
+        USRA_DBG << "Send ack for registration ok to the unit server " << cu_uid << " with commadn id:" <<command_id;
+    } catch (chaos::CException& ex) {
+        ack_command->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                   ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+
+        USRA_ERR << "Sent ack for registration denied to the unit server " << cu_uid;
+        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::control_unit::RegistrationAckBatchCommand),
+                                          ack_command.release(),
+                                          command_id);
+        throw ex;
+    } catch (...) {
+        USRA_ERR << "Sent ack for registration denied to the unit server " << cu_uid;
+            //somenthing goes worng so deny the registration
+        ack_command->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                   ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+        getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::control_unit::RegistrationAckBatchCommand),
+                                          ack_command.release(),
+                                          command_id);
+        LOG_AND_TROW(USRA_ERR, -5, "Unknown exception")
+    }
     return NULL;
 }

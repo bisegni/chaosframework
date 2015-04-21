@@ -28,6 +28,7 @@
 #define MDBCUDA_DBG  DBG_LOG(MongoDBControlUnitDataAccess)
 #define MDBCUDA_ERR  ERR_LOG(MongoDBControlUnitDataAccess)
 
+using namespace chaos;
 using namespace chaos::common::data;
 
 using namespace chaos::service_common::persistence::mongodb;
@@ -43,11 +44,19 @@ MongoDBControlUnitDataAccess::~MongoDBControlUnitDataAccess() {
 
 }
 
-int MongoDBControlUnitDataAccess::insertNewControlUnit(chaos::common::data::CDataWrapper& control_unit_description) {
+int MongoDBControlUnitDataAccess::checkPresence(const std::string& unit_server_unique_id,
+                                                bool& presence) {
+    CHAOS_ASSERT(node_data_access)
+    return node_data_access->checkNodePresence(presence,
+                                               unit_server_unique_id,
+                                               NodeType::NODE_TYPE_CONTROL_UNIT);
+}
+
+int MongoDBControlUnitDataAccess::insertNewControlUnit(CDataWrapper& control_unit_description) {
     int err = 0;
-    if(!control_unit_description.hasKey(chaos::NodeDefinitionKey::NODE_TYPE)) {
-            //set he ndoe type as control unit
-        control_unit_description.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+    if(!control_unit_description.hasKey(NodeDefinitionKey::NODE_TYPE)) {
+            //set the type of control unit
+        control_unit_description.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
     }
     if((err = node_data_access->insertNewNode(control_unit_description))) {
         MDBCUDA_ERR << "Error:" << err << " adding new node for control unit";
@@ -55,46 +64,140 @@ int MongoDBControlUnitDataAccess::insertNewControlUnit(chaos::common::data::CDat
     return err;
 }
 
-int MongoDBControlUnitDataAccess::updateControlUnit(chaos::common::data::CDataWrapper& control_unit_description) {
+int MongoDBControlUnitDataAccess::updateControlUnit(CDataWrapper& control_unit_description) {
     int err = 0;
     return err;
 }
 
-int MongoDBControlUnitDataAccess::addNewDataset(chaos::common::data::CDataWrapper& dataset_description) {
-    int err = 0;
-    return err;
-}
-
-
-int MongoDBControlUnitDataAccess::checkDatasetPresence(chaos::common::data::CDataWrapper& dataset_description)  {
-    int err = 0;
-    return err;
-}
-
-
-int MongoDBControlUnitDataAccess::getLastDataset(chaos::common::data::CDataWrapper& dataset_description)  {
-    int err = 0;
-    return err;
-}
-
-int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_unique_id,
-                                                         chaos::common::data::CDataWrapper& instance_description) {
+int MongoDBControlUnitDataAccess::setDataset(CDataWrapper& dataset_description) {
     int err = 0;
         //allocate data block on vfat
     mongo::BSONObjBuilder bson_find;
     mongo::BSONObjBuilder updated_field;
     mongo::BSONObjBuilder bson_update;
-    MDBCUDA_DBG << instance_description.getJSONString();
     try {
-
-        if(!instance_description.hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) return -1;
+            //check for principal mandatory keys
+        if(!dataset_description.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) return -1;
+        if(!dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -2;
+        if(!dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP))return -3;
 
             //serach criteria
-        bson_find   << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
-        << chaos::NodeDefinitionKey::NODE_TYPE << chaos::NodeType::NODE_TYPE_CONTROL_UNIT;
+        bson_find   << NodeDefinitionKey::NODE_UNIQUE_ID << dataset_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)
+        << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
+
+            //add dataset timestamp
+        updated_field << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP << (long long)dataset_description.getInt64Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP);
+
+            //add dataset
+        std::auto_ptr<CMultiTypeDataArrayWrapper> ds_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        if(!ds_vec.get()) return -3;
+            //cicle all dataset attribute
+        mongo::BSONArrayBuilder dataset_bson_array;
+        for(int idx = 0;
+            idx < ds_vec->size();
+            idx++) {
+            mongo::BSONObjBuilder dataset_element_builder;
+
+            auto_ptr<CDataWrapper> dataset_element(ds_vec->getCDataWrapperElementAtIndex(idx));
+            if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
+               dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)&&
+               dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)&&
+               dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION)&&
+               dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE)) {
+
+                    //mandatory field
+                dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME <<
+                dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
+
+                dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION <<
+                dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION);
+
+                dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE <<
+                dataset_element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE);
+
+                dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION <<
+                dataset_element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION);
+
+                dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE <<
+                dataset_element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE);
+                    //optional field
+                if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
+                    dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE <<
+                    dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE);
+                }
+
+                if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {
+                    dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE <<
+                    dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE);
+                }
+
+                if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {
+                    dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE <<
+                    dataset_element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE);
+                }
+                dataset_bson_array << dataset_element_builder.obj();
+            }
+        }
+            //add dataset array to update bson
+        updated_field.appendArray(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION,
+                                  dataset_bson_array.arr());
+
+
+
+        mongo::BSONObj query = bson_find.obj();
+        mongo::BSONObj update = BSON("$set" << BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << updated_field.obj()));
+
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
+                                            "findOne",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "Update",
+                                                                    query.toString(),
+                                                                    update.jsonString()));)
+            //set the instance parameter within the node representing the control unit
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                     query,
+                                     update))) {
+            MDBCUDA_ERR << "Error updating unit server";
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+
+int MongoDBControlUnitDataAccess::checkDatasetPresence(CDataWrapper& dataset_description)  {
+    int err = 0;
+    return err;
+}
+
+
+int MongoDBControlUnitDataAccess::getLastDataset(CDataWrapper& dataset_description)  {
+    int err = 0;
+    return err;
+}
+
+int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_unique_id,
+                                                         CDataWrapper& instance_description) {
+    int err = 0;
+        //allocate data block on vfat
+    mongo::BSONObjBuilder bson_find;
+    mongo::BSONObjBuilder updated_field;
+    mongo::BSONObjBuilder bson_update;
+    try {
+
+        if(!instance_description.hasKey(NodeDefinitionKey::NODE_PARENT)) return -1;
+
+            //serach criteria
+        bson_find   << NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
+        << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
 
             //add the load_at_startup field
-        updated_field << chaos::NodeDefinitionKey::NODE_PARENT << instance_description.getStringValue(chaos::NodeDefinitionKey::NODE_PARENT)
+        updated_field << NodeDefinitionKey::NODE_PARENT << instance_description.getStringValue(NodeDefinitionKey::NODE_PARENT)
         << "auto_load" << (bool)(instance_description.hasKey("auto_load")?instance_description.getBoolValue("auto_load"):false);
 
             //add unit server parent
@@ -141,14 +244,14 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
                 idx < attr_array->size();
                 idx++) {
                 auto_ptr<CDataWrapper> attr_desc(attr_array->getCDataWrapperElementAtIndex(idx));
-                if(attr_desc->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
-                   attr_desc->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
+                if(attr_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
+                   attr_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
                     int size;
                     CDataWrapper a;
-                    a.addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, attr_desc->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
-                    a.addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, attr_desc->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE));
-                    if(attr_desc->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) a.addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, attr_desc->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
-                    if(attr_desc->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) a.addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, attr_desc->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE));
+                    a.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, attr_desc->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
+                    a.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, attr_desc->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE));
+                    if(attr_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) a.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, attr_desc->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
+                    if(attr_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) a.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, attr_desc->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE));
                         //add object to array
                     bab << mongo::BSONObj(a.getBSONRawData(size));
                 }
@@ -176,14 +279,14 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
     } catch (const mongo::DBException &e) {
         MDBCUDA_ERR << e.what();
         err = -1;
-    } catch (const chaos::CException &e) {
+    } catch (const CException &e) {
         MDBCUDA_ERR << e.what();
         err = e.errorCode;
     }
     return err;
 }
 
-int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost::shared_ptr<chaos::common::data::CDataWrapper> >& result_page,
+int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost::shared_ptr<CDataWrapper> >& result_page,
                                                               const std::string& unit_server_uid,
                                                               std::vector<std::string> cu_type_filter,
                                                               uint32_t last_sequence_id,
@@ -197,8 +300,8 @@ int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost:
         //compose query
 
         //filter on sequence, type and unit server
-    bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_TYPE << chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
-    bson_find_and << BSON(boost::str(boost::format("instance_description.%1%") % chaos::NodeDefinitionKey::NODE_PARENT) << unit_server_uid);
+    bson_find_and << BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT);
+    bson_find_and << BSON(boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_uid);
 
         //add cu types
     if(cu_type_filter.size()) {
@@ -213,7 +316,7 @@ int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost:
         // filter on node unique id
 
     mongo::BSONObj q = bson_find.obj();
-        // mongo::BSONObj p =  BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID<<1);
+        // mongo::BSONObj p =  BSON(NodeDefinitionKey::NODE_UNIQUE_ID<<1);
     DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
                                         "findOne",
                                         DATA_ACCESS_LOG_1_ENTRY("Query",
@@ -233,7 +336,9 @@ int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost:
                  it != paged_result.end();
                  it++) {
                 boost::shared_ptr<CDataWrapper> result_intance(new CDataWrapper());
-                result_intance->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, it->getStringField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+                result_intance->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, it->getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
+                if(it->hasField(NodeDefinitionKey::NODE_RPC_ADDR))result_intance->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, it->getStringField(NodeDefinitionKey::NODE_RPC_ADDR));
+                if(it->hasField(NodeDefinitionKey::NODE_RPC_DOMAIN))result_intance->addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, it->getStringField(NodeDefinitionKey::NODE_RPC_DOMAIN));
 
                 mongo::BSONObj instance_description = it->getObjectField("instance_description");
                 result_intance->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
@@ -246,22 +351,22 @@ int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost:
 }
 
 int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& control_unit_uid,
-                                                         chaos::common::data::CDataWrapper **result) {
+                                                         CDataWrapper **result) {
     return getInstanceDescription("", control_unit_uid, result);
 }
 
 int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit_server_uid,
                                                          const std::string& control_unit_uid,
-                                                         chaos::common::data::CDataWrapper **result) {
+                                                         CDataWrapper **result) {
     int err = 0;
     mongo::BSONObj          q_result;
     mongo::BSONObjBuilder   bson_find;
     SearchResult            paged_result;
 
-    bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_uid;
+    bson_find << NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_uid;
     if(unit_server_uid.size()>0) {
             //ad also unit server for search the instance description
-        bson_find << boost::str(boost::format("instance_description.%1%") % chaos::NodeDefinitionKey::NODE_PARENT) << unit_server_uid;
+        bson_find << boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_uid;
     }
     mongo::BSONObj q = bson_find.obj();
 
@@ -279,10 +384,10 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
     } else {
         mongo::BSONObj instance_description = q_result.getObjectField("instance_description");
         *result = new CDataWrapper();
-        (*result)->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, q_result.getStringField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        (*result)->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, q_result.getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
 
 
-        (*result)->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, instance_description.getStringField(chaos::NodeDefinitionKey::NODE_PARENT));
+        (*result)->addStringValue(NodeDefinitionKey::NODE_PARENT, instance_description.getStringField(NodeDefinitionKey::NODE_PARENT));
         if(instance_description.hasField("auto_load"))(*result)->addBoolValue("auto_load", instance_description.getBoolField("auto_load"));
         if(instance_description.hasField("load_parameter"))(*result)->addStringValue("load_parameter", instance_description.getStringField("load_parameter"));
         if(instance_description.hasField("control_unit_implementation"))(*result)->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
@@ -320,8 +425,8 @@ int MongoDBControlUnitDataAccess::deleteInstanceDescription(const std::string& u
     mongo::BSONObj          q_result;
     mongo::BSONObjBuilder   bson_find;
 
-    bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_uid;
-    bson_find << boost::str(boost::format("instance_description.%1%") % chaos::NodeDefinitionKey::NODE_PARENT) << unit_server_uid;
+    bson_find << NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_uid;
+    bson_find << boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_uid;
     mongo::BSONObj q = bson_find.obj();
     mongo::BSONObj u = BSON("$unset" << BSON("instance_description" << ""));
 

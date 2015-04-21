@@ -42,7 +42,7 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
  */
 void MDSMessageChannel::sendHeartBeatForDeviceID(string& identificationID) {
     CDataWrapper hbMessage;
-    hbMessage.addStringValue(NodeDefinitionKey::NODE_TYPE, identificationID);
+    hbMessage.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identificationID);
     sendMessage(nodeAddress->node_id,
                 ChaosSystemDomainAndActionLabel::MDS_CU_HEARTBEAT,
                 &hbMessage);
@@ -106,9 +106,9 @@ int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t mil
     CHECK_TIMEOUT_AND_RESULT_CODE(resultAnswer, err)
     if(err == ErrorCode::EC_NO_ERROR && resultAnswer->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){
         auto_ptr<CDataWrapper> allDeviceInfo(resultAnswer->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
-        if(allDeviceInfo->hasKey(NodeDefinitionKey::NODE_TYPE)){
+        if(allDeviceInfo->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)){
                 //there is a result
-            auto_ptr<CMultiTypeDataArrayWrapper> allDeviceInfoVec(allDeviceInfo->getVectorValue(NodeDefinitionKey::NODE_TYPE));
+            auto_ptr<CMultiTypeDataArrayWrapper> allDeviceInfoVec(allDeviceInfo->getVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID));
             
             for (int idx = 0; idx < allDeviceInfoVec->size(); idx++) {
                 deviceIDVec.push_back(allDeviceInfoVec->getStringElementAtIndex(idx));
@@ -127,7 +127,7 @@ int MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, CDev
     int err = ErrorCode::EC_NO_ERROR;
     if(!deviceNetworkAddress) return -1;
     auto_ptr<CDataWrapper> callData(new CDataWrapper());
-    callData->addStringValue(NodeDefinitionKey::NODE_TYPE, identificationID);
+    callData->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identificationID);
         //send request and wait the response
     auto_ptr<CDataWrapper> resultAnswer(sendRequest(nodeAddress->node_id,
                                                     ChaosSystemDomainAndActionLabel::MDS_GET_NODE_ADDRESS,
@@ -159,7 +159,7 @@ int MDSMessageChannel::getLastDatasetForDevice(string& identificationID, CDataWr
     int err = ErrorCode::EC_NO_ERROR;
     if(!deviceDefinition) return -1;
     auto_ptr<CDataWrapper> callData(new CDataWrapper());
-    callData->addStringValue(NodeDefinitionKey::NODE_TYPE, identificationID);
+    callData->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identificationID);
         //send request and wait the response
     auto_ptr<CDataWrapper> deviceInitInformation(sendRequest(nodeAddress->node_id,
                                                              "getCurrentDataset",

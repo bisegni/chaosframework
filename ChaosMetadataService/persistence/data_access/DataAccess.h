@@ -23,4 +23,5 @@
 #include "UtilityDataAccess.h"
 #include "UnitServerDataAccess.h"
 #include "ControlUnitDataAccess.h"
+#include "DataServiceDataAccess.h"
 #endif

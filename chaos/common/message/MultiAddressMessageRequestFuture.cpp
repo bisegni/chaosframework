@@ -128,24 +128,27 @@ bool MultiAddressMessageRequestFuture::wait() {
 
     //! try to get the result waiting for a determinate period of time
 chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::getResult() {
-    if(!current_future.get()) return NULL;
+    CHAOS_ASSERT(current_future.get())
     return current_future->getResult();
 }
 
 
 chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::detachResult() {
-    if(!current_future.get()) return NULL;
+    CHAOS_ASSERT(current_future.get())
     return current_future->detachResult();
 }
 
 int MultiAddressMessageRequestFuture::getError() const {
-    return current_error;
+    CHAOS_ASSERT(current_future.get())
+    return current_future->getError();
 }
 
 const std::string& MultiAddressMessageRequestFuture::getErrorDomain() const {
-    return current_error_domain;
+    CHAOS_ASSERT(current_future.get())
+    return current_future->getErrorDomain();
 }
 
 const std::string& MultiAddressMessageRequestFuture::getErrorMessage() const {
-    return current_error_message;
+    CHAOS_ASSERT(current_future.get())
+    return current_future->getErrorMessage();
 }

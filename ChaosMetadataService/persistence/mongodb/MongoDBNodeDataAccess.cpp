@@ -51,6 +51,7 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
                                 chaos::NodeDefinitionKey::NODE_TYPE << 1 <<
                                 chaos::NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
                                 chaos::NodeDefinitionKey::NODE_RPC_DOMAIN << 1 <<
+                                chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR << 1 <<
                                 chaos::NodeDefinitionKey::NODE_TIMESTAMP << 1);
 
         DEBUG_CODE(MDBNDA_DBG<<log_message("getNodeDescription",
@@ -124,21 +125,30 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
     mongo::BSONObjBuilder bson_update;
     try {
         if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) return -1;
-        if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) return -2;
-        if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) return -4;
-
-        const std::string& node_unique_id = node_description.getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
-        const std::string& node_rpc_addr = node_description.getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
-        const uint64_t node_timestamp = node_description.getUInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP);
-        const std::string& node_rpc_domain = node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)?node_description.getStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN):"";
-
+            //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) return -2;
+            //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) return -4;
 
             //serach criteria
-        bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_unique_id;
-            //update field
-        updated_field << chaos::NodeDefinitionKey::NODE_RPC_ADDR << node_rpc_addr
-        << chaos::NodeDefinitionKey::NODE_RPC_DOMAIN << node_rpc_domain
-        << chaos::NodeDefinitionKey::NODE_TIMESTAMP << (long long)node_timestamp;
+        bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
+        if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_TYPE)) {
+            bson_find << chaos::NodeDefinitionKey::NODE_TYPE << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_TYPE);
+        }
+
+        if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
+            updated_field << chaos::NodeDefinitionKey::NODE_RPC_ADDR << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
+        }
+        if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)) {
+            updated_field << chaos::NodeDefinitionKey::NODE_RPC_DOMAIN << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN);
+        }
+        if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR)) {
+            updated_field << chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR);
+        }
+        if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) {
+            updated_field << chaos::NodeDefinitionKey::NODE_TIMESTAMP << (long long)node_description.getUInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP);
+        }
+
+
+        if(updated_field.len() == 0) return 0;
 
         mongo::BSONObj query = bson_find.obj();
 
@@ -166,14 +176,18 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
 }
 
     //inherited method
-int MongoDBNodeDataAccess::checkNodePresence(const std::string& node_unique_id,
-                                             bool& presence) {
+int MongoDBNodeDataAccess::checkNodePresence(bool& presence,
+                                             const std::string& node_unique_id,
+                                             const std::string& node_unique_type) {
     int err = 0;
         //allocate data block on vfat
     mongo::BSONObjBuilder bson_find;
     mongo::BSONObj result;
     try {
         bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_unique_id;
+        if(node_unique_type.size()>0) {
+            bson_find << chaos::NodeDefinitionKey::NODE_TYPE << node_unique_type;
+        }
         mongo::BSONObj q = bson_find.obj();
 
         DEBUG_CODE(MDBNDA_DBG<<log_message("checkNodePresence",
@@ -195,12 +209,16 @@ int MongoDBNodeDataAccess::checkNodePresence(const std::string& node_unique_id,
     return err;
 }
 
-int MongoDBNodeDataAccess::deleteNode(const std::string& node_unique_id) {
+int MongoDBNodeDataAccess::deleteNode(const std::string& node_unique_id,
+                                      const std::string& node_type) {
     int err = 0;
         //allocate data block on vfat
     mongo::BSONObjBuilder bson_find;
     try {
         bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_unique_id;
+        if(node_type.size()) {
+            bson_find << chaos::NodeDefinitionKey::NODE_TYPE << node_type;
+        }
         mongo::BSONObj q = bson_find.obj();
 
         DEBUG_CODE(MDBNDA_DBG<<log_message("deleteNode",

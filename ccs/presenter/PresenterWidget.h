@@ -8,6 +8,18 @@
 #include <QWidget>
 #include <QMdiSubWindow>
 
+#define GET_CHAOS_API_PTR(api_name)\
+chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->getApiProxy<api_name>()
+
+#define CHK_STR_AND_GET(p, x, alt)\
+(p->hasKey(x)?p->getStringValue(x):alt)
+
+#define CHK_INT32_AND_GET(p, x, alt)\
+(p->hasKey(x)?p->getInt32Value(x):alt)
+
+#define CHK_UINT32_AND_GET(p, x, alt)\
+(p->hasKey(x)?p->getUInt32Value(x):alt)
+
 class CommandPresenter;
 
 class PresenterWidget:
@@ -33,13 +45,13 @@ private:
 
 private slots:
 
-    void asyncApiResult(QString tag,
+    void asyncApiResult(const QString& tag,
                                 QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
-    void asyncApiError(QString tag,
+    void asyncApiError(const QString& tag,
                                QSharedPointer<chaos::CException> api_exception);
 
-     void asyncApiTimeout(QString tag);
+    void asyncApiTimeout(const QString& tag);
 
 protected:
     ApiAsyncProcessor api_processor;
@@ -58,19 +70,19 @@ protected:
                          chaos::metadata_service_client::api_proxy::ApiProxyResult api_result);
 
     //!Api has ben called successfully
-    virtual void onApiDone(QString tag,
+    virtual void onApiDone(const QString& tag,
                            QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
     //!Api has been give an error
-    virtual void onApiError(QString tag,
+    virtual void onApiError(const QString& tag,
                             QSharedPointer<chaos::CException> api_exception);
 
     //! api has gone in timeout
-    virtual void onApiTimeout(QString tag);
+    virtual void onApiTimeout(const QString& tag);
 signals:
 
-    void onStartWaitApi(QString api_tag);
-    void onEndWaitApi(QString api_tag);
+    void onStartWaitApi(const QString& api_tag);
+    void onEndWaitApi(const QString& api_tag);
 };
 
 #endif // PRESENTERWIDGET_H
