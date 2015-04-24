@@ -31,14 +31,18 @@ ADD_SUBDIRECTORY(chaos/cu_toolkit bin/bin_cutoolkit)
 message(STATUS "Configure UIToolkit Layer")
 ADD_SUBDIRECTORY(chaos/ui_toolkit bin/bin_uitoolkit)
 
+IF (NOT CHAOS_NO_MONGO)
 message(STATUS "Configure Chaos Metadata Service")
 ADD_SUBDIRECTORY(ChaosMetadataService bin/bin_metadata_service)
+ENDIF()
 
+IF (NOT CHAOS_NO_SERVICES)
 message(STATUS "Configure Chaos WAN Proxy")
 ADD_SUBDIRECTORY(ChaosWANProxy bin/bin_wan_proxy)
 
 message(STATUS "Configure Chaos Data Service")
 ADD_SUBDIRECTORY(ChaosDataService bin/bin_cds)
+ENDIF()
 
 message(STATUS "Configure Chaos Data Export")
 ADD_SUBDIRECTORY(ChaosDataExport bin/chaos_cde)

@@ -23,7 +23,7 @@
 #include <chaos/common/bson/platform/random.h>
 #include <chaos/common/bson/bsonobjbuilder.h>
 #include <chaos/common/bson/oid.h>
-#include <chaos/common/bson/util/atomic_int.h>
+//#include <chaos/common/bson/util/atomic_int.h>
 
 #define verify BSON_MONGO_verify
 

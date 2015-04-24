@@ -118,6 +118,7 @@ if (x){\
 LAPP_ << "-----------------------------------------";\
 LAPP_ << CSLIB_VERSION_HEADER;\
 LAPP_ << CSLIB_VERSION_NUMBER;\
+LAPP_ << "Date:"<<__DATE__ <<" " <<__TIME__;\
 LAPP_ << "-----------------------------------------";
 
 #define CHAOS_NOT_THROW(x)\

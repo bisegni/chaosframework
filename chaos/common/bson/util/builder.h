@@ -28,6 +28,19 @@
 #include <chaos/common/bson/base/string_data.h>
 #include <chaos/common/bson/util/assert_util.h>
 
+#ifdef __BSON_USEMEMCPY__
+// for this kind of architectures load/store of more than 1 byte 
+// must be 32 byte aligned  
+#define COPY_TYPE(_x,_t) {			\
+	  void*src=(void*)&_x;\
+	  void*dst = (void*)grow(sizeof(_t));\
+	  memcpy(dst,src,sizeof(_t));\
+	  }
+#else
+#define COPY_TYPE(_x,_t)             *((_t*)grow(sizeof(_t))) = _x;
+#endif
+
+
 namespace bson {
     /* Accessing unaligned doubles on ARM generates an alignment trap and aborts with SIGBUS on Linux.
        Wrapping the double in a packed struct forces gcc to generate code that works with unaligned values too.
@@ -147,34 +160,36 @@ namespace bson {
         void decouple() { data = 0; }
 
         void appendUChar(unsigned char j) {
-            *((unsigned char*)grow(sizeof(unsigned char))) = j;
+	  COPY_TYPE(j,unsigned char);
         }
         void appendChar(char j) {
-            *((char*)grow(sizeof(char))) = j;
+	  COPY_TYPE(j,char);
         }
         void appendNum(char j) {
-            *((char*)grow(sizeof(char))) = j;
+	  COPY_TYPE(j,char);
         }
         void appendNum(short j) {
-            *((short*)grow(sizeof(short))) = j;
+	  COPY_TYPE(j,short);
         }
         void appendNum(int j) {
-            *((int*)grow(sizeof(int))) = j;
+	  COPY_TYPE(j,int);
         }
         void appendNum(unsigned j) {
-            *((unsigned*)grow(sizeof(unsigned))) = j;
+	  COPY_TYPE(j,unsigned);
         }
         void appendNum(bool j) {
-            *((bool*)grow(sizeof(bool))) = j;
+	  COPY_TYPE(j,bool);
         }
         void appendNum(double j) {
-            (reinterpret_cast< PackedDouble* >(grow(sizeof(double))))->d = j;
+	  COPY_TYPE(j,double);
+	  //            (reinterpret_cast< PackedDouble* >(grow(sizeof(double))))->d = j;
         }
         void appendNum(long long j) {
-            *((long long*)grow(sizeof(long long))) = j;
+	  COPY_TYPE(j,long long);
+
         }
         void appendNum(unsigned long long j) {
-            *((unsigned long long*)grow(sizeof(unsigned long long))) = j;
+	  COPY_TYPE(j,unsigned long long);
         }
 
         void appendBuf(const void *src, size_t len) {
@@ -200,7 +215,11 @@ namespace bson {
         /* returns the pre-grow write position */
         inline char* grow(int by) {
             int oldlen = l;
-            int newLen = l + by;
+
+	    //            int newLen = (l + by)+ 4 -(l + by)%4  ; 
+
+	    int newLen = (l + by);
+
             if ( newLen > size ) {
                 grow_reallocate(newLen);
             }

@@ -23,6 +23,9 @@
 #endif
 
 #include <chaos/common/bson/platform/compiler.h>
+#define GCC_VERSION (__GNUC__ * 10000 \
+ + __GNUC_MINOR__ * 100 \
+ + __GNUC_PATCHLEVEL__)
 
 namespace bson {
 
@@ -72,7 +75,7 @@ namespace bson {
         InterlockedAdd((volatile long *)&x,by);
     }
 # endif
-#elif defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
+#elif GCC_VERSION >=40700 //defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
     // this is in GCC >= 4.1
     inline void AtomicUInt::set(unsigned newX) { __sync_synchronize(); x = newX; }
     AtomicUInt AtomicUInt::operator++() {
@@ -124,6 +127,31 @@ namespace bson {
     void AtomicUInt::signedAdd(int by) {
         atomic_int_helper(&x, by);
     }
+#elif defined(GCC_VERSION) && GCC_VERSION<40700 && GCC_VERSION >=40100
+
+    // this is in GCC >= 4.1
+    inline void AtomicUInt::set(unsigned newX) {__sync_synchronize(); x = newX; }
+    AtomicUInt AtomicUInt::operator++() {
+      __sync_synchronize();
+        return ++x;
+    }
+    AtomicUInt AtomicUInt::operator++(int) {
+      __sync_synchronize();
+      return x++;
+    }
+    AtomicUInt AtomicUInt::operator--() {
+      __sync_synchronize();
+      return --x;
+    }
+    AtomicUInt AtomicUInt::operator--(int) {
+      __sync_synchronize();
+      return x--;
+    }
+    void AtomicUInt::signedAdd(int by) {
+      __sync_synchronize();
+      x+=by;
+    }    
+
 #else
 #  error "unsupported compiler or platform"
 #endif

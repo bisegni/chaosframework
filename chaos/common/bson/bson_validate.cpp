@@ -51,8 +51,12 @@ namespace bson {
                 if ( ( _position + sizeof(N) ) > _maxLength )
                     return false;
                 if ( out ) {
+#ifdef __BSON_USEMEMCPY__
+		  memcpy((void*)out,(void*)(_buffer + _position),sizeof(N));
+#else
                     const N* temp = reinterpret_cast<const N*>(_buffer + _position);
                     *out = *temp;
+#endif
                 }
                 _position += sizeof(N);
                 return true;
