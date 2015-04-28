@@ -22,6 +22,9 @@
 
 #include <chaos/common/utility/TimingUtil.h>
 
+#include <boost/format.hpp>
+#include <boost/foreach.hpp>
+
 #include <mongo/client/dbclient.h>
 
 #define MDBCUDA_INFO INFO_LOG(MongoDBControlUnitDataAccess)
@@ -69,7 +72,8 @@ int MongoDBControlUnitDataAccess::updateControlUnit(CDataWrapper& control_unit_d
     return err;
 }
 
-int MongoDBControlUnitDataAccess::setDataset(CDataWrapper& dataset_description) {
+int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
+                                             CDataWrapper& dataset_description) {
     int err = 0;
         //allocate data block on vfat
     mongo::BSONObjBuilder bson_find;
@@ -77,7 +81,7 @@ int MongoDBControlUnitDataAccess::setDataset(CDataWrapper& dataset_description) 
     mongo::BSONObjBuilder bson_update;
     try {
             //check for principal mandatory keys
-        if(!dataset_description.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) return -1;
+        if(cu_unique_id.size() == 0) return -1;
         if(!dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -2;
         if(!dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP))return -3;
 
@@ -170,14 +174,74 @@ int MongoDBControlUnitDataAccess::setDataset(CDataWrapper& dataset_description) 
 }
 
 
-int MongoDBControlUnitDataAccess::checkDatasetPresence(CDataWrapper& dataset_description)  {
+int MongoDBControlUnitDataAccess::checkDatasetPresence(const std::string& cu_unique_id,
+                                                       bool& presence) {
     int err = 0;
+    uint64_t counter;
+    try {
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT
+                                    << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION  << BSON("$exists" << true ));
+
+
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("checkDatasetPresence",
+                                            "find",
+                                            DATA_ACCESS_LOG_1_ENTRY("query",
+                                                                    query.toString()));)
+            //remove the field of the document
+        if((err = connection->count(counter,
+                                    MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                    query))) {
+            MDBCUDA_ERR << "Error counting the element";
+        } else {
+            presence = (counter == 1);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
     return err;
 }
 
-
-int MongoDBControlUnitDataAccess::getLastDataset(CDataWrapper& dataset_description)  {
+int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
+                                             chaos::common::data::CDataWrapper **dataset_description) {
     int err = 0;
+    mongo::BSONObj result;
+    try {
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT
+                                    << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION  << BSON("$exists" << true ));
+        mongo::BSONObj prj = BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION  << 1);
+
+
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getDataset",
+                                            "findOne",
+                                            DATA_ACCESS_LOG_2_ENTRY("query",
+                                                                    "prj",
+                                                                    query.toString(),
+                                                                    prj.toString()));)
+            //remove the field of the document
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                      query,
+                                      &prj))) {
+            MDBCUDA_ERR << "Error fetching dataset";
+        } else if(result.isEmpty()) {
+            MDBCUDA_ERR << "No element found";
+        } else {
+                //we have dataset so set it directly within the cdsta wrapper
+            *dataset_description = new CDataWrapper(result.getObjectField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION).objdata());
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
     return err;
 }
 
@@ -298,54 +362,61 @@ int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost:
     SearchResult            paged_result;
 
         //compose query
+    try{
+            //filter on sequence, type and unit server
+        bson_find_and << BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT);
+        bson_find_and << BSON(boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_uid);
 
-        //filter on sequence, type and unit server
-    bson_find_and << BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT);
-    bson_find_and << BSON(boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_uid);
-
-        //add cu types
-    if(cu_type_filter.size()) {
-        for(std::vector<std::string>::iterator it = cu_type_filter.begin();
-            it != cu_type_filter.end();
-            it++) {
-            bson_find_or << BSON("instance_description.control_unit_implementation" << *it);
+            //add cu types
+        if(cu_type_filter.size()) {
+            for(std::vector<std::string>::iterator it = cu_type_filter.begin();
+                it != cu_type_filter.end();
+                it++) {
+                bson_find_or << BSON("instance_description.control_unit_implementation" << *it);
+            }
+            bson_find_and << BSON("$or" << bson_find_or.arr());
         }
-        bson_find_and << BSON("$or" << bson_find_or.arr());
-    }
-    bson_find.appendArray("$and", bson_find_and.obj());
-        // filter on node unique id
+        bson_find.appendArray("$and", bson_find_and.obj());
+            // filter on node unique id
 
-    mongo::BSONObj q = bson_find.obj();
-        // mongo::BSONObj p =  BSON(NodeDefinitionKey::NODE_UNIQUE_ID<<1);
-    DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
-                                        "findOne",
-                                        DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                                q.toString()));)
-        //perform the search for the query page
-    if((err = performPagedQuery(paged_result,
-                                MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
-                                q,
-                                NULL,//return only the control unit unique id
-                                NULL,
-                                results_for_page))) {
-        MDBCUDA_ERR << "Error calling performPagedQuery with error" << err;
-    } else {
-        DEBUG_CODE(MDBCUDA_DBG << "The query '"<< q.toString() <<"' has found " << paged_result.size() << " result";)
-        if(paged_result.size()) {
-            for (SearchResultIterator it = paged_result.begin();
-                 it != paged_result.end();
-                 it++) {
-                boost::shared_ptr<CDataWrapper> result_intance(new CDataWrapper());
-                result_intance->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, it->getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
-                if(it->hasField(NodeDefinitionKey::NODE_RPC_ADDR))result_intance->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, it->getStringField(NodeDefinitionKey::NODE_RPC_ADDR));
-                if(it->hasField(NodeDefinitionKey::NODE_RPC_DOMAIN))result_intance->addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, it->getStringField(NodeDefinitionKey::NODE_RPC_DOMAIN));
+        mongo::BSONObj q = bson_find.obj();
+            // mongo::BSONObj p =  BSON(NodeDefinitionKey::NODE_UNIQUE_ID<<1);
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
+                                            "findOne",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.toString()));)
+            //perform the search for the query page
+        if((err = performPagedQuery(paged_result,
+                                    MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                    q,
+                                    NULL,//return only the control unit unique id
+                                    NULL,
+                                    results_for_page))) {
+            MDBCUDA_ERR << "Error calling performPagedQuery with error" << err;
+        } else {
+            DEBUG_CODE(MDBCUDA_DBG << "The query '"<< q.toString() <<"' has found " << paged_result.size() << " result";)
+            if(paged_result.size()) {
+                for (SearchResultIterator it = paged_result.begin();
+                     it != paged_result.end();
+                     it++) {
+                    boost::shared_ptr<CDataWrapper> result_intance(new CDataWrapper());
+                    result_intance->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, it->getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
+                    if(it->hasField(NodeDefinitionKey::NODE_RPC_ADDR))result_intance->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, it->getStringField(NodeDefinitionKey::NODE_RPC_ADDR));
+                    if(it->hasField(NodeDefinitionKey::NODE_RPC_DOMAIN))result_intance->addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, it->getStringField(NodeDefinitionKey::NODE_RPC_DOMAIN));
 
-                mongo::BSONObj instance_description = it->getObjectField("instance_description");
-                result_intance->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
+                    mongo::BSONObj instance_description = it->getObjectField("instance_description");
+                    result_intance->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
 
-                result_page.push_back(result_intance);
+                    result_page.push_back(result_intance);
+                }
             }
         }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
     }
     return err;
 }
@@ -362,59 +433,66 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
     mongo::BSONObj          q_result;
     mongo::BSONObjBuilder   bson_find;
     SearchResult            paged_result;
-
-    bson_find << NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_uid;
-    if(unit_server_uid.size()>0) {
-            //ad also unit server for search the instance description
-        bson_find << boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_uid;
-    }
-    mongo::BSONObj q = bson_find.obj();
-
-    DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
-                           "findOne",
-                           DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                   q.toString()));)
-
-    if((err = connection->findOne(q_result,
-                                  MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
-                                  q))){
-        MDBCUDA_ERR << "Error calling performPagedQuery with error" << err;
-    } else if(q_result.isEmpty()){
-        MDBCUDA_DBG << "No instance description found for control unit:" <<control_unit_uid << " with parent:" << unit_server_uid;
-    } else {
-        mongo::BSONObj instance_description = q_result.getObjectField("instance_description");
-        *result = new CDataWrapper();
-        (*result)->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, q_result.getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
-
-
-        (*result)->addStringValue(NodeDefinitionKey::NODE_PARENT, instance_description.getStringField(NodeDefinitionKey::NODE_PARENT));
-        if(instance_description.hasField("auto_load"))(*result)->addBoolValue("auto_load", instance_description.getBoolField("auto_load"));
-        if(instance_description.hasField("load_parameter"))(*result)->addStringValue("load_parameter", instance_description.getStringField("load_parameter"));
-        if(instance_description.hasField("control_unit_implementation"))(*result)->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
-
-        if(instance_description.hasField("driver_description")) {
-            std::vector< mongo::BSONElement > drv_descriptions;
-            instance_description.getObjectField("driver_description").elems(drv_descriptions);
-            for(std::vector< mongo::BSONElement >::iterator it = drv_descriptions.begin();
-                it != drv_descriptions.end();
-                it++) {
-                CDataWrapper driver_desc(it->Obj().objdata());
-                (*result)->appendCDataWrapperToArray(driver_desc);
-            }
-            (*result)->finalizeArrayForKey("driver_description");
+    try{
+        bson_find << NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_uid;
+        if(unit_server_uid.size()>0) {
+                //ad also unit server for search the instance description
+            bson_find << boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_uid;
         }
+        mongo::BSONObj q = bson_find.obj();
 
-        if(instance_description.hasField("attribute_value_descriptions")) {
-            std::vector< mongo::BSONElement > attr_descriptions;
-            instance_description.getObjectField("attribute_value_descriptions").elems(attr_descriptions);
-            for(std::vector< mongo::BSONElement >::iterator it = attr_descriptions.begin();
-                it != attr_descriptions.end();
-                it++) {
-                CDataWrapper driver_desc(it->Obj().objdata());
-                (*result)->appendCDataWrapperToArray(driver_desc);
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
+                                            "findOne",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.toString()));)
+
+        if((err = connection->findOne(q_result,
+                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                      q))){
+            MDBCUDA_ERR << "Error calling performPagedQuery with error" << err;
+        } else if(q_result.isEmpty()){
+            MDBCUDA_DBG << "No instance description found for control unit:" <<control_unit_uid << " with parent:" << unit_server_uid;
+        } else {
+            mongo::BSONObj instance_description = q_result.getObjectField("instance_description");
+            *result = new CDataWrapper();
+            (*result)->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, q_result.getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
+
+
+            (*result)->addStringValue(NodeDefinitionKey::NODE_PARENT, instance_description.getStringField(NodeDefinitionKey::NODE_PARENT));
+            if(instance_description.hasField("auto_load"))(*result)->addBoolValue("auto_load", instance_description.getBoolField("auto_load"));
+            if(instance_description.hasField("load_parameter"))(*result)->addStringValue("load_parameter", instance_description.getStringField("load_parameter"));
+            if(instance_description.hasField("control_unit_implementation"))(*result)->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
+
+            if(instance_description.hasField("driver_description")) {
+                std::vector< mongo::BSONElement > drv_descriptions;
+                instance_description.getObjectField("driver_description").elems(drv_descriptions);
+                for(std::vector< mongo::BSONElement >::iterator it = drv_descriptions.begin();
+                    it != drv_descriptions.end();
+                    it++) {
+                    CDataWrapper driver_desc(it->Obj().objdata());
+                    (*result)->appendCDataWrapperToArray(driver_desc);
+                }
+                (*result)->finalizeArrayForKey("driver_description");
             }
-            (*result)->finalizeArrayForKey("attribute_value_descriptions");
+
+            if(instance_description.hasField("attribute_value_descriptions")) {
+                std::vector< mongo::BSONElement > attr_descriptions;
+                instance_description.getObjectField("attribute_value_descriptions").elems(attr_descriptions);
+                for(std::vector< mongo::BSONElement >::iterator it = attr_descriptions.begin();
+                    it != attr_descriptions.end();
+                    it++) {
+                    CDataWrapper driver_desc(it->Obj().objdata());
+                    (*result)->appendCDataWrapperToArray(driver_desc);
+                }
+                (*result)->finalizeArrayForKey("attribute_value_descriptions");
+            }
         }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
     }
     return err;
 }
@@ -424,23 +502,138 @@ int MongoDBControlUnitDataAccess::deleteInstanceDescription(const std::string& u
     int err = 0;
     mongo::BSONObj          q_result;
     mongo::BSONObjBuilder   bson_find;
+    try{
+        bson_find << NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_uid;
+        bson_find << boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_uid;
+        mongo::BSONObj q = bson_find.obj();
+        mongo::BSONObj u = BSON("$unset" << BSON("instance_description" << ""));
 
-    bson_find << NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_uid;
-    bson_find << boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_uid;
-    mongo::BSONObj q = bson_find.obj();
-    mongo::BSONObj u = BSON("$unset" << BSON("instance_description" << ""));
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("deleteInstanceDescription",
+                                            "update",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "Update",
+                                                                    q.toString(),
+                                                                    u.jsonString()));)
+            //remove the field of the document
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                     q,
+                                     u))) {
+            MDBCUDA_ERR << "Error removing control unit instance from node";
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
 
-    DEBUG_CODE(MDBCUDA_DBG<<log_message("deleteInstanceDescription",
-                           "update",
-                           DATA_ACCESS_LOG_2_ENTRY("Query",
-                                                   "Update",
-                                                   q.toString(),
-                                                   u.jsonString()));)
-        //remove the field of the document
-    if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
-                                 q,
-                                 u))) {
-        MDBCUDA_ERR << "Error removing control unit instance from node";
+int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeConfiguration(const std::string& control_unit_uid,
+                                                                           const std::string& attribute_name,
+                                                                           boost::shared_ptr<chaos::common::data::CDataWrapper>& result) {
+    int err = 0;
+    mongo::BSONObj  result_bson;
+    try{
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_uid
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT
+                                    << boost::str(boost::format("instance_description.attribute_value_descirption.%1%") %
+                                                  ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) << attribute_name);
+        mongo::BSONObj prj = BSON("instance_description.attribute_value_descirption" << 1);
+
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDatasetAttributeConfiguration",
+                                            "findOne",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "Projection",
+                                                                    query.toString(),
+                                                                    prj.jsonString()));)
+            //remove the field of the document
+        if((err  = connection->findOne(result_bson,
+                                       MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
+                                                                MONGODB_COLLECTION_NODES),
+                                       query,
+                                       &prj))){
+
+        }else if(result_bson.isEmpty()){
+            MDBCUDA_ERR << "No attribute has bee foundt";
+        } else {
+            mongo::BSONObj attribute_config = result_bson.getObjectField("instance_description.attribute_value_descirption");
+                //we have found description
+            result.reset(new CDataWrapper());
+            if(attribute_config.hasField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME)) {
+                result->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME,
+                                       attribute_config.getStringField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
+            }
+            if(attribute_config.hasField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
+                result->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE,
+                                       attribute_config.getStringField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE));
+            }
+            if(attribute_config.hasField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {
+                result->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE,
+                                       attribute_config.getStringField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
+            }
+            if(attribute_config.hasField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {
+                result->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE,
+                                       attribute_config.getStringField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE));
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+    //! return the data service associater to control unit
+int MongoDBControlUnitDataAccess::getDataServiceAssociated(const std::string& cu_uid,
+                                                           std::vector<std::string>& associated_ds){
+    CHAOS_ASSERT(node_data_access)
+    int err = 0;
+    std::vector<mongo::BSONObj> result;
+    try{
+        mongo::BSONObj q = BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE
+                                << "cu_association" << BSON("$in" << BSON_ARRAY(cu_uid)));
+        mongo::BSONObj p = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << 1);
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getDataServiceAssociated",
+                                            "find",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "projection",
+                                                                    q.toString(),
+                                                                    p.jsonString()));)
+            //remove the field of the document
+        connection->findN(result,
+                          MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
+                                                   MONGODB_COLLECTION_NODES),
+                          q,
+                          10,
+                          0,
+                          &p);
+
+        BOOST_FOREACH(mongo::BSONObj element, result){
+            if(!element.hasField(NodeDefinitionKey::NODE_UNIQUE_ID)) continue;
+            const std::string ds_unique_id = element.getStringField(NodeDefinitionKey::NODE_UNIQUE_ID);
+            CDataWrapper *node_description;
+            if((err = node_data_access->getNodeDescription(ds_unique_id,
+                                                           &node_description))){
+                MDBCUDA_ERR << "Error fetching node description for data service:" << ds_unique_id;
+            } else if(node_description!=NULL){
+                    //we have object description
+                std::auto_ptr<CDataWrapper> node_ptr(node_description);
+                associated_ds.push_back(node_ptr->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID));
+            } else {
+                MDBCUDA_ERR << "no node description found for data service:" << ds_unique_id;
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
     }
     return err;
 }

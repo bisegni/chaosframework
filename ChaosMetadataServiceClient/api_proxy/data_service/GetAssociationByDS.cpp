@@ -26,7 +26,7 @@ using namespace chaos::metadata_service_client::api_proxy::data_service;
 
 API_PROXY_CD_DEFINITION(GetAssociationByDS,
                         "data_service",
-                        "associateControlUnit")
+                        "getAssociation")
 
 /*!
 

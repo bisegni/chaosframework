@@ -88,7 +88,14 @@
     <addaction name="actionNext_window"/>
     <addaction name="actionPrev_Window"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionPreferences"/>
+   </widget>
    <addaction name="menuNode"/>
+   <addaction name="menuTools"/>
    <addaction name="menuWindows"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -191,6 +198,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>Preferences</string>
    </property>
   </action>
  </widget>

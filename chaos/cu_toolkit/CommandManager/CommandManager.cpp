@@ -63,7 +63,7 @@ void CommandManager::init(void *initParam) throw(CException) {
     AbstActionDescShrPtr 
     actionDescription = DeclareAction::addActionDescritionInstance<CommandManager>(this, 
                                                                                    &CommandManager::shutdown, 
-                                                                                   NodeDefinitionKeyRPC::RPC_DOMAIN, 
+                                                                                   NodeDomainAndActionRPC::RPC_DOMAIN, 
                                                                                    ChaosSystemDomainAndActionLabel::ACTION_SYSTEM_SHUTDOWN, "Shutdown the chaos control unit library instance");
     
         //registering the comman manager action

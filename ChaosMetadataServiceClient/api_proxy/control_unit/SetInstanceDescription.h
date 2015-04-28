@@ -32,16 +32,22 @@ namespace chaos {
                 typedef boost::ptr_vector<common::data::CDataWrapper>           CDWList;
                 typedef boost::ptr_vector<common::data::CDataWrapper>::iterator CDWListIterator;
 
-                class SetInstanceDescription:
-                public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(SetInstanceDescription)
+                class SetInstanceDescription;
+
+                    //api helper
+                /*!
+                 helper class for collecting the data needes by the api
+                 */
+                class SetInstanceDescriptionHelper {
+                    friend class SetInstanceDescription;
                         //!list for all ddriver description added to the api
                     CDWList driver_descirptions;
                         //!list all the attribute value description added to the api
                     CDWList attribute_value_descriptions;
-                protected:
-                    API_PROXY_CD_DECLARATION(SetInstanceDescription)
                 public:
+                    SetInstanceDescriptionHelper();
+                    ~SetInstanceDescriptionHelper();
+
                         //! the unique id of the control unit instance
                     std::string control_unit_uid;
                         //! the unit server that host the instance
@@ -56,6 +62,7 @@ namespace chaos {
 
                         //! the string is passed to the control unit for the load phase
                     std::string load_parameter;
+
 
                         //!add a new driver description
                     void addDriverDesscription(const std::string& driver_name,
@@ -72,10 +79,20 @@ namespace chaos {
                                             const std::string& attribute_min_range = std::string());
                         //! remove all previously added attribute range value description
                     void clearAllAttributeConfig();
+                };
+
+                    //api alcass
+                class SetInstanceDescription:
+                public chaos::metadata_service_client::api_proxy::ApiProxy {
+                    API_PROXY_CLASS(SetInstanceDescription)
+                protected:
+                    API_PROXY_CD_DECLARATION(SetInstanceDescription)
+                public:
+                    std::auto_ptr<SetInstanceDescriptionHelper> getNewHelper();
                     /*!
                      Set the isntance
                      */
-                    ApiProxyResult execute();
+                    ApiProxyResult execute(SetInstanceDescriptionHelper& api_data);
                 };
                 
             }

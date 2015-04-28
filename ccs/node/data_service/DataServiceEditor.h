@@ -23,6 +23,8 @@ protected:
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
     void fillTableDS(QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+    void fillDataServiceAssocaition(const QString& data_service,
+                                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 private slots:
     void handleNewDataService(const QString& unique_id,
                               const QString& direct_io_address,
@@ -34,6 +36,10 @@ private slots:
 
     void on_pushButtonAddDataService_clicked();
     //-------------list and table event-------------------------
+    void tableDSCustomMenuRequested(QPoint pos);
+
+    void loadCUAssociationForDataService();
+
     void tableDSCurrentChanged(const QModelIndex &current,
                                const QModelIndex &previous);
     void tableDSSelectionChanged(const QItemSelection& selected,
@@ -55,6 +61,8 @@ private slots:
                              const QVector<QPair<QString,QString> >& selected_nodes);
 
     void on_pushButtonRemoveAssociatedControlUnit_clicked();
+
+    void on_pushButtonUpdateAssociationList_clicked();
 
 private:
     Ui::DataServiceEditor *ui;

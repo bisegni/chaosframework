@@ -18,11 +18,9 @@ class UnitServerEditor :
     const QString node_unique_id;
     //list model
     QStringListModel *list_model_cu_type;
-    //query proxy
-    chaos::metadata_service_client::api_proxy::unit_server::LoadUnloadControlUnit *us_load_unload_cu_proxy;
-    chaos::metadata_service_client::api_proxy::unit_server::GetDescription *us_get_description_proxy;
-    chaos::metadata_service_client::api_proxy::control_unit::SearchInstancesByUS *cu_si_proxy;
-    chaos::metadata_service_client::api_proxy::control_unit::DeleteInstance *cu_di_proxy;
+
+    //! hel p to colelct the information for the api
+    chaos::metadata_service_client::api_proxy::control_unit::SetInstanceDescriptionHelper instance_description_helper;
 
     //the lis tof the isntances setuped for the unit server
     std::vector<QSharedPointer<chaos::common::data::CDataWrapper> > instance_list;

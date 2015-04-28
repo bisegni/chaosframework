@@ -1,5 +1,5 @@
 /*
- *	control_unit_batch.h
+ *	batch_impl.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,10 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_control_unit_batch_h
-#define CHAOSFramework_control_unit_batch_h
-#include "RegistrationAckBatchCommand.h"
-#include "IDSTControlUnitBatchCommand.h"
+#ifndef CHAOSFramework_batch_impl_h
+#define CHAOSFramework_batch_impl_h
+
+#include "control_unit/control_unit_batch.h"
+#include "unit_server/unit_server_batch.h"
+
 #endif

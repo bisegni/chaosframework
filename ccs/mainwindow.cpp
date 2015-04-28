@@ -4,11 +4,13 @@
 #include "node/unit_server/UnitServerEditor.h"
 #include "node/data_service/DataServiceEditor.h"
 #include "search/SearchNodeResult.h"
+#include "preference/PreferenceDialog.h"
 
 #include <QInputDialog>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     command_presenter(NULL),
+    main_controller(NULL),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -65,4 +67,15 @@ void MainWindow::on_actionSearch_Node_triggered()
 void MainWindow::on_actionData_Services_triggered()
 {
     command_presenter->showCommandPresenter(new DataServiceEditor());
+}
+
+void MainWindow::on_actionPreferences_triggered()
+{
+    PreferenceDialog pref_dialog(this);
+    //connect changed signal to reconfiguration slot of main controller
+    connect(&pref_dialog,
+            SIGNAL(changedConfiguration()),
+            main_controller,
+            SLOT(reconfigure()));
+    pref_dialog.exec();
 }

@@ -80,6 +80,49 @@ int MongoDBDataServiceDataAccess::insertNew(const std::string& ds_unique_id,
     return err;
 }
 
+int MongoDBDataServiceDataAccess::getDescription(const std::string& ds_unique_id,
+                                                 chaos::common::data::CDataWrapper **node_description) {
+    CHAOS_ASSERT(node_data_access)
+    int err = 0;
+    if((err = node_data_access->getNodeDescription(ds_unique_id, node_description))) return err;
+
+    mongo::BSONObj result;
+    try {
+            //we can update the node node
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << ds_unique_id
+                                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE);
+        mongo::BSONObj prj = BSON(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << 1);
+
+        DEBUG_CODE(MDBDSDA_DBG<<log_message("getDescription",
+                                            "findOne",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "prj",
+                                                                    query.toString(),
+                                                                    prj.jsonString()));)
+        if((err = connection->findOne(result,
+                                     MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
+                                                              MONGODB_COLLECTION_NODES),
+                                     query,
+                                     &prj))){
+            MDBDSDA_ERR << "Error fecthing specific data service attribute for" << ds_unique_id << " with error:" << err;
+        } else if(result.isEmpty()){
+            err = -3;
+            MDBDSDA_ERR << "no specific data service attribute found for " << ds_unique_id << " with error:" << err;
+        } else {
+            (*node_description)->addStringValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT,
+                                                result.getStringField(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT));
+        }
+    } catch (const mongo::DBException &e) {
+        MDBDSDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBDSDA_ERR << e.what();
+        err = e.errorCode;
+    }
+
+    return err;
+}
+
     //inherited method
 int MongoDBDataServiceDataAccess::updateExisting(const std::string& ds_unique_id,
                                                  const std::string& ds_direct_io_addr,
@@ -243,11 +286,14 @@ int MongoDBDataServiceDataAccess::searchAssociationForUID(const std::string& ds_
 
         if(!result.isEmpty() &&
            result.hasField("cu_association")) {
-            result.elems(association);
+                //get all array element
+            association = result.getField("cu_association").Array();
+                //check if not empty
             if(association.size()) {
                 for(std::vector<mongo::BSONElement>::iterator it = association.begin();
                     it != association.end();
                     it++){
+                    const std::string cu_associated_id = it->String();
                     CDataWrapper *node_element_description = NULL;
                     if((err = node_data_access->getNodeDescription(it->String(),
                                                                    &node_element_description))) {

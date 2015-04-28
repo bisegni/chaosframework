@@ -112,7 +112,7 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
             load_unload_data_pack->addStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR, us_instance->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR));
             if(load_unload) {
                     //in load phase we need the type to instantiate the control unit
-                load_unload_data_pack->addStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE, cu_instance->getStringValue("control_unit_implementation"));
+                load_unload_data_pack->addStringValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE, cu_instance->getStringValue("control_unit_implementation"));
             }
                 //perform phase in background
             getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::unit_server::LoadUnloadControlUnit)),

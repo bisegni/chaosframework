@@ -109,26 +109,26 @@ void ControlManager::init(void *initParameter) throw(CException) {
 		//init CU action
 		actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
 																					   &ControlManager::loadControlUnit,
-																					   UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
-																					   UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT,
+																					   UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
+																					   UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT,
 																					   "Control Unit load system action");
 		//add parameter for control unit name
-		actionDescription->addParam(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE,
+		actionDescription->addParam(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE,
 									DataType::TYPE_STRING,
 									"The type of the control unit to load");
 		//add parameter for driver initialization string
-		actionDescription->addParam(UnitServerNodeDomainAndActionLabel::PARAM_CU_LOAD_DRIVER_PARAMS,
+		actionDescription->addParam(UnitServerNodeDomainAndActionRPC::PARAM_CU_LOAD_DRIVER_PARAMS,
 									DataType::TYPE_STRING,
 									"Driver params (pipe separated '|') to pass to the control unit instance");
 
 		//deinit CU action
 		actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
 																					   &ControlManager::unloadControlUnit,
-                                                                                       UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
-                                                                                       UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_UNLOAD_CONTROL_UNIT,
+                                                                                       UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                       UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_UNLOAD_CONTROL_UNIT,
 																					   "Control Unit unload system action");
 		//add parameter for control unit name
-		actionDescription->addParam(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE,
+		actionDescription->addParam(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE,
 									DataType::TYPE_STRING,
 									"Alias of the control unit to unload");
         actionDescription->addParam(NodeDefinitionKey::NODE_UNIQUE_ID,
@@ -137,15 +137,15 @@ void ControlManager::init(void *initParameter) throw(CException) {
 
 		actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
 																					   &ControlManager::unitServerRegistrationACK,
-																					   UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
-																					   UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
+																					   UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
+																					   UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_REG_ACK,
 																					   "Unit server registration ack message");
 	}
 
 	actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
 																				   &ControlManager::unitServerStatus,
-																				   NodeDefinitionKeyRPC::RPC_DOMAIN,
-																				   NodeDefinitionKeyRPC::ACTION_NODE_STATUS,
+																				   NodeDomainAndActionRPC::RPC_DOMAIN,
+																				   NodeDomainAndActionRPC::ACTION_NODE_STATUS,
                                                                                    "Unit server states");
 
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
@@ -155,8 +155,8 @@ void ControlManager::init(void *initParameter) throw(CException) {
                                                                                    "Update Command Manager Configuration");
 	actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
                                                                                    &ControlManager::workUnitRegistrationACK,
-                                                                                   UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
-                                                                                   UnitServerNodeDomainAndActionLabel::ACTION_REGISTRATION_CONTROL_UNIT_ACK,
+                                                                                   UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                   UnitServerNodeDomainAndActionRPC::ACTION_REGISTRATION_CONTROL_UNIT_ACK,
                                                                                    "Update Command Manager Configuration");
 	//register command manager action
     CommandManager::getInstance()->registerAction(this);
@@ -420,10 +420,10 @@ void ControlManager::manageControlUnit() {
 CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& detach) throw (CException) {
 	//check param
 	IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
-	IN_ACTION_PARAM_CHECK(!message_data->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE), -2, "No instancer alias")
+	IN_ACTION_PARAM_CHECK(!message_data->hasKey(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE), -2, "No instancer alias")
 	IN_ACTION_PARAM_CHECK(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID), -3, "No id for the work unit instance found")
 
-	std::string work_unit_type = message_data->getStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE);
+	std::string work_unit_type = message_data->getStringValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE);
 	LCMAPP_ << "Get new request for instance the work unit with alias:" << work_unit_type;
 
 	WriteLock write_instancer_lock(mutex_map_cu_instancer);
@@ -474,10 +474,10 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 //! message for unload operation
 CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool& detach) throw (CException) {
 	IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
-        //IN_ACTION_PARAM_CHECK(!message_data->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE), -2, "No instancer alias")
+        //IN_ACTION_PARAM_CHECK(!message_data->hasKey(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE), -2, "No instancer alias")
 	IN_ACTION_PARAM_CHECK(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID), -2, "No id for the work unit instance found")
 
-        //std::string work_unit_type = message_data->getStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE);
+        //std::string work_unit_type = message_data->getStringValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE);
 	std::string work_unit_id = message_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
 
     LCMAPP_ << "Unload operation for: " << work_unit_id;// << " of type "<<work_unit_type;

@@ -135,6 +135,11 @@ void MultiAddressMessageChannel::removeNode(const CNetworkAddress& node_address)
     map_url_node_id.erase(node_address.ip_port);
 }
 
+    //! remove all configured node
+void MultiAddressMessageChannel::removeAllNode() {
+    service_feeder.clear(true);
+}
+
     //
 void  MultiAddressMessageChannel::disposeService(void *service_ptr) {
     MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);

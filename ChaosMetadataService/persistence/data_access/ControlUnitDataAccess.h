@@ -30,30 +30,33 @@ namespace chaos {
     namespace metadata_service {
         namespace persistence {
             namespace data_access {
-                
+
                 class ControlUnitDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 public:
                     DECLARE_DA_NAME
 
-                    //! default constructor
+                        //! default constructor
                     ControlUnitDataAccess();
-                    
-                    //!default destructor
+
+                        //!default destructor
                     ~ControlUnitDataAccess();
 
                         //!check if the control unit node is present
                     virtual int checkPresence(const std::string& control_unit_id, bool& presence) = 0;
 
                     virtual int insertNewControlUnit(chaos::common::data::CDataWrapper& control_unit_description) = 0;
-                    
+
                     virtual int updateControlUnit(chaos::common::data::CDataWrapper& control_unit_description) = 0;
-                    
-                    virtual int setDataset(chaos::common::data::CDataWrapper& dataset_description) = 0;
-                    
-                    virtual int checkDatasetPresence(chaos::common::data::CDataWrapper& dataset_description) = 0;
-                    
-                    virtual int getLastDataset(chaos::common::data::CDataWrapper& dataset_description) = 0;
+
+                    virtual int setDataset(const std::string& cu_unique_id,
+                                           chaos::common::data::CDataWrapper& dataset_description) = 0;
+
+                    virtual int checkDatasetPresence(const std::string& cu_unique_id,
+                                                     bool& presence) = 0;
+
+                    virtual int getDataset(const std::string& cu_unique_id,
+                                           chaos::common::data::CDataWrapper **dataset_description) = 0;
 
                     virtual int setInstanceDescription(const std::string& cu_unique_id,
                                                        chaos::common::data::CDataWrapper& instance_description) = 0;
@@ -73,6 +76,14 @@ namespace chaos {
 
                     virtual int deleteInstanceDescription(const std::string& unit_server_uid,
                                                           const std::string& control_unit_uid) = 0;
+
+                    virtual int getInstanceDatasetAttributeConfiguration(const std::string& control_unit_uid,
+                                                                         const std::string& attribute_name,
+                                                                         boost::shared_ptr<chaos::common::data::CDataWrapper>& result) = 0;
+
+                        //! return the data service associater to control unit
+                    virtual int getDataServiceAssociated(const std::string& cu_uid,
+                                                         std::vector<std::string>& associated_ds) = 0;
                 };
                 
             }

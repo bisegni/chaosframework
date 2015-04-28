@@ -46,7 +46,8 @@ SOURCES += main.cpp\
     node/control_unit/DriverDescriptionInputDialog.cpp \
     node/control_unit/AttributeValueRangeDialog.cpp \
     node/data_service/DataServiceEditor.cpp \
-    node/data_service/CreateEditDataService.cpp
+    node/data_service/CreateEditDataService.cpp \
+    preference/PreferenceDialog.cpp
 
 HEADERS  += mainwindow.h \
     search/SearchNodeResult.h \
@@ -62,7 +63,8 @@ HEADERS  += mainwindow.h \
     node/control_unit/DriverDescriptionInputDialog.h \
     node/control_unit/AttributeValueRangeDialog.h \
     node/data_service/DataServiceEditor.h \
-    node/data_service/CreateEditDataService.h
+    node/data_service/CreateEditDataService.h \
+    preference/PreferenceDialog.h
 
 FORMS    += mainwindow.ui \
     search/searchnoderesult.ui \
@@ -72,7 +74,8 @@ FORMS    += mainwindow.ui \
     node/control_unit/DriverDescriptionInputDialog.ui \
     node/control_unit/AttributeValueRangeDialog.ui \
     node/data_service/DataServiceEditor.ui \
-    node/data_service/CreateEditDataService.ui
+    node/data_service/CreateEditDataService.ui \
+    preference/PreferenceDialog.ui
 
 DISTFILES += \
     dark_orange.stylesheet

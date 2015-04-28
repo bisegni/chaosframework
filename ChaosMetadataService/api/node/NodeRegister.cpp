@@ -183,7 +183,8 @@ chaos::common::data::CDataWrapper *NodeRegister::controlUnitRegistration(chaos::
                 LOG_AND_TROW(USRA_ERR, err, "Error updating default node field")
             }
 
-            if((err = cu_da->setDataset(*api_data))){
+            if((err = cu_da->setDataset(cu_uid,
+                                        *api_data))){
                 LOG_AND_TROW(USRA_ERR, err, "error setting the dataset")
             }
                 //ok->registered

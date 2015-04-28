@@ -39,6 +39,7 @@ network_broker(_network_broker){
 
         //control unit command
     installCommand(control_unit::RegistrationAckBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::RegistrationAckBatchCommand));
+    installCommand(control_unit::IDSTControlUnitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::IDSTControlUnitBatchCommand));
 }
 
 MDSBatchExecutor::~MDSBatchExecutor() {

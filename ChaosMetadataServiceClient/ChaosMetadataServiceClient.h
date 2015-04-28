@@ -81,6 +81,10 @@ namespace chaos {
             D* getApiProxy(int32_t timeout_in_milliseconds = 1000) {
                 return api_proxy_manager->getApiProxy<D>(timeout_in_milliseconds);
             }
+
+            void clearServerList();
+
+            void addServerAddress(const std::string& server_address_and_port);
         };
     }
 }

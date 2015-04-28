@@ -42,18 +42,38 @@ CDataWrapper *StartStop::execute(CDataWrapper *api_data,
                                   bool& detach_data) throw(chaos::CException) {
 
     if(!api_data) {LOG_AND_TROW(CU_STASTO_ERR, -1, "Search parameter are needed");}
-    if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) {LOG_AND_TROW(CU_STASTO_ERR, -2, "The ndk_unique_id key (representing the control unit uid) is mandatory");}
-    if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {LOG_AND_TROW(CU_STASTO_ERR, -3, "The ndk_parent key (representing the unit server uid) is mandatory");}
+    if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) {LOG_AND_TROW(CU_STASTO_ERR, -2, "The ndk_unique_id key is mandatory");}
+    if(!api_data->hasKey("start")) {LOG_AND_TROW(CU_STASTO_ERR, -3, "The start key is mandatory");}
 
-    int err = 0;
-    CDataWrapper *result = NULL;
+    int err                     = 0;
+    uint64_t command_id         = 0;
+    CDataWrapper *tmp_ptr       = NULL;
+    std::auto_ptr<CDataWrapper> cu_base_description;
+
     const std::string cu_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
-    const std::string us_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
-    GET_DATA_ACCESS(persistence::data_access::ControlUnitDataAccess, cu_da, -4)
-    if((err = cu_da->getInstanceDescription(us_uid,
-                                            cu_uid,
-                                            &result))){
-        LOG_AND_TROW(CU_STASTO_ERR, err, boost::str(boost::format("Error fetching the control unit instance description for cuid:%1% and usuid:%2%") % cu_uid % cu_uid));
+    const bool start = api_data->getBoolValue("start");
+
+    GET_DATA_ACCESS(persistence::data_access::NodeDataAccess, n_da, -1)
+
+        //get default control unit node description
+    if((err = n_da->getNodeDescription(cu_uid, &tmp_ptr))) {
+        LOG_AND_TROW(CU_STASTO_ERR, err, boost::str(boost::format("Error fetching the control unit node dafault description for unique id:%1% with error %2%") % cu_uid));
+    } else if(tmp_ptr == NULL) {
+        LOG_AND_TROW(CU_STASTO_ERR, err, boost::str(boost::format("No control unit node dafault description found for unique id:%1% ") % cu_uid));
     }
-    return result;
+    cu_base_description.reset(tmp_ptr); tmp_ptr=NULL;
+
+        //copy rpc information in the init datapack
+    CHECK_KEY_THROW_AND_LOG(cu_base_description, NodeDefinitionKey::NODE_RPC_ADDR, CU_STASTO_ERR, -2, "No rpc addres in the control unit descirption")
+    cu_base_description->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, cu_base_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR));
+    CHECK_KEY_THROW_AND_LOG(cu_base_description, NodeDefinitionKey::NODE_RPC_DOMAIN, CU_STASTO_ERR, -3, "No rpc domain in the control unit descirption")
+    cu_base_description->addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, cu_base_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN));
+
+        //set the aciton type
+    cu_base_description->addInt32Value("action", (start?1:2));
+        //launch initilization in background
+    getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::control_unit::IDSTControlUnitBatchCommand)),
+                                      cu_base_description.release(),
+                                      command_id);
+    return NULL;
 }

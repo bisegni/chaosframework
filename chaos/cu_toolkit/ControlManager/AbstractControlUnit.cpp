@@ -166,7 +166,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
 	setupConfiguration.addStringValue("mds_control_key", control_key);
     
     //add the control unit type with semantonc type::subtype
-    setupConfiguration.addStringValue(NodeDefinitionKey::NODE_TYPE, boost::str(boost::format("%1%:%2%") % NodeType::NODE_TYPE_CONTROL_UNIT % control_unit_type));
+    setupConfiguration.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
 	
 	//check if as been setuped a file for configuration
 	//LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
@@ -174,12 +174,10 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
 	
 	//first call the setup abstract method used by the implementing CU to define action, dataset and other
 	//usefull value
-	ACULDBG_ << "Define Actions and Dataset";
 	unitDefineActionAndDataset();
 	
 	//for now we need only to add custom action for expose to rpc
 	//input element of the dataset
-	ACULDBG_ << "Define the base action for map the input attribute of the dataset";
 	AbstActionDescShrPtr
 	actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
 																		 &AbstractControlUnit::_setDatasetAttribute,
@@ -187,51 +185,43 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
 																		 "method for set the input element for the dataset");
 	
 	//expose updateConfiguration Methdo to rpc
-	ACULDBG_ << "Register updateConfiguration action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::updateConfiguration,
 													 "updateConfiguration",
 													 "Update control unit configuration");
 	
-	ACULDBG_ << "Register initDevice action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_init,
-													 ChaosSystemDomainAndActionLabel::ACTION_NODE_INIT,
+													 NodeDomainAndActionRPC::ACTION_NODE_INIT,
 													 "Perform the control unit initialization");
 	
-	ACULDBG_ << "Register deinitDevice action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_deinit,
-													 ChaosSystemDomainAndActionLabel::ACTION_NODE_DEINIT,
+													 NodeDomainAndActionRPC::ACTION_NODE_DEINIT
+                                                     ,
 													 "Perform the control unit deinitialization");
-	ACULDBG_ << "Register startDevice action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_start,
-													 ChaosSystemDomainAndActionLabel::ACTION_NODE_START,
+													 NodeDomainAndActionRPC::ACTION_NODE_START,
 													 "Start the control unit scheduling");
 	
-	ACULDBG_ << "Register stopDevice action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_stop,
-													 ChaosSystemDomainAndActionLabel::ACTION_NODE_STOP,
+													 NodeDomainAndActionRPC::ACTION_NODE_STOP,
 													 "Stop the control unit scheduling");
-	ACULDBG_ << "Register restoreDevice action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_unitRestoreToSnapshot,
-													 ChaosSystemDomainAndActionLabel::ACTION_NODE_RESTORE,
+													 NodeDomainAndActionRPC::ACTION_NODE_RESTORE,
 													 "Restore contorl unit to a snapshot tag");
-	ACULDBG_ << "Register getState action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_getState,
-													 ChaosSystemDomainAndActionLabel::ACTION_NODE_GET_STATE,
+													 NodeDomainAndActionRPC::ACTION_NODE_GET_STATE,
 													 "Get the state of the running control unit");
-	ACULDBG_ << "Register getInfo action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_getInfo,
-													 ChaosSystemDomainAndActionLabel::ACTION_CU_GET_INFO,
+													 NodeDomainAndActionRPC::ACTION_CU_GET_INFO,
 													 "Get the information about running control unit");
 	
-	ACULDBG_ << "Get dataset description";
 	//grab dataset description
 	DatasetDB::fillDataWrapperWithDataSetDescription(setupConfiguration);
 }
@@ -471,7 +461,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 														  bool& detachParam) throw(CException) {
 	int err = 0;
 	//check
-	if(!restoreParam || !restoreParam->hasKey(ChaosSystemDomainAndActionLabel::ACTION_NODE_RESTORE_PARAM_TAG)) return NULL;
+	if(!restoreParam || !restoreParam->hasKey(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG)) return NULL;
 	
 	if(getServiceState() != service_state_machine::InizializableServiceType::IS_INITIATED &&
 	   getServiceState() != service_state_machine::StartableServiceType::SS_STARTED ) {
@@ -485,7 +475,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 	
 	boost::shared_ptr<CDataWrapper> dataset_at_tag;
 	//get tag alias
-	const std::string restore_snapshot_tag = restoreParam->getStringValue(ChaosSystemDomainAndActionLabel::ACTION_NODE_RESTORE_PARAM_TAG);
+	const std::string restore_snapshot_tag = restoreParam->getStringValue(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG);
 	
 	ACULDBG_ << "Start restoring snapshot tag for: " << restore_snapshot_tag;
 	

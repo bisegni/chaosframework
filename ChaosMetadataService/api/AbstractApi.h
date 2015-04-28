@@ -21,6 +21,7 @@
 #define CHAOSFramework_AbstractApi_h
 #include "../mds_types.h"
 #include "../persistence/persistence.h"
+#include "../batch/batch_impl.h"
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/data/CDataWrapper.h>

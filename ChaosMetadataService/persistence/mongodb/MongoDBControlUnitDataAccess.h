@@ -34,15 +34,15 @@ namespace chaos {
     namespace metadata_service {
         namespace persistence {
             namespace mongodb {
-                //forward declaration
+                    //forward declaration
                 class MongoDBPersistenceDriver;
-                
-                //! Data Access for producer manipulation data
+
+                    //! Data Access for producer manipulation data
                 class MongoDBControlUnitDataAccess:
                 public data_access::ControlUnitDataAccess,
                 protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
-                    
+
                     MongoDBNodeDataAccess *node_data_access = NULL;
                 protected:
                     MongoDBControlUnitDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
@@ -52,14 +52,17 @@ namespace chaos {
                     int checkPresence(const std::string& control_unit_id, bool& presence);
 
                     int insertNewControlUnit(chaos::common::data::CDataWrapper& control_unit_description);
-                    
+
                     int updateControlUnit(chaos::common::data::CDataWrapper& control_unit_description);
-                    
-                    int setDataset(chaos::common::data::CDataWrapper& dataset_description);
-                    
-                    int checkDatasetPresence(chaos::common::data::CDataWrapper& dataset_description);
-                    
-                    int getLastDataset(chaos::common::data::CDataWrapper& dataset_description);
+
+                    int setDataset(const std::string& cu_unique_id,
+                                   chaos::common::data::CDataWrapper& dataset_description);
+
+                    int checkDatasetPresence(const std::string& cu_unique_id,
+                                             bool& presence);
+
+                    int getDataset(const std::string& cu_unique_id,
+                                   chaos::common::data::CDataWrapper **dataset_description);
 
                     int setInstanceDescription(const std::string& cu_unique_id,
                                                chaos::common::data::CDataWrapper& instance_description);
@@ -77,10 +80,20 @@ namespace chaos {
                     int getInstanceDescription(const std::string& control_unit_uid,
                                                chaos::common::data::CDataWrapper **result);
 
+
                     int deleteInstanceDescription(const std::string& unit_server_uid,
                                                   const std::string& control_unit_uid);
-                };
 
+
+                    int getInstanceDatasetAttributeConfiguration(const std::string& control_unit_uid,
+                                                                 const std::string& attribute_name,
+                                                                 boost::shared_ptr<chaos::common::data::CDataWrapper>& result);
+                    
+                        //! return the data service associater to control unit
+                    int getDataServiceAssociated(const std::string& cu_uid,
+                                                 std::vector<std::string>& associated_ds);
+                };
+                
                 
             }
         }

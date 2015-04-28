@@ -12,7 +12,6 @@
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
-using namespace chaos::metadata_service_client::api_proxy::control_unit;
 
 ControUnitInstanceEditor::ControUnitInstanceEditor(const QString& unit_server_uid,
                                                    const QString& control_unit_type):
@@ -44,10 +43,6 @@ ControUnitInstanceEditor::~ControUnitInstanceEditor()
 }
 
 void ControUnitInstanceEditor::initUI() {
-    //fetch the api proxy
-    set_inst_desc_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<SetInstanceDescription>();
-    get_instance_api_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<GetInstance>();
-
     //setting the default info
     if(is_in_editing) {
         setTabTitle(tr("Control unit instance editing"));
@@ -67,10 +62,6 @@ void ControUnitInstanceEditor::initUI() {
     QHeaderView *headerView = ui->tableViewDriverSpecification->horizontalHeader();
     headerView->setSectionResizeMode(QHeaderView::Stretch);
 
-    //finisch to configure table
-    ui->tableViewDriverSpecification->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tableViewDriverSpecification->setSelectionBehavior(QAbstractItemView::SelectRows);
-
     //configure dataset attribute table
 
     table_model_dataset_attribute_setup = new QStandardItemModel(this);
@@ -84,10 +75,6 @@ void ControUnitInstanceEditor::initUI() {
 
     headerView = ui->tableViewDatasetAttributes->horizontalHeader();
     headerView->setSectionResizeMode(QHeaderView::Stretch);
-
-    //finisch to configure table
-    ui->tableViewDatasetAttributes->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tableViewDatasetAttributes->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     //widget connection initialization
     connect(ui->tableViewDriverSpecification->selectionModel(),
@@ -109,40 +96,39 @@ void ControUnitInstanceEditor::initUI() {
     if(is_in_editing) {
         //get information from server
         submitApiResult(QString("get_instance"),
-                        get_instance_api_proxy->execute(ui->labelUnitServer->text().toStdString(),
-                                                        ui->lineEditControlUnitUniqueID->text().toStdString()));
+                        GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(ui->labelUnitServer->text().toStdString(),
+                                                                              ui->lineEditControlUnitUniqueID->text().toStdString()));
     }
 
 }
 
-SetInstanceDescription *ControUnitInstanceEditor::prepareSetInstanceApi() {
-    assert(set_inst_desc_proxy);
+control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSetInstanceApi() {
     //cu id
-    set_inst_desc_proxy->control_unit_uid = ui->lineEditControlUnitUniqueID->text().toStdString();
+    set_instance_api_hepler.control_unit_uid = ui->lineEditControlUnitUniqueID->text().toStdString();
     //us id
-    set_inst_desc_proxy->unit_server_uid = ui->labelUnitServer->text().toStdString();
+    set_instance_api_hepler.unit_server_uid = ui->labelUnitServer->text().toStdString();
     //cu implementation
-    set_inst_desc_proxy->control_unit_implementation = ui->labelControlUnitType->text().toStdString();
+    set_instance_api_hepler.control_unit_implementation = ui->labelControlUnitType->text().toStdString();
     //autoload
-    set_inst_desc_proxy->auto_load = ui->checkBoxAutoLoad->isChecked();
+    set_instance_api_hepler.auto_load = ui->checkBoxAutoLoad->isChecked();
     //load parameter
-    set_inst_desc_proxy->load_parameter = ui->textEditLoadParameter->toPlainText().toStdString();
+    set_instance_api_hepler.load_parameter = ui->textEditLoadParameter->toPlainText().toStdString();
     //add all driver description
-    set_inst_desc_proxy->clearAllDriverDescriptions();
+    set_instance_api_hepler.clearAllDriverDescriptions();
     for(int idx = 0;
         idx < table_model_driver_spec->rowCount();
         idx++) {
         QString drv_name = table_model_driver_spec->item(idx, 0)->text();
         QString drv_vers = table_model_driver_spec->item(idx, 1)->text();
         QString drv_init = table_model_driver_spec->item(idx, 2)->text();
-        set_inst_desc_proxy->addDriverDesscription(drv_name.toStdString(),
-                                                   drv_vers.toStdString(),
-                                                   drv_init.toStdString());
+        set_instance_api_hepler.addDriverDesscription(drv_name.toStdString(),
+                                                      drv_vers.toStdString(),
+                                                      drv_init.toStdString());
         qDebug() << "Added driver description for: "<< drv_name << "-" << drv_vers <<"-"<<drv_init;
     }
 
     //add all attribute description
-    set_inst_desc_proxy->clearAllAttributeConfig();
+    set_instance_api_hepler.clearAllAttributeConfig();
     for(int idx = 0;
         idx < table_model_dataset_attribute_setup->rowCount();
         idx++) {
@@ -150,13 +136,13 @@ SetInstanceDescription *ControUnitInstanceEditor::prepareSetInstanceApi() {
         QString attr_def = table_model_dataset_attribute_setup->item(idx, 1)->text();
         QString attr_max = table_model_dataset_attribute_setup->item(idx, 2)->text();
         QString attr_min = table_model_dataset_attribute_setup->item(idx, 3)->text();
-        set_inst_desc_proxy->addAttributeConfig(attr_name.toStdString(),
-                                                attr_def.toStdString(),
-                                                attr_max.toStdString(),
-                                                attr_min.toStdString());
+        set_instance_api_hepler.addAttributeConfig(attr_name.toStdString(),
+                                                   attr_def.toStdString(),
+                                                   attr_max.toStdString(),
+                                                   attr_min.toStdString());
         qDebug() << "Added attribute description for: "<< attr_name <<"-" << attr_def << " of ["<<attr_min<<"/"<<attr_max<<"]";
     }
-    return set_inst_desc_proxy;
+    return set_instance_api_hepler;
 }
 
 #define CHECK_AND_SET_LABEL(x,v)  if(api_result->hasKey(x)) {  v->setText(QString::fromStdString(api_result->getStringValue(x))); } else {  v->setText(QString());}
@@ -261,7 +247,7 @@ void ControUnitInstanceEditor::onApiDone(const QString& tag,
 void ControUnitInstanceEditor::on_pushButtonSaveInstance_clicked()
 {
     submitApiResult(QString("save_instance"),
-                    prepareSetInstanceApi()->execute());
+                    GET_CHAOS_API_PTR(control_unit::SetInstanceDescription)->execute(prepareSetInstanceApi()));
 }
 
 void ControUnitInstanceEditor::on_pushButtonAddDriverDescription_clicked()

@@ -89,6 +89,10 @@ namespace chaos {
                 void init(void *init_data) throw (chaos::CException);
                     //!inherited by InizializableService
                 void deinit() throw (chaos::CException);
+                    //! add a new api server endpoint
+                void addServerAddress(const std::string& server_address);
+                    //! remove all api endpoint server
+                void clearServer();
             };
         }
     }

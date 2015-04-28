@@ -3,12 +3,16 @@
 #include "CreateEditDataService.h"
 #include "../../search/SearchNodeResult.h"
 
+#include <QMenu>
 #include <QDebug>
 
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
+
+#define COMPOSE_TAG_FOR_LOAD_ASSOCIATION(ds) QString("la|%1").arg(ds)
+#define GETDS_FROM_TAG_FOR_LOAD_ASSOCIATION(tag) (tag.split("|").size()==2?tag.split("|")[1]:QString::fromStdString("no-ds"))
 
 DataServiceEditor::DataServiceEditor() :
     PresenterWidget(NULL),
@@ -33,7 +37,6 @@ void DataServiceEditor::initUI() {
 
     table_model_acu = new QStandardItemModel(this);
     table_model_acu->setHorizontalHeaderItem(0, new QStandardItem(tr("Unique Identifier")));
-    table_model_acu->setHorizontalHeaderItem(1, new QStandardItem(tr("Implementation")));
     table_model_acu->setHorizontalHeaderItem(1, new QStandardItem(tr("RPC Address")));
     table_model_acu->setHorizontalHeaderItem(1, new QStandardItem(tr("RPC Domain")));
     table_model_acu->setHorizontalHeaderItem(2, new QStandardItem(tr("State")));
@@ -42,10 +45,12 @@ void DataServiceEditor::initUI() {
     ui->tableViewAssociatedControlUnits->setModel(table_model_acu);
     ui->tableViewAssociatedControlUnits->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-
-
+    QPalette dataset_asscoiaiton_label_cp;
+    dataset_asscoiaiton_label_cp.setColor(QPalette::Text, Qt::blue);
+    ui->labelSelectedDataServiceForAssociationTable->setPalette(dataset_asscoiaiton_label_cp);
 
     //widget connection initialization
+    //table data soruce
     connect(ui->tableViewDataServices->selectionModel(),
             SIGNAL(currentChanged(QModelIndex,QModelIndex)),
             SLOT(tableDSCurrentChanged(QModelIndex,QModelIndex)));
@@ -54,6 +59,12 @@ void DataServiceEditor::initUI() {
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(tableDSSelectionChanged(QItemSelection,QItemSelection)));
 
+    ui->tableViewDataServices->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tableViewDataServices,
+            SIGNAL(customContextMenuRequested(QPoint)),
+            SLOT(tableDSCustomMenuRequested(QPoint)));
+
+    //table association
     connect(ui->tableViewAssociatedControlUnits->selectionModel(),
             SIGNAL(currentChanged(QModelIndex,QModelIndex)),
             SLOT(tableAssocCurrentChanged(QModelIndex,QModelIndex)));
@@ -140,6 +151,14 @@ void DataServiceEditor::on_pushButtonRemoveAssociatedControlUnit_clicked() {
 }
 
 
+void DataServiceEditor::on_pushButtonUpdateAssociationList_clicked() {
+    if(ui->labelSelectedDataServiceForAssociationTable->text().size()==0) return;
+    //start the api for load all association ofr dataservice
+    QString ds_selected = ui->labelSelectedDataServiceForAssociationTable->text();
+    submitApiResult(COMPOSE_TAG_FOR_LOAD_ASSOCIATION(ds_selected),
+                    GET_CHAOS_API_PTR(data_service::GetAssociationByDS)->execute(ds_selected.toStdString()));
+}
+
 void DataServiceEditor::handleSelectedNodes(const QString& tag,
                                             const QVector<QPair<QString,QString> >& selected_nodes) {
     //set the data for association
@@ -177,6 +196,31 @@ void DataServiceEditor::handleUpdateDataService(int current_row,
                     GET_CHAOS_API_PTR(data_service::UpdateDS)->execute(unique_id.toStdString(),
                                                                        direct_io_address.toStdString(),
                                                                        endpoint));
+}
+
+//--------------table event------------------
+void DataServiceEditor::tableDSCustomMenuRequested(QPoint pos) {
+    //compose contexual menu
+    QModelIndexList selected = ui->tableViewDataServices->selectionModel()->selectedRows();
+    if(selected.size() == 1) {
+        QMenu *menu=new QMenu(this);
+        QAction *menuLoadAssociationForDS = new QAction("Load Association", this);
+        connect(menuLoadAssociationForDS,
+                SIGNAL(triggered()),
+                SLOT(loadCUAssociationForDataService()));
+        menu->addAction(menuLoadAssociationForDS);
+        //show contextual menu
+        menu->popup(ui->tableViewDataServices->viewport()->mapToGlobal(pos));
+    }
+}
+
+void DataServiceEditor::loadCUAssociationForDataService() {
+    QModelIndexList selected = ui->tableViewDataServices->selectionModel()->selectedRows();
+    if(selected.size()!=1) return;
+    QString ds_selected = table_model_ds->item(selected.first().row(),0)->text();
+
+    submitApiResult(COMPOSE_TAG_FOR_LOAD_ASSOCIATION(ds_selected),
+                    GET_CHAOS_API_PTR(data_service::GetAssociationByDS)->execute(ds_selected.toStdString()));
 }
 
 void DataServiceEditor::tableDSCurrentChanged(const QModelIndex &current,
@@ -231,14 +275,45 @@ void DataServiceEditor::onApiDone(const QString& tag,
                         GET_CHAOS_API_PTR(data_service::GetAllDS)->execute());
     } else if(tag.compare("ds_get_all_ds")==0) {
         fillTableDS(api_result);
-    } else if(tag.compare("new_association")==0){
-        showInformation(tr("Data Service"),
-                        tr("Add Assocaition"),
-                        tr("The associations are be saved"));
-    }else if(tag.compare("delete_association")==0){
-        showInformation(tr("Data Service"),
-                        tr("Delete Assocaition"),
-                        tr("The associations are be deleted"));
+    } else if((tag.compare("new_association")==0)||
+              (tag.compare("delete_association")==0)){
+        //udate the list
+        on_pushButtonUpdateAssociationList_clicked();
+    }else if(tag.startsWith("la|")) {
+        //we have a result for the lsit of the association to a data service
+        fillDataServiceAssocaition(GETDS_FROM_TAG_FOR_LOAD_ASSOCIATION(tag), api_result);
+    }
+}
+void DataServiceEditor::fillDataServiceAssocaition(const QString& data_service,
+                                                   QSharedPointer<CDataWrapper> api_result) {
+    table_model_acu->setRowCount(0);
+    ui->labelSelectedDataServiceForAssociationTable->setText(data_service);
+    ui->pushButtonUpdateAssociationList->setEnabled(data_service.size()>0);
+    if(!api_result.isNull() &&
+            api_result->hasKey("node_search_result_page")) {
+        std::auto_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
+        for(int i = 0;
+            i < arr->size();
+            i++) {
+            QSharedPointer<CDataWrapper> found_ds(arr->getCDataWrapperElementAtIndex(i));
+            QList<QStandardItem *> row_item;
+            QStandardItem *item = NULL;
+            row_item.append(item = new QStandardItem(QString::fromStdString(CHK_STR_AND_GET(found_ds, NodeDefinitionKey::NODE_UNIQUE_ID, "never setuped"))));
+            item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+            row_item.append(item = new QStandardItem(QString::fromStdString(CHK_STR_AND_GET(found_ds, NodeDefinitionKey::NODE_RPC_ADDR, "never registered"))));
+            item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+            row_item.append(item = new QStandardItem(QString::fromStdString(CHK_STR_AND_GET(found_ds, NodeDefinitionKey::NODE_RPC_DOMAIN, "never registered"))));
+            item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+            row_item.append(item = new QStandardItem(tr("---")));
+            item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+            row_item.append(item = new QStandardItem(tr("---")));
+            item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+            table_model_acu->appendRow(row_item);
+        }
     }
 }
 
@@ -246,7 +321,7 @@ void DataServiceEditor::fillTableDS(QSharedPointer<CDataWrapper> api_result) {
     table_model_ds->setRowCount(0);
     if(!api_result.isNull() &&
             api_result->hasKey("node_search_result_page")) {
-        CMultiTypeDataArrayWrapper *arr =  api_result->getVectorValue("node_search_result_page");
+        std::auto_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));;
         for(int i = 0;
             i < arr->size();
             i++) {
@@ -264,6 +339,5 @@ void DataServiceEditor::fillTableDS(QSharedPointer<CDataWrapper> api_result) {
 
             table_model_ds->appendRow(row_item);
         }
-
     }
 }

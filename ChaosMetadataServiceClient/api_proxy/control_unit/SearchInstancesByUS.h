@@ -36,11 +36,9 @@ namespace chaos {
 
                 public:
                         //the unit server that host the instances
-                    std::string unit_server_uid;
-                        //the implementation that whe want to be returned
-                    std::vector<std::string> control_unit_implementation;
-
-                    ApiProxyResult execute(uint32_t last_node_sequence_id = 0,
+                    ApiProxyResult execute(std::string unit_server_uid,
+                                           std::vector<std::string> control_unit_implementation = std::vector<std::string>(),
+                                           uint32_t last_node_sequence_id = 0,
                                            uint32_t result_page_length = 100);
                 };
             }

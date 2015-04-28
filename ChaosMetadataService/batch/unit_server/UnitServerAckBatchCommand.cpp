@@ -86,8 +86,8 @@ void UnitServerAckCommand::ccHandler() {
     USAC_INFO << "execute ccHandler";
     retry_number++;
     result.reset(message_channel->sendRequest(remote_unitserver_address->ip_port,
-                                              UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
-                                              UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
+                                              UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
+                                              UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_REG_ACK,
                                               message_data,
                                               1000));
     if(message_channel->getLastErrorCode() != 0) {

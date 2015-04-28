@@ -1,5 +1,5 @@
 /*
- *	StartStop.h
+ *	StartStop.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,26 +18,22 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__StartStop__
-#define __CHAOSFramework__StartStop__
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/StartStop.h>
 
-#include "../AbstractApi.h"
+using namespace chaos::metadata_service_client::api_proxy;
+using namespace chaos::metadata_service_client::api_proxy::control_unit;
 
-namespace chaos {
-    namespace metadata_service {
-        namespace api {
-            namespace control_unit {
-                class StartStop:
-                public AbstractApi {
-                public:
-                    StartStop();
-                    ~StartStop();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
-                };
-            }
-        }
-    }
+API_PROXY_CD_DEFINITION(StartStop,
+                        "control_unit",
+                        "startStop")
+
+/*!
+
+ */
+ApiProxyResult StartStop::execute(const std::string& cu_unique_id,
+                                   bool start) {
+    chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
+    message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, cu_unique_id);
+    message->addBoolValue("start", start);
+    return callApi(message);
 }
-
-#endif /* defined(__CHAOSFramework__StartStop__) */

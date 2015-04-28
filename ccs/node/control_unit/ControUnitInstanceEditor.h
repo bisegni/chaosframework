@@ -36,7 +36,8 @@ public:
     ~ControUnitInstanceEditor();
 
     //read the ui and preapre the api proxy with the value
-    chaos::metadata_service_client::api_proxy::control_unit::SetInstanceDescription *prepareSetInstanceApi();
+    chaos::metadata_service_client::api_proxy::control_unit::SetInstanceDescriptionHelper set_instance_api_hepler;
+    chaos::metadata_service_client::api_proxy::control_unit::SetInstanceDescriptionHelper& prepareSetInstanceApi();
 
     void fillUIFromInstanceInfo(QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 protected:
@@ -82,9 +83,6 @@ private slots:
                                     const QString& attribute_default_max_value,
                                     const QString& attribute_default_min_value);
 private:
-    //set instance api proxy
-    chaos::metadata_service_client::api_proxy::control_unit::SetInstanceDescription *set_inst_desc_proxy;
-    chaos::metadata_service_client::api_proxy::control_unit::GetInstance *get_instance_api_proxy;
     Ui::ControUnitInstanceEditor *ui;
 };
 

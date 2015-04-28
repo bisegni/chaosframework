@@ -77,11 +77,11 @@ void LoadUnloadControlUnit::setHandler(CDataWrapper *data) {
     }
 
     if(load) {
-        if(!data->hasKey(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE)){
+        if(!data->hasKey(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE)){
             BATHC_CU_LUL_ERR << LoadUnloadControlUnit_NO_CU_TYPE;
             throw chaos::CException(-3, LoadUnloadControlUnit_NO_CU_TYPE, __PRETTY_FUNCTION__);
         } else {
-            cu_type = data->getStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE);
+            cu_type = data->getStringValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE);
         }
     }
 
@@ -112,12 +112,12 @@ void LoadUnloadControlUnit::acquireHandler() {
         case LUL_SEND_LOAD_COMMAND:{
             CDataWrapper message;
             message.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
-            message.addStringValue(UnitServerNodeDomainAndActionLabel::PARAM_CONTROL_UNIT_TYPE, cu_type);
+            message.addStringValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE, cu_type);
 
             BATHC_CU_LUL_DBG << "Send command to load control unit '" << cu_id << "' of type '" << cu_type << "'";
             request_future = message_channel->sendRequestWithFuture(us_address,
-                                                                    UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
-                                                                    UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT,
+                                                                    UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                    UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT,
                                                                     &message);
             if(!request_future.get()) {
                 BATHC_CU_LUL_ERR << "request with no future";
@@ -133,8 +133,8 @@ void LoadUnloadControlUnit::acquireHandler() {
 
             BATHC_CU_LUL_DBG << "Send command to unload control unit '" << cu_id << "' of type '" << cu_type << "'";
             request_future = message_channel->sendRequestWithFuture(us_address,
-                                                                    UnitServerNodeDomainAndActionLabel::RPC_DOMAIN,
-                                                                    UnitServerNodeDomainAndActionLabel::ACTION_UNIT_SERVER_UNLOAD_CONTROL_UNIT,
+                                                                    UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                    UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_UNLOAD_CONTROL_UNIT,
                                                                     &message);
             if(!request_future.get()) {
                 BATHC_CU_LUL_ERR << "request with no future";

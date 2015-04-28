@@ -10,7 +10,8 @@
 #include <QModelIndex>
 #include <QMenu>
 #include <QMessageBox>
-
+#include <QTimeZone>
+#include <QLocale>
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
@@ -28,13 +29,6 @@ UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(customMenuRequested(QPoint)));
-
-    //----------------fetch the key------------------
-    us_load_unload_cu_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<unit_server::LoadUnloadControlUnit>();
-    us_get_description_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<unit_server::GetDescription>();
-    cu_si_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<control_unit::SearchInstancesByUS>();
-    cu_si_proxy->unit_server_uid = _node_unique_id.toStdString();
-    cu_di_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<control_unit::DeleteInstance>();
 }
 
 UnitServerEditor::~UnitServerEditor()
@@ -49,7 +43,6 @@ void UnitServerEditor::initUI() {
     //create cu type list model
     list_model_cu_type = new QStringListModel(this);
     ui->listViewCUType->setModel(list_model_cu_type);
-    ui->listViewCUType->setSelectionMode(QAbstractItemView::MultiSelection);
 
     //connect update button to interla slot
     connect(ui->pushButtonUpdateAllInfo, SIGNAL(clicked()), this, SLOT(updateAll()));
@@ -58,21 +51,18 @@ void UnitServerEditor::initUI() {
     // QStandardItemModel(int rows, int columns, QObject * parent = 0)
     table_model = new QStandardItemModel(this);
     table_model->setHorizontalHeaderItem(0, new QStandardItem(QString("UID")));
-    table_model->setHorizontalHeaderItem(1, new QStandardItem(QString("Implementation")));
-    table_model->setHorizontalHeaderItem(1, new QStandardItem(QString("RPC Address")));
-    table_model->setHorizontalHeaderItem(1, new QStandardItem(QString("RPC Domain")));
-    table_model->setHorizontalHeaderItem(2, new QStandardItem(QString("State")));
-    table_model->setHorizontalHeaderItem(3, new QStandardItem(QString("State SM")));
+    table_model->setHorizontalHeaderItem(1, new QStandardItem(QString("Impl")));
+    table_model->setHorizontalHeaderItem(2, new QStandardItem(QString("RPC Addr")));
+    table_model->setHorizontalHeaderItem(3, new QStandardItem(QString("RPC Dom")));
+    table_model->setHorizontalHeaderItem(4, new QStandardItem(QString("State")));
+    table_model->setHorizontalHeaderItem(5, new QStandardItem(QString("State SM")));
+    ui->tableView->horizontalHeader()->setFont(QFont("Tahoma", 11));
 
     // Attach the model to the view
     ui->tableView->setModel(table_model);
 
     QHeaderView *headerView = ui->tableView->horizontalHeader();
     headerView->setSectionResizeMode(QHeaderView::Stretch);
-
-    //finisch to configure table
-    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     //set connection
     connect(ui->listViewCUType->selectionModel(),
@@ -120,30 +110,29 @@ void UnitServerEditor::customMenuRequested(QPoint pos){
         menu->addAction(menuStop);
         menu->popup(ui->tableView->viewport()->mapToGlobal(pos));
     }
-
 }
 
 void UnitServerEditor::updateAll() {
     submitApiResult(QString("get_description"),
-                    us_get_description_proxy->execute(node_unique_id.toStdString()));
-    submitApiResult(QString("cu_si"),
-                    cu_si_proxy->execute(0, 100));
+                    GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(node_unique_id.toStdString()));
+    //update instances
+    handleSelectionChanged(ui->listViewCUType->selectionModel()->selection());
 }
 
 void UnitServerEditor::handleSelectionChanged(const QItemSelection& selection) {
-    assert(cu_si_proxy);
     //remove all previously impl from the api container
-    cu_si_proxy->control_unit_implementation.clear();
 
     //add the new selected
+    std::vector<std::string> control_unit_implementation;
     foreach (QModelIndex element, selection.indexes()) {
         QString impl = element.data().toString();
         qDebug() << "Add " << impl << " as filter for instances search";
-        cu_si_proxy->control_unit_implementation.push_back(impl.toStdString());
+        control_unit_implementation.push_back(impl.toStdString());
     }
     //resend the search
     submitApiResult(QString("cu_si"),
-                    cu_si_proxy->execute());
+                    GET_CHAOS_API_PTR(control_unit::SearchInstancesByUS)->execute(node_unique_id.toStdString(),
+                                                                                  control_unit_implementation));
 }
 
 void UnitServerEditor::tableCurrentChanged(const QModelIndex &current,
@@ -173,9 +162,7 @@ void UnitServerEditor::onApiDone(const QString& tag,
 
         if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) {
             uint64_t ts = api_result->getUInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP);
-            QDateTime timestamp;
-            timestamp.setMSecsSinceEpoch(ts);
-            ui->labelRegistrationTimestamp->setText(timestamp.toString(Qt::SystemLocaleLongDate));
+            ui->labelRegistrationTimestamp->setText(QDateTime::fromMSecsSinceEpoch(ts, Qt::LocalTime).toString());
         } else {
             ui->labelRegistrationTimestamp->setText(tr("No registration timestamp found!"));
         }
@@ -261,23 +248,20 @@ void UnitServerEditor::on_pushButtonUpdateAllInfo_clicked()
     updateAll();
 }
 
-void UnitServerEditor::on_pushButtonRemoveInstance_clicked()
-{
-    assert(cu_di_proxy);
+void UnitServerEditor::on_pushButtonRemoveInstance_clicked() {
     //add the new selected
     foreach (QModelIndex element, ui->tableView->selectionModel()->selectedIndexes()) {
         QString cu_inst_id = table_model->item(element.row(), 0)->text();
         qDebug() << "Remove " << cu_inst_id << " instance";
         submitApiResult(QString("cu_ri"),
-                        cu_di_proxy->execute(node_unique_id.toStdString(),
-                                             cu_inst_id.toStdString()));
+                        GET_CHAOS_API_PTR(control_unit::DeleteInstance)->execute(node_unique_id.toStdString(),
+                                                                                 cu_inst_id.toStdString()));
     }
     //update the result
     updateAll();
 }
 
-void UnitServerEditor::on_pushButtonEditInstance_clicked()
-{
+void UnitServerEditor::on_pushButtonEditInstance_clicked() {
     foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
         QString cu_inst_id = table_model->item(element.row(), 0)->text();
         qDebug() << "Edit " << cu_inst_id << " instance";
@@ -288,10 +272,9 @@ void UnitServerEditor::on_pushButtonEditInstance_clicked()
 }
 
 
-void UnitServerEditor::on_pushButtonUpdateControlUnitType_clicked()
-{
+void UnitServerEditor::on_pushButtonUpdateControlUnitType_clicked() {
     submitApiResult(QString("get_description"),
-                    us_get_description_proxy->execute(node_unique_id.toStdString()));
+                    GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(node_unique_id.toStdString()));
 }
 
 
@@ -302,8 +285,8 @@ void UnitServerEditor::cuInstanceLoadSelected() {
         qDebug() << "Send load message for " << QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
         //load the selected cu
         submitApiResult(QString("cu_load"),
-                        us_load_unload_cu_proxy->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
-                                                         true));
+                        GET_CHAOS_API_PTR(unit_server::LoadUnloadControlUnit)->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
+                                                                                       true));
     }
 }
 
@@ -313,23 +296,50 @@ void UnitServerEditor::cuInstanceUnloadSelected() {
         qDebug() << "Send unload message for " << QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
         //load the selected cu
         submitApiResult(QString("cu_unload"),
-                        us_load_unload_cu_proxy->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
-                                                         false));
+                        GET_CHAOS_API_PTR(unit_server::LoadUnloadControlUnit)->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
+                                                                                       false));
     }
 }
 
 void UnitServerEditor::cuInstanceInitSelected() {
-    qDebug() << "cuInstanceInitSelected";
+    foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
+        QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+        qDebug() << "Send unload message for " << QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        //load the selected cu
+        submitApiResult(QString("cu_init"),
+                        GET_CHAOS_API_PTR(control_unit::InitDeinit)->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
+                                                                             true));
+    }
 }
 
 void UnitServerEditor::cuInstanceDeinitSelected() {
-    qDebug() << "cuInstanceDeinitSelected";
+    foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
+        QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+        qDebug() << "Send unload message for " << QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        //load the selected cu
+        submitApiResult(QString("cu_deinit"),
+                        GET_CHAOS_API_PTR(control_unit::InitDeinit)->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
+                                                                             false));
+    }
 }
 
 void UnitServerEditor::cuInstanceStartSelected() {
-    qDebug() << "cuInstanceStartSelected";
+    foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
+        QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+        qDebug() << "Send unload message for " << QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        //load the selected cu
+        submitApiResult(QString("cu_start"),
+                        GET_CHAOS_API_PTR(control_unit::StartStop)->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
+                                                                            true));
+    }
 }
 
 void UnitServerEditor::cuInstanceStopSelected() {
-    qDebug() << "cuInstanceStopSelected";
-}
+    foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
+        QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+        qDebug() << "Send unload message for " << QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        //load the selected cu
+        submitApiResult(QString("cu_start"),
+                        GET_CHAOS_API_PTR(control_unit::StartStop)->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
+                                                                            false));
+    }}

@@ -53,6 +53,9 @@ namespace chaos {
                                   const std::string& ds_direct_io_addr,
                                   uint32_t endpoint);
 
+                    int getDescription(const std::string& ds_unique_id,
+                                       chaos::common::data::CDataWrapper **node_description);
+
                         //inherited method
                     int updateExisting(const std::string& ds_unique_id,
                                        const std::string& ds_direct_io_addr,

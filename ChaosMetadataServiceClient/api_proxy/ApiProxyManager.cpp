@@ -45,7 +45,7 @@ void ApiProxyManager::init(void *init_data) throw (chaos::CException) {
     APM_LAPP << "Get multi address message channel";
     mn_message_channel = network_broker->getRawMultiAddressMessageChannel();
     if(!mn_message_channel) throw chaos::CException(-1, "Error multinode message channel creation", __PRETTY_FUNCTION__);
-    if(setting->mds_backend_servers.size() == 0) throw chaos::CException(-2, "No metadata server endpoint has been set", __PRETTY_FUNCTION__);
+        //if(setting->mds_backend_servers.size() == 0) throw chaos::CException(-2, "No metadata server endpoint has been set", __PRETTY_FUNCTION__);
     
     for(BackendServerListIterator it = setting->mds_backend_servers.begin();
         it != setting->mds_backend_servers.end();
@@ -68,4 +68,13 @@ void ApiProxyManager::deinit() throw (chaos::CException) {
     if(mn_message_channel) {
         network_broker->disposeMessageChannel(mn_message_channel);
     }
+}
+
+    //! add a new api server endpoint
+void ApiProxyManager::addServerAddress(const std::string& server_address) {
+    mn_message_channel->addNode(server_address);
+}
+    //! remove all api endpoint server
+void ApiProxyManager::clearServer() {
+    mn_message_channel->removeAllNode();
 }

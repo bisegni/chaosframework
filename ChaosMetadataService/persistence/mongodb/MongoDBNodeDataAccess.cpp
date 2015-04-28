@@ -133,7 +133,6 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_TYPE)) {
             bson_find << chaos::NodeDefinitionKey::NODE_TYPE << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_TYPE);
         }
-
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
             updated_field << chaos::NodeDefinitionKey::NODE_RPC_ADDR << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
         }

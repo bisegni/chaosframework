@@ -214,19 +214,46 @@ namespace chaos {
     }
     /** @} */ // end of NodeType
 
-    /** @defgroup NodeDefinitionKeyRPC !CHAOS node rpc key description
+    /** @defgroup NodeDomainAndActionRPC !CHAOS node rpc key description
      *  @{
      */
         //! Name space for grupping the key for action published by the node
-    namespace NodeDefinitionKeyRPC {
+    namespace NodeDomainAndActionRPC {
             //! The domain for the rpc action for every nodes (and sublcass)
         static const char * const RPC_DOMAIN                    = "system";
             //! Action that needs to answer with the status of the node(specialized for  every node)
         static const char * const ACTION_NODE_STATUS            = "ndk_rpc_request_status";
             //! Action that is called to inform the node of the registration status
         static const char * const ACTION_REGISTRATION_ACK        = "ndk_rpc_reg_ack";
+        
+            //! Start the control unit intialization, the action need the default value
+            //! of the input attribute for a determinate device
+        static const char * const ACTION_NODE_INIT                                  = "initNode";
+
+            //! Deinitialization of a control unit, if it is in run, the stop phase
+            //! is started befor deinitialization one
+        static const char * const ACTION_NODE_DEINIT                                = "deinitNodeUnit";
+
+            //! start the run method schedule for a determinated device
+        static const char * const ACTION_NODE_START                                 = "startNodeUnit";
+
+            //! pause the run method for a determinated device
+        static const char * const ACTION_NODE_STOP                                  = "stopNodeUnit";
+
+            //! pause the run method for a determinated device
+        static const char * const ACTION_NODE_RESTORE                               = "restoreNodeUnit";
+
+            //! restore the control unit to a determinate temporal tag
+        static const char * const ACTION_NODE_RESTORE_PARAM_TAG                     = "restoreNodeTag";
+
+            //! is the name of the temporal tag to use as restore point
+        static const char * const ACTION_NODE_GET_STATE                             = "getNodeState";
+
+            //! return the control unit information
+        static const char * const ACTION_CU_GET_INFO                                = "getNodeInfo";
+
     }
-    /** @} */ // end of NodeDefinitionKeyRPC
+    /** @} */ // end of NodeDomainAndActionRPC
 
     /** @defgroup UnitServerNodeDefinitionKey !CHAOS unit server node key description
      *  @{
@@ -244,11 +271,11 @@ namespace chaos {
     /** @} */ // end of UnitServerNodeDefinitionKey
 
 
-    /** @defgroup UnitServerNodeDomainAndActionLabel !CHAOS unit server rpc key description
+    /** @defgroup UnitServerNodeDomainAndActionRPC !CHAOS unit server rpc key description
      *  This is the collection of all key used only by unit server
      *  @{
      */
-    namespace UnitServerNodeDomainAndActionLabel {
+    namespace UnitServerNodeDomainAndActionRPC {
             //! The domain for unit server rpc action
         static const char * const RPC_DOMAIN                                        = "unit_server";
 
@@ -273,7 +300,7 @@ namespace chaos {
          */
         static const char * const PARAM_CONTROL_UNIT_TYPE                     = "usn_rpc_par_control_unit_type";
     }
-    /** @} */ // end of UnitServerNodeDomainAndActionLabel
+    /** @} */ // end of UnitServerNodeDomainAndActionRPC
 
 
     /** @defgroup DataServiceNodeDefinitionKey !CHAOS data service node key description
@@ -416,7 +443,7 @@ namespace chaos {
             //! key that idetify the result of the node registration[int32]
         static const char * const PARAM_REGISTER_NODE_RESULT      = "mdsndk_rpc_p_reg_result";
     }
-    /** @} */ // end of NodeDefinitionKeyRPC
+    /** @} */ // end of NodeDomainAndActionRPC
 
     namespace common {
         namespace utility {
@@ -748,33 +775,6 @@ namespace chaos {
 
             //! Action called by mds for ack message in the unit server registration process
         static const char * const ACTION_NODE_REG_ACK                           = "nodeRegistrationACK";
-
-            //! Start the control unit intialization, the action need the default value
-            //! of the input attribute for a determinate device
-        static const char * const ACTION_NODE_INIT                                  = "initNode";
-
-            //! Deinitialization of a control unit, if it is in run, the stop phase
-            //! is started befor deinitialization one
-        static const char * const ACTION_NODE_DEINIT                                = "deinitNodeUnit";
-
-            //! start the run method schedule for a determinated device
-        static const char * const ACTION_NODE_START                                 = "startNodeUnit";
-
-            //! pause the run method for a determinated device
-        static const char * const ACTION_NODE_STOP                                  = "stopNodeUnit";
-
-            //! pause the run method for a determinated device
-        static const char * const ACTION_NODE_RESTORE                               = "restoreNodeUnit";
-
-            //! restore the control unit to a determinate temporal tag
-        static const char * const ACTION_NODE_RESTORE_PARAM_TAG                     = "restoreNodeTag";
-        
-            //! is the name of the temporal tag to use as restore point
-        static const char * const ACTION_NODE_GET_STATE                             = "getNodeState";
-        
-            //! return the control unit information
-        static const char * const ACTION_CU_GET_INFO                                = "getNodeInfo";
-        
     }
     /** @} */ // end of ChaosSystemDomainAndActionLabel
     

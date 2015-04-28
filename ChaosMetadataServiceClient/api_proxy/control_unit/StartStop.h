@@ -21,19 +21,26 @@
 #ifndef __CHAOSFramework__StartStop__
 #define __CHAOSFramework__StartStop__
 
-#include "../AbstractApi.h"
+#include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
 namespace chaos {
-    namespace metadata_service {
-        namespace api {
+    namespace metadata_service_client {
+        namespace api_proxy {
             namespace control_unit {
                 class StartStop:
-                public AbstractApi {
+                public chaos::metadata_service_client::api_proxy::ApiProxy {
+                    API_PROXY_CLASS(StartStop)
+                protected:
+                        //! default constructor
+                    API_PROXY_CD_DECLARATION(StartStop)
                 public:
-                    StartStop();
-                    ~StartStop();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
+                        //! perform the start and stop operation for a control unit
+                    /*!
+                     \param cu_unique_id control unit id to start or stop
+                     \param start true start the cu false stop it
+                     */
+                    ApiProxyResult execute(const std::string& cu_unique_id,
+                                           bool start);
                 };
             }
         }

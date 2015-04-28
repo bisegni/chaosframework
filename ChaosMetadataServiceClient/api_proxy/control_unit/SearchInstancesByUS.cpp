@@ -29,7 +29,9 @@ API_PROXY_CD_DEFINITION(SearchInstancesByUS,
 /*!
 
  */
-ApiProxyResult SearchInstancesByUS::execute(uint32_t last_node_sequence_id,
+ApiProxyResult SearchInstancesByUS::execute(std::string unit_server_uid,
+                                            std::vector<std::string> control_unit_implementation,
+                                            uint32_t last_node_sequence_id,
                                             uint32_t result_page_length) {
     chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
     message->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, unit_server_uid);

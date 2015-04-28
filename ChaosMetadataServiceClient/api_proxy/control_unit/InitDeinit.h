@@ -20,23 +20,26 @@
 #ifndef __CHAOSFramework__InitDeinit__
 #define __CHAOSFramework__InitDeinit__
 
-#include "../AbstractApi.h"
+#include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
 namespace chaos {
-    namespace metadata_service {
-        namespace api {
+    namespace metadata_service_client {
+        namespace api_proxy {
             namespace control_unit {
                 class InitDeinit:
-                public AbstractApi {
-                    void initialize(const std::string& cu_uid);
-                    void deinitialize(const std::string& cu_uid);
-                    boost::shared_ptr<CDataWrapper>     mergeDatasetAttributeWithSetup(boost::shared_ptr<CDataWrapper> element_in_dataset,
-                                                                                       boost::shared_ptr<CDataWrapper> element_in_setup);
+                public chaos::metadata_service_client::api_proxy::ApiProxy {
+                    API_PROXY_CLASS(InitDeinit)
+                protected:
+                        //! default constructor
+                    API_PROXY_CD_DECLARATION(InitDeinit)
                 public:
-                    InitDeinit();
-                    ~InitDeinit();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
-                                                               bool& detach_data) throw(chaos::CException);
+                        //! perform the init and deinit operation for a control unit
+                    /*!
+                     \param cu_unique_id control unit id to init or deinit
+                     \param start true init the cu false deinit it
+                     */
+                    ApiProxyResult execute(const std::string& cu_unique_id,
+                                           bool init);
                 };
             }
         }

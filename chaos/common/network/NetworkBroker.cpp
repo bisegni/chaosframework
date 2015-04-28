@@ -553,7 +553,7 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
 MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel() {
     CNodeNetworkAddress *mdsNodeAddr = new CNodeNetworkAddress();
     mdsNodeAddr->ip_port = GlobalConfiguration::getInstance()->getMetadataServerAddress();
-    mdsNodeAddr->node_id = NodeDefinitionKeyRPC::RPC_DOMAIN;
+    mdsNodeAddr->node_id = chaos::NodeDomainAndActionRPC::RPC_DOMAIN;
     return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(mdsNodeAddr, MDS));
 }
 

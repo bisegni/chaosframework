@@ -137,6 +137,8 @@ namespace chaos {
                 void addNode(const chaos::common::network::CNetworkAddress& node_address);
                 //! remove a node from the channel
                 void removeNode(const chaos::common::network::CNetworkAddress& node_address);
+                    //! remove all configured node
+                void removeAllNode();
                 //! get the rpc published host and port
                 void getRpcPublishedHostAndPort(std::string& rpc_published_host_port);
                 /*!
