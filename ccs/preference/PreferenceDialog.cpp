@@ -63,6 +63,8 @@ void PreferenceDialog::saveAllPreference() {
     settings.endArray();
     settings.endGroup();
     settings.sync();
+    //emit signal for changed preference
+    emit changedConfiguration();
 }
 
 void PreferenceDialog::on_pushButtonAddNewMDSRpcEndpoint_clicked() {

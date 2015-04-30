@@ -88,6 +88,10 @@ int main(int argc, char * argv[]) {
         ChaosMetadataServiceClient::getInstance()->init(argc, argv);
         ChaosMetadataServiceClient::getInstance()->start();
 
+        ChaosMetadataServiceClient::getInstance()->addServerAddress("localhost:5000");
+        ChaosMetadataServiceClient::getInstance()->clearServerList();
+        ChaosMetadataServiceClient::getInstance()->addServerAddress("localhost:5000");
+
         EchoTestProxy *echo_proxy_test = ChaosMetadataServiceClient::getInstance()->getApiProxy<EchoTestProxy>(1000);
         tg.add_thread(new boost::thread(&asyncTest, echo_proxy_test));
         tg.add_thread(new boost::thread(&asyncTest, echo_proxy_test));

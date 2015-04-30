@@ -13,9 +13,7 @@ using namespace chaos::metadata_service_client;
 Q_DECLARE_METATYPE(QSharedPointer<chaos::CException>);
 Q_DECLARE_METATYPE(QSharedPointer<chaos::common::data::CDataWrapper>);
 
-MainController::MainController():
-QObject(NULL) {
-    w.main_controller = this;
+MainController::MainController() {
 }
 
 MainController::~MainController()
@@ -78,7 +76,12 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qDebug() << "Thread pool of size:" << QThreadPool::globalInstance()->maxThreadCount();
 
     splash->show();
-    QTimer::singleShot(1500, &w, SLOT(show()));
+
+    //configure from preference value
+    w.reconfigure();
+
+    //show main window
+    w.show();
 }
 
 void MainController::deinit() {
@@ -90,18 +93,4 @@ void MainController::deinit() {
     ChaosMetadataServiceClient::getInstance()->deinit();
 
     qDebug() << "!CHAOS Control Studio closed!";
-}
-
-void MainController::reconfigure() {
-    ChaosMetadataServiceClient::getInstance()->clearServerList();
-    settings.beginGroup("network");
-    int size = settings.beginReadArray("mds_address");
-
-    for (int i = 0; i < size; ++i) {
-        settings.setArrayIndex(i);
-        ChaosMetadataServiceClient::getInstance()->addServerAddress(settings.value("address").toString().toStdString());
-        ;
-    }
-    settings.endArray();
-    settings.endGroup();
 }

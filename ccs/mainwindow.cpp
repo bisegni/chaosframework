@@ -6,11 +6,15 @@
 #include "search/SearchNodeResult.h"
 #include "preference/PreferenceDialog.h"
 
+#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+
 #include <QInputDialog>
+
+using namespace chaos::metadata_service_client;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     command_presenter(NULL),
-    main_controller(NULL),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -75,7 +79,20 @@ void MainWindow::on_actionPreferences_triggered()
     //connect changed signal to reconfiguration slot of main controller
     connect(&pref_dialog,
             SIGNAL(changedConfiguration()),
-            main_controller,
             SLOT(reconfigure()));
     pref_dialog.exec();
+}
+
+void MainWindow::reconfigure() {
+    ChaosMetadataServiceClient::getInstance()->clearServerList();
+    QSettings settings;
+    settings.beginGroup("network");
+    int size = settings.beginReadArray("mds_address");
+
+    for (int i = 0; i < size; ++i) {
+        settings.setArrayIndex(i);
+        ChaosMetadataServiceClient::getInstance()->addServerAddress(settings.value("address").toString().toStdString());
+    }
+    settings.endArray();
+    settings.endGroup();
 }

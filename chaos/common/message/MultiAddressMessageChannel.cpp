@@ -143,6 +143,7 @@ void MultiAddressMessageChannel::removeAllNode() {
     //
 void  MultiAddressMessageChannel::disposeService(void *service_ptr) {
     MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);
+    map_url_node_id.erase(service->ip_port);
     if(service) delete(service);
 }
 
