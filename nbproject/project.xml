@@ -4,9 +4,9 @@
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
             <name>chaosframework</name>
-            <c-extensions>c,m</c-extensions>
-            <cpp-extensions>cc,cpp,cxx,mm</cpp-extensions>
-            <header-extensions>SUNWCCh,h,hpp,inc,inl,ipp</header-extensions>
+            <c-extensions>c</c-extensions>
+            <cpp-extensions>cc,cpp,cxx</cpp-extensions>
+            <header-extensions>SUNWCCh,h,hpp,ipp</header-extensions>
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>

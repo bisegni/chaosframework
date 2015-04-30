@@ -1,8 +1,12 @@
 SET(cu_lib_src  ChaosCUToolkit.cpp CommandManager/CommandManager.cpp)
 SET(cu_lib_src  ${cu_lib_src} driver_manager/DriverManager.cpp driver_manager/driver/AbstractDriver.cpp driver_manager/driver/DriverAccessor.cpp driver_manager/driver/DriverPluginLoader.cpp driver_manager/driver/AbstractDriverPlugin.cpp)
+SET(cu_lib_src  ${cu_lib_src} driver_manager/driver/BasicIODriver.cpp driver_manager/driver/BasicIODriverInterface.cpp)
+
 SET(cu_lib_src  ${cu_lib_src} DataManager/DataManager.cpp DataManager/KeyDataStorage.cpp)
 SET(cu_lib_src  ${cu_lib_src} ControlManager/AbstractControlUnit.cpp ControlManager/ControlManager.cpp)
 SET(cu_lib_src  ${cu_lib_src} ControlManager/SCAbstractControlUnit.cpp ControlManager/RTAbstractControlUnit.cpp ControlManager/WorkUnitManagement.cpp)
+SET(cu_lib_src  ${cu_lib_src} ControlManager/IOCU.cpp)
+
 SET(cu_lib_src  ${cu_lib_src} ControlManager/slow_command/SlowCommandExecutor.cpp ControlManager/slow_command/SlowCommand.cpp ControlManager/slow_command/command/SetAttributeCommand.cpp
 								ControlManager/AttributeSharedCacheWrapper.cpp)
 

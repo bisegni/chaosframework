@@ -32,5 +32,8 @@
             <file>file:/home/michelo/progetti/chaos_bundle/chaosframework/chaos/common/global.h</file>
             <file>file:/home/michelo/progetti/chaos_bundle/chaosframework/chaos/common/event/EventServer.h</file>
         </group>
+        <group name="CHAOS">
+            <file>file:/home/michelo/chaos_bundle/chaosframework/chaos/cu_toolkit/driver_manager/driver/DriverPluginLoader.h</file>
+        </group>
     </open-files>
 </project-private>
