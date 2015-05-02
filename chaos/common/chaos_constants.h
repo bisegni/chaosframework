@@ -394,7 +394,12 @@ namespace chaos {
                 //!byte array variable length
             TYPE_BYTEARRAY,
                 //!bool variable length
-            TYPE_BOOLEAN
+            TYPE_BOOLEAN,
+            //!user data type
+            TYPE_CLUSTER,
+            //!modifier to be ored to normal data types
+            TYPE_ACCESS_ARRAY=0x100
+
         } DataType;
 
             //!define the direction of dataset element

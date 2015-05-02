@@ -536,6 +536,11 @@
 		32CB7CE117099C8D00767FC1 /* DataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB7CDF17099C8D00767FC1 /* DataCache.h */; };
 		32CDA9A4198932C500663D8B /* LoadableService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CDA9A2198932C500663D8B /* LoadableService.cpp */; };
 		32CDA9A5198932C500663D8B /* LoadableService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CDA9A3198932C500663D8B /* LoadableService.h */; };
+		32CFC5C51AF55FED00E2A0B6 /* IOCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFC5C31AF55FED00E2A0B6 /* IOCU.cpp */; };
+		32CFC5C61AF55FED00E2A0B6 /* IOCU.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFC5C41AF55FED00E2A0B6 /* IOCU.h */; };
+		32CFC5CA1AF5601300E2A0B6 /* BasicIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFC5C71AF5601300E2A0B6 /* BasicIODriver.cpp */; };
+		32CFC5CB1AF5601300E2A0B6 /* BasicIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFC5C81AF5601300E2A0B6 /* BasicIODriver.h */; };
+		32CFC5CC1AF5601300E2A0B6 /* BasicIODriverInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFC5C91AF5601300E2A0B6 /* BasicIODriverInterface.cpp */; };
 		32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95915E4D950005D607E /* EventDescriptor.cpp */; };
 		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
@@ -1319,6 +1324,11 @@
 		32CB7CDF17099C8D00767FC1 /* DataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataCache.h; sourceTree = "<group>"; };
 		32CDA9A2198932C500663D8B /* LoadableService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableService.cpp; sourceTree = "<group>"; };
 		32CDA9A3198932C500663D8B /* LoadableService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableService.h; sourceTree = "<group>"; };
+		32CFC5C31AF55FED00E2A0B6 /* IOCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IOCU.cpp; sourceTree = "<group>"; };
+		32CFC5C41AF55FED00E2A0B6 /* IOCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOCU.h; sourceTree = "<group>"; };
+		32CFC5C71AF5601300E2A0B6 /* BasicIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicIODriver.cpp; sourceTree = "<group>"; };
+		32CFC5C81AF5601300E2A0B6 /* BasicIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicIODriver.h; sourceTree = "<group>"; };
+		32CFC5C91AF5601300E2A0B6 /* BasicIODriverInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicIODriverInterface.cpp; sourceTree = "<group>"; };
 		32CFF95915E4D950005D607E /* EventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDescriptor.cpp; sourceTree = "<group>"; };
 		32CFF95A15E4D950005D607E /* EventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDescriptor.h; sourceTree = "<group>"; };
 		32CFF95D15E4DBD3005D607E /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
@@ -2458,6 +2468,8 @@
 			isa = PBXGroup;
 			children = (
 				325F8B4E1763AED200EFE616 /* slow_command */,
+				32CFC5C31AF55FED00E2A0B6 /* IOCU.cpp */,
+				32CFC5C41AF55FED00E2A0B6 /* IOCU.h */,
 				3250105D19E2DB4A00809415 /* AttributeSharedCacheWrapper.cpp */,
 				3250105E19E2DB4A00809415 /* AttributeSharedCacheWrapper.h */,
 				326DB4A514B3A3E50018A8D0 /* AbstractControlUnit.cpp */,
@@ -2641,6 +2653,9 @@
 		328CC9D31763CC50000B30B6 /* driver */ = {
 			isa = PBXGroup;
 			children = (
+				32CFC5C71AF5601300E2A0B6 /* BasicIODriver.cpp */,
+				32CFC5C81AF5601300E2A0B6 /* BasicIODriver.h */,
+				32CFC5C91AF5601300E2A0B6 /* BasicIODriverInterface.cpp */,
 				328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */,
 				328CC9D51763CCC7000B30B6 /* AbstractDriver.h */,
 				32919A091764E68F00724874 /* DriverAccessor.cpp */,
@@ -3447,8 +3462,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32CFC5C61AF55FED00E2A0B6 /* IOCU.h in Headers */,
 				32698D4A179E8CD100D6638C /* SetAttributeCommand.h in Headers */,
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
+				32CFC5CB1AF5601300E2A0B6 /* BasicIODriver.h in Headers */,
 				326DB4BB14B3A3E50018A8D0 /* CommandManager.h in Headers */,
 				32234D40176E045100525E0C /* SlowCommandExecutor.h in Headers */,
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
@@ -4022,6 +4039,7 @@
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
 				3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */,
+				32CFC5CC1AF5601300E2A0B6 /* BasicIODriverInterface.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				32158DE5187D80D9004C25AA /* SetAttributeCommand.cpp in Sources */,
@@ -4029,10 +4047,12 @@
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
 				3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */,
 				326DB4CB14B3A3E50018A8D0 /* KeyDataStorage.cpp in Sources */,
+				32CFC5C51AF55FED00E2A0B6 /* IOCU.cpp in Sources */,
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
 				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
 				32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */,
 				3250105F19E2DB4A00809415 /* AttributeSharedCacheWrapper.cpp in Sources */,
+				32CFC5CA1AF5601300E2A0B6 /* BasicIODriver.cpp in Sources */,
 				32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */,
 				32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */,
 				32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */,

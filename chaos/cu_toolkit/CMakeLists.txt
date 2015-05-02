@@ -1,5 +1,6 @@
 SET(cu_lib_src  ChaosCUToolkit.cpp CommandManager/CommandManager.cpp)
-SET(cu_lib_src  ${cu_lib_src} driver_manager/DriverManager.cpp driver_manager/driver/AbstractDriver.cpp driver_manager/driver/DriverAccessor.cpp driver_manager/driver/DriverPluginLoader.cpp driver_manager/driver/AbstractDriverPlugin.cpp)
+
+SET(cu_lib_src  ${cu_lib_src} driver_manager/DriverManager.cpp driver_manager/driver/AbstractDriver.cpp driver_manager/driver/DriverAccessor.cpp                driver_manager/driver/DriverPluginLoader.cpp driver_manager/driver/AbstractDriverPlugin.cpp)
 SET(cu_lib_src  ${cu_lib_src} driver_manager/driver/BasicIODriver.cpp driver_manager/driver/BasicIODriverInterface.cpp)
 
 SET(cu_lib_src  ${cu_lib_src} DataManager/DataManager.cpp DataManager/KeyDataStorage.cpp)
