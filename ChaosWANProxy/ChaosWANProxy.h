@@ -48,8 +48,7 @@ namespace chaos {
 		 */
 		class ChaosWANProxy :
 		public ChaosCommon<ChaosWANProxy>,
-		public ServerDelegator,
-		public common::utility::StartableService {
+		public ServerDelegator {
 			friend class common::utility::Singleton<ChaosWANProxy>;
 			
 			static WaitSemaphore waitCloseSemaphore;

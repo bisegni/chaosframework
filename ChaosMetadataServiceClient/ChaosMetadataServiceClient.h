@@ -40,8 +40,7 @@ namespace chaos {
          */
         class ChaosMetadataServiceClient :
         public ChaosCommon<ChaosMetadataServiceClient>,
-        public ServerDelegator,
-        public common::utility::StartableService {
+        public ServerDelegator {
             friend class common::utility::Singleton<ChaosMetadataServiceClient>;
 
                 //!network broker service
