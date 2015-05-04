@@ -177,7 +177,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
 int MongoDBControlUnitDataAccess::checkDatasetPresence(const std::string& cu_unique_id,
                                                        bool& presence) {
     int err = 0;
-    uint64_t counter;
+    unsigned long long counter;
     try {
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT

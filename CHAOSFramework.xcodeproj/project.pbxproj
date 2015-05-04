@@ -200,6 +200,9 @@
 		325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */; };
 		325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F8B501763AF2300EFE616 /* SlowCommand.h */; };
 		325FC8571AF7670200DB9D66 /* BasicIODriverInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 325FC8561AF7670200DB9D66 /* BasicIODriverInterface.h */; };
+		325FC85A1AF77A7900DB9D66 /* NewUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325FC8581AF77A7900DB9D66 /* NewUS.cpp */; };
+		325FC85D1AF7910300DB9D66 /* NewUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325FC85B1AF7910300DB9D66 /* NewUS.cpp */; };
+		325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */ = {isa = PBXBuildFile; fileRef = 325FC85C1AF7910300DB9D66 /* NewUS.h */; };
 		326096C519BF22080032F55E /* DataBlockFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326096C319BF22080032F55E /* DataBlockFetcher.cpp */; };
 		32610F8C1AE6560A00779B84 /* GetDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32610F8A1AE6560A00779B84 /* GetDescription.cpp */; };
 		32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 32610F8B1AE6560A00779B84 /* GetDescription.h */; };
@@ -910,6 +913,10 @@
 		325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlowCommand.cpp; sourceTree = "<group>"; };
 		325F8B501763AF2300EFE616 /* SlowCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SlowCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		325FC8561AF7670200DB9D66 /* BasicIODriverInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicIODriverInterface.h; sourceTree = "<group>"; };
+		325FC8581AF77A7900DB9D66 /* NewUS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewUS.cpp; sourceTree = "<group>"; };
+		325FC8591AF77A7900DB9D66 /* NewUS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewUS.h; sourceTree = "<group>"; };
+		325FC85B1AF7910300DB9D66 /* NewUS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewUS.cpp; sourceTree = "<group>"; };
+		325FC85C1AF7910300DB9D66 /* NewUS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewUS.h; sourceTree = "<group>"; };
 		326096C319BF22080032F55E /* DataBlockFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataBlockFetcher.cpp; sourceTree = "<group>"; };
 		326096C419BF22080032F55E /* DataBlockFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlockFetcher.h; sourceTree = "<group>"; };
 		32610F8A1AE6560A00779B84 /* GetDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetDescription.cpp; sourceTree = "<group>"; };
@@ -1709,6 +1716,8 @@
 				3235FDC91A6FF45600EC83A9 /* GetDescription.h */,
 				32CAC9E21AE6991500DC6AAB /* LoadUnloadControlUnit.cpp */,
 				32CAC9E31AE6991500DC6AAB /* LoadUnloadControlUnit.h */,
+				325FC8581AF77A7900DB9D66 /* NewUS.cpp */,
+				325FC8591AF77A7900DB9D66 /* NewUS.h */,
 			);
 			path = unit_server;
 			sourceTree = "<group>";
@@ -2035,6 +2044,8 @@
 			children = (
 				32610F8A1AE6560A00779B84 /* GetDescription.cpp */,
 				32610F8B1AE6560A00779B84 /* GetDescription.h */,
+				325FC85B1AF7910300DB9D66 /* NewUS.cpp */,
+				325FC85C1AF7910300DB9D66 /* NewUS.h */,
 				32CAC9E51AE69F3D00DC6AAB /* LoadUnloadControlUnit.cpp */,
 				32CAC9E61AE69F3D00DC6AAB /* LoadUnloadControlUnit.h */,
 			);
@@ -3524,6 +3535,7 @@
 				327F39AC1AEAA2390000C845 /* UpdateDS.h in Headers */,
 				32362C221ADD0C45000CA079 /* SetInstanceDescription.h in Headers */,
 				323386B21ACD731E008863DC /* NodeSearch.h in Headers */,
+				325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */,
 				327F39B01AEAA2500000C845 /* AssociationControlUnit.h in Headers */,
 				32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */,
 			);
@@ -3800,6 +3812,7 @@
 				320530DD1AE930200064275B /* MongoDBDataServiceDataAccess.cpp in Sources */,
 				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
 				32809C791A9C79DE00C02C12 /* UtilityDataAccess.cpp in Sources */,
+				325FC85A1AF77A7900DB9D66 /* NewUS.cpp in Sources */,
 				324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */,
 				327F39A01AEA47980000C845 /* GetAssociationByDS.cpp in Sources */,
 				328E77FF1A7A94140008C070 /* NodeGroup.cpp in Sources */,
@@ -4086,6 +4099,7 @@
 				327F39AF1AEAA2500000C845 /* AssociationControlUnit.cpp in Sources */,
 				327F39BE1AEAB6260000C845 /* GetAllDS.cpp in Sources */,
 				32610F8C1AE6560A00779B84 /* GetDescription.cpp in Sources */,
+				325FC85D1AF7910300DB9D66 /* NewUS.cpp in Sources */,
 				3208AABD1AC56C1C000860D9 /* GetNodeDescription.cpp in Sources */,
 				327F39B31AEAA2680000C845 /* GetAssociationByDS.cpp in Sources */,
 				328C873E1AE01A590047C79B /* DeleteInstance.cpp in Sources */,

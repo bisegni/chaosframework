@@ -23,11 +23,9 @@ MainWindow::MainWindow(QWidget *parent) :
     command_presenter = new CommandPresenter(this, ui->mdiAreaEditor);
 
 
-    ui->dockCommand->setStyleSheet("::title { position: relative;"
-                                   "          text-align: center }");
-    ui->dockCommandSpecific->setStyleSheet("::title { position: relative;"
-                                           "          text-align: center }");
-    ui->dockCommand->setWidget(new SearchNode(this, command_presenter));
+    //ui->dockCommand->setStyleSheet("::title { position: relative; text-align: center }");
+    //ui->dockCommandSpecific->setStyleSheet("::title { position: relative;text-align: center }");
+    //ui->dockCommand->setWidget(new SearchNode(this, command_presenter));
     //tabifyDockWidget(ui->dockCommand,
     //                 ui->dockCommandSpecific);
 }

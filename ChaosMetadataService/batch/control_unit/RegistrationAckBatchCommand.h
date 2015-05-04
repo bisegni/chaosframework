@@ -47,7 +47,7 @@ namespace chaos {
 
                     CURegAckPhase phase;
                     std::string cu_id;
-                    std::string si_addr;
+                    std::string unit_server_addr;
                     int32_t     reg_result;
                 public:
                     RegistrationAckBatchCommand();

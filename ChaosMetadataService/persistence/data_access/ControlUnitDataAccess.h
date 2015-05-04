@@ -22,7 +22,7 @@
 
 #include "../persistence.h"
 
-#include <chaos/common/data/CDatawrapper.h>
+#include <chaos/common/data/CDataWrapper.h>
 
 #include <boost/smart_ptr.hpp>
 

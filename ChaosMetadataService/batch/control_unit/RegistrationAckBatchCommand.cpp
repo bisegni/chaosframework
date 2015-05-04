@@ -63,7 +63,7 @@ void RegistrationAckBatchCommand::setHandler(CDataWrapper *data) {
     if(!data->hasKey(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)) throw CException(-4, RegistrationAckBatchCommand_NO_RESULT_FOUND, __PRETTY_FUNCTION__);
 
     cu_id = data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    si_addr = data->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
+    unit_server_addr = data->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
     reg_result = data->getInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT);
 
     message_channel = getNewMessageChannel();
@@ -80,11 +80,11 @@ void RegistrationAckBatchCommand::acquireHandler() {
     MDSBatchCommand::acquireHandler();
     switch(phase) {
         case RACK_SEND: {
-            CU_RACK_DBG << "Send ack to control unit:" << cu_id << " on ip:" << si_addr;
+            CU_RACK_DBG << "Send ack to control unit:" << cu_id << " on ip:" << unit_server_addr;
             CDataWrapper message;
             message.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
             message.addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT, reg_result);
-            request_future = message_channel->sendRequestWithFuture(si_addr,
+            request_future = message_channel->sendRequestWithFuture(unit_server_addr,
                                                                     UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
                                                                     UnitServerNodeDomainAndActionRPC::ACTION_REGISTRATION_CONTROL_UNIT_ACK,
                                                                     &message);
