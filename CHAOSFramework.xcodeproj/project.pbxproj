@@ -203,6 +203,9 @@
 		325FC85A1AF77A7900DB9D66 /* NewUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325FC8581AF77A7900DB9D66 /* NewUS.cpp */; };
 		325FC85D1AF7910300DB9D66 /* NewUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325FC85B1AF7910300DB9D66 /* NewUS.cpp */; };
 		325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */ = {isa = PBXBuildFile; fileRef = 325FC85C1AF7910300DB9D66 /* NewUS.h */; };
+		325FC8611AF7C8B200DB9D66 /* GetCurrentDataset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325FC85F1AF7C8B200DB9D66 /* GetCurrentDataset.cpp */; };
+		325FC8641AF7CEE900DB9D66 /* GetCurrentDataset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325FC8621AF7CEE900DB9D66 /* GetCurrentDataset.cpp */; };
+		325FC8651AF7CEE900DB9D66 /* GetCurrentDataset.h in Headers */ = {isa = PBXBuildFile; fileRef = 325FC8631AF7CEE900DB9D66 /* GetCurrentDataset.h */; };
 		326096C519BF22080032F55E /* DataBlockFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326096C319BF22080032F55E /* DataBlockFetcher.cpp */; };
 		32610F8C1AE6560A00779B84 /* GetDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32610F8A1AE6560A00779B84 /* GetDescription.cpp */; };
 		32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 32610F8B1AE6560A00779B84 /* GetDescription.h */; };
@@ -917,6 +920,10 @@
 		325FC8591AF77A7900DB9D66 /* NewUS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewUS.h; sourceTree = "<group>"; };
 		325FC85B1AF7910300DB9D66 /* NewUS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewUS.cpp; sourceTree = "<group>"; };
 		325FC85C1AF7910300DB9D66 /* NewUS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewUS.h; sourceTree = "<group>"; };
+		325FC85F1AF7C8B200DB9D66 /* GetCurrentDataset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetCurrentDataset.cpp; sourceTree = "<group>"; };
+		325FC8601AF7C8B200DB9D66 /* GetCurrentDataset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetCurrentDataset.h; sourceTree = "<group>"; };
+		325FC8621AF7CEE900DB9D66 /* GetCurrentDataset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetCurrentDataset.cpp; sourceTree = "<group>"; };
+		325FC8631AF7CEE900DB9D66 /* GetCurrentDataset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetCurrentDataset.h; sourceTree = "<group>"; };
 		326096C319BF22080032F55E /* DataBlockFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataBlockFetcher.cpp; sourceTree = "<group>"; };
 		326096C419BF22080032F55E /* DataBlockFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlockFetcher.h; sourceTree = "<group>"; };
 		32610F8A1AE6560A00779B84 /* GetDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetDescription.cpp; sourceTree = "<group>"; };
@@ -1777,6 +1784,8 @@
 				32610F921AE671A300779B84 /* InitDeinit.h */,
 				32610F941AE671AF00779B84 /* StartStop.cpp */,
 				32610F951AE671AF00779B84 /* StartStop.h */,
+				325FC85F1AF7C8B200DB9D66 /* GetCurrentDataset.cpp */,
+				325FC8601AF7C8B200DB9D66 /* GetCurrentDataset.h */,
 			);
 			path = control_unit;
 			sourceTree = "<group>";
@@ -1796,6 +1805,8 @@
 				327F39C11AEFABB00000C845 /* InitDeinit.h */,
 				327F39C41AEFABBB0000C845 /* StartStop.cpp */,
 				327F39C51AEFABBB0000C845 /* StartStop.h */,
+				325FC8621AF7CEE900DB9D66 /* GetCurrentDataset.cpp */,
+				325FC8631AF7CEE900DB9D66 /* GetCurrentDataset.h */,
 			);
 			path = control_unit;
 			sourceTree = "<group>";
@@ -3529,6 +3540,7 @@
 				32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */,
 				327F39B41AEAA2680000C845 /* GetAssociationByDS.h in Headers */,
 				327F39C71AEFABBB0000C845 /* StartStop.h in Headers */,
+				325FC8651AF7CEE900DB9D66 /* GetCurrentDataset.h in Headers */,
 				3274A90D1AC2F214000C6A4D /* ApiProxyManager.h in Headers */,
 				328C87331ADFDB9A0047C79B /* SearchInstancesByUS.h in Headers */,
 				3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */,
@@ -3818,6 +3830,7 @@
 				328E77FF1A7A94140008C070 /* NodeGroup.cpp in Sources */,
 				320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */,
 				3235FDCA1A6FF45600EC83A9 /* GetDescription.cpp in Sources */,
+				325FC8611AF7C8B200DB9D66 /* GetCurrentDataset.cpp in Sources */,
 				3235FDD91A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp in Sources */,
 				327F39A31AEA49C00000C845 /* DeleteDS.cpp in Sources */,
 				32610F931AE671A300779B84 /* InitDeinit.cpp in Sources */,
@@ -4096,6 +4109,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				32661C6D1AA741D000F1A721 /* ChaosMetadataServiceClient.cpp in Sources */,
+				325FC8641AF7CEE900DB9D66 /* GetCurrentDataset.cpp in Sources */,
 				327F39AF1AEAA2500000C845 /* AssociationControlUnit.cpp in Sources */,
 				327F39BE1AEAB6260000C845 /* GetAllDS.cpp in Sources */,
 				32610F8C1AE6560A00779B84 /* GetDescription.cpp in Sources */,

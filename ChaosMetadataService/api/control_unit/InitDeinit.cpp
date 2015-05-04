@@ -221,7 +221,7 @@ void InitDeinit::deinitialize(const std::string& cu_uid) {
 
         //get default control unit node description
     if((err = n_da->getNodeDescription(cu_uid, &tmp_ptr))) {
-        LOG_AND_TROW(CU_INDEIN_ERR, err, boost::str(boost::format("Error fetching the control unit node dafault description for unique id:%1% with error %2%") % cu_uid));
+        LOG_AND_TROW(CU_INDEIN_ERR, err, boost::str(boost::format("Error fetching the control unit node dafault description for unique id:%1% with error %2%") % cu_uid % err));
     } else if(tmp_ptr == NULL) {
         LOG_AND_TROW(CU_INDEIN_ERR, err, boost::str(boost::format("No control unit node dafault description found for unique id:%1% ") % cu_uid));
     }

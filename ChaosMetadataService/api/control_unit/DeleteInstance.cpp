@@ -51,7 +51,7 @@ CDataWrapper *DeleteInstance::execute(CDataWrapper *api_data,
     GET_DATA_ACCESS(persistence::data_access::ControlUnitDataAccess, cu_da, -4)
     if((err = cu_da->deleteInstanceDescription(us_uid,
                                                cu_uid))){
-        LOG_AND_TROW(CU_DI_ERR, err, boost::str(boost::format("Error removing the control unit instance description for cuid:%1% and usuid:%2%") % cu_uid % cu_uid));
+        LOG_AND_TROW(CU_DI_ERR, err, boost::str(boost::format("Error removing the control unit instance description for cuid:%1% and usuid:%2%") % cu_uid % us_uid));
     }
     return NULL;
 }

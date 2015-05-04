@@ -53,7 +53,7 @@ CDataWrapper *GetInstance::execute(CDataWrapper *api_data,
     if((err = cu_da->getInstanceDescription(us_uid,
                                             cu_uid,
                                             &result))){
-        LOG_AND_TROW(CU_GI_ERR, err, boost::str(boost::format("Error fetching the control unit instance description for cuid:%1% and usuid:%2%") % cu_uid % cu_uid));
+        LOG_AND_TROW(CU_GI_ERR, err, boost::str(boost::format("Error fetching the control unit instance description for cuid:%1% and usuid:%2%") % cu_uid % us_uid));
     }
     return result;
 }

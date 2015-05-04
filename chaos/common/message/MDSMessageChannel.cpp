@@ -130,17 +130,18 @@ int MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, CDev
     callData->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identificationID);
         //send request and wait the response
     auto_ptr<CDataWrapper> resultAnswer(sendRequest(nodeAddress->node_id,
-                                                    ChaosSystemDomainAndActionLabel::MDS_GET_NODE_ADDRESS,
+                                                    "getNodeDescription",
                                                     callData.get(),
                                                     millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(resultAnswer, err)
-    if(err == ErrorCode::EC_NO_ERROR && resultAnswer->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){
-        auto_ptr<CDataWrapper> nodeNetworkInfromation(resultAnswer->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
-        if(nodeNetworkInfromation->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) && nodeNetworkInfromation->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)){
+    if(err == ErrorCode::EC_NO_ERROR &&
+       resultAnswer.get()){
+        if(resultAnswer->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) &&
+           resultAnswer->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)){
                 //there is a result
             *deviceNetworkAddress = new CDeviceNetworkAddress();
-            (*deviceNetworkAddress)->ip_port = nodeNetworkInfromation->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
-            (*deviceNetworkAddress)->node_id = nodeNetworkInfromation->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN);
+            (*deviceNetworkAddress)->ip_port = resultAnswer->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
+            (*deviceNetworkAddress)->node_id = resultAnswer->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN);
             (*deviceNetworkAddress)->device_id = identificationID;
         }
     }
@@ -161,15 +162,14 @@ int MDSMessageChannel::getLastDatasetForDevice(string& identificationID, CDataWr
     auto_ptr<CDataWrapper> callData(new CDataWrapper());
     callData->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identificationID);
         //send request and wait the response
-    auto_ptr<CDataWrapper> deviceInitInformation(sendRequest(nodeAddress->node_id,
+    auto_ptr<CDataWrapper> deviceInitInformation(sendRequest("control_unit",
                                                              "getCurrentDataset",
                                                              callData.get(),
                                                              millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(deviceInitInformation, err) 
-    if(err == ErrorCode::EC_NO_ERROR) {
-        if(deviceInitInformation->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){
-            *deviceDefinition = deviceInitInformation->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
-        }
+    if(err == ErrorCode::EC_NO_ERROR &&
+       deviceInitInformation.get()) {
+            *deviceDefinition = deviceInitInformation->clone();
     }
     return err;
 }
