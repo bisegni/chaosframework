@@ -199,6 +199,7 @@
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
 		325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */; };
 		325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F8B501763AF2300EFE616 /* SlowCommand.h */; };
+		325FC8571AF7670200DB9D66 /* BasicIODriverInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 325FC8561AF7670200DB9D66 /* BasicIODriverInterface.h */; };
 		326096C519BF22080032F55E /* DataBlockFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326096C319BF22080032F55E /* DataBlockFetcher.cpp */; };
 		32610F8C1AE6560A00779B84 /* GetDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32610F8A1AE6560A00779B84 /* GetDescription.cpp */; };
 		32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 32610F8B1AE6560A00779B84 /* GetDescription.h */; };
@@ -908,6 +909,7 @@
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
 		325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlowCommand.cpp; sourceTree = "<group>"; };
 		325F8B501763AF2300EFE616 /* SlowCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SlowCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		325FC8561AF7670200DB9D66 /* BasicIODriverInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicIODriverInterface.h; sourceTree = "<group>"; };
 		326096C319BF22080032F55E /* DataBlockFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataBlockFetcher.cpp; sourceTree = "<group>"; };
 		326096C419BF22080032F55E /* DataBlockFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlockFetcher.h; sourceTree = "<group>"; };
 		32610F8A1AE6560A00779B84 /* GetDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetDescription.cpp; sourceTree = "<group>"; };
@@ -2656,6 +2658,7 @@
 				32CFC5C71AF5601300E2A0B6 /* BasicIODriver.cpp */,
 				32CFC5C81AF5601300E2A0B6 /* BasicIODriver.h */,
 				32CFC5C91AF5601300E2A0B6 /* BasicIODriverInterface.cpp */,
+				325FC8561AF7670200DB9D66 /* BasicIODriverInterface.h */,
 				328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */,
 				328CC9D51763CCC7000B30B6 /* AbstractDriver.h */,
 				32919A091764E68F00724874 /* DriverAccessor.cpp */,
@@ -3465,6 +3468,7 @@
 				32CFC5C61AF55FED00E2A0B6 /* IOCU.h in Headers */,
 				32698D4A179E8CD100D6638C /* SetAttributeCommand.h in Headers */,
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
+				325FC8571AF7670200DB9D66 /* BasicIODriverInterface.h in Headers */,
 				32CFC5CB1AF5601300E2A0B6 /* BasicIODriver.h in Headers */,
 				326DB4BB14B3A3E50018A8D0 /* CommandManager.h in Headers */,
 				32234D40176E045100525E0C /* SlowCommandExecutor.h in Headers */,

@@ -553,17 +553,6 @@ namespace chaos {
     }
     /** @} */ // end of DataPackSystemKey
 
-    
-	/** @defgroup CUType Control Unit Default Type
-	 *  This is the collection of the key for the classification of the control unit types
-	 *  @{
-	 */
-	//! Name space for grupping control unit types
-	namespace CUType {
-		static const char * const RTCU	= "rtcu";
-		static const char * const SCCU  = "sccu";
-	}
-	/** @} */ // end of CUType
 	
 	/** @defgroup DatasetDefinitionkey Dataset definition key
 	 *  This is the collection of the key for the device dataset
@@ -596,47 +585,8 @@ namespace chaos {
 		//!key representing the default value
 		static const char * const MIN_RANGE                         = "ds_min_range";
 	}
-	
 	/** @} */ // end of DatasetDefinitionkey
-	
-	/** @defgroup ChaosDataType Chaos Basic datatype
-	 *  This is the collection of the definition of the chaos basic datatype
-	 *  @{
-	 */
-	//! Name space for grupping the definition of the chaos basic datatype
-	namespace DataType {
-		//!typede for datatype
-		typedef enum DataType{
-			//!Integer 32 bit length
-			TYPE_INT32 = 0,
-			//!Integer 64 bit length
-			TYPE_INT64,
-			//!Double 64 bit length
-			TYPE_DOUBLE,
-			//!C string variable length
-			TYPE_STRING,
-			//!byte array variable length
-			TYPE_BYTEARRAY,
-			//!bool variable length
-			TYPE_BOOLEAN,
-                        //!user data type        
-                        TYPE_CLUSTER,
-                        //!modifier to be ored to normal data types
-                        TYPE_ACCESS_ARRAY=0x100 
-		} DataType;
-		
-		//!define the direction of dataset element
-		typedef enum DataSetAttributeIOAttribute{
-			//!define an atribute in input
-			Input = 0,
-			//!define an atribute in output
-			Output=1,
-			//!define an atribute either two direction
-			Bidirectional=2,
-		} DataSetAttributeIOAttribute;
-	}
-	
-    /** @} */ // end of DatasetDefinitionkey
+
 
     /** @defgroup ChaosErrorCode Chaos Error Code
      *  This is the collection of the definition of the chaos error code
