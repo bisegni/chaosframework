@@ -47,7 +47,10 @@ SOURCES += main.cpp\
     node/control_unit/AttributeValueRangeDialog.cpp \
     node/data_service/DataServiceEditor.cpp \
     node/data_service/CreateEditDataService.cpp \
-    preference/PreferenceDialog.cpp
+    preference/PreferenceDialog.cpp \
+    node/control_unit/controluniteditor.cpp \
+    node/data/ChaosAbstractNodeTableModel.cpp \
+    node/data/FixedOutputChannelDatasetTableModel.cpp
 
 HEADERS  += mainwindow.h \
     search/SearchNodeResult.h \
@@ -64,7 +67,11 @@ HEADERS  += mainwindow.h \
     node/control_unit/AttributeValueRangeDialog.h \
     node/data_service/DataServiceEditor.h \
     node/data_service/CreateEditDataService.h \
-    preference/PreferenceDialog.h
+    preference/PreferenceDialog.h \
+    node/control_unit/controluniteditor.h \
+    node/data/CUDatasetModel.h \
+    node/data/ChaosAbstractNodeTableModel.h \
+    node/data/FixedOutputChannelDatasetTableModel.h
 
 FORMS    += mainwindow.ui \
     search/searchnoderesult.ui \
@@ -75,7 +82,8 @@ FORMS    += mainwindow.ui \
     node/control_unit/AttributeValueRangeDialog.ui \
     node/data_service/DataServiceEditor.ui \
     node/data_service/CreateEditDataService.ui \
-    preference/PreferenceDialog.ui
+    preference/PreferenceDialog.ui \
+    node/control_unit/controluniteditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet

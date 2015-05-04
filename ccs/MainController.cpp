@@ -8,10 +8,13 @@
 #include <QFile>
 #include <QSettings>
 
+#include <string>
 using namespace chaos::metadata_service_client;
 
+//declare metatype used in chaos
 Q_DECLARE_METATYPE(QSharedPointer<chaos::CException>);
 Q_DECLARE_METATYPE(QSharedPointer<chaos::common::data::CDataWrapper>);
+Q_DECLARE_METATYPE (std::string)
 
 MainController::MainController() {
 }
@@ -22,8 +25,11 @@ MainController::~MainController()
 }
 
 void MainController::init(int argc, char **argv, QApplication& a) {
+    //register chaos metatype
     qRegisterMetaType< QSharedPointer<chaos::CException> >();
     qRegisterMetaType< QSharedPointer<chaos::common::data::CDataWrapper> >();
+    qRegisterMetaType<std::string>("std::string");
+
     //set the dark fusion style
     a.setStyle(QStyleFactory::create("Fusion"));
 
