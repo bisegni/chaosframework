@@ -16,7 +16,8 @@ SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
 
 SET(cnd_src  ${cnd_src}	api/unit_server/UnitServerApiGroup.cpp
                         api/unit_server/GetDescription.cpp
-                        api/unit_server/LoadUnloadControlUnit.cpp)
+                        api/unit_server/LoadUnloadControlUnit.cpp
+                        api/unit_server/NewUS.cpp)
 
 SET(cnd_src  ${cnd_src}	api/data_service/DataServiceApiGroup.cpp
 						api/data_service/NewDS.cpp
