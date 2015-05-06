@@ -180,6 +180,8 @@
 		3253F2FF189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3253F2FD189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h */; };
 		3253F302189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3253F300189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp */; };
 		3253F303189AEF8000959CA7 /* DirectIOVirtualServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3253F301189AEF8000959CA7 /* DirectIOVirtualServerChannel.h */; };
+		32543B1A1AFA6D28008D58EC /* HealtMetric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32543B181AFA6D28008D58EC /* HealtMetric.cpp */; };
+		32543B1B1AFA6D28008D58EC /* HealtMetric.h in Headers */ = {isa = PBXBuildFile; fileRef = 32543B191AFA6D28008D58EC /* HealtMetric.h */; };
 		325568521AE3A98B00CFA7C9 /* PropertyCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325568511AE3A98B00CFA7C9 /* PropertyCollector.cpp */; };
 		32556B0919B5F2FA0004ABC5 /* DBDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32556B0819B5F2FA0004ABC5 /* DBDriver.h */; };
 		32556B0F19B5F4090004ABC5 /* DataPackScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32556B0B19B5F4090004ABC5 /* DataPackScanner.cpp */; };
@@ -893,6 +895,8 @@
 		3253F300189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOVirtualServerChannel.cpp; sourceTree = "<group>"; };
 		3253F301189AEF8000959CA7 /* DirectIOVirtualServerChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOVirtualServerChannel.h; sourceTree = "<group>"; };
 		3253F304189AF0D500959CA7 /* DirectIODataPack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIODataPack.h; sourceTree = "<group>"; };
+		32543B181AFA6D28008D58EC /* HealtMetric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HealtMetric.cpp; sourceTree = "<group>"; };
+		32543B191AFA6D28008D58EC /* HealtMetric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HealtMetric.h; sourceTree = "<group>"; };
 		325568511AE3A98B00CFA7C9 /* PropertyCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyCollector.cpp; sourceTree = "<group>"; };
 		32556B0819B5F2FA0004ABC5 /* DBDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBDriver.h; sourceTree = "<group>"; };
 		32556B0B19B5F4090004ABC5 /* DataPackScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataPackScanner.cpp; sourceTree = "<group>"; };
@@ -1986,6 +1990,8 @@
 			children = (
 				325D2FCB1AFA19E500B2A706 /* HealtManager.cpp */,
 				325D2FCC1AFA19E500B2A706 /* HealtManager.h */,
+				32543B181AFA6D28008D58EC /* HealtMetric.cpp */,
+				32543B191AFA6D28008D58EC /* HealtMetric.h */,
 			);
 			path = healt_system;
 			sourceTree = "<group>";
@@ -3445,6 +3451,7 @@
 				32640A2C169DCC5800450962 /* EmbeddedDataTransform.h in Headers */,
 				32640A2D169DCC5800450962 /* AbstractDeviceTracker.h in Headers */,
 				325D2FCE1AFA19E500B2A706 /* HealtManager.h in Headers */,
+				32543B1B1AFA6D28008D58EC /* HealtMetric.h in Headers */,
 				32640A30169DCC5800450962 /* FetcherDeviceTracker.h in Headers */,
 				32640A31169DCC5800450962 /* TrackerListener.h in Headers */,
 				32640A33169DCC5800450962 /* TransformTracker.h in Headers */,
@@ -3951,6 +3958,7 @@
 				324A4B75191A428500975394 /* jsobj.cpp in Sources */,
 				326DB45C14B38BC00018A8D0 /* CDataWrapper.cpp in Sources */,
 				326DB45E14B38BC00018A8D0 /* CUSchemaDB.cpp in Sources */,
+				32543B1A1AFA6D28008D58EC /* HealtMetric.cpp in Sources */,
 				326DB46714B38BC00018A8D0 /* AbstractCommandDispatcher.cpp in Sources */,
 				32B159D518B38CA50096B58B /* DirectIODeviceServerChannel.cpp in Sources */,
 				324A4B52191A41EF00975394 /* process_id.cpp in Sources */,

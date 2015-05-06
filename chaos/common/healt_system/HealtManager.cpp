@@ -23,8 +23,10 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 #include <boost/format.hpp>
+#include <boost/foreach.hpp>
 
 using namespace chaos::common::io;
+using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::healt_system;
 
@@ -34,63 +36,15 @@ using namespace chaos::common::healt_system;
 
 #define HEALT_NEED_NODE_NO_METRIC_PRESENCE(n,m)\
 if(map_node.count(n) == 0) return;\
-if(map_node[n].count(m) != 0) return;
+if(map_node[n]->map_metric.count(m) != 0) return;
 
 #define HEALT_NEED_NODE_AND_METRIC_PRESENCE(n,m)\
 if(map_node.count(n) == 0) return;\
-if(map_node[n].count(m) == 0) return;
+if(map_node[n]->map_metric.count(m) == 0) return;
 
 #define HEALT_SET_METRIC_VALUE(t, n, m, v)\
-t *tmp = dynamic_cast<t*>(map_node[n][m].get());\
+t *tmp = dynamic_cast<t*>(map_node[n]->map_metric[m].get());\
 if(tmp)tmp->value = v;
-
-
-    //----------------------metric element-------------------------
-HealtMetric::HealtMetric(const std::string& _name,
-                         const chaos::DataType::DataType _type):
-name(_name),
-type(_type){}
-void HealtMetric::addMetricToCD(chaos::common::data::CDataWrapper *data) {
-    if(data) addMetricToCD(*data);
-}
-
-
-BoolHealtMetric::BoolHealtMetric(const std::string& _name):
-HealtMetric(_name,
-            chaos::DataType::TYPE_BOOLEAN){}
-void BoolHealtMetric::addMetricToCD(chaos::common::data::CDataWrapper& data) {
-    data.addBoolValue(name.c_str(), value);
-}
-
-Int32HealtMetric::Int32HealtMetric(const std::string& _name):
-HealtMetric(_name,
-            chaos::DataType::TYPE_INT32){}
-void Int32HealtMetric::addMetricToCD(chaos::common::data::CDataWrapper& data) {
-    data.addInt32Value(name, value);
-}
-
-Int64HealtMetric::Int64HealtMetric(const std::string& _name):
-HealtMetric(_name,
-            chaos::DataType::TYPE_INT64){}
-void Int64HealtMetric::addMetricToCD(chaos::common::data::CDataWrapper& data) {
-    data.addInt64Value(name, value);
-}
-
-
-DoubleHealtMetric::DoubleHealtMetric(const std::string& _name):
-HealtMetric(_name,
-            chaos::DataType::TYPE_DOUBLE){}
-void DoubleHealtMetric::addMetricToCD(chaos::common::data::CDataWrapper& data) {
-    data.addDoubleValue(name, value);
-}
-
-StringHealtMetric::StringHealtMetric(const std::string& _name):
-HealtMetric(_name,
-            chaos::DataType::TYPE_STRING){}
-void StringHealtMetric::addMetricToCD(chaos::common::data::CDataWrapper& data) {
-    data.addStringValue(name, value);
-}
-    //----------------------metric element-------------------------
 
 void HealtManager::setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker) {
     network_broker_ptr = _network_broker;
@@ -137,7 +91,7 @@ void HealtManager::addNewNode(const std::string& node_uid) {
     boost::unique_lock<boost::shared_mutex> wl(map_node_mutex);
     if(map_node.count(node_uid) != 0) return;
         //add new node in map
-    map_node.insert(make_pair(node_uid, HealtNodeElementMap()));
+    map_node.insert(make_pair(node_uid, boost::shared_ptr<NodeHealtSet>(new NodeHealtSet(node_uid))));
 }
 
 void HealtManager::removeNode(const std::string& node_uid) {
@@ -176,8 +130,7 @@ void HealtManager::addNodeMetric(const std::string& node_uid,
             break;
     }
         //add metric
-    map_node[node_uid].insert(make_pair(node_metric, metric));
-
+    map_node[node_uid]->map_metric.insert(make_pair(node_metric, metric));
 }
 
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
@@ -215,6 +168,28 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
     boost::unique_lock<boost::shared_mutex> wl(map_node_mutex);
     HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
     HEALT_SET_METRIC_VALUE(BoolHealtMetric, node_uid, node_metric, bool_value);
+}
+
+void HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_map,
+                                       chaos::common::data::CDataWrapper& node_data_pack) {
+    BOOST_FOREACH(HealtNodeElementMap::value_type map_metric_element, element_map) {
+        //add metric to cdata wrapper
+        map_metric_element.second->addMetricToCD(node_data_pack);
+    }
+}
+
+//publish the healt for the ndoe uid
+void HealtManager::publishNodeHealt(const std::string& node_uid) {
+    if(map_node.count(node_uid) == 0) return;
+    
+    //allocate the datapack
+    std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
+    //compose datapack
+    prepareNodeDataPack(map_node[node_uid]->map_metric,
+                        *data_pack.get());
+    //send datapack
+    io_data_driver->storeData(map_node[node_uid]->node_key,
+                              data_pack.release());
 }
 
 void HealtManager::timeout() {

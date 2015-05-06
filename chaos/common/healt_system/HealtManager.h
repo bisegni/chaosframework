@@ -25,8 +25,8 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/StartableService.h>
+#include <chaos/common/healt_system/HealtMetric.h>
 #include <chaos/common/async_central/async_central.h>
-
 #include <map>
 
 #include <boost/thread.hpp>
@@ -35,59 +35,25 @@ namespace chaos {
     namespace common{
         namespace healt_system {
 
-                //! metric element
-            struct HealtMetric {
-                HealtMetric(const std::string& _name,
-                            const chaos::DataType::DataType _type);
-
-                virtual void addMetricToCD(chaos::common::data::CDataWrapper& data) = 0;
-                void addMetricToCD(chaos::common::data::CDataWrapper *data);
-            protected:
-                const std::string name;
-                const chaos::DataType::DataType type;
-            };
-
-            struct BoolHealtMetric:
-            public HealtMetric {
-                bool value;
-                BoolHealtMetric(const std::string& _name);
-                void addMetricToCD(chaos::common::data::CDataWrapper& data);
-            };
-
-            struct Int32HealtMetric:
-            public HealtMetric {
-                int32_t value;
-                Int32HealtMetric(const std::string& _name);
-                void addMetricToCD(chaos::common::data::CDataWrapper& data);
-            };
-
-            struct Int64HealtMetric:
-            public HealtMetric {
-                int64_t value;
-                Int64HealtMetric(const std::string& _name);
-                void addMetricToCD(chaos::common::data::CDataWrapper& data);
-            };
-
-            struct DoubleHealtMetric:
-            public HealtMetric {
-                double value;
-                DoubleHealtMetric(const std::string& _name);
-                void addMetricToCD(chaos::common::data::CDataWrapper& data);
-            };
-
-            struct StringHealtMetric:
-            public HealtMetric {
-                std::string value;
-                StringHealtMetric(const std::string& _name);
-                void addMetricToCD(chaos::common::data::CDataWrapper& data);
-            };
-
-
+            
             typedef std::map<std::string, boost::shared_ptr<HealtMetric> >              HealtNodeElementMap;
             typedef std::map<std::string, boost::shared_ptr<HealtMetric> >::iterator    HealtNodeElementMapIterator;
 
-            typedef std::map<std::string, HealtNodeElementMap >             HealtNodeMap;
-            typedef std::map<std::string, HealtNodeElementMap >::iterator   HealtNodeMapIterator;
+            struct NodeHealtSet {
+                //the key to use for the node publishing operation
+                std::string   node_key;
+                
+                //is the metric node map
+                HealtNodeElementMap map_metric;
+                
+                NodeHealtSet(const std::string& node_uid){
+                    node_key = node_uid + "_healt";
+                }
+            };
+
+            typedef std::map<std::string, boost::shared_ptr<NodeHealtSet> >             HealtNodeMap;
+            typedef std::map<std::string, boost::shared_ptr<NodeHealtSet> >::iterator   HealtNodeMapIterator;
+            
 
                 //! Is the root class for the healt managment system
             /*!
@@ -110,11 +76,18 @@ namespace chaos {
                 std::auto_ptr<chaos::common::io::IODataDriver>      io_data_driver;
             protected:
                 void timeout();
+                void prepareNodeDataPack(HealtNodeElementMap& element_map,
+                                         chaos::common::data::CDataWrapper& node_data_pack);
             public:
                 void init(void *init_data) throw (chaos::CException);
                 void start() throw (chaos::CException);
                 void stop() throw (chaos::CException);
                 void deinit() throw (chaos::CException);
+                
+                //s
+                void setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker);
+
+                
                 void addNewNode(const std::string& node_uid);
                 void removeNode(const std::string& node_uid);
                 void addNodeMetric(const std::string& node_uid,
@@ -135,10 +108,9 @@ namespace chaos {
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         const bool bool_value);
+                
                     //publish the healt for the ndoe uid
                 void publishNodeHealt(const std::string& node_uid);
-
-                void setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker);
             };
         }
     }

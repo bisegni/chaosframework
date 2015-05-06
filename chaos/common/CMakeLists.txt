@@ -2,7 +2,8 @@ SET(common_lib_src						log/LogManager.cpp)
 
 SET(common_lib_src	${common_lib_src}	async_central/AsyncCentralManager.cpp async_central/TimerHandler.cpp)
 
-SET(common_lib_src	${common_lib_src}	healt_system/HealtManager.cpp)
+SET(common_lib_src	${common_lib_src}	healt_system/HealtManager.cpp
+                                        healt_system/HealtMetric.cpp)
 
 SET(common_lib_src  ${common_lib_src}	action/ActionExecutionSafetySystem.cpp action/EventAction.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp)
 
