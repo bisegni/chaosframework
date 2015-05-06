@@ -68,13 +68,13 @@ CDataWrapper *CDataWrapper::clone() {
 
 
 //add a csdata value
-void CDataWrapper::addCSDataValue(const char *key, CDataWrapper& csData) {
+void CDataWrapper::addCSDataValue(const std::string& key, CDataWrapper& csData) {
     if(csData.bsonBuilder->len()==0) return;
     bsonBuilder->append(key, csData.bsonBuilder->asTempObj());
 }
 
 //add a string value
-void CDataWrapper::addStringValue(const char *key, const string& strValue) {
+void CDataWrapper::addStringValue(const std::string& key, const string& strValue) {
 	try{
 		bsonBuilder->append(key, strValue);
 	}catch(bson::MsgAssertionException& ex) {
@@ -83,7 +83,7 @@ void CDataWrapper::addStringValue(const char *key, const string& strValue) {
 }
 
 //append a strin gto an open array
-void CDataWrapper::appendStringToArray(const char *stringArrayElement) {
+void CDataWrapper::appendStringToArray(const char * stringArrayElement) {
     bsonArrayBuilder->append(stringArrayElement);
 }
 
@@ -114,13 +114,13 @@ void CDataWrapper::appendCDataWrapperToArray(CDataWrapper& srcDataWrapper, bool 
 }
 
 //finalize the array into a key for the current dataobject
-void CDataWrapper::finalizeArrayForKey(const char *key) {
+void CDataWrapper::finalizeArrayForKey(const std::string& key) {
     bsonBuilder->appendArray(key, bsonArrayBuilder->done());
     bsonArrayBuilder.reset(new BSONArrayBuilder());
 }
 
 //return a vectorvalue for a key
-CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const char *key) {
+CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const std::string& key) {
 	try {
 		return new CMultiTypeDataArrayWrapper(bsonBuilder->asTempObj().getField(key).Array());
 	} catch (bson::UserException& ex) {
@@ -129,30 +129,30 @@ CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const char *key) {
 }
 
 //add a long value
-void CDataWrapper::addInt32Value(const char *key, int32_t i32Value) {
+void CDataWrapper::addInt32Value(const std::string& key, int32_t i32Value) {
     bsonBuilder->append(key, i32Value);
 }
 //add a long value
-void CDataWrapper::addInt32Value(const char *key, uint32_t ui32Value) {
+void CDataWrapper::addInt32Value(const std::string& key, uint32_t ui32Value) {
     bsonBuilder->append(key, static_cast<int32_t>(ui32Value));
 }
 //add a double value
-void CDataWrapper::addDoubleValue(const char *key, double dValue) {
+void CDataWrapper::addDoubleValue(const std::string& key, double dValue) {
     bsonBuilder->append(key, (double)dValue);
 }
 
 //add a integer value
-void CDataWrapper::addInt64Value(const char *key, int64_t i64Value) {
+void CDataWrapper::addInt64Value(const std::string& key, int64_t i64Value) {
     bsonBuilder->append(key, (long long)i64Value);
 }
 
 //add a integer value
-void CDataWrapper::addInt64Value(const char *key, uint64_t i64Value) {
+void CDataWrapper::addInt64Value(const std::string& key, uint64_t i64Value) {
     bsonBuilder->append(key, (long long)static_cast<int64_t>(i64Value));
 }
 
 //get a csdata value
-CDataWrapper *CDataWrapper::getCSDataValue(const char *key) {
+CDataWrapper *CDataWrapper::getCSDataValue(const std::string& key) {
     //allocate the pointer for the result
     CDataWrapper *result = new CDataWrapper();
     if(result){
@@ -166,53 +166,53 @@ CDataWrapper *CDataWrapper::getCSDataValue(const char *key) {
 
 
 //get string value
-string  CDataWrapper::getStringValue(const char *key) {
+string  CDataWrapper::getStringValue(const std::string& key) {
     return bsonBuilder->asTempObj().getField(key).String();
 }
 
 //get string value
-const char *  CDataWrapper::getCStringValue(const char *key) {
+const char *  CDataWrapper::getCStringValue(const std::string& key) {
     //return bsonBuilder->asTempObj().getField(key).String().c_str();
 	return getRawValuePtr(key);
 }
 //add a integer value
-int32_t CDataWrapper::getInt32Value(const char *key) {
+int32_t CDataWrapper::getInt32Value(const std::string& key) {
     return bsonBuilder->asTempObj().getField(key).numberInt();
 }
 //add a integer value
-uint32_t CDataWrapper::getUInt32Value(const char *key) {
+uint32_t CDataWrapper::getUInt32Value(const std::string& key) {
     
     return static_cast<uint32_t>(bsonBuilder->asTempObj().getField(key).numberInt());
 }
 //add a integer value
-int64_t CDataWrapper::getInt64Value(const char *key) {
+int64_t CDataWrapper::getInt64Value(const std::string& key) {
     
     return bsonBuilder->asTempObj().getField(key).numberLong();
 }
 //add a integer value
-uint64_t CDataWrapper::getUInt64Value(const char *key) {
+uint64_t CDataWrapper::getUInt64Value(const std::string& key) {
     
     return static_cast<uint64_t>(bsonBuilder->asTempObj().getField(key).numberLong());
 }
 //add a integer value
-double_t CDataWrapper::getDoubleValue(const char *key) {
+double_t CDataWrapper::getDoubleValue(const std::string& key) {
     
     return bsonBuilder->asTempObj().getField(key).Double();
 }
 
 //get a bool value
-bool  CDataWrapper::getBoolValue(const char *key) {
+bool  CDataWrapper::getBoolValue(const std::string& key) {
     
     return bsonBuilder->asTempObj().getField(key).Bool();
 }
 
 //set a binary data value
-void CDataWrapper::addBinaryValue(const char *key, const char *buff, int bufLen) {
+void CDataWrapper::addBinaryValue(const std::string& key, const char *buff, int bufLen) {
     bsonBuilder->appendBinData(key, bufLen, BinDataGeneral, buff);
 }
 
 //return the binary data value
-const char* CDataWrapper::getBinaryValue(const char *key, int& bufLen)  {
+const char* CDataWrapper::getBinaryValue(const std::string& key, int& bufLen)  {
     return bsonBuilder->asTempObj().getField(key).binData(bufLen);
 }
 
@@ -275,7 +275,7 @@ const char * CDataWrapper::getRawValuePtr(const std::string& key) {
 }
 
 //add a bool value
-void CDataWrapper::addBoolValue(const char *key, bool boolValue) {
+void CDataWrapper::addBoolValue(const std::string& key, bool boolValue) {
     bsonBuilder->append(key, boolValue);
 }
 

@@ -67,11 +67,6 @@ namespace chaos {
 		}
 
 		namespace network {
-                //using namespace std;
-                //using namespace boost;
-                //using namespace chaos::common::message;
-                //using namespace chaos::common::data;
-                //using namespace chaos::common::direct_io;
 			
 			//! Channel Type Enumeration
 			/*!

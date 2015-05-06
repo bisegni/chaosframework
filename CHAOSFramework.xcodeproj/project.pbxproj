@@ -193,6 +193,8 @@
 		3258AF0C1935F46D00A66D44 /* FeederTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AF0A1935F46D00A66D44 /* FeederTest.cpp */; };
 		325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325CA6B915EE10B3007FCC12 /* EventAction.cpp */; };
 		325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325CA6BA15EE10B3007FCC12 /* EventAction.h */; };
+		325D2FCD1AFA19E500B2A706 /* HealtManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325D2FCB1AFA19E500B2A706 /* HealtManager.cpp */; };
+		325D2FCE1AFA19E500B2A706 /* HealtManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 325D2FCC1AFA19E500B2A706 /* HealtManager.h */; };
 		325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325DE9EF15EC031E00D6F34E /* EventChannel.cpp */; };
 		325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 325DE9F015EC031E00D6F34E /* EventChannel.h */; };
 		325DE9F615EC03F800D6F34E /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325DE9F415EC03F800D6F34E /* EventAction.h */; };
@@ -909,6 +911,8 @@
 		3258AF0B1935F46D00A66D44 /* FeederTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeederTest.h; sourceTree = "<group>"; };
 		325CA6B915EE10B3007FCC12 /* EventAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventAction.cpp; sourceTree = "<group>"; };
 		325CA6BA15EE10B3007FCC12 /* EventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAction.h; sourceTree = "<group>"; };
+		325D2FCB1AFA19E500B2A706 /* HealtManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HealtManager.cpp; sourceTree = "<group>"; };
+		325D2FCC1AFA19E500B2A706 /* HealtManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HealtManager.h; sourceTree = "<group>"; };
 		325DE9EF15EC031E00D6F34E /* EventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventChannel.cpp; sourceTree = "<group>"; };
 		325DE9F015EC031E00D6F34E /* EventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventChannel.h; sourceTree = "<group>"; };
 		325DE9F415EC03F800D6F34E /* EventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAction.h; sourceTree = "<group>"; };
@@ -1977,6 +1981,15 @@
 			path = ArchitectureTests;
 			sourceTree = "<group>";
 		};
+		325D2FCA1AFA19B600B2A706 /* healt_system */ = {
+			isa = PBXGroup;
+			children = (
+				325D2FCB1AFA19E500B2A706 /* HealtManager.cpp */,
+				325D2FCC1AFA19E500B2A706 /* HealtManager.h */,
+			);
+			path = healt_system;
+			sourceTree = "<group>";
+		};
 		325DE9EE15EC001900D6F34E /* channel */ = {
 			isa = PBXGroup;
 			children = (
@@ -2218,6 +2231,7 @@
 				326DB3FC14B38BC00018A8D0 /* exception */,
 				320C2180151B2BF200BD0F41 /* event */,
 				326DB3FE14B38BC00018A8D0 /* general */,
+				325D2FCA1AFA19B600B2A706 /* healt_system */,
 				322884421ADBB50300CA1F4B /* property */,
 				32875F951776317F00E33D6F /* plugin */,
 				32BE864415A0CDC200818C39 /* log */,
@@ -3430,6 +3444,7 @@
 				32640A2A169DCC5800450962 /* DataFetcherInterface.h in Headers */,
 				32640A2C169DCC5800450962 /* EmbeddedDataTransform.h in Headers */,
 				32640A2D169DCC5800450962 /* AbstractDeviceTracker.h in Headers */,
+				325D2FCE1AFA19E500B2A706 /* HealtManager.h in Headers */,
 				32640A30169DCC5800450962 /* FetcherDeviceTracker.h in Headers */,
 				32640A31169DCC5800450962 /* TrackerListener.h in Headers */,
 				32640A33169DCC5800450962 /* TransformTracker.h in Headers */,
@@ -4013,6 +4028,7 @@
 				32661C711AA7606400F1A721 /* NodeMessageChannel.cpp in Sources */,
 				3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */,
 				3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */,
+				325D2FCD1AFA19E500B2A706 /* HealtManager.cpp in Sources */,
 				324A4B90191A527D00975394 /* base64.cpp in Sources */,
 				324A4B6E191A428500975394 /* assert_util.cpp in Sources */,
 				322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */,
