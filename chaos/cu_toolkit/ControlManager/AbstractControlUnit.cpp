@@ -224,6 +224,9 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
 	
 	//grab dataset description
 	DatasetDB::fillDataWrapperWithDataSetDescription(setupConfiguration);
+
+        //get action description
+    getActionDescrionsInDataWrapper(setupConfiguration);
 }
 
 void AbstractControlUnit::unitDefineDriver(std::vector<DrvRequestInfo>& neededDriver) {

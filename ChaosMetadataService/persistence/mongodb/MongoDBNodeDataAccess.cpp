@@ -123,6 +123,7 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
     mongo::BSONObjBuilder bson_find;
     mongo::BSONObjBuilder updated_field;
     mongo::BSONObjBuilder bson_update;
+    mongo::BSONArrayBuilder bson_update_array;
     try {
         if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) return -1;
             //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) return -2;
@@ -145,7 +146,56 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) {
             updated_field << chaos::NodeDefinitionKey::NODE_TIMESTAMP << (long long)node_description.getUInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP);
         }
+        if(node_description.hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC)) {
+            std::auto_ptr<CMultiTypeDataArrayWrapper> action_array(node_description.getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
+            for(int idx = 0;
+                idx < action_array->size();
+                idx++) {
+                mongo::BSONObjBuilder action_description;
+                mongo::BSONArrayBuilder param_descriptions;
+                std::auto_ptr<CDataWrapper> element(action_array->getCDataWrapperElementAtIndex(idx));
+                if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
+                    action_description << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
+                    << element->getStringValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
+                }
+                if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION)) {
+                    action_description << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION
+                    << element->getStringValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION);
+                }
+                    //check if the action has parameter
+                if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM)) {
+                    std::auto_ptr<CMultiTypeDataArrayWrapper> param_array(element->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM));
+                    for(int idx = 0;
+                        idx < param_array->size();
+                        idx++) {
+                        mongo::BSONObjBuilder single_param_desc;
+                        std::auto_ptr<CDataWrapper> param(param_array->getCDataWrapperElementAtIndex(idx));
 
+                        if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME)) {
+                            single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME
+                            << param->getStringValue( chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME);
+                        }
+                        if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_INFO)) {
+                            single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_INFO
+                            << param->getStringValue( chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_INFO);
+                        }
+                        if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_TYPE)) {
+                            single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_TYPE
+                            << param->getInt32Value(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_TYPE);
+                        }
+                            //add element to array
+                        param_descriptions << single_param_desc.obj();
+                    }
+                        //add all param description
+                    action_description.appendArray(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM, param_descriptions.arr());
+                }
+                    //appen action description to array
+                bson_update_array << action_description.obj();
+            }
+
+                //add all action to the bson update object
+            updated_field.appendArray(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC, bson_update_array.arr());
+        }
 
         if(updated_field.len() == 0) return 0;
 
