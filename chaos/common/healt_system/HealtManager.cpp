@@ -181,6 +181,9 @@ void HealtManager::addNewNode(const std::string& node_uid) {
     if(map_node.count(node_uid) != 0) return;
         //add new node in map
     map_node.insert(make_pair(node_uid, boost::shared_ptr<NodeHealtSet>(new NodeHealtSet(node_uid))));
+
+        //add default standard 'status' metric
+    map_node[node_uid]->map_metric.insert(make_pair(NodeHealtDefinitionKey::NODE_HEALT_STATUS, boost::shared_ptr<HealtMetric>(new StringHealtMetric(NodeHealtDefinitionKey::NODE_HEALT_STATUS))));
 }
 
 void HealtManager::removeNode(const std::string& node_uid) {

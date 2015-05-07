@@ -20,6 +20,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/cu_toolkit/ControlManager/ControlManager.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
@@ -46,6 +47,7 @@ namespace cu_driver_manager = chaos::cu::driver_manager;
 
 using namespace chaos;
 using namespace chaos::common::utility;
+using namespace chaos::common::healt_system;
 using namespace chaos::cu::command_manager;
 using namespace chaos::cu::control_manager;
 using namespace std;
@@ -168,6 +170,9 @@ void ControlManager::init(void *initParameter) throw(CException) {
 void ControlManager::start() throw(CException) {
     LCMAPP_  << "Start cu scan timer";
 	if(use_unit_server){
+            //register unit server node
+        HealtManager::getInstance()->addNewNode(unit_server_alias);
+        HealtManager::getInstance()->publishNodeHealt(unit_server_alias);
 		//add unit server registration managment timer
 		chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC));
 	} else {
@@ -630,6 +635,10 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
 			  if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()) == boost::msm::back::HANDLED_TRUE){
 			    LCMAPP_ << "Registration is gone well";
 			    //we are published and it is ok!
+                //update healt status
+                  HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
+                                                                  NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                                  NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
 			  } else {
 			    LCMAPP_ << "Registration ACK received,bad  SM state "<<(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()));
 			    throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for published event", __PRETTY_FUNCTION__);

@@ -221,6 +221,37 @@ namespace chaos {
     }
     /** @} */ // end of NodeType
 
+    /** @defgroup NodeHealtDefinitionKey !CHAOS node healt key description
+     *  @{
+     */
+        //! This namespace enclose all the key for inspetting a node healt
+        //! every different node need to expose default key and custom
+    namespace NodeHealtDefinitionKey {
+            //! define the status of a node (loaded, initilized, deinitialized, started, stopped, unloaded)
+        static const char * const NODE_HEALT_STATUS      = "nh_phase";
+    }
+    /** @} */ // end of NodeHealtDefinitionKey
+
+    /** @defgroup NodeHealtDefinitionValue !CHAOS node healt standard value
+     *  @{
+     */
+        //! This namespace enclose all the value for the healt key
+    namespace NodeHealtDefinitionValue {
+            //! unloaded status
+        static const char * const NODE_HEALT_STATUS_UNLOAD      = "Unload";
+            //! load status
+        static const char * const NODE_HEALT_STATUS_LOAD        = "Load";
+            //! initilizeed status
+        static const char * const NODE_HEALT_STATUS_INIT        = "Init";
+            //! deinitialized status
+        static const char * const NODE_HEALT_STATUS_DEINIT      = "Deinit";
+            //! started status
+        static const char * const NODE_HEALT_STATUS_START       = "Start";
+            //! stopped status
+        static const char * const NODE_HEALT_STATUS_STOP        = "Stop";
+    }
+    /** @} */ // end of NodeHealtDefinitionValue
+
     /** @defgroup NodeDomainAndActionRPC !CHAOS node rpc key description
      *  @{
      */
