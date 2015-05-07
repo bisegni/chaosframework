@@ -14,6 +14,10 @@ SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
                         api/AbstractApi.cpp
                         api/AbstractApiGroup.cpp)
 
+SET(cnd_src  ${cnd_src}	api/healt/HealtApiGroup.cpp
+                        api/healt/ProcessHello.cpp
+                        api/healt/ProcessBye.cpp)
+
 SET(cnd_src  ${cnd_src}	api/unit_server/UnitServerApiGroup.cpp
                         api/unit_server/GetDescription.cpp
                         api/unit_server/LoadUnloadControlUnit.cpp
