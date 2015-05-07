@@ -29,6 +29,7 @@ using namespace chaos::common::io;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::healt_system;
+using namespace chaos::common::async_central;
 
 #define HM_INFO INFO_LOG(HealtMetric)
 #define HM_DBG DBG_LOG(HealtMetric)
@@ -76,7 +77,7 @@ void HealtManager::init(void *init_data) throw (chaos::CException) {
 }
 
 void HealtManager::start() throw (chaos::CException) {
-
+    AsyncCentralManager::getInstance()->addTimer(this, 0, 5000);
 }
 
 void HealtManager::stop() throw (chaos::CException) {

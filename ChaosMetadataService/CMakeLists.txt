@@ -33,7 +33,8 @@ SET(cnd_src  ${cnd_src}	api/control_unit/ControlUnitGroup.cpp
                         api/control_unit/GetInstance.cpp
 						api/control_unit/DeleteInstance.cpp
 						api/control_unit/InitDeinit.cpp
-						api/control_unit/StartStop.cpp)
+						api/control_unit/StartStop.cpp
+                        api/control_unit/GetCurrentDataset.cpp)
 
 SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/NodeCreateUnitServer.cpp

@@ -35,17 +35,20 @@ namespace chaos {
     namespace common{
         namespace healt_system {
 
-            
+
             typedef std::map<std::string, boost::shared_ptr<HealtMetric> >              HealtNodeElementMap;
             typedef std::map<std::string, boost::shared_ptr<HealtMetric> >::iterator    HealtNodeElementMapIterator;
 
             struct NodeHealtSet {
-                //the key to use for the node publishing operation
+                    //the key to use for the node publishing operation
                 std::string   node_key;
-                
-                //is the metric node map
+
+                    //is the metric node map
                 HealtNodeElementMap map_metric;
-                
+
+                    //permit to lock the intere set
+                boost::shared_mutex mutex_metric_set;
+
                 NodeHealtSet(const std::string& node_uid){
                     node_key = node_uid + "_healt";
                 }
@@ -53,7 +56,7 @@ namespace chaos {
 
             typedef std::map<std::string, boost::shared_ptr<NodeHealtSet> >             HealtNodeMap;
             typedef std::map<std::string, boost::shared_ptr<NodeHealtSet> >::iterator   HealtNodeMapIterator;
-            
+
 
                 //! Is the root class for the healt managment system
             /*!
@@ -83,11 +86,11 @@ namespace chaos {
                 void start() throw (chaos::CException);
                 void stop() throw (chaos::CException);
                 void deinit() throw (chaos::CException);
-                
-                //s
+
+                    //s
                 void setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker);
 
-                
+
                 void addNewNode(const std::string& node_uid);
                 void removeNode(const std::string& node_uid);
                 void addNodeMetric(const std::string& node_uid,
@@ -108,7 +111,7 @@ namespace chaos {
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         const bool bool_value);
-                
+
                     //publish the healt for the ndoe uid
                 void publishNodeHealt(const std::string& node_uid);
             };

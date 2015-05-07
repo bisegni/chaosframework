@@ -197,6 +197,7 @@
 		325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325CA6BA15EE10B3007FCC12 /* EventAction.h */; };
 		325D2FCD1AFA19E500B2A706 /* HealtManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325D2FCB1AFA19E500B2A706 /* HealtManager.cpp */; };
 		325D2FCE1AFA19E500B2A706 /* HealtManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 325D2FCC1AFA19E500B2A706 /* HealtManager.h */; };
+		325D2FD11AFB571000B2A706 /* healt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325D2FCF1AFB571000B2A706 /* healt.cpp */; };
 		325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325DE9EF15EC031E00D6F34E /* EventChannel.cpp */; };
 		325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 325DE9F015EC031E00D6F34E /* EventChannel.h */; };
 		325DE9F615EC03F800D6F34E /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325DE9F415EC03F800D6F34E /* EventAction.h */; };
@@ -917,6 +918,8 @@
 		325CA6BA15EE10B3007FCC12 /* EventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAction.h; sourceTree = "<group>"; };
 		325D2FCB1AFA19E500B2A706 /* HealtManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HealtManager.cpp; sourceTree = "<group>"; };
 		325D2FCC1AFA19E500B2A706 /* HealtManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HealtManager.h; sourceTree = "<group>"; };
+		325D2FCF1AFB571000B2A706 /* healt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = healt.cpp; sourceTree = "<group>"; };
+		325D2FD01AFB571000B2A706 /* healt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = healt.h; sourceTree = "<group>"; };
 		325DE9EF15EC031E00D6F34E /* EventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventChannel.cpp; sourceTree = "<group>"; };
 		325DE9F015EC031E00D6F34E /* EventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventChannel.h; sourceTree = "<group>"; };
 		325DE9F415EC03F800D6F34E /* EventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAction.h; sourceTree = "<group>"; };
@@ -1996,6 +1999,15 @@
 			path = healt_system;
 			sourceTree = "<group>";
 		};
+		325D2FD21AFB573100B2A706 /* healt */ = {
+			isa = PBXGroup;
+			children = (
+				325D2FCF1AFB571000B2A706 /* healt.cpp */,
+				325D2FD01AFB571000B2A706 /* healt.h */,
+			);
+			path = healt;
+			sourceTree = "<group>";
+		};
 		325DE9EE15EC001900D6F34E /* channel */ = {
 			isa = PBXGroup;
 			children = (
@@ -3067,6 +3079,7 @@
 		32C7B8FA16DD35D7005B3B21 /* api */ = {
 			isa = PBXGroup;
 			children = (
+				325D2FD21AFB573100B2A706 /* healt */,
 				324EF3DA1AE922B1000837AF /* data_service */,
 				32362C171ADC0FA1000CA079 /* control_unit */,
 				328E77FC1A7A937D0008C070 /* node */,
@@ -3880,6 +3893,7 @@
 				328D0FF41A8A0862001A2001 /* UnitServerDataAccess.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
+				325D2FD11AFB571000B2A706 /* healt.cpp in Sources */,
 				320530D71AE924ED0064275B /* AssociationControlUnit.cpp in Sources */,
 				32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */,
 				328C872F1ADFC2D60047C79B /* GetInstance.cpp in Sources */,
