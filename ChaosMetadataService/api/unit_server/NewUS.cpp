@@ -23,8 +23,8 @@
 #include <boost/format.hpp>
 
 using namespace chaos::common::data;
-using namespace chaos::metadata_service::persistence::data_access;
 using namespace chaos::metadata_service::api::unit_server;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define US_NEW_INFO INFO_LOG(NewUS)
 #define US_NEW_DBG  DBG_LOG(NewUS)

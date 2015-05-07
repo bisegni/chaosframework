@@ -21,6 +21,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::control_unit;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define CU_SI_INFO INFO_LOG(SearchInstancesByUS)
 #define CU_SI_DBG  DBG_LOG(SearchInstancesByUS)
@@ -66,7 +67,7 @@ CDataWrapper *SearchInstancesByUS::execute(CDataWrapper *api_data,
     }
 
         //get node data access
-    GET_DATA_ACCESS(persistence::data_access::ControlUnitDataAccess, cu_da, -2)
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -2)
     if((err = cu_da->searchInstanceForUnitServer(page_result,
                                                  api_data->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT),
                                                  cu_type_filter,

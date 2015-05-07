@@ -1,9 +1,9 @@
 /*
- *	GetDescription.h
+ *	HealtApiGroup.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
- *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,27 +17,19 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__GetDescription__
-#define __CHAOSFramework__GetDescription__
+#include "HealtApiGroup.h"
+#include "ProcessHello.h"
+#include "ProcessBye.h"
+using namespace chaos::metadata_service::api::healt;
+DEFINE_CLASS_FACTORY_NO_ALIAS(HealtApiGroup,
+                              chaos::metadata_service::api::AbstractApiGroup);
 
-#include "../AbstractApi.h"
-
-namespace chaos {
-	namespace metadata_service {
-		namespace api {
-			namespace unit_server {
-				
-				class GetDescription:
-				public AbstractApi {
-				public:
-					GetDescription();
-					~GetDescription();
-					chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
-				};
-				
-			}
-		}
-	}
+HealtApiGroup::HealtApiGroup():
+AbstractApiGroup(chaos::HealtProcessDomainAndActionRPC::RPC_DOMAIN){
+    addApi<ProcessHello>();
+    addApi<ProcessBye>();
 }
 
-#endif /* defined(__CHAOSFramework__GetDescription__) */
+HealtApiGroup::~HealtApiGroup() {
+    
+}

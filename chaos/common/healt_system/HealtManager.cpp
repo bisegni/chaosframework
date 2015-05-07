@@ -21,6 +21,7 @@
 #include <chaos/common/io/IODirectIODriver.h>
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
+#include <chaos/common/utility/TimingUtil.h>
 
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
@@ -28,6 +29,7 @@
 using namespace chaos::common::io;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::message;
 using namespace chaos::common::healt_system;
 using namespace chaos::common::async_central;
 
@@ -47,15 +49,27 @@ if(map_node[n]->map_metric.count(m) == 0) return;
 t *tmp = dynamic_cast<t*>(map_node[n]->map_metric[m].get());\
 if(tmp)tmp->value = v;
 
+HealtManager::HealtManager():
+network_broker_ptr(NULL),
+mds_message_channel(NULL){
+
+}
+HealtManager::~HealtManager() {
+
+}
+
 void HealtManager::setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker) {
     network_broker_ptr = _network_broker;
 }
 void HealtManager::init(void *init_data) throw (chaos::CException) {
-     if(network_broker_ptr == NULL) throw CException(-1, "No NetworkBroker has been set", __PRETTY_FUNCTION__);
+    if(network_broker_ptr == NULL) throw CException(-1, "No NetworkBroker has been set", __PRETTY_FUNCTION__);
 
     std::string impl_name = boost::str(boost::format("%1%IODriver") %
                                        GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
     HM_INFO << "Allocating data driver " << impl_name;
+
+    mds_message_channel = network_broker_ptr->getMultiMetadataServiceRawMessageChannel();
+    if(mds_message_channel == NULL) throw CException(-2, "Unalbe to get metadata server channel", __PRETTY_FUNCTION__);
 
     io_data_driver.reset(common::utility::ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(impl_name));
     if(io_data_driver.get()) {
@@ -76,16 +90,90 @@ void HealtManager::init(void *init_data) throw (chaos::CException) {
     io_data_driver->init(NULL);
 }
 
+void HealtManager::sayHello() throw (chaos::CException) {
+    int retry = 0;
+    bool saying_hello = true;
+    HM_INFO << "Start hello phase throward metadata services";
+    CDataWrapper *hello_pack = new CDataWrapper();
+        //add node id
+    hello_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
+                               GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort());
+    hello_pack->addStringValue(NodeDefinitionKey::NODE_TYPE,
+                               NodeType::NODE_TYPE_HEALT_PROCESS);
+    hello_pack->addInt64Value(NodeDefinitionKey::NODE_TIMESTAMP,
+                              TimingUtil::getTimeStamp());
+    std::auto_ptr<MultiAddressMessageRequestFuture> future = mds_message_channel->sendRequestWithFuture(HealtProcessDomainAndActionRPC::RPC_DOMAIN,
+                                                                                                        HealtProcessDomainAndActionRPC::ACTION_PROCESS_WELCOME,
+                                                                                                        hello_pack,
+                                                                                                        1000);
+    do{
+        if(future->wait()) {
+            saying_hello = false;
+            if(future->getError()) {
+                throw CException(future->getError(),
+                                 future->getErrorMessage(),
+                                 future->getErrorDomain());
+            } else if(!future->getResult()) {
+                    //we have received no result or no server list
+                throw CException(-1,
+                                 "Empty answer from hello message",
+                                 __PRETTY_FUNCTION__);
+            } else {
+                if(!future->getResult()->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)) {
+                        //we have received no result or no server list
+                    throw CException(-2,
+                                     "No server list on hello answer",
+                                     __PRETTY_FUNCTION__);
+                } else {
+                        //we have result and need to update the driver
+                    io_data_driver->updateConfiguration(future->getResult());
+                }
+            }
+        } else {
+            if(retry++ >= 3) {
+                throw CException(-3,
+                                 "Exiceed the maximum number of retry to wait the answer",
+                                 __PRETTY_FUNCTION__);
+            } else {
+                HM_INFO << "Retry waiting answer";
+            }
+        }
+    }while(saying_hello);
+}
+
 void HealtManager::start() throw (chaos::CException) {
+        //say hello to mds
+    for(int retry = 0;
+        retry < 3;
+        retry ++) {
+        try{
+            sayHello();
+        } catch(chaos::CException& ex) {
+            DECODE_CHAOS_EXCEPTION(ex)
+            continue;
+        }
+        break;
+    }
+
+        //add timer to publish all node healt very 5 second
     AsyncCentralManager::getInstance()->addTimer(this, 0, 5000);
 }
 
 void HealtManager::stop() throw (chaos::CException) {
-
+        //add timer to publish all node healt very 5 second
+    AsyncCentralManager::getInstance()->removeTimer(this);
 }
 
 void HealtManager::deinit() throw (chaos::CException) {
-    io_data_driver->deinit();
+    if(io_data_driver.get()) {
+        io_data_driver->deinit();
+        io_data_driver.reset();
+    }
+
+    if(mds_message_channel) {
+        network_broker_ptr->disposeMessageChannel(mds_message_channel);
+        mds_message_channel = NULL;
+    }
 }
 
 void HealtManager::addNewNode(const std::string& node_uid) {
@@ -174,25 +262,25 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
 void HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_map,
                                        chaos::common::data::CDataWrapper& node_data_pack) {
     BOOST_FOREACH(HealtNodeElementMap::value_type map_metric_element, element_map) {
-        //add metric to cdata wrapper
+            //add metric to cdata wrapper
         map_metric_element.second->addMetricToCD(node_data_pack);
     }
 }
 
-//publish the healt for the ndoe uid
+    //publish the healt for the ndoe uid
 void HealtManager::publishNodeHealt(const std::string& node_uid) {
     if(map_node.count(node_uid) == 0) return;
-    
-    //allocate the datapack
+
+        //allocate the datapack
     std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
-    //compose datapack
+        //compose datapack
     prepareNodeDataPack(map_node[node_uid]->map_metric,
                         *data_pack.get());
-    //send datapack
+        //send datapack
     io_data_driver->storeData(map_node[node_uid]->node_key,
                               data_pack.release());
 }
 
 void HealtManager::timeout() {
-
+    
 }

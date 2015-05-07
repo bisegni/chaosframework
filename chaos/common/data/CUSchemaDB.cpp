@@ -83,7 +83,7 @@ void CUSchemaDB::initDB(const char *name, bool onMemory) {
     MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, keyTmp);
     MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, keyTmp);
     MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE, keyTmp);
-    MAKE_KEY(DataServiceNodeDefinitionKey::DS_SERVER_ADDRESS, keyTmp);
+    MAKE_KEY(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST, keyTmp);
 }
 
 CUSchemaDB::~CUSchemaDB() {
@@ -433,15 +433,15 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     }
 
         //add now the server address for this device if sent
-    if(attributeDataWrapper.hasKey(DataServiceNodeDefinitionKey::DS_SERVER_ADDRESS)) {
+    if(attributeDataWrapper.hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)) {
             //remove all stored server
-        clearAllAttributeForProperty(deviceEntity, mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_SERVER_ADDRESS]);
+        clearAllAttributeForProperty(deviceEntity, mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST]);
 
             //in the package has been sent the address where fir the data for this device
-        auto_ptr<CMultiTypeDataArrayWrapper> serverVec(attributeDataWrapper.getVectorValue(DataServiceNodeDefinitionKey::DS_SERVER_ADDRESS));
+        auto_ptr<CMultiTypeDataArrayWrapper> serverVec(attributeDataWrapper.getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
         for (int idx = 0; idx < serverVec->size(); idx++) {
                 //add new server
-            deviceEntity->addProperty(mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_SERVER_ADDRESS],  serverVec->getStringElementAtIndex(idx).c_str());
+            deviceEntity->addProperty(mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST],  serverVec->getStringElementAtIndex(idx).c_str());
         }
     }
 }
@@ -540,14 +540,14 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEnt
 
         //add now the server address for this device if sent
     attrProperty.clear();
-    deviceEntity->getPropertyByKeyID(mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_SERVER_ADDRESS], attrProperty);
+    deviceEntity->getPropertyByKeyID(mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST], attrProperty);
     for (ptr_vector<edb::KeyIdAndValue>::iterator iter = attrProperty.begin();
          iter != attrProperty.end();
          iter++) {
         edb::KeyIdAndValue *kivPtr = &(*iter);
         deviceDatasetDescription.appendStringToArray(kivPtr->value.strValue);
     }
-    deviceDatasetDescription.finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_SERVER_ADDRESS);
+    deviceDatasetDescription.finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
 }
 
 /*

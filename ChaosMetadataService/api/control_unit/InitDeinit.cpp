@@ -24,6 +24,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::control_unit;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define CU_INDEIN_INFO INFO_LOG(InitDeinit)
 #define CU_INDEIN_DBG  DBG_LOG(InitDeinit)
@@ -96,9 +97,9 @@ void InitDeinit::initialize(const std::string& cu_uid) {
     std::auto_ptr<CDataWrapper> dataset_description;
     std::auto_ptr<CDataWrapper> init_datapack(new CDataWrapper());
 
-    GET_DATA_ACCESS(persistence::data_access::NodeDataAccess, n_da, -1)
-    GET_DATA_ACCESS(persistence::data_access::ControlUnitDataAccess, cu_da, -2)
-    GET_DATA_ACCESS(persistence::data_access::DataServiceDataAccess, ds_da, -3)
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -1)
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -2)
+    GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -3)
 
         //set the control unique id in the init datapack
     init_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
@@ -200,7 +201,7 @@ void InitDeinit::initialize(const std::string& cu_uid) {
             }
 
         }
-        init_datapack->finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_SERVER_ADDRESS);
+        init_datapack->finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
     }
         //sethte aciton type
     init_datapack->addInt32Value("action", (int32_t)0);
@@ -212,7 +213,7 @@ void InitDeinit::initialize(const std::string& cu_uid) {
 
 void InitDeinit::deinitialize(const std::string& cu_uid) {
 
-    GET_DATA_ACCESS(persistence::data_access::NodeDataAccess, n_da, -1)
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -1)
     int err = 0;
     uint64_t command_id=0;
     CDataWrapper *tmp_ptr = NULL;

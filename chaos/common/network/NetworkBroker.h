@@ -323,6 +323,9 @@ namespace chaos {
                  */
                 chaos::common::message::MultiAddressMessageChannel *getRawMultiAddressMessageChannel();
 
+                    //!return a multi node channel for all metadata service
+                chaos::common::message::MultiAddressMessageChannel *getMultiMetadataServiceRawMessageChannel();
+
 				//!performance channel creation
 				/*!
 				 Performe the creation of performance channel thowards a network node

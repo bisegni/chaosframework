@@ -24,6 +24,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::control_unit;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define CU_DI_INFO INFO_LOG(GetInstance)
 #define CU_DI_DBG  DBG_LOG(GetInstance)
@@ -48,7 +49,7 @@ CDataWrapper *DeleteInstance::execute(CDataWrapper *api_data,
     const std::string cu_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     const std::string us_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
 
-    GET_DATA_ACCESS(persistence::data_access::ControlUnitDataAccess, cu_da, -4)
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -4)
     if((err = cu_da->deleteInstanceDescription(us_uid,
                                                cu_uid))){
         LOG_AND_TROW(CU_DI_ERR, err, boost::str(boost::format("Error removing the control unit instance description for cuid:%1% and usuid:%2%") % cu_uid % us_uid));

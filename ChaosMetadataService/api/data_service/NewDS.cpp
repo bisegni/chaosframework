@@ -22,6 +22,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::data_service;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define DS_NEW_DS_INFO INFO_LOG(NewDS)
 #define DS_NEW_DS_DBG  DBG_LOG(NewDS)
@@ -49,7 +50,7 @@ CDataWrapper *NewDS::execute(CDataWrapper *api_data,
     const std::string ds_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     const std::string ds_direct_io_address = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR);
     const uint32_t ds_direct_io_endpoint = api_data->getUInt32Value(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT);
-    GET_DATA_ACCESS(persistence::data_access::DataServiceDataAccess, ds_da, -4)
+    GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -4)
     if((err = ds_da->checkPresence(ds_uid, presence))) {
         LOG_AND_TROW(DS_NEW_DS_ERR, err, boost::str(boost::format("Error checking the presence of the data service cuid %1%") % ds_uid));
     }

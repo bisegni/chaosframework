@@ -250,9 +250,9 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
 	//lock the feeder access
 	boost::unique_lock<boost::shared_mutex>(mutext_feeder);
 	//checkif someone has passed us the device indetification
-	if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_SERVER_ADDRESS)){
+	if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
 		IODirectIODriver_LAPP_ << "Get the DataManager LiveData address value";
-		auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_SERVER_ADDRESS));
+		auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
 		size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
 		for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
 			string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);

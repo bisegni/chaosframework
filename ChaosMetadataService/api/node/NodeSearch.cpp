@@ -23,6 +23,7 @@
 #define NS_ERR  ERR_LOG(NodeSearch)
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
+using namespace chaos::metadata_service::persistence::data_access;
 
 NodeSearch::NodeSearch():
 AbstractApi("nodeSearch"){
@@ -50,7 +51,7 @@ chaos::common::data::CDataWrapper *NodeSearch::execute(chaos::common::data::CDat
         NS_DBG << "The length of the page has been set to:" << page_length;
     }
         //get node data access
-    GET_DATA_ACCESS(persistence::data_access::NodeDataAccess, n_da, -4)
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -4)
     if(n_da->searchNode(&result,
                         api_data->getStringValue("unique_id_filter"),
                         api_data->getInt32Value("node_type_filter"),

@@ -10,6 +10,7 @@
 #include <boost/format.hpp>
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::data_service;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define DS_GET_ASSOC_INFO INFO_LOG(GetAssociationByDS)
 #define DS_GET_ASSOC_DBG  DBG_LOG(GetAssociationByDS)
@@ -36,7 +37,7 @@ chaos::common::data::CDataWrapper *GetAssociationByDS::execute(chaos::common::da
     auto_ptr<CDataWrapper> result;
     std::vector<boost::shared_ptr<CDataWrapper> > node_associated;
 
-    GET_DATA_ACCESS(persistence::data_access::DataServiceDataAccess, ds_da, -3)
+    GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -3)
     const std::string ds_unique_id = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
 
     if((err = ds_da->searchAssociationForUID(ds_unique_id,

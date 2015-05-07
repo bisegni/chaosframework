@@ -24,6 +24,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::control_unit;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define CU_STASTO_INFO INFO_LOG(StartStop)
 #define CU_STASTO_DBG  DBG_LOG(StartStop)
@@ -53,7 +54,7 @@ CDataWrapper *StartStop::execute(CDataWrapper *api_data,
     const std::string cu_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     const bool start = api_data->getBoolValue("start");
 
-    GET_DATA_ACCESS(persistence::data_access::NodeDataAccess, n_da, -1)
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -1)
 
         //get default control unit node description
     if((err = n_da->getNodeDescription(cu_uid, &tmp_ptr))) {

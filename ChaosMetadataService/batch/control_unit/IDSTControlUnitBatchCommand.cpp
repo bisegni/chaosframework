@@ -38,7 +38,8 @@ message_channel(NULL),
 cu_id(),
 cu_rpc_addr(),
 cu_rpc_dom(),
-action(ACTION_INIT) {
+action(ACTION_INIT),
+phase(PHASE_SEND_MESSAGE){
         //set default scheduler delay 1 second
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
         //set the timeout to 10 seconds

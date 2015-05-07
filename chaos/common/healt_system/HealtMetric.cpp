@@ -21,21 +21,24 @@ void HealtMetric::addMetricToCD(CDataWrapper *data) {
 
 BoolHealtMetric::BoolHealtMetric(const std::string& _name):
 HealtMetric(_name,
-            chaos::DataType::TYPE_BOOLEAN){}
+            chaos::DataType::TYPE_BOOLEAN),
+value(false){}
 void BoolHealtMetric::addMetricToCD(CDataWrapper& data) {
     data.addBoolValue(name.c_str(), value);
 }
 
 Int32HealtMetric::Int32HealtMetric(const std::string& _name):
 HealtMetric(_name,
-            chaos::DataType::TYPE_INT32){}
+            chaos::DataType::TYPE_INT32),
+value(0){}
 void Int32HealtMetric::addMetricToCD(CDataWrapper& data) {
     data.addInt32Value(name, value);
 }
 
 Int64HealtMetric::Int64HealtMetric(const std::string& _name):
 HealtMetric(_name,
-            chaos::DataType::TYPE_INT64){}
+            chaos::DataType::TYPE_INT64),
+value(0){}
 void Int64HealtMetric::addMetricToCD(CDataWrapper& data) {
     data.addInt64Value(name, value);
 }
@@ -43,14 +46,16 @@ void Int64HealtMetric::addMetricToCD(CDataWrapper& data) {
 
 DoubleHealtMetric::DoubleHealtMetric(const std::string& _name):
 HealtMetric(_name,
-            chaos::DataType::TYPE_DOUBLE){}
+            chaos::DataType::TYPE_DOUBLE),
+value(0.0){}
 void DoubleHealtMetric::addMetricToCD(CDataWrapper& data) {
     data.addDoubleValue(name, value);
 }
 
 StringHealtMetric::StringHealtMetric(const std::string& _name):
 HealtMetric(_name,
-            chaos::DataType::TYPE_STRING){}
+            chaos::DataType::TYPE_STRING),
+value(""){}
 void StringHealtMetric::addMetricToCD(CDataWrapper& data) {
     data.addStringValue(name, value);
 }

@@ -24,6 +24,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::control_unit;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define CU_GCD_INFO INFO_LOG(StartStop)
 #define CU_GCD_DBG  DBG_LOG(StartStop)
@@ -49,7 +50,7 @@ CDataWrapper *GetCurrentDataset::execute(CDataWrapper *api_data,
     CDataWrapper        *result     = NULL;
     const   std::string cu_uid      = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
 
-    GET_DATA_ACCESS(persistence::data_access::ControlUnitDataAccess, cu_da, -3)
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -3)
 
         //get default control unit node description
     if((err = cu_da->checkPresence(cu_uid, presence))) {
@@ -58,14 +59,13 @@ CDataWrapper *GetCurrentDataset::execute(CDataWrapper *api_data,
         LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("No control unit available with uid id:%1%") % cu_uid));
     }
 
-    if(err = cu_da->checkDatasetPresence(cu_uid, presence)) {
+    if((err = cu_da->checkDatasetPresence(cu_uid, presence))) {
         LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Error fetching the presence of the dataset for the control unit uid:%1% with error %2%") % cu_uid % err));
     } else if(!presence) {
         LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("No dataset found for control unit with uid id:%1%") % cu_uid));
     }
-    if(err = cu_da->getDataset(cu_uid, &result)) {
+    if((err = cu_da->getDataset(cu_uid, &result))) {
         LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Error fetching the dataset for the control unit uid:%1% with error %2%") % cu_uid % err));
     }
-
     return result;
 }

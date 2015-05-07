@@ -10,6 +10,7 @@
 #include <boost/format.hpp>
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::data_service;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define DS_GET_ALL_INFO INFO_LOG(GetAssociationByDS)
 #define DS_GET_ALL_DBG  DBG_LOG(GetAssociationByDS)
@@ -31,7 +32,7 @@ chaos::common::data::CDataWrapper *GetAllDataService::execute(chaos::common::dat
     auto_ptr<CDataWrapper> result;
     std::vector<boost::shared_ptr<CDataWrapper> > data_services;
 
-    GET_DATA_ACCESS(persistence::data_access::DataServiceDataAccess, ds_da, -3)
+    GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -3)
 
     if((err = ds_da->searchAllDataAccess(data_services, 0, 100))){
         LOG_AND_TROW(DS_GET_ALL_ERR, err, "Error fetching data service list")

@@ -264,7 +264,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
 //            configuration.appendStringToArray(liveDataServer[idx]);
 //        }
 //    }
-//    configuration.finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_SERVER_ADDRESS);
+//    configuration.finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
     
     //configure metadataserver
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, InitOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")

@@ -557,6 +557,18 @@ MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel() {
     return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(mdsNodeAddr, MDS));
 }
 
+    //!Metadata server channel creation
+/*!
+ Performe the creation of metadata server
+ */
+MultiAddressMessageChannel *NetworkBroker::getMultiMetadataServiceRawMessageChannel() {
+    MultiAddressMessageChannel *mc = getRawMultiAddressMessageChannel();
+    if(mc){
+        mc->addNode(GlobalConfiguration::getInstance()->getMetadataServerAddress());
+    }
+    return mc;
+}
+
 //!Device channel creation
 /*!
  Performe the creation of device channel

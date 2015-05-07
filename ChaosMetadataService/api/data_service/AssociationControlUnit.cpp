@@ -23,6 +23,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::data_service;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define DS_ASSCIATE_CU_DS_INFO INFO_LOG(AssociationControlUnit)
 #define DS_ASSCIATE_CU_DS_DBG  DBG_LOG(AssociationControlUnit)
@@ -51,8 +52,8 @@ CDataWrapper *AssociationControlUnit::execute(CDataWrapper *api_data,
     const std::string ds_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
     const bool associate = api_data->getBoolValue("associate");
 
-    GET_DATA_ACCESS(persistence::data_access::ControlUnitDataAccess, cu_da, -5)
-    GET_DATA_ACCESS(persistence::data_access::DataServiceDataAccess, ds_da, -6)
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -5)
+    GET_DATA_ACCESS(DataServiceDataAccess, ds_da, -6)
     if((err = ds_da->checkPresence(ds_uid, presence))){
         LOG_AND_TROW(DS_ASSCIATE_CU_DS_ERR, err, boost::str(boost::format("Error checking hte data service '%1%' presence")%ds_uid))
     } else {

@@ -33,10 +33,9 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/log/LogManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-
+#include <chaos/common/healt_system/HealtManager.h>
 //! Default chaos namespace used to group all common api
 namespace chaos {
-
 	
 	//! Chaos common engine class
 	/*!
@@ -134,51 +133,47 @@ namespace chaos {
 			
 			err = uname(&u_name);
 			if(err==-1){
-				LAPP_ << "Platform: " << strerror(errno);
-				} else {
+                    LAPP_ << "Platform: " << strerror(errno);
+            } else {
 					LAPP_ << "Platform: " << u_name.sysname << " " << u_name.nodename << " " << u_name.release << " " << u_name.version << " " << u_name.machine;
-				}
+			}
 				
-				LAPP_ << "Boost version: " << (BOOST_VERSION / 100000) << "."<< ((BOOST_VERSION / 100) % 1000)<< "."<< (BOOST_VERSION / 100000);
-				LAPP_ << "Compiler Version: " << BOOST_COMPILER;
-				LAPP_ << "-----------------------------------------";
+			LAPP_ << "Boost version: " << (BOOST_VERSION / 100000) << "."<< ((BOOST_VERSION / 100) % 1000)<< "."<< (BOOST_VERSION / 100000);
+			LAPP_ << "Compiler Version: " << BOOST_COMPILER;
+			LAPP_ << "-----------------------------------------";
+
+			//find our ip
+			string local_ip;
+			if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){
+				local_ip = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_IP);
+			} else {
+				local_ip = common::utility::InetUtility::scanForLocalNetworkAddress();
+			}
+			GlobalConfiguration::getInstance()->addLocalServerAddress(local_ip);
+
+			LAPP_ << "The local address choosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
+
+			//Starting Async centrla
+			LAPP_ << "Initilizing async central";
+			common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), init_data, "AsyncCentralManager", __PRETTY_FUNCTION__);
+            
+        }
 				
+        void deinit() throw (CException) {
+            LAPP_ << "DeInitilizing async central";
+            common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__);
+        }
 				
-				//find our ip
-				string local_ip;
-				if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){
-					local_ip = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_IP);
-				} else {
-					local_ip = common::utility::InetUtility::scanForLocalNetworkAddress();
-				}
-				GlobalConfiguration::getInstance()->addLocalServerAddress(local_ip);
-				
-				LAPP_ << "The local address choosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
-				
-				//Starting Async centrla
-				LAPP_ << "Initilizing async central";
-				common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), init_data, "AsyncCentralManager", __PRETTY_FUNCTION__);
-				}
-				
-				void deinit() throw (CException) {
-					LAPP_ << "DeInitilizing async central";
-					common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__);
-				}
-				
-				void start() throw (CException) {
+		void start() throw (CException) {
 					
-				}
-				void stop() throw (CException) {
+		}
+		void stop() throw (CException) {
 					
-				}
-				//! Return the global configuration for the current singleton instance
-				/*!
-				 \return the GlobalConfiguration pointer to global instance
-				 */
-				GlobalConfiguration *getGlobalConfigurationInstance() {
-					return GlobalConfiguration::getInstance();
-				}
-				
-		};
+		}
+
+        GlobalConfiguration *getGlobalConfigurationInstance() {
+            return GlobalConfiguration::getInstance();
+        }
+    };
 }
 #endif

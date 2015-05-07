@@ -180,6 +180,13 @@ namespace chaos {
      */
         //! Name space for grupping key for the node type
     namespace NodeType {
+            //! identify a single process healt service
+        /*!
+         Every common toolkit singleton(every process) has an internal healt system
+         taht register in an syncrhonous way his presence.
+         */
+        static const char * const NODE_TYPE_HEALT_PROCESS     = "nt_healt_process";
+
             //! identify an unit server node
         /*!
          A unit server node is a specialized node that act as server for many configurable
@@ -225,7 +232,7 @@ namespace chaos {
         static const char * const ACTION_NODE_STATUS            = "ndk_rpc_request_status";
             //! Action that is called to inform the node of the registration status
         static const char * const ACTION_REGISTRATION_ACK        = "ndk_rpc_reg_ack";
-        
+
             //! Start the control unit intialization, the action need the default value
             //! of the input attribute for a determinate device
         static const char * const ACTION_NODE_INIT                                  = "initNode";
@@ -254,6 +261,30 @@ namespace chaos {
 
     }
     /** @} */ // end of NodeDomainAndActionRPC
+
+    /** @defgroup HealtProcessDefinitionKey !CHAOS healt process key description
+     *  @{
+     */
+    namespace HealtProcessDefinitionKey {
+    }
+    /** @} */ // end of HealtProcessDefinitionKey
+
+    /** @defgroup HealtProcessDomainAndActionRPC !CHAOS healt process key for rpc communication
+     *  @{
+     */
+    namespace HealtProcessDomainAndActionRPC {
+            //! The domain for unit server rpc action
+        static const char * const RPC_DOMAIN                                        = "healt";
+            //! This action is exposed by MDS and nned to be called to the remote node
+            //! for publish itself
+        static const char * const ACTION_PROCESS_WELCOME                            = "processHello";
+            //! This action is exposed by MDS and nned to be called to the remote node
+            //! for unpublish itself
+        static const char * const ACTION_PROCESS_BYE                                = "processBye";
+
+
+    }
+    /** @} */ // end of HealtProcessDomainAndActionRPC
 
     /** @defgroup UnitServerNodeDefinitionKey !CHAOS unit server node key description
      *  @{
@@ -310,7 +341,7 @@ namespace chaos {
      */
         //! This is the collection of the key to configura history and live channel
     namespace DataServiceNodeDefinitionKey {
-        static const char * const DS_SERVER_ADDRESS                            = "dsndk_direct_io_full";
+        static const char * const DS_DIRECT_IO_FULL_ADDRESS_LIST                            = "dsndk_direct_io_full";
             //!lis the endpoitwhere is published the direct io[uint32_t]
         static const char * const DS_DIRECT_IO_ENDPOINT                        = "dsndk_direct_io_ep";
     }
@@ -395,9 +426,9 @@ namespace chaos {
             TYPE_BYTEARRAY,
                 //!bool variable length
             TYPE_BOOLEAN,
-            //!user data type
+                //!user data type
             TYPE_CLUSTER,
-            //!modifier to be ored to normal data types
+                //!modifier to be ored to normal data types
             TYPE_ACCESS_ARRAY=0x100
 
         } DataType;
@@ -553,39 +584,39 @@ namespace chaos {
     }
     /** @} */ // end of DataPackSystemKey
 
-	
-	/** @defgroup DatasetDefinitionkey Dataset definition key
-	 *  This is the collection of the key for the device dataset
-	 *  @{
-	 */
-	//! Name space for grupping option used for define the dataset of the device abstraction
-	namespace DatasetDefinitionkey {
-		//!key for dataset descriptors array {[domain, name, paramteres....]}
-		static const char * const DESCRIPTION                       = "ds_desc";
-		//!key for dataset timestampt validity
-		static const char * const TIMESTAMP                         = "ds_timestamp";
-		//!key for the name of dataset attribute
-		static const char * const ATTRIBUTE_NAME                    = "ds_attr_name";
-		//!key for the tag of the dataset attrbiute
-		static const char * const ATTRIBUTE_TAG                     = "ds_attr_tag";
-		//!key representing the type of parameter
-		static const char * const ATTRIBUTE_TYPE                    = "ds_attr_type";
-		//!key for the units ofr the attrbiute(ampere, volts)
-		static const char * const ATTRIBUTE_UNIT                    = "ds_attr_unit";
-		//!key representing the name of the parameter
-		static const char * const ATTRIBUTE_DESCRIPTION             = "ds_attr_desc";
-		//!key representig the information for the parameter
-		static const char * const ATTRIBUTE_DIRECTION               = "ds_attr_dir";
-		//!key representing the value max size where need (type different from rawd data type ex: int32)
-		static const char * const VALUE_MAX_SIZE                    = "ds_max_size";
-		//!key representing the default value
-		static const char * const DEFAULT_VALUE                     = "ds_default_value";
-		//!key representing the default value
-		static const char * const MAX_RANGE                         = "ds_max_range";
-		//!key representing the default value
-		static const char * const MIN_RANGE                         = "ds_min_range";
-	}
-	/** @} */ // end of DatasetDefinitionkey
+
+    /** @defgroup DatasetDefinitionkey Dataset definition key
+     *  This is the collection of the key for the device dataset
+     *  @{
+     */
+        //! Name space for grupping option used for define the dataset of the device abstraction
+    namespace DatasetDefinitionkey {
+            //!key for dataset descriptors array {[domain, name, paramteres....]}
+        static const char * const DESCRIPTION                       = "ds_desc";
+            //!key for dataset timestampt validity
+        static const char * const TIMESTAMP                         = "ds_timestamp";
+            //!key for the name of dataset attribute
+        static const char * const ATTRIBUTE_NAME                    = "ds_attr_name";
+            //!key for the tag of the dataset attrbiute
+        static const char * const ATTRIBUTE_TAG                     = "ds_attr_tag";
+            //!key representing the type of parameter
+        static const char * const ATTRIBUTE_TYPE                    = "ds_attr_type";
+            //!key for the units ofr the attrbiute(ampere, volts)
+        static const char * const ATTRIBUTE_UNIT                    = "ds_attr_unit";
+            //!key representing the name of the parameter
+        static const char * const ATTRIBUTE_DESCRIPTION             = "ds_attr_desc";
+            //!key representig the information for the parameter
+        static const char * const ATTRIBUTE_DIRECTION               = "ds_attr_dir";
+            //!key representing the value max size where need (type different from rawd data type ex: int32)
+        static const char * const VALUE_MAX_SIZE                    = "ds_max_size";
+            //!key representing the default value
+        static const char * const DEFAULT_VALUE                     = "ds_default_value";
+            //!key representing the default value
+        static const char * const MAX_RANGE                         = "ds_max_range";
+            //!key representing the default value
+        static const char * const MIN_RANGE                         = "ds_min_range";
+    }
+    /** @} */ // end of DatasetDefinitionkey
 
 
     /** @defgroup ChaosErrorCode Chaos Error Code
@@ -732,7 +763,7 @@ namespace chaos {
         static const char * const ACTION_NODE_REG_ACK                           = "nodeRegistrationACK";
     }
     /** @} */ // end of ChaosSystemDomainAndActionLabel
-    
+
     /** @defgroup PerformanceSystemRpcKey Chaos performance system
      * this is the collection of the rpc key for interacting with
      * internal performance system
@@ -742,16 +773,16 @@ namespace chaos {
             //-------------------------performance-----------------------
             //! The chaos action domain for system message
         static const char * const SYSTEM_PERFORMANCE_DOMAIN = "system:perf";
-        
+
         static const char * const ACTION_PERFORMANCE_INIT_SESSION= "sp:init_session";
-        
+
         static const char * const ACTION_PERFORMANCE_CLOSE_SESSION= "sp:close_session";
-        
+
         static const char * const KEY_REQUEST_SERVER_DESCRITPION = "sp::req_serv_desc";
     }
     /** @} */ // end of PerformanceSystemRpcKey
-    
-    
+
+
     namespace event {
         /** @defgroup EventConfiguration Chaos event constant for server
          and cleint configuration

@@ -27,6 +27,7 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/healt_system/HealtMetric.h>
 #include <chaos/common/async_central/async_central.h>
+#include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <map>
 
 #include <boost/thread.hpp>
@@ -76,11 +77,15 @@ namespace chaos {
                 boost::shared_mutex                                 map_node_mutex;
 
                 chaos::common::network::NetworkBroker               *network_broker_ptr;
+                chaos::common::message::MultiAddressMessageChannel  *mds_message_channel;
                 std::auto_ptr<chaos::common::io::IODataDriver>      io_data_driver;
             protected:
+                HealtManager();
+                ~HealtManager();
                 void timeout();
                 void prepareNodeDataPack(HealtNodeElementMap& element_map,
                                          chaos::common::data::CDataWrapper& node_data_pack);
+                void sayHello() throw (chaos::CException);
             public:
                 void init(void *init_data) throw (chaos::CException);
                 void start() throw (chaos::CException);

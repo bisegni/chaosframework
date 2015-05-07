@@ -25,6 +25,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::unit_server;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define CU_LOUNLO_INFO INFO_LOG(LoadUnloadControlUnit)
 #define CU_LOUNLO_DBG  DBG_LOG(LoadUnloadControlUnit)
@@ -61,8 +62,8 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
     load_unload_data_pack->addBoolValue("load", load_unload);
 
         //get data access
-    GET_DATA_ACCESS(persistence::data_access::NodeDataAccess, n_da, -3)
-    GET_DATA_ACCESS(persistence::data_access::ControlUnitDataAccess, cu_da, -4)
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -4)
 
     CU_LOUNLO_DBG << "Starting the " << (load_unload?"load":"unload") << " phase for " << cu_uid;
     if((err = n_da->getNodeDescription(cu_uid, &cu_base_descirption))){

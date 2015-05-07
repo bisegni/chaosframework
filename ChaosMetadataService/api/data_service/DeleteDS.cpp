@@ -10,6 +10,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::data_service;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define DS_DELETE_DS_INFO INFO_LOG(DeleteDS)
 #define DS_DELETE_DS_DBG  DBG_LOG(DeleteDS)

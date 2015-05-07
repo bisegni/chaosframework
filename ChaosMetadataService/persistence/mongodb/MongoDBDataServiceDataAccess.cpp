@@ -100,10 +100,10 @@ int MongoDBDataServiceDataAccess::getDescription(const std::string& ds_unique_id
                                                                     query.toString(),
                                                                     prj.jsonString()));)
         if((err = connection->findOne(result,
-                                     MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
-                                                              MONGODB_COLLECTION_NODES),
-                                     query,
-                                     &prj))){
+                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
+                                                               MONGODB_COLLECTION_NODES),
+                                      query,
+                                      &prj))){
             MDBDSDA_ERR << "Error fecthing specific data service attribute for" << ds_unique_id << " with error:" << err;
         } else if(result.isEmpty()){
             err = -3;
@@ -360,6 +360,100 @@ int MongoDBDataServiceDataAccess::searchAllDataAccess(std::vector<boost::shared_
                  it != paged_result.end();
                  it++) {
                 node_associated.push_back(boost::shared_ptr<common::data::CDataWrapper>(new CDataWrapper(it->objdata())));
+            }
+        }
+    }
+    return err;
+}
+
+int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  best_available_data_service,
+                                                      unsigned int numerb_of_result) {
+    int err = 0;
+    SearchResult            paged_result;
+
+    unsigned long long      number_of_total_ds = 0;
+        //almost we need toreturn one data service
+    if(numerb_of_result == 0) return -1;
+
+    mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_DATA_SERVICE);
+        //filter on sequence
+    mongo::BSONObj projection = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
+                                     NodeDefinitionKey::NODE_RPC_ADDR << 1 <<
+                                     NodeDefinitionKey::NODE_RPC_DOMAIN << 1 <<
+                                     NodeDefinitionKey::NODE_DIRECT_IO_ADDR << 1 <<
+                                     DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << 1);
+
+    DEBUG_CODE(MDBDSDA_DBG<<log_message("getBestNDataService",
+                                        "count",
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                query.toString()));)
+
+    if((err = connection->count(number_of_total_ds,
+                                MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                query))) {
+        MDBDSDA_ERR << "Error countin all data services with error:" << err;
+    } else if(number_of_total_ds == 0) {
+        MDBDSDA_ERR << "No dataservice found.";
+    } else {
+        std::vector<int>                index_to_skip;
+        std::vector<mongo::BSONObj>     result;
+            //find all needed server
+        int rnd =0;
+        int iter = 0;
+        if(number_of_total_ds > numerb_of_result) {
+                //more dataservice of many the user whant
+            while(true){
+                rnd = rand()%number_of_total_ds;
+                if(std::find(index_to_skip.begin(), index_to_skip.end(), rnd) == index_to_skip.end()) {
+                    index_to_skip.push_back(rnd);
+                }
+                if((iter++ >= 100) ||
+                   (index_to_skip.size() >= 3)) break;
+            }
+        }else {
+                //add all index
+            for(int idx = 0; idx < number_of_total_ds; idx++) {
+                index_to_skip.push_back(idx);
+            }
+        }
+
+        for(int idx = 0;
+            idx < numerb_of_result;
+            idx++) {
+            result.clear();
+
+            DEBUG_CODE(MDBDSDA_DBG<<log_message("getBestNDataService",
+                                                "findOne",
+                                                DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                        query.toString()));)
+
+                //perform the search for the query page
+            connection->findN(result,
+                              MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                              query,
+                              1,
+                              index_to_skip[idx]);
+                //fill reuslt
+            if(result.size()==0) {
+                break;
+            } else {
+                    //has been found
+                boost::shared_ptr<common::data::CDataWrapper> element(new CDataWrapper());
+                if(result.front().hasField(NodeDefinitionKey::NODE_UNIQUE_ID)) {
+                    element->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
+                                            result.front().getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
+                }
+                if(result.front().hasField(NodeDefinitionKey::NODE_DIRECT_IO_ADDR)) {
+                    element->addStringValue(NodeDefinitionKey::NODE_DIRECT_IO_ADDR,
+                                            result.front().getStringField(NodeDefinitionKey::NODE_DIRECT_IO_ADDR));
+                }
+                if(result.front().hasField(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)) {
+                    element->addInt32Value(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT,
+                                           result.front().getIntField(DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT));
+                }
+                
+                    //add element to result
+                best_available_data_service.push_back(element);
             }
         }
     }

@@ -25,6 +25,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
+using namespace chaos::metadata_service::persistence::data_access;
 
 NodeGetDescription::NodeGetDescription():
 AbstractApi("getNodeDescription"){
@@ -45,7 +46,7 @@ chaos::common::data::CDataWrapper *NodeGetDescription::execute(chaos::common::da
     }
     
     //!get the unit server data access
-    persistence::data_access::NodeDataAccess *n_da = getPersistenceDriver()->getDataAccess<persistence::data_access::NodeDataAccess>();
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -2)
     if((err = n_da->checkNodePresence(presence,
                                       api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)))) {
         LOG_AND_TROW(USRA_ERR, err, "Error checking node presence")
@@ -54,7 +55,7 @@ chaos::common::data::CDataWrapper *NodeGetDescription::execute(chaos::common::da
             LOG_AND_TROW(USRA_ERR, err, "Error fetching node decription")
         }
     } else {
-        LOG_AND_TROW(USRA_ERR, -2, "Node not found")
+        LOG_AND_TROW(USRA_ERR, -3, "Node not found")
     }
     return result;
 }

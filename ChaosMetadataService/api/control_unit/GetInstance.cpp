@@ -24,6 +24,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::control_unit;
+using namespace chaos::metadata_service::persistence::data_access;
 
 #define CU_GI_INFO INFO_LOG(GetInstance)
 #define CU_GI_DBG  DBG_LOG(GetInstance)
@@ -49,7 +50,7 @@ CDataWrapper *GetInstance::execute(CDataWrapper *api_data,
     CDataWrapper *result = NULL;
     const std::string cu_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     const std::string us_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
-    GET_DATA_ACCESS(persistence::data_access::ControlUnitDataAccess, cu_da, -4)
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -4)
     if((err = cu_da->getInstanceDescription(us_uid,
                                             cu_uid,
                                             &result))){

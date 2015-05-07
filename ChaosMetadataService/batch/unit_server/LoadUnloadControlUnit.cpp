@@ -39,7 +39,8 @@ static const char * const LoadUnloadControlUnit_NO_MESSAGE_CHANNEL = "No message
 LoadUnloadControlUnit::LoadUnloadControlUnit():
 MDSBatchCommand(),
 retry_number(0),
-message_channel(NULL){
+message_channel(NULL),
+phase(LUL_SEND_LOAD_COMMAND){
         //set default scheduler delay 1 second
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
         //set the timeout to 10 seconds

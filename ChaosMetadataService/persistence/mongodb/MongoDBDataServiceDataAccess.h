@@ -79,6 +79,9 @@ namespace chaos {
                     int searchAllDataAccess(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  node_associated,
                                             uint32_t last_unique_id,
                                             uint32_t page_length);
+
+                    int getBestNDataService(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  best_available_data_service,
+                                            unsigned int numerb_of_result);
                 };
 
 

@@ -196,14 +196,13 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
                 //add all action to the bson update object
             updated_field.appendArray(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC, bson_update_array.arr());
         }
-
-        if(updated_field.len() == 0) return 0;
-
+        if(updated_field.asTempObj().isEmpty()) return 0;
         mongo::BSONObj query = bson_find.obj();
-
             //set the update
         bson_update << "$set" << updated_field.obj();
         mongo::BSONObj update = bson_update.obj();
+
+
 
         DEBUG_CODE(MDBNDA_DBG<<log_message("updateUS",
                                            "update",

@@ -30,6 +30,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
+using namespace chaos::metadata_service::persistence::data_access;
 
 NodeRegister::NodeRegister():
 AbstractApi(chaos::MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE){
@@ -83,8 +84,8 @@ chaos::common::data::CDataWrapper *NodeRegister::unitServerRegistration(chaos::c
     detach_data = true;
 
         //fetch the unit server data access
-    GET_DATA_ACCESS(persistence::data_access::UnitServerDataAccess, us_da, -1)
-    GET_DATA_ACCESS(persistence::data_access::UtilityDataAccess, u_da, -2)
+    GET_DATA_ACCESS(UnitServerDataAccess, us_da, -1)
+    GET_DATA_ACCESS(UtilityDataAccess, u_da, -2)
 
     const std::string unit_server_alias = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     try {
@@ -157,8 +158,8 @@ chaos::common::data::CDataWrapper *NodeRegister::controlUnitRegistration(chaos::
         throw CException(-1, "RPC domain not found", __PRETTY_FUNCTION__);
     }
         //fetch the unit server data access
-    GET_DATA_ACCESS(persistence::data_access::ControlUnitDataAccess, cu_da, -2)
-    GET_DATA_ACCESS(persistence::data_access::NodeDataAccess, n_da, -3)
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -2)
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
 
 
         //allocate datapack for batch command

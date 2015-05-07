@@ -25,6 +25,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::node;
+using namespace chaos::metadata_service::persistence::data_access;
 
 NodeCreateUnitServer::NodeCreateUnitServer():
 AbstractApi("newNode"){
@@ -53,7 +54,7 @@ chaos::common::data::CDataWrapper *NodeCreateUnitServer::execute(chaos::common::
     }
     
     //!get the unit server data access
-    persistence::data_access::UnitServerDataAccess *us_da = getPersistenceDriver()->getDataAccess<persistence::data_access::UnitServerDataAccess>();
+    GET_DATA_ACCESS(UnitServerDataAccess, us_da, -4)
     if(us_da->checkPresence(api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), presence)) {
         
     }
