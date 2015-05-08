@@ -41,6 +41,8 @@ namespace chaos {
             typedef std::map<std::string, boost::shared_ptr<HealtMetric> >::iterator    HealtNodeElementMapIterator;
 
             struct NodeHealtSet {
+                    //notify when some metric has chagned
+                bool    has_changed;
                     //the key to use for the node publishing operation
                 std::string   node_key;
 

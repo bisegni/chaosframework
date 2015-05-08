@@ -62,14 +62,6 @@ private:\
 //class impl : public subclass
 
 namespace chaos{
-    
-    //forward event channel declaration
-    namespace event{
-        namespace channel {
-            class InstrumentEventChannel;
-        }
-    }
-    
     namespace cu {
         namespace control_manager {
 			using namespace chaos::common::data;
@@ -212,10 +204,6 @@ namespace chaos{
 				
 				//! Momentary driver for push data into the central memory
 				data_manager::KeyDataStorage*  key_data_storage;
-				
-				//! Event channel to permit the fire of the device event
-				event::channel::InstrumentEventChannel *device_event_channel;
-				
 				
 				//! fast cached attribute vector accessor
 				std::vector<AttributeValue*> cache_output_attribute_vector;

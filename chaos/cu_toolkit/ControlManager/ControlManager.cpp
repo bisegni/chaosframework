@@ -24,7 +24,6 @@
 #include <chaos/cu_toolkit/ControlManager/ControlManager.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-#include <chaos/common/event/channel/InstrumentEventChannel.h>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -269,9 +268,7 @@ void ControlManager::deinit() throw(CException) {
             }
         }
         LCMAPP_  << "Dispose event channel for Control Unit Sanbox:" << WU_IDENTIFICATION(cu->work_unit_instance);
-        CommandManager::getInstance()->deleteInstrumentEventChannel(cu->work_unit_instance->device_event_channel);
-        cu->work_unit_instance->device_event_channel = NULL;
-        cuDeclareActionsInstance.clear();
+         cuDeclareActionsInstance.clear();
         LCMAPP_  << "Unload" << cu->work_unit_instance->getCUInstance();
     }
     map_cuid_registered_instance.clear();
@@ -471,7 +468,14 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 	//submit new instance of the requested control unit
 	AbstractControlUnit *instance = map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params);
 	IN_ACTION_PARAM_CHECK(instance==NULL, -7, "Error creating work unit instance")
+
+        //add healt metric for newly create control unit instance
+    HealtManager::getInstance()->addNewNode(work_unit_id);
+
+        //tag control uinit for mds managed
 	instance->control_key = "mds";
+
+        //submit contorl unit to state machine scheduling thread
 	submitControlUnit(instance);
 	return NULL;
 }
@@ -667,6 +671,10 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
 				}
 				break;
 		}
+
+            //publish the healt result
+        HealtManager::getInstance()->publishNodeHealt(unit_server_alias);
+
 		//repeat fast as possible the timer
 		chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
 		chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC));

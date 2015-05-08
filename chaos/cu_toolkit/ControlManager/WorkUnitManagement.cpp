@@ -18,8 +18,10 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/ControlManager/WorkUnitManagement.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
+#include <chaos/cu_toolkit/ControlManager/WorkUnitManagement.h>
+
+#include <chaos/common/healt_system/HealtManager.h>
 
 #define WUMHADER "[" << std::string(work_unit_instance->getCUInstance()) + std::string("-") + std::string(work_unit_instance->getCUID()) << "-"<<getCurrentStateString()<<"] - "
 #define WUMAPP_ INFO_LOG(WorkUnitManagement) << WUMHADER
@@ -32,6 +34,8 @@ throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for f
 }
 
 using namespace chaos::common::data;
+using namespace chaos::common::healt_system;
+
 using namespace chaos::cu::command_manager;
 using namespace chaos::cu::control_manager;
 
@@ -131,8 +135,6 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             publishing_counter_delay = 0;
             WUMAPP_ << "Control unit is unpublished, need to be setup";
             //associate the event channel to the control unit
-            WUMAPP_ << "Adding event channel";
-            work_unit_instance->device_event_channel = CommandManager::getInstance()->getInstrumentEventChannel();
 
             WUMAPP_ << "Setup Control Unit Sanbox for cu with instance";
             try{
@@ -169,6 +171,11 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
                 CommandManager::getInstance()->registerAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
             }
+
+                //set healt to load
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
             break;
         }
         case UnitStateStartUnpublishing: {
@@ -222,17 +229,17 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 }
             }
             
-            
-            if(work_unit_instance->device_event_channel) {
-                CommandManager::getInstance()->deleteInstrumentEventChannel(work_unit_instance->device_event_channel);
-                work_unit_instance->device_event_channel = NULL;
-            }
-            
             WUMAPP_  << "work unit is going to be unpublished";
             SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublished())
+                //set healt to unload
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
             break;
         }
     }
+        //publish if something has changed
+    HealtManager::getInstance()->publishNodeHealt(work_unit_instance->getCUID());
     WUMDBG_ << "End state machine step";
 
 }

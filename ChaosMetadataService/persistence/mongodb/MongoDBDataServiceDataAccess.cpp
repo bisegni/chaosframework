@@ -398,7 +398,7 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<boost::shared_
         std::vector<int>                index_to_skip;
         std::vector<mongo::BSONObj>     result;
             //find all needed server
-        int rnd =0;
+        int rnd = 0;
         int iter = 0;
         if(number_of_total_ds > numerb_of_result) {
                 //more dataservice of many the user whant
@@ -416,9 +416,9 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<boost::shared_
                 index_to_skip.push_back(idx);
             }
         }
-
+            //fetch the desidered number of random data service
         for(int idx = 0;
-            idx < numerb_of_result;
+            idx < index_to_skip.size();
             idx++) {
             result.clear();
 

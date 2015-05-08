@@ -20,11 +20,13 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
-#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
+
 #include <chaos/cu_toolkit/DataManager/DataManager.h>
-#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 #include <chaos/cu_toolkit/driver_manager/DriverManager.h>
+#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
+#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 
 #include <iostream>
 #include <fstream>
@@ -39,9 +41,9 @@
 using namespace boost::uuids;
 
 using namespace chaos::common::data;
-using namespace chaos::common::data::cache;
-
 using namespace chaos::common::utility;
+using namespace chaos::common::data::cache;
+using namespace chaos::common::healt_system;
 
 using namespace chaos::cu::data_manager;
 using namespace chaos::cu::control_manager;
@@ -65,7 +67,6 @@ control_unit_param(_control_unit_param),
 attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
-device_event_channel(NULL),
 key_data_storage(NULL){
 }
 
@@ -83,7 +84,6 @@ control_unit_param(_control_unit_param),
 attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
-device_event_channel(NULL),
 key_data_storage(NULL){
 	//copy array
 	for (int idx = 0; idx < _control_unit_drivers.size(); idx++){
@@ -315,6 +315,11 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
 		
 		//call update param function
 		updateConfiguration(init_configuration, detachParam);
+
+            //set healt to init
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT);
 	}catch(CException& ex) {
 		//inthis case i need to deinit the state of the abstract control unit
 		try{
@@ -324,8 +329,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
 		} catch(CException& sub_ex) {}
 		throw ex;
 	}
-	
-	return NULL;
+    return NULL;
 }
 
 /*
@@ -339,6 +343,11 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
 
 	try {
 		unitStart();
+
+            //set healt to start
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_START);
 	}catch(CException& ex) {
 		//inthis case i need to stop the abstract control unit
 		try{
@@ -368,7 +377,12 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
 
 	//call start method of the startable interface
 	StartableService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
-	//first we need to stop the implementation unit
+
+    //set healt to stop
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP);
+
 	return NULL;
 }
 
@@ -449,11 +463,17 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
 		if(attribute_shared_cache_wrapper) {
 			delete(attribute_shared_cache_wrapper);
 			attribute_shared_cache_wrapper = NULL;
-		}			
+		}
+
+            //set healt to deinit
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT);
+
 	} catch (CException& ex) {
 		ACULDBG_ << "Exception on unit deinit:" << ex.what();
 	}
-	return NULL;
+ 	return NULL;
 }
 
 

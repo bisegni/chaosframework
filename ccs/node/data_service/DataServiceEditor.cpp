@@ -30,7 +30,7 @@ void DataServiceEditor::initUI() {
     table_model_ds = new QStandardItemModel(this);
     table_model_ds->setHorizontalHeaderItem(0, new QStandardItem(tr("Unique Identifier")));
     table_model_ds->setHorizontalHeaderItem(1, new QStandardItem(tr("DirectIO Address")));
-    table_model_ds->setHorizontalHeaderItem(1, new QStandardItem(tr("Endpoint")));
+    table_model_ds->setHorizontalHeaderItem(2, new QStandardItem(tr("Endpoint")));
     // Attach the model to the view
     ui->tableViewDataServices->setModel(table_model_ds);
     ui->tableViewDataServices->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -38,9 +38,9 @@ void DataServiceEditor::initUI() {
     table_model_acu = new QStandardItemModel(this);
     table_model_acu->setHorizontalHeaderItem(0, new QStandardItem(tr("Unique Identifier")));
     table_model_acu->setHorizontalHeaderItem(1, new QStandardItem(tr("RPC Address")));
-    table_model_acu->setHorizontalHeaderItem(1, new QStandardItem(tr("RPC Domain")));
-    table_model_acu->setHorizontalHeaderItem(2, new QStandardItem(tr("State")));
-    table_model_acu->setHorizontalHeaderItem(3, new QStandardItem(tr("State SM")));
+    table_model_acu->setHorizontalHeaderItem(2, new QStandardItem(tr("RPC Domain")));
+    table_model_acu->setHorizontalHeaderItem(3, new QStandardItem(tr("State")));
+    table_model_acu->setHorizontalHeaderItem(4, new QStandardItem(tr("State SM")));
     // Attach the model to the view
     ui->tableViewAssociatedControlUnits->setModel(table_model_acu);
     ui->tableViewAssociatedControlUnits->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);

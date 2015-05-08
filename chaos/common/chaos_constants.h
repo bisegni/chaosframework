@@ -227,6 +227,8 @@ namespace chaos {
         //! This namespace enclose all the key for inspetting a node healt
         //! every different node need to expose default key and custom
     namespace NodeHealtDefinitionKey {
+            //! define time stamp of the collection of the last insert metric
+        static const char * const NODE_HEALT_TIMESTAMP      = "nh_ts";
             //! define the status of a node (loaded, initilized, deinitialized, started, stopped, unloaded)
         static const char * const NODE_HEALT_STATUS      = "nh_phase";
     }
