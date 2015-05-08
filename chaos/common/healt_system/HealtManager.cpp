@@ -49,9 +49,9 @@ if(map_node[n]->map_metric.count(m) == 0) return;
 t *tmp = dynamic_cast<t*>(node_metrics_ptr->map_metric[m].get());\
 if(tmp)tmp->value = v;
 
-#define HEALT_SET_METRIC_TIMESTAMP(node_metrics_ptr)\
-Int64HealtMetric *ts_tmp = dynamic_cast<Int64HealtMetric*>(node_metrics_ptr->map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get());\
-if(ts_tmp)ts_tmp->value = TimingUtil::getTimeStamp();
+#define HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)\
+Int64HealtMetric *ts_tmp = dynamic_cast<Int64HealtMetric*>(node_metrics_ptr->map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC].get());\
+ts_tmp->value = TimingUtil::getTimeStamp();
 
 HealtManager::HealtManager():
 network_broker_ptr(NULL),
@@ -189,6 +189,8 @@ void HealtManager::addNewNode(const std::string& node_uid) {
         //add default standard metric
     map_node[node_uid]->map_metric.insert(make_pair(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP,
                                                     boost::shared_ptr<HealtMetric>(new Int64HealtMetric(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP))));
+    map_node[node_uid]->map_metric.insert(make_pair(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC,
+                                                    boost::shared_ptr<HealtMetric>(new Int64HealtMetric(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC))));
     map_node[node_uid]->map_metric.insert(make_pair(NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                     boost::shared_ptr<HealtMetric>(new StringHealtMetric(NodeHealtDefinitionKey::NODE_HEALT_STATUS))));
 }
@@ -249,7 +251,7 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
     wl.unlock();
 
         //work on local shared pointer
-    HEALT_SET_METRIC_TIMESTAMP(node_metrics_ptr)
+    HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
     HEALT_SET_METRIC_VALUE(node_metrics_ptr, Int32HealtMetric, node_metric, int32_value);
 }
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
@@ -262,7 +264,7 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
         // unlock all map
     wl.unlock();
         //work on local shared pointer
-    HEALT_SET_METRIC_TIMESTAMP(node_metrics_ptr)
+    HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
     HEALT_SET_METRIC_VALUE(node_metrics_ptr,
                            Int64HealtMetric,
                            node_metric,
@@ -277,7 +279,7 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
     boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
         // unlock all map
     wl.unlock();
-    HEALT_SET_METRIC_TIMESTAMP(node_metrics_ptr)
+    HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
     HEALT_SET_METRIC_VALUE(node_metrics_ptr,
                            DoubleHealtMetric,
                            node_metric,
@@ -292,7 +294,7 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
     boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
         // unlock all map
     wl.unlock();
-    HEALT_SET_METRIC_TIMESTAMP(node_metrics_ptr)
+    HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
     HEALT_SET_METRIC_VALUE(node_metrics_ptr,
                            StringHealtMetric,
                            node_metric,
@@ -308,7 +310,7 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
     boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
         // unlock all map
     wl.unlock();
-    HEALT_SET_METRIC_TIMESTAMP(node_metrics_ptr)
+    HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
     HEALT_SET_METRIC_VALUE(node_metrics_ptr,
                            BoolHealtMetric,
                            node_metric,
@@ -316,7 +318,11 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
 }
 
 void HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_map,
-                                       chaos::common::data::CDataWrapper& node_data_pack) {
+                                       chaos::common::data::CDataWrapper& node_data_pack,
+                                       uint64_t push_timestamp) {
+        //set the push timestamp
+    dynamic_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
+        //scan all metrics
     BOOST_FOREACH(HealtNodeElementMap::value_type map_metric_element, element_map) {
             //add metric to cdata wrapper
         map_metric_element.second->addMetricToCD(node_data_pack);
@@ -329,21 +335,47 @@ void HealtManager::publishNodeHealt(const std::string& node_uid) {
 
         //allocate the datapack
     std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
+
+        // read lock
+    boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
+
+        //get the push timestamp
+    uint64_t push_timestamp = TimingUtil::getTimeStamp();
+
         //compose datapack
-    prepareNodeDataPack(map_node[node_uid]->map_metric,
-                        *data_pack.get());
+    prepareNodeDataPack(node_metrics_ptr->map_metric,
+                        *data_pack.get(),
+                        push_timestamp);
         //send datapack
     io_data_driver->storeData(map_node[node_uid]->node_key,
                               data_pack.release());
 }
 
 void HealtManager::timeout() {
+        //allocate the datapack
+    std::auto_ptr<CDataWrapper> data_pack;
+
+        //get the push timestamp
+    uint64_t push_timestamp = TimingUtil::getTimeStamp();
+
         //publish all registered metric
     boost::shared_lock<boost::shared_mutex> rl(map_node_mutex);
     for(HealtNodeMapIterator it = map_node.begin();
         it != map_node.end();
         it++) {
-            //publish single node
-        publishNodeHealt(it->first);
+            // create datapack
+        data_pack.reset(new CDataWrapper());
+
+            // get metric ptr
+        boost::shared_ptr<NodeHealtSet> node_metrics_ptr = it->second;
+        
+            //compose datapack
+        prepareNodeDataPack(node_metrics_ptr->map_metric,
+                            *data_pack.get(),
+                            push_timestamp);
+            //send datapack
+        io_data_driver->storeData(node_metrics_ptr->node_key,
+                                  data_pack.release());
+
     }
 }

@@ -86,7 +86,8 @@ namespace chaos {
                 ~HealtManager();
                 void timeout();
                 void prepareNodeDataPack(HealtNodeElementMap& element_map,
-                                         chaos::common::data::CDataWrapper& node_data_pack);
+                                         chaos::common::data::CDataWrapper& node_data_pack,
+                                          uint64_t push_timestamp);
                 void sayHello() throw (chaos::CException);
             public:
                 void init(void *init_data) throw (chaos::CException);
