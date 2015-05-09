@@ -56,6 +56,7 @@ void MongoDBDriver::init(void *init_data) throw (chaos::CException) {
 	//db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true,  dropDups: true  } )
 	//db.runCommand( { shardCollection : "chaos_vfs.domains" , key : { domain_name: 1, domain_url:1 } , unique : true,  dropDups: true  } )
 	
+	/* commented out by rorru on 07/05/2015 (avoiding index creation by "chaos" user)
 	//domain index
 	mongo::BSONObj index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<
 										  MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE<<1);
@@ -93,7 +94,7 @@ void MongoDBDriver::init(void *init_data) throw (chaos::CException) {
 						   MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID << 1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA, index_on_domain, true, "", true);
 	if(err !=0 && err != 85) throw chaos::CException(err, "Error creating snapshot data collection index", __PRETTY_FUNCTION__);
-	
+	*/
 }
 
 //!deinit
