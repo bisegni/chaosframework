@@ -19,7 +19,6 @@
  */
 #include <ChaosMetadataServiceClient/monitor_system/QuantumSlot.h>
 
-#include <boost/foreach.hpp>
 
 using namespace chaos::metadata_service_client::monitor_system;
 
@@ -27,12 +26,22 @@ QuantumSlot::QuantumSlot(const std::string& _key,
                          int  _quantum_multiplier):
 key(_key),
 quantum_multiplier(_quantum_multiplier),
+real_quantum(quantum_multiplier * MONITOR_QUANTUM_LENGTH),
 consumers_priority_index(boost::multi_index::get<priority_index>(consumers)),
-consumers_pointer_index(boost::multi_index::get<pointer_index>(consumers)){
+consumers_pointer_index(boost::multi_index::get<pointer_index>(consumers)),
+last_processed_time(0){
 }
 
 QuantumSlot::~QuantumSlot() {
     
+}
+
+const std::string& QuantumSlot::getKey() const {
+    return key;
+}
+
+int QuantumSlot::getQuantumMultiplier() const {
+    return quantum_multiplier;
 }
 
 void QuantumSlot::addNewConsumer(QuantumSlotConsumer *_consumer,
@@ -57,4 +66,18 @@ void QuantumSlot::sendNewValueConsumer(KeyValue& value) {
         //signal the consumer
         reinterpret_cast<QuantumSlotConsumer*>(it->consumer_pointer)->quantumSlotHasData(key, value);
     }
+}
+
+//! set the last processing timestamp
+void QuantumSlot::setLastProcessingTime(uint64_t _last_processing_time) {
+    uint64_t time_diff = _last_processing_time - last_processed_time;
+    last_processed_time = _last_processing_time;
+    //if timediff is minor of real quantum the fetch delay is good
+    quantum_is_good = time_diff<real_quantum;
+}
+
+//! determinate if the current quantum is good
+
+bool QuantumSlot::isQuantumGood() {
+    return quantum_is_good;
 }

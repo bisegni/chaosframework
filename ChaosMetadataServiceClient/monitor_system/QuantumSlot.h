@@ -34,6 +34,9 @@ namespace chaos {
     namespace metadata_service_client {
         namespace monitor_system {
             
+            //! forward declaration
+            class QuantumSlotScheduler;
+            
             struct ConsumerType {
                 uint32_t    priority;
                 uintptr_t   consumer_pointer;
@@ -77,15 +80,22 @@ namespace chaos {
              the the slot is forwarded to the queue for the update of the value
              */
             class QuantumSlot {
+                friend class QuantumSlotScheduler;
                 //is the key for wich we need to retrive the value
                 const std::string   key;
                 
                 //! is the multiplier for the quantum, when it is 0 ti is schedule for execution
                 const int           quantum_multiplier;
-                //! current slot
-                int                 current_quantum_slot;
+                
+                //! is the real quantum calculated by quantum_multiplier*MONITOR_QUANTUM_LENGTH
+                uint64_t            real_quantum;
+                
                 //! priority
                 int                 priority;
+                
+                uint64_t            last_processed_time;
+                
+                bool                quantum_is_good;
                 
                 //! gthe lock for the consumers managment
                 boost::shared_mutex mutex_consumers;
@@ -95,10 +105,24 @@ namespace chaos {
                 SetConsumerTypePriorityIndex&    consumers_priority_index;
                 SetConsumerTypePointerIndex&     consumers_pointer_index;
                 
-            public:
                 QuantumSlot(const std::string& _key,
                             int  _quantum_multiplier);
+            public:
                 ~QuantumSlot();
+                
+                //! set the last processing timestamp
+                void setLastProcessingTime(uint64_t last_processing_time);
+                //! determinate if the current quantum is good
+                /*!
+                 this function calculate if the fetch of the value is contained
+                 whithin the quantum(* multiplier). If this function return false
+                 the problem is that the slot has been executed out of his quantum
+                 */
+                bool isQuantumGood();
+                
+                const std::string& getKey() const;
+                int getQuantumMultiplier() const;
+                
                 void addNewConsumer(QuantumSlotConsumer *_consumer,
                                     int priotiy);
                 void removeConsumer(QuantumSlotConsumer *_consumer);

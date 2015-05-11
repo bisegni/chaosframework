@@ -29,22 +29,17 @@ namespace chaos {
     namespace metadata_service_client {
         namespace monitor_system {
             
-            typedef boost::shared_ptr<chaos::common::data::CDataWrapper> KeyValue;
-            
             //!is the minimal monitoring delay
 #define MONITOR_QUANTUM_LENGTH  100//milli-seconds
             
-            //! forward declaration
-            class QuantumSlot;
             
-            //! is the consumer for the slot new data
+            typedef boost::shared_ptr<chaos::common::data::CDataWrapper> KeyValue;
+            
             class QuantumSlotConsumer {
-                friend class QuantumSlot;
-                
+            public:
                 //!as called every time there is new data for quantum slot
                 virtual void quantumSlotHasData(const std::string& key, KeyValue value) = 0;
             };
-            
         }
     }
 }

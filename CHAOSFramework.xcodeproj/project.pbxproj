@@ -623,10 +623,9 @@
 		32FB20201A3F2E7300307A86 /* AbstractSharedDomainCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB201E1A3F2E7300307A86 /* AbstractSharedDomainCache.cpp */; };
 		32FB20211A3F2E7300307A86 /* AbstractSharedDomainCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FB201F1A3F2E7300307A86 /* AbstractSharedDomainCache.h */; };
 		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
-		32FFA3E81B00CEE100C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
-		32FFA3E91B00CEE100C57E07 /* QuantumSlotScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
+		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
 		53DADAAF19C8676C00E13DB2 /* SingletonOnArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */; };
 /* End PBXBuildFile section */
 
@@ -3324,7 +3323,6 @@
 				326DB47C14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h in Headers */,
 				326DB47D14B38BC00018A8D0 /* CObjectProcessingQueue.h in Headers */,
 				32C3546A178860EB009ED581 /* decl.hpp in Headers */,
-				32FFA3E91B00CEE100C57E07 /* QuantumSlotScheduler.h in Headers */,
 				324A4B79191A428500975394 /* misc.h in Headers */,
 				326DB47E14B38BC00018A8D0 /* CObjectProcessingQueueListener.h in Headers */,
 				326DB47F14B38BC00018A8D0 /* ChaosRpc.h in Headers */,
@@ -4115,7 +4113,6 @@
 				32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */,
 				329603221876B45000CDCADA /* BatchCommand.cpp in Sources */,
 				32A91FCA1A49AF0700DCF364 /* RpcSyncServer.cpp in Sources */,
-				32FFA3E81B00CEE100C57E07 /* QuantumSlotScheduler.cpp in Sources */,
 				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
 				3251B5131A768A9E00EF3F82 /* HashMapTest.cpp in Sources */,
 				32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */,
@@ -4189,6 +4186,7 @@
 				325FC8641AF7CEE900DB9D66 /* GetCurrentDataset.cpp in Sources */,
 				327F39AF1AEAA2500000C845 /* AssociationControlUnit.cpp in Sources */,
 				327F39BE1AEAB6260000C845 /* GetAllDS.cpp in Sources */,
+				32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */,
 				32610F8C1AE6560A00779B84 /* GetDescription.cpp in Sources */,
 				325FC85D1AF7910300DB9D66 /* NewUS.cpp in Sources */,
 				3208AABD1AC56C1C000860D9 /* GetNodeDescription.cpp in Sources */,
