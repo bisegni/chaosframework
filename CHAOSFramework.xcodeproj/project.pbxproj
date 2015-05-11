@@ -160,6 +160,8 @@
 		324EF3DD1AE92379000837AF /* NewDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324EF3DB1AE92379000837AF /* NewDS.cpp */; };
 		324EF3E01AE9238B000837AF /* UpdateDS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324EF3DE1AE9238B000837AF /* UpdateDS.cpp */; };
 		324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */; };
+		324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324FD07F1B00ACEF003800BA /* MonitorManager.cpp */; };
+		324FD0821B00ACEF003800BA /* MonitorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 324FD0801B00ACEF003800BA /* MonitorManager.h */; };
 		3250105F19E2DB4A00809415 /* AttributeSharedCacheWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3250105D19E2DB4A00809415 /* AttributeSharedCacheWrapper.cpp */; };
 		3250106019E2DB4A00809415 /* AttributeSharedCacheWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3250105E19E2DB4A00809415 /* AttributeSharedCacheWrapper.h */; };
 		325013BC15E9258C00DCB13E /* EventClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325013BA15E9258C00DCB13E /* EventClient.cpp */; };
@@ -621,6 +623,10 @@
 		32FB20201A3F2E7300307A86 /* AbstractSharedDomainCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB201E1A3F2E7300307A86 /* AbstractSharedDomainCache.cpp */; };
 		32FB20211A3F2E7300307A86 /* AbstractSharedDomainCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FB201F1A3F2E7300307A86 /* AbstractSharedDomainCache.h */; };
 		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
+		32FFA3E81B00CEE100C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
+		32FFA3E91B00CEE100C57E07 /* QuantumSlotScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */; };
+		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
+		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
 		53DADAAF19C8676C00E13DB2 /* SingletonOnArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */; };
 /* End PBXBuildFile section */
 
@@ -872,6 +878,9 @@
 		324EF3DF1AE9238B000837AF /* UpdateDS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateDS.h; sourceTree = "<group>"; };
 		324EF3E11AE923F9000837AF /* DataServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataServiceApiGroup.cpp; sourceTree = "<group>"; };
 		324EF3E21AE923F9000837AF /* DataServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataServiceApiGroup.h; sourceTree = "<group>"; };
+		324FD07F1B00ACEF003800BA /* MonitorManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonitorManager.cpp; sourceTree = "<group>"; };
+		324FD0801B00ACEF003800BA /* MonitorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonitorManager.h; sourceTree = "<group>"; };
+		324FD0831B00AD02003800BA /* monitor_system.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = monitor_system.h; sourceTree = "<group>"; };
 		3250105D19E2DB4A00809415 /* AttributeSharedCacheWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttributeSharedCacheWrapper.cpp; sourceTree = "<group>"; };
 		3250105E19E2DB4A00809415 /* AttributeSharedCacheWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeSharedCacheWrapper.h; sourceTree = "<group>"; };
 		325013BA15E9258C00DCB13E /* EventClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventClient.cpp; sourceTree = "<group>"; };
@@ -1453,6 +1462,11 @@
 		32FC7EE21A701D8E0029C2A2 /* AbstractApiGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractApiGroup.h; sourceTree = "<group>"; };
 		32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiManagment.cpp; sourceTree = "<group>"; };
 		32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiManagment.h; sourceTree = "<group>"; };
+		32FCB0691B00B4D0002894A2 /* monitor_system_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = monitor_system_types.h; sourceTree = "<group>"; };
+		32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlotScheduler.cpp; sourceTree = "<group>"; };
+		32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlotScheduler.h; sourceTree = "<group>"; };
+		32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumSlot.cpp; sourceTree = "<group>"; };
+		32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumSlot.h; sourceTree = "<group>"; };
 		53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingletonOnArguments.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2201,7 +2215,7 @@
 				3274A9061AC2EE76000C6A4D /* metadata_service_client_constants.h */,
 				3274A9071AC2EF70000C6A4D /* metadata_service_client_types.h */,
 				3274A9081AC2F18E000C6A4D /* api_proxy */,
-				3274A9091AC2F1CD000C6A4D /* monitor */,
+				3274A9091AC2F1CD000C6A4D /* monitor_system */,
 			);
 			path = ChaosMetadataServiceClient;
 			sourceTree = "<group>";
@@ -2634,11 +2648,19 @@
 			path = api_proxy;
 			sourceTree = "<group>";
 		};
-		3274A9091AC2F1CD000C6A4D /* monitor */ = {
+		3274A9091AC2F1CD000C6A4D /* monitor_system */ = {
 			isa = PBXGroup;
 			children = (
+				324FD07F1B00ACEF003800BA /* MonitorManager.cpp */,
+				324FD0801B00ACEF003800BA /* MonitorManager.h */,
+				32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */,
+				32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */,
+				32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */,
+				32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */,
+				324FD0831B00AD02003800BA /* monitor_system.h */,
+				32FCB0691B00B4D0002894A2 /* monitor_system_types.h */,
 			);
-			path = monitor;
+			path = monitor_system;
 			sourceTree = "<group>";
 		};
 		327F39A41AEAA1EB0000C845 /* data_service */ = {
@@ -3302,6 +3324,7 @@
 				326DB47C14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h in Headers */,
 				326DB47D14B38BC00018A8D0 /* CObjectProcessingQueue.h in Headers */,
 				32C3546A178860EB009ED581 /* decl.hpp in Headers */,
+				32FFA3E91B00CEE100C57E07 /* QuantumSlotScheduler.h in Headers */,
 				324A4B79191A428500975394 /* misc.h in Headers */,
 				326DB47E14B38BC00018A8D0 /* CObjectProcessingQueueListener.h in Headers */,
 				326DB47F14B38BC00018A8D0 /* ChaosRpc.h in Headers */,
@@ -3578,6 +3601,7 @@
 			files = (
 				327F39BF1AEAB6260000C845 /* GetAllDS.h in Headers */,
 				327F39B81AEAA2850000C845 /* DeleteDS.h in Headers */,
+				32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */,
 				327F39A81AEAA2290000C845 /* NewDS.h in Headers */,
 				327F39C31AEFABB00000C845 /* InitDeinit.h in Headers */,
 				328C87371ADFDD410047C79B /* GetInstance.h in Headers */,
@@ -3593,6 +3617,7 @@
 				32362C221ADD0C45000CA079 /* SetInstanceDescription.h in Headers */,
 				323386B21ACD731E008863DC /* NodeSearch.h in Headers */,
 				325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */,
+				324FD0821B00ACEF003800BA /* MonitorManager.h in Headers */,
 				327F39B01AEAA2500000C845 /* AssociationControlUnit.h in Headers */,
 				32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */,
 			);
@@ -4090,6 +4115,7 @@
 				32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */,
 				329603221876B45000CDCADA /* BatchCommand.cpp in Sources */,
 				32A91FCA1A49AF0700DCF364 /* RpcSyncServer.cpp in Sources */,
+				32FFA3E81B00CEE100C57E07 /* QuantumSlotScheduler.cpp in Sources */,
 				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
 				3251B5131A768A9E00EF3F82 /* HashMapTest.cpp in Sources */,
 				32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */,
@@ -4159,6 +4185,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				32661C6D1AA741D000F1A721 /* ChaosMetadataServiceClient.cpp in Sources */,
+				32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */,
 				325FC8641AF7CEE900DB9D66 /* GetCurrentDataset.cpp in Sources */,
 				327F39AF1AEAA2500000C845 /* AssociationControlUnit.cpp in Sources */,
 				327F39BE1AEAB6260000C845 /* GetAllDS.cpp in Sources */,
@@ -4174,6 +4201,7 @@
 				3208AAB91AC56A51000860D9 /* ApiProxy.cpp in Sources */,
 				327F39C61AEFABBB0000C845 /* StartStop.cpp in Sources */,
 				327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */,
+				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
 				327F39AB1AEAA2390000C845 /* UpdateDS.cpp in Sources */,
