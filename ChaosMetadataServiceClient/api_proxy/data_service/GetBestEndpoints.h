@@ -1,5 +1,5 @@
 /*
- *	GetAllDS
+ *	GetBestEndpoints.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__GetAllDS__
-#define __CHAOSFramework__GetAllDS__
+#ifndef __CHAOSFramework__GetBestEndpoints__
+#define __CHAOSFramework__GetBestEndpoints__
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
@@ -27,22 +27,23 @@ namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
             namespace data_service {
-
-                class GetAllDS:
+                
+                class GetBestEndpoints:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(GetAllDS)
+                    API_PROXY_CLASS(GetBestEndpoints)
                 protected:
-                    API_PROXY_CD_DECLARATION(GetAllDS)
+                    API_PROXY_CD_DECLARATION(GetBestEndpoints)
                 public:
-
+                    
                     /*!
-                     Return al the data services
+                     Return the best avaialbe data services endpoint
+                     \param number_of_result is the number of enpoint to return the default is 3
                      */
-                    ApiProxyResult execute();
+                    ApiProxyResult execute(int number_of_result = 3);
                 };
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__GetAllDS__) */
+#endif /* defined(__CHAOSFramework__GetBestEndpoints__) */

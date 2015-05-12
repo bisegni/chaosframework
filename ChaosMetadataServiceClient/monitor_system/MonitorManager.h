@@ -22,9 +22,10 @@
 
 #include <ChaosMetadataServiceClient/metadata_service_client_types.h>
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system_types.h>
+#include <ChaosMetadataServiceClient/monitor_system/QuantumSlotScheduler.h>
 
 #include <chaos/common/network/NetworkBroker.h>
-#include <chaos/common/utility/StartableService.h>
+#include <chaos/common/utility/InizializableService.h>
 
 namespace chaos {
     namespace metadata_service_client {
@@ -39,13 +40,17 @@ namespace chaos {
              */
             class MonitorManager:
             public chaos::common::utility::StartableService {
-                friend class ChaosMetadataServiceClient;
+                friend class chaos::common::utility::StartableServiceContainer<MonitorManager>;
+                friend class chaos::metadata_service_client::ChaosMetadataServiceClient;
                 
                 //! Applciation settings
                 ClientSetting *setting;
                 
                 //! network broker service
                 chaos::common::network::NetworkBroker *network_broker;
+                
+                //!quantum slot scheduler
+                QuantumSlotScheduler *slot_scheduler;
                 
                 MonitorManager(chaos::common::network::NetworkBroker *_network_broker,
                                ClientSetting *_setting);
@@ -56,6 +61,19 @@ namespace chaos {
                 void start() throw (chaos::CException);
                 void stop() throw (chaos::CException);
                 void deinit() throw (chaos::CException);
+                
+                void resetEndpointList(std::vector<std::string> new_server_list);
+                
+                //! add a new quantum slot for key
+                void addKeyConsumer(const std::string& key_to_monitor,
+                                    int quantum_multiplier,
+                                    QuantumSlotConsumer *consumer,
+                                    int consumer_priority = 500);
+                
+                //! remove a consumer by key and quantum
+                void removeKeyConsumer(const std::string& key_to_monitor,
+                                       int quantum_multiplier,
+                                       QuantumSlotConsumer *consumer);
             };
         }
     }

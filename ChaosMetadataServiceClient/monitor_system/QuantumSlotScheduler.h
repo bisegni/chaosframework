@@ -23,6 +23,8 @@
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system_types.h>
 #include <ChaosMetadataServiceClient/monitor_system/QuantumSlot.h>
 
+#include <chaos/common/io/IODataDriver.h>
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/StartableService.h>
 
 #include <boost/thread.hpp>
@@ -32,6 +34,11 @@
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/hashed_index.hpp>
+#include <boost/asio.hpp>
+
+#include <vector>
+#include <string>
+
 namespace chaos {
     namespace metadata_service_client {
         namespace monitor_system {
@@ -85,20 +92,58 @@ namespace chaos {
                 ScheduleSlotDecrementQuantum(){}
                 
                 void operator()(ScheduleSlot& ss) {
-                    if(ss.current_quantum < 0) {
-                        ss.current_quantum = ss.quantum_slot->getQuantumMultiplier();
-                    } else {
+                    if(ss.current_quantum > 0) {
                         ss.current_quantum--;
                     }
                 }
             };
             
+            struct ScheduleSlotResetQuantum
+            {
+                ScheduleSlotResetQuantum(){}
+                
+                void operator()(ScheduleSlot& ss) {
+                    ss.current_quantum  = ss.quantum_slot->getQuantumMultiplier();
+                }
+            };
+            
+            struct ScheduleSlotDisableQuantum
+            {
+                ScheduleSlotDisableQuantum(){}
+                
+                void operator()(ScheduleSlot& ss) {
+                    ss.current_quantum = -1;
+                }
+            };
+            
+            //! class that manage the scan of the slot ad the fetch of the slot vlaue
+            /*!
+             This scheduler consists into two job, the scanner and the fetcher.
+             The scanner, is the job that scans all available quantum slot and, for each one,
+             decrement his current quantum. Qhen it goes reach( or goes below, the 0 the slot
+             is put withing the queue that colelct all slot that nened to have his value refresched.
+             The Fetcher si the job that scan the active slot queue and for each one fetch the
+             value form the cds.
+             */
             class QuantumSlotScheduler:
             public chaos::common::utility::StartableService {
                 friend class MonitorManager;
+                //asio structure
+                boost::asio::io_service                 ios;
+                boost::shared_ptr<boost::thread>        ios_thread;
+                boost::asio::deadline_timer             async_timer;
+                asio::io_service::work                  async_work;
                 
-                boost::mutex                mutex_condition;
+                std::vector<std::string>                data_driver_endpoint;
+                chaos::common::network::NetworkBroker    *network_broker;
+                std::string                             data_driver_impl;
+                chaos::common::io::IODataDriver         *data_driver;
+                
+                boost::mutex                mutex_condition_fetch;
                 boost::condition_variable   condition_fetch;
+                
+                boost::mutex                mutex_condition_scan;
+                boost::condition_variable   condition_scan;
                 
                 //groups for thread that make the scanner
                 bool                    work_on_scan;
@@ -108,6 +153,7 @@ namespace chaos {
                 bool                    work_on_fetch;
                 boost::thread_group     fetcher_threads;
                 
+                //! queue for all the active slot
                 ActiveQuantumSlotQueue  queue_active_slot;
                 
                 //multi index set for the slot
@@ -118,7 +164,7 @@ namespace chaos {
                 //manage the lock on the slot multi-index
                 boost::shared_mutex              set_slots_mutex;
                 
-                QuantumSlotScheduler();
+                QuantumSlotScheduler(chaos::common::network::NetworkBroker *_network_broker);
                 ~QuantumSlotScheduler();
                 
                 //! Scan the slot to find which of that can be executed
@@ -129,8 +175,14 @@ namespace chaos {
                 void scanSlot();
                 
                 //! fetch the value for all the slot within the queue_active_slot queue
-                void fetchValue();
+                void fetchValue(boost::shared_ptr<chaos::common::io::IODataDriver> data_driver);
                 
+                //! add a new thread to the fetcher job
+                void addNewfetcherThread();
+                
+                void dispath_new_value_async(const boost::system::error_code& error,
+                                             QuantumSlot *cur_slot,
+                                             const char *data_found);
             public:
                 
                 void init(void *init_data) throw (chaos::CException);
@@ -138,12 +190,15 @@ namespace chaos {
                 void stop() throw (chaos::CException);
                 void deinit() throw (chaos::CException);
                 
+                //! set a new lits of server to use for fetch values
+                void setDataDriverEndpoints(const std::vector<std::string>& _data_driver_endpoint);
+                
                 //! add a new quantum slot for key
                 void addKeyConsumer(const std::string& key_to_monitor,
                                     int quantum_multiplier,
                                     QuantumSlotConsumer *consumer,
                                     int consumer_priority = 500);
-                
+                //! remove a consumer by key and quantum
                 void removeKeyConsumer(const std::string& key_to_monitor,
                                        int quantum_multiplier,
                                        QuantumSlotConsumer *consumer);

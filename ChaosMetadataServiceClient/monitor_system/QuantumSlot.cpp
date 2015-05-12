@@ -59,7 +59,7 @@ void QuantumSlot::removeConsumer(QuantumSlotConsumer *_consumer) {
     }
 }
 
-void QuantumSlot::sendNewValueConsumer(KeyValue& value) {
+void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
     for (SetConsumerTypePriorityIndexIterator it = consumers_priority_index.begin();
          it != consumers_priority_index.end();
          it++) {

@@ -20,7 +20,7 @@
 #ifndef CHAOSFramework_api_proxy_h
 #define CHAOSFramework_api_proxy_h
 
-#include <ChaosMetadataServiceClient/api_proxy/api.h>
+//#include <ChaosMetadataServiceClient/api_proxy/api.h>
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 
@@ -30,6 +30,7 @@
 #include <ChaosMetadataServiceClient/api_proxy/data_service/UpdateDS.h>
 #include <ChaosMetadataServiceClient/api_proxy/data_service/DeleteDS.h>
 #include <ChaosMetadataServiceClient/api_proxy/data_service/GetAllDS.h>
+#include <ChaosMetadataServiceClient/api_proxy/data_service/GetBestEndpoints.h>
 #include <ChaosMetadataServiceClient/api_proxy/data_service/GetAssociationByDS.h>
 #include <ChaosMetadataServiceClient/api_proxy/data_service/AssociationControlUnit.h>
 

@@ -28,6 +28,9 @@
 		320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320E773C1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp */; };
 		320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0EB18A39E650014CDB3 /* DirectIO.h */; };
 		3210EE1E1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3210EE1C1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp */; };
+		3211CCD61B0205C700F9B80E /* GetBestEndpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211CCD41B0205C700F9B80E /* GetBestEndpoints.cpp */; };
+		3211CCD91B021B8D00F9B80E /* GetBestEndpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211CCD71B021B8D00F9B80E /* GetBestEndpoints.cpp */; };
+		3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211CCD81B021B8D00F9B80E /* GetBestEndpoints.h */; };
 		3211FD1D1698699D00424A3C /* LiveDataFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */; };
 		3211FD1E1698699D00424A3C /* LiveDataFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211FD1C1698699D00424A3C /* LiveDataFetcher.h */; };
 		321237231A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321237211A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp */; };
@@ -716,6 +719,10 @@
 		3210EE1C1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegistrationAckBatchCommand.cpp; sourceTree = "<group>"; };
 		3210EE1D1AE7DE15006ADC0B /* RegistrationAckBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegistrationAckBatchCommand.h; sourceTree = "<group>"; };
 		3210EE1F1AE7E0FB006ADC0B /* control_unit_batch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = control_unit_batch.h; sourceTree = "<group>"; };
+		3211CCD41B0205C700F9B80E /* GetBestEndpoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetBestEndpoints.cpp; sourceTree = "<group>"; };
+		3211CCD51B0205C700F9B80E /* GetBestEndpoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetBestEndpoints.h; sourceTree = "<group>"; };
+		3211CCD71B021B8D00F9B80E /* GetBestEndpoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetBestEndpoints.cpp; sourceTree = "<group>"; };
+		3211CCD81B021B8D00F9B80E /* GetBestEndpoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetBestEndpoints.h; sourceTree = "<group>"; };
 		3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveDataFetcher.cpp; sourceTree = "<group>"; };
 		3211FD1C1698699D00424A3C /* LiveDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDataFetcher.h; sourceTree = "<group>"; };
 		321237201A65788E002A2D63 /* BaseWANInterfaceHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseWANInterfaceHandler.h; sourceTree = "<group>"; };
@@ -1914,6 +1921,8 @@
 				327F399F1AEA47980000C845 /* GetAssociationByDS.h */,
 				327F39B91AEAB14E0000C845 /* GetAllDataService.cpp */,
 				327F39BA1AEAB14E0000C845 /* GetAllDataService.h */,
+				3211CCD41B0205C700F9B80E /* GetBestEndpoints.cpp */,
+				3211CCD51B0205C700F9B80E /* GetBestEndpoints.h */,
 			);
 			path = data_service;
 			sourceTree = "<group>";
@@ -2677,6 +2686,8 @@
 				327F39B21AEAA2680000C845 /* GetAssociationByDS.h */,
 				327F39BC1AEAB6260000C845 /* GetAllDS.cpp */,
 				327F39BD1AEAB6260000C845 /* GetAllDS.h */,
+				3211CCD71B021B8D00F9B80E /* GetBestEndpoints.cpp */,
+				3211CCD81B021B8D00F9B80E /* GetBestEndpoints.h */,
 			);
 			path = data_service;
 			sourceTree = "<group>";
@@ -3617,6 +3628,7 @@
 				325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */,
 				324FD0821B00ACEF003800BA /* MonitorManager.h in Headers */,
 				327F39B01AEAA2500000C845 /* AssociationControlUnit.h in Headers */,
+				3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */,
 				32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3921,6 +3933,7 @@
 				323386B71AD3C4C6008863DC /* MongoDBAccessor.cpp in Sources */,
 				32CAC9E41AE6991500DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				324EF3E01AE9238B000837AF /* UpdateDS.cpp in Sources */,
+				3211CCD61B0205C700F9B80E /* GetBestEndpoints.cpp in Sources */,
 				320530DA1AE92D770064275B /* DataServiceDataAccess.cpp in Sources */,
 				32A40D471A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp in Sources */,
 				32CAC9E11AE6988200DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
@@ -4187,6 +4200,7 @@
 				327F39AF1AEAA2500000C845 /* AssociationControlUnit.cpp in Sources */,
 				327F39BE1AEAB6260000C845 /* GetAllDS.cpp in Sources */,
 				32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */,
+				3211CCD91B021B8D00F9B80E /* GetBestEndpoints.cpp in Sources */,
 				32610F8C1AE6560A00779B84 /* GetDescription.cpp in Sources */,
 				325FC85D1AF7910300DB9D66 /* NewUS.cpp in Sources */,
 				3208AABD1AC56C1C000860D9 /* GetNodeDescription.cpp in Sources */,

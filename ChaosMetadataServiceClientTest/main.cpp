@@ -15,15 +15,19 @@
 #include <boost/thread.hpp>
 #include <boost/lexical_cast.hpp>
 
-using namespace chaos::metadata_service_client::api_proxy;
-using namespace chaos::metadata_service_client::api_proxy::node;
-
 using namespace chaos::metadata_service_client;
+using namespace chaos::metadata_service_client::api_proxy;
+using namespace chaos::metadata_service_client::monitor_system;
+using namespace chaos::metadata_service_client::api_proxy::node;
 
 boost::atomic<uint64_t> global_counter;
 boost::atomic<uint64_t> error_count;
 boost::atomic<uint64_t> no_result_count;
-;
+
+#define MSCT_INFO   INFO_LOG(MetadataServiceClientTest)
+#define MSCT_DBG    INFO_LOG(MetadataServiceClientTest)
+#define MSCT_ERR    INFO_LOG(MetadataServiceClientTest)
+
 class EchoTestProxy:
 public chaos::metadata_service_client::api_proxy::ApiProxy {
     API_PROXY_CLASS(EchoTestProxy)
@@ -44,6 +48,15 @@ public:
         chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
         message->addStringValue(echo_test_key.c_str(), echo_test_value);
         return callApi(message);
+    };
+};
+
+class TestMonitorConsumer:
+public QuantumSlotConsumer {
+    void quantumSlotHasData(const std::string& key,
+                            KeyValue value) {
+        //print fetched data
+        MSCT_INFO << key << " - " << value->getJSONString();
     };
 };
 
@@ -82,6 +95,7 @@ void asyncTest(EchoTestProxy *echo_proxy_test) {
 int main(int argc, char * argv[]) {
     boost::thread_group tg;
     try{
+        TestMonitorConsumer test_consumer;
         global_counter = 0;
         error_count = 0;
         no_result_count=0;
@@ -89,18 +103,23 @@ int main(int argc, char * argv[]) {
         ChaosMetadataServiceClient::getInstance()->start();
 
         ChaosMetadataServiceClient::getInstance()->addServerAddress("localhost:5000");
-        ChaosMetadataServiceClient::getInstance()->clearServerList();
-        ChaosMetadataServiceClient::getInstance()->addServerAddress("localhost:5000");
 
-        EchoTestProxy *echo_proxy_test = ChaosMetadataServiceClient::getInstance()->getApiProxy<EchoTestProxy>(1000);
-        tg.add_thread(new boost::thread(&asyncTest, echo_proxy_test));
-        tg.add_thread(new boost::thread(&asyncTest, echo_proxy_test));
-        tg.join_all();
+        ChaosMetadataServiceClient::getInstance()->enableMonitoring();
+        
+        ChaosMetadataServiceClient::getInstance()->addKeyConsumer("rt-claudio-1_healt",
+                                                                  5,
+                                                                  &test_consumer);
+
+        
+        //EchoTestProxy *echo_proxy_test = ChaosMetadataServiceClient::getInstance()->getApiProxy<EchoTestProxy>(1000);
+        //tg.add_thread(new boost::thread(&asyncTest, echo_proxy_test));
+        //tg.add_thread(new boost::thread(&asyncTest, echo_proxy_test));
+        //tg.join_all();
         std::cout << "\nTest finisched with 2 thread\n" << std::flush;
         std::cout << "global_counter"<<global_counter<<"\n" << std::flush;
         std::cout << "error_count"<<error_count<<"\n" << std::flush;
         std::cout << "no_result_count"<<no_result_count<<"\n" << std::flush;
-            //sleep(5);
+        sleep(600);
         ChaosMetadataServiceClient::getInstance()->stop();
         ChaosMetadataServiceClient::getInstance()->deinit();
     }catch(chaos::CException& ex) {

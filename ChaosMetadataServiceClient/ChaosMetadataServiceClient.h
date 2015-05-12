@@ -22,7 +22,7 @@
 
 #include <ChaosMetadataServiceClient/api_proxy/api.h>
 #include <ChaosMetadataServiceClient/metadata_service_client_types.h>
-
+#include <ChaosMetadataServiceClient/monitor_system/MonitorManager.h>
 
 #include <boost/thread/condition.hpp>
 
@@ -34,7 +34,7 @@
 
 namespace chaos {
     namespace metadata_service_client {
-            //! Chaos Node Directory base class
+        //! Chaos Node Directory base class
         /*!
          Singleton class that act as main entry for mds client library
          */
@@ -42,48 +42,66 @@ namespace chaos {
         public ChaosCommon<ChaosMetadataServiceClient>,
         public ServerDelegator {
             friend class common::utility::Singleton<ChaosMetadataServiceClient>;
-
-                //!network broker service
+            
+            //!network broker service
             common::utility::StartableServiceContainer<chaos::common::network::NetworkBroker> network_broker_service;
-
-                //!network broker service
+            
+            //!api proxy service
             common::utility::InizializableServiceContainer<chaos::metadata_service_client::api_proxy::ApiProxyManager> api_proxy_manager;
-
-                //!default constructor
+            
+            //!monitor manager
+            common::utility::StartableServiceContainer<chaos::metadata_service_client::monitor_system::MonitorManager> monitor_manager;
+            
+            //!default constructor
             ChaosMetadataServiceClient();
-
-                //! default destructor
+            
+            //! default destructor
             ~ChaosMetadataServiceClient();
-
-                //! set the custom client init parameter
+            
+            //! set the custom client init parameter
             void setClientInitParameter();
         public:
-                //! the client setting
+            //! the client setting
             ClientSetting setting;
-
-                //! C and C++ attribute parser
+            
+            //! C and C++ attribute parser
             /*!
              Specialized option for startup c and cpp program main options parameter
              */
             void init(int argc, char* argv[]) throw (CException);
-
-                //! StartableService inherited method
+            
+            //! StartableService inherited method
             void init(void *init_data)  throw(CException);
-                //! StartableService inherited method
+            //! StartableService inherited method
             void start()throw(CException);
-                //! StartableService inherited method
+            //! StartableService inherited method
             void stop()throw(CException);
-                //! StartableService inherited method
+            //! StartableService inherited method
             void deinit()throw(CException);
             
             template<typename D>
             D* getApiProxy(int32_t timeout_in_milliseconds = 1000) {
                 return api_proxy_manager->getApiProxy<D>(timeout_in_milliseconds);
             }
-
+            
             void clearServerList();
-
+            
             void addServerAddress(const std::string& server_address_and_port);
+            
+            void enableMonitoring() throw(CException);
+            
+            void disableMonitoring() throw(CException);
+            
+            //! add a new quantum slot for key
+            bool addKeyConsumer(const std::string& key_to_monitor,
+                                int quantum_multiplier,
+                                monitor_system::QuantumSlotConsumer *consumer,
+                                int consumer_priority = 500);
+            
+            //! remove a consumer by key and quantum
+            bool removeKeyConsumer(const std::string& key_to_monitor,
+                                   int quantum_multiplier,
+                                   monitor_system::QuantumSlotConsumer *consumer);
         };
     }
 }

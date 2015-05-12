@@ -25,7 +25,7 @@
 #include "AssociationControlUnit.h"
 #include "GetAssociationByDS.h"
 #include "GetAllDataService.h"
-
+#include "GetBestEndpoints.h"
 using namespace chaos::metadata_service::api::data_service;
 DEFINE_CLASS_FACTORY_NO_ALIAS(DataServiceApiGroup, chaos::metadata_service::api::AbstractApiGroup);
 
@@ -38,7 +38,7 @@ AbstractApiGroup("data_service"){
     addApi<GetAllDataService>();
     addApi<GetAssociationByDS>();
     addApi<AssociationControlUnit>();
-
+    addApi<GetBestEndpoints>();
 }
 
 DataServiceApiGroup::~DataServiceApiGroup() {

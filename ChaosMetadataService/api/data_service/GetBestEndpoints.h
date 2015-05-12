@@ -1,5 +1,5 @@
 /*
- *	GetAllDS
+ *	GetBestEndpoints
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,31 +18,28 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__GetAllDS__
-#define __CHAOSFramework__GetAllDS__
+#ifndef __CHAOSFramework__GetBestEndpoints__
+#define __CHAOSFramework__GetBestEndpoints__
 
-#include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
+#include "../AbstractApi.h"
 
 namespace chaos {
-    namespace metadata_service_client {
-        namespace api_proxy {
+    namespace metadata_service {
+        namespace api {
             namespace data_service {
-
-                class GetAllDS:
-                public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(GetAllDS)
-                protected:
-                    API_PROXY_CD_DECLARATION(GetAllDS)
+                
+                class GetBestEndpoints:
+                public AbstractApi {
+                    
                 public:
-
-                    /*!
-                     Return al the data services
-                     */
-                    ApiProxyResult execute();
+                    GetBestEndpoints();
+                    ~GetBestEndpoints();
+                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
+                                                               bool& detach_data) throw(chaos::CException);
                 };
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__GetAllDS__) */
+#endif /* defined(__CHAOSFramework__GetBestEndpoints__) */

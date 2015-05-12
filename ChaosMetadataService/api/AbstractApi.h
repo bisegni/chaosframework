@@ -22,21 +22,18 @@
 #include "../mds_types.h"
 #include "../persistence/persistence.h"
 #include "../batch/batch_impl.h"
+
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/global.h>
 namespace chaos {
 	namespace metadata_service {
 		namespace api {
 
-#define LOG_AND_TROW(log, num, msg)\
-log << "("<<num<<") " << msg;\
-throw chaos::CException(num, msg, __PRETTY_FUNCTION__);
-
 #define CHECK_CDW_THROW_AND_LOG(cdw, log, num, msg)\
 if(cdw == NULL) {LOG_AND_TROW(log, num, msg)}
-
-
+            
 #define CHECK_KEY_THROW_AND_LOG(cdw, key, log, num, msg)\
 if(cdw->hasKey(key) == false) {LOG_AND_TROW(log, num, msg)}
 

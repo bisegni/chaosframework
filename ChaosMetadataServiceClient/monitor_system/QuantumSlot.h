@@ -126,7 +126,7 @@ namespace chaos {
                 void addNewConsumer(QuantumSlotConsumer *_consumer,
                                     int priotiy);
                 void removeConsumer(QuantumSlotConsumer *_consumer);
-                void sendNewValueConsumer(KeyValue& _value);
+                void sendNewValueConsumer(const KeyValue& _value);
             };
         }
     }

@@ -61,6 +61,13 @@
 #define DBG_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x) << __FUNCTION__ << " - "
 #define ERR_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
 
+#define LOG_AND_TROW(log, num, msg)\
+log << "("<<num<<") " << msg;\
+throw chaos::CException(num, msg, __PRETTY_FUNCTION__);
+
+#define CHAOS_LASSERT_EXCEPTION(assertion, log, num, msg)\
+if(!assertion) {LOG_AND_TROW(log, num, msg)}
+
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true
 #ifndef DEBUG
