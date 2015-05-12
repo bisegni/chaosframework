@@ -203,6 +203,7 @@ namespace bson {
 
         void appendStr(const StringData &str , bool includeEndingNull = true ) {
             const int len = str.size() + ( includeEndingNull ? 1 : 0 );
+            
             str.copyTo( grow(len), includeEndingNull );
         }
 

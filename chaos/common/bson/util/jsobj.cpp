@@ -193,7 +193,7 @@ namespace bson {
             }
             break;
         case BinData: {
-            const int len = *( reinterpret_cast<const int*>( value() ) );
+            const int len = portable_cast<int>( value() ) ;
             BinDataType type = BinDataType( *( reinterpret_cast<const unsigned char*>( value() ) +
                                                sizeof( int ) ) );
             s << "{ \"$binary\" : \"";

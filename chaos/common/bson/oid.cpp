@@ -50,8 +50,14 @@ namespace bson {
         unsigned p = ProcessId::getCurrent().asUInt32();
         x._pid ^= static_cast<unsigned short>(p);
         // when the pid is greater than 16 bits, let the high bits modulate the machine id field.
+#ifdef __BSON_USEMEMCPY__
+        unsigned ret=x._machineNumber[1];
+        ret^=p >> 16;
+        x._machineNumber[1]=ret;
+#else
         unsigned short& rest = (unsigned short &) x._machineNumber[1];
         rest ^= p >> 16;
+#endif
     }
 
     OID::MachineAndPid OID::genMachineAndPid() {

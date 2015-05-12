@@ -33,6 +33,18 @@ namespace bson {
     class BSONObjBuilder;
 }
 
+template <typename T,typename Y>
+T portable_cast(Y*pnt){
+#ifdef __BSON_USEMEMCPY__
+    T tmp;
+     memcpy(&tmp,(void*)pnt,sizeof(T));
+     return tmp;
+#else
+     return *reinterpret_cast< T * >(pnt);
+#endif
+
+}
+
 namespace bson {
 
     /* l and r MUST have same type when called: check that first. */
@@ -176,7 +188,7 @@ namespace bson {
             @see Bool(), trueValue()
         */
         Date_t date() const {
-            return *reinterpret_cast< const Date_t* >( value() );
+            return portable_cast<Date_t>(value());
         }
 
         /** Convert the value to boolean, regardless of its type, in a javascript-like fashion
@@ -193,9 +205,11 @@ namespace bson {
         /** Return double value for this field. MUST be NumberDouble type. */
         double _numberDouble() const {return (reinterpret_cast< const PackedDouble* >( value() ))->d; }
         /** Return int value for this field. MUST be NumberInt type. */
-        int _numberInt() const {return *reinterpret_cast< const int* >( value() ); }
+        int _numberInt() const {
+            return portable_cast<int>(value());
+        }
         /** Return long long value for this field. MUST be NumberLong type. */
-        long long _numberLong() const {return *reinterpret_cast< const long long* >( value() ); }
+        long long _numberLong() const {return portable_cast<long long>(value());}
 
         /** Retrieve int value for the element safely.  Zero returned if not a number. */
         int numberInt() const;
@@ -222,7 +236,9 @@ namespace bson {
 
         /** Retrieve the object ID stored in the object.
             You must ensure the element is of type jstOID first. */
-        const bson::OID &__oid() const { return *reinterpret_cast< const bson::OID* >( value() ); }
+        const bson::OID __oid() const {
+            return portable_cast<bson::OID>(value());
+        }
 
         /** True if element is null. */
         bool isNull() const {
@@ -234,12 +250,12 @@ namespace bson {
             @return string size including terminating null
         */
         int valuestrsize() const {
-            return *reinterpret_cast< const int* >( value() );
+            return portable_cast<int>(value());
         }
 
         // for objects the size *includes* the size of the size field
         size_t objsize() const {
-            return static_cast< const size_t >( *reinterpret_cast< const uint32_t* >( value() ) );
+            return portable_cast<size_t>(value());
         }
 
         /** Get a string's value.  Also gives you start of the real data for an embedded object.
@@ -268,7 +284,7 @@ namespace bson {
          *  This INCLUDES the null char at the end */
         int codeWScopeCodeLen() const {
             massert( 16178 , "not codeWScope" , type() == CodeWScope );
-            return *(int *)( value() + 4 );
+            return portable_cast<int>(value()+4);
         }
 
         /** Get the scope SavedContext of a CodeWScope data element.
@@ -399,11 +415,11 @@ namespace bson {
             return t * 1000;
         }
         unsigned int timestampInc() const {
-            return ((unsigned int*)(value() ))[0];
+            return portable_cast<unsigned int>(value());
         }
 
         unsigned long long timestampValue() const {
-            return reinterpret_cast<const unsigned long long*>( value() )[0];
+            return portable_cast<unsigned long long>(value());
         }
 
         const char * dbrefNS() const {
@@ -411,11 +427,11 @@ namespace bson {
             return value() + 4;
         }
 
-        const bson::OID& dbrefOID() const {
+        const bson::OID dbrefOID() const {
             uassert( 10064 ,  "not a dbref" , type() == DBRef );
             const char * start = value();
-            start += 4 + *reinterpret_cast< const int* >( start );
-            return *reinterpret_cast< const bson::OID* >( start );
+            start += 4 + portable_cast<int>(start);
+            return portable_cast< bson::OID >( start );
         }
 
         /** this does not use fieldName in the comparison, just the value */
@@ -499,11 +515,11 @@ namespace bson {
         // NOTE Behavior changes must be replicated in Value::coerceToBool().
         switch( type() ) {
         case NumberLong:
-            return *reinterpret_cast< const long long* >( value() ) != 0;
+            return (portable_cast< long long >( value() ) != 0);
         case NumberDouble:
             return (reinterpret_cast < const PackedDouble* >(value ()))->d != 0;
         case NumberInt:
-            return *reinterpret_cast< const int* >( value() ) != 0;
+            return(portable_cast< int >( value() ) != 0);
         case bson::Bool:
             return boolean();
         case EOO:
@@ -549,9 +565,9 @@ namespace bson {
         case NumberDouble:
             return _numberDouble();
         case NumberInt:
-            return *reinterpret_cast< const int* >( value() );
+            return portable_cast< int >( value() );
         case NumberLong:
-            return (double) *reinterpret_cast< const long long* >( value() );
+            return (double) portable_cast< long long >( value() );
         default:
             return 0;
         }
