@@ -182,7 +182,7 @@ namespace chaos {
 				void setSerializedJsonData(const char* jsonData);
 				
 				//check if the key is present in data wrapper
-				bool hasKey(const char*);
+                bool hasKey(const std::string& key);
 				
 				//return all key contained into the object
 				void getAllKey(std::vector<std::string>& contained_key);

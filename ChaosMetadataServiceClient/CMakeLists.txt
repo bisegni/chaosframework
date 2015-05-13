@@ -3,18 +3,19 @@ include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 
 SET(mcl_src ChaosMetadataServiceClient.cpp)
 
-SET(mcl_src ${mcl_src}   api_proxy/ApiProxyManager.cpp
+SET(mcl_src ${mcl_src}      api_proxy/ApiProxyManager.cpp
                             api_proxy/ApiProxy.cpp)
 
-SET(mcl_src ${mcl_src}   api_proxy/node/GetNodeDescription.cpp
+SET(mcl_src ${mcl_src}      api_proxy/node/GetNodeDescription.cpp
                             api_proxy/node/NodeSearch.cpp)
 
-SET(mcl_src ${mcl_src}   api_proxy/data_service/NewDS.cpp
+SET(mcl_src ${mcl_src}      api_proxy/data_service/NewDS.cpp
                             api_proxy/data_service/UpdateDS.cpp
                             api_proxy/data_service/DeleteDS.cpp
                             api_proxy/data_service/AssociationControlUnit.cpp
                             api_proxy/data_service/GetAssociationByDS.cpp
-                            api_proxy/data_service/GetAllDS.cpp)
+                            api_proxy/data_service/GetAllDS.cpp
+                            api_proxy/data_service/GetBestEndpoints.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/control_unit/SetInstanceDescription.cpp
                             api_proxy/control_unit/SearchInstancesByUS.cpp
@@ -22,9 +23,14 @@ SET(mcl_src ${mcl_src}      api_proxy/control_unit/SetInstanceDescription.cpp
                             api_proxy/control_unit/DeleteInstance.cpp
                             api_proxy/control_unit/GetCurrentDataset.cpp)
 
-SET(mcl_src ${mcl_src}   api_proxy/unit_server/GetDescription.cpp
+SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
                             api_proxy/unit_server/LoadUnloadControlUnit.cpp)
 
+SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
+                            monitor_system/QuantumSlot.cpp
+                            monitor_system/QuantumKeyConsumer.cpp
+                            monitor_system/QuantumSlotScheduler.cpp
+                            monitor_system/AbstractQuantumKeyAttributeHandler.cpp)
 IF(BUILD_FORCE_STATIC)
 ADD_LIBRARY(chaos_metadata_service_client STATIC ${mcl_src})
 ELSE()

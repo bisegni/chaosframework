@@ -26,11 +26,11 @@
 
 #include <boost/format.hpp>
 
-#define STAT_ITERATION 10
+#define STAT_ITERATION 100
 
-#define QSS_INFO   INFO_LOG(QuantumSlotScheduler)
-#define QSS_DBG    INFO_LOG(QuantumSlotScheduler)
-#define QSS_ERR    INFO_LOG(QuantumSlotScheduler)
+#define QSS_INFO   INFO_LOG (QuantumSlotScheduler)
+#define QSS_DBG    DBG_LOG  (QuantumSlotScheduler)
+#define QSS_ERR    ERR_LOG  (QuantumSlotScheduler)
 
 using namespace chaos::common::io;
 using namespace chaos::common::data;
@@ -107,12 +107,12 @@ void QuantumSlotScheduler::setDataDriverEndpoints(const std::vector<std::string>
     data_driver_endpoint = _data_driver_endpoint;
     QSS_INFO<< "New servers has been configured";
     if(fetcher_threads.size() == 0) return; //no thread are active so never has been started
-        
+    
     work_on_fetch = false;
     condition_scan.notify_all();
     fetcher_threads.join_all();
     QSS_INFO<< "Stoppped all current fetcher thread";
-
+    
     work_on_fetch = true;
     condition_fetch.notify_all();
     addNewfetcherThread();
@@ -124,21 +124,24 @@ void QuantumSlotScheduler::scanSlot() {
     int64_t     milliseconds_to_sleep = 0;
     uint64_t    milliseconds_start = 0;
     uint64_t    current_processing_time = 0;
+    uint64_t    iteration_processing_time = 0;
+    int         processed_element;
     ScheduleSlotDecrementQuantum        decrement_quantum_op;
     ScheduleSlotDisableQuantum          disable_quantum_op;
     
-    QSS_DBG << "Enter scan thread";
+    QSS_INFO << "Enter scan thread:" << boost::this_thread::get_id();
     boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_scan);
     while(work_on_scan) {
-
+        processed_element = 0;
         milliseconds_start = TimingUtil::getTimeStamp();
         //set_urls_rb_pos_index.modify(it, URLServiceIndexUpdateRBPosition(++last_round_robin_index));
         for(SSSlotTypeCurrentQuantumIndexIterator it = set_slots_index_quantum.begin();
             it != set_slots_index_quantum.end();
             it++) {
+            processed_element++;
             //decrement every index
             set_slots_index_quantum.modify(it, decrement_quantum_op);
-
+            
             //chec if we need to execute the slot fetch operation
             if(it->current_quantum == 0) {
                 //tag slot as in processing mode
@@ -156,11 +159,15 @@ void QuantumSlotScheduler::scanSlot() {
         milliseconds_to_sleep = (MONITOR_QUANTUM_LENGTH - (current_processing_time = (TimingUtil::getTimeStamp() - milliseconds_start)));
         
         //----stat procesisng time---
-        current_processing_time += current_processing_time;
+        iteration_processing_time += current_processing_time;
         
         if(((stat_counter++) % STAT_ITERATION) == 0) {
-            QSS_DBG << boost::str(boost::format("Stat on processing time is %1% milliseocnds for %2% iteration")%((double)current_processing_time/STAT_ITERATION)%STAT_ITERATION);
-            current_processing_time = 0;
+            QSS_INFO << boost::str(boost::format("Slot Processing time is ~%1% milliseconds(total milliseconds %2% for %3% quantum) for %4% elements")%
+                                   ((double)iteration_processing_time/STAT_ITERATION)%
+                                   iteration_processing_time%
+                                   STAT_ITERATION%
+                                   processed_element);
+            iteration_processing_time = 0;
         }
         
         if(milliseconds_to_sleep>0) {
@@ -169,15 +176,15 @@ void QuantumSlotScheduler::scanSlot() {
                 condition_scan.timed_wait(lock_on_condition, posix_time::milliseconds(milliseconds_to_sleep));
             }while((set_slots_index_quantum.size()==0) && work_on_scan);
         }else{
-            QSS_DBG << "Scan thread to slow we need more thread here";
+            QSS_INFO << "Scan thread to slow we need more thread here";
         }
     }
-    QSS_DBG << "Leaving scan thread";
+    QSS_INFO << "Leaving scan thread:" << boost::this_thread::get_id();
 }
 
 //! add a new thread to the fetcher job
 void QuantumSlotScheduler::addNewfetcherThread() {
-    QSS_INFO<< "Stat the allcoation of new fetcher Thread";
+    QSS_INFO<< "start the allocation of a new fetcher Thread";
     IODataDriver *data_driver = NULL;
     data_driver = ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(boost::str(boost::format("%1%IODriver")%data_driver_impl));
     CHAOS_LASSERT_EXCEPTION(data_driver, QSS_ERR, -1, "Error allocating new data driver")
@@ -218,7 +225,7 @@ void QuantumSlotScheduler::dispath_new_value_async(const boost::system::error_co
 
 void QuantumSlotScheduler::fetchValue(boost::shared_ptr<IODataDriver> data_driver) {
     QuantumSlot *cur_slot = NULL;
-    QSS_INFO << "Starting new thread for value fetch";
+    QSS_INFO << "Entering fetcher thread:" << boost::this_thread::get_id();
     boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_fetch);
     while(work_on_fetch) {
         if(queue_active_slot.pop(cur_slot)) {
@@ -237,14 +244,14 @@ void QuantumSlotScheduler::fetchValue(boost::shared_ptr<IODataDriver> data_drive
         }
     }
     data_driver->deinit();
-    QSS_INFO << "Leaving fetcher thread";
+    QSS_INFO << "Leaving fetcher thread:" << boost::this_thread::get_id();
 }
 
 //! add a new quantum slot for key
 void QuantumSlotScheduler::addKeyConsumer(const std::string& key_to_monitor,
                                           int quantum_multiplier,
                                           QuantumSlotConsumer *consumer,
-                                          int consumer_priority) {
+                                          unsigned int consumer_priority) {
     //boost::unique_lock<boost::shared_mutex> wl(set_slots_mutex);
     boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_scan);
     

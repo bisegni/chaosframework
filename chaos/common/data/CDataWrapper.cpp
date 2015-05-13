@@ -217,7 +217,7 @@ const char* CDataWrapper::getBinaryValue(const std::string& key, int& bufLen)  {
 }
 
 //check if the key is present in data wrapper
-bool CDataWrapper::hasKey(const char* key) {
+bool CDataWrapper::hasKey(const std::string& key) {
     return bsonBuilder->asTempObj().hasElement(key);
 }
 

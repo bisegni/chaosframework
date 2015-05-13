@@ -31,6 +31,8 @@
 		3211CCD61B0205C700F9B80E /* GetBestEndpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211CCD41B0205C700F9B80E /* GetBestEndpoints.cpp */; };
 		3211CCD91B021B8D00F9B80E /* GetBestEndpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211CCD71B021B8D00F9B80E /* GetBestEndpoints.cpp */; };
 		3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211CCD81B021B8D00F9B80E /* GetBestEndpoints.h */; };
+		3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211CCDB1B03402800F9B80E /* QuantumKeyConsumer.cpp */; };
+		3211CCDE1B03402800F9B80E /* QuantumKeyConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211CCDC1B03402800F9B80E /* QuantumKeyConsumer.h */; };
 		3211FD1D1698699D00424A3C /* LiveDataFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */; };
 		3211FD1E1698699D00424A3C /* LiveDataFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211FD1C1698699D00424A3C /* LiveDataFetcher.h */; };
 		321237231A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321237211A657BA0002A2D63 /* AbstractWANInterfaceResponse.cpp */; };
@@ -72,6 +74,8 @@
 		323386B71AD3C4C6008863DC /* MongoDBAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323386B31AD3C45E008863DC /* MongoDBAccessor.cpp */; };
 		323386BA1AD3D78E008863DC /* MultiAddressMessageRequestFuture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323386B81AD3D78E008863DC /* MultiAddressMessageRequestFuture.cpp */; };
 		323386BB1AD3D78E008863DC /* MultiAddressMessageRequestFuture.h in Headers */ = {isa = PBXBuildFile; fileRef = 323386B91AD3D78E008863DC /* MultiAddressMessageRequestFuture.h */; };
+		3234BE7A1B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3234BE781B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.cpp */; };
+		3234BE7B1B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3234BE791B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h */; };
 		3235110A17B3EAE500E39E14 /* TemplatedConcurrentQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */; };
 		3235425C1923A5C70090B8F6 /* StageDataConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */; };
 		3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDC51A6FF43000EC83A9 /* UnitServerApiGroup.cpp */; };
@@ -723,6 +727,8 @@
 		3211CCD51B0205C700F9B80E /* GetBestEndpoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetBestEndpoints.h; sourceTree = "<group>"; };
 		3211CCD71B021B8D00F9B80E /* GetBestEndpoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetBestEndpoints.cpp; sourceTree = "<group>"; };
 		3211CCD81B021B8D00F9B80E /* GetBestEndpoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetBestEndpoints.h; sourceTree = "<group>"; };
+		3211CCDB1B03402800F9B80E /* QuantumKeyConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumKeyConsumer.cpp; sourceTree = "<group>"; };
+		3211CCDC1B03402800F9B80E /* QuantumKeyConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumKeyConsumer.h; sourceTree = "<group>"; };
 		3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveDataFetcher.cpp; sourceTree = "<group>"; };
 		3211FD1C1698699D00424A3C /* LiveDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDataFetcher.h; sourceTree = "<group>"; };
 		321237201A65788E002A2D63 /* BaseWANInterfaceHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseWANInterfaceHandler.h; sourceTree = "<group>"; };
@@ -781,6 +787,8 @@
 		323386B41AD3C45E008863DC /* MongoDBAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBAccessor.h; sourceTree = "<group>"; };
 		323386B81AD3D78E008863DC /* MultiAddressMessageRequestFuture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiAddressMessageRequestFuture.cpp; sourceTree = "<group>"; };
 		323386B91AD3D78E008863DC /* MultiAddressMessageRequestFuture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiAddressMessageRequestFuture.h; sourceTree = "<group>"; };
+		3234BE781B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractQuantumKeyAttributeHandler.cpp; sourceTree = "<group>"; };
+		3234BE791B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractQuantumKeyAttributeHandler.h; sourceTree = "<group>"; };
 		3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedConcurrentQueue.h; sourceTree = "<group>"; };
 		3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StageDataConsumer.cpp; sourceTree = "<group>"; };
 		3235425B1923A5C70090B8F6 /* StageDataConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StageDataConsumer.h; sourceTree = "<group>"; };
@@ -2665,6 +2673,10 @@
 				32FFA3E71B00CEE100C57E07 /* QuantumSlotScheduler.h */,
 				32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */,
 				32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */,
+				3211CCDB1B03402800F9B80E /* QuantumKeyConsumer.cpp */,
+				3211CCDC1B03402800F9B80E /* QuantumKeyConsumer.h */,
+				3234BE781B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.cpp */,
+				3234BE791B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h */,
 				324FD0831B00AD02003800BA /* monitor_system.h */,
 				32FCB0691B00B4D0002894A2 /* monitor_system_types.h */,
 			);
@@ -3616,6 +3628,7 @@
 				328C87371ADFDD410047C79B /* GetInstance.h in Headers */,
 				3208AABE1AC56C1C000860D9 /* GetNodeDescription.h in Headers */,
 				32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */,
+				3211CCDE1B03402800F9B80E /* QuantumKeyConsumer.h in Headers */,
 				327F39B41AEAA2680000C845 /* GetAssociationByDS.h in Headers */,
 				327F39C71AEFABBB0000C845 /* StartStop.h in Headers */,
 				325FC8651AF7CEE900DB9D66 /* GetCurrentDataset.h in Headers */,
@@ -3627,6 +3640,7 @@
 				323386B21ACD731E008863DC /* NodeSearch.h in Headers */,
 				325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */,
 				324FD0821B00ACEF003800BA /* MonitorManager.h in Headers */,
+				3234BE7B1B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h in Headers */,
 				327F39B01AEAA2500000C845 /* AssociationControlUnit.h in Headers */,
 				3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */,
 				32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */,
@@ -4198,6 +4212,7 @@
 				32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */,
 				325FC8641AF7CEE900DB9D66 /* GetCurrentDataset.cpp in Sources */,
 				327F39AF1AEAA2500000C845 /* AssociationControlUnit.cpp in Sources */,
+				3234BE7A1B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.cpp in Sources */,
 				327F39BE1AEAB6260000C845 /* GetAllDS.cpp in Sources */,
 				32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */,
 				3211CCD91B021B8D00F9B80E /* GetBestEndpoints.cpp in Sources */,
@@ -4214,6 +4229,7 @@
 				327F39C61AEFABBB0000C845 /* StartStop.cpp in Sources */,
 				327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */,
 				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
+				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
 				327F39AB1AEAA2390000C845 /* UpdateDS.cpp in Sources */,

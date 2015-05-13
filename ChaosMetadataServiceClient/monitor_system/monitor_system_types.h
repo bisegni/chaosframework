@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #ifndef CHAOSFramework_monitor_system_types_h
 #define CHAOSFramework_monitor_system_types_h
 
@@ -38,7 +39,7 @@ namespace chaos {
             class QuantumSlotConsumer {
             public:
                 //!as called every time there is new data for quantum slot
-                virtual void quantumSlotHasData(const std::string& key, KeyValue value) = 0;
+                virtual void quantumSlotHasData(const std::string& key, const KeyValue& value) = 0;
             };
         }
     }

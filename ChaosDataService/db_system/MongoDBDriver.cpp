@@ -572,7 +572,7 @@ int MongoDBDriver::vfsGetFilePathForOldestBlockState(const std::string& domain,
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " searching oldest datablock with state";
 		} else if(result.isEmpty()){
-			MDBID_LERR_ << "No datablock found for the criteria";
+			//MDBID_LERR_ << "No datablock found for the criteria";
 		} else if(result.hasField(MONGO_DB_FIELD_FILE_PRIMARY_KEY)){
 			mongo::BSONObjBuilder file_query;
 			file_query << "_id" << result[MONGO_DB_FIELD_FILE_PRIMARY_KEY].OID();

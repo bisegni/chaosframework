@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #ifndef __CHAOSFramework__QuantumSlot__
 #define __CHAOSFramework__QuantumSlot__
 
@@ -57,7 +58,7 @@ namespace chaos {
             typedef boost::multi_index_container<
             ConsumerType,
             boost::multi_index::indexed_by<
-            boost::multi_index::ordered_unique<boost::multi_index::tag<priority_index>,  BOOST_MULTI_INDEX_MEMBER(ConsumerType, uint32_t, priority)>,
+            boost::multi_index::ordered_non_unique<boost::multi_index::tag<priority_index>,  BOOST_MULTI_INDEX_MEMBER(ConsumerType, uint32_t, priority)>,
             boost::multi_index::ordered_unique<boost::multi_index::tag<pointer_index>,  BOOST_MULTI_INDEX_MEMBER(ConsumerType, uintptr_t, consumer_pointer)>
             >
             > SetConsumerType;
@@ -105,6 +106,10 @@ namespace chaos {
                 SetConsumerTypePriorityIndex&    consumers_priority_index;
                 SetConsumerTypePointerIndex&     consumers_pointer_index;
                 
+                //statistic variable
+                uint64_t last_send_data_duration;
+                int send_data_iteration;
+                
                 QuantumSlot(const std::string& _key,
                             int  _quantum_multiplier);
             public:
@@ -124,7 +129,7 @@ namespace chaos {
                 int getQuantumMultiplier() const;
                 
                 void addNewConsumer(QuantumSlotConsumer *_consumer,
-                                    int priotiy);
+                                    unsigned int priotiy);
                 void removeConsumer(QuantumSlotConsumer *_consumer);
                 void sendNewValueConsumer(const KeyValue& _value);
             };

@@ -17,15 +17,20 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #ifndef __CHAOSFramework__MonitorManager__
 #define __CHAOSFramework__MonitorManager__
 
 #include <ChaosMetadataServiceClient/metadata_service_client_types.h>
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system_types.h>
 #include <ChaosMetadataServiceClient/monitor_system/QuantumSlotScheduler.h>
+#include <ChaosMetadataServiceClient/monitor_system/QuantumKeyConsumer.h>
 
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/InizializableService.h>
+
+#include <map>
+#include <string>
 
 namespace chaos {
     namespace metadata_service_client {
@@ -34,6 +39,8 @@ namespace chaos {
         
         namespace monitor_system {
             
+            typedef std::map<std::string, QuantumKeyConsumer*>           QuantuKeyConsumerMap;
+            typedef std::map<std::string, QuantumKeyConsumer*>::iterator QuantuKeyConsumerMapIterator;
             /*!
              class that manage the monitoring of node healt and
              control unit attribute value
@@ -52,6 +59,10 @@ namespace chaos {
                 //!quantum slot scheduler
                 QuantumSlotScheduler *slot_scheduler;
                 
+                //!map for QuantumKeyAttributeHandler structure
+                boost::mutex            map_mutex;
+                QuantuKeyConsumerMap    map_quantum_key_consumer;
+                
                 MonitorManager(chaos::common::network::NetworkBroker *_network_broker,
                                ClientSetting *_setting);
                 ~MonitorManager();
@@ -68,12 +79,24 @@ namespace chaos {
                 void addKeyConsumer(const std::string& key_to_monitor,
                                     int quantum_multiplier,
                                     QuantumSlotConsumer *consumer,
-                                    int consumer_priority = 500);
+                                    unsigned int consumer_priority = 500);
+                
+                //! add a new handler for a single attribute for a key
+                void addKeyAttributeHandler(const std::string& key_to_monitor,
+                                            int quantum_multiplier,
+                                            AbstractQuantumKeyAttributeHandler *attribute_handler,
+                                            unsigned int consumer_priority = 500);
                 
                 //! remove a consumer by key and quantum
                 void removeKeyConsumer(const std::string& key_to_monitor,
                                        int quantum_multiplier,
                                        QuantumSlotConsumer *consumer);
+                
+                //! remove an handler associated to ans attirbute of a key
+                void removeKeyAttributeHandler(const std::string& key_to_monitor,
+                                               int quantum_multiplier,
+                                               AbstractQuantumKeyAttributeHandler *attribute_handler);
+                
             };
         }
     }

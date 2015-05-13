@@ -118,6 +118,9 @@ namespace chaos {
                                         const std::string& str_value);
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
+                                        const char * c_str_value);
+                void addNodeMetricValue(const std::string& node_uid,
+                                        const std::string& node_metric,
                                         const bool bool_value);
 
                     //publish the healt for the ndoe uid

@@ -1,10 +1,10 @@
-    //
-    //  main.cpp
-    //  ChaosMetadataServiceClientTest
-    //
-    //  Created by Claudio Bisegni on 27/03/15.
-    //  Copyright (c) 2015 INFN. All rights reserved.
-    //
+//
+//  main.cpp
+//  ChaosMetadataServiceClientTest
+//
+//  Created by Claudio Bisegni on 27/03/15.
+//  Copyright (c) 2015 INFN. All rights reserved.
+//
 
 #include <iostream>
 #include <chaos/common/data/CDataWrapper.h>
@@ -32,14 +32,14 @@ class EchoTestProxy:
 public chaos::metadata_service_client::api_proxy::ApiProxy {
     API_PROXY_CLASS(EchoTestProxy)
 protected:
-        //! default constructor
+    //! default constructor
     EchoTestProxy(chaos::common::message::MultiAddressMessageChannel *_mn_message,
                   int32_t timeout_in_milliseconds):
     ApiProxy("test", "echo", _mn_message, timeout_in_milliseconds){};
-        //! default destructor
+    //! default destructor
     ~EchoTestProxy(){};
 public:
-
+    
     /*!
      Return the description of the node
      */
@@ -54,14 +54,27 @@ public:
 class TestMonitorConsumer:
 public QuantumSlotConsumer {
     void quantumSlotHasData(const std::string& key,
-                            KeyValue value) {
+                            const KeyValue& value) {
         //print fetched data
-        MSCT_INFO << key << " - " << value->getJSONString();
+       MSCT_INFO << key << " - " << value->getJSONString() <<std::endl;
     };
 };
 
-void asyncTest(EchoTestProxy *echo_proxy_test) {
+class TestHealtPhaseAttributeHandler:
+public QuantumKeyAttributeStringHandler {
+public:
+    TestHealtPhaseAttributeHandler():
+    QuantumKeyAttributeStringHandler(std::string("nh_phase")){}
+protected:
+    void consumeValue(const std::string& key,
+                      const std::string& attribute,
+                      const std::string& value) {
+        MSCT_INFO << "key:" << key << " attribute:" << attribute << " value:" << value;
+    }
+};
 
+void asyncTest(EchoTestProxy *echo_proxy_test) {
+    
     uint64_t num_of_cicle = 0;
     for(int idx = 0; idx < 10000; idx++) {
         if(((num_of_cicle++) % 100) == 0) {
@@ -74,43 +87,44 @@ void asyncTest(EchoTestProxy *echo_proxy_test) {
             std::cout << "Waint for result pass:" << i++<< "\n" << std::flush;
             if(i>2) break;
         }
-
+        
         if(r->getResult() != NULL) {
-                //std::cout << r->getResult()->getJSONString() << "\n" << std::flush;
+            //std::cout << r->getResult()->getJSONString() << "\n" << std::flush;
             assert(value.compare(r->getResult()->getStringValue("key_echo")) == 0);
         } else if(r->getError()){
             error_count++;
-                //std::cerr << "Error code:"<<r->getError() << "\n" << std::flush;
-                //std::cerr << "Error Message:"<<r->getErrorMessage() <<  "\n" << std::flush;
-                //std::cerr << "Error Domain:"<<r->getErrorDomain() <<  "\n" << std::flush;
+            //std::cerr << "Error code:"<<r->getError() << "\n" << std::flush;
+            //std::cerr << "Error Message:"<<r->getErrorMessage() <<  "\n" << std::flush;
+            //std::cerr << "Error Domain:"<<r->getErrorDomain() <<  "\n" << std::flush;
         } else {
             no_result_count++;
-                //std::cerr << "No result found";
+            //std::cerr << "No result found";
         }
-            //sleep for 100ms
-            //usleep(1000);
+        //sleep for 100ms
+        //usleep(1000);
     }
 }
 
 int main(int argc, char * argv[]) {
     boost::thread_group tg;
     try{
-        TestMonitorConsumer test_consumer;
+        TestHealtPhaseAttributeHandler healt_phase_attribute_handler;
+        TestMonitorConsumer test_consumer[400];
         global_counter = 0;
         error_count = 0;
         no_result_count=0;
         ChaosMetadataServiceClient::getInstance()->init(argc, argv);
         ChaosMetadataServiceClient::getInstance()->start();
-
+        
         ChaosMetadataServiceClient::getInstance()->addServerAddress("localhost:5000");
-
+        
         ChaosMetadataServiceClient::getInstance()->enableMonitoring();
         
         ChaosMetadataServiceClient::getInstance()->addKeyConsumer("rt-claudio-1_healt",
                                                                   5,
-                                                                  &test_consumer);
-
-        
+                                                                  &test_consumer[0]);
+        ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandler("rt-claudio-1_healt", 1, &healt_phase_attribute_handler);
+        sleep(3600);
         //EchoTestProxy *echo_proxy_test = ChaosMetadataServiceClient::getInstance()->getApiProxy<EchoTestProxy>(1000);
         //tg.add_thread(new boost::thread(&asyncTest, echo_proxy_test));
         //tg.add_thread(new boost::thread(&asyncTest, echo_proxy_test));
@@ -119,7 +133,7 @@ int main(int argc, char * argv[]) {
         std::cout << "global_counter"<<global_counter<<"\n" << std::flush;
         std::cout << "error_count"<<error_count<<"\n" << std::flush;
         std::cout << "no_result_count"<<no_result_count<<"\n" << std::flush;
-        sleep(600);
+        
         ChaosMetadataServiceClient::getInstance()->stop();
         ChaosMetadataServiceClient::getInstance()->deinit();
     }catch(chaos::CException& ex) {

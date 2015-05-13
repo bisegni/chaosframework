@@ -215,6 +215,18 @@ bool ChaosMetadataServiceClient::addKeyConsumer(const std::string& key_to_monito
     return true;
 }
 
+bool ChaosMetadataServiceClient::addKeyAttributeHandler(const std::string& key_to_monitor,
+                                                        int quantum_multiplier,
+                                                        AbstractQuantumKeyAttributeHandler *attribute_handler,
+                                                        unsigned int consumer_priority) {
+    if(monitor_manager.get() == NULL) return false;
+    monitor_manager->addKeyAttributeHandler(key_to_monitor,
+                                            quantum_multiplier,
+                                            attribute_handler,
+                                            consumer_priority);
+    return true;
+}
+
 //! remove a consumer by key and quantum
 bool ChaosMetadataServiceClient::removeKeyConsumer(const std::string& key_to_monitor,
                                                    int quantum_multiplier,
@@ -223,5 +235,16 @@ bool ChaosMetadataServiceClient::removeKeyConsumer(const std::string& key_to_mon
     monitor_manager->addKeyConsumer(key_to_monitor,
                                     quantum_multiplier,
                                     consumer);
+    return true;
+}
+
+//! remove an handler associated to ans attirbute of a key
+bool ChaosMetadataServiceClient::removeKeyAttributeHandler(const std::string& key_to_monitor,
+                                                           int quantum_multiplier,
+                                                           AbstractQuantumKeyAttributeHandler *attribute_handler) {
+    if(monitor_manager.get() == NULL) return false;
+    monitor_manager->removeKeyAttributeHandler(key_to_monitor,
+                                               quantum_multiplier,
+                                               attribute_handler);
     return true;
 }

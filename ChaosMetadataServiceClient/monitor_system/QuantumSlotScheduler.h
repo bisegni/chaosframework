@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #ifndef __CHAOSFramework__QuantumSlotScheduler__
 #define __CHAOSFramework__QuantumSlotScheduler__
 
@@ -197,11 +198,13 @@ namespace chaos {
                 void addKeyConsumer(const std::string& key_to_monitor,
                                     int quantum_multiplier,
                                     QuantumSlotConsumer *consumer,
-                                    int consumer_priority = 500);
+                                    unsigned int consumer_priority = 500);
+                
                 //! remove a consumer by key and quantum
                 void removeKeyConsumer(const std::string& key_to_monitor,
                                        int quantum_multiplier,
                                        QuantumSlotConsumer *consumer);
+
             };
             
         }

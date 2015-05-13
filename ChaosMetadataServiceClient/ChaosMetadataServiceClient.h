@@ -97,11 +97,19 @@ namespace chaos {
                                 int quantum_multiplier,
                                 monitor_system::QuantumSlotConsumer *consumer,
                                 int consumer_priority = 500);
-            
+            //! add a new handler for a single attribute for a key
+            bool addKeyAttributeHandler(const std::string& key_to_monitor,
+                                        int quantum_multiplier,
+                                        monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
+                                        unsigned int consumer_priority = 500);
             //! remove a consumer by key and quantum
             bool removeKeyConsumer(const std::string& key_to_monitor,
                                    int quantum_multiplier,
                                    monitor_system::QuantumSlotConsumer *consumer);
+            //! remove an handler associated to ans attirbute of a key
+            bool removeKeyAttributeHandler(const std::string& key_to_monitor,
+                                           int quantum_multiplier,
+                                           monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler);
         };
     }
 }

@@ -29,7 +29,8 @@ SET(cnd_src  ${cnd_src}	api/data_service/DataServiceApiGroup.cpp
                         api/data_service/DeleteDS.cpp
                         api/data_service/AssociationControlUnit.cpp
                         api/data_service/GetAssociationByDS.cpp
-                        api/data_service/GetAllDataService.cpp)
+                        api/data_service/GetAllDataService.cpp
+                        api/data_service/GetBestEndpoints.cpp)
 
 SET(cnd_src  ${cnd_src}	api/control_unit/ControlUnitGroup.cpp
                         api/control_unit/SetInstanceDescription.cpp

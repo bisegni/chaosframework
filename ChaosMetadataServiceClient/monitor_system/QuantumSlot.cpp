@@ -17,9 +17,18 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #include <ChaosMetadataServiceClient/monitor_system/QuantumSlot.h>
 
+#include <chaos/common/utility/TimingUtil.h>
 
+#include <boost/format.hpp>
+
+#define QS_INFO   INFO_LOG (QuantumSlot)
+#define QS_DBG    DBG_LOG  (QuantumSlot)
+#define QS_ERR    ERR_LOG  (QuantumSlot)
+
+using namespace chaos::common::utility;
 using namespace chaos::metadata_service_client::monitor_system;
 
 QuantumSlot::QuantumSlot(const std::string& _key,
@@ -29,12 +38,11 @@ quantum_multiplier(_quantum_multiplier),
 real_quantum(quantum_multiplier * MONITOR_QUANTUM_LENGTH),
 consumers_priority_index(boost::multi_index::get<priority_index>(consumers)),
 consumers_pointer_index(boost::multi_index::get<pointer_index>(consumers)),
-last_processed_time(0){
-}
+last_processed_time(0),
+last_send_data_duration(0),
+send_data_iteration(0){}
 
-QuantumSlot::~QuantumSlot() {
-    
-}
+QuantumSlot::~QuantumSlot() {}
 
 const std::string& QuantumSlot::getKey() const {
     return key;
@@ -45,7 +53,7 @@ int QuantumSlot::getQuantumMultiplier() const {
 }
 
 void QuantumSlot::addNewConsumer(QuantumSlotConsumer *_consumer,
-                                 int priotiy) {
+                                 unsigned int priotiy) {
     if(_consumer == NULL) return;
     consumers.insert(ConsumerType(_consumer, priority));
 }
@@ -60,11 +68,25 @@ void QuantumSlot::removeConsumer(QuantumSlotConsumer *_consumer) {
 }
 
 void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
+    uint64_t start_forwardint_time = TimingUtil::getTimeStampInMicrosends();
     for (SetConsumerTypePriorityIndexIterator it = consumers_priority_index.begin();
          it != consumers_priority_index.end();
          it++) {
         //signal the consumer
         reinterpret_cast<QuantumSlotConsumer*>(it->consumer_pointer)->quantumSlotHasData(key, value);
+    }
+    
+    //calc time
+    last_send_data_duration =  (TimingUtil::getTimeStampInMicrosends() - start_forwardint_time);
+    if((send_data_iteration++ % 100) == 0) {
+        //print statistic
+        if(send_data_iteration >= 100) {
+            QS_INFO << boost::str(boost::format("Forwarding processing time is %1% microseconds for %2% elements for key %3%_%4%")%
+                                  ((double)last_send_data_duration/10)%
+                                  consumers_priority_index.size()%
+                                  key%
+                                  quantum_multiplier);
+        }
     }
 }
 
