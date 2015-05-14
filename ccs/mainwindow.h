@@ -1,8 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-
+#include "monitor/healt/HealtMonitorWidget.h"
 #include "presenter/CommandPresenter.h"
+
 #include <QMainWindow>
 
 namespace Ui {
@@ -25,9 +26,12 @@ private slots:
     void on_actionData_Services_triggered();
 
     void on_actionPreferences_triggered();
+    void on_actionShow_Monitor_View_triggered();
+
 public slots:
     void reconfigure();
 private:
+    HealtMonitorWidget *healt_widget;
     Ui::MainWindow *ui;
 };
 

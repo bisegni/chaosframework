@@ -2,4 +2,10 @@
     <qresource prefix="/splash">
         <file>main_splash.png</file>
     </qresource>
+    <qresource prefix="/images">
+        <file>black_circle_indicator.png</file>
+        <file>green_circle_indicator.png</file>
+        <file>red_circle_indicator.png</file>
+        <file>white_circle_indicator.png</file>
+    </qresource>
 </RCC>

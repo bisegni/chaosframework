@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "MainWindow.h"
 #include "ui_mainwindow.h"
 #include "search/SearchNode.h"
 #include "node/unit_server/UnitServerEditor.h"
@@ -15,29 +15,30 @@ using namespace chaos::metadata_service_client;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     command_presenter(NULL),
-    ui(new Ui::MainWindow)
-{
+    ui(new Ui::MainWindow){
     ui->setupUi(this);
 
     //allocate the presenter
     command_presenter = new CommandPresenter(this, ui->mdiAreaEditor);
-
-
-    //ui->dockCommand->setStyleSheet("::title { position: relative; text-align: center }");
-    //ui->dockCommandSpecific->setStyleSheet("::title { position: relative;text-align: center }");
-    //ui->dockCommand->setWidget(new SearchNode(this, command_presenter));
-    //tabifyDockWidget(ui->dockCommand,
-    //                 ui->dockCommandSpecific);
+    addDockWidget(Qt::RightDockWidgetArea, healt_widget = new HealtMonitorWidget(this));
+    healt_widget->hide();
+    //connect healt monitoring slot to prensenter signal
+    connect(command_presenter,
+            SIGNAL(startMonitoringHealtForNode(QString)),
+            healt_widget,
+            SLOT(startMonitoringNode(QString)));
+    connect(command_presenter,
+            SIGNAL(stopMonitoringHealtForNode(QString)),
+            healt_widget,
+            SLOT(stopMonitoringNode(QString)));
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow(){
     if(command_presenter) delete(command_presenter);
     delete ui;
 }
 
-void MainWindow::on_actionOpenNode_triggered()
-{
+void MainWindow::on_actionOpenNode_triggered(){
     //opena a specified node, knowing the unique identifier
     bool ok;
     QStringList node_types;
@@ -61,24 +62,30 @@ void MainWindow::on_actionOpenNode_triggered()
     }
 }
 
-void MainWindow::on_actionSearch_Node_triggered()
-{
+void MainWindow::on_actionSearch_Node_triggered(){
     command_presenter->showCommandPresenter(new SearchNodeResult());
 }
 
-void MainWindow::on_actionData_Services_triggered()
-{
+void MainWindow::on_actionData_Services_triggered(){
     command_presenter->showCommandPresenter(new DataServiceEditor());
 }
 
-void MainWindow::on_actionPreferences_triggered()
-{
+void MainWindow::on_actionPreferences_triggered(){
     PreferenceDialog pref_dialog(this);
     //connect changed signal to reconfiguration slot of main controller
     connect(&pref_dialog,
             SIGNAL(changedConfiguration()),
             SLOT(reconfigure()));
     pref_dialog.exec();
+}
+
+void MainWindow::on_actionShow_Monitor_View_triggered() {
+    //show or hide the monitor dock view
+    if(healt_widget->isHidden()){
+        healt_widget->show();
+    } else {
+        healt_widget->hide();
+    }
 }
 
 void MainWindow::reconfigure() {
@@ -94,3 +101,4 @@ void MainWindow::reconfigure() {
     settings.endArray();
     settings.endGroup();
 }
+

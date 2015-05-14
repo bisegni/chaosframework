@@ -22,8 +22,7 @@
 
 #include <ChaosMetadataServiceClient/api_proxy/api.h>
 #include <ChaosMetadataServiceClient/metadata_service_client_types.h>
-#include <ChaosMetadataServiceClient/monitor_system/MonitorManager.h>
-
+#include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
 #include <boost/thread/condition.hpp>
 
 #include <chaos/common/global.h>

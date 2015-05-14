@@ -32,7 +32,6 @@ LIBS +=     -lzmq\
             -lboost_filesystem
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     search/SearchNodeResult.cpp \
     search/SearchNode.cpp \
     presenter/PresenterWidget.cpp \
@@ -50,9 +49,12 @@ SOURCES += main.cpp\
     preference/PreferenceDialog.cpp \
     node/control_unit/controluniteditor.cpp \
     node/data/ChaosAbstractNodeTableModel.cpp \
-    node/data/FixedOutputChannelDatasetTableModel.cpp
+    node/data/FixedOutputChannelDatasetTableModel.cpp \
+    MainWindow.cpp \
+    monitor/healt/HealtMonitorWidget.cpp \
+    monitor/healt/HealtPresenterWidget.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     search/SearchNodeResult.h \
     search/SearchNode.h \
     presenter/PresenterWidget.h \
@@ -71,9 +73,12 @@ HEADERS  += mainwindow.h \
     node/control_unit/controluniteditor.h \
     node/data/CUDatasetModel.h \
     node/data/ChaosAbstractNodeTableModel.h \
-    node/data/FixedOutputChannelDatasetTableModel.h
+    node/data/FixedOutputChannelDatasetTableModel.h \
+    MainWindow.h \
+    monitor/healt/HealtMonitorWidget.h \
+    monitor/healt/HealtPresenterWidget.h
 
-FORMS    += mainwindow.ui \
+FORMS    += \
     search/searchnoderesult.ui \
     search/searchnode.ui \
     node/unit_server/UnitServerEditor.ui \
@@ -83,7 +88,9 @@ FORMS    += mainwindow.ui \
     node/data_service/DataServiceEditor.ui \
     node/data_service/CreateEditDataService.ui \
     preference/PreferenceDialog.ui \
-    node/control_unit/controluniteditor.ui
+    node/control_unit/controluniteditor.ui \
+    MainWindow.ui \
+    monitor/healt/HealtPresenterWidget.ui
 
 DISTFILES += \
     dark_orange.stylesheet

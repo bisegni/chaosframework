@@ -94,9 +94,19 @@
     </property>
     <addaction name="actionPreferences"/>
    </widget>
+   <widget class="QMenu" name="menuMonitor">
+    <property name="title">
+     <string>Monitor</string>
+    </property>
+    <addaction name="actionEnable_Monitoring"/>
+    <addaction name="actionDisable_Monitoring"/>
+    <addaction name="separator"/>
+    <addaction name="actionShow_Monitor_View"/>
+   </widget>
    <addaction name="menuNode"/>
    <addaction name="menuTools"/>
    <addaction name="menuWindows"/>
+   <addaction name="menuMonitor"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -164,6 +174,24 @@
   <action name="actionPreferences">
    <property name="text">
     <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionEnable_Monitoring">
+   <property name="text">
+    <string>Start Monitoring</string>
+   </property>
+  </action>
+  <action name="actionDisable_Monitoring">
+   <property name="text">
+    <string>Stop Monitoring</string>
+   </property>
+  </action>
+  <action name="actionShow_Monitor_View">
+   <property name="text">
+    <string>Show/Hide Monitor View</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
  </widget>

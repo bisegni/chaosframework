@@ -47,6 +47,16 @@ void PresenterWidget::addWidgetToPresenter(PresenterWidget *p_w) {
     presenter_instance->showCommandPresenter(p_w);
 }
 
+void PresenterWidget::addMonitorHealtForNode(const QString& node) {
+    assert(presenter_instance);
+    presenter_instance->addMonitorHealtForNode(node);
+}
+
+void PresenterWidget::removeMonitorHealtForNode(const QString& node) {
+    assert(presenter_instance);
+    presenter_instance->removeMonitorHealtForNode(node);
+}
+
 void PresenterWidget::submitApiResult(const QString& api_tag,
                                       ApiProxyResult api_result) {
     api_processor.submitApiResult(api_tag,

@@ -32,3 +32,11 @@ void CommandPresenter::showCommandPresenter(PresenterWidget *pwidget) {
     sub_win->show();
     pwidget->initUI();
 }
+
+void CommandPresenter::addMonitorHealtForNode(const QString& node) {
+    emit startMonitoringHealtForNode(node);
+}
+
+void CommandPresenter::removeMonitorHealtForNode(const QString& node) {
+    emit stopMonitoringHealtForNode(node);
+}

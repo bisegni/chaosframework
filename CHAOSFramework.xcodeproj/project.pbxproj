@@ -791,6 +791,7 @@
 		3234BE781B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractQuantumKeyAttributeHandler.cpp; sourceTree = "<group>"; };
 		3234BE791B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractQuantumKeyAttributeHandler.h; sourceTree = "<group>"; };
 		3234BE7E1B04CC9400AE6B08 /* HealtStatusAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HealtStatusAttributeHandler.h; sourceTree = "<group>"; };
+		3234BE811B04F49F00AE6B08 /* HealtHeartbeatAttributeHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HealtHeartbeatAttributeHandler.h; sourceTree = "<group>"; };
 		3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedConcurrentQueue.h; sourceTree = "<group>"; };
 		3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StageDataConsumer.cpp; sourceTree = "<group>"; };
 		3235425B1923A5C70090B8F6 /* StageDataConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StageDataConsumer.h; sourceTree = "<group>"; };
@@ -1765,6 +1766,7 @@
 			isa = PBXGroup;
 			children = (
 				3234BE7E1B04CC9400AE6B08 /* HealtStatusAttributeHandler.h */,
+				3234BE811B04F49F00AE6B08 /* HealtHeartbeatAttributeHandler.h */,
 			);
 			path = handler;
 			sourceTree = "<group>";

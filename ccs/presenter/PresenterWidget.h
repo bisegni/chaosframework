@@ -65,6 +65,10 @@ protected:
                          const QString& sub_title,
                          const QString& information);
 
+    void addMonitorHealtForNode(const QString& node);
+
+    void removeMonitorHealtForNode(const QString& node);
+
     //!submit api result for async wait termination
     void submitApiResult(const QString& api_tag,
                          chaos::metadata_service_client::api_proxy::ApiProxyResult api_result);

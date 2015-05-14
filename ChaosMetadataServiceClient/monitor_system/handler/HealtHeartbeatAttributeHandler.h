@@ -1,5 +1,5 @@
 /*
- *	HealtStatusAttributeHandler.h
+ *	HealtHeartBeatAttributeHandler.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -17,9 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
-#ifndef __CHAOSFramework__HealtStatusAttributeHandler__
-#define __CHAOSFramework__HealtStatusAttributeHandler__
+#ifndef CHAOSFramework_HealtHeartbeatAttributeHandler_h
+#define CHAOSFramework_HealtHeartbeatAttributeHandler_h
 
 #include <chaos/common/chaos_constants.h>
 #include <ChaosMetadataServiceClient/monitor_system/AbstractQuantumKeyAttributeHandler.h>
@@ -29,18 +28,18 @@ namespace chaos {
         namespace monitor_system {
             namespace handler {
                 
-                //! Precreated handler for node healt status
-                class HealtStatusAttributeHandler:
-                public QuantumKeyAttributeStringHandler {
+                //! Precreated handler for node healt heartbeat
+                class HealtHeartBeatAttributeHandler:
+                public QuantumKeyAttributeInt64Handler {
                 public:
-                    HealtStatusAttributeHandler():
-                    QuantumKeyAttributeStringHandler(std::string(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS)){}
+                    HealtHeartBeatAttributeHandler():
+                    QuantumKeyAttributeInt64Handler(std::string(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP)){}
                 };
-
+                
                 
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__HealtStatusAttributeHandler__) */
+#endif

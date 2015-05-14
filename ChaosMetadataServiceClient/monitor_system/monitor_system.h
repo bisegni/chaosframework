@@ -21,7 +21,10 @@
 #ifndef CHAOSFramework_monitor_system_h
 #define CHAOSFramework_monitor_system_h
 
+#include <ChaosMetadataServiceClient/monitor_system/QuantumSlot.h>
 #include <ChaosMetadataServiceClient/monitor_system/MonitorManager.h>
-
-
+#include <ChaosMetadataServiceClient/monitor_system/QuantumKeyConsumer.h>
+#include <ChaosMetadataServiceClient/monitor_system/AbstractQuantumKeyAttributeHandler.h>
+#include <ChaosMetadataServiceClient/monitor_system/handler/HealtStatusAttributeHandler.h>
+#include <ChaosMetadataServiceClient/monitor_system/handler/HealtHeartbeatAttributeHandler.h>
 #endif

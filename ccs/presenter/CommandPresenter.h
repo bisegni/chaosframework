@@ -1,7 +1,6 @@
 #ifndef COMMANDPRESENTER_H
 #define COMMANDPRESENTER_H
 
-
 #include <QObject>
 #include <QMdiArea>
 
@@ -21,7 +20,11 @@ public:
 
     //! show the command presenter
     void showCommandPresenter(PresenterWidget *pwidget);
+    void addMonitorHealtForNode(const QString& node);
+    void removeMonitorHealtForNode(const QString& node);
 signals:
+    void startMonitoringHealtForNode(const QString& nod_to_monitor);
+    void stopMonitoringHealtForNode(const QString& nod_to_monitor);
 
 public slots:
 };
