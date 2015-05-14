@@ -19,7 +19,7 @@
  */
 #ifndef __CHAOSFramework__HealtManager__
 #define __CHAOSFramework__HealtManager__
-
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/data/CDataWrapper.h>
@@ -53,7 +53,7 @@ namespace chaos {
                 boost::shared_mutex mutex_metric_set;
 
                 NodeHealtSet(const std::string& node_uid){
-                    node_key = node_uid + "_healt";
+                    node_key = node_uid + chaos::NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
                 }
             };
 
@@ -98,27 +98,34 @@ namespace chaos {
                     //s
                 void setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker);
 
-
                 void addNewNode(const std::string& node_uid);
+                
                 void removeNode(const std::string& node_uid);
+                
                 void addNodeMetric(const std::string& node_uid,
                                    const std::string& node_metric,
                                    chaos::DataType::DataType metric_type);
+                
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         int32_t int32_value);
+                
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         int64_t int64_value);
+                
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         double double_value);
+                
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         const std::string& str_value);
+                
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         const char * c_str_value);
+                
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         const bool bool_value);

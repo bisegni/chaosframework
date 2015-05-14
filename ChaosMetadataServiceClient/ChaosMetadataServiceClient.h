@@ -97,19 +97,45 @@ namespace chaos {
                                 int quantum_multiplier,
                                 monitor_system::QuantumSlotConsumer *consumer,
                                 int consumer_priority = 500);
+            
+            //! add a new consumer ofr the healt data associated to a key
+            bool addKeyConsumerForHealt(const std::string& key_to_monitor,
+                                        int quantum_multiplier,
+                                        monitor_system::QuantumSlotConsumer *consumer,
+                                        int consumer_priority = 500);
+            
             //! add a new handler for a single attribute for a key
             bool addKeyAttributeHandler(const std::string& key_to_monitor,
                                         int quantum_multiplier,
                                         monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
                                         unsigned int consumer_priority = 500);
+
+            //! add a new handler for a single attribute for a healt data for a key
+            bool addKeyAttributeHandlerForHealt(const std::string& key_to_monitor,
+                                                int quantum_multiplier,
+                                                monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
+                                                unsigned int consumer_priority = 500);
+            
             //! remove a consumer by key and quantum
             bool removeKeyConsumer(const std::string& key_to_monitor,
                                    int quantum_multiplier,
                                    monitor_system::QuantumSlotConsumer *consumer);
+            
+            //! remove a consumer for the healt data associated to a key
+            bool removeKeyConsumerForHealt(const std::string& key_to_monitor,
+                                           int quantum_multiplier,
+                                           monitor_system::QuantumSlotConsumer *consumer);
+            
             //! remove an handler associated to ans attirbute of a key
             bool removeKeyAttributeHandler(const std::string& key_to_monitor,
                                            int quantum_multiplier,
                                            monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler);
+            
+            //! remove an handler associated to ans attirbute of a key
+            bool removeKeyAttributeHandlerForHealt(const std::string& key_to_monitor,
+                                                   int quantum_multiplier,
+                                                   monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler);
+            
         };
     }
 }

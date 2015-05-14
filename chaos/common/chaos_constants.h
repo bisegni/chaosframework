@@ -227,6 +227,7 @@ namespace chaos {
     //! This namespace enclose all the key for inspetting a node healt
     //! every different node need to expose default key and custom
     namespace NodeHealtDefinitionKey {
+        static const char * const HEALT_KEY_POSTFIX                     = "_healt";
         //! define time stamp ofthe push (usefull for heart beating)
         static const char * const NODE_HEALT_TIMESTAMP                  = "nh_ts";
         //! define time stamp of the collection of the last insert metric

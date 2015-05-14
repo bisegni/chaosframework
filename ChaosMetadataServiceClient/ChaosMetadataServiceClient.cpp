@@ -215,6 +215,22 @@ bool ChaosMetadataServiceClient::addKeyConsumer(const std::string& key_to_monito
     return true;
 }
 
+//! add a new consumer ofr the healt data associated to a key
+bool ChaosMetadataServiceClient::addKeyConsumerForHealt(const std::string& key_to_monitor,
+                                                        int quantum_multiplier,
+                                                        monitor_system::QuantumSlotConsumer *consumer,
+                                                        int consumer_priority) {
+    // compose healt key for node
+    std::string healt_key = boost::str(boost::format("%1%_%2%")%
+                                       key_to_monitor%
+                                       NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
+    // call api for register the conusmer
+    return addKeyConsumer(healt_key,
+                          quantum_multiplier,
+                          consumer,
+                          consumer_priority);
+}
+
 bool ChaosMetadataServiceClient::addKeyAttributeHandler(const std::string& key_to_monitor,
                                                         int quantum_multiplier,
                                                         AbstractQuantumKeyAttributeHandler *attribute_handler,
@@ -225,6 +241,22 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandler(const std::string& key_t
                                             attribute_handler,
                                             consumer_priority);
     return true;
+}
+
+//! add a new handler for a single attribute for a healt data for a key
+bool ChaosMetadataServiceClient::addKeyAttributeHandlerForHealt(const std::string& key_to_monitor,
+                                                                int quantum_multiplier,
+                                                                monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
+                                                                unsigned int consumer_priority) {
+    // compose healt key for node
+    std::string healt_key = boost::str(boost::format("%1%_%2%")%
+                                       key_to_monitor%
+                                       NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
+    // call api for register the conusmer
+    return addKeyAttributeHandler(healt_key,
+                                  quantum_multiplier,
+                                  attribute_handler,
+                                  consumer_priority);
 }
 
 //! remove a consumer by key and quantum
@@ -238,6 +270,19 @@ bool ChaosMetadataServiceClient::removeKeyConsumer(const std::string& key_to_mon
     return true;
 }
 
+//! remove a consumer for the healt data associated to a key
+bool ChaosMetadataServiceClient::removeKeyConsumerForHealt(const std::string& key_to_monitor,
+                                                           int quantum_multiplier,
+                                                           monitor_system::QuantumSlotConsumer *consumer) {
+    // compose healt key for node
+    std::string healt_key = boost::str(boost::format("%1%_%2%")%
+                                       key_to_monitor%
+                                       NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
+    return removeKeyConsumer(healt_key,
+                             quantum_multiplier,
+                             consumer);
+}
+
 //! remove an handler associated to ans attirbute of a key
 bool ChaosMetadataServiceClient::removeKeyAttributeHandler(const std::string& key_to_monitor,
                                                            int quantum_multiplier,
@@ -247,4 +292,17 @@ bool ChaosMetadataServiceClient::removeKeyAttributeHandler(const std::string& ke
                                                quantum_multiplier,
                                                attribute_handler);
     return true;
+}
+
+//! remove an handler associated to ans attirbute of a key
+bool ChaosMetadataServiceClient::removeKeyAttributeHandlerForHealt(const std::string& key_to_monitor,
+                                                                   int quantum_multiplier,
+                                                                   monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler) {
+    // compose healt key for node
+    std::string healt_key = boost::str(boost::format("%1%_%2%")%
+                                       key_to_monitor%
+                                       NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
+    return removeKeyAttributeHandler(healt_key,
+                                     quantum_multiplier,
+                                     attribute_handler);
 }
