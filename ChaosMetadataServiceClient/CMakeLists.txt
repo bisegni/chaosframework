@@ -31,6 +31,7 @@ SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
                             monitor_system/QuantumKeyConsumer.cpp
                             monitor_system/QuantumSlotScheduler.cpp
                             monitor_system/AbstractQuantumKeyAttributeHandler.cpp)
+
 IF(BUILD_FORCE_STATIC)
 ADD_LIBRARY(chaos_metadata_service_client STATIC ${mcl_src})
 ELSE()

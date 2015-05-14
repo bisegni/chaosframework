@@ -233,7 +233,7 @@ namespace chaos {
         //! define time stamp of the collection of the last insert metric
         static const char * const NODE_HEALT_TIMESTAMP_LAST_METRIC      = "nh_ts_lst_metric";
         //! define the status of a node (loaded, initilized, deinitialized, started, stopped, unloaded)
-        static const char * const NODE_HEALT_STATUS                     = "nh_phase";
+        static const char * const NODE_HEALT_STATUS                     = "nh_status";
     }
     /** @} */ // end of NodeHealtDefinitionKey
     

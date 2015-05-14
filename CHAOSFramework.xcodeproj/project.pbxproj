@@ -76,6 +76,7 @@
 		323386BB1AD3D78E008863DC /* MultiAddressMessageRequestFuture.h in Headers */ = {isa = PBXBuildFile; fileRef = 323386B91AD3D78E008863DC /* MultiAddressMessageRequestFuture.h */; };
 		3234BE7A1B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3234BE781B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.cpp */; };
 		3234BE7B1B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3234BE791B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h */; };
+		3234BE801B04CC9400AE6B08 /* HealtStatusAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3234BE7E1B04CC9400AE6B08 /* HealtStatusAttributeHandler.h */; };
 		3235110A17B3EAE500E39E14 /* TemplatedConcurrentQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */; };
 		3235425C1923A5C70090B8F6 /* StageDataConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */; };
 		3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235FDC51A6FF43000EC83A9 /* UnitServerApiGroup.cpp */; };
@@ -789,6 +790,7 @@
 		323386B91AD3D78E008863DC /* MultiAddressMessageRequestFuture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiAddressMessageRequestFuture.h; sourceTree = "<group>"; };
 		3234BE781B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractQuantumKeyAttributeHandler.cpp; sourceTree = "<group>"; };
 		3234BE791B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractQuantumKeyAttributeHandler.h; sourceTree = "<group>"; };
+		3234BE7E1B04CC9400AE6B08 /* HealtStatusAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HealtStatusAttributeHandler.h; sourceTree = "<group>"; };
 		3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedConcurrentQueue.h; sourceTree = "<group>"; };
 		3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StageDataConsumer.cpp; sourceTree = "<group>"; };
 		3235425B1923A5C70090B8F6 /* StageDataConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StageDataConsumer.h; sourceTree = "<group>"; };
@@ -1759,6 +1761,14 @@
 			path = ChaosDataService;
 			sourceTree = "<group>";
 		};
+		3234BE7C1B04CC2B00AE6B08 /* handler */ = {
+			isa = PBXGroup;
+			children = (
+				3234BE7E1B04CC9400AE6B08 /* HealtStatusAttributeHandler.h */,
+			);
+			path = handler;
+			sourceTree = "<group>";
+		};
 		3235FDC41A6FF40100EC83A9 /* unit_server */ = {
 			isa = PBXGroup;
 			children = (
@@ -2667,6 +2677,7 @@
 		3274A9091AC2F1CD000C6A4D /* monitor_system */ = {
 			isa = PBXGroup;
 			children = (
+				3234BE7C1B04CC2B00AE6B08 /* handler */,
 				324FD07F1B00ACEF003800BA /* MonitorManager.cpp */,
 				324FD0801B00ACEF003800BA /* MonitorManager.h */,
 				32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */,
@@ -3633,6 +3644,7 @@
 				327F39C71AEFABBB0000C845 /* StartStop.h in Headers */,
 				325FC8651AF7CEE900DB9D66 /* GetCurrentDataset.h in Headers */,
 				3274A90D1AC2F214000C6A4D /* ApiProxyManager.h in Headers */,
+				3234BE801B04CC9400AE6B08 /* HealtStatusAttributeHandler.h in Headers */,
 				328C87331ADFDB9A0047C79B /* SearchInstancesByUS.h in Headers */,
 				3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */,
 				327F39AC1AEAA2390000C845 /* UpdateDS.h in Headers */,
