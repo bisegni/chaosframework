@@ -1,9 +1,10 @@
 #include "PresenterWidget.h"
 #include "CommandPresenter.h"
+
+#include <QMenu>
 #include <QDebug>
 #include <QCloseEvent>
 #include <QMessageBox>
-#include <QDebug>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -47,12 +48,12 @@ void PresenterWidget::addWidgetToPresenter(PresenterWidget *p_w) {
     presenter_instance->showCommandPresenter(p_w);
 }
 
-void PresenterWidget::addMonitorHealtForNode(const QString& node) {
+void PresenterWidget::addNodeToHealtMonitor(const QString& node) {
     assert(presenter_instance);
     presenter_instance->addMonitorHealtForNode(node);
 }
 
-void PresenterWidget::removeMonitorHealtForNode(const QString& node) {
+void PresenterWidget::removeNodeToHealtMonitor(const QString& node) {
     assert(presenter_instance);
     presenter_instance->removeMonitorHealtForNode(node);
 }
@@ -113,14 +114,57 @@ void PresenterWidget::onApiTimeout(const QString& tag) {
                     tr("Timeout reached (Possible no server available)!"));
 }
 
- void PresenterWidget::showInformation(const QString& title,
-                                       const QString& sub_title,
-                                       const QString& information) {
-     QString title_(title);
-     title_.append("[");
-     title_.append(sub_title);
-     title_.append("]");
-     QMessageBox::information(this,
-                              title_,
-                              information);
- }
+void PresenterWidget::showInformation(const QString& title,
+                                      const QString& sub_title,
+                                      const QString& information) {
+    QString title_(title);
+    title_.append("[");
+    title_.append(sub_title);
+    title_.append("]");
+    QMessageBox::information(this,
+                             title_,
+                             information);
+}
+
+//---------------contextual menu utility------------
+void PresenterWidget::registerWidgetForContextualMenu(QWidget *contextual_menu_parent) {
+    if(!contextual_menu_parent) return;
+    contextual_menu_parent->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(contextual_menu_parent, SIGNAL(customContextMenuRequested(QPoint)),
+            this, SLOT(contextualMenuWillBeShown(QPoint)));
+}
+
+void PresenterWidget::contextualMenuWillBeShown(const QPoint& cm_start_point) {
+    QWidget *child = this->childAt(cm_start_point);
+    QMenu *menu = new QMenu(this);
+
+    //let superclass to add custom action
+    addCustomActionToContextualMenuForWidget(child, cm_start_point, menu);
+
+    //show the contextual menu
+    menu->popup(child->mapToGlobal(cm_start_point));
+}
+
+void PresenterWidget::addCustomActionToContextualMenuForWidget(QWidget *contextual_menu_parent,
+                                                               const QPoint &cm_start_point,
+                                                               QMenu *contextual_menu) {
+
+}
+
+void PresenterWidget::addDefaultNodeAction(QMenu *contextual_menu) {
+    QAction *start_healt_monitoring_action = new QAction("Start healt monitor", contextual_menu);
+    connect(start_healt_monitoring_action, SIGNAL(triggered()), this, SLOT(startHealtMonitorAction()));
+    contextual_menu->addAction(start_healt_monitoring_action);
+
+    QAction *stop_healt_monitoring_action = new QAction("Stop healt monitor", contextual_menu);
+    connect(stop_healt_monitoring_action, SIGNAL(triggered()), this, SLOT(stopHealtMonitorAction()));
+    contextual_menu->addAction(stop_healt_monitoring_action);
+}
+
+void PresenterWidget::startHealtMonitorAction() {
+
+}
+
+void PresenterWidget::stopHealtMonitorAction() {
+
+}

@@ -1,8 +1,10 @@
 #ifndef HEALTMONITORWIDGET_H
 #define HEALTMONITORWIDGET_H
 
+#include "HealtWidgetsListPresenteWidget.h"
+
 #include <QDockWidget>
-#include <QVBoxLayout>
+#include <QScrollArea>
 #include <QMap>
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
@@ -22,7 +24,7 @@ public slots:
 
 private:
      QMap<QString, HealtPresenterWidget*> map_node_healt_wdg;
-     QVBoxLayout *healt_widget_vlayout;
+     HealtWidgetsListPresenteWidget *healt_list_presenter;
 };
 
 #endif // HEALTMONITORWIDGET_H

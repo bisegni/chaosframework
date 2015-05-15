@@ -27,9 +27,16 @@ class SearchNodeResult :
     //api has ben called successfully
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+
+    //-------------default node cm event
+    void startHealtMonitorAction();
+    void stopHealtMonitorAction();
 protected:
     void initUI();
     bool canClose();
+    void addCustomActionToContextualMenuForWidget(QWidget *contextual_menu_parent,
+                                                  const QPoint &cm_start_point,
+                                                  QMenu *contextual_menu);
 
 public:
     explicit SearchNodeResult(bool _selection_mode = false,

@@ -9,16 +9,16 @@
 #include <QMdiSubWindow>
 
 #define GET_CHAOS_API_PTR(api_name)\
-chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->getApiProxy<api_name>()
+    chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->getApiProxy<api_name>()
 
 #define CHK_STR_AND_GET(p, x, alt)\
-(p->hasKey(x)?p->getStringValue(x):alt)
+    (p->hasKey(x)?p->getStringValue(x):alt)
 
 #define CHK_INT32_AND_GET(p, x, alt)\
-(p->hasKey(x)?p->getInt32Value(x):alt)
+    (p->hasKey(x)?p->getInt32Value(x):alt)
 
 #define CHK_UINT32_AND_GET(p, x, alt)\
-(p->hasKey(x)?p->getUInt32Value(x):alt)
+    (p->hasKey(x)?p->getUInt32Value(x):alt)
 
 class CommandPresenter;
 
@@ -46,12 +46,17 @@ private:
 private slots:
 
     void asyncApiResult(const QString& tag,
-                                QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+                        QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
     void asyncApiError(const QString& tag,
-                               QSharedPointer<chaos::CException> api_exception);
+                       QSharedPointer<chaos::CException> api_exception);
 
     void asyncApiTimeout(const QString& tag);
+
+    void contextualMenuWillBeShown(const QPoint& cm_start_point);
+protected slots:
+    virtual void startHealtMonitorAction();
+    virtual void stopHealtMonitorAction();
 
 protected:
     ApiAsyncProcessor api_processor;
@@ -65,9 +70,18 @@ protected:
                          const QString& sub_title,
                          const QString& information);
 
-    void addMonitorHealtForNode(const QString& node);
+    void addNodeToHealtMonitor(const QString& node);
 
-    void removeMonitorHealtForNode(const QString& node);
+    void removeNodeToHealtMonitor(const QString& node);
+
+    //contextual menu utility
+    void registerWidgetForContextualMenu(QWidget *contextual_menu_parent);
+
+    virtual void addCustomActionToContextualMenuForWidget(QWidget *contextual_menu_parent,
+                                                          const QPoint& cm_start_point,
+                                                          QMenu *contextual_menu);
+
+    void addDefaultNodeAction(QMenu *contextual_menu);
 
     //!submit api result for async wait termination
     void submitApiResult(const QString& api_tag,

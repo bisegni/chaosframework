@@ -63,6 +63,9 @@ void SearchNodeResult::initUI() {
     //finisch to configure table
     ui->tableViewResult->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableViewResult->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+    //add contextual menu to result table
+    registerWidgetForContextualMenu(ui->tableViewResult);
 }
 
 void SearchNodeResult::onApiDone(const QString& tag,
@@ -151,5 +154,41 @@ void SearchNodeResult::on_pushButtonActionOnSelected_clicked()
             }
         }
     }
+}
 
+void SearchNodeResult::addCustomActionToContextualMenuForWidget(QWidget *contextual_menu_parent,
+                                                                const QPoint& cm_start_point,
+                                                                QMenu *contextual_menu) {
+    if(ui->tableViewResult->childAt(cm_start_point) == contextual_menu_parent) {
+        //we have a request to show a contextual menu for table result
+
+        //add only the default node action
+        addDefaultNodeAction(contextual_menu);
+    }
+}
+
+void SearchNodeResult::startHealtMonitorAction() {
+    QModelIndexList indexes = ui->tableViewResult->selectionModel()->selectedRows();
+    foreach (QModelIndex selected_index, indexes) {
+        QStandardItem *node_uid = table_model->item(selected_index.row(), 0);
+        QStandardItem *node_type = table_model->item(selected_index.row(), 1);
+        if(node_type->text().compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT)||
+           node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER)) {
+            //we can register for healt this node
+            addNodeToHealtMonitor(node_uid->text());
+        }
+    }
+}
+
+void SearchNodeResult::stopHealtMonitorAction() {
+    QModelIndexList indexes = ui->tableViewResult->selectionModel()->selectedRows();
+    foreach (QModelIndex selected_index, indexes) {
+        QStandardItem *node_uid = table_model->item(selected_index.row(), 0);
+        QStandardItem *node_type = table_model->item(selected_index.row(), 1);
+        if(node_type->text().compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT)||
+           node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER)) {
+            //we can register for healt this node
+            removeNodeToHealtMonitor(node_uid->text());
+        }
+    }
 }

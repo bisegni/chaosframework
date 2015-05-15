@@ -52,7 +52,9 @@ SOURCES += main.cpp\
     node/data/FixedOutputChannelDatasetTableModel.cpp \
     MainWindow.cpp \
     monitor/healt/HealtMonitorWidget.cpp \
-    monitor/healt/HealtPresenterWidget.cpp
+    monitor/healt/HealtPresenterWidget.cpp \
+    monitor/healt/HealtWidgetsListPresenteWidget.cpp \
+    widget/LedIndicatorWidget.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -76,7 +78,9 @@ HEADERS  += \
     node/data/FixedOutputChannelDatasetTableModel.h \
     MainWindow.h \
     monitor/healt/HealtMonitorWidget.h \
-    monitor/healt/HealtPresenterWidget.h
+    monitor/healt/HealtPresenterWidget.h \
+    monitor/healt/HealtWidgetsListPresenteWidget.h \
+    widget/LedIndicatorWidget.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -90,7 +94,8 @@ FORMS    += \
     preference/PreferenceDialog.ui \
     node/control_unit/controluniteditor.ui \
     MainWindow.ui \
-    monitor/healt/HealtPresenterWidget.ui
+    monitor/healt/HealtPresenterWidget.ui \
+    monitor/healt/HealtWidgetsListPresenteWidget.ui
 
 DISTFILES += \
     dark_orange.stylesheet

@@ -31,28 +31,26 @@ HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
     ui->setupUi(this);
     ui->labelUID->setText(node_to_check);
 
-    QIcon icons;
-    icons.addPixmap(QPixmap(":/images/red_circle_indicator.png"),
-                    QIcon::Disabled, QIcon::Off);
-    icons.addPixmap(QPixmap(":/images/green_circle_indicator.png"),
-                    QIcon::Disabled, QIcon::On);
-    ui->pushButtonHelatIndicator->setIcon(icons);
+    QSharedPointer<QIcon> offline_icon(new QIcon(":/images/red_circle_indicator.png"));
+    QSharedPointer<QIcon> on_icon(new QIcon(":/images/green_circle_indicator.png"));
 
-    ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(node_key.toStdString(),
-                                                                              2,
-                                                                              &status_handler);
-    ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(node_key.toStdString(),
-                                                                              2,
-                                                                              &hb_handler);
+    ui->ledIndicator->addState(0, offline_icon);
+    ui->ledIndicator->addState(1, on_icon);
+//    ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(node_key.toStdString(),
+//                                                                              2,
+//                                                                              &status_handler);
+//    ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(node_key.toStdString(),
+//                                                                              2,
+//                                                                              &hb_handler);
 }
 
 HealtPresenterWidget::~HealtPresenterWidget() {
-    ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(node_key.toStdString(),
-                                                                                 2,
-                                                                                 &status_handler);
-    ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(node_key.toStdString(),
-                                                                                 2,
-                                                                                 &hb_handler);
+//    ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(node_key.toStdString(),
+//                                                                                 2,
+//                                                                                 &status_handler);
+//    ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(node_key.toStdString(),
+//                                                                                 2,
+//                                                                                 &hb_handler);
     delete ui;
 }
 
@@ -68,12 +66,12 @@ void HealtPresenterWidget::updateAttributeValue(const QString& attribute_name,
         //QDateTime::fromMSecsSinceEpoch(cur_ts, Qt::LocalTime).toString()
         if(cur_ts > last_time_stamp) {
             //in time
-            ui->pushButtonHelatIndicator->setChecked(true);
+            ui->ledIndicator->setState(1);
         } else if((QDateTime::currentMSecsSinceEpoch() - last_time_stamp) > 5000) {
             //timeouted
-            ui->pushButtonHelatIndicator->setChecked(false);
+            ui->ledIndicator->setState(0);
         } else {
-            ui->pushButtonHelatIndicator->setChecked(true);
+           ui->ledIndicator->setState(1);
         }
     }
 }

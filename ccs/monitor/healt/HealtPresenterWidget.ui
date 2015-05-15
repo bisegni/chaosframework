@@ -65,30 +65,24 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButtonHelatIndicator">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
+      <widget class="LedIndicatorWidget" name="ledIndicator" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="maximumSize">
+       <property name="minimumSize">
         <size>
          <width>16</width>
          <height>16</height>
         </size>
        </property>
-       <property name="text">
-        <string>i</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
+       <property name="maximumSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -133,6 +127,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LedIndicatorWidget</class>
+   <extends>QWidget</extends>
+   <header>widget/LedIndicatorWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
