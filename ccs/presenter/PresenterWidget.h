@@ -5,7 +5,9 @@
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
+#include <QMap>
 #include <QWidget>
+#include <QVariant>
 #include <QMdiSubWindow>
 
 #define GET_CHAOS_API_PTR(api_name)\
@@ -30,6 +32,7 @@ class PresenterWidget:
 
     QMdiSubWindow *editor_subwindow;
     CommandPresenter *presenter_instance;
+
 public:
     explicit PresenterWidget(QWidget *parent = NULL);
     ~PresenterWidget();
@@ -42,7 +45,7 @@ public:
 private:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
     void setSubWindow(QMdiSubWindow *_editor_subwindow);
-
+    void addDefaultNodeAction(QWidget *contextual_menu_parent);
 private slots:
 
     void asyncApiResult(const QString& tag,
@@ -53,7 +56,7 @@ private slots:
 
     void asyncApiTimeout(const QString& tag);
 
-    void contextualMenuWillBeShown(const QPoint& cm_start_point);
+    void generalContextualMenuActionTrigger();
 protected slots:
     virtual void startHealtMonitorAction();
     virtual void stopHealtMonitorAction();
@@ -75,13 +78,12 @@ protected:
     void removeNodeToHealtMonitor(const QString& node);
 
     //contextual menu utility
-    void registerWidgetForContextualMenu(QWidget *contextual_menu_parent);
+    void registerWidgetForContextualMenu(QWidget *contextual_menu_parent,
+                                         QMap<QString, QVariant> *widget_contextual_menu_action,
+                                         bool add_default_node_action);
 
-    virtual void addCustomActionToContextualMenuForWidget(QWidget *contextual_menu_parent,
-                                                          const QPoint& cm_start_point,
-                                                          QMenu *contextual_menu);
-
-    void addDefaultNodeAction(QMenu *contextual_menu);
+    virtual void contextualMenuActionTrigger(const QString& cm_title,
+                                             const QVariant& cm_data);
 
     //!submit api result for async wait termination
     void submitApiResult(const QString& api_tag,

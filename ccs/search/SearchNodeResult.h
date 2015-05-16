@@ -34,9 +34,6 @@ class SearchNodeResult :
 protected:
     void initUI();
     bool canClose();
-    void addCustomActionToContextualMenuForWidget(QWidget *contextual_menu_parent,
-                                                  const QPoint &cm_start_point,
-                                                  QMenu *contextual_menu);
 
 public:
     explicit SearchNodeResult(bool _selection_mode = false,

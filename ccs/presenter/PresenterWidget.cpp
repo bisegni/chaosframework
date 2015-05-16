@@ -127,38 +127,46 @@ void PresenterWidget::showInformation(const QString& title,
 }
 
 //---------------contextual menu utility------------
-void PresenterWidget::registerWidgetForContextualMenu(QWidget *contextual_menu_parent) {
+void PresenterWidget::registerWidgetForContextualMenu(QWidget *contextual_menu_parent,
+                                                      QMap<QString, QVariant> *widget_contextual_menu_action,
+                                                      bool add_default_node_action) {
     if(!contextual_menu_parent) return;
-    contextual_menu_parent->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(contextual_menu_parent, SIGNAL(customContextMenuRequested(QPoint)),
-            this, SLOT(contextualMenuWillBeShown(QPoint)));
+    contextual_menu_parent->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+    if(widget_contextual_menu_action){
+        QMapIterator<QString, QVariant> it(*widget_contextual_menu_action);
+        while(it.hasNext()) {
+            QAction *action = new QAction(it.key(), contextual_menu_parent);
+            action->setData(it.value());
+            contextual_menu_parent->addAction(action);
+            connect(action,
+                    SIGNAL(triggered()),
+                    this,
+                    SLOT(generalContextualMenuActionTrigger()));
+        }
+    }
+    if(add_default_node_action)addDefaultNodeAction(contextual_menu_parent);
 }
 
-void PresenterWidget::contextualMenuWillBeShown(const QPoint& cm_start_point) {
-    QWidget *child = this->childAt(cm_start_point);
-    QMenu *menu = new QMenu(this);
 
-    //let superclass to add custom action
-    addCustomActionToContextualMenuForWidget(child, cm_start_point, menu);
-
-    //show the contextual menu
-    menu->popup(child->mapToGlobal(cm_start_point));
-}
-
-void PresenterWidget::addCustomActionToContextualMenuForWidget(QWidget *contextual_menu_parent,
-                                                               const QPoint &cm_start_point,
-                                                               QMenu *contextual_menu) {
-
-}
-
-void PresenterWidget::addDefaultNodeAction(QMenu *contextual_menu) {
-    QAction *start_healt_monitoring_action = new QAction("Start healt monitor", contextual_menu);
+void PresenterWidget::addDefaultNodeAction(QWidget *contextual_menu_parent) {
+    QAction *start_healt_monitoring_action = new QAction("Start healt monitor", contextual_menu_parent);
     connect(start_healt_monitoring_action, SIGNAL(triggered()), this, SLOT(startHealtMonitorAction()));
-    contextual_menu->addAction(start_healt_monitoring_action);
+    contextual_menu_parent->addAction(start_healt_monitoring_action);
 
-    QAction *stop_healt_monitoring_action = new QAction("Stop healt monitor", contextual_menu);
+    QAction *stop_healt_monitoring_action = new QAction("Stop healt monitor", contextual_menu_parent);
     connect(stop_healt_monitoring_action, SIGNAL(triggered()), this, SLOT(stopHealtMonitorAction()));
-    contextual_menu->addAction(stop_healt_monitoring_action);
+    contextual_menu_parent->addAction(stop_healt_monitoring_action);
+}
+
+void PresenterWidget::generalContextualMenuActionTrigger() {
+    QAction* cm_action = qobject_cast<QAction*>(sender());
+    contextualMenuActionTrigger(cm_action->text(), cm_action->data());
+}
+
+void PresenterWidget::contextualMenuActionTrigger(const QString& cm_title,
+                                                  const QVariant& cm_data){
+
 }
 
 void PresenterWidget::startHealtMonitorAction() {

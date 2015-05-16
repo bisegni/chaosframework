@@ -65,7 +65,9 @@ void SearchNodeResult::initUI() {
     ui->tableViewResult->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     //add contextual menu to result table
-    registerWidgetForContextualMenu(ui->tableViewResult);
+    registerWidgetForContextualMenu(ui->tableViewResult,
+                                    NULL,
+                                    true);
 }
 
 void SearchNodeResult::onApiDone(const QString& tag,
@@ -153,17 +155,6 @@ void SearchNodeResult::on_pushButtonActionOnSelected_clicked()
                 addWidgetToPresenter(new UnitServerEditor(node_uid->text()));
             }
         }
-    }
-}
-
-void SearchNodeResult::addCustomActionToContextualMenuForWidget(QWidget *contextual_menu_parent,
-                                                                const QPoint& cm_start_point,
-                                                                QMenu *contextual_menu) {
-    if(ui->tableViewResult->childAt(cm_start_point) == contextual_menu_parent) {
-        //we have a request to show a contextual menu for table result
-
-        //add only the default node action
-        addDefaultNodeAction(contextual_menu);
     }
 }
 

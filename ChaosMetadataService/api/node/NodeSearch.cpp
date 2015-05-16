@@ -38,7 +38,7 @@ chaos::common::data::CDataWrapper *NodeSearch::execute(chaos::common::data::CDat
                                                        bool& detach_data) throw(chaos::CException) {
     uint32_t last_sequence_id = 0;
     uint32_t page_length = 30;
-    chaos::common::data::CDataWrapper *result;
+    chaos::common::data::CDataWrapper *result = NULL;
     if(!api_data) throw CException(-1, "Search parameter are needed", __PRETTY_FUNCTION__);
     if(!api_data->hasKey("unique_id_filter")) throw CException(-2, "Filter for node unique id is madnatory", __PRETTY_FUNCTION__);
     if(!api_data->hasKey("node_type_filter")) throw CException(-3, "Filter for node type is madnatory", __PRETTY_FUNCTION__);

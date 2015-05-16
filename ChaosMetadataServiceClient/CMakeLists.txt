@@ -21,9 +21,12 @@ SET(mcl_src ${mcl_src}      api_proxy/control_unit/SetInstanceDescription.cpp
                             api_proxy/control_unit/SearchInstancesByUS.cpp
                             api_proxy/control_unit/GetInstance.cpp
                             api_proxy/control_unit/DeleteInstance.cpp
-                            api_proxy/control_unit/GetCurrentDataset.cpp)
+                            api_proxy/control_unit/GetCurrentDataset.cpp
+                            api_proxy/control_unit/InitDeinit.cpp
+                            api_proxy/control_unit/StartStop.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
+                            api_proxy/unit_server/NewUS.cpp
                             api_proxy/unit_server/LoadUnloadControlUnit.cpp)
 
 SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
@@ -51,10 +54,10 @@ FILE(GLOB files "api_proxy/control_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/control_unit)
 
 FILE(GLOB files "api_proxy/unit_server/*.h")
-INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/control_unit)
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/unit_server)
 
 FILE(GLOB files "api_proxy/data_service/*.h")
-INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/control_unit)
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/data_service)
 
 FILE(GLOB files "api_proxy/node/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/node)
