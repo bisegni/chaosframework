@@ -4,7 +4,6 @@
 LedIndicatorWidget::LedIndicatorWidget(QWidget *parent):
     QWidget(parent),
     current_state(0) {
-
 }
 
 void LedIndicatorWidget::paintEvent (QPaintEvent *)

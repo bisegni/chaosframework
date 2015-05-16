@@ -23,7 +23,7 @@ void HearbeatHandler::consumeValue(const std::string& key,
 
 HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
                                            QWidget *parent) :
-    QWidget(parent),
+    QFrame(parent),
     last_time_stamp(0),
     node_key(node_to_check),
     ui(new Ui::HealtPresenterWidget)
@@ -42,6 +42,9 @@ HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
 //    ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(node_key.toStdString(),
 //                                                                              2,
 //                                                                              &hb_handler);
+    setFrameStyle(QFrame::StyledPanel | QFrame::Raised);
+    setLineWidth(2);
+    setMidLineWidth(2);
 }
 
 HealtPresenterWidget::~HealtPresenterWidget() {

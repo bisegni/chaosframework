@@ -1,7 +1,7 @@
 #ifndef HEALTPRESENTERWIDGET_H
 #define HEALTPRESENTERWIDGET_H
 
-#include <QWidget>
+#include <QFrame>
 
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
 
@@ -42,7 +42,7 @@ signals:
 
 //! Widget that show the healt information about a node
 class HealtPresenterWidget :
-        public QWidget
+        public QFrame
 {
     Q_OBJECT
 

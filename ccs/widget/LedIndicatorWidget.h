@@ -2,8 +2,8 @@
 #define LEDINDICATORWIDGET_H
 
 #include <QMap>
-#include <QWidget>
 #include <QIcon>
+#include <QWidget>
 #include <QSharedPointer>
 
 class LedIndicatorWidget :

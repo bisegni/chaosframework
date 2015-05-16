@@ -8,6 +8,7 @@ HealtWidgetsListPresenteWidget::HealtWidgetsListPresenteWidget(QWidget *parent) 
     ui->setupUi(this);
     ui->scrollAreaWidgetContents->setLayout(new QVBoxLayout(this));
     ((QVBoxLayout*)ui->scrollAreaWidgetContents->layout())->insertStretch(-1);
+    ((QVBoxLayout*)ui->scrollAreaWidgetContents->layout())->setContentsMargins(2,2,2,2);
 }
 
 HealtWidgetsListPresenteWidget::~HealtWidgetsListPresenteWidget()
