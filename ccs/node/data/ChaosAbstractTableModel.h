@@ -2,8 +2,10 @@
 #define CHAOSABSTRACTNODETABLEMODEL_H
 
 #include <QAbstractTableModel>
+#include <QSharedPointer>
+#include <chaos/common/data/CDataWrapper.h>
 
-class ChaosAbstractNodeTableModel :
+class ChaosAbstractTableModel :
         public QAbstractTableModel {
     Q_OBJECT
 
@@ -17,7 +19,8 @@ protected:
     virtual QVariant getTextAlignForData(int row, int column) const;
     virtual QVariant getCheckStateForData(int row, int column) const;
 public:
-    ChaosAbstractNodeTableModel(QObject *parent);
+    ChaosAbstractTableModel(QObject *parent=0);
+    Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
     int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE ;
     int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const Q_DECL_OVERRIDE;

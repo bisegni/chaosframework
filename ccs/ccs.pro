@@ -47,14 +47,15 @@ SOURCES += main.cpp\
     node/data_service/DataServiceEditor.cpp \
     node/data_service/CreateEditDataService.cpp \
     preference/PreferenceDialog.cpp \
-    node/control_unit/controluniteditor.cpp \
-    node/data/ChaosAbstractNodeTableModel.cpp \
     node/data/FixedOutputChannelDatasetTableModel.cpp \
     MainWindow.cpp \
     monitor/healt/HealtMonitorWidget.cpp \
     monitor/healt/HealtPresenterWidget.cpp \
     monitor/healt/HealtWidgetsListPresenteWidget.cpp \
-    widget/LedIndicatorWidget.cpp
+    widget/LedIndicatorWidget.cpp \
+    node/data/ChaosAbstractTableModel.cpp \
+    node/data/ChaosFixedCDataWrapperTableMode.cpp \
+    node/control_unit/ControlUnitEditor.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -72,15 +73,20 @@ HEADERS  += \
     node/data_service/DataServiceEditor.h \
     node/data_service/CreateEditDataService.h \
     preference/PreferenceDialog.h \
-    node/control_unit/controluniteditor.h \
     node/data/CUDatasetModel.h \
-    node/data/ChaosAbstractNodeTableModel.h \
     node/data/FixedOutputChannelDatasetTableModel.h \
     MainWindow.h \
     monitor/healt/HealtMonitorWidget.h \
     monitor/healt/HealtPresenterWidget.h \
     monitor/healt/HealtWidgetsListPresenteWidget.h \
-    widget/LedIndicatorWidget.h
+    widget/LedIndicatorWidget.h \
+    node/data/ChaosAbstractTableModel.h \
+    node/data/ChaosFixedCDataWrapperTableModel.h \
+    node/control_unit/ControlUnitEditor.h \
+    monitor/healt/handler/HealtStatusHandler.h \
+    monitor/healt/handler/AbstractHealtHandler.h \
+    monitor/healt/handler/HealtHeartbeatHandler.h \
+    monitor/healt/handler/handler.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -92,10 +98,10 @@ FORMS    += \
     node/data_service/DataServiceEditor.ui \
     node/data_service/CreateEditDataService.ui \
     preference/PreferenceDialog.ui \
-    node/control_unit/controluniteditor.ui \
     MainWindow.ui \
     monitor/healt/HealtPresenterWidget.ui \
-    monitor/healt/HealtWidgetsListPresenteWidget.ui
+    monitor/healt/HealtWidgetsListPresenteWidget.ui \
+    node/control_unit/ControlUnitEditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet

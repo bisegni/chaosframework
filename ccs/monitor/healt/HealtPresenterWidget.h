@@ -1,6 +1,8 @@
 #ifndef HEALTPRESENTERWIDGET_H
 #define HEALTPRESENTERWIDGET_H
 
+#include "handler/handler.h"
+
 #include <QFrame>
 
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
@@ -8,37 +10,6 @@
 namespace Ui {
 class HealtPresenterWidget;
 }
-
-class StatusHandler:
-        public QObject,
-        public chaos::metadata_service_client::monitor_system::handler::HealtStatusAttributeHandler
-{
-    Q_OBJECT
-
-protected:
-    void consumeValue(const std::string& key,
-                      const std::string& attribute,
-                      const std::string& value);
-signals:
-    void valueUpdated(const QString& attribute_name,
-                      const QVariant& attribute_value);
-};
-
-class HearbeatHandler:
-        public QObject,
-        public chaos::metadata_service_client::monitor_system::handler::HealtHeartBeatAttributeHandler
-{
-    Q_OBJECT
-protected:
-    void consumeValue(const std::string& key,
-                      const std::string& attribute,
-                      const int64_t value);
-
-signals:
-    void valueUpdated(const QString& attribute_name,
-                      const QVariant& attribute_value);
-};
-
 
 //! Widget that show the healt information about a node
 class HealtPresenterWidget :
@@ -60,8 +31,8 @@ public slots:
     void updateAttributeValue(const QString& attribute_name,
                               const QVariant& attribute_value);
 private:
-    StatusHandler   status_handler;
-    HearbeatHandler hb_handler;
+    HealtStatusHandler      status_handler;
+    HealthHartbeatHandler   hb_handler;
     QString         node_key;
     qulonglong last_time_stamp;
     Ui::HealtPresenterWidget *ui;

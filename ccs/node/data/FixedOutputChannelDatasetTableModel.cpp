@@ -2,11 +2,34 @@
 
 using namespace chaos::common::data;
 
-FixedOutputChannelDatasetTableModel::FixedOutputChannelDatasetTableModel(const QVector< QSharedPointer<CDataWrapper> >& _dataset_output_element,
-                                                                         QObject *parent):
-    ChaosAbstractNodeTableModel(parent),
-    dataset_output_element(_dataset_output_element) {
+FixedOutputChannelDatasetTableModel::FixedOutputChannelDatasetTableModel(QObject *parent):
+    ChaosFixedCDataWrapperTableModel(parent) {
 
+}
+
+void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::common::data::CDataWrapper>& _dataset) {
+    //call superclas method taht will emit dataChagned
+    ChaosFixedCDataWrapperTableModel::updateData(_dataset);
+    if(data_wrapped.isNull() ||
+       !data_wrapped->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) return;
+    beginResetModel();
+    QSharedPointer<CMultiTypeDataArrayWrapper> dataset_array(data_wrapped->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+    for(int idx = 0;
+        idx < dataset_array->size();
+        idx++) {
+        QSharedPointer<CDataWrapper> element(dataset_array->getCDataWrapperElementAtIndex(idx));
+        if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION) &&
+                element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME) &&
+                element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE) &&
+                element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION)) {
+            int direction = element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION);
+            if(direction == chaos::DataType::Output ||
+                    direction == chaos::DataType::Bidirectional) {
+                dataset_output_element.push_back(element);
+            }
+        }
+    }
+    endResetModel();
 }
 
 FixedOutputChannelDatasetTableModel::~FixedOutputChannelDatasetTableModel() {
@@ -24,13 +47,13 @@ int FixedOutputChannelDatasetTableModel::getColumnCount() const {
 QString FixedOutputChannelDatasetTableModel::getHeaderForColumn(int column) const {
     QString result;
     switch(column) {
-    case 1:
+    case 0:
         result = QString("Name");
         break;
-    case 2:
+    case 1:
         result = QString("Type");
         break;
-    case 3:
+    case 2:
         result = QString("Description");
         break;
     }
@@ -41,13 +64,13 @@ QVariant FixedOutputChannelDatasetTableModel::getCellData(int row, int column) c
     QVariant result;
     QSharedPointer<CDataWrapper> element = dataset_output_element[row];
     switch(column) {
-    case 1:
+    case 0:
         if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME)) {
             result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
         }
         break;
 
-    case 2:
+    case 1:
         if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
             switch (element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
             case chaos::DataType::TYPE_BOOLEAN:
@@ -55,29 +78,29 @@ QVariant FixedOutputChannelDatasetTableModel::getCellData(int row, int column) c
                 break;
             case chaos::DataType::TYPE_INT32:
                 result = QString("Int32");
-            break;
+                break;
             case chaos::DataType::TYPE_INT64:
                 result = QString("Int64");
-            break;
+                break;
             case chaos::DataType::TYPE_STRING:
                 result = QString("String");
-            break;
+                break;
             case chaos::DataType::TYPE_DOUBLE:
                 result = QString("Double");
-            break;
+                break;
             case chaos::DataType::TYPE_BYTEARRAY:
                 result = QString("Binary");
-            break;
+                break;
             case chaos::DataType::TYPE_CLUSTER:
                 result = QString("Cluster");
-            break;
+                break;
             default:
                 break;
             }
         }
         break;
 
-    case 3:
+    case 2:
         if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)) {
             return QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
         }

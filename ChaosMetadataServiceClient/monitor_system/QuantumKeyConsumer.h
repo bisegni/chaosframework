@@ -35,8 +35,8 @@ namespace chaos {
             //!forward declaration
             class QuantumSlotScheduler;
             
-            typedef std::map<std::string, AbstractQuantumKeyAttributeHandler* >             AttributeHandlerMap;
-            typedef std::map<std::string, AbstractQuantumKeyAttributeHandler* >::iterator   AttributeHandlerMapIterator;
+            typedef std::map<uintptr_t, AbstractQuantumKeyAttributeHandler* >             AttributeHandlerMap;
+            typedef std::map<uintptr_t, AbstractQuantumKeyAttributeHandler* >::iterator   AttributeHandlerMapIterator;
             
             //! is a consumer for a keythat manager many handler for the key attribute
             class QuantumKeyConsumer:

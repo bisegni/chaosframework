@@ -26,7 +26,7 @@ void QuantumKeyConsumer::quantumSlotHasData(const std::string& key,
     for(AttributeHandlerMapIterator it = map_attribute_handler.begin();
         it != map_attribute_handler.end();
         it++) {
-        if(value->hasKey(it->first)){
+        if(value->hasKey(it->second->attribute)){
             //broadcast value
             it->second->_consumeValue(key,
                                       value);
@@ -37,15 +37,17 @@ void QuantumKeyConsumer::quantumSlotHasData(const std::string& key,
 void QuantumKeyConsumer::addAttributeHandler(AbstractQuantumKeyAttributeHandler *handler) {
     //aquire write lock to work on map
     boost::unique_lock<boost::shared_mutex> rl(map_mutex);
-    if(map_attribute_handler.count(handler->attribute)) return;
-    map_attribute_handler.insert(make_pair(handler->attribute, handler));
+    uintptr_t key = reinterpret_cast<uintptr_t>(handler);
+    if(map_attribute_handler.count(key)) return;
+    map_attribute_handler.insert(make_pair(key, handler));
 }
 
 void QuantumKeyConsumer::removeAttributeHandler(AbstractQuantumKeyAttributeHandler *handler) {
     //aquire write lock to work on map
     boost::unique_lock<boost::shared_mutex> wl(map_mutex);
-    if(!map_attribute_handler.count(handler->attribute)) return;
-    map_attribute_handler.erase(handler->attribute);
+    uintptr_t key = reinterpret_cast<uintptr_t>(handler);
+    if(!map_attribute_handler.count(key)) return;
+    map_attribute_handler.erase(key);
 }
 
 const std::string& QuantumKeyConsumer::getKey() {

@@ -1,6 +1,7 @@
 #include "SearchNodeResult.h"
 #include "ui_searchnoderesult.h"
 #include "node/unit_server/UnitServerEditor.h"
+#include "node/control_unit/ControlUnitEditor.h"
 
 #include <QDebug>
 #include <QPair>
@@ -153,6 +154,9 @@ void SearchNodeResult::on_pushButtonActionOnSelected_clicked()
             if(node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
                 qDebug() << "Open unit server editor for" << node_uid->text();
                 addWidgetToPresenter(new UnitServerEditor(node_uid->text()));
+            }else if(node_type->text().compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) {
+                qDebug() << "Open control unit editor for" << node_uid->text();
+                addWidgetToPresenter(new ControlUnitEditor(node_uid->text()));
             }
         }
     }

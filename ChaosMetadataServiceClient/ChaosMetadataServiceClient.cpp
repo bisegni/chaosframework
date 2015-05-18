@@ -284,7 +284,7 @@ bool ChaosMetadataServiceClient::removeKeyConsumerForHealt(const std::string& ke
                                                            int quantum_multiplier,
                                                            monitor_system::QuantumSlotConsumer *consumer) {
     // compose healt key for node
-    std::string healt_key = boost::str(boost::format("%1%_%2%")%
+    std::string healt_key = boost::str(boost::format("%1%%2%")%
                                        key_to_monitor%
                                        NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
     return removeKeyConsumer(healt_key,
@@ -308,7 +308,7 @@ bool ChaosMetadataServiceClient::removeKeyAttributeHandlerForHealt(const std::st
                                                                    int quantum_multiplier,
                                                                    monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler) {
     // compose healt key for node
-    std::string healt_key = boost::str(boost::format("%1%_%2%")%
+    std::string healt_key = boost::str(boost::format("%1%%2%")%
                                        key_to_monitor%
                                        NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
     return removeKeyAttributeHandler(healt_key,
