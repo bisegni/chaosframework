@@ -46,7 +46,7 @@ void QuantumKeyAttributeInt64Handler::_consumeValue(const std::string& key,
                                                     const KeyValue& value) {
     consumeValue(key,
                  attribute,
-                 value->getInt32Value(attribute));
+                 value->getInt64Value(attribute));
 }
 
 QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeDoubleHandler)

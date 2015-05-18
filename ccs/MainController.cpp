@@ -64,7 +64,8 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     darkPalette.setColor(QPalette::Disabled, QPalette::Text, disable_color);
 
     a.setPalette(darkPalette);
-    a.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+    a.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }"
+                    "QHeaderView { font-size: 11pt; }");
 
     //show main window
     splash.reset(new QSplashScreen(pixmap));

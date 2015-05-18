@@ -155,9 +155,6 @@ void ChaosMetadataServiceClient::addServerAddress(const std::string& server_addr
 void ChaosMetadataServiceClient::enableMonitoring() throw(CException) {
     std::vector<std::string> endpoints_list;
     
-    monitor_manager.reset(new MonitorManager(network_broker_service.get(), &setting), "MonitorManager");
-    monitor_manager.init(NULL, __PRETTY_FUNCTION__);
-    
     CMSC_LDBG << "Ask to metadata server for cds enpoint for monitoring";
     
     //get server available for dataservice from metadata server with two second of timeout
@@ -183,6 +180,11 @@ void ChaosMetadataServiceClient::enableMonitoring() throw(CException) {
     //get the endpoint array
     CMSC_LDBG<< "Scan the result for serverlist";
     std::auto_ptr<CMultiTypeDataArrayWrapper> endpoint_array(available_enpoint_result->getResult()->getVectorValue(DS_DIRECT_IO_FULL_ADDRESS_LIST));
+    CHAOS_LASSERT_EXCEPTION((endpoint_array->size()!=0),
+                            CMSC_LERR,
+                            -3,
+                            "No available server has been returned")
+    
     for(int idx = 0;
         idx < endpoint_array->size();
         idx++) {
@@ -190,6 +192,8 @@ void ChaosMetadataServiceClient::enableMonitoring() throw(CException) {
         CMSC_LDBG<< "Add " << server << " to server list";
         endpoints_list.push_back(server);
     }
+    monitor_manager.reset(new MonitorManager(network_broker_service.get(), &setting), "MonitorManager");
+    monitor_manager.init(NULL, __PRETTY_FUNCTION__);
     monitor_manager->resetEndpointList(endpoints_list);
     //start the monitor manager
     monitor_manager.start(__PRETTY_FUNCTION__);
@@ -200,6 +204,11 @@ void ChaosMetadataServiceClient::disableMonitoring() throw(CException) {
         CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
         CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
     }
+}
+
+bool ChaosMetadataServiceClient::monitoringIsStarted() {
+    return monitor_manager.get() &&
+            (monitor_manager->getServiceState() == common::utility::service_state_machine::StartableServiceType::SS_STARTED);
 }
 
 //! add a new quantum slot for key
@@ -221,7 +230,7 @@ bool ChaosMetadataServiceClient::addKeyConsumerForHealt(const std::string& key_t
                                                         monitor_system::QuantumSlotConsumer *consumer,
                                                         int consumer_priority) {
     // compose healt key for node
-    std::string healt_key = boost::str(boost::format("%1%_%2%")%
+    std::string healt_key = boost::str(boost::format("%1%%2%")%
                                        key_to_monitor%
                                        NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
     // call api for register the conusmer
@@ -249,7 +258,7 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForHealt(const std::strin
                                                                 monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
                                                                 unsigned int consumer_priority) {
     // compose healt key for node
-    std::string healt_key = boost::str(boost::format("%1%_%2%")%
+    std::string healt_key = boost::str(boost::format("%1%%2%")%
                                        key_to_monitor%
                                        NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
     // call api for register the conusmer

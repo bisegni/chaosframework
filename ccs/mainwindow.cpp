@@ -9,7 +9,7 @@
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 #include <QInputDialog>
-
+#include <QMessageBox>
 using namespace chaos::metadata_service_client;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -44,12 +44,12 @@ void MainWindow::on_actionOpenNode_triggered(){
     QStringList node_types;
     node_types << tr("Unit Server");
     QString type =  QInputDialog::getItem(this,
-                                         tr("Select node type"),
-                                         tr("Type:"),
-                                         node_types,
-                                         0,
-                                         false,
-                                         &ok);
+                                          tr("Select node type"),
+                                          tr("Type:"),
+                                          node_types,
+                                          0,
+                                          false,
+                                          &ok);
     if(ok) {
         QString node_uid = QInputDialog::getText(this,
                                                  tr("Open a node by unique ID"),
@@ -92,13 +92,24 @@ void MainWindow::reconfigure() {
     ChaosMetadataServiceClient::getInstance()->clearServerList();
     QSettings settings;
     settings.beginGroup("network");
-    int size = settings.beginReadArray("mds_address");
+    int mds_address_size = settings.beginReadArray("mds_address");
 
-    for (int i = 0; i < size; ++i) {
+    for (int i = 0; i < mds_address_size; ++i) {
         settings.setArrayIndex(i);
         ChaosMetadataServiceClient::getInstance()->addServerAddress(settings.value("address").toString().toStdString());
     }
     settings.endArray();
     settings.endGroup();
+    //check if monitoring is started
+    if(mds_address_size &&
+            !ChaosMetadataServiceClient::getInstance()->monitoringIsStarted()) {
+        //try to start it
+        try{
+            ChaosMetadataServiceClient::getInstance()->enableMonitoring();
+        }catch(chaos::CException &ex) {
+            ChaosMetadataServiceClient::getInstance()->disableMonitoring();
+            QMessageBox::information(this, tr("Monitoring Startup"), tr(ex.what()));
+        }
+    }
 }
 

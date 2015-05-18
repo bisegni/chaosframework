@@ -60,18 +60,31 @@ public QuantumSlotConsumer {
     };
 };
 
-class TestHealtPhaseAttributeHandler:
-public QuantumKeyAttributeStringHandler {
-public:
-    TestHealtPhaseAttributeHandler():
-    QuantumKeyAttributeStringHandler(std::string("nh_phase")){}
+class StatusHandler:
+public chaos::metadata_service_client::monitor_system::handler::HealtStatusAttributeHandler
+{
+    
 protected:
     void consumeValue(const std::string& key,
                       const std::string& attribute,
                       const std::string& value) {
         MSCT_INFO << "key:" << key << " attribute:" << attribute << " value:" << value;
     }
+
 };
+
+class HearbeatHandler:
+public chaos::metadata_service_client::monitor_system::handler::HealtHeartBeatAttributeHandler
+{
+protected:
+    void consumeValue(const std::string& key,
+                      const std::string& attribute,
+                      const int64_t value) {
+        MSCT_INFO << "key:" << key << " attribute:" << attribute << " value:" << (uint64_t)value;
+    }
+
+};
+
 
 void asyncTest(EchoTestProxy *echo_proxy_test) {
     
@@ -108,7 +121,8 @@ void asyncTest(EchoTestProxy *echo_proxy_test) {
 int main(int argc, char * argv[]) {
     boost::thread_group tg;
     try{
-        TestHealtPhaseAttributeHandler healt_phase_attribute_handler;
+        StatusHandler status_handler;
+        HearbeatHandler hb_handler;
         TestMonitorConsumer test_consumer[400];
         global_counter = 0;
         error_count = 0;
@@ -123,7 +137,9 @@ int main(int argc, char * argv[]) {
         ChaosMetadataServiceClient::getInstance()->addKeyConsumer("rt-claudio-1_healt",
                                                                   5,
                                                                   &test_consumer[0]);
-        ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandler("rt-claudio-1_healt", 1, &healt_phase_attribute_handler);
+        ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 1, &status_handler);
+        ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 1, &hb_handler);
+        
         sleep(3600);
         //EchoTestProxy *echo_proxy_test = ChaosMetadataServiceClient::getInstance()->getApiProxy<EchoTestProxy>(1000);
         //tg.add_thread(new boost::thread(&asyncTest, echo_proxy_test));

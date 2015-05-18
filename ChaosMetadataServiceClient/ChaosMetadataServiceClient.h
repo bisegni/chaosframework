@@ -91,6 +91,8 @@ namespace chaos {
             
             void disableMonitoring() throw(CException);
             
+            bool monitoringIsStarted();
+            
             //! add a new quantum slot for key
             bool addKeyConsumer(const std::string& key_to_monitor,
                                 int quantum_multiplier,
