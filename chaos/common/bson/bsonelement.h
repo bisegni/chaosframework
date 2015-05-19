@@ -40,7 +40,7 @@ T portable_cast(Y*pnt){
      memcpy(&tmp,(void*)pnt,sizeof(T));
      return tmp;
 #else
-     return *reinterpret_cast< T * >(pnt);
+     return *reinterpret_cast< const T * >(pnt);
 #endif
 
 }

@@ -44,7 +44,7 @@ namespace chaos {
                     const char* name;
                     const char* desc;
                     chaos::DataType::DataSetAttributeIOAttribute dir;
-                    chaos::DataType::DataType type;
+                    int type;
                     int maxsize;
                 } ddDataSet_t;
 

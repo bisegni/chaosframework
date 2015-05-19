@@ -20,28 +20,6 @@
         <in>main.cpp</in>
       </df>
       <df name="bin">
-        <df name="bin_cds">
-          <df name="CMakeFiles">
-            <df name="ChaosDataService.dir">
-              <df name="cache_system">
-              </df>
-              <df name="db_system">
-              </df>
-              <df name="indexer">
-              </df>
-              <df name="query_engine">
-              </df>
-              <df name="vfs">
-                <df name="query">
-                </df>
-                <df name="storage_system">
-                </df>
-              </df>
-              <df name="worker">
-              </df>
-            </df>
-          </df>
-        </df>
         <df name="bin_common">
           <df name="CMakeFiles">
             <df name="chaos_common.dir">
@@ -140,50 +118,12 @@
             </df>
           </df>
         </df>
-        <df name="bin_metadata_service">
-          <df name="CMakeFiles">
-            <df name="ChaosMetadataService.dir">
-              <df name="api">
-                <df name="producer">
-                </df>
-                <df name="unit_server">
-                </df>
-              </df>
-              <df name="batch">
-                <df name="unit_server">
-                </df>
-              </df>
-              <df name="persistence">
-                <df name="data_access">
-                </df>
-                <df name="mongodb">
-                </df>
-              </df>
-            </df>
-          </df>
-        </df>
         <df name="bin_uitoolkit">
           <df name="CMakeFiles">
             <df name="chaos_uitoolkit.dir">
               <df name="HighLevelApi">
               </df>
               <df name="LowLevelApi">
-              </df>
-            </df>
-          </df>
-        </df>
-        <df name="bin_wan_proxy">
-          <df name="CMakeFiles">
-            <df name="ChaosWANProxy.dir">
-              <df name="api">
-                <df name="producer">
-                </df>
-              </df>
-              <df name="persistence">
-              </df>
-              <df name="wan_interface">
-                <df name="http">
-                </df>
               </df>
             </df>
           </df>
@@ -1488,6 +1428,10 @@
           <df name="tomcat">
             <df name="conf">
             </df>
+            <df name="logs">
+            </df>
+            <df name="webapps">
+            </df>
             <df name="work">
               <df name="localEngine">
                 <df name="localhost">
@@ -1663,8 +1607,6 @@
           </df>
         </df>
         <df name="CMakeTmp">
-        </df>
-        <df name="Progress">
         </df>
       </df>
       <df name="Documentation">
@@ -13204,42 +13146,88 @@
           </df>
         </df>
         <df name="zlib-1.2.8">
+          <df name="amiga">
+          </df>
+          <df name="as400">
+            <in>zlib.inc</in>
+          </df>
           <df name="contrib">
+            <df name="ada">
+            </df>
+            <df name="amd64">
+              <in>amd64-match.S</in>
+            </df>
+            <df name="asm686">
+              <in>match.S</in>
+            </df>
             <df name="blast">
               <in>blast.c</in>
+              <in>blast.h</in>
+            </df>
+            <df name="delphi">
+            </df>
+            <df name="dotzlib">
+              <df name="DotZLib">
+              </df>
+            </df>
+            <df name="gcc_gvmat64">
+              <in>gvmat64.S</in>
             </df>
             <df name="infback9">
               <in>infback9.c</in>
+              <in>infback9.h</in>
+              <in>inffix9.h</in>
+              <in>inflate9.h</in>
               <in>inftree9.c</in>
+              <in>inftree9.h</in>
             </df>
             <df name="inflate86">
               <in>inffas86.c</in>
+              <in>inffast.S</in>
             </df>
             <df name="iostream">
               <in>test.cpp</in>
               <in>zfstream.cpp</in>
+              <in>zfstream.h</in>
             </df>
             <df name="iostream2">
+              <in>zstream.h</in>
               <in>zstream_test.cpp</in>
             </df>
             <df name="iostream3">
               <in>test.cc</in>
               <in>zfstream.cc</in>
+              <in>zfstream.h</in>
             </df>
             <df name="masmx64">
+              <in>gvmat64.asm</in>
               <in>inffas8664.c</in>
+              <in>inffasx64.asm</in>
+            </df>
+            <df name="masmx86">
+              <in>inffas32.asm</in>
+              <in>match686.asm</in>
             </df>
             <df name="minizip">
+              <in>crypt.h</in>
               <in>ioapi.c</in>
+              <in>ioapi.h</in>
               <in>iowin32.c</in>
+              <in>iowin32.h</in>
               <in>miniunz.c</in>
               <in>minizip.c</in>
               <in>mztools.c</in>
+              <in>mztools.h</in>
               <in>unzip.c</in>
+              <in>unzip.h</in>
               <in>zip.c</in>
+              <in>zip.h</in>
+            </df>
+            <df name="pascal">
             </df>
             <df name="puff">
               <in>puff.c</in>
+              <in>puff.h</in>
               <in>pufftest.c</in>
             </df>
             <df name="testzlib">
@@ -13248,6 +13236,16 @@
             <df name="untgz">
               <in>untgz.c</in>
             </df>
+            <df name="vstudio">
+              <df name="vc10">
+              </df>
+              <df name="vc11">
+              </df>
+              <df name="vc9">
+              </df>
+            </df>
+          </df>
+          <df name="doc">
           </df>
           <df name="examples">
             <in>enough.c</in>
@@ -13256,29 +13254,55 @@
             <in>gzappend.c</in>
             <in>gzjoin.c</in>
             <in>gzlog.c</in>
+            <in>gzlog.h</in>
             <in>zpipe.c</in>
             <in>zran.c</in>
+          </df>
+          <df name="msdos">
+          </df>
+          <df name="nintendods">
+          </df>
+          <df name="old">
+            <df name="os2">
+            </df>
+          </df>
+          <df name="qnx">
           </df>
           <df name="test">
             <in>example.c</in>
             <in>infcover.c</in>
             <in>minigzip.c</in>
           </df>
+          <df name="watcom">
+          </df>
+          <df name="win32">
+          </df>
           <in>adler32.c</in>
           <in>compress.c</in>
           <in>crc32.c</in>
+          <in>crc32.h</in>
           <in>deflate.c</in>
+          <in>deflate.h</in>
           <in>gzclose.c</in>
+          <in>gzguts.h</in>
           <in>gzlib.c</in>
           <in>gzread.c</in>
           <in>gzwrite.c</in>
           <in>infback.c</in>
           <in>inffast.c</in>
+          <in>inffast.h</in>
+          <in>inffixed.h</in>
           <in>inflate.c</in>
+          <in>inflate.h</in>
           <in>inftrees.c</in>
+          <in>inftrees.h</in>
           <in>trees.c</in>
+          <in>trees.h</in>
           <in>uncompr.c</in>
+          <in>zconf.h</in>
+          <in>zlib.h</in>
           <in>zutil.c</in>
+          <in>zutil.h</in>
         </df>
       </df>
       <df name="JNIChaos">
@@ -13357,9 +13381,505 @@
       <df name="usr">
         <df name="local">
           <df name="bin">
+            <df name="SiemensS7">
+            </df>
+          </df>
+          <df name="chaosframework">
+            <df name="ChaosMDSLite">
+              <df name="src">
+                <df name="main">
+                  <df name="java">
+                    <df name="it">
+                      <df name="infn">
+                        <df name="chaos">
+                          <df name="mds">
+                            <df name="batchexecution">
+                            </df>
+                            <df name="business">
+                            </df>
+                            <df name="da">
+                            </df>
+                            <df name="event">
+                            </df>
+                            <df name="process">
+                            </df>
+                            <df name="rpc">
+                              <df name="server">
+                              </df>
+                            </df>
+                            <df name="rpcaction">
+                            </df>
+                            <df name="secutiry">
+                            </df>
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                  <df name="webapp">
+                    <df name="META-INF">
+                    </df>
+                    <df name="VAADIN">
+                      <df name="themes">
+                        <df name="base">
+                          <df name="absolutelayout">
+                          </df>
+                          <df name="accordion">
+                          </df>
+                          <df name="button">
+                          </df>
+                          <df name="caption">
+                          </df>
+                          <df name="common">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="csslayout">
+                          </df>
+                          <df name="customcomponent">
+                          </df>
+                          <df name="customlayout">
+                          </df>
+                          <df name="datefield">
+                          </df>
+                          <df name="dragwrapper">
+                          </df>
+                          <df name="embedded">
+                          </df>
+                          <df name="formlayout">
+                          </df>
+                          <df name="gridlayout">
+                          </df>
+                          <df name="link">
+                          </df>
+                          <df name="loginform">
+                          </df>
+                          <df name="menubar">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="notification">
+                          </df>
+                          <df name="orderedlayout">
+                          </df>
+                          <df name="panel">
+                          </df>
+                          <df name="popupview">
+                          </df>
+                          <df name="progressindicator">
+                          </df>
+                          <df name="select">
+                          </df>
+                          <df name="shadow">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="slider">
+                          </df>
+                          <df name="splitpanel">
+                          </df>
+                          <df name="table">
+                          </df>
+                          <df name="tabsheet">
+                          </df>
+                          <df name="textfield">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="tree">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="treetable">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="upload">
+                          </df>
+                          <df name="window">
+                            <df name="img">
+                              <df name="shadow">
+                              </df>
+                            </df>
+                          </df>
+                        </df>
+                        <df name="chameleon">
+                          <df name="common">
+                          </df>
+                          <df name="components">
+                            <df name="accordion">
+                            </df>
+                            <df name="button">
+                            </df>
+                            <df name="datefield">
+                            </df>
+                            <df name="label">
+                            </df>
+                            <df name="menubar">
+                            </df>
+                            <df name="notification">
+                            </df>
+                            <df name="panel">
+                            </df>
+                            <df name="popupview">
+                            </df>
+                            <df name="progressindicator">
+                            </df>
+                            <df name="selects">
+                            </df>
+                            <df name="slider">
+                            </df>
+                            <df name="splitpanel">
+                            </df>
+                            <df name="table">
+                            </df>
+                            <df name="tabsheet">
+                            </df>
+                            <df name="textfield">
+                            </df>
+                            <df name="tree">
+                            </df>
+                            <df name="window">
+                            </df>
+                          </df>
+                          <df name="compound">
+                            <df name="segment">
+                            </df>
+                            <df name="sidebar-menu">
+                            </df>
+                            <df name="toolbar">
+                            </df>
+                          </df>
+                          <df name="icons">
+                          </df>
+                          <df name="img">
+                          </df>
+                        </df>
+                        <df name="chaosmdslitetheme">
+                        </df>
+                        <df name="liferay">
+                          <df name="accordion">
+                          </df>
+                          <df name="button">
+                          </df>
+                          <df name="common">
+                          </df>
+                          <df name="contextmenu">
+                          </df>
+                          <df name="datefield">
+                          </df>
+                          <df name="formlayout">
+                          </df>
+                          <df name="menubar">
+                          </df>
+                          <df name="notification">
+                          </df>
+                          <df name="panel">
+                          </df>
+                          <df name="popupview">
+                          </df>
+                          <df name="progressindicator">
+                          </df>
+                          <df name="select">
+                          </df>
+                          <df name="slider">
+                          </df>
+                          <df name="splitpanel">
+                          </df>
+                          <df name="table">
+                          </df>
+                          <df name="tabsheet">
+                          </df>
+                          <df name="textfield">
+                          </df>
+                          <df name="tree">
+                          </df>
+                          <df name="window">
+                          </df>
+                        </df>
+                        <df name="reindeer">
+                          <df name="a-sprite-definitions">
+                          </df>
+                          <df name="accordion">
+                          </df>
+                          <df name="button">
+                            <df name="img">
+                              <df name="black">
+                              </df>
+                            </df>
+                          </df>
+                          <df name="common">
+                            <df name="icons">
+                            </df>
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="datefield">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="formlayout">
+                          </df>
+                          <df name="label">
+                          </df>
+                          <df name="layouts">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="link">
+                          </df>
+                          <df name="menubar">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="notification">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="panel">
+                          </df>
+                          <df name="popupview">
+                          </df>
+                          <df name="progressindicator">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="select">
+                            <df name="img">
+                              <df name="black">
+                              </df>
+                            </df>
+                          </df>
+                          <df name="slider">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="splitpanel">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="table">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="tabsheet">
+                            <df name="img">
+                              <df name="bar">
+                              </df>
+                              <df name="framed">
+                              </df>
+                            </df>
+                          </df>
+                          <df name="textfield">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="tree">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="window">
+                            <df name="img">
+                              <df name="black">
+                              </df>
+                            </df>
+                          </df>
+                        </df>
+                        <df name="runo">
+                          <df name="absolutelayout">
+                          </df>
+                          <df name="accordion">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="button">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="caption">
+                          </df>
+                          <df name="common">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="datefield">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="formlayout">
+                          </df>
+                          <df name="gridlayout">
+                          </df>
+                          <df name="icons">
+                            <df name="16">
+                            </df>
+                            <df name="32">
+                            </df>
+                            <df name="64">
+                            </df>
+                          </df>
+                          <df name="label">
+                          </df>
+                          <df name="link">
+                          </df>
+                          <df name="menubar">
+                          </df>
+                          <df name="notification">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="orderedlayout">
+                          </df>
+                          <df name="panel">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="popupview">
+                          </df>
+                          <df name="progressindicator">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="select">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="shadow">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="slider">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="splitpanel">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="table">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="tabsheet">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="textfield">
+                            <df name="img">
+                            </df>
+                          </df>
+                          <df name="tree">
+                            <df name="img">
+                              <df name="connectors">
+                              </df>
+                            </df>
+                          </df>
+                          <df name="window">
+                            <df name="img">
+                              <df name="dialog">
+                              </df>
+                              <df name="shadow">
+                              </df>
+                            </df>
+                          </df>
+                        </df>
+                      </df>
+                      <df name="widgetsets">
+                        <df name="com.github.wolfie.refresher.RefresherApplicationWidgetset">
+                          <df name="ie6pngfix">
+                          </df>
+                        </df>
+                        <df name="com.vaadin.terminal.gwt.DefaultWidgetSet">
+                          <df name="ie6pngfix">
+                          </df>
+                        </df>
+                        <df name="WEB-INF">
+                          <df name="deploy">
+                            <df name="com.github.wolfie.refresher.RefresherApplicationWidgetset">
+                              <df name="rpcPolicyManifest">
+                              </df>
+                              <df name="symbolMaps">
+                              </df>
+                            </df>
+                            <df name="com.vaadin.terminal.gwt.DefaultWidgetSet">
+                              <df name="rpcPolicyManifest">
+                              </df>
+                              <df name="symbolMaps">
+                              </df>
+                            </df>
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                    <df name="WEB-INF">
+                      <df name="lib">
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+              <df name="target">
+                <df name="classes">
+                  <df name="it">
+                    <df name="infn">
+                      <df name="chaos">
+                        <df name="mds">
+                          <df name="batchexecution">
+                          </df>
+                          <df name="business">
+                          </df>
+                          <df name="da">
+                          </df>
+                          <df name="event">
+                          </df>
+                          <df name="process">
+                          </df>
+                          <df name="rpc">
+                            <df name="server">
+                            </df>
+                          </df>
+                          <df name="rpcaction">
+                          </df>
+                          <df name="secutiry">
+                          </df>
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+                <df name="generated-sources">
+                  <df name="annotations">
+                  </df>
+                </df>
+                <df name="tomcat">
+                  <df name="conf">
+                  </df>
+                  <df name="logs">
+                  </df>
+                  <df name="webapps">
+                  </df>
+                  <df name="work">
+                    <df name="localEngine">
+                      <df name="localhost">
+                        <df name="ChaosMDSLite">
+                        </df>
+                      </df>
+                    </df>
+                  </df>
+                </df>
+              </df>
+              <df name="test">
+                <df name="configurations">
+                </df>
+              </df>
+            </df>
           </df>
           <df name="etc">
             <df name="chaos-mess">
+            </df>
+            <df name="powersupply">
+            </df>
+            <df name="sensors">
             </df>
           </df>
           <df name="include">
@@ -17181,29 +17701,46 @@
                 </df>
                 <df name="detail">
                   <in>atomic.hpp</in>
+                  <in>cast_tags.hpp</in>
+                  <in>config_begin.hpp</in>
+                  <in>config_end.hpp</in>
                   <in>config_external_begin.hpp</in>
                   <in>config_external_end.hpp</in>
                   <in>file_locking_helpers.hpp</in>
                   <in>file_wrapper.hpp</in>
                   <in>in_place_interface.hpp</in>
+                  <in>intermodule_singleton.hpp</in>
+                  <in>intermodule_singleton_common.hpp</in>
                   <in>interprocess_tester.hpp</in>
                   <in>intersegment_ptr.hpp</in>
+                  <in>managed_global_memory.hpp</in>
                   <in>managed_memory_impl.hpp</in>
+                  <in>managed_multi_shared_memory.hpp</in>
                   <in>managed_open_or_create_impl.hpp</in>
                   <in>math_functions.hpp</in>
+                  <in>min_max.hpp</in>
                   <in>move.hpp</in>
+                  <in>mpl.hpp</in>
                   <in>multi_segment_services.hpp</in>
                   <in>named_proxy.hpp</in>
+                  <in>os_file_functions.hpp</in>
+                  <in>os_thread_functions.hpp</in>
                   <in>pointer_type.hpp</in>
                   <in>portable_intermodule_singleton.hpp</in>
+                  <in>posix_time_types_wrk.hpp</in>
                   <in>preprocessor.hpp</in>
                   <in>ptime_wrk.hpp</in>
+                  <in>robust_emulation.hpp</in>
                   <in>segment_manager_helper.hpp</in>
+                  <in>tmp_dir_helpers.hpp</in>
+                  <in>transform_iterator.hpp</in>
                   <in>type_traits.hpp</in>
                   <in>utilities.hpp</in>
                   <in>variadic_templates_tools.hpp</in>
+                  <in>win32_api.hpp</in>
                   <in>windows_intermodule_singleton.hpp</in>
                   <in>workaround.hpp</in>
+                  <in>xsi_shared_memory_device.hpp</in>
                   <in>xsi_shared_memory_file_wrapper.hpp</in>
                 </df>
                 <df name="indexes">
@@ -25519,10 +26056,60 @@
                 <in>CUTestReport.h</in>
               </df>
             </df>
+            <df name="core">
+              <in>AbstractDataImportDriver.h</in>
+              <in>DataImport.h</in>
+              <in>DataImportDriverInterface.h</in>
+            </df>
             <df name="driver">
               <df name="chaos-mess">
                 <in>ChaosMESS.h</in>
                 <in>DummyDriver.h</in>
+              </df>
+              <df name="modbus">
+                <df name="core">
+                  <in>ChaosModbusInterface.h</in>
+                  <in>modbusDriver.h</in>
+                </df>
+                <in>ModbusControlUnit.h</in>
+                <in>ModbusFemtoUnit.h</in>
+              </df>
+              <df name="plc">
+                <df name="s7lib">
+                  <in>log2.h</in>
+                  <in>nodave.h</in>
+                  <in>openSocket.h</in>
+                  <in>setport.h</in>
+                </df>
+                <in>S7ControlUnit.h</in>
+                <in>SiemensS7TcpDriver.h</in>
+                <in>SiemensS7TcpDriverTypes.h</in>
+              </df>
+              <df name="powersupply">
+                <df name="core">
+                  <in>ChaosPowerSupplyInterface.h</in>
+                  <in>ChaosUIPowersupplyCWrapper.h</in>
+                </df>
+                <df name="models">
+                  <in>GenericPowerSupplyDD.h</in>
+                </df>
+                <in>SCPowerSupplyControlUnit.h</in>
+              </df>
+              <df name="sensors">
+                <df name="core">
+                  <in>AbstractSensorDriver.h</in>
+                  <in>BasicSensor.h</in>
+                  <in>SensorDriverInterface.h</in>
+                </df>
+                <df name="models">
+                  <in>LucidTemperatureDriver.h</in>
+                  <in>VTemperatureDriver.h</in>
+                  <in>ZBSensorCollector.h</in>
+                  <in>ZBSensorNode.h</in>
+                  <in>ZBSensorNodeC.h</in>
+                  <in>ZBSensorNodeD.h</in>
+                  <in>ZBSensorNodeS.h</in>
+                </df>
               </df>
             </df>
             <df name="event2">
@@ -25702,129 +26289,8 @@
               <in>modbus-version.h</in>
               <in>modbus.h</in>
             </df>
-            <df name="mongo">
-              <df name="base">
-                <in>disallow_copying.h</in>
-                <in>error_codes.h</in>
-                <in>parse_number.h</in>
-                <in>status-inl.h</in>
-                <in>status.h</in>
-                <in>status_with.h</in>
-                <in>string_data-inl.h</in>
-                <in>string_data.h</in>
-              </df>
-              <df name="bson">
-                <df name="util">
-                  <in>builder.h</in>
-                  <in>misc.h</in>
-                </df>
-                <in>bson-inl.h</in>
-                <in>bson.h</in>
-                <in>bson_db.h</in>
-                <in>bson_field.h</in>
-                <in>bsonelement.h</in>
-                <in>bsonmisc.h</in>
-                <in>bsonobj.h</in>
-                <in>bsonobjbuilder.h</in>
-                <in>bsonobjiterator.h</in>
-                <in>bsontypes.h</in>
-                <in>inline_decls.h</in>
-                <in>oid.h</in>
-                <in>optime.h</in>
-                <in>ordering.h</in>
-              </df>
-              <df name="client">
-                <in>autolib.h</in>
-                <in>bulk_operation_builder.h</in>
-                <in>bulk_update_builder.h</in>
-                <in>bulk_upsert_builder.h</in>
-                <in>connpool.h</in>
-                <in>dbclient.h</in>
-                <in>dbclient_rs.h</in>
-                <in>dbclientcursor.h</in>
-                <in>dbclientinterface.h</in>
-                <in>exceptions.h</in>
-                <in>export_macros.h</in>
-                <in>gridfs.h</in>
-                <in>index_spec.h</in>
-                <in>init.h</in>
-                <in>options.h</in>
-                <in>redef_macros.h</in>
-                <in>sasl_client_authenticate.h</in>
-                <in>undef_macros.h</in>
-                <in>write_concern.h</in>
-                <in>write_options.h</in>
-                <in>write_result.h</in>
-              </df>
-              <df name="db">
-                <in>jsobj.h</in>
-                <in>json.h</in>
-              </df>
-              <df name="logger">
-                <in>appender.h</in>
-                <in>component_message_log_domain.h</in>
-                <in>labeled_level.h</in>
-                <in>log_component.h</in>
-                <in>log_component_settings.h</in>
-                <in>log_domain.h</in>
-                <in>log_manager.h</in>
-                <in>log_severity-inl.h</in>
-                <in>log_severity.h</in>
-                <in>logger.h</in>
-                <in>logstream_builder.h</in>
-                <in>message_event.h</in>
-                <in>message_log_domain.h</in>
-                <in>tee.h</in>
-              </df>
-              <df name="platform">
-                <in>atomic_intrinsics.h</in>
-                <in>atomic_intrinsics_gcc_atomic.h</in>
-                <in>atomic_intrinsics_gcc_intel.h</in>
-                <in>atomic_intrinsics_gcc_sync.h</in>
-                <in>atomic_intrinsics_win32.h</in>
-                <in>atomic_word.h</in>
-                <in>atomic_word_cxx11.h</in>
-                <in>atomic_word_intrinsics.h</in>
-                <in>basic.h</in>
-                <in>compiler.h</in>
-                <in>compiler_gcc.h</in>
-                <in>compiler_msvc.h</in>
-                <in>cstdint.h</in>
-                <in>float_utils.h</in>
-                <in>hash_namespace.h</in>
-                <in>process_id.h</in>
-                <in>unordered_map.h</in>
-                <in>windows_basic.h</in>
-              </df>
-              <df name="stdx">
-                <in>functional.h</in>
-              </df>
-              <df name="util">
-                <df name="concurrency">
-                  <in>thread_name.h</in>
-                </df>
-                <df name="mongoutils">
-                  <in>str.h</in>
-                </df>
-                <df name="net">
-                  <in>hostandport.h</in>
-                  <in>message.h</in>
-                  <in>message_port.h</in>
-                  <in>operation.h</in>
-                  <in>sock.h</in>
-                  <in>ssl_manager.h</in>
-                </df>
-                <in>assert_util.h</in>
-                <in>background.h</in>
-                <in>bufreader.h</in>
-                <in>debug_util.h</in>
-                <in>goodies.h</in>
-                <in>hex.h</in>
-                <in>log.h</in>
-                <in>time_support.h</in>
-              </df>
-              <in>config.h</in>
-              <in>version.h</in>
+            <df name="models">
+              <in>MemcachedDataImporterDriver.h</in>
             </df>
             <df name="mongoose">
               <in>Controller.h</in>
@@ -25869,6 +26335,8 @@
             <df name="pkgconfig">
             </df>
           </df>
+          <df name="log">
+          </df>
           <df name="share">
             <df name="aclocal">
             </df>
@@ -25880,6 +26348,129 @@
               <df name="man4">
               </df>
             </df>
+          </df>
+          <df name="tools">
+            <df name="package_template">
+              <df name="DEBIAN">
+              </df>
+              <df name="etc">
+                <df name="default">
+                </df>
+                <df name="init">
+                </df>
+                <df name="init.d">
+                </df>
+              </df>
+            </df>
+            <df name="patches">
+            </df>
+            <df name="project_template">
+              <df name="common.tmpl">
+                <df name="__template_name__.xcodeproj">
+                  <df name="project.xcworkspace">
+                  </df>
+                  <df name="xcuserdata">
+                    <df name="michelo.xcuserdatad">
+                      <df name="xcschemes">
+                      </df>
+                    </df>
+                  </df>
+                </df>
+                <df name="source">
+                  <in>__template_name__.cpp</in>
+                  <in>__template_name__.h</in>
+                  <in>main.cpp</in>
+                </df>
+                <df name="test">
+                  <in>main.cpp</in>
+                </df>
+              </df>
+              <df name="driver.tmpl">
+                <df name="__template_name__.xcodeproj">
+                  <df name="project.xcworkspace">
+                  </df>
+                </df>
+                <df name="source">
+                  <in>__template_name__ControlUnit.cpp</in>
+                  <in>__template_name__ControlUnit.h</in>
+                  <in>__template_name__Driver.cpp</in>
+                  <in>__template_name__Driver.h</in>
+                  <in>__template_name__DriverSwitch.cpp</in>
+                  <in>main.cpp</in>
+                </df>
+              </df>
+              <df name="rtcu.tmpl">
+                <df name="__template_name__.xcodeproj">
+                  <df name="project.xcworkspace">
+                  </df>
+                </df>
+                <df name="source">
+                  <in>__template_name__.cpp</in>
+                  <in>__template_name__.h</in>
+                  <in>__template_name__Driver.cpp</in>
+                  <in>__template_name__Driver.h</in>
+                  <in>main.cpp</in>
+                </df>
+                <df name="test">
+                  <in>__template_name__Client.cpp</in>
+                </df>
+              </df>
+              <df name="sccu.tmpl">
+                <df name="__template_name__.xcodeproj">
+                  <df name="project.xcworkspace">
+                  </df>
+                </df>
+                <df name="source">
+                  <in>DefaultCommand.cpp</in>
+                  <in>DefaultCommand.h</in>
+                  <in>DummyDriver.cpp</in>
+                  <in>DummyDriver.h</in>
+                  <in>__template_name__.cpp</in>
+                  <in>__template_name__.h</in>
+                  <in>__template_name__CommandSample.cpp</in>
+                  <in>__template_name__CommandSample.h</in>
+                  <in>__template_name__DefaultCommand.cpp</in>
+                  <in>__template_name__DefaultCommand.h</in>
+                  <in>__template_name__Driver.cpp</in>
+                  <in>__template_name__Driver.h</in>
+                  <in>__template_name__Interface.cpp</in>
+                  <in>__template_name__Interface.h</in>
+                  <in>main.cpp</in>
+                </df>
+                <df name="test">
+                  <in>__template_name__Client.cpp</in>
+                </df>
+              </df>
+            </df>
+            <df name="test">
+              <df name="benchmark-local">
+              </df>
+              <df name="test-local-services">
+              </df>
+            </df>
+          </df>
+          <df name="UnitServer">
+            <df name="build">
+            </df>
+            <df name="CMakeFiles">
+              <df name="2.8.12.2">
+                <df name="CompilerIdC">
+                  <in>CMakeCCompilerId.c</in>
+                </df>
+                <df name="CompilerIdCXX">
+                  <in>CMakeCXXCompilerId.cpp</in>
+                </df>
+              </df>
+              <df name="CMakeTmp">
+              </df>
+              <df name="Progress">
+              </df>
+              <df name="UnitServer.dir">
+              </df>
+            </df>
+            <in>main.cpp</in>
+          </df>
+          <df name="vfs">
           </df>
         </df>
       </df>
