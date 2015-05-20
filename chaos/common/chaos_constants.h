@@ -408,26 +408,53 @@ namespace chaos {
         
         //!key for dataset description (array of per-attribute document)
         static const char * const CONTROL_UNIT_DATASET_DESCRIPTION                  = "cudk_ds_desc";
+        
         //!key for dataset timestampt validity[uint64_t]
         static const char * const CONTROL_UNIT_DATASET_TIMESTAMP                    = "cudk_ds_timestamp";
+        
         //!key for the name of dataset attribute
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_NAME               = "cudk_ds_attr_name";
+        
         //!key representing the type of parameter
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE               = "cudk_ds_attr_type";
+        
         //!key for the units ofr the attrbiute (ampere, volts)
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_UNIT               = "cudk_ds_attr_unit";
+        
         //!key representing the name of the parameter
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION        = "cudk_ds_attr_desc";
+        
         //!key representig the information for the parameter
         static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION          = "cudk_ds_attr_dir";
+        
         //!key representing the value max size where need (type different from raw data type ex: int32)
         static const char * const CONTROL_UNIT_DATASET_VALUE_MAX_SIZE               = "cudk_ds_max_size";
+        
         //!key representing the default value
         static const char * const CONTROL_UNIT_DATASET_DEFAULT_VALUE                = "cudk_default_value";
+        
         //!key representing the default value
         static const char * const CONTROL_UNIT_DATASET_MAX_RANGE                    = "cudk_ds_max_range";
+        
         //!key representing the default value
         static const char * const CONTROL_UNIT_DATASET_MIN_RANGE                    = "cudk_ds_min_range";
+        
+        //!key representing the bitmask flasgs of @DataType::DataTypeModfier that are applied on data type
+        static const char * const CONTROL_UNIT_DATASET_MODIFIER                     = "cudk_ds_mod";
+        
+        //!key representing an array of type that describe the single or multiple subtype
+        //that compese a single element whitin the binary data (int32 or array of int32)
+        static const char * const CONTROL_UNIT_DATASET_BINARY_SUBTYPE               = "cudk_ds_bin_st";
+        
+        //!key representing how many times the binary subtype is repeated within the bunary data[int32]
+        static const char * const CONTROL_UNIT_DATASET_BINARY_CARDINALITY           = "cudk_ds_bin_card";
+        
+        //!key representing the mime string associated to the MIME subtype
+        static const char * const CONTROL_UNIT_DATASET_BINARY_MIME_DESCRIPTION      = "cudk_ds_bin_mime";
+        
+        //!key representing the standard mime type string, that describe the data
+        //!within the binary field, associated to the MIME subtype
+        static const char * const CONTROL_UNIT_DATASET_BINARY_MIME_ENCODING         = "cudk_ds_bin_encoding";
     }
     /** @} */ // end of ControlUnitNodeDefinitionKey
     
@@ -449,7 +476,7 @@ namespace chaos {
     //! Name space for grupping the definition of the chaos basic datatype
     namespace DataType {
         //!typede for datatype
-        typedef enum DataType{
+        typedef enum DataType {
             //!Integer 32 bit length
             TYPE_INT32 = 0,
             //!Integer 64 bit length
@@ -462,12 +489,40 @@ namespace chaos {
             TYPE_BYTEARRAY,
             //!bool variable length
             TYPE_BOOLEAN,
-            //!user data type
             TYPE_CLUSTER,
             //!modifier to be ored to normal data types
             TYPE_ACCESS_ARRAY=0x100
-            
+
         } DataType;
+        
+        typedef enum BinarySubtype {
+            //!bool variable length
+            SUB_TYPE_BOOLEAN = 0,
+            //!Integer char bit length
+            SUB_TYPE_CHAR,
+            //!Integer 8 bit length
+            SUB_TYPE_INT8,
+            //!Integer 16 bit length
+            SUB_TYPE_INT16,
+            //!Integer 32 bit length
+            SUB_TYPE_INT32,
+            //!Integer 64 bit length
+            SUB_TYPE_INT64,
+            //!Double 64 bit length
+            SUB_TYPE_DOUBLE,
+            //!C string variable length
+            SUB_TYPE_STRING,
+            //! the subtype is represented by a specific mime type tagged in specific dataset constants
+            SUB_TYPE_MIME,
+            
+            //! unsigned flag
+            SUB_TYPE_UNSIGNED = 0x200,
+        } BinarySubtype;
+        
+        typedef enum DataTypeModfier {
+            //!bool variable length
+            MODIFIER_UNSIGNED = 0
+        } DataTypeModfier;
         
         //!define the direction of dataset element
         typedef enum DataSetAttributeIOAttribute{

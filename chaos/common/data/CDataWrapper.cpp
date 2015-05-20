@@ -221,6 +221,10 @@ bool CDataWrapper::hasKey(const std::string& key) {
     return bsonBuilder->asTempObj().hasElement(key);
 }
 
+bool CDataWrapper::isVector(const std::string& key) {
+    return bsonBuilder->asTempObj().getField(key).type() == bson::Array;
+}
+
 //return all key contained into the object
 void CDataWrapper::getAllKey(std::vector<std::string>& contained_key) {
 	BSONObjIterator obj_iterator(bsonBuilder->asTempObj());

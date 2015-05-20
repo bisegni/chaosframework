@@ -184,6 +184,8 @@ namespace chaos {
 				//check if the key is present in data wrapper
                 bool hasKey(const std::string& key);
 				
+                bool isVector(const std::string& key);
+                
 				//return all key contained into the object
 				void getAllKey(std::vector<std::string>& contained_key);
 				

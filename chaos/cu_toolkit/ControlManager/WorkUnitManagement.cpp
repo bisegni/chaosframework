@@ -126,6 +126,9 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
     switch ((UnitState) wu_instance_sm.current_state()[0]) {
         case UnitStateUnpublished:
             WUMAPP_ << "Work unit in unpublished";
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
             active = false;
             break;
             

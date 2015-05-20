@@ -171,6 +171,9 @@ void ControlManager::start() throw(CException) {
 	if(use_unit_server){
             //register unit server node
         HealtManager::getInstance()->addNewNode(unit_server_alias);
+        HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
+                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
         HealtManager::getInstance()->publishNodeHealt(unit_server_alias);
 		//add unit server registration managment timer
 		chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC));

@@ -72,13 +72,28 @@ namespace chaos {
 				 \param attributeType the type of the new attribute
 				 \param attributeDirection the direction of the new attribute
 				 */
-				void addAttributeToDataSet(const char*const attributeName,
-										   const char*const attributeDescription,
-										   DataType::DataType attributeType,
-										   DataType::DataSetAttributeIOAttribute attributeDirection,
+                void addAttributeToDataSet(const std::string& attribute_name,
+										   const std::string& attribute_description,
+										   DataType::DataType attribute_type,
+										   DataType::DataSetAttributeIOAttribute attribute_direction,
 										   uint32_t maxSize = 0);
 				
-				
+                void addBinaryAttributeAsSubtypeToDataSet(const std::string& attribute_name,
+                                                          const std::string& attribute_description,
+                                                          DataType::BinarySubtype               subtype,
+                                                          int32_t    cardinality,
+                                                          DataType::DataSetAttributeIOAttribute attribute_direction);
+                
+                void addBinaryAttributeAsSubtypeToDataSet(const std::string&            attribute_name,
+                                                          const std::string&            attribute_description,
+                                                          const std::vector<int32_t>&   subtype_list,
+                                                          int32_t                       cardinality,
+                                                          DataType::DataSetAttributeIOAttribute attribute_direction);
+                
+                void addBinaryAttributeAsMIMETypeToDataSet(const std::string& attribute_name,
+                                                           const std::string& attribute_description,
+                                                           std::string mime_type,
+                                                           DataType::DataSetAttributeIOAttribute attribute_direction);
 				
 				//!Get dataset attribute names
 				/*!
