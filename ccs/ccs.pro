@@ -55,7 +55,11 @@ SOURCES += main.cpp\
     widget/LedIndicatorWidget.cpp \
     node/data/ChaosAbstractTableModel.cpp \
     node/data/ChaosFixedCDataWrapperTableMode.cpp \
-    node/control_unit/ControlUnitEditor.cpp
+    node/control_unit/ControlUnitEditor.cpp \
+    node/data/FixedInputChannelDatasetTableModel.cpp \
+    widget/LedIndicatorAliveTSWidget.cpp \
+    logic/property_switch/MultiPropertyLogicSwitch.cpp \
+    logic/property_switch/SwitchAggregator.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -86,7 +90,11 @@ HEADERS  += \
     monitor/healt/handler/HealtStatusHandler.h \
     monitor/healt/handler/AbstractHealtHandler.h \
     monitor/healt/handler/HealtHeartbeatHandler.h \
-    monitor/healt/handler/handler.h
+    monitor/healt/handler/handler.h \
+    node/data/FixedInputChannelDatasetTableModel.h \
+    widget/LedIndicatorAliveTSWidget.h \
+    logic/property_switch/MultiPropertyLogicSwitch.h \
+    logic/property_switch/SwitchAggregator.h
 
 FORMS    += \
     search/searchnoderesult.ui \

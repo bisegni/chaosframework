@@ -1,5 +1,5 @@
 /*
- *	GetInstance.h
+ *	ChangeNodeState.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,32 +18,38 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__GetInstance__
-#define __CHAOSFramework__GetInstance__
+#ifndef __CHAOSFramework__ChangeNodeState__
+#define __CHAOSFramework__ChangeNodeState__
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
 namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
-            namespace control_unit {
-                class GetInstance:
+            namespace node {
+                
+                class ChangeNodeState:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(GetInstance)
+                    API_PROXY_CLASS(ChangeNodeState)
                 protected:
-                        //! default constructor
-                    API_PROXY_CD_DECLARATION(GetInstance)
-
+                    //! default constructor
+                    API_PROXY_CD_DECLARATION(ChangeNodeState)
+                    
                 public:
-                    //! Return the configuration instance of the control unit identified by the unique id
+                    
                     /*!
-                     \param control_unit_uid is the unique id that identify the control unit
+                     Return the description of the node
+                     \param node_uid  thw node unique identifier
+                     \param operation 0-load, 1-init, 2-start, 3-stop, 4-deinit, 5-unload
                      */
-                    ApiProxyResult execute(const std::string& control_unit_uid);
+                    ApiProxyResult execute(const std::string& node_uid,
+                                           int to_state);
                 };
+                
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__GetInstance__) */
+
+#endif /* defined(__CHAOSFramework__ChangeNodeState__) */

@@ -44,17 +44,16 @@ CDataWrapper *GetInstance::execute(CDataWrapper *api_data,
 
     if(!api_data) {LOG_AND_TROW(CU_GI_ERR, -1, "Search parameter are needed");}
     if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) {LOG_AND_TROW(CU_GI_ERR, -2, "The ndk_unique_id key (representing the control unit uid) is mandatory");}
-    if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {LOG_AND_TROW(CU_GI_ERR, -3, "The ndk_parent key (representing the unit server uid) is mandatory");}
+    //if(!api_data->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {LOG_AND_TROW(CU_GI_ERR, -3, "The ndk_parent key (representing the unit server uid) is mandatory");}
 
     int err = 0;
     CDataWrapper *result = NULL;
     const std::string cu_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
-    const std::string us_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
-    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -4)
-    if((err = cu_da->getInstanceDescription(us_uid,
-                                            cu_uid,
+
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -3)
+    if((err = cu_da->getInstanceDescription(cu_uid,
                                             &result))){
-        LOG_AND_TROW(CU_GI_ERR, err, boost::str(boost::format("Error fetching the control unit instance description for cuid:%1% and usuid:%2%") % cu_uid % us_uid));
+        LOG_AND_TROW(CU_GI_ERR, err, boost::str(boost::format("Error fetching the control unit instance description for cuid:%1%") % cu_uid));
     }
     return result;
 }

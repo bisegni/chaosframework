@@ -12,7 +12,8 @@ class AbstractHealtHandler:
     Q_OBJECT
 
 signals:
-    void valueUpdated(const QString& attribute_name,
+    void valueUpdated(const QString& key,
+                      const QString& attribute_name,
                       const QVariant& attribute_value);
 };
 #endif // ABSTRACTHEALTHANDLER

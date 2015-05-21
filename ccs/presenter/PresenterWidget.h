@@ -60,9 +60,9 @@ private slots:
 protected slots:
     virtual void startHealtMonitorAction();
     virtual void stopHealtMonitorAction();
-
 protected:
     ApiAsyncProcessor api_processor;
+
     void setTabTitle(const QString& title);
 
     void closeTab();
@@ -76,6 +76,8 @@ protected:
     void addNodeToHealtMonitor(const QString& node);
 
     void removeNodeToHealtMonitor(const QString& node);
+
+    void manageWidgetStateOnForValue(const QString& value);
 
     //contextual menu utility
     void registerWidgetForContextualMenu(QWidget *contextual_menu_parent,

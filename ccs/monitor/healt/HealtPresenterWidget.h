@@ -28,7 +28,8 @@ public:
                                   QWidget *parent = 0);
     ~HealtPresenterWidget();
 public slots:
-    void updateAttributeValue(const QString& attribute_name,
+    void updateAttributeValue(const QString& key,
+                              const QString& attribute_name,
                               const QVariant& attribute_value);
 private:
     HealtStatusHandler      status_handler;

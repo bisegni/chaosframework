@@ -29,11 +29,11 @@ HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
 
     //handler connection
     connect(&status_handler,
-            SIGNAL(valueUpdated(QString,QVariant)),
-            SLOT(updateAttributeValue(QString,QVariant)));
+            SIGNAL(valueUpdated(QString,QString,QVariant)),
+            SLOT(updateAttributeValue(QString,QString,QVariant)));
     connect(&hb_handler,
-            SIGNAL(valueUpdated(QString,QVariant)),
-            SLOT(updateAttributeValue(QString,QVariant)));
+            SIGNAL(valueUpdated(QString,QString,QVariant)),
+            SLOT(updateAttributeValue(QString,QString,QVariant)));
     ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(node_key.toStdString(),
                                                                               20,
                                                                               &status_handler);
@@ -55,7 +55,8 @@ HealtPresenterWidget::~HealtPresenterWidget() {
     delete ui;
 }
 
-void HealtPresenterWidget::updateAttributeValue(const QString& attribute_name,
+void HealtPresenterWidget::updateAttributeValue(const QString& key,
+                                                const QString& attribute_name,
                                                 const QVariant& attribute_value) {
     if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
         //print the status

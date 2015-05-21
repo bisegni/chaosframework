@@ -32,3 +32,7 @@ void LedIndicatorWidget::setState(int new_sate) {
     current_state = new_sate;
     repaint();
 }
+
+int LedIndicatorWidget::getState() {
+    return current_state;
+}

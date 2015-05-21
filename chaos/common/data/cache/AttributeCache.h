@@ -24,6 +24,7 @@
 #include <map>
 
 #include <boost/thread.hpp>
+#include <boost/dynamic_bitset.hpp>
 
 #include <chaos/common/data/cache/AttributeValue.h>
 #include <chaos/common/utility/InizializableService.h>

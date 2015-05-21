@@ -489,6 +489,9 @@
 		32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159D818B4B9F90096B58B /* DataWorker.cpp */; };
 		32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159DC18B4D4200096B58B /* MemcachedCacheDriver.cpp */; };
 		32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */; };
+		32B4192C1B0DE55E00C3CA7D /* ChangeNodeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */; };
+		32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B4192B1B0DE55E00C3CA7D /* ChangeNodeState.h */; };
+		32B419301B0DE68800C3CA7D /* ChangeNodeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B4192E1B0DE68800C3CA7D /* ChangeNodeState.cpp */; };
 		32B571ED168E02C30002A198 /* bson_builder_base.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E4168E02C20002A198 /* bson_builder_base.h */; };
 		32B571EE168E02C30002A198 /* bson_db.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E5168E02C20002A198 /* bson_db.h */; };
 		32B571F0168E02C30002A198 /* bson_field.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E7168E02C20002A198 /* bson_field.h */; };
@@ -1296,6 +1299,10 @@
 		32B159E318B635580096B58B /* cache_system.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cache_system.h; sourceTree = "<group>"; };
 		32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSBatchExecutor.cpp; sourceTree = "<group>"; };
 		32B3E11C1A7A3923007B7802 /* MDSBatchExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSBatchExecutor.h; sourceTree = "<group>"; };
+		32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeNodeState.cpp; sourceTree = "<group>"; };
+		32B4192B1B0DE55E00C3CA7D /* ChangeNodeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeNodeState.h; sourceTree = "<group>"; };
+		32B4192E1B0DE68800C3CA7D /* ChangeNodeState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeNodeState.cpp; sourceTree = "<group>"; };
+		32B4192F1B0DE68800C3CA7D /* ChangeNodeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangeNodeState.h; sourceTree = "<group>"; };
 		32B571E4168E02C20002A198 /* bson_builder_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_builder_base.h; sourceTree = "<group>"; };
 		32B571E5168E02C20002A198 /* bson_db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_db.h; sourceTree = "<group>"; };
 		32B571E7168E02C20002A198 /* bson_field.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_field.h; sourceTree = "<group>"; };
@@ -1598,6 +1605,8 @@
 				3208AABC1AC56C1C000860D9 /* GetNodeDescription.h */,
 				323386AF1ACD731E008863DC /* NodeSearch.cpp */,
 				323386B01ACD731E008863DC /* NodeSearch.h */,
+				32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */,
+				32B4192B1B0DE55E00C3CA7D /* ChangeNodeState.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -2806,6 +2815,8 @@
 				32B9F3F61AC4186300380FE9 /* NodeCreateUnitServer.h */,
 				32B9F3F81AC4460A00380FE9 /* NodeGetDescription.cpp */,
 				32B9F3F91AC4460A00380FE9 /* NodeGetDescription.h */,
+				32B4192E1B0DE68800C3CA7D /* ChangeNodeState.cpp */,
+				32B4192F1B0DE68800C3CA7D /* ChangeNodeState.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -3649,6 +3660,7 @@
 				3234BE801B04CC9400AE6B08 /* HealtStatusAttributeHandler.h in Headers */,
 				328C87331ADFDB9A0047C79B /* SearchInstancesByUS.h in Headers */,
 				3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */,
+				32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */,
 				327F39AC1AEAA2390000C845 /* UpdateDS.h in Headers */,
 				32362C221ADD0C45000CA079 /* SetInstanceDescription.h in Headers */,
 				323386B21ACD731E008863DC /* NodeSearch.h in Headers */,
@@ -3946,6 +3958,7 @@
 				32362C1D1ADC0FDF000CA079 /* ControlUnitGroup.cpp in Sources */,
 				32610F961AE671AF00779B84 /* StartStop.cpp in Sources */,
 				32B9F3F41AC3E74C00380FE9 /* AbstractPersistenceDriver.cpp in Sources */,
+				32B419301B0DE68800C3CA7D /* ChangeNodeState.cpp in Sources */,
 				324EF3DD1AE92379000837AF /* NewDS.cpp in Sources */,
 				32B9F3FA1AC4460A00380FE9 /* NodeGetDescription.cpp in Sources */,
 				328E78021A7A94810008C070 /* NodeRegister.cpp in Sources */,
@@ -4247,6 +4260,7 @@
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
 				327F39AB1AEAA2390000C845 /* UpdateDS.cpp in Sources */,
+				32B4192C1B0DE55E00C3CA7D /* ChangeNodeState.cpp in Sources */,
 				328C87321ADFDB9A0047C79B /* SearchInstancesByUS.cpp in Sources */,
 				323386B11ACD731E008863DC /* NodeSearch.cpp in Sources */,
 			);

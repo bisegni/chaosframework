@@ -1,5 +1,5 @@
 /*
- *	NodeGetDescription.h
+ *	ChangeNodeState.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__NodeGetDescription__
-#define __CHAOSFramework__NodeGetDescription__
+#ifndef __CHAOSFramework__ChangeNodeState__
+#define __CHAOSFramework__ChangeNodeState__
 
 #include "../AbstractApi.h"
 
@@ -28,12 +28,12 @@ namespace chaos {
         namespace api {
             namespace node {
                 
-                class NodeGetDescription:
+                class ChangeNodeState:
                 public AbstractApi {
                     
                 public:
-                    NodeGetDescription();
-                    ~NodeGetDescription();
+                    ChangeNodeState();
+                    ~ChangeNodeState();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException);
                 };
@@ -43,4 +43,5 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__NodeGetDescription__) */
+
+#endif /* defined(__CHAOSFramework__ChangeNodeState__) */

@@ -58,6 +58,16 @@ void PresenterWidget::removeNodeToHealtMonitor(const QString& node) {
     presenter_instance->removeMonitorHealtForNode(node);
 }
 
+void PresenterWidget::manageWidgetStateOnForValue(const QString& value) {
+    QList<QWidget *> w_list = findChildren<QWidget*>();
+    foreach (QWidget* wdg, w_list) {
+        QVariant state_on_value = wdg->property("_state_on");
+        if(!state_on_value.isNull()) {
+            wdg->setEnabled(state_on_value.toString().contains(value));
+        }
+    }
+}
+
 void PresenterWidget::submitApiResult(const QString& api_tag,
                                       ApiProxyResult api_result) {
     api_processor.submitApiResult(api_tag,
@@ -91,6 +101,7 @@ void PresenterWidget::asyncApiTimeout(const QString& tag) {
     emit onEndWaitApi(tag);
 }
 
+//-------slot for api-------
 void PresenterWidget::onApiDone(const QString& tag,
                                 QSharedPointer<CDataWrapper> api_result) {
     qDebug() << "onApiDone event of tag:" << tag << " of error:" << QString::fromStdString(api_result->getJSONString());

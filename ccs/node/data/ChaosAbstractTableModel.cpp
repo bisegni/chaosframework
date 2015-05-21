@@ -61,10 +61,6 @@ QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const
     QVariant result;
     if (!index.isValid())
              return QVariant();
-    // generate a log message when this method gets called
-    qDebug() << QString("row %1, col%2, role %3")
-                .arg(row).arg(col).arg(role);
-
     switch(role){
     case Qt::DisplayRole:
         result = getCellData(row, col);

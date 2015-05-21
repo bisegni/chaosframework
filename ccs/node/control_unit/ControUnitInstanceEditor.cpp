@@ -96,8 +96,7 @@ void ControUnitInstanceEditor::initUI() {
     if(is_in_editing) {
         //get information from server
         submitApiResult(QString("get_instance"),
-                        GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(ui->labelUnitServer->text().toStdString(),
-                                                                              ui->lineEditControlUnitUniqueID->text().toStdString()));
+                        GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(ui->lineEditControlUnitUniqueID->text().toStdString()));
     }
 
 }

@@ -1,21 +1,19 @@
-#include "FixedOutputChannelDatasetTableModel.h"
-
+#include "FixedInputChannelDatasetTableModel.h"
+#include <QDebug>
 using namespace chaos::common::data;
 
-FixedOutputChannelDatasetTableModel::FixedOutputChannelDatasetTableModel(QObject *parent):
+FixedInputChannelDatasetTableModel::FixedInputChannelDatasetTableModel(QObject *parent):
     ChaosFixedCDataWrapperTableModel(parent) {
 
 }
-
-FixedOutputChannelDatasetTableModel::~FixedOutputChannelDatasetTableModel() {
+FixedInputChannelDatasetTableModel::~FixedInputChannelDatasetTableModel() {
 
 }
-
-void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::common::data::CDataWrapper>& _dataset) {
+void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::common::data::CDataWrapper>& _dataset) {
     //call superclas method taht will emit dataChagned
     ChaosFixedCDataWrapperTableModel::updateData(_dataset);
     if(data_wrapped.isNull() ||
-       !data_wrapped->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) return;
+            !data_wrapped->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) return;
     beginResetModel();
     QSharedPointer<CMultiTypeDataArrayWrapper> dataset_array(data_wrapped->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
     for(int idx = 0;
@@ -27,7 +25,7 @@ void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos:
                 element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE) &&
                 element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION)) {
             int direction = element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION);
-            if(direction == chaos::DataType::Output ||
+            if(direction == chaos::DataType::Input ||
                     direction == chaos::DataType::Bidirectional) {
                 dataset_output_element.push_back(element);
             }
@@ -35,16 +33,15 @@ void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos:
     }
     endResetModel();
 }
-
-int FixedOutputChannelDatasetTableModel::getRowCount() const {
+int FixedInputChannelDatasetTableModel::getRowCount() const {
     return dataset_output_element.size();
 }
 
-int FixedOutputChannelDatasetTableModel::getColumnCount() const {
-    return 3;
+int FixedInputChannelDatasetTableModel::getColumnCount() const {
+    return 6;
 }
 
-QString FixedOutputChannelDatasetTableModel::getHeaderForColumn(int column) const {
+QString FixedInputChannelDatasetTableModel::getHeaderForColumn(int column) const {
     QString result;
     switch(column) {
     case 0:
@@ -56,11 +53,20 @@ QString FixedOutputChannelDatasetTableModel::getHeaderForColumn(int column) cons
     case 2:
         result = QString("Description");
         break;
+    case 3:
+        result = QString("Max");
+        break;
+    case 4:
+        result = QString("Min");
+        break;
+    case 5:
+        result = QString("Default");
+        break;
     }
     return result;
 }
 
-QVariant FixedOutputChannelDatasetTableModel::getCellData(int row, int column) const{
+QVariant FixedInputChannelDatasetTableModel::getCellData(int row, int column) const {
     QVariant result;
     QSharedPointer<CDataWrapper> element = dataset_output_element[row];
     switch(column) {
@@ -91,20 +97,36 @@ QVariant FixedOutputChannelDatasetTableModel::getCellData(int row, int column) c
             case chaos::DataType::TYPE_BYTEARRAY:
                 result = QString("Binary");
                 break;
-            case chaos::DataType::TYPE_CLUSTER:
-                result = QString("Cluster");
-                break;
             default:
+                result = QString("------");
                 break;
             }
         }
         break;
 
-    case 2:
-        if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)) {
-            return QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
+    case 2:{
+        result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
+        break;
+    }
+
+    case 3:{
+        if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {
+            result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
         }
         break;
+    }
+    case 4:{
+        if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {
+            result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
+        }
+        break;
+    }
+    case 5:{
+        if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
+            result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
+        }
+        break;
+    }
     }
     return result;
 }

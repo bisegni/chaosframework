@@ -22,6 +22,7 @@
 #include "NodeCreateUnitServer.h"
 #include "NodeSearch.h"
 #include "NodeGetDescription.h"
+#include "ChangeNodeState.h"
 
 using namespace chaos::metadata_service::api::node;
 DEFINE_CLASS_FACTORY_NO_ALIAS(NodeGroup, chaos::metadata_service::api::AbstractApiGroup);
@@ -33,6 +34,7 @@ AbstractApiGroup("system"){
     addApi<NodeRegister>();
     addApi<NodeCreateUnitServer>();
     addApi<NodeGetDescription>();
+    addApi<ChangeNodeState>();
 }
 
 NodeGroup::~NodeGroup() {

@@ -1,5 +1,5 @@
 /*
- *	GetInstance.cpp
+ *	ChangeNodeState.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,21 +18,19 @@
  *    	limitations under the License.
  */
 
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/GetInstance.h>
-
+#include <ChaosMetadataServiceClient/api_proxy/node/ChangeNodeState.h>
 using namespace chaos::metadata_service_client::api_proxy;
-using namespace chaos::metadata_service_client::api_proxy::control_unit;
+using namespace chaos::metadata_service_client::api_proxy::node;
 
-API_PROXY_CD_DEFINITION(GetInstance,
-                        "control_unit",
-                        "getInstance")
+API_PROXY_CD_DEFINITION(ChangeNodeState, "system", "changeNodeState")
 
 /*!
-
+ 
  */
-ApiProxyResult GetInstance::execute(const std::string& control_unit_uid) {
+ApiProxyResult ChangeNodeState::execute(const std::string& node_uid,
+                                        int to_state) {
     chaos::common::data::CDataWrapper *message = new chaos::common::data::CDataWrapper();
-    message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, control_unit_uid);
-    //message->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, unit_server_uid);
+    message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
+    message->addInt32Value("to_state", to_state);
     return callApi(message);
 }

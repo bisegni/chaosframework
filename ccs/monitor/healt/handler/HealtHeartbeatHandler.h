@@ -12,7 +12,8 @@ protected:
                       const std::string& attribute,
                       const int64_t value) {
         //emit new value
-        emit valueUpdated(QString::fromStdString(attribute),
+        emit valueUpdated(QString::fromStdString(key),
+                          QString::fromStdString(attribute),
                           QVariant::fromValue<qulonglong>((uint64_t)value));
     }
 };

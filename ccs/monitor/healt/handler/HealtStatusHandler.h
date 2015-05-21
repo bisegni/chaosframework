@@ -12,7 +12,8 @@ protected:
                       const std::string& attribute,
                       const std::string& value) {
         //emit new value
-        emit valueUpdated(QString::fromStdString(attribute),
+        emit valueUpdated(QString::fromStdString(key),
+                          QString::fromStdString(attribute),
                           QVariant::fromValue<QString>(QString::fromStdString(value)));
     }
 };
