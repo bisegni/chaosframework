@@ -134,6 +134,9 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             
         case UnitStateStartPublishing: {
             active = true;
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOADING);
             //reset the delay for the forwarding of the registration datapack
             publishing_counter_delay = 0;
             WUMAPP_ << "Control unit is unpublished, need to be setup";
@@ -183,6 +186,10 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
         }
         case UnitStateStartUnpublishing: {
             active = true;
+            //set healt to load
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOADING);
             WUMAPP_ << "work unit is starting the unpublishing process";
             WUMAPP_ << "Register RPC action for cu whith instance";
             std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
@@ -196,6 +203,9 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             
         case UnitStatePublishingFailure: {
             WUMAPP_  << "there was been error during control unit registration we end here";
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
             active = false;
             break;
         }

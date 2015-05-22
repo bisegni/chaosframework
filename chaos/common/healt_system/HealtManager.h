@@ -108,27 +108,33 @@ namespace chaos {
                 
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
-                                        int32_t int32_value);
+                                        int32_t int32_value,
+                                        bool publish = false);
                 
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
-                                        int64_t int64_value);
+                                        int64_t int64_value,
+                                        bool publish = false);
                 
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
-                                        double double_value);
+                                        double double_value,
+                                        bool publish = false);
                 
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
-                                        const std::string& str_value);
+                                        const std::string& str_value,
+                                        bool publish = false);
                 
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
-                                        const char * c_str_value);
+                                        const char * c_str_value,
+                                        bool publish = false);
                 
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
-                                        const bool bool_value);
+                                        const bool bool_value,
+                                        bool publish = false);
 
                     //publish the healt for the ndoe uid
                 void publishNodeHealt(const std::string& node_uid);

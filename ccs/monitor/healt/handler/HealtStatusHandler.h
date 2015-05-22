@@ -16,5 +16,8 @@ protected:
                           QString::fromStdString(attribute),
                           QVariant::fromValue<QString>(QString::fromStdString(value)));
     }
+public:
+    HealtStatusHandler(bool event_on_change = false):
+    HealtStatusAttributeHandler(event_on_change){}
 };
 #endif // HEALTSTATUSHANDLER_H

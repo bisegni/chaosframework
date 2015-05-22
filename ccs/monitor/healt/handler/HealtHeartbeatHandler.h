@@ -16,6 +16,10 @@ protected:
                           QString::fromStdString(attribute),
                           QVariant::fromValue<qulonglong>((uint64_t)value));
     }
+
+public:
+    HealthHartbeatHandler(bool event_on_change = false):
+    HealtHeartBeatAttributeHandler(event_on_change){}
 };
 #endif // HEALTHEARTBEATHANDLER
 

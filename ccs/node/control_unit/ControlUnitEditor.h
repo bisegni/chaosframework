@@ -53,7 +53,7 @@ private:
     void fillInfo(const QSharedPointer<chaos::common::data::CDataWrapper>& node_info);
     void fillDataset(const QSharedPointer<chaos::common::data::CDataWrapper>& dataset);
 
-    //SwitchAggregator logic_switch_aggregator;
+    SwitchAggregator logic_switch_aggregator;
 
     HealthHartbeatHandler   hb_handler;
     HealtStatusHandler      status_handler;

@@ -77,13 +77,7 @@
       </widget>
      </item>
      <item>
-      <widget class="LedIndicatorWidget" name="ledIndicator" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+      <widget class="LedIndicatorAliveTSWidget" name="ledIndicatorHelatTS" native="true">
        <property name="minimumSize">
         <size>
          <width>16</width>
@@ -153,9 +147,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LedIndicatorWidget</class>
+   <class>LedIndicatorAliveTSWidget</class>
    <extends>QWidget</extends>
-   <header>widget/LedIndicatorWidget.h</header>
+   <header>widget/LedIndicatorAliveTSWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

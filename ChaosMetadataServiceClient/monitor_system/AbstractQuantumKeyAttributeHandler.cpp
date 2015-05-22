@@ -23,16 +23,23 @@
 using namespace chaos::metadata_service_client::monitor_system;
 
 
-AbstractQuantumKeyAttributeHandler::AbstractQuantumKeyAttributeHandler(const std::string& _attribute):
-attribute(_attribute) {
-    
-}
+AbstractQuantumKeyAttributeHandler::AbstractQuantumKeyAttributeHandler(const std::string& _attribute,
+                                                                       bool  _event_on_value_change):
+attribute(_attribute),
+event_on_value_change(_event_on_value_change) {}
 
-AbstractQuantumKeyAttributeHandler::~AbstractQuantumKeyAttributeHandler() {
-    
-}
+AbstractQuantumKeyAttributeHandler::~AbstractQuantumKeyAttributeHandler() {}
 
 //---------------------------int32_t attribute handler-------------------------
+QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeBoolHandler)
+void QuantumKeyAttributeBoolHandler::_consumeValue(const std::string& key,
+                                                   const KeyValue& value) {
+
+    consumeValue(key,
+                 attribute,
+                 value->getBoolValue(attribute));
+}
+
 QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeInt32Handler)
 void QuantumKeyAttributeInt32Handler::_consumeValue(const std::string& key,
                                                     const KeyValue& value) {
@@ -52,7 +59,9 @@ void QuantumKeyAttributeInt64Handler::_consumeValue(const std::string& key,
 QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeDoubleHandler)
 void QuantumKeyAttributeDoubleHandler::_consumeValue(const std::string& key,
                                                      const KeyValue& value) {
-    
+    consumeValue(key,
+                 attribute,
+                 value->getDoubleValue(attribute));
 }
 
 QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeStringHandler)
@@ -61,6 +70,7 @@ void QuantumKeyAttributeStringHandler::_consumeValue(const std::string& key,
     consumeValue(key,
                  attribute,
                  value->getStringValue(attribute));
+
 }
 
 QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeBinaryHandler)
@@ -75,12 +85,5 @@ void QuantumKeyAttributeBinaryHandler::_consumeValue(const std::string& key,
                  buf_size);
 }
 
-QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeBoolHandler)
-void QuantumKeyAttributeBoolHandler::_consumeValue(const std::string& key,
-                                                   const KeyValue& value) {
-    consumeValue(key,
-                 attribute,
-                 value->getBoolValue(attribute));
-}
 
 

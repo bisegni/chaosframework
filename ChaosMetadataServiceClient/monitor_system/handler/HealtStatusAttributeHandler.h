@@ -33,8 +33,8 @@ namespace chaos {
                 class HealtStatusAttributeHandler:
                 public QuantumKeyAttributeStringHandler {
                 public:
-                    HealtStatusAttributeHandler():
-                    QuantumKeyAttributeStringHandler(std::string(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS)){}
+                    HealtStatusAttributeHandler(bool event_on_value_change = false):
+                    QuantumKeyAttributeStringHandler(std::string(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS), event_on_value_change){}
                 };
 
                 

@@ -26,17 +26,24 @@
 namespace chaos {
     namespace metadata_service_client {
         namespace monitor_system {
-            
+ 
 #define QuantumKeyAttributeHandlerIMPL_CONST_DIST(x)\
-x::x(const std::string& _attribute):\
-AbstractQuantumKeyAttributeHandler(_attribute){}\
+x::x(const std::string& _attribute, bool _event_on_value_change):\
+AbstractQuantumKeyAttributeHandler(_attribute, _event_on_value_change){}\
 x::~x(){}\
 
+            
             //!forward decalration
             class MonitorManager;
             class QuantumSlotScheduler;
             class QuantumKeyConsumer;
             
+            //! bas class for the attribute handler
+            /*!
+             This class permit to register on QuantumKeyConsumer for receive handler
+             when a value for an attribute is refreshed. Cna be also been set for
+             notify only when the value is changed and not on every refresh.
+             */
             class AbstractQuantumKeyAttributeHandler {
                 friend class MonitorManager;
                 friend class QuantumKeyConsumer;
@@ -44,16 +51,38 @@ x::~x(){}\
                 virtual void _consumeValue(const std::string& key, const KeyValue& value) = 0;
             protected:
                 const std::string attribute;
+                bool event_on_value_change;
             public:
-                AbstractQuantumKeyAttributeHandler(const std::string& _attribute);
+                //!Default contrusctor
+                /*!
+                 \param _attribute the name of the attribute
+                 \param event_on_value_change if true the event is fired only when the value is changed
+                 */
+                AbstractQuantumKeyAttributeHandler(const std::string& _attribute,
+                                                   bool _event_on_value_change = false);
                 virtual ~AbstractQuantumKeyAttributeHandler();
+            };
+            
+            class QuantumKeyAttributeBoolHandler:
+            public AbstractQuantumKeyAttributeHandler {
+                int last_value;
+                void _consumeValue(const std::string& key, const KeyValue& value);
+            public:
+                QuantumKeyAttributeBoolHandler(const std::string& _attribute,
+                                               bool _event_on_value_change = false);
+                ~QuantumKeyAttributeBoolHandler();
+                virtual void consumeValue(const std::string& key,
+                                          const std::string& attribute,
+                                          const bool value) = 0;
             };
             
             class QuantumKeyAttributeInt32Handler:
             public AbstractQuantumKeyAttributeHandler {
+                int32_t last_value;
                 void _consumeValue(const std::string& key, const KeyValue& value);
             public:
-                QuantumKeyAttributeInt32Handler(const std::string& _attribute);
+                QuantumKeyAttributeInt32Handler(const std::string& _attribute,
+                                                bool _event_on_value_change = false);
                 ~QuantumKeyAttributeInt32Handler();
                 virtual void consumeValue(const std::string& key,
                                           const std::string& attribute,
@@ -62,9 +91,11 @@ x::~x(){}\
             
             class QuantumKeyAttributeInt64Handler:
             public AbstractQuantumKeyAttributeHandler {
+                int64_t last_value;
                 void _consumeValue(const std::string& key, const KeyValue& value);
             public:
-                QuantumKeyAttributeInt64Handler(const std::string& _attribute);
+                QuantumKeyAttributeInt64Handler(const std::string& _attribute,
+                                                bool _event_on_value_change = false);
                 ~QuantumKeyAttributeInt64Handler();
                 virtual void consumeValue(const std::string& key,
                                           const std::string& attribute,
@@ -73,9 +104,11 @@ x::~x(){}\
             
             class QuantumKeyAttributeDoubleHandler:
             public AbstractQuantumKeyAttributeHandler {
+                double last_value;
                 void _consumeValue(const std::string& key, const KeyValue& value);
             public:
-                QuantumKeyAttributeDoubleHandler(const std::string& _attribute);
+                QuantumKeyAttributeDoubleHandler(const std::string& _attribute,
+                                                 bool _event_on_value_change = false);
                 ~QuantumKeyAttributeDoubleHandler();
                 virtual void consumeValue(const std::string& key,
                                           const std::string& attribute,
@@ -84,9 +117,11 @@ x::~x(){}\
             
             class QuantumKeyAttributeStringHandler:
             public AbstractQuantumKeyAttributeHandler {
+                std::string last_value;
                 void _consumeValue(const std::string& key, const KeyValue& value);
             public:
-                QuantumKeyAttributeStringHandler(const std::string& _attribute);
+                QuantumKeyAttributeStringHandler(const std::string& _attribute,
+                                                 bool _event_on_value_change = false);
                 ~QuantumKeyAttributeStringHandler();
                 virtual void consumeValue(const std::string& key,
                                           const std::string& attribute,
@@ -97,23 +132,13 @@ x::~x(){}\
             public AbstractQuantumKeyAttributeHandler {
                 void _consumeValue(const std::string& key, const KeyValue& value);
             public:
-                QuantumKeyAttributeBinaryHandler(const std::string& _attribute);
+                QuantumKeyAttributeBinaryHandler(const std::string& _attribute,
+                                                 bool _event_on_value_change = false);
                 ~QuantumKeyAttributeBinaryHandler();
                 virtual void consumeValue(const std::string& key,
                                           const std::string& attribute,
                                           const char * value,
                                           const int32_t value_size) = 0;
-            };
-            
-            class QuantumKeyAttributeBoolHandler:
-            public AbstractQuantumKeyAttributeHandler {
-                void _consumeValue(const std::string& key, const KeyValue& value);
-            public:
-                QuantumKeyAttributeBoolHandler(const std::string& _attribute);
-                ~QuantumKeyAttributeBoolHandler();
-                virtual void consumeValue(const std::string& key,
-                                          const std::string& attribute,
-                                          const bool value) = 0;
             };
         }
     }

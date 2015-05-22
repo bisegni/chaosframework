@@ -14,7 +14,9 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     PresenterWidget(NULL),
     control_unit_unique_id(_control_unit_unique_id),
     ui(new Ui::ControlUnitEditor),
-    channel_output_table_model(NULL) {
+    channel_output_table_model(NULL),
+    hb_handler(),
+    status_handler() {
     ui->setupUi(this);
     //handler connection
     connect(&status_handler,
@@ -60,11 +62,27 @@ void ControlUnitEditor::initUI() {
                                                                               &hb_handler);
 
     //compose logic on switch
-    //logic_switch_aggregator.addNewLogicSwitch("loadeble");
-    //logic_switch_aggregator.addKeyRefValue("loadeble", "us_live","true");
-    //logic_switch_aggregator.addKeyRefValue("loadeble", "us_state","Load");
-    //logic_switch_aggregator.addKeyRefValue("loadeble", "cu_alive","false");
-    //logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("loadeble", ui->pushButtonLoadAction, "enabled", true, false);
+    //for load button
+    logic_switch_aggregator.addNewLogicSwitch("load");
+    logic_switch_aggregator.addKeyRefValue("load", "us_alive","true");
+    logic_switch_aggregator.addKeyRefValue("load", "us_state","Load");
+    logic_switch_aggregator.addKeyRefValue("load", "cu_alive","false");
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("load", ui->pushButtonLoadAction, "enabled", true, false);
+
+    logic_switch_aggregator.addNewLogicSwitch("unload");
+    logic_switch_aggregator.addKeyRefValue("unload", "us_alive","true");
+    logic_switch_aggregator.addKeyRefValue("unload", "us_state","Load");
+    logic_switch_aggregator.addKeyRefValue("unload", "cu_alive","true");
+    logic_switch_aggregator.addKeyRefValue("unload", "cu_state","Load");
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("unload", ui->pushButtonUnload, "enabled", true, false);
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("unload", ui->pushButtonInitAction, "enabled", true, false);
+
+    logic_switch_aggregator.addNewLogicSwitch("start");
+    logic_switch_aggregator.addKeyRefValue("start", "us_alive","true");
+    logic_switch_aggregator.addKeyRefValue("start", "us_state","Load");
+    logic_switch_aggregator.addKeyRefValue("start", "cu_alive","true");
+    logic_switch_aggregator.addKeyRefValue("start", "cu_state","Init");
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("unload", ui->pushButtonUnload, "enabled", true, false);
 
     //launch api for control unit information
     updateAll();
@@ -141,12 +159,12 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
                 ui->labelControlUnitStatus->setText(attribute_value.toString());
             }
             //broadcast cu status to switch
-            //logic_switch_aggregator.broadcastCurrentValueForKey("cu_state", attribute_value.toString());
+            logic_switch_aggregator.broadcastCurrentValueForKey("cu_state", attribute_value.toString());
         } else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0){
             //print the timestamp and update the red/green indicator
             ui->ledIndicatorHealtTSControlUnit->setNewTS(attribute_value.toULongLong());
             //broadcast cu status to switch
-            //logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", (ui->ledIndicatorHealtTSControlUnit->getState()==2)?"true":"false");
+            logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", (ui->ledIndicatorHealtTSControlUnit->getState()==2)?"true":"false");
         }
     } else  if(key.startsWith(unit_server_parent_unique_id)) {
         //show healt for unit server
@@ -157,11 +175,11 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
             }else{
                 ui->labelUnitServerStatus->setText(attribute_value.toString());
             }
-            //logic_switch_aggregator.broadcastCurrentValueForKey("us_state", attribute_value.toString());
+            logic_switch_aggregator.broadcastCurrentValueForKey("us_state", attribute_value.toString());
         } else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0){
             //print the timestamp and update the red/green indicator
             ui->ledIndicatorHealtTSUnitServer->setNewTS(attribute_value.toULongLong());
-            //logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", (ui->ledIndicatorHealtTSUnitServer->getState()==2)?"true":"false");
+            logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", (ui->ledIndicatorHealtTSUnitServer->getState()==2)?"true":"false");
         }
     }
 }

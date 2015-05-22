@@ -244,16 +244,28 @@ namespace chaos {
     namespace NodeHealtDefinitionValue {
         //! unloaded status
         static const char * const NODE_HEALT_STATUS_UNLOAD      = "Unload";
+        //! unloaded status
+        static const char * const NODE_HEALT_STATUS_UNLOADING   = "Unloading";
         //! load status
         static const char * const NODE_HEALT_STATUS_LOAD        = "Load";
+        //! load status
+        static const char * const NODE_HEALT_STATUS_LOADING     = "Loading";
         //! initilizeed status
         static const char * const NODE_HEALT_STATUS_INIT        = "Init";
+        //! initilizeed status
+        static const char * const NODE_HEALT_STATUS_INITING     = "Initializing";
         //! deinitialized status
         static const char * const NODE_HEALT_STATUS_DEINIT      = "Deinit";
+        //! deinitialized status
+        static const char * const NODE_HEALT_STATUS_DEINITING   = "Deinitializing";
         //! started status
         static const char * const NODE_HEALT_STATUS_START       = "Start";
+        //! started status
+        static const char * const NODE_HEALT_STATUS_STARTING    = "Starting";
         //! stopped status
         static const char * const NODE_HEALT_STATUS_STOP        = "Stop";
+        //! stopped status
+        static const char * const NODE_HEALT_STATUS_STOPING     = "Stoping";
     }
     /** @} */ // end of NodeHealtDefinitionValue
     

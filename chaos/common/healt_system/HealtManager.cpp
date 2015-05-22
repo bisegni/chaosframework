@@ -240,7 +240,8 @@ void HealtManager::addNodeMetric(const std::string& node_uid,
 
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
                                       const std::string& node_metric,
-                                      int32_t int32_value) {
+                                      int32_t int32_value,
+                                      bool publish) {
     boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
     HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
     
@@ -256,10 +257,12 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
                            Int32HealtMetric,
                            node_metric,
                            int32_value);
+    if(publish) {publishNodeHealt(node_uid);}
 }
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
                                       const std::string& node_metric,
-                                      int64_t int64_value) {
+                                      int64_t int64_value,
+                                      bool publish) {
     boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
     HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
     // read lock
@@ -272,10 +275,12 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
                            Int64HealtMetric,
                            node_metric,
                            int64_value);
+    if(publish) {publishNodeHealt(node_uid);}
 }
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
                                       const std::string& node_metric,
-                                      double double_value) {
+                                      double double_value,
+                                      bool publish) {
     boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
     HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
     // read lock
@@ -287,10 +292,12 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
                            DoubleHealtMetric,
                            node_metric,
                            double_value);
+    if(publish) {publishNodeHealt(node_uid);}
 }
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
                                       const std::string& node_metric,
-                                      const std::string& str_value) {
+                                      const std::string& str_value,
+                                      bool publish) {
     boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
     HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
     // read lock
@@ -302,11 +309,13 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
                            StringHealtMetric,
                            node_metric,
                            str_value);
+    if(publish) {publishNodeHealt(node_uid);}
 }
 
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
                                       const std::string& node_metric,
-                                      const char * c_str_value) {
+                                      const char * c_str_value,
+                                      bool publish) {
     boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
     HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
     // read lock
@@ -318,11 +327,13 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
                            StringHealtMetric,
                            node_metric,
                            c_str_value);
+    if(publish) {publishNodeHealt(node_uid);}
 }
 
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
                                       const std::string& node_metric,
-                                      const bool bool_value) {
+                                      const bool bool_value,
+                                      bool publish) {
     boost::unique_lock<boost::shared_mutex> wl(map_node_mutex);
     HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
     // read lock
@@ -334,6 +345,7 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
                            BoolHealtMetric,
                            node_metric,
                            bool_value);
+    if(publish) {publishNodeHealt(node_uid);}
 }
 
 void HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_map,

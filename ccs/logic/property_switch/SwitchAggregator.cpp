@@ -29,10 +29,10 @@ void SwitchAggregator::addKeyRefValue(const QString& switch_name,
 
 void SwitchAggregator::broadcastCurrentValueForKey(const QString& key,
                                                    const QString& current_value) {
+    qDebug() << "Brodcast  key: "<< key << " value:" << current_value;
     QMapIterator<QString, QSharedPointer<MultiPropertyLogicSwitch> > it(map_switch);
     while (it.hasNext()) {
         it.next();
-        qDebug() << "Brodcast  to "<<it.key();
         it.value()->currentPropertyKeyValue(key, current_value);
     }
 }

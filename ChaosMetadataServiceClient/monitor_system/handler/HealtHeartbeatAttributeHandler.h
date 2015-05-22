@@ -32,8 +32,8 @@ namespace chaos {
                 class HealtHeartBeatAttributeHandler:
                 public QuantumKeyAttributeInt64Handler {
                 public:
-                    HealtHeartBeatAttributeHandler():
-                    QuantumKeyAttributeInt64Handler(std::string(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP)){}
+                    HealtHeartBeatAttributeHandler(bool event_on_value_change = false):
+                    QuantumKeyAttributeInt64Handler(std::string(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP),event_on_value_change){}
                 };
                 
                 
