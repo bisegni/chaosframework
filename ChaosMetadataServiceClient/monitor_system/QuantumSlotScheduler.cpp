@@ -291,4 +291,8 @@ void QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
     
     //! add consumer to slot
     quantum_slot->removeConsumer(consumer);
+    
+   // if(quantum_slot->size() == 0) {
+     //   set_slots_index_key_slot.erase(it);
+   // }
 }

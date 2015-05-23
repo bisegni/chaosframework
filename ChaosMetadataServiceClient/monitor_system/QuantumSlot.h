@@ -102,6 +102,7 @@ namespace chaos {
                 boost::shared_mutex mutex_consumers;
                 
                 //multi-index structure for managment of consumer
+                boost::shared_mutex              consumer_mutex;
                 SetConsumerType                  consumers;
                 SetConsumerTypePriorityIndex&    consumers_priority_index;
                 SetConsumerTypePointerIndex&     consumers_pointer_index;
@@ -132,6 +133,7 @@ namespace chaos {
                                     unsigned int priotiy);
                 void removeConsumer(QuantumSlotConsumer *_consumer);
                 void sendNewValueConsumer(const KeyValue& _value);
+                int32_t size();
             };
         }
     }

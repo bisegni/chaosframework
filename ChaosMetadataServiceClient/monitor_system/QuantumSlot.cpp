@@ -55,11 +55,13 @@ int QuantumSlot::getQuantumMultiplier() const {
 void QuantumSlot::addNewConsumer(QuantumSlotConsumer *_consumer,
                                  unsigned int priotiy) {
     if(_consumer == NULL) return;
+    boost::unique_lock<boost::shared_mutex> wl(consumer_mutex);
     consumers.insert(ConsumerType(_consumer, priority));
 }
 
 void QuantumSlot::removeConsumer(QuantumSlotConsumer *_consumer) {
     if(_consumer == NULL) return;
+    boost::unique_lock<boost::shared_mutex> wl(consumer_mutex);
     uintptr_t pointer_int = reinterpret_cast<uintptr_t>(_consumer);
     SetConsumerTypePointerIndexIterator iter = consumers_pointer_index.find(pointer_int);
     if (iter != consumers_pointer_index.end()) {
@@ -68,6 +70,7 @@ void QuantumSlot::removeConsumer(QuantumSlotConsumer *_consumer) {
 }
 
 void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
+    boost::shared_lock<boost::shared_mutex> rl(consumer_mutex);
     uint64_t start_forwardint_time = TimingUtil::getTimeStampInMicrosends();
     for (SetConsumerTypePriorityIndexIterator it = consumers_priority_index.begin();
          it != consumers_priority_index.end();
@@ -102,4 +105,8 @@ void QuantumSlot::setLastProcessingTime(uint64_t _last_processing_time) {
 
 bool QuantumSlot::isQuantumGood() {
     return quantum_is_good;
+}
+
+int32_t QuantumSlot::size() {
+    return consumers_pointer_index.size();
 }

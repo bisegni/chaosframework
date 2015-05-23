@@ -123,11 +123,11 @@ int main(int argc, char * argv[]) {
     boost::thread_group tg;
     try{
         StatusHandler status_handler;
-        HearbeatHandler hb_handler_1;
-        HearbeatHandler hb_handler_2;
+        //HearbeatHandler *hb_handler_1 = new HearbeatHandler();
+        //HearbeatHandler *hb_handler_2 = new HearbeatHandler();
         
-        hb_handler_1.tag = "_1";
-        hb_handler_2.tag = "_2";
+        //hb_handler_1->tag = "_1";
+        //hb_handler_2->tag = "_2";
         TestMonitorConsumer test_consumer[400];
         global_counter = 0;
         error_count = 0;
@@ -135,7 +135,7 @@ int main(int argc, char * argv[]) {
         ChaosMetadataServiceClient::getInstance()->init(argc, argv);
         ChaosMetadataServiceClient::getInstance()->start();
         
-        ChaosMetadataServiceClient::getInstance()->addServerAddress("localhost:5000");
+        ChaosMetadataServiceClient::getInstance()->addServerAddress("macbisegni.lnf.infn.it:5000");
         
         ChaosMetadataServiceClient::getInstance()->enableMonitoring();
         
@@ -143,17 +143,26 @@ int main(int argc, char * argv[]) {
         //                                                          5,
         //                                                          &test_consumer[0]);
         //ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 10, &status_handler);
-        ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 10, &hb_handler_1);
-        ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 10, &hb_handler_2);
+        //ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_1);
+        //ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_2);
         
-        sleep(10);
+        //sleep(20);
         
         //ChaosMetadataServiceClient::getInstance()->removeKeyConsumer("rt-claudio-1_healt",
                                                                      //5,
                                                                      //&test_consumer[0]);
         //ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 10, &status_handler);
-        ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 10, &hb_handler_1);
-        ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 10, &hb_handler_2);
+        //ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_2);
+        //ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_1);
+        //delete(hb_handler_1);delete(hb_handler_2);
+        for(int idx = 0; idx < 100; idx++) {
+            HearbeatHandler *hb_handler_1 = new HearbeatHandler();
+            hb_handler_1->tag = boost::lexical_cast<std::string>(idx);
+            ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 1, hb_handler_1);
+            usleep(500000);
+            ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 1, hb_handler_1);
+            delete(hb_handler_1);
+        }
         
         //EchoTestProxy *echo_proxy_test = ChaosMetadataServiceClient::getInstance()->getApiProxy<EchoTestProxy>(1000);
         //tg.add_thread(new boost::thread(&asyncTest, echo_proxy_test));
