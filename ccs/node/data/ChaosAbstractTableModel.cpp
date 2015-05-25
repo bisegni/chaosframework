@@ -34,15 +34,15 @@ QVariant ChaosAbstractTableModel::headerData(int section, Qt::Orientation orient
     return QVariant();
 }
 
-QVariant ChaosAbstractTableModel::getCellData(int row, int column)   const{
+QVariant ChaosAbstractTableModel::getCellData(int row, int column) const {
     return QVariant();
 }
 
-QVariant ChaosAbstractTableModel::getFontForData(int row, int column)   const{
+QVariant ChaosAbstractTableModel::getFontForData(int row, int column) const {
     return QVariant();
 }
 
-QVariant ChaosAbstractTableModel::getBackgroundForData(int row, int column)  const{
+QVariant ChaosAbstractTableModel::getBackgroundForData(int row, int column) const {
     return QVariant();
 }
 
@@ -58,8 +58,7 @@ QVariant ChaosAbstractTableModel::getTooltipTextForData(int row, int column) con
     return QVariant();
 }
 
-QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const
-{
+QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const {
     int row = index.row();
     int col = index.column();
     QVariant result;
