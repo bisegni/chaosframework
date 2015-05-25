@@ -63,26 +63,36 @@ void ControlUnitEditor::initUI() {
 
     //compose logic on switch
     //for load button
+    logic_switch_aggregator.addNewLogicSwitch("cu_can_operate");
+    logic_switch_aggregator.addKeyRefValue("cu_can_operate", "us_alive","true");
+    logic_switch_aggregator.addKeyRefValue("cu_can_operate", "us_state","Load");
+
     logic_switch_aggregator.addNewLogicSwitch("load");
-    logic_switch_aggregator.addKeyRefValue("load", "us_alive","true");
-    logic_switch_aggregator.addKeyRefValue("load", "us_state","Load");
+    logic_switch_aggregator.connectSwitch("load", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("load", "cu_alive","false");
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("load", ui->pushButtonLoadAction, "enabled", true, false);
 
     logic_switch_aggregator.addNewLogicSwitch("unload");
-    logic_switch_aggregator.addKeyRefValue("unload", "us_alive","true");
-    logic_switch_aggregator.addKeyRefValue("unload", "us_state","Load");
+    logic_switch_aggregator.connectSwitch("unload", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("unload", "cu_alive","true");
     logic_switch_aggregator.addKeyRefValue("unload", "cu_state","Load");
+    logic_switch_aggregator.addKeyRefValue("unload", "cu_state","Deinit");
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("unload", ui->pushButtonUnload, "enabled", true, false);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("unload", ui->pushButtonInitAction, "enabled", true, false);
 
     logic_switch_aggregator.addNewLogicSwitch("start");
-    logic_switch_aggregator.addKeyRefValue("start", "us_alive","true");
-    logic_switch_aggregator.addKeyRefValue("start", "us_state","Load");
+    logic_switch_aggregator.connectSwitch("start", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("start", "cu_alive","true");
     logic_switch_aggregator.addKeyRefValue("start", "cu_state","Init");
-    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("unload", ui->pushButtonUnload, "enabled", true, false);
+    logic_switch_aggregator.addKeyRefValue("start", "cu_state","Stop");
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonStartAction, "enabled", true, false);
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonDeinitAction, "enabled", true, false);
+
+    logic_switch_aggregator.addNewLogicSwitch("stop");
+    logic_switch_aggregator.connectSwitch("stop", "cu_can_operate");
+    logic_switch_aggregator.addKeyRefValue("stop", "cu_alive","true");
+    logic_switch_aggregator.addKeyRefValue("stop", "cu_state","Start");
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("stop", ui->pushButtonStopAction, "enabled", true, false);
 
     //launch api for control unit information
     updateAll();

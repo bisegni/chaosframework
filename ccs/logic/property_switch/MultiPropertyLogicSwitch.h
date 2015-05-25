@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QSet>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QSharedPointer>
@@ -11,7 +12,7 @@
 #include <boost/dynamic_bitset.hpp>
 
 struct KeyValueAndPosition {
-    QString reference_value;
+    QSet<QString> reference_value;
     int bit_field_position;
 };
 

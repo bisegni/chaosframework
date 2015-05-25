@@ -840,8 +840,6 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
     ptr_vector<edb::KeyIdAndValue> attrPropertyVec;
     
     //clear all information
-    memset((void*)&rangeInfo, 0, sizeof(RangeValueInfo));
-    
     kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME];
     kiv.type = edb::KEY_STR_VALUE;
     
