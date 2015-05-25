@@ -24,6 +24,7 @@ protected:
     int getColumnCount() const;
     QString getHeaderForColumn(int column) const;
     QVariant getCellData(int row, int column) const;
+    QVariant getTooltipTextForData(int row, int column) const;
 };
 
 #endif // FIXEDOUTPUTCHANNELDATASETTABLEMODEL_H

@@ -18,6 +18,7 @@ protected:
     virtual QVariant getBackgroundForData(int row, int column) const;
     virtual QVariant getTextAlignForData(int row, int column) const;
     virtual QVariant getCheckStateForData(int row, int column) const;
+    virtual QVariant getTooltipTextForData(int row, int column) const;
 public:
     ChaosAbstractTableModel(QObject *parent=0);
     Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;

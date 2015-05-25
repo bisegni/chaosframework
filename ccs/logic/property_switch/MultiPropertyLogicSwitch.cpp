@@ -29,7 +29,6 @@ void MultiPropertyLogicSwitch::setPropertyKeyValue(const QString& key,
     }
     //add new value
     kvp->reference_value.insert(value);
-    qDebug() << "MultiPropertyLogicSwitch::setPropertyKeyValue->key:" << key << " Ref Value:"<<value << " bit pos:" << (logic_state_bit_field.size()-1);
 }
 
 //! set the key value
@@ -39,7 +38,6 @@ void MultiPropertyLogicSwitch::currentPropertyKeyValue(const QString& key,
     if(property_map.count(key) == 0) return;
     QSharedPointer<KeyValueAndPosition>& kvp = property_map[key];
     //update key bit
-    qDebug() << "MultiPropertyLogicSwitch::currentPropertyKeyValue->key:" << key << " Ref Value:"<<kvp->reference_value <<" value: " << value;
     logic_state_bit_field[kvp->bit_field_position] = (kvp->reference_value.find(value)!=kvp->reference_value.end());
     emit switchChangeState(logic_switch_name, logic_state_bit_field.all());
 }

@@ -54,6 +54,10 @@ QVariant ChaosAbstractTableModel::getCheckStateForData(int row, int column) cons
     return QVariant();
 }
 
+QVariant ChaosAbstractTableModel::getTooltipTextForData(int row, int column) const {
+    return QVariant();
+}
+
 QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const
 {
     int row = index.row();
@@ -74,6 +78,8 @@ QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const
     case Qt::TextAlignmentRole:
         result = getTextAlignForData(row, col);
         break;
+    case Qt::ToolTipRole:
+        result = getTooltipTextForData(row, col);
     default:
         break;
     }

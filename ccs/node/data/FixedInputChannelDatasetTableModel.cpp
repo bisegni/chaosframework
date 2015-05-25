@@ -130,3 +130,7 @@ QVariant FixedInputChannelDatasetTableModel::getCellData(int row, int column) co
     }
     return result;
 }
+
+QVariant FixedInputChannelDatasetTableModel::getTooltipTextForData(int row, int column) const {
+    return getCellData(row, column);
+}
