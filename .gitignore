@@ -1,3 +1,4 @@
+ccs/ccs.app/Contents/*
 ccs/*.autosave
 ccs/moc_*
 ccs/ui_*
