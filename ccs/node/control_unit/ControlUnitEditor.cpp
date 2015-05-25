@@ -141,7 +141,8 @@ void ControlUnitEditor::onApiDone(const QString& tag,
                 ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(new_u_s,
                                                                                           20,
                                                                                           &hb_handler);
-
+                // keep track of new us uid
+                unit_server_parent_unique_id = QString::fromStdString(new_u_s);
             }
         }
     }
