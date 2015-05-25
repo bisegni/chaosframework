@@ -171,7 +171,7 @@ void QuantumSlotScheduler::scanSlot() {
         }
         
         if(milliseconds_to_sleep>0) {
-            //waith for the time
+            //whait for the time
             do {
                 condition_scan.timed_wait(lock_on_condition, posix_time::milliseconds(milliseconds_to_sleep));
             }while((set_slots_index_quantum.size()==0) && work_on_scan);

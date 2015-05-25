@@ -94,9 +94,14 @@ namespace chaos {
                 //! priority
                 int                 priority;
                 
+                //! is the last processing time for this slot
                 uint64_t            last_processed_time;
                 
+                //! determinate i fthe quantum processing delay is good
                 bool                quantum_is_good;
+                
+                //! identify a purgeable slot
+                bool                purgeable;
                 
                 //! gthe lock for the consumers managment
                 boost::shared_mutex mutex_consumers;
