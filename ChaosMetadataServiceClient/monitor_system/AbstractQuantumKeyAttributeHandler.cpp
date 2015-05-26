@@ -20,6 +20,7 @@
 
 #include <ChaosMetadataServiceClient/monitor_system/AbstractQuantumKeyAttributeHandler.h>
 
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::monitor_system;
 
 
@@ -78,11 +79,9 @@ void QuantumKeyAttributeBinaryHandler::_consumeValue(const std::string& key,
                                                      const KeyValue& value) {
 
     int32_t buf_size = 0;
-    const char * buf =  value->getBinaryValue(key, buf_size);
     consumeValue(key,
                  attribute,
-                 buf,
-                 buf_size);
+                 boost::shared_ptr<SerializationBuffer>(new SerializationBuffer(value->getBinaryValue(attribute, buf_size), buf_size)));
 }
 
 

@@ -1,9 +1,9 @@
 #ifndef HEALTSTATUSHANDLER_H
 #define HEALTSTATUSHANDLER_H
-#include "AbstractHealtHandler.h"
+#include "AbstractAttributeHandler.h"
 
 class HealtStatusHandler:
-        public AbstractHealtHandler,
+        public AbstractAttributeHandler,
         public chaos::metadata_service_client::monitor_system::handler::HealtStatusAttributeHandler
 {
     Q_OBJECT

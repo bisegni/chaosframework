@@ -1,11 +1,10 @@
 #ifndef HEALTHEARTBEATHANDLER
 #define HEALTHEARTBEATHANDLER
-#include "AbstractHealtHandler.h"
+#include "AbstractAttributeHandler.h"
 
 class HealthHartbeatHandler:
-        public AbstractHealtHandler,
-        public chaos::metadata_service_client::monitor_system::handler::HealtHeartBeatAttributeHandler
-{
+        public AbstractAttributeHandler,
+        public chaos::metadata_service_client::monitor_system::handler::HealtHeartBeatAttributeHandler {
     Q_OBJECT
 protected:
     void consumeValue(const std::string& key,

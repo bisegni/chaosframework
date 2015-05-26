@@ -6,7 +6,7 @@
 
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
 
-class AbstractHealtHandler:
+class AbstractAttributeHandler:
         public QObject
 {
     Q_OBJECT

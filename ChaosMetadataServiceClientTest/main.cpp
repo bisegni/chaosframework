@@ -86,6 +86,23 @@ public:
     std::string tag;
 };
 
+class BinaryHandler:
+public chaos::metadata_service_client::monitor_system::QuantumKeyAttributeBinaryHandler
+{
+public:
+    BinaryHandler(const std::string& _attribute,
+                  bool _event_on_value_change = false):
+    QuantumKeyAttributeBinaryHandler(_attribute,
+                                     _event_on_value_change){}
+protected:
+    void consumeValue(const std::string& key,
+                      const std::string& attribute,
+                      const boost::shared_ptr<chaos::common::data::SerializationBuffer>& buffer) {
+        MSCT_INFO << "Tag:"<<tag<<" key:" << key << " attribute:" << attribute << " with size:"<<buffer->getBufferLen();
+    }
+public:
+    std::string tag;
+};
 
 void asyncTest(EchoTestProxy *echo_proxy_test) {
     
@@ -123,6 +140,7 @@ int main(int argc, char * argv[]) {
     boost::thread_group tg;
     try{
         StatusHandler status_handler;
+        BinaryHandler bin_handler("sinWave");
         //HearbeatHandler *hb_handler_1 = new HearbeatHandler();
         //HearbeatHandler *hb_handler_2 = new HearbeatHandler();
         
@@ -139,19 +157,19 @@ int main(int argc, char * argv[]) {
         
         ChaosMetadataServiceClient::getInstance()->enableMonitoring();
         
-        //ChaosMetadataServiceClient::getInstance()->addKeyConsumer("rt-claudio-1_healt",
-        //                                                          5,
-        //                                                          &test_consumer[0]);
-        //ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 10, &status_handler);
+//        ChaosMetadataServiceClient::getInstance()->addKeyConsumer("rt-claudio-1_o",
+//                                                                  10,
+//                                                                  &test_consumer[0]);
+        ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandler("rt-claudio-1_o", 10, &bin_handler);
         //ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_1);
         //ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_2);
         
-        //sleep(20);
+        sleep(20);
         
-        //ChaosMetadataServiceClient::getInstance()->removeKeyConsumer("rt-claudio-1_healt",
-                                                                     //5,
-                                                                     //&test_consumer[0]);
-        //ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 10, &status_handler);
+//        ChaosMetadataServiceClient::getInstance()->removeKeyConsumer("rt-claudio-1_o",
+//                                                                     10,
+//                                                                     &test_consumer[0]);
+        ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandler("rt-claudio-1_o", 10, &bin_handler);
         //ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_2);
         //ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_1);
         //delete(hb_handler_1);delete(hb_handler_2);

@@ -54,12 +54,12 @@ SOURCES += main.cpp\
     monitor/healt/HealtWidgetsListPresenteWidget.cpp \
     widget/LedIndicatorWidget.cpp \
     node/data/ChaosAbstractTableModel.cpp \
-    node/data/ChaosFixedCDataWrapperTableMode.cpp \
     node/control_unit/ControlUnitEditor.cpp \
     node/data/FixedInputChannelDatasetTableModel.cpp \
     widget/LedIndicatorAliveTSWidget.cpp \
     logic/property_switch/MultiPropertyLogicSwitch.cpp \
-    logic/property_switch/SwitchAggregator.cpp
+    logic/property_switch/SwitchAggregator.cpp \
+    node/data/ChaosAbstractDataSetTableModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -85,16 +85,22 @@ HEADERS  += \
     monitor/healt/HealtWidgetsListPresenteWidget.h \
     widget/LedIndicatorWidget.h \
     node/data/ChaosAbstractTableModel.h \
-    node/data/ChaosFixedCDataWrapperTableModel.h \
     node/control_unit/ControlUnitEditor.h \
     monitor/healt/handler/HealtStatusHandler.h \
-    monitor/healt/handler/AbstractHealtHandler.h \
     monitor/healt/handler/HealtHeartbeatHandler.h \
     monitor/healt/handler/handler.h \
     node/data/FixedInputChannelDatasetTableModel.h \
     widget/LedIndicatorAliveTSWidget.h \
     logic/property_switch/MultiPropertyLogicSwitch.h \
-    logic/property_switch/SwitchAggregator.h
+    logic/property_switch/SwitchAggregator.h \
+    node/data/ChaosAbstractDataSetTableModel.h \
+    monitor/healt/handler/AbstractAttributeHandler.h \
+    monitor/healt/handler/MonitorBoolAttributeHandler.h \
+    monitor/healt/handler/MonitorInt32AttributeHandler.h \
+    monitor/healt/handler/MonitorInt64AttributeHandler.h \
+    monitor/healt/handler/MonitorDoubleAttributeHandler.h \
+    monitor/healt/handler/MonitorStringAttributeHandler.h \
+    monitor/healt/handler/MonitorBinaryAttributeHandler.h
 
 FORMS    += \
     search/searchnoderesult.ui \

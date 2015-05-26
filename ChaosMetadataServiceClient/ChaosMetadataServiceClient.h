@@ -117,6 +117,12 @@ namespace chaos {
                                                 monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
                                                 unsigned int consumer_priority = 500);
             
+            bool addKeyAttributeHandlerForDataset(const std::string& key_to_monitor,
+                                                  const unsigned int dataset_type,
+                                                  int quantum_multiplier,
+                                                  monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
+                                                  unsigned int consumer_priority = 500);
+            
             //! remove a consumer by key and quantum
             bool removeKeyConsumer(const std::string& key_to_monitor,
                                    int quantum_multiplier,
@@ -136,6 +142,11 @@ namespace chaos {
             bool removeKeyAttributeHandlerForHealt(const std::string& key_to_monitor,
                                                    int quantum_multiplier,
                                                    monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler);
+            
+            bool removeKeyAttributeHandlerForDataset(const std::string& key_to_monitor,
+                                                     const unsigned int dataset_type,
+                                                     int quantum_multiplier,
+                                                     monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler);
             
         };
     }

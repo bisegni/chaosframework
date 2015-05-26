@@ -61,6 +61,7 @@ QVariant ChaosAbstractTableModel::getTooltipTextForData(int row, int column) con
 QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const {
     int row = index.row();
     int col = index.column();
+
     QVariant result;
     if (!index.isValid())
              return QVariant();

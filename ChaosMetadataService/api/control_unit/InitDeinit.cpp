@@ -86,6 +86,9 @@ boost::shared_ptr<CDataWrapper> InitDeinit::mergeDatasetAttributeWithSetup(boost
     MERGE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, element_in_dataset, element_in_setup, result)
     MERGE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, element_in_dataset, element_in_setup, result)
     MERGE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, element_in_dataset, element_in_setup, result)
+    CU_INDEIN_INFO << element_in_dataset->getJSONString();
+    CU_INDEIN_INFO << element_in_setup->getJSONString();
+    CU_INDEIN_INFO << result->getJSONString();
     return result;
 }
 

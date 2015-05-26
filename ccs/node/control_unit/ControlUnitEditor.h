@@ -49,18 +49,21 @@ private slots:
 
     void on_pushButtonStopAction_clicked();
 
+    void on_checkBoxMonitorOutputChannels_clicked();
+
+    void on_checkBoxMonitorInputChannels_clicked();
+
 private:
     void fillInfo(const QSharedPointer<chaos::common::data::CDataWrapper>& node_info);
     void fillDataset(const QSharedPointer<chaos::common::data::CDataWrapper>& dataset);
 
-    SwitchAggregator logic_switch_aggregator;
-
+    const QString           control_unit_unique_id;
+    QString                 unit_server_parent_unique_id;
+    SwitchAggregator        logic_switch_aggregator;
     HealthHartbeatHandler   hb_handler;
     HealtStatusHandler      status_handler;
     FixedOutputChannelDatasetTableModel channel_output_table_model;
     FixedInputChannelDatasetTableModel channel_input_table_model;
-    const QString control_unit_unique_id;
-    QString unit_server_parent_unique_id;
     Ui::ControlUnitEditor *ui;
 };
 

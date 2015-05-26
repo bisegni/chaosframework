@@ -23,6 +23,8 @@
 
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system_types.h>
 
+#include <chaos/common/data/CDataWrapper.h>
+
 namespace chaos {
     namespace metadata_service_client {
         namespace monitor_system {
@@ -137,8 +139,7 @@ x::~x(){}\
                 ~QuantumKeyAttributeBinaryHandler();
                 virtual void consumeValue(const std::string& key,
                                           const std::string& attribute,
-                                          const char * value,
-                                          const int32_t value_size) = 0;
+                                          const boost::shared_ptr<chaos::common::data::SerializationBuffer>& buffer) = 0;
             };
         }
     }

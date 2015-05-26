@@ -2,8 +2,12 @@
 #include <QDebug>
 using namespace chaos::common::data;
 
-FixedInputChannelDatasetTableModel::FixedInputChannelDatasetTableModel(QObject *parent):
-    ChaosFixedCDataWrapperTableModel(parent) {
+FixedInputChannelDatasetTableModel::FixedInputChannelDatasetTableModel(const QString &node_uid,
+                                                                       unsigned int dataset_type,
+                                                                       QObject *parent):
+    ChaosAbstractDataSetTableModel(node_uid,
+                                   dataset_type,
+                                   parent) {
 
 }
 FixedInputChannelDatasetTableModel::~FixedInputChannelDatasetTableModel() {
@@ -11,7 +15,8 @@ FixedInputChannelDatasetTableModel::~FixedInputChannelDatasetTableModel() {
 }
 void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::common::data::CDataWrapper>& _dataset) {
     //call superclas method taht will emit dataChagned
-    ChaosFixedCDataWrapperTableModel::updateData(_dataset);
+    data_wrapped = _dataset;
+    int real_row = 0;
     if(data_wrapped.isNull() ||
             !data_wrapped->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) return;
     beginResetModel();
@@ -27,18 +32,23 @@ void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::
             int direction = element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION);
             if(direction == chaos::DataType::Input ||
                     direction == chaos::DataType::Bidirectional) {
-                dataset_output_element.push_back(element);
+                map_doe_attribute_name_index.insert(QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME)),
+                                                    QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,
+                                                                                                    7,
+                                                                                                    (chaos::DataType::DataType)element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE))));
+                vector_doe.push_back(element);
             }
         }
     }
     endResetModel();
 }
+
 int FixedInputChannelDatasetTableModel::getRowCount() const {
-    return dataset_output_element.size();
+    return vector_doe.size();
 }
 
 int FixedInputChannelDatasetTableModel::getColumnCount() const {
-    return 6;
+    return monitoring_enabled?7:6;
 }
 
 QString FixedInputChannelDatasetTableModel::getHeaderForColumn(int column) const {
@@ -62,13 +72,16 @@ QString FixedInputChannelDatasetTableModel::getHeaderForColumn(int column) const
     case 5:
         result = QString("Default");
         break;
+    case 6:
+        result = QString("Current value");
+        break;
     }
     return result;
 }
 
 QVariant FixedInputChannelDatasetTableModel::getCellData(int row, int column) const {
     QVariant result;
-    QSharedPointer<CDataWrapper> element = dataset_output_element[row];
+    QSharedPointer<CDataWrapper> element = vector_doe[row];
     switch(column) {
     case 0:
         if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME)) {
@@ -104,33 +117,55 @@ QVariant FixedInputChannelDatasetTableModel::getCellData(int row, int column) co
         }
         break;
 
-    case 2:{
+    case 2:
         result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
         break;
-    }
 
-    case 3:{
+    case 3:
         if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {
             result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
         }
         break;
-    }
-    case 4:{
+    case 4:
         if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {
             result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
         }
         break;
-    }
-    case 5:{
+    case 5:
         if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
             result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
         }
         break;
-    }
+    case 6:
+        if(map_doe_current_values.find(row) == map_doe_current_values.end()) {
+            result = QString("...");
+        } else {
+            result = map_doe_current_values[row];
+        }
+        break;
     }
     return result;
 }
 
 QVariant FixedInputChannelDatasetTableModel::getTooltipTextForData(int row, int column) const {
     return getCellData(row, column);
+}
+
+QVariant FixedInputChannelDatasetTableModel::getTextAlignForData(int row, int column) const {
+    QVariant result;
+    switch(column) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+        case 5:
+        result =  Qt::AlignLeft+Qt::AlignVCenter;
+        break;
+    case 6:
+        result =  Qt::AlignHCenter+Qt::AlignVCenter;
+        break;
+    }
+
+    return result;
 }

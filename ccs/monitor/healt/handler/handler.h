@@ -3,6 +3,12 @@
 
 #include "HealtStatusHandler.h"
 #include "HealtHeartbeatHandler.h"
-#include "AbstractHealtHandler.h"
+#include "AbstractAttributeHandler.h"
+#include "MonitorBoolAttributeHandler.h"
+#include "MonitorBinaryAttributeHandler.h"
+#include "MonitorDoubleAttributeHandler.h"
+#include "MonitorInt32AttributeHandler.h"
+#include "MonitorInt64AttributeHandler.h"
+#include "MonitorStringAttributeHandler.h"
 
 #endif // HANDLER_H

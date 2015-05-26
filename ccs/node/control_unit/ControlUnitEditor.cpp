@@ -14,9 +14,12 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     PresenterWidget(NULL),
     control_unit_unique_id(_control_unit_unique_id),
     ui(new Ui::ControlUnitEditor),
-    channel_output_table_model(NULL),
     hb_handler(),
-    status_handler() {
+    status_handler(),
+    channel_output_table_model(control_unit_unique_id,
+                               chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT),
+    channel_input_table_model(control_unit_unique_id,
+                              chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT) {
     ui->setupUi(this);
     //handler connection
     connect(&status_handler,
@@ -233,4 +236,12 @@ void ControlUnitEditor::on_pushButtonStartAction_clicked() {
 void ControlUnitEditor::on_pushButtonStopAction_clicked() {
     submitApiResult("cu_stop",
                     GET_CHAOS_API_PTR(control_unit::StartStop)->execute(control_unit_unique_id.toStdString(), false));
+}
+
+void ControlUnitEditor::on_checkBoxMonitorOutputChannels_clicked() {
+    channel_output_table_model.setAttributeMonitoring(ui->checkBoxMonitorOutputChannels->isChecked());
+}
+
+void ControlUnitEditor::on_checkBoxMonitorInputChannels_clicked() {
+    channel_input_table_model.setAttributeMonitoring(ui->checkBoxMonitorInputChannels->isChecked());
 }

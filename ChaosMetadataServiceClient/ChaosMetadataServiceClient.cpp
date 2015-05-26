@@ -208,7 +208,7 @@ void ChaosMetadataServiceClient::disableMonitoring() throw(CException) {
 
 bool ChaosMetadataServiceClient::monitoringIsStarted() {
     return monitor_manager.get() &&
-            (monitor_manager->getServiceState() == common::utility::service_state_machine::StartableServiceType::SS_STARTED);
+    (monitor_manager->getServiceState() == common::utility::service_state_machine::StartableServiceType::SS_STARTED);
 }
 
 //! add a new quantum slot for key
@@ -268,6 +268,44 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForHealt(const std::strin
                                   consumer_priority);
 }
 
+bool ChaosMetadataServiceClient::addKeyAttributeHandlerForDataset(const std::string& key_to_monitor,
+                                                                  const unsigned int dataset_type,
+                                                                  int quantum_multiplier,
+                                                                  monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
+                                                                  unsigned int consumer_priority) {
+    std::string dataset_key;
+    switch(dataset_type) {
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+            dataset_key = boost::str(boost::format("%1%%2%")%
+                                     key_to_monitor%
+                                     DataPackPrefixID::OUTPUT_DATASE_PREFIX);
+            break;
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+            dataset_key = boost::str(boost::format("%1%%2%")%
+                                     key_to_monitor%
+                                     DataPackPrefixID::INPUT_DATASE_PREFIX);
+            break;
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+            dataset_key = boost::str(boost::format("%1%%2%")%
+                                     key_to_monitor%
+                                     DataPackPrefixID::CUSTOM_DATASE_PREFIX);
+            break;
+            
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+            dataset_key = boost::str(boost::format("%1%%2%")%
+                                     key_to_monitor%
+                                     DataPackPrefixID::SYSTEM_DATASE_PREFIX);
+            break;
+        default:
+            return false;
+    }
+    // call api for register the conusmer
+    return addKeyAttributeHandler(dataset_key,
+                                  quantum_multiplier,
+                                  attribute_handler,
+                                  consumer_priority);
+}
+
 //! remove a consumer by key and quantum
 bool ChaosMetadataServiceClient::removeKeyConsumer(const std::string& key_to_monitor,
                                                    int quantum_multiplier,
@@ -312,6 +350,42 @@ bool ChaosMetadataServiceClient::removeKeyAttributeHandlerForHealt(const std::st
                                        key_to_monitor%
                                        NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
     return removeKeyAttributeHandler(healt_key,
+                                     quantum_multiplier,
+                                     attribute_handler);
+}
+
+bool ChaosMetadataServiceClient::removeKeyAttributeHandlerForDataset(const std::string& key_to_monitor,
+                                                                     const unsigned int dataset_type,
+                                                                     int quantum_multiplier,
+                                                                     monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler) {
+    std::string dataset_key;
+    switch(dataset_type) {
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+            dataset_key = boost::str(boost::format("%1%%2%")%
+                                     key_to_monitor%
+                                     DataPackPrefixID::OUTPUT_DATASE_PREFIX);
+            break;
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+            dataset_key = boost::str(boost::format("%1%%2%")%
+                                     key_to_monitor%
+                                     DataPackPrefixID::INPUT_DATASE_PREFIX);
+            break;
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+            dataset_key = boost::str(boost::format("%1%%2%")%
+                                     key_to_monitor%
+                                     DataPackPrefixID::CUSTOM_DATASE_PREFIX);
+            break;
+            
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+            dataset_key = boost::str(boost::format("%1%%2%")%
+                                     key_to_monitor%
+                                     DataPackPrefixID::SYSTEM_DATASE_PREFIX);
+            break;
+        default:
+            return false;
+    }
+    
+    return removeKeyAttributeHandler(dataset_key,
                                      quantum_multiplier,
                                      attribute_handler);
 }

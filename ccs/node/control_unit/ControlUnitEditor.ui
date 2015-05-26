@@ -214,14 +214,17 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QLabel" name="labelOutputChannel">
+          <widget class="QCheckBox" name="checkBoxMonitorOutputChannels">
            <property name="font">
             <font>
              <pointsize>11</pointsize>
             </font>
            </property>
+           <property name="toolTip">
+            <string>Output Channels monitoring switch</string>
+           </property>
            <property name="text">
-            <string>Output channels</string>
+            <string>Output Channels</string>
            </property>
           </widget>
          </item>
@@ -251,11 +254,14 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QCheckBox" name="checkBoxMonitorInputChannels">
            <property name="font">
             <font>
              <pointsize>11</pointsize>
             </font>
+           </property>
+           <property name="toolTip">
+            <string>Input Channels monitoring switch</string>
            </property>
            <property name="text">
             <string>Input Channels</string>
