@@ -23,7 +23,6 @@ ChaosAbstractDataSetTableModel::ChaosAbstractDataSetTableModel(const QString &_n
     dataset_type(_dataset_type){}
 
 ChaosAbstractDataSetTableModel::~ChaosAbstractDataSetTableModel() {
-    setAttributeMonitoring(false);
 }
 
 void ChaosAbstractDataSetTableModel::setAttributeMonitoring(bool enable,

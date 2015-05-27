@@ -31,6 +31,10 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
 }
 
 ControlUnitEditor::~ControlUnitEditor() {
+    //shutdown monitoring of channel
+    channel_input_table_model.setAttributeMonitoring(false);
+    channel_output_table_model.setAttributeMonitoring(false);
+    //remove monitoring on cu and us
     if(unit_server_parent_unique_id.size()) {
         //remove old unit server for healt
         ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(unit_server_parent_unique_id.toStdString(),
