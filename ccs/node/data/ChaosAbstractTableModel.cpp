@@ -16,14 +16,6 @@ int ChaosAbstractTableModel::columnCount(const QModelIndex& parent) const
     return getColumnCount();
 }
 
-Qt::ItemFlags ChaosAbstractTableModel::flags(const QModelIndex &index) const
-{
-    if (!index.isValid())
-        return Qt::ItemIsEnabled;
-
-    return QAbstractTableModel::flags(index);
-}
-
 QVariant ChaosAbstractTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole) {
@@ -58,13 +50,17 @@ QVariant ChaosAbstractTableModel::getTooltipTextForData(int row, int column) con
     return QVariant();
 }
 
+bool ChaosAbstractTableModel::setCellData(const QModelIndex& index, const QVariant& value) {
+    return false;
+}
+
 QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const {
     int row = index.row();
     int col = index.column();
 
     QVariant result;
     if (!index.isValid())
-             return QVariant();
+        return QVariant();
     switch(role){
     case Qt::DisplayRole:
         result = getCellData(row, col);
@@ -84,4 +80,27 @@ QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const
         break;
     }
     return result;
+}
+
+bool ChaosAbstractTableModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+    bool result = false;
+    if (index.isValid() && role == Qt::EditRole) {
+        if(result = setCellData(index, value)){
+            emit(dataChanged(index, index));
+        }
+    }
+    return result;
+}
+
+bool ChaosAbstractTableModel::isCellEditable(const QModelIndex &index) const {
+    return false;
+}
+
+Qt::ItemFlags ChaosAbstractTableModel::flags(const QModelIndex &index) const {
+    Qt::ItemFlags flags = Qt::ItemIsEnabled;
+    if (!index.isValid()) return flags;
+    if(isCellEditable(index)) {
+        flags |= Qt::ItemIsEditable;
+    }
+    return flags;
 }

@@ -19,6 +19,8 @@ protected:
     virtual QVariant getTextAlignForData(int row, int column) const;
     virtual QVariant getCheckStateForData(int row, int column) const;
     virtual QVariant getTooltipTextForData(int row, int column) const;
+    virtual bool setCellData(const QModelIndex &index, const QVariant &value);
+    virtual bool isCellEditable(const QModelIndex &index) const;
 public:
     ChaosAbstractTableModel(QObject *parent=0);
     Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
@@ -26,6 +28,7 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const Q_DECL_OVERRIDE;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    bool setData(const QModelIndex &index, const QVariant &value, int role);
 };
 
 #endif // CHAOSABSTRACTNODETABLEMODEL_H

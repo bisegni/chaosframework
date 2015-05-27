@@ -26,6 +26,11 @@ protected:
     QVariant getCellData(int row, int column) const;
     QVariant getTooltipTextForData(int row, int column) const;
     QVariant getTextAlignForData(int row, int column) const;
+    bool setCellData(const QModelIndex &index, const QVariant &value);
+    bool isCellEditable(const QModelIndex &index) const;
+private:
+    //contains the value for set
+    QVector<QVariant> attribute_set_value;
 };
 
 #endif // FIXEDINPUTCHANNELDATASETTABLEMODEL_H

@@ -36,6 +36,7 @@ void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::
                                                     QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,
                                                                                                     7,
                                                                                                     (chaos::DataType::DataType)element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE))));
+                attribute_set_value.push_back(QVariant(""));
                 vector_doe.push_back(element);
             }
         }
@@ -48,7 +49,7 @@ int FixedInputChannelDatasetTableModel::getRowCount() const {
 }
 
 int FixedInputChannelDatasetTableModel::getColumnCount() const {
-    return monitoring_enabled?7:6;
+    return monitoring_enabled?8:7;
 }
 
 QString FixedInputChannelDatasetTableModel::getHeaderForColumn(int column) const {
@@ -73,6 +74,9 @@ QString FixedInputChannelDatasetTableModel::getHeaderForColumn(int column) const
         result = QString("Default");
         break;
     case 6:
+        result = QString("Set value");
+        break;
+    case 7:
         result = QString("Current value");
         break;
     }
@@ -137,6 +141,9 @@ QVariant FixedInputChannelDatasetTableModel::getCellData(int row, int column) co
         }
         break;
     case 6:
+        result = attribute_set_value[row];
+        break;
+    case 7:
         if(map_doe_current_values.find(row) == map_doe_current_values.end()) {
             result = QString("...");
         } else {
@@ -159,13 +166,24 @@ QVariant FixedInputChannelDatasetTableModel::getTextAlignForData(int row, int co
     case 2:
     case 3:
     case 4:
-        case 5:
+    case 5:
         result =  Qt::AlignLeft+Qt::AlignVCenter;
         break;
     case 6:
+    case 7:
         result =  Qt::AlignHCenter+Qt::AlignVCenter;
         break;
-    }
 
+    default:
+        result =  Qt::AlignLeft;
+    }
     return result;
+}
+
+bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, const QVariant& value) {
+    attribute_set_value[index.row()] = value;
+}
+
+bool FixedInputChannelDatasetTableModel::isCellEditable(const QModelIndex &index) const {
+    return index.column() == 6;
 }
