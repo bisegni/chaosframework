@@ -53,6 +53,8 @@ private slots:
 
     void on_checkBoxMonitorInputChannels_clicked();
 
+    void on_pushButtonCommitSet_clicked();
+
 private:
     void fillInfo(const QSharedPointer<chaos::common::data::CDataWrapper>& node_info);
     void fillDataset(const QSharedPointer<chaos::common::data::CDataWrapper>& dataset);

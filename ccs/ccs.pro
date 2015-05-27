@@ -115,7 +115,7 @@ FORMS    += \
     MainWindow.ui \
     monitor/healt/HealtPresenterWidget.ui \
     monitor/healt/HealtWidgetsListPresenteWidget.ui \
-    node/control_unit/ControlUnitEditor.ui
+    node/control_unit/controluniteditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet

@@ -249,3 +249,7 @@ void ControlUnitEditor::on_checkBoxMonitorOutputChannels_clicked() {
 void ControlUnitEditor::on_checkBoxMonitorInputChannels_clicked() {
     channel_input_table_model.setAttributeMonitoring(ui->checkBoxMonitorInputChannels->isChecked());
 }
+
+void ControlUnitEditor::on_pushButtonCommitSet_clicked() {
+
+}
