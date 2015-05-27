@@ -77,6 +77,10 @@ namespace chaos {
                     virtual int deleteInstanceDescription(const std::string& unit_server_uid,
                                                           const std::string& control_unit_uid) = 0;
 
+                    virtual int getInstanceDatasetAttributeDescription(const std::string& control_unit_uid,
+                                                                       const std::string& attribute_name,
+                                                                       boost::shared_ptr<chaos::common::data::CDataWrapper>& result) = 0;
+                    
                     virtual int getInstanceDatasetAttributeConfiguration(const std::string& control_unit_uid,
                                                                          const std::string& attribute_name,
                                                                          boost::shared_ptr<chaos::common::data::CDataWrapper>& result) = 0;

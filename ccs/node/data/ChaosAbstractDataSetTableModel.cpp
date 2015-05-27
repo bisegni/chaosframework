@@ -126,6 +126,8 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
     map_doe_current_values.insert(it.value()->row,
                                   QString::number(value));
     endResetModel();
+    QModelIndex index = QAbstractTableModel::createIndex(it.value()->row, it.value()->column);
+    emit(dataChanged(index, index));
 }
 
 void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
@@ -137,6 +139,8 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
     map_doe_current_values.insert(it.value()->row,
                                   QString::number(value));
     endResetModel();
+    QModelIndex index = QAbstractTableModel::createIndex(it.value()->row, it.value()->column);
+    emit(dataChanged(index, index));
 }
 
 void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
@@ -148,6 +152,8 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
     map_doe_current_values.insert(it.value()->row,
                                   QString::number(value));
     endResetModel();
+    QModelIndex index = QAbstractTableModel::createIndex(it.value()->row, it.value()->column);
+    emit(dataChanged(index, index));
 }
 
 void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
@@ -159,6 +165,8 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
     map_doe_current_values.insert(it.value()->row,
                                   QString::number(value));
     endResetModel();
+    QModelIndex index = QAbstractTableModel::createIndex(it.value()->row, it.value()->column);
+    emit(dataChanged(index, index));
 }
 
 void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
@@ -170,6 +178,8 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
     map_doe_current_values.insert(it.value()->row,
                                   value);
     endResetModel();
+    QModelIndex index = QAbstractTableModel::createIndex(it.value()->row, it.value()->column);
+    emit(dataChanged(index, index));
 }
 
 void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
@@ -181,6 +191,8 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
     map_doe_current_values.insert(it.value()->row,
                                   base64Encode(QString(QByteArray::fromRawData(value->getBufferPtr(), (value->getBufferLen()>20?value->getBufferLen():20)))));
     endResetModel();
+    QModelIndex index = QAbstractTableModel::createIndex(it.value()->row, it.value()->column);
+    emit(dataChanged(index, index));
 }
 
 QString ChaosAbstractDataSetTableModel::base64Encode(QString string) {

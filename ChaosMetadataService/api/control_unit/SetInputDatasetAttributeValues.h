@@ -1,5 +1,5 @@
 /*
- *	GetCurrentDataset
+ *	SetInputDatasetAttributeValues.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,9 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__GetCurrentDataset__
-#define __CHAOSFramework__GetCurrentDataset__
+
+#ifndef __CHAOSFramework__SetInputDatasetAttributeValues__
+#define __CHAOSFramework__SetInputDatasetAttributeValues__
 
 #include "../AbstractApi.h"
 
@@ -27,11 +28,11 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace control_unit {
-                class GetCurrentDataset:
+                class SetInputDatasetAttributeValues:
                 public AbstractApi {
                 public:
-                    GetCurrentDataset();
-                    ~GetCurrentDataset();
+                    SetInputDatasetAttributeValues();
+                    ~SetInputDatasetAttributeValues();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException);
                 };
@@ -40,4 +41,4 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__GetCurrentDataset__) */
+#endif /* defined(__CHAOSFramework__SetInputDatasetAttributeValues__) */

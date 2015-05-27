@@ -6,12 +6,13 @@
 #include <boost/lexical_cast.hpp>
 
 #define CHECKTYPE(r, t, v)\
-try{\
-boost::lexical_cast<t>(v.toString().toStdString());\
-r=true;\
-}catch(...){r=false;}
+    try{\
+    boost::lexical_cast<t>(v.toString().toStdString());\
+    r=true;\
+    }catch(...){r=false;}
 
 using namespace chaos::common::data;
+using namespace chaos::metadata_service_client::api_proxy::control_unit;
 
 FixedInputChannelDatasetTableModel::FixedInputChannelDatasetTableModel(const QString &node_uid,
                                                                        unsigned int dataset_type,
@@ -47,12 +48,27 @@ void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::
                                                     QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,
                                                                                                     7,
                                                                                                     (chaos::DataType::DataType)element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE))));
+                attribute_value_changed.push_back(0);
                 attribute_set_value.push_back(QVariant(0.0));
                 vector_doe.push_back(element);
             }
         }
     }
     endResetModel();
+}
+
+void FixedInputChannelDatasetTableModel::getAttributeChangeSet(std::vector< boost::shared_ptr< InputDatasetAttributeValue> >& value_set_array) {
+    size_t index = attribute_value_changed.find_first();
+    while(index != boost::dynamic_bitset<>::npos) {
+        QSharedPointer<CDataWrapper> element = vector_doe[index];
+
+        boost::shared_ptr<InputDatasetAttributeValue> changes(new InputDatasetAttributeValue(node_uid.toStdString(),
+                                                                                             element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME),
+                                                                                             attribute_set_value[index].toString().toStdString()));
+        value_set_array.push_back(changes);
+        index = attribute_value_changed.find_next(index);
+    }
+    attribute_value_changed.reset();
 }
 
 int FixedInputChannelDatasetTableModel::getRowCount() const {
@@ -199,31 +215,31 @@ bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, c
     switch (element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
     case chaos::DataType::TYPE_BOOLEAN:
         CHECKTYPE(result, bool, value)
-        if(!result) {
+                if(!result) {
             error_message = tr("The value is not convertible to double");
         }
         break;
     case chaos::DataType::TYPE_INT32:
         CHECKTYPE(result, int32_t, value)
-        if(!result) {
+                if(!result) {
             error_message = tr("The value is not convertible to int32");
         }
         break;
     case chaos::DataType::TYPE_INT64:
         CHECKTYPE(result, int64_t, value)
-        if(!result) {
+                if(!result) {
             error_message = tr("The value is not convertible to int64_t");
         }
         break;
     case chaos::DataType::TYPE_STRING:
         CHECKTYPE(result, std::string, value)
-        if(!result) {
+                if(!result) {
             error_message = tr("The value is not convertible to std::string");
         }
         break;
     case chaos::DataType::TYPE_DOUBLE:
         CHECKTYPE(result, double, value)
-        if(!result) {
+                if(!result) {
             error_message = tr("The value is not convertible to double");
         }
         break;
@@ -236,6 +252,7 @@ bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, c
         msgBox.setInformativeText(error_message);
         msgBox.exec();
     } else {
+        attribute_value_changed[index.row()] = true;
         attribute_set_value[index.row()] = value;
     }
     return result;

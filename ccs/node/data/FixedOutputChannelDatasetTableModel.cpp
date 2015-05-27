@@ -30,6 +30,12 @@ void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos:
                                         QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,
                                                                                         4,
                                                                                         chaos::DataType::TYPE_INT64)));
+    QSharedPointer<CDataWrapper> element(new CDataWrapper());
+    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, chaos::DataPackCommonKey::DPCK_TIMESTAMP);
+    element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, chaos::DataType::TYPE_INT64);
+    element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, "Acquisition timestamp");
+    vector_doe.push_back(element);
+
     //add other output channels
     QSharedPointer<CMultiTypeDataArrayWrapper> dataset_array(data_wrapped->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
     for(int idx = 0;
@@ -56,7 +62,7 @@ void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos:
 }
 
 int FixedOutputChannelDatasetTableModel::getRowCount() const {
-    return vector_doe.size()+1;
+    return vector_doe.size();
 }
 
 int FixedOutputChannelDatasetTableModel::getColumnCount() const {
@@ -84,79 +90,59 @@ QString FixedOutputChannelDatasetTableModel::getHeaderForColumn(int column) cons
 
 QVariant FixedOutputChannelDatasetTableModel::getCellData(int row, int column) const {
     QVariant result;
-     if(row == 0) {
-        switch(column) {
-        case 0:
-               result = chaos::DataPackCommonKey::DPCK_TIMESTAMP;
-            break;
-
-        case 1:
-            result = QString("Int64");
-            break;
-
-        case 2:
-            result = QString("Publishing Timestamp");
-            break;
-        case 3:
-            if(map_doe_current_values.find(row) == map_doe_current_values.end()) {
-                result = QString("...");
-            } else {
-                result = QDateTime::fromMSecsSinceEpoch(map_doe_current_values[row].toULongLong(), Qt::LocalTime).toString();
-            }
-            break;
+    QSharedPointer<CDataWrapper> element = vector_doe[row];
+    switch(column) {
+    case 0:
+        if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME)) {
+            result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
         }
-    } else {
-        QSharedPointer<CDataWrapper> element = vector_doe[row-1];
-        switch(column) {
-        case 0:
-            if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME)) {
-                result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
-            }
-            break;
+        break;
 
-        case 1:
-            if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
-                switch (element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
-                case chaos::DataType::TYPE_BOOLEAN:
-                    result = QString("boolean");
-                    break;
-                case chaos::DataType::TYPE_INT32:
-                    result = QString("Int32");
-                    break;
-                case chaos::DataType::TYPE_INT64:
-                    result = QString("Int64");
-                    break;
-                case chaos::DataType::TYPE_STRING:
-                    result = QString("String");
-                    break;
-                case chaos::DataType::TYPE_DOUBLE:
-                    result = QString("Double");
-                    break;
-                case chaos::DataType::TYPE_BYTEARRAY:
-                    result = QString("Binary");
-                    break;
-                case chaos::DataType::TYPE_CLUSTER:
-                    result = QString("Cluster");
-                    break;
-                default:
-                    break;
-                }
+    case 1:
+        if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
+            switch (element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
+            case chaos::DataType::TYPE_BOOLEAN:
+                result = QString("boolean");
+                break;
+            case chaos::DataType::TYPE_INT32:
+                result = QString("Int32");
+                break;
+            case chaos::DataType::TYPE_INT64:
+                result = QString("Int64");
+                break;
+            case chaos::DataType::TYPE_STRING:
+                result = QString("String");
+                break;
+            case chaos::DataType::TYPE_DOUBLE:
+                result = QString("Double");
+                break;
+            case chaos::DataType::TYPE_BYTEARRAY:
+                result = QString("Binary");
+                break;
+            case chaos::DataType::TYPE_CLUSTER:
+                result = QString("Cluster");
+                break;
+            default:
+                break;
             }
-            break;
-
-        case 2:
-            if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)) {
-                return QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
-            }
-            break;
-        case 3:
-            if(map_doe_current_values.find(row) == map_doe_current_values.end()) {
-                result = QString("...");
-            } else {
-                result = map_doe_current_values[row];
-            }
-            break;
         }
+        break;
+
+    case 2:
+        if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)) {
+            return QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
+        }
+        break;
+    case 3:
+        if(map_doe_current_values.find(row) == map_doe_current_values.end()) {
+            result = QString("...");
+        } else {
+            result = map_doe_current_values[row];
+            if(row == 0) {
+                result = QDateTime::fromMSecsSinceEpoch(result.toLongLong(), Qt::LocalTime).toString();
+            }
+        }
+        break;
     }
     return result;
 }

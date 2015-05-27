@@ -251,5 +251,6 @@ void ControlUnitEditor::on_checkBoxMonitorInputChannels_clicked() {
 }
 
 void ControlUnitEditor::on_pushButtonCommitSet_clicked() {
-
+    std::vector< boost::shared_ptr< control_unit::InputDatasetAttributeValue> > value_set_array;
+    channel_input_table_model.getAttributeChangeSet(value_set_array);
 }

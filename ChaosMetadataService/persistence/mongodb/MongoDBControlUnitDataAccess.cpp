@@ -559,6 +559,53 @@ int MongoDBControlUnitDataAccess::deleteInstanceDescription(const std::string& u
     return err;
 }
 
+int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeDescription(const std::string& control_unit_uid,
+                                                                          const std::string& attribute_name,
+                                                                          boost::shared_ptr<chaos::common::data::CDataWrapper>& result) {
+    int err = 0;
+    mongo::BSONObj  result_bson;
+    const std::string dotted_dataset_path =  boost::str(boost::format("%1%.%1%")%ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+    const std::string dotted_dataset_path_proj =  boost::str(boost::format("%1%.%1%.$")%ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+    try{
+        mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_uid <<
+                                    NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT <<
+                                    dotted_dataset_path << BSON("$elemMatch"<<BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME << attribute_name)));
+        mongo::BSONObj prj = BSON(dotted_dataset_path_proj << 1);
+        
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDatasetAttributeConfiguration",
+                                            "findOne",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "Projection",
+                                                                    query.toString(),
+                                                                    prj.jsonString()));)
+        //remove the field of the document
+        if((err  = connection->findOne(result_bson,
+                                       MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
+                                                                MONGODB_COLLECTION_NODES),
+                                       query,
+                                       &prj))){
+            
+        }else if(result_bson.isEmpty()){
+            MDBCUDA_ERR << "No attribute has bee foundt";
+        } else {
+            std::vector<mongo::BSONElement> result_array = result_bson.getFieldDotted(dotted_dataset_path).Array();
+            if(result_array.size()!=0) {
+                mongo::BSONObj attribute_config = result_array[0].Obj();
+                //we have found description and need to return all field
+                result.reset(new CDataWrapper(attribute_config.objdata()));
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+
+}
+
 int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeConfiguration(const std::string& control_unit_uid,
                                                                            const std::string& attribute_name,
                                                                            boost::shared_ptr<chaos::common::data::CDataWrapper>& result) {

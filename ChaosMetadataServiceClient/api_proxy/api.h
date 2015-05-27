@@ -42,6 +42,7 @@
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/GetCurrentDataset.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SearchInstancesByUS.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInstanceDescription.h>
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInputDatasetAttributeValues.h>
 
     //----------------------------unit server nodes----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/GetDescription.h>
