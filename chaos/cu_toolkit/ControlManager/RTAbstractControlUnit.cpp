@@ -96,7 +96,7 @@ void RTAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigura
 	AbstractControlUnit::_defineActionAndDataset(setupConfiguration);
 	//add the scekdule dalay for the sandbox
 	if(schedule_dalay){
-		//in this case ovverrride the config file
+		//in this case ovverride the config file
 		setupConfiguration.addInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY , schedule_dalay);
 	}
 }

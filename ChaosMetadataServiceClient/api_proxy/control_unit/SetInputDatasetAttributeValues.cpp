@@ -24,12 +24,16 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::control_unit;
 
-InputDatasetAttributeValue::InputDatasetAttributeValue(const std::string& _cu_uid,
-                                                       const std::string& _attribute_name,
-                                                       const std::string& _value):
-cu_uid(_cu_uid),
+InputDatasetAttributeChangeValue::InputDatasetAttributeChangeValue(const std::string& _attribute_name,
+                                                                   const std::string& _value):
 attribute_name(_attribute_name),
 value(_value){}
+
+
+ControlUnitInputDatasetChangeSet::ControlUnitInputDatasetChangeSet(const std::string _cu_uid,
+                                                                   const std::vector< boost::shared_ptr<InputDatasetAttributeChangeValue> >& _change_set):
+cu_uid(_cu_uid),
+change_set(_change_set){}
 
 API_PROXY_CD_DEFINITION(SetInputDatasetAttributeValues,
                         "control_unit",
@@ -38,23 +42,36 @@ API_PROXY_CD_DEFINITION(SetInputDatasetAttributeValues,
 /*!
  
  */
-ApiProxyResult SetInputDatasetAttributeValues::execute(const std::vector< boost::shared_ptr<InputDatasetAttributeValue> >& attribute_values) {
+ApiProxyResult SetInputDatasetAttributeValues::execute(const std::vector< boost::shared_ptr<ControlUnitInputDatasetChangeSet> >& change_set) {
     std::auto_ptr<CDataWrapper> message(new chaos::common::data::CDataWrapper());
     
     //compose package
-    for(std::vector< boost::shared_ptr<InputDatasetAttributeValue> >::const_iterator it = attribute_values.begin();
-        it != attribute_values.end();
+    for(std::vector< boost::shared_ptr<ControlUnitInputDatasetChangeSet> >::const_iterator it = change_set.begin();
+        it != change_set.end();
         it++) {
+        //add change for the contorl unit change set
+        std::auto_ptr<CDataWrapper> cu_changes(new CDataWrapper());
+        cu_changes->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, (*it)->cu_uid);
         
-        std::auto_ptr<CDataWrapper> element;
-        element->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, (*it)->cu_uid);
-        element->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, (*it)->attribute_name);
-        element->addStringValue("set_value", (*it)->value);
+        for(std::vector< boost::shared_ptr<InputDatasetAttributeChangeValue> >::iterator it_change = (*it)->change_set.begin();
+            it_change != (*it)->change_set.end();
+            it_change++) {
+            std::auto_ptr<CDataWrapper> change(new CDataWrapper());
+            //wrape the chagne
+            change->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, (*it_change)->attribute_name);
+            change->addStringValue("change_value", (*it_change)->value);
+            
+            //append the change to the cu object
+            cu_changes->appendCDataWrapperToArray(*change);
+        }
+        cu_changes->finalizeArrayForKey("change_set");
         
-        message->appendCDataWrapperToArray(*element);
+        //add cu changes to the global array
+        message->appendCDataWrapperToArray(*cu_changes);
     }
     //close array
     message->finalizeArrayForKey("attribute_set_values");
+
     //call api
     return callApi(message.release());
 }

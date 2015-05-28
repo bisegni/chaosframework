@@ -181,7 +181,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     AbstActionDescShrPtr
     actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
                                                                          &AbstractControlUnit::_setDatasetAttribute,
-                                                                         "setDatasetAttribute",
+                                                                         ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
                                                                          "method for set the input element for the dataset");
     
     //expose updateConfiguration Methdo to rpc
@@ -832,6 +832,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
         getDatasetAttributesName(DataType::Input , in_attribute_name);
         
         if(dataset_attribute_values->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
+            //get the contrl unit id
             std::string node_id = dataset_attribute_values->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
             //compare the message device id and the local
             for (std::vector<std::string>::iterator iter = in_attribute_name.begin();

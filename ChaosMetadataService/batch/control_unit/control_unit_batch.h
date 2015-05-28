@@ -20,6 +20,7 @@
 
 #ifndef CHAOSFramework_control_unit_batch_h
 #define CHAOSFramework_control_unit_batch_h
+#include "ApplyChangeSet.h"
 #include "RegistrationAckBatchCommand.h"
 #include "IDSTControlUnitBatchCommand.h"
 #endif

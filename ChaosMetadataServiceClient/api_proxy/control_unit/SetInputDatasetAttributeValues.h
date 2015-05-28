@@ -29,14 +29,20 @@ namespace chaos {
         namespace api_proxy {
             namespace control_unit {
                 
-                struct InputDatasetAttributeValue {
-                    std::string cu_uid;
+                
+                struct InputDatasetAttributeChangeValue {
                     std::string attribute_name;
                     std::string value;
                     
-                    InputDatasetAttributeValue(const std::string& _cu_uid,
-                                               const std::string& _attribute_name,
+                    InputDatasetAttributeChangeValue(const std::string& _attribute_name,
                                                const std::string& _value);
+                };
+                
+                struct ControlUnitInputDatasetChangeSet {
+                    std::string cu_uid;
+                    std::vector< boost::shared_ptr<InputDatasetAttributeChangeValue> > change_set;
+                    ControlUnitInputDatasetChangeSet(const std::string _cu_uid,
+                                                    const std::vector< boost::shared_ptr<InputDatasetAttributeChangeValue> >& _change_set);
                 };
                 
                 //! return the current control unit dataset
@@ -51,7 +57,7 @@ namespace chaos {
                     /*!
                      \param cu_unique_id control unit id for wich we need the dataset
                      */
-                    ApiProxyResult execute(const std::vector< boost::shared_ptr<InputDatasetAttributeValue> >& attribute_values);
+                    ApiProxyResult execute(const std::vector< boost::shared_ptr<ControlUnitInputDatasetChangeSet> >& change_set);
                 };
             }
         }

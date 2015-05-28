@@ -146,10 +146,10 @@ int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues, bool
     attributesValues.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     //deviceAttributeValues.addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, attributesValues);
     if(noWait){
-        sendMessage(deviceNetworkAddress->node_id, "setDatasetAttribute", &attributesValues);
+        sendMessage(deviceNetworkAddress->node_id, ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET, &attributesValues);
     } else {
         auto_ptr<CDataWrapper> initResult(sendRequest(deviceNetworkAddress->node_id,
-                                                      "setDatasetAttribute",
+                                                      ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
                                                       &attributesValues,
                                                       millisecToWait));
         CHECK_TIMEOUT_AND_RESULT_CODE(initResult, err)

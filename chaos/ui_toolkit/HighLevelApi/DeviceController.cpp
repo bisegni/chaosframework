@@ -411,7 +411,7 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 	
 	//err = deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
 	localCommandPack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_id);
-	err = deviceChannel->sendCustomRequest("setDatasetAttribute", &localCommandPack, &resultData, millisecToWait);
+	err = deviceChannel->sendCustomRequest(ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET, &localCommandPack, &resultData, millisecToWait);
 	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id
 		command_id = resultData->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
@@ -446,7 +446,7 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 	
 	//forward the request
 	localCommandPack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_id);
-	err = deviceChannel->sendCustomRequest("setDatasetAttribute", &localCommandPack, &resultData, millisecToWait);
+    err = deviceChannel->sendCustomRequest(ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET, &localCommandPack, &resultData, millisecToWait);
 	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id
 		command_id = resultData->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);

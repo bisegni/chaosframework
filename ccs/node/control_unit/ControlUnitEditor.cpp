@@ -2,6 +2,7 @@
 #include "ui_controluniteditor.h"
 
 #include <QDateTime>
+#include <QMessageBox>
 #include <QDebug>
 static const QString TAG_CU_INFO = QString("g_cu_i");
 static const QString TAG_CU_DATASET = QString("g_cu_d");
@@ -251,6 +252,15 @@ void ControlUnitEditor::on_checkBoxMonitorInputChannels_clicked() {
 }
 
 void ControlUnitEditor::on_pushButtonCommitSet_clicked() {
-    std::vector< boost::shared_ptr< control_unit::InputDatasetAttributeValue> > value_set_array;
+    std::vector< boost::shared_ptr< control_unit::ControlUnitInputDatasetChangeSet > > value_set_array;
     channel_input_table_model.getAttributeChangeSet(value_set_array);
+    if(value_set_array[0]->change_set.size()==0) {
+        QMessageBox msgBox;
+        msgBox.setText(tr("Error applying changeset."));
+        msgBox.setInformativeText(tr("No updated input attribute has been found!."));
+        msgBox.exec();
+        return;
+    }
+    submitApiResult("cu_stop",
+                    GET_CHAOS_API_PTR(control_unit::SetInputDatasetAttributeValues)->execute(value_set_array));
 }

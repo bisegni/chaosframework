@@ -495,6 +495,7 @@
 		32B419341B16148A00C3CA7D /* SetInputDatasetAttributeValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B419321B16148A00C3CA7D /* SetInputDatasetAttributeValues.cpp */; };
 		32B419371B16236300C3CA7D /* SetInputDatasetAttributeValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B419351B16236300C3CA7D /* SetInputDatasetAttributeValues.cpp */; };
 		32B419381B16236300C3CA7D /* SetInputDatasetAttributeValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B419361B16236300C3CA7D /* SetInputDatasetAttributeValues.h */; };
+		32B4193B1B17715700C3CA7D /* ApplyChangeSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B419391B17715700C3CA7D /* ApplyChangeSet.cpp */; };
 		32B571ED168E02C30002A198 /* bson_builder_base.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E4168E02C20002A198 /* bson_builder_base.h */; };
 		32B571EE168E02C30002A198 /* bson_db.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E5168E02C20002A198 /* bson_db.h */; };
 		32B571F0168E02C30002A198 /* bson_field.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E7168E02C20002A198 /* bson_field.h */; };
@@ -1310,6 +1311,8 @@
 		32B419331B16148A00C3CA7D /* SetInputDatasetAttributeValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetInputDatasetAttributeValues.h; sourceTree = "<group>"; };
 		32B419351B16236300C3CA7D /* SetInputDatasetAttributeValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetInputDatasetAttributeValues.cpp; sourceTree = "<group>"; };
 		32B419361B16236300C3CA7D /* SetInputDatasetAttributeValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetInputDatasetAttributeValues.h; sourceTree = "<group>"; };
+		32B419391B17715700C3CA7D /* ApplyChangeSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplyChangeSet.cpp; sourceTree = "<group>"; };
+		32B4193A1B17715700C3CA7D /* ApplyChangeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplyChangeSet.h; sourceTree = "<group>"; };
 		32B571E4168E02C20002A198 /* bson_builder_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_builder_base.h; sourceTree = "<group>"; };
 		32B571E5168E02C20002A198 /* bson_db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_db.h; sourceTree = "<group>"; };
 		32B571E7168E02C20002A198 /* bson_field.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_field.h; sourceTree = "<group>"; };
@@ -2173,6 +2176,8 @@
 				3210EE1D1AE7DE15006ADC0B /* RegistrationAckBatchCommand.h */,
 				32C067BB1AEFE5DD000B1ED9 /* IDSTControlUnitBatchCommand.cpp */,
 				32C067BC1AEFE5DD000B1ED9 /* IDSTControlUnitBatchCommand.h */,
+				32B419391B17715700C3CA7D /* ApplyChangeSet.cpp */,
+				32B4193A1B17715700C3CA7D /* ApplyChangeSet.h */,
 				3210EE1F1AE7E0FB006ADC0B /* control_unit_batch.h */,
 			);
 			path = control_unit;
@@ -4006,6 +4011,7 @@
 				32B9F3F31AC3E74C00380FE9 /* AbstractDataAccess.cpp in Sources */,
 				32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */,
 				328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */,
+				32B4193B1B17715700C3CA7D /* ApplyChangeSet.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
 				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */,

@@ -470,6 +470,12 @@ namespace chaos {
     }
     /** @} */ // end of ControlUnitNodeDefinitionKey
     
+    namespace ControlUnitNodeDomainAndActionRPC {
+        //!Alias associated to thefunction taht apply the value changes set to the input dataset attribute
+        static const char * const CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET  = "cunrpc_ida_cs";
+
+    }
+    
     /** @defgroup CUType Control Unit Default Type
      *  This is the collection of the key for the classification of the control unit types
      *  @{
