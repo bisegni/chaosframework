@@ -122,12 +122,10 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
                                                   const bool value) {
     DoeMapAIIterator it = map_doe_attribute_name_index.find(attribute);
     if(it == map_doe_attribute_name_index.end()) return;
-    beginResetModel();
     map_doe_current_values.insert(it.value()->row,
                                   QString::number(value));
-    endResetModel();
-    QModelIndex index = QAbstractTableModel::createIndex(it.value()->row, it.value()->column);
-    emit(dataChanged(index, index));
+    QModelIndex index_to_refresh = this->index(it.value()->row, it.value()->column);
+    emit(dataChanged(index_to_refresh, index_to_refresh));
 }
 
 void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
@@ -135,12 +133,10 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
                                                   const int32_t value) {
     DoeMapAIIterator it = map_doe_attribute_name_index.find(attribute);
     if(it == map_doe_attribute_name_index.end()) return;
-    beginResetModel();
     map_doe_current_values.insert(it.value()->row,
                                   QString::number(value));
-    endResetModel();
-    QModelIndex index = QAbstractTableModel::createIndex(it.value()->row, it.value()->column);
-    emit(dataChanged(index, index));
+    QModelIndex index_to_refresh = this->index(it.value()->row, it.value()->column);
+    emit(dataChanged(index_to_refresh, index_to_refresh));
 }
 
 void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
@@ -148,12 +144,10 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
                                                   const int64_t value) {
     DoeMapAIIterator it = map_doe_attribute_name_index.find(attribute);
     if(it == map_doe_attribute_name_index.end()) return;
-    beginResetModel();
     map_doe_current_values.insert(it.value()->row,
                                   QString::number(value));
-    endResetModel();
-    QModelIndex index = QAbstractTableModel::createIndex(it.value()->row, it.value()->column);
-    emit(dataChanged(index, index));
+    QModelIndex index_to_refresh = this->index(it.value()->row, it.value()->column);
+    emit(dataChanged(index_to_refresh, index_to_refresh));
 }
 
 void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
@@ -161,12 +155,10 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
                                                   const double value) {
     DoeMapAIIterator it = map_doe_attribute_name_index.find(attribute);
     if(it == map_doe_attribute_name_index.end()) return;
-    beginResetModel();
     map_doe_current_values.insert(it.value()->row,
                                   QString::number(value));
-    endResetModel();
-    QModelIndex index = QAbstractTableModel::createIndex(it.value()->row, it.value()->column);
-    emit(dataChanged(index, index));
+    QModelIndex index_to_refresh = this->index(it.value()->row, it.value()->column);
+    emit(dataChanged(index_to_refresh, index_to_refresh));
 }
 
 void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
@@ -174,12 +166,10 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
                                                   const QString& value) {
     DoeMapAIIterator it = map_doe_attribute_name_index.find(attribute);
     if(it == map_doe_attribute_name_index.end()) return;
-    beginResetModel();
     map_doe_current_values.insert(it.value()->row,
                                   value);
-    endResetModel();
-    QModelIndex index = QAbstractTableModel::createIndex(it.value()->row, it.value()->column);
-    emit(dataChanged(index, index));
+    QModelIndex index_to_refresh = this->index(it.value()->row, it.value()->column);
+    emit(dataChanged(index_to_refresh, index_to_refresh));
 }
 
 void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
@@ -187,12 +177,11 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
                                                   const boost::shared_ptr<chaos::common::data::SerializationBuffer>& value) {
     DoeMapAIIterator it = map_doe_attribute_name_index.find(attribute);
     if(it == map_doe_attribute_name_index.end()) return;
-    beginResetModel();
     map_doe_current_values.insert(it.value()->row,
-                                  base64Encode(QString(QByteArray::fromRawData(value->getBufferPtr(), (value->getBufferLen()>20?value->getBufferLen():20)))));
-    endResetModel();
-    QModelIndex index = QAbstractTableModel::createIndex(it.value()->row, it.value()->column);
-    emit(dataChanged(index, index));
+                                  base64Encode(QString(QByteArray::fromRawData(value->getBufferPtr(),
+                                                                               (value->getBufferLen()>20?value->getBufferLen():20)))));
+    QModelIndex index_to_refresh = this->index(it.value()->row, it.value()->column);
+    emit(dataChanged(index_to_refresh, index_to_refresh));
 }
 
 QString ChaosAbstractDataSetTableModel::base64Encode(QString string) {
