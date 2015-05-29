@@ -18,7 +18,8 @@ SET(mcl_src ${mcl_src}      api_proxy/data_service/NewDS.cpp
                             api_proxy/data_service/GetAllDS.cpp
                             api_proxy/data_service/GetBestEndpoints.cpp)
 
-SET(mcl_src ${mcl_src}      api_proxy/control_unit/SetInstanceDescription.cpp
+SET(mcl_src ${mcl_src}      api_proxy/control_unit/SetInputDatasetAttributeValues.cpp
+                            api_proxy/control_unit/SetInstanceDescription.cpp
                             api_proxy/control_unit/SearchInstancesByUS.cpp
                             api_proxy/control_unit/GetInstance.cpp
                             api_proxy/control_unit/DeleteInstance.cpp

@@ -32,7 +32,8 @@ SET(cnd_src  ${cnd_src}	api/data_service/DataServiceApiGroup.cpp
                         api/data_service/GetAllDataService.cpp
                         api/data_service/GetBestEndpoints.cpp)
 
-SET(cnd_src  ${cnd_src}	api/control_unit/ControlUnitGroup.cpp
+SET(cnd_src  ${cnd_src}	api/control_unit/SetInputDatasetAttributeValues.cpp
+                        api/control_unit/ControlUnitGroup.cpp
                         api/control_unit/SetInstanceDescription.cpp
                         api/control_unit/SearchInstancesByUS.cpp
                         api/control_unit/GetInstance.cpp
