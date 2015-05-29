@@ -30,7 +30,10 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
+
 #include <chaos/common/batch_command/BatchCommandTypes.h>
+#include <chaos/common/batch_command/BatchCommandDescription.h>
+
 using namespace chaos::common::data;
 using namespace chaos::common::data::cache;
 

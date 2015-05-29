@@ -22,10 +22,16 @@
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
 
+std::map<std::string, BatchCommandDescription* > BatchCommandDescription::global_description_instances;
+
 BatchCommandDescription::BatchCommandDescription(const std::string& batch_command_alias,
                                                  const std::string& batch_command_description):
 alias(batch_command_alias),
-description(batch_command_description){}
+description(batch_command_description){
+    global_description_instances.insert(make_pair(batch_command_alias, this));
+}
+
+BatchCommandDescription::~BatchCommandDescription(){}
 
 void BatchCommandDescription::addParameter(const std::string& parameter_name,
                                            const std::string& parameter_description,
@@ -38,7 +44,7 @@ void BatchCommandDescription::addParameter(const std::string& parameter_name,
     attribute_description->addInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE, type);
     
     //insert attribute
-    map_paramter.insert(make_pair(parameter_name, attribute_description));
+    map_parameter.insert(make_pair(parameter_name, attribute_description));
 }
 
 boost::shared_ptr<chaos::common::data::CDataWrapper>
@@ -46,13 +52,18 @@ BatchCommandDescription::getDescription() {
     boost::shared_ptr<chaos::common::data::CDataWrapper> description_obj(new CDataWrapper());
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, alias);
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION, description);
-    if(map_paramter.size()) {
-        for(MapParamterIterator it = map_paramter.begin();
-            it != map_paramter.end();
+    if(map_parameter.size()) {
+        for(MapParamterIterator it = map_parameter.begin();
+            it != map_parameter.end();
             it++) {
             description_obj->appendCDataWrapperToArray(*it->second);
         }
         description_obj->finalizeArrayForKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS);
     }
     return description_obj;
+}
+
+//! return the alias of the command
+const std::string& BatchCommandDescription::getAlias() {
+    return alias;
 }
