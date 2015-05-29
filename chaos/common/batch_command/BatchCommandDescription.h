@@ -21,22 +21,44 @@
 #ifndef __CHAOSFramework__BatchCommandDescription__
 #define __CHAOSFramework__BatchCommandDescription__
 
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
 
 #include <boost/shared_ptr.hpp>
+
+#include <map>
+
+#define BATCH_COMMAND_START_DESCRIPTION(name, description)\
+static BatchCommandDescription BatchCommandDescription ## #name(name, description);
 
 namespace chaos {
     namespace common {
         namespace batch_command {
             
+            typedef std::map<std::string,
+            boost::shared_ptr<chaos::common::data::CDataWrapper> > MapParamter;
+            
+            typedef std::map<std::string,
+            boost::shared_ptr<chaos::common::data::CDataWrapper> >::iterator MapParamterIterator;
+            
             //! provide a set of method that permit to declare a batch command
             class BatchCommandDescription {
-                boost::shared_ptr<chaos::common::data::CDataWrapper> description;
-            
+                const std::string alias;
+                const std::string description;
+                
+                MapParamter map_paramter;
             public:
                 //! default constructor with the alias of the command
-                BatchCommandDescription(const std::string& batch_command_alias);
+                BatchCommandDescription(const std::string& batch_command_alias,
+                                        const std::string& batch_command_description);
                 ~BatchCommandDescription();
+                
+                void addParameter(const std::string& parameter_name,
+                                  const std::string& parameter_description,
+                                  chaos::DataType::DataType type);
+                
+                boost::shared_ptr<chaos::common::data::CDataWrapper>
+                getDescription();
             };
             
         }

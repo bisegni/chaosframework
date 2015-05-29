@@ -94,10 +94,25 @@ namespace chaos {
              @{
              */
             //! Name space for the key usign for batch command description
-            namespace BatchCommandDescriptionKey {
+            namespace BatchCommandAndParameterDescriptionkey {
                 
                 //! @The key represent the alias of the batch command
-                static const char * const BC_ALIAS = "bc_alias";
+                static const char * const BC_ALIAS                  = "bc_alias";
+                
+                //! @The key represent the description of the command
+                static const char * const BC_DESCRIPTION            = "bc_description";
+                
+                //! @The key represent the list of all parameters
+                static const char * const BC_PARAMETERS             = "bc_parameters";
+                
+                //! @The key represent the paramter name
+                static const char * const BC_PARAMETER_NAME         = "bc_parameter_name";
+                
+                //! @The key represent the paremter description
+                static const char * const BC_PARAMETER_DESCRIPTION  = "bc_parameter_description";
+                
+                //! @The key represent the paremter type
+                static const char * const BC_PARAMETER_TYPE         = "bc_parameter_type";
             }
             /** @} */ // end of BatchCommandDescriptionKey Slow Control API
         }

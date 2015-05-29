@@ -22,7 +22,37 @@
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
 
-BatchCommandDescription::BatchCommandDescription(const std::string& batch_command_alias):
-description(new CDataWrapper()){
-    description->addStringValue(BatchCommandDescriptionKey::BC_ALIAS);
+BatchCommandDescription::BatchCommandDescription(const std::string& batch_command_alias,
+                                                 const std::string& batch_command_description):
+alias(batch_command_alias),
+description(batch_command_description){}
+
+void BatchCommandDescription::addParameter(const std::string& parameter_name,
+                                           const std::string& parameter_description,
+                                           chaos::DataType::DataType type) {
+    //allocate paramter
+    boost::shared_ptr< chaos::common::data::CDataWrapper > attribute_description(new CDataWrapper());
+    
+    attribute_description->addStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME, parameter_name);
+    attribute_description->addStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION, parameter_description);
+    attribute_description->addInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE, type);
+    
+    //insert attribute
+    map_paramter.insert(make_pair(parameter_name, attribute_description));
+}
+
+boost::shared_ptr<chaos::common::data::CDataWrapper>
+BatchCommandDescription::getDescription() {
+    boost::shared_ptr<chaos::common::data::CDataWrapper> description_obj(new CDataWrapper());
+    description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, alias);
+    description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION, description);
+    if(map_paramter.size()) {
+        for(MapParamterIterator it = map_paramter.begin();
+            it != map_paramter.end();
+            it++) {
+            description_obj->appendCDataWrapperToArray(*it->second);
+        }
+        description_obj->finalizeArrayForKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS);
+    }
+    return description_obj;
 }
