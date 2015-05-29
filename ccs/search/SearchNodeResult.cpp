@@ -131,34 +131,10 @@ void SearchNodeResult::on_pushButtonStartSearch_clicked()
                     );
 }
 
-void SearchNodeResult::on_pushButtonActionOnSelected_clicked()
-{
+void SearchNodeResult::on_pushButtonActionOnSelected_clicked() {
     QModelIndexList indexes = ui->tableViewResult->selectionModel()->selectedRows();
-    if(selection_mode) {
-        QVector<QPair<QString,QString> > selected_nodes;
-        foreach (QModelIndex index, indexes) {
-            QStandardItem *node_uid = table_model->item(index.row(), 0);
-            QStandardItem *node_type = table_model->item(index.row(), 1);
-            //add the selectged element
-            selected_nodes.push_back(qMakePair(node_uid->text(), node_type->text()));
-        }
-        //emit signal
-        emit  selectedNodes(tag,
-                            selected_nodes);
-
-        closeTab();
-    } else {
-        foreach (QModelIndex index, indexes) {
-            QStandardItem *node_uid = table_model->item(index.row(), 0);
-            QStandardItem *node_type = table_model->item(index.row(), 1);
-            if(node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
-                qDebug() << "Open unit server editor for" << node_uid->text();
-                addWidgetToPresenter(new UnitServerEditor(node_uid->text()));
-            }else if(node_type->text().compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) {
-                qDebug() << "Open control unit editor for" << node_uid->text();
-                addWidgetToPresenter(new ControlUnitEditor(node_uid->text()));
-            }
-        }
+    foreach (QModelIndex index, indexes) {
+        on_tableViewResult_doubleClicked(index);
     }
 }
 
@@ -168,7 +144,7 @@ void SearchNodeResult::startHealtMonitorAction() {
         QStandardItem *node_uid = table_model->item(selected_index.row(), 0);
         QStandardItem *node_type = table_model->item(selected_index.row(), 1);
         if(node_type->text().compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT)||
-           node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER)) {
+                node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER)) {
             //we can register for healt this node
             addNodeToHealtMonitor(node_uid->text());
         }
@@ -181,9 +157,35 @@ void SearchNodeResult::stopHealtMonitorAction() {
         QStandardItem *node_uid = table_model->item(selected_index.row(), 0);
         QStandardItem *node_type = table_model->item(selected_index.row(), 1);
         if(node_type->text().compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT)||
-           node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER)) {
+                node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER)) {
             //we can register for healt this node
             removeNodeToHealtMonitor(node_uid->text());
+        }
+    }
+}
+
+void SearchNodeResult::on_tableViewResult_doubleClicked(const QModelIndex &index) {
+    if(selection_mode) {
+        QVector<QPair<QString,QString> > selected_nodes;
+        QStandardItem *node_uid = table_model->item(index.row(), 0);
+        QStandardItem *node_type = table_model->item(index.row(), 1);
+        //add the selectged element
+        selected_nodes.push_back(qMakePair(node_uid->text(), node_type->text()));
+
+        //emit signal
+        emit  selectedNodes(tag,
+                            selected_nodes);
+
+        closeTab();
+    } else {
+        QStandardItem *node_uid = table_model->item(index.row(), 0);
+        QStandardItem *node_type = table_model->item(index.row(), 1);
+        if(node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
+            qDebug() << "Open unit server editor for" << node_uid->text();
+            addWidgetToPresenter(new UnitServerEditor(node_uid->text()));
+        }else if(node_type->text().compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) {
+            qDebug() << "Open control unit editor for" << node_uid->text();
+            addWidgetToPresenter(new ControlUnitEditor(node_uid->text()));
         }
     }
 }

@@ -54,6 +54,8 @@ private slots:
 
     void on_pushButtonActionOnSelected_clicked();
 
+    void on_tableViewResult_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::SearchNodeResult *ui;
     QStandardItemModel *table_model;
