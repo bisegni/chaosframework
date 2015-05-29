@@ -1,5 +1,5 @@
 /*
- *	BatchCommandException.h
+ *	BatchCommandDescription.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,27 +18,29 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_BatchCommandException_h
-#define CHAOSFramework_BatchCommandException_h
+#ifndef __CHAOSFramework__BatchCommandDescription__
+#define __CHAOSFramework__BatchCommandDescription__
 
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/data/CDataWrapper.h>
+
+#include <boost/shared_ptr.hpp>
 
 namespace chaos {
     namespace common {
         namespace batch_command {
             
-            /*
-             Exception class for Slowc command package
-             */
-            class BatchCommandException : public CException{
-                
-                
+            //! provide a set of method that permit to declare a batch command
+            class BatchCommandDescription {
+                boost::shared_ptr<chaos::common::data::CDataWrapper> description;
+            
             public:
-                BatchCommandException(int eCode, const char * eMessage):CException(eCode, eMessage, "ControlManager::SlowControl") {}
+                //! default constructor with the alias of the command
+                BatchCommandDescription(const std::string& batch_command_alias);
+                ~BatchCommandDescription();
             };
             
         }
     }
 }
 
-#endif
+#endif /* defined(__CHAOSFramework__BatchCommandDescription__) */

@@ -496,6 +496,8 @@
 		32B419371B16236300C3CA7D /* SetInputDatasetAttributeValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B419351B16236300C3CA7D /* SetInputDatasetAttributeValues.cpp */; };
 		32B419381B16236300C3CA7D /* SetInputDatasetAttributeValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B419361B16236300C3CA7D /* SetInputDatasetAttributeValues.h */; };
 		32B4193B1B17715700C3CA7D /* ApplyChangeSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B419391B17715700C3CA7D /* ApplyChangeSet.cpp */; };
+		32B4193E1B18A6EE00C3CA7D /* BatchCommandDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B4193C1B18A6EE00C3CA7D /* BatchCommandDescription.cpp */; };
+		32B4193F1B18A6EE00C3CA7D /* BatchCommandDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B4193D1B18A6EE00C3CA7D /* BatchCommandDescription.h */; };
 		32B571ED168E02C30002A198 /* bson_builder_base.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E4168E02C20002A198 /* bson_builder_base.h */; };
 		32B571EE168E02C30002A198 /* bson_db.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E5168E02C20002A198 /* bson_db.h */; };
 		32B571F0168E02C30002A198 /* bson_field.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E7168E02C20002A198 /* bson_field.h */; };
@@ -1313,6 +1315,8 @@
 		32B419361B16236300C3CA7D /* SetInputDatasetAttributeValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetInputDatasetAttributeValues.h; sourceTree = "<group>"; };
 		32B419391B17715700C3CA7D /* ApplyChangeSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplyChangeSet.cpp; sourceTree = "<group>"; };
 		32B4193A1B17715700C3CA7D /* ApplyChangeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplyChangeSet.h; sourceTree = "<group>"; };
+		32B4193C1B18A6EE00C3CA7D /* BatchCommandDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BatchCommandDescription.cpp; sourceTree = "<group>"; };
+		32B4193D1B18A6EE00C3CA7D /* BatchCommandDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchCommandDescription.h; sourceTree = "<group>"; };
 		32B571E4168E02C20002A198 /* bson_builder_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_builder_base.h; sourceTree = "<group>"; };
 		32B571E5168E02C20002A198 /* bson_db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_db.h; sourceTree = "<group>"; };
 		32B571E7168E02C20002A198 /* bson_field.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_field.h; sourceTree = "<group>"; };
@@ -2853,6 +2857,8 @@
 			children = (
 				329603141876B45000CDCADA /* BatchCommand.cpp */,
 				329603151876B45000CDCADA /* BatchCommand.h */,
+				32B4193C1B18A6EE00C3CA7D /* BatchCommandDescription.cpp */,
+				32B4193D1B18A6EE00C3CA7D /* BatchCommandDescription.h */,
 				329603181876B45000CDCADA /* BatchCommandExecutor.cpp */,
 				329603191876B45000CDCADA /* BatchCommandExecutor.h */,
 				3296031A1876B45000CDCADA /* BatchCommandSandbox.cpp */,
@@ -3494,6 +3500,7 @@
 				329603291876B45000CDCADA /* BatchCommandSandbox.h in Headers */,
 				322D990218A95F9200C0864C /* QueryDataConsumer.h in Headers */,
 				324A4B2F191A405700975394 /* element-inl.h in Headers */,
+				32B4193F1B18A6EE00C3CA7D /* BatchCommandDescription.h in Headers */,
 				322E157D161B62A900C3003C /* NetworkBroker.h in Headers */,
 				3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */,
 				324A4B29191A405700975394 /* const_element-inl.h in Headers */,
@@ -4124,6 +4131,7 @@
 				329603281876B45000CDCADA /* BatchCommandSandbox.cpp in Sources */,
 				32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */,
 				32661C751AA867E100F1A721 /* MessageRequestFuture.cpp in Sources */,
+				32B4193E1B18A6EE00C3CA7D /* BatchCommandDescription.cpp in Sources */,
 				32EE897F191A792000DE2F29 /* stringutils.cpp in Sources */,
 				32C4C86D193491F2002DA741 /* URLServiceFeeder.cpp in Sources */,
 				325013BC15E9258C00DCB13E /* EventClient.cpp in Sources */,

@@ -89,6 +89,17 @@ namespace chaos {
                 static const char * const   RPC_FLUSH_COMMAND_HISTORY = "flushCmdStateHst";
             }
             /** @} */ // end of API_Slow_Control Slow Control API
+            
+            /** @defgroup KEY_bacth_command_description Batch Command Description Key
+             @{
+             */
+            //! Name space for the key usign for batch command description
+            namespace BatchCommandDescriptionKey {
+                
+                //! @The key represent the alias of the batch command
+                static const char * const BC_ALIAS = "bc_alias";
+            }
+            /** @} */ // end of BatchCommandDescriptionKey Slow Control API
         }
     }
 }

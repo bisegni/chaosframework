@@ -69,7 +69,8 @@ SET(cnd_src  ${cnd_src}	batch/unit_server/UnitServerAckBatchCommand.cpp
                         batch/unit_server/LoadUnloadControlUnit.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/control_unit/RegistrationAckBatchCommand.cpp
-                        batch/control_unit/IDSTControlUnitBatchCommand.cpp)
+                        batch/control_unit/IDSTControlUnitBatchCommand.cpp,
+                        batch/control_unit/ApplyChangeSet.cpp)
 
 ADD_EXECUTABLE(ChaosMetadataService ${cnd_src})
 
