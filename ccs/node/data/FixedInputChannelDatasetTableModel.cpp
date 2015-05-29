@@ -6,11 +6,6 @@
 
 #include <boost/lexical_cast.hpp>
 
-#define CHECKTYPE(r, t, v)\
-    try{\
-    boost::lexical_cast<t>(v.toString().toStdString());\
-    r=true;\
-    }catch(...){r=false;}
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy::control_unit;
@@ -210,24 +205,27 @@ QVariant FixedInputChannelDatasetTableModel::getCellData(int row, int column) co
         result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
         break;
     case 3:
-        if(dataset_attribute_configuration.contains(row)) {
+        if(dataset_attribute_configuration.contains(row) &&
+                dataset_attribute_configuration[row]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {
             result = QString::fromStdString(dataset_attribute_configuration[row]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE));
         } else if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {
-            result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
+            result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE));
         }
         break;
     case 4:
-        if(dataset_attribute_configuration.contains(row)) {
+        if(dataset_attribute_configuration.contains(row) &&
+                dataset_attribute_configuration[row]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {
             result = QString::fromStdString(dataset_attribute_configuration[row]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
         } else if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {
             result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
         }
         break;
     case 5:
-        if(dataset_attribute_configuration.contains(row)) {
+        if(dataset_attribute_configuration.contains(row) &&
+                dataset_attribute_configuration[row]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
             result = QString::fromStdString(dataset_attribute_configuration[row]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE));
         } else if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
-            result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
+            result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE));
         }
         break;
     case 6:
@@ -315,7 +313,36 @@ QVariant FixedInputChannelDatasetTableModel::getTextColorForData(int row, int co
     default:
         break;
     }
-    return result;}
+    return result;
+}
+
+#define CHECKTYPE(r, t, v)\
+    t typed_value;\
+    try{\
+    typed_value = boost::lexical_cast<t>(v.toString().toStdString());\
+    r=true;\
+    }catch(...){r=false;}
+
+
+#define CHECK_MAX_MIN_NUMERIC_TYPED_VALUE(t, tv)\
+    if(dataset_attribute_configuration.contains(index.row()) &&\
+             dataset_attribute_configuration[index.row()]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {\
+            t min  =  boost::lexical_cast<t>(dataset_attribute_configuration[index.row()]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE));\
+            if((tv < min)) {\
+                error_message = QString::fromStdString(boost::str(boost::format("The value %1% is minor of %2%") % tv % min));\
+                result = false;\
+                break;\
+            }\
+    }\
+    if(dataset_attribute_configuration.contains(index.row()) &&\
+             dataset_attribute_configuration[index.row()]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {\
+            t max  =  boost::lexical_cast<t>(dataset_attribute_configuration[index.row()]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));\
+            if(tv > max) {\
+                error_message = QString::fromStdString(boost::str(boost::format("The value %1% is major of %2%") % tv % max));\
+                result = false;\
+                break;\
+            }\
+    }
 
 bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, const QVariant& value) {
     bool result = true;
@@ -323,36 +350,47 @@ bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, c
 
     QSharedPointer<CDataWrapper> element = vector_doe[index.row()];
     switch (element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
-    case chaos::DataType::TYPE_BOOLEAN:
+    case chaos::DataType::TYPE_BOOLEAN:{
         CHECKTYPE(result, bool, value)
                 if(!result) {
             error_message = tr("The value is not convertible to double");
         }
         break;
-    case chaos::DataType::TYPE_INT32:
+    }
+    case chaos::DataType::TYPE_INT32:{
         CHECKTYPE(result, int32_t, value)
                 if(!result) {
             error_message = tr("The value is not convertible to int32");
-        }
+            break;
+         }
+        CHECK_MAX_MIN_NUMERIC_TYPED_VALUE(int32_t, typed_value)
         break;
-    case chaos::DataType::TYPE_INT64:
+    }
+    case chaos::DataType::TYPE_INT64:{
         CHECKTYPE(result, int64_t, value)
                 if(!result) {
             error_message = tr("The value is not convertible to int64_t");
+            break;
         }
+        CHECK_MAX_MIN_NUMERIC_TYPED_VALUE(int64_t, typed_value)
         break;
-    case chaos::DataType::TYPE_STRING:
+    }
+    case chaos::DataType::TYPE_DOUBLE:{
+        CHECKTYPE(result, double, value)
+                if(!result) {
+            error_message = tr("The value is not convertible to double");
+            break;
+        }
+        CHECK_MAX_MIN_NUMERIC_TYPED_VALUE(double, typed_value)
+        break;
+    }
+    case chaos::DataType::TYPE_STRING:{
         CHECKTYPE(result, std::string, value)
                 if(!result) {
             error_message = tr("The value is not convertible to std::string");
         }
         break;
-    case chaos::DataType::TYPE_DOUBLE:
-        CHECKTYPE(result, double, value)
-                if(!result) {
-            error_message = tr("The value is not convertible to double");
-        }
-        break;
+    }
     default:
         break;
     }

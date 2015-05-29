@@ -286,7 +286,7 @@ void ControlUnitEditor::on_pushButtonCommitSet_clicked() {
         msgBox.exec();
         return;
     }
-    submitApiResult("cu_apply_changeset",
+    submitApiResult(TAG_CU_APPLY_CHANGESET,
                     GET_CHAOS_API_PTR(control_unit::SetInputDatasetAttributeValues)->execute(value_set_array));
 }
 
