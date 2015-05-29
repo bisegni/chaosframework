@@ -24,7 +24,9 @@ void FixedOutputChannelDatasetTableModel::updateData(const QSharedPointer<chaos:
     if(data_wrapped.isNull() ||
             !data_wrapped->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) return;
     beginResetModel();
-
+    //reset all
+    vector_doe.clear();
+    map_doe_attribute_name_index.clear();
     //add the default timestamp field
     map_doe_attribute_name_index.insert(chaos::DataPackCommonKey::DPCK_TIMESTAMP,
                                         QSharedPointer<AttributeInfo>(new AttributeInfo(real_row++,

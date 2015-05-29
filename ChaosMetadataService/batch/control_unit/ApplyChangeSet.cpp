@@ -91,11 +91,11 @@ void ApplyChangeSet::ccHandler() {
                                                                     ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
                                                                     message);
             
-            CU_ACS_BC_DBG << "Call 'setDatasetAttribute' action of to control unit:" << cu_id << " on rpc[" << cu_rpc_addr <<":"<<cu_rpc_dom<<"]";
+            CU_ACS_BC_DBG << "Call "<<ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET<<" action of to control unit:" << cu_id << " on rpc[" << cu_rpc_addr <<":"<<cu_rpc_dom<<"]";
             phase = IDSTPhase_WAIT_ANSWER;
         }
         case IDSTPhase_WAIT_ANSWER: {
-            CU_ACS_BC_DBG << "Waith for 'setDatasetAttribute' action ack from the control unit:" << cu_id << " on rpc[" << cu_rpc_addr <<":"<<cu_rpc_dom<<"]";
+            CU_ACS_BC_DBG << "Waith for "<<ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET<<" action ack from the control unit:" << cu_id << " on rpc[" << cu_rpc_addr <<":"<<cu_rpc_dom<<"]";
             if(!request_future.get()) {
                 CU_ACS_BC_ERR << "request with no future";
                 throw chaos::CException(-1, "request with no future", __PRETTY_FUNCTION__);

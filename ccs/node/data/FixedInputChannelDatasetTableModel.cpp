@@ -1,6 +1,7 @@
 #include "FixedInputChannelDatasetTableModel.h"
 
 #include <QDebug>
+#include <QColor>
 #include <QMessageBox>
 
 #include <boost/lexical_cast.hpp>
@@ -13,6 +14,22 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy::control_unit;
+
+static QColor changed_value_background_color(94,170,255);
+static QColor changed_value_text_color(10,10,10);
+
+
+void ChangeValue::setCurrentValue(const QVariant& _current_value) {
+    current_value = _current_value;
+}
+
+void ChangeValue::reset() {
+    current_value = last_value;
+}
+
+void ChangeValue::commit() {
+    last_value = current_value;
+}
 
 FixedInputChannelDatasetTableModel::FixedInputChannelDatasetTableModel(const QString &node_uid,
                                                                        unsigned int dataset_type,
@@ -32,6 +49,12 @@ void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::
     if(data_wrapped.isNull() ||
             !data_wrapped->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) return;
     beginResetModel();
+    //reset all
+    map_doe_attribute_name_index.clear();
+    attribute_value_changed.clear();
+    attribute_set_value.clear();
+    vector_doe.clear();
+
     QSharedPointer<CMultiTypeDataArrayWrapper> dataset_array(data_wrapped->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
     for(int idx = 0;
         idx < dataset_array->size();
@@ -49,12 +72,29 @@ void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::
                                                                                                     7,
                                                                                                     (chaos::DataType::DataType)element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE))));
                 attribute_value_changed.push_back(0);
-                attribute_set_value.push_back(QVariant(0.0));
+                attribute_set_value.push_back(QSharedPointer<ChangeValue>(new ChangeValue()));
                 vector_doe.push_back(element);
             }
         }
     }
     endResetModel();
+}
+
+void FixedInputChannelDatasetTableModel::updateInstanceDescription(const QSharedPointer<CDataWrapper>& _dataset_attribute_configuration) {
+    dataset_attribute_configuration.clear();
+    if(!_dataset_attribute_configuration->hasKey("attribute_value_descriptions")) return;
+
+    QSharedPointer<CMultiTypeDataArrayWrapper> attribute_configuration(_dataset_attribute_configuration->getVectorValue("attribute_value_descriptions"));
+    for(int idx = 0;
+        idx < attribute_configuration->size();
+        idx++){
+        //fetch the attribute configuration
+        QSharedPointer<CDataWrapper> attribute(attribute_configuration->getCDataWrapperElementAtIndex(idx));
+
+        //add it to map
+        QString attribute_name  = QString::fromStdString(attribute->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
+        dataset_attribute_configuration.insert(map_doe_attribute_name_index[attribute_name]->row, attribute);
+    }
 }
 
 void FixedInputChannelDatasetTableModel::getAttributeChangeSet(std::vector< boost::shared_ptr<ControlUnitInputDatasetChangeSet> >& value_set_array) {
@@ -65,13 +105,28 @@ void FixedInputChannelDatasetTableModel::getAttributeChangeSet(std::vector< boos
         QSharedPointer<CDataWrapper> element = vector_doe[index];
 
         boost::shared_ptr<InputDatasetAttributeChangeValue> changes(new InputDatasetAttributeChangeValue(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME),
-                                                                                                         attribute_set_value[index].toString().toStdString()));
+                                                                                                         attribute_set_value[index]->current_value.toString().toStdString()));
         change_set.push_back(changes);
         index = attribute_value_changed.find_next(index);
     }
     //push this
     value_set_array.push_back( boost::shared_ptr<ControlUnitInputDatasetChangeSet>(new ControlUnitInputDatasetChangeSet(node_uid.toStdString(), change_set)));
+}
+
+void FixedInputChannelDatasetTableModel::applyChangeSet(bool commit) {
+    beginResetModel();
+    size_t index = attribute_value_changed.find_first();
+    while(index != boost::dynamic_bitset<>::npos) {
+        QSharedPointer<CDataWrapper> element = vector_doe[index];
+        if(commit)
+            attribute_set_value[index]->commit();
+        else
+            attribute_set_value[index]->reset();
+
+        index = attribute_value_changed.find_next(index);
+    }
     attribute_value_changed.reset();
+    endResetModel();
 }
 
 int FixedInputChannelDatasetTableModel::getRowCount() const {
@@ -95,10 +150,10 @@ QString FixedInputChannelDatasetTableModel::getHeaderForColumn(int column) const
         result = QString("Description");
         break;
     case 3:
-        result = QString("Max");
+        result = QString("Min");
         break;
     case 4:
-        result = QString("Min");
+        result = QString("Max");
         break;
     case 5:
         result = QString("Default");
@@ -154,24 +209,29 @@ QVariant FixedInputChannelDatasetTableModel::getCellData(int row, int column) co
     case 2:
         result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
         break;
-
     case 3:
-        if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {
+        if(dataset_attribute_configuration.contains(row)) {
+            result = QString::fromStdString(dataset_attribute_configuration[row]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE));
+        } else if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {
             result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
         }
         break;
     case 4:
-        if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {
+        if(dataset_attribute_configuration.contains(row)) {
+            result = QString::fromStdString(dataset_attribute_configuration[row]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
+        } else if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {
             result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
         }
         break;
     case 5:
-        if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
+        if(dataset_attribute_configuration.contains(row)) {
+            result = QString::fromStdString(dataset_attribute_configuration[row]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE));
+        } else if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)) {
             result = QString::fromStdString(element->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
         }
         break;
     case 6:
-        result = attribute_set_value[row];
+        result = attribute_set_value[row]->current_value;
         break;
     case 7:
         if(map_doe_current_values.find(row) == map_doe_current_values.end()) {
@@ -194,11 +254,11 @@ QVariant FixedInputChannelDatasetTableModel::getTextAlignForData(int row, int co
     case 0:
     case 1:
     case 2:
+        result =  Qt::AlignLeft+Qt::AlignVCenter;
+        break;
     case 3:
     case 4:
     case 5:
-        result =  Qt::AlignLeft+Qt::AlignVCenter;
-        break;
     case 6:
     case 7:
         result =  Qt::AlignHCenter+Qt::AlignVCenter;
@@ -209,6 +269,53 @@ QVariant FixedInputChannelDatasetTableModel::getTextAlignForData(int row, int co
     }
     return result;
 }
+
+QVariant FixedInputChannelDatasetTableModel::getBackgroundForData(int row, int column) const {
+    QVariant result;
+    switch(column) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+        break;
+    case 6:
+        if(attribute_value_changed[row]){
+            result = changed_value_background_color;
+        }
+        break;
+    case 7:
+        break;
+
+    default:
+        break;
+    }
+    return result;
+}
+
+QVariant FixedInputChannelDatasetTableModel::getTextColorForData(int row, int column) const {
+    QVariant result;
+    switch(column) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+        break;
+    case 6:
+        if(attribute_value_changed[row]){
+            result = changed_value_text_color;
+        }
+        break;
+    case 7:
+        break;
+
+    default:
+        break;
+    }
+    return result;}
 
 bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, const QVariant& value) {
     bool result = true;
@@ -256,7 +363,7 @@ bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, c
         msgBox.exec();
     } else {
         attribute_value_changed[index.row()] = true;
-        attribute_set_value[index.row()] = value;
+        attribute_set_value[index.row()]->setCurrentValue(value);
     }
     return result;
 }

@@ -5,6 +5,7 @@
 MultiPropertyLogicSwitch::MultiPropertyLogicSwitch(const QString& _logic_switch_name,
                                                    QObject *parent) :
     QObject(parent),
+    last_output_state(-1),
     logic_switch_name(_logic_switch_name),
     logic_state_bit_field(){
 
@@ -39,7 +40,13 @@ void MultiPropertyLogicSwitch::currentPropertyKeyValue(const QString& key,
     QSharedPointer<KeyValueAndPosition>& kvp = property_map[key];
     //update key bit
     logic_state_bit_field[kvp->bit_field_position] = (kvp->reference_value.find(value)!=kvp->reference_value.end());
-    emit switchChangeState(logic_switch_name, logic_state_bit_field.all());
+    if(last_output_state == -1) {
+        last_output_state = logic_state_bit_field.all();
+    } else {
+        if(((bool)last_output_state) == logic_state_bit_field.all()) return;
+        last_output_state = logic_state_bit_field.all();
+    }
+    emit switchChangeState(logic_switch_name, last_output_state);
 }
 
 void MultiPropertyLogicSwitch::attachLogicSwitch(const MultiPropertyLogicSwitch& logic_switch,

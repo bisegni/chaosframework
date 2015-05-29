@@ -40,7 +40,9 @@ private slots:
     void connectedSwitchChangedState(const QString& logic_switch_name,
                                      bool state);
 private:
+
     QMutex mutex;
+    int last_output_state;
     QMap<QString, QSharedPointer<KeyValueAndPosition> > property_map;
     const QString logic_switch_name;
     //! it determinate ifthe switch is on or false

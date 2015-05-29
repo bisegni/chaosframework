@@ -16,6 +16,7 @@ protected:
     virtual QVariant getCellData(int row, int column) const;
     virtual QVariant getFontForData(int row, int column) const;
     virtual QVariant getBackgroundForData(int row, int column) const;
+    virtual QVariant getTextColorForData(int row, int column) const;
     virtual QVariant getTextAlignForData(int row, int column) const;
     virtual QVariant getCheckStateForData(int row, int column) const;
     virtual QVariant getTooltipTextForData(int row, int column) const;

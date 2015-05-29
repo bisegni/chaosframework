@@ -38,6 +38,10 @@ QVariant ChaosAbstractTableModel::getBackgroundForData(int row, int column) cons
     return QVariant();
 }
 
+QVariant ChaosAbstractTableModel::getTextColorForData(int row, int column) const {
+    return QVariant();
+}
+
 QVariant ChaosAbstractTableModel::getTextAlignForData(int row, int column) const {
     return QVariant();
 }
@@ -70,6 +74,9 @@ QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const
         break;
     case Qt::BackgroundRole:
         result = getBackgroundForData(row, col);
+        break;
+    case Qt::TextColorRole:
+        result = getTextColorForData(row, col);
         break;
     case Qt::TextAlignmentRole:
         result = getTextAlignForData(row, col);

@@ -35,18 +35,6 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="labelRemoteAddress">
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>remote address</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="QLabel" name="labelUniqueIdentifier">
        <property name="font">
@@ -67,7 +55,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Remote addr:</string>
+        <string>Rpc info</string>
        </property>
       </widget>
      </item>
@@ -183,6 +171,58 @@
            <width>16</width>
            <height>16</height>
           </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0,1">
+       <item alignment="Qt::AlignRight">
+        <widget class="QLabel" name="label_3">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Address:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelRemoteAddress">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>rpc address</string>
+         </property>
+        </widget>
+       </item>
+       <item alignment="Qt::AlignRight">
+        <widget class="QLabel" name="label_5">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Domain:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelRpcDomain">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
          </property>
         </widget>
        </item>
@@ -305,6 +345,18 @@
             </spacer>
            </item>
            <item>
+            <widget class="QPushButton" name="pushButtonResetChangeSet">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Reset Change Set</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="pushButtonCommitSet">
              <property name="font">
               <font>
@@ -312,7 +364,7 @@
               </font>
              </property>
              <property name="text">
-              <string>Commit Set</string>
+              <string>Commit Change Set</string>
              </property>
             </widget>
            </item>

@@ -7,19 +7,22 @@
 static const QString TAG_CU_INFO = QString("g_cu_i");
 static const QString TAG_CU_DATASET = QString("g_cu_d");
 static const QString TAG_CU_INSTANCE = QString("g_cu_instance");
+static const QString TAG_CU_APPLY_CHANGESET = QString("g_cu_apply_changeset");
 
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
 ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     PresenterWidget(NULL),
+    last_online_state(false),
     control_unit_unique_id(_control_unit_unique_id),
     ui(new Ui::ControlUnitEditor),
     hb_handler(),
     status_handler(),
-    channel_output_table_model(control_unit_unique_id,
+    dataset_output_table_model(control_unit_unique_id,
                                chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT),
-    channel_input_table_model(control_unit_unique_id,
+    dataset_input_table_model(control_unit_unique_id,
                               chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT) {
     ui->setupUi(this);
     //handler connection
@@ -33,8 +36,8 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
 
 ControlUnitEditor::~ControlUnitEditor() {
     //shutdown monitoring of channel
-    channel_input_table_model.setAttributeMonitoring(false);
-    channel_output_table_model.setAttributeMonitoring(false);
+    dataset_input_table_model.setAttributeMonitoring(false);
+    dataset_output_table_model.setAttributeMonitoring(false);
     //remove monitoring on cu and us
     if(unit_server_parent_unique_id.size()) {
         //remove old unit server for healt
@@ -56,10 +59,10 @@ ControlUnitEditor::~ControlUnitEditor() {
 
 void ControlUnitEditor::initUI() {
     //add model to table
-    ui->tableViewOutputChannel->setModel(&channel_output_table_model);
+    ui->tableViewOutputChannel->setModel(&dataset_output_table_model);
     ui->tableViewOutputChannel->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    ui->tableViewInputChannels->setModel(&channel_input_table_model);
+    ui->tableViewInputChannels->setModel(&dataset_input_table_model);
     ui->tableViewInputChannels->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(control_unit_unique_id.toStdString(),
@@ -102,12 +105,16 @@ void ControlUnitEditor::initUI() {
     logic_switch_aggregator.addKeyRefValue("stop", "cu_state","Start");
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("stop", ui->pushButtonStopAction, "enabled", true, false);
 
+    //set control unit uid label
+    ui->labelUniqueIdentifier->setText(control_unit_unique_id);
+
+
     //launch api for control unit information
-    updateAll();
+    updateAllControlunitInfomration();
 }
 
 
-void ControlUnitEditor::updateAll() {
+void ControlUnitEditor::updateAllControlunitInfomration() {
     submitApiResult(QString(TAG_CU_INFO),
                     GET_CHAOS_API_PTR(node::GetNodeDescription)->execute(control_unit_unique_id.toStdString()));
     submitApiResult(QString(TAG_CU_DATASET),
@@ -122,7 +129,7 @@ bool ControlUnitEditor::canClose() {
 }
 
 void ControlUnitEditor::onApiDone(const QString& tag,
-                                  QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
+                                  QSharedPointer<CDataWrapper> api_result) {
     if(tag.compare(TAG_CU_INFO) == 0) {
         fillInfo(api_result);
     } else if(tag.compare(TAG_CU_DATASET) == 0) {
@@ -152,17 +159,25 @@ void ControlUnitEditor::onApiDone(const QString& tag,
                 // keep track of new us uid
                 unit_server_parent_unique_id = QString::fromStdString(new_u_s);
             }
+            //apply control unit instance
+            dataset_input_table_model.updateInstanceDescription(api_result);
         }
+    } else if(tag.compare(TAG_CU_APPLY_CHANGESET) == 0) {
+        dataset_input_table_model.applyChangeSet(true);
     }
 }
 
 void ControlUnitEditor::fillInfo(const QSharedPointer<chaos::common::data::CDataWrapper>& node_info) {
-    if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) {
-        ui->labelUniqueIdentifier->setText(QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)));
-    }
-
     if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
         ui->labelRemoteAddress->setText(QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR)));
+    } else {
+        ui->labelRemoteAddress->setText(tr("---------"));
+    }
+
+    if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)) {
+        ui->labelRpcDomain->setText(QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)));
+    } else {
+        ui->labelRpcDomain->setText(tr("---------"));
     }
 }
 
@@ -179,11 +194,21 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
             }
             //broadcast cu status to switch
             logic_switch_aggregator.broadcastCurrentValueForKey("cu_state", attribute_value.toString());
+            if( attribute_value.toString().compare(tr("Load"))==0){
+                bool current_relevated_online_status = ui->ledIndicatorHealtTSControlUnit->getState()==2;
+                if(current_relevated_online_status != last_online_state) {
+                    if(current_relevated_online_status) {
+                        //we need to reload all information
+                        updateAllControlunitInfomration();
+                    }
+                    last_online_state = current_relevated_online_status;
+                }
+            }
         } else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0){
             //print the timestamp and update the red/green indicator
             ui->ledIndicatorHealtTSControlUnit->setNewTS(attribute_value.toULongLong());
             //broadcast cu status to switch
-            logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", (ui->ledIndicatorHealtTSControlUnit->getState()==2)?"true":"false");
+            logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", ((ui->ledIndicatorHealtTSControlUnit->getState()==2)?"true":"false"));
         }
     } else  if(key.startsWith(unit_server_parent_unique_id)) {
         //show healt for unit server
@@ -204,13 +229,13 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
 }
 
 void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
-                              bool switch_activate) {
+                                                 bool switch_activate) {
 
 }
 
 void ControlUnitEditor::fillDataset(const QSharedPointer<chaos::common::data::CDataWrapper>& dataset) {
-    channel_output_table_model.updateData(dataset);
-    channel_input_table_model.updateData(dataset);
+    dataset_output_table_model.updateData(dataset);
+    dataset_input_table_model.updateData(dataset);
 }
 
 void ControlUnitEditor::on_pushButtonLoadAction_clicked() {
@@ -244,16 +269,16 @@ void ControlUnitEditor::on_pushButtonStopAction_clicked() {
 }
 
 void ControlUnitEditor::on_checkBoxMonitorOutputChannels_clicked() {
-    channel_output_table_model.setAttributeMonitoring(ui->checkBoxMonitorOutputChannels->isChecked());
+    dataset_output_table_model.setAttributeMonitoring(ui->checkBoxMonitorOutputChannels->isChecked());
 }
 
 void ControlUnitEditor::on_checkBoxMonitorInputChannels_clicked() {
-    channel_input_table_model.setAttributeMonitoring(ui->checkBoxMonitorInputChannels->isChecked());
+    dataset_input_table_model.setAttributeMonitoring(ui->checkBoxMonitorInputChannels->isChecked());
 }
 
 void ControlUnitEditor::on_pushButtonCommitSet_clicked() {
     std::vector< boost::shared_ptr< control_unit::ControlUnitInputDatasetChangeSet > > value_set_array;
-    channel_input_table_model.getAttributeChangeSet(value_set_array);
+    dataset_input_table_model.getAttributeChangeSet(value_set_array);
     if(value_set_array[0]->change_set.size()==0) {
         QMessageBox msgBox;
         msgBox.setText(tr("Error applying changeset."));
@@ -261,6 +286,10 @@ void ControlUnitEditor::on_pushButtonCommitSet_clicked() {
         msgBox.exec();
         return;
     }
-    submitApiResult("cu_stop",
+    submitApiResult("cu_apply_changeset",
                     GET_CHAOS_API_PTR(control_unit::SetInputDatasetAttributeValues)->execute(value_set_array));
+}
+
+void ControlUnitEditor::on_pushButtonResetChangeSet_clicked() {
+    dataset_input_table_model.applyChangeSet(false);
 }

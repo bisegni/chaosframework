@@ -23,7 +23,7 @@ public:
     explicit ControlUnitEditor(const QString& _control_unit_unique_id);
     ~ControlUnitEditor();
 protected:
-    void updateAll();
+    void updateAllControlunitInfomration();
     void initUI();
     bool canClose();
     void onApiDone(const QString& tag,
@@ -55,17 +55,21 @@ private slots:
 
     void on_pushButtonCommitSet_clicked();
 
+    void on_pushButtonResetChangeSet_clicked();
+
 private:
     void fillInfo(const QSharedPointer<chaos::common::data::CDataWrapper>& node_info);
     void fillDataset(const QSharedPointer<chaos::common::data::CDataWrapper>& dataset);
 
+    //keep track of the last relevated online state
+    bool last_online_state;
     const QString           control_unit_unique_id;
     QString                 unit_server_parent_unique_id;
     SwitchAggregator        logic_switch_aggregator;
     HealthHartbeatHandler   hb_handler;
     HealtStatusHandler      status_handler;
-    FixedOutputChannelDatasetTableModel channel_output_table_model;
-    FixedInputChannelDatasetTableModel channel_input_table_model;
+    FixedOutputChannelDatasetTableModel dataset_output_table_model;
+    FixedInputChannelDatasetTableModel dataset_input_table_model;
     Ui::ControlUnitEditor *ui;
 };
 

@@ -101,7 +101,7 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
         for(int idx_change = 0;
             idx_change < change_set->size();
             idx_change++) {
-            std::auto_ptr<CDataWrapper> change(change_set->getCDataWrapperElementAtIndex(idx));
+            std::auto_ptr<CDataWrapper> change(change_set->getCDataWrapperElementAtIndex(idx_change));
             if(!change->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME)||
                !change->hasKey("change_value")) {
                 //we need to have either the values
@@ -119,7 +119,7 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
             }
             
             if(element_description.get()==NULL ||
-               element_description->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
+               !element_description->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
                 //we have no description so we don't have a type for the attribute so we need to step forward
                 continue;
             }
