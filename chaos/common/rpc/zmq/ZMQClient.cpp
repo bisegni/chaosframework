@@ -94,13 +94,6 @@ void ZMQClient::deinit() throw(CException) {
     
     boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
     
-    for(std::map<string, boost::shared_ptr<SocketInfo> >::iterator it = map_socket.begin();
-        it != map_socket.end();
-        it++) {
-        boost::unique_lock<boost::shared_mutex> lock_socket(it->second->socket_mutex);
-        
-        if(it->second->socket) zmq_close(it->second->socket);
-    }
     map_socket.clear();
     
     ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopping";
@@ -145,60 +138,32 @@ bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread
     return true;
 }
 
-boost::shared_ptr<SocketInfo> ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi) {
-    int	err = 0;
-    int linger = 500;
-    int water_mark = 1;
-    int timeout = 5000;
+SocketInfo *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi) {
     boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-    if(!map_socket.count(nfi->destinationAddr)) {
-        ZMQC_LDBG << "Create new socket for " << nfi->destinationAddr;
-        boost::shared_ptr<SocketInfo>  socket_info_ptr(new SocketInfo());
-        socket_info_ptr->endpoint = nfi->destinationAddr;
-        socket_info_ptr->socket = zmq_socket (zmqContext, ZMQ_REQ);
-        //this implementation is too slow, client for ip need to be cached
-        if(!socket_info_ptr->socket) {
-            ZMQC_LERR << "Error creating socket";
-            socket_info_ptr.reset();
-            return socket_info_ptr;
-        } else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_LINGER, &linger, sizeof(int)))) {
-            ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
-        } else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_RCVHWM, &water_mark, sizeof(int)))) {
-            ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
-        } else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_SNDHWM, &water_mark, sizeof(int)))) {
-            ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
-        } else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_SNDTIMEO, &timeout, sizeof(int)))) {
-            ZMQC_LERR << "Error setting ZMQ_SNDTIMEO value";
-        } else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_RCVTIMEO, &timeout, sizeof(int)))) {
-            ZMQC_LERR << "Error setting ZMQ_RCVTIMEO value";
-        } else {
-            string url = "tcp://";
-            url.append(nfi->destinationAddr);
-            if((err = zmq_connect(socket_info_ptr->socket, url.c_str()))) {
-                ZMQC_LERR << "Error connecting to remote socket:" <<url;
-            }
-        }
-        
-        if(err) {
-            zmq_close(socket_info_ptr->socket);
-            socket_info_ptr->socket = NULL;
-            socket_info_ptr.reset();
-        } else {
-            map_socket.insert(make_pair(socket_info_ptr->endpoint, socket_info_ptr));
-        }
-        return socket_info_ptr;
+    SocketMapIterator it = map_socket.find(nfi->destinationAddr);
+    if(it != map_socket.end()){
+        return it->second->getSocket();
     } else {
-        ZMQC_LDBG << "return already allocated socket for " << nfi->destinationAddr;
-        return map_socket[nfi->destinationAddr];
+        boost::shared_ptr<SocketEndpointPool> socket_pool(new SocketEndpointPool(nfi->destinationAddr));
+        map_socket.insert(make_pair(nfi->destinationAddr, socket_pool));
+        return socket_pool->getSocket();
     }
 }
 
-void ZMQClient::disposeSocket(boost::shared_ptr<SocketInfo> socket_info_to_dispose) {
+void ZMQClient::releaseSocket(SocketInfo *socket_info_to_release) {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-    map_socket.erase(socket_info_to_dispose->endpoint);
-    zmq_close(socket_info_to_dispose->socket);
-    socket_info_to_dispose->socket = NULL;
-    socket_info_to_dispose.reset();
+    map_socket[socket_info_to_release->endpoint]->releaseSocket(socket_info_to_release);
+}
+
+void ZMQClient::timeout() {
+    boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
+    for (SocketMapIterator it = map_socket.begin();
+         it != map_socket.end();
+         it++){
+        lock_socket_map.unlock();
+        it->second->mantainance();
+        lock_socket_map.lock();
+    }
 }
 
 /*
@@ -213,7 +178,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     
     //get remote ip
     //serialize the call packet
-    boost::shared_ptr<SocketInfo> socket_info;
+    SocketInfo *socket_info;
     auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
     try{
         socket_info = getSocketForNFI(messageInfo);
@@ -222,11 +187,8 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
             return;
         }
         
-        //now we can use the socket
-        boost::unique_lock<boost::shared_mutex> lock_socket(socket_info->socket_mutex);
-        ZMQC_LDBG << "Lock acquired on socket mutex";
-        
-        if(!(socket_info.get() && socket_info->socket)) {
+        if(!socket_info ||
+           socket_info->socket) {
             ZMQC_LDBG << "Socket creation error";
             return;
         }
@@ -292,16 +254,14 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                 }
             }
         }
-        
     }catch (std::exception& e) {
-        disposeSocket(socket_info);
         ZMQC_LAPP << "Error during message forwarding:"<< e.what();
         return;
     } catch (...) {
-        disposeSocket(socket_info);
         ZMQC_LAPP << "General error during message forwarding:";
         return;
     }
+    releaseSocket(socket_info);
     zmq_msg_close (&message);
     zmq_msg_close (&reply);
 }

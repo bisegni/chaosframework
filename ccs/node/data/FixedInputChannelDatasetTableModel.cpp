@@ -77,8 +77,8 @@ void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::
 
 void FixedInputChannelDatasetTableModel::updateInstanceDescription(const QSharedPointer<CDataWrapper>& _dataset_attribute_configuration) {
     dataset_attribute_configuration.clear();
-    if(!_dataset_attribute_configuration->hasKey("attribute_value_descriptions")) return;
-
+    if(_dataset_attribute_configuration.isNull() ||
+            !_dataset_attribute_configuration->hasKey("attribute_value_descriptions")) return;
     QSharedPointer<CMultiTypeDataArrayWrapper> attribute_configuration(_dataset_attribute_configuration->getVectorValue("attribute_value_descriptions"));
     for(int idx = 0;
         idx < attribute_configuration->size();
@@ -326,22 +326,22 @@ QVariant FixedInputChannelDatasetTableModel::getTextColorForData(int row, int co
 
 #define CHECK_MAX_MIN_NUMERIC_TYPED_VALUE(t, tv)\
     if(dataset_attribute_configuration.contains(index.row()) &&\
-             dataset_attribute_configuration[index.row()]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {\
-            t min  =  boost::lexical_cast<t>(dataset_attribute_configuration[index.row()]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE));\
-            if((tv < min)) {\
-                error_message = QString::fromStdString(boost::str(boost::format("The value %1% is minor of %2%") % tv % min));\
-                result = false;\
-                break;\
-            }\
+    dataset_attribute_configuration[index.row()]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {\
+    t min  =  boost::lexical_cast<t>(dataset_attribute_configuration[index.row()]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE));\
+    if((tv < min)) {\
+    error_message = QString::fromStdString(boost::str(boost::format("The value %1% is minor of %2%") % tv % min));\
+    result = false;\
+    break;\
+    }\
     }\
     if(dataset_attribute_configuration.contains(index.row()) &&\
-             dataset_attribute_configuration[index.row()]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {\
-            t max  =  boost::lexical_cast<t>(dataset_attribute_configuration[index.row()]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));\
-            if(tv > max) {\
-                error_message = QString::fromStdString(boost::str(boost::format("The value %1% is major of %2%") % tv % max));\
-                result = false;\
-                break;\
-            }\
+    dataset_attribute_configuration[index.row()]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {\
+    t max  =  boost::lexical_cast<t>(dataset_attribute_configuration[index.row()]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));\
+    if(tv > max) {\
+    error_message = QString::fromStdString(boost::str(boost::format("The value %1% is major of %2%") % tv % max));\
+    result = false;\
+    break;\
+    }\
     }
 
 bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, const QVariant& value) {
@@ -362,9 +362,9 @@ bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, c
                 if(!result) {
             error_message = tr("The value is not convertible to int32");
             break;
-         }
+        }
         CHECK_MAX_MIN_NUMERIC_TYPED_VALUE(int32_t, typed_value)
-        break;
+                break;
     }
     case chaos::DataType::TYPE_INT64:{
         CHECKTYPE(result, int64_t, value)
@@ -373,7 +373,7 @@ bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, c
             break;
         }
         CHECK_MAX_MIN_NUMERIC_TYPED_VALUE(int64_t, typed_value)
-        break;
+                break;
     }
     case chaos::DataType::TYPE_DOUBLE:{
         CHECKTYPE(result, double, value)
@@ -382,7 +382,7 @@ bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, c
             break;
         }
         CHECK_MAX_MIN_NUMERIC_TYPED_VALUE(double, typed_value)
-        break;
+                break;
     }
     case chaos::DataType::TYPE_STRING:{
         CHECKTYPE(result, std::string, value)
