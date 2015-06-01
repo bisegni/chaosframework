@@ -37,99 +37,27 @@ namespace chaos {
         std::string endpoint;
         uint64_t last_push_ts;
         
-        SocketInfo():
-        socket(NULL),
-        endpoint(""),
-        last_push_ts(0){};
+        SocketInfo();
     public:     
-        ~SocketInfo(){
-            if(socket)zmq_close(socket);
-        }
+        ~SocketInfo();
    
         void *socket;
     };
     
     class SocketEndpointPool {
         friend class ZMQClient;
-        const std::string endpoint;
         void *zmq_context;
+        const std::string endpoint;
         std::deque< SocketInfo* > pool;
         boost::mutex mutex_pool;
         
-        SocketEndpointPool(const std::string& _endpoint):
-        endpoint(_endpoint) {
-        }
-        
-        public:
-        ~SocketEndpointPool() {
-            for(std::deque< SocketInfo* >::iterator it = pool.begin();
-                it!=pool.end();
-                it++) {
-                delete(*it);
-            }
-        }
-    
-        SocketInfo *getSocket() {
-            int	err = 0;
-            int linger = 0;
-            int water_mark = 1;
-            int timeout = 5000;
-            boost::unique_lock<boost::mutex> l(mutex_pool);
-            SocketInfo *socket_info_ptr = NULL;
-            if(pool.empty()) {
-                std::auto_ptr<SocketInfo> _temp_socket_info_ptr;
-                _temp_socket_info_ptr.reset(new SocketInfo());
-                _temp_socket_info_ptr->endpoint = endpoint;
-                _temp_socket_info_ptr->socket = zmq_socket (zmq_context, ZMQ_REQ);
-                if(!_temp_socket_info_ptr->socket) {
-                    err = -1;
-                } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_LINGER, &linger, sizeof(int)))) {
-                } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_RCVHWM, &water_mark, sizeof(int)))) {
-                } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_SNDHWM, &water_mark, sizeof(int)))) {
-                } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_SNDTIMEO, &timeout, sizeof(int)))) {
-                } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_RCVTIMEO, &timeout, sizeof(int)))) {
-                } else {
-                    string url = "tcp://";
-                    url.append(endpoint);
-                    if((err = zmq_connect(_temp_socket_info_ptr->socket, url.c_str()))) {
-                    }
-                }
-                
-                if(err) {
-                    if(_temp_socket_info_ptr->socket) {
-                        zmq_close(_temp_socket_info_ptr->socket);
-                    }
-                } else {
-                    //all is gone weel so we can release the temp smatr pointer to result pointer
-                    socket_info_ptr = _temp_socket_info_ptr.release();
-                    socket_info_ptr->last_push_ts = chaos::common::utility::TimingUtil::getTimeStamp();
-                }
-            } else {
-                //return alread allcoated one
-                socket_info_ptr = pool.front();
-                socket_info_ptr->last_push_ts = chaos::common::utility::TimingUtil::getTimeStamp();
-                //remove associated pointr
-                pool.pop_front();
-            }
-            return socket_info_ptr;
-        }
-        
-        void releaseSocket(SocketInfo *socket_info) {
-            boost::unique_lock<boost::mutex> l(mutex_pool);
-            pool.push_front(socket_info);
-        }
-        
-        //! remove timeouted element
-        void mantainance() {
-            boost::unique_lock<boost::mutex> l(mutex_pool);
-            //check if last element is in timeout
-            SocketInfo *checked_socket = pool.back();
-            if((chaos::common::utility::TimingUtil::getTimeStamp() - checked_socket->last_push_ts) >
-               60000) {
-                //we can remove and delete it
-                delete(checked_socket);
-            }
-        }
+        SocketEndpointPool(const std::string& _endpoint,
+                           void *_zmq_context);
+    public:
+        ~SocketEndpointPool();
+        SocketInfo *getSocket();
+        void releaseSocket(SocketInfo *socket_info);
+        void mantainance();
     };
     
     typedef std::map<std::string, boost::shared_ptr<SocketEndpointPool> >           SocketMap;

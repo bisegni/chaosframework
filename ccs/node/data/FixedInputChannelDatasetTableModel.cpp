@@ -88,6 +88,7 @@ void FixedInputChannelDatasetTableModel::updateInstanceDescription(const QShared
 
         //add it to map
         QString attribute_name  = QString::fromStdString(attribute->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME));
+        if(!map_doe_attribute_name_index.contains(attribute_name)) continue;
         dataset_attribute_configuration.insert(map_doe_attribute_name_index[attribute_name]->row, attribute);
     }
 }

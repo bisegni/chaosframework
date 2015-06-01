@@ -134,9 +134,9 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 #define PS_STR(x) (x?"service":"priority")
 void ZMQDirectIOServer::worker(bool priority_service) {
 	char						header_buffer[DIRECT_IO_HEADER_SIZE];
-	int							linger				= 500;
-	int							water_mark			= 500;
-	int							timeout				= 200;
+	int							linger				= 0;
+	int							water_mark			= 10;
+	int							timeout				= 1000;
 	void						*socket				= NULL;
     int							err					= 0;
 	bool						send_synchronous_answer = false;
@@ -232,7 +232,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
                 continue;
             }
 
-			//receive the zmq evenlod delimiter
+			//receive the zmq evenlop delimiter
 			err = stringReceive(socket, empty_delimiter);
 			if(err == -1 ) {
                 continue;

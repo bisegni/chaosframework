@@ -38,6 +38,103 @@ using namespace boost::algorithm;
 
 #define ZMQ_DO_AGAIN(x) do{x}while(err == EAGAIN);
 
+
+SocketInfo::SocketInfo():
+socket(NULL),
+endpoint(""),
+last_push_ts(0){
+};
+
+SocketInfo::~SocketInfo(){
+    if(socket)zmq_close(socket);
+}
+
+//----------------------------------------------------------------------
+SocketEndpointPool::SocketEndpointPool(const std::string& _endpoint,
+                   void *_zmq_context):
+zmq_context(_zmq_context),
+endpoint(_endpoint) {
+}
+
+SocketEndpointPool::~SocketEndpointPool() {
+    for(std::deque< SocketInfo* >::iterator it = pool.begin();
+        it!=pool.end();
+        it++) {
+        delete(*it);
+    }
+}
+
+SocketInfo *SocketEndpointPool::getSocket() {
+    int	err = 0;
+    int linger = 0;
+    int water_mark = 1;
+    int timeout = 5000;
+    boost::unique_lock<boost::mutex> l(mutex_pool);
+    SocketInfo *socket_info_ptr = NULL;
+    if(pool.empty()) {
+        DEBUG_CODE(ZMQC_LDBG << "No more socket in the pool";)
+        std::auto_ptr<SocketInfo> _temp_socket_info_ptr;
+        _temp_socket_info_ptr.reset(new SocketInfo());
+        _temp_socket_info_ptr->endpoint = endpoint;
+        _temp_socket_info_ptr->socket = zmq_socket (zmq_context, ZMQ_REQ);
+        if(!_temp_socket_info_ptr->socket) {
+            err = -1;
+        } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_LINGER, &linger, sizeof(int)))) {
+        } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_RCVHWM, &water_mark, sizeof(int)))) {
+        } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_SNDHWM, &water_mark, sizeof(int)))) {
+        } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_SNDTIMEO, &timeout, sizeof(int)))) {
+        } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_RCVTIMEO, &timeout, sizeof(int)))) {
+        } else {
+            string url = "tcp://";
+            url.append(endpoint);
+            if((err = zmq_connect(_temp_socket_info_ptr->socket, url.c_str()))) {
+            } else {
+                DEBUG_CODE(ZMQC_LDBG << "ZMQ new pool socket created for "<<endpoint;)
+            }
+        }
+        
+        if(err) {
+            if(_temp_socket_info_ptr->socket) {
+                ZMQC_LERR << "Error during ocnfiguraiton of the pool socket for "<<endpoint;
+                zmq_close(_temp_socket_info_ptr->socket);
+            }
+        } else {
+            //all is gone weel so we can release the temp smatr pointer to result pointer
+            socket_info_ptr = _temp_socket_info_ptr.release();
+        }
+    } else {
+        //return alread allcoated one
+        socket_info_ptr = pool.front();
+        //remove associated pointr
+        pool.pop_front();
+        
+        DEBUG_CODE(ZMQC_LDBG << "Return pooled socket "<<endpoint;)
+    }
+    return socket_info_ptr;
+}
+
+void SocketEndpointPool::releaseSocket(SocketInfo *socket_info) {
+    boost::unique_lock<boost::mutex> l(mutex_pool);
+    DEBUG_CODE(ZMQC_LDBG << "Release socket for "<<socket_info->endpoint;)
+    socket_info->last_push_ts = chaos::common::utility::TimingUtil::getTimeStamp();
+    pool.push_front(socket_info);
+}
+
+//! remove timeouted element
+void SocketEndpointPool::mantainance() {
+    boost::unique_lock<boost::mutex> l(mutex_pool);
+    DEBUG_CODE(ZMQC_LDBG << "Enter pool mantainance loop for endpoint "<< endpoint ;)
+    //check if last element is in timeout
+    SocketInfo *checked_socket = pool.back();
+    uint64_t time_diff = (chaos::common::utility::TimingUtil::getTimeStamp() - checked_socket->last_push_ts);
+    if(time_diff > 60000) {
+        DEBUG_CODE(ZMQC_LDBG << "Purging socket with timediff "<< time_diff ;)
+        //we can remove and delete it
+        delete(checked_socket);
+    }
+}
+
+//-------------------------------------------------------
 DEFINE_CLASS_FACTORY(ZMQClient, RpcClient);
 
 static void my_free (void *data, void *hint)
@@ -144,7 +241,7 @@ SocketInfo *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi) {
     if(it != map_socket.end()){
         return it->second->getSocket();
     } else {
-        boost::shared_ptr<SocketEndpointPool> socket_pool(new SocketEndpointPool(nfi->destinationAddr));
+        boost::shared_ptr<SocketEndpointPool> socket_pool(new SocketEndpointPool(nfi->destinationAddr, zmqContext));
         map_socket.insert(make_pair(nfi->destinationAddr, socket_pool));
         return socket_pool->getSocket();
     }
@@ -184,12 +281,20 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
         socket_info = getSocketForNFI(messageInfo);
         if(socket_info == NULL){
             ZMQC_LERR << "GetSocketForNFI failed";
+            forwadSubmissionResultError(messageInfo,
+                                        -1,
+                                        "GetSocketForNFI failed",
+                                        __PRETTY_FUNCTION__);
             return;
         }
         
-        if(!socket_info ||
-           socket_info->socket) {
+        if(!socket_info->socket) {
             ZMQC_LDBG << "Socket creation error";
+            forwadSubmissionResultError(messageInfo,
+                                        -1,
+                                        "Socket creation error",
+                                        __PRETTY_FUNCTION__);
+            releaseSocket(socket_info);
             return;
         }
         
@@ -256,10 +361,8 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
         }
     }catch (std::exception& e) {
         ZMQC_LAPP << "Error during message forwarding:"<< e.what();
-        return;
     } catch (...) {
         ZMQC_LAPP << "General error during message forwarding:";
-        return;
     }
     releaseSocket(socket_info);
     zmq_msg_close (&message);

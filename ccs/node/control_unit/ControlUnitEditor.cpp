@@ -119,8 +119,6 @@ void ControlUnitEditor::updateAllControlunitInfomration() {
                     GET_CHAOS_API_PTR(node::GetNodeDescription)->execute(control_unit_unique_id.toStdString()));
     submitApiResult(QString(TAG_CU_DATASET),
                     GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(control_unit_unique_id.toStdString()));
-    submitApiResult(QString(TAG_CU_INSTANCE),
-                    GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(control_unit_unique_id.toStdString()));
 }
 
 
@@ -134,6 +132,8 @@ void ControlUnitEditor::onApiDone(const QString& tag,
         fillInfo(api_result);
     } else if(tag.compare(TAG_CU_DATASET) == 0) {
         fillDataset(api_result);
+        submitApiResult(QString(TAG_CU_INSTANCE),
+                        GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(control_unit_unique_id.toStdString()));
     } else if(tag.compare(TAG_CU_INSTANCE) == 0) {
         if(api_result.isNull()) return;
         if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)){

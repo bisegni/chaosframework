@@ -160,7 +160,7 @@ int main(int argc, char * argv[]) {
 //        ChaosMetadataServiceClient::getInstance()->addKeyConsumer("rt-claudio-1_o",
 //                                                                  10,
 //                                                                  &test_consumer[0]);
-        ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandler("rt-claudio-1_o", 10, &bin_handler);
+        ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandler("rt-claudio-1_o", 20, &bin_handler);
         //ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_1);
         //ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_2);
         
@@ -169,7 +169,7 @@ int main(int argc, char * argv[]) {
 //        ChaosMetadataServiceClient::getInstance()->removeKeyConsumer("rt-claudio-1_o",
 //                                                                     10,
 //                                                                     &test_consumer[0]);
-        ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandler("rt-claudio-1_o", 10, &bin_handler);
+        ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandler("rt-claudio-1_o", 20, &bin_handler);
         //ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_2);
         //ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_1);
         //delete(hb_handler_1);delete(hb_handler_2);
