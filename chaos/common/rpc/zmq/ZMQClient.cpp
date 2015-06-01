@@ -173,14 +173,14 @@ void ZMQClient::init(void *init_data) throw(CException) {
  start the rpc adapter
  */
 void ZMQClient::start() throw(CException) {
-    
+    chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, 60000);
 }
 
 /*
  start the rpc adapter
  */
 void ZMQClient::stop() throw(CException) {
-    
+   chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
 }
 
 /*
