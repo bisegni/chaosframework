@@ -56,7 +56,7 @@
 #define CONTROL_MANAGER_UNIT_SERVER_KEY_desc						"the path to the file that contains the rsa public key for the unit server alias"
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC			"unit_server_retry_ms"
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_desc	"Delay in milliseconds for the registration retry"
-#define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_DEFAULT	5000
+#define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_DEFAULT	2000
 
 
 //define the type for the Control Unit instancer

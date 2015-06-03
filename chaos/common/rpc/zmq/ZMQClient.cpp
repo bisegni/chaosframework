@@ -51,7 +51,7 @@ SocketInfo::~SocketInfo(){
 
 //----------------------------------------------------------------------
 SocketEndpointPool::SocketEndpointPool(const std::string& _endpoint,
-                   void *_zmq_context):
+                                       void *_zmq_context):
 zmq_context(_zmq_context),
 endpoint(_endpoint) {
 }
@@ -123,14 +123,22 @@ void SocketEndpointPool::releaseSocket(SocketInfo *socket_info) {
 //! remove timeouted element
 void SocketEndpointPool::mantainance() {
     boost::unique_lock<boost::mutex> l(mutex_pool);
+    int max_to_check = pool.size()>3?3:(int)pool.size();
     DEBUG_CODE(ZMQC_LDBG << "Enter pool mantainance loop for endpoint "<< endpoint ;)
     //check if last element is in timeout
-    SocketInfo *checked_socket = pool.back();
-    uint64_t time_diff = (chaos::common::utility::TimingUtil::getTimeStamp() - checked_socket->last_push_ts);
-    if(time_diff > 60000) {
-        DEBUG_CODE(ZMQC_LDBG << "Purging socket with timediff "<< time_diff ;)
-        //we can remove and delete it
-        delete(checked_socket);
+
+    while((max_to_check--)> 0) {
+        SocketInfo *checked_socket = pool.back();
+        uint64_t time_diff = (chaos::common::utility::TimingUtil::getTimeStamp() - checked_socket->last_push_ts);
+        if(time_diff > 60000) {
+            //remove last element
+            pool.pop_back();
+            DEBUG_CODE(ZMQC_LDBG << "Purging socket with timediff "<< time_diff;)
+            //we can remove and delete it
+            delete(checked_socket);
+        } else {
+            break;
+        }
     }
 }
 
@@ -173,14 +181,15 @@ void ZMQClient::init(void *init_data) throw(CException) {
  start the rpc adapter
  */
 void ZMQClient::start() throw(CException) {
-    chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, 60000);
+    //start timere after and repeat every one minut
+    chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 60000, 60000);
 }
 
 /*
  start the rpc adapter
  */
 void ZMQClient::stop() throw(CException) {
-   chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+    chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
 }
 
 /*

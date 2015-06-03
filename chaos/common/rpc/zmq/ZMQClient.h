@@ -44,11 +44,15 @@ namespace chaos {
         void *socket;
     };
     
+    typedef std::deque< SocketInfo* >                       SocketPoolQueue;
+    typedef std::deque< SocketInfo* > ::reverse_iterator    SocketPoolQueueReverseIterator;
+
+    
     class SocketEndpointPool {
         friend class ZMQClient;
         void *zmq_context;
         const std::string endpoint;
-        std::deque< SocketInfo* > pool;
+        SocketPoolQueue pool;
         boost::mutex mutex_pool;
         
         SocketEndpointPool(const std::string& _endpoint,

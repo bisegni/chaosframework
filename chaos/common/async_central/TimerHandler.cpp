@@ -18,14 +18,48 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/async_central/TimerHandler.h>
-#include <uv.h>
+
+#include <boost/bind.hpp>
+#include <boost/asio.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+using namespace chaos::common::utility;
 using namespace chaos::common::async_central;
 
-TimerHandler::TimerHandler() {
-	uv_t.data = reinterpret_cast<void*>(this);
+TimerHandler::TimerHandler():
+timer(NULL){}
+
+TimerHandler::~TimerHandler() {}
+
+void TimerHandler::timerTimeout(const boost::system::error_code& error) {
+    if (error ==  boost::asio::error::operation_aborted) {
+        return;
+    } else {
+        uint64_t start_ts = TimingUtil::getTimeStamp();
+        //call timer handler
+        timeout();
+        
+        uint64_t spent_time = TimingUtil::getTimeStamp()-start_ts;
+        
+        //wait for next call with the delat correct
+        wait(delay-spent_time);
+    }
 }
 
-TimerHandler::~TimerHandler() {
-	
+void TimerHandler::wait(uint64_t _delay) {
+    if(timer == NULL) return;
+    //repeat rate
+    timer->expires_from_now(boost::posix_time::milliseconds(_delay));
+    timer->async_wait(boost::bind(&TimerHandler::timerTimeout,
+                                  this,
+                                  boost::asio::placeholders::error));
+}
+
+void TimerHandler::removeTimer() {
+    if(timer == NULL) return;
+    timer->cancel();
+    delete(timer);
+    timer = NULL;
 }

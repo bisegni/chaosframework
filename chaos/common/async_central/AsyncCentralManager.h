@@ -26,18 +26,16 @@
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/Delegate.h>
 
-//#include <boost/thread.hpp>
-//#include <boost/scoped_ptr.hpp>
-#include <map>
-#include <uv.h>
+#include <boost/asio.hpp>
+#include <boost/thread.hpp>
+
+
 namespace chaos {
 	namespace common {
 		namespace async_central {
 			
 			//! forward declaration
 			class TimerHandler;
-
-			typedef uv_thread_t AcmThreadID;
 			
 			/*!
 			 Managment class fot the async central
@@ -46,11 +44,11 @@ namespace chaos {
 			public utility::Singleton<AsyncCentralManager>,
 			public utility::InizializableService {
 			  friend class utility::Singleton<AsyncCentralManager>;
-				uv_thread_t	thread_loop_id;
-				uv_loop_t *uv_l;
-				static bool looping;
-				
-				static void _internalEventLoop(void *args);
+				boost::asio::io_service         asio_service;
+                boost::asio::io_service::work   asio_default_work;
+                boost::thread_group             asio_thread_group;
+                
+                boost::mutex mutex;
 				
 				AsyncCentralManager();
 				~AsyncCentralManager();
@@ -62,13 +60,7 @@ namespace chaos {
 			public:
 				int addTimer(TimerHandler *timer_handler, uint64_t timeout, uint64_t repeat);
 				
-				int restartTimer(TimerHandler *timer_handler);
-				
 				void removeTimer(TimerHandler *timer_handler);
-				
-				int addThread(chaos::common::utility::delegate::Delegate *thread_delegate, AcmThreadID *thread_id);
-				
-				void joinThread(AcmThreadID *thread_id);
 			};
 		}
 	}

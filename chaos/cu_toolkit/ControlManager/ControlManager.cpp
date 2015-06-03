@@ -168,6 +168,7 @@ void ControlManager::init(void *initParameter) throw(CException) {
  */
 void ControlManager::start() throw(CException) {
     LCMAPP_  << "Start cu scan timer";
+    int err = 0;
     if(use_unit_server){
         //register unit server node
         HealtManager::getInstance()->addNewNode(unit_server_alias);
@@ -176,7 +177,9 @@ void ControlManager::start() throw(CException) {
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOADING,
                                                         true);
         //add unit server registration managment timer
-        chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC));
+        if((err = chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC)))){
+            throw chaos::CException(-1, "Error registering the Control managet timer", __PRETTY_FUNCTION__);
+        }
     } else {
         startControlUnitSMThread();
     }
