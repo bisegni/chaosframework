@@ -178,20 +178,21 @@ chaos::common::data::CDataWrapper *NodeRegister::controlUnitRegistration(chaos::
     try {
             //check if the node is rpresent
         if((err = cu_da->checkPresence(cu_uid, is_present))) {
-            LOG_AND_TROW(USRA_ERR, -4, "error checking the unit server presence")
-        }if(is_present) {
+            LOG_AND_TROW(USRA_ERR, -4, "error checking the control unit presence")
+        } if (is_present) {
             if((err = n_da->updateNode(*api_data))) {
                 LOG_AND_TROW(USRA_ERR, err, "Error updating default node field")
             }
 
             if((err = cu_da->setDataset(cu_uid,
                                         *api_data))){
-                LOG_AND_TROW(USRA_ERR, err, "error setting the dataset")
+                LOG_AND_TROW(USRA_ERR, err, "error setting the dataset of the control unit")
             }
                 //ok->registered
             ack_command->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                        ErrorCode::EC_MDS_NODE_REGISTRATION_OK);
         } else {
+            USRA_ERR << "The control unit "<< cu_uid <<" is not present so we can't register it";
                 //actiually only the control unit hosted by unit server can be registered
             ack_command->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                        ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);

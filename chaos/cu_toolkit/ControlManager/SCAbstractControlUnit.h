@@ -74,8 +74,11 @@ namespace chaos {
 				 */
 				CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
 			protected:
-				// Get all managem declare action instance
+				//! Get all managem declare action instance
 				void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
+                
+                //! called whr the infrastructure need to know how is composed the control unit
+                void _defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException);
 				
 				//! system dataset configuraiton overload
 				void initSystemAttributeOnSharedAttributeCache();
@@ -116,10 +119,17 @@ namespace chaos {
 				void addExecutionChannels(unsigned int execution_channels=1);
 				
 				template<typename T>
-				void installCommand(const char * commandName) {
+                void installCommand(const std::string& command_alias) {
 					CHAOS_ASSERT(slow_command_executor)
-					slow_command_executor->installCommand(std::string(commandName), SLOWCOMMAND_INSTANCER(T));
+					slow_command_executor->installCommand(command_alias, SLOWCOMMAND_INSTANCER(T));
 				}
+                
+                template<typename T>
+                void installCommand(boost::shared_ptr<BatchCommandDescription> command_description) {
+                    CHAOS_ASSERT(slow_command_executor)
+                    command_description->setInstancer(SLOWCOMMAND_INSTANCER(T));
+                    slow_command_executor->installCommand(command_description);
+                }
 			};
 		}
     }

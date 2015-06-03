@@ -67,10 +67,10 @@ namespace chaos {
                 //forward declaration
                 class SlowCommand;
                 
-                //! Macro for helping the allocation of the isntancer of the class implementing the slow command
-#define SLOWCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::NestedObjectInstancer<chaos::cu::control_manager::slow_command::SlowCommand, chaos_batch::BatchCommand>(\
-				new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::SlowCommand>())
-				
+#define SLOWCOMMAND_INSTANCER(SlowCommandClass)\
+new chaos::common::utility::NestedObjectInstancer<chaos::cu::control_manager::slow_command::SlowCommand, chaos::common::batch_command::BatchCommand>(\
+new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::SlowCommand>())
+                
                 //! Slow command execution sand box
                 /*!
                     This class is the environment where the exeecution of the slow command handlers take place.
@@ -145,6 +145,8 @@ namespace chaos {
 					//! Install a command associated with a type
                     void installCommand(const std::string& alias,
 										chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer);
+                    //! Install a command
+                    void installCommand(boost::shared_ptr<common::batch_command::BatchCommandDescription> command_description);
                 };
             }
         }

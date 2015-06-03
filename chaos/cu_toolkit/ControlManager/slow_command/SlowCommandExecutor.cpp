@@ -124,6 +124,11 @@ void SlowCommandExecutor::installCommand(const string& alias,
 	BatchCommandExecutor::installCommand(alias, instancer);
 }
 
+//! Install a command
+void SlowCommandExecutor::installCommand(boost::shared_ptr<BatchCommandDescription> command_description) {
+    //call superclss method
+    BatchCommandExecutor::installCommand(command_description);
+}
 
 //! Check if the waithing command can be installed
 BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& commandAlias) {

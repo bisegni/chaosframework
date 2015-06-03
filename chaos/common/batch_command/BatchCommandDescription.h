@@ -23,38 +23,39 @@
 
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/ObjectInstancer.h>
 
 #include <boost/shared_ptr.hpp>
 
 #include <map>
 
 //macro fro helping the creation of batch command description
-#define BATCH_COMMAND_DESCRIPTION(name)\
-BatchCommandDescription ## name
+#define BATCH_COMMAND_DESCRIPTION(n)\
+BatchCommandDescription ## n
 
-#define BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(name)\
-Get ## BatchCommandDescription ## name
+#define BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(n)\
+Get ## BatchCommandDescription ## n
 
-#define BATCH_COMMAND_DECLARE_DESCRIPTION(name)\
-boost::shared_ptr<chaos::common::data::CDataWrapper> BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(name)();
+#define BATCH_COMMAND_DECLARE_DESCRIPTION(n)\
+boost::shared_ptr<BatchCommandDescription> BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(n)();
 
-#define BATCH_COMMAND_OPEN_DESCRIPTION(name, description)\
-boost::shared_ptr<chaos::common::data::CDataWrapper> BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(name)(){\
-BatchCommandDescription BATCH_COMMAND_DESCRIPTION(name)(#name, description);
+#define BATCH_COMMAND_OPEN_DESCRIPTION(n, d)\
+boost::shared_ptr<BatchCommandDescription> BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(n)(){\
+boost::shared_ptr<BatchCommandDescription> result(new BatchCommandDescription(#n, d));
 
-#define BATCH_COMMAND_ADD_BOOL_PARAMTER(name, paramter, description)\
-BATCH_COMMAND_DESCRIPTION(name).addParameter(paramter, description, chaos::DataType::TYPE_BOOLEAN);
-#define BATCH_COMMAND_ADD_INT32_PARAMTER(name, paramter, description)\
-BATCH_COMMAND_DESCRIPTION(name).addParameter(paramter, description, chaos::DataType::TYPE_INT32);
-#define BATCH_COMMAND_ADD_INT64_PARAMTER(name, paramter, description)\
-BATCH_COMMAND_DESCRIPTION(name).addParameter(paramter, description, chaos::DataType::TYPE_INT64);
-#define BATCH_COMMAND_ADD_DOUBLE_PARAMTER(name, paramter, description)\
-BATCH_COMMAND_DESCRIPTION(name).addParameter(paramter, description, chaos::DataType::TYPE_DOUBLE);
-#define BATCH_COMMAND_ADD_STRING_PARAMTER(name, paramter, description)\
-BATCH_COMMAND_DESCRIPTION(name).addParameter(paramter, description, chaos::DataType::TYPE_STRING);
+#define BATCH_COMMAND_ADD_BOOL_PARAMTER(p, d)\
+result->addParameter(p, d, chaos::DataType::TYPE_BOOLEAN);
+#define BATCH_COMMAND_ADD_INT32_PARAMTER(p, d))\
+result->addParameter(, d, chaos::DataType::TYPE_INT32);
+#define BATCH_COMMAND_ADD_INT64_PARAMTER(p, d))\
+result->addParameter(, d, chaos::DataType::TYPE_INT64);
+#define BATCH_COMMAND_ADD_DOUBLE_PARAMTER(p, d))\
+result->addParameter(, d, chaos::DataType::TYPE_DOUBLE);
+#define BATCH_COMMAND_ADD_STRING_PARAMTER(p, d))\
+result->addParameter(, d, chaos::DataType::TYPE_STRING);
 
-#define BATCH_COMMAND_CLOSE_DESCRIPTION(name)\
-return BATCH_COMMAND_DESCRIPTION(name).getDescription();\
+#define BATCH_COMMAND_CLOSE_DESCRIPTION()\
+return result;\
 }
 
 //macro that will return the shared pointer to cdatawrapper that contains the description
@@ -64,6 +65,10 @@ BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(name)()
 namespace chaos {
     namespace common {
         namespace batch_command {
+            
+            //!forward declaration
+            class BatchCommandExecutor;
+            class BatchCommand;
             
             typedef std::map<std::string,
             boost::shared_ptr<chaos::common::data::CDataWrapper> > MapParamter;
@@ -75,27 +80,49 @@ namespace chaos {
             
             //! provide a set of method that permit to declare a batch command
             class BatchCommandDescription {
-                const std::string alias;
-                const std::string description;
+                friend class BatchCommandExecutor;
+                std::string alias;
+                std::string description;
 
                 MapParamter map_parameter;
-                static std::map<std::string, BatchCommandDescription* > global_description_instances;
+                
+                chaos::common::utility::ObjectInstancer<BatchCommand> *instancer;
             public:
+                //! default constructor
+                BatchCommandDescription();
                 //! default constructor with the alias of the command
-                BatchCommandDescription(const std::string& batch_command_alias,
-                                        const std::string& batch_command_description);
+                BatchCommandDescription(const std::string& _command_alias,
+                                        const std::string& _command_description);
+                
+                //! default constructor with the alias of the command
+                BatchCommandDescription(const std::string& _command_alias,
+                                        const std::string& _command_description,
+                                        chaos::common::utility::ObjectInstancer<BatchCommand> *_instancer);
+                
+                //!copy constructor
+                BatchCommandDescription(const std::string& _command_alias,
+                                        const std::string& _command_description,
+                                        const MapParamter& _map_paramter);
+                
                 ~BatchCommandDescription();
                 
+                void setAlias(const std::string& _alias);
                 //! return the alias of the command
                 const std::string& getAlias();
                 
+                void setDescription(const std::string& _description);
+                //! return the alias of the command
+                const std::string& getDescription();
+                
+                void setInstancer(chaos::common::utility::ObjectInstancer<BatchCommand> *_instancer);
+                                        
                 //! add a parameter to the command
                 void addParameter(const std::string& parameter_name,
                                   const std::string& parameter_description,
                                   chaos::DataType::DataType type);
                 
                 boost::shared_ptr<chaos::common::data::CDataWrapper>
-                getDescription();
+                getFullDescription();
             };
             
             

@@ -22,16 +22,40 @@
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
 
-std::map<std::string, BatchCommandDescription* > BatchCommandDescription::global_description_instances;
 
-BatchCommandDescription::BatchCommandDescription(const std::string& batch_command_alias,
-                                                 const std::string& batch_command_description):
-alias(batch_command_alias),
-description(batch_command_description){
-    global_description_instances.insert(make_pair(batch_command_alias, this));
+BatchCommandDescription::BatchCommandDescription(const std::string& _command_alias,
+                                                 const std::string& _command_description):
+alias(_command_alias),
+description(_command_description),
+instancer(NULL) {}
+
+BatchCommandDescription::BatchCommandDescription(const std::string& _command_alias,
+                                                 const std::string& _command_description,
+                                                 chaos::common::utility::ObjectInstancer<BatchCommand> *_instancer):
+alias(_command_alias),
+description(_command_description),
+instancer(_instancer) {}
+
+
+BatchCommandDescription::BatchCommandDescription(const std::string& _command_alias,
+                                                 const std::string& _command_description,
+                                                 const MapParamter& _map_paramter):
+alias(_command_alias),
+description(_command_description),
+map_parameter(_map_paramter),
+instancer(NULL) {}
+
+BatchCommandDescription::~BatchCommandDescription(){
+    if(instancer) delete(instancer);
+    instancer = NULL;
 }
 
-BatchCommandDescription::~BatchCommandDescription(){}
+void BatchCommandDescription::setInstancer(chaos::common::utility::ObjectInstancer<BatchCommand> *_instancer) {
+    if(instancer){
+        delete (instancer);
+    }
+    instancer = _instancer;
+}
 
 void BatchCommandDescription::addParameter(const std::string& parameter_name,
                                            const std::string& parameter_description,
@@ -48,7 +72,7 @@ void BatchCommandDescription::addParameter(const std::string& parameter_name,
 }
 
 boost::shared_ptr<chaos::common::data::CDataWrapper>
-BatchCommandDescription::getDescription() {
+BatchCommandDescription::getFullDescription() {
     boost::shared_ptr<chaos::common::data::CDataWrapper> description_obj(new CDataWrapper());
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, alias);
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION, description);
@@ -63,7 +87,20 @@ BatchCommandDescription::getDescription() {
     return description_obj;
 }
 
+void BatchCommandDescription::setAlias(const std::string& _alias) {
+    alias = _alias;
+}
+
 //! return the alias of the command
 const std::string& BatchCommandDescription::getAlias() {
     return alias;
+}
+
+void BatchCommandDescription::setDescription(const std::string& _description) {
+    description = _description;
+}
+
+//! return the alias of the command
+const std::string& BatchCommandDescription::getDescription() {
+    return description;
 }

@@ -25,6 +25,7 @@
 #include <map>
 #include <deque>
 #include <memory>
+#include <vector>
 #include <stdint.h>
 
 
@@ -39,6 +40,7 @@
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 #include <chaos/common/batch_command/BatchCommandSandbox.h>
 #include <chaos/common/batch_command/BatchCommandSandboxEventHandler.h>
+#include <chaos/common/batch_command/BatchCommandDescription.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 
 //#include <boost/container/deque.hpp>
@@ -61,7 +63,8 @@ namespace chaos {
             //! Macro for helping the allocation of the isntancer of the class implementing the slow command
 //#define BATCHCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::BatchCommand>()
             
-            
+            typedef std::map<string,  boost::shared_ptr<BatchCommandDescription> >              MapCommandDescription;
+            typedef std::map<string,  boost::shared_ptr<BatchCommandDescription> >::iterator    MapCommandDescriptionIterator;
             //! Slow command execution sand box
             /*!
              This class is the environment where the exeecution of the slow command handlers take place.
@@ -105,7 +108,7 @@ namespace chaos {
                 std::map<uint64_t, boost::shared_ptr<CommandState> >	command_state_fast_access_map;
                 
                 //! this map correlate the alias to the object instancer
-                std::map<string, chaos::common::utility::ObjectInstancer<BatchCommand>* > mapCommandInstancer;
+                MapCommandDescription map_command_description;
                 
                 
                 //!Allocate a new slow command sandbox
@@ -216,8 +219,18 @@ namespace chaos {
                  */
                 void setDefaultCommand(const string& alias, unsigned int sandbox_instance = 1);
 				
+                /*!
+                 \ingroup API_Slow_Control
+                 */
 				const std::string & getDefaultCommand();
 				
+                //! return all the command description
+                /*!
+                 \ingroup API_Slow_Control
+                 Fill the vector with all command description
+                 */
+                void getCommandsDescriptions(std::vector< boost::shared_ptr<BatchCommandDescription> >& descriptions);
+                
                 //! Install a command associated with a type
                 /*!
                  Install the isntancer for a determinated SlowCommand, for an easly way to do this can be used
@@ -229,6 +242,9 @@ namespace chaos {
                  */
                 void installCommand(const string& alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer);
 				
+                //! Install a command by his description
+                void installCommand(boost::shared_ptr<BatchCommandDescription> command_description);
+                
 				//!return all the aliases of the installe batch command
 				/*!
 				 \param commands_alias will be filled with the alias of the

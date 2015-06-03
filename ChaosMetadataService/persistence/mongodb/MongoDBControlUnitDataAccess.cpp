@@ -146,7 +146,6 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                     }
                 }
                 
-                
                 if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE)) {
                     dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE
                     << dataset_element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE);
@@ -175,7 +174,45 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         updated_field.appendArray(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION,
                                   dataset_bson_array.arr());
         
-        
+        //check if we have bactch command in the dataset
+        if(dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION)) {
+            std::auto_ptr<CMultiTypeDataArrayWrapper> bc_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
+            mongo::BSONArrayBuilder batch_command_bson_array;
+            for(int idx = 0;
+                idx < bc_vec->size();
+                idx++) {
+                mongo::BSONObjBuilder batch_command_builder;
+                
+                auto_ptr<CDataWrapper> bc_element(bc_vec->getCDataWrapperElementAtIndex(idx));
+                MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS)
+                MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION)
+                
+                //check for parameter
+                if(bc_element->hasKey(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS)){
+                    mongo::BSONArrayBuilder batch_command_parameter_bson_array;
+                    std::auto_ptr<CMultiTypeDataArrayWrapper> bc_param_vec(dataset_description.getVectorValue(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
+                    for(int idx_param = 0;
+                        idx_param < ds_vec->size();
+                        idx_param++) {
+                        mongo::BSONObjBuilder batch_command_parameter_builder;
+                        auto_ptr<CDataWrapper> bc_param_element(ds_vec->getCDataWrapperElementAtIndex(idx_param));
+                        MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME)
+                        MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION)
+                        MDB_COPY_I32_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE)
+                        batch_command_parameter_bson_array << batch_command_parameter_builder.obj();
+                    }
+                    //add dataset array to update bson
+                    batch_command_builder.appendArray(common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETERS,
+                                                      batch_command_parameter_bson_array.arr());
+                }
+                //add the batch command description to the command array
+                batch_command_bson_array << batch_command_builder.obj();
+            }
+            
+            //add batch command to the dataset
+            updated_field.appendArray(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION,
+                                      batch_command_bson_array.arr());
+        }
         
         mongo::BSONObj query = bson_find.obj();
         mongo::BSONObj update = BSON("$set" << BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << updated_field.obj()));

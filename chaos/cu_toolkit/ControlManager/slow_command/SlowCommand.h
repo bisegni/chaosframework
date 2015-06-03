@@ -51,7 +51,7 @@ namespace chaos{
             
             //! The name space that group all foundamental class need by slow control !CHAOS implementation
             namespace slow_command {
-				
+                
 				namespace command {
 					class SetAttributeCommand;
 				}
@@ -59,7 +59,13 @@ namespace chaos{
                 //forward declaration
                 class SlowCommandExecutor;
 
-				
+                //! Macro for helping the allocation of the isntancer of the class implementing the slow command
+               
+#define BATCH_COMMAND_OPEN_DESCRIPTION_WITH_SLOWCOMMAND_INSTANCER(n, d)\
+BATCH_COMMAND_OPEN_DESCRIPTION(n,d)\
+result->setInstancer(new chaos::common::utility::NestedObjectInstancer<chaos::cu::control_manager::slow_command::SlowCommand, chaos::common::batch_command::BatchCommand>(\
+new chaos::common::utility::TypedObjectInstancer<n, chaos::cu::control_manager::slow_command::SlowCommand>()));
+                
                 //! Base cass for the slow command implementation
                 /*!
                  The slow command implementation in !CHAOS permit the definition of the three foundamental phase in "control" as seen by !CHAOS logic:

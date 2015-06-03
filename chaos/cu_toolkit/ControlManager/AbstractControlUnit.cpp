@@ -151,7 +151,7 @@ void AbstractControlUnit::setKeyDataStorage(KeyDataStorage* _key_data_storage) {
  is called after getStartConfiguration directly by sandbox. in this method
  are defined the action for the input element of the dataset
  */
-void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfiguration)  throw(CException) {
+void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
     vector<std::string> tempStringVector;
     
     if(control_unit_id.size()) {
@@ -160,17 +160,17 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     
     //add the CU isntance, this can be redefinide by user in the unitDefineActionAndDataset method
     //for let the CU have the same instance at every run
-    setupConfiguration.addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, control_unit_instance);
+    setup_configuration.addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, control_unit_instance);
     
     //undocumented field
-    setupConfiguration.addStringValue("mds_control_key", control_key);
+    setup_configuration.addStringValue("mds_control_key", control_key);
     
     //add the control unit type with semantonc type::subtype
-    setupConfiguration.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
+    setup_configuration.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
     
     //check if as been setuped a file for configuration
     //LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
-    //loadCDataWrapperForJsonFile(setupConfiguration);
+    //loadCDataWrapperForJsonFile(setup_configuration);
     
     //first call the setup abstract method used by the implementing CU to define action, dataset and other
     //usefull value
@@ -223,10 +223,10 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
                                                      "Get the information about running control unit");
     
     //grab dataset description
-    DatasetDB::fillDataWrapperWithDataSetDescription(setupConfiguration);
+    DatasetDB::fillDataWrapperWithDataSetDescription(setup_configuration);
     
     //get action description
-    getActionDescrionsInDataWrapper(setupConfiguration);
+    getActionDescrionsInDataWrapper(setup_configuration);
 }
 
 void AbstractControlUnit::unitDefineDriver(std::vector<DrvRequestInfo>& neededDriver) {

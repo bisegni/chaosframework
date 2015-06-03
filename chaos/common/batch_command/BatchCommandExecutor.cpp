@@ -138,15 +138,15 @@ BatchCommandExecutor::~BatchCommandExecutor() {
     // and the CU is not redefined unti it is reloaded but startup
     // a and so new executor will be used
     BCELAPP_ << "Removing all the instacer of the command";
-    for(std::map<string, chaos::common::utility::ObjectInstancer<BatchCommand>* >::iterator it = mapCommandInstancer.begin();
-        it != mapCommandInstancer.end();
+    for(MapCommandDescriptionIterator it = map_command_description.begin();
+        it != map_command_description.end();
         it++) {
         BCELAPP_ << "Dispose instancer " << it->first;
-        if(it->second) delete(it->second);
+       // if(it->second) delete(it->second);
     }
 	
 	//clear the instancer command map
-    mapCommandInstancer.clear();
+    map_command_description.clear();
 	
 	//clear the queue of the command state
 	command_state_queue.clear();
@@ -416,15 +416,36 @@ const std::string& BatchCommandExecutor::getDefaultCommand() {
 	return default_command_alias;
 }
 
+//! return all the command description
+void BatchCommandExecutor::getCommandsDescriptions(std::vector< boost::shared_ptr<BatchCommandDescription> >& descriptions) {
+    for(MapCommandDescriptionIterator it = map_command_description.begin();
+        it != map_command_description.end();
+        it++) {
+        //add shared ptr with the vector
+        descriptions.push_back(it->second);
+    }
+}
+
 //! Install a command associated with a type
 void BatchCommandExecutor::installCommand(const string& alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer) {
     BCELAPP_ << "Install new command with alias -> " << alias;
-    mapCommandInstancer.insert(make_pair<string, chaos::common::utility::ObjectInstancer<BatchCommand>* >(alias, instancer));
+    boost::shared_ptr<BatchCommandDescription> description(new BatchCommandDescription(alias,
+                                                                                       "OLD unsupportd command style",
+                                                                                       instancer));
+    map_command_description.insert(make_pair<string,
+                                   boost::shared_ptr<BatchCommandDescription> >(alias, description));
+}
+
+//! Install a command by his description
+void BatchCommandExecutor::installCommand(boost::shared_ptr<BatchCommandDescription> command_description) {
+    BCELAPP_ << "Install new command with alias -> " << command_description->getAlias();
+    map_command_description.insert(make_pair<string,
+                                   boost::shared_ptr<BatchCommandDescription> >(command_description->getAlias(), command_description));
 }
 
 void BatchCommandExecutor::getAllCommandAlias(std::vector<std::string>& commands_alias) {
-	for(std::map<string, chaos::common::utility::ObjectInstancer<BatchCommand>* >::iterator it = mapCommandInstancer.begin();
-		it != mapCommandInstancer.end();
+	for(MapCommandDescriptionIterator it = map_command_description.begin();
+		it != map_command_description.end();
 		it++) {
 		commands_alias.push_back(it->first);
 	}
@@ -437,7 +458,7 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(CDataWrapper *submission
     BatchCommand *instance = instanceCommandInfo(command_alias);
     if(instance) {
 		//set the alias for this command
-		instance->setCommandAlias(command_alias);
+		//instance->setCommandAlias(command_alias);
 		
         if(submissionInfo->hasKey(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32)) {
             instance->submissionRule = submissionInfo->getInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32);
@@ -468,8 +489,10 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(CDataWrapper *submission
 //! Check if the waithing command can be installed
 BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& commandAlias) {
     BatchCommand *result = NULL;
-    if(mapCommandInstancer.count(commandAlias)) {
-        result = mapCommandInstancer[commandAlias]->getInstance();
+    if(map_command_description.count(commandAlias)) {
+        boost::shared_ptr<BatchCommandDescription> description = map_command_description[commandAlias];
+        result = description->instancer->getInstance();
+        result->setCommandAlias(description->getAlias());
 		//forward the pointer of the driver accessor
 		//result->driverAccessorsErogator = driverAccessorsErogator;
         if(result) {

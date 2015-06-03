@@ -33,6 +33,17 @@
  */
 #define MONGODB_REGEX_ON_FILED(field_name, regex) BSON(field_name << BSON("$regex" << regex))
 
+//copy chaos data wrapper key into the bson obj builder
+#define MDB_COPY_STRING_CDWKEY_TO_BUILDER(b, o, k)\
+if(o->hasKey(k)) {\
+b << k << o->getStringValue(k);\
+}
+
+#define MDB_COPY_I32_CDWKEY_TO_BUILDER(b, o, k)\
+if(o->hasKey(k)) {\
+b << k << o->getInt32Value(k);\
+}
+
 namespace chaos {
     namespace service_common {
         namespace persistence {

@@ -90,6 +90,26 @@ void  SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const Declare
     declareActionInstance.push_back(slow_command_executor);
 }
 
+//! called whr the infrastructure need to know how is composed the control unit
+void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
+    //call superclass method
+    AbstractControlUnit::_defineActionAndDataset(setup_configuration);
+    //add the batch command description to the configuration
+    
+    std::vector< boost::shared_ptr<BatchCommandDescription> > batch_command_description;
+    slow_command_executor->getCommandsDescriptions(batch_command_description);
+    if(batch_command_description.size()){
+        //fill setup with command descirption serialization
+        for(std::vector< boost::shared_ptr<BatchCommandDescription> > ::iterator it = batch_command_description.begin();
+            it != batch_command_description.end();
+            it++) {
+            boost::shared_ptr<CDataWrapper> full_description((*it)->getFullDescription());
+            setup_configuration.appendCDataWrapperToArray(*full_description);
+        }
+        setup_configuration.finalizeArrayForKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION);
+    }
+}
+
 /*
  Initialize the Custom Contro Unit and return the configuration
  */

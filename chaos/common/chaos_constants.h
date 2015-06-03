@@ -141,6 +141,12 @@ namespace chaos {
          */
         static const char * const NODE_TYPE             = "ndk_type";
         
+        //! define the node type[string]
+        /*!
+         The subtype related to the type
+         */
+        static const char * const NODE_SUB_TYPE         = "ndk_sub_type";
+        
         //! identify the node rpc address[string:string]
         /*!
          Permit to assciate to the node the address of the rpc interface
@@ -467,13 +473,16 @@ namespace chaos {
         //!key representing the standard mime type string, that describe the data
         //!within the binary field, associated to the MIME subtype
         static const char * const CONTROL_UNIT_DATASET_BINARY_MIME_ENCODING         = "cudk_ds_bin_encoding";
+        
+        //!The key represent an array with the object taht represent, each one, the command description array[object...]
+        static const char * const CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION         = "cudk_ds_command_description";
     }
     /** @} */ // end of ControlUnitNodeDefinitionKey
     
     namespace ControlUnitNodeDomainAndActionRPC {
-        //!Alias associated to thefunction taht apply the value changes set to the input dataset attribute
+        //!Alias associated to thefunction that apply the value changes set to the input dataset attribute
         static const char * const CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET  = "cunrpc_ida_cs";
-
+        
     }
     
     /** @defgroup CUType Control Unit Default Type
@@ -510,7 +519,7 @@ namespace chaos {
             TYPE_CLUSTER,
             //!modifier to be ored to normal data types
             TYPE_ACCESS_ARRAY=0x100
-
+            
         } DataType;
         
         typedef enum BinarySubtype {

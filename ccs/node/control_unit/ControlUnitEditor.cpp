@@ -75,17 +75,18 @@ void ControlUnitEditor::initUI() {
     //compose logic on switch
     //for load button
     logic_switch_aggregator.addNewLogicSwitch("cu_can_operate");
-    logic_switch_aggregator.addKeyRefValue("cu_can_operate", "us_alive","true");
+    logic_switch_aggregator.addKeyRefValue("cu_can_operate", "us_alive","online");
     logic_switch_aggregator.addKeyRefValue("cu_can_operate", "us_state","Load");
 
     logic_switch_aggregator.addNewLogicSwitch("load");
     logic_switch_aggregator.connectSwitch("load", "cu_can_operate");
-    logic_switch_aggregator.addKeyRefValue("load", "cu_alive","false");
+    logic_switch_aggregator.addKeyRefValue("load", "cu_alive","offline");
+    logic_switch_aggregator.addKeyRefValue("load", "cu_alive","not_found");
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("load", ui->pushButtonLoadAction, "enabled", true, false);
 
     logic_switch_aggregator.addNewLogicSwitch("unload");
     logic_switch_aggregator.connectSwitch("unload", "cu_can_operate");
-    logic_switch_aggregator.addKeyRefValue("unload", "cu_alive","true");
+    logic_switch_aggregator.addKeyRefValue("unload", "cu_alive","online");
     logic_switch_aggregator.addKeyRefValue("unload", "cu_state","Load");
     logic_switch_aggregator.addKeyRefValue("unload", "cu_state","Deinit");
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("unload", ui->pushButtonUnload, "enabled", true, false);
@@ -93,7 +94,7 @@ void ControlUnitEditor::initUI() {
 
     logic_switch_aggregator.addNewLogicSwitch("start");
     logic_switch_aggregator.connectSwitch("start", "cu_can_operate");
-    logic_switch_aggregator.addKeyRefValue("start", "cu_alive","true");
+    logic_switch_aggregator.addKeyRefValue("start", "cu_alive","online");
     logic_switch_aggregator.addKeyRefValue("start", "cu_state","Init");
     logic_switch_aggregator.addKeyRefValue("start", "cu_state","Stop");
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonStartAction, "enabled", true, false);
@@ -101,9 +102,13 @@ void ControlUnitEditor::initUI() {
 
     logic_switch_aggregator.addNewLogicSwitch("stop");
     logic_switch_aggregator.connectSwitch("stop", "cu_can_operate");
-    logic_switch_aggregator.addKeyRefValue("stop", "cu_alive","true");
+    logic_switch_aggregator.addKeyRefValue("stop", "cu_alive","online");
     logic_switch_aggregator.addKeyRefValue("stop", "cu_state","Start");
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("stop", ui->pushButtonStopAction, "enabled", true, false);
+
+    //set the status on not_found for either the control unit and unit serve
+    logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(0));
+    logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(0));
 
     //set control unit uid label
     ui->labelUniqueIdentifier->setText(control_unit_unique_id);
@@ -124,6 +129,20 @@ void ControlUnitEditor::updateAllControlunitInfomration() {
 
 bool ControlUnitEditor::canClose() {
     return true;
+}
+
+QString ControlUnitEditor::getStatusString(int status) {
+    switch(status) {
+    case 0:
+        return QString("not_found");
+        break;
+    case 1:
+         return QString("offline");
+        break;
+    case 2:
+         return QString("online");
+        break;
+    }
 }
 
 void ControlUnitEditor::onApiDone(const QString& tag,
@@ -171,13 +190,13 @@ void ControlUnitEditor::fillInfo(const QSharedPointer<chaos::common::data::CData
     if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
         ui->labelRemoteAddress->setText(QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR)));
     } else {
-        ui->labelRemoteAddress->setText(tr("---------"));
+        ui->labelRemoteAddress->setText(tr(""));
     }
 
     if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)) {
         ui->labelRpcDomain->setText(QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)));
     } else {
-        ui->labelRpcDomain->setText(tr("---------"));
+        ui->labelRpcDomain->setText(tr(""));
     }
 }
 
@@ -188,7 +207,7 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
         if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
             //print the status
             if(attribute_value.isNull()) {
-                ui->labelControlUnitStatus->setText(tr("-------"));
+                ui->labelControlUnitStatus->setText(tr(""));
             }else{
                 ui->labelControlUnitStatus->setText(attribute_value.toString());
             }
@@ -208,14 +227,14 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
             //print the timestamp and update the red/green indicator
             ui->ledIndicatorHealtTSControlUnit->setNewTS(attribute_value.toULongLong());
             //broadcast cu status to switch
-            logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", ((ui->ledIndicatorHealtTSControlUnit->getState()==2)?"true":"false"));
+            logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(ui->ledIndicatorHealtTSControlUnit->getState()));
         }
     } else  if(key.startsWith(unit_server_parent_unique_id)) {
         //show healt for unit server
         if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
             //print the status
             if(attribute_value.isNull()) {
-                ui->labelUnitServerStatus->setText(tr("-------"));
+                ui->labelUnitServerStatus->setText(tr(""));
             }else{
                 ui->labelUnitServerStatus->setText(attribute_value.toString());
             }
@@ -223,7 +242,7 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
         } else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0){
             //print the timestamp and update the red/green indicator
             ui->ledIndicatorHealtTSUnitServer->setNewTS(attribute_value.toULongLong());
-            logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", (ui->ledIndicatorHealtTSUnitServer->getState()==2)?"true":"false");
+            logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(ui->ledIndicatorHealtTSUnitServer->getState()));
         }
     }
 }

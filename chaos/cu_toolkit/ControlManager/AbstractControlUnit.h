@@ -218,7 +218,7 @@ namespace chaos{
 				/*!
 				 This method configure the CDataWrapper whit all th einromation for describe the implemented device
 				 */
-				virtual void _defineActionAndDataset(CDataWrapper&) throw(CException);
+				virtual void _defineActionAndDataset(CDataWrapper &setup_configuration) throw(CException);
 				
 				//! Get all managed declare action instance
 				/*!
