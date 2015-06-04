@@ -124,10 +124,8 @@ namespace chaos {
 					slow_command_executor->installCommand(command_alias, SLOWCOMMAND_INSTANCER(T));
 				}
                 
-                template<typename T>
                 void installCommand(boost::shared_ptr<BatchCommandDescription> command_description) {
                     CHAOS_ASSERT(slow_command_executor)
-                    command_description->setInstancer(SLOWCOMMAND_INSTANCER(T));
                     slow_command_executor->installCommand(command_description);
                 }
 			};
