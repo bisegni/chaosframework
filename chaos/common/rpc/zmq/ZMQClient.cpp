@@ -126,7 +126,7 @@ void SocketEndpointPool::mantainance() {
     int max_to_check = pool.size()>3?3:(int)pool.size();
     DEBUG_CODE(ZMQC_LDBG << "Enter pool mantainance loop for endpoint "<< endpoint ;)
     //check if last element is in timeout
-
+    
     while((max_to_check--)> 0) {
         SocketInfo *checked_socket = pool.back();
         uint64_t time_diff = (chaos::common::utility::TimingUtil::getTimeStamp() - checked_socket->last_push_ts);
@@ -142,6 +142,10 @@ void SocketEndpointPool::mantainance() {
     }
 }
 
+int SocketEndpointPool::getSize() {
+    boost::unique_lock<boost::mutex> l(mutex_pool);
+    return (int)pool.size();
+}
 //-------------------------------------------------------
 DEFINE_CLASS_FACTORY(ZMQClient, RpcClient);
 
@@ -263,12 +267,15 @@ void ZMQClient::releaseSocket(SocketInfo *socket_info_to_release) {
 
 void ZMQClient::timeout() {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-    for (SocketMapIterator it = map_socket.begin();
-         it != map_socket.end();
-         it++){
-        lock_socket_map.unlock();
+    SocketMapIterator it = map_socket.begin();
+    while(it != map_socket.end()){
         it->second->mantainance();
-        lock_socket_map.lock();
+        if( it->second->getSize() == 0 ) {
+            ZMQC_LAPP << "Delete socket pool for:" << it->first;
+            map_socket.erase( it++ ); // advance before iterator become invalid
+        } else {
+            ++it;
+        }
     }
 }
 

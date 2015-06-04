@@ -60,6 +60,7 @@ namespace chaos {
     public:
         ~SocketEndpointPool();
         SocketInfo *getSocket();
+        int getSize();
         void releaseSocket(SocketInfo *socket_info);
         void mantainance();
     };
