@@ -280,7 +280,8 @@ int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
         mongo::BSONObj query = BSON(NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
                                     << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT
                                     << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION  << BSON("$exists" << true ));
-        mongo::BSONObj prj = BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION  << 1);
+        mongo::BSONObj prj = BSON(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION  << 1 <<
+                                  ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION << 1);
         
         
         DEBUG_CODE(MDBCUDA_DBG<<log_message("getDataset",

@@ -1,11 +1,13 @@
 #ifndef CONTROLUNITEDITOR_H
 #define CONTROLUNITEDITOR_H
 
-#include "../../presenter/PresenterWidget.h"
-#include "../../monitor/healt/handler/handler.h"
 #include "../data/FixedOutputChannelDatasetTableModel.h"
 #include "../data/FixedInputChannelDatasetTableModel.h"
+#include "../data/CommandItemDelegate.h"
+#include "../data/CommandListModel.h"
 
+#include "../../presenter/PresenterWidget.h"
+#include "../../monitor/healt/handler/handler.h"
 #include "../../logic/property_switch/SwitchAggregator.h"
 
 #include <QWidget>
@@ -69,6 +71,7 @@ private:
     SwitchAggregator        logic_switch_aggregator;
     HealthHartbeatHandler   hb_handler;
     HealtStatusHandler      status_handler;
+    CommandListModel                     command_list_model;
     FixedOutputChannelDatasetTableModel dataset_output_table_model;
     FixedInputChannelDatasetTableModel dataset_input_table_model;
     Ui::ControlUnitEditor *ui;

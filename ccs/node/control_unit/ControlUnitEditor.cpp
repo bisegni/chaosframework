@@ -113,7 +113,9 @@ void ControlUnitEditor::initUI() {
     //set control unit uid label
     ui->labelUniqueIdentifier->setText(control_unit_unique_id);
 
-
+    //set command
+    ui->listViewCommandList->setModel(&command_list_model);
+   // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
     //launch api for control unit information
     updateAllControlunitInfomration();
 }
@@ -255,6 +257,7 @@ void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
 void ControlUnitEditor::fillDataset(const QSharedPointer<chaos::common::data::CDataWrapper>& dataset) {
     dataset_output_table_model.updateData(dataset);
     dataset_input_table_model.updateData(dataset);
+    command_list_model.updateData(dataset);
 }
 
 void ControlUnitEditor::on_pushButtonLoadAction_clicked() {

@@ -18,6 +18,8 @@ Q_DECLARE_METATYPE (std::string)
 Q_DECLARE_METATYPE(int32_t)
 Q_DECLARE_METATYPE(int64_t)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::SerializationBuffer>)
+Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>)
+Q_DECLARE_METATYPE(boost::shared_ptr<chaos::CException>)
 
 MainController::MainController() {
 }
@@ -36,6 +38,8 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qRegisterMetaType<int64_t>("int64_t");
     qRegisterMetaType<boost::shared_ptr<chaos::common::data::SerializationBuffer> >();
     qRegisterMetaType<boost::shared_ptr<chaos::common::data::SerializationBuffer> >("boost::shared_ptr<chaos::common::data::SerializationBuffer>&");
+    qRegisterMetaType<boost::shared_ptr<chaos::common::data::CDataWrapper> >("boost::shared_ptr<chaos::common::data::CDataWrapper>");
+    qRegisterMetaType<boost::shared_ptr<chaos::CException> >("chaos::CException");
 
     //set the dark fusion style
     a.setStyle(QStyleFactory::create("Fusion"));

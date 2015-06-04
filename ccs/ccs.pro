@@ -59,7 +59,10 @@ SOURCES += main.cpp\
     widget/LedIndicatorAliveTSWidget.cpp \
     logic/property_switch/MultiPropertyLogicSwitch.cpp \
     logic/property_switch/SwitchAggregator.cpp \
-    node/data/ChaosAbstractDataSetTableModel.cpp
+    node/data/ChaosAbstractDataSetTableModel.cpp \
+    node/data/ChaosAbstractListModel.cpp \
+    node/data/CommandItemDelegate.cpp \
+    node/data/CommandListModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -100,7 +103,10 @@ HEADERS  += \
     monitor/healt/handler/MonitorInt64AttributeHandler.h \
     monitor/healt/handler/MonitorDoubleAttributeHandler.h \
     monitor/healt/handler/MonitorStringAttributeHandler.h \
-    monitor/healt/handler/MonitorBinaryAttributeHandler.h
+    monitor/healt/handler/MonitorBinaryAttributeHandler.h \
+    node/data/ChaosAbstractListModel.h \
+    node/data/CommandItemDelegate.h \
+    node/data/CommandListModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -115,7 +121,7 @@ FORMS    += \
     MainWindow.ui \
     monitor/healt/HealtPresenterWidget.ui \
     monitor/healt/HealtWidgetsListPresenteWidget.ui \
-    node/control_unit/controluniteditor.ui
+    node/control_unit/ControlUnitEditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet
