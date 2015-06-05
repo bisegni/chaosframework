@@ -65,6 +65,9 @@
          <pointsize>11</pointsize>
         </font>
        </property>
+       <property name="statusTip">
+        <string>The unique identifier of the control unit</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -136,6 +139,9 @@
            <pointsize>11</pointsize>
           </font>
          </property>
+         <property name="statusTip">
+          <string>The last state relevated of the unit server</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -167,6 +173,9 @@
            <height>16</height>
           </size>
          </property>
+         <property name="statusTip">
+          <string>The alive status of the control unit</string>
+         </property>
         </widget>
        </item>
        <item row="0" column="2">
@@ -175,6 +184,9 @@
           <font>
            <pointsize>11</pointsize>
           </font>
+         </property>
+         <property name="statusTip">
+          <string>The last internal state relevated of the control unit</string>
          </property>
          <property name="text">
           <string/>
@@ -194,6 +206,9 @@
            <width>16</width>
            <height>16</height>
           </size>
+         </property>
+         <property name="statusTip">
+          <string>The healt status of the unit server that host the control unit</string>
          </property>
         </widget>
        </item>
@@ -223,6 +238,9 @@
            <pointsize>11</pointsize>
           </font>
          </property>
+         <property name="statusTip">
+          <string>The rpc address of the control unit</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -247,6 +265,9 @@
            <pointsize>11</pointsize>
           </font>
          </property>
+         <property name="statusTip">
+          <string>The rpc doman where the control unit expose his rpc action</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -264,7 +285,7 @@
       </font>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="iconSize">
       <size>
@@ -319,6 +340,9 @@
              <pointsize>11</pointsize>
             </font>
            </property>
+           <property name="statusTip">
+            <string>The output dataset attribute information</string>
+           </property>
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
@@ -362,6 +386,9 @@
              <pointsize>11</pointsize>
             </font>
            </property>
+           <property name="statusTip">
+            <string>The input dataset attribute information</string>
+           </property>
            <property name="editTriggers">
             <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
            </property>
@@ -401,6 +428,9 @@
                <pointsize>11</pointsize>
               </font>
              </property>
+             <property name="statusTip">
+              <string>Reset the changes done on the input attribute value</string>
+             </property>
              <property name="text">
               <string>Reset Change Set</string>
              </property>
@@ -412,6 +442,9 @@
               <font>
                <pointsize>11</pointsize>
               </font>
+             </property>
+             <property name="statusTip">
+              <string>Apply the change made on input attribute value</string>
              </property>
              <property name="text">
               <string>Commit Change Set</string>

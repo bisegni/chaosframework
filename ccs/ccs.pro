@@ -62,7 +62,8 @@ SOURCES += main.cpp\
     node/data/ChaosAbstractDataSetTableModel.cpp \
     node/data/ChaosAbstractListModel.cpp \
     node/data/CommandItemDelegate.cpp \
-    node/data/CommandListModel.cpp
+    node/data/CommandListModel.cpp \
+    node/data/CommandDescription.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -106,7 +107,8 @@ HEADERS  += \
     monitor/healt/handler/MonitorBinaryAttributeHandler.h \
     node/data/ChaosAbstractListModel.h \
     node/data/CommandItemDelegate.h \
-    node/data/CommandListModel.h
+    node/data/CommandListModel.h \
+    node/data/CommandDescription.h
 
 FORMS    += \
     search/searchnoderesult.ui \

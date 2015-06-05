@@ -1,24 +1,46 @@
 #include "CommandItemDelegate.h"
+#include "CommandDescription.h"
+
+#include <QPainter>
+#include <QFontMetrics>
+#include <QAbstractItemView>
+#include <QSharedPointer>
+
+#include <chaos/common/chaos_constants.h>
+#include <chaos/common/data/CDataWrapper.h>
+
+using namespace chaos::common::data;
 
 CommandItemDelegate::CommandItemDelegate(QWidget *parent):
-    QStyledItemDelegate(parent) {
+    QItemDelegate(parent) {
 
 }
 
-void CommandItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+void CommandItemDelegate::paint(QPainter *painter,
+                                const QStyleOptionViewItem &option,
                                 const QModelIndex &index) const {
-    //    if (index.data().canConvert<StarRating>()) {
-    //        StarRating starRating = qvariant_cast<StarRating>(index.data());
+    QSharedPointer<CommandDescription> command_description = index.data().value< QSharedPointer<CommandDescription> >();
 
-    //        if (option.state & QStyle::State_Selected)
-    //            painter->fillRect(option.rect, option.palette.highlight());
+    drawBackground(painter, option, index);
 
-    //        starRating.paint(painter, option.rect, option.palette,
-    //                         StarRating::ReadOnly);
-    //    } else {
-    //        QStyledItemDelegate::paint(painter, option, index);
-    //    }
+    QStyleOptionViewItem alias_option = option;
+    alias_option.displayAlignment = Qt::AlignLeft | Qt::AlignVCenter;
+    alias_option.font.setPointSize(12);
+    alias_option.font.setBold(true);
+    QRect alias_rect(alias_option.rect.x(), alias_option.rect.y(), alias_option.rect.width(), alias_option.rect.height()/2);
+    drawDisplay(painter, alias_option, alias_rect, command_description->alias);
+
+    QStyleOptionViewItem description_option = option;
+    description_option.displayAlignment = Qt::AlignLeft | Qt::AlignVCenter;
+    description_option.font.setPointSize(10);
+    description_option.font.setBold(false);
+    description_option.font.setItalic(true);
+    QRect description_rect(description_option.rect.x(), description_option.rect.y()+(description_option.rect.height()/2), description_option.rect.width(), description_option.rect.height()/2);
+    drawDisplay(painter, description_option, description_rect, command_description->description);
+
+    drawFocus(painter, option, option.rect);
 }
+
 QWidget *CommandItemDelegate::createEditor(QWidget *parent,
                                            const QStyleOptionViewItem &option,
                                            const QModelIndex &index) const {
@@ -61,10 +83,5 @@ void CommandItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *mode
 
 QSize CommandItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                     const QModelIndex &index) const {
-    //    if (index.data().canConvert<StarRating>()) {
-    //        StarRating starRating = qvariant_cast<StarRating>(index.data());
-    //        return starRating.sizeHint();
-    //    } else {
-    //        return QStyledItemDelegate::sizeHint(option, index);
-    //    }
+    return QItemDelegate::sizeHint(option, index)*2;
 }

@@ -2,10 +2,10 @@
 #define COMMANDITEMDELEGATE_H
 
 
-#include <QStyledItemDelegate>
+#include <QItemDelegate>
 
 class CommandItemDelegate :
-        public QStyledItemDelegate{
+        public QItemDelegate {
     Q_OBJECT
 
 public:

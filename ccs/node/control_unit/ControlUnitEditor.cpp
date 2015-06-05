@@ -125,6 +125,7 @@ void ControlUnitEditor::initUI() {
     ui->lineEditSubmissionRunStepDelay->setValidator(new QIntValidator(0, 60000000, this));
     ui->lineEditSubmissionRetry->setValidator(new QIntValidator(0, 1000000, this));
     ui->listViewCommandList->setModel(&command_list_model);
+    ui->listViewCommandList->setItemDelegate(new CommandItemDelegate( ui->listViewCommandList));
    // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
     //launch api for control unit information
     updateAllControlunitInfomration();

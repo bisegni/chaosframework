@@ -1,5 +1,7 @@
 #include "CommandListModel.h"
+#include "CommandDescription.h"
 
+#include <chaos/common/chaos_constants.h>
 using namespace chaos::common::data;
 
 CommandListModel::CommandListModel(QObject *parent):
@@ -30,9 +32,7 @@ QString CommandListModel::getHeaderForSection(int section) const {
 
 QVariant CommandListModel::getRowData(int row) const {
     if(command_description_array.size()==0) return QVariant();
-    if(command_description_array[row]->hasKey(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS)) {
-        return QString::fromStdString(command_description_array[row]->getStringValue(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS));
-    }else {
-        return tr("no alias found");
-    }
+    QSharedPointer<CommandDescription> cmd_desc(new CommandDescription(QString::fromStdString(command_description_array[row]->getStringValue(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS)),
+                                                                       QString::fromStdString(command_description_array[row]->getStringValue(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION))));
+    return QVariant::fromValue(cmd_desc);
 }
