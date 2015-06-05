@@ -7,14 +7,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
-    <height>460</height>
+    <width>760</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>720</width>
-    <height>460</height>
+    <width>760</width>
+    <height>540</height>
    </size>
   </property>
   <property name="font">
@@ -26,8 +26,26 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <property name="spacing">
+    <number>4</number>
+   </property>
+   <property name="leftMargin">
+    <number>4</number>
+   </property>
+   <property name="topMargin">
+    <number>4</number>
+   </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
+   <property name="bottomMargin">
+    <number>4</number>
+   </property>
    <item>
     <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
+     <property name="spacing">
+      <number>4</number>
+     </property>
      <item row="2" column="0" alignment="Qt::AlignRight">
       <widget class="QLabel" name="label_4">
        <property name="font">
@@ -48,7 +66,7 @@
         </font>
        </property>
        <property name="text">
-        <string>unique identifier for control unit</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -119,7 +137,7 @@
           </font>
          </property>
          <property name="text">
-          <string>-------</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -159,7 +177,7 @@
           </font>
          </property>
          <property name="text">
-          <string>-------</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -183,6 +201,9 @@
      </item>
      <item row="1" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0,1">
+       <property name="spacing">
+        <number>4</number>
+       </property>
        <item alignment="Qt::AlignRight">
         <widget class="QLabel" name="label_3">
          <property name="font">
@@ -203,7 +224,7 @@
           </font>
          </property>
          <property name="text">
-          <string>rpc address</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -227,7 +248,7 @@
           </font>
          </property>
          <property name="text">
-          <string>TextLabel</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -243,7 +264,7 @@
       </font>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="iconSize">
       <size>
@@ -256,8 +277,26 @@
        <string>Dataset</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>2</number>
+       </property>
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>4</number>
+         </property>
          <item>
           <widget class="QCheckBox" name="checkBoxMonitorOutputChannels">
            <property name="font">
@@ -269,7 +308,7 @@
             <string>Output Channels monitoring switch</string>
            </property>
            <property name="text">
-            <string>Output Channels</string>
+            <string>Show live data for output channels</string>
            </property>
           </widget>
          </item>
@@ -298,6 +337,9 @@
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>4</number>
+         </property>
          <item>
           <widget class="QCheckBox" name="checkBoxMonitorInputChannels">
            <property name="font">
@@ -309,7 +351,7 @@
             <string>Input Channels monitoring switch</string>
            </property>
            <property name="text">
-            <string>Input Channels</string>
+            <string>Show live data for input channels</string>
            </property>
           </widget>
          </item>
@@ -336,6 +378,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="spacing">
+            <number>4</number>
+           </property>
            <item>
             <spacer name="horizontalSpacer_2">
              <property name="orientation">
@@ -383,24 +428,24 @@
       <attribute name="title">
        <string>Command</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_8">
+      <layout class="QVBoxLayout" name="verticalLayout_12">
        <property name="spacing">
         <number>4</number>
        </property>
        <property name="leftMargin">
-        <number>4</number>
+        <number>2</number>
        </property>
        <property name="topMargin">
-        <number>4</number>
+        <number>2</number>
        </property>
        <property name="rightMargin">
-        <number>4</number>
+        <number>2</number>
        </property>
        <property name="bottomMargin">
-        <number>4</number>
+        <number>2</number>
        </property>
        <item>
-        <widget class="QSplitter" name="splitter_2">
+        <widget class="QSplitter" name="splitterCommandList">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -429,69 +474,238 @@
             </layout>
            </item>
            <item>
-            <widget class="QListView" name="listViewCommandList"/>
+            <widget class="QListView" name="listViewCommandList">
+             <property name="statusTip">
+              <string>The lis tof the command exposed by control unit</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
-         <widget class="QSplitter" name="splitter">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <widget class="QWidget" name="verticalLayoutWidget_2">
-           <layout class="QVBoxLayout" name="verticalLayout_6">
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <widget class="QWidget" name="">
+          <layout class="QVBoxLayout" name="verticalLayout_8" stretch="1,0">
+           <property name="spacing">
+            <number>4</number>
+           </property>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <property name="spacing">
+              <number>4</number>
+             </property>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <property name="spacing">
+                <number>4</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_8">
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Command instances</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QListWidget" name="listWidgetCommandInstances">
+               <property name="statusTip">
+                <string>The lis tof all instance of the commands</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget" native="true">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>150</height>
+              </size>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
               <property name="spacing">
                <number>4</number>
               </property>
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
+              <property name="topMargin">
+               <number>2</number>
+              </property>
+              <property name="rightMargin">
+               <number>2</number>
+              </property>
+              <property name="bottomMargin">
+               <number>2</number>
+              </property>
               <item>
-               <widget class="QLabel" name="label_8">
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
+               <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,0">
+                <property name="spacing">
+                 <number>4</number>
                 </property>
-                <property name="text">
-                 <string>Command instances</string>
-                </property>
-               </widget>
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1">
+                  <property name="spacing">
+                   <number>4</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="label_10">
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Parameter list</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QTableView" name="tableViewParameterList">
+                    <property name="statusTip">
+                     <string>Is the table for all command paramter</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_10" stretch="0,1">
+                  <property name="spacing">
+                   <number>4</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="label_11">
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Submission settings</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0,0,0" columnstretch="0,0">
+                    <property name="spacing">
+                     <number>4</number>
+                    </property>
+                    <item row="3" column="1">
+                     <widget class="QLineEdit" name="lineEditSubmissionRunStepDelay">
+                      <property name="statusTip">
+                       <string>Is the delay to whait for schedule the next run step(0-60000000 us)</string>
+                      </property>
+                      <property name="placeholderText">
+                       <string/>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="1">
+                     <widget class="QComboBox" name="comboBoxSubmissionExecutionChannel">
+                      <item>
+                       <property name="text">
+                        <string>0</string>
+                       </property>
+                      </item>
+                     </widget>
+                    </item>
+                    <item row="4" column="1">
+                     <widget class="QLineEdit" name="lineEditSubmissionRetry">
+                      <property name="statusTip">
+                       <string>Is the delay to whait for retry to submit this command(0-1000000 us)</string>
+                      </property>
+                      <property name="placeholderText">
+                       <string/>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="0" alignment="Qt::AlignRight">
+                     <widget class="QLabel" name="label_13">
+                      <property name="text">
+                       <string>run step delay</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="QLineEdit" name="lineEditSubmissionPriority">
+                      <property name="statusTip">
+                       <string>Is the priority within the command queue (0-100)</string>
+                      </property>
+                      <property name="placeholderText">
+                       <string/>
+                      </property>
+                      <property name="clearButtonEnabled">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="0" alignment="Qt::AlignRight|Qt::AlignVCenter">
+                     <widget class="QLabel" name="label_9">
+                      <property name="text">
+                       <string>execution channel</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="0" alignment="Qt::AlignRight">
+                     <widget class="QLabel" name="label_14">
+                      <property name="text">
+                       <string>retry</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="0" alignment="Qt::AlignRight">
+                     <widget class="QLabel" name="label_12">
+                      <property name="text">
+                       <string>priority</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0" alignment="Qt::AlignRight">
+                     <widget class="QLabel" name="label_15">
+                      <property name="text">
+                       <string>rule:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QComboBox" name="comboBoxSubmissionRule">
+                      <item>
+                       <property name="text">
+                        <string>Normal</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Stack</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>Kill</string>
+                       </property>
+                      </item>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
               </item>
              </layout>
-            </item>
-            <item>
-             <widget class="QListWidget" name="listWidgetCommandInstances"/>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="verticalLayoutWidget_3">
-           <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0,1">
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
-              <item>
-               <widget class="QLabel" name="label_9">
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Command instance setting</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QWidget" name="widget" native="true"/>
-            </item>
-           </layout>
-          </widget>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </widget>
        </item>
@@ -501,6 +715,9 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>4</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">

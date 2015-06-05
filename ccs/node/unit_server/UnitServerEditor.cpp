@@ -54,9 +54,7 @@ void UnitServerEditor::initUI() {
     table_model->setHorizontalHeaderItem(1, new QStandardItem(QString("Impl")));
     table_model->setHorizontalHeaderItem(2, new QStandardItem(QString("RPC Addr")));
     table_model->setHorizontalHeaderItem(3, new QStandardItem(QString("RPC Dom")));
-    table_model->setHorizontalHeaderItem(4, new QStandardItem(QString("State")));
-    table_model->setHorizontalHeaderItem(5, new QStandardItem(QString("State SM")));
-    ui->tableView->horizontalHeader()->setFont(QFont("Tahoma", 11));
+
 
     // Attach the model to the view
     ui->tableView->setModel(table_model);
@@ -217,12 +215,6 @@ void UnitServerEditor::fillTableWithInstance( QSharedPointer<CDataWrapper> cu_in
     item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
     row_item.append(item = new QStandardItem(QString::fromStdString(CHK_STR_AND_GET(cu_instance, NodeDefinitionKey::NODE_RPC_DOMAIN, "--nr--"))));
-    item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-    row_item.append(item = new QStandardItem(QString::fromStdString("---")));
-    item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-
-    row_item.append(item = new QStandardItem(QString::fromStdString("---")));
     item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
     table_model->appendRow(row_item);

@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QMessageBox>
 #include <QDebug>
+#include <QIntValidator>
 static const QString TAG_CU_INFO = QString("g_cu_i");
 static const QString TAG_CU_DATASET = QString("g_cu_d");
 static const QString TAG_CU_INSTANCE = QString("g_cu_instance");
@@ -113,7 +114,16 @@ void ControlUnitEditor::initUI() {
     //set control unit uid label
     ui->labelUniqueIdentifier->setText(control_unit_unique_id);
 
-    //set command
+    //command section
+    QList<int> splitterCLSizes;
+    splitterCLSizes.append(300);
+    splitterCLSizes.append(600);
+    ui->splitterCommandList->setSizes(splitterCLSizes);
+    ui->splitterCommandList->setStretchFactor(0,1);
+    ui->splitterCommandList->setStretchFactor(1,2);
+    ui->lineEditSubmissionPriority->setValidator(new QIntValidator(0, 100, this));
+    ui->lineEditSubmissionRunStepDelay->setValidator(new QIntValidator(0, 60000000, this));
+    ui->lineEditSubmissionRetry->setValidator(new QIntValidator(0, 1000000, this));
     ui->listViewCommandList->setModel(&command_list_model);
    // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
     //launch api for control unit information
