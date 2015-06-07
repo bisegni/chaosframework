@@ -5,6 +5,8 @@
 #include <QFontMetrics>
 #include <QAbstractItemView>
 #include <QSharedPointer>
+#include <QMargins>
+#include <QPen>
 
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
@@ -21,6 +23,7 @@ void CommandItemDelegate::paint(QPainter *painter,
                                 const QModelIndex &index) const {
     QSharedPointer<CommandDescription> command_description = index.data().value< QSharedPointer<CommandDescription> >();
 
+    painter->save();
     drawBackground(painter, option, index);
 
     QStyleOptionViewItem alias_option = option;
@@ -28,6 +31,11 @@ void CommandItemDelegate::paint(QPainter *painter,
     alias_option.font.setPointSize(12);
     alias_option.font.setBold(true);
     QRect alias_rect(alias_option.rect.x(), alias_option.rect.y(), alias_option.rect.width(), alias_option.rect.height()/2);
+
+    painter->setBrush(QColor(200,200,200, 50));
+    painter->setPen(QPen(QColor(200,200,200, 50), 0));
+
+    painter->drawRoundedRect(alias_rect.marginsRemoved(QMargins(2,2,2,0)), 5,5);
     drawDisplay(painter, alias_option, alias_rect, command_description->alias);
 
     QStyleOptionViewItem description_option = option;
@@ -39,6 +47,7 @@ void CommandItemDelegate::paint(QPainter *painter,
     drawDisplay(painter, description_option, description_rect, command_description->description);
 
     drawFocus(painter, option, option.rect);
+    painter->restore();
 }
 
 QWidget *CommandItemDelegate::createEditor(QWidget *parent,
