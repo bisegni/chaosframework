@@ -1,15 +1,14 @@
-#ifndef COMMANDITEMDELEGATE_H
-#define COMMANDITEMDELEGATE_H
-
+#ifndef TwoLineInformationListItemDelegate_H
+#define TwoLineInformationListItemDelegate_H
 
 #include <QItemDelegate>
 
-class CommandItemDelegate :
+class TwoLineInformationListItemDelegate :
         public QItemDelegate {
     Q_OBJECT
 
 public:
-    CommandItemDelegate(QWidget *parent = 0);
+    TwoLineInformationListItemDelegate(QWidget *parent = 0);
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option,
                const QModelIndex &index) const Q_DECL_OVERRIDE;
@@ -22,6 +21,8 @@ public:
                       const QModelIndex &index) const Q_DECL_OVERRIDE;
 
 private slots:
-    void commitAndCloseEditor();
+   // void commitAndCloseEditor();
+private:
+    QPainterPath roundRectangle(const QRectF& rect, qreal leftTopRadius, qreal leftBottomRadius, qreal rightTopRadius, qreal rightBottomRadius) const;
 };
-#endif // COMMANDITEMDELEGATE_H
+#endif // TwoLineInformationListItemDelegate_H

@@ -1,9 +1,10 @@
 #include "ControlUnitEditor.h"
 #include "ui_controluniteditor.h"
+#include "../../widget/list/delegate/TwoLineInformationListItemDelegate.h"
 
+#include <QDebug>
 #include <QDateTime>
 #include <QMessageBox>
-#include <QDebug>
 #include <QIntValidator>
 static const QString TAG_CU_INFO = QString("g_cu_i");
 static const QString TAG_CU_DATASET = QString("g_cu_d");
@@ -121,11 +122,11 @@ void ControlUnitEditor::initUI() {
     ui->splitterCommandList->setSizes(splitterCLSizes);
     ui->splitterCommandList->setStretchFactor(0,1);
     ui->splitterCommandList->setStretchFactor(1,2);
-    ui->lineEditSubmissionPriority->setValidator(new QIntValidator(0, 100, this));
-    ui->lineEditSubmissionRunStepDelay->setValidator(new QIntValidator(0, 60000000, this));
-    ui->lineEditSubmissionRetry->setValidator(new QIntValidator(0, 1000000, this));
     ui->listViewCommandList->setModel(&command_list_model);
-    ui->listViewCommandList->setItemDelegate(new CommandItemDelegate( ui->listViewCommandList));
+    ui->listViewCommandList->setItemDelegate(new TwoLineInformationListItemDelegate( ui->listViewCommandList));
+    connect(ui->listViewCommandList->selectionModel(),
+         SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+         SLOT(handleSelectionChangedOnCommandDescription(QItemSelection,QItemSelection)));
    // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
     //launch api for control unit information
     updateAllControlunitInfomration();
@@ -263,6 +264,12 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
 void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
                                                  bool switch_activate) {
 
+}
+
+void ControlUnitEditor::handleSelectionChangedOnCommandDescription(const QItemSelection& selection,
+                                                                   const QItemSelection &previous_selected) {
+    qDebug() << ui->listViewCommandList->selectionModel()->selectedRows().size();
+    qDebug() << selection.indexes().size();
 }
 
 void ControlUnitEditor::fillDataset(const QSharedPointer<chaos::common::data::CDataWrapper>& dataset) {

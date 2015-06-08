@@ -19,7 +19,6 @@ public:
     void updateData(const QSharedPointer<chaos::common::data::CDataWrapper>& _dataset);
 protected:
     int getRowCount() const;
-    QString getHeaderForSection(int section) const;
     QVariant getRowData(int row) const;
 private:
     QVector< QSharedPointer<chaos::common::data::CDataWrapper> > command_description_array;

@@ -278,14 +278,14 @@
     </layout>
    </item>
    <item>
-    <widget class="QTabWidget" name="tabWidgetDataset">
+    <widget class="QTabWidget" name="tabWidget">
      <property name="font">
       <font>
        <pointsize>11</pointsize>
       </font>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="iconSize">
       <size>
@@ -508,235 +508,132 @@
            </item>
            <item>
             <widget class="QListView" name="listViewCommandList">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="statusTip">
               <string>The lis tof the command exposed by control unit</string>
              </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::MultiSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
             </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <property name="spacing">
+              <number>4</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAddNewCommadInstance">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Add new instance</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
          <widget class="QWidget" name="">
-          <layout class="QVBoxLayout" name="verticalLayout_8" stretch="1,0">
+          <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0">
            <property name="spacing">
             <number>4</number>
            </property>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_6">
-             <property name="spacing">
-              <number>4</number>
-             </property>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_5">
-               <property name="spacing">
-                <number>4</number>
+              <widget class="QLabel" name="label_8">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
                </property>
-               <item>
-                <widget class="QLabel" name="label_8">
-                 <property name="font">
-                  <font>
-                   <pointsize>11</pointsize>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Command instances</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QListWidget" name="listWidgetCommandInstances">
-               <property name="statusTip">
-                <string>The lis tof all instance of the commands</string>
+               <property name="text">
+                <string>Command instance list</string>
                </property>
               </widget>
              </item>
             </layout>
            </item>
            <item>
-            <widget class="QWidget" name="widget" native="true">
-             <property name="enabled">
-              <bool>true</bool>
+            <widget class="QListView" name="listViewCommandInstance">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>150</height>
-              </size>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_7">
-              <property name="spacing">
-               <number>4</number>
-              </property>
-              <property name="leftMargin">
-               <number>2</number>
-              </property>
-              <property name="topMargin">
-               <number>2</number>
-              </property>
-              <property name="rightMargin">
-               <number>2</number>
-              </property>
-              <property name="bottomMargin">
-               <number>2</number>
-              </property>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,0">
-                <property name="spacing">
-                 <number>4</number>
-                </property>
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1">
-                  <property name="spacing">
-                   <number>4</number>
-                  </property>
-                  <item>
-                   <widget class="QLabel" name="label_10">
-                    <property name="font">
-                     <font>
-                      <pointsize>11</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Parameter list</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QTableView" name="tableViewParameterList">
-                    <property name="statusTip">
-                     <string>Is the table for all command paramter</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_10" stretch="0,1">
-                  <property name="spacing">
-                   <number>4</number>
-                  </property>
-                  <item>
-                   <widget class="QLabel" name="label_11">
-                    <property name="font">
-                     <font>
-                      <pointsize>11</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Submission settings</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0,0,0" columnstretch="0,0">
-                    <property name="spacing">
-                     <number>4</number>
-                    </property>
-                    <item row="3" column="1">
-                     <widget class="QLineEdit" name="lineEditSubmissionRunStepDelay">
-                      <property name="statusTip">
-                       <string>Is the delay to whait for schedule the next run step(0-60000000 us)</string>
-                      </property>
-                      <property name="placeholderText">
-                       <string/>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="QComboBox" name="comboBoxSubmissionExecutionChannel">
-                      <item>
-                       <property name="text">
-                        <string>0</string>
-                       </property>
-                      </item>
-                     </widget>
-                    </item>
-                    <item row="4" column="1">
-                     <widget class="QLineEdit" name="lineEditSubmissionRetry">
-                      <property name="statusTip">
-                       <string>Is the delay to whait for retry to submit this command(0-1000000 us)</string>
-                      </property>
-                      <property name="placeholderText">
-                       <string/>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="3" column="0" alignment="Qt::AlignRight">
-                     <widget class="QLabel" name="label_13">
-                      <property name="text">
-                       <string>run step delay</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="1">
-                     <widget class="QLineEdit" name="lineEditSubmissionPriority">
-                      <property name="statusTip">
-                       <string>Is the priority within the command queue (0-100)</string>
-                      </property>
-                      <property name="placeholderText">
-                       <string/>
-                      </property>
-                      <property name="clearButtonEnabled">
-                       <bool>true</bool>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="0" alignment="Qt::AlignRight|Qt::AlignVCenter">
-                     <widget class="QLabel" name="label_9">
-                      <property name="text">
-                       <string>execution channel</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="4" column="0" alignment="Qt::AlignRight">
-                     <widget class="QLabel" name="label_14">
-                      <property name="text">
-                       <string>retry</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="0" alignment="Qt::AlignRight">
-                     <widget class="QLabel" name="label_12">
-                      <property name="text">
-                       <string>priority</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0" alignment="Qt::AlignRight">
-                     <widget class="QLabel" name="label_15">
-                      <property name="text">
-                       <string>rule:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="1">
-                     <widget class="QComboBox" name="comboBoxSubmissionRule">
-                      <item>
-                       <property name="text">
-                        <string>Normal</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Stack</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Kill</string>
-                       </property>
-                      </item>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-             </layout>
             </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <property name="spacing">
+              <number>4</number>
+             </property>
+             <item>
+              <spacer name="horizontalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonRemoveInstance">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Remove Instance</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonUpdateInstanceList">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Update instance list</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>

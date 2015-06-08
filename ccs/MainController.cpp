@@ -1,6 +1,6 @@
 #include "MainController.h"
 
-#include "node/data/CommandDescription.h"
+#include "widget/list/delegate/TwoLineInformationItem.h"
 
 #include <QStyleFactory>
 #include <QThreadPool>
@@ -16,7 +16,7 @@ using namespace chaos::metadata_service_client;
 //declare metatype used in chaos
 Q_DECLARE_METATYPE(QSharedPointer<chaos::CException>);
 Q_DECLARE_METATYPE(QSharedPointer<chaos::common::data::CDataWrapper>);
-Q_DECLARE_METATYPE(QSharedPointer<CommandDescription>);
+Q_DECLARE_METATYPE(QSharedPointer<TwoLineInformationItem>);
 Q_DECLARE_METATYPE (std::string)
 Q_DECLARE_METATYPE(int32_t)
 Q_DECLARE_METATYPE(int64_t)
@@ -34,9 +34,9 @@ MainController::~MainController()
 
 void MainController::init(int argc, char **argv, QApplication& a) {
     //register chaos metatype
-    qRegisterMetaType< QSharedPointer<chaos::CException> >();
-    qRegisterMetaType< QSharedPointer<chaos::common::data::CDataWrapper> >();
-    qRegisterMetaType< QSharedPointer<CommandDescription> >();
+    qRegisterMetaType<QSharedPointer<chaos::CException> >();
+    qRegisterMetaType<QSharedPointer<chaos::common::data::CDataWrapper> >();
+    qRegisterMetaType< QSharedPointer<TwoLineInformationItem> >();
     qRegisterMetaType<std::string>("std::string");
     qRegisterMetaType<int32_t>("int32_t");
     qRegisterMetaType<int64_t>("int64_t");

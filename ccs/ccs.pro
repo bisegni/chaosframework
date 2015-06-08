@@ -61,9 +61,10 @@ SOURCES += main.cpp\
     logic/property_switch/SwitchAggregator.cpp \
     node/data/ChaosAbstractDataSetTableModel.cpp \
     node/data/ChaosAbstractListModel.cpp \
-    node/data/CommandItemDelegate.cpp \
     node/data/CommandListModel.cpp \
-    node/data/CommandDescription.cpp
+    widget/list/delegate/TwoLineInformationListItemDelegate.cpp \
+    widget/list/delegate/TwoLineInformationItem.cpp \
+    node/control_unit/ControlUnitComandInstanceEditor.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -106,9 +107,10 @@ HEADERS  += \
     monitor/healt/handler/MonitorStringAttributeHandler.h \
     monitor/healt/handler/MonitorBinaryAttributeHandler.h \
     node/data/ChaosAbstractListModel.h \
-    node/data/CommandItemDelegate.h \
     node/data/CommandListModel.h \
-    node/data/CommandDescription.h
+    widget/list/delegate/TwoLineInformationItem.h \
+    widget/list/delegate/TwoLineInformationListItemDelegate.h \
+    node/control_unit/ControlUnitComandInstanceEditor.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -123,7 +125,8 @@ FORMS    += \
     MainWindow.ui \
     monitor/healt/HealtPresenterWidget.ui \
     monitor/healt/HealtWidgetsListPresenteWidget.ui \
-    node/control_unit/ControlUnitEditor.ui
+    node/control_unit/ControlUnitComandInstanceEditor.ui \
+    node/control_unit/controluniteditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet

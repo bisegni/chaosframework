@@ -3,7 +3,6 @@
 
 #include "../data/FixedOutputChannelDatasetTableModel.h"
 #include "../data/FixedInputChannelDatasetTableModel.h"
-#include "../data/CommandItemDelegate.h"
 #include "../data/CommandListModel.h"
 
 #include "../../presenter/PresenterWidget.h"
@@ -11,6 +10,7 @@
 #include "../../logic/property_switch/SwitchAggregator.h"
 
 #include <QWidget>
+#include <QItemSelection>
 
 namespace Ui {
 class ControlUnitEditor;
@@ -38,6 +38,9 @@ private slots:
 
     void onLogicSwitchChangeState(const QString& switch_name,
                                   bool switch_activate);
+
+    void handleSelectionChangedOnCommandDescription(const QItemSelection& selection,
+                                                    const QItemSelection& previous_selected);
 
     void on_pushButtonLoadAction_clicked();
 
@@ -70,10 +73,10 @@ private:
     QString                 unit_server_parent_unique_id;
     SwitchAggregator        logic_switch_aggregator;
     HealthHartbeatHandler   hb_handler;
-    HealtStatusHandler      status_handler;
-    CommandListModel                     command_list_model;
+    HealtStatusHandler                  status_handler;
+    CommandListModel                    command_list_model;
     FixedOutputChannelDatasetTableModel dataset_output_table_model;
-    FixedInputChannelDatasetTableModel dataset_input_table_model;
+    FixedInputChannelDatasetTableModel  dataset_input_table_model;
     Ui::ControlUnitEditor *ui;
 };
 
