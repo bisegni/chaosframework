@@ -68,6 +68,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_LOG_FILE, po::value< string >()->default_value("chaos_frameowrk.log"), "Specify when the file path of the log");
         addOption(InitOption::OPT_LOG_LEVEL, po::value< string >()->default_value("info"), "Specify the level of the log using the value [debug, info, notice, warning, fatal]"),
         addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
+        addOption(InitOption::OPT_PUBLISHING_INTERFACE, po::value< string >(), "Specify the interface where to publish the framework rpc system");
     }catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
     }
@@ -205,6 +206,9 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     bool isIp = regex_match(publishingIp, common::utility::ServerIPRegExp);
     if(isIp) configuration.addStringValue(InitOption::OPT_PUBLISHING_IP, publishingIp);
     
+    CHECK_AND_DEFINE_OPTION(string, publishingInterface, InitOption::OPT_PUBLISHING_INTERFACE)
+    configuration.addStringValue(InitOption::OPT_PUBLISHING_INTERFACE, publishingInterface);
+    
     //configure rpc
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerPort, InitOption::OPT_RPC_SERVER_PORT, 8888)
     int32_t freeFoundPort = InetUtility::scanForLocalFreePort(rpcServerPort);
@@ -254,17 +258,6 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     
     //cevent
     configuration.addStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
-    
-    //configure the live data
-//    CHECK_AND_DEFINE_OPTION(vector<string>, liveDataServer, InitOption::OPT_LIVE_DATA_SERVER_ADDRESS)
-//    if(liveDataServer.size()==0){
-//        configuration.appendStringToArray("localhost:11211");
-//    }else{
-//        for (int idx = 0; idx < liveDataServer.size(); idx++) {
-//            configuration.appendStringToArray(liveDataServer[idx]);
-//        }
-//    }
-//    configuration.finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
     
     //configure metadataserver
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, InitOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")

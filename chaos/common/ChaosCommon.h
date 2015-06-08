@@ -146,7 +146,10 @@ namespace chaos {
 			if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){
 				local_ip = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_IP);
 			} else {
-				local_ip = common::utility::InetUtility::scanForLocalNetworkAddress();
+                if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_INTERFACE))
+                    local_ip = common::utility::InetUtility::scanForLocalNetworkAddress(GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_INTERFACE));
+                else
+                    local_ip = common::utility::InetUtility::scanForLocalNetworkAddress();
 			}
 			GlobalConfiguration::getInstance()->addLocalServerAddress(local_ip);
 

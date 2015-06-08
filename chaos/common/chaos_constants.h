@@ -71,6 +71,8 @@ namespace chaos {
         static const char * const   OPT_LOG_LEVEL                       = "log-level";
         //! Specify the ip where publish the framework
         static const char * const   OPT_PUBLISHING_IP                   = "publishing-ip";
+        //! use the interface name to determinate the ip where publish itself
+        static const char * const   OPT_PUBLISHING_INTERFACE            = "publishing-interface";
         //! Specify the ip where publish the framework
         static const char * const   OPT_DATA_IO_IMPL					= "data-io-impl";
     }
