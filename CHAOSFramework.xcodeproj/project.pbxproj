@@ -570,6 +570,7 @@
 		32CFC5CA1AF5601300E2A0B6 /* BasicIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFC5C71AF5601300E2A0B6 /* BasicIODriver.cpp */; };
 		32CFC5CB1AF5601300E2A0B6 /* BasicIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFC5C81AF5601300E2A0B6 /* BasicIODriver.h */; };
 		32CFC5CC1AF5601300E2A0B6 /* BasicIODriverInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFC5C91AF5601300E2A0B6 /* BasicIODriverInterface.cpp */; };
+		32CFD5D81B2587400060AED5 /* SetCommandTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFD5D61B2587400060AED5 /* SetCommandTemplate.cpp */; };
 		32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95915E4D950005D607E /* EventDescriptor.cpp */; };
 		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
@@ -1401,6 +1402,8 @@
 		32CFC5C71AF5601300E2A0B6 /* BasicIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicIODriver.cpp; sourceTree = "<group>"; };
 		32CFC5C81AF5601300E2A0B6 /* BasicIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicIODriver.h; sourceTree = "<group>"; };
 		32CFC5C91AF5601300E2A0B6 /* BasicIODriverInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicIODriverInterface.cpp; sourceTree = "<group>"; };
+		32CFD5D61B2587400060AED5 /* SetCommandTemplate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetCommandTemplate.cpp; sourceTree = "<group>"; };
+		32CFD5D71B2587400060AED5 /* SetCommandTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetCommandTemplate.h; sourceTree = "<group>"; };
 		32CFF95915E4D950005D607E /* EventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDescriptor.cpp; sourceTree = "<group>"; };
 		32CFF95A15E4D950005D607E /* EventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDescriptor.h; sourceTree = "<group>"; };
 		32CFF95D15E4DBD3005D607E /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
@@ -1860,6 +1863,8 @@
 				325FC8601AF7C8B200DB9D66 /* GetCurrentDataset.h */,
 				32B419321B16148A00C3CA7D /* SetInputDatasetAttributeValues.cpp */,
 				32B419331B16148A00C3CA7D /* SetInputDatasetAttributeValues.h */,
+				32CFD5D61B2587400060AED5 /* SetCommandTemplate.cpp */,
+				32CFD5D71B2587400060AED5 /* SetCommandTemplate.h */,
 			);
 			path = control_unit;
 			sourceTree = "<group>";
@@ -3984,6 +3989,7 @@
 				328D0FF41A8A0862001A2001 /* UnitServerDataAccess.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
+				32CFD5D81B2587400060AED5 /* SetCommandTemplate.cpp in Sources */,
 				325D2FDE1AFB65DE00B2A706 /* HealtApiGroup.cpp in Sources */,
 				320530D71AE924ED0064275B /* AssociationControlUnit.cpp in Sources */,
 				32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */,

@@ -179,7 +179,7 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
     if(it == map_doe_attribute_name_index.end()) return;
     map_doe_current_values.insert(it.value()->row,
                                   base64Encode(QString(QByteArray::fromRawData(value->getBufferPtr(),
-                                                                               (value->getBufferLen()>20?value->getBufferLen():20)))));
+                                                                               (value->getBufferLen()<20?value->getBufferLen():20)))));
     QModelIndex index_to_refresh = this->index(it.value()->row, it.value()->column);
     emit(dataChanged(index_to_refresh, index_to_refresh));
 }

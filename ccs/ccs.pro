@@ -64,7 +64,8 @@ SOURCES += main.cpp\
     node/data/CommandListModel.cpp \
     widget/list/delegate/TwoLineInformationListItemDelegate.cpp \
     widget/list/delegate/TwoLineInformationItem.cpp \
-    node/control_unit/ControlUnitComandInstanceEditor.cpp
+    node/control_unit/ControlUnitCommandTemplateEditor.cpp \
+    node/data/CommandParameterTableModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -110,7 +111,8 @@ HEADERS  += \
     node/data/CommandListModel.h \
     widget/list/delegate/TwoLineInformationItem.h \
     widget/list/delegate/TwoLineInformationListItemDelegate.h \
-    node/control_unit/ControlUnitComandInstanceEditor.h
+    node/control_unit/ControlUnitCommandTemplateEditor.h \
+    node/data/CommandParameterTableModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -125,8 +127,8 @@ FORMS    += \
     MainWindow.ui \
     monitor/healt/HealtPresenterWidget.ui \
     monitor/healt/HealtWidgetsListPresenteWidget.ui \
-    node/control_unit/ControlUnitComandInstanceEditor.ui \
-    node/control_unit/controluniteditor.ui
+    node/control_unit/ControlUnitEditor.ui \
+    node/control_unit/ControlUnitCommandTemplateEditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet

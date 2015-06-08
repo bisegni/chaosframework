@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ControlUnitComandInstanceEditor</class>
- <widget class="QDialog" name="ControlUnitComandInstanceEditor">
+ <class>ControlUnitCommandTemplateEditor</class>
+ <widget class="QDialog" name="ControlUnitCommandTemplateEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>207</height>
+    <height>230</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>600</width>
+    <height>230</height>
+   </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>600</width>
-    <height>207</height>
+    <width>65535</width>
+    <height>230</height>
    </size>
   </property>
   <property name="font">
@@ -29,17 +35,72 @@
     <number>4</number>
    </property>
    <property name="leftMargin">
-    <number>2</number>
+    <number>4</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>4</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>4</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>4</number>
    </property>
+   <item>
+    <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0">
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <item row="0" column="0" alignment="Qt::AlignRight|Qt::AlignVCenter">
+      <widget class="QLabel" name="label">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Template name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLineEdit" name="lineEditTemplateName">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="toolTip">
+        <string>The unique name for template</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" alignment="Qt::AlignRight|Qt::AlignVCenter">
+      <widget class="QLabel" name="label_2">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Command name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="labelCommandName">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,0">
      <property name="spacing">
@@ -67,6 +128,24 @@
          <property name="statusTip">
           <string>Is the table for all command paramter</string>
          </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>20</number>
+         </attribute>
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>20</number>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>20</number>
+         </attribute>
         </widget>
        </item>
       </layout>
@@ -95,8 +174,11 @@
          </property>
          <item row="3" column="1">
           <widget class="QLineEdit" name="lineEditSubmissionRunStepDelay">
-           <property name="statusTip">
+           <property name="toolTip">
             <string>Is the delay to whait for schedule the next run step(0-60000000 us)</string>
+           </property>
+           <property name="statusTip">
+            <string/>
            </property>
            <property name="placeholderText">
             <string/>
@@ -105,8 +187,11 @@
          </item>
          <item row="0" column="1">
           <widget class="QComboBox" name="comboBoxSubmissionExecutionChannel">
-           <property name="statusTip">
+           <property name="toolTip">
             <string>The channel where run the command</string>
+           </property>
+           <property name="statusTip">
+            <string/>
            </property>
            <item>
             <property name="text">
@@ -117,8 +202,11 @@
          </item>
          <item row="4" column="1">
           <widget class="QLineEdit" name="lineEditSubmissionRetry">
-           <property name="statusTip">
+           <property name="toolTip">
             <string>Is the delay to whait for retry to submit this command(0-1000000 us)</string>
+           </property>
+           <property name="statusTip">
+            <string/>
            </property>
            <property name="placeholderText">
             <string/>
@@ -134,8 +222,11 @@
          </item>
          <item row="2" column="1">
           <widget class="QLineEdit" name="lineEditSubmissionPriority">
-           <property name="statusTip">
+           <property name="toolTip">
             <string>Is the priority within the command queue (0-100)</string>
+           </property>
+           <property name="statusTip">
+            <string/>
            </property>
            <property name="placeholderText">
             <string/>
@@ -175,8 +266,11 @@
          </item>
          <item row="1" column="1">
           <widget class="QComboBox" name="comboBoxSubmissionRule">
-           <property name="statusTip">
+           <property name="toolTip">
             <string>The submission rule</string>
+           </property>
+           <property name="statusTip">
+            <string/>
            </property>
            <item>
             <property name="text">
@@ -207,7 +301,10 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -218,7 +315,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>ControlUnitComandInstanceEditor</receiver>
+   <receiver>ControlUnitCommandTemplateEditor</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -234,7 +331,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>ControlUnitComandInstanceEditor</receiver>
+   <receiver>ControlUnitCommandTemplateEditor</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

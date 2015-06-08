@@ -62,6 +62,8 @@ private slots:
 
     void on_pushButtonResetChangeSet_clicked();
 
+    void on_pushButtonAddNewCommadInstance_clicked();
+
 private:
     QString getStatusString(int status);
     void fillInfo(const QSharedPointer<chaos::common::data::CDataWrapper>& node_info);

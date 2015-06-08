@@ -1,5 +1,4 @@
 #include "TwoLineInformationListItemDelegate.h"
-#include "TwoLineInformationItem.h"
 
 #include <QPainter>
 #include <QFontMetrics>

@@ -199,6 +199,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                         MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME)
                         MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION)
                         MDB_COPY_I32_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE)
+                        MDB_COPY_I32_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG)
                         batch_command_parameter_bson_array << batch_command_parameter_builder.obj();
                     }
                     //add dataset array to update bson

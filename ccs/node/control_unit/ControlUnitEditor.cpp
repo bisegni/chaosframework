@@ -1,5 +1,6 @@
 #include "ControlUnitEditor.h"
-#include "ui_controluniteditor.h"
+#include "ControlUnitCommandTemplateEditor.h"
+#include "ui_ControlUnitEditor.h"
 #include "../../widget/list/delegate/TwoLineInformationListItemDelegate.h"
 
 #include <QDebug>
@@ -123,7 +124,7 @@ void ControlUnitEditor::initUI() {
     ui->splitterCommandList->setStretchFactor(0,1);
     ui->splitterCommandList->setStretchFactor(1,2);
     ui->listViewCommandList->setModel(&command_list_model);
-    ui->listViewCommandList->setItemDelegate(new TwoLineInformationListItemDelegate( ui->listViewCommandList));
+    ui->listViewCommandList->setItemDelegate(new TwoLineInformationListItemDelegate(ui->listViewCommandList));
     connect(ui->listViewCommandList->selectionModel(),
          SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
          SLOT(handleSelectionChangedOnCommandDescription(QItemSelection,QItemSelection)));
@@ -268,8 +269,7 @@ void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
 
 void ControlUnitEditor::handleSelectionChangedOnCommandDescription(const QItemSelection& selection,
                                                                    const QItemSelection &previous_selected) {
-    qDebug() << ui->listViewCommandList->selectionModel()->selectedRows().size();
-    qDebug() << selection.indexes().size();
+    ui->pushButtonAddNewCommadInstance->setEnabled(ui->listViewCommandList->selectionModel()->selectedRows().size()==1);
 }
 
 void ControlUnitEditor::fillDataset(const QSharedPointer<chaos::common::data::CDataWrapper>& dataset) {
@@ -332,4 +332,14 @@ void ControlUnitEditor::on_pushButtonCommitSet_clicked() {
 
 void ControlUnitEditor::on_pushButtonResetChangeSet_clicked() {
     dataset_input_table_model.applyChangeSet(false);
+}
+
+void ControlUnitEditor::on_pushButtonAddNewCommadInstance_clicked() {
+    QModelIndexList selected_list = ui->listViewCommandList->selectionModel()->selectedRows();
+    if(selected_list.size()!=1) return;
+
+    ControlUnitCommandTemplateEditor template_editor(this);
+    QSharedPointer<TwoLineInformationItem> item = selected_list.first().data().value< QSharedPointer<TwoLineInformationItem> >();
+    template_editor.setCommandDescription(item->raw_data);
+    template_editor.exec();
 }

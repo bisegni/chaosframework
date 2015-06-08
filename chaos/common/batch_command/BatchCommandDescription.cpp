@@ -59,14 +59,15 @@ void BatchCommandDescription::setInstancer(chaos::common::utility::ObjectInstanc
 
 void BatchCommandDescription::addParameter(const std::string& parameter_name,
                                            const std::string& parameter_description,
-                                           chaos::DataType::DataType type) {
+                                           chaos::DataType::DataType type,
+                                           int32_t flag) {
     //allocate paramter
     boost::shared_ptr< chaos::common::data::CDataWrapper > attribute_description(new CDataWrapper());
     
     attribute_description->addStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME, parameter_name);
     attribute_description->addStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION, parameter_description);
     attribute_description->addInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE, type);
-    
+    attribute_description->addInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG, flag);
     //insert attribute
     map_parameter.insert(make_pair(parameter_name, attribute_description));
 }

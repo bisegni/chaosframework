@@ -29,6 +29,7 @@ int CommandListModel::getRowCount() const {
 QVariant CommandListModel::getRowData(int row) const {
     if(command_description_array.size()==0) return QVariant();
     QSharedPointer<TwoLineInformationItem> cmd_desc(new TwoLineInformationItem(QString::fromStdString(command_description_array[row]->getStringValue(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS)),
-                                                                               QString::fromStdString(command_description_array[row]->getStringValue(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION))));
+                                                                               QString::fromStdString(command_description_array[row]->getStringValue(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION)),
+                                                                               command_description_array[row]));
     return QVariant::fromValue(cmd_desc);
 }

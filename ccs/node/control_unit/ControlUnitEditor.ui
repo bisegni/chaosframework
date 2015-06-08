@@ -285,7 +285,7 @@
       </font>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="iconSize">
       <size>
@@ -547,6 +547,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="pushButtonAddNewCommadInstance">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>11</pointsize>
@@ -561,7 +564,7 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="">
+         <widget class="QWidget" name="layoutWidget">
           <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0">
            <property name="spacing">
             <number>4</number>
@@ -576,7 +579,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Command instance list</string>
+                <string>Command template list</string>
                </property>
               </widget>
              </item>
@@ -611,6 +614,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="pushButtonRemoveInstance">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>11</pointsize>

@@ -113,6 +113,11 @@ namespace chaos {
                 
                 //! @The key represent the paremter type
                 static const char * const BC_PARAMETER_TYPE         = "bc_parameter_type";
+                
+                //! @The key an int32 that contais the below describted flags
+                static const char * const BC_PARAMETER_FLAG         = "bc_parameter_flag";
+                
+                static int BC_PARAMETER_FLAG_MANDATORY = 1;
             }
             /** @} */ // end of BatchCommandDescriptionKey Slow Control API
         }

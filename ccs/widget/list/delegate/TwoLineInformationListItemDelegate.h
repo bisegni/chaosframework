@@ -1,6 +1,8 @@
 #ifndef TwoLineInformationListItemDelegate_H
 #define TwoLineInformationListItemDelegate_H
 
+#include "TwoLineInformationItem.h"
+
 #include <QItemDelegate>
 
 class TwoLineInformationListItemDelegate :
