@@ -11,6 +11,8 @@ CommandListModel::CommandListModel(QObject *parent):
 
 void CommandListModel::updateData(const QSharedPointer<CDataWrapper>& _dataset) {
     beginResetModel();
+    //remove last updated data
+    command_description_array.clear();
     if(_dataset->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION)){
         QSharedPointer<CMultiTypeDataArrayWrapper> command_array(_dataset->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
         for(int idx = 0;
