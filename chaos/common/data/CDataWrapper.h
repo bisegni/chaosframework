@@ -19,13 +19,15 @@
  */
 #ifndef CDataWrapper_H
 #define CDataWrapper_H
-#include <boost/scoped_ptr.hpp>
-#include <string>
-#include <vector>
+
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/pool/CPoolMemoryObject.h>
 
 #include <boost/scoped_ptr.hpp>
+
+#include <string>
+#include <vector>
+
 namespace chaos {
 	namespace common {
 		namespace data {

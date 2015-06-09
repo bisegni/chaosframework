@@ -13,19 +13,6 @@ using namespace chaos::metadata_service_client::api_proxy::control_unit;
 static QColor changed_value_background_color(94,170,255);
 static QColor changed_value_text_color(10,10,10);
 
-
-void ChangeValue::setCurrentValue(const QVariant& _current_value) {
-    current_value = _current_value;
-}
-
-void ChangeValue::reset() {
-    current_value = last_value;
-}
-
-void ChangeValue::commit() {
-    last_value = current_value;
-}
-
 FixedInputChannelDatasetTableModel::FixedInputChannelDatasetTableModel(const QString &node_uid,
                                                                        unsigned int dataset_type,
                                                                        QObject *parent):
@@ -67,7 +54,7 @@ void FixedInputChannelDatasetTableModel::updateData(const QSharedPointer<chaos::
                                                                                                     7,
                                                                                                     (chaos::DataType::DataType)element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE))));
                 attribute_value_changed.push_back(0);
-                attribute_set_value.push_back(QSharedPointer<ChangeValue>(new ChangeValue()));
+                attribute_set_value.push_back(QSharedPointer<AttributeValueChangeSet>(new AttributeValueChangeSet()));
                 vector_doe.push_back(element);
             }
         }

@@ -20,7 +20,6 @@
 #ifndef CHAOSFramework_api_proxy_h
 #define CHAOSFramework_api_proxy_h
 
-//#include <ChaosMetadataServiceClient/api_proxy/api.h>
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 
@@ -40,10 +39,10 @@
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/GetInstance.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/DeleteInstance.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/GetCurrentDataset.h>
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/SetCommandTemplate.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SearchInstancesByUS.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInstanceDescription.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInputDatasetAttributeValues.h>
-
     //----------------------------unit server nodes----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/GetDescription.h>
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/LoadUnloadControlUnit.h>

@@ -11,7 +11,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service_client::api_proxy::control_unit;
 
-static QColor changed_value_background_color(94,170,255);
+static QColor changed_value_background_color_mandatory(94,170,255);
 static QColor changed_value_text_color(10,10,10);
 
 
@@ -27,25 +27,66 @@ void CommandParameterTableModel::updateAttribute(const QSharedPointer<chaos::com
             !command_description->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS)) return;
     beginResetModel();
     //remove old attribute list
-    command_attribute_description.clear();
-
+    attribute_changes.clear();
     QSharedPointer<CMultiTypeDataArrayWrapper> attribute_array(command_description->getVectorValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
     for(int idx = 0;
         idx < attribute_array->size();
         idx++) {
         QSharedPointer<CDataWrapper> attribute(attribute_array->getCDataWrapperElementAtIndex(idx));
-        if(attribute->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME) ||
-                attribute->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION) ||
-                attribute->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE)){
-            //add well formed attribute
-            command_attribute_description.push_back(attribute);
+        if(attribute->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME) &&
+                attribute->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION) &&
+                attribute->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE) &&
+                attribute->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG)){
+
+            QSharedPointer<AttributeValueChangeSet> attribute_change_set(new AttributeValueChangeSet());
+            attribute_change_set->attribute_raw_description = attribute;
+            attribute_change_set->attribute_name = QString::fromStdString(attribute->getStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME));
+            attribute_change_set->is_mandatory = ((attribute->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG) &
+                                                  BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG_MANDATORY)==
+                    BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG_MANDATORY);
+            attribute_change_set->type = attribute->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE);
+            attribute_changes.push_back(attribute_change_set);
         }
     }
     endResetModel();
 }
 
+void CommandParameterTableModel::fillTemplate(chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate &command_template) {
+    foreach (QSharedPointer<AttributeValueChangeSet> attribute, attribute_changes) {
+        boost::shared_ptr<CDataWrapperKeyValueSetter> kv_setter;
+        switch (attribute->type) {
+        case chaos::DataType::TYPE_BOOLEAN:
+            kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperBoolKeyValueSetter(attribute->attribute_name.toStdString(),
+                                                                                                         attribute->current_value.toBool()));
+            break;
+        case chaos::DataType::TYPE_INT32:
+            break;
+        case chaos::DataType::TYPE_INT64:
+            break;
+        case chaos::DataType::TYPE_STRING:
+            break;
+        case chaos::DataType::TYPE_DOUBLE:
+            break;
+        case chaos::DataType::TYPE_BYTEARRAY:
+            break;
+        default:
+
+            break;
+        }
+    }
+}
+
+
+void CommandParameterTableModel::resetChanges() {
+    beginResetModel();
+    foreach (QSharedPointer<AttributeValueChangeSet> attribute_change,  attribute_changes) {
+        attribute_change->reset();
+    }
+    endResetModel();
+}
+
 int CommandParameterTableModel::getRowCount() const {
-    return command_attribute_description.size();
+    return attribute_changes.size();
 }
 
 int CommandParameterTableModel::getColumnCount() const {
@@ -73,21 +114,15 @@ QString CommandParameterTableModel::getHeaderForColumn(int column) const {
 
 QVariant CommandParameterTableModel::getCellData(int row, int column) const {
     QVariant result;
-    QSharedPointer<CDataWrapper> element = command_attribute_description[row];
     switch(column) {
     case 0:
-        if(element->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME)) {
-            result = QString::fromStdString(element->getStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME));
-        }
+        result = attribute_changes[row]->attribute_name;
         break;
     case 1:
-        if(element->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION)) {
-            result = QString::fromStdString(element->getStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION));
-        }
+        result = QString::fromStdString(attribute_changes[row]->attribute_raw_description->getStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION));
         break;
     case 2:
-        if(element->hasKey(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE)) {
-            switch (element->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE)) {
+            switch (attribute_changes[row]->type) {
             case chaos::DataType::TYPE_BOOLEAN:
                 result = QString("boolean");
                 break;
@@ -110,9 +145,9 @@ QVariant CommandParameterTableModel::getCellData(int row, int column) const {
                 result = QString("------");
                 break;
             }
-        }
         break;
     case 3:
+        result = attribute_changes[row]->current_value;
         break;
     }
     return result;
@@ -180,9 +215,7 @@ QVariant CommandParameterTableModel::getTextColorForData(int row, int column) co
 bool CommandParameterTableModel::setCellData(const QModelIndex& index, const QVariant& value) {
     bool result = true;
     QString error_message;
-
-    QSharedPointer<CDataWrapper> element = command_attribute_description[index.row()];
-    switch (element->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE)) {
+    switch (attribute_changes[index.row()]->type) {
     case chaos::DataType::TYPE_BOOLEAN:{
         CHECKTYPE(result, bool, value)
                 if(!result) {
@@ -213,7 +246,7 @@ bool CommandParameterTableModel::setCellData(const QModelIndex& index, const QVa
     }
     case chaos::DataType::TYPE_STRING:{
         CHECKTYPE(result, std::string, value)
-        if(!result) {
+                if(!result) {
             error_message = tr("The value is not convertible to std::string");
         }
         break;
@@ -227,8 +260,7 @@ bool CommandParameterTableModel::setCellData(const QModelIndex& index, const QVa
         msgBox.setInformativeText(error_message);
         msgBox.exec();
     } else {
-       // attribute_value_changed[index.row()] = true;
-       // attribute_set_value[index.row()]->setCurrentValue(value);
+        attribute_changes[index.row()]->setCurrentValue(value);
     }
     return result;
 }

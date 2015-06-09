@@ -65,7 +65,8 @@ SOURCES += main.cpp\
     widget/list/delegate/TwoLineInformationListItemDelegate.cpp \
     widget/list/delegate/TwoLineInformationItem.cpp \
     node/control_unit/ControlUnitCommandTemplateEditor.cpp \
-    node/data/CommandParameterTableModel.cpp
+    node/data/CommandParameterTableModel.cpp \
+    node/data/AttributeValueChangeSet.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -83,7 +84,6 @@ HEADERS  += \
     node/data_service/DataServiceEditor.h \
     node/data_service/CreateEditDataService.h \
     preference/PreferenceDialog.h \
-    node/data/CUDatasetModel.h \
     node/data/FixedOutputChannelDatasetTableModel.h \
     MainWindow.h \
     monitor/healt/HealtMonitorWidget.h \
@@ -112,7 +112,8 @@ HEADERS  += \
     widget/list/delegate/TwoLineInformationItem.h \
     widget/list/delegate/TwoLineInformationListItemDelegate.h \
     node/control_unit/ControlUnitCommandTemplateEditor.h \
-    node/data/CommandParameterTableModel.h
+    node/data/CommandParameterTableModel.h \
+    node/data/AttributeValueChangeSet.h
 
 FORMS    += \
     search/searchnoderesult.ui \

@@ -35,14 +35,15 @@ namespace chaos {
                     std::string value;
                     
                     InputDatasetAttributeChangeValue(const std::string& _attribute_name,
-                                               const std::string& _value);
+                                                     const std::string& _value);
+                    
                 };
                 
                 struct ControlUnitInputDatasetChangeSet {
                     std::string cu_uid;
                     std::vector< boost::shared_ptr<InputDatasetAttributeChangeValue> > change_set;
                     ControlUnitInputDatasetChangeSet(const std::string _cu_uid,
-                                                    const std::vector< boost::shared_ptr<InputDatasetAttributeChangeValue> >& _change_set);
+                                                     const std::vector< boost::shared_ptr<InputDatasetAttributeChangeValue> >& _change_set);
                 };
                 
                 //! return the current control unit dataset

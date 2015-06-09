@@ -262,6 +262,10 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
     }
 }
 
+void ControlUnitEditor::saveTemplate(QSharedPointer<chaos::common::data::CDataWrapper> command_template) {
+
+}
+
 void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
                                                  bool switch_activate) {
 
@@ -338,7 +342,11 @@ void ControlUnitEditor::on_pushButtonAddNewCommadInstance_clicked() {
     QModelIndexList selected_list = ui->listViewCommandList->selectionModel()->selectedRows();
     if(selected_list.size()!=1) return;
 
+    //! open tempalte editor for new instance creation
     ControlUnitCommandTemplateEditor template_editor(this);
+    connect(&template_editor,
+            SIGNAL(saveTemplate(QSharedPointer<chaos::common::data::CDataWrapper>)),
+            SLOT(saveTemplate(QSharedPointer<chaos::common::data::CDataWrapper>)));
     QSharedPointer<TwoLineInformationItem> item = selected_list.first().data().value< QSharedPointer<TwoLineInformationItem> >();
     template_editor.setCommandDescription(item->raw_data);
     template_editor.exec();

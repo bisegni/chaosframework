@@ -313,6 +313,10 @@ int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
     return err;
 }
 
+int MongoDBControlUnitDataAccess::setCommandDescription(chaos::common::data::CDataWrapper& command_description) {
+    
+}
+
 int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_unique_id,
                                                          CDataWrapper& instance_description) {
     int err = 0;

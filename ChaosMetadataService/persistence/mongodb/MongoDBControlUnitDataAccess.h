@@ -64,6 +64,8 @@ namespace chaos {
                     int getDataset(const std::string& cu_unique_id,
                                    chaos::common::data::CDataWrapper **dataset_description);
                     
+                    int setCommandDescription(chaos::common::data::CDataWrapper& command_description);
+                    
                     int setInstanceDescription(const std::string& cu_unique_id,
                                                chaos::common::data::CDataWrapper& instance_description);
                     

@@ -58,6 +58,8 @@ namespace chaos {
                     virtual int getDataset(const std::string& cu_unique_id,
                                            chaos::common::data::CDataWrapper **dataset_description) = 0;
 
+                    virtual int setCommandDescription(chaos::common::data::CDataWrapper& command_description) = 0;
+                    
                     virtual int setInstanceDescription(const std::string& cu_unique_id,
                                                        chaos::common::data::CDataWrapper& instance_description) = 0;
 

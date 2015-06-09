@@ -21,8 +21,9 @@
 #ifndef __CHAOSFramework__ApiProxy__
 #define __CHAOSFramework__ApiProxy__
 
-    //#include <chaos/common/utility/NamedService.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
+
+#include <ChaosMetadataServiceClient/api_proxy/api_types.h>
 
 #include <boost/atomic.hpp>
 

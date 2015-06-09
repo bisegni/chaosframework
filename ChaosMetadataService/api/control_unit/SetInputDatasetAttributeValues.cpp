@@ -53,7 +53,6 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
     //get the data access
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
     GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -4)
-    CU_SIDAV_INFO << api_data->getJSONString();
     for(int idx = 0;
         idx < value_set_array->size();
         idx++){

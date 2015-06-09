@@ -1,6 +1,7 @@
 #ifndef FIXEDINPUTCHANNELDATASETTABLEMODEL_H
 #define FIXEDINPUTCHANNELDATASETTABLEMODEL_H
 
+#include "AttributeValueChangeSet.h"
 #include "ChaosAbstractDataSetTableModel.h"
 
 #include <chaos/common/chaos_constants.h>
@@ -11,14 +12,6 @@
 #include <QVector>
 #include <QSharedPointer>
 
-struct ChangeValue{
-    QVariant last_value;
-    QVariant current_value;
-
-    void setCurrentValue(const QVariant& cur_val);
-    void reset();
-    void commit();
-};
 
 class FixedInputChannelDatasetTableModel:
         public ChaosAbstractDataSetTableModel
@@ -49,7 +42,7 @@ private:
     //memorize all the attributes that have had their values changed
     boost::dynamic_bitset<> attribute_value_changed;
     //contains the value for set
-    QVector< QSharedPointer<ChangeValue> > attribute_set_value;
+    QVector< QSharedPointer<AttributeValueChangeSet> > attribute_set_value;
     QMap<int, QSharedPointer<chaos::common::data::CDataWrapper> >dataset_attribute_configuration;
 };
 
