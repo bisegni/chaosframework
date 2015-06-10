@@ -349,8 +349,8 @@ void ControlUnitEditor::on_pushButtonAddNewCommadInstance_clicked() {
     //! open tempalte editor for new instance creation
     ControlUnitCommandTemplateEditor template_editor(this);
     connect(&template_editor,
-            SIGNAL(saveTemplate(QSharedPointer<chaos::common::data::CDataWrapper>)),
-            SLOT(saveTemplate(QSharedPointer<chaos::common::data::CDataWrapper>)));
+            SIGNAL(saveTemplate(boost::shared_ptr<control_unit::CommandTemplate>)),
+            SLOT(saveTemplate(boost::shared_ptr<control_unit::CommandTemplate>)));
     QSharedPointer<TwoLineInformationItem> item = selected_list.first().data().value< QSharedPointer<TwoLineInformationItem> >();
     template_editor.setCommandDescription(item->raw_data);
     template_editor.exec();
