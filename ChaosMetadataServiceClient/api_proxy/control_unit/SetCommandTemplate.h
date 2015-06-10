@@ -44,7 +44,7 @@ namespace chaos {
                     //! the unique id of the command
                     std::string command_unique_id;
                     //!the setter for the paramter
-                    ParameterSetterList paramter_value_list;
+                    ParameterSetterList parameter_value_list;
                     //!the submission rule
                     uint32_t submission_rule;
                     //! the priority of the command within the whait queue

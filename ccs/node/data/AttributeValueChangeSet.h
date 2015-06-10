@@ -9,6 +9,7 @@ public QObject {
     Q_OBJECT
 public:
     bool is_mandatory;
+    bool parametrize;
     QString  attribute_name;
     int type;
     QVariant last_value;

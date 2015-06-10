@@ -203,6 +203,10 @@ namespace chaos {
 				//append all element of an data wrapper
 				void appendAllElement(CDataWrapper&);
 				
+                //!copy a key(with value) from this instance to another CDataWrapper one
+                bool copyKeyTo(const std::string& key_to_copy,
+                               CDataWrapper& destination);
+                
 				//! Return the Hashing represetnation of the CDataWrapper
 				string toHash() const;
 			};

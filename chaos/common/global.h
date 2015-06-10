@@ -31,6 +31,7 @@
  * Read the README.txt file in the root of source code folder
  */
 #include <boost/version.hpp>
+#include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/log/common.hpp>
@@ -64,6 +65,9 @@
 #define LOG_AND_TROW(log, num, msg)\
 log << "("<<num<<") " << msg;\
 throw chaos::CException(num, msg, __PRETTY_FUNCTION__);
+
+#define LOG_AND_TROW_FORMATTED(log, num, f, p)\
+LOG_AND_TROW(log, num, boost::str(boost::format(f)p))
 
 #define CHAOS_LASSERT_EXCEPTION(assertion, log, num, msg)\
 if(!assertion) {LOG_AND_TROW(log, num, msg)}

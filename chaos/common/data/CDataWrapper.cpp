@@ -352,6 +352,16 @@ void CDataWrapper::appendAllElement(CDataWrapper& srcDataWrapper) {
     bsonBuilder->appendElements(srcDataWrapper.bsonBuilder->asTempObj());
 }
 
+bool CDataWrapper::copyKeyTo(const std::string& key_to_copy,
+                             CDataWrapper& destination) {
+    bool result = false;
+    if((result = bsonBuilder->asTempObj().hasElement(key_to_copy))){
+        //we can copy
+        destination.bsonBuilder->append(bsonBuilder->asTempObj().getField(key_to_copy));
+    }
+    return result;
+}
+
 //reset the datawrapper
 void CDataWrapper::reset() {
     bsonBuilder.reset(new BSONObjBuilder());

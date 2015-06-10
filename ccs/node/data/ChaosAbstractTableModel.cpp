@@ -30,6 +30,10 @@ QVariant ChaosAbstractTableModel::getCellData(int row, int column) const {
     return QVariant();
 }
 
+QVariant ChaosAbstractTableModel::getCheckeable(int row, int column) const {
+    return QVariant();
+}
+
 QVariant ChaosAbstractTableModel::getFontForData(int row, int column) const {
     return QVariant();
 }
@@ -69,6 +73,9 @@ QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const
     case Qt::DisplayRole:
         result = getCellData(row, col);
         break;
+    case Qt::CheckStateRole:
+        result = getCheckeable(row, col);
+        break;
     case Qt::FontRole:
         result = getFontForData(row, col);
         break;
@@ -91,7 +98,8 @@ QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const
 
 bool ChaosAbstractTableModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     bool result = false;
-    if (index.isValid() && role == Qt::EditRole) {
+    if (index.isValid() &&
+            (role == Qt::EditRole || role == Qt::CheckStateRole)) {
         if(result = setCellData(index, value)){
             emit(dataChanged(index, index));
         }
@@ -103,10 +111,16 @@ bool ChaosAbstractTableModel::isCellEditable(const QModelIndex &index) const {
     return false;
 }
 
+bool ChaosAbstractTableModel::isCellCheckable(const QModelIndex &index) const {
+    return false;
+}
+
 Qt::ItemFlags ChaosAbstractTableModel::flags(const QModelIndex &index) const {
     Qt::ItemFlags flags = Qt::ItemIsEnabled;
     if (!index.isValid()) return flags;
-    if(isCellEditable(index)) {
+    if(isCellCheckable(index)) {
+        flags |= Qt::ItemIsUserCheckable;
+    } else if(isCellEditable(index)) {
         flags |= Qt::ItemIsEditable;
     }
     return flags;

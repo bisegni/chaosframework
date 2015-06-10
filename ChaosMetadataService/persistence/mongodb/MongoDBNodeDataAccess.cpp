@@ -372,7 +372,6 @@ int MongoDBNodeDataAccess::checkCommandTemplatePresence(const std::string& templ
     int err = 0;
     mongo::BSONObj result;
     try {
-        
         mongo::BSONObj q = BSON("template_name" << template_name <<
                                 BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
         
@@ -384,7 +383,7 @@ int MongoDBNodeDataAccess::checkCommandTemplatePresence(const std::string& templ
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
                                       q))){
-            MDBNDA_ERR << boost::str(boost::format("Error sercing temaplte name: %1% and command uid:%2%")%template_name%command_unique_id);
+            MDBNDA_ERR << boost::str(boost::format("Error searching template name: %1% for command uid:%2%")%template_name%command_unique_id);
         }
         presence = !result.isEmpty();
     } catch (const mongo::DBException &e) {
@@ -392,24 +391,115 @@ int MongoDBNodeDataAccess::checkCommandTemplatePresence(const std::string& templ
         MDBNDA_ERR << e.what();
         err = e.getCode();
     }
-
     return err;
 }
 
 int MongoDBNodeDataAccess::setCommandTemplate(chaos::common::data::CDataWrapper& command_template) {
     int err = 0;
+    try {
+        if(!command_template.hasKey("template_name") ||
+           !command_template.hasKey(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)) {
+            MDBNDA_ERR << boost::str(boost::format("The key 'template_name' and  '%2%' are mandatory!")%"template_name"%BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
+            return -1;
+        }
+        
+        std::string template_name = command_template.getStringValue("temlate_name");
+        std::string command_unique_id = command_template.getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
+        
+        //create query
+        mongo::BSONObj q = BSON("template_name" << template_name <<
+                                BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
+        
+        //create the update package (all key imnus the first two used before
+        std::auto_ptr<CDataWrapper> to_update;
+        std::vector<std::string> all_keys;
+        command_template.getAllKey(all_keys);
+        
+        for(std::vector<std::string>::iterator it = all_keys.begin();
+            it != all_keys.end();
+            it++) {
+            if(it->compare("template_name") ||
+               it->compare(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)) continue;
+            
+            //copy the key if present
+            command_template.copyKeyTo(*it, *to_update);
+        }
+        
+        std::auto_ptr<SerializationBuffer> chaos_bson(to_update->getBSONData());
+        mongo::BSONObj u(chaos_bson->getBufferPtr());
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("setCommandTemplate",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                   "update",
+                                                                   q.jsonString(),
+                                                                   u.jsonString()));)
+        
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                     q,
+                                     u,
+                                     true))){
+            MDBNDA_ERR << boost::str(boost::format("Error setting the template name: %1% for command uid:%2%")%template_name%command_unique_id);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
     return err;
 }
 
 int MongoDBNodeDataAccess::deleteCommandTemplate(const std::string& template_name,
                                                  const std::string& command_unique_id) {
     int err = 0;
+    try {
+        //create query
+        mongo::BSONObj q = BSON("template_name" << template_name <<
+                                BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("deleteCommandTemplate",
+                                           "delete",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()));)
+        
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                     q))){
+            MDBNDA_ERR << boost::str(boost::format("Error removing the template name: %1% for command uid:%2%")%template_name%command_unique_id);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
     return err;
 }
 
 int MongoDBNodeDataAccess::returnCommandTemplate(const std::string& template_name,
-                          const std::string& command_unique_id,
+                                                 const std::string& command_unique_id,
                                                  chaos::common::data::CDataWrapper **command_template) {
     int err = 0;
+    mongo::BSONObj result;
+    try {
+        //create query
+        mongo::BSONObj q = BSON("template_name" << template_name <<
+                                BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("deleteCommandTemplate",
+                                           "delete",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()));)
+        
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                      q))){
+            MDBNDA_ERR << boost::str(boost::format("Error searching the template name: %1% for command uid:%2%")%template_name%command_unique_id);
+        } else if(result.isEmpty()) {
+            MDBNDA_ERR << boost::str(boost::format("No template found for template name: %1% and command uid:%2%")%template_name%command_unique_id);
+        } else {
+            //return a new datawrapper with the found content
+            *command_template = new CDataWrapper(result.objdata());
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
     return err;
 }

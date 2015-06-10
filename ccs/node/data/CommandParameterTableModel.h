@@ -21,12 +21,14 @@ protected:
     int getColumnCount() const;
     QString getHeaderForColumn(int column) const;
     QVariant getCellData(int row, int column) const;
+    QVariant getCheckeable(int row, int column) const;
     QVariant getTooltipTextForData(int row, int column) const;
     QVariant getTextAlignForData(int row, int column) const;
     QVariant getBackgroundForData(int row, int column) const;
     QVariant getTextColorForData(int row, int column) const;
     bool setCellData(const QModelIndex &index, const QVariant &value);
     bool isCellEditable(const QModelIndex &index) const;
+    bool isCellCheckable(const QModelIndex &index) const;
 private:
     //contains the attribute
     QVector< QSharedPointer<AttributeValueChangeSet> > attribute_changes;

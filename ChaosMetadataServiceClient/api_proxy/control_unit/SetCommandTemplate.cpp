@@ -42,8 +42,8 @@ ApiProxyResult SetCommandTemplate::execute(const TemplateList& template_configur
         template_element->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, (*it)->template_name);
         template_element->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, (*it)->command_unique_id);
         //! scan all parameter configuration
-        for(ParameterSetterListIterator it_param = (*it)->paramter_value_list.begin();
-            it_param != (*it)->paramter_value_list.end();
+        for(ParameterSetterListIterator it_param = (*it)->parameter_value_list.begin();
+            it_param != (*it)->parameter_value_list.end();
             it_param++){
             (*it_param)->setTo(*template_element);
         }

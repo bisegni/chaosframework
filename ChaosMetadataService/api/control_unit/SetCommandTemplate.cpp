@@ -25,6 +25,7 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service::api::control_unit;
 using namespace chaos::metadata_service::persistence::data_access;
 
@@ -44,10 +45,8 @@ SetCommandTemplate::~SetCommandTemplate() {
 CDataWrapper *SetCommandTemplate::execute(CDataWrapper *api_data,
                                           bool& detach_data) throw(chaos::CException) {
     int err = 0;
-    bool presence = false;
     CHECK_CDW_THROW_AND_LOG(api_data, CU_SCT_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, "template_list", CU_SCT_ERR, -2, "The attribute template_list is mandatory")
-    //CHECK_KEY_THROW_AND_LOG(api_data, chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS, CU_SCT_ERR, -4, boost::str(boost::format("The attribute %1% is mandatory")%chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS))
     
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
     GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -4)
@@ -59,11 +58,18 @@ CDataWrapper *SetCommandTemplate::execute(CDataWrapper *api_data,
         idx++) {
         
         std::auto_ptr<CDataWrapper> template_element(tempalte_list->getCDataWrapperElementAtIndex(idx));
+        
+        if(template_element->hasKey("template_name")&&
+           template_element->hasKey(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)) {
+            CU_SCT_ERR << "Tempalte with no all mandatory key: " << template_element->getJSONData();
+            continue;
+        }
+        
         const std::string template_name = template_element->getStringValue("template_name");
-        const std::string command_unique_id = template_element->getStringValue(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
+        const std::string command_unique_id = template_element->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
+        if((err = n_da->setCommandTemplate(*template_element))) {
+            LOG_AND_TROW_FORMATTED(CU_SCT_ERR, -5, "Error setting the template %1% of command uid %2%", %template_name%command_unique_id)
+        }
     }
-    
-    
-    
     return NULL;
 }

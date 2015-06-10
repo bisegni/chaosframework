@@ -14,6 +14,7 @@ protected:
     virtual int getColumnCount() const = 0;
     virtual QString getHeaderForColumn(int column) const = 0;
     virtual QVariant getCellData(int row, int column) const;
+    virtual QVariant getCheckeable(int row, int column) const;
     virtual QVariant getFontForData(int row, int column) const;
     virtual QVariant getBackgroundForData(int row, int column) const;
     virtual QVariant getTextColorForData(int row, int column) const;
@@ -22,6 +23,7 @@ protected:
     virtual QVariant getTooltipTextForData(int row, int column) const;
     virtual bool setCellData(const QModelIndex &index, const QVariant &value);
     virtual bool isCellEditable(const QModelIndex &index) const;
+    virtual bool isCellCheckable(const QModelIndex &index) const;
 public:
     ChaosAbstractTableModel(QObject *parent=0);
     Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;

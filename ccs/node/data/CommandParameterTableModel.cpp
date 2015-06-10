@@ -54,6 +54,14 @@ void CommandParameterTableModel::updateAttribute(const QSharedPointer<chaos::com
 void CommandParameterTableModel::fillTemplate(chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate &command_template) {
     foreach (QSharedPointer<AttributeValueChangeSet> attribute, attribute_changes) {
         boost::shared_ptr<CDataWrapperKeyValueSetter> kv_setter;
+
+        if(attribute->current_value.isNull()) {
+            if(attribute->is_mandatory){
+
+            }
+            continue;
+        }
+
         switch (attribute->type) {
         case chaos::DataType::TYPE_BOOLEAN:
             kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperBoolKeyValueSetter(attribute->attribute_name.toStdString(),
@@ -81,6 +89,9 @@ void CommandParameterTableModel::fillTemplate(chaos::metadata_service_client::ap
 
             break;
         }
+        if(kv_setter.get()) {
+            command_template.parameter_value_list.push_back(kv_setter);
+        }
     }
 }
 
@@ -98,7 +109,7 @@ int CommandParameterTableModel::getRowCount() const {
 }
 
 int CommandParameterTableModel::getColumnCount() const {
-    return 4;
+    return 5;
 }
 
 QString CommandParameterTableModel::getHeaderForColumn(int column) const {
@@ -115,6 +126,9 @@ QString CommandParameterTableModel::getHeaderForColumn(int column) const {
         break;
     case 3:
         result = QString("Set value");
+        break;
+    case 4:
+        result = QString("Parametrize");
         break;
     }
     return result;
@@ -157,9 +171,25 @@ QVariant CommandParameterTableModel::getCellData(int row, int column) const {
     case 3:
         result = attribute_changes[row]->current_value;
         break;
+    default:
+        break;
     }
     return result;
 }
+
+QVariant CommandParameterTableModel::getCheckeable(int row, int column) const {
+    QVariant result;
+    switch(column){
+    case 4:
+        result = attribute_changes[row]->parametrize?Qt::Checked:Qt::Unchecked;
+        break;
+
+    default:
+        break;
+    }
+    return result;
+}
+
 
 QVariant CommandParameterTableModel::getTooltipTextForData(int row, int column) const {
     return getCellData(row, column);
@@ -190,6 +220,10 @@ QVariant CommandParameterTableModel::getBackgroundForData(int row, int column) c
     case 1:
     case 2:
     case 3:
+    case 4:
+        if(attribute_changes[row]->is_mandatory) {
+            result = changed_value_background_color_mandatory;
+        }
         break;
     default:
         break;
@@ -222,57 +256,76 @@ QVariant CommandParameterTableModel::getTextColorForData(int row, int column) co
 
 bool CommandParameterTableModel::setCellData(const QModelIndex& index, const QVariant& value) {
     bool result = true;
-    QString error_message;
-    switch (attribute_changes[index.row()]->type) {
-    case chaos::DataType::TYPE_BOOLEAN:{
-        CHECKTYPE(result, bool, value)
-                if(!result) {
-            error_message = tr("The value is not convertible to double");
+    if(index.column() == 3) {
+        QString error_message;
+
+        if(attribute_changes[index.row()]->parametrize) {
+            QMessageBox msgBox;
+            msgBox.setText(tr("Command Attribute Cast Error"));
+            msgBox.setInformativeText(tr("parametrized attribute can't be valorized"));
+            msgBox.exec();
+            result = false;
+        } else{
+
+            switch (attribute_changes[index.row()]->type) {
+            case chaos::DataType::TYPE_BOOLEAN:{
+                CHECKTYPE(result, bool, value)
+                        if(!result) {
+                    error_message = tr("The value is not convertible to double");
+                }
+                break;
+            }
+            case chaos::DataType::TYPE_INT32:{
+                CHECKTYPE(result, int32_t, value)
+                        if(!result) {
+                    error_message = tr("The value is not convertible to int32");
+                    break;
+                }
+            }
+            case chaos::DataType::TYPE_INT64:{
+                CHECKTYPE(result, int64_t, value)
+                        if(!result) {
+                    error_message = tr("The value is not convertible to int64_t");
+                    break;
+                }
+            }
+            case chaos::DataType::TYPE_DOUBLE:{
+                CHECKTYPE(result, double, value)
+                        if(!result) {
+                    error_message = tr("The value is not convertible to double");
+                    break;
+                }
+            }
+            case chaos::DataType::TYPE_STRING:{
+                CHECKTYPE(result, std::string, value)
+                        if(!result) {
+                    error_message = tr("The value is not convertible to std::string");
+                }
+                break;
+            }
+            default:
+                break;
+            }
+            if(!result){
+                QMessageBox msgBox;
+                msgBox.setText(tr("Command Attribute Cast Error"));
+                msgBox.setInformativeText(error_message);
+                msgBox.exec();
+            } else {
+                attribute_changes[index.row()]->setCurrentValue(value);
+            }
         }
-        break;
-    }
-    case chaos::DataType::TYPE_INT32:{
-        CHECKTYPE(result, int32_t, value)
-                if(!result) {
-            error_message = tr("The value is not convertible to int32");
-            break;
-        }
-    }
-    case chaos::DataType::TYPE_INT64:{
-        CHECKTYPE(result, int64_t, value)
-                if(!result) {
-            error_message = tr("The value is not convertible to int64_t");
-            break;
-        }
-    }
-    case chaos::DataType::TYPE_DOUBLE:{
-        CHECKTYPE(result, double, value)
-                if(!result) {
-            error_message = tr("The value is not convertible to double");
-            break;
-        }
-    }
-    case chaos::DataType::TYPE_STRING:{
-        CHECKTYPE(result, std::string, value)
-                if(!result) {
-            error_message = tr("The value is not convertible to std::string");
-        }
-        break;
-    }
-    default:
-        break;
-    }
-    if(!result){
-        QMessageBox msgBox;
-        msgBox.setText(tr("Command Attribute Cast Error"));
-        msgBox.setInformativeText(error_message);
-        msgBox.exec();
-    } else {
-        attribute_changes[index.row()]->setCurrentValue(value);
+    }else if(index.column() == 4) {
+        attribute_changes[index.row()]->parametrize = value.toBool();
+        result = true;
     }
     return result;
 }
 
 bool CommandParameterTableModel::isCellEditable(const QModelIndex &index) const {
-    return index.column() == 3;
+    return index.column() == 3 || index.column() == 4;
+}
+
+bool CommandParameterTableModel::isCellCheckable(const QModelIndex &index) const {
+    return index.column() == 4;
 }

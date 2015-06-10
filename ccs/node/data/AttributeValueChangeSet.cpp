@@ -1,9 +1,13 @@
 #include "AttributeValueChangeSet.h"
 
 AttributeValueChangeSet::AttributeValueChangeSet(QObject *parent):
-QObject(parent) {
-
-}
+    QObject(parent),
+    is_mandatory(false),
+    parametrize(false),
+    attribute_name(),
+    type(0),
+    last_value(),
+    current_value(){}
 
 AttributeValueChangeSet::~AttributeValueChangeSet() {
 
