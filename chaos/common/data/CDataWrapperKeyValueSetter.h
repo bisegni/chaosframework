@@ -42,7 +42,7 @@ namespace chaos {
             public CDataWrapperKeyValueSetter {
             protected:
                 type attribute_value;
-                TypedCDataWrapperKeyValueSetter(const std::string _attribute_name,
+                TypedCDataWrapperKeyValueSetter(const std::string& _attribute_name,
                                                 const type& _attribute_value):
                 CDataWrapperKeyValueSetter(_attribute_name),
                 attribute_value(_attribute_value){}
@@ -51,7 +51,7 @@ namespace chaos {
             class CDataWrapperBoolKeyValueSetter:
             public TypedCDataWrapperKeyValueSetter<bool> {
             public:
-                CDataWrapperBoolKeyValueSetter(const std::string _attribute_name,
+                CDataWrapperBoolKeyValueSetter(const std::string& _attribute_name,
                                                const bool& _attribute_value):
                 TypedCDataWrapperKeyValueSetter<bool>(attribute_name,
                                                       attribute_value){}
@@ -64,8 +64,8 @@ namespace chaos {
             
             class CDataWrapperInt32KeyValueSetter:
             public TypedCDataWrapperKeyValueSetter<int32_t> {
-                public:
-                CDataWrapperInt32KeyValueSetter(const std::string _attribute_name,
+            public:
+                CDataWrapperInt32KeyValueSetter(const std::string& _attribute_name,
                                                 const int32_t& _attribute_value):
                 TypedCDataWrapperKeyValueSetter<int32_t>(attribute_name,
                                                          attribute_value){}
@@ -78,8 +78,8 @@ namespace chaos {
             
             class CDataWrapperInt64KeyValueSetter:
             public TypedCDataWrapperKeyValueSetter<int64_t> {
-                public:
-                CDataWrapperInt64KeyValueSetter(const std::string _attribute_name,
+            public:
+                CDataWrapperInt64KeyValueSetter(const std::string& _attribute_name,
                                                 const int64_t& _attribute_value):
                 TypedCDataWrapperKeyValueSetter<int64_t>(attribute_name,
                                                          attribute_value){}
@@ -92,8 +92,8 @@ namespace chaos {
             
             class CDataWrapperDoubleKeyValueSetter:
             public TypedCDataWrapperKeyValueSetter<double> {
-                public:
-                CDataWrapperDoubleKeyValueSetter(const std::string _attribute_name,
+            public:
+                CDataWrapperDoubleKeyValueSetter(const std::string& _attribute_name,
                                                  const double& _attribute_value):
                 TypedCDataWrapperKeyValueSetter<double>(attribute_name,
                                                         attribute_value){}
@@ -105,12 +105,12 @@ namespace chaos {
             };
             
             class CDataWrapperStringKeyValueSetter:
-            public TypedCDataWrapperKeyValueSetter<string> {
-                public:
-                CDataWrapperStringKeyValueSetter(const std::string _attribute_name,
-                                                 const string& _attribute_value):
-                TypedCDataWrapperKeyValueSetter<string>(attribute_name,
-                                                         attribute_value){}
+            public TypedCDataWrapperKeyValueSetter<std::string> {
+            public:
+                CDataWrapperStringKeyValueSetter(const std::string& _attribute_name,
+                                                 const std::string& _attribute_value):
+                TypedCDataWrapperKeyValueSetter<std::string>(attribute_name,
+                                                             attribute_value){}
                 
                 void setTo(chaos::common::data::CDataWrapper& data) {
                     data.addStringValue(attribute_name,
