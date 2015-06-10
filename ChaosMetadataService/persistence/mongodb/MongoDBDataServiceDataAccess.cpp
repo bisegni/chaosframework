@@ -100,8 +100,7 @@ int MongoDBDataServiceDataAccess::getDescription(const std::string& ds_unique_id
                                                                     query.toString(),
                                                                     prj.jsonString()));)
         if((err = connection->findOne(result,
-                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
-                                                               MONGODB_COLLECTION_NODES),
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                       query,
                                       &prj))){
             MDBDSDA_ERR << "Error fecthing specific data service attribute for" << ds_unique_id << " with error:" << err;
@@ -152,8 +151,7 @@ int MongoDBDataServiceDataAccess::updateExisting(const std::string& ds_unique_id
                                                                         query.toString(),
                                                                         update.jsonString()));)
 
-            if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
-                                                                  MONGODB_COLLECTION_NODES),
+            if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                          query,
                                          update))){
                 MDBDSDA_ERR << "Error updating proprietary field for data service:" << ds_unique_id << " with error:" << err;
@@ -205,8 +203,7 @@ int MongoDBDataServiceDataAccess::associateNode(const std::string& ds_unique_id,
                                                                     q.toString(),
                                                                     u.jsonString()));)
 
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
-                                                              MONGODB_COLLECTION_NODES),
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      q,
                                      u))) {
             MDBDSDA_ERR << "Error adding to data service:" << ds_unique_id << " the control unit:" << associated_node_unique_id <<" with error:"<< err;
@@ -239,8 +236,7 @@ int MongoDBDataServiceDataAccess::removeNode(const std::string& ds_unique_id,
                                                                     q.toString(),
                                                                     u.jsonString()));)
 
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
-                                                              MONGODB_COLLECTION_NODES),
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      q,
                                      u,
                                      false,
@@ -277,8 +273,7 @@ int MongoDBDataServiceDataAccess::searchAssociationForUID(const std::string& ds_
                                             DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                     query.toString()));)
         if((err = connection->findOne(result,
-                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
-                                                               MONGODB_COLLECTION_NODES),
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                       query,
                                       &projection))){
             MDBDSDA_ERR << "Error finding association for data service:" << ds_unique_id << " with error:"<< err;
@@ -347,7 +342,7 @@ int MongoDBDataServiceDataAccess::searchAllDataAccess(std::vector<boost::shared_
                                      DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT << 1);
         //perform the search for the query page
     if((err = performPagedQuery(paged_result,
-                                MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                 query,
                                 &projection,
                                 NULL,
@@ -389,7 +384,7 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<boost::shared_
                                                                 query.toString()));)
 
     if((err = connection->count(number_of_total_ds,
-                                MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                 query))) {
         MDBDSDA_ERR << "Error countin all data services with error:" << err;
     } else if(number_of_total_ds == 0) {
@@ -429,7 +424,7 @@ int MongoDBDataServiceDataAccess::getBestNDataService(std::vector<boost::shared_
 
                 //perform the search for the query page
             connection->findN(result,
-                              MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                              MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                               query,
                               1,
                               index_to_skip[idx]);

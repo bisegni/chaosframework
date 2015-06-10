@@ -184,6 +184,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                 mongo::BSONObjBuilder batch_command_builder;
                 
                 auto_ptr<CDataWrapper> bc_element(bc_vec->getCDataWrapperElementAtIndex(idx));
+                MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)
                 MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS)
                 MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_builder, bc_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION)
                 
@@ -200,6 +201,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                         MDB_COPY_STRING_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION)
                         MDB_COPY_I32_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE)
                         MDB_COPY_I32_CDWKEY_TO_BUILDER(batch_command_parameter_builder, bc_param_element, common::batch_command::BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG)
+                        
                         batch_command_parameter_bson_array << batch_command_parameter_builder.obj();
                     }
                     //add dataset array to update bson
@@ -225,7 +227,7 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                                                                     query.toString(),
                                                                     update.jsonString()));)
         //set the instance parameter within the node representing the control unit
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
             MDBCUDA_ERR << "Error updating unit server";
@@ -257,7 +259,7 @@ int MongoDBControlUnitDataAccess::checkDatasetPresence(const std::string& cu_uni
                                                                     query.toString()));)
         //remove the field of the document
         if((err = connection->count(counter,
-                                    MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                    MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                     query))) {
             MDBCUDA_ERR << "Error counting the element";
         } else {
@@ -293,7 +295,7 @@ int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
                                                                     prj.toString()));)
         //remove the field of the document
         if((err = connection->findOne(result,
-                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                       query,
                                       &prj))) {
             MDBCUDA_ERR << "Error fetching dataset";
@@ -407,7 +409,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
                                                                     query.toString(),
                                                                     update.jsonString()));)
         //set the instance parameter within the node representing the control unit
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
             MDBCUDA_ERR << "Error updating unit server";
@@ -459,7 +461,7 @@ int MongoDBControlUnitDataAccess::searchInstanceForUnitServer(std::vector<boost:
                                                                     q.toString()));)
         //perform the search for the query page
         if((err = performPagedQuery(paged_result,
-                                    MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                    MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                     q,
                                     NULL,//return only the control unit unique id
                                     NULL,
@@ -519,7 +521,7 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
                                                                     q.toString()));)
         
         if((err = connection->findOne(q_result,
-                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                       q))){
             MDBCUDA_ERR << "Error calling performPagedQuery with error" << err;
         } else if(q_result.isEmpty()){
@@ -587,7 +589,7 @@ int MongoDBControlUnitDataAccess::deleteInstanceDescription(const std::string& u
                                                                     q.toString(),
                                                                     u.jsonString()));)
         //remove the field of the document
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      q,
                                      u))) {
             MDBCUDA_ERR << "Error removing control unit instance from node";
@@ -623,8 +625,7 @@ int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeDescription(const s
                                                                     prj.jsonString()));)
         //remove the field of the document
         if((err  = connection->findOne(result_bson,
-                                       MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
-                                                                MONGODB_COLLECTION_NODES),
+                                       MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                        query,
                                        &prj))){
             
@@ -668,8 +669,7 @@ int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeConfiguration(const
                                                                     prj.jsonString()));)
         //remove the field of the document
         if((err  = connection->findOne(result_bson,
-                                       MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
-                                                                MONGODB_COLLECTION_NODES),
+                                       MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                        query,
                                        &prj))){
             
@@ -727,8 +727,7 @@ int MongoDBControlUnitDataAccess::getDataServiceAssociated(const std::string& cu
                                                                     p.jsonString()));)
         //remove the field of the document
         connection->findN(result,
-                          MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(),
-                                                   MONGODB_COLLECTION_NODES),
+                          MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                           q,
                           10,
                           0,

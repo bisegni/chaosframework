@@ -59,7 +59,7 @@ int MongoDBUtilityDataAccess::getNextSequenceValue(const std::string& sequence_n
                                                                    q.toString(),
                                                                    ui.toString()));)
 
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_SEQUENCES), q, ui, true))) {
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SEQUENCES), q, ui, true))) {
             MDBUDA_ERR << "Error initilizing ";
         } else {
             update << "$inc" << BSON("value" << 1);
@@ -72,7 +72,7 @@ int MongoDBUtilityDataAccess::getNextSequenceValue(const std::string& sequence_n
                                                                        q.toString(),
                                                                        u.toString()));)
 
-            if((err = connection->findAndModify(result, MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_SEQUENCES), q, u, false, false))) {
+            if((err = connection->findAndModify(result, MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SEQUENCES), q, u, false, false))) {
                 MDBUDA_ERR << "Error updating ";
             } else if (!result.hasField("value")){
                 MDBUDA_ERR << "Error retriving the sequence value";

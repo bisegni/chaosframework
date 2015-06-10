@@ -24,22 +24,42 @@
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 #include <chaos/common/data/CDataWrapperKeyValueSetter.h>
 
+#include <vector>
+
+#include <boost/shared_ptr.hpp>
+
 namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
             namespace control_unit {
                 
+                typedef std::vector< boost::shared_ptr<common::data::CDataWrapperKeyValueSetter> > ParameterSetterList;
+                typedef ParameterSetterList::iterator                                              ParameterSetterListIterator;
+                /*!
+                 wrap the command template information
+                 */
                 struct CommandTemplate {
+                    //! the representative name of the tempalte (unique)
                     std::string template_name;
-                    std::string command_alias;
-                    std::vector< boost::shared_ptr<common::data::CDataWrapperKeyValueSetter> > paramter_value;
+                    //! the unique id of the command
+                    std::string command_unique_id;
+                    //!the setter for the paramter
+                    ParameterSetterList paramter_value_list;
+                    //!the submission rule
                     uint32_t submission_rule;
-                    uint32_t priority;
+                    //! the priority of the command within the whait queue
+                    uint32_t submission_priority;
+                    //! the run schedule delay between a runa and the next(in microseconds)
                     uint64_t schedule_step_delay;
+                    //! the delay between the submission retry, waithing a favorable current command state(in milliseconds)
                     uint32_t submission_retry_delay;
+                    //! the execution channel where run the command
                     uint32_t execution_channel;
                 };
                 
+                typedef std::vector< boost::shared_ptr<CommandTemplate> >                   TemplateList;
+                typedef std::vector< boost::shared_ptr<CommandTemplate> >::iterator         TemplateListIterator;
+                typedef std::vector< boost::shared_ptr<CommandTemplate> >::const_iterator   TemplateListConstIterator;
                 //! Set (insert or update) a template for control unit command
                 class SetCommandTemplate:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
@@ -51,8 +71,7 @@ namespace chaos {
                     //!
                     /*!
                      */
-                    ApiProxyResult execute(const std::string& control_unit_uid,
-                                           const boost::shared_ptr<CommandTemplate>& template_configuration);
+                    ApiProxyResult execute(const TemplateList& template_configuration);
                 };
             }
         }

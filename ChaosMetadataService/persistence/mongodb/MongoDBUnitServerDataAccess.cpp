@@ -95,7 +95,7 @@ int MongoDBUnitServerDataAccess::updateUS(chaos::common::data::CDataWrapper& uni
         if((err = node_data_access->updateNode(unit_server_description))) {
             MDBUSDA_ERR << "Error updating node information";
             return err;
-        } else if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+        } else if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                             query,
                                             update))) {
             MDBUSDA_ERR << "Error updating unit server";
@@ -146,7 +146,7 @@ int MongoDBUnitServerDataAccess::getDescription(const std::string& unit_server_u
                                                                     p.jsonString()));)
         mongo::BSONObj r;
         if((err = connection->findOne(r,
-                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                       q,
                                       &p))){
             MDBUSDA_ERR << "Error fetching the unit server ndoe specific attribute with code:" << err;

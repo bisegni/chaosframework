@@ -112,6 +112,41 @@ namespace chaos {
                                            uint32_t search_type,
                                            uint32_t last_unique_id,
                                            uint32_t page_length = 50) = 0;
+                    
+                    //! set (insert or update) a template for a batch command
+                    /*!
+                     The CDataWrapper contains all the key show on SetCommandTemplate api documentation
+                     */
+                    virtual int setCommandTemplate(chaos::common::data::CDataWrapper& command_template) = 0;
+                    
+                    //! Check a command template presence
+                    /*!
+                     Try to find a command template
+                     \param template_name is the name that semantically represent the tempalte
+                     \param command_unique_id is the unique identifir ther represent the command
+                     \param presence true if the tempalte exists false otherwhise
+                     */
+                    virtual int checkCommandTemplatePresence(const std::string& template_name,
+                                                             const std::string& command_unique_id,
+                                                             bool& presence) = 0;
+                    //! Delete a command template
+                    /*!
+                     Delete a temaplte for a batch command
+                     \param template_name is the name that semantically represent the tempalte
+                     \param command_unique_id is the unique identifir ther represent the command
+                     */
+                    virtual int deleteCommandTemplate(const std::string& template_name,
+                                                      const std::string& command_unique_id) = 0;
+                    
+                    //! Return a command template
+                    /*!
+                     search and if is present return the template by name and command uid
+                     \param template_name is the name that semantically represent the tempalte
+                     \param command_unique_id is the unique identifir ther represent the command
+                     */
+                    virtual int returnCommandTemplate(const std::string& template_name,
+                                                      const std::string& command_unique_id,
+                                                      chaos::common::data::CDataWrapper **command_template) = 0;
                 };
 
             }

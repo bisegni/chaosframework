@@ -21,7 +21,7 @@ public:
     void setCommandDescription(QSharedPointer<chaos::common::data::CDataWrapper> _command_description);
 
 signals:
-    void saveTemplate(QSharedPointer<chaos::common::data::CDataWrapper> command_template);
+    void saveTemplate(boost::shared_ptr<chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate> command_template);
 
 private slots:
     void on_buttonBox_accepted();
@@ -29,7 +29,7 @@ private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
 
 private:
-    QSharedPointer<chaos::common::data::CDataWrapper> getTempalteDescription();
+    boost::shared_ptr<chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate> getTemplateDescription();
     QSharedPointer<chaos::common::data::CDataWrapper> command_description;
     CommandParameterTableModel parameter_table_model;
     Ui::ControlUnitCommandTemplateEditor *ui;

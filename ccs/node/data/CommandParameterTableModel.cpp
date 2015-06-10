@@ -42,8 +42,8 @@ void CommandParameterTableModel::updateAttribute(const QSharedPointer<chaos::com
             attribute_change_set->attribute_raw_description = attribute;
             attribute_change_set->attribute_name = QString::fromStdString(attribute->getStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME));
             attribute_change_set->is_mandatory = ((attribute->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG) &
-                                                  BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG_MANDATORY)==
-                    BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG_MANDATORY);
+                                                   BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG_MANDATORY)==
+                                                  BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG_MANDATORY);
             attribute_change_set->type = attribute->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE);
             attribute_changes.push_back(attribute_change_set);
         }
@@ -60,12 +60,20 @@ void CommandParameterTableModel::fillTemplate(chaos::metadata_service_client::ap
                                                                                                          attribute->current_value.toBool()));
             break;
         case chaos::DataType::TYPE_INT32:
+            kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperInt32KeyValueSetter(attribute->attribute_name.toStdString(),
+                                                                                                          attribute->current_value.toInt()));
             break;
         case chaos::DataType::TYPE_INT64:
+            kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperInt64KeyValueSetter(attribute->attribute_name.toStdString(),
+                                                                                                          attribute->current_value.toLongLong()));
             break;
         case chaos::DataType::TYPE_STRING:
+            kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperStringKeyValueSetter(attribute->attribute_name.toStdString(),
+                                                                                                           attribute->current_value.toString().toStdString()));
             break;
         case chaos::DataType::TYPE_DOUBLE:
+            kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperDoubleKeyValueSetter(attribute->attribute_name.toStdString(),
+                                                                                                           attribute->current_value.toDouble()));
             break;
         case chaos::DataType::TYPE_BYTEARRAY:
             break;
@@ -122,29 +130,29 @@ QVariant CommandParameterTableModel::getCellData(int row, int column) const {
         result = QString::fromStdString(attribute_changes[row]->attribute_raw_description->getStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION));
         break;
     case 2:
-            switch (attribute_changes[row]->type) {
-            case chaos::DataType::TYPE_BOOLEAN:
-                result = QString("boolean");
-                break;
-            case chaos::DataType::TYPE_INT32:
-                result = QString("Int32");
-                break;
-            case chaos::DataType::TYPE_INT64:
-                result = QString("Int64");
-                break;
-            case chaos::DataType::TYPE_STRING:
-                result = QString("String");
-                break;
-            case chaos::DataType::TYPE_DOUBLE:
-                result = QString("Double");
-                break;
-            case chaos::DataType::TYPE_BYTEARRAY:
-                result = QString("Binary");
-                break;
-            default:
-                result = QString("------");
-                break;
-            }
+        switch (attribute_changes[row]->type) {
+        case chaos::DataType::TYPE_BOOLEAN:
+            result = QString("boolean");
+            break;
+        case chaos::DataType::TYPE_INT32:
+            result = QString("Int32");
+            break;
+        case chaos::DataType::TYPE_INT64:
+            result = QString("Int64");
+            break;
+        case chaos::DataType::TYPE_STRING:
+            result = QString("String");
+            break;
+        case chaos::DataType::TYPE_DOUBLE:
+            result = QString("Double");
+            break;
+        case chaos::DataType::TYPE_BYTEARRAY:
+            result = QString("Binary");
+            break;
+        default:
+            result = QString("------");
+            break;
+        }
         break;
     case 3:
         result = attribute_changes[row]->current_value;

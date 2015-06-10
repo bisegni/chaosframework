@@ -24,25 +24,11 @@ using namespace chaos::common::batch_command;
 
 
 BatchCommandDescription::BatchCommandDescription(const std::string& _command_alias,
-                                                 const std::string& _command_description):
-alias(_command_alias),
-description(_command_description),
-instancer(NULL) {}
-
-BatchCommandDescription::BatchCommandDescription(const std::string& _command_alias,
                                                  const std::string& _command_description,
-                                                 chaos::common::utility::ObjectInstancer<BatchCommand> *_instancer):
+                                                 const std::string& _unique_identifier):
 alias(_command_alias),
 description(_command_description),
-instancer(_instancer) {}
-
-
-BatchCommandDescription::BatchCommandDescription(const std::string& _command_alias,
-                                                 const std::string& _command_description,
-                                                 const MapParamter& _map_paramter):
-alias(_command_alias),
-description(_command_description),
-map_parameter(_map_paramter),
+unique_identifier(_unique_identifier),
 instancer(NULL) {}
 
 BatchCommandDescription::~BatchCommandDescription(){
@@ -75,6 +61,7 @@ void BatchCommandDescription::addParameter(const std::string& parameter_name,
 boost::shared_ptr<chaos::common::data::CDataWrapper>
 BatchCommandDescription::getFullDescription() {
     boost::shared_ptr<chaos::common::data::CDataWrapper> description_obj(new CDataWrapper());
+    description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, unique_identifier);
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, alias);
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION, description);
     if(map_parameter.size()) {

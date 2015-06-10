@@ -46,20 +46,24 @@ CDataWrapper *SetCommandTemplate::execute(CDataWrapper *api_data,
     int err = 0;
     bool presence = false;
     CHECK_CDW_THROW_AND_LOG(api_data, CU_SCT_ERR, -1, "No parameter found")
-    CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_UNIQUE_ID, CU_SCT_ERR, -2, boost::str(boost::format("The attribute %1% is mandatory")%NodeDefinitionKey::NODE_UNIQUE_ID))
-    CHECK_KEY_THROW_AND_LOG(api_data, "template_name", CU_SCT_ERR, -3, "The attribute template_name is mandatory")
-    CHECK_KEY_THROW_AND_LOG(api_data, chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS, CU_SCT_ERR, -4, boost::str(boost::format("The attribute %1% is mandatory")%chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS))
+    CHECK_KEY_THROW_AND_LOG(api_data, "template_list", CU_SCT_ERR, -2, "The attribute template_list is mandatory")
+    //CHECK_KEY_THROW_AND_LOG(api_data, chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS, CU_SCT_ERR, -4, boost::str(boost::format("The attribute %1% is mandatory")%chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS))
     
-    GET_DATA_ACCESS(NodeDataAccess, n_da, -5)
-    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -6)
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
+    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -4)
     
-    const std::string cu_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    const std::string template_name = api_data->getStringValue("template_name");
-    const std::string command_alias = api_data->getStringValue(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_ALIAS);
-    if((err = n_da->checkNodePresence(presence,
-                                      cu_uid))) {
+    std::auto_ptr<CMultiTypeDataArrayWrapper> tempalte_list(api_data->getVectorValue("template_list"));
+    
+    for(int idx = 0;
+        idx < tempalte_list->size();
+        idx++) {
         
+        std::auto_ptr<CDataWrapper> template_element(tempalte_list->getCDataWrapperElementAtIndex(idx));
+        const std::string template_name = template_element->getStringValue("template_name");
+        const std::string command_unique_id = template_element->getStringValue(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
     }
+    
+    
     
     return NULL;
 }

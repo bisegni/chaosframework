@@ -95,6 +95,8 @@ namespace chaos {
              */
             //! Name space for the key usign for batch command description
             namespace BatchCommandAndParameterDescriptionkey {
+                //! @The key represent the alias of the batch command
+                static const char * const BC_UNIQUE_ID              = "bc_unique_id";
                 
                 //! @The key represent the alias of the batch command
                 static const char * const BC_ALIAS                  = "bc_alias";

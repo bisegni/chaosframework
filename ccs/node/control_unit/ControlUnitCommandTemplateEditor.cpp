@@ -30,21 +30,35 @@ void ControlUnitCommandTemplateEditor::setCommandDescription(QSharedPointer<chao
     if(command_description->hasKey(BatchCommandAndParameterDescriptionkey::BC_ALIAS)){
         ui->labelCommandName->setText(QString::fromStdString(command_description->getStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS)));
     }
+    if(command_description->hasKey(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)){
+        ui->labelCommandUID->setText(QString::fromStdString(command_description->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)));
+    }
     //update attribute within the model
     parameter_table_model.updateAttribute(command_description);
 }
 
 void ControlUnitCommandTemplateEditor::on_buttonBox_accepted() {
-
+    emit saveTemplate(getTemplateDescription());
 }
 
-QSharedPointer<chaos::common::data::CDataWrapper> ControlUnitCommandTemplateEditor::getTempalteDescription() {
-    QSharedPointer<control_unit::CommandTemplate> result(new control_unit::CommandTemplate());
+boost::shared_ptr<control_unit::CommandTemplate> ControlUnitCommandTemplateEditor::getTemplateDescription() {
+    boost::shared_ptr<control_unit::CommandTemplate> result(new control_unit::CommandTemplate());
+    //set base information
     result->template_name = ui->lineEditTemplateName->text().toStdString();
-    if(command_description->hasKey(BatchCommandAndParameterDescriptionkey::BC_ALIAS)) {
-        result->command_alias = command_description->getStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS);
+    if(command_description->hasKey(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)){
+       result->command_unique_id = command_description->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
     }
+
+    //fetch all set parameter
     parameter_table_model.fillTemplate(*result);
+
+    //set the rule and scheduler setting
+    result->submission_rule = ui->comboBoxSubmissionRule->currentData().toInt();
+    result->submission_priority = ui->lineEditSubmissionPriority->text().toInt();
+    result->schedule_step_delay = ui->lineEditSubmissionRunStepDelay->text().toLongLong();
+    result->submission_retry_delay = ui->lineEditSubmissionRetry->text().toInt();
+    result->execution_channel = ui->comboBoxSubmissionExecutionChannel->currentData().toInt();
+    return result;
 }
 
 void ControlUnitCommandTemplateEditor::on_buttonBox_clicked(QAbstractButton *button) {

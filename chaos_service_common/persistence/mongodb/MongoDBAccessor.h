@@ -26,6 +26,8 @@
 #include <boost/format.hpp>
 
 
+//#define MONGO_DB_COLLECTION_NAME(db,coll)	boost::str(boost::format("%1%.%2%") % db % coll)
+#define MONGO_DB_COLLECTION_NAME(coll)	boost::str(boost::format("%1%.%2%") % getDatabaseName() % coll)
     //! add a regex on a field
 /*!
  create a return a BSON object with a query expresion with a regular expression like:

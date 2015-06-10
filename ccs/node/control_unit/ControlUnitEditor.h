@@ -42,7 +42,7 @@ private slots:
     void handleSelectionChangedOnCommandDescription(const QItemSelection& selection,
                                                     const QItemSelection& previous_selected);
 
-    void saveTemplate(QSharedPointer<chaos::common::data::CDataWrapper> command_template);
+    void saveTemplate( boost::shared_ptr<chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate> command_template);
 
     void on_pushButtonLoadAction_clicked();
 

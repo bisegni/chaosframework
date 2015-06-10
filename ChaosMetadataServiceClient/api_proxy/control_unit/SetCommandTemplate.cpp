@@ -21,6 +21,7 @@
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SetCommandTemplate.h>
 
 using namespace chaos::common::data;
+using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::control_unit;
 
@@ -32,9 +33,28 @@ API_PROXY_CD_DEFINITION(SetCommandTemplate,
 /*!
  
  */
-ApiProxyResult SetCommandTemplate::execute(const std::string& control_unit_uid,
-                                           const boost::shared_ptr<CommandTemplate>& template_configuration) {
-    std::auto_ptr<CDataWrapper> message(new chaos::common::data::CDataWrapper());
+ApiProxyResult SetCommandTemplate::execute(const TemplateList& template_configurations) {
+    std::auto_ptr<CDataWrapper> message(new CDataWrapper());
+    for(TemplateListConstIterator it = template_configurations.begin();
+        it != template_configurations.end();
+        it++) {
+        std::auto_ptr<CDataWrapper> template_element(new CDataWrapper());
+        template_element->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, (*it)->template_name);
+        template_element->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, (*it)->command_unique_id);
+        //! scan all parameter configuration
+        for(ParameterSetterListIterator it_param = (*it)->paramter_value_list.begin();
+            it_param != (*it)->paramter_value_list.end();
+            it_param++){
+            (*it_param)->setTo(*template_element);
+        }
+        template_element->addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32, (*it)->submission_rule);
+        template_element->addInt32Value(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32, (*it)->submission_priority);
+        template_element->addInt64Value(BatchCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, (*it)->schedule_step_delay);
+        template_element->addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (*it)->submission_retry_delay);
+        template_element->addInt32Value(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (*it)->execution_channel);
+        message->appendCDataWrapperToArray(*template_element);
+    }
+    message->finalizeArrayForKey("template_list");
     //call api
     return callApi(message.release());
 }

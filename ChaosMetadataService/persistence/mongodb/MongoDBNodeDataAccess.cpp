@@ -29,6 +29,7 @@
 #define MDBNDA_ERR  ERR_LOG(MongoDBNodeDataAccess)
 
 using namespace chaos::common::data;
+using namespace chaos::common::batch_command;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 
@@ -62,7 +63,7 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
                                                                    p.jsonString()));)
 
         if((err = connection->findOne(result,
-                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES), q, &p))){
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), q, &p))){
             MDBNDA_ERR << "Error fetching node description";
         } else if(result.isEmpty()) {
             MDBNDA_ERR << "No node description has been found";
@@ -105,7 +106,7 @@ int MongoDBNodeDataAccess::insertNewNode(CDataWrapper& node_description) {
                                            DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                    obj_to_insert));)
 
-        if((err = connection->insert(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+        if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      obj_to_insert))) {
             MDBNDA_ERR << "Error creating new node";
         }
@@ -211,7 +212,7 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
                                                                    query.jsonString(),
                                                                    update.jsonString()));)
 
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
             MDBNDA_ERR << "Error updating unit server";
@@ -244,7 +245,7 @@ int MongoDBNodeDataAccess::checkNodePresence(bool& presence,
                                                                    q.jsonString()));)
 
         if((err = connection->findOne(result,
-                                      MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                       q))){
             MDBNDA_ERR << "Error sercing unit server unit server" << node_unique_id;
         }
@@ -274,7 +275,7 @@ int MongoDBNodeDataAccess::deleteNode(const std::string& node_unique_id,
                                            DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                    q.jsonString()));)
 
-        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      q))){
             MDBNDA_ERR << "Error deleting unit server" << node_unique_id;
         }
@@ -343,7 +344,7 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
 
         //perform the search for the query page
     if((err = performPagedQuery(paged_result,
-                                MONGO_DB_COLLECTION_NAME(getDatabaseName().c_str(), MONGODB_COLLECTION_NODES),
+                                MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                 q,
                                 NULL,
                                 NULL,
@@ -362,5 +363,53 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
             (*result)->finalizeArrayForKey("node_search_result_page");
         }
     }
+    return err;
+}
+
+int MongoDBNodeDataAccess::checkCommandTemplatePresence(const std::string& template_name,
+                                                        const std::string& command_unique_id,
+                                                        bool& presence) {
+    int err = 0;
+    mongo::BSONObj result;
+    try {
+        
+        mongo::BSONObj q = BSON("template_name" << template_name <<
+                                BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("checkCommandTemplatePresence",
+                                           "find",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()));)
+        
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                      q))){
+            MDBNDA_ERR << boost::str(boost::format("Error sercing temaplte name: %1% and command uid:%2%")%template_name%command_unique_id);
+        }
+        presence = !result.isEmpty();
+    } catch (const mongo::DBException &e) {
+        presence = false;
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+
+    return err;
+}
+
+int MongoDBNodeDataAccess::setCommandTemplate(chaos::common::data::CDataWrapper& command_template) {
+    int err = 0;
+    return err;
+}
+
+int MongoDBNodeDataAccess::deleteCommandTemplate(const std::string& template_name,
+                                                 const std::string& command_unique_id) {
+    int err = 0;
+    return err;
+}
+
+int MongoDBNodeDataAccess::returnCommandTemplate(const std::string& template_name,
+                          const std::string& command_unique_id,
+                                                 chaos::common::data::CDataWrapper **command_template) {
+    int err = 0;
     return err;
 }

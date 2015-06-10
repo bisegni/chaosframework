@@ -11,6 +11,7 @@ static const QString TAG_CU_INFO = QString("g_cu_i");
 static const QString TAG_CU_DATASET = QString("g_cu_d");
 static const QString TAG_CU_INSTANCE = QString("g_cu_instance");
 static const QString TAG_CU_APPLY_CHANGESET = QString("g_cu_apply_changeset");
+static const QString TAG_CU_SET_TEMPLATE = QString("g_cu_set_template");
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
@@ -262,8 +263,11 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
     }
 }
 
-void ControlUnitEditor::saveTemplate(QSharedPointer<chaos::common::data::CDataWrapper> command_template) {
-
+void ControlUnitEditor::saveTemplate(boost::shared_ptr<control_unit::CommandTemplate> command_template) {
+    std::vector< boost::shared_ptr<control_unit::CommandTemplate> >template_list;
+    template_list.push_back(command_template);
+    submitApiResult("cu_set_template",
+                    GET_CHAOS_API_PTR(control_unit::SetCommandTemplate)->execute(template_list));
 }
 
 void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,

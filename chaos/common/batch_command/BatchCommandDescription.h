@@ -39,9 +39,9 @@ Get ## BatchCommandDescription ## n
 #define BATCH_COMMAND_DECLARE_DESCRIPTION(n)\
 boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(n)();
 
-#define BATCH_COMMAND_OPEN_DESCRIPTION(n, d)\
+#define BATCH_COMMAND_OPEN_DESCRIPTION(n, d, uid)\
 boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(n)(){\
-boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> result(new BatchCommandDescription(#n, d));
+boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> result(new BatchCommandDescription(#n, d, uid));
 
 #define BATCH_COMMAND_ADD_BOOL_PARAMTER(p, d, flag)\
 result->addParameter(p, d, chaos::DataType::TYPE_BOOLEAN, flag);
@@ -83,11 +83,15 @@ namespace chaos {
             
             
             //! provide a set of method that permit to declare a batch command
+            /*!
+             A batch command need to be declare to permit to other chaos node
+             to know how call and configure it.
+             */
             class BatchCommandDescription {
                 friend class BatchCommandExecutor;
                 std::string alias;
                 std::string description;
-
+                std::string unique_identifier;
                 MapParamter map_parameter;
                 
                 chaos::common::utility::ObjectInstancer<BatchCommand> *instancer;
@@ -96,17 +100,9 @@ namespace chaos {
                 BatchCommandDescription();
                 //! default constructor with the alias of the command
                 BatchCommandDescription(const std::string& _command_alias,
-                                        const std::string& _command_description);
-                
-                //! default constructor with the alias of the command
-                BatchCommandDescription(const std::string& _command_alias,
                                         const std::string& _command_description,
-                                        chaos::common::utility::ObjectInstancer<BatchCommand> *_instancer);
-                
-                //!copy constructor
-                BatchCommandDescription(const std::string& _command_alias,
-                                        const std::string& _command_description,
-                                        const MapParamter& _map_paramter);
+                                        const std::string& _unique_identifier = std::string("00000000-0000-0000-0000-00000000000"));
+
                 
                 ~BatchCommandDescription();
                 
