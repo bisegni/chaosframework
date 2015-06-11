@@ -21,6 +21,7 @@
 #ifndef __CHAOSFramework__ApiProxy__
 #define __CHAOSFramework__ApiProxy__
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 
 #include <ChaosMetadataServiceClient/api_proxy/api_types.h>

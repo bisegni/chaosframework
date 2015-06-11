@@ -20,8 +20,8 @@ Q_DECLARE_METATYPE(int64_t)
 Q_DECLARE_METATYPE(QSharedPointer<chaos::CException>);
 Q_DECLARE_METATYPE(QSharedPointer<chaos::common::data::CDataWrapper>);
 Q_DECLARE_METATYPE(QSharedPointer<TwoLineInformationItem>);
-Q_DECLARE_METATYPE(QSharedPointer<chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate>);
-Q_DECLARE_METATYPE(boost::shared_ptr<chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate>);
+Q_DECLARE_METATYPE(QSharedPointer<chaos::metadata_service_client::api_proxy::node::CommandTemplate>);
+Q_DECLARE_METATYPE(boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate>);
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::SerializationBuffer>)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::CException>)
@@ -37,10 +37,11 @@ MainController::~MainController()
 void MainController::init(int argc, char **argv, QApplication& a) {
     //register chaos metatype
     qRegisterMetaType<QSharedPointer<chaos::CException> >();
-    qRegisterMetaType<QSharedPointer<chaos::common::data::CDataWrapper> >();
+    qRegisterMetaType<QSharedPointer<chaos::common::data::CDataWrapper> >("QSharedPointer<CDataWrapper>");
+    qRegisterMetaType<QSharedPointer<chaos::common::data::CDataWrapper> >("QSharedPointer<chaos::common::data::CDataWrapper>");
     qRegisterMetaType<QSharedPointer<TwoLineInformationItem> >();
-    qRegisterMetaType<QSharedPointer<chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate> >();
-    qRegisterMetaType<boost::shared_ptr<chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate> >();
+    qRegisterMetaType<QSharedPointer<chaos::metadata_service_client::api_proxy::node::CommandTemplate> >();
+    qRegisterMetaType<boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate> >();
     qRegisterMetaType<std::string>("std::string");
     qRegisterMetaType<int32_t>("int32_t");
     qRegisterMetaType<int64_t>("int64_t");

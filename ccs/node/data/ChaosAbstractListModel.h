@@ -10,6 +10,7 @@ class ChaosAbstractListModel :
 protected:
     virtual int getRowCount() const = 0;
     virtual QVariant getRowData(int row) const = 0;
+    virtual QVariant getUserData(int row) const = 0;
     virtual QVariant getTooltipTextForData(int row) const;
 public:
     ChaosAbstractListModel( QObject *parent = 0);

@@ -1,9 +1,11 @@
 #ifndef CONTROLUNITEDITOR_H
 #define CONTROLUNITEDITOR_H
+#include "ControlUnitCommandTemplateEditor.h"
 
-#include "../data/FixedOutputChannelDatasetTableModel.h"
-#include "../data/FixedInputChannelDatasetTableModel.h"
 #include "../data/CommandListModel.h"
+#include "../data/CommandTemplateListModel.h"
+#include "../data/FixedInputChannelDatasetTableModel.h"
+#include "../data/FixedOutputChannelDatasetTableModel.h"
 
 #include "../../presenter/PresenterWidget.h"
 #include "../../monitor/healt/handler/handler.h"
@@ -25,7 +27,6 @@ public:
     explicit ControlUnitEditor(const QString& _control_unit_unique_id);
     ~ControlUnitEditor();
 protected:
-    void updateAllControlunitInfomration();
     void initUI();
     bool canClose();
     void onApiDone(const QString& tag,
@@ -42,7 +43,7 @@ private slots:
     void handleSelectionChangedOnCommandDescription(const QItemSelection& selection,
                                                     const QItemSelection& previous_selected);
 
-    void saveTemplate( boost::shared_ptr<chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate> command_template);
+    void saveTemplate( boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate> command_template);
 
     void on_pushButtonLoadAction_clicked();
 
@@ -66,8 +67,14 @@ private slots:
 
     void on_pushButtonAddNewCommadInstance_clicked();
 
+    void on_pushButtonUpdateTemaplteList_clicked();
+
 private:
     QString getStatusString(int status);
+
+    void updateTemplateSearch();
+    void updateAllControlUnitInfomration();
+
     void fillInfo(const QSharedPointer<chaos::common::data::CDataWrapper>& node_info);
     void fillDataset(const QSharedPointer<chaos::common::data::CDataWrapper>& dataset);
 
@@ -78,9 +85,13 @@ private:
     SwitchAggregator        logic_switch_aggregator;
     HealthHartbeatHandler   hb_handler;
     HealtStatusHandler                  status_handler;
+
     CommandListModel                    command_list_model;
+    CommandTemplateListModel            command_template_list_model;
+
     FixedOutputChannelDatasetTableModel dataset_output_table_model;
     FixedInputChannelDatasetTableModel  dataset_input_table_model;
+    ControlUnitCommandTemplateEditor    template_editor;
     Ui::ControlUnitEditor *ui;
 };
 

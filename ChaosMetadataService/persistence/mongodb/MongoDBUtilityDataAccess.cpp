@@ -50,7 +50,7 @@ int MongoDBUtilityDataAccess::getNextSequenceValue(const std::string& sequence_n
         mongo::BSONObj q = query.obj();
 
             //try to sse if we need to initialize
-        mongo::BSONObj ui = BSON("$setOnInsert" << BSON("value" << (int32_t)0));
+        mongo::BSONObj ui = BSON("$setOnInsert" << BSON("value" << (int32_t)1));
 
         DEBUG_CODE(MDBUDA_DBG<<log_message("getNextSequenceValue",
                                            "update",

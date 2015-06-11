@@ -124,10 +124,9 @@ namespace chaos {
 					slow_command_executor->installCommand(command_alias, SLOWCOMMAND_INSTANCER(T));
 				}
                 
-                void installCommand(boost::shared_ptr<BatchCommandDescription> command_description) {
-                    CHAOS_ASSERT(slow_command_executor)
-                    slow_command_executor->installCommand(command_description);
-                }
+                void installCommand(boost::shared_ptr<BatchCommandDescription> command_description,
+                                    bool is_default = false,
+                                    unsigned int sandbox = 0);
 			};
 		}
     }

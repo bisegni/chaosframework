@@ -23,6 +23,8 @@
 #include "NodeSearch.h"
 #include "NodeGetDescription.h"
 #include "ChangeNodeState.h"
+#include "CommandTemplateSet.h"
+#include "CommandTemplateSearch.h"
 
 using namespace chaos::metadata_service::api::node;
 DEFINE_CLASS_FACTORY_NO_ALIAS(NodeGroup, chaos::metadata_service::api::AbstractApiGroup);
@@ -35,6 +37,8 @@ AbstractApiGroup("system"){
     addApi<NodeCreateUnitServer>();
     addApi<NodeGetDescription>();
     addApi<ChangeNodeState>();
+    addApi<CommandTemplateSet>();
+    addApi<CommandTemplateSearch>();
 }
 
 NodeGroup::~NodeGroup() {

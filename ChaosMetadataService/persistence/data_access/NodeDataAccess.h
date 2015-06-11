@@ -111,7 +111,7 @@ namespace chaos {
                                            const std::string& criteria,
                                            uint32_t search_type,
                                            uint32_t last_unique_id,
-                                           uint32_t page_length = 50) = 0;
+                                           uint32_t page_length = 100) = 0;
                     
                     //! set (insert or update) a template for a batch command
                     /*!
@@ -147,6 +147,18 @@ namespace chaos {
                     virtual int returnCommandTemplate(const std::string& template_name,
                                                       const std::string& command_unique_id,
                                                       chaos::common::data::CDataWrapper **command_template) = 0;
+                    
+                    //!Make simple command tempalte query
+                    /*!
+                     perform a simple search on node command template
+                     \param result the handle for the reuslt data (is allcoated only if the search has been done with success)
+                     \param cmd_uid_to_filter the list of the command unique id for filtering operation
+                     \param last_unique_id is the start of the search page to retrieve
+                     */
+                    virtual int searchCommandTemplate(chaos::common::data::CDataWrapper **result,
+                                                      const std::vector<std::string>& cmd_uid_to_filter,
+                                                      uint32_t last_unique_id,
+                                                      uint32_t page_length = 100) = 0;
                 };
 
             }

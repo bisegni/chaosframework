@@ -20,18 +20,14 @@
 
 #ifndef CHAOSFramework_chaos_types_h
 #define CHAOSFramework_chaos_types_h
+
 #include <chaos/common/batch_command/BatchCommandTypes.h>
 
-/** @defgroup Control_Unit_Definition_Api Control Unit Definition Public API
- @{
- */
+#include <vector>
 
-/** @} */ // end of Control_Unit_Definition_Api Slow Control API
+#define  CHAOS_DEFINE_VECTOR_FOR_TYPE(t, name)\
+typedef std::vector< t >                   name;\
+typedef std::vector< t >::iterator         name ## Iterator;\
+typedef std::vector< t >::const_iterator   name ## ConstIterator;\
 
-
-/** @defgroup Control_Unit_User_Api Control Unit User Public API
- @{ This is the collection of the api that the user can call within the control unit definition
- */
-
-/** @} */ // end of Control_Unit_User_Api Slow Control API
 #endif

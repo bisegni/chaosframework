@@ -1,5 +1,5 @@
 /*
- *	GetNodeDescription.h
+ *	CommandTemplateSearch.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,33 +18,38 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__GetNodeDescription__
-#define __CHAOSFramework__GetNodeDescription__
+#ifndef __CHAOSFramework__CommandTemplateSearch__
+#define __CHAOSFramework__CommandTemplateSearch__
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
+
+#include <string>
 
 namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
             namespace node {
-
-                class GetNodeDescription:
+                
+                //define the list, iterator and cost iterator
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, CommandUIDList)
+                
+                //! Search the template
+                class CommandTemplateSearch:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(GetNodeDescription)
+                    API_PROXY_CLASS(CommandTemplateSearch)
                 protected:
-                    API_PROXY_CD_DECLARATION(GetNodeDescription)
+                    //! default constructor
+                    API_PROXY_CD_DECLARATION(CommandTemplateSearch)
                 public:
-
+                    //!return a page for a temaplte search filtering on command uid
                     /*!
-                     Return the description of the node
-                     \param unique_node_id unique id of the node for which we need the colpete description
+                     \param uid_list a stirng list that contains the uid to include into the search
                      */
-                    ApiProxyResult execute(const std::string& unique_node_id);
+                    ApiProxyResult execute(const CommandUIDList& uid_list);
                 };
-
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__GetNodeDescription__) */
+#endif /* defined(__CHAOSFramework__CommandTemplateSearch__) */

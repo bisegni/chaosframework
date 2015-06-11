@@ -37,24 +37,23 @@ namespace chaos {
                 virtual void setTo(chaos::common::data::CDataWrapper& data) = 0;
             };
             
-            template<typename type>
+            template<typename t>
             class TypedCDataWrapperKeyValueSetter:
             public CDataWrapperKeyValueSetter {
             protected:
-                type attribute_value;
-                TypedCDataWrapperKeyValueSetter(const std::string& _attribute_name,
-                                                const type& _attribute_value):
-                CDataWrapperKeyValueSetter(_attribute_name),
-                attribute_value(_attribute_value){}
+                t attribute_value;
+                TypedCDataWrapperKeyValueSetter(const std::string& _attribute_name):
+                CDataWrapperKeyValueSetter(_attribute_name){}
             };
             
             class CDataWrapperBoolKeyValueSetter:
             public TypedCDataWrapperKeyValueSetter<bool> {
             public:
                 CDataWrapperBoolKeyValueSetter(const std::string& _attribute_name,
-                                               const bool& _attribute_value):
-                TypedCDataWrapperKeyValueSetter<bool>(attribute_name,
-                                                      attribute_value){}
+                                               bool _attribute_value):
+                TypedCDataWrapperKeyValueSetter<bool>(_attribute_name) {
+                    attribute_value =_attribute_value;
+                }
                 
                 void setTo(chaos::common::data::CDataWrapper& data) {
                     data.addBoolValue(attribute_name,
@@ -66,9 +65,10 @@ namespace chaos {
             public TypedCDataWrapperKeyValueSetter<int32_t> {
             public:
                 CDataWrapperInt32KeyValueSetter(const std::string& _attribute_name,
-                                                const int32_t& _attribute_value):
-                TypedCDataWrapperKeyValueSetter<int32_t>(attribute_name,
-                                                         attribute_value){}
+                                                int32_t _attribute_value):
+                TypedCDataWrapperKeyValueSetter<int32_t>(_attribute_name) {
+                    attribute_value =_attribute_value;
+                }
                 
                 void setTo(chaos::common::data::CDataWrapper& data) {
                     data.addInt32Value(attribute_name,
@@ -80,9 +80,10 @@ namespace chaos {
             public TypedCDataWrapperKeyValueSetter<int64_t> {
             public:
                 CDataWrapperInt64KeyValueSetter(const std::string& _attribute_name,
-                                                const int64_t& _attribute_value):
-                TypedCDataWrapperKeyValueSetter<int64_t>(attribute_name,
-                                                         attribute_value){}
+                                                int64_t _attribute_value):
+                TypedCDataWrapperKeyValueSetter<int64_t>(_attribute_name) {
+                    attribute_value =_attribute_value;
+                }
                 
                 void setTo(chaos::common::data::CDataWrapper& data) {
                     data.addInt64Value(attribute_name,
@@ -94,9 +95,10 @@ namespace chaos {
             public TypedCDataWrapperKeyValueSetter<double> {
             public:
                 CDataWrapperDoubleKeyValueSetter(const std::string& _attribute_name,
-                                                 const double& _attribute_value):
-                TypedCDataWrapperKeyValueSetter<double>(attribute_name,
-                                                        attribute_value){}
+                                                 double _attribute_value):
+                TypedCDataWrapperKeyValueSetter<double>(_attribute_name) {
+                    attribute_value =_attribute_value;
+                }
                 
                 void setTo(chaos::common::data::CDataWrapper& data) {
                     data.addDoubleValue(attribute_name,
@@ -109,8 +111,9 @@ namespace chaos {
             public:
                 CDataWrapperStringKeyValueSetter(const std::string& _attribute_name,
                                                  const std::string& _attribute_value):
-                TypedCDataWrapperKeyValueSetter<std::string>(attribute_name,
-                                                             attribute_value){}
+                TypedCDataWrapperKeyValueSetter<std::string>(_attribute_name) {
+                    attribute_value =_attribute_value;
+                }
                 
                 void setTo(chaos::common::data::CDataWrapper& data) {
                     data.addStringValue(attribute_name,

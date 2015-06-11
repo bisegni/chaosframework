@@ -1,5 +1,5 @@
 /*
- *	SetCommandTemplate.h
+ *	CommandTemplateGet.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,20 +18,21 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__SetCommandTemplate__
-#define __CHAOSFramework__SetCommandTemplate__
+
+#ifndef __CHAOSFramework__CommandTemplateGet__
+#define __CHAOSFramework__CommandTemplateGet__
 
 #include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {
         namespace api {
-            namespace control_unit {
-                class SetCommandTemplate:
+            namespace node {
+                class CommandTemplateGet:
                 public AbstractApi {
                 public:
-                    SetCommandTemplate();
-                    ~SetCommandTemplate();
+                    CommandTemplateGet();
+                    ~CommandTemplateGet();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException);
                 };
@@ -40,4 +41,4 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__SetCommandTemplate__) */
+#endif /* defined(__CHAOSFramework__CommandTemplateGet__) */

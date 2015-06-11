@@ -19,17 +19,18 @@ public:
     explicit ControlUnitCommandTemplateEditor(QWidget *parent = 0);
     ~ControlUnitCommandTemplateEditor();
     void setCommandDescription(QSharedPointer<chaos::common::data::CDataWrapper> _command_description);
-
+    void reset();
 signals:
-    void saveTemplate(boost::shared_ptr<chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate> command_template);
+    void saveTemplate(boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate> command_template);
 
 private slots:
-    void on_buttonBox_accepted();
+    void on_pushButtonReset_clicked();
+    void on_pushButtonSave_clicked();
 
-    void on_buttonBox_clicked(QAbstractButton *button);
+    void on_pushButtonCancel_clicked();
 
 private:
-    boost::shared_ptr<chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate> getTemplateDescription();
+    boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate> getTemplateDescription();
     QSharedPointer<chaos::common::data::CDataWrapper> command_description;
     CommandParameterTableModel parameter_table_model;
     Ui::ControlUnitCommandTemplateEditor *ui;

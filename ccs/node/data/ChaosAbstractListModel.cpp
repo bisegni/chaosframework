@@ -34,6 +34,10 @@ QVariant  ChaosAbstractListModel::data(const QModelIndex &index, int role) const
         break;
     case Qt::ToolTipRole:
         result = getTooltipTextForData(row);
+        break;
+    case Qt::UserRole:
+            result = getUserData(row);
+        break;
     default:
         break;
     }

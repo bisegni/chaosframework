@@ -73,6 +73,9 @@
        <property name="toolTip">
         <string>The unique name for template</string>
        </property>
+       <property name="accessibleName">
+        <string>Template Name</string>
+       </property>
       </widget>
      </item>
      <item row="1" column="0" alignment="Qt::AlignRight|Qt::AlignVCenter">
@@ -209,6 +212,9 @@
            <property name="statusTip">
             <string/>
            </property>
+           <property name="accessibleName">
+            <string>Run Step delay</string>
+           </property>
            <property name="placeholderText">
             <string/>
            </property>
@@ -237,6 +243,9 @@
            <property name="statusTip">
             <string/>
            </property>
+           <property name="accessibleName">
+            <string>Submission Retry</string>
+           </property>
            <property name="placeholderText">
             <string/>
            </property>
@@ -256,6 +265,9 @@
            </property>
            <property name="statusTip">
             <string/>
+           </property>
+           <property name="accessibleName">
+            <string>Priority Value</string>
            </property>
            <property name="placeholderText">
             <string/>
@@ -325,17 +337,63 @@
     </layout>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
-     </property>
-     <property name="centerButtons">
-      <bool>false</bool>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButtonReset">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Reset</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCancel">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonSave">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Save</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -349,38 +407,5 @@
   <tabstop>lineEditSubmissionRetry</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>ControlUnitCommandTemplateEditor</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>252</x>
-     <y>225</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>229</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>ControlUnitCommandTemplateEditor</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>320</x>
-     <y>225</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>229</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

@@ -403,7 +403,7 @@ int MongoDBNodeDataAccess::setCommandTemplate(chaos::common::data::CDataWrapper&
             return -1;
         }
         
-        std::string template_name = command_template.getStringValue("temlate_name");
+        std::string template_name = command_template.getStringValue("template_name");
         std::string command_unique_id = command_template.getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
         
         //create query
@@ -411,22 +411,22 @@ int MongoDBNodeDataAccess::setCommandTemplate(chaos::common::data::CDataWrapper&
                                 BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
         
         //create the update package (all key imnus the first two used before
-        std::auto_ptr<CDataWrapper> to_update;
+        std::auto_ptr<CDataWrapper> to_update(new CDataWrapper());
         std::vector<std::string> all_keys;
         command_template.getAllKey(all_keys);
         
         for(std::vector<std::string>::iterator it = all_keys.begin();
             it != all_keys.end();
             it++) {
-            if(it->compare("template_name") ||
-               it->compare(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)) continue;
+            if((it->compare("template_name")==0) ||
+               (it->compare(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)==0)) continue;
             
             //copy the key if present
             command_template.copyKeyTo(*it, *to_update);
         }
         
         std::auto_ptr<SerializationBuffer> chaos_bson(to_update->getBSONData());
-        mongo::BSONObj u(chaos_bson->getBufferPtr());
+        mongo::BSONObj u = BSON("$setOnInsert" << mongo::BSONObj(chaos_bson->getBufferPtr()));
         
         DEBUG_CODE(MDBNDA_DBG<<log_message("setCommandTemplate",
                                            "update",
@@ -500,6 +500,67 @@ int MongoDBNodeDataAccess::returnCommandTemplate(const std::string& template_nam
     } catch (const mongo::DBException &e) {
         MDBNDA_ERR << e.what();
         err = e.getCode();
+    }
+    return err;
+}
+
+//! inherited method
+int MongoDBNodeDataAccess::searchCommandTemplate(chaos::common::data::CDataWrapper **result,
+                                                 const std::vector<std::string>& cmd_uid_to_filter,
+                                                 uint32_t last_unique_id,
+                                                 uint32_t page_length) {
+    int err = 0;
+
+    mongo::BSONObjBuilder   bson_find;
+    mongo::BSONArrayBuilder bson_uid_array_list;
+    mongo::BSONArrayBuilder bson_find_and;
+    SearchResult            paged_result;
+    
+    //compose query
+    
+    //filter on sequence
+    bson_find_and << BSON( "seq" << BSON("$gte"<<last_unique_id));
+    
+    //filter on type
+    for(std::vector<std::string>::const_iterator it = cmd_uid_to_filter.begin();
+        it != cmd_uid_to_filter.end();
+        it++) {
+        bson_uid_array_list << *it;
+    }
+    
+    //compose the or
+    bson_find_and << BSON(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << BSON("$in" << bson_uid_array_list.arr()));
+    bson_find.appendArray("$and", bson_find_and.obj());
+    mongo::BSONObj q = bson_find.obj();
+    mongo::BSONObj p = BSON("template_name" << 1 <<
+                            BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << 1);
+    DEBUG_CODE(MDBNDA_DBG<<log_message("searchCommandTemplate",
+                                       "performPagedQuery",
+                                       DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                               "Projection",
+                                                               q.jsonString(),
+                                                               p.jsonString()));)
+    
+    //perform the search for the query page
+    if((err = performPagedQuery(paged_result,
+                                MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                q,
+                                NULL,
+                                NULL,
+                                page_length))) {
+        MDBNDA_ERR << "Error calling performPagedQuery with error" << err;
+    } else {
+        DEBUG_CODE(MDBNDA_DBG << "The query '"<< q.toString() <<"' has found " << paged_result.size() << " result";)
+        if(paged_result.size()) {
+            *result = new CDataWrapper();
+            for (SearchResultIterator it = paged_result.begin();
+                 it != paged_result.end();
+                 it++) {
+                CDataWrapper cd(it->objdata());
+                (*result)->appendCDataWrapperToArray(cd);
+            }
+            (*result)->finalizeArrayForKey("cmd_tmpl_search_result_page");
+        }
     }
     return err;
 }

@@ -66,7 +66,8 @@ SOURCES += main.cpp\
     widget/list/delegate/TwoLineInformationItem.cpp \
     node/control_unit/ControlUnitCommandTemplateEditor.cpp \
     node/data/CommandParameterTableModel.cpp \
-    node/data/AttributeValueChangeSet.cpp
+    node/data/AttributeValueChangeSet.cpp \
+    node/data/CommandTemplateListModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -113,7 +114,8 @@ HEADERS  += \
     widget/list/delegate/TwoLineInformationListItemDelegate.h \
     node/control_unit/ControlUnitCommandTemplateEditor.h \
     node/data/CommandParameterTableModel.h \
-    node/data/AttributeValueChangeSet.h
+    node/data/AttributeValueChangeSet.h \
+    node/data/CommandTemplateListModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

@@ -20,13 +20,13 @@ ChaosAbstractDataSetTableModel::ChaosAbstractDataSetTableModel(const QString &_n
     ChaosAbstractTableModel(parent),
     monitoring_enabled(false),
     node_uid(_node_uid),
-    dataset_type(_dataset_type){}
+    dataset_type(_dataset_type),
+    quantum_multiplier(20){}
 
 ChaosAbstractDataSetTableModel::~ChaosAbstractDataSetTableModel() {
 }
 
-void ChaosAbstractDataSetTableModel::setAttributeMonitoring(bool enable,
-                                                            int quantum_multiplier) {
+void ChaosAbstractDataSetTableModel::setAttributeMonitoring(bool enable) {
     if(enable == monitoring_enabled) return;
 
     beginResetModel();
@@ -101,7 +101,7 @@ void ChaosAbstractDataSetTableModel::setAttributeMonitoring(bool enable,
                 map_doe_handlers.insert(it.key(), handler);
                 ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForDataset(node_uid.toStdString(),
                                                                                             dataset_type,
-                                                                                            10,
+                                                                                            quantum_multiplier,
                                                                                             handler.data());
             }
         } else {
@@ -110,7 +110,7 @@ void ChaosAbstractDataSetTableModel::setAttributeMonitoring(bool enable,
             qDebug()<< "Stopping monitor for attribute:" << it.key();
             ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForDataset(node_uid.toStdString(),
                                                                                            dataset_type,
-                                                                                           10,
+                                                                                           quantum_multiplier,
                                                                                            h_it.value().data());
             map_doe_handlers.erase(h_it);
         }

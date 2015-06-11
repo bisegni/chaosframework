@@ -1,5 +1,5 @@
 /*
- *	SetCommandTemplate.h
+ *	CommandTemplateSet.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__SetCommandTemplate__
-#define __CHAOSFramework__SetCommandTemplate__
+#ifndef __CHAOSFramework__CommandTemplateSet__
+#define __CHAOSFramework__CommandTemplateSet__
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 #include <chaos/common/data/CDataWrapperKeyValueSetter.h>
@@ -31,7 +31,7 @@
 namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
-            namespace control_unit {
+            namespace node {
                 
                 typedef std::vector< boost::shared_ptr<common::data::CDataWrapperKeyValueSetter> > ParameterSetterList;
                 typedef ParameterSetterList::iterator                                              ParameterSetterListIterator;
@@ -60,13 +60,14 @@ namespace chaos {
                 typedef std::vector< boost::shared_ptr<CommandTemplate> >                   TemplateList;
                 typedef std::vector< boost::shared_ptr<CommandTemplate> >::iterator         TemplateListIterator;
                 typedef std::vector< boost::shared_ptr<CommandTemplate> >::const_iterator   TemplateListConstIterator;
+                
                 //! Set (insert or update) a template for control unit command
-                class SetCommandTemplate:
+                class CommandTemplateSet:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(SetCommandTemplate)
+                    API_PROXY_CLASS(CommandTemplateSet)
                 protected:
                     //! default constructor
-                    API_PROXY_CD_DECLARATION(SetCommandTemplate)
+                    API_PROXY_CD_DECLARATION(CommandTemplateSet)
                 public:
                     //!
                     /*!
@@ -78,4 +79,4 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__SetCommandTemplate__) */
+#endif /* defined(__CHAOSFramework__CommandTemplateSet__) */

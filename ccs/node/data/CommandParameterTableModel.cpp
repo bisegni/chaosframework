@@ -51,7 +51,7 @@ void CommandParameterTableModel::updateAttribute(const QSharedPointer<chaos::com
     endResetModel();
 }
 
-void CommandParameterTableModel::fillTemplate(chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate &command_template) {
+void CommandParameterTableModel::fillTemplate(chaos::metadata_service_client::api_proxy::node::CommandTemplate &command_template) {
     foreach (QSharedPointer<AttributeValueChangeSet> attribute, attribute_changes) {
         boost::shared_ptr<CDataWrapperKeyValueSetter> kv_setter;
 

@@ -14,7 +14,7 @@ public:
     CommandParameterTableModel(QObject *parent = 0);
     ~CommandParameterTableModel();
     void updateAttribute(const QSharedPointer<chaos::common::data::CDataWrapper>& command_description);
-    void fillTemplate(chaos::metadata_service_client::api_proxy::control_unit::CommandTemplate& command_template);
+    void fillTemplate(chaos::metadata_service_client::api_proxy::node::CommandTemplate& command_template);
     void resetChanges();
 protected:
     int getRowCount() const;

@@ -1,5 +1,4 @@
 #include "ControlUnitEditor.h"
-#include "ControlUnitCommandTemplateEditor.h"
 #include "ui_ControlUnitEditor.h"
 #include "../../widget/list/delegate/TwoLineInformationListItemDelegate.h"
 
@@ -12,8 +11,10 @@ static const QString TAG_CU_DATASET = QString("g_cu_d");
 static const QString TAG_CU_INSTANCE = QString("g_cu_instance");
 static const QString TAG_CU_APPLY_CHANGESET = QString("g_cu_apply_changeset");
 static const QString TAG_CU_SET_TEMPLATE = QString("g_cu_set_template");
+static const QString TAG_CU_SEARCH_TEMPLATE = QString("g_cu_search_template");
 
 using namespace chaos::common::data;
+using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
@@ -62,6 +63,11 @@ ControlUnitEditor::~ControlUnitEditor() {
 }
 
 void ControlUnitEditor::initUI() {
+    //connect tempalte editor
+    connect(&template_editor,
+            SIGNAL(saveTemplate(boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate>)),
+            SLOT(saveTemplate(boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate>)));
+
     //add model to table
     ui->tableViewOutputChannel->setModel(&dataset_output_table_model);
     ui->tableViewOutputChannel->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -127,15 +133,37 @@ void ControlUnitEditor::initUI() {
     ui->listViewCommandList->setModel(&command_list_model);
     ui->listViewCommandList->setItemDelegate(new TwoLineInformationListItemDelegate(ui->listViewCommandList));
     connect(ui->listViewCommandList->selectionModel(),
-         SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-         SLOT(handleSelectionChangedOnCommandDescription(QItemSelection,QItemSelection)));
-   // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SLOT(handleSelectionChangedOnCommandDescription(QItemSelection,QItemSelection)));
+
+    //command template
+    ui->listViewCommandInstance->setModel(&command_template_list_model);
+
+    // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
     //launch api for control unit information
-    updateAllControlunitInfomration();
+    updateAllControlUnitInfomration();
 }
 
+void ControlUnitEditor::updateTemplateSearch() {
+    node::CommandUIDList uid_filter;
+    if(ui->listViewCommandInstance->selectionModel()->selectedRows().size()) {
+        foreach(QModelIndex row, ui->listViewCommandInstance->selectionModel()->selectedRows()) {
+            QVariant user_data = row.data(Qt::UserRole);
+            if(user_data.canConvert<QString>()) {
+                uid_filter.push_back(user_data.toString().toStdString());
+            }
+        }
+    }else{
+        command_list_model.fillWithCommandUID(uid_filter);
+    }
 
-void ControlUnitEditor::updateAllControlunitInfomration() {
+    if(uid_filter.size()!=0) {
+        submitApiResult(QString(TAG_CU_SEARCH_TEMPLATE),
+                        GET_CHAOS_API_PTR(node::CommandTemplateSearch)->execute(uid_filter));
+    }
+}
+
+void ControlUnitEditor::updateAllControlUnitInfomration() {
     submitApiResult(QString(TAG_CU_INFO),
                     GET_CHAOS_API_PTR(node::GetNodeDescription)->execute(control_unit_unique_id.toStdString()));
     submitApiResult(QString(TAG_CU_DATASET),
@@ -153,10 +181,10 @@ QString ControlUnitEditor::getStatusString(int status) {
         return QString("not_found");
         break;
     case 1:
-         return QString("offline");
+        return QString("offline");
         break;
     case 2:
-         return QString("online");
+        return QString("online");
         break;
     }
 }
@@ -199,6 +227,11 @@ void ControlUnitEditor::onApiDone(const QString& tag,
         }
     } else if(tag.compare(TAG_CU_APPLY_CHANGESET) == 0) {
         dataset_input_table_model.applyChangeSet(true);
+    } else if(tag.compare(TAG_CU_SET_TEMPLATE) == 0) {
+        template_editor.reset();
+        template_editor.hide();
+    } else if(tag.compare(TAG_CU_SEARCH_TEMPLATE) == 0) {
+        command_template_list_model.updateSearchPage(api_result);
     }
 }
 
@@ -234,7 +267,7 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
                 if(current_relevated_online_status != last_online_state) {
                     if(current_relevated_online_status) {
                         //we need to reload all information
-                        updateAllControlunitInfomration();
+                        updateAllControlUnitInfomration();
                     }
                     last_online_state = current_relevated_online_status;
                 }
@@ -263,11 +296,11 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
     }
 }
 
-void ControlUnitEditor::saveTemplate(boost::shared_ptr<control_unit::CommandTemplate> command_template) {
-    std::vector< boost::shared_ptr<control_unit::CommandTemplate> >template_list;
+void ControlUnitEditor::saveTemplate(boost::shared_ptr<node::CommandTemplate> command_template) {
+    std::vector< boost::shared_ptr<node::CommandTemplate> >template_list;
     template_list.push_back(command_template);
     submitApiResult("cu_set_template",
-                    GET_CHAOS_API_PTR(control_unit::SetCommandTemplate)->execute(template_list));
+                    GET_CHAOS_API_PTR(node::CommandTemplateSet)->execute(template_list));
 }
 
 void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
@@ -284,6 +317,8 @@ void ControlUnitEditor::fillDataset(const QSharedPointer<chaos::common::data::CD
     dataset_output_table_model.updateData(dataset);
     dataset_input_table_model.updateData(dataset);
     command_list_model.updateData(dataset);
+    //update search on tempalte list()
+    updateTemplateSearch();
 }
 
 void ControlUnitEditor::on_pushButtonLoadAction_clicked() {
@@ -347,11 +382,11 @@ void ControlUnitEditor::on_pushButtonAddNewCommadInstance_clicked() {
     if(selected_list.size()!=1) return;
 
     //! open tempalte editor for new instance creation
-    ControlUnitCommandTemplateEditor template_editor(this);
-    connect(&template_editor,
-            SIGNAL(saveTemplate(boost::shared_ptr<control_unit::CommandTemplate>)),
-            SLOT(saveTemplate(boost::shared_ptr<control_unit::CommandTemplate>)));
     QSharedPointer<TwoLineInformationItem> item = selected_list.first().data().value< QSharedPointer<TwoLineInformationItem> >();
     template_editor.setCommandDescription(item->raw_data);
-    template_editor.exec();
+    template_editor.show();
+}
+
+void ControlUnitEditor::on_pushButtonUpdateTemaplteList_clicked() {
+    updateTemplateSearch();
 }

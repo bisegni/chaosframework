@@ -35,10 +35,10 @@ public:
     //update the dataset
     virtual void updateData(const QSharedPointer<chaos::common::data::CDataWrapper>& _dataset) = 0;
     //! start or stop the monitoring of the dataset attribute
-    void setAttributeMonitoring(bool enable, int quantum_multiplier = 20);
+    void setAttributeMonitoring(bool enable);
 
 protected:
-
+    unsigned int                                                    quantum_multiplier;
     bool                                                            monitoring_enabled;
     QString                                                         node_uid;
     unsigned int                                                    dataset_type;

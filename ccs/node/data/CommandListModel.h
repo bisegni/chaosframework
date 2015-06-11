@@ -16,10 +16,12 @@ class CommandListModel:
 public:
     CommandListModel(QObject *parent = 0);
 
+    void fillWithCommandUID(chaos::metadata_service_client::api_proxy::node::CommandUIDList& uid);
     void updateData(const QSharedPointer<chaos::common::data::CDataWrapper>& _dataset);
 protected:
     int getRowCount() const;
     QVariant getRowData(int row) const;
+    QVariant getUserData(int row) const;
 private:
     QVector< QSharedPointer<chaos::common::data::CDataWrapper> > command_description_array;
 };
