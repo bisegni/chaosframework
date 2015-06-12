@@ -41,13 +41,32 @@ CommandTemplateGet::~CommandTemplateGet() {
 }
 
 CDataWrapper *CommandTemplateGet::execute(CDataWrapper *api_data,
-                                             bool& detach_data) throw(chaos::CException) {
+                                          bool& detach_data) throw(chaos::CException) {
     int err = 0;
+    bool presence = false;
+    CDataWrapper *result = NULL;
+    CHECK_CDW_THROW_AND_LOG(api_data, CU_CTG_ERR, -2, "No parameter found")
+    CHECK_KEY_THROW_AND_LOG(api_data, "template_name", CU_CTG_ERR, -3, "The attribute template_name is mandatory")
+    CHECK_KEY_THROW_AND_LOG(api_data, BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, CU_CTG_ERR, -4, "The attribute for command unique id is mandatory")
     
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
-    CHECK_CDW_THROW_AND_LOG(api_data, CU_CTG_ERR, -1, "No parameter found")
-    CHECK_KEY_THROW_AND_LOG(api_data, "cmd_uid_fetch_list", CU_CTG_ERR, -2, "The attribute command_uid_to_fetch is mandatory")
     
+    const std::string template_name = api_data->getStringValue("template_name");
+    const std::string command_unique_id = api_data->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
     
-    return NULL;
+    //check if the command template is present
+    if((err = n_da->checkCommandTemplatePresence(template_name,
+                                                 command_unique_id,
+                                                 presence))) {
+        LOG_AND_TROW_FORMATTED(CU_CTG_ERR, err, "Error checking the command template %1%(%2%) presence", %template_name%command_unique_id)
+    }
+    
+    if(presence) {
+        if((err = n_da->getCommandTemplate(template_name,
+                                          command_unique_id,
+                                          &result))){
+            LOG_AND_TROW_FORMATTED(CU_CTG_ERR, err, "Error getting the command tempalte %1%(%2%)", %template_name%command_unique_id)
+        }
+    }
+    return result;
 }

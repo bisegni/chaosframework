@@ -20,14 +20,42 @@
 #ifndef CHAOSFramework_api_types_h
 #define CHAOSFramework_api_types_h
 
-
+#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/CDataWrapperKeyValueSetter.h>
 #include <boost/shared_ptr.hpp>
 
 namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
-            namespace control_unit {
+            namespace node {
+                typedef std::vector< boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> >   ParameterSetterList;
+                typedef ParameterSetterList::iterator                                                       ParameterSetterListIterator;
                 
+                /*!
+                 wrap the command template information
+                 */
+                struct CommandTemplate {
+                    //! the representative name of the tempalte (unique)
+                    std::string template_name;
+                    //! the unique id of the command
+                    std::string command_unique_id;
+                    //!the setter for the paramter
+                    ParameterSetterList parameter_value_list;
+                    //!the submission rule
+                    uint32_t submission_rule;
+                    //! the priority of the command within the whait queue
+                    uint32_t submission_priority;
+                    //! the run schedule delay between a runa and the next(in microseconds)
+                    uint64_t schedule_step_delay;
+                    //! the delay between the submission retry, waithing a favorable current command state(in milliseconds)
+                    uint32_t submission_retry_delay;
+                    //! the execution channel where run the command
+                    uint32_t execution_channel;
+                };
+
+                typedef std::vector< boost::shared_ptr<CommandTemplate> >                   TemplateList;
+                typedef std::vector< boost::shared_ptr<CommandTemplate> >::iterator         TemplateListIterator;
+                typedef std::vector< boost::shared_ptr<CommandTemplate> >::const_iterator   TemplateListConstIterator;
             }
         }
     }

@@ -43,7 +43,7 @@ int CommandListModel::getRowCount() const {
 }
 
 QVariant CommandListModel::getUserData(int row) const {
-    return QVariant();
+    return QString::fromStdString(command_description_array[row]->getStringValue(chaos::common::batch_command::BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID));
 }
 
 QVariant CommandListModel::getRowData(int row) const {

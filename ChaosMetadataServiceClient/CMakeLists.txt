@@ -8,7 +8,11 @@ SET(mcl_src ${mcl_src}      api_proxy/ApiProxyManager.cpp
 
 SET(mcl_src ${mcl_src}      api_proxy/node/GetNodeDescription.cpp
                             api_proxy/node/NodeSearch.cpp
-                            api_proxy/node/ChangeNodeState.cpp)
+                            api_proxy/node/ChangeNodeState.cpp
+                            api_proxy/node/CommandGet.cpp
+                            api_proxy/node/CommandTemplateGet.cpp
+                            api_proxy/node/CommandTemplateSet.cpp
+                            api_proxy/node/CommandTemplateSearch.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/data_service/NewDS.cpp
                             api_proxy/data_service/UpdateDS.cpp

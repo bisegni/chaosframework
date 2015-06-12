@@ -19,8 +19,7 @@ class ControlUnitEditor;
 }
 
 class ControlUnitEditor :
-        public PresenterWidget
-{
+        public PresenterWidget {
     Q_OBJECT
 
 public:
@@ -40,10 +39,11 @@ private slots:
     void onLogicSwitchChangeState(const QString& switch_name,
                                   bool switch_activate);
 
-    void handleSelectionChangedOnCommandDescription(const QItemSelection& selection,
-                                                    const QItemSelection& previous_selected);
+    void handleSelectionChangedOnListWiew(const QItemSelection& selection,
+                                          const QItemSelection& previous_selected);
 
-    void saveTemplate( boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate> command_template);
+    void templateSaved(const QString& tempalte_name,
+                       const QString& command_uid);
 
     void on_pushButtonLoadAction_clicked();
 
@@ -69,6 +69,8 @@ private slots:
 
     void on_pushButtonUpdateTemaplteList_clicked();
 
+    void on_pushButtonEditInstance_clicked();
+
 private:
     QString getStatusString(int status);
 
@@ -91,7 +93,6 @@ private:
 
     FixedOutputChannelDatasetTableModel dataset_output_table_model;
     FixedInputChannelDatasetTableModel  dataset_input_table_model;
-    ControlUnitCommandTemplateEditor    template_editor;
     Ui::ControlUnitEditor *ui;
 };
 

@@ -113,6 +113,26 @@ namespace chaos {
                                            uint32_t last_unique_id,
                                            uint32_t page_length = 100) = 0;
                     
+                    //! set (insert or update) command description
+                    /*!
+                     \param command the description
+                     */
+                    virtual int setCommand(chaos::common::data::CDataWrapper& command) = 0;
+                    
+                    //! return a command
+                    /*!
+                     \param comamnd_uid the unique identifier of the command
+                     \param command the description
+                     */
+                    virtual int getCommand(const std::string& command_unique_id,
+                                           chaos::common::data::CDataWrapper **command) = 0;
+                    
+                    //! delete a command description
+                    /*!
+                     \param the uid of the command to delete
+                     */
+                    virtual int deleteCommand(const std::string& command_unique_id) = 0;
+                    
                     //! set (insert or update) a template for a batch command
                     /*!
                      The CDataWrapper contains all the key show on SetCommandTemplate api documentation
@@ -144,7 +164,7 @@ namespace chaos {
                      \param template_name is the name that semantically represent the tempalte
                      \param command_unique_id is the unique identifir ther represent the command
                      */
-                    virtual int returnCommandTemplate(const std::string& template_name,
+                    virtual int getCommandTemplate(const std::string& template_name,
                                                       const std::string& command_unique_id,
                                                       chaos::common::data::CDataWrapper **command_template) = 0;
                     

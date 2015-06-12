@@ -490,6 +490,10 @@
 		32B1E7EF1B297E8200221E49 /* CommandTemplateGet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E7ED1B297E8200221E49 /* CommandTemplateGet.cpp */; };
 		32B1E7F21B298D2600221E49 /* CommandTemplateSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E7F01B298D2600221E49 /* CommandTemplateSearch.cpp */; };
 		32B1E7F31B298D2600221E49 /* CommandTemplateSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B1E7F11B298D2600221E49 /* CommandTemplateSearch.h */; };
+		32B1E7F61B2AD1CC00221E49 /* CommandTemplateGet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E7F41B2AD1CC00221E49 /* CommandTemplateGet.cpp */; };
+		32B1E7F71B2AD1CC00221E49 /* CommandTemplateGet.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B1E7F51B2AD1CC00221E49 /* CommandTemplateGet.h */; };
+		32B1E7FD1B2B06CE00221E49 /* CommandGet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E7FB1B2B06CD00221E49 /* CommandGet.cpp */; };
+		32B1E8001B2B0EB600221E49 /* CommandGet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E7F81B2B036C00221E49 /* CommandGet.cpp */; };
 		32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */; };
 		32B4192C1B0DE55E00C3CA7D /* ChangeNodeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */; };
 		32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B4192B1B0DE55E00C3CA7D /* ChangeNodeState.h */; };
@@ -1311,6 +1315,12 @@
 		32B1E7EE1B297E8200221E49 /* CommandTemplateGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandTemplateGet.h; sourceTree = "<group>"; };
 		32B1E7F01B298D2600221E49 /* CommandTemplateSearch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandTemplateSearch.cpp; sourceTree = "<group>"; };
 		32B1E7F11B298D2600221E49 /* CommandTemplateSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandTemplateSearch.h; sourceTree = "<group>"; };
+		32B1E7F41B2AD1CC00221E49 /* CommandTemplateGet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandTemplateGet.cpp; sourceTree = "<group>"; };
+		32B1E7F51B2AD1CC00221E49 /* CommandTemplateGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandTemplateGet.h; sourceTree = "<group>"; };
+		32B1E7F81B2B036C00221E49 /* CommandGet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandGet.cpp; sourceTree = "<group>"; };
+		32B1E7F91B2B036C00221E49 /* CommandGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandGet.h; sourceTree = "<group>"; };
+		32B1E7FB1B2B06CD00221E49 /* CommandGet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandGet.cpp; sourceTree = "<group>"; };
+		32B1E7FC1B2B06CD00221E49 /* CommandGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandGet.h; sourceTree = "<group>"; };
 		32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSBatchExecutor.cpp; sourceTree = "<group>"; };
 		32B3E11C1A7A3923007B7802 /* MDSBatchExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSBatchExecutor.h; sourceTree = "<group>"; };
 		32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeNodeState.cpp; sourceTree = "<group>"; };
@@ -1631,10 +1641,14 @@
 				323386B01ACD731E008863DC /* NodeSearch.h */,
 				32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */,
 				32B4192B1B0DE55E00C3CA7D /* ChangeNodeState.h */,
+				32B1E7FB1B2B06CD00221E49 /* CommandGet.cpp */,
+				32B1E7FC1B2B06CD00221E49 /* CommandGet.h */,
 				32B1E7E61B297AB300221E49 /* CommandTemplateSet.cpp */,
 				32B1E7E71B297AB300221E49 /* CommandTemplateSet.h */,
 				32B1E7F01B298D2600221E49 /* CommandTemplateSearch.cpp */,
 				32B1E7F11B298D2600221E49 /* CommandTemplateSearch.h */,
+				32B1E7F41B2AD1CC00221E49 /* CommandTemplateGet.cpp */,
+				32B1E7F51B2AD1CC00221E49 /* CommandTemplateGet.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -2852,6 +2866,8 @@
 				32B9F3F91AC4460A00380FE9 /* NodeGetDescription.h */,
 				32B4192E1B0DE68800C3CA7D /* ChangeNodeState.cpp */,
 				32B4192F1B0DE68800C3CA7D /* ChangeNodeState.h */,
+				32B1E7F81B2B036C00221E49 /* CommandGet.cpp */,
+				32B1E7F91B2B036C00221E49 /* CommandGet.h */,
 				32B1E7E31B297A6100221E49 /* CommandTemplateSet.cpp */,
 				32B1E7E41B297A6100221E49 /* CommandTemplateSet.h */,
 				32B1E7EA1B297CF800221E49 /* CommandTemplateSearch.cpp */,
@@ -3675,6 +3691,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32B1E7F71B2AD1CC00221E49 /* CommandTemplateGet.h in Headers */,
 				327F39BF1AEAB6260000C845 /* GetAllDS.h in Headers */,
 				327F39B81AEAA2850000C845 /* DeleteDS.h in Headers */,
 				32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */,
@@ -3998,6 +4015,7 @@
 				328C873A1AE016DC0047C79B /* DeleteInstance.cpp in Sources */,
 				323236CB164573C60052CE06 /* main.cpp in Sources */,
 				327F39BB1AEAB14E0000C845 /* GetAllDataService.cpp in Sources */,
+				32B1E8001B2B0EB600221E49 /* CommandGet.cpp in Sources */,
 				3210EE1E1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp in Sources */,
 				32C067BD1AEFE5DD000B1ED9 /* IDSTControlUnitBatchCommand.cpp in Sources */,
 				328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */,
@@ -4274,6 +4292,7 @@
 			files = (
 				32661C6D1AA741D000F1A721 /* ChaosMetadataServiceClient.cpp in Sources */,
 				32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */,
+				32B1E7F61B2AD1CC00221E49 /* CommandTemplateGet.cpp in Sources */,
 				32B1E7E91B297C7F00221E49 /* CommandTemplateSet.cpp in Sources */,
 				325FC8641AF7CEE900DB9D66 /* GetCurrentDataset.cpp in Sources */,
 				327F39AF1AEAA2500000C845 /* AssociationControlUnit.cpp in Sources */,
@@ -4294,6 +4313,7 @@
 				32B419371B16236300C3CA7D /* SetInputDatasetAttributeValues.cpp in Sources */,
 				32B1E7F21B298D2600221E49 /* CommandTemplateSearch.cpp in Sources */,
 				327F39C61AEFABBB0000C845 /* StartStop.cpp in Sources */,
+				32B1E7FD1B2B06CE00221E49 /* CommandGet.cpp in Sources */,
 				327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */,
 				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
 				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,

@@ -68,9 +68,20 @@ namespace chaos {
                                    uint32_t page_length);
                     
                     //! inherited method
+                    int getCommand(const std::string& command_unique_id,
+                                   chaos::common::data::CDataWrapper **command);
+                    
+                    //! inherited method
+                    int setCommand(chaos::common::data::CDataWrapper& command);
+                    
+                    //! inherited method
+                    int deleteCommand(const std::string& command_unique_id);
+                    
+                    //! inherited method
                     int checkCommandTemplatePresence(const std::string& template_name,
                                                      const std::string& command_unique_id,
                                                      bool& presence);
+
                     //! inherited method
                     int setCommandTemplate(chaos::common::data::CDataWrapper& command_template);
                     
@@ -79,15 +90,15 @@ namespace chaos {
                                               const std::string& command_unique_id);
                     
                     //! inherited method
-                    int returnCommandTemplate(const std::string& template_name,
-                                              const std::string& command_unique_id,
-                                              chaos::common::data::CDataWrapper **command_template);
+                    int getCommandTemplate(const std::string& template_name,
+                                           const std::string& command_unique_id,
+                                           chaos::common::data::CDataWrapper **command_template);
                     
                     //! inherited method
                     int searchCommandTemplate(chaos::common::data::CDataWrapper **result,
-                                                      const std::vector<std::string>& cmd_uid_to_filter,
-                                                      uint32_t last_unique_id,
-                                                      uint32_t page_length = 100);
+                                              const std::vector<std::string>& cmd_uid_to_filter,
+                                              uint32_t last_unique_id,
+                                              uint32_t page_length = 100);
                 };
                 
                 

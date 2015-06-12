@@ -48,8 +48,10 @@
 
     //------------------------------abstract nodes-----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/node/NodeSearch.h>
+#include <ChaosMetadataServiceClient/api_proxy/node/CommandGet.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/ChangeNodeState.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/GetNodeDescription.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateSet.h>
+#include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateGet.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateSearch.h>
 #endif

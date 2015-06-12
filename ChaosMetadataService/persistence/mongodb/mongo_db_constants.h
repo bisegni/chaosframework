@@ -14,8 +14,9 @@
 #define CHAOSFramework_mongo_db_constants_h
 
 //----------------------------------collection naming-------------------------------------------
-static const char * const MONGODB_COLLECTION_NODES          = "mds_nodes";
-static const char * const MONGODB_COLLECTION_NODES_COMMAND  = "mds_nodes_commands";
-static const char * const MONGODB_COLLECTION_SEQUENCES      = "mds_sequences";
+static const char * const MONGODB_COLLECTION_NODES                      = "mds_nodes";
+static const char * const MONGODB_COLLECTION_NODES_COMMAND              = "mds_nodes_command";
+static const char * const MONGODB_COLLECTION_NODES_COMMAND_TEMPLATE     = "mds_nodes_command_template";
+static const char * const MONGODB_COLLECTION_SEQUENCES                  = "mds_sequences";
 
 #endif

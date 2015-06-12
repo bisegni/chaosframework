@@ -6,11 +6,12 @@
 #include <QDateTime>
 #include <QMessageBox>
 #include <QIntValidator>
+#include <QObject>
+
 static const QString TAG_CU_INFO = QString("g_cu_i");
 static const QString TAG_CU_DATASET = QString("g_cu_d");
 static const QString TAG_CU_INSTANCE = QString("g_cu_instance");
 static const QString TAG_CU_APPLY_CHANGESET = QString("g_cu_apply_changeset");
-static const QString TAG_CU_SET_TEMPLATE = QString("g_cu_set_template");
 static const QString TAG_CU_SEARCH_TEMPLATE = QString("g_cu_search_template");
 
 using namespace chaos::common::data;
@@ -63,11 +64,6 @@ ControlUnitEditor::~ControlUnitEditor() {
 }
 
 void ControlUnitEditor::initUI() {
-    //connect tempalte editor
-    connect(&template_editor,
-            SIGNAL(saveTemplate(boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate>)),
-            SLOT(saveTemplate(boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate>)));
-
     //add model to table
     ui->tableViewOutputChannel->setModel(&dataset_output_table_model);
     ui->tableViewOutputChannel->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -134,10 +130,13 @@ void ControlUnitEditor::initUI() {
     ui->listViewCommandList->setItemDelegate(new TwoLineInformationListItemDelegate(ui->listViewCommandList));
     connect(ui->listViewCommandList->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-            SLOT(handleSelectionChangedOnCommandDescription(QItemSelection,QItemSelection)));
+            SLOT(handleSelectionChangedOnListWiew(QItemSelection,QItemSelection)));
 
     //command template
     ui->listViewCommandInstance->setModel(&command_template_list_model);
+    connect(ui->listViewCommandInstance->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SLOT(handleSelectionChangedOnListWiew(QItemSelection,QItemSelection)));
 
     // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
     //launch api for control unit information
@@ -146,8 +145,8 @@ void ControlUnitEditor::initUI() {
 
 void ControlUnitEditor::updateTemplateSearch() {
     node::CommandUIDList uid_filter;
-    if(ui->listViewCommandInstance->selectionModel()->selectedRows().size()) {
-        foreach(QModelIndex row, ui->listViewCommandInstance->selectionModel()->selectedRows()) {
+    if(ui->listViewCommandList->selectionModel()->selectedRows().size()) {
+        foreach(QModelIndex row, ui->listViewCommandList->selectionModel()->selectedRows()) {
             QVariant user_data = row.data(Qt::UserRole);
             if(user_data.canConvert<QString>()) {
                 uid_filter.push_back(user_data.toString().toStdString());
@@ -227,9 +226,6 @@ void ControlUnitEditor::onApiDone(const QString& tag,
         }
     } else if(tag.compare(TAG_CU_APPLY_CHANGESET) == 0) {
         dataset_input_table_model.applyChangeSet(true);
-    } else if(tag.compare(TAG_CU_SET_TEMPLATE) == 0) {
-        template_editor.reset();
-        template_editor.hide();
     } else if(tag.compare(TAG_CU_SEARCH_TEMPLATE) == 0) {
         command_template_list_model.updateSearchPage(api_result);
     }
@@ -296,11 +292,10 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
     }
 }
 
-void ControlUnitEditor::saveTemplate(boost::shared_ptr<node::CommandTemplate> command_template) {
-    std::vector< boost::shared_ptr<node::CommandTemplate> >template_list;
-    template_list.push_back(command_template);
-    submitApiResult("cu_set_template",
-                    GET_CHAOS_API_PTR(node::CommandTemplateSet)->execute(template_list));
+void ControlUnitEditor::templateSaved(const QString& tempalte_name,
+                                      const QString& command_uid) {
+    //after temaplte has been saved update the search
+    updateTemplateSearch();
 }
 
 void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
@@ -308,9 +303,16 @@ void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
 
 }
 
-void ControlUnitEditor::handleSelectionChangedOnCommandDescription(const QItemSelection& selection,
-                                                                   const QItemSelection &previous_selected) {
-    ui->pushButtonAddNewCommadInstance->setEnabled(ui->listViewCommandList->selectionModel()->selectedRows().size()==1);
+void ControlUnitEditor::handleSelectionChangedOnListWiew(const QItemSelection& selection,
+                                                         const QItemSelection &previous_selected) {
+    QObject* sender = QObject::sender()->parent();
+    if(ui->listViewCommandList == sender) {
+        ui->pushButtonAddNewCommadInstance->setEnabled(ui->listViewCommandList->selectionModel()->selectedRows().size()==1);
+    }else if(ui->listViewCommandInstance == sender){
+        unsigned int selected_template_count = ui->listViewCommandInstance->selectionModel()->selectedRows().size();
+        ui->pushButtonEditInstance->setEnabled(selected_template_count);
+        ui->pushButtonRemoveInstance->setEnabled(selected_template_count);
+    }
 }
 
 void ControlUnitEditor::fillDataset(const QSharedPointer<chaos::common::data::CDataWrapper>& dataset) {
@@ -383,10 +385,30 @@ void ControlUnitEditor::on_pushButtonAddNewCommadInstance_clicked() {
 
     //! open tempalte editor for new instance creation
     QSharedPointer<TwoLineInformationItem> item = selected_list.first().data().value< QSharedPointer<TwoLineInformationItem> >();
-    template_editor.setCommandDescription(item->raw_data);
-    template_editor.show();
+    ControlUnitCommandTemplateEditor    *template_editor= new ControlUnitCommandTemplateEditor();
+    template_editor->setCommandDescription(item->raw_data);
+    //connect tempalte editor
+    connect(template_editor,
+            SIGNAL(templateSaved(QString,QString)),
+            SLOT(templateSaved(QString,QString)));
+
+    addWidgetToPresenter(template_editor);
 }
 
 void ControlUnitEditor::on_pushButtonUpdateTemaplteList_clicked() {
     updateTemplateSearch();
+}
+
+void ControlUnitEditor::on_pushButtonEditInstance_clicked() {//scann all selected element and open the editor for each one
+    foreach (QModelIndex index, ui->listViewCommandInstance->selectionModel()->selectedRows()) {
+        //! open tempalte editor for new instance creation
+        ControlUnitCommandTemplateEditor    *template_editor= new ControlUnitCommandTemplateEditor(index.data().toString(),
+                                                                                                   index.data(Qt::UserRole).toString());
+        //connect tempalte editor
+        connect(template_editor,
+                SIGNAL(templateSaved(QString,QString)),
+                SLOT(templateSaved(QString,QString)));
+
+        addWidgetToPresenter(template_editor);
+    }
 }

@@ -46,7 +46,7 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
     try {
         if(node_unique_id.size() == 0) return -1; //invalid unique id
         query_builder << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_unique_id;
-
+        
         mongo::BSONObj q = query_builder.obj();
         mongo::BSONObj p = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << 1 <<
                                 chaos::NodeDefinitionKey::NODE_TYPE << 1 <<
@@ -54,14 +54,14 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
                                 chaos::NodeDefinitionKey::NODE_RPC_DOMAIN << 1 <<
                                 chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR << 1 <<
                                 chaos::NodeDefinitionKey::NODE_TIMESTAMP << 1);
-
+        
         DEBUG_CODE(MDBNDA_DBG<<log_message("getNodeDescription",
                                            "findOne",
                                            DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                    "Projection",
                                                                    q.jsonString(),
                                                                    p.jsonString()));)
-
+        
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), q, &p))){
             MDBNDA_ERR << "Error fetching node description";
@@ -78,7 +78,7 @@ int MongoDBNodeDataAccess::getNodeDescription(const std::string& node_unique_id,
     return err;
 }
 
-    //inherited method
+//inherited method
 int MongoDBNodeDataAccess::insertNewNode(CDataWrapper& node_description) {
     int err = 0;
     uint64_t sequence_id = 0;
@@ -94,18 +94,18 @@ int MongoDBNodeDataAccess::insertNewNode(CDataWrapper& node_description) {
                 node_description.addInt64Value("seq", sequence_id);
             }
         }
-            //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) return -3;
-            //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)) return -4;
-            //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) return -5;
-
+        //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) return -3;
+        //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)) return -4;
+        //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) return -5;
+        
         std::auto_ptr<SerializationBuffer> ser(node_description.getBSONData());
         mongo::BSONObj obj_to_insert(ser->getBufferPtr());
-
+        
         DEBUG_CODE(MDBNDA_DBG<<log_message("insertNewNode",
                                            "insert",
                                            DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                    obj_to_insert));)
-
+        
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      obj_to_insert))) {
             MDBNDA_ERR << "Error creating new node";
@@ -117,20 +117,20 @@ int MongoDBNodeDataAccess::insertNewNode(CDataWrapper& node_description) {
     return err;
 }
 
-    //! update the node updatable feature
+//! update the node updatable feature
 int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_description) {
     int err = 0;
-        //allocate data block on vfat
+    //allocate data block on vfat
     mongo::BSONObjBuilder bson_find;
     mongo::BSONObjBuilder updated_field;
     mongo::BSONObjBuilder bson_update;
     mongo::BSONArrayBuilder bson_update_array;
     try {
         if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) return -1;
-            //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) return -2;
-            //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) return -4;
-
-            //serach criteria
+        //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) return -2;
+        //if(!node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) return -4;
+        
+        //serach criteria
         bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_TYPE)) {
             bson_find << chaos::NodeDefinitionKey::NODE_TYPE << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_TYPE);
@@ -163,7 +163,7 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
                     action_description << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION
                     << element->getStringValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION);
                 }
-                    //check if the action has parameter
+                //check if the action has parameter
                 if(element->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM)) {
                     std::auto_ptr<CMultiTypeDataArrayWrapper> param_array(element->getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM));
                     for(int idx = 0;
@@ -171,7 +171,7 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
                         idx++) {
                         mongo::BSONObjBuilder single_param_desc;
                         std::auto_ptr<CDataWrapper> param(param_array->getCDataWrapperElementAtIndex(idx));
-
+                        
                         if(param->hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME)) {
                             single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME
                             << param->getStringValue( chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME);
@@ -184,34 +184,34 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
                             single_param_desc << chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_TYPE
                             << param->getInt32Value(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_TYPE);
                         }
-                            //add element to array
+                        //add element to array
                         param_descriptions << single_param_desc.obj();
                     }
-                        //add all param description
+                    //add all param description
                     action_description.appendArray(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM, param_descriptions.arr());
                 }
-                    //appen action description to array
+                //appen action description to array
                 bson_update_array << action_description.obj();
             }
-
-                //add all action to the bson update object
+            
+            //add all action to the bson update object
             updated_field.appendArray(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC, bson_update_array.arr());
         }
         if(updated_field.asTempObj().isEmpty()) return 0;
         mongo::BSONObj query = bson_find.obj();
-            //set the update
+        //set the update
         bson_update << "$set" << updated_field.obj();
         mongo::BSONObj update = bson_update.obj();
-
-
-
+        
+        
+        
         DEBUG_CODE(MDBNDA_DBG<<log_message("updateUS",
                                            "update",
                                            DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                    "Update",
                                                                    query.jsonString(),
                                                                    update.jsonString()));)
-
+        
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
@@ -224,12 +224,12 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
     return err;
 }
 
-    //inherited method
+//inherited method
 int MongoDBNodeDataAccess::checkNodePresence(bool& presence,
                                              const std::string& node_unique_id,
                                              const std::string& node_unique_type) {
     int err = 0;
-        //allocate data block on vfat
+    //allocate data block on vfat
     mongo::BSONObjBuilder bson_find;
     mongo::BSONObj result;
     try {
@@ -238,12 +238,12 @@ int MongoDBNodeDataAccess::checkNodePresence(bool& presence,
             bson_find << chaos::NodeDefinitionKey::NODE_TYPE << node_unique_type;
         }
         mongo::BSONObj q = bson_find.obj();
-
+        
         DEBUG_CODE(MDBNDA_DBG<<log_message("checkNodePresence",
                                            "find",
                                            DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                    q.jsonString()));)
-
+        
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                       q))){
@@ -261,7 +261,7 @@ int MongoDBNodeDataAccess::checkNodePresence(bool& presence,
 int MongoDBNodeDataAccess::deleteNode(const std::string& node_unique_id,
                                       const std::string& node_type) {
     int err = 0;
-        //allocate data block on vfat
+    //allocate data block on vfat
     mongo::BSONObjBuilder bson_find;
     try {
         bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_unique_id;
@@ -269,12 +269,12 @@ int MongoDBNodeDataAccess::deleteNode(const std::string& node_unique_id,
             bson_find << chaos::NodeDefinitionKey::NODE_TYPE << node_type;
         }
         mongo::BSONObj q = bson_find.obj();
-
+        
         DEBUG_CODE(MDBNDA_DBG<<log_message("deleteNode",
                                            "delete",
                                            DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                    q.jsonString()));)
-
+        
         if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      q))){
             MDBNDA_ERR << "Error deleting unit server" << node_unique_id;
@@ -292,23 +292,23 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
                                       uint32_t last_unique_id,
                                       uint32_t page_length) {
     int err = 0;
-        //decode the type of the node
+    //decode the type of the node
     std::string             type_of_node;
-        //contain token found in criteria
+    //contain token found in criteria
     std::vector<std::string> criteria_token;
-        //helper for regular expression
+    //helper for regular expression
     std::string             token_for_mongo;
     mongo::BSONObjBuilder   bson_find;
     mongo::BSONArrayBuilder bson_find_or;
     mongo::BSONArrayBuilder bson_find_and;
     SearchResult            paged_result;
-
-        //compose query
-
-        //filter on sequence
+    
+    //compose query
+    
+    //filter on sequence
     bson_find_and << BSON( "seq" << BSON("$gte"<<last_unique_id));
-
-        //filter on type
+    
+    //filter on type
     if(search_type>0) {
         switch(search_type) {
             case 1:
@@ -322,9 +322,9 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
         }
         bson_find_and << BSON( chaos::NodeDefinitionKey::NODE_TYPE << type_of_node);
     }
-
-
-        // filter on node unique id
+    
+    
+    // filter on node unique id
     boost::split(criteria_token, criteria, is_any_of(" "), token_compress_on );
     for (std::vector<std::string>::iterator it = criteria_token.begin();
          it != criteria_token.end();
@@ -332,17 +332,17 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
         token_for_mongo = ".*"+*it+".*";
         bson_find_or <<  MONGODB_REGEX_ON_FILED(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, token_for_mongo);
     }
-        //compose the or
+    //compose the or
     bson_find_and << BSON("$or" << bson_find_or.arr());
     bson_find.appendArray("$and", bson_find_and.obj());
     mongo::BSONObj q = bson_find.obj();
-
+    
     DEBUG_CODE(MDBNDA_DBG<<log_message("searchNode",
                                        "performPagedQuery",
                                        DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                q.jsonString()));)
-
-        //perform the search for the query page
+    
+    //perform the search for the query page
     if((err = performPagedQuery(paged_result,
                                 MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                 q,
@@ -366,6 +366,85 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
     return err;
 }
 
+
+//! inherited method
+int MongoDBNodeDataAccess::setCommand(chaos::common::data::CDataWrapper& command) {
+    int err = 0;
+    mongo::BSONObj result;
+    try {
+        std::auto_ptr<SerializationBuffer> ser(command.getBSONData());
+        mongo::BSONObj i(ser->getBufferPtr());
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("setCommand",
+                                           "insert",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   i.jsonString()));)
+        
+        if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                     i))){
+            MDBNDA_ERR << "Inserting a new command";
+        }
+
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+int MongoDBNodeDataAccess::getCommand(const std::string& command_unique_id,
+                                      chaos::common::data::CDataWrapper **command) {
+    int err = 0;
+    mongo::BSONObj result;
+    try {
+        //create query
+        mongo::BSONObj q = BSON(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("getCommand",
+                                           "findOne",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()));)
+        
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                      q))){
+            MDBNDA_ERR << boost::str(boost::format("Error searching the command uid:%2%")%command_unique_id);
+        } else if(result.isEmpty()) {
+            MDBNDA_ERR << boost::str(boost::format("No command for uid:%2%")%command_unique_id);
+        } else {
+            //return a new datawrapper with the found content
+            *command = new CDataWrapper(result.objdata());
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
+//! inherited method
+int MongoDBNodeDataAccess::deleteCommand(const std::string& command_unique_id) {
+    int err = 0;
+    try {
+        //create query
+        mongo::BSONObj q = BSON(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("deleteCommandTemplate",
+                                           "delete",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()));)
+        
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                     q))){
+            MDBNDA_ERR << boost::str(boost::format("Error removing the command uid:%2%")%command_unique_id);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
 int MongoDBNodeDataAccess::checkCommandTemplatePresence(const std::string& template_name,
                                                         const std::string& command_unique_id,
                                                         bool& presence) {
@@ -381,7 +460,7 @@ int MongoDBNodeDataAccess::checkCommandTemplatePresence(const std::string& templ
                                                                    q.jsonString()));)
         
         if((err = connection->findOne(result,
-                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND_TEMPLATE),
                                       q))){
             MDBNDA_ERR << boost::str(boost::format("Error searching template name: %1% for command uid:%2%")%template_name%command_unique_id);
         }
@@ -412,6 +491,7 @@ int MongoDBNodeDataAccess::setCommandTemplate(chaos::common::data::CDataWrapper&
         
         //create the update package (all key imnus the first two used before
         std::auto_ptr<CDataWrapper> to_update(new CDataWrapper());
+        to_update->addStringValue("type", "template");
         std::vector<std::string> all_keys;
         command_template.getAllKey(all_keys);
         
@@ -435,7 +515,7 @@ int MongoDBNodeDataAccess::setCommandTemplate(chaos::common::data::CDataWrapper&
                                                                    q.jsonString(),
                                                                    u.jsonString()));)
         
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND_TEMPLATE),
                                      q,
                                      u,
                                      true))){
@@ -461,7 +541,7 @@ int MongoDBNodeDataAccess::deleteCommandTemplate(const std::string& template_nam
                                            DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                    q.jsonString()));)
         
-        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND_TEMPLATE),
                                      q))){
             MDBNDA_ERR << boost::str(boost::format("Error removing the template name: %1% for command uid:%2%")%template_name%command_unique_id);
         }
@@ -472,9 +552,9 @@ int MongoDBNodeDataAccess::deleteCommandTemplate(const std::string& template_nam
     return err;
 }
 
-int MongoDBNodeDataAccess::returnCommandTemplate(const std::string& template_name,
-                                                 const std::string& command_unique_id,
-                                                 chaos::common::data::CDataWrapper **command_template) {
+int MongoDBNodeDataAccess::getCommandTemplate(const std::string& template_name,
+                                              const std::string& command_unique_id,
+                                              chaos::common::data::CDataWrapper **command_template) {
     int err = 0;
     mongo::BSONObj result;
     try {
@@ -482,13 +562,13 @@ int MongoDBNodeDataAccess::returnCommandTemplate(const std::string& template_nam
         mongo::BSONObj q = BSON("template_name" << template_name <<
                                 BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
         
-        DEBUG_CODE(MDBNDA_DBG<<log_message("deleteCommandTemplate",
-                                           "delete",
+        DEBUG_CODE(MDBNDA_DBG<<log_message("getCommandTemplate",
+                                           "findOne",
                                            DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                    q.jsonString()));)
         
         if((err = connection->findOne(result,
-                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND_TEMPLATE),
                                       q))){
             MDBNDA_ERR << boost::str(boost::format("Error searching the template name: %1% for command uid:%2%")%template_name%command_unique_id);
         } else if(result.isEmpty()) {
@@ -510,7 +590,7 @@ int MongoDBNodeDataAccess::searchCommandTemplate(chaos::common::data::CDataWrapp
                                                  uint32_t last_unique_id,
                                                  uint32_t page_length) {
     int err = 0;
-
+    
     mongo::BSONObjBuilder   bson_find;
     mongo::BSONArrayBuilder bson_uid_array_list;
     mongo::BSONArrayBuilder bson_find_and;
@@ -543,7 +623,7 @@ int MongoDBNodeDataAccess::searchCommandTemplate(chaos::common::data::CDataWrapp
     
     //perform the search for the query page
     if((err = performPagedQuery(paged_result,
-                                MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND_TEMPLATE),
                                 q,
                                 NULL,
                                 NULL,

@@ -210,6 +210,9 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                 }
                 //add the batch command description to the command array
                 batch_command_bson_array << batch_command_builder.obj();
+                
+                //insert commandi onto node comamnd collection
+                node_data_access->setCommand(*bc_element);
             }
             
             //add batch command to the dataset

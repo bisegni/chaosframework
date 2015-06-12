@@ -1,5 +1,5 @@
 /*
- *	CommandTemplateSet.h
+ *	CommandTemplateGet.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,37 +18,37 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__CommandTemplateSet__
-#define __CHAOSFramework__CommandTemplateSet__
+#ifndef __CHAOSFramework__CommandTemplateGet__
+#define __CHAOSFramework__CommandTemplateGet__
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
-#include <chaos/common/data/CDataWrapperKeyValueSetter.h>
 
-#include <vector>
-
-#include <boost/shared_ptr.hpp>
+#include <string>
 
 namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
             namespace node {
                 
-                //! Set (insert or update) a template for control unit command
-                class CommandTemplateSet:
+                //! Return a complete description of a command temaplte
+                class CommandTemplateGet:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(CommandTemplateSet)
+                    API_PROXY_CLASS(CommandTemplateGet)
                 protected:
                     //! default constructor
-                    API_PROXY_CD_DECLARATION(CommandTemplateSet)
+                    API_PROXY_CD_DECLARATION(CommandTemplateGet)
                 public:
-                    //!
+                    
                     /*!
+                     \param template_name the name of tempalte
+                     \param command_uid the command unique id
                      */
-                    ApiProxyResult execute(const TemplateList& template_configuration);
+                    ApiProxyResult execute(const std::string& template_name,
+                                           const std::string& command_uid);
                 };
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__CommandTemplateSet__) */
+#endif /* defined(__CHAOSFramework__CommandTemplateGet__) */

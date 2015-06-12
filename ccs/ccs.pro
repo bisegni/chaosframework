@@ -64,10 +64,10 @@ SOURCES += main.cpp\
     node/data/CommandListModel.cpp \
     widget/list/delegate/TwoLineInformationListItemDelegate.cpp \
     widget/list/delegate/TwoLineInformationItem.cpp \
-    node/control_unit/ControlUnitCommandTemplateEditor.cpp \
     node/data/CommandParameterTableModel.cpp \
     node/data/AttributeValueChangeSet.cpp \
-    node/data/CommandTemplateListModel.cpp
+    node/data/CommandTemplateListModel.cpp \
+    node/control_unit/ControlUnitCommandTemplateEditor.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -112,10 +112,10 @@ HEADERS  += \
     node/data/CommandListModel.h \
     widget/list/delegate/TwoLineInformationItem.h \
     widget/list/delegate/TwoLineInformationListItemDelegate.h \
-    node/control_unit/ControlUnitCommandTemplateEditor.h \
     node/data/CommandParameterTableModel.h \
     node/data/AttributeValueChangeSet.h \
-    node/data/CommandTemplateListModel.h
+    node/data/CommandTemplateListModel.h \
+    node/control_unit/ControlUnitCommandTemplateEditor.h
 
 FORMS    += \
     search/searchnoderesult.ui \

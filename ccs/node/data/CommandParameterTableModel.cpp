@@ -95,6 +95,36 @@ void CommandParameterTableModel::fillTemplate(chaos::metadata_service_client::ap
     }
 }
 
+void CommandParameterTableModel::applyTemplate(const QSharedPointer<chaos::common::data::CDataWrapper>& command_template) {
+    beginResetModel();
+    foreach (QSharedPointer<AttributeValueChangeSet> attribute, attribute_changes) {
+        const std::string attribute_name = attribute->attribute_name.toStdString();
+        if(command_template->hasKey(attribute_name))
+        switch (attribute->type) {
+        case chaos::DataType::TYPE_BOOLEAN:
+            attribute->current_value = command_template->getBoolValue(attribute_name);
+            break;
+        case chaos::DataType::TYPE_INT32:
+            attribute->current_value = command_template->getInt32Value(attribute_name);
+            break;
+        case chaos::DataType::TYPE_INT64:
+            attribute->current_value = command_template->getInt64Value(attribute_name);
+            break;
+        case chaos::DataType::TYPE_STRING:
+            attribute->current_value = QString::fromStdString(command_template->getStringValue(attribute_name));
+            break;
+        case chaos::DataType::TYPE_DOUBLE:
+            attribute->current_value = command_template->getDoubleValue(attribute_name);
+            break;
+        case chaos::DataType::TYPE_BYTEARRAY:
+            break;
+        default:
+
+            break;
+        }
+    }
+    endResetModel();
+}
 
 void CommandParameterTableModel::resetChanges() {
     beginResetModel();

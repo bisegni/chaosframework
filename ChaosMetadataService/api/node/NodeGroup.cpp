@@ -23,7 +23,9 @@
 #include "NodeSearch.h"
 #include "NodeGetDescription.h"
 #include "ChangeNodeState.h"
+#include "CommandGet.h"
 #include "CommandTemplateSet.h"
+#include "CommandTemplateGet.h"
 #include "CommandTemplateSearch.h"
 
 using namespace chaos::metadata_service::api::node;
@@ -37,7 +39,9 @@ AbstractApiGroup("system"){
     addApi<NodeCreateUnitServer>();
     addApi<NodeGetDescription>();
     addApi<ChangeNodeState>();
+    addApi<CommandGet>();
     addApi<CommandTemplateSet>();
+    addApi<CommandTemplateGet>();
     addApi<CommandTemplateSearch>();
 }
 

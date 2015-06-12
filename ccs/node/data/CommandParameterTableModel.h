@@ -15,6 +15,7 @@ public:
     ~CommandParameterTableModel();
     void updateAttribute(const QSharedPointer<chaos::common::data::CDataWrapper>& command_description);
     void fillTemplate(chaos::metadata_service_client::api_proxy::node::CommandTemplate& command_template);
+    void applyTemplate(const QSharedPointer<chaos::common::data::CDataWrapper>& command_template);
     void resetChanges();
 protected:
     int getRowCount() const;

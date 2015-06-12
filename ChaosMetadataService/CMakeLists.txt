@@ -47,7 +47,11 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
 						api/node/NodeGetDescription.cpp
 						api/node/NodeRegister.cpp
 						api/node/NodeSearch.cpp
-                        api/node/ChangeNodeState.cpp)
+                        api/node/ChangeNodeState.cpp
+                        api/node/CommandGet.cpp
+                        api/node/CommandTemplateSet.cpp
+                        api/node/CommandTemplateGet.cpp
+                        api/node/CommandTemplateSearch.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/NodeDataAccess.cpp
