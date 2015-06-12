@@ -3,9 +3,13 @@ SET(common_lib_src						log/LogManager.cpp)
 SET(common_lib_src	${common_lib_src}	async_central/AsyncCentralManager.cpp async_central/TimerHandler.cpp)
 
 SET(common_lib_src	${common_lib_src}	healt_system/HealtManager.cpp
-                                        healt_system/HealtMetric.cpp)
+                                      healt_system/HealtMetric.cpp)
 
-SET(common_lib_src  ${common_lib_src}	action/ActionExecutionSafetySystem.cpp action/EventAction.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp)
+SET(common_lib_src  ${common_lib_src}	action/ActionExecutionSafetySystem.cpp
+                                      action/EventAction.cpp
+                                      action/ActionDescriptor.cpp
+                                      action/DeclareAction.cpp
+                                      action/DomainActions.cpp)
 
 SET(common_lib_src  ${common_lib_src}	bson/oid.cpp bson/bson_validate.cpp
 										bson/base/parse_number.cpp bson/base/string_data.cpp bson/base/stringutils.cpp bson/base/status.cpp bson/base/error_codes.cpp
@@ -69,7 +73,10 @@ SET(common_lib_src  ${common_lib_src}	sync_rpc/RpcSyncServer.cpp sync_rpc/HTTPRp
 
 SET(common_lib_src  ${common_lib_src}	utility/NamedService.cpp utility/LoadableService.cpp utility/StartableService.cpp utility/InizializableService.cpp)
 
-SET(common_lib_src  ${common_lib_src}	batch_command/BatchCommandExecutor.cpp batch_command/BatchCommandSandbox.cpp batch_command/BatchCommand.cpp)
+SET(common_lib_src  ${common_lib_src}	batch_command/BatchCommandExecutor.cpp
+                                      batch_command/BatchCommandSandbox.cpp
+                                      batch_command/BatchCommand.cpp
+                                      batch_command/BatchCommandDescription.cpp)
 SET(common_lib_src  ${common_lib_src}	plugin/AbstractPlugin.cpp plugin/PluginDiscover.cpp plugin/PluginInspector.cpp plugin/PluginLoader.cpp)
 
 IF (NOT DEFINED BUILD_FORCE_STATIC )
