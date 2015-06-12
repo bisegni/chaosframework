@@ -13,6 +13,7 @@ static const QString TAG_CU_DATASET = QString("g_cu_d");
 static const QString TAG_CU_INSTANCE = QString("g_cu_instance");
 static const QString TAG_CU_APPLY_CHANGESET = QString("g_cu_apply_changeset");
 static const QString TAG_CU_SEARCH_TEMPLATE = QString("g_cu_search_template");
+static const QString TAG_CU_DELETE_TEMPLATE = QString("g_cu_delete_template");
 
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
@@ -228,6 +229,9 @@ void ControlUnitEditor::onApiDone(const QString& tag,
         dataset_input_table_model.applyChangeSet(true);
     } else if(tag.compare(TAG_CU_SEARCH_TEMPLATE) == 0) {
         command_template_list_model.updateSearchPage(api_result);
+    } else if(tag.compare(TAG_CU_DELETE_TEMPLATE) == 0) {
+        //tempalte delete operaion
+        updateTemplateSearch();
     }
 }
 
@@ -311,7 +315,7 @@ void ControlUnitEditor::handleSelectionChangedOnListWiew(const QItemSelection& s
     }else if(ui->listViewCommandInstance == sender){
         unsigned int selected_template_count = ui->listViewCommandInstance->selectionModel()->selectedRows().size();
         ui->pushButtonEditInstance->setEnabled(selected_template_count);
-        ui->pushButtonRemoveInstance->setEnabled(selected_template_count);
+        ui->pushButtonRemoveInstance->setEnabled(selected_template_count == 1);
     }
 }
 
@@ -410,5 +414,16 @@ void ControlUnitEditor::on_pushButtonEditInstance_clicked() {//scann all selecte
                 SLOT(templateSaved(QString,QString)));
 
         addWidgetToPresenter(template_editor);
+    }
+}
+
+void ControlUnitEditor::on_pushButtonRemoveInstance_clicked() {
+    foreach(QModelIndex index, ui->listViewCommandInstance->selectionModel()->selectedRows()) {
+        //invoke api for template delete operation
+        /*
+         submitApiResult(TAG_CU_DELETE_TEMPLATE,
+                        GET_CHAOS_API_PTR(node::CommandTemplateGet)->execute(index.data().toString().toStdString(),
+                                                                             index.data(Qt::UserRole).toString().toStdString()));
+                                                                             */
     }
 }

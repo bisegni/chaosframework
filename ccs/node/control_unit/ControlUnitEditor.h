@@ -71,6 +71,8 @@ private slots:
 
     void on_pushButtonEditInstance_clicked();
 
+    void on_pushButtonRemoveInstance_clicked();
+
 private:
     QString getStatusString(int status);
 
