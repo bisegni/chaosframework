@@ -142,17 +142,17 @@ namespace chaos {
                     //! Check a command template presence
                     /*!
                      Try to find a command template
-                     \param template_name is the name that semantically represent the tempalte
+                     \param template_name is the name that semantically represent the template
                      \param command_unique_id is the unique identifir ther represent the command
-                     \param presence true if the tempalte exists false otherwhise
+                     \param presence true if the template exists false otherwhise
                      */
                     virtual int checkCommandTemplatePresence(const std::string& template_name,
                                                              const std::string& command_unique_id,
                                                              bool& presence) = 0;
                     //! Delete a command template
                     /*!
-                     Delete a temaplte for a batch command
-                     \param template_name is the name that semantically represent the tempalte
+                     Delete a template for a batch command
+                     \param template_name is the name that semantically represent the template
                      \param command_unique_id is the unique identifir ther represent the command
                      */
                     virtual int deleteCommandTemplate(const std::string& template_name,
@@ -161,14 +161,14 @@ namespace chaos {
                     //! Return a command template
                     /*!
                      search and if is present return the template by name and command uid
-                     \param template_name is the name that semantically represent the tempalte
+                     \param template_name is the name that semantically represent the template
                      \param command_unique_id is the unique identifir ther represent the command
                      */
                     virtual int getCommandTemplate(const std::string& template_name,
                                                       const std::string& command_unique_id,
                                                       chaos::common::data::CDataWrapper **command_template) = 0;
                     
-                    //!Make simple command tempalte query
+                    //!Make simple command template query
                     /*!
                      perform a simple search on node command template
                      \param result the handle for the reuslt data (is allcoated only if the search has been done with success)

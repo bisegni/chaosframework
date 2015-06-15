@@ -9,7 +9,8 @@ CommandTemplateListModel::CommandTemplateListModel(QObject *parent):
 void CommandTemplateListModel::updateSearchPage(const QSharedPointer<CDataWrapper>& template_result_page) {
     beginResetModel();
     page_element.clear();
-    if(!template_result_page->hasKey("cmd_tmpl_search_result_page")) return;
+    if(template_result_page.isNull() ||
+            !template_result_page->hasKey("cmd_tmpl_search_result_page")) return;
 
     QSharedPointer<CMultiTypeDataArrayWrapper> result_page(template_result_page->getVectorValue("cmd_tmpl_search_result_page"));
     for(int idx = 0;

@@ -1,5 +1,5 @@
 /*
- *	CommandTemplateGet.h
+ *	CommandTemplateDelete.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__CommandTemplateGet__
-#define __CHAOSFramework__CommandTemplateGet__
+#ifndef __CHAOSFramework__CommandTemplateDelete__
+#define __CHAOSFramework__CommandTemplateDelete__
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
@@ -30,13 +30,13 @@ namespace chaos {
         namespace api_proxy {
             namespace node {
                 
-                //! Return a complete description of a command template
-                class CommandTemplateGet:
+                //! Delete the command template
+                class CommandTemplateDelete:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(CommandTemplateGet)
+                    API_PROXY_CLASS(CommandTemplateDelete)
                 protected:
                     //! default constructor
-                    API_PROXY_CD_DECLARATION(CommandTemplateGet)
+                    API_PROXY_CD_DECLARATION(CommandTemplateDelete)
                 public:
                     
                     /*!
@@ -51,4 +51,5 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__CommandTemplateGet__) */
+
+#endif /* defined(__CHAOSFramework__CommandTemplateDelete__) */

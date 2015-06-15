@@ -35,7 +35,7 @@ namespace chaos {
                  wrap the command template information
                  */
                 struct CommandTemplate {
-                    //! the representative name of the tempalte (unique)
+                    //! the representative name of the template (unique)
                     std::string template_name;
                     //! the unique id of the command
                     std::string command_unique_id;

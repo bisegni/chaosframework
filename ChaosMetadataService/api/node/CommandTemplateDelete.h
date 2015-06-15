@@ -1,5 +1,5 @@
 /*
- *	CommandTemplateGet.h
+ *	CommandTemplateDelete.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__CommandTemplateGet__
-#define __CHAOSFramework__CommandTemplateGet__
+#ifndef __CHAOSFramework__CommandTemplateDelete__
+#define __CHAOSFramework__CommandTemplateDelete__
 
 #include "../AbstractApi.h"
 
@@ -27,11 +27,11 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
-                class CommandTemplateGet:
+                class CommandTemplateDelete:
                 public AbstractApi {
                 public:
-                    CommandTemplateGet();
-                    ~CommandTemplateGet();
+                    CommandTemplateDelete();
+                    ~CommandTemplateDelete();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException);
                 };
@@ -40,4 +40,4 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__CommandTemplateGet__) */
+#endif /* defined(__CHAOSFramework__CommandTemplateDelete__) */

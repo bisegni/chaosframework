@@ -71,7 +71,7 @@ namespace chaos {
             public:
                 template<typename P>
                 P* getApiProxy(int32_t timeout_in_milliseconds = 1000) {
-                        //! there was a type for every tempalte expantion
+                        //! there was a type for every template expantion
                     static P* instance = NULL;
                     if(instance == NULL) {
                         //allcoate the instsancer for the AbstractApi depending by the template

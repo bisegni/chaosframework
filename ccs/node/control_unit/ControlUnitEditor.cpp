@@ -139,6 +139,11 @@ void ControlUnitEditor::initUI() {
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(handleSelectionChangedOnListWiew(QItemSelection,QItemSelection)));
 
+
+    //led indicator
+    ui->ledIndicatorHealtTSControlUnit->setStateBlinkOnRepeatSet(2, true);
+    ui->ledIndicatorHealtTSUnitServer->setStateBlinkOnRepeatSet(2, true);
+
     // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
     //launch api for control unit information
     updateAllControlUnitInfomration();
@@ -420,10 +425,8 @@ void ControlUnitEditor::on_pushButtonEditInstance_clicked() {//scann all selecte
 void ControlUnitEditor::on_pushButtonRemoveInstance_clicked() {
     foreach(QModelIndex index, ui->listViewCommandInstance->selectionModel()->selectedRows()) {
         //invoke api for template delete operation
-        /*
-         submitApiResult(TAG_CU_DELETE_TEMPLATE,
-                        GET_CHAOS_API_PTR(node::CommandTemplateGet)->execute(index.data().toString().toStdString(),
-                                                                             index.data(Qt::UserRole).toString().toStdString()));
-                                                                             */
+        submitApiResult(TAG_CU_DELETE_TEMPLATE,
+                        GET_CHAOS_API_PTR(node::CommandTemplateDelete)->execute(index.data().toString().toStdString(),
+                                                                                index.data(Qt::UserRole).toString().toStdString()));
     }
 }

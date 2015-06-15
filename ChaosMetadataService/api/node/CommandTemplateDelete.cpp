@@ -1,5 +1,5 @@
 /*
- *	CommandTemplateGet.cpp
+ *	CommandTemplateDelete.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -17,7 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "CommandTemplateGet.h"
+
+#include "CommandTemplateDelete.h"
 
 #include <boost/format.hpp>
 
@@ -27,21 +28,21 @@ using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-#define CU_CTG_INFO INFO_LOG(CommandTemplateGet)
-#define CU_CTG_DBG  DBG_LOG(CommandTemplateGet)
-#define CU_CTG_ERR  ERR_LOG(CommandTemplateGet)
+#define CU_CTG_INFO INFO_LOG(CommandTemplateDelete)
+#define CU_CTG_DBG  DBG_LOG(CommandTemplateDelete)
+#define CU_CTG_ERR  ERR_LOG(CommandTemplateDelete)
 
-CommandTemplateGet::CommandTemplateGet():
-AbstractApi("commandTemplateGet"){
+CommandTemplateDelete::CommandTemplateDelete():
+AbstractApi("commandTemplateDelete"){
     
 }
 
-CommandTemplateGet::~CommandTemplateGet() {
+CommandTemplateDelete::~CommandTemplateDelete() {
     
 }
 
-CDataWrapper *CommandTemplateGet::execute(CDataWrapper *api_data,
-                                          bool& detach_data) throw(chaos::CException) {
+CDataWrapper *CommandTemplateDelete::execute(CDataWrapper *api_data,
+                                             bool& detach_data) throw(chaos::CException) {
     int err = 0;
     bool presence = false;
     CDataWrapper *result = NULL;
@@ -62,10 +63,9 @@ CDataWrapper *CommandTemplateGet::execute(CDataWrapper *api_data,
     }
     
     if(presence) {
-        if((err = n_da->getCommandTemplate(template_name,
-                                          command_unique_id,
-                                          &result))){
-            LOG_AND_TROW_FORMATTED(CU_CTG_ERR, err, "Error getting the command template %1%(%2%)", %template_name%command_unique_id)
+        if((err = n_da->deleteCommandTemplate(template_name,
+                                              command_unique_id))){
+            LOG_AND_TROW_FORMATTED(CU_CTG_ERR, err, "Error removing the command template %1%(%2%)", %template_name%command_unique_id)
         }
     }
     return result;

@@ -177,13 +177,18 @@ void ControlUnitCommandTemplateEditor::on_pushButtonReset_clicked() {
     }
 
 void ControlUnitCommandTemplateEditor::on_pushButtonSave_clicked() {
+    QString param_in_error;
     CHEC_TEXT_VALIDATOR(ui->lineEditTemplateName)
-            CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionPriority)
-            CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionRunStepDelay)
-            CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionRetry)
-            //emit the singal for complete editing
+    CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionPriority)
+    CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionRunStepDelay)
+    CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionRetry)
+    //check the validation on param rule
+    if(!parameter_table_model.validation(param_in_error)){
+        QMessageBox::information(this, tr("validation Error"), QString("The attribute '%1' cannot be validated (it can be mandatory and not valorized or parametrized)").arg(param_in_error));
+        return;
+    }
 
-            std::vector< boost::shared_ptr<node::CommandTemplate> >template_list;
+    std::vector< boost::shared_ptr<node::CommandTemplate> >template_list;
     template_list.push_back(getTemplateDescription());
     submitApiResult(TAG_CMD_TEMPLATE_SET,
                     GET_CHAOS_API_PTR(node::CommandTemplateSet)->execute(template_list));

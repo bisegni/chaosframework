@@ -53,5 +53,6 @@
 #include <ChaosMetadataServiceClient/api_proxy/node/GetNodeDescription.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateSet.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateGet.h>
+#include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateDelete.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateSearch.h>
 #endif

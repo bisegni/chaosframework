@@ -26,6 +26,7 @@
 #include "CommandGet.h"
 #include "CommandTemplateSet.h"
 #include "CommandTemplateGet.h"
+#include "CommandTemplateDelete.h"
 #include "CommandTemplateSearch.h"
 
 using namespace chaos::metadata_service::api::node;
@@ -42,6 +43,7 @@ AbstractApiGroup("system"){
     addApi<CommandGet>();
     addApi<CommandTemplateSet>();
     addApi<CommandTemplateGet>();
+    addApi<CommandTemplateDelete>();
     addApi<CommandTemplateSearch>();
 }
 

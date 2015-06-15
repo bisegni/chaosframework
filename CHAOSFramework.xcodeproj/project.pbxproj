@@ -494,6 +494,10 @@
 		32B1E7F71B2AD1CC00221E49 /* CommandTemplateGet.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B1E7F51B2AD1CC00221E49 /* CommandTemplateGet.h */; };
 		32B1E7FD1B2B06CE00221E49 /* CommandGet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E7FB1B2B06CD00221E49 /* CommandGet.cpp */; };
 		32B1E8001B2B0EB600221E49 /* CommandGet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E7F81B2B036C00221E49 /* CommandGet.cpp */; };
+		32B1E8031B2E9D1B00221E49 /* CommandTemplateDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8011B2E9D1B00221E49 /* CommandTemplateDelete.cpp */; };
+		32B1E8061B2EA07200221E49 /* CommandTemplateDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8041B2EA07200221E49 /* CommandTemplateDelete.cpp */; };
+		32B1E8071B2EA07200221E49 /* CommandTemplateDelete.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B1E8051B2EA07200221E49 /* CommandTemplateDelete.h */; };
+		32B1E80A1B2EA77200221E49 /* GetNodeNetworkAddress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8081B2EA77200221E49 /* GetNodeNetworkAddress.cpp */; };
 		32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */; };
 		32B4192C1B0DE55E00C3CA7D /* ChangeNodeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */; };
 		32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B4192B1B0DE55E00C3CA7D /* ChangeNodeState.h */; };
@@ -1321,6 +1325,12 @@
 		32B1E7F91B2B036C00221E49 /* CommandGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandGet.h; sourceTree = "<group>"; };
 		32B1E7FB1B2B06CD00221E49 /* CommandGet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandGet.cpp; sourceTree = "<group>"; };
 		32B1E7FC1B2B06CD00221E49 /* CommandGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandGet.h; sourceTree = "<group>"; };
+		32B1E8011B2E9D1B00221E49 /* CommandTemplateDelete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandTemplateDelete.cpp; sourceTree = "<group>"; };
+		32B1E8021B2E9D1B00221E49 /* CommandTemplateDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandTemplateDelete.h; sourceTree = "<group>"; };
+		32B1E8041B2EA07200221E49 /* CommandTemplateDelete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandTemplateDelete.cpp; sourceTree = "<group>"; };
+		32B1E8051B2EA07200221E49 /* CommandTemplateDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandTemplateDelete.h; sourceTree = "<group>"; };
+		32B1E8081B2EA77200221E49 /* GetNodeNetworkAddress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodeNetworkAddress.cpp; sourceTree = "<group>"; };
+		32B1E8091B2EA77200221E49 /* GetNodeNetworkAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetNodeNetworkAddress.h; sourceTree = "<group>"; };
 		32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSBatchExecutor.cpp; sourceTree = "<group>"; };
 		32B3E11C1A7A3923007B7802 /* MDSBatchExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSBatchExecutor.h; sourceTree = "<group>"; };
 		32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeNodeState.cpp; sourceTree = "<group>"; };
@@ -1645,10 +1655,12 @@
 				32B1E7FC1B2B06CD00221E49 /* CommandGet.h */,
 				32B1E7E61B297AB300221E49 /* CommandTemplateSet.cpp */,
 				32B1E7E71B297AB300221E49 /* CommandTemplateSet.h */,
-				32B1E7F01B298D2600221E49 /* CommandTemplateSearch.cpp */,
-				32B1E7F11B298D2600221E49 /* CommandTemplateSearch.h */,
 				32B1E7F41B2AD1CC00221E49 /* CommandTemplateGet.cpp */,
 				32B1E7F51B2AD1CC00221E49 /* CommandTemplateGet.h */,
+				32B1E8041B2EA07200221E49 /* CommandTemplateDelete.cpp */,
+				32B1E8051B2EA07200221E49 /* CommandTemplateDelete.h */,
+				32B1E7F01B298D2600221E49 /* CommandTemplateSearch.cpp */,
+				32B1E7F11B298D2600221E49 /* CommandTemplateSearch.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -2864,6 +2876,8 @@
 				32B9F3F61AC4186300380FE9 /* NodeCreateUnitServer.h */,
 				32B9F3F81AC4460A00380FE9 /* NodeGetDescription.cpp */,
 				32B9F3F91AC4460A00380FE9 /* NodeGetDescription.h */,
+				32B1E8081B2EA77200221E49 /* GetNodeNetworkAddress.cpp */,
+				32B1E8091B2EA77200221E49 /* GetNodeNetworkAddress.h */,
 				32B4192E1B0DE68800C3CA7D /* ChangeNodeState.cpp */,
 				32B4192F1B0DE68800C3CA7D /* ChangeNodeState.h */,
 				32B1E7F81B2B036C00221E49 /* CommandGet.cpp */,
@@ -2874,6 +2888,8 @@
 				32B1E7EB1B297CF800221E49 /* CommandTemplateSearch.h */,
 				32B1E7ED1B297E8200221E49 /* CommandTemplateGet.cpp */,
 				32B1E7EE1B297E8200221E49 /* CommandTemplateGet.h */,
+				32B1E8011B2E9D1B00221E49 /* CommandTemplateDelete.cpp */,
+				32B1E8021B2E9D1B00221E49 /* CommandTemplateDelete.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -3706,6 +3722,7 @@
 				325FC8651AF7CEE900DB9D66 /* GetCurrentDataset.h in Headers */,
 				3274A90D1AC2F214000C6A4D /* ApiProxyManager.h in Headers */,
 				3234BE801B04CC9400AE6B08 /* HealtStatusAttributeHandler.h in Headers */,
+				32B1E8071B2EA07200221E49 /* CommandTemplateDelete.h in Headers */,
 				328C87331ADFDB9A0047C79B /* SearchInstancesByUS.h in Headers */,
 				3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */,
 				32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */,
@@ -4021,6 +4038,7 @@
 				328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */,
 				325D2FDF1AFB65DE00B2A706 /* ProcessHello.cpp in Sources */,
 				32B1E7E51B297A6100221E49 /* CommandTemplateSet.cpp in Sources */,
+				32B1E80A1B2EA77200221E49 /* GetNodeNetworkAddress.cpp in Sources */,
 				32FA1EF31A7A462200A46800 /* MDSBatchCommand.cpp in Sources */,
 				32809C7C1A9C7DDD00C02C12 /* MongoDBUtilityDataAccess.cpp in Sources */,
 				323386B71AD3C4C6008863DC /* MongoDBAccessor.cpp in Sources */,
@@ -4045,6 +4063,7 @@
 				328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */,
 				325D2FE21AFB9C2100B2A706 /* ProcessBye.cpp in Sources */,
 				32B9F3F31AC3E74C00380FE9 /* AbstractDataAccess.cpp in Sources */,
+				32B1E8031B2E9D1B00221E49 /* CommandTemplateDelete.cpp in Sources */,
 				32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */,
 				32B1E7EF1B297E8200221E49 /* CommandTemplateGet.cpp in Sources */,
 				328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */,
@@ -4306,6 +4325,7 @@
 				327F39B31AEAA2680000C845 /* GetAssociationByDS.cpp in Sources */,
 				328C873E1AE01A590047C79B /* DeleteInstance.cpp in Sources */,
 				32362C211ADD0C45000CA079 /* SetInstanceDescription.cpp in Sources */,
+				32B1E8061B2EA07200221E49 /* CommandTemplateDelete.cpp in Sources */,
 				327F39C21AEFABB00000C845 /* InitDeinit.cpp in Sources */,
 				327F39B71AEAA2850000C845 /* DeleteDS.cpp in Sources */,
 				3274A90C1AC2F214000C6A4D /* ApiProxyManager.cpp in Sources */,

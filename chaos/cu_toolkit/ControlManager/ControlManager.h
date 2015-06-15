@@ -272,7 +272,7 @@ namespace chaos {
 				//! control unit registration
 				/*!
 				 Register a control unit instancer associating it to an alias
-				 \param control_unit_alias the alias associated to the tempalte class identification
+				 \param control_unit_alias the alias associated to the template class identification
 				 */
 				template<typename ControlUnitClass>
 				void registerControlUnit() {

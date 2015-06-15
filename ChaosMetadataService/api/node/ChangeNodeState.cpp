@@ -19,7 +19,6 @@
  */
 #include "ChangeNodeState.h"
 
-
 #define N_CS_INFO INFO_LOG(ChangeNodeState)
 #define N_CS_DBG  DBG_LOG(ChangeNodeState)
 #define N_CS_ERR  ERR_LOG(ChangeNodeState)

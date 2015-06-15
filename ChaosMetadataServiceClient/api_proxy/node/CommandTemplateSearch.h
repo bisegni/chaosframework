@@ -41,7 +41,7 @@ namespace chaos {
                     //! default constructor
                     API_PROXY_CD_DECLARATION(CommandTemplateSearch)
                 public:
-                    //!return a page for a temaplte search filtering on command uid
+                    //!return a page for a template search filtering on command uid
                     /*!
                      \param uid_list a stirng list that contains the uid to include into the search
                      */

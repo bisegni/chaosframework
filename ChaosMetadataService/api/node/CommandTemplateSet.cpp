@@ -62,7 +62,7 @@ CDataWrapper *CommandTemplateSet::execute(CDataWrapper *api_data,
         
         if(!template_element->hasKey("template_name")||
            !template_element->hasKey(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)) {
-            CU_SCT_ERR << "Tempalte with no all mandatory key: " << template_element->getJSONData();
+            CU_SCT_ERR << "template with no all mandatory key: " << template_element->getJSONData();
             continue;
         }
         

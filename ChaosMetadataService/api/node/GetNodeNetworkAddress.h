@@ -1,5 +1,5 @@
 /*
- *	CommandTemplateGet.h
+ *	GetNodeNetworkAddress.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__CommandTemplateGet__
-#define __CHAOSFramework__CommandTemplateGet__
+#ifndef __CHAOSFramework__GetNodeNetworkAddress__
+#define __CHAOSFramework__GetNodeNetworkAddress__
 
 #include "../AbstractApi.h"
 
@@ -27,11 +27,12 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
-                class CommandTemplateGet:
+                //!compatibility API used to simulate the old mdslite client
+                class GetNodeNetworkAddress:
                 public AbstractApi {
                 public:
-                    CommandTemplateGet();
-                    ~CommandTemplateGet();
+                    GetNodeNetworkAddress();
+                    ~GetNodeNetworkAddress();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException);
                 };
@@ -40,4 +41,4 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__CommandTemplateGet__) */
+#endif /* defined(__CHAOSFramework__GetNodeNetworkAddress__) */
