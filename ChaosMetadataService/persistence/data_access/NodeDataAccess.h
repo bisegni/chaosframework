@@ -113,6 +113,14 @@ namespace chaos {
                                            uint32_t last_unique_id,
                                            uint32_t page_length = 100) = 0;
                     
+                    //! Check a command presence
+                    /*!
+                     \param command_unique_id is the unique identifir ther represent the command
+                     \param presence true if the template exists false otherwhise
+                     */
+                    virtual int checkCommandPresence(const std::string& command_unique_id,
+                                                     bool& presence) = 0;
+                    
                     //! set (insert or update) command description
                     /*!
                      \param command the description

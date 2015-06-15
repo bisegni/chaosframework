@@ -28,9 +28,9 @@ using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-#define CU_TCS_INFO INFO_LOG(CommandTemplateSearch)
-#define CU_TCS_DBG  DBG_LOG(CommandTemplateSearch)
-#define CU_TCS_ERR  ERR_LOG(CommandTemplateSearch)
+#define N_TCS_INFO INFO_LOG(CommandTemplateSearch)
+#define N_TCS_DBG  DBG_LOG(CommandTemplateSearch)
+#define N_TCS_ERR  ERR_LOG(CommandTemplateSearch)
 
 CommandTemplateSearch::CommandTemplateSearch():
 AbstractApi("commandTemplateSearch"){
@@ -49,18 +49,18 @@ CDataWrapper *CommandTemplateSearch::execute(CDataWrapper *api_data,
     uint32_t page_length = 100;
     std::vector<std::string> cmd_uid_filter;
     
-    CHECK_CDW_THROW_AND_LOG(api_data, CU_TCS_ERR, -1, "No parameter found")
-    CHECK_KEY_THROW_AND_LOG(api_data, "cmd_uid_fetch_list", CU_TCS_ERR, -2, "The attribute cmd_uid_fetch_list is mandatory")
+    CHECK_CDW_THROW_AND_LOG(api_data, N_TCS_ERR, -1, "No parameter found")
+    CHECK_KEY_THROW_AND_LOG(api_data, "cmd_uid_fetch_list", N_TCS_ERR, -2, "The attribute cmd_uid_fetch_list is mandatory")
     
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
     
     if(api_data->hasKey("last_node_sequence_id")) {
         last_sequence_id = (uint32_t)api_data->getInt32Value("last_node_sequence_id");
-        CU_TCS_DBG << "Need to load a new page starting from id:" << last_sequence_id;
+        N_TCS_DBG << "Need to load a new page starting from id:" << last_sequence_id;
     }
     if(api_data->hasKey("result_page_length")) {
         page_length = (uint32_t)api_data->getInt32Value("result_page_length");
-        CU_TCS_DBG << "The length of the page has been set to:" << page_length;
+        N_TCS_DBG << "The length of the page has been set to:" << page_length;
     }
     
     std::auto_ptr<CMultiTypeDataArrayWrapper> uid_list(api_data->getVectorValue("cmd_uid_fetch_list"));
@@ -79,7 +79,7 @@ CDataWrapper *CommandTemplateSearch::execute(CDataWrapper *api_data,
                                           cmd_uid_filter,
                                           last_sequence_id,
                                           page_length))) {
-        LOG_AND_TROW(CU_TCS_ERR, -4, "Loading search page")
+        LOG_AND_TROW(N_TCS_ERR, -4, "Loading search page")
     }
     return result;
 }

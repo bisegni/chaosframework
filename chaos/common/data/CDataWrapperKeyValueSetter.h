@@ -46,6 +46,17 @@ namespace chaos {
                 CDataWrapperKeyValueSetter(_attribute_name){}
             };
             
+            class CDataWrapperNullKeyValueSetter:
+            public CDataWrapperKeyValueSetter {
+            public:
+                CDataWrapperNullKeyValueSetter(const std::string& _attribute_name):
+                CDataWrapperKeyValueSetter(_attribute_name){}
+                
+                void setTo(chaos::common::data::CDataWrapper& data) {
+                    data.addNullValue(attribute_name);
+                }
+            };
+            
             class CDataWrapperBoolKeyValueSetter:
             public TypedCDataWrapperKeyValueSetter<bool> {
             public:

@@ -128,6 +128,9 @@ CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const std::string& key)
 	return NULL;
 }
 
+void CDataWrapper::addNullValue(const std::string& key) {
+    bsonBuilder->appendNull(key);
+}
 //add a long value
 void CDataWrapper::addInt32Value(const std::string& key, int32_t i32Value) {
     bsonBuilder->append(key, i32Value);
@@ -164,7 +167,6 @@ CDataWrapper *CDataWrapper::getCSDataValue(const std::string& key) {
     return result;
 }
 
-
 //get string value
 string  CDataWrapper::getStringValue(const std::string& key) {
     return bsonBuilder->asTempObj().getField(key).String();
@@ -175,6 +177,11 @@ const char *  CDataWrapper::getCStringValue(const std::string& key) {
     //return bsonBuilder->asTempObj().getField(key).String().c_str();
 	return getRawValuePtr(key);
 }
+
+bool CDataWrapper::isNullValue(const std::string& key){
+    return bsonBuilder->asTempObj().getField(key).isNull();
+}
+
 //add a integer value
 int32_t CDataWrapper::getInt32Value(const std::string& key) {
     return bsonBuilder->asTempObj().getField(key).numberInt();

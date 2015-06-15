@@ -44,33 +44,29 @@ namespace chaos {
                     //inherited method
                     int getNodeDescription(const std::string& node_unique_id,
                                            chaos::common::data::CDataWrapper **node_description);
-                    
                     //inherited method
                     int insertNewNode(chaos::common::data::CDataWrapper& node_description);
-                    
                     //! update the node updatable feature
                     int updateNode(chaos::common::data::CDataWrapper& node_description);
-                    
                     // inherited method
                     int checkNodePresence(bool& presence,
                                           const std::string& node_unique_id,
                                           const std::string& node_unique_type = std::string());
-                    
                     //! inherited method
                     int deleteNode(const std::string& node_unique_id,
                                    const std::string& node_type = std::string());
-                    
                     //! inherited method
                     int searchNode(chaos::common::data::CDataWrapper **result,
                                    const std::string& criteria,
                                    uint32_t search_type,
                                    uint32_t last_unique_id,
                                    uint32_t page_length);
-                    
                     //! inherited method
                     int getCommand(const std::string& command_unique_id,
                                    chaos::common::data::CDataWrapper **command);
-                    
+                    //! inherited method
+                    int checkCommandPresence(const std::string& command_unique_id,
+                                             bool& presence);
                     //! inherited method
                     int setCommand(chaos::common::data::CDataWrapper& command);
                     
@@ -81,27 +77,21 @@ namespace chaos {
                     int checkCommandTemplatePresence(const std::string& template_name,
                                                      const std::string& command_unique_id,
                                                      bool& presence);
-
                     //! inherited method
                     int setCommandTemplate(chaos::common::data::CDataWrapper& command_template);
-                    
                     //! inherited method
                     int deleteCommandTemplate(const std::string& template_name,
                                               const std::string& command_unique_id);
-                    
                     //! inherited method
                     int getCommandTemplate(const std::string& template_name,
                                            const std::string& command_unique_id,
                                            chaos::common::data::CDataWrapper **command_template);
-                    
                     //! inherited method
                     int searchCommandTemplate(chaos::common::data::CDataWrapper **result,
                                               const std::vector<std::string>& cmd_uid_to_filter,
                                               uint32_t last_unique_id,
                                               uint32_t page_length = 100);
                 };
-                
-                
             }
         }
     }

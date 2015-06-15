@@ -27,9 +27,9 @@ using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-#define CU_CTG_INFO INFO_LOG(CommandTemplateGet)
-#define CU_CTG_DBG  DBG_LOG(CommandTemplateGet)
-#define CU_CTG_ERR  ERR_LOG(CommandTemplateGet)
+#define N_CTG_INFO INFO_LOG(CommandTemplateGet)
+#define N_CTG_DBG  DBG_LOG(CommandTemplateGet)
+#define N_CTG_ERR  ERR_LOG(CommandTemplateGet)
 
 CommandTemplateGet::CommandTemplateGet():
 AbstractApi("commandTemplateGet"){
@@ -45,9 +45,9 @@ CDataWrapper *CommandTemplateGet::execute(CDataWrapper *api_data,
     int err = 0;
     bool presence = false;
     CDataWrapper *result = NULL;
-    CHECK_CDW_THROW_AND_LOG(api_data, CU_CTG_ERR, -2, "No parameter found")
-    CHECK_KEY_THROW_AND_LOG(api_data, "template_name", CU_CTG_ERR, -3, "The attribute template_name is mandatory")
-    CHECK_KEY_THROW_AND_LOG(api_data, BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, CU_CTG_ERR, -4, "The attribute for command unique id is mandatory")
+    CHECK_CDW_THROW_AND_LOG(api_data, N_CTG_ERR, -2, "No parameter found")
+    CHECK_KEY_THROW_AND_LOG(api_data, "template_name", N_CTG_ERR, -3, "The attribute template_name is mandatory")
+    CHECK_KEY_THROW_AND_LOG(api_data, BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, N_CTG_ERR, -4, "The attribute for command unique id is mandatory")
     
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
     
@@ -58,14 +58,14 @@ CDataWrapper *CommandTemplateGet::execute(CDataWrapper *api_data,
     if((err = n_da->checkCommandTemplatePresence(template_name,
                                                  command_unique_id,
                                                  presence))) {
-        LOG_AND_TROW_FORMATTED(CU_CTG_ERR, err, "Error checking the command template %1%(%2%) presence", %template_name%command_unique_id)
+        LOG_AND_TROW_FORMATTED(N_CTG_ERR, err, "Error checking the command template %1%(%2%) presence", %template_name%command_unique_id)
     }
     
     if(presence) {
         if((err = n_da->getCommandTemplate(template_name,
                                           command_unique_id,
                                           &result))){
-            LOG_AND_TROW_FORMATTED(CU_CTG_ERR, err, "Error getting the command template %1%(%2%)", %template_name%command_unique_id)
+            LOG_AND_TROW_FORMATTED(N_CTG_ERR, err, "Error getting the command template %1%(%2%)", %template_name%command_unique_id)
         }
     }
     return result;

@@ -498,6 +498,10 @@
 		32B1E8061B2EA07200221E49 /* CommandTemplateDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8041B2EA07200221E49 /* CommandTemplateDelete.cpp */; };
 		32B1E8071B2EA07200221E49 /* CommandTemplateDelete.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B1E8051B2EA07200221E49 /* CommandTemplateDelete.h */; };
 		32B1E80A1B2EA77200221E49 /* GetNodeNetworkAddress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8081B2EA77200221E49 /* GetNodeNetworkAddress.cpp */; };
+		32B1E80D1B2EDAC100221E49 /* CommandTemplateSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E80B1B2EDAC100221E49 /* CommandTemplateSubmit.cpp */; };
+		32B1E8101B2EDAE900221E49 /* CommandInstanceSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E80E1B2EDAE900221E49 /* CommandInstanceSubmit.cpp */; };
+		32B1E8131B2EDB2800221E49 /* CommandTemplateSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8111B2EDB2800221E49 /* CommandTemplateSubmit.cpp */; };
+		32B1E8161B2EDB4700221E49 /* CommandInstanceSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8141B2EDB4700221E49 /* CommandInstanceSubmit.cpp */; };
 		32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */; };
 		32B4192C1B0DE55E00C3CA7D /* ChangeNodeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */; };
 		32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B4192B1B0DE55E00C3CA7D /* ChangeNodeState.h */; };
@@ -1331,6 +1335,14 @@
 		32B1E8051B2EA07200221E49 /* CommandTemplateDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandTemplateDelete.h; sourceTree = "<group>"; };
 		32B1E8081B2EA77200221E49 /* GetNodeNetworkAddress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodeNetworkAddress.cpp; sourceTree = "<group>"; };
 		32B1E8091B2EA77200221E49 /* GetNodeNetworkAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetNodeNetworkAddress.h; sourceTree = "<group>"; };
+		32B1E80B1B2EDAC100221E49 /* CommandTemplateSubmit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandTemplateSubmit.cpp; sourceTree = "<group>"; };
+		32B1E80C1B2EDAC100221E49 /* CommandTemplateSubmit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandTemplateSubmit.h; sourceTree = "<group>"; };
+		32B1E80E1B2EDAE900221E49 /* CommandInstanceSubmit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandInstanceSubmit.cpp; sourceTree = "<group>"; };
+		32B1E80F1B2EDAE900221E49 /* CommandInstanceSubmit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandInstanceSubmit.h; sourceTree = "<group>"; };
+		32B1E8111B2EDB2800221E49 /* CommandTemplateSubmit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandTemplateSubmit.cpp; sourceTree = "<group>"; };
+		32B1E8121B2EDB2800221E49 /* CommandTemplateSubmit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandTemplateSubmit.h; sourceTree = "<group>"; };
+		32B1E8141B2EDB4700221E49 /* CommandInstanceSubmit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandInstanceSubmit.cpp; sourceTree = "<group>"; };
+		32B1E8151B2EDB4700221E49 /* CommandInstanceSubmit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandInstanceSubmit.h; sourceTree = "<group>"; };
 		32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSBatchExecutor.cpp; sourceTree = "<group>"; };
 		32B3E11C1A7A3923007B7802 /* MDSBatchExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSBatchExecutor.h; sourceTree = "<group>"; };
 		32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeNodeState.cpp; sourceTree = "<group>"; };
@@ -1661,6 +1673,10 @@
 				32B1E8051B2EA07200221E49 /* CommandTemplateDelete.h */,
 				32B1E7F01B298D2600221E49 /* CommandTemplateSearch.cpp */,
 				32B1E7F11B298D2600221E49 /* CommandTemplateSearch.h */,
+				32B1E80B1B2EDAC100221E49 /* CommandTemplateSubmit.cpp */,
+				32B1E80C1B2EDAC100221E49 /* CommandTemplateSubmit.h */,
+				32B1E80E1B2EDAE900221E49 /* CommandInstanceSubmit.cpp */,
+				32B1E80F1B2EDAE900221E49 /* CommandInstanceSubmit.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -2890,6 +2906,10 @@
 				32B1E7EE1B297E8200221E49 /* CommandTemplateGet.h */,
 				32B1E8011B2E9D1B00221E49 /* CommandTemplateDelete.cpp */,
 				32B1E8021B2E9D1B00221E49 /* CommandTemplateDelete.h */,
+				32B1E8111B2EDB2800221E49 /* CommandTemplateSubmit.cpp */,
+				32B1E8121B2EDB2800221E49 /* CommandTemplateSubmit.h */,
+				32B1E8141B2EDB4700221E49 /* CommandInstanceSubmit.cpp */,
+				32B1E8151B2EDB4700221E49 /* CommandInstanceSubmit.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -4009,6 +4029,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				320530DD1AE930200064275B /* MongoDBDataServiceDataAccess.cpp in Sources */,
+				32B1E8131B2EDB2800221E49 /* CommandTemplateSubmit.cpp in Sources */,
 				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
 				32809C791A9C79DE00C02C12 /* UtilityDataAccess.cpp in Sources */,
 				325FC85A1AF77A7900DB9D66 /* NewUS.cpp in Sources */,
@@ -4065,9 +4086,12 @@
 				32B9F3F31AC3E74C00380FE9 /* AbstractDataAccess.cpp in Sources */,
 				32B1E8031B2E9D1B00221E49 /* CommandTemplateDelete.cpp in Sources */,
 				32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */,
+				32B1E8101B2EDAE900221E49 /* CommandInstanceSubmit.cpp in Sources */,
+				32B1E80D1B2EDAC100221E49 /* CommandTemplateSubmit.cpp in Sources */,
 				32B1E7EF1B297E8200221E49 /* CommandTemplateGet.cpp in Sources */,
 				328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */,
 				32B4193B1B17715700C3CA7D /* ApplyChangeSet.cpp in Sources */,
+				32B1E8161B2EDB4700221E49 /* CommandInstanceSubmit.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
 				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */,

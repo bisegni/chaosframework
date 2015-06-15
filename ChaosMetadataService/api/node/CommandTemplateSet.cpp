@@ -28,9 +28,9 @@ using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-#define CU_SCT_INFO INFO_LOG(CommandTemplateSet)
-#define CU_SCT_DBG  DBG_LOG(CommandTemplateSet)
-#define CU_SCT_ERR  ERR_LOG(CommandTemplateSet)
+#define N_SCT_INFO INFO_LOG(CommandTemplateSet)
+#define N_SCT_DBG  DBG_LOG(CommandTemplateSet)
+#define N_SCT_ERR  ERR_LOG(CommandTemplateSet)
 
 CommandTemplateSet::CommandTemplateSet():
 AbstractApi("commandTemplateSet"){
@@ -46,8 +46,8 @@ CDataWrapper *CommandTemplateSet::execute(CDataWrapper *api_data,
     int err = 0;
     uint64_t sequence = 0;
     bool presence = false;
-    CHECK_CDW_THROW_AND_LOG(api_data, CU_SCT_ERR, -1, "No parameter found")
-    CHECK_KEY_THROW_AND_LOG(api_data, "template_list", CU_SCT_ERR, -2, "The attribute template_list is mandatory")
+    CHECK_CDW_THROW_AND_LOG(api_data, N_SCT_ERR, -1, "No parameter found")
+    CHECK_KEY_THROW_AND_LOG(api_data, "template_list", N_SCT_ERR, -2, "The attribute template_list is mandatory")
     
     //get the data access
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
@@ -62,27 +62,35 @@ CDataWrapper *CommandTemplateSet::execute(CDataWrapper *api_data,
         
         if(!template_element->hasKey("template_name")||
            !template_element->hasKey(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)) {
-            CU_SCT_ERR << "template with no all mandatory key: " << template_element->getJSONData();
+            N_SCT_ERR << "template with no all mandatory key: " << template_element->getJSONData();
             continue;
         }
         
         const std::string template_name = template_element->getStringValue("template_name");
         const std::string command_unique_id = template_element->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
         
+        //load command description for validation
+        if((err = n_da->checkCommandPresence(command_unique_id,
+                                      presence))) {
+           LOG_AND_TROW_FORMATTED(N_SCT_ERR, -5, "Error checking the presence of the for command uid %1%", %command_unique_id)
+        } else if(!presence) {
+            LOG_AND_TROW_FORMATTED(N_SCT_ERR, -6, "The uid %1% not have any command associated to it", %command_unique_id)
+        }
+        
         //check if it is presence, otherwhise we need to add the sequence
         if((err = n_da->checkCommandTemplatePresence(template_name, command_unique_id, presence))){
-            LOG_AND_TROW_FORMATTED(CU_SCT_ERR, -5, "Error checking the presence of the template %1% for command uid %2%", %template_name%command_unique_id)
+            LOG_AND_TROW_FORMATTED(N_SCT_ERR, -7, "Error checking the presence of the template %1% for command uid %2%", %template_name%command_unique_id)
         } else if(!presence) {
             //we need to add the sequence
             if((err = u_da->getNextSequenceValue("nodes_command_template", sequence))) {
-                LOG_AND_TROW_FORMATTED(CU_SCT_ERR, -5, "Error getting the sequence for new template %1% for command uid %2%", %template_name%command_unique_id)
+                LOG_AND_TROW_FORMATTED(N_SCT_ERR, -8, "Error getting the sequence for new template %1% for command uid %2%", %template_name%command_unique_id)
             }
             
             //we have the sequence
             template_element->addInt64Value("seq", sequence);
         }
         if((err = n_da->setCommandTemplate(*template_element))) {
-            LOG_AND_TROW_FORMATTED(CU_SCT_ERR, -6, "Error setting the template %1% of command uid %2%", %template_name%command_unique_id)
+            LOG_AND_TROW_FORMATTED(N_SCT_ERR, -9, "Error setting the template %1% of command uid %2%", %template_name%command_unique_id)
         }
     }
     return NULL;

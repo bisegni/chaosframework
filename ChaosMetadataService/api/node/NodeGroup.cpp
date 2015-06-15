@@ -28,6 +28,8 @@
 #include "CommandTemplateGet.h"
 #include "CommandTemplateDelete.h"
 #include "CommandTemplateSearch.h"
+#include "CommandTemplateSubmit.h"
+#include "CommandInstanceSubmit.h"
 
 using namespace chaos::metadata_service::api::node;
 DEFINE_CLASS_FACTORY_NO_ALIAS(NodeGroup, chaos::metadata_service::api::AbstractApiGroup);
@@ -45,8 +47,8 @@ AbstractApiGroup("system"){
     addApi<CommandTemplateGet>();
     addApi<CommandTemplateDelete>();
     addApi<CommandTemplateSearch>();
+    addApi<CommandTemplateSubmit>();
+    addApi<CommandInstanceSubmit>();
 }
 
-NodeGroup::~NodeGroup() {
-    
-}
+NodeGroup::~NodeGroup() {}

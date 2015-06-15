@@ -24,6 +24,8 @@
 #include <chaos/common/utility/TimingUtil.h>
 #include <boost/algorithm/string.hpp>
 
+#include <map>
+
 #define MDBNDA_INFO INFO_LOG(MongoDBNodeDataAccess)
 #define MDBNDA_DBG  DBG_LOG(MongoDBNodeDataAccess)
 #define MDBNDA_ERR  ERR_LOG(MongoDBNodeDataAccess)
@@ -366,8 +368,32 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
     return err;
 }
 
+int MongoDBNodeDataAccess::checkCommandPresence(const std::string& command_unique_id,
+                                                bool& presence) {
+    int err = 0;
+    mongo::BSONObj result;
+    try {
+        mongo::BSONObj q = BSON(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command_unique_id);
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("checkCommandPresence",
+                                           "find",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q.jsonString()));)
+        
+        if((err = connection->findOne(result,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                      q))){
+            MDBNDA_ERR << boost::str(boost::format("Error checking presence for command uid:%1%")%command_unique_id);
+        }
+        presence = !result.isEmpty();
+    } catch (const mongo::DBException &e) {
+        presence = false;
+        MDBNDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
 
-//! inherited method
 int MongoDBNodeDataAccess::setCommand(chaos::common::data::CDataWrapper& command) {
     int err = 0;
     mongo::BSONObj result;

@@ -127,6 +127,8 @@ namespace chaos {
 				//return a vectorvalue for a key
 				CMultiTypeDataArrayWrapper* getVectorValue(const std::string&);
 				
+                void addNullValue(const std::string&);
+                
 				//add a integer value
                 void addInt32Value(const std::string&, int32_t);
 				//add a integer value
@@ -145,6 +147,8 @@ namespace chaos {
 				//set a binary data value
 				void addBinaryValue(const std::string&, const char *, int);
 				
+                bool isNullValue(const std::string& attribute_name);
+                
 				//get a integer value
 				int32_t getInt32Value(const std::string& key);
 				

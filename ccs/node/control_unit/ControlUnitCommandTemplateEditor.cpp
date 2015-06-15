@@ -63,6 +63,7 @@ void ControlUnitCommandTemplateEditor::onApiDone(const QString& tag,
         //emit signal for saved template
         emit(templateSaved( ui->lineEditTemplateName->text(),
                             ui->labelCommandUID->text()));
+        closeTab();
     } else if(tag.compare(TAG_CMD_TEMPLATE_GET) == 0) {
         setTemplateDescription(api_result);
         this->setCursor(Qt::ArrowCursor);

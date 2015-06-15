@@ -1,5 +1,5 @@
 /*
- *	CommandGet.cpp
+ *	CommandTemplateSubmit.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,7 +18,7 @@
  *    	limitations under the License.
  */
 
-#include "CommandGet.h"
+#include "CommandTemplateSubmit.h"
 
 #include <boost/format.hpp>
 
@@ -28,34 +28,31 @@ using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service::api::node;
 using namespace chaos::metadata_service::persistence::data_access;
 
-#define N_CG_INFO INFO_LOG(CommandGet)
-#define N_CG_DBG  DBG_LOG(CommandGet)
-#define N_CG_ERR  ERR_LOG(CommandGet)
+#define N_CTS_INFO INFO_LOG(CommandTemplateSubmit)
+#define N_CTS_DBG  DBG_LOG(CommandTemplateSubmit)
+#define N_CTS_ERR  ERR_LOG(CommandTemplateSubmit)
 
-CommandGet::CommandGet():
-AbstractApi("commandGet"){
+CommandTemplateSubmit::CommandTemplateSubmit():
+AbstractApi("commandTemplateSubmit"){
     
 }
 
-CommandGet::~CommandGet() {
+CommandTemplateSubmit::~CommandTemplateSubmit() {
     
 }
 
-CDataWrapper *CommandGet::execute(CDataWrapper *api_data,
-                                  bool& detach_data) throw(chaos::CException) {
+CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
+                                             bool& detach_data) throw(chaos::CException) {
     int err = 0;
+    bool presence = false;
     CDataWrapper *result = NULL;
-    CHECK_CDW_THROW_AND_LOG(api_data, N_CG_ERR, -1, "No parameter found")
-    CHECK_KEY_THROW_AND_LOG(api_data, BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, N_CG_ERR, -2, "The attribute BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID is mandatory")
+    CHECK_CDW_THROW_AND_LOG(api_data, N_CTS_ERR, -2, "No parameter found")
+    CHECK_KEY_THROW_AND_LOG(api_data, "submission_task", N_CTS_ERR, -3, "The list of submiossion task is mandatory")
     
-    //get the data access
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
     
-    const std::string command_unique_id = api_data->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
+    std::auto_ptr<CMultiTypeDataArrayWrapper> submission_task_list(api_data->getVectorValue("submission_task"));
     
-    //we need to add the sequence
-    if((err = n_da->getCommand(command_unique_id, &result))) {
-        LOG_AND_TROW_FORMATTED(N_CG_ERR, -4, "Error getting command for uid %2%", %command_unique_id)
-    }
+    
     return result;
 }

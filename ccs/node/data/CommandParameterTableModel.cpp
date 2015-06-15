@@ -12,7 +12,7 @@ using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service_client::api_proxy::control_unit;
 
 static QColor changed_value_background_color_mandatory(94,170,255);
-static QColor changed_value_text_color(10,10,10);
+static QColor changed_value_text_color_mandatory(10,10,10);
 
 
 CommandParameterTableModel::CommandParameterTableModel(QObject *parent):
@@ -54,32 +54,36 @@ void CommandParameterTableModel::updateAttribute(const QSharedPointer<chaos::com
 void CommandParameterTableModel::fillTemplate(chaos::metadata_service_client::api_proxy::node::CommandTemplate &command_template) {
     foreach (QSharedPointer<AttributeValueChangeSet> attribute, attribute_changes) {
         boost::shared_ptr<CDataWrapperKeyValueSetter> kv_setter;
-        switch (attribute->type) {
-        case chaos::DataType::TYPE_BOOLEAN:
-            kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperBoolKeyValueSetter(attribute->attribute_name.toStdString(),
-                                                                                                         attribute->current_value.toBool()));
-            break;
-        case chaos::DataType::TYPE_INT32:
-            kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperInt32KeyValueSetter(attribute->attribute_name.toStdString(),
-                                                                                                          attribute->current_value.toInt()));
-            break;
-        case chaos::DataType::TYPE_INT64:
-            kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperInt64KeyValueSetter(attribute->attribute_name.toStdString(),
-                                                                                                          attribute->current_value.toLongLong()));
-            break;
-        case chaos::DataType::TYPE_STRING:
-            kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperStringKeyValueSetter(attribute->attribute_name.toStdString(),
-                                                                                                           attribute->current_value.toString().toStdString()));
-            break;
-        case chaos::DataType::TYPE_DOUBLE:
-            kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperDoubleKeyValueSetter(attribute->attribute_name.toStdString(),
-                                                                                                           attribute->current_value.toDouble()));
-            break;
-        case chaos::DataType::TYPE_BYTEARRAY:
-            break;
-        default:
+        if(attribute->parametrize) {
+            kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperNullKeyValueSetter(attribute->attribute_name.toStdString()));
+        }else {
+            switch (attribute->type) {
+            case chaos::DataType::TYPE_BOOLEAN:
+                kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperBoolKeyValueSetter(attribute->attribute_name.toStdString(),
+                                                                                                             attribute->current_value.toBool()));
+                break;
+            case chaos::DataType::TYPE_INT32:
+                kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperInt32KeyValueSetter(attribute->attribute_name.toStdString(),
+                                                                                                              attribute->current_value.toInt()));
+                break;
+            case chaos::DataType::TYPE_INT64:
+                kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperInt64KeyValueSetter(attribute->attribute_name.toStdString(),
+                                                                                                              attribute->current_value.toLongLong()));
+                break;
+            case chaos::DataType::TYPE_STRING:
+                kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperStringKeyValueSetter(attribute->attribute_name.toStdString(),
+                                                                                                               attribute->current_value.toString().toStdString()));
+                break;
+            case chaos::DataType::TYPE_DOUBLE:
+                kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperDoubleKeyValueSetter(attribute->attribute_name.toStdString(),
+                                                                                                               attribute->current_value.toDouble()));
+                break;
+            case chaos::DataType::TYPE_BYTEARRAY:
+                break;
+            default:
 
-            break;
+                break;
+            }
         }
         if(kv_setter.get()) {
             command_template.parameter_value_list.push_back(kv_setter);
@@ -91,29 +95,32 @@ void CommandParameterTableModel::applyTemplate(const QSharedPointer<chaos::commo
     beginResetModel();
     foreach (QSharedPointer<AttributeValueChangeSet> attribute, attribute_changes) {
         const std::string attribute_name = attribute->attribute_name.toStdString();
-        if(command_template->hasKey(attribute_name))
-            switch (attribute->type) {
-            case chaos::DataType::TYPE_BOOLEAN:
-                attribute->current_value = command_template->getBoolValue(attribute_name);
-                break;
-            case chaos::DataType::TYPE_INT32:
-                attribute->current_value = command_template->getInt32Value(attribute_name);
-                break;
-            case chaos::DataType::TYPE_INT64:
-                attribute->current_value = command_template->getInt64Value(attribute_name);
-                break;
-            case chaos::DataType::TYPE_STRING:
-                attribute->current_value = QString::fromStdString(command_template->getStringValue(attribute_name));
-                break;
-            case chaos::DataType::TYPE_DOUBLE:
-                attribute->current_value = command_template->getDoubleValue(attribute_name);
-                break;
-            case chaos::DataType::TYPE_BYTEARRAY:
-                break;
-            default:
-
-                break;
+        if(command_template->hasKey(attribute_name)) {
+            attribute->parametrize = command_template->isNullValue(attribute_name);
+            if(attribute->parametrize == false) {
+                switch (attribute->type) {
+                case chaos::DataType::TYPE_BOOLEAN:
+                    attribute->current_value = command_template->getBoolValue(attribute_name);
+                    break;
+                case chaos::DataType::TYPE_INT32:
+                    attribute->current_value = command_template->getInt32Value(attribute_name);
+                    break;
+                case chaos::DataType::TYPE_INT64:
+                    attribute->current_value = command_template->getInt64Value(attribute_name);
+                    break;
+                case chaos::DataType::TYPE_STRING:
+                    attribute->current_value = QString::fromStdString(command_template->getStringValue(attribute_name));
+                    break;
+                case chaos::DataType::TYPE_DOUBLE:
+                    attribute->current_value = command_template->getDoubleValue(attribute_name);
+                    break;
+                case chaos::DataType::TYPE_BYTEARRAY:
+                    break;
+                default:
+                    break;
+                }
             }
+        }
     }
     endResetModel();
 }
@@ -273,6 +280,9 @@ QVariant CommandParameterTableModel::getTextColorForData(int row, int column) co
     case 1:
     case 2:
     case 3:
+        if(attribute_changes[row]->is_mandatory) {
+            result = changed_value_text_color_mandatory;
+        }
         break;
 
     default:
