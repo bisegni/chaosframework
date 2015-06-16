@@ -178,10 +178,6 @@ const char *  CDataWrapper::getCStringValue(const std::string& key) {
 	return getRawValuePtr(key);
 }
 
-bool CDataWrapper::isNullValue(const std::string& key){
-    return bsonBuilder->asTempObj().getField(key).isNull();
-}
-
 //add a integer value
 int32_t CDataWrapper::getInt32Value(const std::string& key) {
     return bsonBuilder->asTempObj().getField(key).numberInt();
@@ -369,6 +365,16 @@ bool CDataWrapper::copyKeyTo(const std::string& key_to_copy,
     return result;
 }
 
+void CDataWrapper::copyAllTo(CDataWrapper& destination) {
+    std::vector<BSONElement> all_element;
+    bsonBuilder->asTempObj().elems(all_element);
+    for(std::vector<BSONElement>::iterator it = all_element.begin();
+        it != all_element.end();
+        it++) {
+        destination.bsonBuilder->append(*it);
+    }
+}
+
 //reset the datawrapper
 void CDataWrapper::reset() {
     bsonBuilder.reset(new BSONObjBuilder());
@@ -376,4 +382,42 @@ void CDataWrapper::reset() {
 
 string CDataWrapper::toHash() const{
 	return  bsonBuilder->asTempObj().md5();
+}
+
+//------------------------checking utility
+
+bool CDataWrapper::isNullValue(const std::string& key){
+    return bsonBuilder->asTempObj().getField(key).isNull();
+}
+
+bool CDataWrapper::isBoolValue(const std::string& key){
+    return bsonBuilder->asTempObj().getField(key).isBoolean();
+}
+
+bool CDataWrapper::isInt32Value(const std::string& key){
+    return bsonBuilder->asTempObj().getField(key).type()==NumberInt;
+}
+
+bool CDataWrapper::isInt64Value(const std::string& key){
+    return bsonBuilder->asTempObj().getField(key).type()==NumberLong;
+}
+
+bool CDataWrapper::isDoubleValue(const std::string& key){
+    return bsonBuilder->asTempObj().getField(key).type()==NumberDouble;
+}
+
+bool CDataWrapper::isStringValue(const std::string& key){
+    return bsonBuilder->asTempObj().getField(key).type()==String;
+}
+
+bool CDataWrapper::isBinaryValue(const std::string& key){
+    return bsonBuilder->asTempObj().getField(key).type()==BinData;
+}
+
+bool CDataWrapper::isCDataWrapperValue(const std::string& key){
+    return bsonBuilder->asTempObj().getField(key).type()==Object;
+}
+
+bool CDataWrapper::isVectorValue(const std::string& key){
+    return bsonBuilder->asTempObj().getField(key).type()==Array;
 }

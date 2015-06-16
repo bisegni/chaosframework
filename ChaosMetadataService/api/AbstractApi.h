@@ -31,12 +31,6 @@ namespace chaos {
 	namespace metadata_service {
 		namespace api {
 
-#define CHECK_CDW_THROW_AND_LOG(cdw, log, num, msg)\
-if(cdw == NULL) {LOG_AND_TROW(log, num, msg)}
-            
-#define CHECK_KEY_THROW_AND_LOG(cdw, key, log, num, msg)\
-if(cdw->hasKey(key) == false) {LOG_AND_TROW(log, num, msg)}
-
 #define GET_DATA_ACCESS(x,v, err)\
 x *v = getPersistenceDriver()->getDataAccess<x>();\
 if(v == NULL) throw CException(err, "Error allocating " #x, __PRETTY_FUNCTION__);

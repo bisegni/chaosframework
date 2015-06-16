@@ -23,12 +23,32 @@
 
 #include "../AbstractApi.h"
 
+#include <map>
+
 namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
+                
+                typedef pair<std::string, std::string> TemplateKey;
+                
                 class CommandTemplateSubmit:
                 public AbstractApi {
+                    //list of command instance
+                    std::vector<boost::shared_ptr<CDataWrapper> > comamnd_instance_list;
+                    //cache the command description for reuse
+                    std::map<std::string, boost::shared_ptr<CDataWrapper> > command_description_cache;
+                    //cache the template description for reuse
+                    std::map<TemplateKey, boost::shared_ptr<CDataWrapper> > template_description_cache;
+                    
+                    boost::shared_ptr<CDataWrapper> getCommandDescription(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
+                                                                          const std::string& command_uid);
+                    boost::shared_ptr<CDataWrapper> getCommandTemaplateDescription(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
+                                                                                   const std::string& template_name,
+                                                                                   const std::string& command_uid);
+                    
+                    void processSubmissionTask(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
+                                               boost::shared_ptr<chaos::common::data::CDataWrapper> submission_task);
                 public:
                     CommandTemplateSubmit();
                     ~CommandTemplateSubmit();

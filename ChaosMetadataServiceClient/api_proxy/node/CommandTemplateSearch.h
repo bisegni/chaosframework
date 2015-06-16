@@ -30,9 +30,6 @@ namespace chaos {
         namespace api_proxy {
             namespace node {
                 
-                //define the list, iterator and cost iterator
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, CommandUIDList)
-                
                 //! Search the template
                 class CommandTemplateSearch:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {

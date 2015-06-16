@@ -72,6 +72,18 @@ LOG_AND_TROW(log, num, boost::str(boost::format(f)p))
 #define CHAOS_LASSERT_EXCEPTION(assertion, log, num, msg)\
 if(!assertion) {LOG_AND_TROW(log, num, msg)}
 
+#define CHECK_CDW_THROW_AND_LOG(cdw, log, num, msg)\
+if(cdw == NULL) {LOG_AND_TROW(log, num, msg)}
+
+#define CHECK_KEY_THROW_AND_LOG(cdw, key, log, num, msg)\
+if(cdw->hasKey(key) == false) {LOG_AND_TROW(log, num, msg)}
+
+#define CHECK_CDW_THROW_AND_LOG_FORMATTED(cdw, log, num, frmt, param)\
+if(cdw == NULL) {LOG_AND_TROW_FORMATTED(log, num, frmt, param)}
+
+#define CHECK_KEY_THROW_AND_LOG_FORMATTED(cdw, key, log, num, frmt, param)\
+if(cdw->hasKey(key) == false) {LOG_AND_TROW_FORMATTED(log, num, frmt, param)}
+
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true
 #ifndef DEBUG

@@ -28,9 +28,8 @@ namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
             namespace node {
-                typedef std::vector< boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> >   ParameterSetterList;
-                typedef ParameterSetterList::iterator                                                       ParameterSetterListIterator;
-                
+                //create list types for cdatawrapper setter
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter>, ParameterSetterList)
                 /*!
                  wrap the command template information
                  */
@@ -53,9 +52,22 @@ namespace chaos {
                     uint32_t execution_channel;
                 };
 
-                typedef std::vector< boost::shared_ptr<CommandTemplate> >                   TemplateList;
-                typedef std::vector< boost::shared_ptr<CommandTemplate> >::iterator         TemplateListIterator;
-                typedef std::vector< boost::shared_ptr<CommandTemplate> >::const_iterator   TemplateListConstIterator;
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<CommandTemplate>, TemplateList)
+                
+                struct TemplateSubmission {
+                    //! the representative name of the template (unique)
+                    std::string template_name;
+                    //! the unique id of the command
+                    std::string command_unique_id;
+                    //! value for parametrized attribute in tempalte
+                    ParameterSetterList parametrized_attribute_value;
+                };
+                
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<TemplateSubmission>, TemplateSubmissionList)
+                
+                //define the list, iterator and cost iterator
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, CommandUIDList)
+
             }
         }
     }

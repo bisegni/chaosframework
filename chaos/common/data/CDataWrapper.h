@@ -146,8 +146,6 @@ namespace chaos {
 				
 				//set a binary data value
 				void addBinaryValue(const std::string&, const char *, int);
-				
-                bool isNullValue(const std::string& attribute_name);
                 
 				//get a integer value
 				int32_t getInt32Value(const std::string& key);
@@ -211,8 +209,31 @@ namespace chaos {
                 bool copyKeyTo(const std::string& key_to_copy,
                                CDataWrapper& destination);
                 
+                //!copy all key(with value) from this instance to another CDataWrapper one
+                void copyAllTo(CDataWrapper& destination);
+                
 				//! Return the Hashing represetnation of the CDataWrapper
 				string toHash() const;
+                
+                //---checking funciton
+                
+                bool isNullValue(const std::string& key);
+                
+                bool isBoolValue(const std::string& key);
+                
+                bool isInt32Value(const std::string& key);
+                
+                bool isInt64Value(const std::string& key);
+                
+                bool isDoubleValue(const std::string& key);
+                
+                bool isStringValue(const std::string& key);
+                
+                bool isBinaryValue(const std::string& key);
+                
+                bool isCDataWrapperValue(const std::string& key);
+                
+                bool isVectorValue(const std::string& key);
 			};
 			
 			//! MutableCDataWrapper for field update

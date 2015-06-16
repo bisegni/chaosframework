@@ -67,7 +67,8 @@ SOURCES += main.cpp\
     node/data/CommandParameterTableModel.cpp \
     node/data/AttributeValueChangeSet.cpp \
     node/data/CommandTemplateListModel.cpp \
-    node/control_unit/ControlUnitCommandTemplateEditor.cpp
+    node/control_unit/ControlUnitCommandTemplateEditor.cpp \
+    node/control_unit/CommandTemplateInstanceEditor.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -115,7 +116,8 @@ HEADERS  += \
     node/data/CommandParameterTableModel.h \
     node/data/AttributeValueChangeSet.h \
     node/data/CommandTemplateListModel.h \
-    node/control_unit/ControlUnitCommandTemplateEditor.h
+    node/control_unit/ControlUnitCommandTemplateEditor.h \
+    node/control_unit/CommandTemplateInstanceEditor.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -131,7 +133,8 @@ FORMS    += \
     monitor/healt/HealtPresenterWidget.ui \
     monitor/healt/HealtWidgetsListPresenteWidget.ui \
     node/control_unit/ControlUnitEditor.ui \
-    node/control_unit/ControlUnitCommandTemplateEditor.ui
+    node/control_unit/ControlUnitCommandTemplateEditor.ui \
+    node/control_unit/CommandTemplateInstanceEditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet
