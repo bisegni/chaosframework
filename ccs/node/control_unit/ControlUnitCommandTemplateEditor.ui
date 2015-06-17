@@ -460,6 +460,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineEditTemplateName</tabstop>
+  <tabstop>tableViewParameterList</tabstop>
+  <tabstop>comboBoxSubmissionExecutionChannel</tabstop>
+  <tabstop>comboBoxSubmissionRule</tabstop>
+  <tabstop>lineEditSubmissionPriority</tabstop>
+  <tabstop>lineEditSubmissionRunStepDelay</tabstop>
+  <tabstop>lineEditSubmissionRetry</tabstop>
+  <tabstop>pushButtonReset</tabstop>
+  <tabstop>pushButtonCancel</tabstop>
+  <tabstop>pushButtonSave</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

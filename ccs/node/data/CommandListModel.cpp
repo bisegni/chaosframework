@@ -16,7 +16,8 @@ void CommandListModel::updateData(const QSharedPointer<CDataWrapper>& _dataset) 
     command_description_array.clear();
 
     //scan commands
-    if(_dataset->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION)){
+    if(!_dataset.isNull() &&
+            _dataset->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION)){
         QSharedPointer<CMultiTypeDataArrayWrapper> command_array(_dataset->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION));
         for(int idx = 0;
             idx < command_array->size();

@@ -532,7 +532,7 @@ int MongoDBNodeDataAccess::setCommandTemplate(chaos::common::data::CDataWrapper&
         }
         
         std::auto_ptr<SerializationBuffer> chaos_bson(to_update->getBSONData());
-        mongo::BSONObj u = BSON("$setOnInsert" << mongo::BSONObj(chaos_bson->getBufferPtr()));
+        mongo::BSONObj u = BSON("$set" << mongo::BSONObj(chaos_bson->getBufferPtr()));
         
         DEBUG_CODE(MDBNDA_DBG<<log_message("setCommandTemplate",
                                            "update",

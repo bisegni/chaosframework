@@ -4,11 +4,11 @@
 CommandPresenter::CommandPresenter(QObject *parent,
                                    QMdiArea *_mdi_area_editors) :
     QObject(parent),
-    mdi_area_editors(_mdi_area_editors)
-{}
+    mdi_area_editors(_mdi_area_editors){
+    mdi_area_editors->setActivationOrder(QMdiArea::ActivationHistoryOrder);
+}
 
-CommandPresenter::~CommandPresenter()
-{}
+CommandPresenter::~CommandPresenter(){}
 
 void CommandPresenter::showCommandPresenter(PresenterWidget *pwidget) {
     if(pwidget == NULL) return;

@@ -42,6 +42,9 @@ public:
     virtual bool canClose() = 0;
     virtual void initUI() = 0;
 
+public slots:
+    void closeTab();
+
 private:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
     void setSubWindow(QMdiSubWindow *_editor_subwindow);
@@ -64,8 +67,6 @@ protected:
     ApiAsyncProcessor api_processor;
 
     void setTabTitle(const QString& title);
-
-    void closeTab();
 
     void addWidgetToPresenter(PresenterWidget *p_w);
 

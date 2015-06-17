@@ -276,7 +276,6 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
 									   uint32_t channel_data_len,
 									   DirectIOSynchronousAnswerPtr synchronous_answer) {
 	//debug check
-	CHAOS_ASSERT(query_engine)
 	int err = cache_driver_get_last->getData(channel_data,
 											 channel_data_len,
 											 &synchronous_answer->answer_data,

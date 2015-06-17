@@ -25,6 +25,8 @@ public:
     void setCommandDescription(QSharedPointer<chaos::common::data::CDataWrapper> _command_description);
     //used for editing
     void setTemplateDescription(QSharedPointer<chaos::common::data::CDataWrapper> _template_description);
+
+public slots:
     void reset();
 
 protected:
@@ -43,10 +45,11 @@ signals:
                        const QString& command_uid);
 
 private slots:
-    void on_pushButtonReset_clicked();
     void on_pushButtonSave_clicked();
 
     void on_pushButtonCancel_clicked();
+
+    void on_pushButtonReset_clicked();
 
 private:
     bool in_editing;

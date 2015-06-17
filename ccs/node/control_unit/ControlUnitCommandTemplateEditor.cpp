@@ -166,11 +166,6 @@ void ControlUnitCommandTemplateEditor::reset() {
     parameter_table_model.resetChanges();
 }
 
-void ControlUnitCommandTemplateEditor::on_pushButtonReset_clicked() {
-    reset();
-}
-
-
 #define CHEC_TEXT_VALIDATOR(u)\
     if(u->hasAcceptableInput() == false) {\
     QMessageBox::information(this, QString("Validation input value"), QString("The value for %1 is invalid").arg(u->accessibleName()));\
@@ -195,7 +190,10 @@ void ControlUnitCommandTemplateEditor::on_pushButtonSave_clicked() {
                     GET_CHAOS_API_PTR(node::CommandTemplateSet)->execute(template_list));
 }
 
-
 void ControlUnitCommandTemplateEditor::on_pushButtonCancel_clicked() {
     closeTab();
+}
+
+void ControlUnitCommandTemplateEditor::on_pushButtonReset_clicked() {
+    reset();
 }

@@ -56,7 +56,7 @@ void CommandParameterTableModel::fillTemplate(chaos::metadata_service_client::ap
         boost::shared_ptr<CDataWrapperKeyValueSetter> kv_setter;
         if(attribute->parametrize) {
             kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperNullKeyValueSetter(attribute->attribute_name.toStdString()));
-        }else {
+        } else if(!attribute->current_value.isNull()) {
             switch (attribute->type) {
             case chaos::DataType::TYPE_BOOLEAN:
                 kv_setter = boost::shared_ptr<CDataWrapperKeyValueSetter>(new CDataWrapperBoolKeyValueSetter(attribute->attribute_name.toStdString(),
