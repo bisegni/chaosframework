@@ -19,7 +19,7 @@
  */
 
 #include "LoadUnloadControlUnit.h"
-#include "../../batch/unit_server/LoadUnloadControlUnit.h"
+#include "ChaosMetadataService/batch/unit_server/LoadUnloadControlUnit.h"
 
 #include <boost/format.hpp>
 

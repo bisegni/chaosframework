@@ -20,7 +20,7 @@
 #ifndef __CHAOSFramework__UnitServerApiGroup__
 #define __CHAOSFramework__UnitServerApiGroup__
 
-#include "../AbstractApiGroup.h"
+#include "ChaosMetadataService/api/AbstractApiGroup.h"
 
 namespace chaos {
 	namespace metadata_service {

@@ -12,7 +12,11 @@ SET(mcl_src ${mcl_src}      api_proxy/node/GetNodeDescription.cpp
                             api_proxy/node/CommandGet.cpp
                             api_proxy/node/CommandTemplateGet.cpp
                             api_proxy/node/CommandTemplateSet.cpp
-                            api_proxy/node/CommandTemplateSearch.cpp)
+                            api_proxy/node/CommandTemplateDelete.cpp
+                            api_proxy/node/CommandTemplateSearch.cpp
+                            api_proxy/node/CommandTemplateSubmit.cpp
+                            api_proxy/node/CommandInstanceSubmit.cpp
+                            api_proxy/node/GetCommandAndTemplateDescription.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/data_service/NewDS.cpp
                             api_proxy/data_service/UpdateDS.cpp

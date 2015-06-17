@@ -36,7 +36,6 @@ SOURCES += main.cpp\
     search/SearchNode.cpp \
     presenter/PresenterWidget.cpp \
     presenter/CommandPresenter.cpp \
-    data/ChaosData.cpp \
     api_async_processor/ApiAsyncProcessor.cpp \
     api_async_processor/ApiAsyncRunnable.cpp \
     MainController.cpp \
@@ -68,14 +67,15 @@ SOURCES += main.cpp\
     node/data/AttributeValueChangeSet.cpp \
     node/data/CommandTemplateListModel.cpp \
     node/control_unit/ControlUnitCommandTemplateEditor.cpp \
-    node/control_unit/CommandTemplateInstanceEditor.cpp
+    node/control_unit/CommandTemplateInstanceEditor.cpp \
+    data/CommandReader.cpp \
+    data/CommandParameterReader.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
     search/SearchNode.h \
     presenter/PresenterWidget.h \
     presenter/CommandPresenter.h \
-    data/ChaosData.h \
     api_async_processor/ApiAsyncProcessor.h \
     api_async_processor/ApiAsyncRunnable.h \
     MainController.h \
@@ -117,7 +117,9 @@ HEADERS  += \
     node/data/AttributeValueChangeSet.h \
     node/data/CommandTemplateListModel.h \
     node/control_unit/ControlUnitCommandTemplateEditor.h \
-    node/control_unit/CommandTemplateInstanceEditor.h
+    node/control_unit/CommandTemplateInstanceEditor.h \
+    data/CommandReader.h \
+    data/CommandParameterReader.h
 
 FORMS    += \
     search/searchnoderesult.ui \

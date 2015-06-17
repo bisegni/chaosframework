@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #include "CommandCommonUtility.h"
 
 #include <chaos/common/global.h>
@@ -71,10 +72,11 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *co
         const int flags = parameter_description->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG);
         if((flags & BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG_MANDATORY) == BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG_MANDATORY) {
             //check ifthe tempalte has the value or the request filed
-            if(!command_template->hasKey(attribute_name))
+            if(!command_template->hasKey(attribute_name)) {
                 LOG_AND_TROW_FORMATTED(N_CCU_ERR, -6,
                                        "The attribute '%1%' fo command '%2%' is mandatory but is not present into the template '%3%'",
                                        %attribute_name%command_alias%template_name)
+            }
         }
        
         //if the attribute is null meaning that it need to be forwarded

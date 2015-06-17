@@ -345,6 +345,9 @@
 		3274A90D1AC2F214000C6A4D /* ApiProxyManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3274A90B1AC2F214000C6A4D /* ApiProxyManager.h */; };
 		32761A311B305652006C8719 /* CommandTemplateSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E80B1B2EDAC100221E49 /* CommandTemplateSubmit.cpp */; };
 		32761A321B30565A006C8719 /* CommandInstanceSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E80E1B2EDAE900221E49 /* CommandInstanceSubmit.cpp */; };
+		32761A381B314697006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A361B314697006C8719 /* GetCommandAndTemplateDescription.cpp */; };
+		32761A391B314697006C8719 /* GetCommandAndTemplateDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 32761A371B314697006C8719 /* GetCommandAndTemplateDescription.h */; };
+		32761A3C1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A3A1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
 		327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B715DFAAF40003C6DA /* RpcServer.cpp */; };
 		327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967D315E029C70003C6DA /* AsioImplEventServer.cpp */; };
@@ -1128,6 +1131,10 @@
 		3274A9071AC2EF70000C6A4D /* metadata_service_client_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = metadata_service_client_types.h; sourceTree = "<group>"; };
 		3274A90A1AC2F214000C6A4D /* ApiProxyManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiProxyManager.cpp; sourceTree = "<group>"; };
 		3274A90B1AC2F214000C6A4D /* ApiProxyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiProxyManager.h; sourceTree = "<group>"; };
+		32761A361B314697006C8719 /* GetCommandAndTemplateDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetCommandAndTemplateDescription.cpp; sourceTree = "<group>"; };
+		32761A371B314697006C8719 /* GetCommandAndTemplateDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetCommandAndTemplateDescription.h; sourceTree = "<group>"; };
+		32761A3A1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetCommandAndTemplateDescription.cpp; sourceTree = "<group>"; };
+		32761A3B1B3157CA006C8719 /* GetCommandAndTemplateDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetCommandAndTemplateDescription.h; sourceTree = "<group>"; };
 		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcClient.cpp; sourceTree = "<group>"; };
 		327967B715DFAAF40003C6DA /* RpcServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServer.cpp; sourceTree = "<group>"; };
 		327967D315E029C70003C6DA /* AsioImplEventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioImplEventServer.cpp; sourceTree = "<group>"; };
@@ -1680,6 +1687,8 @@
 				32B1E80C1B2EDAC100221E49 /* CommandTemplateSubmit.h */,
 				32B1E80E1B2EDAE900221E49 /* CommandInstanceSubmit.cpp */,
 				32B1E80F1B2EDAE900221E49 /* CommandInstanceSubmit.h */,
+				32761A361B314697006C8719 /* GetCommandAndTemplateDescription.cpp */,
+				32761A371B314697006C8719 /* GetCommandAndTemplateDescription.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -2915,6 +2924,8 @@
 				32B1E8151B2EDB4700221E49 /* CommandInstanceSubmit.h */,
 				32B1E8171B2FFCE500221E49 /* CommandCommonUtility.cpp */,
 				32B1E8181B2FFCE500221E49 /* CommandCommonUtility.h */,
+				32761A3A1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp */,
+				32761A3B1B3157CA006C8719 /* GetCommandAndTemplateDescription.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -3742,6 +3753,7 @@
 				3208AABE1AC56C1C000860D9 /* GetNodeDescription.h in Headers */,
 				32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */,
 				3211CCDE1B03402800F9B80E /* QuantumKeyConsumer.h in Headers */,
+				32761A391B314697006C8719 /* GetCommandAndTemplateDescription.h in Headers */,
 				327F39B41AEAA2680000C845 /* GetAssociationByDS.h in Headers */,
 				327F39C71AEFABBB0000C845 /* StartStop.h in Headers */,
 				325FC8651AF7CEE900DB9D66 /* GetCurrentDataset.h in Headers */,
@@ -4095,6 +4107,7 @@
 				32B1E7EF1B297E8200221E49 /* CommandTemplateGet.cpp in Sources */,
 				328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */,
 				32B4193B1B17715700C3CA7D /* ApplyChangeSet.cpp in Sources */,
+				32761A3C1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */,
 				32B1E8161B2EDB4700221E49 /* CommandInstanceSubmit.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
 				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
@@ -4351,6 +4364,7 @@
 				3211CCD91B021B8D00F9B80E /* GetBestEndpoints.cpp in Sources */,
 				32610F8C1AE6560A00779B84 /* GetDescription.cpp in Sources */,
 				325FC85D1AF7910300DB9D66 /* NewUS.cpp in Sources */,
+				32761A381B314697006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */,
 				3208AABD1AC56C1C000860D9 /* GetNodeDescription.cpp in Sources */,
 				327F39B31AEAA2680000C845 /* GetAssociationByDS.cpp in Sources */,
 				328C873E1AE01A590047C79B /* DeleteInstance.cpp in Sources */,

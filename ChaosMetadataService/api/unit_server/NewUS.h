@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__NewUS__
 #define __CHAOSFramework__NewUS__
 
-#include "../AbstractApi.h"
+#include "ChaosMetadataService/api/AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {

@@ -2,6 +2,7 @@
 #define COMMANDTEMPLATEINSTANCEEDITOR_H
 
 #include "../../presenter/PresenterWidget.h"
+#include "../../data/CommandReader.h"
 
 namespace Ui {
 class CommandTemplateInstanceEditor;
@@ -28,10 +29,12 @@ private slots:
 
 private:
     //create the user interface for set the requested parameter
-    void configureForTemplate(QSharedPointer<chaos::common::data::CDataWrapper> template_description);
+    void configureForTemplate(QSharedPointer<chaos::common::data::CDataWrapper> template_description,
+                              QSharedPointer<CommandReader> command_reader);
     const QString node_uid;
     const QString template_name;
     const QString command_uid;
+
     Ui::CommandTemplateInstanceEditor *ui;
 };
 

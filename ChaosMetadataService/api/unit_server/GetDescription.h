@@ -20,7 +20,7 @@
 #ifndef __CHAOSFramework__GetDescription__
 #define __CHAOSFramework__GetDescription__
 
-#include "../AbstractApi.h"
+#include "ChaosMetadataService/api/AbstractApi.h"
 
 namespace chaos {
 	namespace metadata_service {

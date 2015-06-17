@@ -607,7 +607,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Update</string>
+                <string>Update List</string>
                </property>
               </widget>
              </item>
@@ -635,7 +635,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Remove Instance</string>
+                <string>Remove Template</string>
                </property>
               </widget>
              </item>
@@ -650,7 +650,19 @@
                 </font>
                </property>
                <property name="text">
-                <string>Edit Instance</string>
+                <string>Edit Template</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonCreateInstance">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Create Instance</string>
                </property>
               </widget>
              </item>

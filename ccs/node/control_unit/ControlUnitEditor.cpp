@@ -1,5 +1,7 @@
 #include "ControlUnitEditor.h"
 #include "ui_ControlUnitEditor.h"
+
+#include "CommandTemplateInstanceEditor.h"
 #include "../../widget/list/delegate/TwoLineInformationListItemDelegate.h"
 
 #include <QDebug>
@@ -321,6 +323,7 @@ void ControlUnitEditor::handleSelectionChangedOnListWiew(const QItemSelection& s
         unsigned int selected_template_count = ui->listViewCommandInstance->selectionModel()->selectedRows().size();
         ui->pushButtonEditInstance->setEnabled(selected_template_count);
         ui->pushButtonRemoveInstance->setEnabled(selected_template_count == 1);
+        ui->pushButtonCreateInstance->setEnabled(selected_template_count == 1);
     }
 }
 
@@ -408,7 +411,8 @@ void ControlUnitEditor::on_pushButtonUpdateTemaplteList_clicked() {
     updateTemplateSearch();
 }
 
-void ControlUnitEditor::on_pushButtonEditInstance_clicked() {//scann all selected element and open the editor for each one
+void ControlUnitEditor::on_pushButtonEditInstance_clicked() {
+    //scann all selected element and open the editor for each one
     foreach (QModelIndex index, ui->listViewCommandInstance->selectionModel()->selectedRows()) {
         //! open tempalte editor for new instance creation
         ControlUnitCommandTemplateEditor    *template_editor= new ControlUnitCommandTemplateEditor(index.data().toString(),
@@ -429,4 +433,12 @@ void ControlUnitEditor::on_pushButtonRemoveInstance_clicked() {
                         GET_CHAOS_API_PTR(node::CommandTemplateDelete)->execute(index.data().toString().toStdString(),
                                                                                 index.data(Qt::UserRole).toString().toStdString()));
     }
+}
+
+void ControlUnitEditor::on_pushButtonCreateInstance_clicked() {
+   foreach(QModelIndex index,  ui->listViewCommandInstance->selectionModel()->selectedRows()) {
+        addWidgetToPresenter(new CommandTemplateInstanceEditor(control_unit_unique_id,
+                                                               index.data().toString(),
+                                                               index.data(Qt::UserRole).toString()));
+   }
 }
