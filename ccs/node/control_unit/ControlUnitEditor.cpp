@@ -397,8 +397,7 @@ void ControlUnitEditor::on_pushButtonAddNewCommadInstance_clicked() {
 
     //! open tempalte editor for new instance creation
     QSharedPointer<TwoLineInformationItem> item = selected_list.first().data().value< QSharedPointer<TwoLineInformationItem> >();
-    ControlUnitCommandTemplateEditor    *template_editor= new ControlUnitCommandTemplateEditor();
-    template_editor->setCommandDescription(item->raw_data);
+    ControlUnitCommandTemplateEditor    *template_editor= new ControlUnitCommandTemplateEditor(QString::fromStdString(item->raw_data->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)));
     //connect tempalte editor
     connect(template_editor,
             SIGNAL(templateSaved(QString,QString)),

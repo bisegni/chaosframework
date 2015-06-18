@@ -9,15 +9,16 @@ using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service_client::api_proxy;
 
 static const QString TAG_CMD_TEMPLATE_SET = QString("cuct_tmplt_set");
-static const QString TAG_CMD_TEMPLATE_GET = QString("cuct_tmplt_get");
 static const QString TAG_CMD_COMMAND_GET = QString("cuct_cmd_get");
+static const QString TAG_CMD_FETCH_TEMPLATE_AND_COMMAND = QString("cuct_edit_get_tc");
 
-ControlUnitCommandTemplateEditor::ControlUnitCommandTemplateEditor() :
+ControlUnitCommandTemplateEditor::ControlUnitCommandTemplateEditor(const QString& _command_uid) :
     PresenterWidget(NULL),
     parameter_table_model(this),
     ui(new Ui::ControlUnitCommandTemplateEditor),
     in_editing(false){
     ui->setupUi(this);
+    ui->labelCommandUID->setText(_command_uid);
 }
 
 ControlUnitCommandTemplateEditor::ControlUnitCommandTemplateEditor(const QString &_template_name,
@@ -28,6 +29,7 @@ ControlUnitCommandTemplateEditor::ControlUnitCommandTemplateEditor(const QString
     in_editing(true){
     ui->setupUi(this);
     ui->lineEditTemplateName->setText(_template_name);
+    ui->lineEditTemplateName->setReadOnly(true);
     ui->labelCommandUID->setText(_command_uid);
 }
 
@@ -46,8 +48,11 @@ void ControlUnitCommandTemplateEditor::initUI() {
     ui->tableViewParameterList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     if(in_editing) {
-        setCursor(Qt::WaitCursor);
-        //load tmepalte
+        //load template and command
+        submitApiResult(TAG_CMD_FETCH_TEMPLATE_AND_COMMAND,
+                        GET_CHAOS_API_PTR(node::GetCommandAndTemplateDescription)->execute(ui->lineEditTemplateName->text().toStdString(),
+                                                                                            ui->labelCommandUID->text().toStdString()));
+    } else {
         submitApiResult(TAG_CMD_COMMAND_GET,
                         GET_CHAOS_API_PTR(node::CommandGet)->execute(ui->labelCommandUID->text().toStdString()));
     }
@@ -64,32 +69,24 @@ void ControlUnitCommandTemplateEditor::onApiDone(const QString& tag,
         emit(templateSaved( ui->lineEditTemplateName->text(),
                             ui->labelCommandUID->text()));
         closeTab();
-    } else if(tag.compare(TAG_CMD_TEMPLATE_GET) == 0) {
-        setTemplateDescription(api_result);
-        this->setCursor(Qt::ArrowCursor);
-        //here end the sequence loading in editing
     } else if(tag.compare(TAG_CMD_COMMAND_GET) == 0) {
-        //load template
-        submitApiResult(TAG_CMD_TEMPLATE_GET,
-                        GET_CHAOS_API_PTR(node::CommandTemplateGet)->execute(ui->lineEditTemplateName->text().toStdString(),
-                                                                             ui->labelCommandUID->text().toStdString()));
         //set the command description
         setCommandDescription(api_result);
+    } else if(tag.compare(TAG_CMD_FETCH_TEMPLATE_AND_COMMAND) == 0) {
+        if(!api_result->hasKey("command_description") ||
+                !api_result->isCDataWrapperValue("command_description")) {
+            showInformation(tr("Error"), tr("Command Fetch"), QString("The  uid '%1%' for the command has not been found").arg(ui->labelCommandUID->text()));
+            return;
+        }
+        if(!api_result->hasKey("template_description") ||
+                !api_result->isCDataWrapperValue("template_description")) {
+            showInformation(tr("Error"), tr("Template Fetch"), QString("The  temaplte '%1%' has not been found").arg(ui->lineEditTemplateName->text()));
+            return;
+        }
+
+        setTemplateDescription(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description")));
+        setCommandDescription(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
     }
-}
-
-//!Api has been give an error
-void ControlUnitCommandTemplateEditor::onApiError(const QString& tag,
-                                                  QSharedPointer<chaos::CException> api_exception) {
-    this->setCursor(Qt::ArrowCursor);
-    PresenterWidget::onApiError(tag,
-                                api_exception);
-}
-
-//! api has gone in timeout
-void ControlUnitCommandTemplateEditor::onApiTimeout(const QString& tag) {
-    this->setCursor(Qt::ArrowCursor);
-    PresenterWidget::onApiTimeout(tag);
 }
 
 void ControlUnitCommandTemplateEditor::setCommandDescription(QSharedPointer<chaos::common::data::CDataWrapper> _command_description) {
@@ -175,11 +172,11 @@ void ControlUnitCommandTemplateEditor::reset() {
 void ControlUnitCommandTemplateEditor::on_pushButtonSave_clicked() {
     QString param_in_error;
     CHEC_TEXT_VALIDATOR(ui->lineEditTemplateName)
-    CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionPriority)
-    CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionRunStepDelay)
-    CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionRetry)
-    //check the validation on param rule
-    if(!parameter_table_model.validation(param_in_error)){
+            CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionPriority)
+            CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionRunStepDelay)
+            CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionRetry)
+            //check the validation on param rule
+            if(!parameter_table_model.validation(param_in_error)){
         QMessageBox::information(this, tr("validation Error"), QString("The attribute '%1' cannot be validated (it can be mandatory and not valorized or parametrized)").arg(param_in_error));
         return;
     }

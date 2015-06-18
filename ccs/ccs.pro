@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = ccs
 TEMPLATE = app
@@ -69,7 +69,11 @@ SOURCES += main.cpp\
     node/control_unit/ControlUnitCommandTemplateEditor.cpp \
     node/control_unit/CommandTemplateInstanceEditor.cpp \
     data/CommandReader.cpp \
-    data/CommandParameterReader.cpp
+    data/CommandParameterReader.cpp \
+    widget/CDSAttrQLineEdit.cpp \
+    data/ChaosTypedAttributeValueSetter.cpp \
+    external_lib/qcustomplot.cpp \
+    data/AttributeReader.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -119,7 +123,11 @@ HEADERS  += \
     node/control_unit/ControlUnitCommandTemplateEditor.h \
     node/control_unit/CommandTemplateInstanceEditor.h \
     data/CommandReader.h \
-    data/CommandParameterReader.h
+    data/CommandParameterReader.h \
+    widget/CDSAttrQLineEdit.h \
+    data/ChaosTypedAttributeValueSetter.h \
+    external_lib/qcustomplot.h \
+    data/AttributeReader.h
 
 FORMS    += \
     search/searchnoderesult.ui \

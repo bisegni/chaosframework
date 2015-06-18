@@ -17,7 +17,7 @@ class ControlUnitCommandTemplateEditor :
     Q_OBJECT
 
 public:
-    explicit ControlUnitCommandTemplateEditor();
+    explicit ControlUnitCommandTemplateEditor(const QString& _command_uid);
     explicit ControlUnitCommandTemplateEditor(const QString& _template_name,
                                               const QString& _command_uid);
     ~ControlUnitCommandTemplateEditor();
@@ -34,12 +34,6 @@ protected:
     bool canClose();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
-    //!Api has been give an error
-    void onApiError(const QString& tag,
-                            QSharedPointer<chaos::CException> api_exception);
-
-    //! api has gone in timeout
-    void onApiTimeout(const QString& tag);
 signals:
     void templateSaved(const QString& tempalte_name,
                        const QString& command_uid);

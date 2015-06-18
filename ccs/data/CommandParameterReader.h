@@ -1,6 +1,8 @@
 #ifndef COMMANDPARAMETERREADER_H
 #define COMMANDPARAMETERREADER_H
 
+#include "AttributeReader.h"
+
 #include <QObject>
 #include <QMap>
 #include <QSharedPointer>
@@ -9,14 +11,14 @@
 #include <chaos/common/data/CDataWrapper.h>
 
 class CommandParameterReader :
-        public QObject {
+        public AttributeReader {
     Q_OBJECT
 public:
     explicit CommandParameterReader(QSharedPointer<chaos::common::data::CDataWrapper> _command_parameter_description,
                                     QObject *parent = 0);
-    QString getParameterName();
-    QString getParameterDescription();
-    int32_t getParameterType();
+    QString getName();
+    QString getDescription();
+    int32_t getType();
     bool isMandatory();
 signals:
 

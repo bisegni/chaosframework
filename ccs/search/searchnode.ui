@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>256</width>
+    <width>505</width>
     <height>91</height>
    </rect>
   </property>
@@ -75,6 +75,9 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="CDSAttrQLineEdit" name="widget" native="true"/>
+     </item>
      <item alignment="Qt::AlignRight">
       <widget class="QPushButton" name="pushButtonStartSearch">
        <property name="maximumSize">
@@ -103,6 +106,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CDSAttrQLineEdit</class>
+   <extends>QWidget</extends>
+   <header>widget/CDSAttrQLineEdit.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

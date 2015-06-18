@@ -1,8 +1,10 @@
 #include "CommandTemplateInstanceEditor.h"
 #include "ui_CommandTemplateInstanceEditor.h"
+#include "../../widget/CDSAttrQLineEdit.h"
 
 #include <QLineEdit>
 #include <QDebug>
+
 const QString TAG_CMD_FETCH_TEMPLATE_AND_COMMAND = QString("cmd_fetch_template_command");
 
 using namespace chaos::common::data;
@@ -52,32 +54,33 @@ void CommandTemplateInstanceEditor::onApiDone(const QString& tag,
         }
 
         configureForTemplate(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description")),
-                             QSharedPointer<CommandReader>(new CommandReader(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")))));
+                                QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
     }
 }
 
-void CommandTemplateInstanceEditor::on_pushButtonSubmitInstance_clicked() {
-
-}
-
-void CommandTemplateInstanceEditor::on_pushButtonClose_clicked() {
+void CommandTemplateInstanceEditor::submitInstance() {
 
 }
 
 void CommandTemplateInstanceEditor::configureForTemplate(QSharedPointer<CDataWrapper> template_description,
-                                                         QSharedPointer<CommandReader> command_reader) {
+                                                         QSharedPointer<CDataWrapper>  command_description) {
     //set the form for insert the requested value by the template
-    qDebug() << "Scan parameter: " << QString::fromStdString(template_description->getJSONString());
-    foreach (QSharedPointer<CommandParameterReader> param_reader, command_reader->getCommandParameterList()) {
-        qDebug() << "check parameter: " << param_reader->getParameterName() ;
+    qDebug() << "Tempalte: " << QString::fromStdString(template_description->getJSONString());
+    qDebug() << "Command: " << QString::fromStdString(command_description->getJSONString());
 
-        if(template_description->isNullValue(param_reader->getParameterName().toStdString())){
+    QSharedPointer<CommandReader> command_reader(new CommandReader(command_description));
+    QList< QSharedPointer<CommandParameterReader> > parameter_reader_list = command_reader->getCommandParameterList();
+    foreach (QSharedPointer<CommandParameterReader> param_reader,
+             parameter_reader_list) {
+        qDebug() << "check parameter: " << param_reader->getName() ;
+
+        if(template_description->isNullValue(param_reader->getName().toStdString())){
             //need to be requested to the user
 
-            ui->formLayoutInputParameter->addRow(new QLabel(param_reader->getParameterName(), this),
-                                                 new QLineEdit(this));
+            ui->formLayoutInputParameter->addRow(new QLabel(param_reader->getName(), this),
+                                                 new CDSAttrQLineEdit(param_reader, this));
         }
     }
-    update();
-    repaint();
+    updateGeometry();
+    setGeometry(geometry().adjusted(0,0,0,parameter_reader_list.size()*2));
 }
