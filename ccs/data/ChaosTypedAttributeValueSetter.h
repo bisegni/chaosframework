@@ -26,6 +26,8 @@ class ChaosTypedAttributeValueSetter :
     QVariant chaos_attribute_value_;
     Q_PROPERTY(QVariant chaos_attribute_value READ chaosAttributeValue WRITE setChaosAttributeValue)
 
+    bool chaos_attribute_mandatory_flag_;
+    Q_PROPERTY(bool chaos_attribute_mandatory READ chaosAttributeMandatoryFlag WRITE setChaosAttributeMandatoryFlag)
 public:
     explicit ChaosTypedAttributeValueSetter(QObject *parent = 0);
             ChaosTypedAttributeValueSetter(const ChaosTypedAttributeValueSetter& source);
@@ -47,7 +49,11 @@ public:
     QVariant chaosAttributeValue() const;
     void setChaosAttributeValue(QVariant chaos_attribute_value);
 
-    QSharedPointer<chaos::common::data::CDataWrapperKeyValueSetter> getCDataWrapperValueSetter(bool *ok = NULL);
+    bool chaosAttributeMandatoryFlag() const;
+    void setChaosAttributeMandatoryFlag(bool chaos_attribute_mandatory);
+
+    bool isValid();
+    boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> getCDataWrapperValueSetter(bool *ok = NULL);
 
 signals:
     void valueTypeChange(int type);

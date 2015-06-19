@@ -4,6 +4,8 @@
 #include "../../presenter/PresenterWidget.h"
 #include "../../data/CommandReader.h"
 
+#include <QMap>
+#include "../../widget/CDSAttrQLineEdit.h"
 namespace Ui {
 class CommandTemplateInstanceEditor;
 }
@@ -33,6 +35,7 @@ private:
     const QString template_name;
     const QString command_uid;
 
+    QMap<QString, CDSAttrQLineEdit*> map_attr_name_value_editor;
     Ui::CommandTemplateInstanceEditor *ui;
 };
 

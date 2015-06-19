@@ -59,7 +59,29 @@ void CommandTemplateInstanceEditor::onApiDone(const QString& tag,
 }
 
 void CommandTemplateInstanceEditor::submitInstance() {
+    bool ok = false;
+    node::TemplateSubmissionList submission_list;
+    boost::shared_ptr<node::TemplateSubmission> submission_info(new node::TemplateSubmission());
+    submission_list.push_back(submission_info);
 
+    QMapIterator<QString, CDSAttrQLineEdit*> iter(map_attr_name_value_editor);
+    while(iter.hasNext()){
+        iter.next();
+        if(!iter.value()->chaosAttributeValueSetter()->isValid()) {
+            showInformation(tr("Submission"), tr("validation"), QString("The attribute %1% is not valid").arg(iter.key()));
+            return;
+        }
+        boost::shared_ptr<CDataWrapperKeyValueSetter> setter = iter.value()->chaosAttributeValueSetter()->getCDataWrapperValueSetter(&ok);
+        if(!ok) {
+            showInformation(tr("Submission"), tr("validation"), QString("The attribute %1% has an invalid value").arg(iter.key()));
+            return;
+        }
+        submission_info->parametrized_attribute_value.push_back(setter);
+    }
+    //whe have all submission pack completed
+
+    submitApiResult(TAG_CMD_FETCH_TEMPLATE_AND_COMMAND,
+                    GET_CHAOS_API_PTR(node::CommandTemplateSubmit)->execute(submission_list));
 }
 
 void CommandTemplateInstanceEditor::configureForTemplate(QSharedPointer<CDataWrapper> template_description,
@@ -76,11 +98,18 @@ void CommandTemplateInstanceEditor::configureForTemplate(QSharedPointer<CDataWra
 
         if(template_description->isNullValue(param_reader->getName().toStdString())){
             //need to be requested to the user
+            QLabel *description = new QLabel(param_reader->getName(), this);
+            if(param_reader->isMandatory()) {
+                description->setStyleSheet("QLabel { color : blue; }");
+            }
+            CDSAttrQLineEdit *editor = new CDSAttrQLineEdit(param_reader, this);
+            ui->formLayoutInputParameter->addRow(description,
+                                                 editor);
 
-            ui->formLayoutInputParameter->addRow(new QLabel(param_reader->getName(), this),
-                                                 new CDSAttrQLineEdit(param_reader, this));
+            map_attr_name_value_editor.insert(param_reader->getName(), editor);
+
         }
     }
-    updateGeometry();
-    setGeometry(geometry().adjusted(0,0,0,parameter_reader_list.size()*2));
+    parentWidget()->update();
+    //setGeometry(geometry().adjusted(0,0,0,parameter_reader_list.size()*2));
 }
