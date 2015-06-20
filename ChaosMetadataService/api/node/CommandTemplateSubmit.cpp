@@ -67,7 +67,7 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
 
 void CommandTemplateSubmit::processSubmissionTask(NodeDataAccess *n_da,
                                                   boost::shared_ptr<CDataWrapper> submission_task) {
-
+    
     boost::shared_ptr<CDataWrapper> instance_to_submit;
     
     CHECK_KEY_THROW_AND_LOG(submission_task.get(), NodeDefinitionKey::NODE_UNIQUE_ID, N_CTS_ERR, -1, "The node unique id is mandatory")
@@ -78,18 +78,20 @@ void CommandTemplateSubmit::processSubmissionTask(NodeDataAccess *n_da,
     const std::string template_name = submission_task->getStringValue("template_name");
     const std::string command_unique_id = submission_task->getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID);
     
-       //fetch command
+    //fetch command
     boost::shared_ptr<CDataWrapper> command_description = getCommandDescription(n_da,
                                                                                 command_unique_id);
-        //fetch template
+    //fetch template
     boost::shared_ptr<CDataWrapper> template_description = getCommandTemaplateDescription(n_da,
                                                                                           template_name,
                                                                                           command_unique_id);
     
     //store command instance
-    comamnd_instance_list.push_back(CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(submission_task.get(),
-                                                                                                                  command_description.get(),
-                                                                                                                  template_description.get()));
+    boost::shared_ptr<CDataWrapper> instance_to_send;
+    comamnd_instance_list.push_back(instance_to_send = CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(submission_task.get(),
+                                                                                                                                     command_description.get(),
+                                                                                                                                     template_description.get()));
+    N_CTS_INFO << instance_to_send->getJSONString();
 }
 
 boost::shared_ptr<CDataWrapper> CommandTemplateSubmit::getCommandDescription(NodeDataAccess *n_da,

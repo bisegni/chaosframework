@@ -12,6 +12,9 @@ CDSAttrQLineEdit::CDSAttrQLineEdit(QWidget *obj) :
 CDSAttrQLineEdit::CDSAttrQLineEdit(QSharedPointer<AttributeReader> attribute_reader,
                                    QWidget *obj):
     QLineEdit(obj) {
+    connect(this,
+            SIGNAL(editingFinished()),
+            SLOT(qlineEditTextChange()));
     setChaosAttributeValueSetter(QSharedPointer<ChaosTypedAttributeValueSetter>(new ChaosTypedAttributeValueSetter()));
     //connect to the change of type
     connect(chaosAttributeValueSetter().data(),
@@ -69,4 +72,8 @@ void CDSAttrQLineEdit::chaosValueTypeChanged(int new_type) {
     default:
         break;
     }
+}
+
+void CDSAttrQLineEdit::qlineEditTextChange() {
+    chaosAttributeValueSetter()->setChaosAttributeValue(text());
 }

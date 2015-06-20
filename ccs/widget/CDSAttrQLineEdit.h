@@ -22,6 +22,7 @@ public:
     void setChaosAttributeValueSetter(const QSharedPointer<ChaosTypedAttributeValueSetter>& chaos_attribute_value_setter);
 private slots:
     void chaosValueTypeChanged(int new_type);
+    void qlineEditTextChange();
 };
 
 #endif // CDSAttrQLineEdit_H

@@ -6,6 +6,7 @@
 #include <QDebug>
 
 const QString TAG_CMD_FETCH_TEMPLATE_AND_COMMAND = QString("cmd_fetch_template_command");
+const QString TAG_CMD_INSTNCE_SUBMIT = QString("cmd_instance_sumission");
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -55,29 +56,40 @@ void CommandTemplateInstanceEditor::onApiDone(const QString& tag,
 
         configureForTemplate(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description")),
                                 QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
+    } else if(tag.comapre(TAG_CMD_INSTNCE_SUBMIT) == 0) {
+        closeTab();
     }
 }
 
-void CommandTemplateInstanceEditor::submitInstance() {
+boost::shared_ptr<node::TemplateSubmission> CommandTemplateInstanceEditor::getTempalteSubmissionTask() {
     bool ok = false;
-    node::TemplateSubmissionList submission_list;
     boost::shared_ptr<node::TemplateSubmission> submission_info(new node::TemplateSubmission());
-    submission_list.push_back(submission_info);
+    submission_info->node_unique_id = node_uid.toStdString();
+    submission_info->template_name = template_name.toStdString();
+    submission_info->command_unique_id = command_uid.toStdString();
 
     QMapIterator<QString, CDSAttrQLineEdit*> iter(map_attr_name_value_editor);
     while(iter.hasNext()){
         iter.next();
         if(!iter.value()->chaosAttributeValueSetter()->isValid()) {
             showInformation(tr("Submission"), tr("validation"), QString("The attribute %1% is not valid").arg(iter.key()));
-            return;
+            return boost::shared_ptr<node::TemplateSubmission>();
         }
         boost::shared_ptr<CDataWrapperKeyValueSetter> setter = iter.value()->chaosAttributeValueSetter()->getCDataWrapperValueSetter(&ok);
         if(!ok) {
             showInformation(tr("Submission"), tr("validation"), QString("The attribute %1% has an invalid value").arg(iter.key()));
-            return;
+            return boost::shared_ptr<node::TemplateSubmission>();
         }
         submission_info->parametrized_attribute_value.push_back(setter);
     }
+    return submission_info;
+}
+
+void CommandTemplateInstanceEditor::submitInstance() {
+    node::TemplateSubmissionList submission_list;
+    boost::shared_ptr<node::TemplateSubmission>  instance = getTempalteSubmissionTask();
+    if(instance.get() == NULL) return;
+    submission_list.push_back(instance);
     //whe have all submission pack completed
 
     submitApiResult(TAG_CMD_FETCH_TEMPLATE_AND_COMMAND,
@@ -85,11 +97,9 @@ void CommandTemplateInstanceEditor::submitInstance() {
 }
 
 void CommandTemplateInstanceEditor::configureForTemplate(QSharedPointer<CDataWrapper> template_description,
-                                                         QSharedPointer<CDataWrapper>  command_description) {
+                                                         QSharedPointer<CDataWrapper> command_description) {
     //set the form for insert the requested value by the template
-    qDebug() << "Tempalte: " << QString::fromStdString(template_description->getJSONString());
-    qDebug() << "Command: " << QString::fromStdString(command_description->getJSONString());
-
+    int heigh_to_add = 0;
     QSharedPointer<CommandReader> command_reader(new CommandReader(command_description));
     QList< QSharedPointer<CommandParameterReader> > parameter_reader_list = command_reader->getCommandParameterList();
     foreach (QSharedPointer<CommandParameterReader> param_reader,
@@ -100,16 +110,17 @@ void CommandTemplateInstanceEditor::configureForTemplate(QSharedPointer<CDataWra
             //need to be requested to the user
             QLabel *description = new QLabel(param_reader->getName(), this);
             if(param_reader->isMandatory()) {
-                description->setStyleSheet("QLabel { color : blue; }");
+                description->setStyleSheet("QLabel { color : #FA8989; }");
             }
             CDSAttrQLineEdit *editor = new CDSAttrQLineEdit(param_reader, this);
             ui->formLayoutInputParameter->addRow(description,
                                                  editor);
-
+            editor->setStyleSheet("CDSAttrQLineEdit {font-size: 11pt;}");
+            editor->setMaximumHeight(20);
+            heigh_to_add += 24;
             map_attr_name_value_editor.insert(param_reader->getName(), editor);
-
         }
     }
-    parentWidget()->update();
-    //setGeometry(geometry().adjusted(0,0,0,parameter_reader_list.size()*2));
+    setMinimumHeight(minimumHeight()+heigh_to_add);
+    parentWidget()->setGeometry(parentWidget()->geometry().adjusted(0,0,0,heigh_to_add));
 }

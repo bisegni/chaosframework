@@ -41,11 +41,11 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *co
     CHECK_KEY_THROW_AND_LOG_FORMATTED(command_description,
                                       BatchCommandAndParameterDescriptionkey::BC_PARAMETERS, N_CCU_ERR, -1,
                                       "The key '%1%' is not present in command description", %BatchCommandAndParameterDescriptionkey::BC_PARAMETERS)
-
+    
     CHECK_KEY_THROW_AND_LOG(command_template,
                             "template_name", N_CCU_ERR, -2,
                             "The key 'template_name' is not present in command template")
-
+    
     bool is_correct_type = true;
     const std::string command_alias = command_description->getStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS);
     const std::string template_name = command_template->getStringValue("template_name");
@@ -70,15 +70,20 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *co
         //check mandatory rule
         const std::string attribute_name = parameter_description->getStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_NAME);
         const int flags = parameter_description->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG);
-        if((flags & BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG_MANDATORY) == BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG_MANDATORY) {
-            //check ifthe tempalte has the value or the request filed
-            if(!command_template->hasKey(attribute_name)) {
+        bool is_in_tempalte = command_template->hasKey(attribute_name);
+        
+        if(!is_in_tempalte) {
+            if((flags & BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG_MANDATORY) ==
+               BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG_MANDATORY) {
+                //the attribute is mandatory but not in the template so we fire the exception
                 LOG_AND_TROW_FORMATTED(N_CCU_ERR, -6,
                                        "The attribute '%1%' fo command '%2%' is mandatory but is not present into the template '%3%'",
                                        %attribute_name%command_alias%template_name)
+            } else {
+                continue;
             }
         }
-       
+        
         //if the attribute is null meaning that it need to be forwarded
         if(command_template->isNullValue(attribute_name)) {
             if(attribute_requested_by_template)

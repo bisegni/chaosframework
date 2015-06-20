@@ -55,6 +55,8 @@ namespace chaos {
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<CommandTemplate>, TemplateList)
                 
                 struct TemplateSubmission {
+                    //! unique id of the node that need to receive the command
+                    std::string node_unique_id;
                     //! the representative name of the template (unique)
                     std::string template_name;
                     //! the unique id of the command

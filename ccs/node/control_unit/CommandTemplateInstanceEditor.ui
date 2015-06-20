@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>509</width>
-    <height>254</height>
+    <width>319</width>
+    <height>79</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>283</width>
+    <height>79</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -36,11 +42,20 @@
    </property>
    <item>
     <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
      <property name="spacing">
       <number>4</number>
      </property>
      <item row="1" column="0" alignment="Qt::AlignRight">
       <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
@@ -53,8 +68,15 @@
      </item>
      <item row="1" column="1">
       <widget class="QLabel" name="labelTemplateName">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="font">
         <font>
+         <pointsize>11</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -69,6 +91,12 @@
      </item>
      <item row="0" column="0" alignment="Qt::AlignRight">
       <widget class="QLabel" name="label_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
@@ -81,8 +109,15 @@
      </item>
      <item row="0" column="1">
       <widget class="QLabel" name="labelNodeUniqueID">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="font">
         <font>
+         <pointsize>11</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -96,11 +131,14 @@
    </item>
    <item>
     <layout class="QFormLayout" name="formLayoutInputParameter">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
      <property name="horizontalSpacing">
-      <number>4</number>
+      <number>2</number>
      </property>
      <property name="verticalSpacing">
-      <number>4</number>
+      <number>2</number>
      </property>
     </layout>
    </item>

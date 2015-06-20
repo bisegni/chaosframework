@@ -26,6 +26,7 @@ protected:
     bool canClose();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+    boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::TemplateSubmission> getTempalteSubmissionTask();
 
 private:
     //create the user interface for set the requested parameter

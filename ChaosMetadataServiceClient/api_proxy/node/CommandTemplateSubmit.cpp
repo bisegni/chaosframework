@@ -40,6 +40,7 @@ ApiProxyResult CommandTemplateSubmit::execute(const TemplateSubmissionList& subm
         it++) {
         //compose submiossion task
         std::auto_ptr<CDataWrapper> submission_task(new CDataWrapper);
+        submission_task->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, (*it)->node_unique_id);
         submission_task->addStringValue("template_name", (*it)->template_name);
         submission_task->addStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, (*it)->command_unique_id);
         for(ParameterSetterListConstIterator it_parameter = (*it)->parametrized_attribute_value.begin();

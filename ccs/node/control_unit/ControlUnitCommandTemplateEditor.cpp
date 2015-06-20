@@ -83,9 +83,8 @@ void ControlUnitCommandTemplateEditor::onApiDone(const QString& tag,
             showInformation(tr("Error"), tr("Template Fetch"), QString("The  temaplte '%1%' has not been found").arg(ui->lineEditTemplateName->text()));
             return;
         }
-
-        setTemplateDescription(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description")));
         setCommandDescription(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
+        setTemplateDescription(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description")));
     }
 }
 
@@ -108,11 +107,11 @@ void ControlUnitCommandTemplateEditor::setTemplateDescription(QSharedPointer<cha
     //reappli submission rule
     if(_template_description->hasKey(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL)){
         temp_int = _template_description->getInt32Value(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL);
-        ui->comboBoxSubmissionExecutionChannel->setCurrentIndex(ui->comboBoxSubmissionExecutionChannel->findText(QString::number(temp_int)));
+        ui->comboBoxSubmissionExecutionChannel->setCurrentIndex(temp_int);
     }
     if(_template_description->hasKey(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32)){
         temp_int = _template_description->getInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32);
-        ui->comboBoxSubmissionRule->setCurrentIndex(ui->comboBoxSubmissionRule->findText(QString::number(temp_int)));
+        ui->comboBoxSubmissionRule->setCurrentIndex(temp_int);
     }
     if(_template_description->hasKey(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32)){
         temp_int = _template_description->getInt32Value(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32);
@@ -172,11 +171,11 @@ void ControlUnitCommandTemplateEditor::reset() {
 void ControlUnitCommandTemplateEditor::on_pushButtonSave_clicked() {
     QString param_in_error;
     CHEC_TEXT_VALIDATOR(ui->lineEditTemplateName)
-            CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionPriority)
-            CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionRunStepDelay)
-            CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionRetry)
+    CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionPriority)
+    CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionRunStepDelay)
+    CHEC_TEXT_VALIDATOR(ui->lineEditSubmissionRetry)
             //check the validation on param rule
-            if(!parameter_table_model.validation(param_in_error)){
+    if(!parameter_table_model.validation(param_in_error)){
         QMessageBox::information(this, tr("validation Error"), QString("The attribute '%1' cannot be validated (it can be mandatory and not valorized or parametrized)").arg(param_in_error));
         return;
     }
