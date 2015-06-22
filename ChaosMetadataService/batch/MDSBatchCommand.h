@@ -20,12 +20,16 @@
 #ifndef __CHAOSFramework__MDSBatchCommand__
 #define __CHAOSFramework__MDSBatchCommand__
 
+#include "../persistence/data_access/DataAccess.h"
+
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/message/MessageChannel.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/message/DeviceMessageChannel.h>
+
+#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
 
 namespace chaos{
     namespace metadata_service {
@@ -40,6 +44,8 @@ namespace chaos{
                 MESSAGE_PHASE_COMPLETED,
                 MESSAGE_PHASE_TIMEOUT
             } MessagePhase;
+            
+            namespace mds_data_access = chaos::metadata_service::persistence::data_access;
             
             //! struct that permit to manage different request with phase for each one
             struct RequestInfo {
@@ -72,6 +78,9 @@ namespace chaos{
                 //!message channel for communitcation with other node
                 chaos::common::message::MessageChannel *message_channel;
                 chaos::common::message::MultiAddressMessageChannel *multiaddress_message_channel;
+                
+                //dataaccess abstract driver
+                chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
             protected:
                 //! default constructor
                 MDSBatchCommand();
@@ -113,6 +122,9 @@ namespace chaos{
                                  chaos::common::data::CDataWrapper *message) throw (chaos::CException);
                 
                 void manageRequestPhase(RequestInfo& request_info) throw (chaos::CException);
+                
+                template<typename T>
+                T* getDataAccess();
             };
             
         }

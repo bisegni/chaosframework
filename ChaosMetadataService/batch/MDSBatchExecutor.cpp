@@ -34,7 +34,8 @@ MDSBatchExecutor::MDSBatchExecutor(const std::string& executor_id,
 BatchCommandExecutor(executor_id),
 network_broker(_network_broker),
 message_channel_for_job(NULL),
-multiaddress_message_channel_for_job(NULL){
+multiaddress_message_channel_for_job(NULL),
+abstract_persistance_driver(NULL){
         //unit server command
     installCommand(unit_server::UnitServerAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::UnitServerAckCommand));
     installCommand(unit_server::LoadUnloadControlUnit::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::LoadUnloadControlUnit));

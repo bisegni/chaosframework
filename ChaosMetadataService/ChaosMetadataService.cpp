@@ -111,6 +111,8 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         api_managment_service.reset(new ApiManagment(), "ApiManagment");
         api_managment_service.init(static_cast<void*>(&api_subsystem_accessor), __PRETTY_FUNCTION__);
 
+        //connect persistence driver to batch system
+        api_subsystem_accessor.batch_executor->abstract_persistance_driver = api_subsystem_accessor.persistence_driver.get();
 	} catch (CException& ex) {
 		DECODE_CHAOS_EXCEPTION(ex)
 		exit(1);
