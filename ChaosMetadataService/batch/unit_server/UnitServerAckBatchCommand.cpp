@@ -29,81 +29,57 @@ using namespace chaos::metadata_service::batch::unit_server;
 
 DEFINE_MDS_COMAMND_ALIAS(UnitServerAckCommand)
 
-static const char * const NET_ADDR_ALLOC_ERR = "CNetworkAddress allocation error";
-static const char * const MESS_CHNL_ALLO_ERR = "Message channel allocation error";
-
 UnitServerAckCommand::UnitServerAckCommand():
 MDSBatchCommand(),
-retry_number(0),
-message_channel(NULL),
 message_data(NULL){
-         //set default scheduler delay 1 second
+    //set default scheduler delay 1 second
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
-        //set the timeout to 10 seconds
+    //set the timeout to 10 seconds
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
 }
-UnitServerAckCommand::~UnitServerAckCommand() {
-    if(message_channel) {
-        USAC_INFO << "Release message channel";
-        releaseChannel(message_channel);
-    }
-}
+
+UnitServerAckCommand::~UnitServerAckCommand() {}
 
 // inherited method
 void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
     if(data  && data->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
-        remote_unitserver_address = new CNetworkAddress();
-        if(remote_unitserver_address) {
-            remote_unitserver_address->ip_port = data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
-            USAC_INFO << "fetch the message channel for:"<<remote_unitserver_address->ip_port;
-            //delete(na);
-            message_channel = getNewMessageChannel();
-            if(!message_channel) {
-                USAC_ERR << MESS_CHNL_ALLO_ERR;
-                throw chaos::CException(-1, MESS_CHNL_ALLO_ERR, __PRETTY_FUNCTION__);
-            }
-        } else {
-            USAC_ERR << NET_ADDR_ALLOC_ERR;
-            throw chaos::CException(-2, NET_ADDR_ALLOC_ERR, __PRETTY_FUNCTION__);
-        }
-        
+        request = createRequest(data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
+                                UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
+                                UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_REG_ACK);
         message_data = data;
-    }
-
+    } else throw chaos::CException(-1, "No unit server address has been set", __PRETTY_FUNCTION__);
+    
 }
 
 // inherited method
 void UnitServerAckCommand::acquireHandler() {
     MDSBatchCommand::acquireHandler();
-    USAC_INFO << "execute acquire handler";
 }
 
 // inherited method
 void UnitServerAckCommand::ccHandler() {
     MDSBatchCommand::ccHandler();
-    auto_ptr<CDataWrapper> result;
-    USAC_INFO << "execute ccHandler";
-    retry_number++;
-    result.reset(message_channel->sendRequest(remote_unitserver_address->ip_port,
-                                              UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
-                                              UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_REG_ACK,
-                                              message_data,
-                                              1000));
-    if(message_channel->getLastErrorCode() != 0) {
-        USAC_INFO << "error sending message to the unit server " << remote_unitserver_address->ip_port;
-        if(retry_number > 3) {
-            USAC_INFO << "We have exeeced the number of retry this is the last retry for unit server act to " << remote_unitserver_address->ip_port;
-            BC_END_RUNNIG_PROPERTY;
+    switch(request->phase) {
+        case MESSAGE_PHASE_UNSENT:
+            sendRequest(*request,
+                        message_data);
+            break;
+            
+        case MESSAGE_PHASE_SENT:
+            manageRequestPhase(*request);
+            break;
+            
+        case MESSAGE_PHASE_COMPLETED:
+        case MESSAGE_PHASE_TIMEOUT:{
+            BC_END_RUNNIG_PROPERTY
+            break;
         }
-    } else {
-        BC_END_RUNNIG_PROPERTY;
     }
 }
 
 // inherited method
 bool UnitServerAckCommand::timeoutHandler() {
     bool result = MDSBatchCommand::timeoutHandler();
-    USAC_INFO << "execute ccHandler with " << result;
     return result;
 }

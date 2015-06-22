@@ -348,6 +348,7 @@
 		32761A381B314697006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A361B314697006C8719 /* GetCommandAndTemplateDescription.cpp */; };
 		32761A391B314697006C8719 /* GetCommandAndTemplateDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 32761A371B314697006C8719 /* GetCommandAndTemplateDescription.h */; };
 		32761A3C1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A3A1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp */; };
+		32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A3E1B37F202006C8719 /* SubmitBatchCommand.cpp */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
 		327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B715DFAAF40003C6DA /* RpcServer.cpp */; };
 		327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967D315E029C70003C6DA /* AsioImplEventServer.cpp */; };
@@ -1135,6 +1136,8 @@
 		32761A371B314697006C8719 /* GetCommandAndTemplateDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetCommandAndTemplateDescription.h; sourceTree = "<group>"; };
 		32761A3A1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetCommandAndTemplateDescription.cpp; sourceTree = "<group>"; };
 		32761A3B1B3157CA006C8719 /* GetCommandAndTemplateDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetCommandAndTemplateDescription.h; sourceTree = "<group>"; };
+		32761A3E1B37F202006C8719 /* SubmitBatchCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubmitBatchCommand.cpp; sourceTree = "<group>"; };
+		32761A3F1B37F202006C8719 /* SubmitBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubmitBatchCommand.h; sourceTree = "<group>"; };
 		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcClient.cpp; sourceTree = "<group>"; };
 		327967B715DFAAF40003C6DA /* RpcServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServer.cpp; sourceTree = "<group>"; };
 		327967D315E029C70003C6DA /* AsioImplEventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioImplEventServer.cpp; sourceTree = "<group>"; };
@@ -2794,6 +2797,15 @@
 			path = monitor_system;
 			sourceTree = "<group>";
 		};
+		32761A3D1B37F1DD006C8719 /* node */ = {
+			isa = PBXGroup;
+			children = (
+				32761A3E1B37F202006C8719 /* SubmitBatchCommand.cpp */,
+				32761A3F1B37F202006C8719 /* SubmitBatchCommand.h */,
+			);
+			path = node;
+			sourceTree = "<group>";
+		};
 		327F39A41AEAA1EB0000C845 /* data_service */ = {
 			isa = PBXGroup;
 			children = (
@@ -2922,10 +2934,10 @@
 				32B1E8121B2EDB2800221E49 /* CommandTemplateSubmit.h */,
 				32B1E8141B2EDB4700221E49 /* CommandInstanceSubmit.cpp */,
 				32B1E8151B2EDB4700221E49 /* CommandInstanceSubmit.h */,
-				32B1E8171B2FFCE500221E49 /* CommandCommonUtility.cpp */,
-				32B1E8181B2FFCE500221E49 /* CommandCommonUtility.h */,
 				32761A3A1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp */,
 				32761A3B1B3157CA006C8719 /* GetCommandAndTemplateDescription.h */,
+				32B1E8171B2FFCE500221E49 /* CommandCommonUtility.cpp */,
+				32B1E8181B2FFCE500221E49 /* CommandCommonUtility.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -3101,6 +3113,7 @@
 				32FA1EF21A7A462200A46800 /* MDSBatchCommand.h */,
 				320E77401A7FD9A6001FB8BC /* mds_service_batch.h */,
 				327D83D91AF1185700AD7000 /* batch_impl.h */,
+				32761A3D1B37F1DD006C8719 /* node */,
 				32610F9A1AE676A400779B84 /* control_unit */,
 				320E773B1A7FBD1E001FB8BC /* unit_server */,
 			);
@@ -4049,6 +4062,7 @@
 				32B1E8131B2EDB2800221E49 /* CommandTemplateSubmit.cpp in Sources */,
 				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
 				32809C791A9C79DE00C02C12 /* UtilityDataAccess.cpp in Sources */,
+				32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */,
 				325FC85A1AF77A7900DB9D66 /* NewUS.cpp in Sources */,
 				324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */,
 				327F39A01AEA47980000C845 /* GetAssociationByDS.cpp in Sources */,

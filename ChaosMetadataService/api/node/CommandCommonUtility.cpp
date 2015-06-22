@@ -116,7 +116,7 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *co
         }
         if(!is_correct_type) {
             LOG_AND_TROW_FORMATTED(N_CCU_ERR, -6,
-                                   "The attribute '%1%' for command '%2%' has incorrect type in template '%3'",
+                                   "The attribute '%1%' for command '%2%' has incorrect type in template '%3%'",
                                    %attribute_name%command_alias%template_name)
         }
     }

@@ -87,11 +87,9 @@ void CommandTemplateSubmit::processSubmissionTask(NodeDataAccess *n_da,
                                                                                           command_unique_id);
     
     //store command instance
-    boost::shared_ptr<CDataWrapper> instance_to_send;
-    comamnd_instance_list.push_back(instance_to_send = CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(submission_task.get(),
-                                                                                                                                     command_description.get(),
-                                                                                                                                     template_description.get()));
-    N_CTS_INFO << instance_to_send->getJSONString();
+    comamnd_instance_list.push_back(CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(submission_task.get(),
+                                                                                                                  command_description.get(),
+                                                                                                                  template_description.get()));
 }
 
 boost::shared_ptr<CDataWrapper> CommandTemplateSubmit::getCommandDescription(NodeDataAccess *n_da,

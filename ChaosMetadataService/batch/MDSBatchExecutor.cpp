@@ -32,7 +32,9 @@ new chaos::common::utility::TypedObjectInstancer<BatchCommandClass, MDSBatchComm
 MDSBatchExecutor::MDSBatchExecutor(const std::string& executor_id,
                                    chaos::common::network::NetworkBroker *_network_broker):
 BatchCommandExecutor(executor_id),
-network_broker(_network_broker){
+network_broker(_network_broker),
+message_channel_for_job(NULL),
+multiaddress_message_channel_for_job(NULL){
         //unit server command
     installCommand(unit_server::UnitServerAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::UnitServerAckCommand));
     installCommand(unit_server::LoadUnloadControlUnit::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::LoadUnloadControlUnit));
@@ -43,7 +45,7 @@ network_broker(_network_broker){
     installCommand(control_unit::IDSTControlUnitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::IDSTControlUnitBatchCommand));
 }
 
-MDSBatchExecutor::~MDSBatchExecutor() {
+MDSBatchExecutor::~MDSBatchExecutor(){
     
 }
 
@@ -54,6 +56,44 @@ void MDSBatchExecutor::installCommand(std::string alias,
     BatchCommandExecutor::installCommand(alias, instancer);
 }
 
+// Initialize instance
+void MDSBatchExecutor::init(void *init_data) throw(chaos::CException) {
+    //initilize superclass
+    BatchCommandExecutor::init(init_data);
+}
+
+// start instance
+void MDSBatchExecutor::start() throw(chaos::CException) {
+    BatchCommandExecutor::start();
+    //allocate channels
+    message_channel_for_job = network_broker->getRawMessageChannel();
+    if(!message_channel_for_job) throw chaos::CException(-1, "Error allcoating Message channel", __PRETTY_FUNCTION__);
+    
+    multiaddress_message_channel_for_job = network_broker->getRawMultiAddressMessageChannel();
+    if(!multiaddress_message_channel_for_job) throw chaos::CException(-2, "Error allcoating Multiaddress Message channel", __PRETTY_FUNCTION__);
+}
+
+// stop instance
+void MDSBatchExecutor::stop() throw(chaos::CException) {
+    if(message_channel_for_job) {
+        network_broker->disposeMessageChannel(message_channel_for_job);
+        message_channel_for_job = NULL;
+    }
+    if(multiaddress_message_channel_for_job) {
+        network_broker->disposeMessageChannel(multiaddress_message_channel_for_job);
+        multiaddress_message_channel_for_job = NULL;
+    }
+    //deallcoate channels
+    BatchCommandExecutor::stop();
+}
+
+// Deinitialize instance
+void MDSBatchExecutor::deinit() throw(chaos::CException) {
+    
+    //deinitilize superclass
+    BatchCommandExecutor::deinit();
+}
+
 //allocate a new command
 chaos::common::batch_command::BatchCommand *MDSBatchExecutor::instanceCommandInfo(const std::string& command_alias) {
     //install command into the batch command executor root class
@@ -61,8 +101,9 @@ chaos::common::batch_command::BatchCommand *MDSBatchExecutor::instanceCommandInf
     
     //customize the newly create batch command
     if(result) {
-        //allcoate new message channel
-        result->network_broker = network_broker;
+        //allocoate new message channel
+        result->message_channel = message_channel_for_job;
+        result->multiaddress_message_channel = multiaddress_message_channel_for_job;
     }
     return result;
 }

@@ -29,10 +29,6 @@ namespace chaos {
             class MDSBatchExcecutor;
             namespace control_unit {
 
-                typedef enum IDSTPhase {
-                    PHASE_SEND_MESSAGE,
-                    PHASE_WAIT_ANSWER
-                }IDSTPhase;
 
                 typedef enum IDSTAction{
                     ACTION_INIT = 0,
@@ -49,16 +45,11 @@ namespace chaos {
 
                     CNetworkAddress * control_unit_address;
                     chaos::common::data::CDataWrapper *message;
-                    chaos::common::message::MessageChannel *message_channel;
-                    std::auto_ptr<chaos::common::message::MessageRequestFuture> request_future;
+                    std::auto_ptr<RequestInfo> request;
 
                     std::string cu_id;
-                    std::string cu_rpc_addr;
-                    std::string cu_rpc_dom;
 
                     IDSTAction  action;
-                    IDSTPhase   phase;
-                    std::string action_to_call;
                 public:
                     IDSTControlUnitBatchCommand();
                     ~IDSTControlUnitBatchCommand();

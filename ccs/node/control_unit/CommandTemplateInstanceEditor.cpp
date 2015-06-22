@@ -6,7 +6,7 @@
 #include <QDebug>
 
 const QString TAG_CMD_FETCH_TEMPLATE_AND_COMMAND = QString("cmd_fetch_template_command");
-const QString TAG_CMD_INSTNCE_SUBMIT = QString("cmd_instance_sumission");
+const QString TAG_CMD_INSTANCE_SUBMIT = QString("cmd_instance_sumission");
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -56,7 +56,8 @@ void CommandTemplateInstanceEditor::onApiDone(const QString& tag,
 
         configureForTemplate(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description")),
                                 QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
-    } else if(tag.comapre(TAG_CMD_INSTNCE_SUBMIT) == 0) {
+    } else if(tag.compare(TAG_CMD_INSTANCE_SUBMIT) == 0) {
+        //instance has bee saved so we can close the panel
         closeTab();
     }
 }
@@ -92,7 +93,7 @@ void CommandTemplateInstanceEditor::submitInstance() {
     submission_list.push_back(instance);
     //whe have all submission pack completed
 
-    submitApiResult(TAG_CMD_FETCH_TEMPLATE_AND_COMMAND,
+    submitApiResult(TAG_CMD_INSTANCE_SUBMIT,
                     GET_CHAOS_API_PTR(node::CommandTemplateSubmit)->execute(submission_list));
 }
 

@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #ifndef __CHAOSFramework__BatchExecutor__
 #define __CHAOSFramework__BatchExecutor__
 
@@ -34,8 +35,10 @@ namespace chaos{
              the metadataserver batch job
              */
             class MDSBatchExecutor:
-            public common::batch_command::BatchCommandExecutor {
+            public chaos::common::batch_command::BatchCommandExecutor {
                 chaos::common::network::NetworkBroker *network_broker;
+                chaos::common::message::MessageChannel *message_channel_for_job;
+                chaos::common::message::MultiAddressMessageChannel *multiaddress_message_channel_for_job;
             protected:
                 //allocate a new command
                 common::batch_command::BatchCommand *instanceCommandInfo(const std::string& command_alias);
@@ -57,10 +60,21 @@ namespace chaos{
                                  chaos::common::network::NetworkBroker *_network_broker);
                 ~MDSBatchExecutor();
                 
+                // Initialize instance
+                void init(void *init_data) throw(chaos::CException);
+                
+                // start instance
+                void start() throw(chaos::CException);
+                
+                // stop instance
+                void stop() throw(chaos::CException);
+                
+                // Deinitialize instance
+                void deinit() throw(chaos::CException);
+                
                 //! Install a command associated with a type
                 void installCommand(std::string alias,
                                     chaos::common::utility::NestedObjectInstancer<MDSBatchCommand, common::batch_command::BatchCommand> *instancer);
-
             };
         }
     }

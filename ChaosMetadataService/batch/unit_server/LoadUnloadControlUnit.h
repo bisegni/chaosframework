@@ -27,32 +27,18 @@ namespace chaos {
     namespace metadata_service{
         namespace batch {
             class MDSBatchExcecutor;
-
             namespace unit_server {
-
-                typedef enum LoadUnloadPhase {
-                    LUL_SEND_LOAD_COMMAND,
-                    LUL_SEND_UNLOAD_COMMAND,
-                    LUL_WAIT_ANSWER,
-                    LUL_END,
-                    LUL_ERR
-                } LoadUnloadPhase;
 
                 class LoadUnloadControlUnit:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
-                    uint32_t retry_number;
 
                     bool load;
                     std::string cu_id;
                     std::string cu_type;
                     std::string us_address;
 
-                    chaos::common::message::MessageChannel *message_channel;
-                    std::auto_ptr<chaos::common::message::MessageRequestFuture> request_future;
-
-
-                    LoadUnloadPhase phase;
+                    std::auto_ptr<RequestInfo> request;
                 public:
                     LoadUnloadControlUnit();
                     ~LoadUnloadControlUnit();

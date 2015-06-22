@@ -29,11 +29,6 @@ namespace chaos {
             class MDSBatchExcecutor;
             namespace control_unit {
                 
-                typedef enum ACSPhase {
-                    IDSTPhase_SEND_MESSAGE,
-                    IDSTPhase_WAIT_ANSWER
-                }ACSPhase;
-                
                 //!Batch command for apply a change set to a control unit
                 class ApplyChangeSet:
                 public metadata_service::batch::MDSBatchCommand {
@@ -42,14 +37,9 @@ namespace chaos {
                     
                     CNetworkAddress * control_unit_address;
                     chaos::common::data::CDataWrapper *message;
-                    chaos::common::message::MessageChannel *message_channel;
-                    std::auto_ptr<chaos::common::message::MessageRequestFuture> request_future;
+                    std::auto_ptr<RequestInfo> request;
                     
                     std::string cu_id;
-                    std::string cu_rpc_addr;
-                    std::string cu_rpc_dom;
-
-                    ACSPhase   phase;
                 public:
                     ApplyChangeSet();
                     ~ApplyChangeSet();

@@ -29,23 +29,14 @@ namespace chaos {
 
             namespace control_unit {
 
-                typedef enum CURegAckPhase {
-                    RACK_SEND,
-                    RACK_ANSW_WAIT
-                } CURegAckPhase;
-
-
                     //!Batch commadn for send ack to the control unit
                 class RegistrationAckBatchCommand:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
-                    uint32_t retry_number;
 
                     CNetworkAddress * control_unit_address;
-                    chaos::common::message::MessageChannel *message_channel;
-                    std::auto_ptr<chaos::common::message::MessageRequestFuture> request_future;
+                    std::auto_ptr<RequestInfo> request;
 
-                    CURegAckPhase phase;
                     std::string cu_id;
                     std::string unit_server_addr;
                     int32_t     reg_result;

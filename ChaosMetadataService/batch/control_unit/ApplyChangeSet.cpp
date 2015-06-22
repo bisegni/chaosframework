@@ -35,11 +35,7 @@ DEFINE_MDS_COMAMND_ALIAS(ApplyChangeSet)
 ApplyChangeSet::ApplyChangeSet():
 MDSBatchCommand(),
 retry_number(0),
-message_channel(NULL),
-cu_id(),
-cu_rpc_addr(),
-cu_rpc_dom(),
-phase(IDSTPhase_SEND_MESSAGE){
+cu_id(){
     //set default scheduler delay 1 second
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
     //set the timeout to 10 seconds
@@ -47,12 +43,7 @@ phase(IDSTPhase_SEND_MESSAGE){
     
 }
 
-ApplyChangeSet::~ApplyChangeSet() {
-    if(message_channel) {
-        CU_ACS_BC_INFO << "Release message channel";
-        releaseChannel(message_channel);
-    }
-}
+ApplyChangeSet::~ApplyChangeSet() {}
 
 // inherited method
 void ApplyChangeSet::setHandler(CDataWrapper *data) {
@@ -60,16 +51,11 @@ void ApplyChangeSet::setHandler(CDataWrapper *data) {
     
     //set cu id to the batch command datapack
     cu_id = data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    cu_rpc_addr = data->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
-    cu_rpc_dom = data->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN);
     
-    message_channel = getNewMessageChannel();
-    if(!message_channel) {
-        CU_ACS_BC_ERR << "No Message channel";
-        throw chaos::CException(-5, "No Message channel", __PRETTY_FUNCTION__);
-    }
     //set the phase to send message
-    phase = IDSTPhase_SEND_MESSAGE;
+    request = createRequest(data->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR),
+                            data->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN),
+                            ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET);
     message = data;
 }
 
@@ -81,47 +67,28 @@ void ApplyChangeSet::acquireHandler() {
 // inherited method
 void ApplyChangeSet::ccHandler() {
     MDSBatchCommand::ccHandler();
-    retry_number++;
-    switch(phase) {
-        case IDSTPhase_SEND_MESSAGE: {
-        
-            //send message for action
-            request_future = message_channel->sendRequestWithFuture(cu_rpc_addr,
-                                                                    cu_rpc_dom,
-                                                                    ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
-                                                                    message);
+    switch(request->phase) {
+        case MESSAGE_PHASE_UNSENT: {
             
-            CU_ACS_BC_DBG << "Call "<<ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET<<" action of to control unit:" << cu_id << " on rpc[" << cu_rpc_addr <<":"<<cu_rpc_dom<<"]";
-            phase = IDSTPhase_WAIT_ANSWER;
-        }
-        case IDSTPhase_WAIT_ANSWER: {
-            CU_ACS_BC_DBG << "Waith for "<<ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET<<" action ack from the control unit:" << cu_id << " on rpc[" << cu_rpc_addr <<":"<<cu_rpc_dom<<"]";
-            if(!request_future.get()) {
-                CU_ACS_BC_ERR << "request with no future";
-                throw chaos::CException(-1, "request with no future", __PRETTY_FUNCTION__);
-            }
-            if(request_future->wait(1000)) {
-                //we have hd answer
-                if(request_future->getError()) {
-                    CU_ACS_BC_ERR << "We have had answer with error"
-                    << request_future->getError() << " \n and message "
-                    << request_future->getErrorMessage() << "\n on domain "
-                    << request_future->getErrorDomain();
-                } else {
-                    CU_ACS_BC_DBG << "Request send with success";
-                }
-                BC_END_RUNNIG_PROPERTY
-            }
+            //send message for action
+            sendRequest(*request,
+                        message);
             break;
         }
-    }
-    if((retry_number % 3) == 0) {
-        BC_END_RUNNIG_PROPERTY
+        case MESSAGE_PHASE_SENT: {
+            manageRequestPhase(*request);
+            break;
+        }
+            
+        case MESSAGE_PHASE_COMPLETED:
+        case MESSAGE_PHASE_TIMEOUT: {
+            BC_END_RUNNIG_PROPERTY
+            break;
+        }
     }
 }
 // inherited method
 bool ApplyChangeSet::timeoutHandler() {
     bool result = MDSBatchCommand::timeoutHandler();
-    CU_ACS_BC_DBG << " Time out reached for "<< ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET <<" action ack from the control unit:" << cu_id << " on rpc[" << cu_rpc_addr <<":"<<cu_rpc_dom<<"]";
     return result;
 }
