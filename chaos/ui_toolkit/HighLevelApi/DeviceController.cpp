@@ -401,7 +401,7 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 	}
 	
 	// set the default slow command information
-	localCommandPack.addStringValue(BatchCommandSubmissionKey::COMMAND_ALIAS_STR, commandAlias);
+	localCommandPack.addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, commandAlias);
 	localCommandPack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
 	localCommandPack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32, (uint32_t) priority);
 	
@@ -437,7 +437,7 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 		localCommandPack.appendAllElement(*slow_command_data);
 	}
 	// set the default slow command information
-	localCommandPack.addStringValue(BatchCommandSubmissionKey::COMMAND_ALIAS_STR, commandAlias);
+	localCommandPack.addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, commandAlias);
 	localCommandPack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
 	
 	if(execution_channel) localCommandPack.addInt32Value(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);

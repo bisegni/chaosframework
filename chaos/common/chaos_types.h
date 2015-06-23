@@ -23,11 +23,18 @@
 
 #include <chaos/common/batch_command/BatchCommandTypes.h>
 
+#include <boost/ptr_container/ptr_container.hpp>
+
 #include <vector>
 
 #define  CHAOS_DEFINE_VECTOR_FOR_TYPE(t, name)\
 typedef std::vector< t >                   name;\
 typedef std::vector< t >::iterator         name ## Iterator;\
 typedef std::vector< t >::const_iterator   name ## ConstIterator;\
+
+#define  CHAOS_DEFINE_PTR_VECTOR_FOR_TYPE(t, name)\
+typedef boost::ptr_vector< t >                   name;\
+typedef boost::ptr_vector< t >::iterator         name ## Iterator;\
+typedef boost::ptr_vector< t >::const_iterator   name ## ConstIterator;\
 
 #endif

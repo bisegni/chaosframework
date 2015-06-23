@@ -30,17 +30,15 @@ namespace chaos {
             namespace node {
                 
                 //!Bbatch command for submit batch command within a node
-                class RegistrationAckBatchCommand:
+                class SubmitBatchCommand:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
-                    
+                    //request for the command submission
                     std::auto_ptr<RequestInfo> request;
-                    
-                    CDataWrapper *message_data;
-
+                    std::auto_ptr<CDataWrapper> command_instance;
                 public:
-                    RegistrationAckBatchCommand();
-                    ~RegistrationAckBatchCommand();
+                    SubmitBatchCommand();
+                    ~SubmitBatchCommand();
                 protected:
                     // inherited method
                     void setHandler(chaos_data::CDataWrapper *data);

@@ -33,7 +33,7 @@ using namespace chaos::metadata_service::api::node;
 
 void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *command_description,
                                                                 CDataWrapper *command_template,
-                                                                std::vector<std::string> *attribute_requested_by_template) throw(chaos::CException) {
+                                                                std::vector<AttributeRequested> *attribute_requested_by_template) throw(chaos::CException) {
     //check ifthe command has parameter
     CHECK_CDW_THROW_AND_LOG(command_description, N_CCU_ERR, -1, "Command description is mandatory")
     CHECK_CDW_THROW_AND_LOG(command_template, N_CCU_ERR, -1, "Command template is mandatory")
@@ -87,7 +87,7 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *co
         //if the attribute is null meaning that it need to be forwarded
         if(command_template->isNullValue(attribute_name)) {
             if(attribute_requested_by_template)
-                attribute_requested_by_template->push_back(attribute_name);
+                attribute_requested_by_template->push_back(make_pair(attribute_name, parameter_description->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE)));
             continue;
         }
         //reset bool check variable
@@ -123,11 +123,15 @@ void CommandCommonUtility::validateCommandTemplateToDescription(CDataWrapper *co
 }
 
 //! create an instance by submission, command and temaplte description
-boost::shared_ptr<CDataWrapper> CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(CDataWrapper *command_submission,
-                                                                                                              CDataWrapper *command_description,
-                                                                                                              CDataWrapper *command_template_description) throw(chaos::CException) {
-    boost::shared_ptr<CDataWrapper> result(new CDataWrapper());
-    std::vector<std::string> attribute_paramterized;
+std::auto_ptr<chaos::common::data::CDataWrapper> CommandCommonUtility::createCommandInstanceByTemplateadnSubmissionDescription(const std::string& node_uid,
+                                                                                                                               CDataWrapper *command_submission,
+                                                                                                                               CDataWrapper *command_description,
+                                                                                                                               CDataWrapper *command_template_description) throw(chaos::CException) {
+    bool is_correct_type = false;
+    std::auto_ptr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
+    result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
+    
+    std::vector<AttributeRequested> attribute_paramterized;
     //validate input parameter
     CHECK_CDW_THROW_AND_LOG(command_submission, N_CCU_ERR, -1, "The command submission is mandatory")
     
@@ -142,15 +146,48 @@ boost::shared_ptr<CDataWrapper> CommandCommonUtility::createCommandInstanceByTem
     command_template_description->copyAllTo(*result);
     
     //try to find requested paramter whitin the command submission
-    for(std::vector<std::string>::iterator it = attribute_paramterized.begin();
+    for(std::vector<AttributeRequested>::iterator it = attribute_paramterized.begin();
         it != attribute_paramterized.end();
         it++) {
-        if(!command_submission->copyKeyTo(*it, *result)) {
+        if(!command_submission->hasKey(it->first)) {
+            LOG_AND_TROW_FORMATTED(N_CCU_ERR, -2,
+                                   "The attribute '%1%' is mandatory by the template '%2%'",
+                                   %it->first%template_name)
+        }
+        //check type
+        switch (it->second) {
+            case chaos::DataType::TYPE_BOOLEAN:
+                is_correct_type = command_submission->isBoolValue(it->first);
+                break;
+            case chaos::DataType::TYPE_INT32:
+                is_correct_type = command_submission->isInt32Value(it->first);
+                break;
+            case chaos::DataType::TYPE_INT64:
+                is_correct_type = command_submission->isInt64Value(it->first);
+                break;
+            case chaos::DataType::TYPE_DOUBLE:
+                is_correct_type = command_submission->isDoubleValue(it->first);
+                break;
+            case chaos::DataType::TYPE_STRING:
+                is_correct_type = command_submission->isStringValue(it->first);
+                break;
+            case chaos::DataType::TYPE_BYTEARRAY:
+                is_correct_type = command_submission->isBinaryValue(it->first);
+                break;
+        }
+        
+        if(!is_correct_type){
+            LOG_AND_TROW_FORMATTED(N_CCU_ERR, -3,
+                                   "The attribute '%1%' is not of the right type",
+                                   %it->first)
+        }
+        
+        if(!command_submission->copyKeyTo(it->first, *result)) {
             // if we are here meaning that a requested attribute within the tempalte is not present
             // into the submission object
-            LOG_AND_TROW_FORMATTED(N_CCU_ERR, -2,
+            LOG_AND_TROW_FORMATTED(N_CCU_ERR, -3,
                                    "The attribute '%1%' is needde by the template '%2%'",
-                                   %*it%template_name)
+                                   %it->first%template_name)
         }
     }
     return result;

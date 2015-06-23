@@ -20,6 +20,7 @@
 #include "MDSBatchExecutor.h"
 #include "unit_server/unit_server_batch.h"
 #include "control_unit/control_unit_batch.h"
+#include "node/node_batch.h"
 
 using namespace chaos::metadata_service::batch;
 #define BCE_INFO INFO_LOG(BatchCommandExecutor)
@@ -36,6 +37,9 @@ network_broker(_network_broker),
 message_channel_for_job(NULL),
 multiaddress_message_channel_for_job(NULL),
 abstract_persistance_driver(NULL){
+        //node server command
+    installCommand(node::SubmitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::SubmitBatchCommand));
+    
         //unit server command
     installCommand(unit_server::UnitServerAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::UnitServerAckCommand));
     installCommand(unit_server::LoadUnloadControlUnit::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::LoadUnloadControlUnit));
@@ -105,6 +109,7 @@ chaos::common::batch_command::BatchCommand *MDSBatchExecutor::instanceCommandInf
         //allocoate new message channel
         result->message_channel = message_channel_for_job;
         result->multiaddress_message_channel = multiaddress_message_channel_for_job;
+        result->abstract_persistance_driver = abstract_persistance_driver;
     }
     return result;
 }

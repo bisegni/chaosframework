@@ -963,6 +963,7 @@
 		3255E72315EA86F1005C96CA /* DefaultEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultEventDispatcher.cpp; sourceTree = "<group>"; };
 		3255E72515EA87D1005C96CA /* AbstractEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEventDispatcher.cpp; sourceTree = "<group>"; };
 		3255E72615EA87D1005C96CA /* AbstractEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEventDispatcher.h; sourceTree = "<group>"; };
+		32568C851B39A5180006988C /* node_batch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = node_batch.h; sourceTree = "<group>"; };
 		3258AEE81935C34000A66D44 /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
 		3258AEE91935C34000A66D44 /* URL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URL.h; sourceTree = "<group>"; };
 		3258AF001935EE4D00A66D44 /* EchitectureTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EchitectureTests; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2802,6 +2803,7 @@
 			children = (
 				32761A3E1B37F202006C8719 /* SubmitBatchCommand.cpp */,
 				32761A3F1B37F202006C8719 /* SubmitBatchCommand.h */,
+				32568C851B39A5180006988C /* node_batch.h */,
 			);
 			path = node;
 			sourceTree = "<group>";

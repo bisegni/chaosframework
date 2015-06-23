@@ -43,7 +43,7 @@ using namespace chaos::common::batch_command;
 
 BatchCommandExecutor::BatchCommandExecutor(const std::string& _executorID):
 executorID(_executorID),
-default_command_sandbox_instance(1),
+default_command_sandbox_instance(COMMAND_BASE_SANDOXX_ID),
 command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE),
 capper_work(false) {
     // this need to be removed from here need to be implemented the def undef services
@@ -408,7 +408,7 @@ void BatchCommandExecutor::setDefaultCommand(const string& command_alias, unsign
     }
     
     default_command_alias = command_alias;
-    default_command_sandbox_instance = sandbox_instance<1?1:sandbox_instance;
+    default_command_sandbox_instance = sandbox_instance;
 	BCELAPP_ << "Install the default command with alias: " << default_command_alias;	
 }
 
@@ -453,7 +453,7 @@ void BatchCommandExecutor::getAllCommandAlias(std::vector<std::string>& commands
 
 //! Check if the waithing command can be installed
 BatchCommand *BatchCommandExecutor::instanceCommandInfo(CDataWrapper *submissionInfo) {
-    std::string command_alias = submissionInfo->getStringValue(BatchCommandSubmissionKey::COMMAND_ALIAS_STR);
+    std::string command_alias = submissionInfo->getStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS);
     DEBUG_CODE(BCELDBG_ << "Instancing command " << command_alias;)
     BatchCommand *instance = instanceCommandInfo(command_alias);
     if(instance) {
@@ -512,7 +512,7 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
                                          chaos_data::CDataWrapper *command_data,
                                          uint64_t& command_id)  throw (CException) {
     //add command alias to the command data
-    command_data->addStringValue(BatchCommandSubmissionKey::COMMAND_ALIAS_STR, batch_command_alias);
+    command_data->addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, batch_command_alias);
     
     //sybmit the command
     submitCommand(command_data, command_id);
@@ -543,7 +543,7 @@ void BatchCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint6
     
 	BCELDBG_ << "Submit new command " << commandDescription->getJSONString();
     
-	DEBUG_CODE(BCELDBG_ << commandDescription->getStringValue(BatchCommandSubmissionKey::COMMAND_ALIAS_STR);)
+	DEBUG_CODE(BCELDBG_ << commandDescription->getStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS);)
 	
 	//add unique id for command
 	command_id = ++command_sequence_id;

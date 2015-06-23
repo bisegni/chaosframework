@@ -48,7 +48,7 @@
 
 #define COMMAND_QUEUE_DEFAULT_LENGTH		1024
 #define COMMAND_STATE_QUEUE_DEFAULT_SIZE	50
-#define COMMAND_BASE_SANDOXX_ID             1
+#define COMMAND_BASE_SANDOXX_ID             0
 
 namespace chaos_data = chaos::common::data;
 namespace boost_cont = boost::container;
@@ -217,7 +217,7 @@ namespace chaos {
                  \param alias is the name of the command to use as default (started at startup)
                  \param sandbox_instance is the 1-based index of the sandbox where install the command
                  */
-                void setDefaultCommand(const string& alias, unsigned int sandbox_instance = 1);
+                void setDefaultCommand(const string& alias, unsigned int sandbox_instance = COMMAND_BASE_SANDOXX_ID);
 				
                 /*!
                  \ingroup API_Slow_Control

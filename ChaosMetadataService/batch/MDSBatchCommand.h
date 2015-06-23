@@ -124,7 +124,10 @@ namespace chaos{
                 void manageRequestPhase(RequestInfo& request_info) throw (chaos::CException);
                 
                 template<typename T>
-                T* getDataAccess();
+                T* getDataAccess() {
+                    CHAOS_ASSERT(abstract_persistance_driver)
+                    return abstract_persistance_driver->getDataAccess<T>();
+                }
             };
             
         }

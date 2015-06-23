@@ -23,10 +23,15 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 
+#include <utility>
+
 namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
+                //wrap attribute name and type in a standard pair
+                typedef std::pair<std::string, int> AttributeRequested;
+                
                 //! utility class to share check login across the api
                 class CommandCommonUtility {
                 public:
@@ -39,12 +44,13 @@ namespace chaos {
                      */
                     static void validateCommandTemplateToDescription(chaos::common::data::CDataWrapper *command_description,
                                                                      chaos::common::data::CDataWrapper *command_template_description,
-                                                                     std::vector<std::string> *attribute_requested_by_template) throw(chaos::CException);
+                                                                     std::vector<AttributeRequested> *attribute_requested_by_template) throw(chaos::CException);
                     
                     //! create an instance by submission, command and temaplte description
-                    static boost::shared_ptr<chaos::common::data::CDataWrapper> createCommandInstanceByTemplateadnSubmissionDescription(chaos::common::data::CDataWrapper *command_submission,
-                                                                                                                                        chaos::common::data::CDataWrapper *command_description,
-                                                                                                                                        chaos::common::data::CDataWrapper *command_template_description) throw(chaos::CException);
+                    static std::auto_ptr<chaos::common::data::CDataWrapper> createCommandInstanceByTemplateadnSubmissionDescription(const std::string& node_uid,
+                                                                                                                                    chaos::common::data::CDataWrapper *command_submission,
+                                                                                                                                    chaos::common::data::CDataWrapper *command_description,
+                                                                                                                                    chaos::common::data::CDataWrapper *command_template_description) throw(chaos::CException);
                 };
             }
         }

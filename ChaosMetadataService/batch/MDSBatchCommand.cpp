@@ -132,9 +132,3 @@ void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info) throw (chaos
             break;
     }
 }
-
-template<typename T>
-T* MDSBatchCommand::getDataAccess() {
-    CHAOS_ASSERT(abstract_persistance_driver)
-    return abstract_persistance_driver->getDataAccess<T>();
-}

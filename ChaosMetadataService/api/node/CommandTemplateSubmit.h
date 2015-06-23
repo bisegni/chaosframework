@@ -23,6 +23,8 @@
 
 #include "../AbstractApi.h"
 
+#include <chaos/common/chaos_types.h>
+
 #include <map>
 
 namespace chaos {
@@ -30,12 +32,14 @@ namespace chaos {
         namespace api {
             namespace node {
                 
+                CHAOS_DEFINE_PTR_VECTOR_FOR_TYPE(chaos::common::data::CDataWrapper, CommandInstanceList)
+                
                 typedef pair<std::string, std::string> TemplateKey;
                 
                 class CommandTemplateSubmit:
                 public AbstractApi {
                     //list of command instance
-                    std::vector<boost::shared_ptr<CDataWrapper> > comamnd_instance_list;
+                    CommandInstanceList command_instance_list;
                     //cache the command description for reuse
                     std::map<std::string, boost::shared_ptr<CDataWrapper> > command_description_cache;
                     //cache the template description for reuse

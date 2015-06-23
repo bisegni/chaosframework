@@ -31,8 +31,6 @@ namespace chaos {
             namespace BatchCommandSubmissionKey {
                 //! @The key represent the postfix to the CU instance to identify his slow command executor {not used for now}.
                 static const char * const   COMMAND_EXECUTOR_POSTFIX_DOMAIN		= "_scexec";
-                //! @The key represent the alis of the comand to instantiate, the value is a string
-                static const char * const   COMMAND_ALIAS_STR                   = "cmd_alias";
                 //! @The key represent the execution channel where submit the command, if not set, the first channel is used (1), the value is an uint32 [1-n]
                 static const char * const   COMMAND_EXECUTION_CHANNEL           = "cmd_exec_channel";
                 //! @The key represent the option to the command submission, the value is an uint32

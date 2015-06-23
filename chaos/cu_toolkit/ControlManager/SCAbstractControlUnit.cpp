@@ -138,7 +138,6 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
     
     //now we can call funciton for custom definition of the shared variable
     SCACU_LAPP_ << "Setting up custom shared variable for device " << DatasetDB::getDeviceID();
-    
 }
 
 /*
@@ -244,7 +243,7 @@ void SCAbstractControlUnit::submitSlowCommand(CDataWrapper *slow_command_pack, u
 CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
     uint64_t command_id =0;
     CDataWrapper *result = NULL;
-    if(datasetAttributeValues->hasKey(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR)) {
+    if(datasetAttributeValues->hasKey(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS)) {
         CHAOS_ASSERT(slow_command_executor)
         // in slow control cu the CDataWrapper instance received from rpc is internally managed
         //so we need to detach it
@@ -253,7 +252,7 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
         detachParam = true;
         //in this event the value is the alias of the command
         //publish command value
-        std::string command_alias = datasetAttributeValues->getStringValue(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR);
+        std::string command_alias = datasetAttributeValues->getStringValue(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS);
         AttributeValue *attr_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT, command_alias);
         if(attr_value) {
             std::string cmd_param = datasetAttributeValues->getJSONString();
@@ -269,11 +268,8 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
         //construct the result
         result = new CDataWrapper();
         result->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
-    } else {
-        //call base implementation
-        result = AbstractControlUnit::setDatasetAttribute(datasetAttributeValues, detachParam);
     }
-    return result;
+    return AbstractControlUnit::setDatasetAttribute(datasetAttributeValues, detachParam);
 }
 
 /*
