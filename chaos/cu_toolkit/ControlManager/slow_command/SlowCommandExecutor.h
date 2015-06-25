@@ -109,7 +109,8 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
                     ~SlowCommandExecutor();
                     
                     //allocate a new command
-                    chaos_batch::BatchCommand *instanceCommandInfo(const std::string& commandAlias);
+                    chaos_batch::BatchCommand *instanceCommandInfo(const std::string& command_alias,
+                                                                   chaos::common::data::CDataWrapper *command_info);
 					
 					//overlodaed command event handler
 					void handleCommandEvent(uint64_t command_seq,

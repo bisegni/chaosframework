@@ -63,7 +63,7 @@ namespace chaos {
 				// Startable Service method
 				void deinit() throw(CException);
 				
-                //!redefine private for protection
+                //redefine private for protection
                 AbstractSharedDomainCache *_getAttributeCache();
                 
 				/*
@@ -96,7 +96,8 @@ namespace chaos {
 				 the alias and the parameter (for engine e for execution) of the command.
 				 \param command_id is the filed where is returned the unique id associated to the submitted command
 				 */
-				void submitSlowCommand(CDataWrapper *slow_command_pack,
+				void submitSlowCommand(const std::string command_alias,
+                                       CDataWrapper *slow_command_pack,
 									   uint64_t& command_id);
 			public:
 				

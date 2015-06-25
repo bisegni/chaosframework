@@ -141,15 +141,8 @@ namespace chaos {
                  to the alias contained into the submissionInfo param.
                  \param the submission param of the command
                  */
-                virtual BatchCommand *instanceCommandInfo(chaos_data::CDataWrapper *submissionInfo);
-                
-                //! Check if the waithing command can be installed
-                /*!
-                 peform the isntantiation of the command associated to the alias in input, if not preset
-                 an exception are fired
-                 \param commandAlias the alias of the command
-                 */
-                virtual BatchCommand *instanceCommandInfo(const std::string& commandAlias);
+                virtual BatchCommand *instanceCommandInfo(const std::string& command_alias,
+                                                          chaos_data::CDataWrapper *submissionInfo);
 
                 
                 //! Get the statistic for the current running command rpc action
@@ -251,14 +244,6 @@ namespace chaos {
 				 registered commands
 				 */
 				void getAllCommandAlias(std::vector<std::string>& commands_alias);
-				
-                //! Submit a batch command
-                /*!
-                 The information for the command are contained into the DataWrapper data serialization,
-                 they are put into the commandSubmittedQueue for to wait to be executed.
-                 */
-                void submitCommand(chaos_data::CDataWrapper *commandDescription,
-                                   uint64_t& command_id)  throw (CException);
                 
                 //! Submit a batch command
                 /*!

@@ -236,9 +236,13 @@ void SCAbstractControlUnit::completeInputAttribute() {
     }
 }
 
-void SCAbstractControlUnit::submitSlowCommand(CDataWrapper *slow_command_pack, uint64_t& command_id) {
+void SCAbstractControlUnit::submitSlowCommand(const std::string command_alias,
+                                              CDataWrapper *slow_command_pack,
+                                              uint64_t& command_id) {
     CHAOS_ASSERT(slow_command_executor)
-    slow_command_executor->submitCommand(slow_command_pack, command_id);
+    slow_command_executor->submitCommand(command_alias,
+                                         slow_command_pack,
+                                         command_id);
 }
 
 /*
@@ -249,14 +253,16 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
     CDataWrapper *result = NULL;
     if(datasetAttributeValues->hasKey(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS)) {
         CHAOS_ASSERT(slow_command_executor)
+        std::string command_alias = datasetAttributeValues->getStringValue(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS);
         // in slow control cu the CDataWrapper instance received from rpc is internally managed
         //so we need to detach it
         // submit the detacched command to slow controll subsystem
-        slow_command_executor->submitCommand(datasetAttributeValues, command_id);
+        slow_command_executor->submitCommand(command_alias,
+                                             datasetAttributeValues,
+                                             command_id);
         detachParam = true;
         //in this event the value is the alias of the command
         //publish command value
-        std::string command_alias = datasetAttributeValues->getStringValue(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS);
         AttributeValue *attr_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT, command_alias);
         if(attr_value) {
             std::string cmd_param = datasetAttributeValues->getJSONString();

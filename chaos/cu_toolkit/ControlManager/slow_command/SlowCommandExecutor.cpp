@@ -127,9 +127,10 @@ void SlowCommandExecutor::installCommand(boost::shared_ptr<BatchCommandDescripti
 }
 
 //! Check if the waithing command can be installed
-BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& commandAlias) {
+BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& command_alias, CDataWrapper *command_info) {
 	//install command into the batch command executor root class
-	SlowCommand *result = (SlowCommand*) BatchCommandExecutor::instanceCommandInfo(commandAlias);
+	SlowCommand *result = (SlowCommand*) BatchCommandExecutor::instanceCommandInfo(command_alias,
+                                                                                   command_info);
 	
 	//cusotmize slow command sublcass
 	if(result) {

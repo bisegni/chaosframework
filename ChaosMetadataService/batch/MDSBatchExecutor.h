@@ -51,7 +51,8 @@ namespace chaos{
                 chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
             protected:
                 //allocate a new command
-                common::batch_command::BatchCommand *instanceCommandInfo(const std::string& command_alias);
+                common::batch_command::BatchCommand *instanceCommandInfo(const std::string& command_alias,
+                                                                         chaos::common::data::CDataWrapper *command_info);
                 
                 //overlodaed command event handler
                 void handleCommandEvent(uint64_t command_seq,

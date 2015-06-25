@@ -100,9 +100,11 @@ void MDSBatchExecutor::deinit() throw(chaos::CException) {
 }
 
 //allocate a new command
-chaos::common::batch_command::BatchCommand *MDSBatchExecutor::instanceCommandInfo(const std::string& command_alias) {
+chaos::common::batch_command::BatchCommand *MDSBatchExecutor::instanceCommandInfo(const std::string& command_alias,
+                                                                                  CDataWrapper *command_info) {
     //install command into the batch command executor root class
-    MDSBatchCommand *result = (MDSBatchCommand*) BatchCommandExecutor::instanceCommandInfo(command_alias);
+    MDSBatchCommand *result = (MDSBatchCommand*) BatchCommandExecutor::instanceCommandInfo(command_alias,
+                                                                                           command_info);
     
     //customize the newly create batch command
     if(result) {
