@@ -45,13 +45,13 @@ namespace chaos {
 				friend class ControlManager;
 				friend class DomainActionsScheduler;
 				
-				uint64_t **run_acquisition_ts_handle;
+				//uint64_t **run_acquisition_ts_handle;
 				AttributeValue *hb_cached_value;
 				uint64_t last_hearbeat_time;
 				uint64_t schedule_dalay;
 				bool scheduler_run;
 				boost::scoped_ptr<boost::thread>  scheduler_thread;
-				
+                
 				/*!
 				 Define the control unit DataSet and Action into
 				 a CDataWrapper
@@ -69,6 +69,8 @@ namespace chaos {
 				
 				//! deinit rt control unit
 				void deinit() throw(CException);
+                //!redefine private for protection
+                AbstractSharedDomainCache* _getAttributeCache();
 			protected:
 				
 				//! schdule a run of the rt control unit

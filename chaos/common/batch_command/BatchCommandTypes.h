@@ -47,7 +47,7 @@ namespace chaos {
                     EVT_PAUSED=3,			/**< The command is paused */
                     EVT_COMPLETED=4,		/**< The command has completed is work successfully */
                     EVT_FAULT=5,			/**< The command has fault */
-                    EVT_KILLED=6			/**< The event has been killed */
+                    EVT_KILLED=6			/**< The command has been killed */
                 } BatchCommandEventType;
             }
 
@@ -59,8 +59,9 @@ namespace chaos {
 				 * \brief Describe the event that the sand box can forward for notify the current state of a command
 				 */
 				typedef enum BatchSandboxEventType {
-					EVT_RUN			= 0,		/**< The sandobx has stepped [no data]*/
-					EVT_HEART_BEAT	= 1			/**< The sandobx is hearbeating [uint64_t]*/
+                    EVT_RUN_START	= 0,		/**< The sandbox start a new step [uint64_t]*/
+					EVT_RUN_END		= 1,		/**< The sandobx end a step [uint64_t]*/
+                    EVT_UPDATE_RUN_DELAY = 2    /**< The sandobx run step delay has been udpated [uint64_t]*/
 				} BatchSandboxEventType;
 			}
 
@@ -116,7 +117,6 @@ namespace chaos {
             typedef struct {
                 uint64_t lastCmdStepStart;	/**< Represent the time collected at the start of the scehduler step (before acquisition phase)[microseconds] */
                 uint64_t lastCmdStepTime;	/**< Represent the time collected at the end of the scehduler step (befor the sleep or pause of the thread)[microseconds] */
-				uint64_t lastHBTime;		/**< is the last heartbeat time [microseconds] */
 			} SandboxStat;
             
             //! Namespace for the features of the slow command

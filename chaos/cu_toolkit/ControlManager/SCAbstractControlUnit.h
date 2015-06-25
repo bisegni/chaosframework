@@ -63,6 +63,9 @@ namespace chaos {
 				// Startable Service method
 				void deinit() throw(CException);
 				
+                //!redefine private for protection
+                AbstractSharedDomainCache *_getAttributeCache();
+                
 				/*
 				 Receive the event for set the dataset input element, this virtual method
 				 is empty because can be used by controlunit implementation
@@ -79,7 +82,7 @@ namespace chaos {
                 
                 //! called whr the infrastructure need to know how is composed the control unit
                 void _defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException);
-				
+                
 				//! system dataset configuraiton overload
 				void initSystemAttributeOnSharedAttributeCache();
 

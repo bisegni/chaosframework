@@ -92,14 +92,8 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
 					AttributeSharedCacheWrapper * attribute_cache;
 					
 					AbstractControlUnit *control_unit_instance;
-					
-					//fast hearb beat cache access
-					AttributeValue *ts_hb_cache;
 					//fast unit last id cache value
 					AttributeValue *last_ru_id_cache;
-					//fast unit last acq ts cache value
-					AttributeValue *last_acq_ts_cache;
-					
 					//fast cache error variable accessor
 					AttributeValue *last_error_code;
 					AttributeValue *last_error_message;

@@ -546,32 +546,26 @@ void BatchCommandSandbox::runCommand() {
 		if(currentExecutingCommand) {
 			curr_executing_impl = currentExecutingCommand->element->cmdImpl;
 			stat.lastCmdStepStart = TimingUtil::getTimeStamp();
-			
+            if(event_handler) {
+                //signal the step of the run
+                event_handler->handleSandboxEvent(identification,
+                                                  BatchSandboxEventType::EVT_RUN_START,
+                                                  &stat.lastCmdStepStart, sizeof(uint64_t));
+            }
 			// call the acquire phase
 			acquireHandlerFunctor();
 			
 			//call the correlation and commit phase();
 			correlationHandlerFunctor();
 			
-			if(event_handler) {
-				//signal the step of the run
-				event_handler->handleSandboxEvent(identification,
-												  BatchSandboxEventType::EVT_RUN,
-												  &stat.lastCmdStepStart, sizeof(uint64_t));
-			}
-			
 			//compute step duration
 			stat.lastCmdStepTime = stat.lastCmdStepStart - TimingUtil::getTimeStamp();
-			
-			if(stat.lastCmdStepStart > stat.lastHBTime + 1000) {
-				stat.lastHBTime = stat.lastCmdStepStart;
-				//every seconds fire an hearbeat event for this sandbox
-				if(event_handler) {
-					event_handler->handleSandboxEvent(identification,
-													  BatchSandboxEventType::EVT_HEART_BEAT,
-													  &stat.lastHBTime, sizeof(uint64_t));
-				}
-			}
+            if(event_handler) {
+                //signal the step of the run
+                event_handler->handleSandboxEvent(identification,
+                                                  BatchSandboxEventType::EVT_RUN_END,
+                                                  &stat.lastCmdStepTime, sizeof(uint64_t));
+            }
 			
 			//fire post command step
 			curr_executing_impl->commandPost();
@@ -686,8 +680,13 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
 		currentExecutingCommand = cmd_to_install;
 		
 		//fire the running event
-		if(event_handler)event_handler->handleCommandEvent(tmp_impl->unique_id, BatchCommandEventType::EVT_RUNNING, NULL);
-		
+        if(event_handler) {
+            event_handler->handleCommandEvent(tmp_impl->unique_id, BatchCommandEventType::EVT_RUNNING, NULL);
+            //signal the step of the run
+            event_handler->handleSandboxEvent(identification,
+                                              BatchSandboxEventType::EVT_UPDATE_RUN_DELAY,
+                                              &currentExecutingCommand->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay, sizeof(uint64_t));
+        }
 	} else {
 		currentExecutingCommand = NULL;
 		acquireHandlerFunctor.cmdInstance = NULL;
@@ -739,4 +738,26 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
 	lock_checker.unlock();
 	waithForNextCheck.unlock();
 	return true;
+}
+
+//! Command features modification rpc action
+void BatchCommandSandbox::setCommandFeatures(features::Features& features) throw (CException) {
+    uint64_t thread_step_delay = 0;
+    //lock the scheduler
+    boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
+    
+    //recheck current command
+    if(!currentExecutingCommand) return;
+    
+    currentExecutingCommand->element->cmdImpl->commandFeatures.featuresFlag |= features.featuresFlag;
+    currentExecutingCommand->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = (thread_step_delay = features.featureSchedulerStepsDelay);
+
+    threadSchedulerPauseCondition.unlock();
+    
+    if(event_handler) {
+        //signal the step of the run
+        event_handler->handleSandboxEvent(identification,
+                                          BatchSandboxEventType::EVT_UPDATE_RUN_DELAY,
+                                          &thread_step_delay , sizeof(uint64_t));
+    }
 }

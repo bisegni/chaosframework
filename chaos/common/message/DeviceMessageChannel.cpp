@@ -162,10 +162,9 @@ int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy, uint32_t mil
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
-    message_data.addInt64Value(
-                               ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY, scheduledDealy);
+    message_data.addInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY, scheduledDealy);
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
-                                              "updateConfiguration",
+                                              NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
                                               &message_data,
                                               millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(result, err)

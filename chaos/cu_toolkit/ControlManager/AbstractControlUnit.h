@@ -71,6 +71,9 @@ namespace chaos{
 			
 			class ControlManager;
 			class WorkUnitManagement;
+            namespace slow_command {
+                class SlowCommandExecutor;
+            }
             //!  Base class for control unit !CHAOS node
 			/*!
 			 This is the abstraction of the contorl unit node of CHAOS. This class extends DeclareAction
@@ -88,6 +91,7 @@ namespace chaos{
 				friend class DomainActionsScheduler;
 				friend class SCAbstractControlUnit;
 				friend class RTAbstractControlUnit;
+                friend class slow_command::SlowCommandExecutor;
 			public:
 				//! definition of the type for the driver list
 				typedef std::vector<DrvRequestInfo>				ControlUnitDriverList;
@@ -118,10 +122,13 @@ namespace chaos{
 				
 				//! the wrapper for the user to isolate the shared cache
 				AttributeSharedCacheWrapper *attribute_shared_cache_wrapper;
-				
-				//! fast access for acquisition timestamp
-				AttributeValue *timestamp_acq_cached_value;
-				
+                
+                //! fast access for acquisition timestamp
+                AttributeValue *timestamp_acq_cached_value;
+                
+                //! fast access for thread scheduledaly cached value
+                AttributeValue *thread_schedule_daly_cached_value;
+                
 				/*!
 				 Add a new KeyDataStorage for a specific key
 				 */
@@ -201,7 +208,7 @@ namespace chaos{
 				//  It's is the dynamically assigned instance of the CU. it will be used
 				// as domain for the rpc action.
 				string control_unit_instance;
-				
+                
 				//! Momentary driver for push data into the central memory
 				data_manager::KeyDataStorage*  key_data_storage;
 				
@@ -211,6 +218,9 @@ namespace chaos{
 				std::vector<AttributeValue*> cache_custom_attribute_vector;
 				std::vector<AttributeValue*> cache_system_attribute_vector;
 
+                //! ofr security reason subclass needs to modifier the access to this method(overloading it and keep private)
+                virtual AbstractSharedDomainCache *_getAttributeCache();
+                
 				//! initialize system attribute
 				virtual void initSystemAttributeOnSharedAttributeCache();
 				
@@ -247,7 +257,12 @@ namespace chaos{
 				 CU type: string type associated with the key @CUDefinitionKey::CS_CM_CU_TYPE
 				 */
 				CDataWrapper* _getInfo(CDataWrapper*, bool& detachParam) throw(CException);
-				
+                
+                //! update the timestamp attribute of the output datapack
+                void _updateAcquistionTimestamp(uint64_t alternative_ts = 0);
+                
+                void _updateRunScheduleDelay(uint64_t new_scehdule_delay);
+                
                 //! Abstract Method that need to be used by the sublcass to define the dataset
 				/*!
 				 Subclass, in this method can call the api to create the dataset, after this method
@@ -401,7 +416,7 @@ namespace chaos{
 				const string& getCUParam();
 				
 				//push output dataset
-				virtual void pushOutputDataset();
+                virtual void pushOutputDataset(bool ts_already_set = false);
 				
 				//push system dataset
 				virtual void pushInputDataset();

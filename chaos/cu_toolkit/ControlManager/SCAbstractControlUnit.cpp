@@ -110,6 +110,10 @@ void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configur
     }
 }
 
+AbstractSharedDomainCache *SCAbstractControlUnit::_getAttributeCache() {
+    return AbstractControlUnit::_getAttributeCache();
+}
+
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
@@ -278,11 +282,16 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
 CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *updatePack, bool& detachParam) throw (CException) {
     chaos::common::data::CDataWrapper *result = AbstractControlUnit::updateConfiguration(updatePack, detachParam);
     if(updatePack->hasKey(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY)){
+        uint64_t new_schedule_daly = updatePack->getUInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
+        
         chaos_batch::features::Features features;
         std::memset(&features, 0, sizeof(chaos_batch::features::Features));
         features.featuresFlag &= chaos_batch::features::FeaturesFlagTypes::FF_LOCK_USER_MOD;
-        features.featureSchedulerStepsDelay = (uint32_t)updatePack->getUInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
+        features.featureSchedulerStepsDelay = new_schedule_daly;
         slow_command_executor->setCommandFeatures(features);
+        //update cached value
+        _updateRunScheduleDelay(new_schedule_daly);
+        pushSystemDataset();
     }
     return result;
 }

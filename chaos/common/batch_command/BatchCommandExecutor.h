@@ -172,7 +172,7 @@ namespace chaos {
                 /*!
                  Updat ethe modiable features of the running command
                  */
-                void setCommandFeatures(features::Features features) throw (CException);
+                void setCommandFeatures(features::Features& features) throw (CException);
                 
                 //! Kill current command rpc action
                 /*!

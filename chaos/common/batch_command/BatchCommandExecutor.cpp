@@ -633,29 +633,18 @@ CDataWrapper* BatchCommandExecutor::setCommandFeatures(CDataWrapper *params, boo
 /*!
  Updat ethe modiable features of the running command
  */
-void BatchCommandExecutor::setCommandFeatures(features::Features features) throw (CException) {
+void BatchCommandExecutor::setCommandFeatures(features::Features& features) throw (CException) {
     ReadLock       lock(sandbox_map_mutex);
     
-    BatchCommandSandbox *tmp_ptr = sandbox_map[1];
-    
-	//lock the scheduler
-	boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutextAccessCurrentCommand);
-	
-	//recheck current command
-	if(!tmp_ptr->currentExecutingCommand) return;
-
-	tmp_ptr->currentExecutingCommand->element->cmdImpl->commandFeatures.featuresFlag |= features.featuresFlag;
-	tmp_ptr->currentExecutingCommand->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = features.featureSchedulerStepsDelay;
-	//}
-    lockForCurrentCommand.unlock();
-    tmp_ptr->threadSchedulerPauseCondition.unlock();
+    BatchCommandSandbox *tmp_ptr = sandbox_map[0];
+    tmp_ptr->setCommandFeatures(features);
 }
 
 //! Kill current command rpc action
 CDataWrapper* BatchCommandExecutor::killCurrentCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
     ReadLock       lock(sandbox_map_mutex);
     
-    BatchCommandSandbox *tmp_ptr = sandbox_map[1];
+    BatchCommandSandbox *tmp_ptr = sandbox_map[0];
     
 	if(!tmp_ptr->currentExecutingCommand) return NULL;
 	BCELAPP_ << "Kill current command into the executor id: " << executorID;

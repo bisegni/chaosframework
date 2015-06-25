@@ -67,6 +67,7 @@ control_unit_param(_control_unit_param),
 attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
+thread_schedule_daly_cached_value(NULL),
 key_data_storage(NULL){
 }
 
@@ -84,6 +85,7 @@ control_unit_param(_control_unit_param),
 attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
+thread_schedule_daly_cached_value(NULL),
 key_data_storage(NULL){
     //copy array
     for (int idx = 0; idx < _control_unit_drivers.size(); idx++){
@@ -187,7 +189,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     //expose updateConfiguration Methdo to rpc
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::updateConfiguration,
-                                                     "updateConfiguration",
+                                                     NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
                                                      "Update control unit configuration");
     
     addActionDescritionInstance<AbstractControlUnit>(this,
@@ -745,12 +747,18 @@ void AbstractControlUnit::completeInputAttribute() {
     
 }
 
+AbstractSharedDomainCache *AbstractControlUnit::_getAttributeCache() {
+    return attribute_value_shared_cache;
+}
+
 void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     AttributeCache& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
     
     //add heart beat attribute
     ACULDBG_ << "Adding syste attribute on shared cache";
-    domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_HEARTBEAT, 0, DataType::TYPE_INT64);
+    //domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_HEARTBEAT, 0, DataType::TYPE_INT64);
+    domain_attribute_setting.addAttribute(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY, 0, DataType::TYPE_INT64);
+    thread_schedule_daly_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY));
     
     //add unit type
     domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_UNIT_TYPE, (uint32_t)control_unit_type.size(), DataType::TYPE_STRING);
@@ -786,6 +794,14 @@ CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam,
     //set the string representing the type of the control unit
     stateResult->addStringValue(NodeDefinitionKey::NODE_TYPE, control_unit_type);
     return stateResult;
+}
+
+void AbstractControlUnit::_updateAcquistionTimestamp(uint64_t alternative_ts) {
+    *timestamp_acq_cached_value->getValuePtr<uint64_t>() = (alternative_ts == 0?TimingUtil::getTimeStamp():alternative_ts);
+}
+
+void AbstractControlUnit::_updateRunScheduleDelay(uint64_t new_scehdule_delay) {
+    *thread_schedule_daly_cached_value->getValuePtr<uint64_t>() = new_scehdule_delay;
 }
 
 //!handler calledfor restor a control unit to a determinate point
@@ -949,7 +965,7 @@ DriverAccessor *AbstractControlUnit::getAccessoInstanceByIndex(int idx) {
 }
 
 
-void AbstractControlUnit::pushOutputDataset() {
+void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
     AttributeCache& output_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
     boost::shared_ptr<SharedCacheLockDomain> r_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_OUTPUT, false);
     r_lock->lock();
@@ -959,14 +975,23 @@ void AbstractControlUnit::pushOutputDataset() {
     
     CDataWrapper *output_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
     if(!output_attribute_dataset) return;
-    
     //write acq ts for second
-    output_attribute_dataset->addInt64Value(timestamp_acq_cached_value->name.c_str(), *timestamp_acq_cached_value->getValuePtr<int64_t>());
+    //add push timestamp
+    if(ts_already_set == false){
+        output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
+    } else {
+        AttributeValue *cached_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_OUTPUT,
+                                                                                       DataPackCommonKey::DPCK_TIMESTAMP);
+        if(cached_value) {
+            output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, *cached_value->getValuePtr<uint64_t>());
+        }
+    }
+    
     //add dataset type
     output_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT);
     //add all other output channel
     for(int idx = 0;
-        idx < cache_output_attribute_vector.size() - 1; //the device id and timestamp in added out of this list
+        idx < cache_output_attribute_vector.size()-1; //the device id and timestamp in added out of this list
         idx++) {
         //
         AttributeValue * value_set = cache_output_attribute_vector[idx];

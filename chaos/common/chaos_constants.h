@@ -315,6 +315,9 @@ namespace chaos {
         //! return the control unit information
         static const char * const ACTION_CU_GET_INFO                                = "getNodeInfo";
         
+        //! update the node property
+        static const char * const ACTION_UPDATE_PROPERTY                            = "updateProperty";
+        
     }
     /** @} */ // end of NodeDomainAndActionRPC
     
@@ -681,7 +684,7 @@ namespace chaos {
     //! Namespace for standard constant used for system attribute
     namespace DataPackSystemKey{
         //!is the ehartbeat of a data producer
-        static const char * const DP_SYS_HEARTBEAT			= "dp_sys_hp";
+        //static const char * const DP_SYS_HEARTBEAT			= "dp_sys_hp";
         
         //!is the last error message occurred into data producer
         static const char * const DP_SYS_UNIT_TYPE			= "dp_sys_unit_type";

@@ -200,6 +200,12 @@ namespace chaos{
                 void deinit() throw(chaos::CException);
                 
                 bool enqueueCommand(CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
+            public:
+                //! Command features modification rpc action
+                /*!
+                 Updat ethe modiable features of the running command
+                 */
+                void setCommandFeatures(features::Features& features) throw (CException);
             };
         }
     }

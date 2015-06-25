@@ -20,6 +20,8 @@
 
 #include <chaos/common/data/cache/AttributeCache.h>
 
+#include <boost/format.hpp>
+
 using namespace chaos::common::data::cache;
 using namespace std;
 /*---------------------------------------------------------------------------------
@@ -121,7 +123,7 @@ void AttributeCache::setValueForAttribute(VariableIndexType n,
  ---------------------------------------------------------------------------------*/
 VariableIndexType AttributeCache::getIndexForName(const std::string& name ) {
 	if(!mapAttributeNameIndex.count(name)) {
-		throw chaos::CException(-1, "No name present in Attribute setting", __PRETTY_FUNCTION__);
+        throw chaos::CException(-1, boost::str(boost::format("No %1% name present in Attribute setting")%name), __PRETTY_FUNCTION__);
 	}
 	return mapAttributeNameIndex[name];
 }
@@ -131,7 +133,7 @@ VariableIndexType AttributeCache::getIndexForName(const std::string& name ) {
  ---------------------------------------------------------------------------------*/
 AttributeValue *AttributeCache::getValueSettingForIndex(VariableIndexType index) {
 	if(!mapAttributeIndex.count(index)) {
-		throw chaos::CException(-1, "No index present in Attribute setting", __PRETTY_FUNCTION__);
+		throw chaos::CException(-1, boost::str(boost::format("No %1% index present in Attribute setting")%index), __PRETTY_FUNCTION__);
 	}
 	return mapAttributeIndex[index].get();
 }

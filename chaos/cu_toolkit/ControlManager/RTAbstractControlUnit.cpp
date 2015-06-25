@@ -19,14 +19,16 @@
  */
 
 #include <limits>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
 
+#include <boost/format.hpp>
 
 using namespace chaos;
 using namespace chaos::common::data;
-using namespace chaos::common::data::cache;
 using namespace chaos::common::utility;
+using namespace chaos::common::data::cache;
 
 using namespace chaos::cu;
 using namespace chaos::cu::control_manager;
@@ -43,7 +45,7 @@ RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _control_unit_id
 AbstractControlUnit(CUType::RTCU,
 					_control_unit_id,
 					_control_unit_param),
-schedule_dalay(1000000){
+schedule_dalay(1000000) {
 	//allocate the handler engine
 	// attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
 	
@@ -63,7 +65,7 @@ AbstractControlUnit(CUType::RTCU,
 					_control_unit_id,
 					_control_unit_param,
 					_control_unit_drivers),
-schedule_dalay(1000000){
+schedule_dalay(1000000) {
 	//allocate the handler engine
 	//attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
 	
@@ -101,6 +103,10 @@ void RTAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigura
 	}
 }
 
+AbstractSharedDomainCache *RTAbstractControlUnit::_getAttributeCache() {
+    return AbstractControlUnit::_getAttributeCache();
+}
+
 /*!
  Init the  RT Control Unit scheduling for device
  */
@@ -120,13 +126,14 @@ void RTAbstractControlUnit::init(void *initData) throw(CException) {
  Starto the  Control Unit scheduling for device
  */
 void RTAbstractControlUnit::start() throw(CException) {
+    _updateRunScheduleDelay(schedule_dalay);
 	//call parent impl
 	AbstractControlUnit::start();
 	
 	//prefetch handle for heartbeat and acuisition ts cached value
-	hb_cached_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataPackSystemKey::DP_SYS_HEARTBEAT);
-	run_acquisition_ts_handle = reinterpret_cast<uint64_t**>(&attribute_value_shared_cache->getAttributeValue(DOMAIN_OUTPUT,
-																											  DataPackCommonKey::DPCK_TIMESTAMP)->value_buffer);
+	//hb_cached_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataPackSystemKey::DP_SYS_HEARTBEAT);
+	//run_acquisition_ts_handle = reinterpret_cast<uint64_t**>(&attribute_value_shared_cache->getAttributeValue(DOMAIN_OUTPUT,
+																											  //DataPackCommonKey::DPCK_TIMESTAMP)->value_buffer);
 	
 	RTCULAPP_ << "Starting thread for device:" << DatasetDB::getDeviceID();
 	threadStartStopManagment(true);
@@ -221,12 +228,8 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
 		if(uSecdelay != schedule_dalay){
 			RTCULAPP_ << "Update schedule delay in:" << uSecdelay << " microsecond";
 			schedule_dalay = uSecdelay;
-			//send envet for the update
-			//----------------------
-			// we need to optimize and be sure that event channel
-			// is mandatory so we can left over the 'if' check
-			//----------------------
-			//if(device_event_channel) device_event_channel->notifyForScheduleUpdateWithNewValue(DatasetDB::getDeviceID(), uSecdelay);
+            _updateRunScheduleDelay(schedule_dalay);
+            pushSystemDataset();
 		}
 	}
 	return result;
@@ -236,22 +239,25 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
  Execute the scehduling for the device
  */
 void RTAbstractControlUnit::executeOnThread() {
+    uint64_t start_execution = 0;
+    uint64_t processing_time = 0;
+    int64_t time_to_sleep = 0;
+    uint64_t start_execution_stat = 0;
+    uint64_t counter = 0;
 	while(scheduler_run) {
-		//set the acquiition time stamp and update it on cache
-		if((**run_acquisition_ts_handle = TimingUtil::getTimeStamp()) > last_hearbeat_time+1000) {
-			//copy to hearbeat cached value
-			last_hearbeat_time = **run_acquisition_ts_handle;
-			hb_cached_value->setValue(&last_hearbeat_time, sizeof(uint64_t));
-			//fire system data set
-			pushSystemDataset();
-		}
-		//! exec the control unit step
+        counter++;
+        start_execution_stat += (start_execution = TimingUtil::getTimeStampInMicrosends());
+        _updateAcquistionTimestamp((uint64_t)(start_execution/1000));
+        //! exec the control unit step
 		unitRun();
 		
 		//! check if the output dataset need to be pushed
-		pushOutputDataset();
+		pushOutputDataset(true);
 		
+        time_to_sleep = schedule_dalay - ((processing_time = TimingUtil::getTimeStampInMicrosends()) - start_execution);
+        //RTCULDBG_ << boost::str(boost::format("start_execution:%1%\nprocessing_time=%2%\ntime_to_sleep=%3%")%start_execution%processing_time%time_to_sleep);
+        if(time_to_sleep<0)continue;
 		//check if we are in sequential or in threaded mode
-		boost::this_thread::sleep_for(boost::chrono::microseconds(schedule_dalay));
+        boost::this_thread::sleep_for(boost::chrono::microseconds(time_to_sleep));
 	}
 }

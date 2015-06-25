@@ -152,7 +152,7 @@ void ControlManager::init(void *initParameter) throw(CException) {
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
                                                                                    &ControlManager::updateConfiguration,
                                                                                    "commandManager",
-                                                                                   "updateConfiguration",
+                                                                                   NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
                                                                                    "Update Command Manager Configuration");
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
                                                                                    &ControlManager::workUnitRegistrationACK,
