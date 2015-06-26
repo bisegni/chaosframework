@@ -20,8 +20,6 @@
 
 #include "CommandGet.h"
 
-#include <boost/format.hpp>
-
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
@@ -55,7 +53,7 @@ CDataWrapper *CommandGet::execute(CDataWrapper *api_data,
     
     //we need to add the sequence
     if((err = n_da->getCommand(command_unique_id, &result))) {
-        LOG_AND_TROW_FORMATTED(N_CG_ERR, -4, "Error getting command for uid %2%", %command_unique_id)
+        LOG_AND_TROW_FORMATTED(N_CG_ERR, -4, "Error getting command for uid %1%", %command_unique_id)
     }
     return result;
 }

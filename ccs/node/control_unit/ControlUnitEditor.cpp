@@ -16,6 +16,7 @@ static const QString TAG_CU_INSTANCE = QString("g_cu_instance");
 static const QString TAG_CU_APPLY_CHANGESET = QString("g_cu_apply_changeset");
 static const QString TAG_CU_SEARCH_TEMPLATE = QString("g_cu_search_template");
 static const QString TAG_CU_DELETE_TEMPLATE = QString("g_cu_delete_template");
+static const QString TAG_CU_SET_THREAD_SCHEDULE_DELAY = QString("g_cu_thrd_sch_del");
 
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
@@ -146,6 +147,8 @@ void ControlUnitEditor::initUI() {
     ui->ledIndicatorHealtTSControlUnit->setStateBlinkOnRepeatSet(2, true);
     ui->ledIndicatorHealtTSUnitServer->setStateBlinkOnRepeatSet(2, true);
 
+    //thread scehdule update
+    ui->lineEditRunScheduleDelay->setValidator(new QIntValidator(0,60000000));
     // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
     //launch api for control unit information
     updateAllControlUnitInfomration();
@@ -435,9 +438,24 @@ void ControlUnitEditor::on_pushButtonRemoveInstance_clicked() {
 }
 
 void ControlUnitEditor::on_pushButtonCreateInstance_clicked() {
-   foreach(QModelIndex index,  ui->listViewCommandInstance->selectionModel()->selectedRows()) {
+    foreach(QModelIndex index,  ui->listViewCommandInstance->selectionModel()->selectedRows()) {
         addWidgetToPresenter(new CommandTemplateInstanceEditor(control_unit_unique_id,
                                                                index.data().toString(),
                                                                index.data(Qt::UserRole).toString()));
-   }
+    }
+}
+
+void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
+    chaos::metadata_service_client::api_proxy::node::NodePropertyGroupList property_list;
+    boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> thread_run_schedule(new chaos::common::data::CDataWrapperInt64KeyValueSetter(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY,
+                                                                                                                                                    ui->lineEditRunScheduleDelay->text().toLongLong()));
+    boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
+    cu_property_group->group_name = "abstract_control_unit";
+    cu_property_group->group_property_list.push_back(thread_run_schedule);
+
+    property_list.push_back(cu_property_group);
+
+    submitApiResult(TAG_CU_SET_THREAD_SCHEDULE_DELAY,
+                    GET_CHAOS_API_PTR(node::UpdateProperty)->execute(control_unit_unique_id.toStdString(),
+                                                                     property_list);
 }

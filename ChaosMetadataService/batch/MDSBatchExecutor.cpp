@@ -38,6 +38,7 @@ message_channel_for_job(NULL),
 multiaddress_message_channel_for_job(NULL),
 abstract_persistance_driver(NULL){
         //node server command
+    installCommand(node::UpdatePropertyCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::UpdatePropertyCommand));
     installCommand(node::SubmitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::SubmitBatchCommand));
     
         //unit server command
@@ -50,12 +51,10 @@ abstract_persistance_driver(NULL){
     installCommand(control_unit::IDSTControlUnitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::IDSTControlUnitBatchCommand));
 }
 
-MDSBatchExecutor::~MDSBatchExecutor(){
-    
-}
+MDSBatchExecutor::~MDSBatchExecutor(){}
 
 //! Install a command associated with a type
-void MDSBatchExecutor::installCommand(std::string alias,
+void MDSBatchExecutor::installCommand(const std::string& alias,
                                       chaos::common::utility::NestedObjectInstancer<MDSBatchCommand, common::batch_command::BatchCommand> *instancer) {
     //call superclass method
     BatchCommandExecutor::installCommand(alias, instancer);

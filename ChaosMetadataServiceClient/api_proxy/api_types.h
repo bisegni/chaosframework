@@ -69,7 +69,13 @@ namespace chaos {
                 
                 //define the list, iterator and cost iterator
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, CommandUIDList)
-
+                
+                //!group of property
+                struct NodePropertyGroup {
+                    std::string           group_name;
+                    ParameterSetterList   group_property_list;
+                };
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<NodePropertyGroup>, NodePropertyGroupList)
             }
         }
     }

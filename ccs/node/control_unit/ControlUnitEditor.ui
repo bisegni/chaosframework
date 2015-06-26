@@ -750,7 +750,7 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Thedel  between run step in microseconds</string>
+          <string>Thedel  between run step in microseconds[0-60000000]</string>
          </property>
          <property name="statusTip">
           <string>Represent the delay between a run and the next</string>

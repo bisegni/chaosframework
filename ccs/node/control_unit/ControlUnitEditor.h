@@ -75,6 +75,8 @@ private slots:
 
     void on_pushButtonCreateInstance_clicked();
 
+    void on_pushButtonSetRunScheduleDelay_clicked();
+
 private:
     QString getStatusString(int status);
 

@@ -1,5 +1,5 @@
 /*
- *	CommandGet.h
+ *	UpdateProperty.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__CommandGet__
-#define __CHAOSFramework__CommandGet__
+#ifndef __CHAOSFramework__UpdateProperty__
+#define __CHAOSFramework__UpdateProperty__
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
@@ -28,22 +28,24 @@ namespace chaos {
         namespace api_proxy {
             namespace node {
                 
-                //! Return a full description of a command
-                class CommandGet:
+                //! submit an update to a property for a node
+                class UpdateProperty:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(CommandGet)
+                    API_PROXY_CLASS(UpdateProperty)
                 protected:
                     //! default constructor
-                    API_PROXY_CD_DECLARATION(CommandGet)
+                    API_PROXY_CD_DECLARATION(UpdateProperty)
                 public:
                     /*!
-                     \param command_unique_id the unique id of a command
+                     \param node_unique_id the unique id of a command
+                     \param node_property_groups_list the list of group of property
                      */
-                    ApiProxyResult execute(const std::string& command_unique_id);
+                    ApiProxyResult execute(const std::string& node_unique_id,
+                                           const NodePropertyGroupList& node_property_groups_list);
                 };
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__CommandGet__) */
+#endif /* defined(__CHAOSFramework__UpdateProperty__) */

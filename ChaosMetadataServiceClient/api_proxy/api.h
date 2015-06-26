@@ -42,6 +42,7 @@
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SearchInstancesByUS.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInstanceDescription.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInputDatasetAttributeValues.h>
+
     //----------------------------unit server nodes----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/GetDescription.h>
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/LoadUnloadControlUnit.h>
@@ -49,6 +50,7 @@
     //------------------------------abstract nodes-----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/node/NodeSearch.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/CommandGet.h>
+#include <ChaosMetadataServiceClient/api_proxy/node/UpdateProperty.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/ChangeNodeState.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/GetNodeDescription.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateSet.h>

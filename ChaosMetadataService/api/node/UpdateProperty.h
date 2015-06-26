@@ -1,5 +1,5 @@
 /*
- *	CommandGet.h
+ *	UpdateProperty.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__CommandGet__
-#define __CHAOSFramework__CommandGet__
+#ifndef __CHAOSFramework__UpdateProperty__
+#define __CHAOSFramework__UpdateProperty__
 
 #include "../AbstractApi.h"
 
@@ -27,11 +27,11 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace node {
-                class CommandGet:
+                class UpdateProperty:
                 public AbstractApi {
                 public:
-                    CommandGet();
-                    ~CommandGet();
+                    UpdateProperty();
+                    ~UpdateProperty();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data) throw(chaos::CException);
                 };
@@ -40,4 +40,5 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__CommandGet__) */
+
+#endif /* defined(__CHAOSFramework__UpdateProperty__) */

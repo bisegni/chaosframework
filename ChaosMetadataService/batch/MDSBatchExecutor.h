@@ -84,7 +84,7 @@ namespace chaos{
                 void deinit() throw(chaos::CException);
                 
                 //! Install a command associated with a type
-                void installCommand(std::string alias,
+                void installCommand(const std::string& alias,
                                     chaos::common::utility::NestedObjectInstancer<MDSBatchCommand, common::batch_command::BatchCommand> *instancer);
             };
         }
