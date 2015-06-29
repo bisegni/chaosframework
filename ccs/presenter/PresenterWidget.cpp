@@ -8,6 +8,7 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
 PresenterWidget::PresenterWidget(QWidget *parent) :
@@ -66,6 +67,116 @@ void PresenterWidget::manageWidgetStateOnForValue(const QString& value) {
             wdg->setEnabled(state_on_value.toString().contains(value));
         }
     }
+}
+
+QString PresenterWidget::getDatasetKeyFromNodeKey(const QString& node_key,
+                                                    unsigned int dataset_type) {
+    QString result = QString::fromStdString(ChaosMetadataServiceClient::getInstance()->getDatasetKeyFromGeneralKey(node_key.toStdString(),
+                                                                                                                   dataset_type));
+    return result;
+}
+
+QString PresenterWidget::getHealttKeyFromNodeKey(const QString& node_key) {
+    QString result = QString::fromStdString(ChaosMetadataServiceClient::getInstance()->getHealtKeyFromGeneralKey(node_key.toStdString()));
+    return result;
+}
+
+void PresenterWidget::registerMonitorHandler(const QString& monitor_key,
+                                             const unsigned int dataset_type,
+                                             unsigned int quantum_multiplier,
+                                             monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler) {
+    registerMonitorHandler(monitor_key.toStdString(),
+                           dataset_type,
+                           quantum_multiplier,
+                           monitor_attribute_handler);
+}
+
+void PresenterWidget::registerMonitorHandler(const std::string& monitor_key,
+                                             const unsigned int dataset_type,
+                                             unsigned int quantum_multiplier,
+                                             monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler) {
+    //connect monitor signal to local virtual slot
+    AbstractAttributeHandler *attribute_handler_qt_interface = dynamic_cast<AbstractAttributeHandler*>(monitor_attribute_handler);
+    if(attribute_handler_qt_interface) {
+        connect(attribute_handler_qt_interface,
+                SIGNAL(valueUpdated(QString,QString,QVariant)),
+                SLOT(monitorHandlerUpdateAttributeValue(QString,QString,QVariant)));
+    }
+
+    //register the monitor
+    ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForDataset(monitor_key,
+                                                                                dataset_type,
+                                                                                quantum_multiplier,
+                                                                                monitor_attribute_handler);
+}
+
+void PresenterWidget::unregisterMonitorHandler(const QString& monitor_key,
+                                               const unsigned int dataset_type,
+                                               unsigned int quantum_multiplier,
+                                               monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler) {
+    unregisterMonitorHandler(monitor_key.toStdString(),
+                             dataset_type,
+                             quantum_multiplier,
+                             monitor_attribute_handler);
+}
+
+
+void PresenterWidget::unregisterMonitorHandler(const std::string& monitor_key,
+                                               const unsigned int dataset_type,
+                                               unsigned int quantum_multiplier,
+                                               monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler) {
+    //deregister the node
+    ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForDataset(monitor_key,
+                                                                                   quantum_multiplier,
+                                                                                   dataset_type,
+                                                                                   monitor_attribute_handler);
+}
+void PresenterWidget::registerHealtMonitorHandler(const QString& monitor_key,
+                                                  unsigned int quantum_multiplier,
+                                                  chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler){
+    registerHealtMonitorHandler(monitor_key.toStdString(),
+                                quantum_multiplier,
+                                monitor_attribute_handler);
+}
+
+void PresenterWidget::unregisterHealtMonitorHandler(const QString& monitor_key,
+                                                    unsigned int quantum_multiplier,
+                                                    chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler) {
+    unregisterHealtMonitorHandler(monitor_key.toStdString(),
+                                  quantum_multiplier,
+                                  monitor_attribute_handler);
+}
+
+void PresenterWidget::registerHealtMonitorHandler(const std::string& monitor_key,
+                                                  unsigned int quantum_multiplier,
+                                                  chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler) {
+    AbstractAttributeHandler *attribute_handler_qt_interface = dynamic_cast<AbstractAttributeHandler*>(monitor_attribute_handler);
+    if(attribute_handler_qt_interface) {
+        connect(attribute_handler_qt_interface,
+                SIGNAL(valueUpdated(QString,QString,QVariant)),
+                SLOT(monitorHandlerUpdateAttributeValue(QString,QString,QVariant)));
+    }
+
+    //register the monitor
+    ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(monitor_key,
+                                                                              quantum_multiplier,
+                                                                              monitor_attribute_handler);
+}
+
+void PresenterWidget::unregisterHealtMonitorHandler(const std::string& monitor_key,
+                                                    unsigned int quantum_multiplier,
+                                                    chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler) {
+    //deregister the node
+    ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(monitor_key,
+                                                                                 quantum_multiplier ,
+                                                                                 monitor_attribute_handler);
+
+}
+
+void PresenterWidget::monitorHandlerUpdateAttributeValue(const QString& key,
+                                                         const QString& attribute_name,
+                                                         const QVariant& attribute_value) {
+#pragma unused (key)
 }
 
 void PresenterWidget::submitApiResult(const QString& api_tag,

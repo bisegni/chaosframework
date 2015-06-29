@@ -1,6 +1,6 @@
 #ifndef HEALTSTATUSHANDLER_H
 #define HEALTSTATUSHANDLER_H
-#include "AbstractAttributeHandler.h"
+#include "../AbstractAttributeHandler.h"
 
 class HealtStatusHandler:
         public AbstractAttributeHandler,

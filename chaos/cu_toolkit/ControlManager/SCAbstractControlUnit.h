@@ -75,7 +75,7 @@ namespace chaos {
 				/*
 				 Event for update some CU configuration
 				 */
-				CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
+				CDataWrapper* updateConfiguration(CDataWrapper *update_pack, bool& detach_param) throw (CException);
 			protected:
 				//! Get all managem declare action instance
 				void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);

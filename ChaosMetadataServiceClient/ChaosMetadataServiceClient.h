@@ -148,6 +148,8 @@ namespace chaos {
                                                      int quantum_multiplier,
                                                      monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler);
             
+            std::string getDatasetKeyFromGeneralKey(const std::string& key, const unsigned int dataset_type);
+            std::string getHealtKeyFromGeneralKey(const std::string& key);
         };
     }
 }

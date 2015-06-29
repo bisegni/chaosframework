@@ -219,19 +219,31 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
 /*!
  Event for update some CU configuration
  */
-CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePack, bool& detachParam) throw (CException) {
-	CDataWrapper *result = AbstractControlUnit::updateConfiguration(updatePack, detachParam);
-	if(updatePack->hasKey(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY)){
-		//we need to configure the delay  from a run() call and the next
-		uint64_t uSecdelay = updatePack->getUInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
-		//check if we need to update the scehdule time
-		if(uSecdelay != schedule_dalay){
-			RTCULAPP_ << "Update schedule delay in:" << uSecdelay << " microsecond";
-			schedule_dalay = uSecdelay;
+CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* update_pack, bool& detach_param) throw (CException) {
+	CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
+    std::auto_ptr<CDataWrapper> cu_properties;
+    CDataWrapper *cu_property_container = NULL;
+	if(update_pack->hasKey(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY)){
+        cu_property_container = update_pack;
+    } else  if(update_pack->hasKey("property_abstract_control_unit") &&
+               update_pack->isCDataWrapperValue("property_abstract_control_unit")){
+        cu_properties.reset(update_pack->getCSDataValue("property_abstract_control_unit"));
+        if(cu_properties->hasKey(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY)) {
+            cu_property_container = cu_properties.get();
+        }
+    }
+    
+    if(cu_property_container) {
+        //we need to configure the delay  from a run() call and the next
+        uint64_t uSecdelay = cu_property_container->getUInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
+        //check if we need to update the scehdule time
+        if(uSecdelay != schedule_dalay){
+            RTCULAPP_ << "Update schedule delay in:" << uSecdelay << " microsecond";
+            schedule_dalay = uSecdelay;
             _updateRunScheduleDelay(schedule_dalay);
             pushSystemDataset();
-		}
-	}
+        }
+    }
 	return result;
 }
 

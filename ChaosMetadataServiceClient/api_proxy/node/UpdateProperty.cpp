@@ -38,6 +38,7 @@ ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
     //add node uid
     message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
     
+    std::auto_ptr<CDataWrapper> update_property_pack(new CDataWrapper());
     //scan all property group
     for(NodePropertyGroupListConstIterator it = node_property_groups_list.begin();
         it != node_property_groups_list.end();
@@ -51,8 +52,9 @@ ApiProxyResult UpdateProperty::execute(const std::string& node_unique_id,
             //
             (*it_p)->setTo(*property_group);
         }
-        message->addCSDataValue((*it)->group_name, *property_group);
+        update_property_pack->addCSDataValue((*it)->group_name, *property_group);
     }
+    message->addCSDataValue("update_property", *update_property_pack);
     
     //call api
     return callApi(message.release());

@@ -928,18 +928,6 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
  Update the configuration for all descendand tree in the Control Uniti class struccture
  */
 CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack, bool& detachParam) throw (CException) {
-    //load all keyDataStorageMap for the registered devices
-    if(!updatePack || !updatePack->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
-        throw CException(-1, "Update pack without DeviceID", __PRETTY_FUNCTION__);
-    }
-    
-    string deviceID = updatePack->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    
-    if(deviceID.compare(DatasetDB::getDeviceID())) {
-        ACULAPP_ << "device:" << DatasetDB::getDeviceID() << "not known by this ContorlUnit";
-        throw CException(-2, "Device not known by this control unit", __PRETTY_FUNCTION__);
-    }
-    
     //check to see if the device can ben initialized
     if(StartableService::getServiceState() == INIT_STATE) {
         ACULAPP_ << "device:" << DatasetDB::getDeviceID() << " not initialized";

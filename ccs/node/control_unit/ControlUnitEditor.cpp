@@ -28,18 +28,19 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     last_online_state(false),
     control_unit_unique_id(_control_unit_unique_id),
     ui(new Ui::ControlUnitEditor),
-    hb_handler(),
-    status_handler(),
+    monitor_handler_hb(),
+    monitor_handler_status(),
+    monitor_handler_system_cu_rtd(),
     dataset_output_table_model(control_unit_unique_id,
                                chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT),
     dataset_input_table_model(control_unit_unique_id,
                               chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT) {
     ui->setupUi(this);
     //handler connection
-    connect(&status_handler,
+    connect(&monitor_handler_status,
             SIGNAL(valueUpdated(QString,QString,QVariant)),
             SLOT(updateAttributeValue(QString,QString,QVariant)));
-    connect(&hb_handler,
+    connect(&monitor_handler_hb,
             SIGNAL(valueUpdated(QString,QString,QVariant)),
             SLOT(updateAttributeValue(QString,QString,QVariant)));
 }
@@ -49,21 +50,7 @@ ControlUnitEditor::~ControlUnitEditor() {
     dataset_input_table_model.setAttributeMonitoring(false);
     dataset_output_table_model.setAttributeMonitoring(false);
     //remove monitoring on cu and us
-    if(unit_server_parent_unique_id.size()) {
-        //remove old unit server for healt
-        ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(unit_server_parent_unique_id.toStdString(),
-                                                                                     20,
-                                                                                     &status_handler);
-        ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(unit_server_parent_unique_id.toStdString(),
-                                                                                     20,
-                                                                                     &hb_handler);
-    }
-    ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(control_unit_unique_id.toStdString(),
-                                                                                 20,
-                                                                                 &status_handler);
-    ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(control_unit_unique_id.toStdString(),
-                                                                                 20,
-                                                                                 &hb_handler);
+    manageMonitoring(false);
     delete ui;
 }
 
@@ -74,13 +61,6 @@ void ControlUnitEditor::initUI() {
 
     ui->tableViewInputChannels->setModel(&dataset_input_table_model);
     ui->tableViewInputChannels->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-    ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(control_unit_unique_id.toStdString(),
-                                                                              20,
-                                                                              &status_handler);
-    ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(control_unit_unique_id.toStdString(),
-                                                                              20,
-                                                                              &hb_handler);
 
     //compose logic on switch
     //for load button
@@ -109,12 +89,14 @@ void ControlUnitEditor::initUI() {
     logic_switch_aggregator.addKeyRefValue("start", "cu_state","Stop");
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonStartAction, "enabled", true, false);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonDeinitAction, "enabled", true, false);
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonSetRunScheduleDelay, "enabled", true, false);
 
     logic_switch_aggregator.addNewLogicSwitch("stop");
     logic_switch_aggregator.connectSwitch("stop", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("stop", "cu_alive","online");
     logic_switch_aggregator.addKeyRefValue("stop", "cu_state","Start");
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("stop", ui->pushButtonStopAction, "enabled", true, false);
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("stop", ui->pushButtonSetRunScheduleDelay, "enabled", true, false);
 
     //set the status on not_found for either the control unit and unit serve
     logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(0));
@@ -152,6 +134,8 @@ void ControlUnitEditor::initUI() {
     // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
     //launch api for control unit information
     updateAllControlUnitInfomration();
+    //start monitoring
+    manageMonitoring(true);
 }
 
 void ControlUnitEditor::updateTemplateSearch() {
@@ -180,6 +164,40 @@ void ControlUnitEditor::updateAllControlUnitInfomration() {
                     GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(control_unit_unique_id.toStdString()));
 }
 
+void ControlUnitEditor::manageMonitoring(bool start) {
+    if(start){
+        registerHealtMonitorHandler(control_unit_unique_id,
+                                    20,
+                                    &monitor_handler_status);
+        registerHealtMonitorHandler(control_unit_unique_id,
+                                    20,
+                                    &monitor_handler_hb);
+        registerMonitorHandler(control_unit_unique_id,
+                               chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
+                               20,
+                               &monitor_handler_system_cu_rtd);
+    }else{
+        if(unit_server_parent_unique_id.size()) {
+            //remove old unit server for healt
+            unregisterHealtMonitorHandler(unit_server_parent_unique_id,
+                                          20,
+                                          &monitor_handler_status);
+            unregisterHealtMonitorHandler(unit_server_parent_unique_id,
+                                          20,
+                                          &monitor_handler_status);
+        }
+        unregisterHealtMonitorHandler(control_unit_unique_id,
+                                      20,
+                                      &monitor_handler_status);
+        unregisterHealtMonitorHandler(control_unit_unique_id,
+                                      20,
+                                      &monitor_handler_hb);
+        unregisterMonitorHandler(control_unit_unique_id,
+                                 chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
+                                 20,
+                                 &monitor_handler_system_cu_rtd);
+    }
+}
 
 bool ControlUnitEditor::canClose() {
     return true;
@@ -212,23 +230,24 @@ void ControlUnitEditor::onApiDone(const QString& tag,
         if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)){
             const std::string new_u_s = api_result->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
             if(unit_server_parent_unique_id.compare(QString::fromStdString(new_u_s)) != 0) {
+                ui->labelUnitServerHost->setText(unit_server_parent_unique_id);
                 //whe ahve unit server changed
                 if(unit_server_parent_unique_id.size()) {
                     //remove old unit server for healt
-                    ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(unit_server_parent_unique_id.toStdString(),
-                                                                                                 20,
-                                                                                                 &status_handler);
-                    ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(unit_server_parent_unique_id.toStdString(),
-                                                                                                 20,
-                                                                                                 &hb_handler);
+                    unregisterHealtMonitorHandler(unit_server_parent_unique_id,
+                                                  20,
+                                                  &monitor_handler_status);
+                    unregisterHealtMonitorHandler(unit_server_parent_unique_id,
+                                                  20,
+                                                  &monitor_handler_hb);
                 }
 
-                ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(new_u_s,
-                                                                                          20,
-                                                                                          &status_handler);
-                ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(new_u_s,
-                                                                                          20,
-                                                                                          &hb_handler);
+                registerHealtMonitorHandler(new_u_s,
+                                            20,
+                                            &monitor_handler_status);
+                registerHealtMonitorHandler(new_u_s,
+                                            20,
+                                            &monitor_handler_hb);
                 // keep track of new us uid
                 unit_server_parent_unique_id = QString::fromStdString(new_u_s);
             }
@@ -259,10 +278,11 @@ void ControlUnitEditor::fillInfo(const QSharedPointer<chaos::common::data::CData
     }
 }
 
-void ControlUnitEditor::updateAttributeValue(const QString& key,
-                                             const QString& attribute_name,
-                                             const QVariant& attribute_value) {
-    if(key.startsWith(control_unit_unique_id)) {
+void ControlUnitEditor::monitorHandlerUpdateAttributeValue(const QString& key,
+                                                           const QString& attribute_name,
+                                                           const QVariant& attribute_value) {
+    qDebug()<< QString("Monitoring event: k:%1%, a:%2%, v:%3%").arg(key, attribute_name, attribute_value.toString());
+    if(key.startsWith(getHealttKeyFromNodeKey(control_unit_unique_id))) {
         if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
             //print the status
             if(attribute_value.isNull()) {
@@ -288,7 +308,7 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
             //broadcast cu status to switch
             logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(ui->ledIndicatorHealtTSControlUnit->getState()));
         }
-    } else  if(key.startsWith(unit_server_parent_unique_id)) {
+    } else if(key.startsWith(unit_server_parent_unique_id)) {
         //show healt for unit server
         if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
             //print the status
@@ -302,6 +322,12 @@ void ControlUnitEditor::updateAttributeValue(const QString& key,
             //print the timestamp and update the red/green indicator
             ui->ledIndicatorHealtTSUnitServer->setNewTS(attribute_value.toULongLong());
             logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(ui->ledIndicatorHealtTSUnitServer->getState()));
+        }
+    } else if(key.compare(getDatasetKeyFromNodeKey(control_unit_unique_id, chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM)) == 0) {
+        //we are receiving data for system dataset of the control unit id
+        if(attribute_name.compare(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY) == 0) {
+            //we have update for the run schedule delay
+            ui->labelRunScheduleDelaySet->setText(attribute_value.toString());
         }
     }
 }
@@ -450,12 +476,12 @@ void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
     boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> thread_run_schedule(new chaos::common::data::CDataWrapperInt64KeyValueSetter(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY,
                                                                                                                                                     ui->lineEditRunScheduleDelay->text().toLongLong()));
     boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
-    cu_property_group->group_name = "abstract_control_unit";
+    cu_property_group->group_name = "property_abstract_control_unit";
     cu_property_group->group_property_list.push_back(thread_run_schedule);
 
     property_list.push_back(cu_property_group);
 
     submitApiResult(TAG_CU_SET_THREAD_SCHEDULE_DELAY,
                     GET_CHAOS_API_PTR(node::UpdateProperty)->execute(control_unit_unique_id.toStdString(),
-                                                                     property_list);
+                                                                     property_list));
 }

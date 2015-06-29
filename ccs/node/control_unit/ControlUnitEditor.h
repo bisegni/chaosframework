@@ -7,8 +7,8 @@
 #include "../data/FixedInputChannelDatasetTableModel.h"
 #include "../data/FixedOutputChannelDatasetTableModel.h"
 
+#include "../../monitor/monitor.h"
 #include "../../presenter/PresenterWidget.h"
-#include "../../monitor/healt/handler/handler.h"
 #include "../../logic/property_switch/SwitchAggregator.h"
 
 #include <QWidget>
@@ -32,10 +32,9 @@ protected:
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
 private slots:
-    void updateAttributeValue(const QString& key,
-                              const QString& attribute_name,
-                              const QVariant& attribute_value);
-
+    void monitorHandlerUpdateAttributeValue(const QString& key,
+                                            const QString& attribute_name,
+                                            const QVariant& attribute_value);
     void onLogicSwitchChangeState(const QString& switch_name,
                                   bool switch_activate);
 
@@ -82,7 +81,7 @@ private:
 
     void updateTemplateSearch();
     void updateAllControlUnitInfomration();
-
+    void manageMonitoring(bool start);
     void fillInfo(const QSharedPointer<chaos::common::data::CDataWrapper>& node_info);
     void fillDataset(const QSharedPointer<chaos::common::data::CDataWrapper>& dataset);
 
@@ -91,8 +90,9 @@ private:
     const QString           control_unit_unique_id;
     QString                 unit_server_parent_unique_id;
     SwitchAggregator        logic_switch_aggregator;
-    HealthHartbeatHandler   hb_handler;
-    HealtStatusHandler                  status_handler;
+    HealthHartbeatHandler               monitor_handler_hb;
+    HealtStatusHandler                  monitor_handler_status;
+    SystemControlUnitRunScheduleDelay   monitor_handler_system_cu_rtd;
 
     CommandListModel                    command_list_model;
     CommandTemplateListModel            command_template_list_model;

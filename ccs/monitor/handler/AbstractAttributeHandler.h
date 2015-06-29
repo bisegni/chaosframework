@@ -7,8 +7,7 @@
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
 
 class AbstractAttributeHandler:
-        public QObject
-{
+        public QObject {
     Q_OBJECT
 
 signals:

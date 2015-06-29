@@ -24,6 +24,7 @@
 #include "NodeGetDescription.h"
 #include "ChangeNodeState.h"
 #include "CommandGet.h"
+#include "UpdateProperty.h"
 #include "CommandTemplateSet.h"
 #include "CommandTemplateGet.h"
 #include "CommandTemplateDelete.h"
@@ -44,6 +45,7 @@ AbstractApiGroup("system"){
     addApi<NodeGetDescription>();
     addApi<ChangeNodeState>();
     addApi<CommandGet>();
+    addApi<UpdateProperty>();
     addApi<CommandTemplateSet>();
     addApi<CommandTemplateGet>();
     addApi<CommandTemplateDelete>();

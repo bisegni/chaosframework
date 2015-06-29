@@ -1,6 +1,7 @@
 #ifndef HEALTMONITORWIDGET_H
 #define HEALTMONITORWIDGET_H
 
+#include "../handler/handler.h"
 #include "HealtWidgetsListPresenteWidget.h"
 
 #include <QDockWidget>

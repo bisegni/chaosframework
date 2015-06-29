@@ -127,7 +127,23 @@ HEADERS  += \
     widget/CDSAttrQLineEdit.h \
     data/ChaosTypedAttributeValueSetter.h \
     external_lib/qcustomplot.h \
-    data/AttributeReader.h
+    data/AttributeReader.h \
+    monitor/system/handler/SystemControlUnit.h \
+    monitor/handler/healt/HealtHeartbeatHandler.h \
+    monitor/handler/healt/HealtStatusHandler.h \
+    monitor/handler/AbstractAttributeHandler.h \
+    monitor/handler/MonitorInt32AttributeHandler.h \
+    monitor/handler/MonitorBinaryAttributeHandler.h \
+    monitor/handler/MonitorBoolAttributeHandler.h \
+    monitor/handler/MonitorDoubleAttributeHandler.h \
+    monitor/handler/MonitorInt64AttributeHandler.h \
+    monitor/handler/MonitorStringAttributeHandler.h \
+    monitor/handler/handler.h \
+    monitor/healt/healt.h \
+    monitor/handler/healt/healt.h \
+    monitor/handler/system/SystemControlUnitRunScheduleDelay.h \
+    monitor/monitor.h \
+    monitor/handler/system/system.h
 
 FORMS    += \
     search/searchnoderesult.ui \

@@ -230,9 +230,7 @@ bool ChaosMetadataServiceClient::addKeyConsumerForHealt(const std::string& key_t
                                                         monitor_system::QuantumSlotConsumer *consumer,
                                                         int consumer_priority) {
     // compose healt key for node
-    std::string healt_key = boost::str(boost::format("%1%%2%")%
-                                       key_to_monitor%
-                                       NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
+    std::string healt_key = getHealtKeyFromGeneralKey(key_to_monitor);
     // call api for register the conusmer
     return addKeyConsumer(healt_key,
                           quantum_multiplier,
@@ -258,9 +256,7 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForHealt(const std::strin
                                                                 monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
                                                                 unsigned int consumer_priority) {
     // compose healt key for node
-    std::string healt_key = boost::str(boost::format("%1%%2%")%
-                                       key_to_monitor%
-                                       NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
+    std::string healt_key = getHealtKeyFromGeneralKey(key_to_monitor);
     // call api for register the conusmer
     return addKeyAttributeHandler(healt_key,
                                   quantum_multiplier,
@@ -358,34 +354,44 @@ bool ChaosMetadataServiceClient::removeKeyAttributeHandlerForDataset(const std::
                                                                      const unsigned int dataset_type,
                                                                      int quantum_multiplier,
                                                                      monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler) {
-    std::string dataset_key;
-    switch(dataset_type) {
-        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
-            dataset_key = boost::str(boost::format("%1%%2%")%
-                                     key_to_monitor%
-                                     DataPackPrefixID::OUTPUT_DATASE_PREFIX);
-            break;
-        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
-            dataset_key = boost::str(boost::format("%1%%2%")%
-                                     key_to_monitor%
-                                     DataPackPrefixID::INPUT_DATASE_PREFIX);
-            break;
-        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
-            dataset_key = boost::str(boost::format("%1%%2%")%
-                                     key_to_monitor%
-                                     DataPackPrefixID::CUSTOM_DATASE_PREFIX);
-            break;
-            
-        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
-            dataset_key = boost::str(boost::format("%1%%2%")%
-                                     key_to_monitor%
-                                     DataPackPrefixID::SYSTEM_DATASE_PREFIX);
-            break;
-        default:
-            return false;
-    }
-    
+    std::string dataset_key = getDatasetKeyFromGeneralKey(key_to_monitor, dataset_type);
+    if(dataset_key.compare("") == 0) return false;
     return removeKeyAttributeHandler(dataset_key,
                                      quantum_multiplier,
                                      attribute_handler);
+}
+
+std::string ChaosMetadataServiceClient::getDatasetKeyFromGeneralKey(const std::string& key,
+                                                                    const unsigned int dataset_type) {
+    switch(dataset_type) {
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
+            return boost::str(boost::format("%1%%2%")%
+                              key%
+                              DataPackPrefixID::OUTPUT_DATASE_PREFIX);
+            break;
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
+            return boost::str(boost::format("%1%%2%")%
+                              key%
+                              DataPackPrefixID::INPUT_DATASE_PREFIX);
+            break;
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
+            return boost::str(boost::format("%1%%2%")%
+                              key%
+                              DataPackPrefixID::CUSTOM_DATASE_PREFIX);
+            break;
+            
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
+            return boost::str(boost::format("%1%%2%")%
+                              key%
+                              DataPackPrefixID::SYSTEM_DATASE_PREFIX);
+            break;
+        default:
+            return "";
+    }
+}
+
+std::string ChaosMetadataServiceClient::getHealtKeyFromGeneralKey(const std::string& key) {
+    return boost::str(boost::format("%1%%2%")%
+                      key%
+                      NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
 }

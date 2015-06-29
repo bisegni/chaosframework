@@ -53,7 +53,8 @@ SocketInfo::~SocketInfo(){
 SocketEndpointPool::SocketEndpointPool(const std::string& _endpoint,
                                        void *_zmq_context):
 zmq_context(_zmq_context),
-endpoint(_endpoint) {
+endpoint(_endpoint),
+created_socket(0){
 }
 
 SocketEndpointPool::~SocketEndpointPool() {
@@ -101,6 +102,7 @@ SocketInfo *SocketEndpointPool::getSocket() {
         } else {
             //all is gone weel so we can release the temp smatr pointer to result pointer
             socket_info_ptr = _temp_socket_info_ptr.release();
+            created_socket++;
         }
     } else {
         //return alread allcoated one
@@ -136,15 +138,16 @@ void SocketEndpointPool::mantainance() {
             DEBUG_CODE(ZMQC_LDBG << "Purging socket with timediff "<< time_diff;)
             //we can remove and delete it
             delete(checked_socket);
+            created_socket--;
         } else {
             break;
         }
     }
 }
 
-int SocketEndpointPool::getSize() {
+unsigned int SocketEndpointPool::getSize() {
     boost::unique_lock<boost::mutex> l(mutex_pool);
-    return (int)pool.size();
+    return (int)created_socket;
 }
 //-------------------------------------------------------
 DEFINE_CLASS_FACTORY(ZMQClient, RpcClient);

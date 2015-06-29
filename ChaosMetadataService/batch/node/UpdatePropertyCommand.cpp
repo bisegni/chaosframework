@@ -90,6 +90,9 @@ void UpdatePropertyCommand::ccHandler() {
             
         case MESSAGE_PHASE_COMPLETED:
         case MESSAGE_PHASE_TIMEOUT: {
+            if(request->request_future->getError()) {
+                CU_UP_ERR << "Error:" <<request->request_future->getError()<<"\nError Domain:" << request->request_future->getErrorDomain() << "\nError Message:" << request->request_future->getErrorMessage();
+            }
             BC_END_RUNNIG_PROPERTY
             break;
             

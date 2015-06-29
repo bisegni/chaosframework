@@ -50,6 +50,7 @@ namespace chaos {
     
     class SocketEndpointPool {
         friend class ZMQClient;
+        unsigned int created_socket;
         void *zmq_context;
         const std::string endpoint;
         SocketPoolQueue pool;
@@ -60,7 +61,7 @@ namespace chaos {
     public:
         ~SocketEndpointPool();
         SocketInfo *getSocket();
-        int getSize();
+        unsigned int getSize();
         void releaseSocket(SocketInfo *socket_info);
         void mantainance();
     };

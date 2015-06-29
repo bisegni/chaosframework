@@ -1,6 +1,6 @@
 #ifndef HEALTHEARTBEATHANDLER
 #define HEALTHEARTBEATHANDLER
-#include "AbstractAttributeHandler.h"
+#include "../AbstractAttributeHandler.h"
 
 class HealthHartbeatHandler:
         public AbstractAttributeHandler,

@@ -215,7 +215,7 @@
       </layout>
      </item>
      <item row="1" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0,1">
+      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0,1,0,1">
        <property name="spacing">
         <number>4</number>
        </property>
@@ -267,6 +267,30 @@
          </property>
          <property name="statusTip">
           <string>The rpc doman where the control unit expose his rpc action</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_11">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Hosted on US:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelUnitServerHost">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
          </property>
          <property name="text">
           <string/>
@@ -729,6 +753,17 @@
            <width>100</width>
            <height>0</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Run step delay in microseconds</string>
+         </property>
+         <property name="statusTip">
+          <string>Show the current run step delay in microseconds</string>
          </property>
          <property name="text">
           <string/>
