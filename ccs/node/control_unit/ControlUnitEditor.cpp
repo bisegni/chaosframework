@@ -89,14 +89,22 @@ void ControlUnitEditor::initUI() {
     logic_switch_aggregator.addKeyRefValue("start", "cu_state","Stop");
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonStartAction, "enabled", true, false);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonDeinitAction, "enabled", true, false);
-    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonSetRunScheduleDelay, "enabled", true, false);
 
     logic_switch_aggregator.addNewLogicSwitch("stop");
     logic_switch_aggregator.connectSwitch("stop", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("stop", "cu_alive","online");
     logic_switch_aggregator.addKeyRefValue("stop", "cu_state","Start");
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("stop", ui->pushButtonStopAction, "enabled", true, false);
-    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("stop", ui->pushButtonSetRunScheduleDelay, "enabled", true, false);
+
+
+    logic_switch_aggregator.addNewLogicSwitch("update_property");
+    logic_switch_aggregator.connectSwitch("update_property", "cu_can_operate");
+    logic_switch_aggregator.addKeyRefValue("update_property", "cu_alive","online");
+    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state","Init");
+    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state","Start");
+    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state","Stop");
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("update_property", ui->pushButtonSetRunScheduleDelay, "enabled", true, false);
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("update_property", ui->lineEditRunScheduleDelay, "enabled", true, false);
 
     //set the status on not_found for either the control unit and unit serve
     logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(0));
@@ -281,7 +289,6 @@ void ControlUnitEditor::fillInfo(const QSharedPointer<chaos::common::data::CData
 void ControlUnitEditor::monitorHandlerUpdateAttributeValue(const QString& key,
                                                            const QString& attribute_name,
                                                            const QVariant& attribute_value) {
-    qDebug()<< QString("Monitoring event: k:%1%, a:%2%, v:%3%").arg(key, attribute_name, attribute_value.toString());
     if(key.startsWith(getHealttKeyFromNodeKey(control_unit_unique_id))) {
         if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
             //print the status

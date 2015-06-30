@@ -32,7 +32,7 @@ namespace chaos {
 #define QuantumKeyAttributeHandlerIMPL_CONST_DIST(x)\
 x::x(const std::string& _attribute, bool _event_on_value_change):\
 AbstractQuantumKeyAttributeHandler(_attribute, _event_on_value_change){}\
-x::~x(){}\
+x::~x(){}
 
             
             //!forward decalration
@@ -63,6 +63,8 @@ x::~x(){}\
                 AbstractQuantumKeyAttributeHandler(const std::string& _attribute,
                                                    bool _event_on_value_change = false);
                 virtual ~AbstractQuantumKeyAttributeHandler();
+                
+                const std::string& getAttributeName();
             };
             
             class QuantumKeyAttributeBoolHandler:

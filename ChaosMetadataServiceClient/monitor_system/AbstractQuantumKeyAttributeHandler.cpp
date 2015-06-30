@@ -23,7 +23,6 @@
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::monitor_system;
 
-
 AbstractQuantumKeyAttributeHandler::AbstractQuantumKeyAttributeHandler(const std::string& _attribute,
                                                                        bool  _event_on_value_change):
 attribute(_attribute),
@@ -31,7 +30,10 @@ event_on_value_change(_event_on_value_change) {}
 
 AbstractQuantumKeyAttributeHandler::~AbstractQuantumKeyAttributeHandler() {}
 
-//---------------------------int32_t attribute handler-------------------------
+const std::string& AbstractQuantumKeyAttributeHandler::getAttributeName() {
+    return attribute;
+}
+//---------------------------implemented handler-------------------------
 QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeBoolHandler)
 void QuantumKeyAttributeBoolHandler::_consumeValue(const std::string& key,
                                                    const KeyValue& value) {
@@ -77,7 +79,6 @@ void QuantumKeyAttributeStringHandler::_consumeValue(const std::string& key,
 QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeBinaryHandler)
 void QuantumKeyAttributeBinaryHandler::_consumeValue(const std::string& key,
                                                      const KeyValue& value) {
-
     int32_t buf_size = 0;
     consumeValue(key,
                  attribute,

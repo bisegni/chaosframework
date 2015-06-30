@@ -1,0 +1,39 @@
+#ifndef MonitorTSTaggedBinaryAttributeHandler_h
+#define MonitorTSTaggedBinaryAttributeHandler_h
+
+#include "AbstractTSTaggedAttributeHandler.h"
+#include "../../data/ChaosByteArray.h"
+#include <QObject>
+#include <QSharedPointer>
+#include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
+
+
+class MonitorTSTaggedBinaryAttributeHandler:
+        public AbstractTSTaggedAttributeHandler,
+        public chaos::metadata_service_client::monitor_system::QuantumTSTaggedBinaryAttributeHandler {
+    Q_OBJECT
+
+protected:
+    void consumeTSTaggedValue(const std::string& key,
+                              const std::string& attribute,
+                              uint64_t timestamp,
+                              const boost::shared_ptr<chaos::common::data::SerializationBuffer>& value) {
+        //emit new value
+        emit valueUpdated(QString::fromStdString(key),
+                          QString::fromStdString(attribute),
+                          timestamp,
+                          QVariant::fromValue<QSharedPointer<ChaosByteArray> >(QSharedPointer<ChaosByteArray>(new ChaosByteArray(value))));
+    }
+
+signals:
+
+public:
+    MonitorTSTaggedBinaryAttributeHandler(const QString& attribute_name,
+                                          const QString& ts_attribute_name,
+                                          bool event_on_change = false):
+        chaos::metadata_service_client::monitor_system::QuantumTSTaggedBinaryAttributeHandler(attribute_name.toStdString(),
+                                                                                              ts_attribute_name.toStdString(),
+                                                                                              event_on_change){}
+};
+#endif // MonitorTSTaggedBinaryAttributeHandler_h
+

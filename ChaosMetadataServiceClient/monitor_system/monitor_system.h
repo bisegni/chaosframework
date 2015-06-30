@@ -25,6 +25,8 @@
 #include <ChaosMetadataServiceClient/monitor_system/MonitorManager.h>
 #include <ChaosMetadataServiceClient/monitor_system/QuantumKeyConsumer.h>
 #include <ChaosMetadataServiceClient/monitor_system/AbstractQuantumKeyAttributeHandler.h>
+#include <ChaosMetadataServiceClient/monitor_system/QuantumTSTaggedAttributeHandler.h>
+
 #include <ChaosMetadataServiceClient/monitor_system/handler/HealtStatusAttributeHandler.h>
 #include <ChaosMetadataServiceClient/monitor_system/handler/HealtHeartbeatAttributeHandler.h>
 #endif

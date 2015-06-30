@@ -203,6 +203,8 @@
 		32568C8B1B3D54650006988C /* UpdatePropertyCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32568C891B3D54650006988C /* UpdatePropertyCommand.cpp */; };
 		32568C8E1B3D7FED0006988C /* UpdateProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32568C8C1B3D7FED0006988C /* UpdateProperty.cpp */; };
 		32568C8F1B3D7FED0006988C /* UpdateProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 32568C8D1B3D7FED0006988C /* UpdateProperty.h */; };
+		32568C921B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32568C901B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp */; };
+		32568C931B42C1690006988C /* QuantumTSTaggedAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32568C911B42C1690006988C /* QuantumTSTaggedAttributeHandler.h */; };
 		3258AEEA1935C34000A66D44 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AEE81935C34000A66D44 /* URL.cpp */; };
 		3258AEEB1935C34000A66D44 /* URL.h in Headers */ = {isa = PBXBuildFile; fileRef = 3258AEE91935C34000A66D44 /* URL.h */; };
 		3258AF031935EE4D00A66D44 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AF021935EE4D00A66D44 /* main.cpp */; };
@@ -974,6 +976,8 @@
 		32568C8A1B3D54650006988C /* UpdatePropertyCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdatePropertyCommand.h; sourceTree = "<group>"; };
 		32568C8C1B3D7FED0006988C /* UpdateProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateProperty.cpp; sourceTree = "<group>"; };
 		32568C8D1B3D7FED0006988C /* UpdateProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateProperty.h; sourceTree = "<group>"; };
+		32568C901B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumTSTaggedAttributeHandler.cpp; sourceTree = "<group>"; };
+		32568C911B42C1690006988C /* QuantumTSTaggedAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumTSTaggedAttributeHandler.h; sourceTree = "<group>"; };
 		3258AEE81935C34000A66D44 /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
 		3258AEE91935C34000A66D44 /* URL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URL.h; sourceTree = "<group>"; };
 		3258AF001935EE4D00A66D44 /* EchitectureTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EchitectureTests; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2804,6 +2808,8 @@
 				3211CCDC1B03402800F9B80E /* QuantumKeyConsumer.h */,
 				3234BE781B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.cpp */,
 				3234BE791B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h */,
+				32568C901B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp */,
+				32568C911B42C1690006988C /* QuantumTSTaggedAttributeHandler.h */,
 				324FD0831B00AD02003800BA /* monitor_system.h */,
 				32FCB0691B00B4D0002894A2 /* monitor_system_types.h */,
 			);
@@ -3780,6 +3786,7 @@
 				32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */,
 				327F39A81AEAA2290000C845 /* NewDS.h in Headers */,
 				327F39C31AEFABB00000C845 /* InitDeinit.h in Headers */,
+				32568C931B42C1690006988C /* QuantumTSTaggedAttributeHandler.h in Headers */,
 				328C87371ADFDD410047C79B /* GetInstance.h in Headers */,
 				3208AABE1AC56C1C000860D9 /* GetNodeDescription.h in Headers */,
 				32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */,
@@ -4401,6 +4408,7 @@
 				325FC85D1AF7910300DB9D66 /* NewUS.cpp in Sources */,
 				32761A381B314697006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */,
 				3208AABD1AC56C1C000860D9 /* GetNodeDescription.cpp in Sources */,
+				32568C921B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp in Sources */,
 				327F39B31AEAA2680000C845 /* GetAssociationByDS.cpp in Sources */,
 				328C873E1AE01A590047C79B /* DeleteInstance.cpp in Sources */,
 				32362C211ADD0C45000CA079 /* SetInstanceDescription.cpp in Sources */,

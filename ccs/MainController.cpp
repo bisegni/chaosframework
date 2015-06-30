@@ -1,7 +1,7 @@
 #include "MainController.h"
 
 #include "widget/list/delegate/TwoLineInformationItem.h"
-
+#include "data/ChaosByteArray.h"
 #include <QStyleFactory>
 #include <QThreadPool>
 #include <QTimer>
@@ -17,6 +17,7 @@ using namespace chaos::metadata_service_client;
 Q_DECLARE_METATYPE (std::string)
 Q_DECLARE_METATYPE(int32_t)
 Q_DECLARE_METATYPE(int64_t)
+Q_DECLARE_METATYPE(QSharedPointer<ChaosByteArray>);
 Q_DECLARE_METATYPE(QSharedPointer<chaos::CException>);
 Q_DECLARE_METATYPE(QSharedPointer<chaos::common::data::CDataWrapper>);
 Q_DECLARE_METATYPE(QSharedPointer<TwoLineInformationItem>);
@@ -36,6 +37,7 @@ MainController::~MainController()
 
 void MainController::init(int argc, char **argv, QApplication& a) {
     //register chaos metatype
+    qRegisterMetaType<QSharedPointer<ChaosByteArray> >();
     qRegisterMetaType<QSharedPointer<chaos::CException> >();
     qRegisterMetaType<QSharedPointer<chaos::common::data::CDataWrapper> >("QSharedPointer<CDataWrapper>");
     qRegisterMetaType<QSharedPointer<chaos::common::data::CDataWrapper> >("QSharedPointer<chaos::common::data::CDataWrapper>");

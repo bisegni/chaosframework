@@ -127,8 +127,8 @@ void PresenterWidget::unregisterMonitorHandler(const std::string& monitor_key,
                                                monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler) {
     //deregister the node
     ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForDataset(monitor_key,
-                                                                                   quantum_multiplier,
                                                                                    dataset_type,
+                                                                                   quantum_multiplier,
                                                                                    monitor_attribute_handler);
 }
 void PresenterWidget::registerHealtMonitorHandler(const QString& monitor_key,

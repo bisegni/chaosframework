@@ -73,7 +73,10 @@ SOURCES += main.cpp\
     widget/CDSAttrQLineEdit.cpp \
     data/ChaosTypedAttributeValueSetter.cpp \
     external_lib/qcustomplot.cpp \
-    data/AttributeReader.cpp
+    data/AttributeReader.cpp \
+    widget/ChaosLabel.cpp \
+    widget/ChaosDatasetLabel.cpp \
+    data/ChaosByteArray.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -143,7 +146,17 @@ HEADERS  += \
     monitor/handler/healt/healt.h \
     monitor/handler/system/SystemControlUnitRunScheduleDelay.h \
     monitor/monitor.h \
-    monitor/handler/system/system.h
+    monitor/handler/system/system.h \
+    widget/ChaosLabel.h \
+    widget/ChaosDatasetLabel.h \
+    monitor/handler/MonitorTSTaggetBoolAttributeHandler.h \
+    monitor/handler/AbstractTSTaggedAttributeHandler.h \
+    monitor/handler/MonitorTSTaggedInt32AttributeHandler.h \
+    monitor/handler/MonitorTSTaggedBinaryAttributeHandler.h \
+    monitor/handler/MonitorTSTaggedDoubleAttributeHandler.h \
+    monitor/handler/MonitorTSTaggedInt64AttributeHandler.h \
+    monitor/handler/MonitorTSTaggedStringAttributeHandler.h \
+    data/ChaosByteArray.h
 
 FORMS    += \
     search/searchnoderesult.ui \
