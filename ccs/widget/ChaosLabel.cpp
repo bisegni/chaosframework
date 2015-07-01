@@ -1,12 +1,23 @@
 #include "ChaosLabel.h"
 
+#include <QDateTime>
+
+using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::monitor_system;
 
 ChaosLabel::ChaosLabel(QWidget * parent,
                        Qt::WindowFlags f):
     QLabel(parent, f),
-    monitoring(false){
+    monitoring(false),
+    last_recevide_timeout(false) {
+    setTimeoutForAlive(6000);
 
+    connect(&healt_status_handler,
+            SIGNAL(valueUpdated(QString,QString,QVariant)),
+            SLOT(valueUpdated(QString,QString,QVariant)));
+    connect(&healt_heartbeat_handler,
+            SIGNAL(valueUpdated(QString,QString,QVariant)),
+            SLOT(valueUpdated(QString,QString,QVariant)));
 }
 
 ChaosLabel::~ChaosLabel() {
@@ -38,7 +49,7 @@ QString ChaosLabel::attributeName() {
     return p_attribute_name;
 }
 
-void ChaosLabel::setAttributeType(chaos::DataType::DataType attribute_type) {
+void ChaosLabel::setAttributeType(ChaosDataType attribute_type) {
     if(attribute_type == p_attribute_type ||
             monitoring) return;
     emit attributeTypeChanged(p_attribute_type,
@@ -46,50 +57,91 @@ void ChaosLabel::setAttributeType(chaos::DataType::DataType attribute_type) {
     p_attribute_type = attribute_type;
 }
 
-chaos::DataType::DataType ChaosLabel::attributeType() {
+ChaosDataType ChaosLabel::attributeType() {
     return p_attribute_type;
 }
 
-void ChaosLabel::startMonitoring() {
-    monitoring = true;
+void ChaosLabel::setTimeoutForAlive(unsigned int timeout_for_alive) {
+    p_timeout_for_alive = timeout_for_alive;
 }
 
-void ChaosLabel::stopMonitoring() {
-    monitoring = false;
+unsigned int ChaosLabel::timeoutForAlive() {
+    return p_timeout_for_alive;
 }
+
+void ChaosLabel::setTrackStatus(bool track_status) {
+    if(p_track_status == track_status) return;
+    p_track_status = track_status;
+}
+
+bool ChaosLabel::trackStatus() {
+    return p_track_status;
+}
+
+int ChaosLabel::startMonitoring() {
+    if(monitoring) return -1;
+    if(trackStatus()) {
+        if(!ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
+                                                                                      20,
+                                                                                      &healt_status_handler)) {
+            return -2;
+        }
+        if(!ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
+                                                                                      20,
+                                                                                      &healt_heartbeat_handler)) {
+            return -3;
+        }
+    }
+    return 0;
+}
+
+int ChaosLabel::stopMonitoring() {
+    if(!monitoring) return -1;
+    if(!ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
+                                                                                     20,
+                                                                                     &healt_heartbeat_handler)) {
+        return -2;
+    }
+    if(!ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
+                                                                                     20,
+                                                                                     &healt_status_handler)) {
+        return -3;
+    }
+    return 0;
+}
+
+void ChaosLabel::valueUpdated(const QString& node_uid,
+                              const QString& attribute_name,
+                              const QVariant& attribute_value) {
+    if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0) {
+        last_recevide_timeout = attribute_value.toLongLong();
+        bool is_on_line = isOnline();
+        if(!isOnline()) {
+            setStyleSheet("QLabel { color : #E65566; }");
+        } else {
+            if(current_value == attribute_value) {
+                setStyleSheet("QLabel { color : gray; }");
+            } else {
+                setStyleSheet("QLabel { color : #4EB66B; }");
+            }
+        }
+    }else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
+        //write the value
+        setToolTip(attribute_value.toString());
+    }
+}
+
 
 void ChaosLabel::valueUpdated(const QString& node_uid,
                               const QString& attribute_name,
                               uint64_t timestamp,
                               const QVariant& attribute_value) {
-
+    //write the value
+    setText(attribute_value.toString());
 }
 
-boost::shared_ptr<AbstractTSTaggedAttributeHandler>
-ChaosLabel::getChaosAttributeHandlerForType(chaos::DataType::DataType chaos_type) {
-    switch(attributeType()) {
-    case chaos::DataType::TYPE_BOOLEAN:
-        return boost::shared_ptr<AbstractTSTaggedAttributeHandler>(new MonitorTSTaggedBoolAttributeHandler(attributeName(),
-                                                                                                           chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-    case chaos::DataType::TYPE_INT32:
-        return boost::shared_ptr<AbstractTSTaggedAttributeHandler>(new MonitorTSTaggedInt32AttributeHandler(attributeName(),
-                                                                                                            chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-    case chaos::DataType::TYPE_INT64:
-        return boost::shared_ptr<AbstractTSTaggedAttributeHandler>(new MonitorTSTaggedInt64AttributeHandler(attributeName(),
-                                                                                                            chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-    case chaos::DataType::TYPE_DOUBLE:
-        return boost::shared_ptr<AbstractTSTaggedAttributeHandler>(new MonitorTSTaggedDoubleAttributeHandler(attributeName(),
-                                                                                                             chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-    case chaos::DataType::TYPE_STRING:
-        return boost::shared_ptr<AbstractTSTaggedAttributeHandler>(new MonitorTSTaggedStringAttributeHandler(attributeName(),
-                                                                                                             chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-    case chaos::DataType::TYPE_BYTEARRAY:
-        return boost::shared_ptr<AbstractTSTaggedAttributeHandler>(new MonitorTSTaggedBinaryAttributeHandler(attributeName(),
-                                                                                                             chaos::DataPackCommonKey::DPCK_TIMESTAMP));
-    default:
-        break;
-    }
-    return boost::shared_ptr<AbstractTSTaggedAttributeHandler>();
+bool ChaosLabel::isOnline() {
+    return (QDateTime::currentDateTimeUtc().currentMSecsSinceEpoch() - last_recevide_timeout) <= timeoutForAlive();
 }
 
 //slots hiding

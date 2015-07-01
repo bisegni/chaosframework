@@ -13,17 +13,25 @@ public:
     enum Dataset { DatasetOutput, DatasetInput, DatasetCustom, DatasetSystem };
 
     explicit ChaosDatasetLabel(QWidget * parent = 0);
-
+    ~ChaosDatasetLabel();
     Dataset dataset();
     void setDataset(Dataset dataset);
-    void startMonitoring();
-    void stopMonitoring();
+    int startMonitoring();
+    int stopMonitoring();
 signals:
     void datasetChanged(const Dataset& last_dataset, const Dataset& new_dataset);
 public slots:
 
-private:
-    Dataset p_dataset;
+protected slots:
+    void valueUpdated(const QString& node_uid,
+                      const QString& attribute_name,
+                      uint64_t timestamp,
+                      const QVariant& attribute_value);
+    private:
+        Dataset p_dataset;
+        unsigned int getChaosDataset();
+        boost::shared_ptr<AbstractTSTaggedAttributeHandler>
+        getChaosAttributeHandlerForType(ChaosDataType chaos_type, bool &ok);
 
 };
 

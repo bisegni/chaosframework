@@ -92,7 +92,6 @@ private:
     SwitchAggregator        logic_switch_aggregator;
     HealthHartbeatHandler               monitor_handler_hb;
     HealtStatusHandler                  monitor_handler_status;
-    SystemControlUnitRunScheduleDelay   monitor_handler_system_cu_rtd;
 
     CommandListModel                    command_list_model;
     CommandTemplateListModel            command_template_list_model;

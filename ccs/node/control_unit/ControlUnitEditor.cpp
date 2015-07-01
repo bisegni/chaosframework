@@ -30,7 +30,6 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     ui(new Ui::ControlUnitEditor),
     monitor_handler_hb(),
     monitor_handler_status(),
-    monitor_handler_system_cu_rtd(),
     dataset_output_table_model(control_unit_unique_id,
                                chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT),
     dataset_input_table_model(control_unit_unique_id,
@@ -142,6 +141,12 @@ void ControlUnitEditor::initUI() {
     // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
     //launch api for control unit information
     updateAllControlUnitInfomration();
+
+    ui->labelRunScheduleDelaySet->setNodeUniqueID(control_unit_unique_id);
+    ui->labelRunScheduleDelaySet->setAttributeName(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
+    ui->labelRunScheduleDelaySet->setAttributeType(chaos::DataType::TYPE_INT64);
+    ui->labelRunScheduleDelaySet->setTrackStatus(true);
+    ui->labelRunScheduleDelaySet->setDataset(ChaosDatasetLabel::DatasetSystem);
     //start monitoring
     manageMonitoring(true);
 }
@@ -180,10 +185,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         registerHealtMonitorHandler(control_unit_unique_id,
                                     20,
                                     &monitor_handler_hb);
-        registerMonitorHandler(control_unit_unique_id,
-                               chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
-                               20,
-                               &monitor_handler_system_cu_rtd);
+         ui->labelRunScheduleDelaySet->startMonitoring();
     }else{
         if(unit_server_parent_unique_id.size()) {
             //remove old unit server for healt
@@ -200,10 +202,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         unregisterHealtMonitorHandler(control_unit_unique_id,
                                       20,
                                       &monitor_handler_hb);
-        unregisterMonitorHandler(control_unit_unique_id,
-                                 chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
-                                 20,
-                                 &monitor_handler_system_cu_rtd);
+        ui->labelRunScheduleDelaySet->stopMonitoring();
     }
 }
 
@@ -329,12 +328,6 @@ void ControlUnitEditor::monitorHandlerUpdateAttributeValue(const QString& key,
             //print the timestamp and update the red/green indicator
             ui->ledIndicatorHealtTSUnitServer->setNewTS(attribute_value.toULongLong());
             logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(ui->ledIndicatorHealtTSUnitServer->getState()));
-        }
-    } else if(key.compare(getDatasetKeyFromNodeKey(control_unit_unique_id, chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM)) == 0) {
-        //we are receiving data for system dataset of the control unit id
-        if(attribute_name.compare(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY) == 0) {
-            //we have update for the run schedule delay
-            ui->labelRunScheduleDelaySet->setText(attribute_value.toString());
         }
     }
 }

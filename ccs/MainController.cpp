@@ -17,6 +17,7 @@ using namespace chaos::metadata_service_client;
 Q_DECLARE_METATYPE (std::string)
 Q_DECLARE_METATYPE(int32_t)
 Q_DECLARE_METATYPE(int64_t)
+Q_DECLARE_METATYPE(uint64_t)
 Q_DECLARE_METATYPE(QSharedPointer<ChaosByteArray>);
 Q_DECLARE_METATYPE(QSharedPointer<chaos::CException>);
 Q_DECLARE_METATYPE(QSharedPointer<chaos::common::data::CDataWrapper>);
@@ -47,6 +48,7 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qRegisterMetaType<std::string>("std::string");
     qRegisterMetaType<int32_t>("int32_t");
     qRegisterMetaType<int64_t>("int64_t");
+    qRegisterMetaType<uint64_t>("uint64_t");
     qRegisterMetaType<boost::shared_ptr<chaos::common::data::SerializationBuffer> >();
     qRegisterMetaType<boost::shared_ptr<chaos::common::data::SerializationBuffer> >("boost::shared_ptr<chaos::common::data::SerializationBuffer>&");
     qRegisterMetaType<boost::shared_ptr<chaos::common::data::CDataWrapper> >("boost::shared_ptr<chaos::common::data::CDataWrapper>");
