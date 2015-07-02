@@ -3,7 +3,7 @@
 
 #include "CommandTemplateInstanceEditor.h"
 #include "../../widget/list/delegate/TwoLineInformationListItemDelegate.h"
-
+#include "../../plot/NodeAttributePlotting.h"
 #include <QDebug>
 #include <QDateTime>
 #include <QMessageBox>
@@ -139,8 +139,6 @@ void ControlUnitEditor::initUI() {
     //thread scehdule update
     ui->lineEditRunScheduleDelay->setValidator(new QIntValidator(0,60000000));
     // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
-    //launch api for control unit information
-    updateAllControlUnitInfomration();
 
     ui->labelRunScheduleDelaySet->setNodeUniqueID(control_unit_unique_id);
     ui->labelRunScheduleDelaySet->setAttributeName(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
@@ -149,6 +147,9 @@ void ControlUnitEditor::initUI() {
     ui->labelRunScheduleDelaySet->setDataset(ChaosDatasetLabel::DatasetSystem);
     //start monitoring
     manageMonitoring(true);
+
+    //launch api for control unit information
+    updateAllControlUnitInfomration();
 }
 
 void ControlUnitEditor::updateTemplateSearch() {
@@ -484,4 +485,9 @@ void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
     submitApiResult(TAG_CU_SET_THREAD_SCHEDULE_DELAY,
                     GET_CHAOS_API_PTR(node::UpdateProperty)->execute(control_unit_unique_id.toStdString(),
                                                                      property_list));
+}
+
+void ControlUnitEditor::on_pushButton_clicked() {
+    NodeAttributePlotting *plot_viewer = new NodeAttributePlotting(control_unit_unique_id, NULL);
+    plot_viewer->show();
 }

@@ -1,7 +1,6 @@
 #ifndef COMMANDTEMPLATELISTMODEL_H
 #define COMMANDTEMPLATELISTMODEL_H
 
-
 #include "ChaosAbstractListModel.h"
 
 #include <QVector>

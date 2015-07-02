@@ -1,5 +1,5 @@
 #include "MainController.h"
-
+#include "data/data.h"
 #include "widget/list/delegate/TwoLineInformationItem.h"
 #include "data/ChaosByteArray.h"
 #include <QStyleFactory>
@@ -19,6 +19,10 @@ Q_DECLARE_METATYPE(int32_t)
 Q_DECLARE_METATYPE(int64_t)
 Q_DECLARE_METATYPE(uint64_t)
 Q_DECLARE_METATYPE(QSharedPointer<ChaosByteArray>);
+Q_DECLARE_METATYPE(QSharedPointer<CommandReader>);
+Q_DECLARE_METATYPE(QSharedPointer<CommandParameterReader>);
+Q_DECLARE_METATYPE(QSharedPointer<DatasetReader>);
+Q_DECLARE_METATYPE(QSharedPointer<DatasetAttributeReader>);
 Q_DECLARE_METATYPE(QSharedPointer<chaos::CException>);
 Q_DECLARE_METATYPE(QSharedPointer<chaos::common::data::CDataWrapper>);
 Q_DECLARE_METATYPE(QSharedPointer<TwoLineInformationItem>);
@@ -39,6 +43,10 @@ MainController::~MainController()
 void MainController::init(int argc, char **argv, QApplication& a) {
     //register chaos metatype
     qRegisterMetaType<QSharedPointer<ChaosByteArray> >();
+    qRegisterMetaType<QSharedPointer<CommandReader> >();
+    qRegisterMetaType<QSharedPointer<CommandParameterReader> >();
+    qRegisterMetaType<QSharedPointer<DatasetReader> >();
+    qRegisterMetaType<QSharedPointer<DatasetAttributeReader> >();
     qRegisterMetaType<QSharedPointer<chaos::CException> >();
     qRegisterMetaType<QSharedPointer<chaos::common::data::CDataWrapper> >("QSharedPointer<CDataWrapper>");
     qRegisterMetaType<QSharedPointer<chaos::common::data::CDataWrapper> >("QSharedPointer<chaos::common::data::CDataWrapper>");

@@ -76,7 +76,11 @@ SOURCES += main.cpp\
     data/AttributeReader.cpp \
     widget/ChaosLabel.cpp \
     widget/ChaosDatasetLabel.cpp \
-    data/ChaosByteArray.cpp
+    data/ChaosByteArray.cpp \
+    plot/NodeAttributePlotting.cpp \
+    node/data/DatasetAttributeListModel.cpp \
+    data/DatasetReader.cpp \
+    data/DatasetAttributeReader.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -101,21 +105,11 @@ HEADERS  += \
     widget/LedIndicatorWidget.h \
     node/data/ChaosAbstractTableModel.h \
     node/control_unit/ControlUnitEditor.h \
-    monitor/healt/handler/HealtStatusHandler.h \
-    monitor/healt/handler/HealtHeartbeatHandler.h \
-    monitor/healt/handler/handler.h \
     node/data/FixedInputChannelDatasetTableModel.h \
     widget/LedIndicatorAliveTSWidget.h \
     logic/property_switch/MultiPropertyLogicSwitch.h \
     logic/property_switch/SwitchAggregator.h \
     node/data/ChaosAbstractDataSetTableModel.h \
-    monitor/healt/handler/AbstractAttributeHandler.h \
-    monitor/healt/handler/MonitorBoolAttributeHandler.h \
-    monitor/healt/handler/MonitorInt32AttributeHandler.h \
-    monitor/healt/handler/MonitorInt64AttributeHandler.h \
-    monitor/healt/handler/MonitorDoubleAttributeHandler.h \
-    monitor/healt/handler/MonitorStringAttributeHandler.h \
-    monitor/healt/handler/MonitorBinaryAttributeHandler.h \
     node/data/ChaosAbstractListModel.h \
     node/data/CommandListModel.h \
     widget/list/delegate/TwoLineInformationItem.h \
@@ -131,7 +125,6 @@ HEADERS  += \
     data/ChaosTypedAttributeValueSetter.h \
     external_lib/qcustomplot.h \
     data/AttributeReader.h \
-    monitor/system/handler/SystemControlUnit.h \
     monitor/handler/healt/HealtHeartbeatHandler.h \
     monitor/handler/healt/HealtStatusHandler.h \
     monitor/handler/AbstractAttributeHandler.h \
@@ -142,7 +135,6 @@ HEADERS  += \
     monitor/handler/MonitorInt64AttributeHandler.h \
     monitor/handler/MonitorStringAttributeHandler.h \
     monitor/handler/handler.h \
-    monitor/healt/healt.h \
     monitor/handler/healt/healt.h \
     monitor/handler/system/SystemControlUnitRunScheduleDelay.h \
     monitor/monitor.h \
@@ -156,7 +148,12 @@ HEADERS  += \
     monitor/handler/MonitorTSTaggedDoubleAttributeHandler.h \
     monitor/handler/MonitorTSTaggedInt64AttributeHandler.h \
     monitor/handler/MonitorTSTaggedStringAttributeHandler.h \
-    data/ChaosByteArray.h
+    data/ChaosByteArray.h \
+    plot/NodeAttributePlotting.h \
+    node/data/DatasetAttributeListModel.h \
+    data/DatasetReader.h \
+    data/DatasetAttributeReader.h \
+    data/data.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -173,7 +170,8 @@ FORMS    += \
     monitor/healt/HealtWidgetsListPresenteWidget.ui \
     node/control_unit/ControlUnitEditor.ui \
     node/control_unit/ControlUnitCommandTemplateEditor.ui \
-    node/control_unit/CommandTemplateInstanceEditor.ui
+    node/control_unit/CommandTemplateInstanceEditor.ui \
+    plot/NodeAttributePlotting.ui
 
 DISTFILES += \
     dark_orange.stylesheet

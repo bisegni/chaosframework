@@ -11,9 +11,6 @@
 #include <QVariant>
 #include <QMdiSubWindow>
 
-#define GET_CHAOS_API_PTR(api_name)\
-    chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->getApiProxy<api_name>()
-
 #define CHK_STR_AND_GET(p, x, alt)\
     (p->hasKey(x)?p->getStringValue(x):alt)
 
