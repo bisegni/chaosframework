@@ -38,10 +38,10 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     //handler connection
     connect(&monitor_handler_status,
             SIGNAL(valueUpdated(QString,QString,QVariant)),
-            SLOT(updateAttributeValue(QString,QString,QVariant)));
+            SLOT(monitorHandlerUpdateAttributeValue(QString,QString,QVariant)));
     connect(&monitor_handler_hb,
             SIGNAL(valueUpdated(QString,QString,QVariant)),
-            SLOT(updateAttributeValue(QString,QString,QVariant)));
+            SLOT(monitorHandlerUpdateAttributeValue(QString,QString,QVariant)));
 }
 
 ControlUnitEditor::~ControlUnitEditor() {
