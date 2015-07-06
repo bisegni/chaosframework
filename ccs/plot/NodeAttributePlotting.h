@@ -9,7 +9,7 @@
 #include <QMap>
 #include <QWidget>
 #include <QSharedPointer>
-
+#include <QReadWriteLock>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 namespace Ui {
@@ -43,6 +43,7 @@ protected:
 private slots:
     void addGraphAction();
     void removePlot();
+    void updatePlot();
     void asyncApiResult(const QString& tag, QSharedPointer<chaos::common::data::CDataWrapper> api_result);
     void asyncApiError(const QString&  tag, QSharedPointer<chaos::CException> api_exception);
     void asyncApiTimeout(const QString& tag);
@@ -52,8 +53,18 @@ private slots:
                       const QString& attribute_name,
                       uint64_t timestamp,
                       const QVariant& attribute_value);
+    void on_lineEditTimeInterval_editingFinished();
+
+    void on_lineEditRangeTo_editingFinished();
+
+    void on_lineEditRangeFrom_editingFinished();
+
+    void on_checkBoxLogScaleEnable_clicked();
+
 private:
     const QString node_uid;
+    uint64_t plot_ageing;                                                                    ;
+    QReadWriteLock lock_read_write_for_plot;
     ApiAsyncProcessor api_processor;
     DatasetAttributeListModel list_model_dataset;
     QMap<QString, QSharedPointer<PlotInfo> > map_plot_info;

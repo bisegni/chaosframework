@@ -1,8 +1,10 @@
 #include "NodeAttributePlotting.h"
 #include "ui_NodeAttributePlotting.h"
 
+#include <QTimer>
 #include <QDebug>
 #include <QMessageBox>
+#include <QIntValidator>
 
 static const QString TAG_CU_GET_DATASET = "cu_get_dataset";
 
@@ -13,6 +15,7 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
                                              QWidget *parent) :
     QWidget(parent),
     node_uid(_node_uid),
+    plot_ageing(60),
     ui(new Ui::NodeAttributePlotting) {
     ui->setupUi(this);
     if(parent == NULL) {
@@ -22,9 +25,13 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
     //set window title name
     setWindowTitle(QString("Plot viewer for:%1").arg(node_uid));
 
+    //set list model
     ui->listViewPlottableAttribute->setModel(&list_model_dataset);
 
     //plot setup
+    ui->lineEditTimeInterval->setValidator(new QIntValidator(60, 600));
+    ui->lineEditRangeFrom->setValidator(new QIntValidator());
+    ui->lineEditRangeTo->setValidator(new QIntValidator());
     ui->qCustomPlotTimed->setBackground(this->palette().background().color());
     //set the x axis as timestamp
     ui->qCustomPlotTimed->xAxis->setTickLabelType(QCPAxis::ltDateTime);
@@ -35,6 +42,7 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
     //set y axis as number
     ui->qCustomPlotTimed->yAxis->setTickLabelType(QCPAxis::ltNumber);
     ui->qCustomPlotTimed->yAxis->setTickLabelFont(QFont(QFont().family(), 8));
+    ui->qCustomPlotTimed->yAxis->setRange(0.0, 100.0);
     ui->qCustomPlotTimed->axisRect()->setupFullAxesBox();
     ui->qCustomPlotTimed->legend->setVisible(true);
 
@@ -51,13 +59,17 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
             SLOT(removePlot()));
     ui->listViewPlottableAttribute->addAction(remove_plot_action);
 
-
+    //load current dataset
     api_processor.submitApiResult(TAG_CU_GET_DATASET,
                                   GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(node_uid.toStdString()),
                                   this,
                                   SLOT(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
                                   SLOT(asyncApiError(QString, QSharedPointer<chaos::CException>)),
                                   SLOT(asyncApiTimeout(QString)));
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updatePlot()));
+    timer->start(100);
 }
 
 NodeAttributePlotting::~NodeAttributePlotting() {
@@ -225,6 +237,59 @@ void NodeAttributePlotting::valueUpdated(const QString& node_uid,
                                          uint64_t timestamp,
                                          const QVariant& attribute_value) {
     qDebug() << QString("Updating plot for: %1 with value %2[%3]").arg(attribute_name, attribute_value.toString(), QString::number(timestamp));
-    map_plot_info[attribute_name]->graph->addData((double)timestamp, attribute_value.toDouble());
-    ui->qCustomPlotTimed->replot(QCustomPlot::rpImmediate);
+    lock_read_write_for_plot.lockForRead();
+    double key = timestamp/1000.0;
+    double key_for_old = key-plot_ageing;
+
+    qDebug() << QString("Updating plot for: %1 with value %2[%3] remove data prior:%4").arg(attribute_name, attribute_value.toString(), QString::number(timestamp), QString::number(key_for_old));
+    map_plot_info[attribute_name]->graph->addData(key, attribute_value.toDouble());
+    map_plot_info[attribute_name]->graph->removeDataBefore(key_for_old);
+    lock_read_write_for_plot.unlock();
+}
+
+void NodeAttributePlotting::updatePlot() {
+    lock_read_write_for_plot.lockForWrite();
+    // make key axis range scroll with the data (at a constant range size of 8):
+    double now = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
+    double key_min = QDateTime::currentDateTime().addSecs(-plot_ageing).toMSecsSinceEpoch()/1000.0;
+    qDebug() << QString("Updating plot range[%1 - %2]").arg(QString::number(key_min), QString::number(now));
+
+    ui->qCustomPlotTimed->xAxis->setRange(key_min, now);
+    ui->qCustomPlotTimed->replot();
+    lock_read_write_for_plot.unlock();
+}
+
+void NodeAttributePlotting::on_lineEditTimeInterval_editingFinished() {
+    qDebug() << "Update the plot ageing display";
+    if(ui->lineEditTimeInterval->text().compare("") == 0) {
+        plot_ageing = 60;
+    } else {
+        plot_ageing = ui->lineEditTimeInterval->text().toDouble();
+    }
+}
+
+void NodeAttributePlotting::on_lineEditRangeTo_editingFinished() {
+    lock_read_write_for_plot.lockForWrite();
+    if(ui->lineEditRangeFrom->text().compare("") == 0) {
+        ui->qCustomPlotTimed->yAxis->setRangeUpper(100.0);
+    } else {
+        ui->qCustomPlotTimed->yAxis->setRangeUpper(ui->lineEditRangeTo->text().toDouble());
+    }
+    lock_read_write_for_plot.unlock();
+}
+
+void NodeAttributePlotting::on_lineEditRangeFrom_editingFinished() {
+    lock_read_write_for_plot.lockForWrite();
+    if(ui->lineEditRangeFrom->text().compare("") == 0) {
+        ui->qCustomPlotTimed->yAxis->setRangeLower(0.0);
+    } else {
+        ui->qCustomPlotTimed->yAxis->setRangeLower(ui->lineEditRangeFrom->text().toDouble());
+    }
+    lock_read_write_for_plot.unlock();
+}
+
+void NodeAttributePlotting::on_checkBoxLogScaleEnable_clicked() {
+    lock_read_write_for_plot.lockForWrite();
+    ui->qCustomPlotTimed->yAxis->setRange(ui->checkBoxLogScaleEnable->isChecked()?QCPAxis::stLogarithmic:QCPAxis::stLinear);
+    lock_read_write_for_plot.unlock();
 }
