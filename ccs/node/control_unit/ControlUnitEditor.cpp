@@ -136,7 +136,7 @@ void ControlUnitEditor::initUI() {
     ui->ledIndicatorHealtTSControlUnit->setStateBlinkOnRepeatSet(2, true);
     ui->ledIndicatorHealtTSUnitServer->setStateBlinkOnRepeatSet(2, true);
 
-    //thread scehdule update
+    //thread schedule update
     ui->lineEditRunScheduleDelay->setValidator(new QIntValidator(0,60000000));
     // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
 
@@ -238,7 +238,6 @@ void ControlUnitEditor::onApiDone(const QString& tag,
         if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)){
             const std::string new_u_s = api_result->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
             if(unit_server_parent_unique_id.compare(QString::fromStdString(new_u_s)) != 0) {
-                ui->labelUnitServerHost->setText(unit_server_parent_unique_id);
                 //whe ahve unit server changed
                 if(unit_server_parent_unique_id.size()) {
                     //remove old unit server for healt
@@ -257,7 +256,7 @@ void ControlUnitEditor::onApiDone(const QString& tag,
                                             20,
                                             &monitor_handler_hb);
                 // keep track of new us uid
-                unit_server_parent_unique_id = QString::fromStdString(new_u_s);
+                ui->labelUnitServerUID->setText(unit_server_parent_unique_id = QString::fromStdString(new_u_s));
             }
             //apply control unit instance
             dataset_input_table_model.updateInstanceDescription(api_result);

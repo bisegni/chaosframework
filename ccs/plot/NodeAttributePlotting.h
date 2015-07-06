@@ -63,7 +63,7 @@ private slots:
 
 private:
     const QString node_uid;
-    uint64_t plot_ageing;                                                                    ;
+    uint64_t plot_ageing;
     QReadWriteLock lock_read_write_for_plot;
     ApiAsyncProcessor api_processor;
     DatasetAttributeListModel list_model_dataset;

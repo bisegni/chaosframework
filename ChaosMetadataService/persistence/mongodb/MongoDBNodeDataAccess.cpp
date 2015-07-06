@@ -397,20 +397,47 @@ int MongoDBNodeDataAccess::checkCommandPresence(const std::string& command_uniqu
 int MongoDBNodeDataAccess::setCommand(chaos::common::data::CDataWrapper& command) {
     int err = 0;
     mongo::BSONObj result;
+    mongo::BSONObjBuilder update_builder;
     try {
+        if(!command.hasKey(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID)) {
+            return -1;
+            MDBNDA_ERR << "No command uid found";
+        }
+        if(!command.hasKey(BatchCommandAndParameterDescriptionkey::BC_ALIAS)) {
+            return -2;
+            MDBNDA_ERR << "No command alias found";
+        }
+        if(!command.hasKey(BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION)) {
+            return -3;
+            MDBNDA_ERR << "No command description found";
+        }
         std::auto_ptr<SerializationBuffer> ser(command.getBSONData());
         mongo::BSONObj i(ser->getBufferPtr());
         
-        DEBUG_CODE(MDBNDA_DBG<<log_message("setCommand",
-                                           "insert",
-                                           DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                                   i.jsonString()));)
+        mongo::BSONObj query = BSON(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID << command.getStringValue(BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID));
         
-        if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
-                                     i))){
-            MDBNDA_ERR << "Inserting a new command";
+        update_builder.append(i.getField(BatchCommandAndParameterDescriptionkey::BC_ALIAS));
+        update_builder.append(i.getField(BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION));
+        if(i.hasElement(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS)){
+            //we have parameters
+            update_builder.append(i.getField(BatchCommandAndParameterDescriptionkey::BC_PARAMETERS));
         }
-
+        mongo::BSONObj update = BSON("$set" << update_builder.obj());
+        
+        DEBUG_CODE(MDBNDA_DBG<<log_message("updateUS",
+                                           "update",
+                                           DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                   "Update",
+                                                                   query.jsonString(),
+                                                                   update.jsonString()));)
+        
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES_COMMAND),
+                                     query,
+                                     update,
+                                     true))) {
+            MDBNDA_ERR << "Error updating unit server:" << err;
+        }
+        
     } catch (const mongo::DBException &e) {
         MDBNDA_ERR << e.what();
         err = e.getCode();

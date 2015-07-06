@@ -286,14 +286,14 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelUnitServerHost">
+        <widget class="QLabel" name="labelUnitServerUID">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
           </font>
          </property>
          <property name="text">
-          <string/>
+          <string>unit server uid</string>
          </property>
         </widget>
        </item>

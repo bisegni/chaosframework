@@ -32,17 +32,22 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
     ui->lineEditTimeInterval->setValidator(new QIntValidator(60, 600));
     ui->lineEditRangeFrom->setValidator(new QIntValidator());
     ui->lineEditRangeTo->setValidator(new QIntValidator());
+    //ui->qCustomPlotTimed->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
     ui->qCustomPlotTimed->setBackground(this->palette().background().color());
-    //set the x axis as timestamp
+    ui->qCustomPlotTimed->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
+    ui->qCustomPlotTimed->legend->setFont(QFont(QFont().family(), 8));
+
     ui->qCustomPlotTimed->xAxis->setTickLabelType(QCPAxis::ltDateTime);
     ui->qCustomPlotTimed->xAxis->setDateTimeFormat("hh:mm:ss");
     ui->qCustomPlotTimed->xAxis->setTickLabelFont(QFont(QFont().family(), 8));
+    ui->qCustomPlotTimed->xAxis->setLabel("Timespamp");
     ui->qCustomPlotTimed->xAxis->setAutoTickStep(true);
-    //ui->qCustomPlotTimed->xAxis->setTickStep(2);
-    //set y axis as number
+
     ui->qCustomPlotTimed->yAxis->setTickLabelType(QCPAxis::ltNumber);
     ui->qCustomPlotTimed->yAxis->setTickLabelFont(QFont(QFont().family(), 8));
     ui->qCustomPlotTimed->yAxis->setRange(0.0, 100.0);
+    ui->qCustomPlotTimed->xAxis->setLabel("Value");
+
     ui->qCustomPlotTimed->axisRect()->setupFullAxesBox();
     ui->qCustomPlotTimed->legend->setVisible(true);
 
@@ -236,12 +241,9 @@ void NodeAttributePlotting::valueUpdated(const QString& node_uid,
                                          const QString& attribute_name,
                                          uint64_t timestamp,
                                          const QVariant& attribute_value) {
-    qDebug() << QString("Updating plot for: %1 with value %2[%3]").arg(attribute_name, attribute_value.toString(), QString::number(timestamp));
     lock_read_write_for_plot.lockForRead();
     double key = timestamp/1000.0;
     double key_for_old = key-plot_ageing;
-
-    qDebug() << QString("Updating plot for: %1 with value %2[%3] remove data prior:%4").arg(attribute_name, attribute_value.toString(), QString::number(timestamp), QString::number(key_for_old));
     map_plot_info[attribute_name]->graph->addData(key, attribute_value.toDouble());
     map_plot_info[attribute_name]->graph->removeDataBefore(key_for_old);
     lock_read_write_for_plot.unlock();
@@ -252,8 +254,6 @@ void NodeAttributePlotting::updatePlot() {
     // make key axis range scroll with the data (at a constant range size of 8):
     double now = QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0;
     double key_min = QDateTime::currentDateTime().addSecs(-plot_ageing).toMSecsSinceEpoch()/1000.0;
-    qDebug() << QString("Updating plot range[%1 - %2]").arg(QString::number(key_min), QString::number(now));
-
     ui->qCustomPlotTimed->xAxis->setRange(key_min, now);
     ui->qCustomPlotTimed->replot();
     lock_read_write_for_plot.unlock();
@@ -270,7 +270,7 @@ void NodeAttributePlotting::on_lineEditTimeInterval_editingFinished() {
 
 void NodeAttributePlotting::on_lineEditRangeTo_editingFinished() {
     lock_read_write_for_plot.lockForWrite();
-    if(ui->lineEditRangeFrom->text().compare("") == 0) {
+    if(ui->lineEditRangeTo->text().compare("") == 0) {
         ui->qCustomPlotTimed->yAxis->setRangeUpper(100.0);
     } else {
         ui->qCustomPlotTimed->yAxis->setRangeUpper(ui->lineEditRangeTo->text().toDouble());
