@@ -290,6 +290,6 @@ void NodeAttributePlotting::on_lineEditRangeFrom_editingFinished() {
 
 void NodeAttributePlotting::on_checkBoxLogScaleEnable_clicked() {
     lock_read_write_for_plot.lockForWrite();
-    ui->qCustomPlotTimed->yAxis->setRange(ui->checkBoxLogScaleEnable->isChecked()?QCPAxis::stLogarithmic:QCPAxis::stLinear);
+    ui->qCustomPlotTimed->yAxis->setScaleType(ui->checkBoxLogScaleEnable->isChecked()?QCPAxis::stLogarithmic:QCPAxis::stLinear);
     lock_read_write_for_plot.unlock();
 }
