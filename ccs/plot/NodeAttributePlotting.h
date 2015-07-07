@@ -10,7 +10,10 @@
 #include <QWidget>
 #include <QSharedPointer>
 #include <QReadWriteLock>
+
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+
+#include <boost/random.hpp>
 
 namespace Ui {
 class NodeAttributePlotting;
@@ -64,6 +67,10 @@ private slots:
 private:
     const QString node_uid;
     uint64_t plot_ageing;
+    boost::mt19937 rng;
+    boost::uniform_int<> zero_to_255;
+    boost::variate_generator< boost::mt19937, boost::uniform_int<> > random_color_component;
+
     QReadWriteLock lock_read_write_for_plot;
     ApiAsyncProcessor api_processor;
     DatasetAttributeListModel list_model_dataset;

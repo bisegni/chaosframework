@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QIntValidator>
-
+#include <QVBoxLayout>
 static const QString TAG_CU_GET_DATASET = "cu_get_dataset";
 
 using namespace chaos::metadata_service_client;
@@ -16,6 +16,9 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
     QWidget(parent),
     node_uid(_node_uid),
     plot_ageing(60),
+    rng((const uint_fast32_t) std::time(0) ),
+    zero_to_255( 0, 255 ),
+    random_color_component(rng, zero_to_255),
     ui(new Ui::NodeAttributePlotting) {
     ui->setupUi(this);
     if(parent == NULL) {
@@ -32,6 +35,7 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
     ui->lineEditTimeInterval->setValidator(new QIntValidator(60, 600));
     ui->lineEditRangeFrom->setValidator(new QIntValidator());
     ui->lineEditRangeTo->setValidator(new QIntValidator());
+
     //ui->qCustomPlotTimed->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
     ui->qCustomPlotTimed->setBackground(this->palette().background().color());
     ui->qCustomPlotTimed->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
@@ -113,6 +117,7 @@ void NodeAttributePlotting::addTimedGraphFor(QSharedPointer<DatasetAttributeRead
     plot_info->graph = ui->qCustomPlotTimed->addGraph();
     plot_info->graph->setLineStyle(QCPGraph::lsLine);
     plot_info->graph->setName(attribute_name);
+    plot_info->graph->setPen(QPen(QColor(random_color_component(), random_color_component(), random_color_component())));
     plot_info->graph->addToLegend();
 
     _addRemoveToPlot(plot_info, true);
