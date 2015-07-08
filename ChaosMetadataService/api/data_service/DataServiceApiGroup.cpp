@@ -30,7 +30,7 @@ using namespace chaos::metadata_service::api::data_service;
 DEFINE_CLASS_FACTORY_NO_ALIAS(DataServiceApiGroup, chaos::metadata_service::api::AbstractApiGroup);
 
 DataServiceApiGroup::DataServiceApiGroup():
-AbstractApiGroup("data_service"){
+AbstractApiGroup(DataServiceNodeDomainAndActionRPC::RPC_DOMAIN){
         //add api for DataService api
     addApi<NewDS>();
     addApi<UpdateDS>();

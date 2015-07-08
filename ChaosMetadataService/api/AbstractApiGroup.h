@@ -28,7 +28,7 @@
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
-
+#include <chaos/common/chaos_types.h>
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
@@ -37,18 +37,39 @@ namespace chaos {
 	namespace metadata_service {
 		namespace api {
             
-            typedef std::vector< boost::shared_ptr<AbstractApi> >           ApiList;
-            typedef std::vector< boost::shared_ptr<AbstractApi> >::iterator ApiListIterator;
-            
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<AbstractApi>, ApiList)
+
 			class AbstractApiGroup:
 			public common::utility::NamedService,
             public chaos::common::utility::InizializableService,
 			public chaos::DeclareAction {
+                friend class AbstractApi;
                 //! the instace of the persistence driver
                 ApiSubserviceAccessor *subservice;
                 
                 //! list of all installed api in the group
                 ApiList api_instance;
+            protected:
+                //! install a class as api
+                /*!
+                 The alias of the action to be call si got by api itself
+                 */
+                template<typename T>
+                boost::shared_ptr<T> getNewApiInstance() {
+                    //allcoate the instsancer for the AbstractApi depending by the template
+                    std::auto_ptr<INSTANCER(T, AbstractApi)> i(ALLOCATE_INSTANCER(T, AbstractApi));
+                    
+                    //get api instance
+                    boost::shared_ptr<T> instance((T*)i->getInstance());
+                    if(instance.get()) {
+                        //we have an instance so we can initilize it
+                        InizializableService::initImplementation(instance.get(),
+                                                                 static_cast<void*>(subservice),
+                                                                 instance->getName(),
+                                                                 __PRETTY_FUNCTION__);
+                    }
+                }
+                
 			public:
 				AbstractApiGroup(const std::string& name);
                 
@@ -75,6 +96,7 @@ namespace chaos {
 																	  instance->getName().c_str());
 					}
 				}
+                
                 
                 void init(void *init_data) throw (chaos::CException);
                 

@@ -40,6 +40,7 @@ namespace chaos {
                     //! perform registration for specific unit server
                     chaos::common::data::CDataWrapper *unitServerRegistration(chaos::common::data::CDataWrapper *api_data,
                                                                               bool& detach_data) throw(chaos::CException);
+                    
                         //! perform specific registration for control unit
                     chaos::common::data::CDataWrapper *controlUnitRegistration(chaos::common::data::CDataWrapper *api_data,
                                                                                bool& detach_data) throw(chaos::CException);

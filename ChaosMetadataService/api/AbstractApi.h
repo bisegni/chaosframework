@@ -35,6 +35,8 @@ namespace chaos {
 x *v = getPersistenceDriver()->getDataAccess<x>();\
 if(v == NULL) throw CException(err, "Error allocating " #x, __PRETTY_FUNCTION__);
 
+            class AbstractApiGroup;
+            
 			//! Api abstraction
 			/*!
 			 This class define the rule for the api development
@@ -42,9 +44,11 @@ if(v == NULL) throw CException(err, "Error allocating " #x, __PRETTY_FUNCTION__)
             class AbstractApi:
             public chaos::common::utility::NamedService,
             public chaos::common::utility::InizializableService {
+                friend class AbstractApiGroup;
                 //! the instace of the persistence driver
                 ApiSubserviceAccessor *subservice;
                 
+                AbstractApiGroup *parent_group;
             protected:
                 service_common::persistence::data_access::AbstractPersistenceDriver *getPersistenceDriver();
                 batch::MDSBatchExecutor *getBatchExecutor();

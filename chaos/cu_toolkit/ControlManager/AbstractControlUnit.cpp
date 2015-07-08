@@ -611,7 +611,7 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *dataset_at
 // Startable Service method
 void AbstractControlUnit::init(void *init_data) throw(CException) {
     CDataWrapper *init_configuration = static_cast<CDataWrapper*>(init_data);
-    if(!init_configuration ||
+    /*if(!init_configuration ||
        !init_configuration->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
         throw CException(-1, "No Device Init information in param", __PRETTY_FUNCTION__);
     }
@@ -620,17 +620,17 @@ void AbstractControlUnit::init(void *init_data) throw(CException) {
     if(deviceID.compare(DatasetDB::getDeviceID())) {
         ACULERR_ << "device:" << deviceID << "not known by this Work Unit";
         throw CException(-2, "Device not known by this control unit", __PRETTY_FUNCTION__);
-    }
+    }*/
     
     //cast to the CDatawrapper instance
-    ACULAPP_ << "Initialize CU Database for device:" << deviceID;
+    ACULAPP_ << "Initialize CU Database for device:" << DatasetDB::getDeviceID();
     DatasetDB::addAttributeToDataSetFromDataWrapper(*init_configuration);
     
     //initialize key data storage for device id
-    ACULAPP_ << "Create KeyDataStorage device:" << deviceID;
-    key_data_storage = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
+    ACULAPP_ << "Create KeyDataStorage device:" << DatasetDB::getDeviceID();
+    key_data_storage = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(DatasetDB::getDeviceID());
     
-    ACULAPP_ << "Call KeyDataStorage init implementation for deviceID:" << deviceID;
+    ACULAPP_ << "Call KeyDataStorage init implementation for deviceID:" << DatasetDB::getDeviceID();
     key_data_storage->init(init_configuration);
 }
 

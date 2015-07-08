@@ -110,9 +110,9 @@ int DeviceMessageChannel::getType(std::string& control_unit_type, uint32_t milli
                                               millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
 	if(err == ErrorCode::EC_NO_ERROR) {
-        auto_ptr<CDataWrapper> info_pack(result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
-        if(info_pack.get() && info_pack->hasKey(NodeDefinitionKey::NODE_TYPE)){
-            control_unit_type = info_pack->getStringValue(NodeDefinitionKey::NODE_TYPE);
+        //auto_ptr<CDataWrapper> info_pack(result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+        if(result.get() && result->hasKey(NodeDefinitionKey::NODE_TYPE)){
+            control_unit_type = result->getStringValue(NodeDefinitionKey::NODE_TYPE);
         }
     }
     return err;
@@ -129,9 +129,9 @@ int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, ui
 											  millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
     if(err == ErrorCode::EC_NO_ERROR) {
-        auto_ptr<CDataWrapper> statePack(result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
-        if(statePack.get() && statePack->hasKey(CUStateKey::CONTROL_UNIT_STATE)){
-            deviceState = (CUStateKey::ControlUnitState)statePack->getInt32Value(CUStateKey::CONTROL_UNIT_STATE);
+        //auto_ptr<CDataWrapper> statePack(result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+        if(result.get() && result->hasKey(CUStateKey::CONTROL_UNIT_STATE)){
+            deviceState = (CUStateKey::ControlUnitState)result->getInt32Value(CUStateKey::CONTROL_UNIT_STATE);
         }
     }
     return err;
@@ -173,18 +173,18 @@ int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy, uint32_t mil
 }
 
 //------------------------------------
-void DeviceMessageChannel::sendCustomMessage(const char * const actAlias, CDataWrapper* const message_data, bool queued) {
+void DeviceMessageChannel::sendCustomMessage(const std::string& action_name, CDataWrapper* const message_data, bool queued) {
     sendMessage(deviceNetworkAddress->node_id,
-                actAlias,
+                action_name,
 				message_data,
 				!queued);
 }
 
 //------------------------------------
-int DeviceMessageChannel::sendCustomRequest(const char * const actAlias, CDataWrapper* const message_data, CDataWrapper** resultData, uint32_t millisecToWait, bool async, bool queued) {
+int DeviceMessageChannel::sendCustomRequest(const std::string& action_name, CDataWrapper* const message_data, CDataWrapper** resultData, uint32_t millisecToWait, bool async, bool queued) {
     int err = ErrorCode::EC_NO_ERROR;
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
-                                              actAlias,
+                                              action_name,
                                               message_data,
                                               millisecToWait,
                                               async,

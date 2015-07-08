@@ -28,7 +28,7 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(UnitServerApiGroup,
                               chaos::metadata_service::api::AbstractApiGroup);
 
 UnitServerApiGroup::UnitServerApiGroup():
-AbstractApiGroup("unit_server"){
+AbstractApiGroup(UnitServerNodeDomainAndActionRPC::RPC_DOMAIN){
 	//add api for producer registration
 	addApi<GetDescription>();
     addApi<LoadUnloadControlUnit>();

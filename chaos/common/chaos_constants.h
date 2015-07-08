@@ -406,6 +406,17 @@ namespace chaos {
     }
     /** @} */ // end of DataServiceNodeDefinitionKey
     
+    
+    /** @defgroup DataServiceNodeDomainAndActionRPC !CHAOS data service rpc key description
+     *  This is the collection of all key used only by unit server
+     *  @{
+     */
+    namespace DataServiceNodeDomainAndActionRPC {
+        //! The domain for unit server rpc action
+        static const char * const RPC_DOMAIN                                    = "data_service";
+    }
+    /** @} */ // end of DataServiceNodeDomainAndActionRPC
+    
     /** @defgroup ControlUnitNodeDefinitionKey List of control unit node type attribute key
      *  @{
      */

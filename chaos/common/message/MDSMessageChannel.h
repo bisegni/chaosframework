@@ -101,6 +101,12 @@ namespace chaos {
 				 \return error code
 				 */
 				int getLastDatasetForDevice(string& identificationID,  CDataWrapper** deviceDefinition, uint32_t millisecToWait=0);
+                
+                //! return the configuration for the data driver
+                /*!
+                 Return the besta available data service at the monent within the configuraiton for data driver
+                 */
+                int getDataDriverBestConfiguration(CDataWrapper** deviceDefinition, uint32_t millisecToWait=0);
 			};
 		}
 	}

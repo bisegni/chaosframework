@@ -88,7 +88,7 @@ void DeviceController::getDeviceId(string& dId) {
 //---------------------------------------------------------------------------------------------------
 void DeviceController::updateChannel() throw(CException) {
     int err = ErrorCode::EC_NO_ERROR;
-    CDataWrapper *devDefHandler = NULL;
+    CDataWrapper *tmp_data_handler = NULL;
     CDeviceNetworkAddress *devAddress = NULL;
     //make the live driver
     if(!mdsChannel){
@@ -96,10 +96,10 @@ void DeviceController::updateChannel() throw(CException) {
         if(!mdsChannel) throw CException(-1, "No MDS Channel created", "DeviceController::init");
     }
     
-    err = mdsChannel->getLastDatasetForDevice(device_id, &devDefHandler, millisecToWait);
-    if(err!=ErrorCode::EC_NO_ERROR || !devDefHandler) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
+    err = mdsChannel->getLastDatasetForDevice(device_id, &tmp_data_handler, millisecToWait);
+    if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
     
-    auto_ptr<CDataWrapper> lastDeviceDefinition(devDefHandler);
+    auto_ptr<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
     
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
     
@@ -108,12 +108,16 @@ void DeviceController::updateChannel() throw(CException) {
     
     //update live data driver
 	if(!ioLiveDataDriver) {
-    ioLiveDataDriver = LLRpcApi::getInstance()->getDataProxyChannelNewInstance();
+        ioLiveDataDriver = LLRpcApi::getInstance()->getDataProxyChannelNewInstance();
 		if(ioLiveDataDriver) {
 			ioLiveDataDriver->init(NULL);
+            if(!mdsChannel->getDataDriverBestConfiguration(&tmp_data_handler, millisecToWait)){
+                auto_ptr<CDataWrapper> best_available_da_ptr(tmp_data_handler);
+                ioLiveDataDriver->updateConfiguration(best_available_da_ptr.get());
+            }
 		}
 	}
-    if(ioLiveDataDriver) ioLiveDataDriver->updateConfiguration(lastDeviceDefinition.get());
+    
     
     //allocate device channel the memory of the CDeviceNetworkAddress * is managed by channel
     if(!deviceChannel){

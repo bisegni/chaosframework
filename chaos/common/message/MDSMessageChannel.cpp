@@ -28,14 +28,14 @@ using namespace chaos::common::message;
 using namespace chaos::common::data;
 
 /*
-#define CHECK_TIMEOUT_AND_RESULT_CODE(x,e) \
-if(!x.get()) {\
-e = ErrorCode::EC_TIMEOUT;\
-} else if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {\
-e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
-}*/
+ #define CHECK_TIMEOUT_AND_RESULT_CODE(x,e) \
+ if(!x.get()) {\
+ e = ErrorCode::EC_TIMEOUT;\
+ } else if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {\
+ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
+ }*/
 
-    //! Send heartbeat
+//! Send heartbeat
 /*!
  Send the heartbeat for an identification ID. This can be an id for a device or an uitoolkit instance
  \param identificationID identification id of a device or a client
@@ -74,11 +74,11 @@ int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset, bool 
 int MDSMessageChannel::sendNodeRegistration(CDataWrapper& deviceDataset, bool requestCheck, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     string currentBrokerIpPort;
-        //get rpc receive port
+    //get rpc receive port
     getRpcPublishedHostAndPort(currentBrokerIpPort);
     deviceDataset.addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
-
-        //set our timestamp
+    
+    //set our timestamp
     deviceDataset.addInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP, chaos::common::utility::TimingUtil::getTimeStamp());
     
     if(requestCheck){
@@ -95,9 +95,9 @@ int MDSMessageChannel::sendNodeRegistration(CDataWrapper& deviceDataset, bool re
     return err;
 }
 
-    //! Get all active device id
+//! Get all active device id
 int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t millisecToWait) {
-        //send request and wait the response
+    //send request and wait the response
     int err = ErrorCode::EC_NO_ERROR;
     auto_ptr<CDataWrapper> resultAnswer(sendRequest(nodeAddress->node_id,
                                                     ChaosSystemDomainAndActionLabel::MDS_GET_ALL_DEVICE,
@@ -107,7 +107,7 @@ int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t mil
     if(err == ErrorCode::EC_NO_ERROR && resultAnswer->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){
         auto_ptr<CDataWrapper> allDeviceInfo(resultAnswer->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
         if(allDeviceInfo->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)){
-                //there is a result
+            //there is a result
             auto_ptr<CMultiTypeDataArrayWrapper> allDeviceInfoVec(allDeviceInfo->getVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID));
             
             for (int idx = 0; idx < allDeviceInfoVec->size(); idx++) {
@@ -118,7 +118,7 @@ int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t mil
     return err;
 }
 
-    //! Get node address for identification id
+//! Get node address for identification id
 /*!
  Return the node address for an identification id
  nodeNetworkAddress node address structure to be filled with identification id network info
@@ -128,7 +128,7 @@ int MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, CDev
     if(!deviceNetworkAddress) return -1;
     auto_ptr<CDataWrapper> callData(new CDataWrapper());
     callData->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identificationID);
-        //send request and wait the response
+    //send request and wait the response
     auto_ptr<CDataWrapper> resultAnswer(sendRequest(nodeAddress->node_id,
                                                     "getNodeDescription",
                                                     callData.get(),
@@ -138,7 +138,7 @@ int MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, CDev
        resultAnswer.get()){
         if(resultAnswer->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) &&
            resultAnswer->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)){
-                //there is a result
+            //there is a result
             *deviceNetworkAddress = new CDeviceNetworkAddress();
             (*deviceNetworkAddress)->ip_port = resultAnswer->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
             (*deviceNetworkAddress)->node_id = resultAnswer->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN);
@@ -149,7 +149,7 @@ int MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, CDev
 }
 
 
-    //! Get curent dataset for device
+//! Get curent dataset for device
 /*!
  Return the node address for an identification id
  \param identificationID id for wich we need to get the network address information
@@ -161,15 +161,36 @@ int MDSMessageChannel::getLastDatasetForDevice(string& identificationID, CDataWr
     if(!deviceDefinition) return -1;
     auto_ptr<CDataWrapper> callData(new CDataWrapper());
     callData->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identificationID);
-        //send request and wait the response
+    //send request and wait the response
     auto_ptr<CDataWrapper> deviceInitInformation(sendRequest("control_unit",
                                                              "getCurrentDataset",
                                                              callData.get(),
                                                              millisecToWait));
-    CHECK_TIMEOUT_AND_RESULT_CODE(deviceInitInformation, err) 
+    CHECK_TIMEOUT_AND_RESULT_CODE(deviceInitInformation, err)
     if(err == ErrorCode::EC_NO_ERROR &&
        deviceInitInformation.get()) {
-            *deviceDefinition = deviceInitInformation->clone();
+        *deviceDefinition = deviceInitInformation->clone();
+    }
+    return err;
+}
+
+//! return the configuration for the data driver
+/*!
+ Return the besta available data service at the monent within the configuraiton for data driver
+ */
+int MDSMessageChannel::getDataDriverBestConfiguration(CDataWrapper** deviceDefinition, uint32_t millisecToWait) {
+    int err = ErrorCode::EC_NO_ERROR;
+    if(!deviceDefinition) return -1;
+    //send request and wait the response
+    std::auto_ptr<MessageRequestFuture> future = sendRequestWithFuture(DataServiceNodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                       "getBestEndpoints",
+                                                                        NULL);
+    if(future->wait(millisecToWait)) {
+        if((err = future->getError()) == ErrorCode::EC_NO_ERROR) {
+            *deviceDefinition = future->detachResult();
+        }
+    } else {
+        err = -1;
     }
     return err;
 }

@@ -109,12 +109,12 @@ namespace chaos {
 				/*!
 				 \brief send a message to a custom action
 				 */
-				void sendCustomMessage(const char * const, common::data::CDataWrapper* const, bool queued = true);
+				void sendCustomMessage(const std::string& action_name, common::data::CDataWrapper* const, bool queued = true);
 				
 				/*!
 				 \brief send a request to a custom action
 				 */
-				int sendCustomRequest(const char * const, common::data::CDataWrapper* const, common::data::CDataWrapper** resultData,uint32_t millisecToWait = 0, bool async = false, bool queued = true);
+				int sendCustomRequest(const std::string& action_name, common::data::CDataWrapper* const, common::data::CDataWrapper** resultData,uint32_t millisecToWait = 0, bool async = false, bool queued = true);
                 
                 /*!
                  send a request to a custom action

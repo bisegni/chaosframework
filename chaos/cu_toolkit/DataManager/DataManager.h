@@ -84,7 +84,7 @@ namespace chaos{
 				/*
 				 *
 				 */
-				KeyDataStorage *getKeyDataStorageNewInstanceForKey(std::string&) throw(CException);
+				KeyDataStorage *getKeyDataStorageNewInstanceForKey(const std::string& device_id) throw(CException);
 				//-------per test------
 				/*
 				 * Return an instance for the configured data live driver
@@ -94,32 +94,32 @@ namespace chaos{
 				/*
 				 Initialize a device id KeyDataStorageBuffer
 				 */
-				void initDeviceIDKeyDataStorage(std::string&, chaos_data::CDataWrapper*) throw(CException);
+				void initDeviceIDKeyDataStorage(const std::string &device_id, chaos_data::CDataWrapper*) throw(CException);
 				
 				/*
 				 Initialize a device id KeyDataStorageBuffer
 				 */
-				void deinitDeviceIDKeyDataStorage(std::string&) throw(CException);
+				void deinitDeviceIDKeyDataStorage(const std::string &device_id) throw(CException);
 				
 				/*
 				 Submit a CDataWrapper on device id KeyDataStorage
 				 */
-				void pushDeviceDataByIdKey(std::string&, chaos_data::CDataWrapper*) throw(CException);
+				void pushDeviceDataByIdKey(const std::string &device_id, chaos_data::CDataWrapper*) throw(CException);
 				
 				/*
 				 Get the last CDataWrapper from the live data for the device id key
 				 */
-				common::utility::ArrayPointer<chaos_data::CDataWrapper> *getLastCDataWrapperForDeviceIdKey(std::string&)  throw(CException);
+				common::utility::ArrayPointer<chaos_data::CDataWrapper> *getLastCDataWrapperForDeviceIdKey(const std::string &device_id)  throw(CException);
 				/*
 				 return a new instance of CDataWrapper filled with a mandatory data
 				 according to key
 				 */
-				chaos_data::CDataWrapper *getNewDataWrapperForDeviceIdKey(std::string&);
+				chaos_data::CDataWrapper *getNewDataWrapperForDeviceIdKey(const std::string &device_id);
 				
 				/*
 				 Configure the datamanager
 				 */
-				void updateConfigurationForDeviceIdKey(std::string&, chaos_data::CDataWrapper*);
+				void updateConfigurationForDeviceIdKey(const std::string &device_id, chaos_data::CDataWrapper*);
 			};
 		}
 	}

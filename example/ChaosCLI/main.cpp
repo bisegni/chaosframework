@@ -200,8 +200,8 @@ int main (int argc, char* argv[] )
     if((control_unit_type =="rtcu") || (control_unit_type =="sccu")){
       err = controller->getState(deviceState);
       if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");
-      std::cout << control_unit_type<<" device, state:";
-      print_state(deviceState);
+      //std::cout << control_unit_type<<" device, state:";
+      //print_state(deviceState);
     } else {
       std::cout << "State-less device"<<std::endl;
       deviceState = CUStateKey::START;

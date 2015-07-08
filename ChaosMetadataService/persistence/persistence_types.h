@@ -27,6 +27,26 @@
 namespace chaos {
     namespace metadata_service{
         namespace persistence {
+            
+            typedef enum AutoFlag {
+                AUTO_LOAD,
+                AUTO_INIT,
+                AUTO_START
+            }AutoFlag;
+            
+            typedef struct NodeSearchIndex {
+                uint64_t last_id;
+                std::string node_uid;
+                
+                NodeSearchIndex(){};
+                NodeSearchIndex(uint64_t _last_id,
+                                const std::string& _node_uid):
+                last_id(_last_id),
+                node_uid(_node_uid){};
+                NodeSearchIndex(const NodeSearchIndex& _nsi):
+                last_id(_nsi.last_id),
+                node_uid(_nsi.node_uid){};
+            };
         }
     }
 }

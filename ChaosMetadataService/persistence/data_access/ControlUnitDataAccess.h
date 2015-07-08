@@ -21,6 +21,7 @@
 #define __CHAOSFramework__ControlUnitDataAccess__
 
 #include "../persistence.h"
+#include "../persistence_types.h"
 
 #include <chaos/common/data/CDataWrapper.h>
 
@@ -35,7 +36,6 @@ namespace chaos {
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 public:
                     DECLARE_DA_NAME
-
                         //! default constructor
                     ControlUnitDataAccess();
 
@@ -45,6 +45,11 @@ namespace chaos {
                         //!check if the control unit node is present
                     virtual int checkPresence(const std::string& control_unit_id, bool& presence) = 0;
 
+                    virtual int getControlUnitWithAutoFlag(const std::string& unit_server_host,
+                                                           chaos::metadata_service::persistence::AutoFlag auto_flag,
+                                                           uint64_t last_sequence_id,
+                                                           std::vector<NodeSearchIndex>& control_unit_found) = 0;
+                    
                     virtual int insertNewControlUnit(chaos::common::data::CDataWrapper& control_unit_description) = 0;
 
                     virtual int updateControlUnit(chaos::common::data::CDataWrapper& control_unit_description) = 0;

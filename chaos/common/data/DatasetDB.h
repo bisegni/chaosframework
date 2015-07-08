@@ -35,7 +35,7 @@ namespace chaos {
 			
 			class DatasetDB : private chaos_data::CUSchemaDB {
 				
-				std::string deviceID;
+				std::string device_id;
 				
 			protected:
 				void setDeviceID(const std::string & _deviceID);

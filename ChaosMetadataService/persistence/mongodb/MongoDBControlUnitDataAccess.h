@@ -51,6 +51,11 @@ namespace chaos {
                     
                     int checkPresence(const std::string& control_unit_id, bool& presence);
                     
+                    int getControlUnitWithAutoFlag(const std::string& unit_server_host,
+                                                   chaos::metadata_service::persistence::AutoFlag auto_flag,
+                                                   uint64_t last_sequence_id,
+                                                   std::vector<NodeSearchIndex>& control_unit_found);
+                    
                     int insertNewControlUnit(chaos::common::data::CDataWrapper& control_unit_description);
                     
                     int updateControlUnit(chaos::common::data::CDataWrapper& control_unit_description);

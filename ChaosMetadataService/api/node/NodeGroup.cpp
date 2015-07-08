@@ -37,7 +37,7 @@ using namespace chaos::metadata_service::api::node;
 DEFINE_CLASS_FACTORY_NO_ALIAS(NodeGroup, chaos::metadata_service::api::AbstractApiGroup);
 
 NodeGroup::NodeGroup():
-AbstractApiGroup("system"){
+AbstractApiGroup(NodeDomainAndActionRPC::RPC_DOMAIN){
     //add api for UnitServer registration
     addApi<NodeSearch>();
     addApi<NodeRegister>();

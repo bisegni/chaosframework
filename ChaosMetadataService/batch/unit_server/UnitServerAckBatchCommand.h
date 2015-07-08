@@ -21,6 +21,7 @@
 #define __CHAOSFramework__UnitServerAckCommand__
 
 #include "../mds_service_batch.h"
+#include <chaos/common/chaos_types.h>
 
 namespace chaos {
     namespace metadata_service{
@@ -29,14 +30,27 @@ namespace chaos {
             
             namespace unit_server {
                 
+                typedef enum UnitServerAckPhase {
+                    USAP_ACK_US,
+                    USAP_CU_AUTOLOAD,
+                    USAP_CU_FECTH_NEXT,
+                    USAP_END
+                } UnitServerAckPhase;
                 
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::metadata_service::persistence::NodeSearchIndex, AutoloadCUList)
                 
                 class UnitServerAckCommand:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
                     
+                    std::string unit_server_uid;
+                    UnitServerAckPhase phase;
                     std::auto_ptr<RequestInfo> request;
                     chaos::common::data::CDataWrapper *message_data;
+                    
+                    
+                    AutoloadCUList          list_autoload_cu;
+                    AutoloadCUListIterator  list_autoload_cu_current;
                 public:
                     UnitServerAckCommand();
                     ~UnitServerAckCommand();

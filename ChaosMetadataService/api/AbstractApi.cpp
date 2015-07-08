@@ -31,7 +31,7 @@ NamedService(name),
 subservice(NULL){}
 
 //default destructor
-AbstractApi::~AbstractApi(){}
+AbstractApi::~AbstractApi(){deinit();}
 
 void AbstractApi::init(void *init_data) throw (chaos::CException) {
     subservice = static_cast<ApiSubserviceAccessor*>(init_data);

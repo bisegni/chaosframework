@@ -55,6 +55,64 @@ int MongoDBControlUnitDataAccess::checkPresence(const std::string& unit_server_u
                                                NodeType::NODE_TYPE_CONTROL_UNIT);
 }
 
+int MongoDBControlUnitDataAccess::getControlUnitWithAutoFlag(const std::string& unit_server_host,
+                                                             chaos::metadata_service::persistence::AutoFlag auto_flag,
+                                                             uint64_t last_sequence_id,
+                                                             std::vector<NodeSearchIndex>& control_unit_found) {
+    int err = 0;
+    SearchResult paged_result;
+    try {
+        mongo::BSONObjBuilder query_builder;
+        
+        //filter on unit server
+        query_builder << boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_host;
+        
+        switch(auto_flag) {
+            case AUTO_LOAD:
+                query_builder << "instance_description.auto_load" << true;
+                break;
+            case AUTO_INIT:
+                return 0;
+                break;
+            case AUTO_START:
+                return 0;
+                break;
+        }
+        
+        query_builder << "seq" << BSON("$gte"<<(long long)last_sequence_id);
+        mongo::Query query = query_builder.obj();
+        
+        DEBUG_CODE(MDBCUDA_DBG<<log_message("checkDatasetPresence",
+                                            "performPagedQuery",
+                                            DATA_ACCESS_LOG_1_ENTRY("query",
+                                                                    query.toString()));)
+        //remove the field of the document
+        if((err = performPagedQuery(paged_result,
+                                   MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                   query.sort("seq"),
+                                   NULL,
+                                   NULL,
+                                   30))) {
+            MDBCUDA_ERR << "Error performing auto flag search";
+        } else {
+            for(SearchResultIterator it = paged_result.begin();
+                it != paged_result.end();
+                it++) {
+                control_unit_found.push_back(NodeSearchIndex(it->getField("seq").numberLong(),
+                                                             it->getField(NodeDefinitionKey::NODE_UNIQUE_ID).String()));
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        MDBCUDA_ERR << e.what();
+        err = -1;
+    } catch (const CException &e) {
+        MDBCUDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+
+}
+
 int MongoDBControlUnitDataAccess::insertNewControlUnit(CDataWrapper& control_unit_description) {
     int err = 0;
     if(!control_unit_description.hasKey(NodeDefinitionKey::NODE_TYPE)) {

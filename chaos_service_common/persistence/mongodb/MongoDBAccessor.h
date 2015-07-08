@@ -21,6 +21,8 @@
 #ifndef __CHAOSFramework__MongoDBAccessor__
 #define __CHAOSFramework__MongoDBAccessor__
 
+#include <chaos/common/chaos_types.h>
+
 #include <chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.h>
 
 #include <boost/format.hpp>
@@ -51,8 +53,7 @@ namespace chaos {
         namespace persistence {
             namespace mongodb {
 
-                typedef std::vector<mongo::BSONObj>             SearchResult;
-                typedef std::vector<mongo::BSONObj>::iterator   SearchResultIterator;
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(mongo::BSONObj, SearchResult)
 
                 class MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
