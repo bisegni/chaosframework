@@ -92,7 +92,7 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
             std::auto_ptr<CDataWrapper> cu_instance(cu_instance_description);
 
             if(!cu_instance->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {
-                LOG_AND_TROW(CU_LOUNLO_ERR, -9, "Control unit isntace lake of parent key(unit server)");
+                LOG_AND_TROW(CU_LOUNLO_ERR, -9, "Control unit instance laks of parent key(unit server)");
             }
 
             if(!cu_instance->hasKey("control_unit_implementation")) {

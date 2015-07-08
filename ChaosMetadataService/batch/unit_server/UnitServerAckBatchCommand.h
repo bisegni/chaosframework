@@ -42,12 +42,13 @@ namespace chaos {
                 class UnitServerAckCommand:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
-                    
+                    persistence::NodeSearchIndex last_worked_cu;
                     std::string unit_server_uid;
                     UnitServerAckPhase phase;
-                    std::auto_ptr<RequestInfo> request;
-                    chaos::common::data::CDataWrapper *message_data;
                     
+                    std::auto_ptr<RequestInfo> request;
+                    std::auto_ptr<CDataWrapper> autoload_pack;
+                    chaos::common::data::CDataWrapper *message_data;
                     
                     AutoloadCUList          list_autoload_cu;
                     AutoloadCUListIterator  list_autoload_cu_current;
@@ -66,6 +67,8 @@ namespace chaos {
                     
                     // inherited method
                     bool timeoutHandler();
+                private:
+                    int prepareRequestForAutoload(const std::string& cu_uid);
                 };
             }
         }

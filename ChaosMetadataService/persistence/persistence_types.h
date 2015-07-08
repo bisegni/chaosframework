@@ -35,16 +35,18 @@ namespace chaos {
             }AutoFlag;
             
             typedef struct NodeSearchIndex {
-                uint64_t last_id;
+                uint64_t seq;
                 std::string node_uid;
                 
-                NodeSearchIndex(){};
-                NodeSearchIndex(uint64_t _last_id,
+                NodeSearchIndex():
+                seq(0),
+                node_uid(){};
+                NodeSearchIndex(uint64_t _seq,
                                 const std::string& _node_uid):
-                last_id(_last_id),
+                seq(_seq),
                 node_uid(_node_uid){};
                 NodeSearchIndex(const NodeSearchIndex& _nsi):
-                last_id(_nsi.last_id),
+                seq(_nsi.seq),
                 node_uid(_nsi.node_uid){};
             };
         }

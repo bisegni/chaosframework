@@ -21,6 +21,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::common::network;
+using namespace chaos::metadata_service::batch;
 using namespace chaos::metadata_service::batch::unit_server;
 
 #define USAC_INFO INFO_LOG(UnitServerAckCommand)
@@ -34,7 +35,7 @@ MDSBatchCommand(),
 message_data(NULL),
 phase(USAP_ACK_US){
     //set default scheduler delay 1 second
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)100000);
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)10000);
     //set the timeout to 10 seconds
     //setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
 }
@@ -103,34 +104,45 @@ void UnitServerAckCommand::ccHandler() {
         }
         case USAP_CU_FECTH_NEXT: {
             if(list_autoload_cu_current == list_autoload_cu.end()) {
+                list_autoload_cu.clear();
                 if(!(err = getDataAccess<mds_data_access::ControlUnitDataAccess>()->getControlUnitWithAutoFlag(unit_server_uid,
                                                                                                                chaos::metadata_service::persistence::AUTO_LOAD,
-                                                                                                               0,
+                                                                                                               last_worked_cu.seq,
                                                                                                                list_autoload_cu))) {
-                    
                     if(list_autoload_cu.size() == 0) {
                         //terminate job
                         BC_END_RUNNIG_PROPERTY
                     } else {
                         //we need to check if
                         list_autoload_cu_current = list_autoload_cu.begin();
-                        phase = USAP_CU_AUTOLOAD;
-                        
-                        //terminate for testing
-                        BC_END_RUNNIG_PROPERTY
+                        last_worked_cu = *list_autoload_cu_current;
+                        if((err = prepareRequestForAutoload(last_worked_cu.node_uid))){
+                            USAC_ERR << "Error creating autoload datapack for:"<<last_worked_cu.node_uid<<" with code:" << err;
+                            BC_END_RUNNIG_PROPERTY
+                        } else {
+                            phase = USAP_CU_AUTOLOAD;
+                        }
                         
                         break;
                     }
                 } else {
+                    USAC_ERR << "Error fetching the autoload control unit with code:" << err;
+                    BC_END_RUNNIG_PROPERTY
                     break;
                 }
             } else {
-                list_autoload_cu_current++;
-                phase = USAP_CU_AUTOLOAD;
-                
-                //terminate for testing
-                BC_END_RUNNIG_PROPERTY
-                
+                if(++list_autoload_cu_current == list_autoload_cu.end()) {
+                    //whe have reached the end of fetched cu so we need to fetch new one page
+                    break;
+                }else {
+                    last_worked_cu = *list_autoload_cu_current;
+                    if((err = prepareRequestForAutoload(last_worked_cu.node_uid))){
+                        USAC_ERR << "Error creating autoload datapack for:"<<last_worked_cu.node_uid<<" with code:" << err;
+                        BC_END_RUNNIG_PROPERTY
+                    } else {
+                        phase = USAP_CU_AUTOLOAD;
+                    }
+                }
                 break;
             }
         }
@@ -139,7 +151,7 @@ void UnitServerAckCommand::ccHandler() {
             switch(request->phase) {
                 case MESSAGE_PHASE_UNSENT:
                     sendRequest(*request,
-                                message_data);
+                                autoload_pack.get());
                     break;
                     
                 case MESSAGE_PHASE_SENT:
@@ -155,12 +167,13 @@ void UnitServerAckCommand::ccHandler() {
                 case MESSAGE_PHASE_TIMEOUT:
                     //terminate job
                     BC_END_RUNNIG_PROPERTY
+                    USAC_ERR << "Whe have had tomeout error on load a control unit, the job will terminate becaus ethe unit serve ca be down";
                     break;
             }
             
             break;
         }
-        
+            
         case USAP_END: {
             break;
         }
@@ -172,4 +185,37 @@ void UnitServerAckCommand::ccHandler() {
 bool UnitServerAckCommand::timeoutHandler() {
     bool result = MDSBatchCommand::timeoutHandler();
     return result;
+}
+
+int UnitServerAckCommand::prepareRequestForAutoload(const std::string& cu_uid) {
+    USAC_DBG << "Prepare autoload request for:" << cu_uid;
+    int err = 0;
+    CDataWrapper * tmp_ptr = NULL;
+    std::auto_ptr<CDataWrapper> instance_description;
+    if((err = getDataAccess<mds_data_access::ControlUnitDataAccess>()->getInstanceDescription(cu_uid,
+                                                                                              &tmp_ptr))) {
+        //we haven't found an instance for the node
+        USAC_ERR << "The node doesn't has an instance configured <<";
+    } else if(tmp_ptr != NULL){
+        instance_description.reset(tmp_ptr);
+        
+        //we have instances the rpc port is got from the unit server input data of the command
+        if(!instance_description->hasKey("control_unit_implementation")) {
+            err = -1;
+        } else {
+            USAC_DBG << "Create the autoload datapack for:" << cu_uid;
+            //create the data pack
+            autoload_pack.reset(new CDataWrapper());
+            autoload_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
+            autoload_pack->addStringValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE, instance_description->getStringValue("control_unit_implementation"));
+            //create the request
+            request = createRequest(message_data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
+                                    UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
+                                    UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT);
+        }
+        
+    } else {
+        err = -2;
+    }
+    return err;
 }
