@@ -79,7 +79,7 @@ int MongoDBControlUnitDataAccess::getControlUnitWithAutoFlag(const std::string& 
                 break;
         }
         
-        query_builder << "seq" << BSON("$gte"<<(long long)last_sequence_id);
+        query_builder << "seq" << BSON("$gt"<<(long long)last_sequence_id);
         mongo::Query query = query_builder.obj();
         
         DEBUG_CODE(MDBCUDA_DBG<<log_message("checkDatasetPresence",
