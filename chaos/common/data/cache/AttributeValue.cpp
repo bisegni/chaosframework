@@ -22,6 +22,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValue.h>
 
+#include <boost/lexical_cast.hpp>
 
 #define AVLAPP_ LAPP_ << "[AttributeValue -" << "] - "
 #define AVLDBG_ LDBG_ << "[AttributeValue -" << "] " << __PRETTY_FUNCTION__ << " - "
@@ -165,4 +166,38 @@ void AttributeValue::writeToCDataWrapper(CDataWrapper& data_wrapper) {
             break;
         }
     }
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+std::string AttributeValue::toString() {
+    switch(type) {
+        case chaos::DataType::TYPE_BYTEARRAY:{
+            return "binary_data";
+        }
+        case chaos::DataType::TYPE_STRING:{
+            return std::string((const char *)value_buffer, size);
+        }
+            
+        case chaos::DataType::TYPE_BOOLEAN:{
+            return boost::lexical_cast<std::string>(*getValuePtr<bool>());
+        }
+            
+        case chaos::DataType::TYPE_DOUBLE:{
+            return boost::lexical_cast<std::string>(*getValuePtr<double>());
+        }
+            
+        case chaos::DataType::TYPE_INT32:{
+            return boost::lexical_cast<std::string>(*getValuePtr<int32_t>());
+        }
+            
+        case chaos::DataType::TYPE_INT64:{
+            return boost::lexical_cast<std::string>(*getValuePtr<int64_t>());
+        }
+            
+            default:
+            break;
+    }
+    return "bad type";
 }

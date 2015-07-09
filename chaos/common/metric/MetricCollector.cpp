@@ -21,6 +21,12 @@
 #include <chaos/common/metric/MetricCollector.h>
 #include <chaos/common/utility/TimingUtil.h>
 
+#include <sstream>
+
+#define MC_INFO INFO_LOG(MetricCollector)
+#define MC_LDBG DBG_LOG(MetricCollector)
+#define MC_LERR ERR_LOG(MetricCollector)
+
 using namespace chaos::common::metric;
 using namespace chaos::common::data::cache;
 using namespace chaos::common::async_central;
@@ -42,10 +48,13 @@ bool MetricCollector::addMetric(const std::string& metric_name,
                                 chaos::DataType::DataType metric_type,
                                 uint32_t metric_max_size) {
     
-    cacching_slot[current_slot_index].metric_attribute_cache.addAttribute(metric_name, metric_max_size, metric_type);
-    AttributeValue *cached_metric = cacching_slot[current_slot_index].metric_attribute_cache.getValueSettingForIndex(cacching_slot[current_slot_index].metric_attribute_cache.getIndexForName(metric_name));
-    if(cached_metric) {
-        cacching_slot[current_slot_index].map_attribute_value.insert(make_pair(metric_name, cached_metric));
+    cacching_slot[0].metric_attribute_cache.addAttribute(metric_name, metric_max_size, metric_type);
+    cacching_slot[1].metric_attribute_cache.addAttribute(metric_name, metric_max_size, metric_type);
+    AttributeValue *cached_metric_0 = cacching_slot[0].metric_attribute_cache.getValueSettingForIndex(cacching_slot[0].metric_attribute_cache.getIndexForName(metric_name));
+    AttributeValue *cached_metric_1 = cacching_slot[1].metric_attribute_cache.getValueSettingForIndex(cacching_slot[1].metric_attribute_cache.getIndexForName(metric_name));
+    if(cached_metric_0 && cached_metric_1) {
+        cacching_slot[0].map_attribute_value.insert(make_pair(metric_name, cached_metric_0));
+        cacching_slot[1].map_attribute_value.insert(make_pair(metric_name, cached_metric_1));
         return true;
     } else {
         return false;
@@ -74,6 +83,7 @@ void MetricCollector::writeTo(chaos::common::data::CDataWrapper& data_wrapper) {
         it->second->writeToCDataWrapper(data_wrapper);
     }
 }
+
 void MetricCollector::timeout() {
     if(last_stat_call) {
         fetchMetricForTimeDiff(chaos::common::utility::TimingUtil::getTimeStamp() - last_stat_call);
@@ -81,6 +91,18 @@ void MetricCollector::timeout() {
         fetchMetricForTimeDiff(0);
     }
     last_stat_call = chaos::common::utility::TimingUtil::getTimeStamp();
+    std::ostringstream os;
+    //switch slot
+    boost::unique_lock<boost::shared_mutex> rwl(current_slot_index_mutex);
+    ChachingSlot *slot_to_persist =  &cacching_slot[(current_slot_index ^= 0x00000001) ^ 0x00000001];
+    rwl.unlock();
+    
+    for(MapMetricIterator it = slot_to_persist->map_attribute_value.begin();
+        it != slot_to_persist->map_attribute_value.end();
+        it++) {
+        os << it->second->name << "," << it->second->toString() << ",";
+    }
+    MC_INFO << os.str();
 }
 
 void MetricCollector::setStatInterval(uint64_t stat_intervall) {

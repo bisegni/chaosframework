@@ -105,6 +105,8 @@ namespace chaos{
                     //! write to data wrapper as key value
                     void writeToCDataWrapper(CDataWrapper& data_wrapper);
                     
+                    std::string toString();
+                    
 					//! check if attribute buffer is good
 					bool isGood();
 				private:

@@ -26,6 +26,9 @@ using namespace chaos::common::rpc;
 #define RPCMFC_LDBG DBG_LOG(RpcClientMetricCollector)
 #define RPCMFC_LERR ERR_LOG(RpcClientMetricCollector)
 
+static const char * const METRIC_KEY_PACKET_COUNT = "packet_count_sec";
+static const char * const METRIC_KEY_BANDWITH = "bandwith_kb_sec";
+
 RpcClientMetricCollector::RpcClientMetricCollector(const std::string& forwarder_implementation,
                                                    RpcClient *_wrapped_client,
                                                    bool _dispose_forwarder_on_exit):
@@ -33,18 +36,20 @@ MetricCollector(forwarder_implementation),
 RpcClient(forwarder_implementation),
 wrapped_client(_wrapped_client),
 dispose_forwarder_on_exit(_dispose_forwarder_on_exit),
-total_pack_ut(0),
-total_bw_ut(0){
+pack_count(0),
+bandwith(0),
+pack_count_for_ut(0.0),
+bw_for_ut(0.0) {
     //received pack and bw in the
-    addMetric("received_pack_count", chaos::DataType::TYPE_INT64);
-    addMetric("received_bw_count", chaos::DataType::TYPE_INT64);
+    addMetric(METRIC_KEY_PACKET_COUNT, chaos::DataType::TYPE_DOUBLE);
+    addMetric(METRIC_KEY_BANDWITH, chaos::DataType::TYPE_DOUBLE);
     //set the time interval to one second of default
     setStatInterval(1000);
 }
 
 RpcClientMetricCollector::~RpcClientMetricCollector() {
     if(dispose_forwarder_on_exit)  CHK_AND_DELETE_OBJ_POINTER(wrapped_client)
-        }
+}
 
 /*
  init the rpc adapter
@@ -88,25 +93,30 @@ bool RpcClientMetricCollector::submitMessage(chaos::common::network::NetworkForw
     bool result = true;
     int size = 0;
     
+    result = wrapped_client->submitMessage(forward_info, on_this_thread);
+    
     //inrement packec count
-    total_pack_ut++;
+    pack_count++;
     
     //increment packet size
     forward_info->message->getBSONRawData(size);
-    total_bw_ut+=size;
-    
-    result = wrapped_client->submitMessage(forward_info, on_this_thread);
+    bandwith+=size;
     
     return result;
 }
 
 void RpcClientMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {
-    double pack_for_ut = 0;
-    double bw_for_ut = 0;
     double sec = time_diff/1000;
     if(sec > 0) {
-        pack_for_ut = total_pack_ut / sec; total_pack_ut = 0;
-        bw_for_ut = ((total_bw_ut / sec)/1024); total_bw_ut = 0;
-        RPCMFC_INFO<< boost::str(boost::format("[pack count: %1% kbyte/s: %2%] in %3% seconds" )%pack_for_ut%bw_for_ut%sec);
+        pack_count_for_ut = pack_count / sec; pack_count = 0;
+        bw_for_ut = ((bandwith / sec)/1024); bandwith = 0;
+        
+        updateMetricValue(METRIC_KEY_PACKET_COUNT,
+                          &pack_count_for_ut,
+                          sizeof(double));
+        updateMetricValue(METRIC_KEY_BANDWITH,
+                          &bw_for_ut,
+                          sizeof(double));
+        //RPCMFC_INFO<< boost::str(boost::format("[pack count: %1% kbyte/s: %2%] in %3% seconds" )%pack_count_for_ut%bw_for_ut%sec);
     }
 }
