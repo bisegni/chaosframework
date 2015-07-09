@@ -25,16 +25,30 @@
 
 #include <boost/ptr_container/ptr_container.hpp>
 
+#include <map>
 #include <vector>
 
 #define  CHAOS_DEFINE_VECTOR_FOR_TYPE(t, name)\
 typedef std::vector< t >                   name;\
 typedef std::vector< t >::iterator         name ## Iterator;\
-typedef std::vector< t >::const_iterator   name ## ConstIterator;\
+typedef std::vector< t >::const_iterator   name ## ConstIterator;
 
 #define  CHAOS_DEFINE_PTR_VECTOR_FOR_TYPE(t, name)\
 typedef boost::ptr_vector< t >                   name;\
 typedef boost::ptr_vector< t >::iterator         name ## Iterator;\
-typedef boost::ptr_vector< t >::const_iterator   name ## ConstIterator;\
+typedef boost::ptr_vector< t >::const_iterator   name ## ConstIterator;
+
+#define  CHAOS_DEFINE_MAP_FOR_TYPE(t1, t2, name)\
+typedef std::map< t1, t2 >                   name;\
+typedef std::map< t1, t2 >::iterator         name ## Iterator;\
+typedef std::map< t1, t2 >::const_iterator   name ## ConstIterator;
+
+#define  CHAOS_DEFINE_PTR_MAP_FOR_TYPE(t1, t2, name)\
+typedef boost::ptr_map< t1, t2 >                   name;\
+typedef boost::ptr_map< t1, t2 >::iterator         name ## Iterator;\
+typedef boost::ptr_map< t1, t2 >::const_iterator   name ## ConstIterator;
+
+#define CHAOS_DEFINE_GET_PTR_MAP_ELEMENT(map, element_type, element_key)\
+dynamic_cast<element_type*>(&map.at(element_key));
 
 #endif

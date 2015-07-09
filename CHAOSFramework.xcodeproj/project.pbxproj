@@ -640,6 +640,10 @@
 		32EA501318A152BE00782435 /* DirectIOServerEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EA501118A152BE00782435 /* DirectIOServerEndpoint.h */; };
 		32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA501418A15BF000782435 /* DirectIODispatcher.cpp */; };
 		32EA501718A15BF000782435 /* DirectIODispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EA501518A15BF000782435 /* DirectIODispatcher.h */; };
+		32EBDEFA1B4E58F300278C42 /* MetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDEF81B4E58F300278C42 /* MetricCollector.cpp */; };
+		32EBDEFB1B4E58F300278C42 /* MetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDEF91B4E58F300278C42 /* MetricCollector.h */; };
+		32EBDEFE1B4E6FC700278C42 /* RpcClientMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDEFC1B4E6FC700278C42 /* RpcClientMetricCollector.cpp */; };
+		32EBDEFF1B4E6FC700278C42 /* RpcClientMetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDEFD1B4E6FC700278C42 /* RpcClientMetricCollector.h */; };
 		32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */; };
 		32EE8978191A5AB000DE2F29 /* status_with.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EE8977191A5AB000DE2F29 /* status_with.h */; };
 		32EE897A191A6CD400DE2F29 /* hash_namespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EE8979191A6CD400DE2F29 /* hash_namespace.h */; };
@@ -1537,6 +1541,10 @@
 		32EA501118A152BE00782435 /* DirectIOServerEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOServerEndpoint.h; sourceTree = "<group>"; };
 		32EA501418A15BF000782435 /* DirectIODispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIODispatcher.cpp; sourceTree = "<group>"; };
 		32EA501518A15BF000782435 /* DirectIODispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIODispatcher.h; sourceTree = "<group>"; };
+		32EBDEF81B4E58F300278C42 /* MetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetricCollector.cpp; sourceTree = "<group>"; };
+		32EBDEF91B4E58F300278C42 /* MetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetricCollector.h; sourceTree = "<group>"; };
+		32EBDEFC1B4E6FC700278C42 /* RpcClientMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcClientMetricCollector.cpp; sourceTree = "<group>"; };
+		32EBDEFD1B4E6FC700278C42 /* RpcClientMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcClientMetricCollector.h; sourceTree = "<group>"; };
 		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
 		32EE8977191A5AB000DE2F29 /* status_with.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = status_with.h; sourceTree = "<group>"; };
 		32EE8979191A6CD400DE2F29 /* hash_namespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hash_namespace.h; sourceTree = "<group>"; };
@@ -2423,6 +2431,7 @@
 				32875F951776317F00E33D6F /* plugin */,
 				32BE864415A0CDC200818C39 /* log */,
 				329FFFCE1707128600D69CDE /* memory */,
+				32EBDEF31B4E586000278C42 /* metric */,
 				326DB40214B38BC00018A8D0 /* io */,
 				3285569D17F2E20500A64ED2 /* direct_io */,
 				326DB40814B38BC00018A8D0 /* pool */,
@@ -2596,6 +2605,8 @@
 				326DB41814B38BC00018A8D0 /* RpcServer.h */,
 				328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */,
 				3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */,
+				32EBDEFC1B4E6FC700278C42 /* RpcClientMetricCollector.cpp */,
+				32EBDEFD1B4E6FC700278C42 /* RpcClientMetricCollector.h */,
 			);
 			path = rpc;
 			sourceTree = "<group>";
@@ -3423,6 +3434,15 @@
 			path = producer;
 			sourceTree = "<group>";
 		};
+		32EBDEF31B4E586000278C42 /* metric */ = {
+			isa = PBXGroup;
+			children = (
+				32EBDEF81B4E58F300278C42 /* MetricCollector.cpp */,
+				32EBDEF91B4E58F300278C42 /* MetricCollector.h */,
+			);
+			path = metric;
+			sourceTree = "<group>";
+		};
 		32EE00CE19387E0B00621776 /* network */ = {
 			isa = PBXGroup;
 			children = (
@@ -3520,6 +3540,7 @@
 				324A4B76191A428500975394 /* jsobj.h in Headers */,
 				322DE35518D467E5006F1551 /* ConcuredUsedItem.h in Headers */,
 				326DB48E14B38BC00018A8D0 /* ArrayPointer.h in Headers */,
+				32EBDEFB1B4E58F300278C42 /* MetricCollector.h in Headers */,
 				329603231876B45000CDCADA /* BatchCommand.h in Headers */,
 				326DB49214B38BC00018A8D0 /* ObjectFactoryRegister.h in Headers */,
 				326DB49314B38BC00018A8D0 /* Singleton.h in Headers */,
@@ -3613,6 +3634,7 @@
 				3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */,
 				329603291876B45000CDCADA /* BatchCommandSandbox.h in Headers */,
 				322D990218A95F9200C0864C /* QueryDataConsumer.h in Headers */,
+				32EBDEFF1B4E6FC700278C42 /* RpcClientMetricCollector.h in Headers */,
 				324A4B2F191A405700975394 /* element-inl.h in Headers */,
 				32B4193F1B18A6EE00C3CA7D /* BatchCommandDescription.h in Headers */,
 				322E157D161B62A900C3003C /* NetworkBroker.h in Headers */,
@@ -4259,6 +4281,7 @@
 				32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */,
 				324A4B1B191A402A00975394 /* MurmurHash3.cpp in Sources */,
 				32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */,
+				32EBDEFA1B4E58F300278C42 /* MetricCollector.cpp in Sources */,
 				329603281876B45000CDCADA /* BatchCommandSandbox.cpp in Sources */,
 				32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */,
 				32661C751AA867E100F1A721 /* MessageRequestFuture.cpp in Sources */,
@@ -4329,6 +4352,7 @@
 				32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */,
 				32279F8416F8DEAF009EC7B9 /* DataBroker.cpp in Sources */,
 				3264BBD51784887900E2F5A0 /* AbstractPlugin.cpp in Sources */,
+				32EBDEFE1B4E6FC700278C42 /* RpcClientMetricCollector.cpp in Sources */,
 				3219E69F18CC7AE600C2F795 /* DirectIOClientConnection.cpp in Sources */,
 				32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */,
 				32CB736F16FE3432008575F0 /* ReaderDataService.cpp in Sources */,

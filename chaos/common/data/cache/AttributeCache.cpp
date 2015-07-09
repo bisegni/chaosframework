@@ -190,3 +190,8 @@ bool AttributeCache::setNewSize(VariableIndexType attribute_index, uint32_t new_
 bool AttributeCache::hasAttribute(const std::string& attribute_name) {
 	return mapAttributeNameIndex.count(attribute_name) != 0;
 }
+
+//!fill the CDataWrapper representig the set
+void AttributeCache::fillDataWrapper(CDataWrapper& data_wrapper) {
+ 
+}

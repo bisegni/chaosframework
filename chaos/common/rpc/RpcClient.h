@@ -54,7 +54,7 @@ namespace chaos {
 			    class NetworkBroker;
 		}
 	}
-
+    
     /*!
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
@@ -63,24 +63,10 @@ namespace chaos {
 	public RpcMessageForwarder,
 	public common::utility::StartableService,
 	public common::utility::NamedService {
-		friend class chaos::common::network::NetworkBroker;
+		//friend class chaos::common::network::NetworkBroker;
         //! handler to the dispatcher to forward error on data forwarding
         RpcServerHandler *server_handler;
     protected:
-        /*!
-         init the rpc adapter
-         */
-        virtual void init(void*) throw(CException) = 0;
-        
-        /*!
-         start the rpc adapter
-         */
-        virtual void start() throw(CException) = 0;
-        
-        /*!
-         deinit the rpc adapter
-         */
-        virtual void deinit() throw(CException) = 0;
         
         /*!
          Forward to dispatcher the error durngi the forwarding of the request message
@@ -101,6 +87,8 @@ namespace chaos {
          Constructor di default per i
          */
         RpcClient(const std::string& alias);
+        
+        virtual void setServerHandler(RpcServerHandler *_server_handler);
     };
 }
 #endif

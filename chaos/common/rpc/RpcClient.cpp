@@ -19,7 +19,9 @@ using namespace chaos::common::data;
 /*!
  Constructor di default per i
  */
-RpcClient::RpcClient(const std::string& alias):NamedService(alias){
+RpcClient::RpcClient(const std::string& alias):
+NamedService(alias),
+server_handler(NULL){
 };
 
 /*!
@@ -88,4 +90,8 @@ void RpcClient::forwadSubmissionResultError(NetworkForwardInfo *message_info,
     answer->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *submission_result.get());
     //forward answer to channel
     auto_ptr<CDataWrapper> to_delete(server_handler->dispatchCommand(answer));
+}
+
+void RpcClient::setServerHandler(RpcServerHandler *_server_handler) {
+    server_handler = _server_handler;
 }

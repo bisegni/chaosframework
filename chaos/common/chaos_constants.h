@@ -36,6 +36,8 @@ namespace chaos {
         //! config file parameter
         static const char * const   OPT_CONF_FILE						= "conf_file";
         //! Specify the implementation to use for rp messaging
+        static const char * const   OPT_RPC_LOG_METRIC                  = "rpc-log-metric";
+        //! Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_IMPL_KV_PARAM               = "rpc-kv-param";
         //! Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_IMPLEMENTATION              = "rpc-server-impl";

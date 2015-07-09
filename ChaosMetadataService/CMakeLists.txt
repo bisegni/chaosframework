@@ -47,6 +47,7 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
 						api/node/NodeGetDescription.cpp
 						api/node/NodeRegister.cpp
 						api/node/NodeSearch.cpp
+                        api/node/UpdateProperty.cpp
                         api/node/ChangeNodeState.cpp
                         api/node/CommandGet.cpp
                         api/node/CommandTemplateSet.cpp
@@ -73,6 +74,9 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
+
+SET(cnd_src  ${cnd_src}	batch/node/UpdatePropertyCommand.cpp
+                        batch/node/SubmitBatchCommand.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/unit_server/UnitServerAckBatchCommand.cpp
                         batch/unit_server/LoadUnloadControlUnit.cpp)

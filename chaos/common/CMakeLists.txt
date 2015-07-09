@@ -21,6 +21,8 @@ SET(common_lib_src  ${common_lib_src}	bson/oid.cpp bson/bson_validate.cpp
 
 SET(common_lib_src  ${common_lib_src}	configuration/GlobalConfiguration.cpp)
 
+SET(common_lib_src  ${common_lib_src}	metric/MetricCollector.cpp)
+
 SET(common_lib_src  ${common_lib_src}	data/CDataWrapper.cpp data/CUSchemaDB.cpp data/DatasetDB.cpp data/entity_db/EntityDB.cpp data/entity_db/sqlite_impl/sqlite3.c
 										data/entity_db/sqlite_impl/SQLiteEntityDB.cpp data/entity/Entity.cpp data/broker/DataBroker.cpp data/broker/publisher/PublisherDataService.cpp
 										data/broker/reader/ReaderDataService.cpp data/cache/FastHash.cpp data/cache/DataCache.cpp data/cache/LFDataCache.cpp )

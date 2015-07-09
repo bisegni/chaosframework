@@ -33,12 +33,14 @@ namespace chaos {
 	class RpcMessageForwarder {
 		
 	public:
+        RpcMessageForwarder(){}
+        virtual ~RpcMessageForwarder(){}
 		/*!
 		 Submit a pack, all the inromation for forwarding it are already into CDataWrapper
-		 \param MessageNetworkDestination the information for the message forward to network node
-		 \param onThisThread if true the message is forwarded in the same thread of the caller
+		 \param forward_info the information for the message forward to network node
+		 \param on_this_thread if true the message is forwarded in the same thread of the caller
 		 */
-		virtual bool submitMessage(chaos::common::network::NetworkForwardInfo *forwardInfo, bool onThisThread=false)=0;
+		virtual bool submitMessage(chaos::common::network::NetworkForwardInfo *forward_info, bool on_this_thread=false)=0;
 	};
 }
 

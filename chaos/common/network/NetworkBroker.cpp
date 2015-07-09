@@ -33,6 +33,7 @@
 #include <chaos/common/event/channel/AlertEventChannel.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/common/utility/InetUtility.h>
+#include <chaos/common/rpc/RpcClientMetricCollector.h>
 
 #define MB_LAPP LAPP_ << "[NetworkBroker]- "
 
@@ -164,10 +165,13 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize RPC Client: " << rpc_client_name;
         rpc_client = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpc_client_name);
-		if(!rpc_client) throw CException(4, "Error allocating rpc client implementation", __PRETTY_FUNCTION__);
+        if(!rpc_client) throw CException(4, "Error allocating rpc client implementation", __PRETTY_FUNCTION__);
+        if(globalConfiguration->getBoolValue(InitOption::OPT_RPC_LOG_METRIC)) {
+            rpc_client = new rpc::RpcClientMetricCollector(rpc_client->getName(), rpc_client);
+        }
         
         //! connect dispatch to manage error durign request forwarding
-        rpc_client->server_handler = command_dispatcher;
+        rpc_client->setServerHandler(command_dispatcher);
         
         if(StartableService::initImplementation(rpc_client, static_cast<void*>(globalConfiguration), rpc_client->getName(), __PRETTY_FUNCTION__)) {
 			//set the forwarder into dispatcher for answere
