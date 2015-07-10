@@ -24,7 +24,7 @@ using namespace chaos::common::metric;
 
 #define CONSOLE_MB_INFO INFO_LOG(ConsoleMetricBackend)
 #define CONSOLE_MB_LDBG DBG_LOG(ConsoleMetricBackend)
-#define CONSOLE_MB_LERR ERR_LOG(ConsoleMetricBackend)
+#define CONSOLE_MB_LNOTICE NOTICE_LOG(ConsoleMetricBackend)
 
 ConsoleMetricBackend::ConsoleMetricBackend(const std::string& _backend_identity):
 AbstractMetricBackend(_backend_identity){}
@@ -44,9 +44,10 @@ void ConsoleMetricBackend::prepare() {
 void ConsoleMetricBackend::flush() {
     std::string output_str = output_stream.str();
     output_stream.clear();
+    output_stream.str("");
     if(output_str.find_last_of(",") != string::npos) {
         output_str.resize(output_str.size()-1);
     }
     output_str.append("]");
-    CONSOLE_MB_INFO << output_str;
+    CONSOLE_MB_LNOTICE << output_str;
 }

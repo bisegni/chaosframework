@@ -51,16 +51,18 @@
     BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
 #endif 
 
-#define LFTL_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLFatal)
+#define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLFatal)
 #define LDBG_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLDebug)
 #define LWRN_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLWarning)
-#define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLNotice)
+#define LNOTE_      BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLNotice)
 #define LAPP_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLInfo)
 
 #define DEFINE_LOG_HEADER(x) "[" #x "] - "
 #define INFO_LOG(x) LAPP_ << DEFINE_LOG_HEADER(x)
+#define NOTICE_LOG(x) LNOTE_ << DEFINE_LOG_HEADER(x)
+#define WARNING_LOG(x) LWRN_ << DEFINE_LOG_HEADER(x)
 #define DBG_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x) << __FUNCTION__ << " - "
-#define ERR_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
+#define ERR_LOG(x)  LERR_ << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
 
 #define LOG_AND_TROW(log, num, msg)\
 log << "("<<num<<") " << msg;\

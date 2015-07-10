@@ -97,14 +97,14 @@ void LogManager::init() throw(CException) {
     string                      logFileName     = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);
     
     logging::add_common_attributes();
-    boost::shared_ptr< logging::core > pCore = boost::log::core::get();
+    boost::shared_ptr< logging::core > logger = boost::log::core::get();
     // Create a backend
 #if (BOOST_VERSION / 100000) >= 1 && ((BOOST_VERSION / 100) % 1000) >= 54
     logging::register_simple_formatter_factory< level::LogSeverityLevel, char  >("Severity");
-    logging::core::get()->set_filter(expr::attr< level::LogSeverityLevel >("Severity") >= logLevel);
+    logger->set_filter(expr::attr< level::LogSeverityLevel >("Severity") >= logLevel);
 #else
     logging::register_simple_formatter_factory< level::LogSeverityLevel  >("Severity");
-    logging::core::get()->set_filter(logging::filters::attr< level::LogSeverityLevel >("Severity") >= logLevel);
+    logger->set_filter(logging::filters::attr< level::LogSeverityLevel >("Severity") >= logLevel);
 #endif
 
     
@@ -134,5 +134,5 @@ void LogManager::init() throw(CException) {
     }
     
     //enable the log in case of needs
-    pCore->set_logging_enabled(logOnConsole || logOnFile);
+    logger->set_logging_enabled(logOnConsole || logOnFile);
  }
