@@ -35,8 +35,10 @@ namespace chaos {
         static const char * const	OPT_HELP                            = "help";
         //! config file parameter
         static const char * const   OPT_CONF_FILE						= "conf_file";
-        //! Specify the implementation to use for rp messaging
+        //! activate the loggin of metric on rpc system
         static const char * const   OPT_RPC_LOG_METRIC                  = "rpc-log-metric";
+        //! the time between the update of rpc metric on persistence backend (in seconds)
+        static const char * const   OPT_RPC_LOG_METRIC_UPDATE_SEC       = "rpc-log-metric-update_sec";
         //! Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_IMPL_KV_PARAM               = "rpc-kv-param";
         //! Specify the implementation to use for rp messaging

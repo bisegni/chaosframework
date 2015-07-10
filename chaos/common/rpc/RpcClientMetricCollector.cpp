@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/rpc/RpcClientMetricCollector.h>
 #include <boost/format.hpp>
 
@@ -32,7 +33,8 @@ static const char * const METRIC_KEY_BANDWITH = "bandwith_kb_sec";
 RpcClientMetricCollector::RpcClientMetricCollector(const std::string& forwarder_implementation,
                                                    RpcClient *_wrapped_client,
                                                    bool _dispose_forwarder_on_exit):
-MetricCollector(forwarder_implementation),
+MetricCollector(forwarder_implementation,
+                GlobalConfiguration::getInstance()->getConfiguration()->getUInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_SEC)),
 RpcClient(forwarder_implementation),
 wrapped_client(_wrapped_client),
 dispose_forwarder_on_exit(_dispose_forwarder_on_exit),
@@ -44,7 +46,7 @@ bw_for_ut(0.0) {
     addMetric(METRIC_KEY_PACKET_COUNT, chaos::DataType::TYPE_DOUBLE);
     addMetric(METRIC_KEY_BANDWITH, chaos::DataType::TYPE_DOUBLE);
     //set the time interval to one second of default
-    setStatInterval(1000);
+    addBackend(metric::MetricBackendPointer(new metric::ConsoleMetricBackend("RpcClientMetricCollector")));
 }
 
 RpcClientMetricCollector::~RpcClientMetricCollector() {
@@ -64,6 +66,7 @@ void RpcClientMetricCollector::init(void *init_data) throw(CException) {
  */
 void RpcClientMetricCollector::start() throw(CException) {
     CHAOS_ASSERT(wrapped_client)
+    startLogging();
     utility::StartableService::startImplementation(wrapped_client, wrapped_client->getName(), __PRETTY_FUNCTION__);
 }
 
@@ -72,6 +75,7 @@ void RpcClientMetricCollector::start() throw(CException) {
  */
 void RpcClientMetricCollector::stop() throw(CException) {
     CHAOS_ASSERT(wrapped_client)
+    stopLogging();
     utility::StartableService::stopImplementation(wrapped_client, wrapped_client->getName(), __PRETTY_FUNCTION__);
 }
 

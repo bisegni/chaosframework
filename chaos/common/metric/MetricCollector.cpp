@@ -31,49 +31,62 @@ using namespace chaos::common::metric;
 using namespace chaos::common::data::cache;
 using namespace chaos::common::async_central;
 
-MetricCollector::MetricCollector(const std::string& _collector_name):
+MetricCollector::MetricCollector(const std::string& _collector_name,
+                                 uint64_t update_time_in_sec):
 collector_name(_collector_name),
 current_slot_index(0),
-last_stat_call(0){
-    chaos::common::utility::InizializableService::initImplementation(&cacching_slot[0].metric_attribute_cache, NULL, "MetricAttributeChache", __PRETTY_FUNCTION__);
-    chaos::common::utility::InizializableService::initImplementation(&cacching_slot[1].metric_attribute_cache, NULL, "MetricAttributeChache", __PRETTY_FUNCTION__);
+last_stat_call(0),
+stat_intervall(update_time_in_sec*1000){
+    chaos::common::utility::InizializableService::initImplementation(&caching_slot[0].metric_attribute_cache, NULL, "MetricAttributeChache", __PRETTY_FUNCTION__);
+    chaos::common::utility::InizializableService::initImplementation(&caching_slot[1].metric_attribute_cache, NULL, "MetricAttributeChache", __PRETTY_FUNCTION__);
 }
 
 MetricCollector::~MetricCollector() {
-    chaos::common::utility::InizializableService::deinitImplementation(&cacching_slot[1].metric_attribute_cache, "MetricAttributeChache", __PRETTY_FUNCTION__);
-    chaos::common::utility::InizializableService::deinitImplementation(&cacching_slot[0].metric_attribute_cache, "MetricAttributeChache", __PRETTY_FUNCTION__);
+    stopLogging();
+    chaos::common::utility::InizializableService::deinitImplementation(&caching_slot[1].metric_attribute_cache, "MetricAttributeChache", __PRETTY_FUNCTION__);
+    chaos::common::utility::InizializableService::deinitImplementation(&caching_slot[0].metric_attribute_cache, "MetricAttributeChache", __PRETTY_FUNCTION__);
+}
+
+void MetricCollector::addBackend(MetricBackendPointer backend) {
+    vector_metric_backend.push_back(backend);
+}
+
+bool MetricCollector::_addMetric(ChachingSlot& cs,
+                                 const std::string& metric_name,
+                                 chaos::DataType::DataType metric_type,
+                                 uint32_t metric_max_size) {
+    cs.metric_attribute_cache.addAttribute(metric_name, metric_max_size, metric_type);
+    AttributeValue *cached_metric = cs.metric_attribute_cache.getValueSettingForIndex(cs.metric_attribute_cache.getIndexForName(metric_name));
+    if(cached_metric) {
+        cs.map_attribute_value.insert(make_pair(metric_name, cached_metric));
+        return true;
+    } else {
+        return false;
+    }
+    
 }
 
 bool MetricCollector::addMetric(const std::string& metric_name,
                                 chaos::DataType::DataType metric_type,
                                 uint32_t metric_max_size) {
-    
-    cacching_slot[0].metric_attribute_cache.addAttribute(metric_name, metric_max_size, metric_type);
-    cacching_slot[1].metric_attribute_cache.addAttribute(metric_name, metric_max_size, metric_type);
-    AttributeValue *cached_metric_0 = cacching_slot[0].metric_attribute_cache.getValueSettingForIndex(cacching_slot[0].metric_attribute_cache.getIndexForName(metric_name));
-    AttributeValue *cached_metric_1 = cacching_slot[1].metric_attribute_cache.getValueSettingForIndex(cacching_slot[1].metric_attribute_cache.getIndexForName(metric_name));
-    if(cached_metric_0 && cached_metric_1) {
-        cacching_slot[0].map_attribute_value.insert(make_pair(metric_name, cached_metric_0));
-        cacching_slot[1].map_attribute_value.insert(make_pair(metric_name, cached_metric_1));
-        return true;
-    } else {
-        return false;
-    }
+    boost::shared_lock<boost::shared_mutex> rl(current_slot_index_mutex);
+    return _addMetric(caching_slot[0], metric_name, metric_type, metric_max_size) &&
+    _addMetric(caching_slot[1], metric_name, metric_type, metric_max_size);
 }
 
 bool MetricCollector::updateMetricValue(const std::string& metric_name,
                                         const void *value_ptr,
                                         uint32_t value_size) {
     boost::shared_lock<boost::shared_mutex> rl(current_slot_index_mutex);
-    if(cacching_slot[current_slot_index].map_attribute_value.count(metric_name) == 0) return false;
-    return cacching_slot[current_slot_index].map_attribute_value[metric_name]->setValue(value_ptr,
+    if(caching_slot[current_slot_index].map_attribute_value.count(metric_name) == 0) return false;
+    return caching_slot[current_slot_index].map_attribute_value[metric_name]->setValue(value_ptr,
                                                                                         value_size);
 }
 
 void MetricCollector::writeTo(chaos::common::data::CDataWrapper& data_wrapper) {
     //switch slot
     boost::unique_lock<boost::shared_mutex> rwl(current_slot_index_mutex);
-    ChachingSlot *slot_to_persist =  &cacching_slot[(current_slot_index ^= 0x00000001)];
+    ChachingSlot *slot_to_persist =  &caching_slot[(current_slot_index ^= 0x00000001)];
     rwl.unlock();
     
     //persiste previous slot
@@ -91,21 +104,32 @@ void MetricCollector::timeout() {
         fetchMetricForTimeDiff(0);
     }
     last_stat_call = chaos::common::utility::TimingUtil::getTimeStamp();
-    std::ostringstream os;
     //switch slot
     boost::unique_lock<boost::shared_mutex> rwl(current_slot_index_mutex);
-    ChachingSlot *slot_to_persist =  &cacching_slot[(current_slot_index ^= 0x00000001) ^ 0x00000001];
+    ChachingSlot *slot_to_persist =  &caching_slot[(current_slot_index ^= 0x00000001) ^ 0x00000001];
     rwl.unlock();
     
-    for(MapMetricIterator it = slot_to_persist->map_attribute_value.begin();
-        it != slot_to_persist->map_attribute_value.end();
-        it++) {
-        os << it->second->name << "," << it->second->toString() << ",";
+    //write metric to backend
+    CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator, vector_metric_backend, (*it)->prepare();)
+    for(MapMetricIterator it_metric = slot_to_persist->map_attribute_value.begin();
+        it_metric != slot_to_persist->map_attribute_value.end();
+        it_metric++) {
+        CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator,
+                                   vector_metric_backend,
+                                   (*it)->addMetric(it_metric->second->name,
+                                                    it_metric->second->toString());)
     }
-    MC_INFO << os.str();
+    CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator, vector_metric_backend, (*it)->flush();)
 }
 
-void MetricCollector::setStatInterval(uint64_t stat_intervall) {
-    AsyncCentralManager::getInstance()->removeTimer(this);
+void MetricCollector::setStatIntervalInSeconds(uint64_t stat_intervall_in_seconds) {
+    stat_intervall = stat_intervall_in_seconds*1000;
+ }
+
+void MetricCollector::startLogging() {
     AsyncCentralManager::getInstance()->addTimer(this, 1000, stat_intervall);
+}
+
+void MetricCollector::stopLogging() {
+    AsyncCentralManager::getInstance()->removeTimer(this);
 }

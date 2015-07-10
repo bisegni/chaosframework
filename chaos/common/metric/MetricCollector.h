@@ -26,17 +26,22 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeCache.h>
 #include <chaos/common/async_central/async_central.h>
+#include <chaos/common/metric/AbstractMetricBackend.h>
 
-#include <stdint.h>
 #include <string>
+#include <stdint.h>
 
 #include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace chaos {
     namespace common {
         namespace metric {
             
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, chaos::common::data::cache::AttributeValue*, MapMetric )
+            typedef boost::shared_ptr<AbstractMetricBackend> MetricBackendPointer;
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(MetricBackendPointer, VectorMetricBackend)
+            
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, chaos::common::data::cache::AttributeValue*, MapMetric)
             
             struct ChachingSlot {
                 MapMetric map_attribute_value;
@@ -48,12 +53,27 @@ namespace chaos {
             public chaos::common::async_central::TimerHandler {
                 //is a name for collector
                 std::string collector_name;
+
+                //! backend used to visualize the metric
+                VectorMetricBackend vector_metric_backend;
                 
-                ChachingSlot cacching_slot[2];
+                //! two different slot for optimizing the update of the metric wil old one are snapped to backend
+                ChachingSlot caching_slot[2];
                 
                 boost::shared_mutex current_slot_index_mutex;
                 int  current_slot_index;
                 uint64_t last_stat_call;
+                uint64_t stat_intervall;
+                
+                bool _addMetric(ChachingSlot& cs,
+                                const std::string& metric_name,
+                                chaos::DataType::DataType metric_type,
+                                uint32_t metric_max_size = 32);
+                
+                void _prepareBackends();
+                void _sendToBackends(const std::string& metric_name,
+                                    const std::string& metric_value);
+                void _flushBackends();
             private:
                 void timeout();
             protected:
@@ -66,23 +86,36 @@ namespace chaos {
                  */
                 virtual void fetchMetricForTimeDiff(uint64_t time_diff) = 0;
                 
-                //!set the stat interval in milliseoconds
-                /*!
-                 determinate the delay between a fetchMetricForTimeDiff call and the next
-                 */
-                void setStatInterval(uint64_t stat_intervall);
             public:
-                MetricCollector(const std::string& _collector_name);
+                MetricCollector(const std::string& _collector_name,
+                                uint64_t update_time_in_sec = 10);
                 ~MetricCollector();
+                
+                //! add a new backend
+                void addBackend(MetricBackendPointer backend);
+                
+                //add a new metric
                 bool addMetric(const std::string& metric_name,
                                chaos::DataType::DataType metric_type,
                                uint32_t metric_max_size = 32);
 
+                //udpate a single metric value
                 bool updateMetricValue(const std::string& metric_name,
                                        const void *value_ptr,
                                        uint32_t value_size);
                 
+                //! write the mertic to a cdata wrapper
                 void writeTo(chaos::common::data::CDataWrapper& data_wrapper);
+                
+                //!set the stat interval in milliseoconds
+                /*!
+                 determinate the delay between a fetchMetricForTimeDiff call and the next
+                 */
+                void setStatIntervalInSeconds(uint64_t stat_intervall_in_seconds);
+                
+                void startLogging();
+                
+                void stopLogging();
             };
             
         }

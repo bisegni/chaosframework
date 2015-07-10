@@ -51,4 +51,12 @@ typedef boost::ptr_map< t1, t2 >::const_iterator   name ## ConstIterator;
 #define CHAOS_DEFINE_GET_PTR_MAP_ELEMENT(map, element_type, element_key)\
 dynamic_cast<element_type*>(&map.at(element_key));
 
+
+#define CHAOS_SCAN_VECTOR_ITERATOR(iter, vec, to_execute)\
+for(iter it = vec.begin();\
+it != vec.end();\
+it++) {\
+   to_execute \
+}\
+
 #endif

@@ -644,6 +644,10 @@
 		32EBDEFB1B4E58F300278C42 /* MetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDEF91B4E58F300278C42 /* MetricCollector.h */; };
 		32EBDEFE1B4E6FC700278C42 /* RpcClientMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDEFC1B4E6FC700278C42 /* RpcClientMetricCollector.cpp */; };
 		32EBDEFF1B4E6FC700278C42 /* RpcClientMetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDEFD1B4E6FC700278C42 /* RpcClientMetricCollector.h */; };
+		32EBDF021B4FBD8800278C42 /* AbstractMetricBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDF001B4FBD8800278C42 /* AbstractMetricBackend.cpp */; };
+		32EBDF031B4FBD8800278C42 /* AbstractMetricBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDF011B4FBD8800278C42 /* AbstractMetricBackend.h */; };
+		32EBDF061B4FCA6F00278C42 /* ConsoleMetricBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDF041B4FCA6F00278C42 /* ConsoleMetricBackend.cpp */; };
+		32EBDF071B4FCA6F00278C42 /* ConsoleMetricBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDF051B4FCA6F00278C42 /* ConsoleMetricBackend.h */; };
 		32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */; };
 		32EE8978191A5AB000DE2F29 /* status_with.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EE8977191A5AB000DE2F29 /* status_with.h */; };
 		32EE897A191A6CD400DE2F29 /* hash_namespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EE8979191A6CD400DE2F29 /* hash_namespace.h */; };
@@ -1545,6 +1549,11 @@
 		32EBDEF91B4E58F300278C42 /* MetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetricCollector.h; sourceTree = "<group>"; };
 		32EBDEFC1B4E6FC700278C42 /* RpcClientMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcClientMetricCollector.cpp; sourceTree = "<group>"; };
 		32EBDEFD1B4E6FC700278C42 /* RpcClientMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcClientMetricCollector.h; sourceTree = "<group>"; };
+		32EBDF001B4FBD8800278C42 /* AbstractMetricBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractMetricBackend.cpp; sourceTree = "<group>"; };
+		32EBDF011B4FBD8800278C42 /* AbstractMetricBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractMetricBackend.h; sourceTree = "<group>"; };
+		32EBDF041B4FCA6F00278C42 /* ConsoleMetricBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsoleMetricBackend.cpp; sourceTree = "<group>"; };
+		32EBDF051B4FCA6F00278C42 /* ConsoleMetricBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleMetricBackend.h; sourceTree = "<group>"; };
+		32EBDF081B4FEFDC00278C42 /* metric.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = metric.h; sourceTree = "<group>"; };
 		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
 		32EE8977191A5AB000DE2F29 /* status_with.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = status_with.h; sourceTree = "<group>"; };
 		32EE8979191A6CD400DE2F29 /* hash_namespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hash_namespace.h; sourceTree = "<group>"; };
@@ -3439,6 +3448,11 @@
 			children = (
 				32EBDEF81B4E58F300278C42 /* MetricCollector.cpp */,
 				32EBDEF91B4E58F300278C42 /* MetricCollector.h */,
+				32EBDF001B4FBD8800278C42 /* AbstractMetricBackend.cpp */,
+				32EBDF011B4FBD8800278C42 /* AbstractMetricBackend.h */,
+				32EBDF041B4FCA6F00278C42 /* ConsoleMetricBackend.cpp */,
+				32EBDF051B4FCA6F00278C42 /* ConsoleMetricBackend.h */,
+				32EBDF081B4FEFDC00278C42 /* metric.h */,
 			);
 			path = metric;
 			sourceTree = "<group>";
@@ -3612,6 +3626,7 @@
 				324A4B70191A428500975394 /* atomic_int.h in Headers */,
 				324A4B48191A41EF00975394 /* atomic_intrinsics_win32.h in Headers */,
 				325013D815E980C800DCB13E /* AsioImplEventClient.h in Headers */,
+				32EBDF071B4FCA6F00278C42 /* ConsoleMetricBackend.h in Headers */,
 				32FB20211A3F2E7300307A86 /* AbstractSharedDomainCache.h in Headers */,
 				325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */,
 				324A4B7B191A428500975394 /* hash.h in Headers */,
@@ -3713,6 +3728,7 @@
 				32640A37169DCC5800450962 /* SmartData.h in Headers */,
 				32640A38169DCC5800450962 /* Element.h in Headers */,
 				324A4B80191A428500975394 /* safe_num.h in Headers */,
+				32EBDF031B4FBD8800278C42 /* AbstractMetricBackend.h in Headers */,
 				32640A39169DCC5800450962 /* IdFactory.h in Headers */,
 				32640A3A169DCC5800450962 /* MillisTime.h in Headers */,
 				32640A3B169DCC5800450962 /* IteratorBase.h in Headers */,
@@ -4322,6 +4338,7 @@
 				325D2FCD1AFA19E500B2A706 /* HealtManager.cpp in Sources */,
 				324A4B90191A527D00975394 /* base64.cpp in Sources */,
 				324A4B6E191A428500975394 /* assert_util.cpp in Sources */,
+				32EBDF021B4FBD8800278C42 /* AbstractMetricBackend.cpp in Sources */,
 				322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */,
 				32BF74AD167CEB57007F8A57 /* EntityDB.cpp in Sources */,
 				3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */,
@@ -4343,6 +4360,7 @@
 				32FB20201A3F2E7300307A86 /* AbstractSharedDomainCache.cpp in Sources */,
 				3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */,
 				32AF7D4018DAEAF300537DE6 /* PerformanceNodeChannel.cpp in Sources */,
+				32EBDF061B4FCA6F00278C42 /* ConsoleMetricBackend.cpp in Sources */,
 				324A4B71191A428500975394 /* bson_extract.cpp in Sources */,
 				32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */,
 				329603221876B45000CDCADA /* BatchCommand.cpp in Sources */,

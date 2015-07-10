@@ -58,6 +58,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_RPC_SYNC_IMPLEMENTATION, po::value< string >()->default_value("HTTP"), "Specify the synchronous rpc implementation");
 		addOption(InitOption::OPT_RPC_SYNC_PORT, po::value< int >()->default_value(_SYNC_RPC_PORT), "Port where is published the syncrhonous rpc interface");
         addOption(InitOption::OPT_RPC_LOG_METRIC, po::value< bool >()->default_value(false), "Enable the logging of the mrpc metric");
+        addOption(InitOption::OPT_RPC_LOG_METRIC_UPDATE_SEC, po::value< uint64_t >()->default_value(10), "The time for acquire the metric");
         addOption(InitOption::OPT_RPC_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the rpc implementation");
         addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(_RPC_PORT), "RPC server port");
         addOption(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"RPC server thread number");
@@ -233,6 +234,10 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
 	
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, rpc_enable_log_metric, InitOption::OPT_RPC_LOG_METRIC, false)
     configuration.addBoolValue(InitOption::OPT_RPC_LOG_METRIC, rpc_enable_log_metric);
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint64_t, rpc_enable_log_metric_update_sec, InitOption::OPT_RPC_LOG_METRIC_UPDATE_SEC, 10)
+    configuration.addInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_SEC, rpc_enable_log_metric_update_sec);
+    
     
     CHECK_AND_DEFINE_OPTION(string, rpc_sync_impl, InitOption::OPT_RPC_SYNC_IMPLEMENTATION)
     configuration.addStringValue(InitOption::OPT_RPC_SYNC_IMPLEMENTATION, rpc_sync_impl);

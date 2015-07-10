@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__RpcClientMetricCollector__
 #define __CHAOSFramework__RpcClientMetricCollector__
 
-#include <chaos/common/metric/MetricCollector.h>
+#include <chaos/common/metric/metric.h>
 #include <chaos/common/rpc/RpcClient.h>
 
 #include <chaos/common/utility/NamedService.h>
@@ -45,8 +45,8 @@ namespace chaos {
                 void fetchMetricForTimeDiff(uint64_t time_diff);
             public:
                 RpcClientMetricCollector(const std::string& forwarder_implementation,
-                                                   RpcClient *_wrapped_forwarder,
-                                                   bool _dispose_forwarder_on_exit = true);
+                                         RpcClient *_wrapped_forwarder,
+                                         bool _dispose_forwarder_on_exit = true);
                 ~RpcClientMetricCollector();
                 /*!
                  reimplementation of forwarder abstract method to collect the metric on sent message
