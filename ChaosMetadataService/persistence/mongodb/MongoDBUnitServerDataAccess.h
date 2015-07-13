@@ -50,7 +50,13 @@ namespace chaos {
 					~MongoDBUnitServerDataAccess();
 				public:
                     //inherited method
-                    int insertNewUS(chaos::common::data::CDataWrapper& unit_server_description);
+                    int insertNewUS(chaos::common::data::CDataWrapper& unit_server_description, bool check_for_cu_type = true);
+                    
+                    //inherited method
+                    int addCUType(const std::string& unit_server_uid, const std::string& cu_type);
+                    
+                    //inherited method
+                    int removeCUType(const std::string& unit_server_uid, const std::string& cu_type);
                     
                     //inherited method
                     int updateUS(chaos::common::data::CDataWrapper& unit_server_description);

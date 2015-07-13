@@ -48,8 +48,26 @@ namespace chaos {
                      UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS(mandatory) that is a vector of string that represent the hosted unit server control unit class.
                      
                      \param unit_server_description unit server key,value description
+                     \param check_for_cu_type will check for cu type presence
                      */
-                    virtual int insertNewUS(chaos::common::data::CDataWrapper& unit_server_description) = 0;
+                    virtual int insertNewUS(chaos::common::data::CDataWrapper& unit_server_description, bool check_for_cu_type = true) = 0;
+                    
+                    //! permit to add the cu type for the unit server
+                    /*!
+                     This api permit to add a control unit type to an unit server
+                     \param unit_server_description unit server key,value description
+                     \param cu_type the type target of the operation
+                     */
+                    virtual int addCUType(const std::string& unit_server_uid, const std::string& cu_type) = 0;
+                    
+                    //! permit to remove the cu type for the unit server
+                    /*!
+                     This api permit remove a control unit type from an unit server and automatically 
+                     remove all the control uni instance associated the the type and unit server in object
+                     \param unit_server_description unit server key,value description
+                     \param cu_type the type target of the operation
+                     */
+                    virtual int removeCUType(const std::string& unit_server_uid, const std::string& cu_type) = 0;
                     
                     //!check if the unit server is present
                     /*!

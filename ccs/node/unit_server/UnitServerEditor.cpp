@@ -12,10 +12,18 @@
 #include <QMessageBox>
 #include <QTimeZone>
 #include <QLocale>
+#include <QInputDialog>
+
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
+
+const QString TAG_CU_ADD_NEW_TYPE = "tag_cu_new_type";
+const QString TAG_CU_REMOVE_TYPE = "tag_cu_remove_type";
+const QString TAG_CU_REMOVE_TYPE_AND_UPDATE_LIST = "tag_cu_remove_type_ul";
+const QString TAG_GET_DESCRIPTION = "get_description";
+const QString TAG_CU_SI = "cu_si";
 
 UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
     PresenterWidget(NULL),
@@ -111,7 +119,7 @@ void UnitServerEditor::customMenuRequested(QPoint pos){
 }
 
 void UnitServerEditor::updateAll() {
-    submitApiResult(QString("get_description"),
+    submitApiResult(TAG_GET_DESCRIPTION,
                     GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(node_unique_id.toStdString()));
     //update instances
     handleSelectionChanged(ui->listViewCUType->selectionModel()->selection());
@@ -128,7 +136,7 @@ void UnitServerEditor::handleSelectionChanged(const QItemSelection& selection) {
         control_unit_implementation.push_back(impl.toStdString());
     }
     //resend the search
-    submitApiResult(QString("cu_si"),
+    submitApiResult(TAG_CU_SI,
                     GET_CHAOS_API_PTR(control_unit::SearchInstancesByUS)->execute(node_unique_id.toStdString(),
                                                                                   control_unit_implementation));
 }
@@ -140,6 +148,7 @@ void UnitServerEditor::tableCurrentChanged(const QModelIndex &current,
 
 void UnitServerEditor::tableSelectionChanged(const QItemSelection& selected,
                                              const QItemSelection& unselected) {
+    ui->pushButtonRemoveCUType->setEnabled(ui->tableView->selectionModel()->selectedRows().size() > 0);
     ui->pushButtonEditInstance->setEnabled(ui->tableView->selectionModel()->selectedRows().size() > 0);
 }
 
@@ -147,7 +156,7 @@ void UnitServerEditor::tableSelectionChanged(const QItemSelection& selected,
 void UnitServerEditor::onApiDone(const QString& tag,
                                  QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     qDebug() << "Received asyncApiResult event of tag:" << tag;
-    if(tag.compare("get_description") == 0) {
+    if(tag.compare(TAG_GET_DESCRIPTION) == 0) {
         //uid
         ui->labelUnitServerUID->setText(node_unique_id);
         //address
@@ -180,7 +189,7 @@ void UnitServerEditor::onApiDone(const QString& tag,
             }
         }
         list_model_cu_type->setStringList(cy_type_list);
-    } else if(tag.compare("cu_si") == 0) {
+    } else if(tag.compare(TAG_CU_SI) == 0) {
         //whe have the result for the control unit searchs
         table_model->setRowCount(0);
         instance_list.clear();
@@ -199,6 +208,10 @@ void UnitServerEditor::onApiDone(const QString& tag,
         qDebug() << "Load sucessfull";
     } else if(tag.compare("cu_unload") == 0) {
         qDebug() << "unload sucessfull";
+    } else if(tag.compare(TAG_CU_ADD_NEW_TYPE)==0) {
+        on_pushButtonUpdateControlUnitType_clicked();
+    }else if(tag.compare(TAG_CU_REMOVE_TYPE_AND_UPDATE_LIST)==0) {
+        on_pushButtonUpdateControlUnitType_clicked();
     }
 }
 
@@ -265,7 +278,7 @@ void UnitServerEditor::on_pushButtonEditInstance_clicked() {
 
 
 void UnitServerEditor::on_pushButtonUpdateControlUnitType_clicked() {
-    submitApiResult(QString("get_description"),
+    submitApiResult(TAG_GET_DESCRIPTION,
                     GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(node_unique_id.toStdString()));
 }
 
@@ -335,3 +348,39 @@ void UnitServerEditor::cuInstanceStopSelected() {
                         GET_CHAOS_API_PTR(control_unit::StartStop)->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
                                                                             false));
     }}
+
+void UnitServerEditor::on_pushButtonAddNewCUType_clicked() {
+    bool ok = false;
+    QString cu_type = QInputDialog::getText(this,
+                                             tr("Create new control unit type"),
+                                             tr("Control Unit Type:"),
+                                             QLineEdit::Normal,
+                                             tr(""), &ok);
+    if(ok && cu_type.size() > 0) {
+        submitApiResult(TAG_CU_ADD_NEW_TYPE,
+                        GET_CHAOS_API_PTR(unit_server::ManageCUType)->execute(node_unique_id.toStdString(),
+                                                                              cu_type.toStdString(),
+                                                                              0));
+    }
+}
+
+void UnitServerEditor::on_pushButtonRemoveCUType_clicked() {
+    int count = ui->listViewCUType->selectionModel()->selectedRows().size();
+    QModelIndexList cu_type_list = ui->listViewCUType->selectionModel()->selectedRows();
+    for(int idx = 0; idx < count; idx++) {
+         QModelIndex cu_type = cu_type_list.at(idx);
+        if(idx+1 < count) {
+            submitApiResult(TAG_CU_REMOVE_TYPE,
+                            GET_CHAOS_API_PTR(unit_server::ManageCUType)->execute(node_unique_id.toStdString(),
+                                                                                  cu_type.data().toString().toStdString(),
+                                                                                  1));
+        } else {
+            //we are at the last element and we need to udpate the list at the end of this call
+            submitApiResult(TAG_CU_REMOVE_TYPE_AND_UPDATE_LIST,
+                            GET_CHAOS_API_PTR(unit_server::ManageCUType)->execute(node_unique_id.toStdString(),
+                                                                                  cu_type.data().toString().toStdString(),
+                                                                                  1));
+        }
+
+    }
+}

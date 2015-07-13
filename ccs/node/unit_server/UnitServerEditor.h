@@ -59,6 +59,10 @@ private slots:
     void cuInstanceStopSelected();
     void on_pushButtonUpdateControlUnitType_clicked();
 
+    void on_pushButtonAddNewCUType_clicked();
+
+    void on_pushButtonRemoveCUType_clicked();
+
 protected:
     void initUI();
     bool canClose();

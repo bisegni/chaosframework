@@ -88,6 +88,25 @@ void MainWindow::on_actionShow_Monitor_View_triggered() {
     }
 }
 
+
+void MainWindow::on_actionAdd_New_Unit_Server_triggered(){
+    bool ok = false;
+    QString unit_server_uid = QInputDialog::getText(this,
+                                                    tr("Create new control unit type"),
+                                                    tr("Control Unit Type:"),
+                                                    QLineEdit::Normal,
+                                                    tr(""), &ok);
+    if(ok && unit_server_uid.size() > 0) {
+        api_processor.submitApiResult("new_unit_server",
+                                      GET_CHAOS_API_PTR(chaos::metadata_service_client::api_proxy::unit_server::NewUS)->execute(unit_server_uid.toStdString()),
+                                      this,
+                                      SLOT(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
+                                      SLOT(asyncApiError(QString, QSharedPointer<chaos::CException>)),
+                                      SLOT(asyncApiTimeout(QString)));
+    }
+}
+
+
 void MainWindow::reconfigure() {
     ChaosMetadataServiceClient::getInstance()->clearServerList();
     QSettings settings;
@@ -113,3 +132,18 @@ void MainWindow::reconfigure() {
     }
 }
 
+void MainWindow::asyncApiTimeout(const QString& tag) {
+    QMessageBox::information(this,
+                             QString("Api Timeout"),
+                             QString("The api with tag %1 has give a timeout").arg(tag));
+}
+
+void MainWindow::asyncApiError(const QString& tag, QSharedPointer<chaos::CException> api_exception) {
+    QMessageBox::information(this,
+                             QString("Api Error"),
+                             QString("The api with tag %1 has give the error:\n%2").arg(tag, api_exception->what()));
+}
+
+void MainWindow::asyncApiResult(const QString& tag, QSharedPointer<chaos::common::data::CDataWrapper> api_data) {
+
+}

@@ -44,10 +44,12 @@
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInputDatasetAttributeValues.h>
 
     //----------------------------unit server nodes----------------------------------------
+#include <ChaosMetadataServiceClient/api_proxy/unit_server/NewUS.h>
+#include <ChaosMetadataServiceClient/api_proxy/unit_server/ManageCUType.h>
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/GetDescription.h>
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/LoadUnloadControlUnit.h>
 
-    //------------------------------abstract nodes-----------------------------------------
+//------------------------------abstract nodes-----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/node/NodeSearch.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/CommandGet.h>
 #include <ChaosMetadataServiceClient/api_proxy/node/UpdateProperty.h>

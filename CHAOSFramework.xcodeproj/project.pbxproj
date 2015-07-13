@@ -648,6 +648,9 @@
 		32EBDF031B4FBD8800278C42 /* AbstractMetricBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDF011B4FBD8800278C42 /* AbstractMetricBackend.h */; };
 		32EBDF061B4FCA6F00278C42 /* ConsoleMetricBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDF041B4FCA6F00278C42 /* ConsoleMetricBackend.cpp */; };
 		32EBDF071B4FCA6F00278C42 /* ConsoleMetricBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDF051B4FCA6F00278C42 /* ConsoleMetricBackend.h */; };
+		32EBDF0B1B538F4B00278C42 /* ManageCUType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDF091B538F4B00278C42 /* ManageCUType.cpp */; };
+		32EBDF0E1B53A32600278C42 /* ManageCUType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDF0C1B53A32600278C42 /* ManageCUType.cpp */; };
+		32EBDF0F1B53A32600278C42 /* ManageCUType.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDF0D1B53A32600278C42 /* ManageCUType.h */; };
 		32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */; };
 		32EE8978191A5AB000DE2F29 /* status_with.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EE8977191A5AB000DE2F29 /* status_with.h */; };
 		32EE897A191A6CD400DE2F29 /* hash_namespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EE8979191A6CD400DE2F29 /* hash_namespace.h */; };
@@ -1554,6 +1557,10 @@
 		32EBDF041B4FCA6F00278C42 /* ConsoleMetricBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsoleMetricBackend.cpp; sourceTree = "<group>"; };
 		32EBDF051B4FCA6F00278C42 /* ConsoleMetricBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleMetricBackend.h; sourceTree = "<group>"; };
 		32EBDF081B4FEFDC00278C42 /* metric.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = metric.h; sourceTree = "<group>"; };
+		32EBDF091B538F4B00278C42 /* ManageCUType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageCUType.cpp; sourceTree = "<group>"; };
+		32EBDF0A1B538F4B00278C42 /* ManageCUType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageCUType.h; sourceTree = "<group>"; };
+		32EBDF0C1B53A32600278C42 /* ManageCUType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageCUType.cpp; sourceTree = "<group>"; };
+		32EBDF0D1B53A32600278C42 /* ManageCUType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageCUType.h; sourceTree = "<group>"; };
 		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
 		32EE8977191A5AB000DE2F29 /* status_with.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = status_with.h; sourceTree = "<group>"; };
 		32EE8979191A6CD400DE2F29 /* hash_namespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hash_namespace.h; sourceTree = "<group>"; };
@@ -1910,6 +1917,8 @@
 				32CAC9E31AE6991500DC6AAB /* LoadUnloadControlUnit.h */,
 				325FC8581AF77A7900DB9D66 /* NewUS.cpp */,
 				325FC8591AF77A7900DB9D66 /* NewUS.h */,
+				32EBDF091B538F4B00278C42 /* ManageCUType.cpp */,
+				32EBDF0A1B538F4B00278C42 /* ManageCUType.h */,
 			);
 			path = unit_server;
 			sourceTree = "<group>";
@@ -2270,10 +2279,12 @@
 			children = (
 				32610F8A1AE6560A00779B84 /* GetDescription.cpp */,
 				32610F8B1AE6560A00779B84 /* GetDescription.h */,
-				325FC85B1AF7910300DB9D66 /* NewUS.cpp */,
-				325FC85C1AF7910300DB9D66 /* NewUS.h */,
 				32CAC9E51AE69F3D00DC6AAB /* LoadUnloadControlUnit.cpp */,
 				32CAC9E61AE69F3D00DC6AAB /* LoadUnloadControlUnit.h */,
+				325FC85B1AF7910300DB9D66 /* NewUS.cpp */,
+				325FC85C1AF7910300DB9D66 /* NewUS.h */,
+				32EBDF0C1B53A32600278C42 /* ManageCUType.cpp */,
+				32EBDF0D1B53A32600278C42 /* ManageCUType.h */,
 			);
 			path = unit_server;
 			sourceTree = "<group>";
@@ -3823,6 +3834,7 @@
 				327F39B81AEAA2850000C845 /* DeleteDS.h in Headers */,
 				32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */,
 				327F39A81AEAA2290000C845 /* NewDS.h in Headers */,
+				32EBDF0F1B53A32600278C42 /* ManageCUType.h in Headers */,
 				327F39C31AEFABB00000C845 /* InitDeinit.h in Headers */,
 				32568C931B42C1690006988C /* QuantumTSTaggedAttributeHandler.h in Headers */,
 				328C87371ADFDD410047C79B /* GetInstance.h in Headers */,
@@ -4149,6 +4161,7 @@
 				328E78021A7A94810008C070 /* NodeRegister.cpp in Sources */,
 				328C873A1AE016DC0047C79B /* DeleteInstance.cpp in Sources */,
 				323236CB164573C60052CE06 /* main.cpp in Sources */,
+				32EBDF0B1B538F4B00278C42 /* ManageCUType.cpp in Sources */,
 				327F39BB1AEAB14E0000C845 /* GetAllDataService.cpp in Sources */,
 				32B1E8001B2B0EB600221E49 /* CommandGet.cpp in Sources */,
 				3210EE1E1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp in Sources */,
@@ -4454,6 +4467,7 @@
 				327F39B31AEAA2680000C845 /* GetAssociationByDS.cpp in Sources */,
 				328C873E1AE01A590047C79B /* DeleteInstance.cpp in Sources */,
 				32362C211ADD0C45000CA079 /* SetInstanceDescription.cpp in Sources */,
+				32EBDF0E1B53A32600278C42 /* ManageCUType.cpp in Sources */,
 				32B1E8061B2EA07200221E49 /* CommandTemplateDelete.cpp in Sources */,
 				327F39C21AEFABB00000C845 /* InitDeinit.cpp in Sources */,
 				327F39B71AEAA2850000C845 /* DeleteDS.cpp in Sources */,

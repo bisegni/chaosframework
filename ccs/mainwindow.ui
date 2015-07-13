@@ -79,6 +79,8 @@
     <addaction name="actionOpenNode"/>
     <addaction name="actionSearch_Node"/>
     <addaction name="actionData_Services"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_New_Unit_Server"/>
    </widget>
    <widget class="QMenu" name="menuWindows">
     <property name="title">
@@ -204,6 +206,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="actionAdd_New_Unit_Server">
+   <property name="text">
+    <string>Add New Unit Server</string>
    </property>
   </action>
  </widget>
