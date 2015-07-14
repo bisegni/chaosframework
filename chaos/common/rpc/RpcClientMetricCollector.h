@@ -33,14 +33,10 @@ namespace chaos {
     namespace common {
         namespace rpc {
             class RpcClientMetricCollector:
-            public chaos::common::metric::MetricCollector,
+            public chaos::common::metric::MetricCollectorIO,
             public RpcClient {
                 bool dispose_forwarder_on_exit;
                 RpcClient *wrapped_client;
-                uint64_t pack_count;
-                uint64_t bandwith;
-                double pack_count_for_ut;
-                double bw_for_ut;
             private:
                 void fetchMetricForTimeDiff(uint64_t time_diff);
             public:

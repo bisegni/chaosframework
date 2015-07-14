@@ -34,6 +34,7 @@
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/rpc/RpcClientMetricCollector.h>
+#include <chaos/common/rpc/RpcServerMetricCollector.h>
 
 #define MB_LAPP LAPP_ << "[NetworkBroker]- "
 
@@ -156,7 +157,10 @@ void NetworkBroker::init(void *initData) throw(CException) {
         MB_LAPP  << "Trying to initilize RPC Server: " << rpc_server_name;
         rpc_server = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpc_server_name);
 		if(!rpc_server) throw CException(4, "Error allocating rpc server implementation", __PRETTY_FUNCTION__);
-		
+        if(globalConfiguration->getBoolValue(InitOption::OPT_RPC_LOG_METRIC)) {
+            rpc_server = new rpc::RpcServerMetricCollector(rpc_server->getName(), rpc_server);
+        }
+        
         if(StartableService::initImplementation(rpc_server, static_cast<void*>(globalConfiguration), rpc_server->getName(), __PRETTY_FUNCTION__)) {
 			//set the handler on the rpc server
             rpc_server->setCommandDispatcher(command_dispatcher);

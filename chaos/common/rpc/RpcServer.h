@@ -76,12 +76,12 @@ namespace chaos {
         /*!
          Return the published port
          */
-        int getPublishedPort();
+        virtual int getPublishedPort();
         
         /*
          set the command dispatcher associated to the instance of rpc adapter
          */
-        void setCommandDispatcher(RpcServerHandler *newCommandHandler);
+        virtual void setCommandDispatcher(RpcServerHandler *newCommandHandler);
     };
 }
 #endif

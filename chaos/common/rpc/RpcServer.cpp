@@ -28,7 +28,7 @@ NamedService(alias) {
 /*!
  Return the published port
  */
-int RpcServer::getPublishedPort(){
+int RpcServer::getPublishedPort() {
     return portNumber;
 }
 

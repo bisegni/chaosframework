@@ -22,6 +22,7 @@
 #define CHAOSFramework_metric_h
 
 #include <chaos/common/metric/MetricCollector.h>
+#include <chaos/common/metric/MetricCollectorIO.h>
 #include <chaos/common/metric/AbstractMetricBackend.h>
 #include <chaos/common/metric/ConsoleMetricBackend.h>
 

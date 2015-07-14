@@ -453,6 +453,10 @@
 		3298487E1736814700C158DF /* ChannelValueAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3298487C1736814700C158DF /* ChannelValueAccessor.h */; };
 		32984880173681BB00C158DF /* SlbCachedInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3298487F173681BB00C158DF /* SlbCachedInfo.h */; };
 		3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3299363418A7C4F60093E7F2 /* ChaosDataService.cpp */; };
+		329C1EFD1B55286100A84D55 /* RpcServerMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1EFB1B55286100A84D55 /* RpcServerMetricCollector.cpp */; };
+		329C1EFE1B55286100A84D55 /* RpcServerMetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1EFC1B55286100A84D55 /* RpcServerMetricCollector.h */; };
+		329C1F011B5540F900A84D55 /* MetricCollectorIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1EFF1B5540F900A84D55 /* MetricCollectorIO.cpp */; };
+		329C1F021B5540F900A84D55 /* MetricCollectorIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1F001B5540F900A84D55 /* MetricCollectorIO.h */; };
 		329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 329CFCF218CDEE2F002C37CF /* ObjectSlot.h */; };
 		329F406C1A669B6300AC318A /* AbstractApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */; };
 		329F40701A669F6C00AC318A /* AbstractPersistenceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329F406E1A669F6C00AC318A /* AbstractPersistenceDriver.cpp */; };
@@ -1296,6 +1300,10 @@
 		3298487F173681BB00C158DF /* SlbCachedInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlbCachedInfo.h; sourceTree = "<group>"; };
 		3299363418A7C4F60093E7F2 /* ChaosDataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosDataService.cpp; sourceTree = "<group>"; };
 		3299363518A7C4F60093E7F2 /* ChaosDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosDataService.h; sourceTree = "<group>"; };
+		329C1EFB1B55286100A84D55 /* RpcServerMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServerMetricCollector.cpp; sourceTree = "<group>"; };
+		329C1EFC1B55286100A84D55 /* RpcServerMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerMetricCollector.h; sourceTree = "<group>"; };
+		329C1EFF1B5540F900A84D55 /* MetricCollectorIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetricCollectorIO.cpp; sourceTree = "<group>"; };
+		329C1F001B5540F900A84D55 /* MetricCollectorIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetricCollectorIO.h; sourceTree = "<group>"; };
 		329CFCF218CDEE2F002C37CF /* ObjectSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectSlot.h; sourceTree = "<group>"; };
 		329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApiGroup.cpp; sourceTree = "<group>"; };
 		329F406B1A669B6300AC318A /* AbstractApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApiGroup.h; sourceTree = "<group>"; };
@@ -2627,6 +2635,8 @@
 				3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */,
 				32EBDEFC1B4E6FC700278C42 /* RpcClientMetricCollector.cpp */,
 				32EBDEFD1B4E6FC700278C42 /* RpcClientMetricCollector.h */,
+				329C1EFB1B55286100A84D55 /* RpcServerMetricCollector.cpp */,
+				329C1EFC1B55286100A84D55 /* RpcServerMetricCollector.h */,
 			);
 			path = rpc;
 			sourceTree = "<group>";
@@ -3459,6 +3469,8 @@
 			children = (
 				32EBDEF81B4E58F300278C42 /* MetricCollector.cpp */,
 				32EBDEF91B4E58F300278C42 /* MetricCollector.h */,
+				329C1EFF1B5540F900A84D55 /* MetricCollectorIO.cpp */,
+				329C1F001B5540F900A84D55 /* MetricCollectorIO.h */,
 				32EBDF001B4FBD8800278C42 /* AbstractMetricBackend.cpp */,
 				32EBDF011B4FBD8800278C42 /* AbstractMetricBackend.h */,
 				32EBDF041B4FCA6F00278C42 /* ConsoleMetricBackend.cpp */,
@@ -3518,6 +3530,7 @@
 				326DB45D14B38BC00018A8D0 /* CDataWrapper.h in Headers */,
 				326DB45F14B38BC00018A8D0 /* CUSchemaDB.h in Headers */,
 				32D5CB32179D233E00A8427E /* chaos_types.h in Headers */,
+				329C1EFE1B55286100A84D55 /* RpcServerMetricCollector.h in Headers */,
 				3229700A18BCC6FE0004F70D /* DirectIOServerPublicInterface.h in Headers */,
 				32EE8978191A5AB000DE2F29 /* status_with.h in Headers */,
 				32D6C8981815293200E9689B /* DirectIOHandler.h in Headers */,
@@ -3681,6 +3694,7 @@
 				32F7FEAB18A5066600FC03AB /* FastDelegate.h in Headers */,
 				3235110A17B3EAE500E39E14 /* TemplatedConcurrentQueue.h in Headers */,
 				328556A517F2E36000A64ED2 /* DirectIOServer.h in Headers */,
+				329C1F021B5540F900A84D55 /* MetricCollectorIO.h in Headers */,
 				3296032A1876B45000CDCADA /* BatchCommandSandboxEventHandler.h in Headers */,
 				328E36ED1786C00D00C1564D /* PluginDefinition.h in Headers */,
 				32B571ED168E02C30002A198 /* bson_builder_base.h in Headers */,
@@ -4268,6 +4282,7 @@
 				326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */,
 				32FB20181A3F0FAB00307A86 /* AttributeValue.cpp in Sources */,
 				324A4B75191A428500975394 /* jsobj.cpp in Sources */,
+				329C1F011B5540F900A84D55 /* MetricCollectorIO.cpp in Sources */,
 				326DB45C14B38BC00018A8D0 /* CDataWrapper.cpp in Sources */,
 				326DB45E14B38BC00018A8D0 /* CUSchemaDB.cpp in Sources */,
 				32543B1A1AFA6D28008D58EC /* HealtMetric.cpp in Sources */,
@@ -4291,6 +4306,7 @@
 				3266A5DF18A631A800637592 /* ZMQBaseClass.cpp in Sources */,
 				327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */,
 				32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */,
+				329C1EFD1B55286100A84D55 /* RpcServerMetricCollector.cpp in Sources */,
 				32C100FB191B847800478F40 /* TimerHandler.cpp in Sources */,
 				32CDA9A4198932C500663D8B /* LoadableService.cpp in Sources */,
 				324A4B9E191A569800975394 /* hex.cpp in Sources */,

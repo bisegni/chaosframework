@@ -21,7 +21,9 @@ SET(common_lib_src  ${common_lib_src}	bson/oid.cpp bson/bson_validate.cpp
 
 SET(common_lib_src  ${common_lib_src}	configuration/GlobalConfiguration.cpp)
 
-SET(common_lib_src  ${common_lib_src}	metric/MetricCollector.cpp)
+SET(common_lib_src  ${common_lib_src}	metric/MetricCollector.cpp
+                                        metric/AbstractMetricBackend.cpp
+                                        metric/ConsoleMetricBackend.cpp)
 
 SET(common_lib_src  ${common_lib_src}	data/CDataWrapper.cpp data/CUSchemaDB.cpp data/DatasetDB.cpp data/entity_db/EntityDB.cpp data/entity_db/sqlite_impl/sqlite3.c
 										data/entity_db/sqlite_impl/SQLiteEntityDB.cpp data/entity/Entity.cpp data/broker/DataBroker.cpp data/broker/publisher/PublisherDataService.cpp
@@ -68,6 +70,8 @@ SET(common_lib_src  ${common_lib_src}	network/NetworkBroker.cpp network/Performa
 
 SET(common_lib_src  ${common_lib_src}	rpc/RpcClient.cpp
                                         rpc/RpcServer.cpp
+                                        rpc/RpcClientMetricCollector.cpp
+                                        rpc/RpcServerMetricCollector.cpp
                                         rpc/zmq/ZMQClient.cpp
                                         rpc/zmq/ZMQServer.cpp)
 
@@ -76,9 +80,9 @@ SET(common_lib_src  ${common_lib_src}	sync_rpc/RpcSyncServer.cpp sync_rpc/HTTPRp
 SET(common_lib_src  ${common_lib_src}	utility/NamedService.cpp utility/LoadableService.cpp utility/StartableService.cpp utility/InizializableService.cpp)
 
 SET(common_lib_src  ${common_lib_src}	batch_command/BatchCommandExecutor.cpp
-                                      batch_command/BatchCommandSandbox.cpp
-                                      batch_command/BatchCommand.cpp
-                                      batch_command/BatchCommandDescription.cpp)
+                                        batch_command/BatchCommandSandbox.cpp
+                                        batch_command/BatchCommand.cpp
+                                        batch_command/BatchCommandDescription.cpp)
 SET(common_lib_src  ${common_lib_src}	plugin/AbstractPlugin.cpp plugin/PluginDiscover.cpp plugin/PluginInspector.cpp plugin/PluginLoader.cpp)
 
 IF (NOT DEFINED BUILD_FORCE_STATIC )
