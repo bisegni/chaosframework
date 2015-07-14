@@ -18,6 +18,8 @@ public:
     void setDataset(Dataset dataset);
     int startMonitoring();
     int stopMonitoring();
+    //force this method to set ever false value to property
+    void setLabelValueShowTrackStatus(bool label_value_show_track_status);
 signals:
     void datasetChanged(const Dataset& last_dataset, const Dataset& new_dataset);
 public slots:

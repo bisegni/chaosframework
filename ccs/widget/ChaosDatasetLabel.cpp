@@ -97,6 +97,10 @@ int ChaosDatasetLabel::stopMonitoring() {
     return 0;
 }
 
+void ChaosDatasetLabel::setLabelValueShowTrackStatus(bool label_value_show_track_status) {
+    ChaosLabel::setLabelValueShowTrackStatus(false);
+}
+
 boost::shared_ptr<AbstractTSTaggedAttributeHandler>
 ChaosDatasetLabel::getChaosAttributeHandlerForType(ChaosDataType chaos_type, bool& ok) {
     ok = !attributeName().isEmpty();

@@ -39,8 +39,10 @@ UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
             this, SLOT(customMenuRequested(QPoint)));
 }
 
-UnitServerEditor::~UnitServerEditor()
-{
+UnitServerEditor::~UnitServerEditor() {
+    //start monitor on chaos ui
+    ui->chaosLabelHealtStatus->stopMonitoring();
+    ui->chaosLedIndicatorHealt->stopMonitoring();
     delete ui;
 }
 
@@ -83,6 +85,14 @@ void UnitServerEditor::initUI() {
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(tableSelectionChanged(QItemSelection,QItemSelection)));
 
+    //setup chaos ui
+    ui->chaosLabelHealtStatus->setNodeUniqueID(node_unique_id);
+    ui->chaosLabelHealtStatus->setTrackStatus(true);
+    ui->chaosLabelHealtStatus->setLabelValueShowTrackStatus(true);
+    ui->chaosLedIndicatorHealt->setNodeUniqueID(node_unique_id);
+    //start monitor on chaos ui
+    ui->chaosLabelHealtStatus->startMonitoring();
+    ui->chaosLedIndicatorHealt->startMonitoring();
     //load info
     updateAll();
 }

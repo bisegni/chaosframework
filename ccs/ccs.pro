@@ -80,7 +80,8 @@ SOURCES += main.cpp\
     plot/NodeAttributePlotting.cpp \
     node/data/DatasetAttributeListModel.cpp \
     data/DatasetReader.cpp \
-    data/DatasetAttributeReader.cpp
+    data/DatasetAttributeReader.cpp \
+    widget/CLedIndicatorHealt.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -153,7 +154,8 @@ HEADERS  += \
     node/data/DatasetAttributeListModel.h \
     data/DatasetReader.h \
     data/DatasetAttributeReader.h \
-    data/data.h
+    data/data.h \
+    widget/CLedIndicatorHealt.h
 
 FORMS    += \
     search/searchnoderesult.ui \

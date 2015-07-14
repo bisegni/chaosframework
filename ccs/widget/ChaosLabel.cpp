@@ -78,6 +78,16 @@ bool ChaosLabel::trackStatus() {
     return p_track_status;
 }
 
+void ChaosLabel::setLabelValueShowTrackStatus(bool label_value_show_track_status) {
+    p_label_value_show_track_status = label_value_show_track_status;
+}
+
+bool ChaosLabel::labelValueShowTrackStatus() {
+    return p_label_value_show_track_status;
+}
+
+bool labelValueShowTrackStatus();
+
 int ChaosLabel::startMonitoring() {
     if(monitoring) return -1;
     if(trackStatus()) {
@@ -128,6 +138,8 @@ void ChaosLabel::valueUpdated(const QString& node_uid,
     }else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
         //write the value
         setToolTip(attribute_value.toString());
+        if(labelValueShowTrackStatus())
+            QLabel::setText(attribute_value.toString());
     }
 }
 
