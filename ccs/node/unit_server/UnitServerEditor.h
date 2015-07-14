@@ -57,12 +57,13 @@ private slots:
     void cuInstanceDeinitSelected();
     void cuInstanceStartSelected();
     void cuInstanceStopSelected();
+
     void on_pushButtonUpdateControlUnitType_clicked();
-
     void on_pushButtonAddNewCUType_clicked();
-
     void on_pushButtonRemoveCUType_clicked();
 
+    void changedNodeOnlineStatus(const QString& node_uid,
+                                 bool new_online_status);
 protected:
     void initUI();
     bool canClose();

@@ -21,7 +21,8 @@ public:
     virtual int startMonitoring();
     virtual int stopMonitoring();
 signals:
-    void changedOnlineStatus(bool online);
+    void changedOnlineStatus(const QString& node_uid,
+                             bool online);
 
 public slots:
 

@@ -22,9 +22,7 @@ CLedIndicatorHealt::CLedIndicatorHealt(QWidget *parent):
 
 }
 
-CLedIndicatorHealt::~CLedIndicatorHealt() {
-
-}
+CLedIndicatorHealt::~CLedIndicatorHealt() {}
 
 void CLedIndicatorHealt::setNodeUniqueID(const QString& node_uid) {
     p_node_uid = node_uid;
@@ -54,7 +52,8 @@ int CLedIndicatorHealt::stopMonitoring() {
 
 void CLedIndicatorHealt::manageOnlineFlag(bool current_status) {
     if(last_online_state == current_status) return;
-   emit changedOnlineStatus(last_online_state = current_status);
+    emit changedOnlineStatus(nodeUniqueID(),
+                             last_online_state = current_status);
 }
 
 void CLedIndicatorHealt::valueUpdated(const QString& node_uid,
@@ -64,14 +63,17 @@ void CLedIndicatorHealt::valueUpdated(const QString& node_uid,
         uint64_t current_timestamp = attribute_value.toULongLong();
         if(current_timestamp == 0) {
             setState(0);
+            manageOnlineFlag(false);
         } else {
             uint64_t time_diff = QDateTime::currentDateTimeUtc().currentMSecsSinceEpoch() - current_timestamp;
             if(time_diff <= 5000) {
                 //in time
                 setState(2);
+                manageOnlineFlag(true);
             } else {
                 //timeouted
                 setState(1);
+                manageOnlineFlag(false);
             }
         }
     }

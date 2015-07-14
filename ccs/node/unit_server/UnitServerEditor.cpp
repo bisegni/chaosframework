@@ -35,8 +35,10 @@ UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
     ui->splitterTypeInstances->setStretchFactor(1,1);
 
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)),
+    connect(ui->tableView,
+            SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(customMenuRequested(QPoint)));
+
 }
 
 UnitServerEditor::~UnitServerEditor() {
@@ -90,6 +92,9 @@ void UnitServerEditor::initUI() {
     ui->chaosLabelHealtStatus->setTrackStatus(true);
     ui->chaosLabelHealtStatus->setLabelValueShowTrackStatus(true);
     ui->chaosLedIndicatorHealt->setNodeUniqueID(node_unique_id);
+    connect(ui->chaosLedIndicatorHealt,
+            SIGNAL(changedOnlineStatus(QString,bool)),
+            SLOT(changedNodeOnlineStatus(QString,bool)));
     //start monitor on chaos ui
     ui->chaosLabelHealtStatus->startMonitoring();
     ui->chaosLedIndicatorHealt->startMonitoring();
@@ -219,9 +224,9 @@ void UnitServerEditor::onApiDone(const QString& tag,
     } else if(tag.compare("cu_unload") == 0) {
         qDebug() << "unload sucessfull";
     } else if(tag.compare(TAG_CU_ADD_NEW_TYPE)==0) {
-        on_pushButtonUpdateControlUnitType_clicked();
+        updateAll();
     }else if(tag.compare(TAG_CU_REMOVE_TYPE_AND_UPDATE_LIST)==0) {
-        on_pushButtonUpdateControlUnitType_clicked();
+        updateAll();
     }
 }
 
@@ -362,10 +367,10 @@ void UnitServerEditor::cuInstanceStopSelected() {
 void UnitServerEditor::on_pushButtonAddNewCUType_clicked() {
     bool ok = false;
     QString cu_type = QInputDialog::getText(this,
-                                             tr("Create new control unit type"),
-                                             tr("Control Unit Type:"),
-                                             QLineEdit::Normal,
-                                             tr(""), &ok);
+                                            tr("Create new control unit type"),
+                                            tr("Control Unit Type:"),
+                                            QLineEdit::Normal,
+                                            tr(""), &ok);
     if(ok && cu_type.size() > 0) {
         submitApiResult(TAG_CU_ADD_NEW_TYPE,
                         GET_CHAOS_API_PTR(unit_server::ManageCUType)->execute(node_unique_id.toStdString(),
@@ -378,7 +383,7 @@ void UnitServerEditor::on_pushButtonRemoveCUType_clicked() {
     int count = ui->listViewCUType->selectionModel()->selectedRows().size();
     QModelIndexList cu_type_list = ui->listViewCUType->selectionModel()->selectedRows();
     for(int idx = 0; idx < count; idx++) {
-         QModelIndex cu_type = cu_type_list.at(idx);
+        QModelIndex cu_type = cu_type_list.at(idx);
         if(idx+1 < count) {
             submitApiResult(TAG_CU_REMOVE_TYPE,
                             GET_CHAOS_API_PTR(unit_server::ManageCUType)->execute(node_unique_id.toStdString(),
@@ -392,5 +397,12 @@ void UnitServerEditor::on_pushButtonRemoveCUType_clicked() {
                                                                                   1));
         }
 
+    }
+}
+
+void UnitServerEditor::changedNodeOnlineStatus(const QString& node_uid,
+                                               bool new_online_status) {
+    if(new_online_status) {
+        updateAll();
     }
 }
