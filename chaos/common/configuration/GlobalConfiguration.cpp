@@ -56,6 +56,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"DirectIO server thread number");
         addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC, po::value< bool >()->default_value(false), "Enable the logging of the DirectIO metric");
         addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, po::value< uint64_t >()->default_value(5), "The time intervall between metric samples");
+        addOption(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, po::value< bool >()->default_value(true), "Merge the metric values(of all endpoint) together");
         addOption(InitOption::OPT_RPC_SYNC_ENABLE, po::value< bool >()->default_value(false), "Enable the sync wrapper to rpc protocol");
         addOption(InitOption::OPT_RPC_SYNC_IMPLEMENTATION, po::value< string >()->default_value("HTTP"), "Specify the synchronous rpc implementation");
 		addOption(InitOption::OPT_RPC_SYNC_PORT, po::value< int >()->default_value(_SYNC_RPC_PORT), "Port where is published the syncrhonous rpc interface");
@@ -271,6 +272,9 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint64_t, direct_io_enable_log_metric_update_sec, InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, 5)
     configuration.addInt64Value(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, direct_io_enable_log_metric_update_sec);
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, direct_io_enable_log_metric_merged_endpoint, InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, true)
+    configuration.addBoolValue(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, direct_io_enable_log_metric_merged_endpoint);
     
     //cevent
     configuration.addStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");

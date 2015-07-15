@@ -39,6 +39,8 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <chaos/common/data/cache/FastHash.h>
 
+#include <boost/thread.hpp>
+
 namespace chaos {
 	
 	namespace common {
@@ -76,6 +78,8 @@ namespace chaos {
 				
 				std::string			impl_alias;
                 boost::atomic_uint	channel_counter;
+                
+                boost::mutex mutex_map_shared_collectors;
                 std::map<SharedCollectorKey, boost::shared_ptr<DirectIOClientConnectionSharedMetricIO> > map_shared_collectors;
 			protected:
 				void forwardEventToClientConnection(DirectIOClientConnection *client, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type);

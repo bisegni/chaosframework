@@ -66,6 +66,8 @@ private slots:
 
 private:
     const QString node_uid;
+    const QString node_uid_output_dataset;
+    const QString node_uid_input_dataset;
     uint64_t plot_ageing;
     boost::mt19937 rng;
     boost::uniform_int<> zero_to_255;

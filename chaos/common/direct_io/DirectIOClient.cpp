@@ -67,8 +67,20 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(std::string server_de
                                        endpoint);
         
         if(result && GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
+            //lock the map
+            boost::unique_lock<boost::mutex> wl(mutex_map_shared_collectors);
+            
+            //prepare key in case with need to split themetric for endpoint
+            std::string server_key = server_description;
+            if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT)) {
+                //we need to merge the endpoint
+                server_key = "merge_together";
+            }
+            //create the collector key
             SharedCollectorKey key(server_description, endpoint);
             boost::shared_ptr<DirectIOClientConnectionSharedMetricIO> shared_collector;
+            
+            //check if we have already allcoated thecollector
             if(map_shared_collectors.count(key)==0) {
                 shared_collector.reset(new DirectIOClientConnectionSharedMetricIO(getName(), server_description_with_endpoint));
             } else {

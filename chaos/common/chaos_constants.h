@@ -53,6 +53,8 @@ namespace chaos {
         static const char * const   OPT_RPC_SERVER_PORT                 = "rpc-server-port";
         //! Specify the number of the thread that the rpc ssytem must use to process the request
         static const char * const   OPT_RPC_SERVER_THREAD_NUMBER        = "rpc-server-thread-number";
+        //! Specify the implementation to use for the direct io subsystem
+        static const char * const   OPT_DIRECT_IO_IMPLEMENTATION		= "direct_io-impl";
         //! Specify the network port where the direct io subsystem publish i's priority channel
         static const char * const   OPT_DIRECT_IO_PRIORITY_SERVER_PORT  = "direct_io-priority-server-port";
         //! Specify the network port where the direct io subsystem publish i's priority channel
@@ -61,10 +63,10 @@ namespace chaos {
         static const char * const   OPT_DIRECT_IO_SERVER_THREAD_NUMBER  = "direct_io-server-thread-number";
         //! activate the loggin of metric on rpc system
         static const char * const   OPT_DIRECT_IO_LOG_METRIC            = "direct-io-log-metric";
+        //! activate the merged or separate metric on target endpoint
+        static const char * const   OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT = "direct-io-client-log-metric-mep";
         //! the time between the update of rpc metric on persistence backend (in seconds)
         static const char * const   OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL = "direct-io-log-metric-update-interval";
-        //! Specify the implementation to use for the direct io subsystem
-        static const char * const   OPT_DIRECT_IO_IMPLEMENTATION		= "direct_io-impl";
         //! Specify the live data servers address with the type host:port it is a multitoken parameter
         static const char * const   OPT_LIVE_DATA_SERVER_ADDRESS        = "live-data-servers";
         //! Specify the metadata address for the metadataserver
