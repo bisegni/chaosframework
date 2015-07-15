@@ -387,3 +387,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     zmq_msg_close (&message);
     zmq_msg_close (&reply);
 }
+
+uint64_t ZMQClient::getMessageQueueSize() {
+    return CObjectProcessingQueue::queueSize();
+}

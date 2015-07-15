@@ -114,6 +114,9 @@ namespace chaos {
          the key CS_CMDM_REMOTE_HOST_IP
          */
         bool submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread=false) throw(CException);
+        
+        //inherited method
+        virtual uint64_t getMessageQueueSize();
     };
 }
 #endif

@@ -31,7 +31,7 @@ RpcClientMetricCollector::RpcClientMetricCollector(const std::string& forwarder_
                                                    RpcClient *_wrapped_client,
                                                    bool _dispose_forwarder_on_exit):
 MetricCollectorIO(forwarder_implementation,
-                GlobalConfiguration::getInstance()->getConfiguration()->getUInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_SEC)),
+                GlobalConfiguration::getInstance()->getConfiguration()->getUInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL)),
 RpcClient(forwarder_implementation),
 wrapped_client(_wrapped_client),
 dispose_forwarder_on_exit(_dispose_forwarder_on_exit) {
@@ -100,5 +100,6 @@ bool RpcClientMetricCollector::submitMessage(chaos::common::network::NetworkForw
 }
 
 void RpcClientMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {
+    pack_unsent_count = (uint32_t)wrapped_client->getMessageQueueSize();
     MetricCollectorIO::fetchMetricForTimeDiff(time_diff);
 }

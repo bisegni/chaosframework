@@ -30,7 +30,7 @@ RpcServerMetricCollector::RpcServerMetricCollector(const std::string& forwarder_
                                                    RpcServer *_wrapper_server,
                                                    bool _dispose_forwarder_on_exit):
 MetricCollectorIO(forwarder_implementation,
-                  GlobalConfiguration::getInstance()->getConfiguration()->getUInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_SEC)),
+                  GlobalConfiguration::getInstance()->getConfiguration()->getUInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL)),
 RpcServer(forwarder_implementation),
 wrapper_server(_wrapper_server),
 wrapperd_server_handler(NULL),

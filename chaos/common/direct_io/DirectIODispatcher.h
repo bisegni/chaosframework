@@ -67,19 +67,19 @@ namespace chaos {
 				void stop() throw(chaos::CException);
 				
 				// Deinit the implementation
-				void deinit() throw(chaos::CException);
+				virtual void deinit() throw(chaos::CException);
 				
 				//! Allocate a new endpoint
-				DirectIOServerEndpoint *getNewEndpoint();
+				virtual DirectIOServerEndpoint *getNewEndpoint();
 				
 				//! Relase the endpoint
-				void releaseEndpoint(DirectIOServerEndpoint *);
+				void releaseEndpoint(DirectIOServerEndpoint *endpoint_to_release);
 				
 				// Event for a new data received
-				int priorityDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer);
+				virtual int priorityDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer);
                 
                 // Event for a new data received
-				int serviceDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer);
+				virtual int serviceDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer);
 			};
 		}
 	}

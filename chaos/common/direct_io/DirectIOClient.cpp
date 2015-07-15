@@ -19,9 +19,13 @@
  */
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/InetUtility.h>
-#include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
+
+#include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
+#include <chaos/common/direct_io/DirectIOClientConnectionSharedMetricIO.h>
+#include <chaos/common/direct_io/DirectIOClientConnectionMetricCollector.h>
 
 #include <boost/regex.hpp>
 #include <boost/format.hpp>
@@ -46,16 +50,53 @@ DirectIOClient::DirectIOClient(std::string alias):NamedService(alias) {
 DirectIOClient::~DirectIOClient() {
 }
 
-void DirectIOClient::forwardEventToClientConnection(DirectIOClientConnection *client, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type) {
+void DirectIOClient::forwardEventToClientConnection(DirectIOClientConnection *client,
+                                                    DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type) {
 	client->lowLevelManageEvent(event_type);
 }
 
 DirectIOClientConnection *DirectIOClient::getNewConnection(std::string server_description_with_endpoint) {
     uint16_t endpoint;
     std::string server_description;
+    DirectIOClientConnection *result = NULL;
     DEBUG_CODE(DIOLDBG_ << "Requested a new connection for a server description " << server_description_with_endpoint;)
     if(decodeServerDescriptionWithEndpoint(server_description_with_endpoint, server_description, endpoint)) {
         DEBUG_CODE(DIOLDBG_ << "scomposed into server description " << server_description << " and endpoint " << endpoint;)
-        return getNewConnection(server_description, endpoint);
-    } else return NULL;
+        
+        result = _getNewConnectionImpl(server_description,
+                                       endpoint);
+        
+        if(result && GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
+            SharedCollectorKey key(server_description, endpoint);
+            boost::shared_ptr<DirectIOClientConnectionSharedMetricIO> shared_collector;
+            if(map_shared_collectors.count(key)==0) {
+                shared_collector.reset(new DirectIOClientConnectionSharedMetricIO(getName(), server_description_with_endpoint));
+            } else {
+                shared_collector = map_shared_collectors[key];
+            }
+
+            //the metric allocator of direct io is a direct subclass of DirectIODispatcher
+            result = new DirectIOClientConnectionMetricCollector(server_description,
+                                                                 endpoint,
+                                                                 shared_collector,
+                                                                 result);
+        }
+
+    }
+        
+    return result;
+}
+
+//! Release the connection
+void DirectIOClient::releaseConnection(DirectIOClientConnection *connection_to_release) {
+    if(connection_to_release && GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
+        //the metric allocator of direct io is a direct subclass of DirectIODispatcher
+        DirectIOClientConnectionMetricCollector *metric_collector = dynamic_cast<DirectIOClientConnectionMetricCollector*>(connection_to_release);
+        if(metric_collector) {
+            _releaseConnectionImpl(metric_collector->wrapped_connection);
+            delete(metric_collector);
+        }
+    } else  {
+        _releaseConnectionImpl(connection_to_release);
+    }
 }

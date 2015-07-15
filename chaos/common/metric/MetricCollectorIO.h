@@ -23,6 +23,7 @@
 
 #include <chaos/common/metric/MetricCollector.h>
 
+#include <boost/atomic.hpp>
 namespace chaos {
     namespace common {
         namespace metric {
@@ -31,8 +32,13 @@ namespace chaos {
             class MetricCollectorIO:
             public MetricCollector {
             protected:
-                uint64_t pack_count;
-                uint64_t bandwith;
+                //! message that are waiting to be sent
+                boost::atomic<uint32_t> pack_unsent_count;
+                //! messagge that hase beens sent since last metric acquisition
+                boost::atomic<uint64_t> pack_count;
+                //! toatl bandwith since last metric acquisition
+                boost::atomic<uint64_t> bandwith;
+                //variable for calculation
                 double pack_count_for_ut;
                 double bw_for_ut;
                 

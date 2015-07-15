@@ -457,6 +457,12 @@
 		329C1EFE1B55286100A84D55 /* RpcServerMetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1EFC1B55286100A84D55 /* RpcServerMetricCollector.h */; };
 		329C1F011B5540F900A84D55 /* MetricCollectorIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1EFF1B5540F900A84D55 /* MetricCollectorIO.cpp */; };
 		329C1F021B5540F900A84D55 /* MetricCollectorIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1F001B5540F900A84D55 /* MetricCollectorIO.h */; };
+		329C1F051B5643EF00A84D55 /* DirectIODispatcherMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F031B5643EF00A84D55 /* DirectIODispatcherMetricCollector.cpp */; };
+		329C1F061B5643EF00A84D55 /* DirectIODispatcherMetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1F041B5643EF00A84D55 /* DirectIODispatcherMetricCollector.h */; };
+		329C1F091B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F071B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.cpp */; };
+		329C1F0A1B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1F081B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h */; };
+		329C1F0D1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F0B1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp */; };
+		329C1F0E1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1F0C1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h */; };
 		329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 329CFCF218CDEE2F002C37CF /* ObjectSlot.h */; };
 		329F406C1A669B6300AC318A /* AbstractApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */; };
 		329F40701A669F6C00AC318A /* AbstractPersistenceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329F406E1A669F6C00AC318A /* AbstractPersistenceDriver.cpp */; };
@@ -1304,6 +1310,12 @@
 		329C1EFC1B55286100A84D55 /* RpcServerMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerMetricCollector.h; sourceTree = "<group>"; };
 		329C1EFF1B5540F900A84D55 /* MetricCollectorIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetricCollectorIO.cpp; sourceTree = "<group>"; };
 		329C1F001B5540F900A84D55 /* MetricCollectorIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetricCollectorIO.h; sourceTree = "<group>"; };
+		329C1F031B5643EF00A84D55 /* DirectIODispatcherMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIODispatcherMetricCollector.cpp; sourceTree = "<group>"; };
+		329C1F041B5643EF00A84D55 /* DirectIODispatcherMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIODispatcherMetricCollector.h; sourceTree = "<group>"; };
+		329C1F071B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClientConnectionMetricCollector.cpp; sourceTree = "<group>"; };
+		329C1F081B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClientConnectionMetricCollector.h; sourceTree = "<group>"; };
+		329C1F0B1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClientConnectionSharedMetricIO.cpp; sourceTree = "<group>"; };
+		329C1F0C1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClientConnectionSharedMetricIO.h; sourceTree = "<group>"; };
 		329CFCF218CDEE2F002C37CF /* ObjectSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectSlot.h; sourceTree = "<group>"; };
 		329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApiGroup.cpp; sourceTree = "<group>"; };
 		329F406B1A669B6300AC318A /* AbstractApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApiGroup.h; sourceTree = "<group>"; };
@@ -2911,11 +2923,17 @@
 				328556A317F2E36000A64ED2 /* DirectIOServer.h */,
 				3219E69D18CC7AE600C2F795 /* DirectIOClientConnection.cpp */,
 				3219E69E18CC7AE600C2F795 /* DirectIOClientConnection.h */,
+				329C1F0B1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp */,
+				329C1F0C1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h */,
+				329C1F071B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.cpp */,
+				329C1F081B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h */,
 				32EA501018A152BE00782435 /* DirectIOServerEndpoint.cpp */,
 				32EA501118A152BE00782435 /* DirectIOServerEndpoint.h */,
 				32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */,
 				32EA501418A15BF000782435 /* DirectIODispatcher.cpp */,
 				32EA501518A15BF000782435 /* DirectIODispatcher.h */,
+				329C1F031B5643EF00A84D55 /* DirectIODispatcherMetricCollector.cpp */,
+				329C1F041B5643EF00A84D55 /* DirectIODispatcherMetricCollector.h */,
 				3229700918BCC6FE0004F70D /* DirectIOServerPublicInterface.h */,
 				328556A617F3039700A64ED2 /* DirectIOTypes.h */,
 				32D6C8971815293200E9689B /* DirectIOHandler.h */,
@@ -3710,6 +3728,7 @@
 				32B571FF168E02CE0002A198 /* bsonobj.h in Headers */,
 				32B57200168E02CE0002A198 /* bsonobjbuilder.h in Headers */,
 				32B57201168E02CE0002A198 /* bsonobjiterator.h in Headers */,
+				329C1F0A1B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h in Headers */,
 				328556A717F3039700A64ED2 /* DirectIOTypes.h in Headers */,
 				32C4C86E193491F2002DA741 /* URLServiceFeeder.h in Headers */,
 				32C3544E17885A37009ED581 /* common.hpp in Headers */,
@@ -3717,6 +3736,7 @@
 				32B57203168E02CE0002A198 /* inline_decls.h in Headers */,
 				32B57208168E02D10002A198 /* oid.h in Headers */,
 				32B57209168E02D10002A198 /* ordering.h in Headers */,
+				329C1F061B5643EF00A84D55 /* DirectIODispatcherMetricCollector.h in Headers */,
 				324A4B2C191A405700975394 /* document-inl.h in Headers */,
 				32C35467178860E5009ED581 /* extension.hpp in Headers */,
 				324A4B91191A527D00975394 /* base64.h in Headers */,
@@ -3788,6 +3808,7 @@
 				32D421B417271572008A326E /* BsonFragment.h in Headers */,
 				328E405E17287B82004E5938 /* LFDataCache.h in Headers */,
 				32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */,
+				329C1F0E1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h in Headers */,
 				3298487E1736814700C158DF /* ChannelValueAccessor.h in Headers */,
 				32B73E9F18D9D80F00F0B187 /* PerformanceManagment.h in Headers */,
 				32984880173681BB00C158DF /* SlbCachedInfo.h in Headers */,
@@ -4304,6 +4325,7 @@
 				3264BBD71784BFE400E2F5A0 /* PluginInspector.cpp in Sources */,
 				324A4B30191A405700975394 /* element.cpp in Sources */,
 				3266A5DF18A631A800637592 /* ZMQBaseClass.cpp in Sources */,
+				329C1F091B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.cpp in Sources */,
 				327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */,
 				32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */,
 				329C1EFD1B55286100A84D55 /* RpcServerMetricCollector.cpp in Sources */,
@@ -4311,6 +4333,7 @@
 				32CDA9A4198932C500663D8B /* LoadableService.cpp in Sources */,
 				324A4B9E191A569800975394 /* hex.cpp in Sources */,
 				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,
+				329C1F0D1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp in Sources */,
 				327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */,
 				327967D915E030C40003C6DA /* AsioEventHandler.cpp in Sources */,
 				32DF603715E14C7700312C94 /* NamedService.cpp in Sources */,
@@ -4358,6 +4381,7 @@
 				325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */,
 				3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */,
 				32B89C9D15F39DB500B17AAA /* ActionExecutionSafetySystem.cpp in Sources */,
+				329C1F051B5643EF00A84D55 /* DirectIODispatcherMetricCollector.cpp in Sources */,
 				32B89CA115F3D1E100B17AAA /* InstrumentEventChannel.cpp in Sources */,
 				32FB201C1A3F11C400307A86 /* AttributeCache.cpp in Sources */,
 				324A4B12191A3F6A00975394 /* status.cpp in Sources */,

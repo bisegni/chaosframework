@@ -89,6 +89,13 @@ namespace chaos {
         RpcClient(const std::string& alias);
         
         virtual void setServerHandler(RpcServerHandler *_server_handler);
+        
+        //! return the numebr of message that are waiting to be sent
+        /*!
+         driver can overload this method to return(if has any) the size
+         of internal queue message
+         */
+        virtual uint64_t getMessageQueueSize();
     };
 }
 #endif

@@ -165,7 +165,7 @@ void ZMQDirectIOClient::deinit() throw(chaos::CException) {
     DirectIOClient::deinit();
 }
 
-DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server_description, uint16_t endpoint) {
+DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string server_description, uint16_t endpoint) {
 	int err = 0;
 	const int output_buffer_dim = 1;
 	const int linger_period = 0;
@@ -308,7 +308,7 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
     return result;
 }
 
-void ZMQDirectIOClient::releaseConnection(DirectIOClientConnection *connection_to_release) {
+void ZMQDirectIOClient::_releaseConnectionImpl(DirectIOClientConnection *connection_to_release) {
 	int err = 0;
 	ZMQDirectIOClientConnection *conn=reinterpret_cast<ZMQDirectIOClientConnection*>(connection_to_release);
 	if(!conn) return;

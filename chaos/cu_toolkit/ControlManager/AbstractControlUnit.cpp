@@ -798,10 +798,12 @@ CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam,
 
 void AbstractControlUnit::_updateAcquistionTimestamp(uint64_t alternative_ts) {
     *timestamp_acq_cached_value->getValuePtr<uint64_t>() = (alternative_ts == 0?TimingUtil::getTimeStamp():alternative_ts);
+    //timestamp_acq_cached_value->markAsChanged();
 }
 
 void AbstractControlUnit::_updateRunScheduleDelay(uint64_t new_scehdule_delay) {
     *thread_schedule_daly_cached_value->getValuePtr<uint64_t>() = new_scehdule_delay;
+    thread_schedule_daly_cached_value->markAsChanged();
 }
 
 //!handler calledfor restor a control unit to a determinate point

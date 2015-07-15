@@ -53,7 +53,8 @@ SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/Dir
 										direct_io/channel/DirectIOVirtualChannel.cpp direct_io/channel/DirectIOVirtualClientChannel.cpp direct_io/channel/DirectIOVirtualServerChannel.cpp
 										direct_io/channel/DirectIODeviceClientChannel.cpp direct_io/channel/DirectIODeviceServerChannel.cpp
 										direct_io/channel/DirectIOPerformanceServerChannel.cpp direct_io/channel/DirectIOPerformanceClientChannel.cpp
-										direct_io/channel/DirectIOSystemAPIServerChannel.cpp direct_io/channel/DirectIOSystemAPIClientChannel.cpp)
+										direct_io/channel/DirectIOSystemAPIServerChannel.cpp direct_io/channel/DirectIOSystemAPIClientChannel.cpp
+                                        direct_io/DirectIOClientConnectionMetricCollector.cpp direct_io/DirectIODispatcherMetricCollector.cpp)
 
 SET(common_lib_src  ${common_lib_src}	io/IODataDriver.cpp io/IOMemcachedIODriver.cpp io/IODirectIODriver.cpp io/QueryFuture.cpp)
 

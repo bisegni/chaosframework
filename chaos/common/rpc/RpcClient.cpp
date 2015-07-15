@@ -95,3 +95,8 @@ void RpcClient::forwadSubmissionResultError(NetworkForwardInfo *message_info,
 void RpcClient::setServerHandler(RpcServerHandler *_server_handler) {
     server_handler = _server_handler;
 }
+
+//! return the numebr of message that are waiting to be sent
+uint64_t RpcClient::getMessageQueueSize() {
+    return 0;
+}

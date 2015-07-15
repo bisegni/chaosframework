@@ -38,7 +38,7 @@ namespace chaos {
         //! activate the loggin of metric on rpc system
         static const char * const   OPT_RPC_LOG_METRIC                  = "rpc-log-metric";
         //! the time between the update of rpc metric on persistence backend (in seconds)
-        static const char * const   OPT_RPC_LOG_METRIC_UPDATE_SEC       = "rpc-log-metric-update_sec";
+        static const char * const   OPT_RPC_LOG_METRIC_UPDATE_INTERVAL  = "rpc-log-metric-update-interval";
         //! Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_IMPL_KV_PARAM               = "rpc-kv-param";
         //! Specify the implementation to use for rp messaging
@@ -59,6 +59,10 @@ namespace chaos {
         static const char * const   OPT_DIRECT_IO_SERVICE_SERVER_PORT   = "direct_io-service-server-port";
         //! Specify the number of the thread that the direct io subsystem must use to process the request
         static const char * const   OPT_DIRECT_IO_SERVER_THREAD_NUMBER  = "direct_io-server-thread-number";
+        //! activate the loggin of metric on rpc system
+        static const char * const   OPT_DIRECT_IO_LOG_METRIC            = "direct-io-log-metric";
+        //! the time between the update of rpc metric on persistence backend (in seconds)
+        static const char * const   OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL = "direct-io-log-metric-update-interval";
         //! Specify the implementation to use for the direct io subsystem
         static const char * const   OPT_DIRECT_IO_IMPLEMENTATION		= "direct_io-impl";
         //! Specify the live data servers address with the type host:port it is a multitoken parameter

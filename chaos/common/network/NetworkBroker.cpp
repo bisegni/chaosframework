@@ -33,8 +33,10 @@
 #include <chaos/common/event/channel/AlertEventChannel.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/common/utility/InetUtility.h>
+//-----------for metric collection---------
 #include <chaos/common/rpc/RpcClientMetricCollector.h>
 #include <chaos/common/rpc/RpcServerMetricCollector.h>
+#include <chaos/common/direct_io/DirectIODispatcherMetricCollector.h>
 
 #define MB_LAPP LAPP_ << "[NetworkBroker]- "
 
@@ -97,8 +99,15 @@ void NetworkBroker::init(void *initData) throw(CException) {
 		
 		//allocate the dispatcher
 		MB_LAPP  << "Allocate DirectIODispatcher";
-		direct_io_server->setHandler(direct_io_dispatcher = new common::direct_io::DirectIODispatcher());
-		
+        if(globalConfiguration->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
+            //the metric allocator of direct io is a direct subclass of DirectIODispatcher
+            direct_io_dispatcher = new direct_io::DirectIODispatcherMetricCollector(direct_io_server->getName());
+        } else {
+            direct_io_dispatcher = new common::direct_io::DirectIODispatcher();
+        }
+		direct_io_server->setHandler(direct_io_dispatcher);
+        
+        
 		//initialize direct io server
 		StartableService::initImplementation(direct_io_server, static_cast<void*>(globalConfiguration), direct_io_server->getName(), __PRETTY_FUNCTION__);
 		
