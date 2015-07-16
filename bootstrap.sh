@@ -372,7 +372,7 @@ if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
     fi
     cd $BASE_EXTERNAL/libcouchbase
     if [ -n "$CHAOS_STATIC" ]; then
-	cmake $CHAOS_CMAKE_FLAGS -DLCB_BUILD_STATIC=true .
+	cmake $CHAOS_CMAKE_FLAGS -DLCB_BUILD_STATIC=true -DLCB_NO_SSL=true .
     else
 	cmake $CHAOS_CMAKE_FLAGS .
     fi
