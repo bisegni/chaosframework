@@ -34,7 +34,7 @@ int main(int argc, char* argv[] ) {
     if(!controller) throw chaos::CException(4, "Error allcoating decive controller", "device controller creation");
 
     //simulate bad init call
-    std::auto_ptr<MessageRequestFuture> result = controller->sendCustomRequestWithFuture(chaos::ChaosSystemDomainAndActionLabel::ACTION_NODE_INIT, NULL);
+    std::auto_ptr<MessageRequestFuture> result = controller->sendCustomRequestWithFuture(chaos::NodeDomainAndActionRPC::ACTION_NODE_INIT, NULL);
     if(result->wait(1000)) {
         std::cout << "Error code:" << result->getError() << std::endl;
         std::cout << "Error message:" << result->getErrorMessage() << std::endl;

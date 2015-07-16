@@ -26,10 +26,16 @@
 
 using namespace chaos::common::direct_io;
 
+#define DIOCCSMC_INFO INFO_LOG(DirectIOClientConnectionSharedMetricIO)
+#define DIOCCSMC_DBG_ DBG_LOG(DirectIOClientConnectionSharedMetricIO)
+#define DIOCCSMC_ERR_ ERR_LOG(DirectIOClientConnectionSharedMetricIO)
+
 DirectIOClientConnectionSharedMetricIO::DirectIOClientConnectionSharedMetricIO(const std::string& client_impl,
                                                                                const std::string& server_endpoint):
 MetricCollectorIO(client_impl,
                   GlobalConfiguration::getInstance()->getConfiguration()->getUInt64Value(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL)) {
+    
+    DIOCCSMC_DBG_ << "Allocate collector";
     
     //add backend
     addBackend(metric::MetricBackendPointer(new metric::ConsoleMetricBackend(boost::str(boost::format("%1%_%2%")%client_impl%server_endpoint))));
@@ -38,6 +44,7 @@ MetricCollectorIO(client_impl,
 }
 
 DirectIOClientConnectionSharedMetricIO::~DirectIOClientConnectionSharedMetricIO() {
+    DIOCCSMC_DBG_ << "Deallocate collector";
     stopLogging();
 }
 

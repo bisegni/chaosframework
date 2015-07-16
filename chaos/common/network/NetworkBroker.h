@@ -108,6 +108,9 @@ namespace chaos {
 				//! Direct IO dispatcher
 				chaos::common::direct_io::DirectIODispatcher *direct_io_dispatcher;
 				
+                //! global direct io client instance
+                chaos::common::direct_io::DirectIOClient *direct_io_client;
+                
 				//!Event Client for event forwarding
 				chaos::event::EventClient *event_client;
 				
@@ -367,11 +370,19 @@ namespace chaos {
 				
 				//!Return a new direct io client instance
 				/*!
-				 Allcoate and return a new direct io client instance. This isntance is totaly managed
+				 Allocate and return a new direct io client instance. This isntance is totaly managed
 				 by the class that request for it. His deallocation is not done in automatic.
 				 \return A new instance of the direct io client
 				 */
-				chaos::common::direct_io::DirectIOClient *getDirectIOClientInstance();
+				chaos::common::direct_io::DirectIOClient *getNewDirectIOClientInstance();
+                
+                //!Return a new direct io client instance
+                /*!
+                 Allcoate and return a new direct io client instance. This isntance is totaly managed
+                 by the class that request for it. His deallocation is not done in automatic.
+                 \return A new instance of the direct io client
+                 */
+                chaos::common::direct_io::DirectIOClient *getSharedDirectIOClientInstance();
 			};
 		}
 	}

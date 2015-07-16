@@ -97,14 +97,14 @@ void IODirectIODriver::init(void *_init_parameter) throw(CException) {
 	
 	if(!init_parameter.network_broker) throw CException(-1, "No network broker configured", __PRETTY_FUNCTION__);
 	
-	init_parameter.client_instance = init_parameter.network_broker->getDirectIOClientInstance();
-	if(!init_parameter.client_instance) throw CException(-1, "No client configured", __PRETTY_FUNCTION__);
+	init_parameter.client_instance = init_parameter.network_broker->getSharedDirectIOClientInstance();
+	//if(!init_parameter.client_instance) throw CException(-1, "No client configured", __PRETTY_FUNCTION__);
 	
 	init_parameter.endpoint_instance = init_parameter.network_broker->getDirectIOServerEndpoint();
 	if(!init_parameter.endpoint_instance) throw CException(-1, "No endpoint configured", __PRETTY_FUNCTION__);
 	
 	//initialize client
-	InizializableService::initImplementation(init_parameter.client_instance, _init_parameter, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
+	//InizializableService::initImplementation(init_parameter.client_instance, _init_parameter, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
 	
 	//get the client and server channel
 	IODirectIODriver_LAPP_ << "Allcoate the default device server channel";
@@ -145,8 +145,8 @@ void IODirectIODriver::deinit() throw(CException) {
 	connectionFeeder.clear();
 	
 	//initialize client
-	InizializableService::deinitImplementation(init_parameter.client_instance, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
-	delete(init_parameter.client_instance);
+	//InizializableService::deinitImplementation(init_parameter.client_instance, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
+	//delete(init_parameter.client_instance);
 	
 	//deinitialize server channel
 	if(device_server_channel) {

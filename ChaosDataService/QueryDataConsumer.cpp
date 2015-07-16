@@ -94,7 +94,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 	
 	//allocate query manager
 	if(!settings->cache_only) {
-		query_engine = new query_engine::QueryEngine(network_broker->getDirectIOClientInstance(),
+		query_engine = new query_engine::QueryEngine(network_broker->getNewDirectIOClientInstance(),
 													 settings->query_manager_thread_poll_size,
 													 vfs_manager_instance);
 		if(!query_engine) throw chaos::CException(-5, "Error allocating Query Engine", __FUNCTION__);

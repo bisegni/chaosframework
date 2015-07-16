@@ -60,7 +60,8 @@ rpc_client(NULL),
 sync_rpc_server(NULL),
 command_dispatcher(NULL),
 direct_io_dispatcher(NULL),
-direct_io_server(NULL) {
+direct_io_server(NULL),
+direct_io_client(NULL) {
     can_use_metadata_server = GlobalConfiguration::getInstance()->isMEtadataServerConfigured();
     if(can_use_metadata_server){
         metadata_server_address = GlobalConfiguration::getInstance()->getMetadataServerAddress();
@@ -84,7 +85,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
     
     
     if(!globalConfiguration) {
-        throw CException(1, "No global configuraiton found", __PRETTY_FUNCTION__);
+        throw CException(-1, "No global configuraiton found", __PRETTY_FUNCTION__);
     }
     
 	//---------------------------- D I R E C T I/O ----------------------------
@@ -95,7 +96,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         direct_io_client_impl = direct_io_impl + "DirectIOClient";
         MB_LAPP  << "Trying to initilize DirectIO Server: " << direct_io_server_impl;
         direct_io_server = ObjectFactoryRegister<common::direct_io::DirectIOServer>::getInstance()->getNewInstanceByName(direct_io_server_impl);
-		if(!direct_io_server) throw CException(1, "Error creating direct io server implementation", __PRETTY_FUNCTION__);
+		if(!direct_io_server) throw CException(-2, "Error creating direct io server implementation", __PRETTY_FUNCTION__);
 		
 		//allocate the dispatcher
 		MB_LAPP  << "Allocate DirectIODispatcher";
@@ -114,6 +115,13 @@ void NetworkBroker::init(void *initData) throw(CException) {
 		//init the my_ip variable for all client
 		common::direct_io::DirectIOClientConnection::my_str_ip = GlobalConfiguration::getInstance()->getLocalServerAddress();
 		common::direct_io::DirectIOClientConnection::my_i64_ip = STRIP_TO_UI64(common::direct_io::DirectIOClientConnection::my_str_ip).to_ulong();
+        
+        direct_io_client = ObjectFactoryRegister<common::direct_io::DirectIOClient>::getInstance()->getNewInstanceByName(direct_io_client_impl);
+        if(!direct_io_client) throw CException(-3, "Error creating direct io client implementation", __PRETTY_FUNCTION__);
+        
+        //initialize direct io client
+        InizializableService::initImplementation(direct_io_client, static_cast<void*>(globalConfiguration), direct_io_client->getName(), __PRETTY_FUNCTION__);
+
     }
 	//---------------------------- D I R E C T I/O ----------------------------
 	
@@ -121,10 +129,10 @@ void NetworkBroker::init(void *initData) throw(CException) {
     if(globalConfiguration->hasKey(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION)) {
         event_dispatcher = ObjectFactoryRegister<AbstractEventDispatcher>::getInstance()->getNewInstanceByName("DefaultEventDispatcher");
         if(!event_dispatcher)
-            throw CException(2, "Event dispatcher implementation not found", __PRETTY_FUNCTION__);
+            throw CException(-4, "Event dispatcher implementation not found", __PRETTY_FUNCTION__);
         
         if(!StartableService::initImplementation(event_dispatcher, static_cast<void*>(globalConfiguration), "DefaultEventDispatcher", __PRETTY_FUNCTION__))
-            throw CException(3, "Event dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
+            throw CException(-5, "Event dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
         
         
         string event_adapter_type = globalConfiguration->getStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION);
@@ -151,10 +159,10 @@ void NetworkBroker::init(void *initData) throw(CException) {
         MB_LAPP  << "Get DefaultCommandDispatcher implementation";
         command_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
         if(!command_dispatcher)
-            throw CException(2, "Command dispatcher implementation not found", __PRETTY_FUNCTION__);
+            throw CException(-6, "Command dispatcher implementation not found", __PRETTY_FUNCTION__);
         
         if(!StartableService::initImplementation(command_dispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", __PRETTY_FUNCTION__))
-            throw CException(3, "Command dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
+            throw CException(-7, "Command dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
         
         
 		// get the rpc type to instantiate
@@ -165,7 +173,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize RPC Server: " << rpc_server_name;
         rpc_server = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpc_server_name);
-		if(!rpc_server) throw CException(4, "Error allocating rpc server implementation", __PRETTY_FUNCTION__);
+		if(!rpc_server) throw CException(-8, "Error allocating rpc server implementation", __PRETTY_FUNCTION__);
         if(globalConfiguration->getBoolValue(InitOption::OPT_RPC_LOG_METRIC)) {
             rpc_server = new rpc::RpcServerMetricCollector(rpc_server->getName(), rpc_server);
         }
@@ -178,7 +186,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize RPC Client: " << rpc_client_name;
         rpc_client = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpc_client_name);
-        if(!rpc_client) throw CException(4, "Error allocating rpc client implementation", __PRETTY_FUNCTION__);
+        if(!rpc_client) throw CException(-9, "Error allocating rpc client implementation", __PRETTY_FUNCTION__);
         if(globalConfiguration->getBoolValue(InitOption::OPT_RPC_LOG_METRIC)) {
             rpc_client = new rpc::RpcClientMetricCollector(rpc_client->getName(), rpc_client);
         }
@@ -191,7 +199,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
             command_dispatcher->setRpcForwarder(rpc_client);
         }
     } else {
-        throw CException(4, "No RPC Adapter type found in configuration", __PRETTY_FUNCTION__);
+        throw CException(-10, "No RPC Adapter type found in configuration", __PRETTY_FUNCTION__);
     }
 	//---------------------------- R P C ----------------------------
     //---------------------------- R P C SYNC ----------------------------
@@ -207,7 +215,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize RPC Server: " << rpc_sync_impl_name;
         sync_rpc_server = ObjectFactoryRegister<sync_rpc::RpcSyncServer>::getInstance()->getNewInstanceByName(rpc_sync_impl_name);
-        if(!sync_rpc_server) throw CException(4, "Error allocating rpc sync server implementation", __PRETTY_FUNCTION__);
+        if(!sync_rpc_server) throw CException(-11, "Error allocating rpc sync server implementation", __PRETTY_FUNCTION__);
         
         if(StartableService::initImplementation(sync_rpc_server, static_cast<void*>(globalConfiguration), sync_rpc_server->getName(), __PRETTY_FUNCTION__)) {
             //set the handler on the rpc server
@@ -228,9 +236,12 @@ void NetworkBroker::init(void *initData) throw(CException) {
  */
 void NetworkBroker::deinit() throw(CException) {
 	MB_LAPP  << "Deinitialize performance session manager";
-	StartableService::deinitImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
+	CHAOS_NOT_THROW(StartableService::deinitImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);)
 
 	//---------------------------- D I R E C T I/O ----------------------------
+    CHAOS_NOT_THROW(InizializableService::deinitImplementation(direct_io_client, direct_io_client->getName(), __PRETTY_FUNCTION__);)
+    DELETE_OBJ_POINTER(direct_io_client);
+    
     CHAOS_NOT_THROW(StartableService::deinitImplementation(direct_io_server, direct_io_server->getName(), "NetworkBroker::deinit");)
 	DELETE_OBJ_POINTER(direct_io_server);
 	//---------------------------- D I R E C T I/O ----------------------------
@@ -652,7 +663,12 @@ void NetworkBroker::releaseDirectIOServerEndpoint(chaos_direct_io::DirectIOServe
     direct_io_dispatcher->releaseEndpoint(end_point);
 }
 //Return a new direct io client instance
-chaos_direct_io::DirectIOClient *NetworkBroker::getDirectIOClientInstance() {
+chaos_direct_io::DirectIOClient *NetworkBroker::getSharedDirectIOClientInstance() {
+    return direct_io_client;
+}
+
+//Return a new direct io client instance
+chaos_direct_io::DirectIOClient *NetworkBroker::getNewDirectIOClientInstance() {
     MB_LAPP  << "Allocate a new DirectIOClient of type " << direct_io_client_impl;
     return ObjectFactoryRegister<common::direct_io::DirectIOClient>::getInstance()->getNewInstanceByName(direct_io_client_impl);
 }

@@ -24,16 +24,16 @@
 using namespace chaos::common::utility;
 using namespace std;
 
-#define NamedService_LDBG_ LDBG_ << "[NamedService]- "
+#define NamedService_LDBG_ DBG_LOG(NamedService)
 
-NamedService::NamedService(const string & alias) {
-    type_name = alias;
-	NamedService_LDBG_ << "Allocated Named Service for " << type_name;
+NamedService::NamedService(const string & _service_name):
+service_name(_service_name){
+	NamedService_LDBG_ << "Allocated Named Service for " << service_name;
 }
 
 /*
  Return the adapter alias
  */
-const string  & NamedService::getName() const{
-    return type_name;
+const string & NamedService::getName() const{
+    return service_name;
 }

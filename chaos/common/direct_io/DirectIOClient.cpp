@@ -39,9 +39,9 @@ namespace b_algo = boost::algorithm;
 
 #define DIO_LOG_HEAD "["<<getName()<<"] - "
 
-#define DIOLAPP_ LAPP_ << DIO_LOG_HEAD
-#define DIOLDBG_ LDBG_ << DIO_LOG_HEAD << __FUNCTION__
-#define DIOLERR_ LERR_ << DIO_LOG_HEAD
+#define DIOLAPP_ INFO_LOG(DirectIOClient)
+#define DIOLDBG_ DBG_LOG(DirectIOClient)
+#define DIOLERR_ ERR_LOG(DirectIOClient)
 
 DirectIOClient::DirectIOClient(std::string alias):NamedService(alias) {
 	
@@ -55,7 +55,7 @@ void DirectIOClient::forwardEventToClientConnection(DirectIOClientConnection *cl
 	client->lowLevelManageEvent(event_type);
 }
 
-DirectIOClientConnection *DirectIOClient::getNewConnection(std::string server_description_with_endpoint) {
+DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& server_description_with_endpoint) {
     uint16_t endpoint;
     std::string server_description;
     DirectIOClientConnection *result = NULL;
@@ -75,14 +75,17 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(std::string server_de
             if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT)) {
                 //we need to merge the endpoint
                 server_key = "merge_together";
+            } else {
+                server_key = server_description_with_endpoint;
             }
             //create the collector key
-            SharedCollectorKey key(server_description, endpoint);
+            SharedCollectorKey key(server_key);
             boost::shared_ptr<DirectIOClientConnectionSharedMetricIO> shared_collector;
             
             //check if we have already allcoated thecollector
             if(map_shared_collectors.count(key)==0) {
                 shared_collector.reset(new DirectIOClientConnectionSharedMetricIO(getName(), server_description_with_endpoint));
+                map_shared_collectors.insert(make_pair(key, shared_collector));
             } else {
                 shared_collector = map_shared_collectors[key];
             }

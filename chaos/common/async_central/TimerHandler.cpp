@@ -59,7 +59,11 @@ void TimerHandler::wait(uint64_t _delay) {
 
 void TimerHandler::removeTimer() {
     if(timer == NULL) return;
-    timer->cancel();
+    try{
+        timer->cancel();
+    } catch(boost::system::system_error& ex) {
+        
+    }
     delete(timer);
     timer = NULL;
 }

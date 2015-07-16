@@ -26,6 +26,9 @@ using namespace chaos::common::direct_io;
 
 static const char * const METRIC_KEY_ENDPOINT_ALIVE = "ndpoint_alive";
 
+#define DIOCCMC_INFO INFO_LOG(DirectIOClientConnectionMetricCollector)
+#define DIOCCMC_DBG_ DBG_LOG(DirectIOClientConnectionMetricCollector)
+#define DIOCCMC_ERR_ ERR_LOG(DirectIOClientConnectionMetricCollector)
 
 DirectIOClientConnectionMetricCollector::DirectIOClientConnectionMetricCollector(const std::string& _server_description,
                                                                                  uint16_t _endpoint,
@@ -34,9 +37,13 @@ DirectIOClientConnectionMetricCollector::DirectIOClientConnectionMetricCollector
 DirectIOClientConnection(_server_description,
                          _endpoint),
 shared_collector(_shared_collector),
-wrapped_connection(_wrapped_connection) {}
+wrapped_connection(_wrapped_connection) {
+    DIOCCMC_DBG_ << "Allocate collector";
+}
 
-DirectIOClientConnectionMetricCollector::~DirectIOClientConnectionMetricCollector() {}
+DirectIOClientConnectionMetricCollector::~DirectIOClientConnectionMetricCollector() {
+    DIOCCMC_DBG_ << "Deallocate collector";
+}
 
 
 //! inherited method

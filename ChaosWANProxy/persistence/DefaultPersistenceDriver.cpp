@@ -63,23 +63,23 @@ void DefaultPersistenceDriver::init(void *init_data) throw (chaos::CException) {
 	if(!mds_message_channel) throw chaos::CException(-1, "No mds channel found", __PRETTY_FUNCTION__);
 		
 	//! get the direct io client
-	direct_io_client = network_broker->getDirectIOClientInstance();
-	InizializableService::initImplementation(direct_io_client,
-											 init_data,
-											 direct_io_client->getName(),
-											 __PRETTY_FUNCTION__);
+	direct_io_client = network_broker->getSharedDirectIOClientInstance();
+	//InizializableService::initImplementation(direct_io_client,
+											 //init_data,
+											 //direct_io_client->getName(),
+											// __PRETTY_FUNCTION__);
 }
 
 void DefaultPersistenceDriver::deinit() throw (chaos::CException) {
 	
 	connection_feeder.clear();
 	
-	if(direct_io_client) {
-		CHAOS_NOT_THROW(InizializableService::deinitImplementation(direct_io_client,
-																   direct_io_client->getName(),
-																   __PRETTY_FUNCTION__);)
-		delete(direct_io_client);
-	}
+	//if(direct_io_client) {
+		//CHAOS_NOT_THROW(InizializableService::deinitImplementation(direct_io_client,
+		//														   direct_io_client->getName(),
+		//														   __PRETTY_FUNCTION__);)
+		//delete(direct_io_client);
+	//}
 	
 	if(mds_message_channel) network_broker->disposeMessageChannel(mds_message_channel);
 }

@@ -348,9 +348,10 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
     if(publish) {publishNodeHealt(node_uid);}
 }
 
-void HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_map,
-                                       chaos::common::data::CDataWrapper& node_data_pack,
-                                       uint64_t push_timestamp) {
+CDataWrapper*  HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_map,
+                                                 uint64_t push_timestamp) {
+    CDataWrapper *node_data_pack = new CDataWrapper();
+    if(node_data_pack) {
     //set the push timestamp
     dynamic_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
     //scan all metrics
@@ -358,6 +359,8 @@ void HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_map,
         //add metric to cdata wrapper
         map_metric_element.second->addMetricToCD(node_data_pack);
     }
+    }
+    return node_data_pack;
 }
 
 //publish the healt for the ndoe uid
@@ -367,46 +370,38 @@ void HealtManager::publishNodeHealt(const std::string& node_uid) {
     //allocate the datapack
     std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
     
-    // read lock
-    boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
-    
-    //get the push timestamp
-    uint64_t push_timestamp = TimingUtil::getTimeStamp();
-    
-    //compose datapack
-    prepareNodeDataPack(node_metrics_ptr->map_metric,
-                        *data_pack.get(),
-                        push_timestamp);
-    //send datapack
-    io_data_driver->storeData(map_node[node_uid]->node_key,
-                              data_pack.release());
+    // get metric ptr
+    _publish(map_node[node_uid]);
 }
 
 void HealtManager::timeout() {
     //allocate the datapack
     std::auto_ptr<CDataWrapper> data_pack;
     
-    //get the push timestamp
-    uint64_t push_timestamp = TimingUtil::getTimeStamp();
-    
     //publish all registered metric
     boost::shared_lock<boost::shared_mutex> rl(map_node_mutex);
     for(HealtNodeMapIterator it = map_node.begin();
         it != map_node.end();
         it++) {
-        // create datapack
-        data_pack.reset(new CDataWrapper());
-        
         // get metric ptr
-        boost::shared_ptr<NodeHealtSet> node_metrics_ptr = it->second;
-        
-        //compose datapack
-        prepareNodeDataPack(node_metrics_ptr->map_metric,
-                            *data_pack.get(),
-                            push_timestamp);
-        //send datapack
-        io_data_driver->storeData(node_metrics_ptr->node_key,
-                                  data_pack.release());
-        
+        _publish(it->second);
+    }
+}
+
+void HealtManager::_publish(const boost::shared_ptr<NodeHealtSet>& heath_set) {
+    //lock the driver for bublishing
+    boost::unique_lock<boost::mutex> wl_io(mutex_publishing);
+    
+    //get the push timestamp
+    uint64_t push_timestamp = TimingUtil::getTimeStamp();
+    
+    //send datapack
+    CDataWrapper *data_pack = prepareNodeDataPack(heath_set->map_metric,
+                                                  push_timestamp);
+    if(data_pack) {
+        io_data_driver->storeData(heath_set->node_key,
+                                  data_pack);
+    } else {
+        HM_ERR << "Error allocating health datapack for node:" << heath_set->node_key;
     }
 }

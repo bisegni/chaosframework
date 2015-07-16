@@ -60,9 +60,9 @@ void LLRpcApi::init()  throw (CException) {
     LLRA_LAPP_ << "NetworkBroker Started";
 	
 	//get new direct io client
-	direct_io_client = network_broker->getDirectIOClientInstance();
-	if(!direct_io_client) throw CException(-1, "Invalid direct io client instance", __PRETTY_FUNCTION__);
-	InizializableService::initImplementation(direct_io_client, NULL, "DirectIOCLient", __PRETTY_FUNCTION__);
+	direct_io_client = network_broker->getSharedDirectIOClientInstance();
+	//if(!direct_io_client) throw CException(-1, "Invalid direct io client instance", __PRETTY_FUNCTION__);
+	//InizializableService::initImplementation(direct_io_client, NULL, "DirectIOCLient", __PRETTY_FUNCTION__);
 }
 
 /*
@@ -70,10 +70,10 @@ void LLRpcApi::init()  throw (CException) {
  */
 void LLRpcApi::deinit()  throw (CException) {
     LLRA_LAPP_ << "Deinit LLRpcApi";
-	if(direct_io_client) {
-		InizializableService::deinitImplementation(direct_io_client, "DirectIOCLient", __PRETTY_FUNCTION__);
-		delete direct_io_client;
-	}
+	//if(direct_io_client) {
+		//InizializableService::deinitImplementation(direct_io_client, "DirectIOCLient", __PRETTY_FUNCTION__);
+		//delete direct_io_client;
+	//}
 	
     LLRA_LAPP_ << "Stop NetworkBroker";
     network_broker->stop();

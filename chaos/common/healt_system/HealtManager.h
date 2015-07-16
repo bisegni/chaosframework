@@ -28,7 +28,8 @@
 #include <chaos/common/healt_system/HealtMetric.h>
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
-#include <map>
+
+#include <chaos/common/chaos_types.h>
 
 #include <boost/thread.hpp>
 
@@ -36,9 +37,8 @@ namespace chaos {
     namespace common{
         namespace healt_system {
 
-
-            typedef std::map<std::string, boost::shared_ptr<HealtMetric> >              HealtNodeElementMap;
-            typedef std::map<std::string, boost::shared_ptr<HealtMetric> >::iterator    HealtNodeElementMapIterator;
+            //! define the map for the metric
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<HealtMetric>, HealtNodeElementMap)
 
             struct NodeHealtSet {
                     //notify when some metric has chagned
@@ -57,9 +57,8 @@ namespace chaos {
                 }
             };
 
-            typedef std::map<std::string, boost::shared_ptr<NodeHealtSet> >             HealtNodeMap;
-            typedef std::map<std::string, boost::shared_ptr<NodeHealtSet> >::iterator   HealtNodeMapIterator;
-
+            //! define map for node health information
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<NodeHealtSet>, HealtNodeMap)
 
                 //! Is the root class for the healt managment system
             /*!
@@ -80,14 +79,17 @@ namespace chaos {
 
                 chaos::common::network::NetworkBroker               *network_broker_ptr;
                 chaos::common::message::MultiAddressMessageChannel  *mds_message_channel;
+                
+                boost::mutex                                        mutex_publishing;
                 std::auto_ptr<chaos::common::io::IODataDriver>      io_data_driver;
+                
+                inline void _publish(const boost::shared_ptr<NodeHealtSet>& heath_set);
             protected:
                 HealtManager();
                 ~HealtManager();
                 void timeout();
-                void prepareNodeDataPack(HealtNodeElementMap& element_map,
-                                         chaos::common::data::CDataWrapper& node_data_pack,
-                                          uint64_t push_timestamp);
+                chaos::common::data::CDataWrapper* prepareNodeDataPack(HealtNodeElementMap& element_map,
+                                                                       uint64_t push_timestamp);
                 void sayHello() throw (chaos::CException);
             public:
                 void init(void *init_data) throw (chaos::CException);

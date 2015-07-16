@@ -83,9 +83,9 @@ void PerformanceManagment::stop() throw(chaos::CException) {
 DirectIOClient *PerformanceManagment::getLocalDirectIOClientInstance() {
 	boost::unique_lock<boost::mutex>(mutext_client_connection);
 	if(!global_performance_connection) {
-		global_performance_connection = network_broker->getDirectIOClientInstance();
-		if(!global_performance_connection) throw chaos::CException(-1, "Performance direct io client creation error", __PRETTY_FUNCTION__);
-		InizializableService::initImplementation(global_performance_connection, NULL, global_performance_connection->getName(), __PRETTY_FUNCTION__);
+		global_performance_connection = network_broker->getSharedDirectIOClientInstance();
+		//if(!global_performance_connection) throw chaos::CException(-1, "Performance direct io client creation error", __PRETTY_FUNCTION__);
+		//InizializableService::initImplementation(global_performance_connection, NULL, global_performance_connection->getName(), __PRETTY_FUNCTION__);
 	}
 	return global_performance_connection;
 }
@@ -95,9 +95,9 @@ void PerformanceManagment::deinit() throw(chaos::CException) {
 	//register the action
 	network_broker->deregisterAction(this);
 	
-	if(global_performance_connection) {
-		InizializableService::deinitImplementation(global_performance_connection, global_performance_connection->getName(), __PRETTY_FUNCTION__);
-	}
+	//if(global_performance_connection) {
+	//	InizializableService::deinitImplementation(global_performance_connection, global_performance_connection->getName(), __PRETTY_FUNCTION__);
+	//}
 }
 
 void PerformanceManagment::purge_worker() {

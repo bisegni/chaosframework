@@ -26,6 +26,10 @@ using namespace chaos::common;
 using namespace chaos::common::rpc;
 using namespace chaos::common::metric;
 
+#define RPCSMC_INFO INFO_LOG(RpcServerMetricCollector)
+#define RPCSMC_LDBG DBG_LOG(RpcClientMetricCollector)
+#define RPCSMC_LERR ERR_LOG(RpcClientMetricCollector)
+
 RpcServerMetricCollector::RpcServerMetricCollector(const std::string& forwarder_implementation,
                                                    RpcServer *_wrapper_server,
                                                    bool _dispose_forwarder_on_exit):
@@ -36,12 +40,14 @@ wrapper_server(_wrapper_server),
 wrapperd_server_handler(NULL),
 dispose_forwarder_on_exit(_dispose_forwarder_on_exit){
     CHAOS_ASSERT(wrapper_server)
+    RPCSMC_LDBG << "Allocate collector";
     wrapper_server->setCommandDispatcher(this);
     //set the time interval to one second of default
     addBackend(metric::MetricBackendPointer(new metric::ConsoleMetricBackend(getName())));
 }
 
 RpcServerMetricCollector::~RpcServerMetricCollector() {
+    RPCSMC_LDBG << "Deallocate collector";
     if(dispose_forwarder_on_exit) {
         CHK_AND_DELETE_OBJ_POINTER(wrapper_server)
     }

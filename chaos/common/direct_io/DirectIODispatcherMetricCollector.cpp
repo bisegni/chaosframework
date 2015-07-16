@@ -26,11 +26,15 @@ using namespace chaos::common::direct_io;
 
 static const char * const METRIC_KEY_ENDPOINT_ALIVE = "ndpoint_alive";
 
+#define DIODMC_INFO INFO_LOG(DirectIODispatcherMetricCollector)
+#define DIODMC_DBG_ DBG_LOG(DirectIODispatcherMetricCollector)
+#define DIODMC_ERR_ ERR_LOG(DirectIODispatcherMetricCollector)
 
 DirectIODispatcherMetricCollector::DirectIODispatcherMetricCollector(const std::string& direct_io_server_impl):
 MetricCollectorIO(direct_io_server_impl,
                   GlobalConfiguration::getInstance()->getConfiguration()->getUInt64Value(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL)),
 endpoint_alive_count(0) {
+    DIODMC_DBG_ << "Allcoate collector";
     //uppend custom direct io metric
     addMetric(METRIC_KEY_ENDPOINT_ALIVE, chaos::DataType::TYPE_INT32);
     
@@ -39,7 +43,7 @@ endpoint_alive_count(0) {
 }
 
 DirectIODispatcherMetricCollector::~DirectIODispatcherMetricCollector() {
-    
+    DIODMC_DBG_ << "Deallcoate collector";
 }
 
 // Start the implementation

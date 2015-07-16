@@ -57,8 +57,8 @@ namespace chaos {
 
             class DirectIOClientConnectionSharedMetricIO;
             
-            typedef std::pair<std::string, uint16_t> SharedCollectorKey;
-            
+            // typedef std::pair<std::string, uint16_t> SharedCollectorKey;
+            typedef  std::string SharedCollectorKey;
             typedef std::map< unsigned int, channel::DirectIOVirtualClientChannel* > ChannelMap;
             typedef std::map< unsigned int, channel::DirectIOVirtualClientChannel* >::iterator ChannelMapIterator;
             typedef utility::TemplatedKeyObjectContainer<std::string, DirectIOClientConnection*> DCKeyObjectContainer;
@@ -97,7 +97,7 @@ namespace chaos {
 				/*!
 				 Allocate a new connection from server description with endpoitn ex: ip:p-port:s_port|endpoint
 				 */
-				DirectIOClientConnection *getNewConnection(std::string server_description_with_endpoint);
+				DirectIOClientConnection *getNewConnection(const std::string& server_description_with_endpoint);
                 
                 //DirectIOClientConnection *getNewConnection(std::string server_description, uint16_t endpoint);
 				

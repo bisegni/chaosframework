@@ -41,8 +41,7 @@ void IODataDriver::deinit() throw(CException) {
 void IODataDriver::storeData(const std::string& key,
 							 CDataWrapper *dataToStore,
 							 int store_hint) throw(CException){
-    
-    if(!dataToStore) return;
+    CHAOS_ASSERT(dataToStore)
 	
 	SerializationBuffer* serialization = dataToStore->getBSONData();
 
