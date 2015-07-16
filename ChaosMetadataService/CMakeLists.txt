@@ -21,10 +21,11 @@ SET(cnd_src  ${cnd_src}	api/healt/HealtApiGroup.cpp
 SET(cnd_src  ${cnd_src}	api/unit_server/UnitServerApiGroup.cpp
                         api/unit_server/GetDescription.cpp
                         api/unit_server/LoadUnloadControlUnit.cpp
-                        api/unit_server/NewUS.cpp)
+                        api/unit_server/NewUS.cpp
+												api/unit_server/ManageCUType.cpp)
 
 SET(cnd_src  ${cnd_src}	api/data_service/DataServiceApiGroup.cpp
-						api/data_service/NewDS.cpp
+												api/data_service/NewDS.cpp
                         api/data_service/UpdateDS.cpp
                         api/data_service/DeleteDS.cpp
                         api/data_service/AssociationControlUnit.cpp
@@ -37,16 +38,16 @@ SET(cnd_src  ${cnd_src}	api/control_unit/SetInputDatasetAttributeValues.cpp
                         api/control_unit/SetInstanceDescription.cpp
                         api/control_unit/SearchInstancesByUS.cpp
                         api/control_unit/GetInstance.cpp
-						api/control_unit/DeleteInstance.cpp
-						api/control_unit/InitDeinit.cpp
-						api/control_unit/StartStop.cpp
+												api/control_unit/DeleteInstance.cpp
+												api/control_unit/InitDeinit.cpp
+												api/control_unit/StartStop.cpp
                         api/control_unit/GetCurrentDataset.cpp)
 
 SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/NodeCreateUnitServer.cpp
-						api/node/NodeGetDescription.cpp
-						api/node/NodeRegister.cpp
-						api/node/NodeSearch.cpp
+												api/node/NodeGetDescription.cpp
+												api/node/NodeRegister.cpp
+												api/node/NodeSearch.cpp
                         api/node/UpdateProperty.cpp
                         api/node/ChangeNodeState.cpp
                         api/node/CommandGet.cpp
@@ -56,7 +57,7 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/CommandTemplateSearch.cpp
                         api/node/CommandTemplateSubmit.cpp
                         api/node/CommandInstanceSubmit.cpp
-                        api/node/CommandCommonutility.cpp
+                        api/node/CommandCommonUtility.cpp
                         api/node/GetCommandAndTemplateDescription.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
@@ -66,7 +67,7 @@ SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/DataServiceDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
-						persistence/mongodb/MongoDBUnitServerDataAccess.cpp
+												persistence/mongodb/MongoDBUnitServerDataAccess.cpp
                         persistence/mongodb/MongoDBNodeDataAccess.cpp
                         persistence/mongodb/MongoDBUtilityDataAccess.cpp
                         persistence/mongodb/MongoDBControlUnitDataAccess.cpp
