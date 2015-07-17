@@ -72,6 +72,12 @@ INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/
 FILE(GLOB files "api_proxy/node/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/node)
 
+FILE(GLOB files "monitor/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/monitor)
+
+FILE(GLOB files "monitor/handler/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/monitor/handler)
+
 INSTALL(TARGETS chaos_metadata_service_client
 DESTINATION "lib"
 PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

@@ -250,7 +250,7 @@ void SCAbstractControlUnit::submitSlowCommand(const std::string command_alias,
  */
 CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
     uint64_t command_id =0;
-    CDataWrapper *result = NULL;
+    std::auto_ptr<CDataWrapper> result_for_command;
     if(datasetAttributeValues->hasKey(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS)) {
         CHAOS_ASSERT(slow_command_executor)
         std::string command_alias = datasetAttributeValues->getStringValue(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS);
@@ -276,10 +276,16 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
             pushInputDataset();
         }
         //construct the result
-        result = new CDataWrapper();
-        result->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
+        result_for_command.reset(new CDataWrapper());
+        result_for_command->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
     }
-    return AbstractControlUnit::setDatasetAttribute(datasetAttributeValues, detachParam);
+    CDataWrapper *result = AbstractControlUnit::setDatasetAttribute(datasetAttributeValues, detachParam);
+    if(!result) {
+        result_for_command->copyKeyTo(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, *result);
+    } else {
+        result = result_for_command.release();
+    }
+    return result;
 }
 
 /*
