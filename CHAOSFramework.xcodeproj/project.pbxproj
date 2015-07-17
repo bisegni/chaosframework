@@ -1316,6 +1316,8 @@
 		329C1F081B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClientConnectionMetricCollector.h; sourceTree = "<group>"; };
 		329C1F0B1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClientConnectionSharedMetricIO.cpp; sourceTree = "<group>"; };
 		329C1F0C1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClientConnectionSharedMetricIO.h; sourceTree = "<group>"; };
+		329C1F0F1B58F46000A84D55 /* bootstrap.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = bootstrap.sh; sourceTree = "<group>"; };
+		329C1F101B58F46700A84D55 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		329CFCF218CDEE2F002C37CF /* ObjectSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectSlot.h; sourceTree = "<group>"; };
 		329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApiGroup.cpp; sourceTree = "<group>"; };
 		329F406B1A669B6300AC318A /* AbstractApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApiGroup.h; sourceTree = "<group>"; };
@@ -2250,6 +2252,8 @@
 		3260260B14B300FE00C906CE = {
 			isa = PBXGroup;
 			children = (
+				329C1F0F1B58F46000A84D55 /* bootstrap.sh */,
+				329C1F101B58F46700A84D55 /* CMakeLists.txt */,
 				326DB3B114B38BC00018A8D0 /* chaos */,
 				32A40D421A9CD4A0000D9A35 /* chaos_service_common */,
 				323236C9164573C60052CE06 /* ChaosMetadataService */,
