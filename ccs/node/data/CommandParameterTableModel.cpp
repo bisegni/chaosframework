@@ -106,7 +106,7 @@ void CommandParameterTableModel::applyTemplate(const QSharedPointer<chaos::commo
                     attribute->current_value = command_template->getInt32Value(attribute_name);
                     break;
                 case chaos::DataType::TYPE_INT64:
-                    attribute->current_value = command_template->getInt64Value(attribute_name);
+                    attribute->current_value = (qlonglong)command_template->getInt64Value(attribute_name);
                     break;
                 case chaos::DataType::TYPE_STRING:
                     attribute->current_value = QString::fromStdString(command_template->getStringValue(attribute_name));

@@ -2,10 +2,10 @@
 #define CDSAttrQLineEdit_H
 
 #include "../data/ChaosTypedAttributeValueSetter.h"
-#include <QLineEdit>
-#include <QtDesigner/QtDesigner>
 
-class QDESIGNER_WIDGET_EXPORT CDSAttrQLineEdit :
+#include <QLineEdit>
+
+class CDSAttrQLineEdit :
 public QLineEdit {
     Q_OBJECT
 

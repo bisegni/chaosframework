@@ -3,7 +3,10 @@
 
 #include "LedIndicatorAliveTSWidget.h"
 #include "LedIndicatorWidget.h"
+
 #include <QIcon>
+
+#include <stdint.h>
 
 class LedIndicatorAliveTSWidget:
         public LedIndicatorWidget {

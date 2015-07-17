@@ -16,6 +16,7 @@ SET(mcl_src ${mcl_src}      api_proxy/node/GetNodeDescription.cpp
                             api_proxy/node/CommandTemplateSearch.cpp
                             api_proxy/node/CommandTemplateSubmit.cpp
                             api_proxy/node/CommandInstanceSubmit.cpp
+                            api_proxy/node/UpdateProperty.cpp
                             api_proxy/node/GetCommandAndTemplateDescription.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/data_service/NewDS.cpp
@@ -37,7 +38,8 @@ SET(mcl_src ${mcl_src}      api_proxy/control_unit/SetInputDatasetAttributeValue
 
 SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
                             api_proxy/unit_server/NewUS.cpp
-                            api_proxy/unit_server/LoadUnloadControlUnit.cpp)
+                            api_proxy/unit_server/LoadUnloadControlUnit.cpp
+                            api_proxy/unit_server/ManageCUType.cpp)
 
 SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
                             monitor_system/QuantumSlot.cpp
@@ -72,11 +74,11 @@ INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/
 FILE(GLOB files "api_proxy/node/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/node)
 
-FILE(GLOB files "monitor/*.h")
-INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/monitor)
+FILE(GLOB files "monitor_system/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/monitor_system)
 
-FILE(GLOB files "monitor/handler/*.h")
-INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/monitor/handler)
+FILE(GLOB files "monitor_system/handler/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/monitor_system/handler)
 
 INSTALL(TARGETS chaos_metadata_service_client
 DESTINATION "lib"

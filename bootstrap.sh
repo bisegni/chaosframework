@@ -119,13 +119,13 @@ if [ ! -d "$BASE_EXTERNAL" ]; then
 fi
 CMAKE_CHAOS_FRAMEWORK=""
 if chaos_exclude "mongo";then
-    CHAOS_NO_MONGO=true;    
+    CHAOS_NO_MONGO=true;
     CMAKE_CHAOS_FRAMEWORK="-DCHAOS_NO_MONGO=true"
     export CXXFLAGS="$CXXFLAGS -DCHAOS_NO_MONGO"
 fi
 
 if chaos_exclude "chaos_services";then
-    CHAOS_NO_SERVICES=true;    
+    CHAOS_NO_SERVICES=true;
     CMAKE_CHAOS_FRAMEWORK="$CMAKE_CHAOS_FRAMEWORK -DCHAOS_NO_SERVICES=true"
 fi
 
@@ -136,16 +136,16 @@ if chaos_exclude "memcached";then
 fi
 
 if chaos_exclude "couchbase";then
-    CHAOS_NO_COUCHBASE=true;    
+    CHAOS_NO_COUCHBASE=true;
     export CXXFLAGS="$CXXFLAGS -DCHAOS_NO_COUCHBASE"
 fi
 if chaos_exclude "zmq";then
-    CHAOS_NO_ZMQ=true;   
+    CHAOS_NO_ZMQ=true;
     export CXXFLAGS="$CXXFLAGS -DCHAOS_NO_ZMQ"
 fi
 
 if chaos_exclude "libuv";then
-    CHAOS_NO_LIBUV=true;    
+    CHAOS_NO_LIBUV=true;
     export CXXFLAGS="$CXXFLAGS -DCHAOS_NO_LIBUV"
 fi
 
@@ -194,9 +194,9 @@ if [ ! -f $PREFIX/include/json/json.h ]; then
     make clean
     rm CMakeCache.txt
     if [ -n "$CHAOS_STATIC" ]; then
-	CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF  
+	CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF
     else
-	CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DJSONCPP_LIB_BUILD_SHARED=ON 
+	CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DJSONCPP_LIB_BUILD_SHARED=ON
     fi
     do_make "jsoncpp"
 fi
@@ -244,7 +244,7 @@ if [ ! -d "$PREFIX/include/boost" ]; then
         tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
         mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
 	cp $CHAOS_BUNDLE/tools/patches/boost-1.55.0-atomic-check_lock_free_flag.patch $BASE_EXTERNAL/boost
-	
+
     fi
 
     #install old version of boost log
@@ -285,7 +285,7 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     echo "Compile and install boost libraries into $PREFIX/"
     ./b2 --clean
     echo "using zlib : $ZLIB_VERSION : $CHAOS_PREFIX ;" > user-config.jam
-    ./b2 $CHAOS_BOOST_FLAGS -j $NPROC 
+    ./b2 $CHAOS_BOOST_FLAGS -j $NPROC
 
 else
     echo "Boost Already present"
@@ -335,28 +335,28 @@ if [ ! -d "$PREFIX/include/event2" ]; then
     echo "LIBEVENT done"
 fi
 
-if [ -z "$CHAOS_NO_LIBUV" ]; then
-    echo "Setup LIBUV"
-if [ ! -f "$PREFIX/include/uv.h" ]; then
-
-    if [ ! -d "$BASE_EXTERNAL/libuv" ]; then
-	echo "Installing LIBUV"
-	if !(git clone https://github.com/joyent/libuv.git $BASE_EXTERNAL/libuv); then
-	    echo "## cannot git clone https://github.com/joyent/libuv.git"
-	    exit 1
-	fi
-	cd $BASE_EXTERNAL/libuv
-	git checkout -b good_for_chaos 1552184
-    else
-	cd $BASE_EXTERNAL/libuv
+#if [ -z "$CHAOS_NO_LIBUV" ]; then
+#    echo "Setup LIBUV"
+#if [ ! -f "$PREFIX/include/uv.h" ]; then
+#
+#    if [ ! -d "$BASE_EXTERNAL/libuv" ]; then
+#	echo "Installing LIBUV"
+#	if !(git clone https://github.com/joyent/libuv.git $BASE_EXTERNAL/libuv); then
+#	    echo "## cannot git clone https://github.com/joyent/libuv.git"
+#	    exit 1
+#	fi
+#	cd $BASE_EXTERNAL/libuv
+#	git checkout -b good_for_chaos 1552184
+#    else
+#	cd $BASE_EXTERNAL/libuv
 	#git pull
-    fi
-    ./autogen.sh
-    ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-    do_make "LIBUV"
-    echo "LIBUV done"
-fi
-fi
+#    fi
+#    ./autogen.sh
+#    ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+#    do_make "LIBUV"
+#    echo "LIBUV done"
+#fi
+#fi
 
 if [ -z "$CHAOS_NO_COUCHBASE" ]; then
 echo "Setup Couchbase sdk"
@@ -380,7 +380,7 @@ if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
     echo "Couchbase done"
 fi
 else
-echo "skipping COUCHBASE"    
+echo "skipping COUCHBASE"
 fi
 
 if [ -z "$CHAOS_NO_MONGO" ]; then
@@ -407,7 +407,7 @@ if [ ! -f "$PREFIX/include/mongo/client/dbclient.h" ]; then
     echo "Mongodb done"
 fi
 else
-echo "skipping MONGO"    
+echo "skipping MONGO"
 fi
 
 if [ -z "$CHAOS_NO_MEMCACHE" ];then
@@ -435,7 +435,7 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
 fi
 echo "Libmemcached done"
 else
-echo "skipping libmemcached"    
+echo "skipping libmemcached"
 fi
 
 if [ -z "$CHAOS_NO_ZMQ" ]; then
@@ -465,7 +465,7 @@ fi
     echo "ZMQ done"
 fi
 else
-echo "skipping ZMQ"    
+echo "skipping ZMQ"
 fi
 
 

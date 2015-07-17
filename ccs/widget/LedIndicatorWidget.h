@@ -6,6 +6,7 @@
 #include <QWidget>
 #include <QTimer>
 #include <QSharedPointer>
+#include <QMutex>
 
 struct StateInfo {
     bool blink_on_repeat_set;

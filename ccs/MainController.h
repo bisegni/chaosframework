@@ -1,7 +1,7 @@
 #ifndef MAINCONTROLLER_H
 #define MAINCONTROLLER_H
 
-#include "mainwindow.h"
+#include "MainWindow.h"
 
 #include <QApplication>
 #include <QSplashScreen>
