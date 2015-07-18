@@ -1,5 +1,5 @@
 #include "MainWindow.h"
-#include "ui_mainwindow.h"
+#include "ui_MainWindow.h"
 #include "search/SearchNode.h"
 #include "node/unit_server/UnitServerEditor.h"
 #include "node/data_service/DataServiceEditor.h"

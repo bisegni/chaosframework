@@ -29,7 +29,10 @@ LIBS +=     -lzmq\
             -lboost_thread\
             -lboost_program_options\
             -lboost_regex\
-            -lboost_filesystem
+            -lboost_filesystem\
+            -lmongoose\
+            -ljsoncpp\
+            -lmemcached
 
 SOURCES += main.cpp\
     search/SearchNodeResult.cpp \
