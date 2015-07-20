@@ -31,6 +31,12 @@ namespace chaos {
 			
 			//! index driver setting
 			typedef struct CacheDriverSetting {
+                //! true if we need to log metric
+                bool                        log_metric;
+                
+                //! determinate the update interval of the metric
+                uint32_t                    log_metric_update_interval;
+                
 				//! driver implementation
 				std::string					cache_driver_impl;
 				

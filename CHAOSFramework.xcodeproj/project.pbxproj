@@ -463,6 +463,8 @@
 		329C1F0A1B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1F081B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h */; };
 		329C1F0D1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F0B1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp */; };
 		329C1F0E1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1F0C1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h */; };
+		329C1F131B5D1FB500A84D55 /* CacheDriverMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F111B5D1FB500A84D55 /* CacheDriverMetricCollector.cpp */; };
+		329C1F161B5D1FE600A84D55 /* CacheDriverSharedMetricIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F141B5D1FE600A84D55 /* CacheDriverSharedMetricIO.cpp */; };
 		329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 329CFCF218CDEE2F002C37CF /* ObjectSlot.h */; };
 		329F406C1A669B6300AC318A /* AbstractApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */; };
 		329F40701A669F6C00AC318A /* AbstractPersistenceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329F406E1A669F6C00AC318A /* AbstractPersistenceDriver.cpp */; };
@@ -1318,6 +1320,10 @@
 		329C1F0C1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClientConnectionSharedMetricIO.h; sourceTree = "<group>"; };
 		329C1F0F1B58F46000A84D55 /* bootstrap.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = bootstrap.sh; sourceTree = "<group>"; };
 		329C1F101B58F46700A84D55 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		329C1F111B5D1FB500A84D55 /* CacheDriverMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriverMetricCollector.cpp; sourceTree = "<group>"; };
+		329C1F121B5D1FB500A84D55 /* CacheDriverMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriverMetricCollector.h; sourceTree = "<group>"; };
+		329C1F141B5D1FE600A84D55 /* CacheDriverSharedMetricIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriverSharedMetricIO.cpp; sourceTree = "<group>"; };
+		329C1F151B5D1FE600A84D55 /* CacheDriverSharedMetricIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriverSharedMetricIO.h; sourceTree = "<group>"; };
 		329CFCF218CDEE2F002C37CF /* ObjectSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectSlot.h; sourceTree = "<group>"; };
 		329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApiGroup.cpp; sourceTree = "<group>"; };
 		329F406B1A669B6300AC318A /* AbstractApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApiGroup.h; sourceTree = "<group>"; };
@@ -2830,6 +2836,10 @@
 				3272152318B006BC005AC8FD /* CacheDriver.h */,
 				32B159E318B635580096B58B /* cache_system.h */,
 				32FB20031A31B5DA00307A86 /* cache_system_types.h */,
+				329C1F111B5D1FB500A84D55 /* CacheDriverMetricCollector.cpp */,
+				329C1F121B5D1FB500A84D55 /* CacheDriverMetricCollector.h */,
+				329C1F141B5D1FE600A84D55 /* CacheDriverSharedMetricIO.cpp */,
+				329C1F151B5D1FE600A84D55 /* CacheDriverSharedMetricIO.h */,
 			);
 			path = cache_system;
 			sourceTree = "<group>";
@@ -4252,6 +4262,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				3203D43C1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp in Sources */,
+				329C1F161B5D1FE600A84D55 /* CacheDriverSharedMetricIO.cpp in Sources */,
+				329C1F131B5D1FB500A84D55 /* CacheDriverMetricCollector.cpp in Sources */,
 				32502C7F1923BAF30073E4AB /* VFSStageFile.cpp in Sources */,
 				327D5E4B192DE3430043ED21 /* MongoDBDriver.cpp in Sources */,
 				3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */,

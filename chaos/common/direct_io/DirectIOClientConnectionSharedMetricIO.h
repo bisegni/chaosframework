@@ -40,4 +40,5 @@ namespace chaos {
         }
     }
 }
+
 #endif /* defined(__CHAOSFramework__DirectIOClientConnectionSharedMetricIO__) */

@@ -40,6 +40,16 @@ int main(int argc, char * argv[]) {
 																									 "Specify the run mode[1 - Query Consumer, 2 - Stage Indexer, 3 - Both]");
 		
 		//cache parameter
+        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_CACHE_LOG_METRIC,
+                                                                                             "Enable log metric for cache driver",
+                                                                                             false,
+                                                                                             &ChaosDataService::getInstance()->setting.cache_driver_setting.log_metric);
+        
+        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_CACHE_LOG_METRIC_UPDATE_INTERVAL,
+                                                                                             "Specify the cache metric log interval in second",
+                                                                                             5,
+                                                                                             &ChaosDataService::getInstance()->setting.cache_driver_setting.log_metric_update_interval);
+
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CACHE_DRIVER,
 																									"Cache driver implementation",
 																									"Memcached",

@@ -20,6 +20,7 @@
 
 #include "../ChaosDataService.h"
 #include "DeviceSharedDataWorker.h"
+#include "../cache_system/CacheDriverMetricCollector.h"
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/data/cache/FastHash.h>
@@ -30,10 +31,9 @@ using namespace chaos::common::utility;
 using namespace chaos::data_service::worker;
 namespace chaos_vfs = chaos::data_service::vfs;
 
-#define DeviceSharedDataWorker_LOG_HEAD "[DeviceSharedDataWorker] - "
-#define DSDW_LAPP_ LAPP_ << DeviceSharedDataWorker_LOG_HEAD
-#define DSDW_LDBG_ LDBG_ << DeviceSharedDataWorker_LOG_HEAD << __FUNCTION__ << " - "
-#define DSDW_LERR_ LERR_ << DeviceSharedDataWorker_LOG_HEAD << __FUNCTION__ << " - " << __LINE__ << "-"
+#define DSDW_LAPP_ INFO_LOG(DeviceSharedDataWorker)
+#define DSDW_LDBG_ DBG_LOG(DeviceSharedDataWorker)
+#define DSDW_LERR_ ERR_LOG(DeviceSharedDataWorker)
 
 
 //------------------------------------------------------------------------------------------------------------------------
@@ -72,6 +72,10 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 		}
 	}
 	cache_driver_ptr = ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
+    if(ChaosDataService::getInstance()->setting.cache_driver_setting.log_metric) {
+        DSDW_LDBG_ << "Enable cache log metric";
+        cache_driver_ptr = new cache_system::CacheDriverMetricCollector(cache_driver_ptr);
+    }
 	InizializableService::initImplementation(cache_driver_ptr, &ChaosDataService::getInstance()->setting.cache_driver_setting, "CacheDriver", __PRETTY_FUNCTION__);
 }
 
@@ -152,10 +156,11 @@ int DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
     CHAOS_ASSERT(job_ptr->request_header)
     CHAOS_ASSERT(job_ptr->data_pack)
     CHAOS_ASSERT(cache_driver_ptr)
+    CHAOS_ASSERT(vfs_manager_instance)
     
 	switch(job_ptr->request_header->tag) {
 		case 0:// storicize only
-			if(vfs_manager_instance) err = DataWorker::submitJobInfo(job_info);
+			err = DataWorker::submitJobInfo(job_info);
 			break;
 			
 		case 2:// storicize and live
@@ -164,7 +169,7 @@ int DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
 									  job_ptr->data_pack,
 									  job_ptr->data_pack_len);
 			//if we have the file manager configure we can push the job for write data in storage workfloy
-			if(vfs_manager_instance) err = DataWorker::submitJobInfo(job_info);
+			err = DataWorker::submitJobInfo(job_info);
 			break;
 			
 		case 1:{// live only only

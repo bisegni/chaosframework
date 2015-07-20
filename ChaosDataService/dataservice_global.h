@@ -27,6 +27,8 @@ namespace chaos{
 #define OPT_RUN_MODE				"run_mode"
 		
 		//cache configuration
+#define OPT_CACHE_LOG_METRIC        "cache_log_metric"
+#define OPT_CACHE_LOG_METRIC_UPDATE_INTERVAL "cache_log_metric_update_interval"
 #define OPT_CACHE_SERVER_LIST		"cache_servers"
 #define OPT_CACHE_DRIVER			"cache_driver"
 #define OPT_CACHE_WORKER_NUM		"cache_worker_num"
@@ -66,6 +68,7 @@ namespace chaos{
 		//! Setting for dataservice configuration
 		typedef struct ChaosDataServiceSetting {
 			bool						cache_only;
+            
 			//!cache configuration
 			chaos::data_service::cache_system::CacheDriverSetting cache_driver_setting;
 			
@@ -73,9 +76,6 @@ namespace chaos{
 			unsigned int				vfile_mantainer_delay;
 			unsigned int				query_manager_thread_poll_size;
 			
-			//----------answer worker------------------
-			//unsigned int				answer_worker_num;
-			//worker::DataWorkerSetting	answer_worker_setting;
 
 			//----------stage data indexer---------------
 			unsigned int				indexer_worker_num;
