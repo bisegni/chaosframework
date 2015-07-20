@@ -37,6 +37,7 @@ wrapped_cache_driver(_wrapped_cache_driver){
     if(shared_collector.get() == NULL){
         //initliae it
         shared_collector.reset(new CacheDriverSharedMetricIO("CacheDriverMetricCollector"));
+        CHAOS_ASSERT(shared_collector.get())
     }
 }
 
@@ -49,6 +50,9 @@ int CacheDriverMetricCollector::putData(void *element_key,
                                         void *value,
                                         uint32_t value_len) {
     CHAOS_ASSERT(wrapped_cache_driver)
+    if(value_len) {
+        shared_collector->incrementSetBandWidth(value_len);
+    }
     int err =  wrapped_cache_driver->putData(element_key,
                                              element_key_len,
                                              value,
@@ -65,6 +69,9 @@ int CacheDriverMetricCollector::getData(void *element_key,
                                              element_key_len,
                                              value,
                                              value_len);
+    if(value_len) {
+        shared_collector->incrementGetBandWidth(value_len);
+    }
     return err;
 }
 
