@@ -72,7 +72,7 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     QApplication::setOrganizationDomain("chaos.infn.it");
 
     a.setStyle(QStyleFactory::create("Fusion"));
-    QColor dark_main(29,38,42);
+     QColor dark_main(95,95,95);
     QColor dark_main_desktop(43,43,43);
     QColor default_text(220,220,220);
     QColor disable_color(155,155,155);
