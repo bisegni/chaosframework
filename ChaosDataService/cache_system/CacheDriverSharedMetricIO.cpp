@@ -35,15 +35,19 @@ static const char * const METRIC_KEY_GET_PACKET_COUNT = "get_packet_count";
 static const char * const METRIC_KEY_GET_BANDWITH = "get_kb_sec";
 CacheDriverSharedMetricIO::CacheDriverSharedMetricIO(const std::string& client_impl):
 MetricCollectorIO(client_impl,
-                  ChaosDataService::getInstance()->setting.cache_driver_setting.log_metric_update_interval) {
-    
+                  ChaosDataService::getInstance()->setting.cache_driver_setting.log_metric_update_interval),
+set_pack_count(0),
+set_bandwith(0),
+get_pack_count(0),
+get_bandwith(0) {
+
     CACHDRVMC_DBG_ << "Allocate collector";
     //add custom key
-    addMetric(METRIC_KEY_SET_PACKET_COUNT, chaos::DataType::TYPE_INT32);
-    addMetric(METRIC_KEY_SET_BANDWITH, chaos::DataType::TYPE_INT32);
-    addMetric(METRIC_KEY_GET_PACKET_COUNT, chaos::DataType::TYPE_INT32);
-    addMetric(METRIC_KEY_GET_BANDWITH, chaos::DataType::TYPE_INT32);
-    
+    addMetric(METRIC_KEY_SET_PACKET_COUNT, chaos::DataType::TYPE_DOUBLE);
+    addMetric(METRIC_KEY_SET_BANDWITH, chaos::DataType::TYPE_DOUBLE);
+    addMetric(METRIC_KEY_GET_PACKET_COUNT, chaos::DataType::TYPE_DOUBLE);
+    addMetric(METRIC_KEY_GET_BANDWITH, chaos::DataType::TYPE_DOUBLE);
+
     //add backend
     addBackend(common::metric::MetricBackendPointer(new common::metric::ConsoleMetricBackend(client_impl)));
     //start logging
@@ -74,13 +78,14 @@ void CacheDriverSharedMetricIO::fetchMetricForTimeDiff(uint64_t time_diff) {
     //update total
     pack_count = set_pack_count+get_pack_count;
     bandwith = set_bandwith + get_bandwith;
-    
+
+
     //udpate partial
     double set_pc = set_pack_count/sec; set_pack_count = 0;
     double set_bw = set_bandwith/sec; set_bandwith = 0;
     double get_pc = get_pack_count/sec; get_pack_count = 0;
     double get_bw = get_bandwith/sec; get_bandwith = 0;
-    
+
     //update local variable cache
     updateMetricValue(METRIC_KEY_SET_PACKET_COUNT,
                       &set_pc,
