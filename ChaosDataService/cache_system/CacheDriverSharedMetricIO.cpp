@@ -82,9 +82,9 @@ void CacheDriverSharedMetricIO::fetchMetricForTimeDiff(uint64_t time_diff) {
 
     //udpate partial
     double set_pc = set_pack_count/sec; set_pack_count = 0;
-    double set_bw = set_bandwith/sec; set_bandwith = 0;
+    double set_bw = ((set_bandwith/sec)/1024); set_bandwith = 0;
     double get_pc = get_pack_count/sec; get_pack_count = 0;
-    double get_bw = get_bandwith/sec; get_bandwith = 0;
+    double get_bw = ((get_bandwith/sec)/1024); get_bandwith = 0;
 
     //update local variable cache
     updateMetricValue(METRIC_KEY_SET_PACKET_COUNT,

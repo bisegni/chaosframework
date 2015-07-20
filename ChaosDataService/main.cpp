@@ -47,7 +47,7 @@ int main(int argc, char * argv[]) {
         
         ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_CACHE_LOG_METRIC_UPDATE_INTERVAL,
                                                                                              "Specify the cache metric log interval in second",
-                                                                                             5,
+                                                                                             1,
                                                                                              &ChaosDataService::getInstance()->setting.cache_driver_setting.log_metric_update_interval);
 
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CACHE_DRIVER,
