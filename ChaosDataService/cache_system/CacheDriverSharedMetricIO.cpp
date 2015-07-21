@@ -55,7 +55,6 @@ get_bandwith(0) {
 }
 
 CacheDriverSharedMetricIO::~CacheDriverSharedMetricIO() {
-    CACHDRVMC_DBG_ << "Deallocate collector";
     //stop logging
     stopLogging();
 }
