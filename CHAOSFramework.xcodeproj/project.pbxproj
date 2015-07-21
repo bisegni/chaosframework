@@ -467,6 +467,8 @@
 		329C1F161B5D1FE600A84D55 /* CacheDriverSharedMetricIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F141B5D1FE600A84D55 /* CacheDriverSharedMetricIO.cpp */; };
 		329C1F191B5E7E4100A84D55 /* StorageDriverMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F171B5E7E4100A84D55 /* StorageDriverMetricCollector.cpp */; };
 		329C1F1C1B5E7E5600A84D55 /* StorageDriverMetricIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F1A1B5E7E5600A84D55 /* StorageDriverMetricIO.cpp */; };
+		329C1F1F1B5E9EDF00A84D55 /* DeviceSharedDataWorkerMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F1D1B5E9EDF00A84D55 /* DeviceSharedDataWorkerMetricCollector.cpp */; };
+		329C1F221B5E9F0900A84D55 /* DeviceSharedDataWorkerMetric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1F201B5E9F0900A84D55 /* DeviceSharedDataWorkerMetric.cpp */; };
 		329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 329CFCF218CDEE2F002C37CF /* ObjectSlot.h */; };
 		329F406C1A669B6300AC318A /* AbstractApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */; };
 		329F40701A669F6C00AC318A /* AbstractPersistenceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329F406E1A669F6C00AC318A /* AbstractPersistenceDriver.cpp */; };
@@ -1330,6 +1332,10 @@
 		329C1F181B5E7E4100A84D55 /* StorageDriverMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageDriverMetricCollector.h; sourceTree = "<group>"; };
 		329C1F1A1B5E7E5600A84D55 /* StorageDriverMetricIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageDriverMetricIO.cpp; sourceTree = "<group>"; };
 		329C1F1B1B5E7E5600A84D55 /* StorageDriverMetricIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageDriverMetricIO.h; sourceTree = "<group>"; };
+		329C1F1D1B5E9EDF00A84D55 /* DeviceSharedDataWorkerMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorkerMetricCollector.cpp; sourceTree = "<group>"; };
+		329C1F1E1B5E9EDF00A84D55 /* DeviceSharedDataWorkerMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorkerMetricCollector.h; sourceTree = "<group>"; };
+		329C1F201B5E9F0900A84D55 /* DeviceSharedDataWorkerMetric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorkerMetric.cpp; sourceTree = "<group>"; };
+		329C1F211B5E9F0900A84D55 /* DeviceSharedDataWorkerMetric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorkerMetric.h; sourceTree = "<group>"; };
 		329CFCF218CDEE2F002C37CF /* ObjectSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectSlot.h; sourceTree = "<group>"; };
 		329F406A1A669B6300AC318A /* AbstractApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApiGroup.cpp; sourceTree = "<group>"; };
 		329F406B1A669B6300AC318A /* AbstractApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApiGroup.h; sourceTree = "<group>"; };
@@ -3207,6 +3213,10 @@
 				32A10C0218C87806006EA04C /* DeviceSharedDataWorker.h */,
 				3203D43A1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp */,
 				3203D43B1A1BA98D005D29E6 /* SnapshotCreationWorker.h */,
+				329C1F1D1B5E9EDF00A84D55 /* DeviceSharedDataWorkerMetricCollector.cpp */,
+				329C1F1E1B5E9EDF00A84D55 /* DeviceSharedDataWorkerMetricCollector.h */,
+				329C1F201B5E9F0900A84D55 /* DeviceSharedDataWorkerMetric.cpp */,
+				329C1F211B5E9F0900A84D55 /* DeviceSharedDataWorkerMetric.h */,
 			);
 			path = worker;
 			sourceTree = "<group>";
@@ -4275,6 +4285,7 @@
 				329C1F161B5D1FE600A84D55 /* CacheDriverSharedMetricIO.cpp in Sources */,
 				329C1F131B5D1FB500A84D55 /* CacheDriverMetricCollector.cpp in Sources */,
 				32502C7F1923BAF30073E4AB /* VFSStageFile.cpp in Sources */,
+				329C1F221B5E9F0900A84D55 /* DeviceSharedDataWorkerMetric.cpp in Sources */,
 				329C1F191B5E7E4100A84D55 /* StorageDriverMetricCollector.cpp in Sources */,
 				327D5E4B192DE3430043ED21 /* MongoDBDriver.cpp in Sources */,
 				3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */,
@@ -4305,6 +4316,7 @@
 				3235425C1923A5C70090B8F6 /* StageDataConsumer.cpp in Sources */,
 				322D990118A95F9200C0864C /* QueryDataConsumer.cpp in Sources */,
 				32556B0F19B5F4090004ABC5 /* DataPackScanner.cpp in Sources */,
+				329C1F1F1B5E9EDF00A84D55 /* DeviceSharedDataWorkerMetricCollector.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -32,8 +32,6 @@ namespace chaos {
             class MetricCollectorIO:
             public MetricCollector {
             protected:
-                //! message that are waiting to be sent
-                boost::atomic<uint32_t> pack_unsent_count;
                 //! messagge that hase beens sent since last metric acquisition
                 boost::atomic<uint64_t> pack_count;
                 //! toatl bandwith since last metric acquisition

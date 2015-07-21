@@ -58,6 +58,7 @@ namespace chaos{
 		protected DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelHandler,
 		public StartableService {
             friend class ChaosDataService;
+
 			std::string cache_impl_name;
 			std::string db_impl_name;
 			

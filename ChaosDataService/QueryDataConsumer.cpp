@@ -22,6 +22,8 @@
 #include "ChaosDataService.h"
 #include "worker/DeviceSharedDataWorker.h"
 #include "worker/SnapshotCreationWorker.h"
+#include "worker/DeviceSharedDataWorkerMetric.h"
+#include "worker/DeviceSharedDataWorkerMetricCollector.h"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/endianess.h>
@@ -39,6 +41,8 @@ using namespace chaos::common::direct_io::channel;
 #define QDCAPP_ LAPP_ << QueryDataConsumer_LOG_HEAD
 #define QDCDBG_ LDBG_ << QueryDataConsumer_LOG_HEAD << __FUNCTION__ << " - "
 #define QDCERR_ LERR_ << QueryDataConsumer_LOG_HEAD << __FUNCTION__ << "(" << __LINE__ << ") - "
+
+boost::shared_ptr<worker::DeviceSharedDataWorkerMetric> dsdwm_metric;
 
 //constructor
 QueryDataConsumer::QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance,
@@ -108,7 +112,15 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     //Sahred data worker
     chaos::data_service::worker::DeviceSharedDataWorker *tmp = NULL;
     for(int idx = 0; idx < settings->cache_driver_setting.caching_worker_num; idx++) {
-        device_data_worker[idx] = (tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name, vfs_manager_instance));
+        tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name, vfs_manager_instance);
+        if(ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
+            QDCAPP_ << "Enable caching worker log metric";
+            dsdwm_metric.reset(new worker::DeviceSharedDataWorkerMetric("DeviceSharedDataWorkerMetric",
+                                                                        ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric_update_interval));
+            tmp = new worker::DeviceSharedDataWorkerMetricCollector(tmp, dsdwm_metric);
+        }
+        
+        device_data_worker[idx] = tmp;
         tmp->init(&settings->cache_driver_setting.caching_worker_setting);
         QDCAPP_ << "Configure server on device worker " << idx;
         for(cache_system::CacheServerListIterator iter = settings->cache_driver_setting.startup_chache_servers.begin();
@@ -198,7 +210,9 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
         DELETE_OBJ_POINTER(device_data_worker[idx])
     }
     free(device_data_worker);
-    
+    if(ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
+        dsdwm_metric.reset();
+    }
     //! deinit the snapshot creation worker
     if(!settings->cache_only &&
        snapshot_data_worker) {

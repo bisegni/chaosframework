@@ -43,6 +43,10 @@ namespace chaos {
 				//! list of the cache server
 				CacheServerList				startup_chache_servers;
 				
+                bool                        caching_worker_log_metric;
+                
+                uint32_t                    caching_worker_log_metric_update_interval;
+                
 				//!number of cache worker
 				unsigned int				caching_worker_num;
 				

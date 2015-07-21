@@ -18,7 +18,7 @@
  *    	limitations under the License.
  */
 
-#include "MetricCollectorIO.h"
+#include <chaos/common/metric/MetricCollectorIO.h>
 
 using namespace chaos::common::metric;
 
@@ -31,14 +31,12 @@ MetricCollectorIO::MetricCollectorIO(const std::string& _collector_name,
 MetricCollector(_collector_name,
                 update_time_in_sec),
 pack_count(0),
-pack_unsent_count(0),
 bandwith(0),
 pack_count_for_ut(0.0),
 bw_for_ut(0.0){
     //received pack and bw in the
     addMetric(METRIC_KEY_PACKET_COUNT, chaos::DataType::TYPE_DOUBLE);
     addMetric(METRIC_KEY_BANDWITH, chaos::DataType::TYPE_DOUBLE);
-    addMetric(METRIC_KEY_PACKET_UNSENT_COUNT, chaos::DataType::TYPE_INT32);
 }
 
 MetricCollectorIO::~MetricCollectorIO() {
@@ -57,8 +55,5 @@ void MetricCollectorIO::fetchMetricForTimeDiff(uint64_t time_diff) {
         updateMetricValue(METRIC_KEY_BANDWITH,
                           &bw_for_ut,
                           sizeof(double));
-        updateMetricValue(METRIC_KEY_PACKET_UNSENT_COUNT,
-                          &pack_unsent_count,
-                          sizeof(int32_t));
     }
 }
