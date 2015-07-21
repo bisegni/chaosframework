@@ -127,6 +127,7 @@ void MetricCollector::setStatIntervalInSeconds(uint64_t stat_intervall_in_second
  }
 
 void MetricCollector::startLogging() {
+    last_stat_call = chaos::common::utility::TimingUtil::getTimeStamp();
     AsyncCentralManager::getInstance()->addTimer(this, 1000, stat_intervall);
 }
 

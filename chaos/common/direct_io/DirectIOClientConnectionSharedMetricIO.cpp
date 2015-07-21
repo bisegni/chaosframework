@@ -44,7 +44,7 @@ MetricCollectorIO(client_impl,
 }
 
 DirectIOClientConnectionSharedMetricIO::~DirectIOClientConnectionSharedMetricIO() {
-    DIOCCSMC_DBG_ << "Deallocate collector";
+    //DIOCCSMC_DBG_ << "Deallocate collector";
     stopLogging();
 }
 

@@ -1,4 +1,4 @@
-/*
+ /*
  *	DirectIOClient.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
@@ -53,6 +53,17 @@ DirectIOClient::~DirectIOClient() {
 void DirectIOClient::forwardEventToClientConnection(DirectIOClientConnection *client,
                                                     DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type) {
 	client->lowLevelManageEvent(event_type);
+}
+
+//! Initialize instance
+void DirectIOClient::init(void *init_data) throw(chaos::CException) {
+    
+}
+
+
+//! Deinit the implementation
+void DirectIOClient::deinit() throw(chaos::CException) {
+    map_shared_collectors.clear();
 }
 
 DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& server_description_with_endpoint) {

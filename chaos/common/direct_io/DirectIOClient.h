@@ -103,6 +103,14 @@ namespace chaos {
 				
 				//! Release the connection
 				void releaseConnection(DirectIOClientConnection *connection_to_release);
+                
+                
+                //! Initialize instance
+                void init(void *init_data) throw(chaos::CException);
+                
+                
+                //! Deinit the implementation
+                void deinit() throw(chaos::CException);
 			};
 			
 		}

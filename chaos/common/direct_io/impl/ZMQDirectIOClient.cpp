@@ -136,6 +136,7 @@ ZMQDirectIOClient::~ZMQDirectIOClient(){
 
 //! Initialize instance
 void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
+    DirectIOClient::init(init_data);
     ZMQDIOLAPP_ << "Allocating zmq context";
 	thread_run= true;
     zmq_context = zmq_ctx_new();
