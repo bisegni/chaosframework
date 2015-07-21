@@ -36,9 +36,11 @@ SET(src  ${src} vfs/VFSManager.cpp
 				vfs/VFSDataWriteableFile.cpp
                 vfs/VFSStageWriteableFile.cpp
                 vfs/VFSStageReadableFile.cpp
-				vfs/storage_system/StorageDriver.cpp
-                vfs/storage_system/PosixStorageDriver.cpp
-				vfs/VFSQuery.cpp)
+				vfs/VFSQuery.cpp
+                vfs/storage_system/StorageDriverMetricIO.cpp
+                vfs/storage_system/StorageDriverMetricCollector.cpp
+                vfs/storage_system/StorageDriver.cpp
+                vfs/storage_system/PosixStorageDriver.cpp)
 
 SET(src  ${src} vfs/query/DataBlockCache.cpp
                 vfs/query/DataBlockFetcher.cpp)

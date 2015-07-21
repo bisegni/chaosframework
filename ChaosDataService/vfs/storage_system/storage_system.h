@@ -20,6 +20,8 @@
 #ifndef CHAOSFramework_storage_system_h
 #define CHAOSFramework_storage_system_h
 
+#include "StorageDriver.h"
 #include "PosixStorageDriver.h"
+#include "StorageDriverMetricCollector.h"
 
 #endif

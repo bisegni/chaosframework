@@ -23,6 +23,7 @@
 
 #include <chaos/common/metric/metric.h>
 
+#include <boost/atomic.hpp>
 #include <boost/thread.hpp>
 
 namespace chaos {

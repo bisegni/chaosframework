@@ -115,7 +115,17 @@ int main(int argc, char * argv[]) {
 																								 "Is the max size that a block can reach",
 																								 VFSManager_MAX_BLOCK_SIZE,
 																								 &ChaosDataService::getInstance()->setting.file_manager_setting.max_block_size);
-		
+        
+        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_VFS_STORAGE_LOG_METRIC,
+                                                                                             "Enable log metric on file system driver",
+                                                                                             false,
+                                                                                             &ChaosDataService::getInstance()->setting.file_manager_setting.storage_driver_setting.log_metric);
+        
+        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_VFS_STORAGE_LOG_METRIC_UPDATE_INTERVAL,
+                                                                                                 "Specify the file update interval, in second, for the metric of the system driver",
+                                                                                                 1,
+                                                                                                 &ChaosDataService::getInstance()->setting.file_manager_setting.storage_driver_setting.log_metric_update_interval);
+        
 		//db
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_DB_DRIVER_IMPL,
 																									"The name of the index driver implementation [MongoDB]",

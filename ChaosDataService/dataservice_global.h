@@ -54,12 +54,14 @@ namespace chaos{
 #define INDEXER_DEFAULT_SCAN_DELAY		60
 		
 		//vfs driver configuration
-#define OPT_VFS_STORAGE_DRIVER_IMPL				"vfs_storage_drvr_impl"
-#define OPT_VFS_STORAGE_DOMAIN					"vfs_storage_domain"
-#define OPT_VFS_STORAGE_DRIVER_KVP				"vfs_storage_driver_kvp"
-#define OPT_VFS_STORAGE_MAX_BLOCK_LIFETIME		"vfs_max_block_lifetime"
-#define OPT_VFS_STORAGE_MAX_BLOCK_SIZE			"vfs_max_block_size"
-		
+#define OPT_VFS_STORAGE_DRIVER_IMPL                 "vfs_storage_drvr_impl"
+#define OPT_VFS_STORAGE_DOMAIN                      "vfs_storage_domain"
+#define OPT_VFS_STORAGE_DRIVER_KVP                  "vfs_storage_driver_kvp"
+#define OPT_VFS_STORAGE_MAX_BLOCK_LIFETIME          "vfs_max_block_lifetime"
+#define OPT_VFS_STORAGE_MAX_BLOCK_SIZE              "vfs_max_block_size"
+#define OPT_VFS_STORAGE_LOG_METRIC                  "vfs_storage_driver_log_metric"
+#define OPT_VFS_STORAGE_LOG_METRIC_UPDATE_INTERVAL  "vfs_storage_driver_log_metric_update_interval"
+        
 #define OPT_DB_DRIVER_IMPL		"db_drvr_impl"
 #define OPT_DB_DRIVER_SERVERS	"db_servers"
 #define OPT_DB_DRIVER_KVP		"db_driver_kvp"

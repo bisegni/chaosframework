@@ -37,14 +37,14 @@ collector_name(_collector_name),
 current_slot_index(0),
 last_stat_call(0),
 stat_intervall(update_time_in_sec*1000){
-    chaos::common::utility::InizializableService::initImplementation(&caching_slot[0].metric_attribute_cache, NULL, "MetricAttributeChache", __PRETTY_FUNCTION__);
-    chaos::common::utility::InizializableService::initImplementation(&caching_slot[1].metric_attribute_cache, NULL, "MetricAttributeChache", __PRETTY_FUNCTION__);
+    caching_slot[1].metric_attribute_cache.init(NULL);
+    caching_slot[0].metric_attribute_cache.init(NULL);
 }
 
 MetricCollector::~MetricCollector() {
     stopLogging();
-    chaos::common::utility::InizializableService::deinitImplementation(&caching_slot[1].metric_attribute_cache, "MetricAttributeChache", __PRETTY_FUNCTION__);
-    chaos::common::utility::InizializableService::deinitImplementation(&caching_slot[0].metric_attribute_cache, "MetricAttributeChache", __PRETTY_FUNCTION__);
+    caching_slot[1].metric_attribute_cache.deinit();
+    caching_slot[0].metric_attribute_cache.deinit();
 }
 
 void MetricCollector::addBackend(MetricBackendPointer backend) {
