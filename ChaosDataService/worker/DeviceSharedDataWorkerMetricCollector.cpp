@@ -26,25 +26,21 @@
 
 using namespace chaos::data_service::worker;
 
-DeviceSharedDataWorkerMetricCollector::DeviceSharedDataWorkerMetricCollector(DeviceSharedDataWorker *_wrapped_data_worker,
+DeviceSharedDataWorkerMetricCollector::DeviceSharedDataWorkerMetricCollector(const std::string& _cache_impl_name,
+                                                                             vfs::VFSManager *_vfs_manager_instance,
                                                                              boost::shared_ptr<DeviceSharedDataWorkerMetric> _data_worker_metric):
-DeviceSharedDataWorker("", NULL),
-wrapped_data_worker(_wrapped_data_worker),
-data_worker_metric(_data_worker_metric){
-    boost::unique_lock<boost::mutex> wl(mutex_data_worker_metric);
-    
-}
+DeviceSharedDataWorker(_cache_impl_name,
+                       _vfs_manager_instance),
+data_worker_metric(_data_worker_metric){}
 
-DeviceSharedDataWorkerMetricCollector::~DeviceSharedDataWorkerMetricCollector() {
-    CHK_AND_DELETE_OBJ_POINTER(wrapped_data_worker)
-}
+DeviceSharedDataWorkerMetricCollector::~DeviceSharedDataWorkerMetricCollector() {}
 
 void DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
                                                        void* cookie) {
     int tag = reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->request_header->tag;
     uint32_t total_data = reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->data_pack_len + reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->request_header->key_len;
     
-    wrapped_data_worker->executeJob(job_info, cookie);
+    DeviceSharedDataWorker::executeJob(job_info, cookie);
     switch(tag) {
         case 0:// storicize only
         case 2:// storicize and live
@@ -60,7 +56,6 @@ void DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
 
 int DeviceSharedDataWorkerMetricCollector::submitJobInfo(WorkerJobPtr job_info) {
     int err = 0;
-    CHAOS_ASSERT(wrapped_data_worker)
     int tag = reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->request_header->tag;
     uint32_t total_data = reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->data_pack_len + reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->request_header->key_len;
     data_worker_metric->incrementInputBandwith(total_data);
@@ -77,7 +72,7 @@ int DeviceSharedDataWorkerMetricCollector::submitJobInfo(WorkerJobPtr job_info) 
             break;
         }
     }
-    err = wrapped_data_worker->submitJobInfo(job_info);
+    err = DeviceSharedDataWorker::submitJobInfo(job_info);
     switch(tag) {
         case 0:// storicize only
         case 2:// storicize and live

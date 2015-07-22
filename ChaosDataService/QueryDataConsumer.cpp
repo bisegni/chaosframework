@@ -109,19 +109,27 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
         if(!query_engine) throw chaos::CException(-5, "Error allocating Query Engine", __FUNCTION__);
         StartableService::initImplementation(query_engine, init_data, "QueryEngine", __PRETTY_FUNCTION__);
     }
-    //Sahred data worker
+    //Shared data worker
+    if(ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
+        QDCAPP_ << "Init Device shared data worker metric";
+        dsdwm_metric.reset(new worker::DeviceSharedDataWorkerMetric("DeviceSharedDataWorkerMetric",
+                                                                        ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric_update_interval));
+    }
     chaos::data_service::worker::DeviceSharedDataWorker *tmp = NULL;
     for(int idx = 0; idx < settings->cache_driver_setting.caching_worker_num; idx++) {
-        tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name, vfs_manager_instance);
+        
         if(ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
             QDCAPP_ << "Enable caching worker log metric";
-            dsdwm_metric.reset(new worker::DeviceSharedDataWorkerMetric("DeviceSharedDataWorkerMetric",
-                                                                        ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric_update_interval));
-            tmp = new worker::DeviceSharedDataWorkerMetricCollector(tmp, dsdwm_metric);
+            //install the data worker taht grab the metric
+            tmp = new worker::DeviceSharedDataWorkerMetricCollector(cache_impl_name,
+                                                                    vfs_manager_instance,
+                                                                    dsdwm_metric);
+        } else {
+            tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name,
+                                                                          vfs_manager_instance);
         }
-        
-        device_data_worker[idx] = tmp;
         tmp->init(&settings->cache_driver_setting.caching_worker_setting);
+        device_data_worker[idx] = tmp;
         QDCAPP_ << "Configure server on device worker " << idx;
         for(cache_system::CacheServerListIterator iter = settings->cache_driver_setting.startup_chache_servers.begin();
             iter != settings->cache_driver_setting.startup_chache_servers.end();
