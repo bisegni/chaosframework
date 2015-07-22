@@ -11,6 +11,8 @@ SET(src  ${src} ChaosDataService.cpp
 
 SET(src  ${src} worker/DataWorker.cpp
                 worker/DeviceSharedDataWorker.cpp
+                worker/DeviceSharedDataWorkerMetric.cpp
+                worker/DeviceSharedDataWorkerMetricCollector.cpp
                 worker/SnapshotCreationWorker.cpp)
 
 SET(src  ${src} cache_system/CacheDriver.cpp
