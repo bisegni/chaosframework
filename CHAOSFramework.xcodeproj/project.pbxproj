@@ -681,6 +681,10 @@
 		32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */; };
 		32F22420179AEED500853F62 /* SCAbstractControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F2241E179AEED500853F62 /* SCAbstractControlUnit.h */; };
 		32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */; };
+		32F5B0061B5F8EBF00457A63 /* FileMetricBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F5B0041B5F8EBF00457A63 /* FileMetricBackend.cpp */; };
+		32F5B0071B5F8EBF00457A63 /* FileMetricBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F5B0051B5F8EBF00457A63 /* FileMetricBackend.h */; };
+		32F5B00A1B5F998F00457A63 /* CSVFileMetricBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F5B0081B5F998F00457A63 /* CSVFileMetricBackend.cpp */; };
+		32F5B00B1B5F998F00457A63 /* CSVFileMetricBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F5B0091B5F998F00457A63 /* CSVFileMetricBackend.h */; };
 		32F7FEA118A4FD9B00FC03AB /* DirectIOEndpointHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */; };
 		32F7FEAB18A5066600FC03AB /* FastDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA218A5066600FC03AB /* FastDelegate.h */; };
 		32F7FEAC18A5066600FC03AB /* FastDelegateBind.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA318A5066600FC03AB /* FastDelegateBind.h */; };
@@ -1616,6 +1620,10 @@
 		32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SCAbstractControlUnit.cpp; sourceTree = "<group>"; };
 		32F2241E179AEED500853F62 /* SCAbstractControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCAbstractControlUnit.h; sourceTree = "<group>"; };
 		32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IODataDriver.cpp; sourceTree = "<group>"; };
+		32F5B0041B5F8EBF00457A63 /* FileMetricBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileMetricBackend.cpp; sourceTree = "<group>"; };
+		32F5B0051B5F8EBF00457A63 /* FileMetricBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMetricBackend.h; sourceTree = "<group>"; };
+		32F5B0081B5F998F00457A63 /* CSVFileMetricBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSVFileMetricBackend.cpp; sourceTree = "<group>"; };
+		32F5B0091B5F998F00457A63 /* CSVFileMetricBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSVFileMetricBackend.h; sourceTree = "<group>"; };
 		32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOEndpointHandler.h; sourceTree = "<group>"; };
 		32F7FEA218A5066600FC03AB /* FastDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegate.h; sourceTree = "<group>"; };
 		32F7FEA318A5066600FC03AB /* FastDelegateBind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegateBind.h; sourceTree = "<group>"; };
@@ -3527,6 +3535,10 @@
 				32EBDF011B4FBD8800278C42 /* AbstractMetricBackend.h */,
 				32EBDF041B4FCA6F00278C42 /* ConsoleMetricBackend.cpp */,
 				32EBDF051B4FCA6F00278C42 /* ConsoleMetricBackend.h */,
+				32F5B0041B5F8EBF00457A63 /* FileMetricBackend.cpp */,
+				32F5B0051B5F8EBF00457A63 /* FileMetricBackend.h */,
+				32F5B0081B5F998F00457A63 /* CSVFileMetricBackend.cpp */,
+				32F5B0091B5F998F00457A63 /* CSVFileMetricBackend.h */,
 				32EBDF081B4FEFDC00278C42 /* metric.h */,
 			);
 			path = metric;
@@ -3741,6 +3753,7 @@
 				32C0CC99168CC16400BC2DA7 /* Entity.h in Headers */,
 				32B73E9718D9A74600F0B187 /* DirectIOPerformanceClientChannel.h in Headers */,
 				3219E6A018CC7AE600C2F795 /* DirectIOClientConnection.h in Headers */,
+				32F5B00B1B5F998F00457A63 /* CSVFileMetricBackend.h in Headers */,
 				324A4B74191A428500975394 /* builder.h in Headers */,
 				324A4B13191A3F6A00975394 /* status.h in Headers */,
 				32F7FEAB18A5066600FC03AB /* FastDelegate.h in Headers */,
@@ -3769,6 +3782,7 @@
 				32B57202168E02CE0002A198 /* bsontypes.h in Headers */,
 				32B57203168E02CE0002A198 /* inline_decls.h in Headers */,
 				32B57208168E02D10002A198 /* oid.h in Headers */,
+				32F5B0071B5F8EBF00457A63 /* FileMetricBackend.h in Headers */,
 				32B57209168E02D10002A198 /* ordering.h in Headers */,
 				329C1F061B5643EF00A84D55 /* DirectIODispatcherMetricCollector.h in Headers */,
 				324A4B2C191A405700975394 /* document-inl.h in Headers */,
@@ -4341,6 +4355,7 @@
 				326DB43314B38BC00018A8D0 /* DeclareAction.cpp in Sources */,
 				326DB43514B38BC00018A8D0 /* DomainActions.cpp in Sources */,
 				326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */,
+				32F5B00A1B5F998F00457A63 /* CSVFileMetricBackend.cpp in Sources */,
 				32FB20181A3F0FAB00307A86 /* AttributeValue.cpp in Sources */,
 				324A4B75191A428500975394 /* jsobj.cpp in Sources */,
 				329C1F011B5540F900A84D55 /* MetricCollectorIO.cpp in Sources */,
@@ -4368,6 +4383,7 @@
 				329C1F091B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.cpp in Sources */,
 				327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */,
 				32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */,
+				32F5B0061B5F8EBF00457A63 /* FileMetricBackend.cpp in Sources */,
 				329C1EFD1B55286100A84D55 /* RpcServerMetricCollector.cpp in Sources */,
 				32C100FB191B847800478F40 /* TimerHandler.cpp in Sources */,
 				32CDA9A4198932C500663D8B /* LoadableService.cpp in Sources */,
