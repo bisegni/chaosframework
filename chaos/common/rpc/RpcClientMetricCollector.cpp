@@ -36,8 +36,6 @@ RpcClient(forwarder_implementation),
 wrapped_client(_wrapped_client),
 dispose_forwarder_on_exit(_dispose_forwarder_on_exit) {
     RPCMFC_LDBG << "Allocate collector";
-    //set the time interval to one second of default
-    addBackend(metric::MetricBackendPointer(new metric::ConsoleMetricBackend(getName())));
 }
 
 RpcClientMetricCollector::~RpcClientMetricCollector() {

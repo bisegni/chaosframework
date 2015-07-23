@@ -48,9 +48,6 @@ flush_count(0) {
     addMetric(METRIC_KEY_READ_PACKET_COUNT, chaos::DataType::TYPE_DOUBLE);
     addMetric(METRIC_KEY_READ_BANDWITH, chaos::DataType::TYPE_DOUBLE);
     addMetric(METRIC_KEY_FLUSH_COUNT, chaos::DataType::TYPE_DOUBLE);
-    
-    //add backend
-    addBackend(common::metric::MetricBackendPointer(new common::metric::ConsoleMetricBackend(client_impl)));
 }
 
 StorageDriverMetricIO::~StorageDriverMetricIO() {

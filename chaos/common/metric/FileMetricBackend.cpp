@@ -34,9 +34,12 @@ FileMetricBackend::FileMetricBackend(const std::string& _backend_identity,
 AbstractMetricBackend(_backend_identity),
 file_path(_file_path){
 //open file
-    CHAOS_ASSERT(boost::filesystem::create_directories(file_path))
-    CHAOS_ASSERT(boost::filesystem::exists(file_path))
-    output_file_stream.open(_backend_identity + _backend_identity + _file_extension, _open_mode);
+    CHAOS_ASSERT(boost::filesystem::create_directories(file_path) || boost::filesystem::exists(file_path))
+    boost::filesystem::path file = file_path;
+    file /= _backend_identity;
+    file.replace_extension(_file_extension);
+    
+    output_file_stream.open(file, _open_mode);
 }
 
 FileMetricBackend::~FileMetricBackend() {

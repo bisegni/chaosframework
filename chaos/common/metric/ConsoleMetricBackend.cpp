@@ -31,23 +31,31 @@ AbstractMetricBackend(_backend_identity){}
 
 ConsoleMetricBackend::~ConsoleMetricBackend() {}
 
+void ConsoleMetricBackend::preMetric() {
+    if(first_metric) return;
+    output_stream << ",";
+}
+
 void ConsoleMetricBackend::addMetric(const std::string& metric_name,
                                      const std::string& metric_value) {
     //!
-    output_stream << metric_name << ":" << metric_value << ",";
+    output_stream << metric_name << ":" << metric_value;
+    first_metric = false;
+}
+
+
+void ConsoleMetricBackend::postMetric() {
+    
 }
 
 void ConsoleMetricBackend::prepare() {
+    first_metric = true;
     output_stream << backend_indetity << "[";
 }
 
 void ConsoleMetricBackend::flush() {
-    std::string output_str = output_stream.str();
+    output_stream <<"]";
+    CONSOLE_MB_LNOTICE << output_stream.str();
     output_stream.clear();
     output_stream.str("");
-    if(output_str.find_last_of(",") != string::npos) {
-        output_str.resize(output_str.size()-1);
-    }
-    output_str.append("]");
-    CONSOLE_MB_LNOTICE << output_str;
 }

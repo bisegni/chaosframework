@@ -35,6 +35,12 @@ namespace chaos {
         static const char * const	OPT_HELP                            = "help";
         //! config file parameter
         static const char * const   OPT_CONF_FILE						= "conf_file";
+        //! enable metric loggin on console backend
+        static const char * const   OPT_LOG_METRIC_ON_CONSOLE           = "log-metric-on-console";
+        //! enable metric loggin on file backend
+        static const char * const   OPT_LOG_METRIC_ON_FILE              = "log-metric-on-file";
+        //! enable metric loggin on file backend
+        static const char * const   OPT_LOG_METRIC_ON_FILE_PATH         = "log-metric-on-file-path";
         //! activate the loggin of metric on rpc system
         static const char * const   OPT_RPC_LOG_METRIC                  = "rpc-log-metric";
         //! the time between the update of rpc metric on persistence backend (in seconds)

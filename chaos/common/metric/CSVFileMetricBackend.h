@@ -1,5 +1,5 @@
 /*
- *	FileMetricBackend.h
+ *	CVSFileMetricBackend.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -23,6 +23,8 @@
 
 #include <chaos/common/metric/FileMetricBackend.h>
 
+#include <sstream>
+
 namespace chaos {
     namespace common {
         namespace metric {
@@ -30,14 +32,18 @@ namespace chaos {
             public FileMetricBackend {
             protected:
                 const boost::filesystem::path file_path;
+                bool first_metric;
+                std::ostringstream output_stream;
                 boost::filesystem::fstream output_file_stream;
             public:
                 CVSFileMetricBackend(const std::string& _backend_identity,
-                                  const std::string& _file_path,
-                                  std::ios_base::openmode _open_mode);
+                                     const std::string& _file_path,
+                                     bool append = false);
                 ~CVSFileMetricBackend();
+                void preMetric();
                 void addMetric(const std::string& metric_name,
                                        const std::string& metric_value);
+                void postMetric();
                 void prepare();
                 void flush();
             };

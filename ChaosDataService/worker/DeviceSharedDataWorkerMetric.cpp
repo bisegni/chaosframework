@@ -49,9 +49,6 @@ queued_size(0){
     addMetric(METRIC_KEY_QUEUED_PACKET_COUNT, chaos::DataType::TYPE_INT64);
     addMetric(METRIC_KEY_QUEUED_PACKET_SIZE, chaos::DataType::TYPE_INT64);
     
-    //add backend
-    addBackend(common::metric::MetricBackendPointer(new common::metric::ConsoleMetricBackend(_collector_name)));
-    
     startLogging();
 }
 

@@ -31,12 +31,15 @@ namespace chaos {
             
             class ConsoleMetricBackend:
             public AbstractMetricBackend {
+                bool first_metric;
                 std::ostringstream output_stream;
             public:
                 ConsoleMetricBackend(const std::string& _backend_identity);
                 ~ConsoleMetricBackend();
+                void preMetric();
                 void addMetric(const std::string& metric_name,
-                               const std::string& metric_value);
+                                       const std::string& metric_value);
+                void postMetric();
                 void prepare();
                 void flush();
             };

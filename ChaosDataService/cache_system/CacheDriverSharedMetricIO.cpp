@@ -47,9 +47,6 @@ get_bandwith(0) {
     addMetric(METRIC_KEY_SET_BANDWITH, chaos::DataType::TYPE_DOUBLE);
     addMetric(METRIC_KEY_GET_PACKET_COUNT, chaos::DataType::TYPE_DOUBLE);
     addMetric(METRIC_KEY_GET_BANDWITH, chaos::DataType::TYPE_DOUBLE);
-
-    //add backend
-    addBackend(common::metric::MetricBackendPointer(new common::metric::ConsoleMetricBackend(client_impl)));
     //start logging
     startLogging();
 }
