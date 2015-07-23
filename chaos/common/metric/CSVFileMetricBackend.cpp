@@ -28,7 +28,7 @@ CVSFileMetricBackend::CVSFileMetricBackend(const std::string& _backend_identity,
 FileMetricBackend(_backend_identity,
                   _file_path,
                   ".csv",
-                  (append?ios::app:ios::trunc)|ios::out){
+                  (append?fstream::app:fstream::trunc)|fstream::in | fstream::out){
     
 }
 
@@ -60,5 +60,9 @@ void CVSFileMetricBackend::postMetric() {
 
 void CVSFileMetricBackend::flush() {
     //write to file
-    output_file_stream << output_stream.str();
+    std::string to_print = output_stream.str();
+    output_file_stream.write(to_print.c_str(), to_print.size());
+    FileMetricBackend::flush();
+    output_stream.clear();
+    output_stream.str("");
 }
