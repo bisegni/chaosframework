@@ -112,8 +112,9 @@ void MetricCollector::writeTo(chaos::common::data::CDataWrapper& data_wrapper) {
 }
 
 void MetricCollector::timeout() {
+    uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
     if(last_stat_call) {
-        fetchMetricForTimeDiff(chaos::common::utility::TimingUtil::getTimeStamp() - last_stat_call);
+        fetchMetricForTimeDiff(now - last_stat_call);
     } else {
         fetchMetricForTimeDiff(0);
     }
@@ -124,7 +125,7 @@ void MetricCollector::timeout() {
     rwl.unlock();
     
     //write metric to backend
-    CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator, vector_metric_backend, (*it)->prepare();)
+    CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator, vector_metric_backend, (*it)->prepare(now);)
     for(MapMetricIterator it_metric = slot_to_persist->map_attribute_value.begin();
         it_metric != slot_to_persist->map_attribute_value.end();
         it_metric++) {

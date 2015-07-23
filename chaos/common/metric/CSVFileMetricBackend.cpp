@@ -28,7 +28,7 @@ CVSFileMetricBackend::CVSFileMetricBackend(const std::string& _backend_identity,
 FileMetricBackend(_backend_identity,
                   _file_path,
                   ".csv",
-                  (append?fstream::app:fstream::trunc)|fstream::in | fstream::out){
+                  (append?fstream::app:fstream::trunc)| fstream::out){
     
 }
 
@@ -36,20 +36,17 @@ CVSFileMetricBackend::~CVSFileMetricBackend() {
     
 }
 
-void CVSFileMetricBackend::prepare() {
-    first_metric = true;
+void CVSFileMetricBackend::prepare(uint64_t metric_acquire_ts) {
+    output_stream << metric_acquire_ts;
 }
 
 void CVSFileMetricBackend::preMetric() {
-    if(first_metric) return;
     output_stream << ",";
 }
 
 void CVSFileMetricBackend::addMetric(const std::string& metric_name,
                                      const std::string& metric_value) {
     output_stream << metric_name << ":" << metric_value;
-    first_metric = false;
-
 }
 
 

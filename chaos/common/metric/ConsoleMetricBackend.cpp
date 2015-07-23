@@ -48,7 +48,7 @@ void ConsoleMetricBackend::postMetric() {
     
 }
 
-void ConsoleMetricBackend::prepare() {
+void ConsoleMetricBackend::prepare(uint64_t metric_acquire_ts) {
     first_metric = true;
     output_stream << backend_indetity << "[";
 }

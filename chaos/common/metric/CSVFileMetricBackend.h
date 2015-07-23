@@ -32,9 +32,7 @@ namespace chaos {
             public FileMetricBackend {
             protected:
                 const boost::filesystem::path file_path;
-                bool first_metric;
                 std::ostringstream output_stream;
-                boost::filesystem::fstream output_file_stream;
             public:
                 CVSFileMetricBackend(const std::string& _backend_identity,
                                      const std::string& _file_path,
@@ -44,7 +42,7 @@ namespace chaos {
                 void addMetric(const std::string& metric_name,
                                        const std::string& metric_value);
                 void postMetric();
-                void prepare();
+                void prepare(uint64_t metric_acquire_ts);
                 void flush();
             };
             

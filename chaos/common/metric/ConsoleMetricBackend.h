@@ -40,7 +40,7 @@ namespace chaos {
                 void addMetric(const std::string& metric_name,
                                        const std::string& metric_value);
                 void postMetric();
-                void prepare();
+                void prepare(uint64_t metric_acquire_ts);
                 void flush();
             };
             
