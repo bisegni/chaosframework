@@ -42,8 +42,6 @@ dispose_forwarder_on_exit(_dispose_forwarder_on_exit){
     CHAOS_ASSERT(wrapper_server)
     RPCSMC_LDBG << "Allocate collector";
     wrapper_server->setCommandDispatcher(this);
-    //set the time interval to one second of default
-    addBackend(metric::MetricBackendPointer(new metric::ConsoleMetricBackend(getName())));
 }
 
 RpcServerMetricCollector::~RpcServerMetricCollector() {

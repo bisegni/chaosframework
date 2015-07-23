@@ -19,8 +19,10 @@
  */
 
 #include <chaos/common/metric/MetricCollector.h>
+#include <chaos/common/metric/ConsoleMetricBackend.h>
+#include <chaos/common/metric/CSVFileMetricBackend.h>
 #include <chaos/common/utility/TimingUtil.h>
-
+#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <sstream>
 
 #define MC_INFO INFO_LOG(MetricCollector)
@@ -39,6 +41,18 @@ last_stat_call(0),
 stat_intervall(update_time_in_sec*1000){
     caching_slot[1].metric_attribute_cache.init(NULL);
     caching_slot[0].metric_attribute_cache.init(NULL);
+    
+    if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_METRIC_ON_CONSOLE)) {
+        //set the time interval to one second of default
+        addBackend(metric::MetricBackendPointer(new metric::ConsoleMetricBackend(collector_name)));
+    }
+    
+    if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_METRIC_ON_FILE)) {
+        const std::string file_path = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_METRIC_ON_FILE_PATH);
+        //set the time interval to one second of default
+        addBackend(metric::MetricBackendPointer(new metric::CVSFileMetricBackend(collector_name,
+                                                                                 file_path)));
+    }
 }
 
 MetricCollector::~MetricCollector() {
@@ -98,8 +112,9 @@ void MetricCollector::writeTo(chaos::common::data::CDataWrapper& data_wrapper) {
 }
 
 void MetricCollector::timeout() {
+    uint64_t now = chaos::common::utility::TimingUtil::getTimeStamp();
     if(last_stat_call) {
-        fetchMetricForTimeDiff(chaos::common::utility::TimingUtil::getTimeStamp() - last_stat_call);
+        fetchMetricForTimeDiff(now - last_stat_call);
     } else {
         fetchMetricForTimeDiff(0);
     }
@@ -110,14 +125,16 @@ void MetricCollector::timeout() {
     rwl.unlock();
     
     //write metric to backend
-    CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator, vector_metric_backend, (*it)->prepare();)
+    CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator, vector_metric_backend, (*it)->prepare(now);)
     for(MapMetricIterator it_metric = slot_to_persist->map_attribute_value.begin();
         it_metric != slot_to_persist->map_attribute_value.end();
         it_metric++) {
         CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator,
                                    vector_metric_backend,
+                                   (*it)->preMetric();
                                    (*it)->addMetric(it_metric->second->name,
-                                                    it_metric->second->toString());)
+                                                    it_metric->second->toString());
+                                   (*it)->postMetric();)
     }
     CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator, vector_metric_backend, (*it)->flush();)
 }

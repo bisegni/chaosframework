@@ -53,9 +53,11 @@ namespace chaos {
                 void addConfiguration(const std::string& configuraiton_name,
                                       const std::string& configuraiton_value);
                 void addConfiguration(const MapMetricBackendConfiguration& configuration);
+                virtual void preMetric() = 0;
                 virtual void addMetric(const std::string& metric_name,
                                        const std::string& metric_value) = 0;
-                virtual void prepare() = 0;
+                virtual void postMetric() = 0;
+                virtual void prepare(uint64_t metric_acquire_ts) = 0;
                 virtual void flush() = 0;
             };
         }

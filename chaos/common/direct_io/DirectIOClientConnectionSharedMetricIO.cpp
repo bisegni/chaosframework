@@ -37,9 +37,6 @@ MetricCollectorIO(client_impl,
     
     DIOCCSMC_DBG_ << "Allocate collector";
     
-    //add backend
-    addBackend(metric::MetricBackendPointer(new metric::ConsoleMetricBackend(boost::str(boost::format("%1%_%2%")%client_impl%server_endpoint))));
-    
     startLogging();
 }
 

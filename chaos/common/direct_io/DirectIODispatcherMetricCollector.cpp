@@ -37,9 +37,6 @@ endpoint_alive_count(0) {
     DIODMC_DBG_ << "Allcoate collector";
     //uppend custom direct io metric
     addMetric(METRIC_KEY_ENDPOINT_ALIVE, chaos::DataType::TYPE_INT32);
-    
-    //add backend
-    addBackend(metric::MetricBackendPointer(new metric::ConsoleMetricBackend(direct_io_server_impl)));
 }
 
 DirectIODispatcherMetricCollector::~DirectIODispatcherMetricCollector() {

@@ -49,6 +49,9 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_HELP, "Produce help message");
         //cache parameter
         addOption<std::string>(InitOption::OPT_CONF_FILE,"File configuration path");
+        addOption(InitOption::OPT_LOG_METRIC_ON_CONSOLE, po::value< bool >()->default_value(true), "Enable the logging metric on console");
+        addOption(InitOption::OPT_LOG_METRIC_ON_FILE, po::value< bool >()->default_value(false), "Enable the logging metric on file");
+        addOption(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, po::value< string >()->default_value("./"), "Specify the path of metric logs");
         addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirect"), "Specify the data io implementation");
         addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
         addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
@@ -199,6 +202,15 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnFile, InitOption::OPT_LOG_ON_FILE)
     configuration.addBoolValue(InitOption::OPT_LOG_ON_FILE, logOnFile);
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, log_metric_on_console, InitOption::OPT_LOG_METRIC_ON_CONSOLE, true)
+    configuration.addBoolValue(InitOption::OPT_LOG_METRIC_ON_CONSOLE, log_metric_on_console);
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, log_metric_on_file, InitOption::OPT_LOG_METRIC_ON_FILE, false)
+    configuration.addBoolValue(InitOption::OPT_LOG_METRIC_ON_FILE, log_metric_on_file);
+    
+    CHECK_AND_DEFINE_OPTION(string, log_metric_file_path, InitOption::OPT_LOG_METRIC_ON_FILE_PATH)
+    configuration.addStringValue(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, log_metric_file_path);
     
     CHECK_AND_DEFINE_OPTION(string, logFilePath, InitOption::OPT_LOG_FILE)
     configuration.addStringValue(InitOption::OPT_LOG_FILE, logFilePath);

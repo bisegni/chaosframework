@@ -1,5 +1,5 @@
 /*
- *	AbstractMetricBackend.h
+ *	FileMetricBackend.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,29 +18,30 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__ConsoleMetricBackend__
-#define __CHAOSFramework__ConsoleMetricBackend__
+#ifndef __CHAOSFramework__FileMetricBackend__
+#define __CHAOSFramework__FileMetricBackend__
 
 #include <chaos/common/metric/AbstractMetricBackend.h>
 
-#include <sstream>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+
+#include <iostream>
 
 namespace chaos {
     namespace common {
         namespace metric {
-            
-            class ConsoleMetricBackend:
+            class FileMetricBackend:
             public AbstractMetricBackend {
-                bool first_metric;
-                std::ostringstream output_stream;
+            protected:
+                const boost::filesystem::path file_path;
+                boost::filesystem::fstream output_file_stream;
             public:
-                ConsoleMetricBackend(const std::string& _backend_identity);
-                ~ConsoleMetricBackend();
-                void preMetric();
-                void addMetric(const std::string& metric_name,
-                                       const std::string& metric_value);
-                void postMetric();
-                void prepare(uint64_t metric_acquire_ts);
+                FileMetricBackend(const std::string& _backend_identity,
+                                  const std::string& _file_path,
+                                  const std::string& _file_extension,
+                                  std::ios_base::openmode _open_mode);
+                ~FileMetricBackend();
                 void flush();
             };
             
@@ -48,4 +49,4 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__ConsoleMetricBackend__) */
+#endif /* defined(__CHAOSFramework__FileMetricBackend__) */
