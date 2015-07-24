@@ -34,13 +34,15 @@ namespace chaos {
         //! for print the help
         static const char * const	OPT_HELP                            = "help";
         //! config file parameter
-        static const char * const   OPT_CONF_FILE						= "conf_file";
+
+        static const char * const   OPT_CONF_FILE						= "conf-file";
         //! enable metric loggin on console backend
         static const char * const   OPT_LOG_METRIC_ON_CONSOLE           = "log-metric-on-console";
         //! enable metric loggin on file backend
         static const char * const   OPT_LOG_METRIC_ON_FILE              = "log-metric-on-file";
         //! enable metric loggin on file backend
         static const char * const   OPT_LOG_METRIC_ON_FILE_PATH         = "log-metric-on-file-path";
+
         //! activate the loggin of metric on rpc system
         static const char * const   OPT_RPC_LOG_METRIC                  = "rpc-log-metric";
         //! the time between the update of rpc metric on persistence backend (in seconds)
@@ -60,13 +62,13 @@ namespace chaos {
         //! Specify the number of the thread that the rpc ssytem must use to process the request
         static const char * const   OPT_RPC_SERVER_THREAD_NUMBER        = "rpc-server-thread-number";
         //! Specify the implementation to use for the direct io subsystem
-        static const char * const   OPT_DIRECT_IO_IMPLEMENTATION		= "direct_io-impl";
+        static const char * const   OPT_DIRECT_IO_IMPLEMENTATION		= "direct-io-impl";
         //! Specify the network port where the direct io subsystem publish i's priority channel
-        static const char * const   OPT_DIRECT_IO_PRIORITY_SERVER_PORT  = "direct_io-priority-server-port";
+        static const char * const   OPT_DIRECT_IO_PRIORITY_SERVER_PORT  = "direct-io-priority-server-port";
         //! Specify the network port where the direct io subsystem publish i's priority channel
-        static const char * const   OPT_DIRECT_IO_SERVICE_SERVER_PORT   = "direct_io-service-server-port";
+        static const char * const   OPT_DIRECT_IO_SERVICE_SERVER_PORT   = "direct-io-service-server-port";
         //! Specify the number of the thread that the direct io subsystem must use to process the request
-        static const char * const   OPT_DIRECT_IO_SERVER_THREAD_NUMBER  = "direct_io-server-thread-number";
+        static const char * const   OPT_DIRECT_IO_SERVER_THREAD_NUMBER  = "direct-io-server-thread-number";
         //! activate the loggin of metric on rpc system
         static const char * const   OPT_DIRECT_IO_LOG_METRIC            = "direct-io-log-metric";
         //! activate the merged or separate metric on target endpoint
@@ -107,7 +109,7 @@ namespace chaos {
     
     namespace common {
         namespace direct_io {
-            /** @defgroup DirectIOConfigurationKey DirectIO System Configuraiton
+            /** @defgroup DirectIOConfigurationKey DirectIO System Configuration
              *  This is the collection of the key for the parameters used to configure the DirectIO system
              *  @{
              */
