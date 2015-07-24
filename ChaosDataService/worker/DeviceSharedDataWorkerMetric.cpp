@@ -45,7 +45,7 @@ queued_size(0){
     addMetric(METRIC_KEY_OUTPUT_PACKET_COUNT, chaos::DataType::TYPE_DOUBLE);
     addMetric(METRIC_KEY_OUTPUT_BADNWITH, chaos::DataType::TYPE_DOUBLE);
     addMetric(METRIC_KEY_QUEUED_PACKET_COUNT, chaos::DataType::TYPE_INT64);
-    addMetric(METRIC_KEY_QUEUED_PACKET_SIZE, chaos::DataType::TYPE_INT64);
+    addMetric(METRIC_KEY_QUEUED_PACKET_SIZE, chaos::DataType::TYPE_DOUBLE);
 
     startLogging();
 }
@@ -89,7 +89,7 @@ void DeviceSharedDataWorkerMetric::fetchMetricForTimeDiff(uint64_t time_diff) {
     double out_pc = output_data_pack/sec; output_data_pack = 0;
     double out_bw = ((output_badnwith/sec)/1024); output_badnwith = 0;
     int64_t q_pc = queued_data_pack;
-    int64_t q_size = ((queued_size)/1024);
+    double q_size = ((queued_size)/1024);
 
     //update local variable cache
     updateMetricValue(METRIC_KEY_INPUT_PACKET_COUNT,
@@ -109,5 +109,5 @@ void DeviceSharedDataWorkerMetric::fetchMetricForTimeDiff(uint64_t time_diff) {
                       sizeof(int64_t));
     updateMetricValue(METRIC_KEY_QUEUED_PACKET_SIZE,
                       &q_size,
-                      sizeof(int64_t));
+                      sizeof(double));
 }
