@@ -29,11 +29,11 @@ FileMetricBackend(_backend_identity,
                   _file_path,
                   ".csv",
                   (append?fstream::app:fstream::trunc)| fstream::out){
-    
+
 }
 
 CVSFileMetricBackend::~CVSFileMetricBackend() {
-    
+
 }
 
 void CVSFileMetricBackend::prepare(uint64_t metric_acquire_ts) {
@@ -51,14 +51,14 @@ void CVSFileMetricBackend::addMetric(const std::string& metric_name,
 
 
 void CVSFileMetricBackend::postMetric() {
-    
+
 }
 
 
 void CVSFileMetricBackend::flush() {
     //write to file
-    std::string to_print = output_stream.str();
-    output_file_stream.write(to_print.c_str(), to_print.size());
+    output_stream << std::endl;
+    output_file_stream << output_stream.str();
     FileMetricBackend::flush();
     output_stream.clear();
     output_stream.str("");
