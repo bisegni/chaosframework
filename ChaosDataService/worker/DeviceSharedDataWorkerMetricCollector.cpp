@@ -39,13 +39,14 @@ void DeviceSharedDataWorkerMetricCollector::executeJob(WorkerJobPtr job_info,
                                                        void* cookie) {
     int tag = reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->request_header->tag;
     uint32_t total_data = reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->data_pack_len + reinterpret_cast<DeviceSharedWorkerJob*>(job_info)->request_header->key_len;
-    
+    //increment metric that has been removed from queue
+    data_worker_metric->decrementQueueSize(total_data);
     DeviceSharedDataWorker::executeJob(job_info, cookie);
     switch(tag) {
         case 0:// storicize only
         case 2:// storicize and live
-            //write data on stage file
-            data_worker_metric->decrementQueueSize(total_data);
+            //increment metric for data stored on vfs
+            data_worker_metric->incrementOutputBandwith(total_data);
             break;
             
         case 1:{// live only
@@ -81,7 +82,6 @@ int DeviceSharedDataWorkerMetricCollector::submitJobInfo(WorkerJobPtr job_info) 
             break;
             
         case 1:{// live only
-            data_worker_metric->incrementOutputBandwith(total_data);
             break;
         }
     }
