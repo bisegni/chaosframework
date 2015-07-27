@@ -68,6 +68,15 @@ namespace chaos_batch = chaos::common::batch_command;
 //--------------rt control unit option--------------------------------------------------
 #define OPT_RT_ATTRIBUTE_VALUE							"rt-attr-val"
 
+
+#define EXECUTE_CHAOS_API(api_name,time_out,...) {\
+chaos::metadata_service_client::api_proxy::ApiProxyResult r=  GET_CHAOS_API_PTR(api_name)->execute( __VA_ARGS__ );\
+r->setTimeout(time_out);\
+r->wait();\
+if(r->getError()){\
+    throw CException(r->getError(),__FUNCTION__,r->getErrorMessage());\
+}}
+
 inline ptime utcToLocalPTime(ptime utcPTime){
   c_local_adjustor<ptime> utcToLocalAdjustor;
   ptime t11 = utcToLocalAdjustor.utc_to_local(utcPTime);
@@ -118,9 +127,11 @@ int initialize_mds(std::string conf){
             std::string name=data_servers->getCDataWrapperElementAtIndex(cnt)->getStringValue("hostname");
             int id = data_servers->getCDataWrapperElementAtIndex(cnt)->getInt32Value("id_server");
             std::cout<<"* found dataserver["<<cnt<<"]:"<<name<<" id:"<<id<<std::endl;
-
-            GET_CHAOS_API_PTR(api_proxy::data_service::UpdateDS)->execute(name,name,id);
-            GET_CHAOS_API_PTR(api_proxy::data_service::NewDS)->execute(name,name,id);
+            EXECUTE_CHAOS_API(api_proxy::data_service::UpdateDS,3000,name,name,id);
+           // chaos::metadata_service_client::api_proxy::ApiProxyResult r= GET_CHAOS_API_PTR(api_proxy::data_service::UpdateDS)->execute(name,name,id);
+             EXECUTE_CHAOS_API(api_proxy::data_service::NewDS,3000,name,name,id);
+            //GET_CHAOS_API_PTR(api_proxy::data_service::NewDS)->execute(name,name,id);
+           
 
         }
     }
@@ -128,9 +139,10 @@ int initialize_mds(std::string conf){
     CMultiTypeDataArrayWrapper* us=mdsconf.getVectorValue("us");
     if(us){
         for(int cnt=0;cnt<us->size();cnt++){
-            std::string usname=us->getCDataWrapperElementAtIndex(cnt)->getStringValue("unit_server_alias");
-            std::cout<<"* found us["<<cnt<<"]:"<<usname<<std::endl;
-            GET_CHAOS_API_PTR(api_proxy::unit_server::NewUS)->execute(usname.c_str());
+            std::string name=us->getCDataWrapperElementAtIndex(cnt)->getStringValue("unit_server_alias");
+            std::cout<<"* found us["<<cnt<<"]:"<<name<<std::endl;
+            //GET_CHAOS_API_PTR(api_proxy::unit_server::NewUS)->execute(usname.c_str());
+             EXECUTE_CHAOS_API(api_proxy::unit_server::NewUS,3000,name);
 
         }
     }
