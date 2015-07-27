@@ -47,7 +47,7 @@
 #define INIT_STATE      0
 #define START_STATE     1
 
-#define CU_OPT_IN_MEMORY_DATABASE "cu_db_in_memory"
+#define CU_OPT_IN_MEMORY_DATABASE "cu-db-in-memory"
 
 #define CONTROL_UNIT_PUBLISH_NAME(impl)\
 impl::PublishName
