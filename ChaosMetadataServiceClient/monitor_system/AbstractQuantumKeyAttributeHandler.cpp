@@ -33,6 +33,16 @@ AbstractQuantumKeyAttributeHandler::~AbstractQuantumKeyAttributeHandler() {}
 const std::string& AbstractQuantumKeyAttributeHandler::getAttributeName() {
     return attribute;
 }
+
+void AbstractQuantumKeyAttributeHandler::_consumeValueNotFound(const std::string& key) {
+    consumeValueNotFound(key,
+                         attribute);
+}
+
+void AbstractQuantumKeyAttributeHandler::consumeValueNotFound(const std::string& key,
+                                  const std::string& attribute) {
+    
+}
 //---------------------------implemented handler-------------------------
 QuantumKeyAttributeHandlerIMPL_CONST_DIST(QuantumKeyAttributeBoolHandler)
 void QuantumKeyAttributeBoolHandler::_consumeValue(const std::string& key,

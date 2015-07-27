@@ -58,6 +58,10 @@ public QuantumSlotConsumer {
         //print fetched data
         MSCT_INFO << key << " - " << value->getJSONString() <<std::endl;
     };
+    void quantumSlotHasNoData(const std::string& key) {
+        //print fetched data
+        MSCT_INFO << key << " - " << "No Data" <<std::endl;
+    };
 };
 
 class StatusHandler:
@@ -140,7 +144,7 @@ int main(int argc, char * argv[]) {
     boost::thread_group tg;
     try{
         StatusHandler status_handler;
-        BinaryHandler bin_handler("sinWave");
+        BinaryHandler bin_handler("sin_wave");
         //HearbeatHandler *hb_handler_1 = new HearbeatHandler();
         //HearbeatHandler *hb_handler_2 = new HearbeatHandler();
         
@@ -153,7 +157,7 @@ int main(int argc, char * argv[]) {
         ChaosMetadataServiceClient::getInstance()->init(argc, argv);
         ChaosMetadataServiceClient::getInstance()->start();
         
-        ChaosMetadataServiceClient::getInstance()->addServerAddress("macbisegni.lnf.infn.it:5000");
+        ChaosMetadataServiceClient::getInstance()->addServerAddress("pcbisegni.lnf.infn.it:5000");
         
         ChaosMetadataServiceClient::getInstance()->enableMonitoring();
         

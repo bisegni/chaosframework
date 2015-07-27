@@ -40,6 +40,8 @@ namespace chaos {
             public:
                 //!as called every time there is new data for quantum slot
                 virtual void quantumSlotHasData(const std::string& key, const KeyValue& value) = 0;
+                //! callend every time that data can't be retrieved from data service
+                virtual void quantumSlotHasNoData(const std::string& key) = 0;
             };
         }
     }

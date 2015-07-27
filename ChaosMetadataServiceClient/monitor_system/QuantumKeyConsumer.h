@@ -47,9 +47,11 @@ namespace chaos {
                 AttributeHandlerMap     map_attribute_handler;
                 
             protected:
+                //! called when data for key has been retrieved from chaos data service
                 void quantumSlotHasData(const std::string& key,
                                         const KeyValue& value);
-                
+                //! callend when no data has ben retrived from data service(key not found or no cds available)
+                void quantumSlotHasNoData(const std::string& key);
             public:
                 QuantumKeyConsumer(const std::string& _key);
                 ~QuantumKeyConsumer();

@@ -1,12 +1,12 @@
 #ifndef MONITORBOOLATTRIBUTEHANDLER
 #define MONITORBOOLATTRIBUTEHANDLER
 
-#include <QObject>
+#include "AbstractAttributeHandler.h"
 
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
 
 class MonitorBoolAttributeHandler:
-        public QObject,
+        public AbstractAttributeHandler,
         public chaos::metadata_service_client::monitor_system::QuantumKeyAttributeBoolHandler {
     Q_OBJECT
 
@@ -17,13 +17,9 @@ protected:
         //emit new value
         emit valueUpdated(QString::fromStdString(key),
                           QString::fromStdString(attribute),
-                          value);
+                          QVariant::fromValue<bool>(value));
     }
 
-signals:
-    void valueUpdated(const QString& key,
-                      const QString& name,
-                      const bool value);
 public:
     MonitorBoolAttributeHandler(const QString& attribute_name,
                                 bool event_on_change = false):

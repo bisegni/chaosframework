@@ -158,7 +158,9 @@ HEADERS  += \
     data/DatasetReader.h \
     data/DatasetAttributeReader.h \
     data/data.h \
-    widget/CLedIndicatorHealt.h
+    widget/CLedIndicatorHealt.h \
+    monitor/handler/MonitorAttributeHandler.h \
+    monitor/handler/MonitorTSTaggedAttributeValue.h
 
 FORMS    += \
     search/searchnoderesult.ui \

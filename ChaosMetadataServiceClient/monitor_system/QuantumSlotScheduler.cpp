@@ -215,6 +215,8 @@ void QuantumSlotScheduler::dispath_new_value_async(const boost::system::error_co
     if(data_found) {
         cur_slot->sendNewValueConsumer(KeyValue(new CDataWrapper(data_found)));
         delete(data_found);
+    } else {
+        cur_slot->sendNoValueToConsumer();
     }
     //reset quantum
     boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_scan);

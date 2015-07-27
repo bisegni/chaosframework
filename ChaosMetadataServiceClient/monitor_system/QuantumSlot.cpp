@@ -93,6 +93,30 @@ void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
     }
 }
 
+void QuantumSlot::sendNoValueToConsumer() {
+    boost::shared_lock<boost::shared_mutex> rl(consumer_mutex);
+    uint64_t start_forwardint_time = TimingUtil::getTimeStampInMicrosends();
+    for (SetConsumerTypePriorityIndexIterator it = consumers_priority_index.begin();
+         it != consumers_priority_index.end();
+         it++) {
+        //signal the consumer
+        reinterpret_cast<QuantumSlotConsumer*>(it->consumer_pointer)->quantumSlotHasNoData(key);
+    }
+    
+    //calc time
+    last_send_data_duration =  (TimingUtil::getTimeStampInMicrosends() - start_forwardint_time);
+    if((send_data_iteration++ % 100) == 0) {
+        //print statistic
+        if(send_data_iteration >= 100) {
+            QS_INFO << boost::str(boost::format("Forwarding processing time is %1% microseconds for %2% elements for key %3%_%4%")%
+                                  ((double)last_send_data_duration/10)%
+                                  consumers_priority_index.size()%
+                                  key%
+                                  quantum_multiplier);
+        }
+    }
+}
+
 //! set the last processing timestamp
 void QuantumSlot::setLastProcessingTime(uint64_t _last_processing_time) {
     uint64_t time_diff = _last_processing_time - last_processed_time;
@@ -108,5 +132,5 @@ bool QuantumSlot::isQuantumGood() {
 }
 
 int32_t QuantumSlot::size() {
-    return consumers_pointer_index.size();
+    return (int32_t)consumers_pointer_index.size();
 }

@@ -12,7 +12,7 @@ ApiAsyncRunnable::ApiAsyncRunnable(const QString& _tag, ApiProxyResult _async_re
 ApiAsyncRunnable::~ApiAsyncRunnable(){}
 
 void ApiAsyncRunnable::run() {
-    if(async_result->wait()) {
+   if(async_result->wait()) {
         if(async_result->getError()) {
             //we have an error
             emit asyncApiError(tag, QSharedPointer<CException>(new CException(async_result->getError(),
