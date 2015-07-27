@@ -31,12 +31,13 @@ namespace chaos{
 #define OPT_CACHE_LOG_METRIC_UPDATE_INTERVAL "cache-log-metric-update-interval"
 #define OPT_CACHE_SERVER_LIST		"cache-servers"
 #define OPT_CACHE_DRIVER			"cache-driver"
-#define OPT_CACHE_WORKER_LOG_METRIC                 "cache-worker-log-metric"
-#define OPT_CACHE_WORKER_LOG_METRIC_UPDATE_INTERVAL "cache-worker-log-metric-update-interval"
-#define OPT_CACHE_WORKER_NUM		"cache-worker-num"
-#define OPT_CACHE_WORKER_THREAD		"cache-worker-thread"
 #define OPT_CACHE_DRIVER_KVP		"cache-driver-kvp"
-#define CACHE_WORKER_NUMBER			1
+        
+#define OPT_DATA_WORKER_LOG_METRIC                 "data-worker-log-metric"
+#define OPT_DATA_WORKER_LOG_METRIC_UPDATE_INTERVAL "data-worker-log-metric-update-interval"
+#define OPT_DATA_WORKER_NUM		"data-worker-num"
+#define OPT_DATA_WORKER_THREAD  "data-worker-thread"
+#define DATA_WORKER_NUMBER		1
 	
 		//query data consumer
 #define OPT_QUERY_CONSUMER_VFILE_MANTAINANCE_DELAY		"qdc-vfile-mantain-delay"

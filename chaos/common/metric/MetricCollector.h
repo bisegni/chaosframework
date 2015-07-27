@@ -41,10 +41,12 @@ namespace chaos {
             typedef boost::shared_ptr<AbstractMetricBackend> MetricBackendPointer;
             CHAOS_DEFINE_VECTOR_FOR_TYPE(MetricBackendPointer, VectorMetricBackend)
             
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, chaos::common::data::cache::AttributeValue*, MapMetric)
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, int, MapMetricNameVecIndex)
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::cache::AttributeValue*, VectorMetric)
             
             struct ChachingSlot {
-                MapMetric map_attribute_value;
+                MapMetricNameVecIndex map_name_index;
+                VectorMetric vector_attribute_value;
                 chaos::common::data::cache::AttributeCache metric_attribute_cache;
             };
             

@@ -72,7 +72,8 @@ bool MetricCollector::_addMetric(ChachingSlot& cs,
     cs.metric_attribute_cache.addAttribute(metric_name, metric_max_size, metric_type);
     AttributeValue *cached_metric = cs.metric_attribute_cache.getValueSettingForIndex(cs.metric_attribute_cache.getIndexForName(metric_name));
     if(cached_metric) {
-        cs.map_attribute_value.insert(make_pair(metric_name, cached_metric));
+        cs.map_name_index.insert(make_pair(metric_name, cs.map_name_index.size()));
+        cs.vector_attribute_value.push_back(cached_metric);
         return true;
     } else {
         return false;
@@ -92,9 +93,9 @@ bool MetricCollector::updateMetricValue(const std::string& metric_name,
                                         const void *value_ptr,
                                         uint32_t value_size) {
     boost::shared_lock<boost::shared_mutex> rl(current_slot_index_mutex);
-    if(caching_slot[current_slot_index].map_attribute_value.count(metric_name) == 0) return false;
-    return caching_slot[current_slot_index].map_attribute_value[metric_name]->setValue(value_ptr,
-                                                                                        value_size);
+    if(caching_slot[current_slot_index].map_name_index.count(metric_name) == 0) return false;
+    return caching_slot[current_slot_index].vector_attribute_value[caching_slot[current_slot_index].map_name_index[metric_name]]->setValue(value_ptr,
+                                                                                                                                           value_size);
 }
 
 void MetricCollector::writeTo(chaos::common::data::CDataWrapper& data_wrapper) {
@@ -104,10 +105,10 @@ void MetricCollector::writeTo(chaos::common::data::CDataWrapper& data_wrapper) {
     rwl.unlock();
     
     //persiste previous slot
-    for(MapMetricIterator it = slot_to_persist->map_attribute_value.begin();
-        it != slot_to_persist->map_attribute_value.end();
+    for(VectorMetricIterator it = slot_to_persist->vector_attribute_value.begin();
+        it != slot_to_persist->vector_attribute_value.end();
         it++) {
-        it->second->writeToCDataWrapper(data_wrapper);
+        (*it)->writeToCDataWrapper(data_wrapper);
     }
 }
 
@@ -126,14 +127,14 @@ void MetricCollector::timeout() {
     
     //write metric to backend
     CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator, vector_metric_backend, (*it)->prepare(now);)
-    for(MapMetricIterator it_metric = slot_to_persist->map_attribute_value.begin();
-        it_metric != slot_to_persist->map_attribute_value.end();
-        it_metric++) {
+    for(VectorMetricIterator it_metric = slot_to_persist->vector_attribute_value.begin();
+                            it_metric != slot_to_persist->vector_attribute_value.end();
+                            it_metric++) {
         CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator,
                                    vector_metric_backend,
                                    (*it)->preMetric();
-                                   (*it)->addMetric(it_metric->second->name,
-                                                    it_metric->second->toString());
+                                   (*it)->addMetric((*it_metric)->name,
+                                                    (*it_metric)->toString());
                                    (*it)->postMetric();)
     }
     CHAOS_SCAN_VECTOR_ITERATOR(VectorMetricBackendIterator, vector_metric_backend, (*it)->flush();)
@@ -141,7 +142,7 @@ void MetricCollector::timeout() {
 
 void MetricCollector::setStatIntervalInSeconds(uint64_t stat_intervall_in_seconds) {
     stat_intervall = stat_intervall_in_seconds*1000;
- }
+}
 
 void MetricCollector::startLogging() {
     last_stat_call = chaos::common::utility::TimingUtil::getTimeStamp();

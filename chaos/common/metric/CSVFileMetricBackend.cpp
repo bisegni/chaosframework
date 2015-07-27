@@ -46,7 +46,7 @@ void CVSFileMetricBackend::preMetric() {
 
 void CVSFileMetricBackend::addMetric(const std::string& metric_name,
                                      const std::string& metric_value) {
-    output_stream << metric_name << ":" << metric_value;
+    output_stream << metric_value;
 }
 
 

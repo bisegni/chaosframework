@@ -58,22 +58,22 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CACHE_SERVER_LIST,
 																												 "The list of the cache server",
 																												 &ChaosDataService::getInstance()->setting.cache_driver_setting.startup_chache_servers);
-        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_CACHE_WORKER_LOG_METRIC,
-                                                                                             "Enable log metric for cache worker",
+        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_DATA_WORKER_LOG_METRIC,
+                                                                                             "Enable log metric for data worker",
                                                                                              false,
                                                                                              &ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric);
         
-        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_CACHE_WORKER_LOG_METRIC_UPDATE_INTERVAL,
-                                                                                                 "Specify the cache worker log interval in second",
+        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_DATA_WORKER_LOG_METRIC_UPDATE_INTERVAL,
+                                                                                                 "Specify the data worker log interval in second",
                                                                                                  1,
                                                                                                  &ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric_update_interval);
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_CACHE_WORKER_NUM,
-																									 "The number of the cache worker",
-																									 CACHE_WORKER_NUMBER,
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_DATA_WORKER_NUM,
+																									 "The number of the data worker",
+																									 DATA_WORKER_NUMBER,
 																									 &ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_num);
 		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_CACHE_WORKER_THREAD,
-																								 "The thread number of each cache worker",
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_DATA_WORKER_THREAD,
+																								 "The thread number of each data worker",
 																								 1,
 																								 &ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_setting.job_thread_number);
 		
