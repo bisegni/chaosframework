@@ -31,7 +31,7 @@ namespace chaos{
 #define OPT_CACHE_LOG_METRIC_UPDATE_INTERVAL "cache-log-metric-update-interval"
 #define OPT_CACHE_SERVER_LIST		"cache-servers"
 #define OPT_CACHE_DRIVER			"cache-driver"
-#define OPT_CACHE_WORKER_LOG_METRIC                 "cache-worker-log_metric"
+#define OPT_CACHE_WORKER_LOG_METRIC                 "cache-worker-log-metric"
 #define OPT_CACHE_WORKER_LOG_METRIC_UPDATE_INTERVAL "cache-worker-log-metric-update-interval"
 #define OPT_CACHE_WORKER_NUM		"cache-worker-num"
 #define OPT_CACHE_WORKER_THREAD		"cache-worker-thread"
