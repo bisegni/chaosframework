@@ -1,5 +1,5 @@
 /*
- *	HealtApiGroup.cpp
+ *	NewDS.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,21 +18,18 @@
  *    	limitations under the License.
  */
 
-#include "HealtApiGroup.h"
-#include "ProcessHello.h"
-#include "ProcessBye.h"
+#include <ChaosMetadataServiceClient/api_proxy/data_service/ResetAll.h>
+using namespace chaos;
+using namespace chaos::metadata_service_client::api_proxy;
+using namespace chaos::metadata_service_client::api_proxy::service;
 
-using namespace chaos::metadata_service::api::healt;
+API_PROXY_CD_DEFINITION(ResetAll,
+                        "service",
+                        "resetAll")
 
-DEFINE_CLASS_FACTORY_NO_ALIAS(HealtApiGroup,
-                              chaos::metadata_service::api::AbstractApiGroup);
-
-HealtApiGroup::HealtApiGroup():
-AbstractApiGroup(chaos::HealtProcessDomainAndActionRPC::RPC_DOMAIN){
-    addApi<ProcessHello>();
-    addApi<ProcessBye>();
-}
-
-HealtApiGroup::~HealtApiGroup() {
-    
+/*!
+ 
+ */
+ApiProxyResult ResetAll::execute() {
+    return callApi();
 }

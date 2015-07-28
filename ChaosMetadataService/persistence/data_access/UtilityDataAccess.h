@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #ifndef __CHAOSFramework__UtilityDataAccess__
 #define __CHAOSFramework__UtilityDataAccess__
 
@@ -38,7 +39,18 @@ namespace chaos {
                     //!default destructor
                     ~UtilityDataAccess();
 
+                    //! return the next value for a named sequece
+                    /*!
+                     The sequced are named by a key, when thi api is called and the sequence not exists, a new entry is create
+                     and initilized to first value that is euql to 1, and it is returned.
+                     */
                     virtual int getNextSequenceValue(const std::string& sequence_name, uint64_t& next_value) = 0;
+                    
+                    //!reset al metadata service backend data
+                    /*!
+                     the reset is done without check (for now)
+                     */
+                    virtual int resetAllData() = 0;
                 };
                 
             }

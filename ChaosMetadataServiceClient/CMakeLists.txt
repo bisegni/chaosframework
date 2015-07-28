@@ -6,6 +6,8 @@ SET(mcl_src ChaosMetadataServiceClient.cpp)
 SET(mcl_src ${mcl_src}      api_proxy/ApiProxyManager.cpp
                             api_proxy/ApiProxy.cpp)
 
+SET(mcl_src ${mcl_src}      api_proxy/service/ResetAll.cpp)
+
 SET(mcl_src ${mcl_src}      api_proxy/node/GetNodeDescription.cpp
                             api_proxy/node/NodeSearch.cpp
                             api_proxy/node/ChangeNodeState.cpp

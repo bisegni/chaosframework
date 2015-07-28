@@ -1,5 +1,5 @@
 /*
- *	HealtApiGroup.h
+ *	ResetAll.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,27 +18,30 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__HealtApiGroup__
-#define __CHAOSFramework__HealtApiGroup__
+#ifndef __CHAOSFramework__ResetAll__
+#define __CHAOSFramework__ResetAll__
 
-#include "../AbstractApiGroup.h"
+#include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
 namespace chaos {
-    namespace metadata_service {
-        namespace api {
-            namespace healt {
-
-                    //! api group for the managment of the producer
-                DECLARE_CLASS_FACTORY(HealtApiGroup, AbstractApiGroup) {
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(HealtApiGroup)
-                public:
-                    HealtApiGroup();
-                    ~HealtApiGroup();
-                };
+    namespace metadata_service_client {
+        namespace api_proxy {
+            namespace service {
                 
+                //! Reset all metadata service backend database
+                class ResetAll:
+                public chaos::metadata_service_client::api_proxy::ApiProxy {
+                    API_PROXY_CLASS(ResetAll)
+                protected:
+                    API_PROXY_CD_DECLARATION(ResetAll)
+                public:
+                    
+                    ApiProxyResult execute();
+                };
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__HealtApiGroup__) */
+
+#endif /* defined(__CHAOSFramework__ResetAll__) */

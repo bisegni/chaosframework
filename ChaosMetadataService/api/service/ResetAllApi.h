@@ -1,5 +1,5 @@
 /*
- *	HealtApiGroup.h
+ *	ResetAllApi.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,22 +18,26 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__HealtApiGroup__
-#define __CHAOSFramework__HealtApiGroup__
+#ifndef __CHAOSFramework__ResetAllApi__
+#define __CHAOSFramework__ResetAllApi__
 
-#include "../AbstractApiGroup.h"
+#include "ChaosMetadataService/api/AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace healt {
-
-                    //! api group for the managment of the producer
-                DECLARE_CLASS_FACTORY(HealtApiGroup, AbstractApiGroup) {
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(HealtApiGroup)
+                
+                //! Reset all the metadata service database data
+                /*!
+                 
+                 */
+                class ResetAllApi:
+                public AbstractApi {
                 public:
-                    HealtApiGroup();
-                    ~HealtApiGroup();
+                    ResetAllApi();
+                    ~ResetAllApi();
+                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
                 };
                 
             }
@@ -41,4 +45,4 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__HealtApiGroup__) */
+#endif /* defined(__CHAOSFramework__ResetAllApi__) */

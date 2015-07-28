@@ -1,5 +1,5 @@
 /*
- *	HealtApiGroup.h
+ *	ServiceApiGroup.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,22 +18,22 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__HealtApiGroup__
-#define __CHAOSFramework__HealtApiGroup__
+#ifndef __CHAOSFramework__ServiceApiGroup__
+#define __CHAOSFramework__ServiceApiGroup__
 
 #include "../AbstractApiGroup.h"
 
 namespace chaos {
     namespace metadata_service {
         namespace api {
-            namespace healt {
-
-                    //! api group for the managment of the producer
-                DECLARE_CLASS_FACTORY(HealtApiGroup, AbstractApiGroup) {
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(HealtApiGroup)
+            namespace service {
+                
+                //! api group for the managment of the producer
+                DECLARE_CLASS_FACTORY(ServiceApiGroup, AbstractApiGroup) {
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ServiceApiGroup)
                 public:
-                    HealtApiGroup();
-                    ~HealtApiGroup();
+                    ServiceApiGroup();
+                    ~ServiceApiGroup();
                 };
                 
             }
@@ -41,4 +41,5 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__HealtApiGroup__) */
+
+#endif /* defined(__CHAOSFramework__ServiceApiGroup__) */
