@@ -79,7 +79,7 @@ chaos::metadata_service_client::api_proxy::ApiProxyResult r=  GET_CHAOS_API_PTR(
 r->setTimeout(time_out);\
 r->wait();\
 if(r->getError()){\
-    std::cerr<<" error in :"<<__FUNCTION__<<" " <<r->getErrorMessage()<<std::endl;\
+    std::cerr<<" error in :"<<__FUNCTION__<<"|"<<__LINE__<<"|"<< # api_name <<" " <<r->getErrorMessage()<<std::endl;\
 }}
 
 #define GET_CONFIG_STRING(what,attr) \
@@ -114,7 +114,7 @@ void print_state(CUStateKey::ControlUnitState state) {
     break;
   default:
     std::cout << "Uknown:"<<state;
-    
+
   }
   std::cout<<std::endl;
 }
@@ -129,12 +129,14 @@ int initialize_mds(std::string conf){
     std::cout<<"* reading:"<<conf<<std::endl;
     stringa << f.rdbuf();
     //std::cout<<"read:"<<stringa.str()<<std::endl;
-   // BSONObj bson(" \"data_servers\" : [ { \"hostname\" : \"192.168.150.21:1672:30175|0\" , \"id_server\" : 5 , \"is_live\" : true} , { \"hostname\" : \"192.168.150.22:1672:30175|0\" , \"id_server\" : 6 , \"is_live\" : true} , { \"hostname\" : \"192.168.150.23:1672:30175|0\" , \"id_server\" : 7 , \"is_live\" : true}]"); 
+   // BSONObj bson(" \"data_servers\" : [ { \"hostname\" : \"192.168.150.21:1672:30175|0\" , \"id_server\" : 5 , \"is_live\" : true} , { \"hostname\" : \"192.168.150.22:1672:30175|0\" , \"id_server\" : 6 , \"is_live\" : true} , { \"hostname\" : \"192.168.150.23:1672:30175|0\" , \"id_server\" : 7 , \"is_live\" : true}]");
     //BSONObj bson(strdup(stringa.str().c_str()));
     //std::cout<<"BJSON:"<<bson.jsonString();
     CDataWrapper mdsconf;
     mdsconf.setSerializedJsonData(stringa.str().c_str());
-    
+
+    //! rest ALL
+    EXECUTE_CHAOS_API(api_proxy::service::ResetAll,3000);
   //  std::cout<<"json:"<<data.getJSONString()<<std::endl;
     CMultiTypeDataArrayWrapper* data_servers=mdsconf.getVectorValue("data_servers");
     if(data_servers){
@@ -156,7 +158,7 @@ int initialize_mds(std::string conf){
             std::cout<<"* found us["<<cnt<<"]:"<<unit_server_alias<<std::endl;
             //GET_CHAOS_API_PTR(api_proxy::unit_server::NewUS)->execute(usname.c_str());
              EXECUTE_CHAOS_API(api_proxy::unit_server::NewUS,3000,unit_server_alias);
-       
+
              CMultiTypeDataArrayWrapper* cu_l=usw->getVectorValue("cu_desc");
              api_proxy::control_unit::SetInstanceDescriptionHelper cud;
              for(int cui=0;(cu_l !=NULL) && (cui<cu_l->size());cui++){
@@ -171,7 +173,7 @@ int initialize_mds(std::string conf){
                  cud.control_unit_uid=cu_id;
                  cud.unit_server_uid=unit_server_alias;
                  cud.control_unit_implementation=cu_type;
-                 EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,1);
+                 //EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,1);
 
                  EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,0);
 
@@ -182,7 +184,7 @@ int initialize_mds(std::string conf){
 
                     GET_CONFIG_STRING(drv_w,DriverDescriptionName);
                     GET_CONFIG_STRING(drv_w,DriverDescriptionVersion);
-                    GET_CONFIG_STRING(drv_w,DriverDescriptionInitParam);       
+                    GET_CONFIG_STRING(drv_w,DriverDescriptionInitParam);
                     cud.addDriverDescription(DriverDescriptionName,DriverDescriptionVersion,DriverDescriptionInitParam);
                  }
                  //attributes
@@ -192,18 +194,18 @@ int initialize_mds(std::string conf){
 
                     GET_CONFIG_STRING(attr_w,ds_attr_name);
                     GET_CONFIG_STRING(attr_w,ds_default_value);
-                    GET_CONFIG_STRING(attr_w,ds_max_range); 
-                    GET_CONFIG_STRING(attr_w,ds_min_range);       
+                    GET_CONFIG_STRING(attr_w,ds_max_range);
+                    GET_CONFIG_STRING(attr_w,ds_min_range);
 
                     cud.addAttributeConfig(ds_attr_name,ds_default_value,ds_max_range,ds_min_range);
                  }
-                 
+
                  EXECUTE_CHAOS_API(api_proxy::control_unit::SetInstanceDescription,3000,cud);
              }
         }
     }
-    
-    
+
+
     return 0;
 }
 int checkSubmissionRule(std::string scSubmissionRule) {
@@ -226,14 +228,14 @@ int main (int argc, char* argv[] )
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_MDS_FILE, "MDS configuration file (initialize the MDS with the given configuration)",&conf_file);
 
     ChaosMetadataServiceClient::getInstance()->init(argc, argv);
-      
-    
-        
+
+
+
     mds  = ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->getConfiguration()->getStringValue("metadata-server");
     if (mds.empty()){
         std::cerr<< "# you must define a valid MDS server 'metadata-server'"<<std::endl;
         return -4;
-    }   
+    }
     //! [UIToolkit Attribute Init]
     std::cout <<"* MDS:"<<mds<<std::endl;
     if(!conf_file.empty()){
@@ -242,18 +244,18 @@ int main (int argc, char* argv[] )
         operation_defined=true;
         initialize_mds(conf_file);
         return 0;
-        
+
     }
     if(operation_defined){
             ChaosMetadataServiceClient::getInstance()->enableMonitoring();
 
-        ChaosMetadataServiceClient::getInstance()->start();  
+        ChaosMetadataServiceClient::getInstance()->start();
     }
-    
+
   }catch (CException& e) {
     std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
     return -3;
   }
-    
+
   return 0;
 }
