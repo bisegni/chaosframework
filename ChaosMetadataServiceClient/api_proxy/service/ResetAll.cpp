@@ -18,7 +18,7 @@
  *    	limitations under the License.
  */
 
-#include <ChaosMetadataServiceClient/api_proxy/data_service/ResetAll.h>
+#include <ChaosMetadataServiceClient/api_proxy/service/ResetAll.h>
 using namespace chaos;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::service;
