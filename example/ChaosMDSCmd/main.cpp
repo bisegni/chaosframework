@@ -83,8 +83,8 @@ if(r->getError()){\
 }}
 
 #define GET_CONFIG_STRING(what,attr) \
-std::string attr=(what)->getStringValue( # attr);\
-std::cout<<" :" # attr <<" ="<<attr<<std::endl;
+std::string attr=(what)->getStringValue( # attr);
+//std::cout<<" :" # attr <<" ="<<attr<<std::endl;
 
 #define GET_CONFIG_INT(what,attr) \
 int32_t attr=(what)->getInt32Value(# attr);
@@ -151,12 +151,13 @@ int initialize_mds(std::string conf){
     CMultiTypeDataArrayWrapper* us=mdsconf.getVectorValue("us");
     if(us){
         for(int cnt=0;(us!=NULL)&&(cnt<us->size());cnt++){
-            GET_CONFIG_STRING(us->getCDataWrapperElementAtIndex(cnt),unit_server_alias);
+            CDataWrapper* usw=us->getCDataWrapperElementAtIndex(cnt);
+            GET_CONFIG_STRING(usw,unit_server_alias);
             std::cout<<"* found us["<<cnt<<"]:"<<unit_server_alias<<std::endl;
             //GET_CHAOS_API_PTR(api_proxy::unit_server::NewUS)->execute(usname.c_str());
              EXECUTE_CHAOS_API(api_proxy::unit_server::NewUS,3000,unit_server_alias);
        
-             CMultiTypeDataArrayWrapper* cu_l=mdsconf.getVectorValue("cu_desc");
+             CMultiTypeDataArrayWrapper* cu_l=usw->getVectorValue("cu_desc");
              api_proxy::control_unit::SetInstanceDescriptionHelper cud;
              for(int cui=0;(cu_l !=NULL) && (cui<cu_l->size());cui++){
                  CDataWrapper* cuw=cu_l->getCDataWrapperElementAtIndex(cui);
@@ -164,10 +165,14 @@ int initialize_mds(std::string conf){
                  GET_CONFIG_STRING(cuw,cu_type);
                  GET_CONFIG_STRING(cuw,cu_param);
                  GET_CONFIG_BOOL(cuw,auto_load);
+                 std::cout<<"\t"<<cu_id<<","<<cu_type<<std::endl;
+                 cud.auto_load=auto_load;
                  cud.load_parameter = cu_param;
                  cud.control_unit_uid=cu_id;
                  cud.unit_server_uid=unit_server_alias;
                  cud.control_unit_implementation=cu_type;
+                 EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,1);
+
                  EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,0);
 
                  // drivers
