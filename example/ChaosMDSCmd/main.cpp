@@ -51,35 +51,16 @@ using namespace chaos::metadata_service_client;
 namespace chaos_batch = chaos::common::batch_command;
 
 #define OPT_MDS_FILE "mds-conf"
-#define OPT_TIMEOUT         "timeout"
-#define OPT_CU_ID			"deviceid"
-#define OPT_SCHEDULE_TIME   "stime"
-#define OPT_PRINT_STATE     "print-state"
-#define OPT_PRINT_TYPE		"print-type"
-#define OPT_PRINT_DATASET	"print-dataset"
-#define OPT_GET_DS_VALUE	"get_ds_value"
-//--------------slow contorol option----------------------------------------------------
-#define OPT_SL_ALIAS									"sc-alias"
-#define OPT_SL_EXEC_CHANNEL								"sc-exec-channel"
-#define OPT_SL_PRIORITY									"sc-priority"
-#define OPT_SL_SUBMISSION_RULE							"sc-sub-rule"
-#define OPT_SL_COMMAND_DATA								"sc-cmd-data"
-#define OPT_SL_COMMAND_ID								"sc-cmd-id"
-#define OPT_SL_COMMAND_SCHEDULE_DELAY					"sc-cmd-sched-wait"
-#define OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY			"sc-cmd-submission-retry-delay"
-#define OPT_SL_COMMAND_SET_FEATURES_LOCK				"sc-cmd-features-lock"
-#define OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT		"sc-cmd-features-sched-wait"
-//--------------rt control unit option--------------------------------------------------
-#define OPT_RT_ATTRIBUTE_VALUE							"rt-attr-val"
 
-    //throw CException(r->getError(),__FUNCTION__,r->getErrorMessage());
 
 #define EXECUTE_CHAOS_API(api_name,time_out,...) {\
 chaos::metadata_service_client::api_proxy::ApiProxyResult r=  GET_CHAOS_API_PTR(api_name)->execute( __VA_ARGS__ );\
 r->setTimeout(time_out);\
 r->wait();\
 if(r->getError()){\
-    std::cerr<<" error in :"<<__FUNCTION__<<"|"<<__LINE__<<"|"<< # api_name <<" " <<r->getErrorMessage()<<std::endl;\
+    std::stringstream ss;\
+    ss<<" error in :"<<__FUNCTION__<<"|"<<__LINE__<<"|"<< # api_name <<" " <<r->getErrorMessage()<<std::endl;\
+    throw CException(r->getError(),"EXECUTE_CHAOS_API",ss.str());\
 }}
 
 #define GET_CONFIG_STRING(what,attr) \
@@ -92,35 +73,8 @@ int32_t attr=(what)->getInt32Value(# attr);
 #define GET_CONFIG_BOOL(what,attr) \
 bool attr=(what)->getBoolValue( # attr);
 
-inline ptime utcToLocalPTime(ptime utcPTime){
-  c_local_adjustor<ptime> utcToLocalAdjustor;
-  ptime t11 = utcToLocalAdjustor.utc_to_local(utcPTime);
-  return t11;
-}
 
-void print_state(CUStateKey::ControlUnitState state) {
-  switch (state) {
-  case CUStateKey::INIT:
-    std::cout << "Initialized:"<<state;
-    break;
-  case CUStateKey::START:
-    std::cout << "Started:"<<state;
-    break;
-  case CUStateKey::STOP:
-    std::cout << "Stopped:"<<state;
-    break;
-  case CUStateKey::DEINIT:
-    std::cout << "Deinitilized:"<<state;
-    break;
-  default:
-    std::cout << "Uknown:"<<state;
-
-  }
-  std::cout<<std::endl;
-}
-
-
-int initialize_mds(std::string conf){
+int initialize_from_old_mds(std::string conf){
     std::stringstream stringa;
     std::ifstream f(conf.c_str());
     if(f.fail()){
@@ -141,11 +95,24 @@ int initialize_mds(std::string conf){
     CMultiTypeDataArrayWrapper* data_servers=mdsconf.getVectorValue("data_servers");
     if(data_servers){
          for(int cnt=0;cnt<data_servers->size();cnt++){
+             std::basic_string<char>::iterator  pnt;
+             int chan=0;
+            std::stringstream ss;
+            ss<<"data_server"<<cnt;
+            
             GET_CONFIG_STRING(data_servers->getCDataWrapperElementAtIndex(cnt),hostname);
-            GET_CONFIG_INT(data_servers->getCDataWrapperElementAtIndex(cnt),id_server);
-            std::cout<<"* found dataserver["<<cnt<<"]:"<<hostname<<" id:"<<id_server<<std::endl;
-            EXECUTE_CHAOS_API(api_proxy::data_service::UpdateDS,3000,hostname,hostname,id_server);
-            EXECUTE_CHAOS_API(api_proxy::data_service::NewDS,3000,hostname,hostname,id_server);
+          //  GET_CONFIG_INT(data_servers->getCDataWrapperElementAtIndex(cnt),id_server);
+            pnt=hostname.begin()+hostname.rfind('|');
+            if(pnt!=hostname.end()){
+                std::string schan;
+                schan.assign(pnt+1,hostname.end());
+                chan=atoi(schan.c_str());
+                hostname.erase(pnt,hostname.end());
+            } 
+            
+            std::cout<<"* found dataserver["<<cnt<<"]:"<<hostname<<" channel:"<<chan<<std::endl;
+            EXECUTE_CHAOS_API(api_proxy::data_service::UpdateDS,3000,ss.str(),hostname,chan);
+            EXECUTE_CHAOS_API(api_proxy::data_service::NewDS,3000,ss.str(),hostname,chan);
 
         }
     }
@@ -208,15 +175,6 @@ int initialize_mds(std::string conf){
 
     return 0;
 }
-int checkSubmissionRule(std::string scSubmissionRule) {
-  if( scSubmissionRule.compare("normal") == 0) {
-    return chaos_batch::SubmissionRuleType::SUBMIT_NORMAL;
-  } else if( scSubmissionRule.compare("stack")  == 0) {
-    return chaos_batch::SubmissionRuleType::SUBMIT_AND_Stack;
-  } else if( scSubmissionRule.compare("kill")  == 0) {
-    return chaos_batch::SubmissionRuleType::SUBMIT_AND_Kill;
-  } else return -1;
-}
 
 int main (int argc, char* argv[] )
 {
@@ -225,7 +183,7 @@ int main (int argc, char* argv[] )
     bool operation_defined=false;
 
   try {
-    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_MDS_FILE, "MDS configuration file (initialize the MDS with the given configuration)",&conf_file);
+    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_MDS_FILE, "MDS configuration file (initialize the MDS with the given json configuration [old style])",&conf_file);
 
     ChaosMetadataServiceClient::getInstance()->init(argc, argv);
 
@@ -242,7 +200,7 @@ int main (int argc, char* argv[] )
         std::cout<<"* Initializing mds:"<< mds<<" with:"<<conf_file<<endl;
         ChaosMetadataServiceClient::getInstance()->addServerAddress(mds);
         operation_defined=true;
-        initialize_mds(conf_file);
+        initialize_from_old_mds(conf_file);
         return 0;
 
     }

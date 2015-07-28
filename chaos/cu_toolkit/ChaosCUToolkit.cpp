@@ -47,7 +47,7 @@ ChaosCUToolkit::ChaosCUToolkit() {
 	
 	GlobalConfiguration::getInstance()->addOption<bool>(CONTROL_MANAGER_UNIT_SERVER_ENABLE,
 														CONTROL_MANAGER_UNIT_SERVER_ENABLE_desc,
-														false);
+														true);
 	
 	GlobalConfiguration::getInstance()->addOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS,
 															   CONTROL_MANAGER_UNIT_SERVER_ALIAS_desc);

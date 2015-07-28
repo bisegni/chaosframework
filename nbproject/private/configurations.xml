@@ -172,6 +172,8 @@
                 </df>
                 <df name="node">
                 </df>
+                <df name="service">
+                </df>
                 <df name="unit_server">
                 </df>
               </df>
@@ -201,6 +203,8 @@
                 <df name="data_service">
                 </df>
                 <df name="node">
+                </df>
+                <df name="service">
                 </df>
                 <df name="unit_server">
                 </df>
@@ -257,6 +261,12 @@
         <df name="chaos_cli">
           <df name="CMakeFiles">
             <df name="ChaosCLI.dir">
+            </df>
+          </df>
+        </df>
+        <df name="ChaosMDSCmd">
+          <df name="CMakeFiles">
+            <df name="ChaosMDSCmd.dir">
             </df>
           </df>
         </df>
@@ -1443,6 +1453,12 @@
             <in>ProducerApiGroup.cpp</in>
             <in>ProducerRegisterApi.cpp</in>
           </df>
+          <df name="service">
+            <in>ResetAll.cpp</in>
+            <in>ResetAll.h</in>
+            <in>ServiceApiGroup.cpp</in>
+            <in>ServiceApiGroup.h</in>
+          </df>
           <df name="unit_server">
             <in>GetDescription.cpp</in>
             <in>GetDescription.h</in>
@@ -1597,6 +1613,10 @@
             <in>UpdateProperty.cpp</in>
             <in>UpdateProperty.h</in>
           </df>
+          <df name="service">
+            <in>ResetAll.cpp</in>
+            <in>ResetAll.h</in>
+          </df>
           <df name="unit_server">
             <in>GetDescription.cpp</in>
             <in>GetDescription.h</in>
@@ -1737,6 +1757,8 @@
         </df>
         <df name="CMakeTmp">
         </df>
+        <df name="Progress">
+        </df>
       </df>
       <df name="Documentation">
         <df name="html">
@@ -1784,6 +1806,22 @@
           <in>main.cpp</in>
         </df>
         <df name="ChaosMDSCmd">
+          <df name="build">
+          </df>
+          <df name="CMakeFiles">
+            <df name="2.8.12.2">
+              <df name="CompilerIdC">
+                <in>CMakeCCompilerId.c</in>
+              </df>
+              <df name="CompilerIdCXX">
+                <in>CMakeCXXCompilerId.cpp</in>
+              </df>
+            </df>
+            <df name="ChaosMDSCmd.dir">
+            </df>
+            <df name="CMakeTmp">
+            </df>
+          </df>
           <in>main.cpp</in>
         </df>
         <df name="ChaosPerformanceTester">
