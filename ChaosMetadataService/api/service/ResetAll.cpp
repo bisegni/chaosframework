@@ -25,7 +25,7 @@
 #define S_RA_ERR  ERR_LOG(ResetAll)
 
 using namespace chaos::common::data;
-using namespace chaos::metadata_service::api::healt;
+using namespace chaos::metadata_service::api::service;
 using namespace chaos::metadata_service::persistence::data_access;
 
 typedef std::vector< boost::shared_ptr<CDataWrapper> > ResultVector;

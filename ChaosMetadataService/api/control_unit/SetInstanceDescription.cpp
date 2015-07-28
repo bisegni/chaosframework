@@ -71,11 +71,11 @@ chaos::common::data::CDataWrapper *SetInstanceDescription::execute(chaos::common
     auto_ptr<CDataWrapper> instance_desc(api_data->getCSDataValue("instance_description"));
         //insert the instance
     if(!instance_desc->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)) {
-        LOG_AND_TROW(CUCUI_ERR, -3, "The instance description need to have the unique id of the parent unit server.")
+        LOG_AND_TROW(CUCUI_ERR, -5, "The instance description need to have the unique id of the parent unit server.")
     }
 
     if(!instance_desc->hasKey("control_unit_implementation")) {
-        LOG_AND_TROW(CUCUI_ERR, -3, "The control unit implementaiton is mandatory within the instance description")
+        LOG_AND_TROW(CUCUI_ERR, -6, "The control unit implementaiton is mandatory within the instance description")
     }
         //
     if((err = cu_da->setInstanceDescription(api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID), *instance_desc.get()))) {

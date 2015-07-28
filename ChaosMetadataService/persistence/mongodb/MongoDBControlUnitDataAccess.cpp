@@ -464,7 +464,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         mongo::BSONObj update = BSON("$set" << BSON("instance_description" << updated_field.obj()));
         
         DEBUG_CODE(MDBCUDA_DBG<<log_message("getInstanceDescription",
-                                            "findOne",
+                                            "update",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "Update",
                                                                     query.toString(),
@@ -473,7 +473,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
-            MDBCUDA_ERR << "Error updating unit server";
+            MDBCUDA_ERR << "Error updating unit server with code:" << err;
         }
     } catch (const mongo::DBException &e) {
         MDBCUDA_ERR << e.what();

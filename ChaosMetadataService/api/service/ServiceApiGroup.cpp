@@ -19,7 +19,7 @@
  */
 
 #include "ServiceApiGroup.h"
-#include "ResetAll"
+#include "ResetAll.h"
 
 using namespace chaos::metadata_service::api::service;
 

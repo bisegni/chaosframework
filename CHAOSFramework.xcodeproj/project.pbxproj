@@ -356,7 +356,6 @@
 		32761A3C1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A3A1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp */; };
 		32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32761A3E1B37F202006C8719 /* SubmitBatchCommand.cpp */; };
 		327791E21B67728300FEDD52 /* ServiceApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327791E01B67728300FEDD52 /* ServiceApiGroup.cpp */; };
-		327791E51B67731700FEDD52 /* ResetAllApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327791E31B67731700FEDD52 /* ResetAllApi.cpp */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
 		327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B715DFAAF40003C6DA /* RpcServer.cpp */; };
 		327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967D315E029C70003C6DA /* AsioImplEventServer.cpp */; };
@@ -500,6 +499,7 @@
 		32ABC26B1A73FB83008DB3A7 /* ObjectQueueTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ABC2691A73FB83008DB3A7 /* ObjectQueueTest.h */; };
 		32AE8BA31B678C1500FAC528 /* ResetAll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AE8BA11B678C1500FAC528 /* ResetAll.cpp */; };
 		32AE8BA41B678C1500FAC528 /* ResetAll.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AE8BA21B678C1500FAC528 /* ResetAll.h */; };
+		32AE8BA71B67B4A100FAC528 /* ResetAll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AE8BA51B67B4A100FAC528 /* ResetAll.cpp */; };
 		32AF7D4018DAEAF300537DE6 /* PerformanceNodeChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AF7D3E18DAEAF300537DE6 /* PerformanceNodeChannel.cpp */; };
 		32AF7D4118DAEAF300537DE6 /* PerformanceNodeChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AF7D3F18DAEAF300537DE6 /* PerformanceNodeChannel.h */; };
 		32AFEB3919BDDACF00AF49F4 /* QueryEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AFEB3719BDDACF00AF49F4 /* QueryEngine.cpp */; };
@@ -1190,8 +1190,6 @@
 		32761A3F1B37F202006C8719 /* SubmitBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubmitBatchCommand.h; sourceTree = "<group>"; };
 		327791E01B67728300FEDD52 /* ServiceApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceApiGroup.cpp; sourceTree = "<group>"; };
 		327791E11B67728300FEDD52 /* ServiceApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceApiGroup.h; sourceTree = "<group>"; };
-		327791E31B67731700FEDD52 /* ResetAllApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResetAllApi.cpp; sourceTree = "<group>"; };
-		327791E41B67731700FEDD52 /* ResetAllApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResetAllApi.h; sourceTree = "<group>"; };
 		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcClient.cpp; sourceTree = "<group>"; };
 		327967B715DFAAF40003C6DA /* RpcServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServer.cpp; sourceTree = "<group>"; };
 		327967D315E029C70003C6DA /* AsioImplEventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioImplEventServer.cpp; sourceTree = "<group>"; };
@@ -1381,6 +1379,8 @@
 		32ABC2691A73FB83008DB3A7 /* ObjectQueueTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectQueueTest.h; sourceTree = "<group>"; };
 		32AE8BA11B678C1500FAC528 /* ResetAll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResetAll.cpp; sourceTree = "<group>"; };
 		32AE8BA21B678C1500FAC528 /* ResetAll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResetAll.h; sourceTree = "<group>"; };
+		32AE8BA51B67B4A100FAC528 /* ResetAll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResetAll.cpp; sourceTree = "<group>"; };
+		32AE8BA61B67B4A100FAC528 /* ResetAll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResetAll.h; sourceTree = "<group>"; };
 		32AF7D3E18DAEAF300537DE6 /* PerformanceNodeChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceNodeChannel.cpp; sourceTree = "<group>"; };
 		32AF7D3F18DAEAF300537DE6 /* PerformanceNodeChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceNodeChannel.h; sourceTree = "<group>"; };
 		32AFEB3719BDDACF00AF49F4 /* QueryEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryEngine.cpp; sourceTree = "<group>"; };
@@ -2935,8 +2935,8 @@
 			children = (
 				327791E01B67728300FEDD52 /* ServiceApiGroup.cpp */,
 				327791E11B67728300FEDD52 /* ServiceApiGroup.h */,
-				327791E31B67731700FEDD52 /* ResetAllApi.cpp */,
-				327791E41B67731700FEDD52 /* ResetAllApi.h */,
+				32AE8BA51B67B4A100FAC528 /* ResetAll.cpp */,
+				32AE8BA61B67B4A100FAC528 /* ResetAll.h */,
 			);
 			path = service;
 			sourceTree = "<group>";
@@ -4255,6 +4255,7 @@
 				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
 				32809C791A9C79DE00C02C12 /* UtilityDataAccess.cpp in Sources */,
 				32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */,
+				32AE8BA71B67B4A100FAC528 /* ResetAll.cpp in Sources */,
 				325FC85A1AF77A7900DB9D66 /* NewUS.cpp in Sources */,
 				324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */,
 				327F39A01AEA47980000C845 /* GetAssociationByDS.cpp in Sources */,
@@ -4262,7 +4263,6 @@
 				320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */,
 				32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */,
 				3235FDCA1A6FF45600EC83A9 /* GetDescription.cpp in Sources */,
-				327791E51B67731700FEDD52 /* ResetAllApi.cpp in Sources */,
 				325FC8611AF7C8B200DB9D66 /* GetCurrentDataset.cpp in Sources */,
 				3235FDD91A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp in Sources */,
 				327F39A31AEA49C00000C845 /* DeleteDS.cpp in Sources */,

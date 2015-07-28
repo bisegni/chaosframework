@@ -26,7 +26,7 @@
 namespace chaos {
     namespace metadata_service {
         namespace api {
-            namespace healt {
+            namespace service {
 
                 //! Reset all the metadata service database data
                 /*!
