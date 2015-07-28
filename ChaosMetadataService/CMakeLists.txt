@@ -14,7 +14,8 @@ SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
                         api/AbstractApi.cpp
                         api/AbstractApiGroup.cpp)
 
-SET(cnd_src  ${cnd_src}	api/service/ResetAll.cpp)
+SET(cnd_src  ${cnd_src}	api/service/ServiceApiGroup.cpp
+												api/service/ResetAll.cpp)
 
 SET(cnd_src  ${cnd_src}	api/healt/HealtApiGroup.cpp
                         api/healt/ProcessHello.cpp

@@ -160,8 +160,8 @@ int initialize_mds(std::string conf){
              EXECUTE_CHAOS_API(api_proxy::unit_server::NewUS,3000,unit_server_alias);
 
              CMultiTypeDataArrayWrapper* cu_l=usw->getVectorValue("cu_desc");
-             api_proxy::control_unit::SetInstanceDescriptionHelper cud;
              for(int cui=0;(cu_l !=NULL) && (cui<cu_l->size());cui++){
+                 api_proxy::control_unit::SetInstanceDescriptionHelper cud;
                  CDataWrapper* cuw=cu_l->getCDataWrapperElementAtIndex(cui);
                  GET_CONFIG_STRING(cuw,cu_id);
                  GET_CONFIG_STRING(cuw,cu_type);
