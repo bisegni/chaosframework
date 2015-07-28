@@ -53,6 +53,10 @@ ADD_SUBDIRECTORY(ChaosDataExport bin/chaos_cde)
 message(STATUS "Configure Chaos CLI")
 ADD_SUBDIRECTORY(example/ChaosCLI bin/chaos_cli)
 
+
+message(STATUS "Configure Chaos ChaosMDSCmd")
+ADD_SUBDIRECTORY(example/ChaosMDSCmd bin/ChaosMDSCmd)
+
 message(STATUS "Configure Chaos Performance Tester")
 ADD_SUBDIRECTORY(example/ChaosPerformanceTester bin/ChaosPerformanceTester)
 

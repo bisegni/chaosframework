@@ -97,7 +97,7 @@ SetInstanceDescriptionHelper::~SetInstanceDescriptionHelper() {
 }
 
     //!add a new driver description
-void SetInstanceDescriptionHelper::addDriverDesscription(const std::string& driver_name,
+void SetInstanceDescriptionHelper::addDriverDescription(const std::string& driver_name,
                                                          const std::string& driver_version,
                                                          const std::string& driver_init_parameter) {
     auto_ptr<CDataWrapper> dd(new CDataWrapper());

@@ -122,8 +122,10 @@ void CDataWrapper::finalizeArrayForKey(const std::string& key) {
 //return a vectorvalue for a key
 CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const std::string& key) {
 	try {
+            if(bsonBuilder->asTempObj().hasElement(key))
 		return new CMultiTypeDataArrayWrapper(bsonBuilder->asTempObj().getField(key).Array());
-	} catch (bson::UserException& ex) {
+            
+	} catch (...) {
 	}
 	return NULL;
 }

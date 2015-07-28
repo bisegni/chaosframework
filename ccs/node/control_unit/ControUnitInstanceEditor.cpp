@@ -120,7 +120,7 @@ control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSet
         QString drv_name = table_model_driver_spec->item(idx, 0)->text();
         QString drv_vers = table_model_driver_spec->item(idx, 1)->text();
         QString drv_init = table_model_driver_spec->item(idx, 2)->text();
-        set_instance_api_hepler.addDriverDesscription(drv_name.toStdString(),
+        set_instance_api_hepler.addDriverDescription(drv_name.toStdString(),
                                                       drv_vers.toStdString(),
                                                       drv_init.toStdString());
         qDebug() << "Added driver description for: "<< drv_name << "-" << drv_vers <<"-"<<drv_init;

@@ -65,7 +65,7 @@ namespace chaos {
 
 
                         //!add a new driver description
-                    void addDriverDesscription(const std::string& driver_name,
+                    void addDriverDescription(const std::string& driver_name,
                                                const std::string& driver_version,
                                                const std::string& driver_init_parameter);
 

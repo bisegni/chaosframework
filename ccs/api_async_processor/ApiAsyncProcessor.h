@@ -8,8 +8,6 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
-#define GET_CHAOS_API_PTR(api_name)\
-    chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->getApiProxy<api_name>()
 
 class ApiAsyncProcessor:
         public QObject

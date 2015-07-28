@@ -30,6 +30,9 @@
 #include <string>
 #include <vector>
 
+#define GET_CHAOS_API_PTR(api_name)\
+    chaos::metadata_service_client::ChaosMetadataServiceClient::getInstance()->getApiProxy<api_name>()
+
 namespace chaos {
     namespace metadata_service_client {
             //! forward declaration

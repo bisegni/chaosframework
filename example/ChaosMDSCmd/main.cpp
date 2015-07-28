@@ -22,6 +22,10 @@
 #include <vector>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/NewUS.h>
+#include <ChaosMetadataServiceClient/api_proxy/unit_server/ManageCUType.h>
+
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInstanceDescription.h>
+
 #include <chaos/common/global.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/chaos_constants.h>
@@ -68,14 +72,25 @@ namespace chaos_batch = chaos::common::batch_command;
 //--------------rt control unit option--------------------------------------------------
 #define OPT_RT_ATTRIBUTE_VALUE							"rt-attr-val"
 
+    //throw CException(r->getError(),__FUNCTION__,r->getErrorMessage());
 
 #define EXECUTE_CHAOS_API(api_name,time_out,...) {\
 chaos::metadata_service_client::api_proxy::ApiProxyResult r=  GET_CHAOS_API_PTR(api_name)->execute( __VA_ARGS__ );\
 r->setTimeout(time_out);\
 r->wait();\
 if(r->getError()){\
-    throw CException(r->getError(),__FUNCTION__,r->getErrorMessage());\
+    std::cerr<<" error in :"<<__FUNCTION__<<" " <<r->getErrorMessage()<<std::endl;\
 }}
+
+#define GET_CONFIG_STRING(what,attr) \
+std::string attr=(what)->getStringValue( # attr);\
+std::cout<<" :" # attr <<" ="<<attr<<std::endl;
+
+#define GET_CONFIG_INT(what,attr) \
+int32_t attr=(what)->getInt32Value(# attr);
+
+#define GET_CONFIG_BOOL(what,attr) \
+bool attr=(what)->getBoolValue( # attr);
 
 inline ptime utcToLocalPTime(ptime utcPTime){
   c_local_adjustor<ptime> utcToLocalAdjustor;
@@ -109,7 +124,7 @@ int initialize_mds(std::string conf){
     std::stringstream stringa;
     std::ifstream f(conf.c_str());
     if(f.fail()){
-        throw CException(-3,"initialize_mds","Cannot open file:"+ conf);
+       throw CException(-3,__FUNCTION__,"Cannot open file:"+ conf);
     }
     std::cout<<"* reading:"<<conf<<std::endl;
     stringa << f.rdbuf();
@@ -124,26 +139,62 @@ int initialize_mds(std::string conf){
     CMultiTypeDataArrayWrapper* data_servers=mdsconf.getVectorValue("data_servers");
     if(data_servers){
          for(int cnt=0;cnt<data_servers->size();cnt++){
-            std::string name=data_servers->getCDataWrapperElementAtIndex(cnt)->getStringValue("hostname");
-            int id = data_servers->getCDataWrapperElementAtIndex(cnt)->getInt32Value("id_server");
-            std::cout<<"* found dataserver["<<cnt<<"]:"<<name<<" id:"<<id<<std::endl;
-            EXECUTE_CHAOS_API(api_proxy::data_service::UpdateDS,3000,name,name,id);
-           // chaos::metadata_service_client::api_proxy::ApiProxyResult r= GET_CHAOS_API_PTR(api_proxy::data_service::UpdateDS)->execute(name,name,id);
-             EXECUTE_CHAOS_API(api_proxy::data_service::NewDS,3000,name,name,id);
-            //GET_CHAOS_API_PTR(api_proxy::data_service::NewDS)->execute(name,name,id);
-           
+            GET_CONFIG_STRING(data_servers->getCDataWrapperElementAtIndex(cnt),hostname);
+            GET_CONFIG_INT(data_servers->getCDataWrapperElementAtIndex(cnt),id_server);
+            std::cout<<"* found dataserver["<<cnt<<"]:"<<hostname<<" id:"<<id_server<<std::endl;
+            EXECUTE_CHAOS_API(api_proxy::data_service::UpdateDS,3000,hostname,hostname,id_server);
+            EXECUTE_CHAOS_API(api_proxy::data_service::NewDS,3000,hostname,hostname,id_server);
 
         }
     }
 
     CMultiTypeDataArrayWrapper* us=mdsconf.getVectorValue("us");
     if(us){
-        for(int cnt=0;cnt<us->size();cnt++){
-            std::string name=us->getCDataWrapperElementAtIndex(cnt)->getStringValue("unit_server_alias");
-            std::cout<<"* found us["<<cnt<<"]:"<<name<<std::endl;
+        for(int cnt=0;(us!=NULL)&&(cnt<us->size());cnt++){
+            GET_CONFIG_STRING(us->getCDataWrapperElementAtIndex(cnt),unit_server_alias);
+            std::cout<<"* found us["<<cnt<<"]:"<<unit_server_alias<<std::endl;
             //GET_CHAOS_API_PTR(api_proxy::unit_server::NewUS)->execute(usname.c_str());
-             EXECUTE_CHAOS_API(api_proxy::unit_server::NewUS,3000,name);
+             EXECUTE_CHAOS_API(api_proxy::unit_server::NewUS,3000,unit_server_alias);
+       
+             CMultiTypeDataArrayWrapper* cu_l=mdsconf.getVectorValue("cu_desc");
+             api_proxy::control_unit::SetInstanceDescriptionHelper cud;
+             for(int cui=0;(cu_l !=NULL) && (cui<cu_l->size());cui++){
+                 CDataWrapper* cuw=cu_l->getCDataWrapperElementAtIndex(cui);
+                 GET_CONFIG_STRING(cuw,cu_id);
+                 GET_CONFIG_STRING(cuw,cu_type);
+                 GET_CONFIG_STRING(cuw,cu_param);
+                 GET_CONFIG_BOOL(cuw,auto_load);
+                 cud.load_parameter = cu_param;
+                 cud.control_unit_uid=cu_id;
+                 cud.unit_server_uid=unit_server_alias;
+                 cud.control_unit_implementation=cu_type;
+                 EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,0);
 
+                 // drivers
+                 CMultiTypeDataArrayWrapper* drv_l=cuw->getVectorValue("DriverDescription");
+                 for(int drv=0;(drv_l !=NULL) && (drv<drv_l->size());drv++){
+                    CDataWrapper* drv_w=drv_l->getCDataWrapperElementAtIndex(drv);
+
+                    GET_CONFIG_STRING(drv_w,DriverDescriptionName);
+                    GET_CONFIG_STRING(drv_w,DriverDescriptionVersion);
+                    GET_CONFIG_STRING(drv_w,DriverDescriptionInitParam);       
+                    cud.addDriverDescription(DriverDescriptionName,DriverDescriptionVersion,DriverDescriptionInitParam);
+                 }
+                 //attributes
+                 CMultiTypeDataArrayWrapper* attr_l=cuw->getVectorValue("AttrDesc");
+                 for(int attr=0;(attr_l !=NULL) && (attr<attr_l->size());attr++){
+                    CDataWrapper* attr_w=attr_l->getCDataWrapperElementAtIndex(attr);
+
+                    GET_CONFIG_STRING(attr_w,ds_attr_name);
+                    GET_CONFIG_STRING(attr_w,ds_default_value);
+                    GET_CONFIG_STRING(attr_w,ds_max_range); 
+                    GET_CONFIG_STRING(attr_w,ds_min_range);       
+
+                    cud.addAttributeConfig(ds_attr_name,ds_default_value,ds_max_range,ds_min_range);
+                 }
+                 
+                 EXECUTE_CHAOS_API(api_proxy::control_unit::SetInstanceDescription,3000,cud);
+             }
         }
     }
     

@@ -34,5 +34,10 @@
             <file>file:/home/michelo/progetti/chaos_bundle/chaosframework/chaos/common/event/EventServer.h</file>
         </group>
         <group name="CHAOS"/>
+        <group name="CHAOS_BUNDLE_DEVELOPMENT">
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/ChaosMetadataServiceClient/ChaosMetadataServiceClient.cpp</file>
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/ChaosMetadataServiceClient/ChaosMetadataServiceClient.h</file>
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/ChaosMetadataServiceClient/CMakeLists.txt</file>
+        </group>
     </open-files>
 </project-private>
