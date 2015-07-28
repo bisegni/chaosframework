@@ -786,7 +786,6 @@ int MongoDBControlUnitDataAccess::getDataServiceAssociated(const std::string& cu
                                                                     "projection",
                                                                     q.toString(),
                                                                     p.jsonString()));)
-        //remove the field of the document
         connection->findN(result,
                           MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                           q,

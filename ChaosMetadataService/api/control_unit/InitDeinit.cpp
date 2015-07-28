@@ -148,6 +148,15 @@ void InitDeinit::initialize(const std::string& cu_uid) {
                                               associated_ds))){
         LOG_AND_TROW(CU_INDEIN_ERR, err, boost::str(boost::format("Error loading the associated data service for the control unit %1%") % cu_uid));
     }
+    
+    //check if we have found some
+    if(associated_ds.size() == 0) {
+        CU_INDEIN_DBG << "No dataservice has been found for control unit:" << cu_uid <<" so we need to get the best tree of them";
+        //no we need to get tbest tree available cds to retun publishable address
+        if((err = ds_da->getBestNDataService(associated_ds, 3))) {
+            LOG_AND_TROW(CU_INDEIN_ERR, err, boost::str(boost::format("Error fetching %2% best available data service for inititializing the control unit:%1%") % cu_uid % 3));
+        }
+    }
 
         //whe have all now we can compose the datapack to send in ckaground
     std:auto_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));

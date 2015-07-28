@@ -71,6 +71,12 @@ namespace chaos {
 
                     virtual int getBestNDataService(std::vector<boost::shared_ptr<common::data::CDataWrapper> >&  best_available_data_service,
                                                     unsigned int numerb_of_result = 3) = 0;
+                    
+                    virtual int getBestNDataService(std::vector<std::string >&  best_available_data_service,
+                                                    unsigned int numerb_of_result = 3) = 0;
+                    
+                    virtual int getBestNDataServiceEndpoint(std::vector<std::string >&  best_available_data_service_endpoint,
+                                                            unsigned int numerb_of_result = 3) = 0;
                 };
 
             }
