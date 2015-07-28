@@ -1,5 +1,5 @@
 /*
- *	HealtApiGroup.cpp
+ *	ServiceApiGroup.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,21 +18,17 @@
  *    	limitations under the License.
  */
 
-#include "HealtApiGroup.h"
-#include "ProcessHello.h"
-#include "ProcessBye.h"
+#include "ServiceApiGroup.h"
 
-using namespace chaos::metadata_service::api::healt;
+using namespace chaos::metadata_service::api::service;
 
-DEFINE_CLASS_FACTORY_NO_ALIAS(HealtApiGroup,
+DEFINE_CLASS_FACTORY_NO_ALIAS(ServiceApiGroup,
                               chaos::metadata_service::api::AbstractApiGroup);
 
-HealtApiGroup::HealtApiGroup():
-AbstractApiGroup(chaos::HealtProcessDomainAndActionRPC::RPC_DOMAIN){
-    addApi<ProcessHello>();
-    addApi<ProcessBye>();
+ServiceApiGroup::ServiceApiGroup():
+AbstractApiGroup("service"){
 }
 
-HealtApiGroup::~HealtApiGroup() {
+ServiceApiGroup::~ServiceApiGroup() {
     
 }

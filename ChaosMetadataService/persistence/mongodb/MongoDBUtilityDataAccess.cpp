@@ -87,3 +87,31 @@ int MongoDBUtilityDataAccess::getNextSequenceValue(const std::string& sequence_n
     }
     return err;
 }
+
+int MongoDBUtilityDataAccess::resetAllData() {
+    int err = 0;
+    try {
+        mongo::BSONObj q;
+        
+        MDBUDA_DBG<<"Start resetting mds data";
+        
+        
+        const char* const collection[] = {MONGODB_COLLECTION_SEQUENCES,
+            MONGODB_COLLECTION_NODES,
+            MONGODB_COLLECTION_NODES_COMMAND,
+            MONGODB_COLLECTION_NODES_COMMAND_TEMPLATE};
+        
+        for(int idx = 0;
+            idx < 4;
+            idx++) {
+            MDBUDA_DBG<<"Remove all documents for:" << collection[idx];
+            if((err = connection->remove(MONGO_DB_COLLECTION_NAME(collection[idx]), q, false))) {
+                MDBUDA_ERR << "Error removing all documents from:" << collection[idx];
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        MDBUDA_ERR << e.what();
+        err = -1;
+    }
+    return err;
+}

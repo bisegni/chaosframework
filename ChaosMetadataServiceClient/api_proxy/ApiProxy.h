@@ -76,7 +76,7 @@ x::~x(){}
                  preform an call of an api and return the opportune future
                  that permit to inspect the result or error
                  */
-                ApiProxyResult callApi(chaos::common::data::CDataWrapper *api_message);
+                ApiProxyResult callApi(chaos::common::data::CDataWrapper *api_message = NULL);
             };
         }
     }

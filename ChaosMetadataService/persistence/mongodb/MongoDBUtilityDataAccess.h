@@ -42,8 +42,10 @@ namespace chaos {
                     ~MongoDBUtilityDataAccess();
                 public:
                     //inherited method
-                    virtual int getNextSequenceValue(const std::string& sequence_name, uint64_t& next_value);
+                    int getNextSequenceValue(const std::string& sequence_name, uint64_t& next_value);
 
+                    //inherited method
+                    int resetAllData();
                 };
                 
                 

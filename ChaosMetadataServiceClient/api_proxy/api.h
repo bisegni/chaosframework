@@ -24,6 +24,9 @@
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 
 //---include all api header
+//----------------------------servcie----------------------------------------
+#include <ChaosMetadataServiceClient/api_proxy/service/ResetAll.h>
+
 //----------------------------data service nodes---------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/data_service/NewDS.h>
 #include <ChaosMetadataServiceClient/api_proxy/data_service/UpdateDS.h>

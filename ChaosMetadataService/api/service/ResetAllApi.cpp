@@ -1,5 +1,5 @@
 /*
- *	HealtApiGroup.cpp
+ *	ResetAllApi.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,21 +18,32 @@
  *    	limitations under the License.
  */
 
-#include "HealtApiGroup.h"
-#include "ProcessHello.h"
-#include "ProcessBye.h"
+#include "ResetAllApi.h"
 
+#define S_RA_INFO INFO_LOG(ResetAllApi)
+#define S_RA_DBG  DBG_LOG(ResetAllApi)
+#define S_RA_ERR  ERR_LOG(ResetAllApi)
+
+using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::healt;
+using namespace chaos::metadata_service::persistence::data_access;
 
-DEFINE_CLASS_FACTORY_NO_ALIAS(HealtApiGroup,
-                              chaos::metadata_service::api::AbstractApiGroup);
+typedef std::vector< boost::shared_ptr<CDataWrapper> > ResultVector;
 
-HealtApiGroup::HealtApiGroup():
-AbstractApiGroup(chaos::HealtProcessDomainAndActionRPC::RPC_DOMAIN){
-    addApi<ProcessHello>();
-    addApi<ProcessBye>();
+ResetAllApi::ResetAllApi():
+AbstractApi("resetAll"){
+    
 }
 
-HealtApiGroup::~HealtApiGroup() {
+ResetAllApi::~ResetAllApi() {
     
+}
+
+chaos::common::data::CDataWrapper *ResetAllApi::execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data) {
+    int err = 0;
+    GET_DATA_ACCESS(UtilityDataAccess, u_da, -1);
+    if((err = u_da->resetAllData())) {
+        LOG_AND_TROW(S_RA_ERR, err, "Error resetting all data");
+    }
+    return NULL;
 }
