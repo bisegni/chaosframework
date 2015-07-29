@@ -377,7 +377,7 @@ int MongoDBControlUnitDataAccess::getDataset(const std::string& cu_unique_id,
 }
 
 int MongoDBControlUnitDataAccess::setCommandDescription(chaos::common::data::CDataWrapper& command_description) {
-    
+    return -1;
 }
 
 int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_unique_id,

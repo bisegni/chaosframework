@@ -35,6 +35,23 @@ namespace chaos {
 x *v = getPersistenceDriver()->getDataAccess<x>();\
 if(v == NULL) throw CException(err, "Error allocating " #x, __PRETTY_FUNCTION__);
 
+#define MOVE_STRING_VALUE(k, src, dst)\
+if(src->hasKey(k)) {\
+dst->addStringValue(k, src->getStringValue(k));\
+}
+            
+#define MERGE_STRING_VALUE(k, src, src2, dst)\
+if(src2->hasKey(k)) {\
+dst->addStringValue(k, src2->getStringValue(k));\
+} else {\
+MOVE_STRING_VALUE(k, src, dst)\
+}
+            
+#define MOVE_INT32_VALUE(k, src, dst)\
+if(src->hasKey(k)) {\
+dst->addInt32Value(k, src->getInt32Value(k));\
+}
+
             class AbstractApiGroup;
             
 			//! Api abstraction

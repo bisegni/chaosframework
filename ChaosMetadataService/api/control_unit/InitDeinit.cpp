@@ -31,23 +31,6 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define CU_INDEIN_DBG  DBG_LOG(InitDeinit)
 #define CU_INDEIN_ERR  ERR_LOG(InitDeinit)
 
-#define MOVE_STRING_VALUE(k, src, dst)\
-if(src->hasKey(k)) {\
-dst->addStringValue(k, src->getStringValue(k));\
-}
-
-#define MERGE_STRING_VALUE(k, src, src2, dst)\
-if(src2->hasKey(k)) {\
-dst->addStringValue(k, src2->getStringValue(k));\
-} else {\
-MOVE_STRING_VALUE(k, src, dst)\
-}
-
-#define MOVE_INT32_VALUE(k, src, dst)\
-if(src->hasKey(k)) {\
-dst->addInt32Value(k, src->getInt32Value(k));\
-}
-
 InitDeinit::InitDeinit():
 AbstractApi("initDeinit"){
 
@@ -87,9 +70,9 @@ boost::shared_ptr<CDataWrapper> InitDeinit::mergeDatasetAttributeWithSetup(boost
     MERGE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, element_in_dataset, element_in_setup, result)
     MERGE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, element_in_dataset, element_in_setup, result)
     MERGE_STRING_VALUE(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, element_in_dataset, element_in_setup, result)
-    CU_INDEIN_INFO << element_in_dataset->getJSONString();
-    CU_INDEIN_INFO << element_in_setup->getJSONString();
-    CU_INDEIN_INFO << result->getJSONString();
+    DEBUG_CODE(CU_INDEIN_INFO << element_in_dataset->getJSONString();)
+    DEBUG_CODE(CU_INDEIN_INFO << element_in_setup->getJSONString();)
+    DEBUG_CODE(CU_INDEIN_INFO << result->getJSONString();)
     return result;
 }
 
