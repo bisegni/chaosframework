@@ -144,10 +144,16 @@ void ControlUnitEditor::initUI() {
     ui->labelControlUnitStatus->setNodeUniqueID(control_unit_unique_id);
     ui->labelControlUnitStatus->setTrackStatus(true);
     ui->labelControlUnitStatus->setLabelValueShowTrackStatus(true);
+    connect(ui->labelControlUnitStatus,
+            SIGNAL(valueChanged(QString,QString)),
+            SLOT(changedNodeState(QString,QString)));
 
     //unit server status
     ui->labelUnitServerStatus->setTrackStatus(true);
     ui->labelUnitServerStatus->setLabelValueShowTrackStatus(true);
+    connect(ui->labelUnitServerStatus,
+            SIGNAL(valueChanged(QString,QString)),
+            SLOT(changedNodeState(QString,QString)));
 
     //show the current thread schedule delay
     ui->labelRunScheduleDelaySet->setNodeUniqueID(control_unit_unique_id);
@@ -195,7 +201,7 @@ void ControlUnitEditor::updateAllControlUnitInfomration() {
 
 void ControlUnitEditor::manageMonitoring(bool start) {
     if(start){
-       ui->labelControlUnitStatus->startMonitoring();
+        ui->labelControlUnitStatus->startMonitoring();
         ui->labelRunScheduleDelaySet->startMonitoring();
         ui->ledIndicatorHealtTSControlUnit->startMonitoring();
     }else{
@@ -213,13 +219,31 @@ void ControlUnitEditor::manageMonitoring(bool start) {
 
 void ControlUnitEditor::changedOnlineStatus(const QString& node_uid,
                                             CLedIndicatorHealt::AliveState node_alive_state) {
-    qDebug()<< "change online status for:" << node_uid << " as:" <<node_alive_state;
     if(node_uid.compare(control_unit_unique_id) == 0) {
+        if(node_alive_state == CLedIndicatorHealt::Online) {
+            //Control unit has becomed online so we need to reload all information
+            updateAllControlUnitInfomration();
+        }
         //state changed for control unit
+        qDebug()<< "change cu online status for:" << node_uid << " as:" <<getStatusString(ui->ledIndicatorHealtTSControlUnit->getState());
         logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(ui->ledIndicatorHealtTSControlUnit->getState()));
     } else if(node_uid.compare(unit_server_parent_unique_id) == 0) {
         //state changed for unit server
+        qDebug()<< "change us online status for:" << node_uid << " as:" <<getStatusString(ui->ledIndicatorHealtTSUnitServer->getState());
         logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(ui->ledIndicatorHealtTSUnitServer->getState()));
+    }
+}
+
+void ControlUnitEditor::changedNodeState(const QString& node_uid,
+                                         const QString& value) {
+    if(node_uid.compare(control_unit_unique_id) == 0) {
+        //state changed for control unit
+        qDebug()<< "change cu state for:" << node_uid << " as:" <<value;
+        logic_switch_aggregator.broadcastCurrentValueForKey("cu_state", value);
+    } else if(node_uid.compare(unit_server_parent_unique_id) == 0) {
+        //state changed for unit server
+        qDebug()<< "change us state for:" << node_uid << " as:" <<value;
+        logic_switch_aggregator.broadcastCurrentValueForKey("us_state", value);
     }
 }
 
@@ -257,7 +281,7 @@ void ControlUnitEditor::onApiDone(const QString& tag,
                 //whe ahve unit server changed
                 if(unit_server_parent_unique_id.size()) {
                     //remove old unit server for healt
-                     ui->labelUnitServerStatus->stopMonitoring();
+                    ui->labelUnitServerStatus->stopMonitoring();
                     ui->ledIndicatorHealtTSUnitServer->stopMonitoring();
                 }
                 unit_server_parent_unique_id = new_u_s;

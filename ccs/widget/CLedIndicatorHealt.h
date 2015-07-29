@@ -16,6 +16,7 @@ class CLedIndicatorHealt :
     Q_ENUMS(AliveState)
 public:
     enum AliveState {
+        Stopped,
         Indeterminated,
         Offline,
         Online

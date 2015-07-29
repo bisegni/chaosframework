@@ -156,7 +156,6 @@ int DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
     CHAOS_ASSERT(job_ptr->request_header)
     CHAOS_ASSERT(job_ptr->data_pack)
     CHAOS_ASSERT(cache_driver_ptr)
-    CHAOS_ASSERT(vfs_manager_instance)
     
 	switch(job_ptr->request_header->tag) {
 		case 0:// storicize only
@@ -185,8 +184,7 @@ int DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
 		}
 	}
 	
-	if(job_ptr->request_header->tag == 1 ||
-	   !vfs_manager_instance) {
+	if(job_ptr->request_header->tag == 1) {
 		free(job_ptr->request_header);
 		free(job_ptr->data_pack);
 		free(job_info);

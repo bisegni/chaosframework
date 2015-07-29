@@ -17,7 +17,7 @@ protected:
         //emit new value
         emit valueUpdated(QString::fromStdString(key),
                           QString::fromStdString(attribute),
-                          QVariant::fromValue<QSharedPointer<ChaosByteArray> >(QSharedPointer<ChaosByteArray>(new ChaosByteArray(value))));
+                          value);
     }
     void consumeValueNotFound(const std::string& key,
                               const std::string& attribute) {
@@ -25,6 +25,10 @@ protected:
         emit valueNotFound(QString::fromStdString(key),
                           QString::fromStdString(attribute));
     }
+signals:
+    void valueUpdated(const QString& key,
+                      const QString& attribute_name,
+                      const boost::shared_ptr<chaos::common::data::SerializationBuffer>& value);
 public:
     MonitorBinaryAttributeHandler(const QString& attribute_name,
                                   bool event_on_change = false):

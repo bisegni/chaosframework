@@ -139,7 +139,7 @@ void ChaosLabel::valueUpdated(const QString& node_uid,
         //write the value
         setToolTip(attribute_value.toString());
         if(labelValueShowTrackStatus())
-            QLabel::setText(attribute_value.toString());
+            setText(attribute_value.toString());
     }
 }
 
@@ -163,4 +163,9 @@ void	ChaosLabel::setNum(int num){QLabel::setNum(num);}
 void	ChaosLabel::setNum(double num){QLabel::setNum(num);}
 void	ChaosLabel::setPicture(const QPicture & picture){QLabel::picture();}
 void	ChaosLabel::setPixmap(const QPixmap &pixmap){QLabel::setPixmap(pixmap);}
-void	ChaosLabel::setText(const QString &string){QLabel::setText(string);}
+void	ChaosLabel::setText(const QString &string){
+    if(text().compare(string) == 0) return;
+    QLabel::setText(string);
+    emit valueChanged(nodeUniqueID(),
+                      string);
+}

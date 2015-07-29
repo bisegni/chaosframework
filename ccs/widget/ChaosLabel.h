@@ -63,7 +63,7 @@ public:
     virtual int stopMonitoring();
 
     bool isOnline();
-        void	setText(const QString &string);
+    void	setText(const QString &string);
 protected slots:
     virtual void valueUpdated(const QString& node_uid,
                               const QString& attribute_name,
@@ -81,6 +81,8 @@ signals:
                               const QString& new_attribute_name);
     void attributeTypeChanged(ChaosDataType last_type,
                               ChaosDataType new_type);
+    void valueChanged(const QString& node_uid,
+                      const QString& value);
 protected:
     bool monitoring;
     HealthHartbeatHandler healt_heartbeat_handler;

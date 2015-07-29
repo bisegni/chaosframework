@@ -12,7 +12,7 @@ CLedIndicatorHealt::CLedIndicatorHealt(QWidget *parent):
     timeouted(new QIcon(":/images/red_circle_indicator.png")),
     alive(new QIcon(":/images/green_circle_indicator.png")),
     last_recevied_ts(0),
-    alive_state(Indeterminated) {
+    alive_state(Stopped) {
     addState(0, no_ts);
     addState(1, timeouted);
     addState(2, alive);

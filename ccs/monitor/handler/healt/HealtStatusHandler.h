@@ -14,8 +14,9 @@ protected:
         //emit new value
         emit valueUpdated(QString::fromStdString(key),
                           QString::fromStdString(attribute),
-                          QVariant::fromValue<QString>(QString::fromStdString(value)));
+                          QString::fromStdString(value));
     }
+
 public:
     HealtStatusHandler(bool event_on_change = false):
     HealtStatusAttributeHandler(event_on_change){}

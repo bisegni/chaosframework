@@ -16,7 +16,7 @@ protected:
         //emit new value
         emit valueUpdated(QString::fromStdString(key),
                           QString::fromStdString(attribute),
-                          QVariant::fromValue<double>(value));
+                          value);
     }
     void consumeValueNotFound(const std::string& key,
                               const std::string& attribute) {
@@ -24,6 +24,11 @@ protected:
         emit valueNotFound(QString::fromStdString(key),
                           QString::fromStdString(attribute));
     }
+signals:
+    void valueUpdated(const QString& key,
+                      const QString& name,
+                      const double value);
+
 public:
     MonitorDoubleAttributeHandler(const QString& attribute_name,
                                   bool event_on_change = false):

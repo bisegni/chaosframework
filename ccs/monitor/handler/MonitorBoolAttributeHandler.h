@@ -17,7 +17,7 @@ protected:
         //emit new value
         emit valueUpdated(QString::fromStdString(key),
                           QString::fromStdString(attribute),
-                          QVariant::fromValue<bool>(value));
+                          value);
     }
 
     void consumeValueNotFound(const std::string& key,
@@ -26,6 +26,10 @@ protected:
         emit valueNotFound(QString::fromStdString(key),
                           QString::fromStdString(attribute));
     }
+signals:
+    void valueUpdated(const QString& key,
+                      const QString& name,
+                      const bool value);
 
 public:
     MonitorBoolAttributeHandler(const QString& attribute_name,

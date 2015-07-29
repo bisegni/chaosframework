@@ -17,7 +17,7 @@ protected:
         //emit new value
         emit valueUpdated(QString::fromStdString(key),
                           QString::fromStdString(attribute),
-                          QVariant::fromValue<int32_t>(value));
+                          value);
     }
     void consumeValueNotFound(const std::string& key,
                               const std::string& attribute) {
@@ -25,6 +25,11 @@ protected:
         emit valueNotFound(QString::fromStdString(key),
                           QString::fromStdString(attribute));
     }
+signals:
+    void valueUpdated(const QString& key,
+                      const QString& name,
+                      const int32_t value);
+
 public:
     MonitorInt32AttributeHandler(const QString& attribute_name,
                                  bool event_on_change = false):

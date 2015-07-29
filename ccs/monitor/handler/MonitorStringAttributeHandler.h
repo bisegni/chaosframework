@@ -24,6 +24,11 @@ protected:
         emit valueNotFound(QString::fromStdString(key),
                           QString::fromStdString(attribute));
     }
+signals:
+    void valueUpdated(const QString& key,
+                      const QString& name,
+                      const QString& value);
+
 public:
     MonitorStringAttributeHandler(const QString& attribute_name,
                                   bool event_on_change = false):
