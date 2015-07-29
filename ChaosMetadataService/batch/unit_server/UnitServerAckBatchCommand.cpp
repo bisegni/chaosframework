@@ -213,6 +213,9 @@ int UnitServerAckCommand::prepareRequestForAutoload(const std::string& cu_uid) {
             //add driver description
             instance_description->copyKeyTo(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION, *autoload_pack);
             instance_description->copyKeyTo(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, *autoload_pack);
+            
+            DEBUG_CODE(USAC_ERR << "Send autoload datapack-----------------------\n" <<autoload_pack->getJSONString();)
+            
             //create the request
             request = createRequest(message_data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
                                     UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
