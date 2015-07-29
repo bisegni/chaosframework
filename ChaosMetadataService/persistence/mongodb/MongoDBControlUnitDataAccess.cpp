@@ -431,7 +431,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
                 
             }
             //bind the array to the key
-            updated_field.appendArray("ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION", bab.arr());
+            updated_field.appendArray(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION, bab.arr());
         }
         
         //check if we have the attribute setup
