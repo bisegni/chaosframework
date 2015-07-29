@@ -60,11 +60,21 @@ namespace chaos{
                 class SlowCommandExecutor;
 
                 //! Macro for helping the allocation of the isntancer of the class implementing the slow command
-               
-#define BATCH_COMMAND_OPEN_DESCRIPTION_WITH_SLOWCOMMAND_INSTANCER(n, d, uid)\
-BATCH_COMMAND_OPEN_DESCRIPTION(n, d, uid)\
+         
+                /*
+                 * You may specify command name 
+                 */
+#define BATCH_COMMAND_OPEN_DESCRIPTION_ALIAS(n,c,alias, d, uid) \
+BATCH_COMMAND_OPEN_DESC(n,c, alias, d, uid) \
 result->setInstancer(new chaos::common::utility::NestedObjectInstancer<chaos::cu::control_manager::slow_command::SlowCommand, chaos::common::batch_command::BatchCommand>(\
-new chaos::common::utility::TypedObjectInstancer<n, chaos::cu::control_manager::slow_command::SlowCommand>()));
+new chaos::common::utility::TypedObjectInstancer<n c, chaos::cu::control_manager::slow_command::SlowCommand>()));
+
+                /**
+                 * Command name is the class name
+                 */
+#define BATCH_COMMAND_OPEN_DESCRIPTION(n,c, d, uid) BATCH_COMMAND_OPEN_DESCRIPTION_ALIAS(n,c, # c, d, uid)
+
+
                 
                 //! Base cass for the slow command implementation
                 /*!

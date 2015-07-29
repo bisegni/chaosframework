@@ -118,6 +118,8 @@ namespace chaos {
                 static const char * const BC_PARAMETER_FLAG         = "bc_parameter_flag";
                 
                 static int BC_PARAMETER_FLAG_MANDATORY = 1;
+                static int BC_PARAMETER_FLAG_OPTIONAL = 0;
+
             }
             /** @} */ // end of BatchCommandDescriptionKey Slow Control API
         }
