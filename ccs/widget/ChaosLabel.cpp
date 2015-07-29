@@ -10,7 +10,7 @@ ChaosLabel::ChaosLabel(QWidget * parent,
     QLabel(parent, f),
     monitoring(false),
     last_recevide_timeout(false) {
-    setTimeoutForAlive(6000);
+    setTimeoutForAlive(5000);
 
     connect(&healt_status_handler,
             SIGNAL(valueUpdated(QString,QString,QVariant)),

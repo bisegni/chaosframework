@@ -96,7 +96,6 @@ private:
     const QString           control_unit_unique_id;
     QString                 unit_server_parent_unique_id;
     SwitchAggregator        logic_switch_aggregator;
-    HealtStatusHandler                  monitor_handler_status;
 
     CommandListModel                    command_list_model;
     CommandTemplateListModel            command_template_list_model;

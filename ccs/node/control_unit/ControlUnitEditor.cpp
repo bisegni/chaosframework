@@ -29,16 +29,12 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     last_online_state(false),
     control_unit_unique_id(_control_unit_unique_id),
     ui(new Ui::ControlUnitEditor),
-    monitor_handler_status(),
     dataset_output_table_model(control_unit_unique_id,
                                chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT),
     dataset_input_table_model(control_unit_unique_id,
                               chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT) {
     ui->setupUi(this);
     //handler connection
-    connect(&monitor_handler_status,
-            SIGNAL(valueUpdated(QString,QString,QVariant)),
-            SLOT(monitorHandlerUpdateAttributeValue(QString,QString,QVariant)));
     connect(ui->ledIndicatorHealtTSControlUnit,
             SIGNAL(changedOnlineStatus(QString, CLedIndicatorHealt::AliveState)),
             SLOT(changedOnlineStatus(QString, CLedIndicatorHealt::AliveState)));
@@ -140,17 +136,30 @@ void ControlUnitEditor::initUI() {
     ui->ledIndicatorHealtTSControlUnit->setStateBlinkOnRepeatSet(2, true);
     ui->ledIndicatorHealtTSUnitServer->setStateBlinkOnRepeatSet(2, true);
 
+    //setup chaos widget
+    //cu helat indicator
     ui->ledIndicatorHealtTSControlUnit->setNodeUniqueID(control_unit_unique_id);
 
-    //thread schedule update
-    ui->lineEditRunScheduleDelay->setValidator(new QIntValidator(0,60000000));
-    // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
+    //control unit status
+    ui->labelControlUnitStatus->setNodeUniqueID(control_unit_unique_id);
+    ui->labelControlUnitStatus->setTrackStatus(true);
+    ui->labelControlUnitStatus->setLabelValueShowTrackStatus(true);
 
+    //unit server status
+    ui->labelUnitServerStatus->setTrackStatus(true);
+    ui->labelUnitServerStatus->setLabelValueShowTrackStatus(true);
+
+    //show the current thread schedule delay
     ui->labelRunScheduleDelaySet->setNodeUniqueID(control_unit_unique_id);
     ui->labelRunScheduleDelaySet->setAttributeName(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
     ui->labelRunScheduleDelaySet->setAttributeType(chaos::DataType::TYPE_INT64);
     ui->labelRunScheduleDelaySet->setTrackStatus(true);
     ui->labelRunScheduleDelaySet->setDataset(ChaosDatasetLabel::DatasetSystem);
+
+    //thread schedule update
+    ui->lineEditRunScheduleDelay->setValidator(new QIntValidator(0,60000000));
+    // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
+
     //start monitoring
     manageMonitoring(true);
 
@@ -186,24 +195,16 @@ void ControlUnitEditor::updateAllControlUnitInfomration() {
 
 void ControlUnitEditor::manageMonitoring(bool start) {
     if(start){
-        registerHealtMonitorHandler(control_unit_unique_id,
-                                    20,
-                                    &monitor_handler_status);
-
+       ui->labelControlUnitStatus->startMonitoring();
         ui->labelRunScheduleDelaySet->startMonitoring();
         ui->ledIndicatorHealtTSControlUnit->startMonitoring();
     }else{
         if(unit_server_parent_unique_id.size()) {
             //remove old unit server for healt
-            unregisterHealtMonitorHandler(unit_server_parent_unique_id,
-                                          20,
-                                          &monitor_handler_status);
+            ui->labelUnitServerStatus->stopMonitoring();
             ui->ledIndicatorHealtTSUnitServer->stopMonitoring();
         }
-        unregisterHealtMonitorHandler(control_unit_unique_id,
-                                      20,
-                                      &monitor_handler_status);
-
+        ui->labelControlUnitStatus->stopMonitoring();
         ui->labelRunScheduleDelaySet->stopMonitoring();
         ui->ledIndicatorHealtTSControlUnit->stopMonitoring();
     }
@@ -256,15 +257,14 @@ void ControlUnitEditor::onApiDone(const QString& tag,
                 //whe ahve unit server changed
                 if(unit_server_parent_unique_id.size()) {
                     //remove old unit server for healt
-                    unregisterHealtMonitorHandler(unit_server_parent_unique_id,
-                                                  20,
-                                                  &monitor_handler_status);
+                     ui->labelUnitServerStatus->stopMonitoring();
                     ui->ledIndicatorHealtTSUnitServer->stopMonitoring();
                 }
                 unit_server_parent_unique_id = new_u_s;
-                registerHealtMonitorHandler(unit_server_parent_unique_id,
-                                            20,
-                                            &monitor_handler_status);
+
+                ui->labelUnitServerStatus->setNodeUniqueID(unit_server_parent_unique_id);
+                ui->labelUnitServerStatus->startMonitoring();
+
                 ui->ledIndicatorHealtTSUnitServer->setNodeUniqueID(unit_server_parent_unique_id);
                 ui->ledIndicatorHealtTSUnitServer->startMonitoring();
                 // keep track of new us uid
