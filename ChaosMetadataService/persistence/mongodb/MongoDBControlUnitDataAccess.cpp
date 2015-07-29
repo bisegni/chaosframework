@@ -598,16 +598,16 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
             if(instance_description.hasField("load_parameter"))(*result)->addStringValue("load_parameter", instance_description.getStringField("load_parameter"));
             if(instance_description.hasField("control_unit_implementation"))(*result)->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
             
-            if(instance_description.hasField("ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION")) {
+            if(instance_description.hasField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
                 std::vector< mongo::BSONElement > drv_descriptions;
-                instance_description.getObjectField("ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION").elems(drv_descriptions);
+                instance_description.getObjectField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION).elems(drv_descriptions);
                 for(std::vector< mongo::BSONElement >::iterator it = drv_descriptions.begin();
                     it != drv_descriptions.end();
                     it++) {
                     CDataWrapper driver_desc(it->Obj().objdata());
                     (*result)->appendCDataWrapperToArray(driver_desc);
                 }
-                (*result)->finalizeArrayForKey("ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION");
+                (*result)->finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION);
             }
             
             if(instance_description.hasField("attribute_value_descriptions")) {
