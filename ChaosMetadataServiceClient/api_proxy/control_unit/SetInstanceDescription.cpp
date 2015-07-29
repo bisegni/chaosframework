@@ -50,7 +50,7 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
         //add the control unit implementation
     instance_description.addBoolValue("auto_load", api_data.auto_load);
         // set the load parameter
-    instance_description.addStringValue("load_parameter", api_data.load_parameter);
+    instance_description.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, api_data.load_parameter);
         //add driver description
     if(api_data.driver_descriptions.size()>0) {
         for(CDWListIterator it = api_data.driver_descriptions.begin();

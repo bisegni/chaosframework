@@ -206,8 +206,13 @@ int UnitServerAckCommand::prepareRequestForAutoload(const std::string& cu_uid) {
             USAC_DBG << "Create the autoload datapack for:" << cu_uid;
             //create the data pack
             autoload_pack.reset(new CDataWrapper());
+            //add cu id
             autoload_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
+            //add cu type
             autoload_pack->addStringValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE, instance_description->getStringValue("control_unit_implementation"));
+            //add driver description
+            instance_description->copyKeyTo(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION, *autoload_pack);
+            instance_description->copyKeyTo(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, *autoload_pack);
             //create the request
             request = createRequest(message_data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
                                     UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,

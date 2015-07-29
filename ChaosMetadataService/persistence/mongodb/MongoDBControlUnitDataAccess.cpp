@@ -401,8 +401,8 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         
         //add unit server parent
         
-        if(instance_description.hasKey("load_parameter")) {
-            updated_field << "load_parameter" << instance_description.getStringValue("load_parameter");
+        if(instance_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM)) {
+            updated_field << ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM << instance_description.getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM);
         }
         
         if(instance_description.hasKey("control_unit_implementation")) {
@@ -595,7 +595,7 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
             
             (*result)->addStringValue(NodeDefinitionKey::NODE_PARENT, instance_description.getStringField(NodeDefinitionKey::NODE_PARENT));
             if(instance_description.hasField("auto_load"))(*result)->addBoolValue("auto_load", instance_description.getBoolField("auto_load"));
-            if(instance_description.hasField("load_parameter"))(*result)->addStringValue("load_parameter", instance_description.getStringField("load_parameter"));
+            if(instance_description.hasField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM))(*result)->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, instance_description.getStringField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM));
             if(instance_description.hasField("control_unit_implementation"))(*result)->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
             
             if(instance_description.hasField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
