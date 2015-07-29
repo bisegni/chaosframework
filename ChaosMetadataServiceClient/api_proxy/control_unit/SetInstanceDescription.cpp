@@ -43,28 +43,22 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
     message->addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, api_data.control_unit_uid);
         // set the type for control unit
     message->addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
-
-
-
         // add the unit server as parent
     instance_description.addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, api_data.unit_server_uid);
-
         //add the control unit implementation
     instance_description.addStringValue("control_unit_implementation", api_data.control_unit_implementation);
-
         //add the control unit implementation
     instance_description.addBoolValue("auto_load", api_data.auto_load);
         // set the load parameter
-    instance_description.addStringValue("load_parameter", api_data.load_parameter);
-
+    instance_description.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, api_data.load_parameter);
         //add driver description
-    if(api_data.driver_descirptions.size()>0) {
-        for(CDWListIterator it = api_data.driver_descirptions.begin();
-            it != api_data.driver_descirptions.end();
+    if(api_data.driver_descriptions.size()>0) {
+        for(CDWListIterator it = api_data.driver_descriptions.begin();
+            it != api_data.driver_descriptions.end();
             it++) {
             instance_description.appendCDataWrapperToArray(*it);
         }
-        instance_description.finalizeArrayForKey("driver_description");
+        instance_description.finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION);
     }
         //add attribute description
     if(api_data.attribute_value_descriptions.size()>0) {
@@ -88,28 +82,24 @@ control_unit_uid(""),
 unit_server_uid(""),
 control_unit_implementation(""),
 auto_load(false),
-load_parameter(""){
+load_parameter(""){}
 
-}
-
-SetInstanceDescriptionHelper::~SetInstanceDescriptionHelper() {
-
-}
+SetInstanceDescriptionHelper::~SetInstanceDescriptionHelper() {}
 
     //!add a new driver description
 void SetInstanceDescriptionHelper::addDriverDescription(const std::string& driver_name,
-                                                         const std::string& driver_version,
-                                                         const std::string& driver_init_parameter) {
+                                                        const std::string& driver_version,
+                                                        const std::string& driver_init_parameter) {
     auto_ptr<CDataWrapper> dd(new CDataWrapper());
-    dd->addStringValue("name", driver_name);
-    dd->addStringValue("version", driver_version);
-    dd->addStringValue("init_parameter", driver_init_parameter);
-    driver_descirptions.push_back(dd.release());
+    dd->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME, driver_name);
+    dd->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION, driver_version);
+    dd->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER, driver_init_parameter);
+    driver_descriptions.push_back(dd.release());
 }
 
     //! clear all previously added driver descriptions
 void SetInstanceDescriptionHelper::clearAllDriverDescriptions() {
-    driver_descirptions.clear();
+    driver_descriptions.clear();
 }
 
     //! add an attribute range value description for the default value and range

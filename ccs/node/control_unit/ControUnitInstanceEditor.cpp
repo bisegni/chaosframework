@@ -158,8 +158,8 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
             CHECK_AND_SET_LABEL("load_parameter", ui->textEditLoadParameter)
 
             //add driverdesc
-            if(api_result->hasKey("driver_description")) {
-        std::auto_ptr<CMultiTypeDataArrayWrapper> arr_drv(api_result->getVectorValue("driver_description"));
+            if(api_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
+        std::auto_ptr<CMultiTypeDataArrayWrapper> arr_drv(api_result->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
         for(int idx = 0;
             idx != arr_drv->size();
             idx++) {
@@ -167,13 +167,13 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
 
             QStandardItem *item = NULL;
             QList<QStandardItem*> row_item;
-            row_item.append(item = new QStandardItem(QString::fromStdString(drv_desc->getStringValue("name"))));
+            row_item.append(item = new QStandardItem(QString::fromStdString(drv_desc->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME))));
             item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
-            row_item.append(item = new QStandardItem(QString::fromStdString(drv_desc->getStringValue("version"))));
+            row_item.append(item = new QStandardItem(QString::fromStdString(drv_desc->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION))));
             item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
-            row_item.append(item = new QStandardItem(QString::fromStdString(drv_desc->getStringValue("init_parameter"))));
+            row_item.append(item = new QStandardItem(QString::fromStdString(drv_desc->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER))));
             item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
             table_model_driver_spec->appendRow(row_item);
 

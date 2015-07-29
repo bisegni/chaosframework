@@ -79,7 +79,7 @@ void SearchNodeResult::onApiDone(const QString& tag,
 
         //clear the model
         table_model->setRowCount(0);
-        if(api_result->hasKey("node_search_result_page")) {
+        if(!api_result.isNull() && api_result->hasKey("node_search_result_page")) {
             //we have result
             CMultiTypeDataArrayWrapper *arr =  api_result->getVectorValue("node_search_result_page");
             for(int i = 0;
