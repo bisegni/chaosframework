@@ -10,6 +10,7 @@
 #include "../../monitor/monitor.h"
 #include "../../presenter/PresenterWidget.h"
 #include "../../logic/property_switch/SwitchAggregator.h"
+#include "../../widget/CLedIndicatorHealt.h"
 
 #include <QWidget>
 #include <QItemSelection>
@@ -40,6 +41,9 @@ private slots:
 
     void handleSelectionChangedOnListWiew(const QItemSelection& selection,
                                           const QItemSelection& previous_selected);
+
+    void changedOnlineStatus(const QString& node_uid,
+                             CLedIndicatorHealt::AliveState node_alive_state);
 
     void templateSaved(const QString& tempalte_name,
                        const QString& command_uid);
@@ -92,7 +96,6 @@ private:
     const QString           control_unit_unique_id;
     QString                 unit_server_parent_unique_id;
     SwitchAggregator        logic_switch_aggregator;
-    HealthHartbeatHandler               monitor_handler_hb;
     HealtStatusHandler                  monitor_handler_status;
 
     CommandListModel                    command_list_model;

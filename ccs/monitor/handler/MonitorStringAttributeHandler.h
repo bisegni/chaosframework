@@ -1,12 +1,12 @@
 #ifndef MONITORSTRINGATTRIBUTEHANDLER
 #define MONITORSTRINGATTRIBUTEHANDLER
 
-#include <QObject>
+#include "AbstractAttributeHandler.h"
 
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
 
 class MonitorStringAttributeHandler:
-        public QObject,
+        public AbstractAttributeHandler,
         public chaos::metadata_service_client::monitor_system::QuantumKeyAttributeStringHandler {
     Q_OBJECT
 protected:
@@ -18,11 +18,12 @@ protected:
                           QString::fromStdString(attribute),
                           QString::fromStdString(value));
     }
-
-signals:
-    void valueUpdated(const QString& key,
-                      const QString& name,
-                      const QString& value);
+    void consumeValueNotFound(const std::string& key,
+                              const std::string& attribute) {
+        //emit value not foud
+        emit valueNotFound(QString::fromStdString(key),
+                          QString::fromStdString(attribute));
+    }
 public:
     MonitorStringAttributeHandler(const QString& attribute_name,
                                   bool event_on_change = false):

@@ -4,6 +4,7 @@
 #include "CommandTemplateInstanceEditor.h"
 #include "../../widget/list/delegate/TwoLineInformationListItemDelegate.h"
 #include "../../plot/NodeAttributePlotting.h"
+
 #include <QDebug>
 #include <QDateTime>
 #include <QMessageBox>
@@ -28,7 +29,6 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     last_online_state(false),
     control_unit_unique_id(_control_unit_unique_id),
     ui(new Ui::ControlUnitEditor),
-    monitor_handler_hb(),
     monitor_handler_status(),
     dataset_output_table_model(control_unit_unique_id,
                                chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT),
@@ -39,9 +39,13 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     connect(&monitor_handler_status,
             SIGNAL(valueUpdated(QString,QString,QVariant)),
             SLOT(monitorHandlerUpdateAttributeValue(QString,QString,QVariant)));
-    connect(&monitor_handler_hb,
-            SIGNAL(valueUpdated(QString,QString,QVariant)),
-            SLOT(monitorHandlerUpdateAttributeValue(QString,QString,QVariant)));
+    connect(ui->ledIndicatorHealtTSControlUnit,
+            SIGNAL(changedOnlineStatus(QString, CLedIndicatorHealt::AliveState)),
+            SLOT(changedOnlineStatus(QString, CLedIndicatorHealt::AliveState)));
+    connect(ui->ledIndicatorHealtTSUnitServer,
+            SIGNAL(changedOnlineStatus(QString, CLedIndicatorHealt::AliveState)),
+            SLOT(changedOnlineStatus(QString, CLedIndicatorHealt::AliveState)));
+
 }
 
 ControlUnitEditor::~ControlUnitEditor() {
@@ -136,6 +140,8 @@ void ControlUnitEditor::initUI() {
     ui->ledIndicatorHealtTSControlUnit->setStateBlinkOnRepeatSet(2, true);
     ui->ledIndicatorHealtTSUnitServer->setStateBlinkOnRepeatSet(2, true);
 
+    ui->ledIndicatorHealtTSControlUnit->setNodeUniqueID(control_unit_unique_id);
+
     //thread schedule update
     ui->lineEditRunScheduleDelay->setValidator(new QIntValidator(0,60000000));
     // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
@@ -183,27 +189,36 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         registerHealtMonitorHandler(control_unit_unique_id,
                                     20,
                                     &monitor_handler_status);
-        registerHealtMonitorHandler(control_unit_unique_id,
-                                    20,
-                                    &monitor_handler_hb);
-         ui->labelRunScheduleDelaySet->startMonitoring();
+
+        ui->labelRunScheduleDelaySet->startMonitoring();
+        ui->ledIndicatorHealtTSControlUnit->startMonitoring();
     }else{
         if(unit_server_parent_unique_id.size()) {
             //remove old unit server for healt
             unregisterHealtMonitorHandler(unit_server_parent_unique_id,
                                           20,
                                           &monitor_handler_status);
-            unregisterHealtMonitorHandler(unit_server_parent_unique_id,
-                                          20,
-                                          &monitor_handler_status);
+            ui->ledIndicatorHealtTSUnitServer->stopMonitoring();
         }
         unregisterHealtMonitorHandler(control_unit_unique_id,
                                       20,
                                       &monitor_handler_status);
-        unregisterHealtMonitorHandler(control_unit_unique_id,
-                                      20,
-                                      &monitor_handler_hb);
+
         ui->labelRunScheduleDelaySet->stopMonitoring();
+        ui->ledIndicatorHealtTSControlUnit->stopMonitoring();
+    }
+}
+
+
+void ControlUnitEditor::changedOnlineStatus(const QString& node_uid,
+                                            CLedIndicatorHealt::AliveState node_alive_state) {
+    qDebug()<< "change online status for:" << node_uid << " as:" <<node_alive_state;
+    if(node_uid.compare(control_unit_unique_id) == 0) {
+        //state changed for control unit
+        logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(ui->ledIndicatorHealtTSControlUnit->getState()));
+    } else if(node_uid.compare(unit_server_parent_unique_id) == 0) {
+        //state changed for unit server
+        logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(ui->ledIndicatorHealtTSUnitServer->getState()));
     }
 }
 
@@ -236,27 +251,24 @@ void ControlUnitEditor::onApiDone(const QString& tag,
     } else if(tag.compare(TAG_CU_INSTANCE) == 0) {
         if(api_result.isNull()) return;
         if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)){
-            const std::string new_u_s = api_result->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
-            if(unit_server_parent_unique_id.compare(QString::fromStdString(new_u_s)) != 0) {
+            const QString new_u_s = QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT));
+            if(unit_server_parent_unique_id.compare(new_u_s) != 0) {
                 //whe ahve unit server changed
                 if(unit_server_parent_unique_id.size()) {
                     //remove old unit server for healt
                     unregisterHealtMonitorHandler(unit_server_parent_unique_id,
                                                   20,
                                                   &monitor_handler_status);
-                    unregisterHealtMonitorHandler(unit_server_parent_unique_id,
-                                                  20,
-                                                  &monitor_handler_hb);
+                    ui->ledIndicatorHealtTSUnitServer->stopMonitoring();
                 }
-
-                registerHealtMonitorHandler(new_u_s,
+                unit_server_parent_unique_id = new_u_s;
+                registerHealtMonitorHandler(unit_server_parent_unique_id,
                                             20,
                                             &monitor_handler_status);
-                registerHealtMonitorHandler(new_u_s,
-                                            20,
-                                            &monitor_handler_hb);
+                ui->ledIndicatorHealtTSUnitServer->setNodeUniqueID(unit_server_parent_unique_id);
+                ui->ledIndicatorHealtTSUnitServer->startMonitoring();
                 // keep track of new us uid
-                ui->labelUnitServerUID->setText(unit_server_parent_unique_id = QString::fromStdString(new_u_s));
+                ui->labelUnitServerUID->setText(unit_server_parent_unique_id);
             }
             //apply control unit instance
             dataset_input_table_model.updateInstanceDescription(api_result);
@@ -310,8 +322,8 @@ void ControlUnitEditor::monitorHandlerUpdateAttributeValue(const QString& key,
             }
         } else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0){
             //print the timestamp and update the red/green indicator
-            ui->ledIndicatorHealtTSControlUnit->setNewTS(attribute_value.toULongLong());
-            //broadcast cu status to switch
+            //ui->ledIndicatorHealtTSControlUnit->setNewTS(attribute_value.toULongLong());
+            ////broadcast cu status to switch
             logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(ui->ledIndicatorHealtTSControlUnit->getState()));
         }
     } else if(key.startsWith(unit_server_parent_unique_id)) {
@@ -326,7 +338,7 @@ void ControlUnitEditor::monitorHandlerUpdateAttributeValue(const QString& key,
             logic_switch_aggregator.broadcastCurrentValueForKey("us_state", attribute_value.toString());
         } else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0){
             //print the timestamp and update the red/green indicator
-            ui->ledIndicatorHealtTSUnitServer->setNewTS(attribute_value.toULongLong());
+            // ui->ledIndicatorHealtTSUnitServer->setNewTS(attribute_value.toULongLong());
             logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(ui->ledIndicatorHealtTSUnitServer->getState()));
         }
     }

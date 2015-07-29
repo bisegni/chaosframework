@@ -1,12 +1,12 @@
 #ifndef MONITORINT64ATTRIBUTEHANDLER
 #define MONITORINT64ATTRIBUTEHANDLER
 
-#include <QObject>
+#include "AbstractAttributeHandler.h"
 
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
 
 class MonitorInt64AttributeHandler:
-        public QObject,
+        public AbstractAttributeHandler,
         public chaos::metadata_service_client::monitor_system::QuantumKeyAttributeInt64Handler {
     Q_OBJECT
 protected:
@@ -16,13 +16,14 @@ protected:
         //emit new value
         emit valueUpdated(QString::fromStdString(key),
                           QString::fromStdString(attribute),
-                          value);
+                          QVariant::fromValue<int64_t>(value));
     }
-
-signals:
-    void valueUpdated(const QString& key,
-                      const QString& name,
-                      const int64_t value);
+    void consumeValueNotFound(const std::string& key,
+                              const std::string& attribute) {
+        //emit value not foud
+        emit valueNotFound(QString::fromStdString(key),
+                          QString::fromStdString(attribute));
+    }
 public:
     MonitorInt64AttributeHandler(const QString& attribute_name,
                                  bool event_on_change = false):

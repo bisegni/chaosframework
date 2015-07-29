@@ -50,6 +50,18 @@ void QuantumKeyConsumer::quantumSlotHasData(const std::string& key,
     }
 }
 
+void QuantumKeyConsumer::quantumSlotHasNoData(const std::string& key) {
+    //acquire read lock
+    boost::shared_lock<boost::shared_mutex> rl(map_mutex);
+    //scan all attribute and call handler
+    for(AttributeHandlerMapIterator it = map_attribute_handler.begin();
+        it != map_attribute_handler.end();
+        it++) {
+            //broadcast value
+            it->second->_consumeValueNotFound(key);
+    }
+}
+
 void QuantumKeyConsumer::addAttributeHandler(AbstractQuantumKeyAttributeHandler *handler) {
     //aquire write lock to work on map
     boost::unique_lock<boost::shared_mutex> rl(map_mutex);

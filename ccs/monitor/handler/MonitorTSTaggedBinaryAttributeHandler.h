@@ -24,8 +24,12 @@ protected:
                           timestamp,
                           QVariant::fromValue<QSharedPointer<ChaosByteArray> >(QSharedPointer<ChaosByteArray>(new ChaosByteArray(value))));
     }
-
-signals:
+    void consumeValueNotFound(const std::string& key,
+                              const std::string& attribute) {
+        //emit value not foud
+        emit valueNotFound(QString::fromStdString(key),
+                          QString::fromStdString(attribute));
+    }
 
 public:
     MonitorTSTaggedBinaryAttributeHandler(const QString& attribute_name,

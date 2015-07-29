@@ -21,8 +21,12 @@ protected:
                           timestamp,
                           QString::fromStdString(value));
     }
-
-signals:
+    void consumeValueNotFound(const std::string& key,
+                              const std::string& attribute) {
+        //emit value not foud
+        emit valueNotFound(QString::fromStdString(key),
+                          QString::fromStdString(attribute));
+    }
 
 public:
     MonitorTSTaggedStringAttributeHandler(const QString& attribute_name,

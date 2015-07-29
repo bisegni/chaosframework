@@ -138,6 +138,7 @@ namespace chaos {
                                     unsigned int priotiy);
                 void removeConsumer(QuantumSlotConsumer *_consumer);
                 void sendNewValueConsumer(const KeyValue& _value);
+                void sendNoValueToConsumer();
                 int32_t size();
             };
         }

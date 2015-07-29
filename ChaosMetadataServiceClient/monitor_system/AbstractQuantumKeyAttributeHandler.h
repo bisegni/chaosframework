@@ -51,6 +51,7 @@ x::~x(){}
                 friend class QuantumKeyConsumer;
                 //attribute that is managed by this handler
                 virtual void _consumeValue(const std::string& key, const KeyValue& value) = 0;
+                virtual void _consumeValueNotFound(const std::string& key);
             protected:
                 const std::string attribute;
                 bool event_on_value_change;
@@ -63,6 +64,9 @@ x::~x(){}
                 AbstractQuantumKeyAttributeHandler(const std::string& _attribute,
                                                    bool _event_on_value_change = false);
                 virtual ~AbstractQuantumKeyAttributeHandler();
+                
+                virtual void consumeValueNotFound(const std::string& key,
+                                                  const std::string& attribute);
                 
                 const std::string& getAttributeName();
             };

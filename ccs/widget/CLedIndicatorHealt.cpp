@@ -12,13 +12,16 @@ CLedIndicatorHealt::CLedIndicatorHealt(QWidget *parent):
     timeouted(new QIcon(":/images/red_circle_indicator.png")),
     alive(new QIcon(":/images/green_circle_indicator.png")),
     last_recevied_ts(0),
-    last_online_state(false) {
+    alive_state(Indeterminated) {
     addState(0, no_ts);
     addState(1, timeouted);
     addState(2, alive);
     connect(&hb_health_handler,
             SIGNAL(valueUpdated(QString,QString,QVariant)),
             SLOT(valueUpdated(QString,QString,QVariant)));
+    connect(&hb_health_handler,
+            SIGNAL(valueNotFound(QString,QString)),
+            SLOT(valueNotFound(QString,QString)));
 
 }
 
@@ -50,10 +53,10 @@ int CLedIndicatorHealt::stopMonitoring() {
     return 0;
 }
 
-void CLedIndicatorHealt::manageOnlineFlag(bool current_status) {
-    if(last_online_state == current_status) return;
+void CLedIndicatorHealt::manageOnlineFlag(AliveState current_alive_state) {
+    if(current_alive_state == alive_state) return;
     emit changedOnlineStatus(nodeUniqueID(),
-                             last_online_state = current_status);
+                             alive_state = current_alive_state);
 }
 
 void CLedIndicatorHealt::valueUpdated(const QString& node_uid,
@@ -63,18 +66,24 @@ void CLedIndicatorHealt::valueUpdated(const QString& node_uid,
         uint64_t current_timestamp = attribute_value.toULongLong();
         if(current_timestamp == 0) {
             setState(0);
-            manageOnlineFlag(false);
+            manageOnlineFlag(Indeterminated);
         } else {
             uint64_t time_diff = QDateTime::currentDateTimeUtc().currentMSecsSinceEpoch() - current_timestamp;
             if(time_diff <= 5000) {
                 //in time
                 setState(2);
-                manageOnlineFlag(true);
+                manageOnlineFlag(Online);
             } else {
                 //timeouted
                 setState(1);
-                manageOnlineFlag(false);
+                manageOnlineFlag(Offline);
             }
         }
     }
+}
+
+void CLedIndicatorHealt::valueNotFound(const QString& node_uid,
+                                       const QString& attribute_name) {
+    setState(0);
+    manageOnlineFlag(Indeterminated);
 }

@@ -1,12 +1,12 @@
 #ifndef MONITORDOUBLEATTRIBUTEHANDLER
 #define MONITORDOUBLEATTRIBUTEHANDLER
 
-#include <QObject>
+#include "AbstractAttributeHandler.h"
 
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
 
 class MonitorDoubleAttributeHandler:
-        public QObject,
+        public AbstractAttributeHandler,
         public chaos::metadata_service_client::monitor_system::QuantumKeyAttributeDoubleHandler {
     Q_OBJECT
 protected:
@@ -16,13 +16,14 @@ protected:
         //emit new value
         emit valueUpdated(QString::fromStdString(key),
                           QString::fromStdString(attribute),
-                          value);
+                          QVariant::fromValue<double>(value));
     }
-
-signals:
-    void valueUpdated(const QString& key,
-                      const QString& name,
-                      const double value);
+    void consumeValueNotFound(const std::string& key,
+                              const std::string& attribute) {
+        //emit value not foud
+        emit valueNotFound(QString::fromStdString(key),
+                          QString::fromStdString(attribute));
+    }
 public:
     MonitorDoubleAttributeHandler(const QString& attribute_name,
                                   bool event_on_change = false):
