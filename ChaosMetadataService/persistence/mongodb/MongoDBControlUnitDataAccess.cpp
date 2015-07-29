@@ -410,28 +410,28 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         }
         
         //check if have the driver description
-        if(instance_description.hasKey("driver_description")) {
+        if(instance_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
             //get the contained control unit type
             mongo::BSONArrayBuilder bab;
-            auto_ptr<CMultiTypeDataArrayWrapper> drv_array(instance_description.getVectorValue("driver_description"));
+            auto_ptr<CMultiTypeDataArrayWrapper> drv_array(instance_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
             for(int idx = 0;
                 idx < drv_array->size();
                 idx++) {
                 auto_ptr<CDataWrapper> driver_desc(drv_array->getCDataWrapperElementAtIndex(idx));
-                if(driver_desc->hasKey("name") &&
-                   driver_desc->hasKey("version")&&
-                   driver_desc->hasKey("init_parameter")) {
+                if(driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME) &&
+                   driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION)&&
+                   driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER)) {
                     int size;
                     CDataWrapper d;
-                    d.addStringValue("name", driver_desc->getStringValue("name"));
-                    d.addStringValue("version", driver_desc->getStringValue("version"));
-                    d.addStringValue("init_parameter", driver_desc->getStringValue("init_parameter"));
+                    driver_desc->copyKeyTo(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME, d);
+                    driver_desc->copyKeyTo(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION, d);
+                    driver_desc->copyKeyTo(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER, d);
                     bab << mongo::BSONObj(d.getBSONRawData(size));
                 }
                 
             }
             //bind the array to the key
-            updated_field.appendArray("driver_description", bab.arr());
+            updated_field.appendArray("ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION", bab.arr());
         }
         
         //check if we have the attribute setup
@@ -598,16 +598,16 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
             if(instance_description.hasField("load_parameter"))(*result)->addStringValue("load_parameter", instance_description.getStringField("load_parameter"));
             if(instance_description.hasField("control_unit_implementation"))(*result)->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
             
-            if(instance_description.hasField("driver_description")) {
+            if(instance_description.hasField("ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION")) {
                 std::vector< mongo::BSONElement > drv_descriptions;
-                instance_description.getObjectField("driver_description").elems(drv_descriptions);
+                instance_description.getObjectField("ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION").elems(drv_descriptions);
                 for(std::vector< mongo::BSONElement >::iterator it = drv_descriptions.begin();
                     it != drv_descriptions.end();
                     it++) {
                     CDataWrapper driver_desc(it->Obj().objdata());
                     (*result)->appendCDataWrapperToArray(driver_desc);
                 }
-                (*result)->finalizeArrayForKey("driver_description");
+                (*result)->finalizeArrayForKey("ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION");
             }
             
             if(instance_description.hasField("attribute_value_descriptions")) {

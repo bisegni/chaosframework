@@ -41,7 +41,7 @@ namespace chaos {
                 class SetInstanceDescriptionHelper {
                     friend class SetInstanceDescription;
                         //!list for all ddriver description added to the api
-                    CDWList driver_descirptions;
+                    CDWList driver_descriptions;
                         //!list all the attribute value description added to the api
                     CDWList attribute_value_descriptions;
                 public:

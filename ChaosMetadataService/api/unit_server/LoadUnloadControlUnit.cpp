@@ -114,6 +114,8 @@ CDataWrapper *LoadUnloadControlUnit::execute(CDataWrapper *api_data,
             if(load_unload) {
                     //in load phase we need the type to instantiate the control unit
                 load_unload_data_pack->addStringValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE, cu_instance->getStringValue("control_unit_implementation"));
+                //we need also the drive descriptions
+                cu_instance->copyKeyTo(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION, *load_unload_data_pack);
             }
                 //perform phase in background
             getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::unit_server::LoadUnloadControlUnit)),
