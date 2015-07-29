@@ -28,8 +28,7 @@ const QString TAG_CU_SI = "cu_si";
 UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
     PresenterWidget(NULL),
     node_unique_id(_node_unique_id),
-    ui(new Ui::UnitServerEditor)
-{
+    ui(new Ui::UnitServerEditor) {
     ui->setupUi(this);
     ui->splitterTypeInstances->setStretchFactor(0,0);
     ui->splitterTypeInstances->setStretchFactor(1,1);

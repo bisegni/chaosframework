@@ -19,7 +19,12 @@ protected:
                           QString::fromStdString(attribute),
                           QVariant::fromValue<QSharedPointer<ChaosByteArray> >(QSharedPointer<ChaosByteArray>(new ChaosByteArray(value))));
     }
-
+    void consumeValueNotFound(const std::string& key,
+                              const std::string& attribute) {
+        //emit value not foud
+        emit valueNotFound(QString::fromStdString(key),
+                          QString::fromStdString(attribute));
+    }
 public:
     MonitorBinaryAttributeHandler(const QString& attribute_name,
                                   bool event_on_change = false):

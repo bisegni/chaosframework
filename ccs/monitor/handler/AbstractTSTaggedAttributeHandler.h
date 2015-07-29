@@ -15,6 +15,8 @@ signals:
                       const QString& attribute_name,
                       const uint64_t timestamp,
                       const QVariant& attribute_value);
+    void valueNotFound(const QString& key,
+                       const QString& attribute_name);
 };
 
 #endif // ABSTRACTTSTAGGEDATTRIBUTEHANDLER

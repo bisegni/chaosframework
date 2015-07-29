@@ -133,7 +133,6 @@ HEADERS  += \
     monitor/handler/healt/HealtStatusHandler.h \
     monitor/handler/AbstractAttributeHandler.h \
     monitor/handler/MonitorInt32AttributeHandler.h \
-    monitor/handler/MonitorBinaryAttributeHandler.h \
     monitor/handler/MonitorBoolAttributeHandler.h \
     monitor/handler/MonitorDoubleAttributeHandler.h \
     monitor/handler/MonitorInt64AttributeHandler.h \
@@ -159,8 +158,7 @@ HEADERS  += \
     data/DatasetAttributeReader.h \
     data/data.h \
     widget/CLedIndicatorHealt.h \
-    monitor/handler/MonitorAttributeHandler.h \
-    monitor/handler/MonitorTSTaggedAttributeValue.h
+    monitor/handler/MonitorBinaryAttributeHandler.h
 
 FORMS    += \
     search/searchnoderesult.ui \

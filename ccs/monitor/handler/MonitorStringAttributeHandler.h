@@ -18,7 +18,12 @@ protected:
                           QString::fromStdString(attribute),
                           QString::fromStdString(value));
     }
-
+    void consumeValueNotFound(const std::string& key,
+                              const std::string& attribute) {
+        //emit value not foud
+        emit valueNotFound(QString::fromStdString(key),
+                          QString::fromStdString(attribute));
+    }
 public:
     MonitorStringAttributeHandler(const QString& attribute_name,
                                   bool event_on_change = false):

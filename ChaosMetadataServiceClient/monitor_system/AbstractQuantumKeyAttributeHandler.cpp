@@ -40,7 +40,7 @@ void AbstractQuantumKeyAttributeHandler::_consumeValueNotFound(const std::string
 }
 
 void AbstractQuantumKeyAttributeHandler::consumeValueNotFound(const std::string& key,
-                                  const std::string& attribute) {
+                                                              const std::string& attribute) {
     
 }
 //---------------------------implemented handler-------------------------

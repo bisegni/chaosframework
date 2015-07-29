@@ -10,9 +10,12 @@
 
 class LedIndicatorAliveTSWidget:
         public LedIndicatorWidget {
+    Q_OBJECT
 public:
+
     LedIndicatorAliveTSWidget(QWidget *parent);
     void setNewTS(uint64_t current_timestamp);
+
 private:
     QSharedPointer<QIcon> no_ts;
     QSharedPointer<QIcon> timeouted;

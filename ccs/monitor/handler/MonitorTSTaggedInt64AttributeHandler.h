@@ -21,8 +21,12 @@ protected:
                           timestamp,
                           QVariant::fromValue<int64_t>(value));
     }
-
-signals:
+    void consumeValueNotFound(const std::string& key,
+                              const std::string& attribute) {
+        //emit value not foud
+        emit valueNotFound(QString::fromStdString(key),
+                          QString::fromStdString(attribute));
+    }
 
 public:
     MonitorTSTaggedInt64AttributeHandler(const QString& attribute_name,

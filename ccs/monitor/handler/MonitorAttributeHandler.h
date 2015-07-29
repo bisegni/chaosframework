@@ -1,5 +1,7 @@
 #ifndef MONITORATTRIBUTEHANDLER
 #define MONITORATTRIBUTEHANDLER
 
+#include "AbstractAttributeHandler.h"
+
 #endif // MONITORATTRIBUTEHANDLER
 
