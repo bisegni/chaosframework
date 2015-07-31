@@ -19,7 +19,7 @@ else
         MEM=$(( $(free -m | grep 'Mem' | awk '{print int(($2/1024)+0.5)}') ))
     fi;
 
-    echo "Your system has $NPROC cpu cores and $MEM gigabytes of physical memory"
+    echo "Your compilation system will use $NPROC cpu cores and $MEM gigabytes of physical memory"
     if [ "$MEM" -lt "$NPROC" ]; then
 	NPROC=$MEM
     fi;

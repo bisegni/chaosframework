@@ -43,18 +43,20 @@ void MultiPropertyLogicSwitch::currentPropertyKeyValue(const QString& key,
     //update key bit
     logic_state_bit_field[kvp->bit_field_position] = (kvp->reference_value.find(value)!=kvp->reference_value.end());
     if(last_output_state == -1) {
-#if (BOOST_VERSION /100000) >= 1 && ((BOOST_VERSION /100) % 1000) >= 56
+#if ((BOOST_VERSION /100000) >= 1 ) && (((BOOST_VERSION /100) % 1000) >= 56)
         last_output_state = logic_state_bit_field.all();
 #else
-        last_output_state = logic_state_bit_field.count() == property_map.size();
+        last_output_state = (logic_state_bit_field.count() == property_map.size());
 #endif
     } else {
-#if (BOOST_VERSION /100000) >= 1 && ((BOOST_VERSION /100) % 1000) >= 56
-        if(((bool)last_output_state) == logic_state_bit_field.all()) return;
-        last_output_state = logic_state_bit_field.all();
+#if ((BOOST_VERSION /100000) >= 1) && (((BOOST_VERSION /100) % 1000) >= 56)
+      if(((bool)last_output_state) == logic_state_bit_field.all()) 
+	return;
+      last_output_state = logic_state_bit_field.all();
 #else
-        if(((bool)last_output_state) == (logic_state_bit_field.count() == property_map.size())) return;
-        last_output_state = (logic_state_bit_field.count() == property_map.size());
+      if(((bool)last_output_state) == (logic_state_bit_field.count() == property_map.size())) 
+	return;
+      last_output_state = (logic_state_bit_field.count() == property_map.size());
 #endif
 
     }
