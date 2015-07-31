@@ -195,7 +195,7 @@ namespace chaos {
         
         
         //! is the hartbeat of the node for the current request[uint64]
-        static const char * const NODE_TIMESTAMP        = "ndk_hearbeat";
+        static const char * const NODE_TIMESTAMP        = "ndk_heartbeat";
     }
     /** @} */ // end of NodeDefinitionKey
     

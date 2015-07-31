@@ -981,10 +981,12 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
     output_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT);
     //add all other output channel
     for(int idx = 0;
-        idx < cache_output_attribute_vector.size()-1; //the device id and timestamp in added out of this list
+        idx < ((int)cache_output_attribute_vector.size())-1; //the device id and timestamp in added out of this list
         idx++) {
         //
         AttributeValue * value_set = cache_output_attribute_vector[idx];
+	assert(value_set);
+
         switch(value_set->type) {
             case DataType::TYPE_BOOLEAN:
                 output_attribute_dataset->addBoolValue(value_set->name.c_str(), *value_set->getValuePtr<bool>());
