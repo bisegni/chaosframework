@@ -280,7 +280,7 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
         result_for_command->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
     }
     CDataWrapper *result = AbstractControlUnit::setDatasetAttribute(datasetAttributeValues, detachParam);
-    if(!result) {
+    if(result) {
         result_for_command->copyKeyTo(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, *result);
     } else {
         result = result_for_command.release();

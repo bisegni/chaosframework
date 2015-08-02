@@ -21,6 +21,9 @@
       </FileRef>
    </Group>
    <FileRef
+      location = "group:CHAOSFramework.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:example/ChaosCLI/ChaosCLI.xcodeproj">
    </FileRef>
    <FileRef
