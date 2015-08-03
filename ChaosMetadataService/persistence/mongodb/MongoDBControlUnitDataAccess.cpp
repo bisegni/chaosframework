@@ -141,18 +141,24 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
         //check for principal mandatory keys
         if(cu_unique_id.size() == 0) return -1;
         if(!dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -2;
-        if(!dataset_description.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP))return -3;
-        
+        if(!dataset_description.isCDataWrapperValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -3;
+        //checkout the dataset
+        auto_ptr<CDataWrapper> dataset(dataset_description.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        if(!dataset->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -5;
+        if(!dataset->isVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION))return -6;
+        if(!dataset->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP))return -4;
+
         //serach criteria
-        bson_find   << NodeDefinitionKey::NODE_UNIQUE_ID << dataset_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID)
-        << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
+        bson_find   << NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
+                    << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
         
         //add dataset timestamp
-        updated_field << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP << (long long)dataset_description.getInt64Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP);
+        updated_field << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP << (long long)dataset->getInt64Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP);
         
-        //add dataset
-        std::auto_ptr<CMultiTypeDataArrayWrapper> ds_vec(dataset_description.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
-        if(!ds_vec.get()) return -3;
+
+        
+        std::auto_ptr<CMultiTypeDataArrayWrapper> ds_vec(dataset->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        if(!ds_vec.get()) return -7;
         //cicle all dataset attribute
         mongo::BSONArrayBuilder dataset_bson_array;
         int32_t type = 0;

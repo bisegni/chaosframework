@@ -25,6 +25,7 @@
 #include "InitDeinit.h"
 #include "StartStop.h"
 #include "GetCurrentDataset.h"
+#include "GetFullDescription.h"
 #include "SetInputDatasetAttributeValues.h"
 using namespace chaos::metadata_service::api::control_unit;
 DEFINE_CLASS_FACTORY_NO_ALIAS(ControlUnitGroup, chaos::metadata_service::api::AbstractApiGroup);
@@ -39,6 +40,7 @@ AbstractApiGroup("control_unit"){
     addApi<InitDeinit>();
     addApi<StartStop>();
     addApi<GetCurrentDataset>();
+    addApi<GetFullDescription>();
     addApi<SetInputDatasetAttributeValues>();
 }
 

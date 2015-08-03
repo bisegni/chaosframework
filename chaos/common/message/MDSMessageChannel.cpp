@@ -1,4 +1,4 @@
-/*
+   /*
  *	MDSMessageChannel.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
@@ -163,7 +163,7 @@ int MDSMessageChannel::getLastDatasetForDevice(string& identificationID, CDataWr
     callData->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identificationID);
     //send request and wait the response
     auto_ptr<CDataWrapper> deviceInitInformation(sendRequest("control_unit",
-                                                             "getCurrentDataset",
+                                                             "getFullDescription",
                                                              callData.get(),
                                                              millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(deviceInitInformation, err)

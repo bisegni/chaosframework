@@ -631,29 +631,31 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(string& deviceID, CDataWr
 /*!
  fill a CDataWrapper with the dataset decode
  */
-void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEntity, CDataWrapper& deviceDatasetDescription) {
+void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEntity, CDataWrapper& device_dataset_description) {
     ptr_vector<edb::KeyIdAndValue> attrProperty;
-    ptr_vector<entity::Entity> deviceDatasetAttribute;
+    ptr_vector<entity::Entity> device_dataset_attributes;
     
     //add deviceID to description data
-    deviceDatasetDescription.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceEntity->getKeyInfo().value.strValue);
+    device_dataset_description.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceEntity->getKeyInfo().value.strValue);
+    
+    //convenient array for element porperty
+    CDataWrapper dataset;
     
     //set the registered timestamp
     deviceEntity->getPropertyByKeyID(mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP], attrProperty);
     if(attrProperty.size()) {
-        deviceDatasetDescription.addInt64Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP, (uint64_t)(&attrProperty[0])->value.numValue);
+        dataset.addInt64Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP, (uint64_t)(&attrProperty[0])->value.numValue);
         attrProperty.release();
     }
     
     //try to get all dataset attribute for device entity
-    deviceEntity->getChildsWithKeyID(mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME], deviceDatasetAttribute);
+    deviceEntity->getChildsWithKeyID(mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME], device_dataset_attributes);
     
     //get dataset attribute for domain name
     
-    //convenient array for element porperty
-    
-    for (ptr_vector<entity::Entity>::iterator dstElmtIterator = deviceDatasetAttribute.begin();
-         dstElmtIterator != deviceDatasetAttribute.end();
+
+    for (ptr_vector<entity::Entity>::iterator dstElmtIterator = device_dataset_attributes.begin();
+         dstElmtIterator != device_dataset_attributes.end();
          dstElmtIterator++) {
         
         //get next dst element entity for get the attribute
@@ -665,17 +667,17 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEnt
         if(attrProperty.size() == 0) continue;
         
         //cicle all dataset element
-        auto_ptr<CDataWrapper> datasetElementCDW(new CDataWrapper());
+        auto_ptr<CDataWrapper> dataset_element(new CDataWrapper());
         
-        fillCDataWrapperDSAtribute(datasetElementCDW.get(), deviceEntity, dstAttrEntity, attrProperty);
+        fillCDataWrapperDSAtribute(dataset_element.get(), deviceEntity, dstAttrEntity, attrProperty);
         
-        // add parametere representation object to main action representation
-        deviceDatasetDescription.appendCDataWrapperToArray(*datasetElementCDW.get());
-        //CDataWrapper *data = *datasetIterator;
+        // add parameter representation object to main action representation
+        dataset.appendCDataWrapperToArray(*dataset_element.get());
     }
     
     //close the dataset attribute array
-    deviceDatasetDescription.finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+    dataset.finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+    device_dataset_description.addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, dataset);
     
     //add now the server address for this device if sent
     attrProperty.clear();
@@ -684,9 +686,9 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEnt
          iter != attrProperty.end();
          iter++) {
         edb::KeyIdAndValue *kivPtr = &(*iter);
-        deviceDatasetDescription.appendStringToArray(kivPtr->value.strValue);
+        device_dataset_description.appendStringToArray(kivPtr->value.strValue);
     }
-    deviceDatasetDescription.finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
+    device_dataset_description.finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
 }
 
 /*

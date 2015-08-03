@@ -107,7 +107,7 @@ void IODirectIODriver::init(void *_init_parameter) throw(CException) {
 	//InizializableService::initImplementation(init_parameter.client_instance, _init_parameter, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
 	
 	//get the client and server channel
-	IODirectIODriver_LAPP_ << "Allcoate the default device server channel";
+	IODirectIODriver_LAPP_ << "Allocate the default device server channel";
 	device_server_channel = (chaos_dio_channel::DirectIODeviceServerChannel *)init_parameter.endpoint_instance->getNewChannelInstance("DirectIODeviceServerChannel");
 	device_server_channel->setHandler(this);
 	

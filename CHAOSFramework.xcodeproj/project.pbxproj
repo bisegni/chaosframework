@@ -605,6 +605,7 @@
 		32C7EAD71A5D9E450008DFE8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAD61A5D9E450008DFE8 /* main.cpp */; };
 		32C7EADD1A5D9EE30008DFE8 /* ChaosWANProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EADB1A5D9EE30008DFE8 /* ChaosWANProxy.cpp */; };
 		32C7EAE71A5EC9980008DFE8 /* AbstractWANInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */; };
+		32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7ED141B6F8E480038BD26 /* GetFullDescription.cpp */; };
 		32CAC9E11AE6988200DC6AAB /* LoadUnloadControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CAC9DF1AE6988200DC6AAB /* LoadUnloadControlUnit.cpp */; };
 		32CAC9E41AE6991500DC6AAB /* LoadUnloadControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CAC9E21AE6991500DC6AAB /* LoadUnloadControlUnit.cpp */; };
 		32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CAC9E51AE69F3D00DC6AAB /* LoadUnloadControlUnit.cpp */; };
@@ -1525,6 +1526,8 @@
 		32C7EADF1A5E868C0008DFE8 /* UrlAccessibleService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UrlAccessibleService.h; sourceTree = "<group>"; };
 		32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractWANInterface.cpp; sourceTree = "<group>"; };
 		32C7EAE61A5EC9980008DFE8 /* AbstractWANInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWANInterface.h; sourceTree = "<group>"; };
+		32C7ED141B6F8E480038BD26 /* GetFullDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetFullDescription.cpp; sourceTree = "<group>"; };
+		32C7ED151B6F8E480038BD26 /* GetFullDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetFullDescription.h; sourceTree = "<group>"; };
 		32CAC9DF1AE6988200DC6AAB /* LoadUnloadControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadUnloadControlUnit.cpp; sourceTree = "<group>"; };
 		32CAC9E01AE6988200DC6AAB /* LoadUnloadControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadUnloadControlUnit.h; sourceTree = "<group>"; };
 		32CAC9E21AE6991500DC6AAB /* LoadUnloadControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadUnloadControlUnit.cpp; sourceTree = "<group>"; };
@@ -2042,6 +2045,8 @@
 				32610F951AE671AF00779B84 /* StartStop.h */,
 				325FC85F1AF7C8B200DB9D66 /* GetCurrentDataset.cpp */,
 				325FC8601AF7C8B200DB9D66 /* GetCurrentDataset.h */,
+				32C7ED141B6F8E480038BD26 /* GetFullDescription.cpp */,
+				32C7ED151B6F8E480038BD26 /* GetFullDescription.h */,
 				32B419321B16148A00C3CA7D /* SetInputDatasetAttributeValues.cpp */,
 				32B419331B16148A00C3CA7D /* SetInputDatasetAttributeValues.h */,
 			);
@@ -4322,6 +4327,7 @@
 				327791E21B67728300FEDD52 /* ServiceApiGroup.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
 				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
+				32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
