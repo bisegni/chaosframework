@@ -109,7 +109,7 @@ void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info) throw (chaos
                 MDSBC_ERR << "request with no future";
                 throw chaos::CException(-2, "request with no future", __PRETTY_FUNCTION__);
             }
-            if(request_info.request_future->wait(1000)) {
+            if(request_info.request_future->wait(5000)) {
                 //we have hd answer
                 if(request_info.request_future->getError()) {
                     MDSBC_ERR << "We have had answer with error"
