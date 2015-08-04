@@ -1,18 +1,8 @@
 {
   "data_servers": [
     {
-      "hostname": "192.168.150.21:1672:30175|0",
-      "id_server": 5,
-      "is_live": true
-    },
-    {
-      "hostname": "192.168.150.22:1672:30175|0",
-      "id_server": 6,
-      "is_live": true
-    },
-    {
-      "hostname": "192.168.150.23:1672:30175|0",
-      "id_server": 7,
+      "hostname": "127.0.0.1:1672:30175|0",
+      "id_server": 0,
       "is_live": true
     }
   ],

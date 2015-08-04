@@ -39,9 +39,7 @@ SET_NAMED_FAULT(l, cmdInstance, c , m , d)
 l << c << m << d; \
 n->setRunningProperty(RunningPropertyType::RP_Fault); \
 n->fault_description.code = c; \
-n->fault_description.description = m; \
-{std::stringstream ss;ss<<d<<"|"<<__FUNCTION__<<"|"<<__LINE__;n->fault_description.domain =ss.str();}
-
+n->fault_description.description = d;
 
 //! Functor implementation
 void AcquireFunctor::operator()() {
