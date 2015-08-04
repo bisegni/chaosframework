@@ -70,6 +70,7 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
         it != command_instance_list.end();
         it++) {
         std::auto_ptr<CDataWrapper> instance_pack(new CDataWrapper());
+        N_CTS_INFO << "Send datapack "<< it->getJSONString();
         instance_pack->addCSDataValue("submission_task", *it);
         getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::SubmitBatchCommand),
                                           instance_pack.release(),

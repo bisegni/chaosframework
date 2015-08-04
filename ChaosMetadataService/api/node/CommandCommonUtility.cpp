@@ -19,7 +19,7 @@
  */
 
 #include "CommandCommonUtility.h"
-
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
 
@@ -128,6 +128,7 @@ std::auto_ptr<chaos::common::data::CDataWrapper> CommandCommonUtility::createCom
                                                                                                                                CDataWrapper *command_description,
                                                                                                                                CDataWrapper *command_template_description) throw(chaos::CException) {
     bool is_correct_type = false;
+    ChaosStringVector all_template_key;
     std::auto_ptr<chaos::common::data::CDataWrapper> result(new CDataWrapper());
     result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_uid);
     
@@ -143,7 +144,19 @@ std::auto_ptr<chaos::common::data::CDataWrapper> CommandCommonUtility::createCom
     
     //we have all parameter valid now compose the request
     command_description->copyKeyTo(BatchCommandAndParameterDescriptionkey::BC_ALIAS, *result);
-    command_template_description->copyAllTo(*result);
+    command_template_description->getAllKey(all_template_key);
+    //we need to copy all template key except the key that are null because are the key that has been requested to the user and so
+    //have been forwarded with the template name
+    for(ChaosStringVectorIterator it = all_template_key.begin();
+        it != all_template_key.end();
+        it++) {
+        if(command_template_description->isNullValue(*it)) {
+            N_CCU_DBG << "Removed from template null value key:" << *it;
+            continue;
+        }
+        //we can add the key value
+        command_template_description->copyKeyTo(*it, *result);
+    }
     
     //try to find requested paramter whitin the command submission
     for(std::vector<AttributeRequested>::iterator it = attribute_paramterized.begin();
