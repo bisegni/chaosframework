@@ -104,6 +104,13 @@ if (!(x)) \
 assert(x);
 #endif
 
+#define CHAOS_EXCEPTION(e,msg) \
+    {std::stringstream ss;\
+    ss<<__FILE__<<":"<<__LINE__<<":"<<__FUNCTION__;\
+    LDBG_<<"throwing exception in:"<<ss.str();\
+    LDBG_<<"message:"<<msg;\
+    throw chaos::CException(e,msg,ss.str());}
+    
 
     //epoc for time stamp calculation
 const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
