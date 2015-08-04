@@ -309,7 +309,7 @@
       </font>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="iconSize">
       <size>
@@ -580,7 +580,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Add new instance</string>
+                <string>add new template</string>
                </property>
               </widget>
              </item>
@@ -631,7 +631,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Update List</string>
+                <string>update List</string>
                </property>
               </widget>
              </item>
@@ -659,7 +659,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Remove Template</string>
+                <string>remove template</string>
                </property>
               </widget>
              </item>
@@ -674,7 +674,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Edit Template</string>
+                <string>edit template</string>
                </property>
               </widget>
              </item>
@@ -686,7 +686,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>Create Instance</string>
+                <string>send instance</string>
                </property>
               </widget>
              </item>
