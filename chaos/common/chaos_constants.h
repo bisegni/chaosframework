@@ -782,24 +782,24 @@ namespace chaos {
             //!no error
             EC_NO_ERROR = 0,
             //! rpc timeout
-            EC_TIMEOUT = 1,
+            EC_TIMEOUT = 100,
             //! dataset attribute not found
-            EC_ATTRIBUTE_NOT_FOUND = 2,
+            EC_ATTRIBUTE_NOT_FOUND, // 101 ...
             //! dataset attribute bad direction
-            EC_ATTRIBUTE_BAD_DIR = 3,
+            EC_ATTRIBUTE_BAD_DIR ,
             //!dataset attribute not supported
-            EC_ATTRIBUTE_TYPE_NOT_SUPPORTED = 4,
+            EC_ATTRIBUTE_TYPE_NOT_SUPPORTED ,
             
             //!unit server registration is gone well
-            EC_MDS_NODE_REGISTRATION_OK = 5,
+            EC_MDS_NODE_REGISTRATION_OK = 500,
             //!unit server registration has failed for invalid alias
-            EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS = 6,
+            EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS,
             //!unit server registration for duplicated alias
-            EC_MDS_NODE_REGISTRATION_FAILURE_DUPLICATE_ALIAS = 7,
+            EC_MDS_NODE_REGISTRATION_FAILURE_DUPLICATE_ALIAS,
             //! node bad state machine state in response to mds ack event
-            EC_MDS_NODE_BAD_SM_STATE = 8,
+            EC_MDS_NODE_BAD_SM_STATE,
             //!work unit is not self manageable and need to be loaded within an unit server
-            EC_MDS_NODE_ID_NOT_SELF_MANAGEABLE = 9
+            EC_MDS_NODE_ID_NOT_SELF_MANAGEABLE
         } ErrorCode;
     }
     /** @} */ // end of ChaosDataType
