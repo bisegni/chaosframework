@@ -5141,7 +5141,6 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
-					"-luv",
 					"-lmongoose",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -5183,7 +5182,6 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
-					"-luv",
 					"-lmongoose",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
