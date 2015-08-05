@@ -46,11 +46,11 @@ if(map_node.count(n) == 0) return;\
 if(map_node[n]->map_metric.count(m) == 0) return;
 
 #define HEALT_SET_METRIC_VALUE(node_metrics_ptr, t, m, v)\
-t *tmp = dynamic_cast<t*>(node_metrics_ptr->map_metric[m].get());\
+t *tmp = static_cast<t*>(node_metrics_ptr->map_metric[m].get());\
 if(tmp)tmp->value = v;
 
 #define HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)\
-Int64HealtMetric *ts_tmp = dynamic_cast<Int64HealtMetric*>(node_metrics_ptr->map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC].get());\
+Int64HealtMetric *ts_tmp = static_cast<Int64HealtMetric*>(node_metrics_ptr->map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC].get());\
 ts_tmp->value = TimingUtil::getTimeStamp();
 
 HealtManager::HealtManager():
@@ -353,7 +353,7 @@ CDataWrapper*  HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_ma
     CDataWrapper *node_data_pack = new CDataWrapper();
     if(node_data_pack) {
     //set the push timestamp
-    dynamic_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
+    static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
     //scan all metrics
     BOOST_FOREACH(HealtNodeElementMap::value_type map_metric_element, element_map) {
         //add metric to cdata wrapper
