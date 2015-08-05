@@ -487,7 +487,6 @@ fi
 echo "Compile !CHAOS"
 cd $SCRIPTPATH
 if [ $nmake -gt 0 ];then
-    exit 1
     cmake $CHAOS_CMAKE_FLAGS $CMAKE_CHAOS_FRAMEWORK .
 else
     echo "* nothing changed"
