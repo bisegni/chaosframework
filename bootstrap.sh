@@ -493,7 +493,7 @@ else
 fi
 
 do_make "!CHAOS"
-
+exit 0
 
 # if [ -n "$CHAOS_DEVELOPMENT" ]; then
 #     echo "Remove the installed header"
