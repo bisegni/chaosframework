@@ -3,7 +3,7 @@
 #####
 #Dipendence: automake libtool subversion git-core bzr ruby1.8-full cmake zlib1g-dev libcloog-ppl0 wget g++
 #####
-
+nmake=0
 SCRIPTPATH=`dirname $0`
 source $CHAOS_BUNDLE/tools/common_util.sh
 
@@ -78,7 +78,12 @@ if [ -n "$CHAOS_CROSS_HOST" ]; then
 fi
 
 do_make() {
-    make clean
+    # make clean
+
+    if [ ! -z "$2" ]; then
+	echo "* make clean"
+	make clean
+    fi
     echo "* make $1 with "$NPROC" processors"
     if [ -n "$CHAOS_DEVELOPMENT" ]; then
 	if !(make -j$NPROC VERBOSE=1); then
@@ -96,6 +101,7 @@ do_make() {
      	echo "## error installing $1"
      	exit 1
      fi
+     ((nmake++))
 }
 
 
@@ -174,7 +180,7 @@ if [ ! -f "$PREFIX/include/zlib.h" ] || [ ! -f "$PREFIX/lib/libz.a" ]; then
 	echo "entering in $BASE_EXTERNAL/zlib-$ZLIB_VERSION"
 	echo "using $CC and $CXX"
 	./configure --prefix=$PREFIX
-	do_make "ZLIB"
+	do_make "ZLIB" 1
     else
 	echo "$BASE_EXTERNAL/zlib-$ZLIB_VERSION not found"
 	exit 1
@@ -200,7 +206,8 @@ if [ ! -f $PREFIX/include/json/json.h ]; then
     else
 	CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DJSONCPP_LIB_BUILD_SHARED=ON
     fi
-    do_make "jsoncpp"
+    
+    do_make "jsoncpp" 1
 fi
 
 ## mongoose install
@@ -227,7 +234,7 @@ if [ ! -f $PREFIX/include/mongoose.h ]; then
        CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DSHAREDLIB=ON -DHAS_JSONCPP=ON -DJSONCPP_DIR=$PREFIX
    fi
 
-	do_make "mongoose-cpp"
+	do_make "mongoose-cpp" 1
 fi
 
 ##
@@ -316,7 +323,7 @@ if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; the
 	./configure --enable-shared --prefix=$PREFIX $CROSS_HOST_CONFIGURE
     fi
 
-    do_make "MODBUS"
+    do_make "MODBUS" 1
 
     echo "libmodbus done"
 fi
@@ -336,7 +343,7 @@ if [ ! -d "$PREFIX/include/event2" ]; then
     git pull
     ./autogen.sh
     ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-    do_make "LIBEVENT"
+    do_make "LIBEVENT" 1
     echo "LIBEVENT done"
 fi
 
@@ -382,7 +389,7 @@ if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
     else
 	cmake $CHAOS_CMAKE_FLAGS .
     fi
-    do_make "COUCHBASE"
+    do_make "COUCHBASE" 1
     echo "Couchbase done"
 fi
 else
@@ -438,7 +445,7 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
     echo "patching memcached.h to use the correct cinttypes"
     sed -i .bak -e "s/include <cinttypes>/include <tr1\/cinttypes>/" libmemcached-1.0/memcached.h
 
-    do_make "LIBMEMCACHED"
+    do_make "LIBMEMCACHED" 1
 fi
 echo "Libmemcached done"
 else
@@ -469,7 +476,7 @@ if [ -z "$CHAOS_DISABLE_EVENTFD" ];then
 else
   ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE --with-gnu-ld --disable-eventfd
 fi
-    do_make "ZMQ"
+    do_make "ZMQ" 1
     echo "ZMQ done"
 fi
 else
@@ -479,7 +486,12 @@ fi
 
 echo "Compile !CHAOS"
 cd $SCRIPTPATH
-cmake $CHAOS_CMAKE_FLAGS $CMAKE_CHAOS_FRAMEWORK .
+if [ $nmake -gt 0 ];then
+    exit 1
+    cmake $CHAOS_CMAKE_FLAGS $CMAKE_CHAOS_FRAMEWORK .
+else
+    echo "* nothing changed"
+fi
 
 do_make "!CHAOS"
 

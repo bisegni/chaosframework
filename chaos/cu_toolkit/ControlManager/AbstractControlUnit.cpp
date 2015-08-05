@@ -267,8 +267,11 @@ void AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::Dec
 CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
                                          bool& detachParam) throw(CException) {
     std::vector<string> attribute_names;
-    if(getServiceState() == common::utility::service_state_machine::InizializableServiceType::IS_INITIATED) throw CException(-1, DatasetDB::getDeviceID()+" already in initialized", __PRETTY_FUNCTION__);
-    if(getServiceState() != common::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED) throw CException(-2, DatasetDB::getDeviceID()+" need to be in deinit", __PRETTY_FUNCTION__);
+    if(getServiceState() == common::utility::service_state_machine::InizializableServiceType::IS_INITIATED) {
+        return NULL;
+     //   throw CException(-1, DatasetDB::getDeviceID()+" already in initialized", __PRETTY_FUNCTION__);
+    }
+    if(getServiceState() != common::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED) throw CException(-1, DatasetDB::getDeviceID()+" need to be in deinit", __PRETTY_FUNCTION__);
     if(!attribute_value_shared_cache) throw CException(-3, "No Shared cache implementation found for:"+DatasetDB::getDeviceID(), __PRETTY_FUNCTION__);
 
     try {
@@ -352,9 +355,12 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
 CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
                                           bool& detachParam) throw(CException) {
     //call start method of the startable interface
-    if(getServiceState() == service_state_machine::StartableServiceType::SS_STARTED) throw CException(-1, DatasetDB::getDeviceID()+" already started", __PRETTY_FUNCTION__);
+    if(getServiceState() == service_state_machine::StartableServiceType::SS_STARTED){
+        return NULL;
+        //throw CException(-1, DatasetDB::getDeviceID()+" already started", __PRETTY_FUNCTION__);
+    }
     if(getServiceState() != common::utility::service_state_machine::InizializableServiceType::IS_INITIATED &&
-       getServiceState() != common::utility::service_state_machine::StartableServiceType::SS_STOPPED) throw CException(-2, DatasetDB::getDeviceID()+" need to be in the init or stop state to be started", __PRETTY_FUNCTION__);
+       getServiceState() != common::utility::service_state_machine::StartableServiceType::SS_STOPPED) throw CException(-1, DatasetDB::getDeviceID()+" need to be in the init or stop state to be started", __PRETTY_FUNCTION__);
 
     ACULDBG_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
     StartableService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
@@ -394,8 +400,11 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
 CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
                                          bool& detachParam) throw(CException) {
     //first we start the deinitializaiton of the implementation unit
-    if(getServiceState() == service_state_machine::StartableServiceType::SS_STOPPED) throw CException(-1, DatasetDB::getDeviceID()+" already stopped", __PRETTY_FUNCTION__);
-    if(getServiceState() != service_state_machine::StartableServiceType::SS_STARTED) throw CException(-2, DatasetDB::getDeviceID()+" need to be started to be stopped", __PRETTY_FUNCTION__);
+    if(getServiceState() == service_state_machine::StartableServiceType::SS_STOPPED) {
+        return NULL;
+     //   throw CException(-1, DatasetDB::getDeviceID()+" already stopped", __PRETTY_FUNCTION__);
+    }
+    if(getServiceState() != service_state_machine::StartableServiceType::SS_STARTED) throw CException(-1, DatasetDB::getDeviceID()+" need to be started to be stopped", __PRETTY_FUNCTION__);
 
     try {
         //set healt to start
@@ -478,9 +487,12 @@ void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDa
  */
 CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
                                            bool& detachParam) throw(CException) {
-    if(getServiceState() == common::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED) throw CException(-1, DatasetDB::getDeviceID()+" already deinitlized", __PRETTY_FUNCTION__);
+    if(getServiceState() == common::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED){
+        return NULL;
+        //throw CException(-1, DatasetDB::getDeviceID()+" already deinitlized", __PRETTY_FUNCTION__);
+    }
     if(getServiceState() != common::utility::service_state_machine::InizializableServiceType::IS_INITIATED &&
-       getServiceState() != common::utility::service_state_machine::StartableServiceType::SS_STOPPED) throw CException(-2, DatasetDB::getDeviceID()+" need to be in the init or stop state to be initialized", __PRETTY_FUNCTION__);
+       getServiceState() != common::utility::service_state_machine::StartableServiceType::SS_STOPPED) throw CException(-1, DatasetDB::getDeviceID()+" need to be in the init or stop state to be initialized", __PRETTY_FUNCTION__);
 
     //first we start the deinitializaiton of the implementation unit
     try {
