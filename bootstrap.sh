@@ -150,7 +150,8 @@ if chaos_exclude "libuv";then
 fi
 
 
-if [ ! -e "$PREFIX/include/zlib.h" ] || [ ! -e "$PREFIX/lib/libz.a" ]; then
+if [ ! -f "$PREFIX/include/zlib.h" ] || [ ! -f "$PREFIX/lib/libz.a" ]; then
+    echo "* need zlib"
     if [ ! -d "$BASE_EXTERNAL/zlib-$ZLIB_VERSION" ]; then
 	if !( wget --no-check-certificate -O "$BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz" "http://zlib.net/zlib-$ZLIB_VERSION.tar.gz" ); then
 	echo "## cannot download http://zlib.net/zlib-$ZLIB_VERSION.tar.gz, aborting "
@@ -182,6 +183,7 @@ fi
 
 ## json cpp
 if [ ! -f $PREFIX/include/json/json.h ]; then
+    echo "* need json"
     if [ ! -d $BASE_EXTERNAL/jsoncpp ]; then
 		if !(git clone https://github.com/bisegni/jsoncpp.git $BASE_EXTERNAL/jsoncpp) ; then
 			echo "## cannot checkout jsoncpp"
@@ -202,7 +204,8 @@ if [ ! -f $PREFIX/include/json/json.h ]; then
 fi
 
 ## mongoose install
-if [ ! -f $PREFIX/include/mongoose-cpp/mongoose.h ]; then
+if [ ! -f $PREFIX/include/mongoose.h ]; then
+    echo "* need mongoose"
     if [ ! -f $BASE_EXTERNAL/mongoose-cpp/mongoose.h ]; then
 		  if !(git clone https://github.com/bisegni/mongoose-cpp.git $BASE_EXTERNAL/mongoose-cpp) ; then
 			  echo "## cannot checkout moongoose-cpp"
@@ -230,31 +233,31 @@ fi
 ##
 
 if [ ! -d "$PREFIX/include/boost" ]; then
-    if [ ! -e $BASE_EXTERNAL/boost ]; then
-	if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
-            echo "Download boost source"
-            if !( wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://tcpdiag.dl.sourceforge.net/project/boost/boost/$BOOST_VERSION_IN_PATH/boost_$BOOST_VERSION.tar.gz" ); then
+    echo "* need boost"
+    if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
+        echo "Download boost $BOOST_VERSION source"
+        if !( wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://tcpdiag.dl.sourceforge.net/project/boost/boost/$BOOST_VERSION_IN_PATH/boost_$BOOST_VERSION.tar.gz" ); then
 	    echo "## cannot download boost_$BOOST_VERSION.tar.gz"
 	    exit 1
-	    fi
-
 	fi
+	    
     fi
+    
     if [ ! -e $BASE_EXTERNAL/boost ]; then
         tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
         mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
 	cp $CHAOS_BUNDLE/tools/patches/boost-1.55.0-atomic-check_lock_free_flag.patch $BASE_EXTERNAL/boost
-
+	
     fi
-
+    
     #install old version of boost log
     if [ $BOOST_NUMBER_VERSION -le 1530 ] && [ ! -d "$BASE_EXTERNAL/boost_log" ]; then
-
+	
 	if !(git clone https://cvs.lnf.infn.it/boost_log $BASE_EXTERNAL/boost_log); then
 	    echo "## cannot git clone  https://cvs.lnf.infn.it/boost_log"
 	    exit 1
 	fi
-
+	
 	if [ ! -d "$BASE_EXTERNAL/boost/boost/log" ]; then
 	    echo "link $BASE_EXTERNAL/boost/boost/log -> $BASE_EXTERNAL/boost_log/boost/log"
 	    ln -s $BASE_EXTERNAL/boost_log/boost/log $BASE_EXTERNAL/boost/boost/log
@@ -265,8 +268,8 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 	    ln -s $BASE_EXTERNAL/boost_log/libs/log $BASE_EXTERNAL/boost/libs/log
 	fi
     fi
-
-
+    
+    
     echo "Boostrapping boost"
     cd $BASE_EXTERNAL/boost
     patch -p1 < boost-1.55.0-atomic-check_lock_free_flag.patch >& /dev/null
@@ -274,26 +277,27 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 	echo "## cannot bootstrap boost"
 	exit 1;
     fi
-
+    
     if [ -n "$CHAOS_CROSS_HOST" ]; then
 	echo "* Patching project-config.jam to cross compile for $CHAOS_CROSS_HOST"
 	sed -i .bak -e "s/using gcc/using gcc : arm : $CXX/" project-config.jam
     fi
-
-
+    
+    
     cd $BASE_EXTERNAL/boost
     echo "Compile and install boost libraries into $PREFIX/"
     ./b2 --clean
     echo "using zlib : $ZLIB_VERSION : $CHAOS_PREFIX ;" > user-config.jam
     ./b2 $CHAOS_BOOST_FLAGS -j $NPROC
-
+    
 else
     echo "Boost Already present"
 fi
 
 ### install libmodbus
 if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; then
-    echo "Setup libmodbus library"
+    echo "* need libmodbus"
+
     if [ ! -d "$BASE_EXTERNAL/libmodbus" ]; then
         echo "Install libmodbus"
         git clone https://github.com/stephane/libmodbus.git $BASE_EXTERNAL/libmodbus
@@ -319,6 +323,7 @@ fi
 
 echo "Setup LIBEVENT :$LIB_EVENT_VERSION"
 if [ ! -d "$PREFIX/include/event2" ]; then
+    echo "* need libevent"
     if [ ! -d "$BASE_EXTERNAL/libevent" ]; then
 	echo "Installing LibEvent"
 	if !(git clone https://github.com/libevent/libevent.git $BASE_EXTERNAL/libevent); then
@@ -361,6 +366,7 @@ fi
 if [ -z "$CHAOS_NO_COUCHBASE" ]; then
 echo "Setup Couchbase sdk"
 if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
+    echo "* need couchbase"
     if [ ! -d "$BASE_EXTERNAL/libcouchbase" ]; then
 	echo "Download couchabse source"
 	if !(git clone https://github.com/couchbase/libcouchbase.git $BASE_EXTERNAL/libcouchbase); then
@@ -413,7 +419,8 @@ fi
 if [ -z "$CHAOS_NO_MEMCACHE" ];then
 echo "Setup LIBMEMCACHED"
 if [ ! -d "$PREFIX/include/libmemcached" ]; then
-    echo "Install libmemcached into  $BASE_EXTERNAL/libmemcached"
+    echo "* need memcached"
+
     if [ ! -d "$BASE_EXTERNAL/libmemcached-$LMEM_VERSION" ]; then
 	if !(wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz); then
 	    echo "## cannot wget  https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz"
@@ -441,6 +448,7 @@ fi
 if [ -z "$CHAOS_NO_ZMQ" ]; then
 echo "Setup ZMQ"
 if [ ! -f "$PREFIX/include/zmq.h" ]; then
+    echo "* need zmq"
     if [ ! -d "$BASE_EXTERNAL/$ZMQ_VERSION" ]; then
 	echo "Download zmq source"
 
