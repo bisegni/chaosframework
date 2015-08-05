@@ -59,7 +59,7 @@ int PerformanceNodeChannel::getPerformanceSession(DirectIOPerformanceSession **p
                                                            PerformanceSystemRpcKey::ACTION_PERFORMANCE_INIT_SESSION,
                                                            &init_performance_session_param,
                                                            ms_timeout));
-	CHECK_TIMEOUT_AND_RESULT_CODE(init_session_result, err)
+    err = getLastErrorCode();
 	if(err == ErrorCode::EC_NO_ERROR) {
         auto_ptr<CDataWrapper> info_pack(init_session_result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
         if(info_pack.get() && info_pack->hasKey(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION)){

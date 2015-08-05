@@ -38,58 +38,58 @@ void DeviceMessageChannel::setNewAddress(CDeviceNetworkAddress *_deviceAddress) 
 }
 //------------------------------------
 int DeviceMessageChannel::initDevice(CDataWrapper *initData, uint32_t millisecToWait) {
-    int err = ErrorCode::EC_NO_ERROR;
+    //int err = ErrorCode::EC_NO_ERROR;
     CHAOS_ASSERT(initData)
     auto_ptr<CDataWrapper> initResult(sendRequest(deviceNetworkAddress->node_id,
                                                   NodeDomainAndActionRPC::ACTION_NODE_INIT,
                                                   initData,
                                                   millisecToWait));
-    CHECK_TIMEOUT_AND_RESULT_CODE(initResult, err)
-    return err;
+    //CHECK_TIMEOUT_AND_RESULT_CODE(initResult, err)
+    return getLastErrorCode();
 }
 
 //------------------------------------
 int DeviceMessageChannel::deinitDevice(uint32_t millisecToWait) {
-    int err = ErrorCode::EC_NO_ERROR;
+    //int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
                                               NodeDomainAndActionRPC::ACTION_NODE_DEINIT,
                                               &message_data,
                                               millisecToWait));
-    CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
-    return err;
+    //CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
+    return getLastErrorCode();
 }
 
 //------------------------------------
 int DeviceMessageChannel::startDevice(uint32_t millisecToWait) {
-    int err = ErrorCode::EC_NO_ERROR;
+    //int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
                                               NodeDomainAndActionRPC::ACTION_NODE_START,
                                               &message_data,
 											  millisecToWait));
-    CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
-    return err;
+    //CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
+    return getLastErrorCode();
 }
 
 //------------------------------------
 int DeviceMessageChannel::stopDevice(uint32_t millisecToWait) {
-    int err = ErrorCode::EC_NO_ERROR;
+    //int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
                                               NodeDomainAndActionRPC::ACTION_NODE_STOP,
 											  &message_data,
 											  millisecToWait));
-    CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
-    return err;
+    //CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
+    return getLastErrorCode();
 }
 
 //------------------------------------
 int DeviceMessageChannel::restoreDeviceToTag(const std::string& restore_tag, uint32_t millisecToWait) {
-	int err = ErrorCode::EC_NO_ERROR;
+	//int err = ErrorCode::EC_NO_ERROR;
 	CDataWrapper message_data;
 	message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
 	message_data.addStringValue(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG, restore_tag);
@@ -97,49 +97,43 @@ int DeviceMessageChannel::restoreDeviceToTag(const std::string& restore_tag, uin
                                               NodeDomainAndActionRPC::ACTION_NODE_RESTORE,
 											  &message_data,
                                               millisecToWait));
-	CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
-	return err;
+	//CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
+	return getLastErrorCode();
 }
 
 //------------------------------------
 int DeviceMessageChannel::getType(std::string& control_unit_type, uint32_t millisecToWait) {
-	int err = ErrorCode::EC_NO_ERROR;
+	//
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
                                               NodeDomainAndActionRPC::ACTION_CU_GET_INFO,
                                               NULL,
                                               millisecToWait));
-    CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
-	if(err == ErrorCode::EC_NO_ERROR) {
-        //auto_ptr<CDataWrapper> info_pack(result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+	if(getLastErrorCode() == ErrorCode::EC_NO_ERROR) {
         if(result.get() && result->hasKey(NodeDefinitionKey::NODE_TYPE)){
             control_unit_type = result->getStringValue(NodeDefinitionKey::NODE_TYPE);
         }
     }
-    return err;
+    return getLastErrorCode();;
 }
 
 //------------------------------------
 int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, uint32_t millisecToWait) {
-    int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
 											  NodeDomainAndActionRPC::ACTION_NODE_GET_STATE,
 											  &message_data,
 											  millisecToWait));
-    CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
-    if(err == ErrorCode::EC_NO_ERROR) {
-        //auto_ptr<CDataWrapper> statePack(result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+    if(getLastErrorCode() == ErrorCode::EC_NO_ERROR) {
         if(result.get() && result->hasKey(CUStateKey::CONTROL_UNIT_STATE)){
             deviceState = (CUStateKey::ControlUnitState)result->getInt32Value(CUStateKey::CONTROL_UNIT_STATE);
         }
     }
-    return err;
+    return getLastErrorCode();;
 }
 
 //------------------------------------
 int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues, bool noWait, uint32_t millisecToWait) {
-    int err = ErrorCode::EC_NO_ERROR;
         //create the pack
     //CDataWrapper deviceAttributeValues;
         //setup with the device_id code
@@ -152,14 +146,12 @@ int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues, bool
                                                       ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
                                                       &attributesValues,
                                                       millisecToWait));
-        CHECK_TIMEOUT_AND_RESULT_CODE(initResult, err)
     }
-    return err;
+    return getLastErrorCode();
 }
 
     //------------------------------------
 int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy, uint32_t millisecToWait) {
-    int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     message_data.addInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY, scheduledDealy);
@@ -167,8 +159,7 @@ int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy, uint32_t mil
                                               NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
                                               &message_data,
                                               millisecToWait));
-    CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
-    return err;
+    return getLastErrorCode();
 
 }
 
@@ -182,18 +173,16 @@ void DeviceMessageChannel::sendCustomMessage(const std::string& action_name, CDa
 
 //------------------------------------
 int DeviceMessageChannel::sendCustomRequest(const std::string& action_name, CDataWrapper* const message_data, CDataWrapper** resultData, uint32_t millisecToWait, bool async, bool queued) {
-    int err = ErrorCode::EC_NO_ERROR;
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
                                               action_name,
                                               message_data,
                                               millisecToWait,
                                               async,
                                               !queued));
-    CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
-    if(err == ErrorCode::EC_NO_ERROR && resultData) {
+    if(getLastErrorCode() == ErrorCode::EC_NO_ERROR && resultData) {
         *resultData = result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
     }
-    return err;
+    return getLastErrorCode();
 }
 
 //------------------------------------

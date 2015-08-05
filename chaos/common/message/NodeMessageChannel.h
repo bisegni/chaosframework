@@ -38,7 +38,7 @@ namespace chaos {
 			 CNodeNetworkAddress ans information for the endpoint
 			 */
 			class NodeMessageChannel:
-            private MessageChannel {
+            protected MessageChannel {
 				friend class chaos::common::network::NetworkBroker;
 
 			protected:

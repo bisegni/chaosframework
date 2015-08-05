@@ -51,7 +51,6 @@ void MDSMessageChannel::sendHeartBeatForDeviceID(string& identificationID) {
 
 //! Send unit server CU states to MDS
 int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset, bool requestCheck, uint32_t millisecToWait) {
-    int err = ErrorCode::EC_NO_ERROR;
     string currentBrokerIpPort;
     getRpcPublishedHostAndPort(currentBrokerIpPort);
     deviceDataset.addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
@@ -60,19 +59,17 @@ int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset, bool 
                                                      ChaosSystemDomainAndActionLabel::UNIT_SERVER_STATES_ANSWER,
                                                      &deviceDataset,
                                                      millisecToWait));
-        CHECK_TIMEOUT_AND_RESULT_CODE(cuStates, err)
     } else {
         sendMessage(nodeAddress->node_id,
                     ChaosSystemDomainAndActionLabel::UNIT_SERVER_STATES_ANSWER,
                     &deviceDataset);
     }
-    return err;
+    return getLastErrorCode();
 }
 
 
 //! Send unit server description to MDS
 int MDSMessageChannel::sendNodeRegistration(CDataWrapper& deviceDataset, bool requestCheck, uint32_t millisecToWait) {
-    int err = ErrorCode::EC_NO_ERROR;
     string currentBrokerIpPort;
     //get rpc receive port
     getRpcPublishedHostAndPort(currentBrokerIpPort);
@@ -86,13 +83,12 @@ int MDSMessageChannel::sendNodeRegistration(CDataWrapper& deviceDataset, bool re
                                                                    MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE,
                                                                    &deviceDataset,
                                                                    millisecToWait));
-        CHECK_TIMEOUT_AND_RESULT_CODE(deviceRegistrationCheck, err)
     } else {
         sendMessage(nodeAddress->node_id,
                     MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE,
                     &deviceDataset);
     }
-    return err;
+    return getLastErrorCode();
 }
 
 //! Get all active device id
@@ -103,8 +99,7 @@ int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t mil
                                                     ChaosSystemDomainAndActionLabel::MDS_GET_ALL_DEVICE,
                                                     NULL,
                                                     millisecToWait));
-    CHECK_TIMEOUT_AND_RESULT_CODE(resultAnswer, err)
-    if(err == ErrorCode::EC_NO_ERROR && resultAnswer->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){
+    if(getLastErrorCode() == ErrorCode::EC_NO_ERROR && resultAnswer->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){
         auto_ptr<CDataWrapper> allDeviceInfo(resultAnswer->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
         if(allDeviceInfo->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)){
             //there is a result
@@ -115,7 +110,7 @@ int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t mil
             }
         }
     }
-    return err;
+    return getLastErrorCode();
 }
 
 //! Get node address for identification id
@@ -133,8 +128,7 @@ int MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, CDev
                                                     "getNodeDescription",
                                                     callData.get(),
                                                     millisecToWait));
-    CHECK_TIMEOUT_AND_RESULT_CODE(resultAnswer, err)
-    if(err == ErrorCode::EC_NO_ERROR &&
+    if(getLastErrorCode() == ErrorCode::EC_NO_ERROR &&
        resultAnswer.get()){
         if(resultAnswer->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) &&
            resultAnswer->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)){
@@ -157,8 +151,7 @@ int MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, CDev
  \return if the infromation is found, a CDataWrapper for dataset desprition is returned
  */
 int MDSMessageChannel::getLastDatasetForDevice(string& identificationID, CDataWrapper** deviceDefinition, uint32_t millisecToWait) {
-    int err = ErrorCode::EC_NO_ERROR;
-    if(!deviceDefinition) return -1;
+    if(!deviceDefinition) return -1000;
     auto_ptr<CDataWrapper> callData(new CDataWrapper());
     callData->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identificationID);
     //send request and wait the response
@@ -166,12 +159,11 @@ int MDSMessageChannel::getLastDatasetForDevice(string& identificationID, CDataWr
                                                              "getFullDescription",
                                                              callData.get(),
                                                              millisecToWait));
-    CHECK_TIMEOUT_AND_RESULT_CODE(deviceInitInformation, err)
-    if(err == ErrorCode::EC_NO_ERROR &&
+    if(getLastErrorCode() == ErrorCode::EC_NO_ERROR &&
        deviceInitInformation.get()) {
         *deviceDefinition = deviceInitInformation->clone();
     }
-    return err;
+    return getLastErrorCode();
 }
 
 //! return the configuration for the data driver
@@ -180,7 +172,7 @@ int MDSMessageChannel::getLastDatasetForDevice(string& identificationID, CDataWr
  */
 int MDSMessageChannel::getDataDriverBestConfiguration(CDataWrapper** deviceDefinition, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
-    if(!deviceDefinition) return -1;
+    if(!deviceDefinition) return -1000;
     //send request and wait the response
     std::auto_ptr<MessageRequestFuture> future = sendRequestWithFuture(DataServiceNodeDomainAndActionRPC::RPC_DOMAIN,
                                                                        "getBestEndpoints",
@@ -190,7 +182,7 @@ int MDSMessageChannel::getDataDriverBestConfiguration(CDataWrapper** deviceDefin
             *deviceDefinition = future->detachResult();
         }
     } else {
-        err = -1;
+        err = -1001;
     }
     return err;
 }

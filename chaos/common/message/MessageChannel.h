@@ -50,11 +50,7 @@ namespace chaos {
 
 			/*! Check for delay error or application error */
 #define CHECK_TIMEOUT_AND_RESULT_CODE(x,e) \
-if(!x.get()) {\
-e = ErrorCode::EC_TIMEOUT;\
-} else if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {\
-e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
-}
+e = getLastErrorCode()
 
 #define MC_PARSE_CDWPTR_RESULT(x) \
 if(x==NULL) {\

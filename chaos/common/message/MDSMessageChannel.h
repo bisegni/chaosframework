@@ -35,7 +35,8 @@ namespace chaos {
 			/*!
 			 This class represent a message chanel for comunication with the Metadata Server
 			 */
-			class MDSMessageChannel : public NodeMessageChannel {
+			class MDSMessageChannel:
+            public NodeMessageChannel {
 				friend class chaos::common::network::NetworkBroker;
 			protected:
 				//! base constructor
