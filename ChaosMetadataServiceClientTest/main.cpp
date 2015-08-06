@@ -86,6 +86,10 @@ protected:
                       const int64_t value) {
         MSCT_INFO << "Tag:"<<tag<<" key:" << key << " attribute:" << attribute << " value:" << (uint64_t)value;
     }
+    void consumeValueNotFound(const std::string& key,
+                                      const std::string& attribute) {
+        MSCT_INFO << "Tag:"<<tag<<" key:" << key << " attribute:" << attribute << " no value found";
+    }
 public:
     std::string tag;
 };
@@ -162,20 +166,22 @@ int main(int argc, char * argv[]) {
         
         ChaosMetadataServiceClient::getInstance()->enableMonitoring();
         
-        HearbeatHandler *hb_handlers[1];
-        for(int idx = 0; idx < 1; idx++) {
+        HearbeatHandler *hb_handler = new HearbeatHandler();
+        for(int idx = 0; idx < 100; idx++) {
+            ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handler);
+            usleep(5000000);
+            ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handler);
+        }
+        delete(hb_handler);
+        
+        HearbeatHandler *hb_handlers[100];
+        for(int idx = 0; idx < 100; idx++) {
             hb_handlers[idx] = new HearbeatHandler();
             hb_handlers[idx]->tag = boost::lexical_cast<std::string>(idx);
             ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handlers[idx]);
         }
         
         for(int idx = 0; idx < 100; idx++) {
-            ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handlers[idx]);
-            usleep(200000);
-            ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handlers[idx]);
-        }
-        
-        for(int idx = 0; idx < 1; idx++) {
             ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handlers[idx]);
             delete(hb_handlers[idx]);
         }

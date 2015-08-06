@@ -49,15 +49,53 @@ namespace chaos {
             
             //define a map for string and quantum slot
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, QuantumSlotConsumer*, QuantumSlotConsumerMap)
-            
+
+#define CHAOS_QSS_COMPOSE_QUANTUM_CONSUMER_KEY(k,q,p) boost::str(boost::format("%1%_%2%_%3%")% k % q % reinterpret_cast<uintptr_t>(p))
 #define CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(k,q) boost::str(boost::format("%1%_%2%")% k % q)
             
             typedef boost::lockfree::queue<QuantumSlot*, boost::lockfree::fixed_sized<false> >  LFQuantumSlotQueue;
             
+            //! structure used to submit new consumer to itnernal layer
+            struct SlotConsumerInfo {
+                //! operation for this consumer add or remove to quantum slot
+                bool operation;
+                //!key to monitor
+                std::string key_to_monitor;
+                //!the requested multiplier for this consumer
+                unsigned int quantum_multiplier;
+                //! the requested priority for this consumer
+                unsigned int consumer_priority;
+                //!slot to call
+                QuantumSlotConsumer *consumer;
+                
+                //!default constructor
+                SlotConsumerInfo(bool _operation,
+                                 const std::string& _key_to_monitor,
+                                 unsigned int _quantum_multiplier,
+                                 QuantumSlotConsumer *_consumer,
+                                 unsigned int _consumer_priority):
+                operation(_operation),
+                key_to_monitor(_key_to_monitor),
+                quantum_multiplier(_quantum_multiplier),
+                consumer(_consumer),
+                consumer_priority(_consumer_priority){}
+                
+                //! copy constructor
+                SlotConsumerInfo(SlotConsumerInfo& _info):
+                operation(_info.operation),
+                key_to_monitor(_info.key_to_monitor),
+                quantum_multiplier(_info.quantum_multiplier),
+                consumer(_info.consumer),
+                consumer_priority(_info.consumer_priority){}
+                
+            };
+            
+            typedef boost::lockfree::queue<SlotConsumerInfo*, boost::lockfree::fixed_sized<false> >  LFQueueSlotConsumerInfo;
+            
             //! strucutre that contain the slot
             struct ScheduleSlot {
                 boost::shared_ptr<QuantumSlot> quantum_slot;
-                //! indeitfy the current slot, qhen is 0 it will be executed
+                //! indeitfy the current slot, when is 0 it will be executed
                 int current_quantum;
                 //! key composed by the key and the quantum 'key_quantum'
                 const std::string quantum_slot_key;
@@ -168,15 +206,22 @@ namespace chaos {
                 
                 //! manage the lock on the slot multi-index
                 boost::shared_mutex                     set_slots_mutex;
-                
-                //! map to handle the inspection of the quantum slot consumer that is managed into internal async layer of scheduler
-                //! this structure is managed only by add and remove ahdler function.
-                QuantumSlotConsumerMap                  quantum_slot_consumer_map;
-                
+
+                //------------structure for comunication between public and internal layers-------------------------------------------
                 //! queue that conenct the public and internal layers of scheduler add and remove handler push quantum slot
                 //! withing this queue and scan slot funciton retrive new one added and increment the multiindex set
-                LFQuantumSlotQueue                      new_quantum_slot_queue;
+                LFQueueSlotConsumerInfo                 queue_new_quantum_slot_consumer;
                 
+                //------------structure for interface public api and internal engine--------------------------------------------------
+                //! map to handle the inspection of the quantum slot consumer that is managed into internal async layer of scheduler
+                //! this structure is managed only by add and remove ahdler function.
+                QuantumSlotConsumerMap                  map_quantum_slot_consumer;
+
+                
+                //!mute for work on map that of slot consumer managed by add and remove function
+                boost::mutex                            mutex_map_quantum_slot_consumer;
+                
+
                 //! default constructor
                 QuantumSlotScheduler(chaos::common::network::NetworkBroker *_network_broker);
                 ~QuantumSlotScheduler();
@@ -197,6 +242,13 @@ namespace chaos {
                 void dispath_new_value_async(const boost::system::error_code& error,
                                              QuantumSlot *cur_slot,
                                              const char *data_found);
+                //! manage the registration in internal layer for new consumer
+                void _addKeyConsumer(SlotConsumerInfo *ci);
+                //!manage in the internal layer the request for remove the consumer
+                void _removeKeyConsumer(SlotConsumerInfo *ci);
+                
+                //!check the internal queue if there are new consumer to add
+                inline void _checkRemoveAndAddNewConsumer();
             public:
                 
                 void init(void *init_data) throw (chaos::CException);
@@ -209,13 +261,13 @@ namespace chaos {
                 
                 //! add a new quantum slot for key
                 void addKeyConsumer(const std::string& key_to_monitor,
-                                    int quantum_multiplier,
+                                    unsigned int quantum_multiplier,
                                     QuantumSlotConsumer *consumer,
                                     unsigned int consumer_priority = 500);
                 
                 //! remove a consumer by key and quantum
                 void removeKeyConsumer(const std::string& key_to_monitor,
-                                       int quantum_multiplier,
+                                       unsigned int quantum_multiplier,
                                        QuantumSlotConsumer *consumer);
                 
             };

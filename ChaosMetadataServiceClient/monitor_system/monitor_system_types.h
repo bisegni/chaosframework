@@ -23,12 +23,16 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 
-#include <boost/lockfree/queue.hpp>
+#include <boost/atomic.hpp>
 #include <boost/thread.hpp>
+#include <boost/lockfree/queue.hpp>
 
 namespace chaos {
     namespace metadata_service_client {
         namespace monitor_system {
+            
+            class QuantumSlot;
+            class QuantumSlotScheduler;
             
             //!is the minimal monitoring delay
 #define MONITOR_QUANTUM_LENGTH  100//milli-seconds
@@ -36,12 +40,40 @@ namespace chaos {
             
             typedef boost::shared_ptr<chaos::common::data::CDataWrapper> KeyValue;
             
+            //! Base class for slot consumer
             class QuantumSlotConsumer {
+                friend class QuantumSlot;
+                friend class QuantumSlotScheduler;
+                //!mutex and variable that help to notify when the consumer is free to be relased
+                //!and no more used by scheduler internal layer
+                bool                                    free_of_work;
+                boost::mutex                            mutex_condition_free;
+                boost::condition_variable               condition_free;
+                //!keep track of how many layers of the  scheduler are using this slot
+                boost::atomic<unsigned int> usage_counter;
+                //!relase any lock on conditional interal variable
+                void setFreeOfWork() {
+                    boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_free);
+                    free_of_work = true;
+                    condition_free.notify_one();
+                }
             public:
+                QuantumSlotConsumer():
+                usage_counter(0){}
+                
+                virtual ~QuantumSlotConsumer() {}
+                
                 //!as called every time there is new data for quantum slot
                 virtual void quantumSlotHasData(const std::string& key, const KeyValue& value) = 0;
                 //! callend every time that data can't be retrieved from data service
                 virtual void quantumSlotHasNoData(const std::string& key) = 0;
+                //! waith on conditional interval variable that is fired when the consumer can be released
+                void waitForCompletition() {
+                    boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_free);
+                    while(!free_of_work) {
+                        condition_free.wait(lock_on_condition);
+                    }
+                }
             };
         }
     }
