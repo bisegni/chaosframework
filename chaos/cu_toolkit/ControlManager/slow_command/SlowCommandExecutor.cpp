@@ -1,6 +1,6 @@
 /*
  *	SlowCommandExecutor.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2013 INFN, National Institute of Nuclear Physics
@@ -50,9 +50,7 @@ BatchCommandExecutor(_executorID),
 dataset_attribute_db_ptr(_dataset_attribute_db_ptr),
 attribute_cache(new AttributeSharedCacheWrapper(getAttributeSharedCache())),
 control_unit_instance(_control_unit_instance),
-ts_hb_cache(NULL),
 last_ru_id_cache(NULL),
-last_acq_ts_cache(NULL),
 last_error_code(NULL),
 last_error_message(NULL),
 last_error_domain(NULL),
@@ -109,9 +107,7 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
 	LDBG_ << "No implementation on deinit";
 	//initialize superclass
 	BatchCommandExecutor::deinit();
-	ts_hb_cache = NULL;
 	last_ru_id_cache = NULL;
-	last_acq_ts_cache = NULL;
 	last_error_code = NULL;
 	last_error_message = NULL;
 	last_error_domain = NULL;
@@ -124,11 +120,17 @@ void SlowCommandExecutor::installCommand(const string& alias,
 	BatchCommandExecutor::installCommand(alias, instancer);
 }
 
+//! Install a command
+void SlowCommandExecutor::installCommand(boost::shared_ptr<BatchCommandDescription> command_description) {
+    //call superclss method
+    BatchCommandExecutor::installCommand(command_description);
+}
 
 //! Check if the waithing command can be installed
-BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& commandAlias) {
+BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& command_alias, CDataWrapper *command_info) {
 	//install command into the batch command executor root class
-	SlowCommand *result = (SlowCommand*) BatchCommandExecutor::instanceCommandInfo(commandAlias);
+	SlowCommand *result = (SlowCommand*) BatchCommandExecutor::instanceCommandInfo(command_alias,
+                                                                                   command_info);
 	
 	//cusotmize slow command sublcass
 	if(result) {
@@ -202,37 +204,21 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 	last_ru_id_cache->setValue(sandbox_id.c_str(), (uint32_t)sandbox_id.size());
 	
 	switch(type) {
-		case BatchSandboxEventType::EVT_HEART_BEAT: {
-			if(type_value_size == sizeof(uint64_t)) {
-				uint64_t *hb = static_cast<uint64_t*>(type_value_ptr);
-				if(!ts_hb_cache) {
-					ts_hb_cache =  getAttributeSharedCache()->getAttributeValue(DOMAIN_SYSTEM,
-																				sandbox_id+"_hb");
-					if(!ts_hb_cache) {
-						SCELERR_ << "Error getti cache slot for heartbeat timestamp";
-						return;
-					}
-				}
-				ts_hb_cache->setValue(hb, type_value_size);
-				//notify to push data
-				control_unit_instance->pushSystemDataset();
-			}
-			break;
-		}
-			
-		case BatchSandboxEventType::EVT_RUN: {
+		case BatchSandboxEventType::EVT_RUN_START: {
 			uint64_t *hb = static_cast<uint64_t*>(type_value_ptr);
-			if(!last_acq_ts_cache) {
-				last_acq_ts_cache =  getAttributeSharedCache()->getAttributeValue(DOMAIN_OUTPUT,
-																				  DataPackCommonKey::DPCK_TIMESTAMP);
-				if(!last_acq_ts_cache) {
-					SCELERR_ << "Error gettin cache slot for acquisition timestamp";
-					return;
-				}
-			}
-			last_acq_ts_cache->setValue(hb, type_value_size);
-			//push output dataset
-			control_unit_instance->pushOutputDataset();
+            control_unit_instance->_updateAcquistionTimestamp(*hb);
+
 		}
+            
+        case BatchSandboxEventType::EVT_RUN_END: {
+            //push output dataset specifingthat the ts has been already updated in casche directly
+            control_unit_instance->pushOutputDataset(true);
+            break;
+        }
+            
+        case BatchSandboxEventType::EVT_UPDATE_RUN_DELAY:
+            control_unit_instance->_updateRunScheduleDelay(*static_cast<uint64_t*>(type_value_ptr));
+            control_unit_instance->pushSystemDataset();
+            break;
 	}
 }

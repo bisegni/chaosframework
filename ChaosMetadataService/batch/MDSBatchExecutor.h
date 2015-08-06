@@ -1,6 +1,6 @@
 /*
  *	BatchExecutor.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -17,16 +17,22 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #ifndef __CHAOSFramework__BatchExecutor__
 #define __CHAOSFramework__BatchExecutor__
 
 #include "MDSBatchCommand.h"
+//#include "../ChaosMetadataService.h"
+
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 #include <chaos/common/batch_command/BatchCommandExecutor.h>
 
+#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
 namespace chaos{
     namespace metadata_service {
+        class ChaosMetadataService;
+        
         namespace batch {
             
             /*!
@@ -34,11 +40,19 @@ namespace chaos{
              the metadataserver batch job
              */
             class MDSBatchExecutor:
-            public common::batch_command::BatchCommandExecutor {
+            public chaos::common::batch_command::BatchCommandExecutor {
+                friend class chaos::metadata_service::ChaosMetadataService;
+                
                 chaos::common::network::NetworkBroker *network_broker;
+                chaos::common::message::MessageChannel *message_channel_for_job;
+                chaos::common::message::MultiAddressMessageChannel *multiaddress_message_channel_for_job;
+                
+                //dataaccess abstract driver
+                chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
             protected:
                 //allocate a new command
-                common::batch_command::BatchCommand *instanceCommandInfo(const std::string& command_alias);
+                common::batch_command::BatchCommand *instanceCommandInfo(const std::string& command_alias,
+                                                                         chaos::common::data::CDataWrapper *command_info);
                 
                 //overlodaed command event handler
                 void handleCommandEvent(uint64_t command_seq,
@@ -57,10 +71,21 @@ namespace chaos{
                                  chaos::common::network::NetworkBroker *_network_broker);
                 ~MDSBatchExecutor();
                 
+                // Initialize instance
+                void init(void *init_data) throw(chaos::CException);
+                
+                // start instance
+                void start() throw(chaos::CException);
+                
+                // stop instance
+                void stop() throw(chaos::CException);
+                
+                // Deinitialize instance
+                void deinit() throw(chaos::CException);
+                
                 //! Install a command associated with a type
-                void installCommand(std::string alias,
+                void installCommand(const std::string& alias,
                                     chaos::common::utility::NestedObjectInstancer<MDSBatchCommand, common::batch_command::BatchCommand> *instancer);
-
             };
         }
     }

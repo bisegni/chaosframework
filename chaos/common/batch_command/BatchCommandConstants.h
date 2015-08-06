@@ -31,10 +31,8 @@ namespace chaos {
             namespace BatchCommandSubmissionKey {
                 //! @The key represent the postfix to the CU instance to identify his slow command executor {not used for now}.
                 static const char * const   COMMAND_EXECUTOR_POSTFIX_DOMAIN		= "_scexec";
-                //! @The key represent the alis of the comand to instantiate, the value is a string
-                static const char * const   COMMAND_ALIAS_STR                   = "cmd_alias";
                 //! @The key represent the execution channel where submit the command, if not set, the first channel is used (1), the value is an uint32 [1-n]
-                static const char * const   COMMAND_EXECUTION_CHANNEL                     = "cmd_exec_channel";
+                static const char * const   COMMAND_EXECUTION_CHANNEL           = "cmd_exec_channel";
                 //! @The key represent the option to the command submission, the value is an uint32
                 static const char * const   SUBMISSION_RULE_UI32				= "cmd_submssn_rule";
                 //! @The key represent the option to the command submission priority, the value is an uint32
@@ -89,6 +87,41 @@ namespace chaos {
                 static const char * const   RPC_FLUSH_COMMAND_HISTORY = "flushCmdStateHst";
             }
             /** @} */ // end of API_Slow_Control Slow Control API
+            
+            /** @defgroup KEY_bacth_command_description Batch Command Description Key
+             @{
+             */
+            //! Name space for the key usign for batch command description
+            namespace BatchCommandAndParameterDescriptionkey {
+                //! @The key represent the alias of the batch command
+                static const char * const BC_UNIQUE_ID              = "bc_unique_id";
+                
+                //! @The key represent the alias of the batch command
+                static const char * const BC_ALIAS                  = "bc_alias";
+                
+                //! @The key represent the description of the command
+                static const char * const BC_DESCRIPTION            = "bc_description";
+                
+                //! @The key represent the list of all parameters
+                static const char * const BC_PARAMETERS             = "bc_parameters";
+                
+                //! @The key represent the paramter name
+                static const char * const BC_PARAMETER_NAME         = "bc_parameter_name";
+                
+                //! @The key represent the paremter description
+                static const char * const BC_PARAMETER_DESCRIPTION  = "bc_parameter_description";
+                
+                //! @The key represent the paremter type
+                static const char * const BC_PARAMETER_TYPE         = "bc_parameter_type";
+                
+                //! @The key an int32 that contais the below describted flags
+                static const char * const BC_PARAMETER_FLAG         = "bc_parameter_flag";
+                
+                static int BC_PARAMETER_FLAG_MANDATORY = 1;
+                static int BC_PARAMETER_FLAG_OPTIONAL = 0;
+
+            }
+            /** @} */ // end of BatchCommandDescriptionKey Slow Control API
         }
     }
 }

@@ -14,7 +14,9 @@
 
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 
-void handler(chaos::atomic_int_type message_id, chaos::common::data::CDataWrapper *result) {
+using namespace chaos::common::message;
+
+void handler(chaos::common::utility::atomic_int_type message_id, chaos::common::data::CDataWrapper *result) {
     LAPP_ << message_id;
     if(result) {
         LAPP_ << result->getJSONString();
@@ -31,11 +33,17 @@ int main(int argc, char* argv[] ) {
     chaos::ui::DeviceController *controller = chaos::ui::HLDataApi::getInstance()->getControllerForDeviceID(std::string("sc_dev_a"), 10000);
     if(!controller) throw chaos::CException(4, "Error allcoating decive controller", "device controller creation");
 
-    chaos::MessageHandler mh = &handler;
-    controller->setHandler(mh);
     //simulate bad init call
-    controller->sendCustomRequest(chaos::ChaosSystemDomainAndActionLabel::ACTION_CU_INIT, NULL, NULL, true);
-    sleep(5);
+    std::auto_ptr<MessageRequestFuture> result = controller->sendCustomRequestWithFuture(chaos::NodeDomainAndActionRPC::ACTION_NODE_INIT, NULL);
+    if(result->wait(1000)) {
+        std::cout << "Error code:" << result->getError() << std::endl;
+        std::cout << "Error message:" << result->getErrorMessage() << std::endl;
+        std::cout << "Error domain:" << result->getErrorDomain() << std::endl;
+        if(result->getResult()) {
+            std::cout << "Result:" << result->getResult()->getJSONString() << std::endl;
+        }
+
+    }
     chaos::ui::ChaosUIToolkit::getInstance()->deinit();
     return 0;
 }

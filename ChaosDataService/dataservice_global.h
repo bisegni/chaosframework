@@ -23,21 +23,26 @@
 namespace chaos{
     namespace data_service {
 
-#define OPT_CACHE_ONLY				"cache_only"
-#define OPT_RUN_MODE				"run_mode"
+#define OPT_CACHE_ONLY				"cache-only"
+#define OPT_RUN_MODE				"run-mode"
 		
 		//cache configuration
-#define OPT_CACHE_SERVER_LIST		"cache_servers"
-#define OPT_CACHE_DRIVER			"cache_driver"
-#define OPT_CACHE_WORKER_NUM		"cache_worker_num"
-#define OPT_CACHE_WORKER_THREAD		"cache_worker_thread"
-#define OPT_CACHE_DRIVER_KVP		"cache_driver_kvp"
-#define CACHE_WORKER_NUMBER			1
+#define OPT_CACHE_LOG_METRIC        "cache-log-metric"
+#define OPT_CACHE_LOG_METRIC_UPDATE_INTERVAL "cache-log-metric-update-interval"
+#define OPT_CACHE_SERVER_LIST		"cache-servers"
+#define OPT_CACHE_DRIVER			"cache-driver"
+#define OPT_CACHE_DRIVER_KVP		"cache-driver-kvp"
+        
+#define OPT_DATA_WORKER_LOG_METRIC                 "data-worker-log-metric"
+#define OPT_DATA_WORKER_LOG_METRIC_UPDATE_INTERVAL "data-worker-log-metric-update-interval"
+#define OPT_DATA_WORKER_NUM		"data-worker-num"
+#define OPT_DATA_WORKER_THREAD  "data-worker-thread"
+#define DATA_WORKER_NUMBER		1
 	
 		//query data consumer
-#define OPT_QUERY_CONSUMER_VFILE_MANTAINANCE_DELAY		"qdc_vfile_mantain_delay"
+#define OPT_QUERY_CONSUMER_VFILE_MANTAINANCE_DELAY		"qdc-vfile-mantain-delay"
 #define QUERY_CONSUMER_VFILE_MANTAINANCE_DEFAULT_DELAY	60
-#define OPT_QUERY_CONSUMER_QM_THREAD_POOL_SIZE			"query_thread_pool_size"
+#define OPT_QUERY_CONSUMER_QM_THREAD_POOL_SIZE			"query-thread-pool-size"
 #define QUERY_CONSUMER_QM_THREAD_POOL_SIZE				1
 		
 		//answer configuration
@@ -46,26 +51,29 @@ namespace chaos{
 //#define ANSWER_WORKER_NUMBER		1
 		
 		//stage data indexer
-#define OPT_INDEXER_WORKER_NUM			"indexer_worker_num"
-#define OPT_INDEXER_SCAN_DELAY			"indexer_scan_delay"
+#define OPT_INDEXER_WORKER_NUM			"indexer-worker-num"
+#define OPT_INDEXER_SCAN_DELAY			"indexer-scan-delay"
 #define INDEXER_DEFAULT_WORKER_NUMBER	1
 #define INDEXER_DEFAULT_SCAN_DELAY		60
 		
 		//vfs driver configuration
-#define OPT_VFS_STORAGE_DRIVER_IMPL				"vfs_storage_drvr_impl"
-#define OPT_VFS_STORAGE_DOMAIN					"vfs_storage_domain"
-#define OPT_VFS_STORAGE_DRIVER_KVP				"vfs_storage_driver_kvp"
-#define OPT_VFS_STORAGE_MAX_BLOCK_LIFETIME		"vfs_max_block_lifetime"
-#define OPT_VFS_STORAGE_MAX_BLOCK_SIZE			"vfs_max_block_size"
-		
-#define OPT_DB_DRIVER_IMPL		"db_drvr_impl"
-#define OPT_DB_DRIVER_SERVERS	"db_servers"
-#define OPT_DB_DRIVER_KVP		"db_driver_kvp"
+#define OPT_VFS_STORAGE_DRIVER_IMPL                 "vfs-storage-drvr-impl"
+#define OPT_VFS_STORAGE_DOMAIN                      "vfs-storage-domain"
+#define OPT_VFS_STORAGE_DRIVER_KVP                  "vfs-storage-driver-kvp"
+#define OPT_VFS_STORAGE_MAX_BLOCK_LIFETIME          "vfs-max-block-lifetime"
+#define OPT_VFS_STORAGE_MAX_BLOCK_SIZE              "vfs-max-block-size"
+#define OPT_VFS_STORAGE_LOG_METRIC                  "vfs-storage-driver-log-metric"
+#define OPT_VFS_STORAGE_LOG_METRIC_UPDATE_INTERVAL  "vfs-storage-driver-log-metric-update-interval"
+        
+#define OPT_DB_DRIVER_IMPL		"db-drvr-impl"
+#define OPT_DB_DRIVER_SERVERS	"db-servers"
+#define OPT_DB_DRIVER_KVP		"db-driver-kvp"
 				
 
 		//! Setting for dataservice configuration
 		typedef struct ChaosDataServiceSetting {
 			bool						cache_only;
+            
 			//!cache configuration
 			chaos::data_service::cache_system::CacheDriverSetting cache_driver_setting;
 			
@@ -73,9 +81,6 @@ namespace chaos{
 			unsigned int				vfile_mantainer_delay;
 			unsigned int				query_manager_thread_poll_size;
 			
-			//----------answer worker------------------
-			//unsigned int				answer_worker_num;
-			//worker::DataWorkerSetting	answer_worker_setting;
 
 			//----------stage data indexer---------------
 			unsigned int				indexer_worker_num;

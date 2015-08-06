@@ -1,6 +1,6 @@
 /*
  *	ChaosUIToolkit.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -348,7 +348,7 @@ extern "C" {
 		try{
 			DeviceController *dCtrl = getDeviceControllerFromID(devID);
 			if(dCtrl && dsAttrName && dsAttrValueHandle) {
-				CDataWrapper *  dataWrapper = ((DeviceController*)dCtrl)->getCurrentDatasetForDomain(DatasetDomainOutput);
+				chaos::common::data::CDataWrapper *  dataWrapper = ((DeviceController*)dCtrl)->getCurrentDatasetForDomain(DatasetDomainOutput);
 				if(dataWrapper) {
 					if(dataWrapper->hasKey(dsAttrName)){
 						DataType::DataType attributeType;

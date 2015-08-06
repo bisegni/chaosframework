@@ -1,6 +1,6 @@
 /*
  *	global_constant.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -25,13 +25,13 @@ namespace chaos {
 		//groups all setting option label
 		namespace setting_options {
 			//!  param for cds adressess
-			static const char * const	OPT_CDS_ADDR   = "cds_addresses";
+			static const char * const	OPT_CDS_ADDR   = "cds-addresses";
 			
 			//! specify the parameters in json (only string) for the wan interfaces
-			static const char * const	OPT_WAN_INTERFACE_PARAM   = "wi_json_param";
+			static const char * const	OPT_WAN_INTERFACE_PARAM   = "wi-json-param";
 			
 			//! specify wich wan interface protocol to choice
-			static const char * const	OPT_INTERFACE_TO_ACTIVATE   = "wi_interface";
+			static const char * const	OPT_INTERFACE_TO_ACTIVATE   = "wi-interface";
 		}
 	}
 }

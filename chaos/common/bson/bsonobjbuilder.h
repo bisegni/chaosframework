@@ -937,14 +937,14 @@ namespace bson {
 
     // $or helper: OR(BSON("x" << GT << 7), BSON("y" << LT 6));
     inline BSONObj OR(const BSONObj& a, const BSONObj& b)
-    { return BSON( "$or" << BSON_MONGO_ARRAY(a << b) ); }
+    { return BSON_OBJ( "$or" << BSON_MONGO_ARRAY_OBJ(a << b) ); }
     inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c)
-    { return BSON( "$or" << BSON_MONGO_ARRAY(a << b << c) ); }
+    { return BSON_OBJ( "$or" << BSON_MONGO_ARRAY_OBJ(a << b << c) ); }
     inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c, const BSONObj& d)
-    { return BSON( "$or" << BSON_MONGO_ARRAY(a << b << c << d) ); }
+    { return BSON_OBJ( "$or" << BSON_MONGO_ARRAY_OBJ(a << b << c << d) ); }
     inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c, const BSONObj& d, const BSONObj& e)
-    { return BSON( "$or" << BSON_MONGO_ARRAY(a << b << c << d << e) ); }
+    { return BSON_OBJ( "$or" << BSON_MONGO_ARRAY_OBJ(a << b << c << d << e) ); }
     inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c, const BSONObj& d, const BSONObj& e, const BSONObj& f)
-    { return BSON( "$or" << BSON_MONGO_ARRAY(a << b << c << d << e << f) ); }
+    { return BSON_OBJ( "$or" << BSON_MONGO_ARRAY_OBJ(a << b << c << d << e << f) ); }
 
 }

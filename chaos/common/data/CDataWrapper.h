@@ -1,6 +1,6 @@
 /*
  *	CDataWrapper.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -19,13 +19,15 @@
  */
 #ifndef CDataWrapper_H
 #define CDataWrapper_H
-#include <boost/scoped_ptr.hpp>
-#include <string>
-#include <vector>
+
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/pool/CPoolMemoryObject.h>
 
 #include <boost/scoped_ptr.hpp>
+
+#include <string>
+#include <vector>
+
 namespace chaos {
 	namespace common {
 		namespace data {
@@ -96,77 +98,81 @@ namespace chaos {
 				
 				CDataWrapper *clone();
 				//add a csdata value
-				void addCSDataValue(const char *, CDataWrapper&);
+				void addCSDataValue(const std::string&, CDataWrapper&);
 				
 				//get a csdata value
-				CDataWrapper *getCSDataValue(const char *);
+				CDataWrapper *getCSDataValue(const std::string&);
 				
 				//add a string value
 				//void addStringValue(const char *, const char *);
 				
 				//add a string value
-				void addStringValue(const char *, const string&);
+				void addStringValue(const std::string&, const string&);
 				
 				//add a string to array
 				void appendStringToArray(const char *);
 				
 				//add a strin gto array
-				void appendStringToArray(const string&);
+				void appendStringToArray(const string &);
 				void appendInt32ToArray(int32_t int32ArrayElement);
 				void appendInt64ToArray(int64_t int64ArrayElement);
 				void appendDoubleToArray(double doubleArrayElement);
 				void appendCDataWrapperToArray(CDataWrapper& srcDataWrapper, bool finalize=false);
 				//finalize the array into a key for the current dataobject
-				void finalizeArrayForKey(const char *);
+				void finalizeArrayForKey(const std::string&);
 				
 				//get a string value
-				string  getStringValue(const char *);
-				const char *  getCStringValue(const char *key);
+				string  getStringValue(const std::string&);
+				const char *  getCStringValue(const std::string& key);
 				//return a vectorvalue for a key
-				CMultiTypeDataArrayWrapper* getVectorValue(const char *);
+				CMultiTypeDataArrayWrapper* getVectorValue(const std::string&);
 				
+                void addNullValue(const std::string&);
+                
 				//add a integer value
-				void addInt32Value(const char *, int32_t);
+                void addInt32Value(const std::string&, int32_t);
 				//add a integer value
-				void addInt32Value(const char *, uint32_t);
+				void addInt32Value(const std::string&, uint32_t);
 				//add a integer value
-				void addInt64Value(const char *, int64_t);
+				void addInt64Value(const std::string&, int64_t);
 				//add a integer value
-				void addInt64Value(const char *, uint64_t);
+				void addInt64Value(const std::string&, uint64_t);
 				
 				//add a double value
-				void addDoubleValue(const char *key, double dValue);
+				void addDoubleValue(const std::string&key, double dValue);
 				
 				//add a bool value
-				void addBoolValue(const char *, bool);
+				void addBoolValue(const std::string&, bool);
 				
 				//set a binary data value
-				void addBinaryValue(const char *, const char *, int);
+				void addBinaryValue(const std::string&, const char *, int);
+                
+				//get a integer value
+				int32_t getInt32Value(const std::string& key);
 				
 				//get a integer value
-				int32_t getInt32Value(const char *key);
+				int64_t getInt64Value(const std::string& key);
 				
 				//get a integer value
-				int64_t getInt64Value(const char *key);
+				uint32_t getUInt32Value(const std::string& key);
 				
 				//get a integer value
-				uint32_t getUInt32Value(const char *key);
-				
-				//get a integer value
-				uint64_t getUInt64Value(const char *key);
+				uint64_t getUInt64Value(const std::string& key);
 				
 				//add a integer value
-				double_t getDoubleValue(const char *key);
+				double_t getDoubleValue(const std::string& key);
 				
 				//get a bool value
-				bool getBoolValue(const char *);
+				bool getBoolValue(const std::string&);
 				
 				//return the binary data value
-				const char* getBinaryValue(const char *, int&);
+				const char* getBinaryValue(const std::string&, int&);
 				
 				//return the bson data
 				SerializationBuffer* getBSONData();
-				
+
+                const char* getBSONRawData(int& size);
+
 				//return the json data
 				SerializationBuffer* getJSONData();
 				
@@ -180,8 +186,10 @@ namespace chaos {
 				void setSerializedJsonData(const char* jsonData);
 				
 				//check if the key is present in data wrapper
-				bool hasKey(const char*);
+                bool hasKey(const std::string& key);
 				
+                bool isVector(const std::string& key);
+                
 				//return all key contained into the object
 				void getAllKey(std::vector<std::string>& contained_key);
 				
@@ -197,8 +205,35 @@ namespace chaos {
 				//append all element of an data wrapper
 				void appendAllElement(CDataWrapper&);
 				
+                //!copy a key(with value) from this instance to another CDataWrapper one
+                bool copyKeyTo(const std::string& key_to_copy,
+                               CDataWrapper& destination);
+                
+                //!copy all key(with value) from this instance to another CDataWrapper one
+                void copyAllTo(CDataWrapper& destination);
+                
 				//! Return the Hashing represetnation of the CDataWrapper
 				string toHash() const;
+                
+                //---checking funciton
+                
+                bool isNullValue(const std::string& key);
+                
+                bool isBoolValue(const std::string& key);
+                
+                bool isInt32Value(const std::string& key);
+                
+                bool isInt64Value(const std::string& key);
+                
+                bool isDoubleValue(const std::string& key);
+                
+                bool isStringValue(const std::string& key);
+                
+                bool isBinaryValue(const std::string& key);
+                
+                bool isCDataWrapperValue(const std::string& key);
+                
+                bool isVectorValue(const std::string& key);
 			};
 			
 			//! MutableCDataWrapper for field update
@@ -209,23 +244,23 @@ namespace chaos {
 				
 			public:
 				
-				void updateStringValue(const char * key, string& newvalue) {
+				void updateStringValue(const std::string& key, string& newvalue) {
 					BSONElement element = bsonBuilder->asTempObj()[key];
 					if(element.String().size() != newvalue.size()) return;
 					//*reinterpret_cast< char* >( element.value() ) = newvalue.c_str;
 				}
 				
-				void updateInt32Value(const char * key, int32_t newvalue) {
+				void updateInt32Value(const std::string& key, int32_t newvalue) {
 					BSONElement element = bsonBuilder->asTempObj()[key];
 					*reinterpret_cast< int32_t* >( (char*)element.value() ) = newvalue;
 				}
 				
-				void updateInt64Value(const char * key, int64_t newvalue) {
+				void updateInt64Value(const std::string& key, int64_t newvalue) {
 					BSONElement element = bsonBuilder->asTempObj()[key];
 					*reinterpret_cast< int64_t* >( (char*)element.value() ) = newvalue;
 				}
 				
-				void updateDoubleValue(const char * key, double newvalue) {
+				void updateDoubleValue(const std::string& key, double newvalue) {
 					BSONElement element = bsonBuilder->asTempObj()[key];
 					*reinterpret_cast< double* >( (char*)element.value() ) = newvalue;
 				}

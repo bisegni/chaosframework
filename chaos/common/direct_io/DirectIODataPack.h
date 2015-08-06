@@ -1,6 +1,6 @@
 /*
  *	DirectIODataPack.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -84,7 +84,7 @@ pack->channel_data = d_ptr;
 			 */
             typedef struct DirectIODataPack {
                 //! define the length of pack
-                struct header {
+                struct DirectIODataPackDispatchHeader {
 					union {
 						//!header raw data
 						uint64_t    raw_data;

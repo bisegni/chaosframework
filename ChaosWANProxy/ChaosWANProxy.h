@@ -1,6 +1,6 @@
 /*
  *	ChaosWANProxy.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -48,8 +48,7 @@ namespace chaos {
 		 */
 		class ChaosWANProxy :
 		public ChaosCommon<ChaosWANProxy>,
-		public ServerDelegator,
-		public common::utility::StartableService {
+		public ServerDelegator {
 			friend class common::utility::Singleton<ChaosWANProxy>;
 			
 			static WaitSemaphore waitCloseSemaphore;

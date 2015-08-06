@@ -1,6 +1,6 @@
 /*
  *	ZMQDirectIOServer.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -134,9 +134,9 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 #define PS_STR(x) (x?"service":"priority")
 void ZMQDirectIOServer::worker(bool priority_service) {
 	char						header_buffer[DIRECT_IO_HEADER_SIZE];
-	int							linger				= 500;
-	int							water_mark			= 500;
-	int							timeout				= 200;
+	int							linger				= 0;
+	int							water_mark			= 10;
+	int							timeout				= 1000;
 	void						*socket				= NULL;
     int							err					= 0;
 	bool						send_synchronous_answer = false;
@@ -232,7 +232,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
                 continue;
             }
 
-			//receive the zmq evenlod delimiter
+			//receive the zmq evenlop delimiter
 			err = stringReceive(socket, empty_delimiter);
 			if(err == -1 ) {
                 continue;
@@ -267,7 +267,6 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 					data_pack->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
 					data_pack->channel_header_data = malloc(data_pack->header.channel_header_size);
 					data_pack->channel_data = NULL;
-					DEBUG_CODE(ZMQDIO_SRV_LDBG_ << "New DIRECT_IO_CHANNEL_PART_HEADER_ONLY message of size: " << data_pack->header.channel_header_size;)
 					
 					//init message with buffer
 					err = zmq_recv(socket, data_pack->channel_header_data, data_pack->header.channel_header_size, 0);
@@ -283,7 +282,6 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 					data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
 					data_pack->channel_data = malloc(data_pack->header.channel_data_size);
 					data_pack->channel_header_data = NULL;
-					DEBUG_CODE(ZMQDIO_SRV_LDBG_ << "New DIRECT_IO_CHANNEL_PART_DATA_ONLY message of size: "<< data_pack->header.channel_data_size;)
      
 					//init message with buffer
 					err = zmq_recv(socket, data_pack->channel_data, data_pack->header.channel_data_size, 0);
@@ -301,9 +299,6 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 					
 					data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
 					data_pack->channel_data = malloc(data_pack->header.channel_data_size);
-
-					DEBUG_CODE(ZMQDIO_SRV_LDBG_ << "New DIRECT_IO_CHANNEL_PART_HEADER_DATA message of header size: " << data_pack->header.channel_header_size;)
-					DEBUG_CODE(ZMQDIO_SRV_LDBG_ << "New DIRECT_IO_CHANNEL_PART_HEADER_DATA message of data size: "<< data_pack->header.channel_data_size;)
 
 					//reiceve all data
 					err = zmq_recv(socket, data_pack->channel_header_data, data_pack->header.channel_header_size, 0);
@@ -364,8 +359,6 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 				//close the message
 				zmq_msg_close(&answer_data);
 			}
-			
-			
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
         }

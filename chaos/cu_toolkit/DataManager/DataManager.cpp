@@ -1,6 +1,6 @@
 /*	
  *	DataManager.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *	
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -126,7 +126,7 @@ IODataDriver *DataManager::getDataLiveDriverNewInstance() throw(CException) {
 /*
  * return a ne winstance of a MultiBufferDataStorage class
  */
-KeyDataStorage *DataManager::getKeyDataStorageNewInstanceForKey(string& key) throw(CException) {
+KeyDataStorage *DataManager::getKeyDataStorageNewInstanceForKey(const string& key) throw(CException) {
     IODataDriver *outputDriver = getDataLiveDriverNewInstance();
     return new KeyDataStorage(key, outputDriver);
 }
@@ -134,34 +134,34 @@ KeyDataStorage *DataManager::getKeyDataStorageNewInstanceForKey(string& key) thr
 /*
  Initialize a device id KeyDataStorageBuffer
  */
-void DataManager::initDeviceIDKeyDataStorage(string& deviceIdKey, CDataWrapper *initializationParameter) throw(CException) {
-    if(deviceIDKeyDataStorageMap.count(deviceIdKey) > 0 ) return;
+void DataManager::initDeviceIDKeyDataStorage(const string& device_id, CDataWrapper *initializationParameter) throw(CException) {
+    if(deviceIDKeyDataStorageMap.count(device_id) > 0 ) return;
     
-    LAPP_ << "Adding a new KeyDataStorage for device id key:" << deviceIdKey;
+    LAPP_ << "Adding a new KeyDataStorage for device id key:" << device_id;
         //need to be create the KeyDataStorage
-    KeyDataStorage *kds = getKeyDataStorageNewInstanceForKey(deviceIdKey);
+    KeyDataStorage *kds = getKeyDataStorageNewInstanceForKey(device_id);
         //initiliaze the KeyDataStorage
     kds->init(initializationParameter);
         //add the data storage to map
-    deviceIDKeyDataStorageMap.insert(make_pair(deviceIdKey, kds));
+    deviceIDKeyDataStorageMap.insert(make_pair(device_id, kds));
 }
 
 /*
  Initialize a device id KeyDataStorageBuffer
  */
-void DataManager::deinitDeviceIDKeyDataStorage(string& deviceIdKey) throw(CException)  {
-    LAPP_ << "Deinit and Delete KeyDataStorage for device id key:" << deviceIdKey;
+void DataManager::deinitDeviceIDKeyDataStorage(const string& device_id) throw(CException)  {
+    LAPP_ << "Deinit and Delete KeyDataStorage for device id key:" << device_id;
         //try to find the device id key
 
-    map<string, KeyDataStorage*>::iterator iter = deviceIDKeyDataStorageMap.find(deviceIdKey);
+    map<string, KeyDataStorage*>::iterator iter = deviceIDKeyDataStorageMap.find(device_id);
         
     if(iter == deviceIDKeyDataStorageMap.end()) return;
         
             //get the pointer
     auto_ptr<KeyDataStorage> tmpKDS((*iter).second);
-    LAPP_ << "Remove in the manager the KeyDataStorage for device id key:" << deviceIdKey;
+    LAPP_ << "Remove in the manager the KeyDataStorage for device id key:" << device_id;
             //remove key from map
-    deviceIDKeyDataStorageMap.erase(deviceIdKey);
+    deviceIDKeyDataStorageMap.erase(device_id);
         
             // the buffer has been found
     tmpKDS->deinit();
@@ -170,29 +170,29 @@ void DataManager::deinitDeviceIDKeyDataStorage(string& deviceIdKey) throw(CExcep
 /*
  Configure the sandbox and all subtree of the CU
  */
-void DataManager::updateConfigurationForDeviceIdKey(string& deviceIdKey, CDataWrapper* newConfiguration) {
-    deviceIDKeyDataStorageMap[deviceIdKey]->updateConfiguration(newConfiguration);
+void DataManager::updateConfigurationForDeviceIdKey(const string& device_id, CDataWrapper* newConfiguration) {
+    deviceIDKeyDataStorageMap[device_id]->updateConfiguration(newConfiguration);
 }
 
 /*
  Submit a CDataWrapper on device id KeyDataStorage
  */
-void DataManager::pushDeviceDataByIdKey(string& deviceIdKey, CDataWrapper* deviceCDataWrapper) throw(CException) {
-        deviceIDKeyDataStorageMap[deviceIdKey]->pushDataSet(data_manager::KeyDataStorageDomainOutput, deviceCDataWrapper);
+void DataManager::pushDeviceDataByIdKey(const string& device_id, CDataWrapper* deviceCDataWrapper) throw(CException) {
+        deviceIDKeyDataStorageMap[device_id]->pushDataSet(data_manager::KeyDataStorageDomainOutput, deviceCDataWrapper);
 }
 
 /*
  get last dataset for a specified key
  */
-chaos::common::utility::ArrayPointer<CDataWrapper> *DataManager::getLastCDataWrapperForDeviceIdKey(string& deviceIdKey)  throw(CException) {
+chaos::common::utility::ArrayPointer<CDataWrapper> *DataManager::getLastCDataWrapperForDeviceIdKey(const string& device_id)  throw(CException) {
         //use keydatastorage from map
-    return deviceIDKeyDataStorageMap[deviceIdKey]->getLastDataSet(data_manager::KeyDataStorageDomainOutput);
+    return deviceIDKeyDataStorageMap[device_id]->getLastDataSet(data_manager::KeyDataStorageDomainOutput);
 }
 
 /*
  return a new instance of CDataWrapper filled with a mandatory data
  according to key
  */
-CDataWrapper *DataManager::getNewDataWrapperForDeviceIdKey(string& deviceIdKey) {
-    return deviceIDKeyDataStorageMap[deviceIdKey]->getNewOutputAttributeDataWrapper();
+CDataWrapper *DataManager::getNewDataWrapperForDeviceIdKey(const string& device_id) {
+    return deviceIDKeyDataStorageMap[device_id]->getNewOutputAttributeDataWrapper();
 }

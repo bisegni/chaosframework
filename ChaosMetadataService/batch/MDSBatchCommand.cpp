@@ -1,6 +1,6 @@
 /*
  *  BatchCommand.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -23,8 +23,8 @@ using namespace chaos::common::network;
 using namespace chaos::metadata_service::batch;
 using namespace chaos::common::batch_command;
 #define MDSBC_INFO INFO_LOG(MDSBatchCommand)
-#define MDSBC_DBG  INFO_DBG(MDSBatchCommand)
-#define MDSBC_ERR  INFO_ERR(MDSBatchCommand)
+#define MDSBC_DBG  DBG_LOG(MDSBatchCommand)
+#define MDSBC_ERR  ERR_LOG(MDSBatchCommand)
 
 //! default constructor
 MDSBatchCommand::MDSBatchCommand():
@@ -38,29 +38,22 @@ MDSBatchCommand::~MDSBatchCommand() {
 }
 
 chaos::common::message::MessageChannel*
-MDSBatchCommand::getNewMessageChannelForAddress(chaos::common::network::CNetworkAddress *node_network_address) {
-    CHAOS_ASSERT(network_broker)
-    return network_broker->getRawMessageChannelFromAddress(node_network_address);
+MDSBatchCommand::getMessageChannel() {
+    CHAOS_ASSERT(message_channel)
+    return message_channel;
 }
 
-//! return a device message channel for a specific node address
-chaos::common::message::DeviceMessageChannel*
-MDSBatchCommand::getNewDeviceMessageChannelForAddress(chaos::common::network::CDeviceNetworkAddress *device_network_address) {
-    CHAOS_ASSERT(network_broker)
-    return network_broker->getDeviceMessageChannelFromAddress(device_network_address);
-}
-
-void
-MDSBatchCommand::releaseChannel(chaos::common::message::MessageChannel *message_channel) {
-    CHAOS_ASSERT(network_broker)
-    network_broker->disposeMessageChannel(message_channel);
+chaos::common::message::MultiAddressMessageChannel*
+MDSBatchCommand::getMultiAddressMessageChannel() {
+    CHAOS_ASSERT(multiaddress_message_channel)
+    return multiaddress_message_channel;
 }
 
 // return the implemented handler
 uint8_t MDSBatchCommand::implementedHandler() {
     return  HandlerType::HT_Set|
-            HandlerType::HT_Correlation|
-            HandlerType::HT_Acquisition;
+    HandlerType::HT_Correlation|
+    HandlerType::HT_Acquisition;
 }
 
 // inherited method
@@ -81,4 +74,61 @@ void MDSBatchCommand::ccHandler() {
 // inherited method
 bool MDSBatchCommand::timeoutHandler() {
     return true;
+}
+
+//! create a request to a remote rpc action
+std::auto_ptr<RequestInfo> MDSBatchCommand::createRequest(const std::string& remote_address,
+                                         const std::string& remote_domain,
+                                         const std::string& remote_action) throw (chaos::CException) {
+    return std::auto_ptr<RequestInfo> (new RequestInfo(remote_address,
+                                                       remote_domain,
+                                                       remote_action));
+}
+
+void MDSBatchCommand::sendRequest(RequestInfo& request_info,
+                                  chaos::common::data::CDataWrapper *message) throw (chaos::CException) {
+    CHAOS_ASSERT(message_channel)
+    
+    request_info.request_future = message_channel->sendRequestWithFuture(request_info.remote_address,
+                                                                         request_info.remote_domain,
+                                                                         request_info.remote_action,
+                                                                         message);
+    request_info.phase = MESSAGE_PHASE_SENT;
+}
+
+void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info) throw (chaos::CException) {
+    switch(request_info.phase) {
+        case MESSAGE_PHASE_UNSENT:
+            throw chaos::CException(-1, "Request is unsent", __PRETTY_FUNCTION__);
+            break;
+        case MESSAGE_PHASE_SENT: {
+            MDSBC_DBG << "Waith for "<< request_info.remote_action <<
+            " action ack from the control unit:" << request_info.remote_address <<
+            " on rpc[" << request_info.remote_domain <<":"<<request_info.remote_action<<"]";
+            if(!request_info.request_future.get()) {
+                MDSBC_ERR << "request with no future";
+                throw chaos::CException(-2, "request with no future", __PRETTY_FUNCTION__);
+            }
+            if(request_info.request_future->wait(5000)) {
+                //we have hd answer
+                if(request_info.request_future->getError()) {
+                    MDSBC_ERR << "We have had answer with error"
+                    << request_info.request_future->getError() << " \n and message "
+                    << request_info.request_future->getErrorMessage() << "\n on domain "
+                    << request_info.request_future->getErrorDomain();
+                } else {
+                    MDSBC_DBG << "Request send with success";
+                }
+                request_info.phase = MESSAGE_PHASE_COMPLETED;
+            } else {
+                if((request_info.retry % 3) == 0) {
+                    request_info.phase = MESSAGE_PHASE_TIMEOUT;
+                }
+            }
+            break;
+        }
+        case MESSAGE_PHASE_COMPLETED:
+        case MESSAGE_PHASE_TIMEOUT:
+            break;
+    }
 }

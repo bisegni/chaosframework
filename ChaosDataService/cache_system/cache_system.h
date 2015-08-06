@@ -1,6 +1,6 @@
 /*
  *	cache_system.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2014 INFN, National Institute of Nuclear Physics
@@ -21,5 +21,6 @@
 #define CHAOSFramework_cache_sytem_h
 #include "MemcachedCacheDriver.h"
 #include "CouchbaseCacheDriver.h"
+#include "CacheDriverMetricCollector.h"
 #include "cache_system_types.h"
 #endif

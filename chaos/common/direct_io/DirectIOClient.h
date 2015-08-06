@@ -1,6 +1,6 @@
 /*
  *	DirectIOClient.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -39,7 +39,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <chaos/common/data/cache/FastHash.h>
 
-
+#include <boost/thread.hpp>
 
 namespace chaos {
 	
@@ -55,7 +55,10 @@ namespace chaos {
                 class DirectIOVirtualClientChannel;
             }
 
-			
+            class DirectIOClientConnectionSharedMetricIO;
+            
+            // typedef std::pair<std::string, uint16_t> SharedCollectorKey;
+            typedef  std::string SharedCollectorKey;
             typedef std::map< unsigned int, channel::DirectIOVirtualClientChannel* > ChannelMap;
             typedef std::map< unsigned int, channel::DirectIOVirtualClientChannel* >::iterator ChannelMapIterator;
             typedef utility::TemplatedKeyObjectContainer<std::string, DirectIOClientConnection*> DCKeyObjectContainer;
@@ -75,8 +78,17 @@ namespace chaos {
 				
 				std::string			impl_alias;
                 boost::atomic_uint	channel_counter;
+                
+                boost::mutex mutex_map_shared_collectors;
+                std::map<SharedCollectorKey, boost::shared_ptr<DirectIOClientConnectionSharedMetricIO> > map_shared_collectors;
 			protected:
 				void forwardEventToClientConnection(DirectIOClientConnection *client, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type);
+                
+                //! get new connection implementation
+                virtual DirectIOClientConnection *_getNewConnectionImpl(std::string server_description, uint16_t endpoint) = 0;
+                
+                //! Release the connection
+                virtual void _releaseConnectionImpl(DirectIOClientConnection *connection_to_release) = 0;
 			public:
                 DirectIOClient(std::string alias);
 				virtual ~DirectIOClient();
@@ -85,12 +97,20 @@ namespace chaos {
 				/*!
 				 Allocate a new connection from server description with endpoitn ex: ip:p-port:s_port|endpoint
 				 */
-				virtual DirectIOClientConnection *getNewConnection(std::string server_description_with_endpoint);
+				DirectIOClientConnection *getNewConnection(const std::string& server_description_with_endpoint);
                 
-                virtual DirectIOClientConnection *getNewConnection(std::string server_description, uint16_t endpoint) = 0;
+                //DirectIOClientConnection *getNewConnection(std::string server_description, uint16_t endpoint);
 				
 				//! Release the connection
-				virtual void releaseConnection(DirectIOClientConnection *connection_to_release) = 0;
+				void releaseConnection(DirectIOClientConnection *connection_to_release);
+                
+                
+                //! Initialize instance
+                void init(void *init_data) throw(chaos::CException);
+                
+                
+                //! Deinit the implementation
+                void deinit() throw(chaos::CException);
 			};
 			
 		}

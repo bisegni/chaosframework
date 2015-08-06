@@ -1,6 +1,6 @@
 /*
  *	AbstractApiGroup.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -19,6 +19,7 @@
  */
 
 #include "AbstractApiGroup.h"
+
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service::api;
 
@@ -36,21 +37,26 @@ void AbstractApiGroup::init(void *init_data) throw (chaos::CException) {
         it != api_instance.end();
         it++) {
         boost::shared_ptr<AbstractApi> api = *it;
+        
+        //initilize api
         InizializableService::initImplementation(api.get(),
                                                  static_cast<void*>(subservice),
                                                  api->getName(),
                                                  __PRETTY_FUNCTION__);
+        //connect parent group to api
+        api->parent_group = this;
     }
 }
 
 void AbstractApiGroup::deinit()  throw (chaos::CException) {
-    for(ApiListIterator it = api_instance.begin();
-        it != api_instance.end();
-        it++) {
-        boost::shared_ptr<AbstractApi> api = *it;
-        InizializableService::deinitImplementation(api.get(),
-                                                   api->getName(),
-                                                   __PRETTY_FUNCTION__);
-    }
+    //the deinit phase is called into destructor of api class
+//    for(ApiListIterator it = api_instance.begin();
+//        it != api_instance.end();
+//        it++) {
+//        boost::shared_ptr<AbstractApi> api = *it;
+//        InizializableService::deinitImplementation(api.get(),
+//                                                   api->getName(),
+//                                                   __PRETTY_FUNCTION__);
+//    }
 
 }

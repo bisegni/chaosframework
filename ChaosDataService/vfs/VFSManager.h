@@ -1,6 +1,6 @@
 /*
  *	VFSManager.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2014 INFN, National Institute of Nuclear Physics
@@ -27,7 +27,7 @@
 #include "VFSStageReadableFile.h"
 #include "VFSQuery.h"
 #include "../db_system/DBDriver.h"
-#include "storage_system/StorageDriver.h"
+#include "storage_system/storage_system.h"
 
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/utility/TemplatedKeyObjectContainer.h>

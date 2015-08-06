@@ -1,6 +1,6 @@
 /*
  *	Entity.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -64,11 +64,11 @@ int32_t Entity::updateProperty(uint32_t propertyID, uint32_t keyID, const char *
 	return database->updatePropertyForEntity(propertyID, keyInfo);
 }
 
-int32_t Entity::addProperty(uint32_t keyID, string& propertyVal) {
+int32_t Entity::addProperty(uint32_t keyID, const string& propertyVal) {
 	return addProperty(keyID, propertyVal.c_str());
 }
 
-int32_t Entity::updateProperty(uint32_t propertyID, uint32_t keyID, string& propertyVal) {
+int32_t Entity::updateProperty(uint32_t propertyID, uint32_t keyID, const string& propertyVal) {
 	return updateProperty(propertyID, keyID, propertyVal.c_str());
 }
 

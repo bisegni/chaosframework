@@ -1,7 +1,7 @@
 
 /*
  *	ZMQDirectIOClient.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -69,6 +69,12 @@ namespace chaos {
 					void *socketMonitor(void *s, const char * address, ConnectionMonitorInfo *monitor_info);
 					//overriding ofr free object fuunction for the tempalted key object container superclass
 					void freeObject(uint32_t hash, DirectIOClientConnection *connection);
+                    
+                    //! get new connection
+                    DirectIOClientConnection *_getNewConnectionImpl(std::string server_description, uint16_t endpoint);
+                    
+                    //! release an instantiated connection
+                    void _releaseConnectionImpl(DirectIOClientConnection *connection_to_release);
                 public:
                     
                     //! Initialize instance
@@ -77,12 +83,6 @@ namespace chaos {
                     
                     //! Deinit the implementation
                     void deinit() throw(chaos::CException);
-
-					//! get new connection
-					DirectIOClientConnection *getNewConnection(std::string server_description, uint16_t endpoint);
-					
-					//! release an instantiated connection
-					void releaseConnection(DirectIOClientConnection *connection_to_release);
                 };
             }
         }

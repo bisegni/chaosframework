@@ -1,6 +1,6 @@
 /*
  *	AsyncCentralManager.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -28,106 +28,48 @@
 #define ACM_LDBG_ LDBG_ << ACM_LOG_HEAD
 #define ACM_LERR_ LERR_ << ACM_LOG_HEAD
 
-
+using namespace boost::asio;
 using namespace chaos::common::async_central;
 
-void acm_timer(uv_timer_t *handle) {
-	TimerHandler *c_handler = reinterpret_cast<TimerHandler*>(handle->data);
-	c_handler->timeout();
-}
-void acm_thread(void *handle) {
-	chaos::common::utility::delegate::Delegate *thread_delegate = reinterpret_cast<chaos::common::utility::delegate::Delegate*>(handle);
-	(*thread_delegate)();
-}
 //----------------------------------------------------------------------------------------------------
-//static initialization
-bool AsyncCentralManager::looping = false;
 
-AsyncCentralManager::AsyncCentralManager() {
-	
+
+AsyncCentralManager::AsyncCentralManager():
+asio_service(),
+asio_default_work(asio_service) {
 }
 
 AsyncCentralManager::~AsyncCentralManager() {
-	
-}
-
-
-void AsyncCentralManager::_internalEventLoop(void *args) {
-	
-	uv_loop_t *uv_l_loc = reinterpret_cast<uv_loop_t*>(args);
-	while(looping) {
-		//call sync loop runner
-		uv_run(uv_l_loc, UV_RUN_DEFAULT);
-		//wait some little time
-		usleep(500000);
-	}
-	
 }
 
 // Initialize instance
-void AsyncCentralManager::init(void *inti_data) throw(chaos::CException) {
-	ACM_LAPP_ << "Allocating uv loop";
-	uv_l = (uv_loop_t*)malloc(sizeof(uv_loop_t));
-	if(!uv_l) throw chaos::CException(-1, "Error allocating uv loop", __PRETTY_FUNCTION__);
-	uv_loop_init(uv_l);
-	
-	//start the interna central loop ticker
-	ACM_LAPP_ << "Allocate loop thread";
-	looping = true;
-	if(uv_thread_create(&thread_loop_id, &AsyncCentralManager::_internalEventLoop, uv_l)) {
-		//error creating thread
-		throw CException(-1, "Error creating loop thread", __PRETTY_FUNCTION__);
-	}
+void AsyncCentralManager::init(void *init_data) throw(chaos::CException) {
+	ACM_LAPP_ << "Allocating event loop";
+    asio_thread_group.create_thread(boost::bind(&boost::asio::io_service::run, &asio_service));
 }
 
 // Deinit the implementation
 void AsyncCentralManager::deinit() throw(chaos::CException) {
-	
 	ACM_LAPP_ << "Stop event loop";
-	looping = false;
-	uv_stop(uv_l);
-	
-	ACM_LAPP_ << "Join loop thread";
-	if(uv_thread_join(&thread_loop_id)) {
-		ACM_LERR_ << "Error joining loop thread";
-	}
-	
-	if(uv_l)free(uv_l);
+    asio_service.stop();
+    asio_thread_group.join_all();
 }
 
-
-int AsyncCentralManager::addTimer(TimerHandler *timer_handler, uint64_t timeout,uint64_t repeat) {
+int AsyncCentralManager::addTimer(TimerHandler *timer_handler,
+                                  uint64_t timeout,
+                                  uint64_t repeat) {
+    boost::unique_lock<boost::mutex> l(mutex);
 	int err = 0;
-	//init timer
-	err = uv_timer_init(uv_l, &timer_handler->uv_t);
-	if(err) return err;
-	
-	//start handler for timer
-	err = uv_timer_start(&timer_handler->uv_t, acm_timer, timeout, repeat);
-	if(err) return err;
-	
+    if((timer_handler->timer = new  deadline_timer(asio_service)) == NULL) {
+        return -1;
+    }
+    timer_handler->delay = repeat;
+    timer_handler->wait(timeout);
 	return err;
 }
 
-int AsyncCentralManager::restartTimer(TimerHandler *timer_handler) {
-	int err = uv_timer_again(&timer_handler->uv_t);
-	return err;
-}
 
 void AsyncCentralManager::removeTimer(TimerHandler *timer_handler) {
-	uv_timer_stop(&timer_handler->uv_t);
-}
-
-int AsyncCentralManager::addThread(chaos::common::utility::delegate::Delegate *thread_delegate, AcmThreadID *thread_id) {
-	int err = 0;
-	if((err = uv_thread_create(thread_id, &acm_thread, thread_delegate))) {
-		return err;
-	}
-	return 0;
-}
-
-void AsyncCentralManager::joinThread(AcmThreadID *thread_id) {
-	if(uv_thread_join(thread_id)) {
-		ACM_LERR_ << "Error joining loop thread";
-	}
+    boost::unique_lock<boost::mutex> l(mutex);
+    timer_handler->removeTimer();
 }

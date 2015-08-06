@@ -1,6 +1,6 @@
 /*
  *	ApiManagment.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #include "ApiManagment.h"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>

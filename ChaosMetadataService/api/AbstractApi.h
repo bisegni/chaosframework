@@ -1,6 +1,6 @@
 /*
  *	AbstractApi.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -20,16 +20,39 @@
 #ifndef CHAOSFramework_AbstractApi_h
 #define CHAOSFramework_AbstractApi_h
 #include "../mds_types.h"
+#include "../persistence/persistence.h"
+#include "../batch/batch_impl.h"
 
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/global.h>
 namespace chaos {
 	namespace metadata_service {
 		namespace api {
-#define LOG_AND_TROW(log, num, err)\
-log << "("<<num<<") " << err;\
-throw chaos::CException(-1, err, __PRETTY_FUNCTION__);
+
+#define GET_DATA_ACCESS(x,v, err)\
+x *v = getPersistenceDriver()->getDataAccess<x>();\
+if(v == NULL) throw CException(err, "Error allocating " #x, __PRETTY_FUNCTION__);
+
+#define MOVE_STRING_VALUE(k, src, dst)\
+if(src->hasKey(k)) {\
+dst->addStringValue(k, src->getStringValue(k));\
+}
+            
+#define MERGE_STRING_VALUE(k, src, src2, dst)\
+if(src2->hasKey(k)) {\
+dst->addStringValue(k, src2->getStringValue(k));\
+} else {\
+MOVE_STRING_VALUE(k, src, dst)\
+}
+            
+#define MOVE_INT32_VALUE(k, src, dst)\
+if(src->hasKey(k)) {\
+dst->addInt32Value(k, src->getInt32Value(k));\
+}
+
+            class AbstractApiGroup;
             
 			//! Api abstraction
 			/*!
@@ -38,11 +61,13 @@ throw chaos::CException(-1, err, __PRETTY_FUNCTION__);
             class AbstractApi:
             public chaos::common::utility::NamedService,
             public chaos::common::utility::InizializableService {
+                friend class AbstractApiGroup;
                 //! the instace of the persistence driver
                 ApiSubserviceAccessor *subservice;
                 
+                AbstractApiGroup *parent_group;
             protected:
-                persistence::AbstractPersistenceDriver *getPersistenceDriver();
+                service_common::persistence::data_access::AbstractPersistenceDriver *getPersistenceDriver();
                 batch::MDSBatchExecutor *getBatchExecutor();
                 chaos::common::network::NetworkBroker *getNetworkBroker();
 			public:

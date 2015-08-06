@@ -1,6 +1,6 @@
 /*
  *	NamedServices.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -31,9 +31,9 @@ namespace chaos {
 			 This class is a base class for all service that need to be recognized with an alias
 			 */
 			class NamedService {
-				std::string type_name;
+				const std::string service_name;
 			protected:
-				explicit NamedService(const std::string & alias);
+				explicit NamedService(const std::string & _service_name);
 			public:
 				/*
 				 Return the alias of the current instance

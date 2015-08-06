@@ -20,18 +20,44 @@
 
 #ifndef CHAOSFramework_chaos_types_h
 #define CHAOSFramework_chaos_types_h
+
 #include <chaos/common/batch_command/BatchCommandTypes.h>
 
-/** @defgroup Control_Unit_Definition_Api Control Unit Definition Public API
- @{
- */
+#include <boost/ptr_container/ptr_container.hpp>
 
-/** @} */ // end of Control_Unit_Definition_Api Slow Control API
+#include <map>
+#include <vector>
 
+#define  CHAOS_DEFINE_VECTOR_FOR_TYPE(t, name)\
+typedef std::vector< t >                   name;\
+typedef std::vector< t >::iterator         name ## Iterator;\
+typedef std::vector< t >::const_iterator   name ## ConstIterator;
 
-/** @defgroup Control_Unit_User_Api Control Unit User Public API
- @{ This is the collection of the api that the user can call within the control unit definition
- */
+#define  CHAOS_DEFINE_PTR_VECTOR_FOR_TYPE(t, name)\
+typedef boost::ptr_vector< t >                   name;\
+typedef boost::ptr_vector< t >::iterator         name ## Iterator;\
+typedef boost::ptr_vector< t >::const_iterator   name ## ConstIterator;
 
-/** @} */ // end of Control_Unit_User_Api Slow Control API
+#define  CHAOS_DEFINE_MAP_FOR_TYPE(t1, t2, name)\
+typedef std::map< t1, t2 >                   name;\
+typedef std::map< t1, t2 >::iterator         name ## Iterator;\
+typedef std::map< t1, t2 >::const_iterator   name ## ConstIterator;
+
+#define  CHAOS_DEFINE_PTR_MAP_FOR_TYPE(t1, t2, name)\
+typedef boost::ptr_map< t1, t2 >                   name;\
+typedef boost::ptr_map< t1, t2 >::iterator         name ## Iterator;\
+typedef boost::ptr_map< t1, t2 >::const_iterator   name ## ConstIterator;
+
+#define CHAOS_DEFINE_GET_PTR_MAP_ELEMENT(map, element_type, element_key)\
+dynamic_cast<element_type*>(&map.at(element_key));
+
+CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, ChaosStringVector)
+
+#define CHAOS_SCAN_VECTOR_ITERATOR(iter, vec, to_execute)\
+for(iter it = vec.begin();\
+it != vec.end();\
+it++) {\
+   to_execute \
+}\
+
 #endif

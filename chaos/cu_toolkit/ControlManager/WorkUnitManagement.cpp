@@ -1,6 +1,6 @@
 /*
  *	WorkUnitManagement.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -18,8 +18,10 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/ControlManager/WorkUnitManagement.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
+#include <chaos/cu_toolkit/ControlManager/WorkUnitManagement.h>
+
+#include <chaos/common/healt_system/HealtManager.h>
 
 #define WUMHADER "[" << std::string(work_unit_instance->getCUInstance()) + std::string("-") + std::string(work_unit_instance->getCUID()) << "-"<<getCurrentStateString()<<"] - "
 #define WUMAPP_ INFO_LOG(WorkUnitManagement) << WUMHADER
@@ -28,10 +30,12 @@
 
 #define SWITCH_SM_TO(e)\
 if(wu_instance_sm.process_event(e) != boost::msm::back::HANDLED_TRUE){\
-throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for failure event", __PRETTY_FUNCTION__);\
+throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for failure event", __PRETTY_FUNCTION__);\
 }
 
 using namespace chaos::common::data;
+using namespace chaos::common::healt_system;
+
 using namespace chaos::cu::command_manager;
 using namespace chaos::cu::control_manager;
 
@@ -97,7 +101,7 @@ void WorkUnitManagement::turnOn() throw (CException) {
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublish()) == boost::msm::back::HANDLED_TRUE){
         //we are switched state
     } else {
-        throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for UnitEventTypePublish event", __PRETTY_FUNCTION__);
+        throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for UnitEventTypePublish event", __PRETTY_FUNCTION__);
     }
 }
 
@@ -109,31 +113,35 @@ void WorkUnitManagement::turnOFF() throw (CException) {
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublish()) == boost::msm::back::HANDLED_TRUE){
         //we are switched state
     } else {
-        throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for UnitEventTypeUnpublish event", __PRETTY_FUNCTION__);
+        throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for UnitEventTypeUnpublish event", __PRETTY_FUNCTION__);
     }
     
 }
 
 /*---------------------------------------------------------------------------------
- 
+
  ---------------------------------------------------------------------------------*/
 void WorkUnitManagement::scheduleSM() throw (CException) {
     WUMDBG_ << "Start state machine step";
     switch ((UnitState) wu_instance_sm.current_state()[0]) {
         case UnitStateUnpublished:
             WUMAPP_ << "Work unit in unpublished";
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
             active = false;
             break;
             
         case UnitStateStartPublishing: {
             active = true;
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOADING);
             //reset the delay for the forwarding of the registration datapack
             publishing_counter_delay = 0;
             WUMAPP_ << "Control unit is unpublished, need to be setup";
             //associate the event channel to the control unit
-            WUMAPP_ << "Adding event channel";
-            work_unit_instance->device_event_channel = CommandManager::getInstance()->getInstrumentEventChannel();
-            
+
             WUMAPP_ << "Setup Control Unit Sanbox for cu with instance";
             try{
                 work_unit_instance->_defineActionAndDataset(mds_registration_message);
@@ -169,10 +177,19 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
                 CommandManager::getInstance()->registerAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
             }
+
+                //set healt to load
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
             break;
         }
         case UnitStateStartUnpublishing: {
             active = true;
+            //set healt to load
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOADING);
             WUMAPP_ << "work unit is starting the unpublishing process";
             WUMAPP_ << "Register RPC action for cu whith instance";
             std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
@@ -186,13 +203,16 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             
         case UnitStatePublishingFailure: {
             WUMAPP_  << "there was been error during control unit registration we end here";
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
             active = false;
             break;
         }
         case UnitStateUnpublishing: {
             CDataWrapper fakeDWForDeinit;
             bool detachFake;
-            fakeDWForDeinit.addStringValue(DatasetDefinitionkey::DEVICE_ID, work_unit_instance->getCUID());
+            fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, work_unit_instance->getCUID());
             try{
                 WUMAPP_  << "Stopping Wor Unit";
                 work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
@@ -202,7 +222,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                     DECODE_CHAOS_EXCEPTION(ex);
                 }
             }
-            
+
             try{
                 WUMAPP_  << "Deiniting Work Unit";
                 work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
@@ -222,19 +242,19 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 }
             }
             
-            
-            if(work_unit_instance->device_event_channel) {
-                CommandManager::getInstance()->deleteInstrumentEventChannel(work_unit_instance->device_event_channel);
-                work_unit_instance->device_event_channel = NULL;
-            }
-            
             WUMAPP_  << "work unit is going to be unpublished";
             SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublished())
+                //set healt to unload
+            HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
+                                                            NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
             break;
         }
     }
+        //publish if something has changed
+    HealtManager::getInstance()->publishNodeHealt(work_unit_instance->getCUID());
     WUMDBG_ << "End state machine step";
-    
+
 }
 bool WorkUnitManagement::smNeedToSchedule() {
     UnitState s = getCurrentState();
@@ -247,45 +267,43 @@ bool WorkUnitManagement::smNeedToSchedule() {
 int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
     // dataToSend can't be sent because it is porperty of the CU
     //so we need to copy it
-    
+
     auto_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
     CDataWrapper mdsPack(serBuf->getBufferPtr());
     //add action for metadata server
     //add local ip and port
-    
-    mdsPack.addStringValue(CUDefinitionKey::CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
-    
+
+        //add default node value
+        //mdsPack.addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
+        //mdsPack.addInt64Value(NodeDefinitionKey::NODE_TIMESTAMP, chaos::common::utility::TimingUtil::getTimeStamp());
+
     //register CU from mds
-    return mds_channel->sendUnitDescription(mdsPack);
+    return mds_channel->sendNodeRegistration(mdsPack);
 }
 
 bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
     bool result = false;
     WUMAPP_ << "Work unit registration ack message received";
     
-    if(!ack_pack.hasKey(ChaosSystemDomainAndActionLabel::PARAM_WORK_UNIT_REG_ACK_DEVICE_ID))
+    if(!ack_pack.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID))
         throw CException(-1, "No device id found", __PRETTY_FUNCTION__);
     
-    string device_id = ack_pack.getStringValue(ChaosSystemDomainAndActionLabel::PARAM_WORK_UNIT_REG_ACK_DEVICE_ID);
+    string device_id = ack_pack.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     if(device_id.compare(work_unit_instance->getCUID()) != 0) {
         throw CException(-2, "received id :"+std::string(work_unit_instance->getCUID())+ std::string(" not equal to work unit instance id:")+device_id, __PRETTY_FUNCTION__);
     }
-    if(ack_pack.hasKey(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT)) {
+    if(ack_pack.hasKey(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)) {
         //registration has been ended
         
-        int ack_val=ack_pack.getInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT);
+        int ack_val=ack_pack.getInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT);
         switch(ack_val){
-            case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK:
-                if(((UnitState) wu_instance_sm.current_state()[0]) == UnitStatePublishing) {
-                    SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypePublished())
-                    WUMAPP_ << "work unit " << device_id << " has been registered.";
-                    result = true;
-                } else {
-                    WUMAPP_ << "work unit " << device_id << " already registered";
-                }
+            case ErrorCode::EC_MDS_NODE_REGISTRATION_OK:
+                SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypePublished())
+                WUMAPP_ << "work unit has been registered:"<<device_id;
+                result = true;
                 break;
                 
-            case ErrorCode::EC_MDS_WOR_UNIT_ID_NOT_SELF_MANAGEABLE:
+            case ErrorCode::EC_MDS_NODE_ID_NOT_SELF_MANAGEABLE:
                 WUMAPP_ << "id is not self manageable";
             default:
                 WUMERR_ << "work unit "<< device_id<<" failed to register, error ack:"<<ack_val;

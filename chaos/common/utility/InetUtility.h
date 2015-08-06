@@ -1,6 +1,6 @@
 /*
  *	InetUtility.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -54,40 +54,45 @@ namespace chaos {
 				/*!
 				 This methdo will take care for network address scan process
 				 */
-				static std::string scanForLocalNetworkAddress() {
+                static std::string scanForLocalNetworkAddress(std::string _eth_interface_name = std::string()) {
 					std::string ip_port;
-					struct ifaddrs * ifAddrStruct=NULL;
+					struct ifaddrs * if_addr_struct=NULL;
 					struct ifaddrs * ifa=NULL;
+                    std::string eth_interface_name;
+                    if(_eth_interface_name.size() == 0) {
 #if __APPLE__
-					const char *ethInterfaceName  = "en";
+					eth_interface_name  = "en";
 #elif __linux__
-					const char *ethInterfaceName = "eth";
+					eth_interface_name = "eth";
 #endif
-					void * tmpAddrPtr=NULL;
+                    } else {
+                        eth_interface_name = _eth_interface_name;
+                    }
+					void * tmp_addr_ptr=NULL;
 					
 					LAPP_ << "Scan for local network interface and ip";
-					getifaddrs(&ifAddrStruct);
+					getifaddrs(&if_addr_struct);
 					
-					for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) {
-						if(strstr(ifa->ifa_name, ethInterfaceName)== NULL) continue;
+					for (ifa = if_addr_struct; ifa != NULL; ifa = ifa->ifa_next) {
+						if(strstr(ifa->ifa_name, eth_interface_name.c_str())== NULL) continue;
 						
 						if (ifa ->ifa_addr->sa_family==AF_INET) { // check it is IP4
 							// is a valid IP4 Address
-							tmpAddrPtr=&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
-							char addressBuffer[INET_ADDRSTRLEN];
-							inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
-							LAPP_ << "Interface " << ifa->ifa_name << " address " << addressBuffer << "<- this will be choosen";
-							ip_port = addressBuffer;
+							tmp_addr_ptr=&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+							char address_buffer[INET_ADDRSTRLEN];
+							inet_ntop(AF_INET, tmp_addr_ptr, address_buffer, INET_ADDRSTRLEN);
+							LAPP_ << "Interface " << ifa->ifa_name << " address " << address_buffer << "<- this will be choosen";
+							ip_port = address_buffer;
 							break;
 						} else if (ifa->ifa_addr->sa_family==AF_INET6) { // check it is IP6
 							// is a valid IP6 Address
-							tmpAddrPtr=&((struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr;
-							char addressBuffer[INET6_ADDRSTRLEN];
-							inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
-							LAPP_ << "Interface " << ifa->ifa_name << " address " << addressBuffer;
+							tmp_addr_ptr=&((struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr;
+							char address_buffer[INET6_ADDRSTRLEN];
+							inet_ntop(AF_INET6, tmp_addr_ptr, address_buffer, INET6_ADDRSTRLEN);
+							LAPP_ << "Interface " << ifa->ifa_name << " address " << address_buffer;
 						}
 					}
-					if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
+					if (if_addr_struct!=NULL) freeifaddrs(if_addr_struct);
 					
 					if(ip_port.size() == 0) {
 						// no ip was found go to localhost

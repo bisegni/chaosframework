@@ -1,6 +1,6 @@
 /*	
  *	ObjectWaitSemaphore.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *	
  *    	Copyright <#Year#> INFN, National Institute of Nuclear Physics

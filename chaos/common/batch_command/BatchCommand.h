@@ -1,6 +1,6 @@
 /*
  *	BatchCommand.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -30,7 +30,10 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
+
 #include <chaos/common/batch_command/BatchCommandTypes.h>
+#include <chaos/common/batch_command/BatchCommandDescription.h>
+
 using namespace chaos::common::data;
 using namespace chaos::common::data::cache;
 
@@ -38,7 +41,7 @@ namespace chaos{
     
     namespace common {
         
-        //! The name space that group all foundamental class need by slow control !CHOAS implementation
+        //! The name space that group all foundamental class need by slow control !CHAOS implementation
         namespace batch_command {
             
             //forward declaration

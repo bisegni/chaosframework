@@ -1,6 +1,6 @@
 /*
  *	DeviceDataWorker.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2014 INFN, National Institute of Nuclear Physics
@@ -39,7 +39,9 @@ namespace chaos_direct_io	= chaos::common::direct_io;
 namespace chaos{
     namespace data_service {
 		namespace worker {
-
+            //forward declaration
+            class DeviceSharedDataWorkerMetricCollector;
+            
 			//! worker information for the device live storage
 			struct DeviceSharedWorkerJob : public WorkerJob {
 				common::direct_io::channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *request_header;
@@ -64,6 +66,7 @@ namespace chaos{
 			
 			//! worker for live device sharing
 			class DeviceSharedDataWorker : public DataWorker {
+                friend class DeviceSharedDataWorkerMetricCollector;
 				std::string					cache_impl_name;
 				vfs::VFSManager				*vfs_manager_instance;
 				uint64_t					last_stage_file_hb;

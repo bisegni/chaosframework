@@ -203,13 +203,9 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				HEADER_SEARCH_PATHS = (
 					../../,
-					/usr/local/include,
 					../../usr/local/include,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"$(SRCROOT)/../../usr/local/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../../usr/local/lib";
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
 					"-lmemcached",
@@ -237,13 +233,9 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				HEADER_SEARCH_PATHS = (
 					../../,
-					/usr/local/include,
 					../../usr/local/include,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"$(SRCROOT)/../../usr/local/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../../usr/local/lib";
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
 					"-lmemcached",

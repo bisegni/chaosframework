@@ -1,6 +1,6 @@
 /*
  *	RpcServer.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -28,7 +28,7 @@ NamedService(alias) {
 /*!
  Return the published port
  */
-int RpcServer::getPublishedPort(){
+int RpcServer::getPublishedPort() {
     return portNumber;
 }
 
@@ -37,4 +37,13 @@ int RpcServer::getPublishedPort(){
  */
 void RpcServer::setCommandDispatcher(RpcServerHandler *newCommandHandler) {
     commandHandler = newCommandHandler;
+}
+
+//! return the numebr of message that are waiting to be sent
+/*!
+ driver can overload this method to return(if has any) the size
+ of internal queue message
+ */
+uint64_t RpcServer::getMessageQueueSize() {
+    return 0;
 }

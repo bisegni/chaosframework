@@ -1,6 +1,6 @@
 /*
  *	AbstractApi.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -19,6 +19,7 @@
  */
 
 #include "AbstractApi.h"
+
 using namespace chaos::common::network;
 
 using namespace chaos::metadata_service::api;
@@ -30,7 +31,7 @@ NamedService(name),
 subservice(NULL){}
 
 //default destructor
-AbstractApi::~AbstractApi(){}
+AbstractApi::~AbstractApi(){deinit();}
 
 void AbstractApi::init(void *init_data) throw (chaos::CException) {
     subservice = static_cast<ApiSubserviceAccessor*>(init_data);
@@ -41,7 +42,7 @@ void AbstractApi::deinit()  throw (chaos::CException) {
     
 }
 
-AbstractPersistenceDriver *AbstractApi::getPersistenceDriver() {
+chaos::service_common::persistence::data_access::AbstractPersistenceDriver *AbstractApi::getPersistenceDriver() {
     CHAOS_ASSERT(subservice)
     return subservice->persistence_driver.get();
 }

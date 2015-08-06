@@ -1,6 +1,6 @@
 /*
  *	ZMQDirectIOClinet.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -136,6 +136,7 @@ ZMQDirectIOClient::~ZMQDirectIOClient(){
 
 //! Initialize instance
 void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
+    DirectIOClient::init(init_data);
     ZMQDIOLAPP_ << "Allocating zmq context";
 	thread_run= true;
     zmq_context = zmq_ctx_new();
@@ -165,10 +166,10 @@ void ZMQDirectIOClient::deinit() throw(chaos::CException) {
     DirectIOClient::deinit();
 }
 
-DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server_description, uint16_t endpoint) {
+DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string server_description, uint16_t endpoint) {
 	int err = 0;
-	const int output_buffer_dim = 500;
-	const int linger_period = 500;
+	const int output_buffer_dim = 1;
+	const int linger_period = 0;
 	const int timeout = 1000;
 	const int min_reconnection_ivl = 100;
 	const int max_reconnection_ivl = 500;
@@ -308,7 +309,7 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
     return result;
 }
 
-void ZMQDirectIOClient::releaseConnection(DirectIOClientConnection *connection_to_release) {
+void ZMQDirectIOClient::_releaseConnectionImpl(DirectIOClientConnection *connection_to_release) {
 	int err = 0;
 	ZMQDirectIOClientConnection *conn=reinterpret_cast<ZMQDirectIOClientConnection*>(connection_to_release);
 	if(!conn) return;

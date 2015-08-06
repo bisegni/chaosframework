@@ -1,6 +1,6 @@
 /*
  *	TimerHandler.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -20,8 +20,7 @@
 
 #ifndef __CHAOSFramework__TimerHandler__
 #define __CHAOSFramework__TimerHandler__
-#include <uv.h>
-
+#include <boost/asio.hpp>
 namespace chaos {
 	namespace common {
 		namespace async_central {
@@ -32,9 +31,14 @@ namespace chaos {
 			/*!
 			 UV timer c++ abstraction
 			 */
-			class TimerHandler {
+            class TimerHandler {
 				friend class AsyncCentralManager;
-				uv_timer_t uv_t;
+                //boost timer
+                boost::asio::deadline_timer *timer;
+                uint64_t    delay;
+                void timerTimeout(const boost::system::error_code& error);
+                void wait(uint64_t _delay);
+                void removeTimer();
 			public:
 				TimerHandler();
 				~TimerHandler();

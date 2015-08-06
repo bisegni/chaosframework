@@ -1,6 +1,6 @@
 /*
  *	unit_server_batch.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -21,5 +21,5 @@
 #define CHAOSFramework_unit_server_batch_h
 
 #include "UnitServerAckBatchCommand.h"
-
+#include "LoadUnloadControlUnit.h"
 #endif

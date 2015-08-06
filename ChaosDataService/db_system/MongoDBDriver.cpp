@@ -45,7 +45,7 @@ void MongoDBDriver::init(void *init_data) throw (chaos::CException) {
 	std::string servers;
 	chaos_data::CDataWrapper driver_custom_init;
 	//allcoate ha pool class
-	ha_connection_pool = new MongoDBHAConnectionManager(setting->servers, setting->key_value_custom_param);
+	ha_connection_pool = new service_common::persistence::mongodb::MongoDBHAConnectionManager(setting->servers, setting->key_value_custom_param);
 	if(setting->key_value_custom_param.count("db")) {
 		db_name = setting->key_value_custom_param["db"];
 	} else {
@@ -572,7 +572,7 @@ int MongoDBDriver::vfsGetFilePathForOldestBlockState(const std::string& domain,
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " searching oldest datablock with state";
 		} else if(result.isEmpty()){
-			MDBID_LERR_ << "No datablock found for the criteria";
+			//MDBID_LERR_ << "No datablock found for the criteria";
 		} else if(result.hasField(MONGO_DB_FIELD_FILE_PRIMARY_KEY)){
 			mongo::BSONObjBuilder file_query;
 			file_query << "_id" << result[MONGO_DB_FIELD_FILE_PRIMARY_KEY].OID();

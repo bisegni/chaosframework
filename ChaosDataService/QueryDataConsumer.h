@@ -1,6 +1,6 @@
 /*
  *	QueryDataConsumer.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2014 INFN, National Institute of Nuclear Physics
@@ -58,6 +58,7 @@ namespace chaos{
 		protected DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelHandler,
 		public StartableService {
             friend class ChaosDataService;
+
 			std::string cache_impl_name;
 			std::string db_impl_name;
 			

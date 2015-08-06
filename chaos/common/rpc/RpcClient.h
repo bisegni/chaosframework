@@ -1,6 +1,6 @@
 /*	
  *	RpcClient.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *	
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -31,11 +31,14 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/rpc/RpcMessageForwarder.h>
+#include <chaos/common/rpc/RpcServerHandler.h>
 
 using namespace chaos::common::network;
 namespace chaos_data = chaos::common::data;
 
 namespace chaos {
+#define RPC_CLIENT_SET_ERROR_OFFSET 100000
+
     /*!
      Define the information for send a message to some server
      */
@@ -51,7 +54,7 @@ namespace chaos {
 			    class NetworkBroker;
 		}
 	}
-
+    
     /*!
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
@@ -60,38 +63,39 @@ namespace chaos {
 	public RpcMessageForwarder,
 	public common::utility::StartableService,
 	public common::utility::NamedService {
-		friend class chaos::common::network::NetworkBroker;
+		//friend class chaos::common::network::NetworkBroker;
+        //! handler to the dispatcher to forward error on data forwarding
+        RpcServerHandler *server_handler;
     protected:
         
         /*!
-         init the rpc adapter
+         Forward to dispatcher the error durngi the forwarding of the request message
          */
-        virtual void init(void*) throw(CException) = 0;
+        void forwadSubmissionResultError(const std::string& channel_node_id,
+                                         uint32_t message_request,
+                                         chaos::common::data::CDataWrapper *submission_result);
         
         /*!
-         start the rpc adapter
+         Forward to dispatcher the error durngi the forwarding of the request message
          */
-        virtual void start() throw(CException) = 0;
-        
-        /*!
-         deinit the rpc adapter
-         */
-        virtual void deinit() throw(CException) = 0;
-        
-        /*!
-         manage the call for the handler when nd error occours
-         */
-        inline void callErrorHandler(NetworkForwardInfo *fInfo, ErrorCode::ErrorCode eCode);
-        
-        /*!
-         manage the call for the handler when the operation has ended
-         */
-        inline void callEndOpHandler(NetworkForwardInfo *fInfo);
+        void forwadSubmissionResultError(NetworkForwardInfo *message_info,
+                                         int32_t error_code,
+                                         const std::string& error_message,
+                                         const std::string& error_domain);
     public:
         /*!
          Constructor di default per i
          */
         RpcClient(const std::string& alias);
+        
+        virtual void setServerHandler(RpcServerHandler *_server_handler);
+        
+        //! return the numebr of message that are waiting to be sent
+        /*!
+         driver can overload this method to return(if has any) the size
+         of internal queue message
+         */
+        virtual uint64_t getMessageQueueSize();
     };
 }
 #endif

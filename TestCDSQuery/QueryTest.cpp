@@ -1,6 +1,6 @@
 /*
  *	QueryTest.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -20,6 +20,8 @@
 
 #include "QueryTest.h"
 #include <chaos/common/utility/TimingUtil.h>
+using namespace chaos::common::data;
+
 void QueryTest::init(void *init_data) throw (chaos::CException) {
     ChaosCommon<QueryTest>::init(init_data);
     

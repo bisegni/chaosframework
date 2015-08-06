@@ -1,6 +1,6 @@
 /*
  *	SlowCommandExecutor.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2013 INFN, National Institute of Nuclear Physics
@@ -67,10 +67,10 @@ namespace chaos {
                 //forward declaration
                 class SlowCommand;
                 
-                //! Macro for helping the allocation of the isntancer of the class implementing the slow command
-#define SLOWCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::NestedObjectInstancer<chaos::cu::control_manager::slow_command::SlowCommand, chaos_batch::BatchCommand>(\
-				new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::SlowCommand>())
-				
+#define SLOWCOMMAND_INSTANCER(SlowCommandClass)\
+new chaos::common::utility::NestedObjectInstancer<chaos::cu::control_manager::slow_command::SlowCommand, chaos::common::batch_command::BatchCommand>(\
+new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::SlowCommand>())
+                
                 //! Slow command execution sand box
                 /*!
                     This class is the environment where the exeecution of the slow command handlers take place.
@@ -92,14 +92,8 @@ namespace chaos {
 					AttributeSharedCacheWrapper * attribute_cache;
 					
 					AbstractControlUnit *control_unit_instance;
-					
-					//fast hearb beat cache access
-					AttributeValue *ts_hb_cache;
 					//fast unit last id cache value
 					AttributeValue *last_ru_id_cache;
-					//fast unit last acq ts cache value
-					AttributeValue *last_acq_ts_cache;
-					
 					//fast cache error variable accessor
 					AttributeValue *last_error_code;
 					AttributeValue *last_error_message;
@@ -115,7 +109,8 @@ namespace chaos {
                     ~SlowCommandExecutor();
                     
                     //allocate a new command
-                    chaos_batch::BatchCommand *instanceCommandInfo(const std::string& commandAlias);
+                    chaos_batch::BatchCommand *instanceCommandInfo(const std::string& command_alias,
+                                                                   chaos::common::data::CDataWrapper *command_info);
 					
 					//overlodaed command event handler
 					void handleCommandEvent(uint64_t command_seq,
@@ -145,6 +140,8 @@ namespace chaos {
 					//! Install a command associated with a type
                     void installCommand(const std::string& alias,
 										chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer);
+                    //! Install a command
+                    void installCommand(boost::shared_ptr<common::batch_command::BatchCommandDescription> command_description);
                 };
             }
         }

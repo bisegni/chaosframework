@@ -1,6 +1,6 @@
 /*
  *	MDSMessageChannel.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -35,7 +35,8 @@ namespace chaos {
 			/*!
 			 This class represent a message chanel for comunication with the Metadata Server
 			 */
-			class MDSMessageChannel : public NodeMessageChannel {
+			class MDSMessageChannel:
+            public NodeMessageChannel {
 				friend class chaos::common::network::NetworkBroker;
 			protected:
 				//! base constructor
@@ -62,7 +63,7 @@ namespace chaos {
 				 \param requestCheck flasg the message has request if it is true
 				 \param millisecToWait delay after wich the wait is interrupt
 				 */
-				int sendUnitServerRegistration(CDataWrapper& unitServerDescription, bool requestCheck = false, uint32_t millisecToWait = 0);
+				int sendNodeRegistration(CDataWrapper& unitServerDescription, bool requestCheck = false, uint32_t millisecToWait = 0);
 				
                 //! Send Unit server CU states to MDS
 				/*!
@@ -73,16 +74,6 @@ namespace chaos {
 				 */
 
                 int sendUnitServerCUStates(CDataWrapper& deviceDataset, bool requestCheck= false, uint32_t millisecToWait=0);
-                    
-                    
-				//! Send dataset to MDS
-				/*!
-				 Perform the registration of the control unit dataaset
-				 \param deviceDataset the CDatawrapper representi the device dataset infromation, th epointer is not disposed
-				 \param requestCheck flasg the message has request if it is true
-				 \param millisecToWait delay after wich the wait is interrupt
-				 */
-				int sendUnitDescription(CDataWrapper& deviceDataset, bool requestCheck=false, uint32_t millisecToWait=0);
 				
 				//! Get all active device id
 				/*!
@@ -111,6 +102,12 @@ namespace chaos {
 				 \return error code
 				 */
 				int getLastDatasetForDevice(string& identificationID,  CDataWrapper** deviceDefinition, uint32_t millisecToWait=0);
+                
+                //! return the configuration for the data driver
+                /*!
+                 Return the besta available data service at the monent within the configuraiton for data driver
+                 */
+                int getDataDriverBestConfiguration(CDataWrapper** deviceDefinition, uint32_t millisecToWait=0);
 			};
 		}
 	}

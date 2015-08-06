@@ -1,6 +1,6 @@
 /*
  *	DataAccess.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -19,6 +19,9 @@
  */
 #ifndef CHAOSFramework_DataAccess_h
 #define CHAOSFramework_DataAccess_h
-#include "ProducerDataAccess.h"
+#include "NodeDataAccess.h"
+#include "UtilityDataAccess.h"
 #include "UnitServerDataAccess.h"
+#include "ControlUnitDataAccess.h"
+#include "DataServiceDataAccess.h"
 #endif

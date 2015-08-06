@@ -1,6 +1,6 @@
 /*
  *	ChaosMetadataService.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -42,8 +42,7 @@ namespace chaos {
          */
         class ChaosMetadataService :
 		public ChaosCommon<ChaosMetadataService>,
-		public ServerDelegator,
-		public common::utility::StartableService {
+		public ServerDelegator {
             friend class common::utility::Singleton<ChaosMetadataService>;
             
             static WaitSemaphore waitCloseSemaphore;

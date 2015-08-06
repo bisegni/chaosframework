@@ -1,6 +1,6 @@
 /*
  *	CUSchemaDB.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -19,7 +19,6 @@
  */
 
 #include <string>
-#include <boost/lexical_cast.hpp>
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/global.h>
@@ -27,15 +26,16 @@
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/data/CDataWrapper.h>
 
+#include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
+
 using namespace std;
 using namespace boost;
 using namespace chaos;
 using namespace chaos::common::data;
 
-
-
 #define MAKE_KEY(key, tmp) entityDB->getIDForKey(key, tmp);\
-                           mapDatasetKeyForID.insert(make_pair<const char *, uint32_t>(key, tmp));
+mapDatasetKeyForID.insert(make_pair<const char *, uint32_t>(key, tmp));
 
 void RangeValueInfo::reset() {
     defaultValue.clear();
@@ -72,29 +72,35 @@ void CUSchemaDB::initDB(const char *name, bool onMemory) {
     composeName.append(utility::UUIDUtil::generateUUIDLite());
     entityDB->initDB(composeName.c_str(), onMemory);
     
-    MAKE_KEY(DatasetDefinitionkey::DEVICE_ID, keyTmp);
-    MAKE_KEY(DatasetDefinitionkey::ATTRIBUTE_NAME, keyTmp);
-    MAKE_KEY(DatasetDefinitionkey::DESCRIPTION, keyTmp);
-    MAKE_KEY(DatasetDefinitionkey::TIMESTAMP, keyTmp);
-    MAKE_KEY(DatasetDefinitionkey::ATTRIBUTE_DESCRIPTION, keyTmp);
-    MAKE_KEY(DatasetDefinitionkey::ATTRIBUTE_TYPE, keyTmp);
-    MAKE_KEY(DatasetDefinitionkey::ATTRIBUTE_DIRECTION, keyTmp);
-    MAKE_KEY(DatasetDefinitionkey::MAX_RANGE, keyTmp);
-    MAKE_KEY(DatasetDefinitionkey::MIN_RANGE, keyTmp);
-    MAKE_KEY(DatasetDefinitionkey::DEFAULT_VALUE, keyTmp);
-    MAKE_KEY(DatasetDefinitionkey::VALUE_MAX_SIZE, keyTmp);
-    MAKE_KEY(DataProxyConfigurationKey::DS_SERVER_ADDRESS, keyTmp);
+    MAKE_KEY(NodeDefinitionKey::NODE_UNIQUE_ID, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE, keyTmp);
+    //new key for subbinary data
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_ENCODING, keyTmp);
+    MAKE_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_DESCRIPTION, keyTmp);
+    
+    MAKE_KEY(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST, keyTmp);
 }
 
 CUSchemaDB::~CUSchemaDB() {
-        //remove all dataset
+    //remove all dataset
     for (EntityPtrMapIterator deviceEntityIter = deviceEntityMap.begin();
          deviceEntityIter != deviceEntityMap.end();
          deviceEntityIter++) {
         delete (deviceEntityIter->second);
     }
     
-        //dispose internal database
+    //dispose internal database
     if(entityDB) {
         entityDB->deinitDB();
         delete(entityDB);
@@ -103,19 +109,19 @@ CUSchemaDB::~CUSchemaDB() {
 
 /*
  Compose the attribute name
-*/
+ */
 void CUSchemaDB::composeAttributeName(const string& deviceID,
-									  const string& attributeName,
-									  string& composedName) {
+                                      const string& attributeName,
+                                      string& composedName) {
     composedName.assign(deviceID).append(":").append(attributeName);
-} 
+}
 
 /*
  Compose the attribute name
-*/ 
+ */
 void CUSchemaDB::decomposeAttributeName(const string& deviceID,
-										const string& attributeName,
-										std::string& decomposed) {
+                                        const string& attributeName,
+                                        std::string& decomposed) {
     decomposed = attributeName.substr(deviceID.size()+1).c_str();
 }
 
@@ -126,12 +132,26 @@ entity::Entity* CUSchemaDB::getDeviceEntity(const string& deviceID) {
     if(deviceEntityMap.count(deviceID) > 0){
         return deviceEntityMap[deviceID];
     }
-        //a new vector need to be added
+    //a new vector need to be added
     addDeviceId(deviceID);
     return deviceEntityMap[deviceID];
-} 
+}
 
-
+/*
+ return the vector containing the atrtibute list for a domain
+ */
+entity::Entity* CUSchemaDB::getBinarySubtypeEntity(const string& node_uid,
+                                                   const string& attribute_name) {
+    //add subtype for binary data
+    std::string a_name;
+    edb::KeyIdAndValue sub_kiv;
+    sub_kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE];
+    sub_kiv.type = chaos::edb::KEY_STR_VALUE;
+    a_name.clear();
+    composeAttributeName(node_uid, boost::str(boost::format("%1%_%2%")%attribute_name%ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE), a_name);
+    strcpy(sub_kiv.value.strValue, a_name.c_str());
+    return entityDB->getNewEntityInstance(sub_kiv);
+}
 /*
  return the vector containing the atrtibute list for a domain
  */
@@ -140,14 +160,14 @@ void CUSchemaDB::addDeviceId(const string& deviceID) {
         return;
     }
     edb::KeyIdAndValue kiv;
-    kiv.keyID = mapDatasetKeyForID[DatasetDefinitionkey::DEVICE_ID];
+    kiv.keyID = mapDatasetKeyForID[NodeDefinitionKey::NODE_UNIQUE_ID];
     kiv.type = chaos::edb::KEY_STR_VALUE;
     strcpy(kiv.value.strValue, deviceID.c_str());
-        //add the entity for device
+    //add the entity for device
     entity::Entity *dsEntity = entityDB->getNewEntityInstance(kiv);
     if(dsEntity) {
         deviceEntityMap.insert(make_pair<string, entity::Entity*>(deviceID, dsEntity));
-        addUniqueAttributeProperty(dsEntity, mapDatasetKeyForID[DatasetDefinitionkey::TIMESTAMP], timingUtils.getTimeStamp(), false);
+        addUniqueAttributeProperty(dsEntity, mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP], (int64_t)timingUtils.getTimeStamp(), false);
     }
 }
 
@@ -159,7 +179,7 @@ entity::Entity *CUSchemaDB::getDatasetElement(entity::Entity *device, const char
     bool alreadyAdded = false;
     string a_name;
     edb::KeyIdAndValue kiv;
-    kiv.keyID = mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_NAME];
+    kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME];
     kiv.type = chaos::edb::KEY_STR_VALUE;
     composeAttributeName(device->getKeyInfo().value.strValue, attributeName, a_name);
     
@@ -185,9 +205,9 @@ entity::Entity *CUSchemaDB::getDatasetElement(entity::Entity *device, const char
 /*
  Add the new field to the dataset
  */
-void CUSchemaDB::addAttributeToDataSet(const char*const attributeDeviceID,
-                                       const char*const attributeName,
-                                       const char*const attributeDescription,
+void CUSchemaDB::addAttributeToDataSet(const std::string& node_uid,
+                                       const std::string& attributeName,
+                                       const std::string& attributeDescription,
                                        DataType::DataType attributeType,
                                        DataType::DataSetAttributeIOAttribute attributeDirection,
                                        uint32_t maxDimension) {
@@ -218,42 +238,161 @@ void CUSchemaDB::addAttributeToDataSet(const char*const attributeDeviceID,
             typeMaxDimension = maxDimension;
             break;
         default:
-                throw CException(2, "unmanaged type", "CUSchemaDB::addAttributeToDataSet");
+            throw CException(2, "unmanaged type", "CUSchemaDB::addAttributeToDataSet");
             break;
     }
     
     bool isChild = false;
-    entity::Entity *device = getDeviceEntity(attributeDeviceID);
+    entity::Entity *device = getDeviceEntity(node_uid);
     
-        //add the attribute
+    //add the attribute
     string a_name;
     edb::KeyIdAndValue kiv;
-    kiv.keyID = mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_NAME];
+    kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME];
     kiv.type = chaos::edb::KEY_STR_VALUE;
     
-    composeAttributeName(attributeDeviceID, attributeName, a_name);
+    composeAttributeName(node_uid, attributeName, a_name);
     
     strcpy(kiv.value.strValue, a_name.c_str());
     
     auto_ptr<entity::Entity> elementDst(entityDB->getNewEntityInstance(kiv));
     
     if(elementDst.get()) {
-        addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_DESCRIPTION], attributeDescription);
-        addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_TYPE], (int64_t)attributeType);
-        addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_DIRECTION], (int64_t)attributeDirection);
-        addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[DatasetDefinitionkey::VALUE_MAX_SIZE], (int64_t)typeMaxDimension);
+        addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], attributeDescription);
+        addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE], (int64_t)attributeType);
+        addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION], (int64_t)attributeDirection);
+        if(typeMaxDimension)addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE], (int64_t)typeMaxDimension);
         device->isChild(*elementDst.get(), isChild);
         if(!isChild) device->addChild(*elementDst);
     }
 }
 
+void CUSchemaDB::addBinaryAttributeAsSubtypeToDataSet(const std::string& node_uid,
+                                                      const std::string& attribute_name,
+                                                      const std::string& attribute_description,
+                                                      DataType::BinarySubtype               subtype,
+                                                      int32_t    cardinality,
+                                                      DataType::DataSetAttributeIOAttribute attribute_direction) {
+    bool isChild = false;
+    entity::Entity *device = getDeviceEntity(node_uid);
+    
+    //add the attribute
+    string a_name;
+    edb::KeyIdAndValue kiv;
+    kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME];
+    kiv.type = chaos::edb::KEY_STR_VALUE;
+    
+    composeAttributeName(node_uid, attribute_name, a_name);
+    
+    strcpy(kiv.value.strValue, a_name.c_str());
+    
+    auto_ptr<entity::Entity> element_dataset(entityDB->getNewEntityInstance(kiv));
+    
+    if(element_dataset.get()) {
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], attribute_description);
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION], (int64_t)attribute_direction);
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE], (int64_t)DataType::TYPE_BYTEARRAY);
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE], (int64_t)subtype);
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY], (int64_t)cardinality);
+        device->isChild(*element_dataset.get(), isChild);
+        if(!isChild) device->addChild(*element_dataset);
+    }
+}
+
+void CUSchemaDB::addBinaryAttributeAsSubtypeToDataSet(const std::string& node_uid,
+                                                      const std::string& attribute_name,
+                                                      const std::string& attribute_description,
+                                                      const std::vector<int32_t>&   subtype_list,
+                                                      int32_t    cardinality,
+                                                      DataType::DataSetAttributeIOAttribute attribute_direction) {
+    bool isChild = false;
+    entity::Entity *device = getDeviceEntity(node_uid);
+    
+    //add the attribute
+    string a_name;
+    edb::KeyIdAndValue kiv;
+    kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME];
+    kiv.type = chaos::edb::KEY_STR_VALUE;
+    
+    composeAttributeName(node_uid, attribute_name, a_name);
+    
+    strcpy(kiv.value.strValue, a_name.c_str());
+    
+    auto_ptr<entity::Entity> element_dataset(entityDB->getNewEntityInstance(kiv));
+    
+    if(element_dataset.get()) {
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], attribute_description);
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION], (int64_t)attribute_direction);
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE], (int64_t)DataType::TYPE_BYTEARRAY);
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE], (int64_t)-1);//-1 indicate that we have an wntity taht collect all subtype
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY], (int64_t)cardinality);
+        device->isChild(*element_dataset.get(), isChild);
+        if(!isChild) device->addChild(*element_dataset);
+        
+        //add subtype for binary data
+        edb::KeyIdAndValue sub_kiv;
+        sub_kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE];
+        sub_kiv.type = chaos::edb::KEY_STR_VALUE;
+        a_name.clear();
+        composeAttributeName(node_uid, boost::str(boost::format("%1%_%2%")%attribute_name%ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE), a_name);
+        strcpy(sub_kiv.value.strValue, a_name.c_str());
+        auto_ptr<entity::Entity> binary_subtype(entityDB->getNewEntityInstance(sub_kiv));
+        if(binary_subtype.get()) {
+            //we can add the list of the attribute
+            for(std::vector<int>::const_iterator it = subtype_list.begin();
+                it != subtype_list.end();
+                it++) {
+                //add the single attribute as normal type to subtype entity
+                int32_t value = *it;
+                binary_subtype->addProperty(mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE], (int64_t)value);
+            }
+            //add subtype to dataset element entity
+            element_dataset->isChild(*binary_subtype.get(), isChild);
+            if(!isChild) element_dataset->addChild(*binary_subtype);
+        }
+    }
+}
+
+void CUSchemaDB::addBinaryAttributeAsMIMETypeToDataSet(const std::string& node_uid,
+                                                       const std::string& attribute_name,
+                                                       const std::string& attribute_description,
+                                                       const std::string& mime_type,
+                                                       DataType::DataSetAttributeIOAttribute attribute_direction) {
+    bool isChild = false;
+    entity::Entity *device = getDeviceEntity(node_uid);
+    
+    //add the attribute
+    string a_name;
+    edb::KeyIdAndValue kiv;
+    kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME];
+    kiv.type = chaos::edb::KEY_STR_VALUE;
+    
+    composeAttributeName(node_uid, attribute_name, a_name);
+    
+    strcpy(kiv.value.strValue, a_name.c_str());
+    
+    auto_ptr<entity::Entity> element_dataset(entityDB->getNewEntityInstance(kiv));
+    
+    if(element_dataset.get()) {
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], attribute_description);
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE], (int64_t)DataType::TYPE_BYTEARRAY);
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION], (int64_t)attribute_direction);
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE], (int64_t)DataType::TYPE_BYTEARRAY);
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE], (int64_t)DataType::SUB_TYPE_MIME);
+        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_DESCRIPTION], mime_type);
+        device->isChild(*element_dataset.get(), isChild);
+        if(!isChild) device->addChild(*element_dataset);
+    }
+    
+}
+
 void CUSchemaDB::clearAllAttributeForProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd) {
-	ptr_vector<edb::KeyIdAndValue> properties_for_entity;
-	attributeEntity->getPropertyByKeyID(keyIDToAdd, properties_for_entity);
-	
-	for (int idx = 0; idx < properties_for_entity.size(); idx++) {
-		attributeEntity->deleteProrperty((&properties_for_entity[idx])->elementID);
-	}
+    ptr_vector<edb::KeyIdAndValue> properties_for_entity;
+    attributeEntity->getPropertyByKeyID(keyIDToAdd, properties_for_entity);
+    
+    for (int idx = 0; idx < properties_for_entity.size(); idx++) {
+        attributeEntity->deleteProrperty((&properties_for_entity[idx])->elementID);
+    }
 }
 
 void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, const char * attributeValue, bool checkValueForUnicity) {
@@ -269,20 +408,20 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
                 found = true;
                 break;
             } else {
-				attributeEntity->deleteProrperty((&keysAndValues[idx])->elementID);
-			}
+                attributeEntity->deleteProrperty((&keysAndValues[idx])->elementID);
+            }
         }
     }
     
     if(!found) {
         attributeEntity->addProperty(keyIDToAdd, attributeValue);
     }
-	//else {
-      //  attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
- //   }
+    //else {
+    //  attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
+    //   }
 }
 
-void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, string& attributeValue, bool checkValueForUnicity) {
+void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, const string& attributeValue, bool checkValueForUnicity) {
     ptr_vector<edb::KeyIdAndValue> keysAndValues;
     attributeEntity->getPropertyByKeyID(keyIDToAdd, keysAndValues);
     int idx = 0;
@@ -295,8 +434,8 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
                 found = true;
                 break;
             } else {
-				attributeEntity->deleteProrperty((&keysAndValues[idx])->elementID);
-			}
+                attributeEntity->deleteProrperty((&keysAndValues[idx])->elementID);
+            }
         }
     }
     
@@ -304,8 +443,8 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
     if(!found) {
         attributeEntity->addProperty(keyIDToAdd, attributeValue);
     } /*else {
-        attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
-    }*/
+       attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
+       }*/
 }
 
 void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, int64_t attributeValue, bool checkValueForUnicity) {
@@ -321,8 +460,8 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
                 found = true;
                 break;
             } else {
-				attributeEntity->deleteProrperty((&keysAndValues[idx])->elementID);
-			}
+                attributeEntity->deleteProrperty((&keysAndValues[idx])->elementID);
+            }
         }
     }
     
@@ -330,8 +469,8 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
     if(!found) {
         attributeEntity->addProperty(keyIDToAdd, attributeValue);
     } /*else {
-        attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
-    }*/
+       attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
+       }*/
 }
 
 void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, double attributeValue, bool checkValueForUnicity) {
@@ -347,8 +486,8 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
                 found = true;
                 break;
             } else {
-				attributeEntity->deleteProrperty((&keysAndValues[idx])->elementID);
-			}
+                attributeEntity->deleteProrperty((&keysAndValues[idx])->elementID);
+            }
         }
     }
     
@@ -356,14 +495,14 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
     if(!found) {
         attributeEntity->addProperty(keyIDToAdd, attributeValue);
     } /*else {
-        attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
-    }*/
+       attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
+       }*/
 }
 /*
  Add the new field at the CU dataset from the CDataWrapper
  */
 void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDataWrapper) {
-        //if(!attributeDataWrapper) return;
+    //if(!attributeDataWrapper) return;
     
     string attributeDeviceID;
     string attributeName;
@@ -371,74 +510,77 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     auto_ptr<CDataWrapper> elementDescription;
     auto_ptr<CMultiTypeDataArrayWrapper> elementsDescriptions;
     
-    if(!attributeDataWrapper.hasKey(DatasetDefinitionkey::DEVICE_ID)) return;
-    attributeDeviceID = attributeDataWrapper.getStringValue(DatasetDefinitionkey::DEVICE_ID);
+    if(!attributeDataWrapper.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) return;
+    attributeDeviceID = attributeDataWrapper.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     //get the entity for device
     entity::Entity *deviceEntity = getDeviceEntity(attributeDeviceID);
     
-    if(attributeDataWrapper.hasKey(DatasetDefinitionkey::DESCRIPTION)){
+    if(attributeDataWrapper.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)){
+        
+        std::auto_ptr<CDataWrapper> dataset_object(attributeDataWrapper.getCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        
+        if(dataset_object->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)) {
+            
             //get the entity for device
-        entity::Entity *deviceEntity = getDeviceEntity(attributeDeviceID);
-        
-        elementsDescriptions.reset(attributeDataWrapper.getVectorValue(DatasetDefinitionkey::DESCRIPTION));
-        
-        for (int idx = 0; idx < elementsDescriptions->size(); idx++) {
+            entity::Entity *deviceEntity = getDeviceEntity(attributeDeviceID);
+            elementsDescriptions.reset(dataset_object->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
             
-            
+            for (int idx = 0; idx < elementsDescriptions->size(); idx++) {
+                
                 //next element in dataset
-            elementDescription.reset(elementsDescriptions->getCDataWrapperElementAtIndex(idx));
+                elementDescription.reset(elementsDescriptions->getCDataWrapperElementAtIndex(idx));
                 //attribute name
-            
-            if(!elementDescription->hasKey(DatasetDefinitionkey::ATTRIBUTE_NAME))
-                continue;
-            
-            
-            string attrName = elementDescription->getStringValue(DatasetDefinitionkey::ATTRIBUTE_NAME);
-            
+                
+                if(!elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME))
+                    continue;
+                
+                string attrName = elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
+                
                 //get the attribute
-            auto_ptr<entity::Entity> attributeEntity(getDatasetElement(deviceEntity, attrName));
-            
+                auto_ptr<entity::Entity> attributeEntity(getDatasetElement(deviceEntity, attrName));
+                
                 //attribute description
-            if(elementDescription->hasKey(DatasetDefinitionkey::ATTRIBUTE_DESCRIPTION)){
-                addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_DESCRIPTION], elementDescription->getStringValue(DatasetDefinitionkey::ATTRIBUTE_DESCRIPTION).c_str());
-            }
+                if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)){
+                    addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION).c_str());
+                }
                 //attribute type
-            if(elementDescription->hasKey(DatasetDefinitionkey::ATTRIBUTE_TYPE)) {
-                addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_TYPE], (int64_t)elementDescription->getInt32Value(DatasetDefinitionkey::ATTRIBUTE_TYPE));
-            }
+                if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
+                    addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE], (int64_t)elementDescription->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE));
+                }
                 //attribute direction
-            if(elementDescription->hasKey(DatasetDefinitionkey::ATTRIBUTE_DIRECTION)){
-                addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_DIRECTION], (int64_t)elementDescription->getInt32Value(DatasetDefinitionkey::ATTRIBUTE_DIRECTION));
-            }
-            
-            if(elementDescription->hasKey(DatasetDefinitionkey::MAX_RANGE)) {
-                addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[DatasetDefinitionkey::MAX_RANGE], elementDescription->getStringValue(DatasetDefinitionkey::MAX_RANGE).c_str());
-            }
-            
-            if(elementDescription->hasKey(DatasetDefinitionkey::MIN_RANGE)){
-                addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[DatasetDefinitionkey::MIN_RANGE], elementDescription->getStringValue(DatasetDefinitionkey::MIN_RANGE).c_str());
-            }
-            
-            if(elementDescription->hasKey(DatasetDefinitionkey::DEFAULT_VALUE)){
-                addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[DatasetDefinitionkey::DEFAULT_VALUE], elementDescription->getStringValue(DatasetDefinitionkey::DEFAULT_VALUE).c_str());
-            }
-            
-            if(elementDescription->hasKey(DatasetDefinitionkey::VALUE_MAX_SIZE)){
-                addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[DatasetDefinitionkey::VALUE_MAX_SIZE], (int64_t)elementDescription->getInt32Value(DatasetDefinitionkey::VALUE_MAX_SIZE));
+                if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION)){
+                    addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION], (int64_t)elementDescription->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION));
+                }
+                
+                if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {
+                    addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE], elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE).c_str());
+                }
+                
+                if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)){
+                    addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE], elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE).c_str());
+                }
+                
+                if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE)){
+                    addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE], elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE).c_str());
+                }
+                
+                if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE)){
+                    addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE], (int64_t)elementDescription->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE));
+                }
             }
         }
-     }
+    }
     
     //add now the server address for this device if sent
-    if(attributeDataWrapper.hasKey(DataProxyConfigurationKey::DS_SERVER_ADDRESS)) {
-		//remove all stored server
-		clearAllAttributeForProperty(deviceEntity, mapDatasetKeyForID[DataProxyConfigurationKey::DS_SERVER_ADDRESS]);
-		
+    if(attributeDataWrapper.hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)) {
+        //remove all stored server
+        clearAllAttributeForProperty(deviceEntity, mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST]);
+        
         //in the package has been sent the address where fir the data for this device
-        auto_ptr<CMultiTypeDataArrayWrapper> serverVec(attributeDataWrapper.getVectorValue(DataProxyConfigurationKey::DS_SERVER_ADDRESS));
+        auto_ptr<CMultiTypeDataArrayWrapper> serverVec(attributeDataWrapper.getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
         for (int idx = 0; idx < serverVec->size(); idx++) {
-			//add new server
-			deviceEntity->addProperty(mapDatasetKeyForID[DataProxyConfigurationKey::DS_SERVER_ADDRESS],  serverVec->getStringElementAtIndex(idx).c_str());
+            //add new server
+            deviceEntity->addProperty(mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST],  serverVec->getStringElementAtIndex(idx).c_str());
         }
     }
 }
@@ -447,30 +589,30 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
  fill a CDataWrapper with the dataset decode
  */
 void CUSchemaDB::fillDataWrapperWithDataSetDescription(CDataWrapper& datasetDescription) {
-        //now i must describe the param for this action
-        // map<string, entity::Entity*> deviceEntityMap
+    //now i must describe the param for this action
+    // map<string, entity::Entity*> deviceEntityMap
     if(deviceEntityMap.size()){
         boost::shared_ptr<CDataWrapper> datasetElementCDW;
         boost::shared_ptr<CDataWrapper> domainDatasetDescription;
         
-            //there are some parameter for this action, need to be added to rapresentation
+        //there are some parameter for this action, need to be added to rapresentation
         for (EntityPtrMapIterator deviceEntityIter = deviceEntityMap.begin();
              deviceEntityIter != deviceEntityMap.end();
              deviceEntityIter++) {
-                //get domain name
+            //get domain name
             string deviceId = deviceEntityIter->first;
             entity::Entity *deviceEntity = deviceEntityIter->second;
-
+            
             auto_ptr<CDataWrapper> domainDatasetDescription(new CDataWrapper());
             
             fillDataWrapperWithDataSetDescription(deviceEntity, *domainDatasetDescription.get());
             
-                // add parametere representation object to main action representation
+            // add parametere representation object to main action representation
             datasetDescription.appendCDataWrapperToArray(*domainDatasetDescription.get());
         }
         
         //close array for all device description [IN CASE DATA FOR INITIALIZE THE DEVICE ONLY one description need to be returne SO THIS FUNCTION NEED TO BE CHANGED TO SUPPORT ALSO ONE ONLY DEVICE DS CREATION]
-        datasetDescription.finalizeArrayForKey(DatasetDefinitionkey::DESCRIPTION);
+        datasetDescription.finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
     }
 }
 
@@ -489,29 +631,31 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(string& deviceID, CDataWr
 /*!
  fill a CDataWrapper with the dataset decode
  */
-void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEntity, CDataWrapper& deviceDatasetDescription) {
+void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEntity, CDataWrapper& device_dataset_description) {
     ptr_vector<edb::KeyIdAndValue> attrProperty;
-    ptr_vector<entity::Entity> deviceDatasetAttribute;
+    ptr_vector<entity::Entity> device_dataset_attributes;
     
     //add deviceID to description data
-    deviceDatasetDescription.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceEntity->getKeyInfo().value.strValue);
+    device_dataset_description.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceEntity->getKeyInfo().value.strValue);
+    
+    //convenient array for element porperty
+    CDataWrapper dataset;
     
     //set the registered timestamp
-    deviceEntity->getPropertyByKeyID(mapDatasetKeyForID[DatasetDefinitionkey::TIMESTAMP], attrProperty);
+    deviceEntity->getPropertyByKeyID(mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP], attrProperty);
     if(attrProperty.size()) {
-        deviceDatasetDescription.addInt64Value(DatasetDefinitionkey::TIMESTAMP, (uint64_t)(&attrProperty[0])->value.numValue);
+        dataset.addInt64Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP, (uint64_t)(&attrProperty[0])->value.numValue);
         attrProperty.release();
     }
     
     //try to get all dataset attribute for device entity
-    deviceEntity->getChildsWithKeyID(mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_NAME], deviceDatasetAttribute);
+    deviceEntity->getChildsWithKeyID(mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME], device_dataset_attributes);
     
     //get dataset attribute for domain name
     
-    //convenient array for element porperty
-    
-    for (ptr_vector<entity::Entity>::iterator dstElmtIterator = deviceDatasetAttribute.begin();
-         dstElmtIterator != deviceDatasetAttribute.end();
+
+    for (ptr_vector<entity::Entity>::iterator dstElmtIterator = device_dataset_attributes.begin();
+         dstElmtIterator != device_dataset_attributes.end();
          dstElmtIterator++) {
         
         //get next dst element entity for get the attribute
@@ -523,33 +667,36 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEnt
         if(attrProperty.size() == 0) continue;
         
         //cicle all dataset element
-        auto_ptr<CDataWrapper> datasetElementCDW(new CDataWrapper());
+        auto_ptr<CDataWrapper> dataset_element(new CDataWrapper());
         
-        fillCDataWrapperDSAtribute(datasetElementCDW.get(), deviceEntity, dstAttrEntity, attrProperty);
+        fillCDataWrapperDSAtribute(dataset_element.get(), deviceEntity, dstAttrEntity, attrProperty);
         
-        // add parametere representation object to main action representation
-        deviceDatasetDescription.appendCDataWrapperToArray(*datasetElementCDW.get());
-        //CDataWrapper *data = *datasetIterator;
+        // add parameter representation object to main action representation
+        dataset.appendCDataWrapperToArray(*dataset_element.get());
     }
     
     //close the dataset attribute array
-    deviceDatasetDescription.finalizeArrayForKey(DatasetDefinitionkey::DESCRIPTION);
+    dataset.finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+    device_dataset_description.addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, dataset);
     
     //add now the server address for this device if sent
     attrProperty.clear();
-    deviceEntity->getPropertyByKeyID(mapDatasetKeyForID[DataProxyConfigurationKey::DS_SERVER_ADDRESS], attrProperty);
+    deviceEntity->getPropertyByKeyID(mapDatasetKeyForID[DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST], attrProperty);
     for (ptr_vector<edb::KeyIdAndValue>::iterator iter = attrProperty.begin();
          iter != attrProperty.end();
          iter++) {
         edb::KeyIdAndValue *kivPtr = &(*iter);
-        deviceDatasetDescription.appendStringToArray(kivPtr->value.strValue);
+        device_dataset_description.appendStringToArray(kivPtr->value.strValue);
     }
-    deviceDatasetDescription.finalizeArrayForKey(DataProxyConfigurationKey::DS_SERVER_ADDRESS);
+    device_dataset_description.finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
 }
 
 /*
  */
-void CUSchemaDB::fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute, entity::Entity *deviceIDEntity, entity::Entity *attrEntity, ptr_vector<edb::KeyIdAndValue>& attrProperty) {
+void CUSchemaDB::fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute,
+                                            entity::Entity *deviceIDEntity,
+                                            entity::Entity *attrEntity,
+                                            ptr_vector<edb::KeyIdAndValue>& attrProperty) {
     
     //add name
     edb::KeyIdAndValue *curKIV = NULL;
@@ -557,29 +704,56 @@ void CUSchemaDB::fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute, entity::E
     string attr = attrEntity->getKeyInfo().value.strValue;
     string attrDecomposed = attr.substr(dID.size()+1);
     
-    dsAttribute->addStringValue(DatasetDefinitionkey::ATTRIBUTE_NAME, attrDecomposed);
+    dsAttribute->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, attrDecomposed);
     
     for (ptr_vector<edb::KeyIdAndValue>::iterator dstElmtIterator = attrProperty.begin();
          dstElmtIterator != attrProperty.end();
          dstElmtIterator++) {
         //cicle the property
         curKIV = &(*dstElmtIterator);
-        if(curKIV->keyID == mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_DESCRIPTION]) {
-            dsAttribute->addStringValue(DatasetDefinitionkey::ATTRIBUTE_DESCRIPTION, curKIV->value.strValue);
-        } else if(curKIV->keyID == mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_DIRECTION]) {
-            dsAttribute->addInt32Value(DatasetDefinitionkey::ATTRIBUTE_DIRECTION, (int32_t)curKIV->value.numValue);
-        } else if(curKIV->keyID == mapDatasetKeyForID[DatasetDefinitionkey::MAX_RANGE]) {
-            dsAttribute->addStringValue(DatasetDefinitionkey::MAX_RANGE, curKIV->value.strValue);
-        } else if(curKIV->keyID == mapDatasetKeyForID[DatasetDefinitionkey::MIN_RANGE]) {
-            dsAttribute->addStringValue(DatasetDefinitionkey::MIN_RANGE, curKIV->value.strValue);
-        } else if(curKIV->keyID == mapDatasetKeyForID[DatasetDefinitionkey::DEFAULT_VALUE]){
-            dsAttribute->addStringValue(DatasetDefinitionkey::DEFAULT_VALUE, curKIV->value.strValue);
-        } else if(curKIV->keyID == mapDatasetKeyForID[DatasetDefinitionkey::VALUE_MAX_SIZE]){
-            dsAttribute->addInt32Value(DatasetDefinitionkey::VALUE_MAX_SIZE, (int32_t)curKIV->value.numValue);
-        } else if(curKIV->keyID == mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_TYPE]) {
-            dsAttribute->addInt32Value(DatasetDefinitionkey::ATTRIBUTE_TYPE, (int32_t)curKIV->value.numValue);
-        } else {
+        if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION]) {
+            dsAttribute->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, curKIV->value.strValue);
+        } else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION]) {
+            dsAttribute->addInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION, (int32_t)curKIV->value.numValue);
+        } else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE]) {
+            dsAttribute->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, curKIV->value.strValue);
+        } else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE]) {
+            dsAttribute->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, curKIV->value.strValue);
+        } else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE]){
+            dsAttribute->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, curKIV->value.strValue);
+        } else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE]){
+            dsAttribute->addInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE, (int32_t)curKIV->value.numValue);
+        } else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE]) {
+            dsAttribute->addInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, (int32_t)curKIV->value.numValue);
+        } else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE]) {
             //custom attribute
+            if(curKIV->value.numValue == -1) {
+                //we have subtype collected in a separate entity so in this case the attribute value is an array
+                std::auto_ptr<entity::Entity> sub_tyhpe_entity(getBinarySubtypeEntity(dID, attrDecomposed));
+                if(sub_tyhpe_entity.get()) {
+                    ptr_vector<edb::KeyIdAndValue> sub_types_list;
+                    //we need to get all rpoperty
+                    sub_tyhpe_entity->getAllProperty(sub_types_list);
+                    if(sub_types_list.size()) {
+                        for(ptr_vector<edb::KeyIdAndValue>::iterator it = sub_types_list.begin();
+                            it != sub_types_list.end();
+                            it++) {
+                            //no we need to add numerica value as 32 bit into the array for attribute subtype
+                            dsAttribute->appendInt32ToArray((int32_t)it->value.numValue);
+                        }
+                        dsAttribute->finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE);
+                    }
+                }
+            } else {
+                //we have a mime type
+                dsAttribute->addInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE, (int32_t)curKIV->value.numValue);
+            }
+        } else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY]){
+            dsAttribute->addInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY, (int32_t)curKIV->value.numValue);
+        } else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_ENCODING]){
+            dsAttribute->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_ENCODING, curKIV->value.strValue);
+        }else if(curKIV->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_DESCRIPTION]){
+            dsAttribute->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_DESCRIPTION, curKIV->value.strValue);
         }
     }
 }
@@ -592,7 +766,7 @@ void CUSchemaDB::getAllDeviceId(vector<string>& deviceNames) {
          deviceEntityIter != deviceEntityMap.end();
          deviceEntityIter++) {
         
-            //add domain name
+        //add domain name
         deviceNames.push_back(deviceEntityIter->first);
     }
 }
@@ -608,7 +782,7 @@ void CUSchemaDB::getDeviceDatasetAttributesName(const string& deviceID,
                                                 vector<string>& attributesName) {
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);
     ptr_vector<entity::Entity> attrDst;
-    deviceEntity->getChildsWithKeyID(mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_DIRECTION], attrDst);
+    deviceEntity->getChildsWithKeyID(mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION], attrDst);
     for (ptr_vector<entity::Entity>::iterator attrEntityIter = attrDst.begin();
          attrEntityIter != attrDst.end();
          attrEntityIter++) {
@@ -625,7 +799,7 @@ void CUSchemaDB::getDeviceDatasetAttributesName(const string& deviceID,
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);
     
     edb::KeyIdAndValue kiv;
-    kiv.keyID = mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_DIRECTION];
+    kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION];
     kiv.type = edb::KEY_NUM_VALUE;
     kiv.value.numValue = static_cast<int64_t>(directionType);
     
@@ -647,27 +821,28 @@ void CUSchemaDB::getDeviceAttributeDescription(const string& deviceID,
                                                string& attributeDescription) {
     ptr_vector<edb::KeyIdAndValue> attrPropertyVec;
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);
-
+    
     auto_ptr<entity::Entity> attributeDstEntity(getDatasetElement(deviceEntity, attributesName.c_str()));
     if(!attributeDstEntity.get()) return;
     
-    attributeDstEntity->getPropertyByKeyID(mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_DESCRIPTION], attrPropertyVec);
+    attributeDstEntity->getPropertyByKeyID(mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION], attrPropertyVec);
     if(!attrPropertyVec.size()) return;
     
     attributeDescription = (&attrPropertyVec[0])->value.strValue;
 }
 
 int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
-                                                  const string& attributesName,
-                                                  RangeValueInfo& rangeInfo) {
+                                                 const string& attributesName,
+                                                 RangeValueInfo& rangeInfo) {
     
     string a_name;
     edb::KeyIdAndValue kiv;
     vector<uint32_t> keyToGot;
     ptr_vector<entity::Entity> attrEntityVec;
     ptr_vector<edb::KeyIdAndValue> attrPropertyVec;
-
-    kiv.keyID = mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_NAME];
+    
+    //clear all information
+    kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME];
     kiv.type = edb::KEY_STR_VALUE;
     
     composeAttributeName(deviceID.c_str(), attributesName.c_str(), a_name);
@@ -682,11 +857,11 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
     if(!attrEntityVec.size()) return 1;
     
     
-    uint32_t keyIdAttrMaxRng = mapDatasetKeyForID[DatasetDefinitionkey::MAX_RANGE];
-    uint32_t keyIdAttrMinRng = mapDatasetKeyForID[DatasetDefinitionkey::MIN_RANGE];
-    uint32_t keyIdAttrDefaultValue = mapDatasetKeyForID[DatasetDefinitionkey::DEFAULT_VALUE];
-    uint32_t keyIdAttrType = mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_TYPE];
-    uint32_t keyIdAttrMaxSize = mapDatasetKeyForID[DatasetDefinitionkey::VALUE_MAX_SIZE];
+    uint32_t keyIdAttrMaxRng = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE];
+    uint32_t keyIdAttrMinRng = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE];
+    uint32_t keyIdAttrDefaultValue = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE];
+    uint32_t keyIdAttrType = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE];
+    uint32_t keyIdAttrMaxSize = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE];
     
     keyToGot.push_back(keyIdAttrMaxRng);
     keyToGot.push_back(keyIdAttrMinRng);
@@ -718,15 +893,15 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
                     break;
                 case edb::KEY_NUM_VALUE:
                     rangeInfo.defaultValue = lexical_cast<string>(kivPtr->value.numValue);
-                break;
+                    break;
                 case edb::KEY_STR_VALUE:
                     rangeInfo.defaultValue = kivPtr->value.strValue;
-                break;
+                    break;
             }
             
         }
     }
-	return 0;
+    return 0;
 }
 
 //!Set the range values for an attribute
@@ -741,16 +916,16 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
 void CUSchemaDB::setDeviceAttributeRangeValueInfo(const string& deviceID,
                                                   const string& attributesName,
                                                   RangeValueInfo& rangeInfo) {
-
+    
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);
-
+    
     //get the attribute
     auto_ptr<entity::Entity> attributeEntity(getDatasetElement(deviceEntity, attributesName.c_str()));
     
-    uint32_t keyIdAttrMaxRng = mapDatasetKeyForID[DatasetDefinitionkey::MAX_RANGE];
-    uint32_t keyIdAttrMinRng = mapDatasetKeyForID[DatasetDefinitionkey::MIN_RANGE];
-    uint32_t keyIdAttrDefaultValue = mapDatasetKeyForID[DatasetDefinitionkey::DEFAULT_VALUE];
-
+    uint32_t keyIdAttrMaxRng = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE];
+    uint32_t keyIdAttrMinRng = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE];
+    uint32_t keyIdAttrDefaultValue = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE];
+    
     addUniqueAttributeProperty(attributeEntity.get(), keyIdAttrMaxRng, rangeInfo.maxRange);
     addUniqueAttributeProperty(attributeEntity.get(), keyIdAttrMinRng, rangeInfo.minRange);
     addUniqueAttributeProperty(attributeEntity.get(), keyIdAttrDefaultValue, rangeInfo.defaultValue);
@@ -759,15 +934,15 @@ void CUSchemaDB::setDeviceAttributeRangeValueInfo(const string& deviceID,
 int CUSchemaDB::getDeviceAttributeDirection(const string& deviceID,
                                             const string& attributesName,
                                             DataType::DataSetAttributeIOAttribute& directionType) {
-
+    
     ptr_vector<edb::KeyIdAndValue> attrPropertyVec;
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);
     //check if we ha found the attribute
     if(!deviceEntity) return 1;
-        
+    
     auto_ptr<entity::Entity> attributeDstEntity(getDatasetElement(deviceEntity, attributesName.c_str()));
     
-    attributeDstEntity->getPropertyByKeyID(mapDatasetKeyForID[DatasetDefinitionkey::ATTRIBUTE_DIRECTION], attrPropertyVec);
+    attributeDstEntity->getPropertyByKeyID(mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION], attrPropertyVec);
     if(!attrPropertyVec.size()) return 1;
     
     directionType = static_cast<DataType::DataSetAttributeIOAttribute>((&attrPropertyVec[0])->value.numValue);

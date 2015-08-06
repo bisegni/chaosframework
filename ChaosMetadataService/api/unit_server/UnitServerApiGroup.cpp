@@ -1,6 +1,6 @@
 /*
  *	UnitServerApiGroup.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -17,18 +17,25 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "UnitServerApiGroup.h"
-#include "UnitServerRegisterApi.h"
 
+#include "UnitServerApiGroup.h"
+#include "GetDescription.h"
+#include "LoadUnloadControlUnit.h"
+#include "NewUS.h"
+#include "ManageCUType.h"
 using namespace chaos::metadata_service::api::unit_server;
-DEFINE_CLASS_FACTORY_NO_ALIAS(UnitServerApiGroup, chaos::metadata_service::api::AbstractApiGroup);
+DEFINE_CLASS_FACTORY_NO_ALIAS(UnitServerApiGroup,
+                              chaos::metadata_service::api::AbstractApiGroup);
 
 UnitServerApiGroup::UnitServerApiGroup():
-AbstractApiGroup("system"){
-    //add api for UnitServer registration
-    addApi<UnitServerRegisterApi>();
+AbstractApiGroup(UnitServerNodeDomainAndActionRPC::RPC_DOMAIN){
+	//add api for producer registration
+	addApi<GetDescription>();
+    addApi<LoadUnloadControlUnit>();
+    addApi<NewUS>();
+    addApi<ManageCUType>();
 }
 
 UnitServerApiGroup::~UnitServerApiGroup() {
-    
+	
 }

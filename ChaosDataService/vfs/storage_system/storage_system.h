@@ -1,6 +1,6 @@
 /*
  *	storage_system.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2014 INFN, National Institute of Nuclear Physics
@@ -20,6 +20,8 @@
 #ifndef CHAOSFramework_storage_system_h
 #define CHAOSFramework_storage_system_h
 
+#include "StorageDriver.h"
 #include "PosixStorageDriver.h"
+#include "StorageDriverMetricCollector.h"
 
 #endif

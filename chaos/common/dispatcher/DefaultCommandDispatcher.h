@@ -1,6 +1,6 @@
 /*	
  *	DefaultCommandDispatcher.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *	
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -30,8 +30,6 @@
 #include <chaos/common/dispatcher/DomainActionsScheduler.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
-namespace chaos_data = chaos::common::data;
-
 namespace chaos{
     
     using namespace std;
@@ -54,7 +52,7 @@ namespace chaos{
         /*!
          Initialization method for output buffer
          */
-        void init(chaos_data::CDataWrapper *initConfiguration) throw(CException);
+        void init(chaos::common::data::CDataWrapper *initConfiguration) throw(CException);
         
         /*!
          Deinitialization method for output buffer
@@ -75,15 +73,15 @@ namespace chaos{
         virtual void deregisterAction(DeclareAction*)  throw(CException) ;
         
 		// inherited method
-        chaos_data::CDataWrapper* dispatchCommand(chaos_data::CDataWrapper*) throw(CException);
+        chaos::common::data::CDataWrapper* dispatchCommand(chaos::common::data::CDataWrapper*) throw(CException);
 		
 		// inherited method
-		chaos_data::CDataWrapper* executeCommandSync(chaos_data::CDataWrapper * action_pack);
+		chaos::common::data::CDataWrapper* executeCommandSync(chaos::common::data::CDataWrapper * action_pack);
         
         // inherited method
-        chaos_data::CDataWrapper* executeCommandSync(const std::string& domain,
-                                                     const std::string& action,
-                                                     chaos_data::CDataWrapper * message_data);
+        chaos::common::data::CDataWrapper* executeCommandSync(const std::string& domain,
+                                                              const std::string& action,
+                                                              chaos::common::data::CDataWrapper * message_data);
     };
 }
 #endif

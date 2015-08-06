@@ -1,6 +1,6 @@
 /*
  *	AbstractCommandDispatcher.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -22,12 +22,30 @@
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 
 using namespace chaos;
+using namespace chaos::common::data;
 using namespace boost;
 using namespace std;
 
 #define ACDLAPP_ LAPP_ << "[AbstractCommandDispatcher] - "
 #define ACDLDBG_ LDBG_ << "[AbstractCommandDispatcher] - "
 #define ACDLERR_ LERR_ << "[AbstractCommandDispatcher] - "
+
+//test echo action
+EchoRpcAction::EchoRpcAction() {
+    //register the action for the response
+    DeclareAction::addActionDescritionInstance<EchoRpcAction>(this,
+                                                               &EchoRpcAction::echoAction,
+                                                               "test",
+                                                               "echo",
+                                                               "Echo rpc action");
+}
+CDataWrapper *EchoRpcAction::echoAction(CDataWrapper *action_data, bool& detach) {
+    if(action_data == NULL) throw CException(0, "echoAction need some data", __PRETTY_FUNCTION__);
+    detach = true;
+    return action_data;
+}
+
+//-----------------------------------------------------------------
 
 AbstractCommandDispatcher::AbstractCommandDispatcher(string alias):NamedService(alias){
 }
@@ -44,14 +62,17 @@ void AbstractCommandDispatcher::init(void *initConfiguration) throw(CException) 
 
 //-----------------------
 void AbstractCommandDispatcher::start() throw(CException) {
-    
+    registerAction(&echoTestClass);
+}
+
+void AbstractCommandDispatcher::stop() throw(CException) {
+    deregisterAction(&echoTestClass);
 }
 
 /*
  deinit the rpc adapter
  */
 void AbstractCommandDispatcher::deinit() throw(CException) {
-    
 }
 
 /*
@@ -131,12 +152,14 @@ void AbstractCommandDispatcher::deregisterAction(DeclareAction* declareActionCla
 /*
  Send a message
  */
-bool AbstractCommandDispatcher::submitMessage(string& serverAndPort,  chaos::common::data::CDataWrapper* messageToSend, bool onThisThread)  throw(CException) {
-    CHAOS_ASSERT(messageToSend && rpcForwarderPtr)
-    if(!messageToSend && serverAndPort.size()) return false;
-    common::network::NetworkForwardInfo *nfi = new NetworkForwardInfo();
-    nfi->destinationAddr = serverAndPort;
-    nfi->message = messageToSend;
+bool AbstractCommandDispatcher::submitMessage(string& server_port,
+                                              chaos::common::data::CDataWrapper* message,
+                                              bool onThisThread)  throw(CException) {
+    CHAOS_ASSERT(message && rpcForwarderPtr)
+    if(!message && server_port.size()) return false;
+    common::network::NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
+    nfi->destinationAddr = server_port;
+    nfi->setMessage(message);
     return rpcForwarderPtr->submitMessage(nfi, onThisThread);
 }
 

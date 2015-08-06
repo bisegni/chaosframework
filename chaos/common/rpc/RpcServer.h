@@ -1,6 +1,6 @@
 /*
  *	RpcServer.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -76,12 +76,20 @@ namespace chaos {
         /*!
          Return the published port
          */
-        int getPublishedPort();
+        virtual int getPublishedPort();
         
         /*
          set the command dispatcher associated to the instance of rpc adapter
          */
-        void setCommandDispatcher(RpcServerHandler *newCommandHandler);
+        virtual void setCommandDispatcher(RpcServerHandler *newCommandHandler);
+        
+        
+        //! return the numebr of message that are waiting to be sent
+        /*!
+         driver can overload this method to return(if has any) the size
+         of internal queue message
+         */
+        virtual uint64_t getMessageQueueSize();
     };
 }
 #endif

@@ -1,6 +1,6 @@
 /*
  *	IODirectIODriver.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -97,17 +97,17 @@ void IODirectIODriver::init(void *_init_parameter) throw(CException) {
 	
 	if(!init_parameter.network_broker) throw CException(-1, "No network broker configured", __PRETTY_FUNCTION__);
 	
-	init_parameter.client_instance = init_parameter.network_broker->getDirectIOClientInstance();
-	if(!init_parameter.client_instance) throw CException(-1, "No client configured", __PRETTY_FUNCTION__);
+	init_parameter.client_instance = init_parameter.network_broker->getSharedDirectIOClientInstance();
+	//if(!init_parameter.client_instance) throw CException(-1, "No client configured", __PRETTY_FUNCTION__);
 	
 	init_parameter.endpoint_instance = init_parameter.network_broker->getDirectIOServerEndpoint();
 	if(!init_parameter.endpoint_instance) throw CException(-1, "No endpoint configured", __PRETTY_FUNCTION__);
 	
 	//initialize client
-	InizializableService::initImplementation(init_parameter.client_instance, _init_parameter, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
+	//InizializableService::initImplementation(init_parameter.client_instance, _init_parameter, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
 	
 	//get the client and server channel
-	IODirectIODriver_LAPP_ << "Allcoate the default device server channel";
+	IODirectIODriver_LAPP_ << "Allocate the default device server channel";
 	device_server_channel = (chaos_dio_channel::DirectIODeviceServerChannel *)init_parameter.endpoint_instance->getNewChannelInstance("DirectIODeviceServerChannel");
 	device_server_channel->setHandler(this);
 	
@@ -145,8 +145,8 @@ void IODirectIODriver::deinit() throw(CException) {
 	connectionFeeder.clear();
 	
 	//initialize client
-	InizializableService::deinitImplementation(init_parameter.client_instance, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
-	delete(init_parameter.client_instance);
+	//InizializableService::deinitImplementation(init_parameter.client_instance, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
+	//delete(init_parameter.client_instance);
 	
 	//deinitialize server channel
 	if(device_server_channel) {
@@ -250,9 +250,9 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
 	//lock the feeder access
 	boost::unique_lock<boost::shared_mutex>(mutext_feeder);
 	//checkif someone has passed us the device indetification
-	if(newConfigration->hasKey(DataProxyConfigurationKey::DS_SERVER_ADDRESS)){
+	if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST)){
 		IODirectIODriver_LAPP_ << "Get the DataManager LiveData address value";
-		auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataProxyConfigurationKey::DS_SERVER_ADDRESS));
+		auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
 		size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
 		for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
 			string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);

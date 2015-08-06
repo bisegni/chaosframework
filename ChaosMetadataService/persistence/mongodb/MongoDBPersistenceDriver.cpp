@@ -1,6 +1,6 @@
 /*
  *	MongoDBPersistenceDriver.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -18,16 +18,21 @@
  *    	limitations under the License.
  */
 #include "MongoDBPersistenceDriver.h"
-#include "MongoDBProducerDataAccess.h"
+#include "MongoDBNodeDataAccess.h"
+#include "MongoDBUtilityDataAccess.h"
 #include "MongoDBUnitServerDataAccess.h"
+#include "MongoDBControlUnitDataAccess.h"
+#include "MongoDBDataServiceDataAccess.h"
 
 #include "../../mds_types.h"
 
 using namespace chaos;
 using namespace chaos::metadata_service::persistence;
 using namespace chaos::metadata_service::persistence::mongodb;
+using namespace chaos::service_common::persistence::data_access;
+using namespace chaos::service_common::persistence::mongodb;
 
-DEFINE_CLASS_FACTORY(MongoDBPersistenceDriver, AbstractPersistenceDriver);
+DEFINE_CLASS_FACTORY(MongoDBPersistenceDriver, chaos::service_common::persistence::data_access::AbstractPersistenceDriver);
 
 MongoDBPersistenceDriver::MongoDBPersistenceDriver(const std::string& name):
 AbstractPersistenceDriver(name){
@@ -49,14 +54,25 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
 													_setting->persistence_kv_param_map));
     
     //register the data access implementations
-    registerDataAccess<MongoDBProducerDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>& >(data_access_type::DataAccessTypeProducer,
-                                                                                                         connection);
-    registerDataAccess<MongoDBUnitServerDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>& >(data_access_type::DataAccessTypeUnitServer,
-                                                                                                           connection);
+    registerDataAccess<data_access::UnitServerDataAccess>(new MongoDBUnitServerDataAccess(connection));
+    registerDataAccess<data_access::NodeDataAccess>(new MongoDBNodeDataAccess(connection));
+    registerDataAccess<data_access::ControlUnitDataAccess>(new MongoDBControlUnitDataAccess(connection));
+    registerDataAccess<data_access::UtilityDataAccess>(new MongoDBUtilityDataAccess(connection));
+    registerDataAccess<data_access::DataServiceDataAccess>(new MongoDBDataServiceDataAccess(connection));
+    //connec usda with nda
+    getDataAccess<MongoDBNodeDataAccess>()->utility_data_access = getDataAccess<MongoDBUtilityDataAccess>();
+    getDataAccess<MongoDBUnitServerDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
+    getDataAccess<MongoDBControlUnitDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
+    getDataAccess<MongoDBDataServiceDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
 }
 void MongoDBPersistenceDriver::deinit() throw (chaos::CException) {
 	connection.reset();
     //call sublcass
     AbstractPersistenceDriver::deinit();
 
+}
+
+void MongoDBPersistenceDriver::deleteDataAccess(void *instance) {
+    AbstractDataAccess *da_instance = static_cast<AbstractDataAccess*>(instance);
+    if(da_instance != NULL)delete(da_instance);
 }

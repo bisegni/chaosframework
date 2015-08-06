@@ -12,9 +12,9 @@
 namespace chaos {
 	namespace metadata_service {
 		
-#define OPT_PERSITENCE_IMPL				"persistence_impl"
-#define OPT_PERSITENCE_SERVER_ADDR_LIST	"persistence_servers"
-#define OPT_PERSITENCE_KV_PARAMTER		"persistence_kv_param"
+#define OPT_PERSITENCE_IMPL				"persistence-impl"
+#define OPT_PERSITENCE_SERVER_ADDR_LIST	"persistence-servers"
+#define OPT_PERSITENCE_KV_PARAMTER		"persistence-kv-param"
 	}
 }
 #endif

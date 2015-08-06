@@ -1,6 +1,6 @@
 /*
  *	UnitServerDataAccess.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -18,11 +18,10 @@
  *    	limitations under the License.
  */
 
-
 #ifndef __CHAOSFramework__UnitServerDataAccess__
 #define __CHAOSFramework__UnitServerDataAccess__
 
-#include "../AbstractDataAccess.h"
+#include "../persistence.h"
 
 #include <chaos/common/data/CDataWrapper.h>
 
@@ -32,44 +31,69 @@ namespace chaos {
             namespace data_access {
                 
                 class UnitServerDataAccess:
-                public AbstractDataAccess {
+                public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 public:
+                    DECLARE_DA_NAME
+
                     //! default constructor
                     UnitServerDataAccess();
                     
-                    //! defautl destructor
+                    //!default destructor
                     ~UnitServerDataAccess();
                     
-                    //! insert a new device with name and property
+                    //! Insert the unit server information
                     /*!
-                     the API receive a pack like the following one:
-                     { 
-                        //is the alias of the remote unit server
-                        "unit_server_alias": "unit server alias",
-                        
-                        //are the control unit that are hosted on remote server
-                        "unit_server_cu_alias": [ "Control Unit Class", "Control Unit Class" ],
+                     Insert a new Unit Server node. After calling the NodeDataAccess method for insert new node it update the created node with the value of the
+                     keys from the namespace chaos::UnitServerNodeDefinitionKey:
+                     UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS(mandatory) that is a vector of string that represent the hosted unit server control unit class.
                      
-                        // is the rpc address where server respond
-                        "cu_instance_net_address": "unit server RPC address host:port"
-                     }
-                    \param unit_server_description unit server key,value description
+                     \param unit_server_description unit server key,value description
+                     \param check_for_cu_type will check for cu type presence
                      */
-                    virtual int insertNewUnitServer(chaos::common::data::CDataWrapper& unit_server_description) = 0;
+                    virtual int insertNewUS(chaos::common::data::CDataWrapper& unit_server_description, bool check_for_cu_type = true) = 0;
                     
-                    //! check if a unit server identified by unique id is preset
+                    //! permit to add the cu type for the unit server
                     /*!
-                     \param unit_server_alias unit server unique id
-                     \param presence = true if the unit server is present
+                     This api permit to add a control unit type to an unit server
+                     \param unit_server_description unit server key,value description
+                     \param cu_type the type target of the operation
                      */
-                    virtual int checkUnitServerPresence(const std::string& unit_server_alias, bool& presence) = 0;
+                    virtual int addCUType(const std::string& unit_server_uid, const std::string& cu_type) = 0;
                     
-                    //! update the unit server information
+                    //! permit to remove the cu type for the unit server
                     /*!
+                     This api permit remove a control unit type from an unit server and automatically 
+                     remove all the control uni instance associated the the type and unit server in object
+                     \param unit_server_description unit server key,value description
+                     \param cu_type the type target of the operation
+                     */
+                    virtual int removeCUType(const std::string& unit_server_uid, const std::string& cu_type) = 0;
+                    
+                    //!check if the unit server is present
+                    /*!
+                     Call directly the node data access to check if the node exist
+                     */
+                    virtual int checkPresence(const std::string& unit_server_uid, bool& presence) = 0;
+                    
+                    //! Update the unit server information
+                    /*!
+                     Perform the update operation on the unit server description, the DA frist need to call the update of the node data
+                     access to update node information next needs to update the unit server custom property from the namespace 
+                     chaos::UnitServerNodeDefinitionKey.
+                     UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS(mandatory)
+                     
                      \param unit_server_description unit server key,value description
                      */
-                    virtual int updateUnitServer(chaos::common::data::CDataWrapper& unit_server_description) = 0;
+                    virtual int updateUS(chaos::common::data::CDataWrapper& unit_server_description) = 0;
+                    
+                    //! delete a unit server
+                    virtual int deleteUS(const std::string& unit_server_unique_id) = 0;
+
+                        //! return the full unit server description
+                    virtual int getDescription(const std::string& unit_server_uid,
+                                               chaos::common::data::CDataWrapper **unit_server_description) = 0;
                 };
+                
                 
             }
         }

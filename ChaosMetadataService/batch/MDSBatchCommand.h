@@ -1,6 +1,6 @@
 /*
  *	BatchCommand.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -20,11 +20,16 @@
 #ifndef __CHAOSFramework__MDSBatchCommand__
 #define __CHAOSFramework__MDSBatchCommand__
 
+#include "../persistence/data_access/DataAccess.h"
+
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/message/MessageChannel.h>
+#include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/message/DeviceMessageChannel.h>
+
+#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
 
 namespace chaos{
     namespace metadata_service {
@@ -32,11 +37,37 @@ namespace chaos{
             
             //forward declaration
             class MDSBatchExecutor;
-
+            
+            typedef enum RequestPhase {
+                MESSAGE_PHASE_UNSENT,
+                MESSAGE_PHASE_SENT,
+                MESSAGE_PHASE_COMPLETED,
+                MESSAGE_PHASE_TIMEOUT
+            } MessagePhase;
+            
+            namespace mds_data_access = chaos::metadata_service::persistence::data_access;
+            
+            //! struct that permit to manage different request with phase for each one
+            struct RequestInfo {
+                unsigned int   retry;
+                const std::string remote_address;
+                const std::string remote_domain;
+                std::string remote_action;
+                RequestPhase   phase;
+                std::auto_ptr<chaos::common::message::MessageRequestFuture> request_future;
+                RequestInfo(const std::string& _remote_address,
+                            const std::string& _remote_domain,
+                            const std::string& _remote_action):
+                retry(0),
+                remote_address(_remote_address),
+                remote_domain(_remote_domain),
+                remote_action (_remote_action),
+                phase(MESSAGE_PHASE_UNSENT){}
+            };
             
             //! base class for all metadata service batch command
             /*!
-             Represent the base class for all metadata server command. Every 
+             Represent the base class for all metadata server command. Every
              command is na instance of this class ans o many egual command can be launched
              with different parameter
              */
@@ -45,7 +76,11 @@ namespace chaos{
                 friend class MDSBatchExecutor;
                 
                 //!message channel for communitcation with other node
-                chaos::common::network::NetworkBroker *network_broker;
+                chaos::common::message::MessageChannel *message_channel;
+                chaos::common::message::MultiAddressMessageChannel *multiaddress_message_channel;
+                
+                //dataaccess abstract driver
+                chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
             protected:
                 //! default constructor
                 MDSBatchCommand();
@@ -53,14 +88,11 @@ namespace chaos{
                 //! default destructor
                 ~MDSBatchCommand();
                 
-                //! return a raw message channel for a specific node address
-                chaos::common::message::MessageChannel *getNewMessageChannelForAddress(chaos::common::network::CNetworkAddress *node_network_address);
+                //! return a raw message channel
+                chaos::common::message::MessageChannel *getMessageChannel();
                 
-                //! return a device message channel for a specific node address
-                chaos::common::message::DeviceMessageChannel *getNewDeviceMessageChannelForAddress(chaos::common::network::CDeviceNetworkAddress *device_network_address);
-                
-                // inherited method
-                void releaseChannel(chaos::common::message::MessageChannel *message_channel);
+                //! return a raw multinode message channel
+                chaos::common::message::MultiAddressMessageChannel *getMultiAddressMessageChannel();
                 
                 // return the implemented handler
                 uint8_t implementedHandler();
@@ -76,6 +108,26 @@ namespace chaos{
                 
                 // inherited method
                 bool timeoutHandler();
+                
+                //! create a request to a remote rpc action
+                std::auto_ptr<RequestInfo> createRequest(const std::string& remote_address,
+                                                         const std::string& remote_domain,
+                                                         const std::string& remote_action) throw (chaos::CException);
+                
+                //! send a request to a remote rpc action
+                /*!
+                 \param message the message to send(the ownership of the memory belong to the caller)
+                 */
+                void sendRequest(RequestInfo& request_info,
+                                 chaos::common::data::CDataWrapper *message) throw (chaos::CException);
+                
+                void manageRequestPhase(RequestInfo& request_info) throw (chaos::CException);
+                
+                template<typename T>
+                T* getDataAccess() {
+                    CHAOS_ASSERT(abstract_persistance_driver)
+                    return abstract_persistance_driver->getDataAccess<T>();
+                }
             };
             
         }

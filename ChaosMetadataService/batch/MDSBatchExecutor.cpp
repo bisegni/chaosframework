@@ -1,6 +1,6 @@
 /*
  *	MDSBatchExecutor.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -19,6 +19,8 @@
  */
 #include "MDSBatchExecutor.h"
 #include "unit_server/unit_server_batch.h"
+#include "control_unit/control_unit_batch.h"
+#include "node/node_batch.h"
 
 using namespace chaos::metadata_service::batch;
 #define BCE_INFO INFO_LOG(BatchCommandExecutor)
@@ -31,31 +33,84 @@ new chaos::common::utility::TypedObjectInstancer<BatchCommandClass, MDSBatchComm
 MDSBatchExecutor::MDSBatchExecutor(const std::string& executor_id,
                                    chaos::common::network::NetworkBroker *_network_broker):
 BatchCommandExecutor(executor_id),
-network_broker(_network_broker){
-    //register unit server command
+network_broker(_network_broker),
+message_channel_for_job(NULL),
+multiaddress_message_channel_for_job(NULL),
+abstract_persistance_driver(NULL){
+        //node server command
+    installCommand(node::UpdatePropertyCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::UpdatePropertyCommand));
+    installCommand(node::SubmitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::SubmitBatchCommand));
+    
+        //unit server command
     installCommand(unit_server::UnitServerAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::UnitServerAckCommand));
+    installCommand(unit_server::LoadUnloadControlUnit::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::LoadUnloadControlUnit));
+
+        //control unit command
+    installCommand(control_unit::ApplyChangeSet::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::ApplyChangeSet));
+    installCommand(control_unit::RegistrationAckBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::RegistrationAckBatchCommand));
+    installCommand(control_unit::IDSTControlUnitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::IDSTControlUnitBatchCommand));
 }
 
-MDSBatchExecutor::~MDSBatchExecutor() {
-    
-}
+MDSBatchExecutor::~MDSBatchExecutor(){}
 
 //! Install a command associated with a type
-void MDSBatchExecutor::installCommand(std::string alias,
+void MDSBatchExecutor::installCommand(const std::string& alias,
                                       chaos::common::utility::NestedObjectInstancer<MDSBatchCommand, common::batch_command::BatchCommand> *instancer) {
     //call superclass method
     BatchCommandExecutor::installCommand(alias, instancer);
 }
 
+// Initialize instance
+void MDSBatchExecutor::init(void *init_data) throw(chaos::CException) {
+    //initilize superclass
+    BatchCommandExecutor::init(init_data);
+}
+
+// start instance
+void MDSBatchExecutor::start() throw(chaos::CException) {
+    BatchCommandExecutor::start();
+    //allocate channels
+    message_channel_for_job = network_broker->getRawMessageChannel();
+    if(!message_channel_for_job) throw chaos::CException(-1, "Error allcoating Message channel", __PRETTY_FUNCTION__);
+    
+    multiaddress_message_channel_for_job = network_broker->getRawMultiAddressMessageChannel();
+    if(!multiaddress_message_channel_for_job) throw chaos::CException(-2, "Error allcoating Multiaddress Message channel", __PRETTY_FUNCTION__);
+}
+
+// stop instance
+void MDSBatchExecutor::stop() throw(chaos::CException) {
+    if(message_channel_for_job) {
+        network_broker->disposeMessageChannel(message_channel_for_job);
+        message_channel_for_job = NULL;
+    }
+    if(multiaddress_message_channel_for_job) {
+        network_broker->disposeMessageChannel(multiaddress_message_channel_for_job);
+        multiaddress_message_channel_for_job = NULL;
+    }
+    //deallcoate channels
+    BatchCommandExecutor::stop();
+}
+
+// Deinitialize instance
+void MDSBatchExecutor::deinit() throw(chaos::CException) {
+    
+    //deinitilize superclass
+    BatchCommandExecutor::deinit();
+}
+
 //allocate a new command
-chaos::common::batch_command::BatchCommand *MDSBatchExecutor::instanceCommandInfo(const std::string& command_alias) {
+chaos::common::batch_command::BatchCommand *MDSBatchExecutor::instanceCommandInfo(const std::string& command_alias,
+                                                                                  CDataWrapper *command_info) {
     //install command into the batch command executor root class
-    MDSBatchCommand *result = (MDSBatchCommand*) BatchCommandExecutor::instanceCommandInfo(command_alias);
+    MDSBatchCommand *result = (MDSBatchCommand*) BatchCommandExecutor::instanceCommandInfo(command_alias,
+                                                                                           command_info);
     
     //customize the newly create batch command
     if(result) {
-        //allcoate new message channel
-        result->network_broker = network_broker;
+        //allocoate new message channel
+        result->message_channel = message_channel_for_job;
+        result->multiaddress_message_channel = multiaddress_message_channel_for_job;
+        result->abstract_persistance_driver = abstract_persistance_driver;
     }
     return result;
 }

@@ -22,6 +22,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValue.h>
 
+#include <boost/lexical_cast.hpp>
 
 #define AVLAPP_ LAPP_ << "[AttributeValue -" << "] - "
 #define AVLDBG_ LDBG_ << "[AttributeValue -" << "] " << __PRETTY_FUNCTION__ << " - "
@@ -129,4 +130,74 @@ CDataWrapper *AttributeValue::getValueAsCDatawrapperPtr(bool from_json) {
 		result->setSerializedJsonData((const char *)value_buffer);
 	}
 	return result;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+void AttributeValue::writeToCDataWrapper(CDataWrapper& data_wrapper) {
+    switch(type) {
+        case chaos::DataType::TYPE_BYTEARRAY:{
+            data_wrapper.addBinaryValue(name, (const char *)value_buffer, size);
+            break;
+        }
+        case chaos::DataType::TYPE_STRING:{
+            data_wrapper.addStringValue(name, std::string((const char *)value_buffer, size));
+            break;
+        }
+
+        case chaos::DataType::TYPE_BOOLEAN:{
+            data_wrapper.addBoolValue(name, *getValuePtr<bool>());
+            break;
+        }
+
+        case chaos::DataType::TYPE_DOUBLE:{
+            data_wrapper.addDoubleValue(name, *getValuePtr<double>());
+            break;
+        }
+
+        case chaos::DataType::TYPE_INT32:{
+            data_wrapper.addInt32Value(name, *getValuePtr<int32_t>());
+            break;
+        }
+
+        case chaos::DataType::TYPE_INT64:{
+            data_wrapper.addInt64Value(name, *getValuePtr<int64_t>());
+            break;
+        }
+    }
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+std::string AttributeValue::toString() {
+    switch(type) {
+        case chaos::DataType::TYPE_BYTEARRAY:{
+            return "binary_data";
+        }
+        case chaos::DataType::TYPE_STRING:{
+            return std::string((const char *)value_buffer, size);
+        }
+            
+        case chaos::DataType::TYPE_BOOLEAN:{
+            return boost::lexical_cast<std::string>(*getValuePtr<bool>());
+        }
+            
+        case chaos::DataType::TYPE_DOUBLE:{
+            return boost::lexical_cast<std::string>(*getValuePtr<double>());
+        }
+            
+        case chaos::DataType::TYPE_INT32:{
+            return boost::lexical_cast<std::string>(*getValuePtr<int32_t>());
+        }
+            
+        case chaos::DataType::TYPE_INT64:{
+            return boost::lexical_cast<std::string>(*getValuePtr<int64_t>());
+        }
+            
+            default:
+            break;
+    }
+    return "bad type";
 }

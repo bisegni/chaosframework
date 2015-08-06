@@ -1,6 +1,6 @@
 /*
  *	AbstractCommandDispatcher.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -37,7 +37,7 @@
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/StartableService.h>
 
-namespace chaos_data = chaos::common::data;
+
 using namespace std;
 using namespace bson;
 using namespace boost;
@@ -52,6 +52,15 @@ namespace chaos{
 		}
 	}
 
+    //! class for the echo test
+    class EchoRpcAction:
+    public DeclareAction {
+    public:
+        EchoRpcAction();
+    protected:
+        chaos::common::data::CDataWrapper *echoAction(chaos::common::data::CDataWrapper *action_data,
+                                                      bool& detach);
+    };
     
         //! Base class for the Chaos Action Dispatcher
     /*!
@@ -71,6 +80,9 @@ namespace chaos{
         RpcMessageForwarder *rpcForwarderPtr;
         
     protected:
+        //! echo test class
+        EchoRpcAction echoTestClass;
+        
 		//! Domain name <-> Action name association map
         /*!Contains the association between the domain name and all action for this domain*/
         map<string, boost::shared_ptr<DomainActions> >  actionDomainExecutorMap;
@@ -82,7 +94,7 @@ namespace chaos{
         virtual void start() throw(CException);
         
         //-----------------------
-        virtual void stop() throw(CException){};
+        virtual void stop() throw(CException);
         
             //! Dispatch deinitialization with default value
         virtual void deinit() throw(CException);
@@ -110,7 +122,7 @@ namespace chaos{
         /*
          update the dispatcher configuration
          */
-        virtual chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*)  throw(CException);
+        virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*)  throw(CException);
         
             //! Send a message via RPC with the associated client
         /*! Send the message via rpc to a determinated node by ip and port.  If the message is a request, the pack need to
@@ -119,14 +131,16 @@ namespace chaos{
          key = CommandManagerConstant::CS_CMDM_REMOTE_HOST_RESPONSE_ID\n
          value = id for the response\n
          
-         \param serverAndPort Is the destination for the message. It has the form: "host:port"
-         \param messageToSend Is message wrapped into a CDataWrapper that needs to be forward via rpc channel
+         \param server_port Is the destination for the message. It has the form: "host:port"
+         \param message Is message wrapped into a CDataWrapper that needs to be forward via rpc channel
          \param onThisThread Inform when the message need to be send on the current thread or scheduled
          by rpc client own queue(if implemented). The default value is "false". In case of "false" value the
          deallocation is managed by rpc client, otherwise("true" value) the caller need to delete the object it self
          \return boolean value to informa is the mesage has been submitted
          */
-        bool submitMessage(string& serverAndPort,  chaos_data::CDataWrapper* messageToSend, bool onThisThread = false) throw(CException);
+        bool submitMessage(string& server_port,
+                           chaos::common::data::CDataWrapper* message,
+                           bool onThisThread = false) throw(CException);
         
             //! Action registration
         /*

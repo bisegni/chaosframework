@@ -1,6 +1,6 @@
 /*
  *	MongoDBPersistenceDriver.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -20,10 +20,9 @@
 #ifndef __CHAOSFramework__MongoDBPersistenceDriver__
 #define __CHAOSFramework__MongoDBPersistenceDriver__
 
-#include "../AbstractPersistenceDriver.h"
-#include "MongoDBHAConnectionManager.h"
-
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.h>
+#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
 
 namespace chaos {
 	namespace metadata_service {
@@ -37,11 +36,12 @@ namespace chaos {
                 /*!
                  The driver is define as class in the object factor
                  */
-				DECLARE_CLASS_FACTORY(MongoDBPersistenceDriver, AbstractPersistenceDriver) {
+                DECLARE_CLASS_FACTORY(MongoDBPersistenceDriver,
+                                      chaos::service_common::persistence::data_access::AbstractPersistenceDriver) {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBPersistenceDriver)
 					
                     //!keep track of the allocated connection
-					boost::shared_ptr<MongoDBHAConnectionManager> connection;
+                    boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager> connection;
 
                     //! Construct the driver
 					MongoDBPersistenceDriver(const std::string& name);
@@ -49,6 +49,8 @@ namespace chaos {
                     //!dispose the driver
 					~MongoDBPersistenceDriver();
 					
+                    //!inherited by AbstractPersistenceDriver
+                    void deleteDataAccess(void *instance);
 				public:
                     //! Initialize the driver
 					void init(void *init_data) throw (chaos::CException);

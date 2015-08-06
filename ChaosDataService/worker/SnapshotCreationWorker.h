@@ -1,6 +1,6 @@
 /*
  *	SnapshotCreationWorker.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2014 INFN, National Institute of Nuclear Physics
@@ -35,8 +35,6 @@
 namespace chaos{
 	namespace data_service {
 		namespace worker {
-			namespace chaos_direct_io	= chaos::common::direct_io;
-			namespace chaos_network		= chaos::common::network;
 
 			//! worker information for snapshot creation
 			struct SnapshotCreationJob :
@@ -63,8 +61,8 @@ namespace chaos{
 				std::string db_impl_name;
 				
 				//! Network infrastructure
-				chaos_network::NetworkBroker		*network_broker;
-				chaos_network::MDSMessageChannel	*mds_channel;
+				chaos::common::network::NetworkBroker		*network_broker;
+				chaos::common::message::MDSMessageChannel	*mds_channel;
 				
 				//!
 				cache_system::CacheDriver			*cache_driver_ptr;
@@ -79,7 +77,7 @@ namespace chaos{
 			public:
 				SnapshotCreationWorker(const std::string& _cache_impl_name,
 									   db_system::DBDriver	*_db_driver_ptr,
-									   chaos_network::NetworkBroker	*_network_broker);
+									   chaos::common::network::NetworkBroker	*_network_broker);
 				~SnapshotCreationWorker();
 				void init(void *init_data) throw (chaos::CException);
 				void deinit() throw (chaos::CException);

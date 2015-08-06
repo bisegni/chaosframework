@@ -7,7 +7,7 @@
 //
 /*	
  *	ActionDescriptor.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio. 
  *	
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -24,7 +24,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ActionDescriptor.h"
+#include <chaos/common/action/ActionDescriptor.h>
 using namespace chaos;
 using namespace std;
 using namespace boost;

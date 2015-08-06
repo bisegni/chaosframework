@@ -1,5 +1,12 @@
-ccs/ChaosControlStudio/nbproject/private/*
-ccs/ChaosControlStudio/CCSRoot/nbproject/private/*
+ccs/ccs.app/Contents/*
+ccs/*.autosave
+ccs/moc_*
+ccs/ui_*
+ccs/.qmake.stash
+example/build-UIToolkitTest-*
+ccs/ccs.pro.user
+build-ccs-*
+*nbproject/private/*
 build
 *.txt
 *~
@@ -67,5 +74,4 @@ ChaosMDSLite/RefCommon.jardesc
 ChaosMDSLite/RefServer.jardesc
 /example/UIToolkitTest/powersupply/nbproject/private/
 *.json
-ccs/ChaosControlStudio/NodeCommander/nbproject/private/private.xml
-ccs/ChaosControlStudio/NodeSearch/nbproject/private/private.xml
+/.project

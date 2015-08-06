@@ -1,6 +1,6 @@
 /*
  *	DefaultCommandDispatcher.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -132,7 +132,6 @@ void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClas
     
     //call superclass method
     AbstractCommandDispatcher::deregisterAction(declareActionClass);
-    //BUG
     
     chaos::common::thread::WriteLock w_lock(das_map_mutex);
     
@@ -276,5 +275,8 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         //set error to general exception error
         resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Unmanaged error");
     }
+    DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-----------------------START";)
+    DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << resultPack->getJSONString();)
+    DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-------------------------END";)
     return resultPack;
 }

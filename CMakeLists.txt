@@ -36,10 +36,13 @@ message(STATUS "Configure Chaos Metadata Service")
 ADD_SUBDIRECTORY(ChaosMetadataService bin/bin_metadata_service)
 ENDIF()
 
-IF (NOT CHAOS_NO_SERVICES)
+message(STATUS "Configure Chaos Metadata Service Client Library")
+ADD_SUBDIRECTORY(ChaosMetadataServiceClient bin/bin_metadata_service_client)
+
 message(STATUS "Configure Chaos WAN Proxy")
 ADD_SUBDIRECTORY(ChaosWANProxy bin/bin_wan_proxy)
 
+IF (NOT CHAOS_NO_MONGO)
 message(STATUS "Configure Chaos Data Service")
 ADD_SUBDIRECTORY(ChaosDataService bin/bin_cds)
 ENDIF()
@@ -47,9 +50,12 @@ ENDIF()
 message(STATUS "Configure Chaos Data Export")
 ADD_SUBDIRECTORY(ChaosDataExport bin/chaos_cde)
 
-
 message(STATUS "Configure Chaos CLI")
 ADD_SUBDIRECTORY(example/ChaosCLI bin/chaos_cli)
+
+
+message(STATUS "Configure Chaos ChaosMDSCmd")
+ADD_SUBDIRECTORY(example/ChaosMDSCmd bin/ChaosMDSCmd)
 
 message(STATUS "Configure Chaos Performance Tester")
 ADD_SUBDIRECTORY(example/ChaosPerformanceTester bin/ChaosPerformanceTester)

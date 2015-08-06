@@ -1,6 +1,6 @@
-/*
+ /*
  *	DirectIOClient.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -19,9 +19,13 @@
  */
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/InetUtility.h>
-#include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
+
+#include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
+#include <chaos/common/direct_io/DirectIOClientConnectionSharedMetricIO.h>
+#include <chaos/common/direct_io/DirectIOClientConnectionMetricCollector.h>
 
 #include <boost/regex.hpp>
 #include <boost/format.hpp>
@@ -35,9 +39,9 @@ namespace b_algo = boost::algorithm;
 
 #define DIO_LOG_HEAD "["<<getName()<<"] - "
 
-#define DIOLAPP_ LAPP_ << DIO_LOG_HEAD
-#define DIOLDBG_ LDBG_ << DIO_LOG_HEAD << __FUNCTION__
-#define DIOLERR_ LERR_ << DIO_LOG_HEAD
+#define DIOLAPP_ INFO_LOG(DirectIOClient)
+#define DIOLDBG_ DBG_LOG(DirectIOClient)
+#define DIOLERR_ ERR_LOG(DirectIOClient)
 
 DirectIOClient::DirectIOClient(std::string alias):NamedService(alias) {
 	
@@ -46,16 +50,79 @@ DirectIOClient::DirectIOClient(std::string alias):NamedService(alias) {
 DirectIOClient::~DirectIOClient() {
 }
 
-void DirectIOClient::forwardEventToClientConnection(DirectIOClientConnection *client, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type) {
+void DirectIOClient::forwardEventToClientConnection(DirectIOClientConnection *client,
+                                                    DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type) {
 	client->lowLevelManageEvent(event_type);
 }
 
-DirectIOClientConnection *DirectIOClient::getNewConnection(std::string server_description_with_endpoint) {
+//! Initialize instance
+void DirectIOClient::init(void *init_data) throw(chaos::CException) {
+    
+}
+
+
+//! Deinit the implementation
+void DirectIOClient::deinit() throw(chaos::CException) {
+    map_shared_collectors.clear();
+}
+
+DirectIOClientConnection *DirectIOClient::getNewConnection(const std::string& server_description_with_endpoint) {
     uint16_t endpoint;
     std::string server_description;
+    DirectIOClientConnection *result = NULL;
     DEBUG_CODE(DIOLDBG_ << "Requested a new connection for a server description " << server_description_with_endpoint;)
     if(decodeServerDescriptionWithEndpoint(server_description_with_endpoint, server_description, endpoint)) {
         DEBUG_CODE(DIOLDBG_ << "scomposed into server description " << server_description << " and endpoint " << endpoint;)
-        return getNewConnection(server_description, endpoint);
-    } else return NULL;
+        
+        result = _getNewConnectionImpl(server_description,
+                                       endpoint);
+        
+        if(result && GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
+            //lock the map
+            boost::unique_lock<boost::mutex> wl(mutex_map_shared_collectors);
+            
+            //prepare key in case with need to split themetric for endpoint
+            std::string server_key = server_description;
+            if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT)) {
+                //we need to merge the endpoint
+                server_key = "merge_together";
+            } else {
+                server_key = server_description_with_endpoint;
+            }
+            //create the collector key
+            SharedCollectorKey key(server_key);
+            boost::shared_ptr<DirectIOClientConnectionSharedMetricIO> shared_collector;
+            
+            //check if we have already allcoated thecollector
+            if(map_shared_collectors.count(key)==0) {
+                shared_collector.reset(new DirectIOClientConnectionSharedMetricIO(getName(), server_description_with_endpoint));
+                map_shared_collectors.insert(make_pair(key, shared_collector));
+            } else {
+                shared_collector = map_shared_collectors[key];
+            }
+
+            //the metric allocator of direct io is a direct subclass of DirectIODispatcher
+            result = new DirectIOClientConnectionMetricCollector(server_description,
+                                                                 endpoint,
+                                                                 shared_collector,
+                                                                 result);
+        }
+
+    }
+        
+    return result;
+}
+
+//! Release the connection
+void DirectIOClient::releaseConnection(DirectIOClientConnection *connection_to_release) {
+    if(connection_to_release && GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
+        //the metric allocator of direct io is a direct subclass of DirectIODispatcher
+        DirectIOClientConnectionMetricCollector *metric_collector = dynamic_cast<DirectIOClientConnectionMetricCollector*>(connection_to_release);
+        if(metric_collector) {
+            _releaseConnectionImpl(metric_collector->wrapped_connection);
+            delete(metric_collector);
+        }
+    } else  {
+        _releaseConnectionImpl(connection_to_release);
+    }
 }

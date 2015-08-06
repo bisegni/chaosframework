@@ -1,6 +1,6 @@
 /*
  *	BatchCommandExecutor.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2013 INFN, National Institute of Nuclear Physics
@@ -25,6 +25,7 @@
 #include <map>
 #include <deque>
 #include <memory>
+#include <vector>
 #include <stdint.h>
 
 
@@ -39,6 +40,7 @@
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 #include <chaos/common/batch_command/BatchCommandSandbox.h>
 #include <chaos/common/batch_command/BatchCommandSandboxEventHandler.h>
+#include <chaos/common/batch_command/BatchCommandDescription.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 
 //#include <boost/container/deque.hpp>
@@ -46,7 +48,7 @@
 
 #define COMMAND_QUEUE_DEFAULT_LENGTH		1024
 #define COMMAND_STATE_QUEUE_DEFAULT_SIZE	50
-#define COMMAND_BASE_SANDOXX_ID             1
+#define COMMAND_BASE_SANDOXX_ID             0
 
 namespace chaos_data = chaos::common::data;
 namespace boost_cont = boost::container;
@@ -61,7 +63,8 @@ namespace chaos {
             //! Macro for helping the allocation of the isntancer of the class implementing the slow command
 //#define BATCHCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::BatchCommand>()
             
-            
+            typedef std::map<string,  boost::shared_ptr<BatchCommandDescription> >              MapCommandDescription;
+            typedef std::map<string,  boost::shared_ptr<BatchCommandDescription> >::iterator    MapCommandDescriptionIterator;
             //! Slow command execution sand box
             /*!
              This class is the environment where the exeecution of the slow command handlers take place.
@@ -105,7 +108,7 @@ namespace chaos {
                 std::map<uint64_t, boost::shared_ptr<CommandState> >	command_state_fast_access_map;
                 
                 //! this map correlate the alias to the object instancer
-                std::map<string, chaos::common::utility::ObjectInstancer<BatchCommand>* > mapCommandInstancer;
+                MapCommandDescription map_command_description;
                 
                 
                 //!Allocate a new slow command sandbox
@@ -138,15 +141,8 @@ namespace chaos {
                  to the alias contained into the submissionInfo param.
                  \param the submission param of the command
                  */
-                virtual BatchCommand *instanceCommandInfo(chaos_data::CDataWrapper *submissionInfo);
-                
-                //! Check if the waithing command can be installed
-                /*!
-                 peform the isntantiation of the command associated to the alias in input, if not preset
-                 an exception are fired
-                 \param commandAlias the alias of the command
-                 */
-                virtual BatchCommand *instanceCommandInfo(const std::string& commandAlias);
+                virtual BatchCommand *instanceCommandInfo(const std::string& command_alias,
+                                                          chaos_data::CDataWrapper *submissionInfo);
 
                 
                 //! Get the statistic for the current running command rpc action
@@ -169,7 +165,7 @@ namespace chaos {
                 /*!
                  Updat ethe modiable features of the running command
                  */
-                void setCommandFeatures(features::Features features) throw (CException);
+                void setCommandFeatures(features::Features& features) throw (CException);
                 
                 //! Kill current command rpc action
                 /*!
@@ -214,10 +210,20 @@ namespace chaos {
                  \param alias is the name of the command to use as default (started at startup)
                  \param sandbox_instance is the 1-based index of the sandbox where install the command
                  */
-                void setDefaultCommand(const string& alias, unsigned int sandbox_instance = 1);
+                void setDefaultCommand(const string& alias, unsigned int sandbox_instance = COMMAND_BASE_SANDOXX_ID);
 				
+                /*!
+                 \ingroup API_Slow_Control
+                 */
 				const std::string & getDefaultCommand();
 				
+                //! return all the command description
+                /*!
+                 \ingroup API_Slow_Control
+                 Fill the vector with all command description
+                 */
+                void getCommandsDescriptions(std::vector< boost::shared_ptr<BatchCommandDescription> >& descriptions);
+                
                 //! Install a command associated with a type
                 /*!
                  Install the isntancer for a determinated SlowCommand, for an easly way to do this can be used
@@ -229,20 +235,15 @@ namespace chaos {
                  */
                 void installCommand(const string& alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer);
 				
+                //! Install a command by his description
+                void installCommand(boost::shared_ptr<BatchCommandDescription> command_description);
+                
 				//!return all the aliases of the installe batch command
 				/*!
 				 \param commands_alias will be filled with the alias of the
 				 registered commands
 				 */
 				void getAllCommandAlias(std::vector<std::string>& commands_alias);
-				
-                //! Submit a batch command
-                /*!
-                 The information for the command are contained into the DataWrapper data serialization,
-                 they are put into the commandSubmittedQueue for to wait to be executed.
-                 */
-                void submitCommand(chaos_data::CDataWrapper *commandDescription,
-                                   uint64_t& command_id)  throw (CException);
                 
                 //! Submit a batch command
                 /*!

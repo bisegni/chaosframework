@@ -1,6 +1,6 @@
 /*
  *	ControlManager.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -47,16 +47,16 @@
 #include <boost/msm/front/euml/operator.hpp>
 
 //startup parameter for unit server
-#define CONTROL_MANAGER_UNIT_SERVER_ENABLE							"unit_server_enable"
+#define CONTROL_MANAGER_UNIT_SERVER_ENABLE							"unit-server-enable"
 #define CONTROL_MANAGER_UNIT_SERVER_ENABLE_desc						"Enable the unit server on this instance of process"
 
-#define CONTROL_MANAGER_UNIT_SERVER_ALIAS							"unit_server_alias"
+#define CONTROL_MANAGER_UNIT_SERVER_ALIAS							"unit-server-alias"
 #define CONTROL_MANAGER_UNIT_SERVER_ALIAS_desc						"Alias used to publish the unit server"
-#define CONTROL_MANAGER_UNIT_SERVER_KEY								"unit_server_file_key"
+#define CONTROL_MANAGER_UNIT_SERVER_KEY								"unit-server-file-key"
 #define CONTROL_MANAGER_UNIT_SERVER_KEY_desc						"the path to the file that contains the rsa public key for the unit server alias"
-#define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC			"unit_server_retry_ms"
+#define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC			"unit-server-retry-ms"
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_desc	"Delay in milliseconds for the registration retry"
-#define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_DEFAULT	5000
+#define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_DEFAULT	2000
 
 
 //define the type for the Control Unit instancer
@@ -154,7 +154,7 @@ namespace chaos {
 				boost::scoped_ptr<boost::thread> thread_registration;
 				
 				//! metadata server channel for control unit registration
-				MDSMessageChannel *mds_channel;
+				chaos::common::message::MDSMessageChannel *mds_channel;
 				
 				//!queue for control unit waiting to be published
 				mutable boost::shared_mutex		mutex_queue_submitted_cu;
@@ -272,7 +272,7 @@ namespace chaos {
 				//! control unit registration
 				/*!
 				 Register a control unit instancer associating it to an alias
-				 \param control_unit_alias the alias associated to the tempalte class identification
+				 \param control_unit_alias the alias associated to the template class identification
 				 */
 				template<typename ControlUnitClass>
 				void registerControlUnit() {

@@ -1,6 +1,6 @@
-/*
+rpc/tcpuv/TCPUVClient.cpp rpc/tcpuv/TCPUVServer.cpp/*
  *	TCPUVServer.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -206,7 +206,7 @@ TCPUVServer::~TCPUVServer() {
 //init the server getting the configuration value
 void TCPUVServer::init(void *init_data) throw(CException) {
 	CDataWrapper *adapterConfiguration = reinterpret_cast<CDataWrapper*>(init_data);
-	portNumber = adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT );
+	portNumber = adapterConfiguration->getInt32Value(InitOption::OPT_RPC_SERVER_PORT );
 }
 
 //start the rpc adapter

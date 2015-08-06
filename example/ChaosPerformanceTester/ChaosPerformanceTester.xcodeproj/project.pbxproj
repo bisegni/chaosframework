@@ -192,13 +192,9 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../usr/local/bin";
 				HEADER_SEARCH_PATHS = (
 					../../,
-					/usr/local/include,
 					../../usr/local/include,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"$(SRCROOT)/../../usr/local/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../../usr/local/lib";
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
 					"-lmemcached",
@@ -224,13 +220,9 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../usr/local/bin";
 				HEADER_SEARCH_PATHS = (
 					../../,
-					/usr/local/include,
 					../../usr/local/include,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"$(SRCROOT)/../../usr/local/lib",
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../../usr/local/lib";
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
 					"-lmemcached",

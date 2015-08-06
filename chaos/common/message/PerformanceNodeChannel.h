@@ -1,6 +1,6 @@
 /*
  *	PerformanceNodeChannel.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -35,8 +35,11 @@ namespace chaos {
 			/*!
 			 This class represent a message chanel for comunication with a device
 			 */
-			class PerformanceNodeChannel : public MessageChannel {
+			class PerformanceNodeChannel:
+            public MessageChannel {
 				friend class chaos::common::network::NetworkBroker;
+                
+                auto_ptr<CNetworkAddress> node_network_address;
 				chaos_direct_io::DirectIOClient *client_instance;
 				chaos_direct_io::DirectIOPerformanceSession *local_performance_session;
 			protected:
@@ -45,7 +48,9 @@ namespace chaos {
 				 The constructor create a channel for comunicate with the device that is contained in a Contro Unit, so the full network address is
 				 ip:port:cu_node_address(instance):deviceID
 				 */
-				PerformanceNodeChannel(NetworkBroker *msg_broker, CNetworkAddress *node_network_address, chaos_direct_io::DirectIOClient *_client_instance);
+				PerformanceNodeChannel(NetworkBroker *msg_broker,
+                                       CNetworkAddress *_node_network_address,
+                                       chaos_direct_io::DirectIOClient *_client_instance);
 				~PerformanceNodeChannel();
 			public:
 				//Get the performance session for a chaos node

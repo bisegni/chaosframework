@@ -1,6 +1,6 @@
 /*
  *	SlowCommand.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -49,9 +49,9 @@ namespace chaos{
         
         namespace control_manager {
             
-            //! The name space that group all foundamental class need by slow control !CHOAS implementation
+            //! The name space that group all foundamental class need by slow control !CHAOS implementation
             namespace slow_command {
-				
+                
 				namespace command {
 					class SetAttributeCommand;
 				}
@@ -59,7 +59,23 @@ namespace chaos{
                 //forward declaration
                 class SlowCommandExecutor;
 
-				
+                //! Macro for helping the allocation of the isntancer of the class implementing the slow command
+         
+                /*
+                 * You may specify command name 
+                 */
+#define BATCH_COMMAND_OPEN_DESCRIPTION_ALIAS(n,c,alias, d, uid) \
+BATCH_COMMAND_OPEN_DESC(n,c, alias, d, uid) \
+result->setInstancer(new chaos::common::utility::NestedObjectInstancer<chaos::cu::control_manager::slow_command::SlowCommand, chaos::common::batch_command::BatchCommand>(\
+new chaos::common::utility::TypedObjectInstancer<n c, chaos::cu::control_manager::slow_command::SlowCommand>()));
+
+                /**
+                 * Command name is the class name
+                 */
+#define BATCH_COMMAND_OPEN_DESCRIPTION(n,c, d, uid) BATCH_COMMAND_OPEN_DESCRIPTION_ALIAS(n,c, # c, d, uid)
+
+
+                
                 //! Base cass for the slow command implementation
                 /*!
                  The slow command implementation in !CHAOS permit the definition of the three foundamental phase in "control" as seen by !CHAOS logic:

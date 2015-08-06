@@ -1,6 +1,6 @@
 /*
  *	RTAbstractControlUnit.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2013 INFN, National Institute of Nuclear Physics
@@ -45,13 +45,13 @@ namespace chaos {
 				friend class ControlManager;
 				friend class DomainActionsScheduler;
 				
-				uint64_t **run_acquisition_ts_handle;
+				//uint64_t **run_acquisition_ts_handle;
 				AttributeValue *hb_cached_value;
 				uint64_t last_hearbeat_time;
 				uint64_t schedule_dalay;
 				bool scheduler_run;
 				boost::scoped_ptr<boost::thread>  scheduler_thread;
-				
+                
 				/*!
 				 Define the control unit DataSet and Action into
 				 a CDataWrapper
@@ -69,6 +69,8 @@ namespace chaos {
 				
 				//! deinit rt control unit
 				void deinit() throw(CException);
+                //!redefine private for protection
+                AbstractSharedDomainCache* _getAttributeCache();
 			protected:
 				
 				//! schdule a run of the rt control unit
@@ -85,7 +87,7 @@ namespace chaos {
 				/*!
 				 Event for update some CU configuration
 				 */
-				virtual chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*, bool&) throw (CException);
+				virtual chaos_data::CDataWrapper* updateConfiguration(CDataWrapper* update_pack, bool& detach_param) throw (CException);
 				
 				/*!
 				 Thread method for the scheduler

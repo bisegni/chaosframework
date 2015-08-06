@@ -1,6 +1,6 @@
 /*
  *	TimingUtil.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -52,9 +52,9 @@ namespace chaos {
 			class TimingUtil {
 			public:
 				//!Return the current timestamp in milliseconds
-				static inline int64_t getTimeStamp() {
+				static inline uint64_t getTimeStamp() {
 					try{
-						return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_milliseconds();
+						return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
 					} catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
 						TU_LERR << "Bad day exception";
 						return 0;
@@ -63,9 +63,9 @@ namespace chaos {
 				}
 
                     //!Return the current timestamp in milliseconds
-                static inline int64_t getTimeStampInMicrosends() {
+                static inline uint64_t getTimeStampInMicrosends() {
                     try{
-                        return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_microseconds();
+                        return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_microseconds();
                     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
                         TU_LERR << "Bad day exception";
                         return 0;
@@ -74,9 +74,9 @@ namespace chaos {
                 }
 				
 				//!Return the current utc timestamp in milliseconds
-				static inline int64_t getUTCTimeStamp() {
+				static inline uint64_t getLocalTimeStamp() {
 					try{
-						return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
+						return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_milliseconds();
 					} catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
 						TU_LERR << "Bad day exception";
 						return 0;
@@ -84,9 +84,9 @@ namespace chaos {
 				}
 
                 				//!Return the current utc timestamp in milliseconds
-                static inline int64_t getUTCTimeStampInMicroseconds() {
+                static inline uint64_t getLocalTimeStampInMicroseconds() {
                     try{
-                        return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_microseconds();
+                        return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_microseconds();
                     } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::gregorian::bad_day_of_month> >& bad_day_exce) {
                         TU_LERR << "Bad day exception";
                         return 0;

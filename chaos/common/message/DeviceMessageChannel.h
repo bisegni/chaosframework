@@ -1,6 +1,6 @@
 /*
  *	DeviceMessageChannel.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -33,7 +33,8 @@ namespace chaos {
 			/*!
 			 This class represent a message chanel for comunication with a device
 			 */
-			class DeviceMessageChannel : public NodeMessageChannel {
+			class DeviceMessageChannel :
+            public NodeMessageChannel {
 				friend class chaos::common::network::NetworkBroker;
 				CDeviceNetworkAddress *deviceNetworkAddress;
 				
@@ -108,12 +109,18 @@ namespace chaos {
 				/*!
 				 \brief send a message to a custom action
 				 */
-				void sendCustomMessage(const char * const, common::data::CDataWrapper* const, bool queued = true);
+				void sendCustomMessage(const std::string& action_name, common::data::CDataWrapper* const, bool queued = true);
 				
 				/*!
 				 \brief send a request to a custom action
 				 */
-				int sendCustomRequest(const char * const, common::data::CDataWrapper* const, common::data::CDataWrapper** resultData,uint32_t millisecToWait = 0, bool async = false, bool queued = true);
+				int sendCustomRequest(const std::string& action_name, common::data::CDataWrapper* const, common::data::CDataWrapper** resultData,uint32_t millisecToWait = 0, bool async = false, bool queued = true);
+                
+                /*!
+                 send a request to a custom action
+                 */
+                std::auto_ptr<MessageRequestFuture>  sendCustomRequestWithFuture(const std::string& action_name,
+                                                                                 common::data::CDataWrapper *request_data);
 			};
 		}
 	}

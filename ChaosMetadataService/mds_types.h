@@ -1,6 +1,6 @@
 /*
  *  mds_types.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -25,7 +25,7 @@
 #include <string>
 
 #include "batch/mds_service_batch.h"
-#include "persistence/AbstractPersistenceDriver.h"
+#include "persistence/persistence.h"
 
 #include <chaos/common/utility/StartableService.h>
 
@@ -46,7 +46,7 @@ namespace chaos{
             common::utility::StartableServiceContainer<batch::MDSBatchExecutor> batch_executor;
             
             //! persistence driver instance
-            common::utility::InizializableServiceContainer<persistence::AbstractPersistenceDriver> persistence_driver;
+            common::utility::InizializableServiceContainer<chaos::service_common::persistence::data_access::AbstractPersistenceDriver> persistence_driver;
         };
 		
 	}

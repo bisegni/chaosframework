@@ -1,6 +1,6 @@
 /*
  *	ZMQClient.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -32,15 +32,129 @@ using namespace std;
 using namespace boost;
 using namespace boost::algorithm;
 
-#define ZMQC_LAPP LAPP_ << "[ZMQClient] - "
-#define ZMQC_LDBG LDBG_ << "[ZMQClient] - "
-#define ZMQC_LERR LERR_ << "[ZMQClient] - "
+#define ZMQC_LAPP INFO_LOG(ZMQClient)
+#define ZMQC_LDBG DBG_LOG(ZMQClient)
+#define ZMQC_LERR ERR_LOG(ZMQClient)
 
+#define ZMQ_DO_AGAIN(x) do{x}while(err == EAGAIN);
+
+
+SocketInfo::SocketInfo():
+socket(NULL),
+endpoint(""),
+last_push_ts(0){
+};
+
+SocketInfo::~SocketInfo(){
+    if(socket)zmq_close(socket);
+}
+
+//----------------------------------------------------------------------
+SocketEndpointPool::SocketEndpointPool(const std::string& _endpoint,
+                                       void *_zmq_context):
+zmq_context(_zmq_context),
+endpoint(_endpoint),
+created_socket(0){
+}
+
+SocketEndpointPool::~SocketEndpointPool() {
+    for(std::deque< SocketInfo* >::iterator it = pool.begin();
+        it!=pool.end();
+        it++) {
+        delete(*it);
+    }
+}
+
+SocketInfo *SocketEndpointPool::getSocket() {
+    int	err = 0;
+    int linger = 0;
+    int water_mark = 1;
+    int timeout = 5000;
+    boost::unique_lock<boost::mutex> l(mutex_pool);
+    SocketInfo *socket_info_ptr = NULL;
+    if(pool.empty()) {
+        DEBUG_CODE(ZMQC_LDBG << "No more socket in the pool";)
+        std::auto_ptr<SocketInfo> _temp_socket_info_ptr;
+        _temp_socket_info_ptr.reset(new SocketInfo());
+        _temp_socket_info_ptr->endpoint = endpoint;
+        _temp_socket_info_ptr->socket = zmq_socket (zmq_context, ZMQ_REQ);
+        if(!_temp_socket_info_ptr->socket) {
+            err = -1;
+        } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_LINGER, &linger, sizeof(int)))) {
+        } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_RCVHWM, &water_mark, sizeof(int)))) {
+        } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_SNDHWM, &water_mark, sizeof(int)))) {
+        } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_SNDTIMEO, &timeout, sizeof(int)))) {
+        } else if ((err = zmq_setsockopt(_temp_socket_info_ptr->socket, ZMQ_RCVTIMEO, &timeout, sizeof(int)))) {
+        } else {
+            string url = "tcp://";
+            url.append(endpoint);
+            if((err = zmq_connect(_temp_socket_info_ptr->socket, url.c_str()))) {
+            } else {
+                DEBUG_CODE(ZMQC_LDBG << "ZMQ new pool socket created for "<<endpoint;)
+            }
+        }
+        
+        if(err) {
+            if(_temp_socket_info_ptr->socket) {
+                ZMQC_LERR << "Error during ocnfiguraiton of the pool socket for "<<endpoint;
+                zmq_close(_temp_socket_info_ptr->socket);
+            }
+        } else {
+            //all is gone weel so we can release the temp smatr pointer to result pointer
+            socket_info_ptr = _temp_socket_info_ptr.release();
+            created_socket++;
+        }
+    } else {
+        //return alread allcoated one
+        socket_info_ptr = pool.front();
+        //remove associated pointr
+        pool.pop_front();
+        
+        DEBUG_CODE(ZMQC_LDBG << "Return pooled socket "<<endpoint;)
+    }
+    return socket_info_ptr;
+}
+
+void SocketEndpointPool::releaseSocket(SocketInfo *socket_info) {
+    boost::unique_lock<boost::mutex> l(mutex_pool);
+    DEBUG_CODE(ZMQC_LDBG << "Release socket for "<<socket_info->endpoint;)
+    socket_info->last_push_ts = chaos::common::utility::TimingUtil::getTimeStamp();
+    pool.push_front(socket_info);
+}
+
+//! remove timeouted element
+void SocketEndpointPool::mantainance() {
+    boost::unique_lock<boost::mutex> l(mutex_pool);
+    int max_to_check = pool.size()>3?3:(int)pool.size();
+    DEBUG_CODE(ZMQC_LDBG << "Enter pool mantainance loop for endpoint "<< endpoint ;)
+    //check if last element is in timeout
+    
+    while((max_to_check--)> 0) {
+        SocketInfo *checked_socket = pool.back();
+        uint64_t time_diff = (chaos::common::utility::TimingUtil::getTimeStamp() - checked_socket->last_push_ts);
+        if(time_diff > 60000) {
+            //remove last element
+            pool.pop_back();
+            DEBUG_CODE(ZMQC_LDBG << "Purging socket with timediff "<< time_diff;)
+            //we can remove and delete it
+            delete(checked_socket);
+            created_socket--;
+        } else {
+            break;
+        }
+    }
+}
+
+unsigned int SocketEndpointPool::getSize() {
+    boost::unique_lock<boost::mutex> l(mutex_pool);
+    return (int)created_socket;
+}
+//-------------------------------------------------------
 DEFINE_CLASS_FACTORY(ZMQClient, RpcClient);
 
 static void my_free (void *data, void *hint)
 {
-	delete (char*)data;
+    delete (char*)data;
 }
 
 
@@ -54,225 +168,226 @@ ZMQClient::~ZMQClient(){
  Initialization method for output buffer
  */
 void ZMQClient::init(void *init_data) throw(CException) {
-	CDataWrapper *cfg = reinterpret_cast<CDataWrapper*>(init_data);
-	ZMQC_LAPP << "initialization";
-	int32_t threadNumber = cfg->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
-	ZMQC_LAPP << "ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
-	CObjectProcessingQueue<NetworkForwardInfo>::init(threadNumber);
-	ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> initialized";
-	
-	ZMQC_LAPP << "ConnectionPool initialization";
-	CHAOS_ASSERT(zmqContext = zmq_ctx_new())
-	
-	//et the thread number
-	zmq_ctx_set(zmqContext, ZMQ_IO_THREADS, threadNumber);
-	
-	ZMQC_LAPP << "ConnectionPool initialized";
+    CDataWrapper *cfg = reinterpret_cast<CDataWrapper*>(init_data);
+    ZMQC_LAPP << "initialization";
+    int32_t threadNumber = cfg->hasKey(InitOption::OPT_RPC_SERVER_THREAD_NUMBER)? cfg->getInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER):1;
+    ZMQC_LAPP << "ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
+    CObjectProcessingQueue<NetworkForwardInfo>::init(threadNumber);
+    ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> initialized";
+    
+    ZMQC_LAPP << "ConnectionPool initialization";
+    CHAOS_ASSERT(zmqContext = zmq_ctx_new())
+    
+    //et the thread number
+    zmq_ctx_set(zmqContext, ZMQ_IO_THREADS, threadNumber);
+    
+    ZMQC_LAPP << "ConnectionPool initialized";
 }
 
 /*
  start the rpc adapter
  */
 void ZMQClient::start() throw(CException) {
-	
+    //start timere after and repeat every one minut
+    chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 60000, 60000);
 }
 
 /*
  start the rpc adapter
  */
 void ZMQClient::stop() throw(CException) {
-	
+    chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
 }
 
 /*
  Deinitialization method for output buffer
  */
 void ZMQClient::deinit() throw(CException) {
-	ZMQC_LAPP << "deinitialization";
-	
-	boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-	
-	for(std::map<string, boost::shared_ptr<SocketInfo> >::iterator it = map_socket.begin();
-		it != map_socket.end();
-		it++) {
-		boost::unique_lock<boost::shared_mutex> lock_socket(it->second->socket_mutex);
-		
-		if(it->second->socket) zmq_close(it->second->socket);
-	}
-	map_socket.clear();
-	
-	ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopping";
-	CObjectProcessingQueue<NetworkForwardInfo>::clear();
-	CObjectProcessingQueue<NetworkForwardInfo>::deinit();
-	ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopped";
-	
-	//destroy the zmq context
-	zmq_ctx_shutdown(zmqContext);
-	zmq_ctx_destroy(zmqContext);
-	ZMQC_LAPP << "ZMQ Destroyed";
-	
+    ZMQC_LAPP << "deinitialization";
+    
+    boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
+    
+    map_socket.clear();
+    
+    ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopping";
+    CObjectProcessingQueue<NetworkForwardInfo>::clear();
+    CObjectProcessingQueue<NetworkForwardInfo>::deinit();
+    ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopped";
+    
+    //destroy the zmq context
+    zmq_ctx_shutdown(zmqContext);
+    zmq_ctx_destroy(zmqContext);
+    ZMQC_LAPP << "ZMQ Destroyed";
 }
 
 /*
  
  */
 bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread) throw(CException) {
-	CHAOS_ASSERT(forwardInfo);
-	ElementManagingPolicy ePolicy;
-	try{
-		if(!forwardInfo->destinationAddr.size())
-			throw CException(0, "No destination ip in message description", __PRETTY_FUNCTION__);
-		if(!forwardInfo->message)
-			throw CException(0, "No message in description", __PRETTY_FUNCTION__);
-		//allocate new forward info
-		//submit action
-		if(onThisThread){
-			ePolicy.elementHasBeenDetached = false;
-			processBufferElement(forwardInfo, ePolicy);
-			//delete(forwardInfo->message);
-			delete(forwardInfo);
-		} else {
-			CObjectProcessingQueue<NetworkForwardInfo>::push(forwardInfo);
-		}
-	} catch(CException& ex){
-		//in this case i need to delete the memory
-		if(forwardInfo->message) delete(forwardInfo->message);
-		if(forwardInfo) delete(forwardInfo);
-		//in this case i need to delete te memory allocated by message
-		DECODE_CHAOS_EXCEPTION(ex)
-	}
-	return true;
+    CHAOS_ASSERT(forwardInfo);
+    ElementManagingPolicy ePolicy;
+    try{
+        if(!forwardInfo->destinationAddr.size())
+            throw CException(0, "No destination ip in message description", __PRETTY_FUNCTION__);
+        if(!forwardInfo->hasMessage())
+            throw CException(0, "No message in description", __PRETTY_FUNCTION__);
+        //allocate new forward info
+        //submit action
+        if(onThisThread){
+            ePolicy.elementHasBeenDetached = false;
+            processBufferElement(forwardInfo, ePolicy);
+            //delete(forwardInfo->message);
+            delete(forwardInfo);
+        } else {
+            CObjectProcessingQueue<NetworkForwardInfo>::push(forwardInfo);
+        }
+    } catch(CException& ex){
+        //in this case i need to delete the memory
+        //if(forwardInfo->message) delete(forwardInfo->message);
+        if(forwardInfo) delete(forwardInfo);
+        //in this case i need to delete te memory allocated by message
+        DECODE_CHAOS_EXCEPTION(ex)
+    }
+    return true;
 }
 
-boost::shared_ptr<SocketInfo> ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi) {
-	int	err = 0;
-	int linger = 500;
-	int water_mark = 100;
-	int timeout = 1000;
-	boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-	if(!map_socket.count(nfi->destinationAddr)) {
-		ZMQC_LDBG << "Create new socket for " << nfi->destinationAddr;
-		boost::shared_ptr<SocketInfo>  socket_info_ptr(new SocketInfo());
-		socket_info_ptr->endpoint = nfi->destinationAddr;
-		socket_info_ptr->socket = zmq_socket (zmqContext, ZMQ_REQ);
-		//this implementation is too slow, client for ip need to be cached
-		if(!socket_info_ptr->socket) {
-			ZMQC_LERR << "Error creating socket";
-			socket_info_ptr.reset();
-			return socket_info_ptr;
-		} else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_LINGER, &linger, sizeof(int)))) {
-			ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
-		} else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_RCVHWM, &water_mark, sizeof(int)))) {
-			ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
-		} else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_SNDHWM, &water_mark, sizeof(int)))) {
-			ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
-		} else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_SNDTIMEO, &timeout, sizeof(int)))) {
-			ZMQC_LERR << "Error setting ZMQ_SNDTIMEO value";
-		} else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_RCVTIMEO, &timeout, sizeof(int)))) {
-			ZMQC_LERR << "Error setting ZMQ_RCVTIMEO value";
-		} else {
-			string url = "tcp://";
-			url.append(nfi->destinationAddr);
-			if((err = zmq_connect(socket_info_ptr->socket, url.c_str()))) {
-			  ZMQC_LERR << "Error connecting to remote socket:" <<url;
-			}
-		}
-		
-		if(err) {
-			zmq_close(socket_info_ptr->socket);
-			socket_info_ptr->socket = NULL;
-			socket_info_ptr.reset();
-		} else {
-			map_socket.insert(make_pair(socket_info_ptr->endpoint, socket_info_ptr));
-		}
-		return socket_info_ptr;
-	} else {
-		ZMQC_LDBG << "return already allocated socket for " << nfi->destinationAddr;
-		return map_socket[nfi->destinationAddr];
-	}
+SocketInfo *ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi) {
+    boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
+    SocketMapIterator it = map_socket.find(nfi->destinationAddr);
+    if(it != map_socket.end()){
+        return it->second->getSocket();
+    } else {
+        boost::shared_ptr<SocketEndpointPool> socket_pool(new SocketEndpointPool(nfi->destinationAddr, zmqContext));
+        map_socket.insert(make_pair(nfi->destinationAddr, socket_pool));
+        return socket_pool->getSocket();
+    }
 }
 
-void ZMQClient::disposeSocket(boost::shared_ptr<SocketInfo> socket_info_to_dispose) {
-	boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
-	map_socket.erase(socket_info_to_dispose->endpoint);
-	zmq_close(socket_info_to_dispose->socket);
-	socket_info_to_dispose->socket = NULL;
-	socket_info_to_dispose.reset();
+void ZMQClient::releaseSocket(SocketInfo *socket_info_to_release) {
+    boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
+    map_socket[socket_info_to_release->endpoint]->releaseSocket(socket_info_to_release);
+}
+
+void ZMQClient::timeout() {
+    boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
+    SocketMapIterator it = map_socket.begin();
+    while(it != map_socket.end()){
+        it->second->mantainance();
+        if( it->second->getSize() == 0 ) {
+            ZMQC_LAPP << "Delete socket pool for:" << it->first;
+            map_socket.erase( it++ ); // advance before iterator become invalid
+        } else {
+            ++it;
+        }
+    }
 }
 
 /*
  process the element action to be executed
  */
 void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
-	//the domain is securely the same is is mandatory for submition so i need to get the name of the action
-	int			err = 0;
-	int32_t		result_forward_error = 0;
-	zmq_msg_t	reply;
-	zmq_msg_t	message;
-	zmq_msg_init (&reply);
-	
-	//get remote ip
-	//serialize the call packet
-	boost::shared_ptr<SocketInfo> socket_info;
-	auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
-	try{
-		socket_info = getSocketForNFI(messageInfo);
-		if(socket_info == NULL){
-		  ZMQC_LERR << "GetSocketForNFI failed";
-		  return;
-		}
-		
-		//now we can use the socket
-		boost::unique_lock<boost::shared_mutex> lock_socket(socket_info->socket_mutex);
-		ZMQC_LDBG << "Lock acquired on socket mutex";
-		
-		if(!(socket_info.get() && socket_info->socket)) {
-			ZMQC_LDBG << "Socket creation error";
-			return;
-		}
-		
-		//detach buffer from carrier object so we don't need to copy anymore the data
-		callSerialization->disposeOnDelete = false;
-		if((err = zmq_msg_init_data(&message, (void*)callSerialization->getBufferPtr(), callSerialization->getBufferLen(), my_free, NULL))) {
-			throw CException(-1, "Error initializiend rcp message", __PRETTY_FUNCTION__);
-		}else if(zmq_sendmsg(socket_info->socket, &message, ZMQ_NOBLOCK)==-1) {
-			throw CException(-1, "Error sending data", __PRETTY_FUNCTION__);
-		} else if(zmq_recvmsg(socket_info->socket, &reply, 0) == -1) {
-			throw CException(-1, "Error receiving data", __PRETTY_FUNCTION__);
-		} else {
-			ZMQC_LDBG << "ACK Received";
-			//decode result of the posting message operation
-			if(zmq_msg_size(&reply)>0){
-#if DEBUG
-				std::stringstream ss;
-				ss << "Sending result" << std::endl;
-				auto_ptr<CDataWrapper> resultBson(new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
-				if(resultBson->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
-					result_forward_error = resultBson->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
-				}
-				if(result_forward_error) {
-					std::stringstream ss;
-					ss << "Result error code: " << result_forward_error << std::endl;
-					if(resultBson->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE)) {
-						ss << "Result error message: " <<  resultBson->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE)<< std::endl;
-					}
-					if(resultBson->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN)) {
-						ss << "Result error domain: " <<  resultBson->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN)<< std::endl;
-					}
-					ZMQC_LDBG << ss.str();
-				}
-#endif
-			}
-		}
-	}catch (std::exception& e) {
-		disposeSocket(socket_info);
-		ZMQC_LAPP << "Error during message forwarding:"<< e.what();
-		return;
-	} catch (...) {
-		disposeSocket(socket_info);
-		ZMQC_LAPP << "General error during message forwarding:";
-		return;
-	}
-	zmq_msg_close (&message);
-	zmq_msg_close (&reply);
+    //the domain is securely the same is is mandatory for submition so i need to get the name of the action
+    int			err = 0;
+    zmq_msg_t	reply;
+    zmq_msg_t	message;
+    zmq_msg_init (&reply);
+    
+    //get remote ip
+    //serialize the call packet
+    SocketInfo *socket_info;
+    auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
+    try{
+        socket_info = getSocketForNFI(messageInfo);
+        if(socket_info == NULL){
+            ZMQC_LERR << "GetSocketForNFI failed";
+            forwadSubmissionResultError(messageInfo,
+                                        -1,
+                                        "GetSocketForNFI failed",
+                                        __PRETTY_FUNCTION__);
+            return;
+        }
+        
+        if(!socket_info->socket) {
+            ZMQC_LDBG << "Socket creation error";
+            forwadSubmissionResultError(messageInfo,
+                                        -1,
+                                        "Socket creation error",
+                                        __PRETTY_FUNCTION__);
+            releaseSocket(socket_info);
+            return;
+        }
+        
+        //detach buffer from carrier object so we don't need to copy anymore the data
+        callSerialization->disposeOnDelete = false;
+        if((err = zmq_msg_init_data(&message, (void*)callSerialization->getBufferPtr(), callSerialization->getBufferLen(), my_free, NULL)) == -1) {
+            int32_t sent_error = zmq_errno();
+            std::string error_message =zmq_strerror(sent_error);
+            ZMQC_LERR << "Error allcoating zmq messagecode:" << sent_error << " message:" <<error_message;
+            if(messageInfo->is_request) {
+                forwadSubmissionResultError(messageInfo,
+                                            -1,
+                                            "Error initializiend rcp message",
+                                            __PRETTY_FUNCTION__);
+            }
+        } else {
+            ZMQC_LDBG << "Try to send message";
+            ZMQ_DO_AGAIN(zmq_sendmsg(socket_info->socket, &message, ZMQ_DONTWAIT);)
+            if(err == -1) {
+                int32_t sent_error = zmq_errno();
+                std::string error_message =zmq_strerror(sent_error);
+                ZMQC_LERR << "Error sending message with code:" << sent_error << " message:" <<error_message;
+                if(messageInfo->is_request) {
+                    forwadSubmissionResultError(messageInfo,
+                                                sent_error,
+                                                error_message,
+                                                __PRETTY_FUNCTION__);
+                }
+            }else{
+                ZMQC_LDBG << "Message sent now wait for ack";
+                //ok get the answer
+                ZMQ_DO_AGAIN(zmq_recvmsg(socket_info->socket, &reply, 0);)
+                if(err == -1) {
+                    int32_t sent_error = zmq_errno();
+                    std::string error_message = zmq_strerror(sent_error);
+                    ZMQC_LERR << "Error receiving ack for message message with code:" << sent_error << " message:" <<error_message;
+                    if(messageInfo->is_request) {
+                        forwadSubmissionResultError(messageInfo,
+                                                    sent_error,
+                                                    error_message,
+                                                    __PRETTY_FUNCTION__);
+                    }
+                } else {
+                    //decode result of the posting message operation
+                    if(messageInfo->is_request) {
+                        if(zmq_msg_size(&reply)>0){
+                            ZMQC_LDBG << "ACK Received for request";
+                            //there is a reply so we need to check if all ok or in case answer to request
+                            forwadSubmissionResultError(messageInfo->sender_node_id,
+                                                        messageInfo->sender_request_id,
+                                                        new CDataWrapper(static_cast<const char *>(zmq_msg_data(&reply))));
+                        } else {
+                            ZMQC_LDBG << "Bad ACK received";
+                            forwadSubmissionResultError(messageInfo,
+                                                        -1,
+                                                        "bad ack received",
+                                                        __PRETTY_FUNCTION__);
+                        }
+                    } else {
+                        ZMQC_LDBG << "ACK Received for message";
+                    }
+                }
+            }
+        }
+    }catch (std::exception& e) {
+        ZMQC_LAPP << "Error during message forwarding:"<< e.what();
+    } catch (...) {
+        ZMQC_LAPP << "General error during message forwarding:";
+    }
+    releaseSocket(socket_info);
+    zmq_msg_close (&message);
+    zmq_msg_close (&reply);
+}
+
+uint64_t ZMQClient::getMessageQueueSize() {
+    return CObjectProcessingQueue::queueSize();
 }

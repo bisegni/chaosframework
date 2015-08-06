@@ -1,6 +1,6 @@
 /*
  *	URLServiceFeeder.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -32,11 +32,14 @@ using namespace chaos::common::network;
 
 URLServiceFeeder::URLServiceFeeder(std::string alias, URLServiceFeederHandler *_handler):
 NamedService(alias),
+last_round_robin_index(0),
 list_size(0),
 current_service(NULL),
 service_list(NULL),
 handler(_handler),
-feed_mode(URLServiceFeeder::URLServiceFeedModeRoundRobin) {
+feed_mode(URLServiceFeeder::URLServiceFeedModeRoundRobin),
+set_urls_pos_index(boost::multi_index::get<position_index>(set_urls_online)),
+set_urls_rb_pos_index(boost::multi_index::get<rb_pos_index>(set_urls_online)){
     CHAOS_ASSERT(handler)
 }
 
@@ -49,16 +52,50 @@ URLServiceFeeder::~URLServiceFeeder() {
 	delete(service_list);
 }
 
+URLServiceFeeder::URLService *URLServiceFeeder::getNextFromSetByRoundRobin() {
+    URLServiceFeeder::URLService *result_service = NULL;
+    SetUrlRBPositionIndexIterator it = set_urls_online.get<rb_pos_index>().begin();
+    if(it == set_urls_online.get<rb_pos_index>().end()) return NULL;
+
+    const URLServiceIndex serv_by_it = *it;
+    result_service = serv_by_it.url_service;
+
+        //remove and resinser to schedule the next service
+        //update round robin order
+    set_urls_rb_pos_index.modify(it, URLServiceIndexUpdateRBPosition(++last_round_robin_index));
+        //return the service
+    return result_service;
+}
+
+URLServiceFeeder::URLService *URLServiceFeeder::getNextFromSetByPriority() {
+    URLServiceFeeder::URLService *result_service = NULL;
+    SetUrlPositionIndexIterator it = set_urls_online.get<position_index>().begin();
+    if(it == set_urls_online.get<position_index>().end()) return NULL;
+
+    URLServiceIndex serv_by_it = *it;
+    result_service = serv_by_it.url_service;
+
+        //return the service
+    return result_service;
+}
+
+void URLServiceFeeder::removeFromOnlineQueue(uint32_t url_index) {
+    SetUrlPositionIndexIterator it = set_urls_online.get<position_index>().find(url_index);
+    if(it == set_urls_online.get<position_index>().end()) return;
+    URLServiceIndex serv_by_it = *it;
+    set_urls_online.get<position_index>().erase(url_index);
+}
 /*!
  Remove all url and service
  */
 void URLServiceFeeder::clear(bool dispose_service) {
-	URLServiceFeeder_LAPP << "Remove all URL and service";
-	online_urls.clear();
+	URLServiceFeeder_LAPP << "Remove all URL and service form multi-index";
+	set_urls_online.clear();
 	
 	for(int idx = 0; idx < (list_size/sizeof(URLServiceFeeder::URLService)); idx++) {
 		//allocate space for new url service
-        if(service_list[idx]->service && dispose_service) {
+        if(service_list[idx]->service &&
+           dispose_service) {
 			handler->disposeService(service_list[idx]->service);
 		}
 		service_list[idx]->priority = 0;
@@ -68,23 +105,6 @@ void URLServiceFeeder::clear(bool dispose_service) {
 		offline_urls.erase(idx);
     }
 	
-}
-
-void URLServiceFeeder::removeFromOnlineQueue(uint32_t url_index) {
-	URLService *tmp_element = NULL;
-	OnlineQueueType work_queue;
-	while (!online_urls.empty()) {
-		tmp_element = online_urls.top();
-		online_urls.pop();
-		if(tmp_element->index == url_index) {
-			continue;
-		}
-		work_queue.push(tmp_element);
-	}
-	online_urls.clear();
-	
-	//merge the new queue into empyt old one
-	boost::heap::heap_merge(online_urls, work_queue);
 }
 
 void URLServiceFeeder::grow() {
@@ -107,49 +127,41 @@ void URLServiceFeeder::grow() {
 uint32_t URLServiceFeeder::addURL(const URL& new_url, uint32_t priority) {
 	//lock the queue
 	uint32_t service_index = 0;
+        //expand memory for contain new service description
 	grow();
+
 	std::set<uint32_t>::iterator new_index = available_url.begin();
 	service_index = *new_index;
-	online_urls.push(service_list[*new_index]);
-	available_url.erase(new_index);
-	
+
 	service_list[service_index]->url = new_url;
 	service_list[service_index]->service = handler->serviceForURL(new_url, service_index);
 	service_list[service_index]->online = true;
 	service_list[service_index]->priority = priority;
-	
+
+        //we can insert new service in online structure
+    set_urls_online.insert(URLServiceIndex(service_index,
+                                           priority,
+                                           ++last_round_robin_index,
+                                           service_list[*new_index]));
+
+        //this index is not anymore available
+    available_url.erase(new_index);
+        //return new index
 	return service_index;
 }
 
-URLServiceFeeder::URLService* URLServiceFeeder::getNext() {
-	URLService *result = NULL;
-	while (!online_urls.empty()) {
-		if(online_urls.top()->online) {
-			result = online_urls.top();
-			online_urls.pop();
-			break;
-		} else {
-			//push the index of this offline element into
-			offline_urls.insert(online_urls.top()->index);
-		}
-		online_urls.pop();
-	}
-	return result;
-}
-
 void* URLServiceFeeder::getService() {
-	if(!current_service) {
-		if (!(current_service = getNext())) return NULL;
-	} else if (feed_mode == URLServiceFeeder::URLServiceFeedModeRoundRobin) {
-		URLService *last_service = current_service;
-		if((current_service = getNext())){
-			//we have a new service so we can push the oldone
-			online_urls.push(last_service);
-		} else {
-			current_service = last_service;
-		}
-	}
-	return current_service->service;
+    switch (feed_mode) {
+        case URLServiceFeeder::URLServiceFeedModeRoundRobin:
+            current_service = getNextFromSetByRoundRobin();
+            break;
+
+        case URLServiceFeeder::URLServiceFeedModeFailOver:
+            current_service = getNextFromSetByPriority();
+            break;
+    }
+
+    return (current_service?current_service->service:NULL);
 }
 
 void URLServiceFeeder::setURLOffline(uint32_t idx) {
@@ -157,11 +169,19 @@ void URLServiceFeeder::setURLOffline(uint32_t idx) {
 		URLServiceFeeder_LERR << "Index out of range";
 		return;
 	}
+
+        //set it offline from global list
+    service_list[idx]->online = false;
+
+        //remove from online set
+    removeFromOnlineQueue(idx);
+
+        //check if in case is the current
 	if(current_service && current_service->index == idx) {
 		current_service = NULL;
 	}
-	service_list[idx]->online = false;
-	//set service offline
+
+	//put into ofline set service offline
 	offline_urls.insert(idx);
 }
 
@@ -170,13 +190,19 @@ void URLServiceFeeder::setURLOnline(uint32_t idx) {
 		URLServiceFeeder_LERR << "Index out of range";
 		return;
 	}
-	//set service offline
+	//find form offline set and remove it
 	std::set<uint32_t>::iterator iter = offline_urls.find(idx);
 	if(iter != offline_urls.end()) {
 		offline_urls.erase(iter);
 	}
+        //mar as online
 	service_list[idx]->online = true;
-	online_urls.push(service_list[idx]);
+
+        //add it into online set
+    set_urls_online.insert(URLServiceIndex(service_list[idx]->index,
+                                           service_list[idx]->priority,
+                                           ++last_round_robin_index,
+                                           service_list[idx]));
 }
 
 void URLServiceFeeder::removeURL(uint32_t idx, bool deallocate_service) {

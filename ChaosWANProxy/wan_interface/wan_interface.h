@@ -1,6 +1,6 @@
 /*
  *	wan_interface.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh <year> INFN, National Institute of Nuclear Physics

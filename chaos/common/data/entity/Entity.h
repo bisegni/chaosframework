@@ -1,6 +1,6 @@
 /*
  *	Entity.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -76,9 +76,9 @@ namespace chaos {
             
             int32_t updateProperty(uint32_t propertyID, uint32_t keyID, const char * propertyVal);
 
-            int32_t addProperty(uint32_t keyID, std::string& propertyVal);
+            int32_t addProperty(uint32_t keyID, const std::string& propertyVal);
 
-            int32_t updateProperty(uint32_t propertyID, uint32_t keyID, std::string& propertyVal);
+            int32_t updateProperty(uint32_t propertyID, uint32_t keyID, const std::string& propertyVal);
 
             int32_t addProperty(uint32_t keyID, int64_t propertyVal);
             

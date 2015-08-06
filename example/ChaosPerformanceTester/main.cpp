@@ -1,6 +1,6 @@
 /*
  *	UIToolkitCMDLineExample.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -94,7 +94,7 @@ int main (int argc, char* argv[] ) {
 			command_sequence.push_back(1);
 		}
 		device_network_address = new CNetworkAddress();
-		device_network_address->ipPort = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<std::string>(OPT_NODE_ADDRESS);
+		device_network_address->ip_port = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<std::string>(OPT_NODE_ADDRESS);
 		chaos::common::message::PerformanceNodeChannel *perf_channel = LLRpcApi::getInstance()->getNewPerformanceChannel(device_network_address);
 		chaos::common::direct_io::DirectIOPerformanceSession *session = NULL;
 		if(!perf_channel->getPerformanceSession(&session, timeout) && session) {
@@ -136,8 +136,6 @@ int main (int argc, char* argv[] ) {
     } catch (CException& e) {
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
     }
-	
-	if(device_network_address) delete(device_network_address);
     return 0;
 }
 

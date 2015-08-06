@@ -1,6 +1,6 @@
 /*
  *	ControlException.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -36,13 +36,12 @@ namespace chaos{
         
         void composeMsg() {
             std::stringstream ss;
-			ss << "-----------Exception------------"<<std::endl;
+            ss << "-----------Exception------------"<<std::endl;
             ss << "Domain:" << errorDomain<<std::endl;
             ss << "Message:" << errorMessage<<std::endl;
             ss << "Error Code;" << errorCode<<std::endl;
             ss << "-----------Exception------------"<<std::endl;
-            const std::string& strSS = ss.str();
-            msg = strSS.c_str();
+            msg = ss.str();
         }
     public:
         //! identify the number for the error

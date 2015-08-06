@@ -1,6 +1,6 @@
 /*
  *	MongoDBUnitServerDataAccess.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -20,40 +20,60 @@
 #ifndef __CHAOSFramework__MongoDBUnitServerDataAccess__
 #define __CHAOSFramework__MongoDBUnitServerDataAccess__
 
-#include "MongoDBAccessor.h"
+
+#include "MongoDBNodeDataAccess.h"
 #include "../data_access/UnitServerDataAccess.h"
+
 #include <chaos/common/utility/ObjectInstancer.h>
+
+#include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
+
+#include <boost/shared_ptr.hpp>
+
 namespace chaos {
-    namespace metadata_service {
-        namespace persistence {
-            namespace mongodb {
-                //forward declaration
-                class MongoDBPersistenceDriver;
-                
+	namespace metadata_service {
+		namespace persistence {
+			namespace mongodb {
+				
+				//forward declaration
+				class MongoDBPersistenceDriver;
+				
                 //! Data Access for producer manipulation data
-                class MongoDBUnitServerDataAccess:
-                public data_access::UnitServerDataAccess,
-                protected MongoDBAccessor {
-                    friend class INSTANCER_P1(MongoDBUnitServerDataAccess, AbstractDataAccess, const boost::shared_ptr<MongoDBHAConnectionManager>&);
-                protected:
-                    MongoDBUnitServerDataAccess(const boost::shared_ptr<MongoDBHAConnectionManager>& _connection);
-                    ~MongoDBUnitServerDataAccess();
-                public:
+				class MongoDBUnitServerDataAccess:
+				public data_access::UnitServerDataAccess,
+                protected service_common::persistence::mongodb::MongoDBAccessor {
+                    friend class MongoDBPersistenceDriver;
+                    
+                    MongoDBNodeDataAccess *node_data_access = NULL;
+				protected:
+                    MongoDBUnitServerDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
+					~MongoDBUnitServerDataAccess();
+				public:
                     //inherited method
-                    int insertNewUnitServer(chaos::common::data::CDataWrapper& unit_server_description);
+                    int insertNewUS(chaos::common::data::CDataWrapper& unit_server_description, bool check_for_cu_type = true);
                     
-                    // inherited method
-                    int checkUnitServerPresence(const std::string& unit_server_alias,
-                                                bool& presence);
+                    //inherited method
+                    int addCUType(const std::string& unit_server_uid, const std::string& cu_type);
                     
-                    //! inherited method
-                    int updateUnitServer(chaos::common::data::CDataWrapper& unit_server_description);
-                };
+                    //inherited method
+                    int removeCUType(const std::string& unit_server_uid, const std::string& cu_type);
+                    
+                    //inherited method
+                    int updateUS(chaos::common::data::CDataWrapper& unit_server_description);
+                    
+                    //inherited method
+                    int checkPresence(const std::string& unit_server_unique_id,
+                                      bool& presence);
 
-                
-            }
-        }
-    }
+                    //inherited method
+                    int deleteUS(const std::string& unit_server_unique_id);
+
+                    //inherited method
+                    int getDescription(const std::string& unit_server_uid,
+                                       chaos::common::data::CDataWrapper **unit_server_description);
+				};
+			}
+		}
+	}
 }
-
-#endif /* defined(__CHAOSFramework__MongoDBUnitServerDataAccess__) */
+#endif /* defined(__CHAOSFramework__MongoDBProducerDataAccess__) */

@@ -1,6 +1,6 @@
 /*
  *	UnitServerApiGroup.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyrigh 2015 INFN, National Institute of Nuclear Physics
@@ -20,24 +20,24 @@
 #ifndef __CHAOSFramework__UnitServerApiGroup__
 #define __CHAOSFramework__UnitServerApiGroup__
 
-#include "../AbstractApiGroup.h"
+#include "ChaosMetadataService/api/AbstractApiGroup.h"
 
 namespace chaos {
-    namespace metadata_service {
-        namespace api {
-            namespace unit_server {
-                
-                //! api group for the managment of the UnitServer
-                DECLARE_CLASS_FACTORY(UnitServerApiGroup, AbstractApiGroup) {
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(UnitServerApiGroup)
-                public:
-                    UnitServerApiGroup();
-                    ~UnitServerApiGroup();
-                };
-                
-            }
-        }
-    }
+	namespace metadata_service {
+		namespace api {
+			namespace unit_server {
+				
+				//! api group for the managment of the producer
+				DECLARE_CLASS_FACTORY(UnitServerApiGroup, AbstractApiGroup) {
+					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(UnitServerApiGroup)
+				public:
+					UnitServerApiGroup();
+					~UnitServerApiGroup();
+				};
+				
+			}
+		}
+	}
 }
 
-#endif /* defined(__CHAOSFramework__UnitServerGroup__) */
+#endif /* defined(__CHAOSFramework__ProducerGroup__) */

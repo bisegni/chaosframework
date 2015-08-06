@@ -1,6 +1,6 @@
 /*
  *	persistence.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2015 INFN, National Institute of Nuclear Physics
@@ -20,7 +20,9 @@
 #ifndef CHAOSFramework_persistence_h
 #define CHAOSFramework_persistence_h
 
-#include "AbstractPersistenceDriver.h"
-#include "AbstractDataAccess.h"
+#include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
+#include <chaos_service_common/persistence/data_access/AbstractDataAccess.h>
+#include "data_access/DataAccess.h"
+#include "persistence_types.h"
 
 #endif

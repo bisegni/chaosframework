@@ -1,6 +1,6 @@
 /*
  *	GlobalConfiguration.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -49,25 +49,33 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_HELP, "Produce help message");
         //cache parameter
         addOption<std::string>(InitOption::OPT_CONF_FILE,"File configuration path");
+        addOption(InitOption::OPT_LOG_METRIC_ON_CONSOLE, po::value< bool >()->default_value(true), "Enable the logging metric on console");
+        addOption(InitOption::OPT_LOG_METRIC_ON_FILE, po::value< bool >()->default_value(false), "Enable the logging metric on file");
+        addOption(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, po::value< string >()->default_value("./"), "Specify the path of metric logs");
         addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirect"), "Specify the data io implementation");
         addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
         addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"DirectIO server thread number");
+        addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC, po::value< bool >()->default_value(false), "Enable the logging of the DirectIO metric");
+        addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, po::value< uint64_t >()->default_value(5), "The time intervall between metric samples");
+        addOption(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, po::value< bool >()->default_value(true), "Merge the metric values(of all endpoint) together");
         addOption(InitOption::OPT_RPC_SYNC_ENABLE, po::value< bool >()->default_value(false), "Enable the sync wrapper to rpc protocol");
         addOption(InitOption::OPT_RPC_SYNC_IMPLEMENTATION, po::value< string >()->default_value("HTTP"), "Specify the synchronous rpc implementation");
 		addOption(InitOption::OPT_RPC_SYNC_PORT, po::value< int >()->default_value(_SYNC_RPC_PORT), "Port where is published the syncrhonous rpc interface");
+        addOption(InitOption::OPT_RPC_LOG_METRIC, po::value< bool >()->default_value(false), "Enable the logging of the mrpc metric");
+        addOption(InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL, po::value< uint64_t >()->default_value(5), "The time intervall between metric samples");
         addOption(InitOption::OPT_RPC_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the rpc implementation");
         addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(_RPC_PORT), "RPC server port");
         addOption(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"RPC server thread number");
         addOption(InitOption::OPT_RPC_IMPL_KV_PARAM, po::value<string>(),"RPC implementation key value parameter[k|v-k1|v1]");
-        addOption(InitOption::OPT_LIVE_DATA_SERVER_ADDRESS, po::value< vector<string> >()->multitoken(), "Live server:port address");
         addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< string >()->default_value("localhost:5000"), "Metadataserver server:port address");
         addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
         addOption(InitOption::OPT_LOG_ON_FILE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on file");
         addOption(InitOption::OPT_LOG_FILE, po::value< string >()->default_value("chaos_frameowrk.log"), "Specify when the file path of the log");
         addOption(InitOption::OPT_LOG_LEVEL, po::value< string >()->default_value("info"), "Specify the level of the log using the value [debug, info, notice, warning, fatal]"),
         addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
+        addOption(InitOption::OPT_PUBLISHING_INTERFACE, po::value< string >(), "Specify the interface where to publish the framework rpc system");
     }catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
     }
@@ -195,6 +203,15 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnFile, InitOption::OPT_LOG_ON_FILE)
     configuration.addBoolValue(InitOption::OPT_LOG_ON_FILE, logOnFile);
     
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, log_metric_on_console, InitOption::OPT_LOG_METRIC_ON_CONSOLE, true)
+    configuration.addBoolValue(InitOption::OPT_LOG_METRIC_ON_CONSOLE, log_metric_on_console);
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, log_metric_on_file, InitOption::OPT_LOG_METRIC_ON_FILE, false)
+    configuration.addBoolValue(InitOption::OPT_LOG_METRIC_ON_FILE, log_metric_on_file);
+    
+    CHECK_AND_DEFINE_OPTION(string, log_metric_file_path, InitOption::OPT_LOG_METRIC_ON_FILE_PATH)
+    configuration.addStringValue(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, log_metric_file_path);
+    
     CHECK_AND_DEFINE_OPTION(string, logFilePath, InitOption::OPT_LOG_FILE)
     configuration.addStringValue(InitOption::OPT_LOG_FILE, logFilePath);
     
@@ -205,36 +222,46 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     bool isIp = regex_match(publishingIp, common::utility::ServerIPRegExp);
     if(isIp) configuration.addStringValue(InitOption::OPT_PUBLISHING_IP, publishingIp);
     
+    CHECK_AND_DEFINE_OPTION(string, publishingInterface, InitOption::OPT_PUBLISHING_INTERFACE)
+    configuration.addStringValue(InitOption::OPT_PUBLISHING_INTERFACE, publishingInterface);
+    
     //configure rpc
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerPort, InitOption::OPT_RPC_SERVER_PORT, 8888)
     int32_t freeFoundPort = InetUtility::scanForLocalFreePort(rpcServerPort);
     addLocalServerBasePort(freeFoundPort);
-    configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT, freeFoundPort);
+    configuration.addInt32Value(InitOption::OPT_RPC_SERVER_PORT, freeFoundPort);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerThreadNumber, InitOption::OPT_RPC_SERVER_THREAD_NUMBER, 1)
-    configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER, rpcServerThreadNumber);
+    configuration.addInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, rpcServerThreadNumber);
     
     CHECK_AND_DEFINE_OPTION(string, rpcImpl, InitOption::OPT_RPC_IMPLEMENTATION)
-    configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE, rpcImpl);
+    configuration.addStringValue(InitOption::OPT_RPC_IMPLEMENTATION, rpcImpl);
     
-    CHECK_AND_DEFINE_OPTION(bool, rpc_sync_enable, InitOption::OPT_RPC_SYNC_ENABLE)
+    CHECK_AND_DEFINE_OPTION(bool, OPT_RPC_SYNC_ENABLE, InitOption::OPT_RPC_SYNC_ENABLE)
     else{
-        rpc_sync_enable = false;
+        OPT_RPC_SYNC_ENABLE = false;
     }
-    configuration.addBoolValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE, rpc_sync_enable);
+    configuration.addBoolValue(InitOption::OPT_RPC_SYNC_ENABLE, OPT_RPC_SYNC_ENABLE);
 	
 	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpc_sync_port, InitOption::OPT_RPC_SYNC_PORT, 8080)
-	configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_PORT, InetUtility::scanForLocalFreePort(rpc_sync_port));
+	configuration.addInt32Value(InitOption::OPT_RPC_SYNC_PORT, InetUtility::scanForLocalFreePort(rpc_sync_port));
 	
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, rpc_enable_log_metric, InitOption::OPT_RPC_LOG_METRIC, false)
+    configuration.addBoolValue(InitOption::OPT_RPC_LOG_METRIC, rpc_enable_log_metric);
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint64_t, rpc_enable_log_metric_update_sec, InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL, 5)
+    configuration.addInt64Value(InitOption::OPT_RPC_LOG_METRIC_UPDATE_INTERVAL, rpc_enable_log_metric_update_sec);
+    
+    
     CHECK_AND_DEFINE_OPTION(string, rpc_sync_impl, InitOption::OPT_RPC_SYNC_IMPLEMENTATION)
-    configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_TYPE, rpc_sync_impl);
+    configuration.addStringValue(InitOption::OPT_RPC_SYNC_IMPLEMENTATION, rpc_sync_impl);
     
     CHECK_AND_DEFINE_OPTION(string, rpc_impl_kv_param, InitOption::OPT_RPC_IMPL_KV_PARAM)
-    configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_KV_IMPL_PARAM_STRING_REGEX, rpc_sync_impl);
+    configuration.addStringValue(InitOption::OPT_RPC_IMPL_KV_PARAM, rpc_sync_impl);
     
     //fill the key value list
     if(rpc_impl_kv_param.size()) {
-        fillKVParameter(map_kv_param_rpc_impl, rpc_impl_kv_param, std::string(RpcConfigurationKey::CS_CMDM_RPC_KV_IMPL_PARAM_STRING_REGEX));
+        fillKVParameter(map_kv_param_rpc_impl, rpc_impl_kv_param, std::string(RpcConfigurationKey::OPT_RPC_IMPL_KV_PARAM_STRING_REGEX));
     }
     
     //direct io
@@ -252,19 +279,17 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     freeFoundPort = InetUtility::scanForLocalFreePort(direct_io_service_port);
     configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT, (uint32_t)freeFoundPort);
     
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, direct_io_enable_log_metric, InitOption::OPT_DIRECT_IO_LOG_METRIC, false)
+    configuration.addBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC, direct_io_enable_log_metric);
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint64_t, direct_io_enable_log_metric_update_sec, InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, 5)
+    configuration.addInt64Value(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, direct_io_enable_log_metric_update_sec);
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(bool, direct_io_enable_log_metric_merged_endpoint, InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, true)
+    configuration.addBoolValue(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, direct_io_enable_log_metric_merged_endpoint);
+    
     //cevent
     configuration.addStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
-    
-    //configure the live data
-    CHECK_AND_DEFINE_OPTION(vector<string>, liveDataServer, InitOption::OPT_LIVE_DATA_SERVER_ADDRESS)
-    if(liveDataServer.size()==0){
-        configuration.appendStringToArray("localhost:11211");
-    }else{
-        for (int idx = 0; idx < liveDataServer.size(); idx++) {
-            configuration.appendStringToArray(liveDataServer[idx]);
-        }
-    }
-    configuration.finalizeArrayForKey(DataProxyConfigurationKey::DS_SERVER_ADDRESS);
     
     //configure metadataserver
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, InitOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")
@@ -346,7 +371,7 @@ void GlobalConfiguration::addMetadataServerAddress(const string& mdsAddress) thr
         throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
     
     //address can be added
-    configuration.addStringValue(DataProxyConfigurationKey::MDS_SERVER_ADDRESS, mdsAddress);
+    configuration.addStringValue(InitOption::OPT_METADATASERVER_ADDRESS, mdsAddress);
 }
 
 /**
@@ -372,7 +397,7 @@ void GlobalConfiguration::addLocalServerBasePort(int32_t localDefaultPort) throw
  return the address of metadataserver
  */
 string GlobalConfiguration::getMetadataServerAddress() {
-    return configuration.getStringValue(DataProxyConfigurationKey::MDS_SERVER_ADDRESS);
+    return configuration.getStringValue(InitOption::OPT_METADATASERVER_ADDRESS);
 }
 
 /*
@@ -401,7 +426,7 @@ string GlobalConfiguration::getLocalServerAddressAnBasePort(){
  return the address of metadataserver
  */
 bool GlobalConfiguration::isMEtadataServerConfigured() {
-    return configuration.hasKey(DataProxyConfigurationKey::MDS_SERVER_ADDRESS);
+    return configuration.hasKey(InitOption::OPT_METADATASERVER_ADDRESS);
 }
 
 const std::map<std::string, std::string>& GlobalConfiguration::getRpcImplKVParam() const {

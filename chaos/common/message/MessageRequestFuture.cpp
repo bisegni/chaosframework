@@ -1,0 +1,97 @@
+/*
+ *	MessageRequestFuture.cpp
+ *	!CHAOS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
+#include <chaos/common/message/MessageRequestFuture.h>
+
+#define MRF_INFO INFO_LOG(MessageRequestFuture)
+#define MRF_DBG DBG_LOG(MessageRequestFuture)
+#define MRF_ERR ERR_LOG(MessageRequestFuture)
+
+using namespace chaos::common::message;
+
+//!private constructor
+MessageRequestFuture::MessageRequestFuture(chaos::common::utility::atomic_int_type _request_id,
+                                           boost::unique_future< boost::shared_ptr<chaos::common::data::CDataWrapper> > _future):
+request_id(_request_id),
+future(_future),
+request_result(NULL),
+error_code(-1),
+error_message(""),
+error_domain(""),
+local_result(false) {
+    
+}
+//!private destructor
+MessageRequestFuture::~MessageRequestFuture() {
+}
+
+bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
+    try{
+        if(request_result.get()) {
+            return true;
+        }
+        //! whait for result
+        if(timeout_in_milliseconds >= 0) {
+            future.wait_for(boost::chrono::milliseconds(timeout_in_milliseconds));
+        } else {
+            future.wait();
+        }
+        
+        if(future.is_ready() &&
+           future.has_value()) {
+            MRF_PARSE_CDWPTR_RESULT(future.get())
+            return true;
+        } else {
+            return false;
+        }
+    } catch (boost::broken_promise &e) {
+        MRF_ERR << "Broken pormisess error:" << e.what();
+    }
+}
+
+//! try to get the result waiting for a determinate period of time
+chaos::common::data::CDataWrapper *MessageRequestFuture::getResult() {
+    //! wait for result
+    return request_result.get();
+    
+}
+
+chaos::common::data::CDataWrapper *MessageRequestFuture::detachResult() {
+    return request_result.release();
+}
+
+uint32_t const & MessageRequestFuture::getRequestID() {
+    return request_id;
+}
+
+int MessageRequestFuture::getError() const {
+    return error_code;
+}
+
+const std::string& MessageRequestFuture::getErrorDomain() const {
+    return error_domain;
+}
+
+const std::string& MessageRequestFuture::getErrorMessage() const {
+    return error_message;
+}
+
+bool MessageRequestFuture::isRemoteMeaning() {
+    return !local_result;
+}

@@ -1,6 +1,6 @@
 /*
  *	ChaosMetadataService.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -37,14 +37,14 @@ using namespace chaos::metadata_service;
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service::api;
 using namespace chaos::metadata_service::batch;
+using namespace chaos::service_common::persistence::data_access;
 using boost::shared_ptr;
 
 WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
 
-#define LCND_LAPP LAPP_ << "[ChaosMetadataService] - "
-#define LCND_LDBG LDBG_ << "[ChaosMetadataService] - " << __PRETTY_FUNCTION << " - "
-#define LCND_LERR LERR_ << "[ChaosMetadataService] - " << __PRETTY_FUNCTION << "(" << __LINE__ << ") - "
-
+#define LCND_LAPP   INFO_LOG(ChaosMetadataService)
+#define LCND_LDBG   DBG_LOG(ChaosMetadataService)
+#define LCND_LERR   ERR_LOG(ChaosMetadataService)
 //! C and C++ attribute parser
 /*!
  Specialized option for startup c and cpp program main options parameter
@@ -102,7 +102,7 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         
 		// persistence driver system
 		const std::string persistence_driver_name = setting.persistence_implementation + "PersistenceDriver";
-		persistence::AbstractPersistenceDriver *instance = ObjectFactoryRegister<persistence::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(persistence_driver_name);
+		AbstractPersistenceDriver *instance = ObjectFactoryRegister<AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(persistence_driver_name);
 		if(!instance) throw chaos::CException(-5, "No persistence driver instance found", __PRETTY_FUNCTION__);
 		api_subsystem_accessor.persistence_driver.reset(instance, "AbstractPersistenceDriver");
 		api_subsystem_accessor.persistence_driver.init((void*)&setting, __PRETTY_FUNCTION__);
@@ -111,6 +111,8 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         api_managment_service.reset(new ApiManagment(), "ApiManagment");
         api_managment_service.init(static_cast<void*>(&api_subsystem_accessor), __PRETTY_FUNCTION__);
 
+        //connect persistence driver to batch system
+        api_subsystem_accessor.batch_executor->abstract_persistance_driver = api_subsystem_accessor.persistence_driver.get();
 	} catch (CException& ex) {
 		DECODE_CHAOS_EXCEPTION(ex)
 		exit(1);

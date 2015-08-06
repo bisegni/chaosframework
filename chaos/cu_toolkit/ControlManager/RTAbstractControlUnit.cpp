@@ -1,6 +1,6 @@
 /*
  *	RTAbstractControlUnit.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2013 INFN, National Institute of Nuclear Physics
@@ -19,14 +19,16 @@
  */
 
 #include <limits>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
 
+#include <boost/format.hpp>
 
 using namespace chaos;
 using namespace chaos::common::data;
-using namespace chaos::common::data::cache;
 using namespace chaos::common::utility;
+using namespace chaos::common::data::cache;
 
 using namespace chaos::cu;
 using namespace chaos::cu::control_manager;
@@ -43,7 +45,7 @@ RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _control_unit_id
 AbstractControlUnit(CUType::RTCU,
 					_control_unit_id,
 					_control_unit_param),
-schedule_dalay(1000000){
+schedule_dalay(1000000) {
 	//allocate the handler engine
 	// attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
 	
@@ -63,7 +65,7 @@ AbstractControlUnit(CUType::RTCU,
 					_control_unit_id,
 					_control_unit_param,
 					_control_unit_drivers),
-schedule_dalay(1000000){
+schedule_dalay(1000000) {
 	//allocate the handler engine
 	//attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
 	
@@ -96,9 +98,13 @@ void RTAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigura
 	AbstractControlUnit::_defineActionAndDataset(setupConfiguration);
 	//add the scekdule dalay for the sandbox
 	if(schedule_dalay){
-		//in this case ovverrride the config file
-		setupConfiguration.addInt64Value(CUDefinitionKey::THREAD_SCHEDULE_DELAY , schedule_dalay);
+		//in this case ovverride the config file
+		setupConfiguration.addInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY , schedule_dalay);
 	}
+}
+
+AbstractSharedDomainCache *RTAbstractControlUnit::_getAttributeCache() {
+    return AbstractControlUnit::_getAttributeCache();
 }
 
 /*!
@@ -120,13 +126,14 @@ void RTAbstractControlUnit::init(void *initData) throw(CException) {
  Starto the  Control Unit scheduling for device
  */
 void RTAbstractControlUnit::start() throw(CException) {
+    _updateRunScheduleDelay(schedule_dalay);
 	//call parent impl
 	AbstractControlUnit::start();
 	
 	//prefetch handle for heartbeat and acuisition ts cached value
-	hb_cached_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataPackSystemKey::DP_SYS_HEARTBEAT);
-	run_acquisition_ts_handle = reinterpret_cast<uint64_t**>(&attribute_value_shared_cache->getAttributeValue(DOMAIN_OUTPUT,
-																											  DataPackCommonKey::DPCK_TIMESTAMP)->value_buffer);
+	//hb_cached_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_SYSTEM, DataPackSystemKey::DP_SYS_HEARTBEAT);
+	//run_acquisition_ts_handle = reinterpret_cast<uint64_t**>(&attribute_value_shared_cache->getAttributeValue(DOMAIN_OUTPUT,
+																											  //DataPackCommonKey::DPCK_TIMESTAMP)->value_buffer);
 	
 	RTCULAPP_ << "Starting thread for device:" << DatasetDB::getDeviceID();
 	threadStartStopManagment(true);
@@ -212,23 +219,31 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
 /*!
  Event for update some CU configuration
  */
-CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePack, bool& detachParam) throw (CException) {
-	CDataWrapper *result = AbstractControlUnit::updateConfiguration(updatePack, detachParam);
-	if(updatePack->hasKey(CUDefinitionKey::THREAD_SCHEDULE_DELAY)){
-		//we need to configure the delay  from a run() call and the next
-		uint64_t uSecdelay = updatePack->getUInt64Value(CUDefinitionKey::THREAD_SCHEDULE_DELAY);
-		//check if we need to update the scehdule time
-		if(uSecdelay != schedule_dalay){
-			RTCULAPP_ << "Update schedule delay in:" << uSecdelay << " microsecond";
-			schedule_dalay = uSecdelay;
-			//send envet for the update
-			//----------------------
-			// we need to optimize and be sure that event channel
-			// is mandatory so we can left over the 'if' check
-			//----------------------
-			//if(device_event_channel) device_event_channel->notifyForScheduleUpdateWithNewValue(DatasetDB::getDeviceID(), uSecdelay);
-		}
-	}
+CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* update_pack, bool& detach_param) throw (CException) {
+	CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
+    std::auto_ptr<CDataWrapper> cu_properties;
+    CDataWrapper *cu_property_container = NULL;
+	if(update_pack->hasKey(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY)){
+        cu_property_container = update_pack;
+    } else  if(update_pack->hasKey("property_abstract_control_unit") &&
+               update_pack->isCDataWrapperValue("property_abstract_control_unit")){
+        cu_properties.reset(update_pack->getCSDataValue("property_abstract_control_unit"));
+        if(cu_properties->hasKey(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY)) {
+            cu_property_container = cu_properties.get();
+        }
+    }
+    
+    if(cu_property_container) {
+        //we need to configure the delay  from a run() call and the next
+        uint64_t uSecdelay = cu_property_container->getUInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
+        //check if we need to update the scehdule time
+        if(uSecdelay != schedule_dalay){
+            RTCULAPP_ << "Update schedule delay in:" << uSecdelay << " microsecond";
+            schedule_dalay = uSecdelay;
+            _updateRunScheduleDelay(schedule_dalay);
+            pushSystemDataset();
+        }
+    }
 	return result;
 }
 
@@ -236,22 +251,25 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
  Execute the scehduling for the device
  */
 void RTAbstractControlUnit::executeOnThread() {
+    uint64_t start_execution = 0;
+    uint64_t processing_time = 0;
+    int64_t time_to_sleep = 0;
+    uint64_t start_execution_stat = 0;
+    uint64_t counter = 0;
 	while(scheduler_run) {
-		//set the acquiition time stamp and update it on cache
-		if((**run_acquisition_ts_handle = TimingUtil::getTimeStamp()) > last_hearbeat_time+1000) {
-			//copy to hearbeat cached value
-			last_hearbeat_time = **run_acquisition_ts_handle;
-			hb_cached_value->setValue(&last_hearbeat_time, sizeof(uint64_t));
-			//fire system data set
-			pushSystemDataset();
-		}
-		//! exec the control unit step
+        counter++;
+        start_execution_stat += (start_execution = TimingUtil::getTimeStampInMicrosends());
+        _updateAcquistionTimestamp((uint64_t)(start_execution/1000));
+        //! exec the control unit step
 		unitRun();
 		
 		//! check if the output dataset need to be pushed
-		pushOutputDataset();
+		pushOutputDataset(true);
 		
+        time_to_sleep = schedule_dalay - ((processing_time = TimingUtil::getTimeStampInMicrosends()) - start_execution);
+        //RTCULDBG_ << boost::str(boost::format("start_execution:%1%\nprocessing_time=%2%\ntime_to_sleep=%3%")%start_execution%processing_time%time_to_sleep);
+        if(time_to_sleep<0)continue;
 		//check if we are in sequential or in threaded mode
-		boost::this_thread::sleep_for(boost::chrono::microseconds(schedule_dalay));
+        boost::this_thread::sleep_for(boost::chrono::microseconds(time_to_sleep));
 	}
 }

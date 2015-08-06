@@ -1,6 +1,6 @@
 /*
  *	IOMemcachedIODriver.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -130,9 +130,9 @@ CDataWrapper* IOMemcachedIODriver::updateConfiguration(CDataWrapper* newConfigra
 	
 	if(!memClient) throw CException(0, "Write memcached structure not allocated", "IOMemcachedIODriver::updateConfiguration");
 	
-	if(newConfigration->hasKey(DataProxyConfigurationKey::DS_SERVER_ADDRESS) && memClient){
+	if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST) && memClient){
 		LMEMDRIVER_ << "Get the DataManager LiveData address value";
-		auto_ptr<chaos_data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataProxyConfigurationKey::DS_SERVER_ADDRESS));
+		auto_ptr<chaos_data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST));
 		//update the live data address
 		
 		//we need forst to reset all the server list

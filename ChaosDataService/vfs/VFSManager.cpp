@@ -1,6 +1,6 @@
 /*
  *	VFSManager.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2014 INFN, National Institute of Nuclear Physics
@@ -20,6 +20,7 @@
 
 #include "VFSManager.h"
 #include "query/DataBlockCache.h"
+#include "../ChaosDataService.h"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
@@ -29,10 +30,9 @@
 using namespace chaos::common::utility;
 using namespace chaos::data_service::vfs;
 
-#define VFSManager_LOG_HEAD "[VFSManager] - "
-#define VFSFM_LAPP_ LAPP_ << VFSManager_LOG_HEAD
-#define VFSFM_LDBG_ LDBG_ << VFSManager_LOG_HEAD << __FUNCTION__ << " - "
-#define VFSFM_LERR_ LERR_ << VFSManager_LOG_HEAD << __FUNCTION__ << " - "
+#define VFSFM_LAPP_ INFO_LOG(VFSManager)
+#define VFSFM_LDBG_ DBG_LOG(VFSManager)
+#define VFSFM_LERR_ ERR_LOG(VFSManager)
 
 #define HB_REPEAT_TIME 2000
 
@@ -67,6 +67,10 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 	VFSFM_LAPP_ << "Allocate storage driver of type " << storage_driver_class_name;
 	storage_driver_ptr = ObjectFactoryRegister<storage_system::StorageDriver>::getInstance()->getNewInstanceByName(storage_driver_class_name);
 	if(!storage_driver_ptr) throw chaos::CException(-1, "No storage driver found", __PRETTY_FUNCTION__);
+    if(ChaosDataService::getInstance()->setting.file_manager_setting.storage_driver_setting.log_metric) {
+        VFSFM_LDBG_ << "Enable cache log metric";
+        storage_driver_ptr = new storage_system::StorageDriverMetricCollector(storage_driver_ptr);
+    }
 	InizializableService::initImplementation(storage_driver_ptr, &setting->storage_driver_setting, storage_driver_ptr->getName(), __PRETTY_FUNCTION__);
 	
 	if(!setting->max_block_size) {

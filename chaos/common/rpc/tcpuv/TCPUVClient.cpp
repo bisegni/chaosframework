@@ -267,7 +267,7 @@ TCPUVClient::~TCPUVClient(){
  */
 void TCPUVClient::init(void *init_data) throw(CException) {
 	chaos::common::data::CDataWrapper *cfg = reinterpret_cast<chaos::common::data::CDataWrapper*>(init_data);
-	int32_t threadNumber = cfg->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
+	int32_t threadNumber = cfg->hasKey(InitOption::OPT_RPC_SERVER_THREAD_NUMBER)? cfg->getInt32Value(InitOption::OPT_RPC_SERVER_THREAD_NUMBER):1;
 	TCPUVClientLAPP << "ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
 	//CObjectProcessingQueue<NetworkForwardInfo>::init(threadNumber);
 	TCPUVClientLAPP << "ObjectProcessingQueue<NetworkForwardInfo> initialized";
@@ -353,7 +353,7 @@ bool TCPUVClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThre
 		if(server_desc_tokens.size() != 2)
 			throw CException(0, "Invalid url format", __PRETTY_FUNCTION__);
 		
-		if(!forwardInfo->message)
+		if(!forwardInfo->hasMessage())
 			throw CException(0, "No message in description", "ZMQClient::submitMessage");
 		//allocate new forward info
 		//submit action
@@ -363,7 +363,7 @@ bool TCPUVClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThre
 		uv_async_send(&async_submit_message);
 	} catch(CException& ex){
 		//in this case i need to delete the memory
-		if(forwardInfo->message) delete(forwardInfo->message);
+		//if(forwardInfo->hasMessage()) delete(forwardInfo->message);
 		if(forwardInfo) delete(forwardInfo);
 		//in this case i need to delete te memory allocated by message
 		DECODE_CHAOS_EXCEPTION(ex)

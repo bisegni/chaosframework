@@ -1,6 +1,6 @@
 /*
  *	WorkUnitManagement.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -31,8 +31,6 @@
 #include <boost/msm/front/euml/common.hpp>
 #include <boost/msm/front/euml/operator.hpp>
 #include <chaos/common/message/MDSMessageChannel.h>
-
-using namespace chaos::common::data;
 
 namespace chaos {
     namespace cu {
@@ -126,7 +124,7 @@ namespace chaos {
              */
             class WorkUnitManagement {
                     //! registration pack used to send work unit descirption to mds
-                CDataWrapper			mds_registration_message;
+                chaos::common::data::CDataWrapper			mds_registration_message;
                     //! state machine for the control unit instance
                 WorkUnitStateMachine	wu_instance_sm;
 
@@ -136,7 +134,7 @@ namespace chaos {
                 int sendConfPackToMDS(CDataWrapper& dataToSend);
                 inline string getCurrentStateString();
             public:
-                MDSMessageChannel						*mds_channel;
+                chaos::common::message::MDSMessageChannel   *mds_channel;
                     //! abstract contro unit isntalce
                 boost::shared_ptr<AbstractControlUnit>	work_unit_instance;
                 

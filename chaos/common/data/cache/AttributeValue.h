@@ -82,7 +82,7 @@ namespace chaos{
 					bool setValue(const void* value_ptr,
 								  uint32_t value_size,
 								  bool tag_has_changed = true);
-					
+                    
 					//! marck attribute as changed
 					void markAsChanged();
 					
@@ -92,7 +92,7 @@ namespace chaos{
 					//! the value is returned has handle because the pointer can change it size ans so
 					//! the pointer can be relocated
 					template<typename T>
-					T* getValuePtr() {
+					inline T* getValuePtr() {
 						return reinterpret_cast<T*>(value_buffer);
 					}
 					
@@ -102,6 +102,11 @@ namespace chaos{
 					 */
 					CDataWrapper *getValueAsCDatawrapperPtr(bool from_json = false);
 					
+                    //! write to data wrapper as key value
+                    void writeToCDataWrapper(CDataWrapper& data_wrapper);
+                    
+                    std::string toString();
+                    
 					//! check if attribute buffer is good
 					bool isGood();
 				private:

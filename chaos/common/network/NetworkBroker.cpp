@@ -1,6 +1,6 @@
 /*
  *	NetworkBroker.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -24,6 +24,7 @@
 #include <chaos/common/message/DeviceMessageChannel.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/MessageChannel.h>
+#include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <chaos/common/message/PerformanceNodeChannel.h>
 #include <chaos/common/event/EventServer.h>
 #include <chaos/common/event/EventClient.h>
@@ -32,6 +33,10 @@
 #include <chaos/common/event/channel/AlertEventChannel.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/common/utility/InetUtility.h>
+//-----------for metric collection---------
+#include <chaos/common/rpc/RpcClientMetricCollector.h>
+#include <chaos/common/rpc/RpcServerMetricCollector.h>
+#include <chaos/common/direct_io/DirectIODispatcherMetricCollector.h>
 
 #define MB_LAPP LAPP_ << "[NetworkBroker]- "
 
@@ -42,7 +47,7 @@ using namespace chaos::event;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::network;
-
+using namespace chaos::common::message;
 /*!
  
  */
@@ -55,7 +60,8 @@ rpc_client(NULL),
 sync_rpc_server(NULL),
 command_dispatcher(NULL),
 direct_io_dispatcher(NULL),
-direct_io_server(NULL) {
+direct_io_server(NULL),
+direct_io_client(NULL) {
     can_use_metadata_server = GlobalConfiguration::getInstance()->isMEtadataServerConfigured();
     if(can_use_metadata_server){
         metadata_server_address = GlobalConfiguration::getInstance()->getMetadataServerAddress();
@@ -79,7 +85,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
     
     
     if(!globalConfiguration) {
-        throw CException(1, "No global configuraiton found", __PRETTY_FUNCTION__);
+        throw CException(-1, "No global configuraiton found", __PRETTY_FUNCTION__);
     }
     
 	//---------------------------- D I R E C T I/O ----------------------------
@@ -90,18 +96,32 @@ void NetworkBroker::init(void *initData) throw(CException) {
         direct_io_client_impl = direct_io_impl + "DirectIOClient";
         MB_LAPP  << "Trying to initilize DirectIO Server: " << direct_io_server_impl;
         direct_io_server = ObjectFactoryRegister<common::direct_io::DirectIOServer>::getInstance()->getNewInstanceByName(direct_io_server_impl);
-		if(!direct_io_server) throw CException(1, "Error creating direct io server implementation", __PRETTY_FUNCTION__);
+		if(!direct_io_server) throw CException(-2, "Error creating direct io server implementation", __PRETTY_FUNCTION__);
 		
 		//allocate the dispatcher
 		MB_LAPP  << "Allocate DirectIODispatcher";
-		direct_io_server->setHandler(direct_io_dispatcher = new common::direct_io::DirectIODispatcher());
-		
+        if(globalConfiguration->getBoolValue(InitOption::OPT_DIRECT_IO_LOG_METRIC)) {
+            //the metric allocator of direct io is a direct subclass of DirectIODispatcher
+            direct_io_dispatcher = new direct_io::DirectIODispatcherMetricCollector(direct_io_server->getName());
+        } else {
+            direct_io_dispatcher = new common::direct_io::DirectIODispatcher();
+        }
+		direct_io_server->setHandler(direct_io_dispatcher);
+        
+        
 		//initialize direct io server
 		StartableService::initImplementation(direct_io_server, static_cast<void*>(globalConfiguration), direct_io_server->getName(), __PRETTY_FUNCTION__);
 		
 		//init the my_ip variable for all client
 		common::direct_io::DirectIOClientConnection::my_str_ip = GlobalConfiguration::getInstance()->getLocalServerAddress();
 		common::direct_io::DirectIOClientConnection::my_i64_ip = STRIP_TO_UI64(common::direct_io::DirectIOClientConnection::my_str_ip).to_ulong();
+        
+        direct_io_client = ObjectFactoryRegister<common::direct_io::DirectIOClient>::getInstance()->getNewInstanceByName(direct_io_client_impl);
+        if(!direct_io_client) throw CException(-3, "Error creating direct io client implementation", __PRETTY_FUNCTION__);
+        
+        //initialize direct io client
+        InizializableService::initImplementation(direct_io_client, static_cast<void*>(globalConfiguration), direct_io_client->getName(), __PRETTY_FUNCTION__);
+
     }
 	//---------------------------- D I R E C T I/O ----------------------------
 	
@@ -109,10 +129,10 @@ void NetworkBroker::init(void *initData) throw(CException) {
     if(globalConfiguration->hasKey(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION)) {
         event_dispatcher = ObjectFactoryRegister<AbstractEventDispatcher>::getInstance()->getNewInstanceByName("DefaultEventDispatcher");
         if(!event_dispatcher)
-            throw CException(2, "Event dispatcher implementation not found", __PRETTY_FUNCTION__);
+            throw CException(-4, "Event dispatcher implementation not found", __PRETTY_FUNCTION__);
         
         if(!StartableService::initImplementation(event_dispatcher, static_cast<void*>(globalConfiguration), "DefaultEventDispatcher", __PRETTY_FUNCTION__))
-            throw CException(3, "Event dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
+            throw CException(-5, "Event dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
         
         
         string event_adapter_type = globalConfiguration->getStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION);
@@ -134,27 +154,30 @@ void NetworkBroker::init(void *initData) throw(CException) {
 	//---------------------------- E V E N T ----------------------------
     
 	//---------------------------- R P C ----------------------------
-    if(globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE)){
+    if(globalConfiguration->hasKey(InitOption::OPT_RPC_IMPLEMENTATION)){
 		//get the dispatcher
         MB_LAPP  << "Get DefaultCommandDispatcher implementation";
         command_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
         if(!command_dispatcher)
-            throw CException(2, "Command dispatcher implementation not found", __PRETTY_FUNCTION__);
+            throw CException(-6, "Command dispatcher implementation not found", __PRETTY_FUNCTION__);
         
         if(!StartableService::initImplementation(command_dispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", __PRETTY_FUNCTION__))
-            throw CException(3, "Command dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
+            throw CException(-7, "Command dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
         
         
 		// get the rpc type to instantiate
-        string rpc_adapter_type = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE);
+        string rpc_impl = globalConfiguration->getStringValue(InitOption::OPT_RPC_IMPLEMENTATION);
 		//construct the rpc server and client name
-        string rpc_server_name = rpc_adapter_type+"Server";
-        string rpc_client_name = rpc_adapter_type+"Client";
+        string rpc_server_name = rpc_impl+"Server";
+        string rpc_client_name = rpc_impl+"Client";
         
         MB_LAPP  << "Trying to initilize RPC Server: " << rpc_server_name;
         rpc_server = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpc_server_name);
-		if(!rpc_server) throw CException(4, "Error allocating rpc server implementation", __PRETTY_FUNCTION__);
-		
+		if(!rpc_server) throw CException(-8, "Error allocating rpc server implementation", __PRETTY_FUNCTION__);
+        if(globalConfiguration->getBoolValue(InitOption::OPT_RPC_LOG_METRIC)) {
+            rpc_server = new rpc::RpcServerMetricCollector(rpc_server->getName(), rpc_server);
+        }
+        
         if(StartableService::initImplementation(rpc_server, static_cast<void*>(globalConfiguration), rpc_server->getName(), __PRETTY_FUNCTION__)) {
 			//set the handler on the rpc server
             rpc_server->setCommandDispatcher(command_dispatcher);
@@ -163,30 +186,36 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize RPC Client: " << rpc_client_name;
         rpc_client = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpc_client_name);
-		if(!rpc_client) throw CException(4, "Error allocating rpc client implementation", __PRETTY_FUNCTION__);
-
+        if(!rpc_client) throw CException(-9, "Error allocating rpc client implementation", __PRETTY_FUNCTION__);
+        if(globalConfiguration->getBoolValue(InitOption::OPT_RPC_LOG_METRIC)) {
+            rpc_client = new rpc::RpcClientMetricCollector(rpc_client->getName(), rpc_client);
+        }
+        
+        //! connect dispatch to manage error durign request forwarding
+        rpc_client->setServerHandler(command_dispatcher);
+        
         if(StartableService::initImplementation(rpc_client, static_cast<void*>(globalConfiguration), rpc_client->getName(), __PRETTY_FUNCTION__)) {
 			//set the forwarder into dispatcher for answere
             command_dispatcher->setRpcForwarder(rpc_client);
         }
     } else {
-        throw CException(4, "No RPC Adapter type found in configuration", __PRETTY_FUNCTION__);
+        throw CException(-10, "No RPC Adapter type found in configuration", __PRETTY_FUNCTION__);
     }
 	//---------------------------- R P C ----------------------------
     //---------------------------- R P C SYNC ----------------------------
-    if(globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE) &&
-	   globalConfiguration->getBoolValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE)){
+    if(globalConfiguration->hasKey(InitOption::OPT_RPC_SYNC_ENABLE) &&
+	   globalConfiguration->getBoolValue(InitOption::OPT_RPC_SYNC_ENABLE)){
         //get the dispatcher
         MB_LAPP  << "Setup RPC Sync implementation";
         
         // get the rpc type to instantiate
-        string rpc_sync_impl = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_TYPE);
+        string rpc_sync_impl = globalConfiguration->getStringValue(InitOption::OPT_RPC_SYNC_IMPLEMENTATION);
         //construct the rpc server and client name
         string rpc_sync_impl_name = rpc_sync_impl+"RpcSyncServer";
         
         MB_LAPP  << "Trying to initilize RPC Server: " << rpc_sync_impl_name;
         sync_rpc_server = ObjectFactoryRegister<sync_rpc::RpcSyncServer>::getInstance()->getNewInstanceByName(rpc_sync_impl_name);
-        if(!sync_rpc_server) throw CException(4, "Error allocating rpc sync server implementation", __PRETTY_FUNCTION__);
+        if(!sync_rpc_server) throw CException(-11, "Error allocating rpc sync server implementation", __PRETTY_FUNCTION__);
         
         if(StartableService::initImplementation(sync_rpc_server, static_cast<void*>(globalConfiguration), sync_rpc_server->getName(), __PRETTY_FUNCTION__)) {
             //set the handler on the rpc server
@@ -207,9 +236,12 @@ void NetworkBroker::init(void *initData) throw(CException) {
  */
 void NetworkBroker::deinit() throw(CException) {
 	MB_LAPP  << "Deinitialize performance session manager";
-	StartableService::deinitImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
+	CHAOS_NOT_THROW(StartableService::deinitImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);)
 
 	//---------------------------- D I R E C T I/O ----------------------------
+    CHAOS_NOT_THROW(InizializableService::deinitImplementation(direct_io_client, direct_io_client->getName(), __PRETTY_FUNCTION__);)
+    DELETE_OBJ_POINTER(direct_io_client);
+    
     CHAOS_NOT_THROW(StartableService::deinitImplementation(direct_io_server, direct_io_server->getName(), "NetworkBroker::deinit");)
 	DELETE_OBJ_POINTER(direct_io_server);
 	//---------------------------- D I R E C T I/O ----------------------------
@@ -474,16 +506,13 @@ void NetworkBroker::deregisterAction(DeclareAction* declare_action_class) {
 /*!
  Submit a message specifing the destination
  */
-bool NetworkBroker::submitMessage(string& host,
+bool NetworkBroker::submitMessage(const string& host,
                                   CDataWrapper *message,
-                                  NetworkErrorHandler handler,
-                                  const char * sender_identifier,
-                                  int64_t sendet_tag,
                                   bool on_this_thread) {
     CHAOS_ASSERT(message && rpc_client)
-    NetworkForwardInfo *nfi = new NetworkForwardInfo();
+    NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
     nfi->destinationAddr = host;
-    nfi->message = message;
+    nfi->setMessage(message);
 	//add answer id to datawrapper
     return rpc_client->submitMessage(nfi, on_this_thread);
 }
@@ -491,48 +520,56 @@ bool NetworkBroker::submitMessage(string& host,
 /*!
  Submite a new request to send to the remote host
  */
-bool NetworkBroker::submiteRequest(string& host,
+bool NetworkBroker::submiteRequest(const string& host,
                                    CDataWrapper *request,
-                                   NetworkErrorHandler handler,
-                                   const char * sender_identifier,
-                                   int64_t sender_tag,
+                                   std::string sender_node_id,
+                                   uint32_t sender_request_id,
                                    bool on_this_thread) {
     CHAOS_ASSERT(request && rpc_client)
     request->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP, published_host_and_port);
-    NetworkForwardInfo *nfi = new NetworkForwardInfo();
+    NetworkForwardInfo *nfi = new NetworkForwardInfo(true);
     nfi->destinationAddr = host;
-    nfi->message = request;
+    nfi->sender_node_id = sender_node_id;
+    nfi->sender_request_id = sender_request_id;
+    nfi->setMessage(request);
     return rpc_client->submitMessage(nfi, on_this_thread);
 }
 
 /*
  */
-MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress *node_network_aAddress,
+MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress *node_network_address,
                                                                  EntityType type) {
-    CHAOS_ASSERT(node_network_aAddress)
     MessageChannel *channel = NULL;
     switch (type) {
         case RAW:
-            channel = new MessageChannel(this, node_network_aAddress->ipPort);
-            delete(node_network_aAddress);
+            CHAOS_ASSERT(!node_network_address)
+            channel = new MessageChannel(this);
             break;
-            
+        case RAW_MULTI_ADDRESS:
+            CHAOS_ASSERT(!node_network_address)
+            channel = new MultiAddressMessageChannel(this);
+            break;
         case MDS:
-            channel = new MDSMessageChannel(this, static_cast<CNodeNetworkAddress*>(node_network_aAddress));
+            if(!node_network_address) return NULL;
+            channel = new MDSMessageChannel(this, static_cast<CNodeNetworkAddress*>(node_network_address));
             break;
             
         case DEVICE:
-            channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(node_network_aAddress));
+            if(!node_network_address) return NULL;
+            channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(node_network_address));
             break;
 		case PERFORMANCE:
-			channel = new common::message::PerformanceNodeChannel(this, node_network_aAddress, performance_session_managment.getLocalDirectIOClientInstance());
+            if(!node_network_address) return NULL;
+			channel = new common::message::PerformanceNodeChannel(this,
+                                                                  node_network_address,
+                                                                  performance_session_managment.getLocalDirectIOClientInstance());
             break;
     }
 	//check if the channel has been created
     if(channel){
         channel->init();
         boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
-        active_rpc_channel.insert(make_pair(channel->channelID, channel));
+        active_rpc_channel.insert(make_pair(channel->channel_reponse_domain, channel));
     }
     return channel;
 }
@@ -543,9 +580,21 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
  */
 MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel() {
     CNodeNetworkAddress *mdsNodeAddr = new CNodeNetworkAddress();
-    mdsNodeAddr->ipPort = GlobalConfiguration::getInstance()->getMetadataServerAddress();
-    mdsNodeAddr->nodeID = ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN;
+    mdsNodeAddr->ip_port = GlobalConfiguration::getInstance()->getMetadataServerAddress();
+    mdsNodeAddr->node_id = chaos::NodeDomainAndActionRPC::RPC_DOMAIN;
     return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(mdsNodeAddr, MDS));
+}
+
+    //!Metadata server channel creation
+/*!
+ Performe the creation of metadata server
+ */
+MultiAddressMessageChannel *NetworkBroker::getMultiMetadataServiceRawMessageChannel() {
+    MultiAddressMessageChannel *mc = getRawMultiAddressMessageChannel();
+    if(mc){
+        mc->addNode(GlobalConfiguration::getInstance()->getMetadataServerAddress());
+    }
+    return mc;
 }
 
 //!Device channel creation
@@ -558,17 +607,18 @@ DeviceMessageChannel *NetworkBroker::getDeviceMessageChannelFromAddress(CDeviceN
 }
 
 //!performance channel creation
-chaos::common::message::PerformanceNodeChannel *NetworkBroker::getPerformanceChannelFromAddress(CNetworkAddress  *node_network_address) {
+PerformanceNodeChannel *NetworkBroker::getPerformanceChannelFromAddress(CNetworkAddress  *node_network_address) {
 	return static_cast<chaos::common::message::PerformanceNodeChannel*>(getNewMessageChannelForRemoteHost(node_network_address, PERFORMANCE));
 }
 
 //! Return a raw message channel
-/*!
- Performe the creation of a raw channel
- \param deviceNetworkAddress device node address
- */
-MessageChannel *NetworkBroker::getRawMessageChannelFromAddress(CNetworkAddress  *node_network_address) {
-   	return getNewMessageChannelForRemoteHost(node_network_address, RAW);
+MessageChannel *NetworkBroker::getRawMessageChannel() {
+   	return getNewMessageChannelForRemoteHost(NULL, RAW);
+}
+
+    //! Return a raw multinode message channel
+MultiAddressMessageChannel *NetworkBroker::getRawMultiAddressMessageChannel() {
+   	return static_cast<MultiAddressMessageChannel*>(getNewMessageChannelForRemoteHost(NULL, RAW_MULTI_ADDRESS));
 }
 
 //!Channel deallocation
@@ -581,10 +631,10 @@ void NetworkBroker::disposeMessageChannel(MessageChannel *message_channel_to_dis
     boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
     
 	//check if the channel is active
-    if(active_rpc_channel.count(message_channel_to_dispose->channelID) == 0) return;
+    if(active_rpc_channel.count(message_channel_to_dispose->channel_reponse_domain) == 0) return;
     
 	//remove the channel as active
-    active_rpc_channel.erase(message_channel_to_dispose->channelID);
+    active_rpc_channel.erase(message_channel_to_dispose->channel_reponse_domain);
     
 	//deallocate it
     message_channel_to_dispose->deinit();
@@ -593,12 +643,15 @@ void NetworkBroker::disposeMessageChannel(MessageChannel *message_channel_to_dis
     delete(message_channel_to_dispose);
 }
 //!Channel deallocation
-/*!
- Perform the message channel deallocation
- */
 void NetworkBroker::disposeMessageChannel(NodeMessageChannel *messageChannelToDispose) {
     NetworkBroker::disposeMessageChannel((MessageChannel*)messageChannelToDispose);
 }
+
+    //!Rpc Channel deallocation
+void NetworkBroker::disposeMessageChannel(chaos::common::message::MultiAddressMessageChannel *messageChannelToDispose) {
+    NetworkBroker::disposeMessageChannel((MessageChannel*)messageChannelToDispose);
+}
+
 //Allocate a new endpoint in the direct io server
 chaos_direct_io::DirectIOServerEndpoint *NetworkBroker::getDirectIOServerEndpoint() {
     CHAOS_ASSERT(direct_io_dispatcher)
@@ -610,7 +663,12 @@ void NetworkBroker::releaseDirectIOServerEndpoint(chaos_direct_io::DirectIOServe
     direct_io_dispatcher->releaseEndpoint(end_point);
 }
 //Return a new direct io client instance
-chaos_direct_io::DirectIOClient *NetworkBroker::getDirectIOClientInstance() {
+chaos_direct_io::DirectIOClient *NetworkBroker::getSharedDirectIOClientInstance() {
+    return direct_io_client;
+}
+
+//Return a new direct io client instance
+chaos_direct_io::DirectIOClient *NetworkBroker::getNewDirectIOClientInstance() {
     MB_LAPP  << "Allocate a new DirectIOClient of type " << direct_io_client_impl;
     return ObjectFactoryRegister<common::direct_io::DirectIOClient>::getInstance()->getNewInstanceByName(direct_io_client_impl);
 }

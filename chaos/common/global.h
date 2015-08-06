@@ -1,6 +1,6 @@
 /*	
  *	global.h
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *	
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -24,13 +24,14 @@
  *
  * \section intro_sec Introduction
  *
- * !CHOAS is a new idea on Control System software architecture, more information cam be found
+ * !CHAOS is a new idea on Control System software architecture, more information cam be found
  * on http://chaos.infn.it/
  *
  * \section install_sec Installation
  * Read the README.txt file in the root of source code folder
  */
 #include <boost/version.hpp>
+#include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/log/common.hpp>
@@ -42,6 +43,7 @@
 #include <chaos/common/endian.h>
 #include <chaos/common/log/LogManager.h>
 
+#include <cassert>
 #if BOOST_VERSION > 105300
     //allocate the logger
     BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
@@ -49,16 +51,40 @@
     BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
 #endif 
 
-#define LFTL_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLFatal)
+#define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLFatal)
 #define LDBG_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLDebug)
 #define LWRN_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLWarning)
-#define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLNotice)
+#define LNOTE_      BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLNotice)
 #define LAPP_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLInfo)
 
 #define DEFINE_LOG_HEADER(x) "[" #x "] - "
 #define INFO_LOG(x) LAPP_ << DEFINE_LOG_HEADER(x)
-#define DBG_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x)
-#define ERR_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
+#define NOTICE_LOG(x) LNOTE_ << DEFINE_LOG_HEADER(x)
+#define WARNING_LOG(x) LWRN_ << DEFINE_LOG_HEADER(x)
+#define DBG_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x) << __FUNCTION__ << " - "
+#define ERR_LOG(x)  LERR_ << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
+
+#define LOG_AND_TROW(log, num, msg)\
+log << "("<<num<<") " << msg;\
+throw chaos::CException(num, msg, __PRETTY_FUNCTION__);
+
+#define LOG_AND_TROW_FORMATTED(log, num, f, p)\
+LOG_AND_TROW(log, num, boost::str(boost::format(f)p))
+
+#define CHAOS_LASSERT_EXCEPTION(assertion, log, num, msg)\
+if(!assertion) {LOG_AND_TROW(log, num, msg)}
+
+#define CHECK_CDW_THROW_AND_LOG(cdw, log, num, msg)\
+if(cdw == NULL) {LOG_AND_TROW(log, num, msg)}
+
+#define CHECK_KEY_THROW_AND_LOG(cdw, key, log, num, msg)\
+if(cdw->hasKey(key) == false) {LOG_AND_TROW(log, num, msg)}
+
+#define CHECK_CDW_THROW_AND_LOG_FORMATTED(cdw, log, num, frmt, param)\
+if(cdw == NULL) {LOG_AND_TROW_FORMATTED(log, num, frmt, param)}
+
+#define CHECK_KEY_THROW_AND_LOG_FORMATTED(cdw, key, log, num, frmt, param)\
+if(cdw->hasKey(key) == false) {LOG_AND_TROW_FORMATTED(log, num, frmt, param)}
 
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true
@@ -68,15 +94,23 @@
 #else
 #define DEBUG_CODE(x) x
 #define CHAOS_ASSERT(x) \
-if (! (x)) \
+if (!(x)) \
 { \
-  std::cout << "ERROR!! Assert " << #x << " failed\n";	\
+    std::cout << "ERROR!! Assert " << #x << " failed\n";	\
     std::cout << " on line " << __LINE__  << "\n";	\
     std::cout << " in file " << __FILE__ << "\n";	\
     std::cout.flush();					\
-}
+}\
+assert(x);
 #endif
 
+#define CHAOS_EXCEPTION(e,msg) \
+    {std::stringstream ss;\
+    ss<<__FILE__<<":"<<__LINE__<<":"<<__FUNCTION__;\
+    LDBG_<<"throwing exception in:"<<ss.str();\
+    LDBG_<<"message:"<<msg;\
+    throw chaos::CException(e,msg,ss.str());}
+    
 
     //epoc for time stamp calculation
 const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));

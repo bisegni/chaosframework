@@ -1,6 +1,6 @@
 /*	
  *	CommandManager.cpp
- *	!CHOAS
+ *	!CHAOS
  *	Created by Bisegni Claudio.
  *	
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
@@ -26,13 +26,15 @@
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
-
+#include <chaos/common/healt_system/HealtManager.h>
 
 using namespace std;
 using namespace boost;
 using namespace chaos;
 
 using namespace chaos::common::data;
+using namespace chaos::common::message;
+using namespace chaos::common::healt_system;
 
 using namespace chaos::cu::command_manager;
 
@@ -63,17 +65,26 @@ void CommandManager::init(void *initParam) throw(CException) {
     AbstActionDescShrPtr 
     actionDescription = DeclareAction::addActionDescritionInstance<CommandManager>(this, 
                                                                                    &CommandManager::shutdown, 
-                                                                                   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN, 
+                                                                                   NodeDomainAndActionRPC::RPC_DOMAIN, 
                                                                                    ChaosSystemDomainAndActionLabel::ACTION_SYSTEM_SHUTDOWN, "Shutdown the chaos control unit library instance");
     
         //registering the comman manager action
     broker->registerAction(this);
+
+        //set the network broker within the  healt manager
+    HealtManager::getInstance()->setNetworkBroker(broker);
+
+        //init healt manager singleton
+    StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealtManager", __PRETTY_FUNCTION__);
 }
 
 /*
  * Deinitzialize the command manager
  */
 void CommandManager::deinit() throw(CException) {
+        //deinit healt manager singleton
+    StartableService::deinitImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
+
         //deregistering the action
     broker->deregisterAction(this);
     broker->deinit();
@@ -84,10 +95,15 @@ void CommandManager::deinit() throw(CException) {
  */
 void CommandManager::start() throw(CException) {
     broker->start();
+        //start healt manager singleton
+    StartableService::startImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
 }
 
 //-----------------------
 void CommandManager::stop() throw(CException) {
+        //stop healt manager singleton
+    StartableService::stopImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
+        //stop the broker
     broker->stop();
 }
 

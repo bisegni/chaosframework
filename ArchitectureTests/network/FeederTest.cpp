@@ -1,10 +1,10 @@
-//
-//  FeederTest.cpp
-//  CHAOSFramework
-//
-//  Created by Claudio Bisegni on 28/05/14.
-//  Copyright (c) 2014 INFN. All rights reserved.
-//
+    //
+    //  FeederTest.cpp
+    //  CHAOSFramework
+    //
+    //  Created by Claudio Bisegni on 28/05/14.
+    //  Copyright (c) 2014 INFN. All rights reserved.
+    //
 
 #include "FeederTest.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -46,154 +46,168 @@ void* FeederTest::serviceForURL(const common::network::URL& url,
 }
 
 void FeederTest::test_feeder_logic() {
-	std::cout << "----------------logic feeder test-----------" << std::endl;
-	feeder_engine.addURL(chaos::common::network::URL("http://test:9091"), 100);
+    std::cout << "----------------logic feeder test-----------" << std::endl;
+    feeder_engine.addURL(chaos::common::network::URL("http://test:9091"), 100);
     feeder_engine.addURL(chaos::common::network::URL("http://test:9092"), 50);
-	feeder_engine.addURL(chaos::common::network::URL("http://test:9093"), 25);
-	chaos::test::network::ServiceForURL *service = NULL;
-	feeder_engine.setFeedMode(chaos::common::network::URLServiceFeeder::URLServiceFeedModeFailOver);
+    feeder_engine.addURL(chaos::common::network::URL("http://test:9093"), 25);
+    chaos::test::network::ServiceForURL *service = NULL;
+    feeder_engine.setFeedMode(chaos::common::network::URLServiceFeeder::URLServiceFeedModeFailOver);
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:9091")
+    CHECK_SERVICE("http://test:9091")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:9091")
-	
+    CHECK_SERVICE("http://test:9091")
+    feeder_engine.setURLOffline(0);
+    PRINT_SERVICE
+    CHECK_SERVICE("http://test:9092")
+    PRINT_SERVICE
+    CHECK_SERVICE("http://test:9092")
+    feeder_engine.setURLOnline(0);
+    PRINT_SERVICE
+    CHECK_SERVICE("http://test:9091")
+    PRINT_SERVICE
+    CHECK_SERVICE("http://test:9091")
+
     feeder_engine.setFeedMode(chaos::common::network::URLServiceFeeder::URLServiceFeedModeRoundRobin);
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:9092")
+    CHECK_SERVICE("http://test:9092")
     PRINT_SERVICE
- 	CHECK_SERVICE("http://test:9091")
-	PRINT_SERVICE
- 	CHECK_SERVICE("http://test:9092")
-	
+    CHECK_SERVICE("http://test:9093")
+    PRINT_SERVICE
+    CHECK_SERVICE("http://test:9091")
+
     feeder_engine.setURLOffline(0);
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:9093")
+    CHECK_SERVICE("http://test:9092")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:9092")
-	PRINT_SERVICE
-	CHECK_SERVICE("http://test:9093")
-	
+    CHECK_SERVICE("http://test:9093")
+    PRINT_SERVICE
+    CHECK_SERVICE("http://test:9092")
+
     feeder_engine.setURLOnline(0);
     feeder_engine.setURLOffline(1);
-	feeder_engine.setURLOffline(2);
+    feeder_engine.setURLOffline(2);
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:9091")
+    CHECK_SERVICE("http://test:9091")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:9091")
-	
+    CHECK_SERVICE("http://test:9091")
+
     feeder_engine.setURLOffline(0);
     PRINT_SERVICE
-	NO_SERVICE
+    NO_SERVICE
     PRINT_SERVICE
-	NO_SERVICE
-	
+    NO_SERVICE
+
     feeder_engine.setURLOnline(0);
     feeder_engine.setURLOnline(1);
-	feeder_engine.setURLOnline(2);
+    feeder_engine.setURLOnline(2);
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:9091")
+    CHECK_SERVICE("http://test:9091")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:9092")
+    CHECK_SERVICE("http://test:9092")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:9091")
-	PRINT_SERVICE
-	CHECK_SERVICE("http://test:9092")
+    CHECK_SERVICE("http://test:9093")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:9091")
+    CHECK_SERVICE("http://test:9091")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:9092")
-	std::cout << "----------------logic feeder test-----------" << std::endl;
+    CHECK_SERVICE("http://test:9092")
+    PRINT_SERVICE
+    CHECK_SERVICE("http://test:9093")
+    std::cout << "----------------logic feeder test-----------" << std::endl;
 }
 
 void FeederTest::test_feeder_logic_equal_priority() {
-	std::cout << "----------------logic feeder test equal priority-----------" << std::endl;
+    std::cout << "----------------logic feeder test equal priority-----------" << std::endl;
 
-	feeder_engine.addURL(chaos::common::network::URL("http://test:8000"), 50);
+    feeder_engine.addURL(chaos::common::network::URL("http://test:8000"), 50);
     feeder_engine.addURL(chaos::common::network::URL("http://test:8001"), 50);
     feeder_engine.addURL(chaos::common::network::URL("http://test:8002"), 50);
-	
-	feeder_engine.setURLOffline(0);
-	feeder_engine.setURLOffline(1);
-	feeder_engine.setURLOffline(2);
-	
-	chaos::test::network::ServiceForURL *service = NULL;
-	feeder_engine.setFeedMode(chaos::common::network::URLServiceFeeder::URLServiceFeedModeFailOver);
+
+    feeder_engine.setURLOffline(0);
+    feeder_engine.setURLOffline(1);
+    feeder_engine.setURLOffline(2);
+
+    chaos::test::network::ServiceForURL *service = NULL;
+    feeder_engine.setFeedMode(chaos::common::network::URLServiceFeeder::URLServiceFeedModeFailOver);
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:8000")
+    CHECK_SERVICE("http://test:8000")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:8000")
-	
+    CHECK_SERVICE("http://test:8000")
+
     feeder_engine.setFeedMode(chaos::common::network::URLServiceFeeder::URLServiceFeedModeRoundRobin);
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:8002")
+    CHECK_SERVICE("http://test:8000")
     PRINT_SERVICE
- 	CHECK_SERVICE("http://test:8001")
-	PRINT_SERVICE
- 	CHECK_SERVICE("http://test:8000")
-	
+    CHECK_SERVICE("http://test:8001")
+    PRINT_SERVICE
+    CHECK_SERVICE("http://test:8002")
+
     feeder_engine.setURLOffline(3);
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:8002")
+    CHECK_SERVICE("http://test:8001")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:8001")
-	PRINT_SERVICE
-	CHECK_SERVICE("http://test:8002")
-	
+    CHECK_SERVICE("http://test:8002")
+    PRINT_SERVICE
+    CHECK_SERVICE("http://test:8001")
+
     feeder_engine.setURLOnline(3);
     feeder_engine.setURLOffline(4);
-	feeder_engine.setURLOffline(5);
+    feeder_engine.setURLOffline(5);
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:8000")
+    CHECK_SERVICE("http://test:8000")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:8000")
-	
+    CHECK_SERVICE("http://test:8000")
+
     feeder_engine.setURLOffline(3);
     PRINT_SERVICE
-	NO_SERVICE
+    NO_SERVICE
     PRINT_SERVICE
-	NO_SERVICE
-	
+    NO_SERVICE
+
     feeder_engine.setURLOnline(3);
     feeder_engine.setURLOnline(4);
-	feeder_engine.setURLOnline(5);
+    feeder_engine.setURLOnline(5);
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:8000")
+    CHECK_SERVICE("http://test:8000")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:8001")
+    CHECK_SERVICE("http://test:8001")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:8002")
-	PRINT_SERVICE
-	CHECK_SERVICE("http://test:8000")
+    CHECK_SERVICE("http://test:8002")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:8001")
+    CHECK_SERVICE("http://test:8000")
     PRINT_SERVICE
-	CHECK_SERVICE("http://test:8002")
-	std::cout << "----------------logic feeder test equal priority-----------" << std::endl;
+    CHECK_SERVICE("http://test:8001")
+    PRINT_SERVICE
+    CHECK_SERVICE("http://test:8002")
+    std::cout << "----------------logic feeder test equal priority-----------" << std::endl;
+
+    feeder_engine.setURLOnline(0);
+    feeder_engine.setURLOnline(1);
+    feeder_engine.setURLOnline(2);
 }
 
 void FeederTest::test_feeder_preformance() {
-	std::cout << "----------------performance feeder test-----------" << std::endl;
-	boost::posix_time::ptime end;
-	boost::posix_time::ptime start;
-	
-	start  = boost::posix_time::microsec_clock::universal_time();
-	for (int idx = 0; idx < number_of_cycle; idx++) {
-		feeder_engine.getService();
-	}
-	end  = boost::posix_time::microsec_clock::universal_time();
-	uint64_t time_for_test = (end-start).total_microseconds();
-	std::cout << "total time for "<< number_of_cycle << " cycle of getService() in round robin->" << time_for_test << std::endl;
-	std::cout << "every cycle is ->" << ((double)time_for_test/(double)number_of_cycle) << " microseconds "<<std::endl;
-	std::cout << "----------------performance feeder test-----------" << std::endl;
-	std::cout << std::endl;
+    std::cout << "----------------performance feeder test-----------" << std::endl;
+    boost::posix_time::ptime end;
+    boost::posix_time::ptime start;
+
+    start  = boost::posix_time::microsec_clock::universal_time();
+    for (int idx = 0; idx < number_of_cycle; idx++) {
+        feeder_engine.getService();
+    }
+    end  = boost::posix_time::microsec_clock::universal_time();
+    uint64_t time_for_test = (end-start).total_microseconds();
+    std::cout << "total time for "<< number_of_cycle << " cycle of getService() in round robin->" << time_for_test << std::endl;
+    std::cout << "every cycle is ->" << ((double)time_for_test/(double)number_of_cycle) << " microseconds "<<std::endl;
+    std::cout << "----------------performance feeder test-----------" << std::endl;
+    std::cout << std::endl;
 
 }
 
 void FeederTest::test(uint32_t _number_of_cycle) {
-	if(_number_of_cycle>0)number_of_cycle = _number_of_cycle;
-	test_feeder_logic();
-	test_feeder_preformance();
-	test_feeder_logic_equal_priority();
-	test_feeder_preformance();
-
+    if(_number_of_cycle>0)number_of_cycle = _number_of_cycle;
+    test_feeder_logic();
+    test_feeder_preformance();
+    test_feeder_logic_equal_priority();
+    test_feeder_preformance();
+    
 }
