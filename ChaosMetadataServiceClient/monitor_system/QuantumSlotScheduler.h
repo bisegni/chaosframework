@@ -24,6 +24,7 @@
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system_types.h>
 #include <ChaosMetadataServiceClient/monitor_system/QuantumSlot.h>
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/StartableService.h>
@@ -46,9 +47,12 @@ namespace chaos {
             //! forward declaration
             class MonitorManager;
             
+            //define a map for string and quantum slot
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, QuantumSlotConsumer*, QuantumSlotConsumerMap)
+            
 #define CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(k,q) boost::str(boost::format("%1%_%2%")% k % q)
             
-            typedef boost::lockfree::queue<QuantumSlot*, boost::lockfree::fixed_sized<false> >  ActiveQuantumSlotQueue;
+            typedef boost::lockfree::queue<QuantumSlot*, boost::lockfree::fixed_sized<false> >  LFQuantumSlotQueue;
             
             //! strucutre that contain the slot
             struct ScheduleSlot {
@@ -129,48 +133,57 @@ namespace chaos {
             class QuantumSlotScheduler:
             public chaos::common::utility::StartableService {
                 friend class MonitorManager;
-                //asio structure
+                //!asio structure
                 boost::asio::io_service                 ios;
                 boost::shared_ptr<boost::thread>        ios_thread;
                 boost::asio::deadline_timer             async_timer;
                 asio::io_service::work                  async_work;
                 
                 std::vector<std::string>                data_driver_endpoint;
-                chaos::common::network::NetworkBroker    *network_broker;
+                chaos::common::network::NetworkBroker   *network_broker;
                 std::string                             data_driver_impl;
                 chaos::common::io::IODataDriver         *data_driver;
                 
-                boost::mutex                mutex_condition_fetch;
-                boost::condition_variable   condition_fetch;
+                boost::mutex                            mutex_condition_fetch;
+                boost::condition_variable               condition_fetch;
                 
-                boost::mutex                mutex_condition_scan;
-                boost::condition_variable   condition_scan;
+                boost::mutex                            mutex_condition_scan;
+                boost::condition_variable               condition_scan;
                 
-                //groups for thread that make the scanner
-                bool                    work_on_scan;
-                boost::thread_group     scanner_threads;
+                //!groups for thread that make the scanner
+                bool                                    work_on_scan;
+                boost::thread_group                     scanner_threads;
                 
                 //!groups for thread that fetch the value for a key
-                bool                    work_on_fetch;
-                boost::thread_group     fetcher_threads;
+                bool                                    work_on_fetch;
+                boost::thread_group                     fetcher_threads;
                 
                 //! queue for all the active slot
-                ActiveQuantumSlotQueue  queue_active_slot;
+                LFQuantumSlotQueue                      queue_active_slot;
                 
-                //multi index set for the slot
-                SetScheduleSlot                  set_slots;
-                SSSlotTypeCurrentQuantumIndex&   set_slots_index_quantum;
-                SSSlotTypeQuantumSlotKeyIndex&   set_slots_index_key_slot;
+                //!multi index set for the slot used internal only
+                SetScheduleSlot                         set_slots;
+                SSSlotTypeCurrentQuantumIndex&          set_slots_index_quantum;
+                SSSlotTypeQuantumSlotKeyIndex&          set_slots_index_key_slot;
                 
-                //manage the lock on the slot multi-index
-                boost::shared_mutex              set_slots_mutex;
+                //! manage the lock on the slot multi-index
+                boost::shared_mutex                     set_slots_mutex;
                 
+                //! map to handle the inspection of the quantum slot consumer that is managed into internal async layer of scheduler
+                //! this structure is managed only by add and remove ahdler function.
+                QuantumSlotConsumerMap                  quantum_slot_consumer_map;
+                
+                //! queue that conenct the public and internal layers of scheduler add and remove handler push quantum slot
+                //! withing this queue and scan slot funciton retrive new one added and increment the multiindex set
+                LFQuantumSlotQueue                      new_quantum_slot_queue;
+                
+                //! default constructor
                 QuantumSlotScheduler(chaos::common::network::NetworkBroker *_network_broker);
                 ~QuantumSlotScheduler();
                 
                 //! Scan the slot to find which of that can be executed
                 /*!
-                 the trhead wait exatly the minimum quantum after that it respawn and 
+                 the trhead wait exatly the minimum quantum after that it respawn and
                  check the slot decrementing the current_quantum of each one
                  */
                 void scanSlot();
@@ -204,7 +217,7 @@ namespace chaos {
                 void removeKeyConsumer(const std::string& key_to_monitor,
                                        int quantum_multiplier,
                                        QuantumSlotConsumer *consumer);
-
+                
             };
             
         }

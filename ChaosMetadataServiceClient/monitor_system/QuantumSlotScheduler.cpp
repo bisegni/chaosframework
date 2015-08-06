@@ -134,7 +134,6 @@ void QuantumSlotScheduler::scanSlot() {
     while(work_on_scan) {
         processed_element = 0;
         milliseconds_start = TimingUtil::getTimeStamp();
-        //set_urls_rb_pos_index.modify(it, URLServiceIndexUpdateRBPosition(++last_round_robin_index));
         for(SSSlotTypeCurrentQuantumIndexIterator it = set_slots_index_quantum.begin();
             it != set_slots_index_quantum.end();
             it++) {
@@ -259,7 +258,7 @@ void QuantumSlotScheduler::addKeyConsumer(const std::string& key_to_monitor,
     
     //add the new slot
     std::string quantum_slot_key = CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(key_to_monitor, quantum_multiplier);
-    
+    if(quantum_slot_consumer_map.count(quantum_slot_key))
     boost::shared_ptr<QuantumSlot> quantum_slot;
     SSSlotTypeQuantumSlotKeyIndexIterator it = set_slots_index_key_slot.find(quantum_slot_key);
     if(it == set_slots_index_key_slot.end()) {
