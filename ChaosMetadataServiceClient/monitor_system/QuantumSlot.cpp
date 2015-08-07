@@ -59,24 +59,47 @@ void QuantumSlot::addNewConsumer(QuantumSlotConsumer *_consumer,
     consumers.insert(ConsumerType(_consumer, priority));
 }
 
-void QuantumSlot::removeConsumer(QuantumSlotConsumer *_consumer) {
-    if(_consumer == NULL) return;
+bool QuantumSlot::removeConsumer(QuantumSlotConsumer *_consumer) {
+    if(_consumer == NULL) return false;
+    bool result = false;
+    
+    //lock all
     boost::unique_lock<boost::shared_mutex> wl(consumer_mutex);
     uintptr_t pointer_int = reinterpret_cast<uintptr_t>(_consumer);
+    
+    //find consumer
     SetConsumerTypePointerIndexIterator iter = consumers_pointer_index.find(pointer_int);
-    if (iter != consumers_pointer_index.end()) {
+    
+    //if we have it return true and remove it
+    if ((result = (iter != consumers_pointer_index.end()))) {
         consumers_pointer_index.erase(pointer_int);
     }
+    return result;
 }
 
 void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
     boost::shared_lock<boost::shared_mutex> rl(consumer_mutex);
     uint64_t start_forwardint_time = TimingUtil::getTimeStampInMicrosends();
-    for (SetConsumerTypePriorityIndexIterator it = consumers_priority_index.begin();
-         it != consumers_priority_index.end();
-         it++) {
-        //signal the consumer
-        reinterpret_cast<QuantumSlotConsumer*>(it->consumer_pointer)->quantumSlotHasData(key, value);
+    //temporary quantum slot pointer
+    QuantumSlotConsumer *curr_qsc = NULL;
+    //set the start iterator
+    SetConsumerTypePriorityIndexIterator it = consumers_priority_index.begin();
+    while (it != consumers_priority_index.end()) {
+        curr_qsc = reinterpret_cast<QuantumSlotConsumer*>(it->consumer_pointer);
+         //check if we need to remove it
+        if(curr_qsc->usage_counter == 0) {
+            DEBUG_CODE(QS_DBG << "The consumer pointer"<<it->consumer_pointer<<" need to removed";)
+            //remove from the index and return the next
+            it = consumers_priority_index.erase(it);
+            //unlock who are waiting the quantum slot free for for work
+            DEBUG_CODE(QS_DBG << "The consumer pointer"<<it->consumer_pointer<<" can be set fre of work";)
+            curr_qsc->setFreeOfWork();
+        } else {
+            //signal the consumer
+            curr_qsc->quantumSlotHasData(key, value);
+            //increment
+            ++it;
+        }
     }
     
     //calc time
@@ -96,11 +119,26 @@ void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
 void QuantumSlot::sendNoValueToConsumer() {
     boost::shared_lock<boost::shared_mutex> rl(consumer_mutex);
     uint64_t start_forwardint_time = TimingUtil::getTimeStampInMicrosends();
-    for (SetConsumerTypePriorityIndexIterator it = consumers_priority_index.begin();
-         it != consumers_priority_index.end();
-         it++) {
-        //signal the consumer
-        reinterpret_cast<QuantumSlotConsumer*>(it->consumer_pointer)->quantumSlotHasNoData(key);
+    //temporary quantum slot pointer
+    QuantumSlotConsumer *curr_qsc = NULL;
+    //set the start iterator
+    SetConsumerTypePriorityIndexIterator it = consumers_priority_index.begin();
+    while (it != consumers_priority_index.end()) {
+        curr_qsc = reinterpret_cast<QuantumSlotConsumer*>(it->consumer_pointer);
+        //check if we need to remove it
+        if(curr_qsc->usage_counter == 0) {
+            DEBUG_CODE(QS_DBG << "The consumer pointer"<<it->consumer_pointer<<" need to removed";)
+            //remove from the index and return the next
+            it = consumers_priority_index.erase(it);
+            //unlock who are waiting the quantum slot free for for work
+            curr_qsc->setFreeOfWork();
+            DEBUG_CODE(QS_DBG << "The consumer pointer"<<it->consumer_pointer<<" can be set fre of work";)
+        } else {
+            //signal the consumer
+            curr_qsc->quantumSlotHasNoData(key);
+            //increment
+            ++it;
+        }
     }
     
     //calc time

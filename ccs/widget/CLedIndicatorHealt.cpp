@@ -25,7 +25,9 @@ CLedIndicatorHealt::CLedIndicatorHealt(QWidget *parent):
 
 }
 
-CLedIndicatorHealt::~CLedIndicatorHealt() {}
+CLedIndicatorHealt::~CLedIndicatorHealt() {
+    stopMonitoring();
+}
 
 void CLedIndicatorHealt::setNodeUniqueID(const QString& node_uid) {
     p_node_uid = node_uid;
@@ -45,9 +47,9 @@ int CLedIndicatorHealt::startMonitoring() {
 }
 
 int CLedIndicatorHealt::stopMonitoring() {
-    if(!ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
-                                                                                  20,
-                                                                                  &hb_health_handler)) {
+    if(!ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
+                                                                                     20,
+                                                                                     &hb_health_handler)) {
         return -1;
     }
     return 0;

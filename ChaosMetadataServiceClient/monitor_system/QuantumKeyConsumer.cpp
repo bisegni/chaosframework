@@ -37,7 +37,8 @@ QuantumKeyConsumer::~QuantumKeyConsumer() {
 void QuantumKeyConsumer::quantumSlotHasData(const std::string& key,
                                             const KeyValue& value) {
     //acquire read lock
-    boost::shared_lock<boost::shared_mutex> rl(map_mutex);
+    boost::unique_lock<boost::mutex> wl(map_mutex);
+    QKC_DBG<< "Broadcast data to handler for key " << key;
     //scan all attribute and call handler
     for(AttributeHandlerMapIterator it = map_attribute_handler.begin();
         it != map_attribute_handler.end();
@@ -52,7 +53,8 @@ void QuantumKeyConsumer::quantumSlotHasData(const std::string& key,
 
 void QuantumKeyConsumer::quantumSlotHasNoData(const std::string& key) {
     //acquire read lock
-    boost::shared_lock<boost::shared_mutex> rl(map_mutex);
+    boost::unique_lock<boost::mutex> wl(map_mutex);
+    QKC_DBG<< "Broadcast no data to handler for key " << key;
     //scan all attribute and call handler
     for(AttributeHandlerMapIterator it = map_attribute_handler.begin();
         it != map_attribute_handler.end();
@@ -64,10 +66,10 @@ void QuantumKeyConsumer::quantumSlotHasNoData(const std::string& key) {
 
 void QuantumKeyConsumer::addAttributeHandler(AbstractQuantumKeyAttributeHandler *handler) {
     //aquire write lock to work on map
-    boost::unique_lock<boost::shared_mutex> rl(map_mutex);
+    boost::unique_lock<boost::mutex> rl(map_mutex);
     if(handler == NULL) return;
     
-    QKC_INFO << "Add new quantum consumer for key:" << key << " and attribute:" << handler->getAttributeName();
+    QKC_INFO << "Add new quantum handler for key:" << key << " and attribute:" << handler->getAttributeName();
     uintptr_t handler_key = reinterpret_cast<uintptr_t>(handler);
     if(map_attribute_handler.count(handler_key)) return;
     map_attribute_handler.insert(make_pair(handler_key, handler));
@@ -75,10 +77,10 @@ void QuantumKeyConsumer::addAttributeHandler(AbstractQuantumKeyAttributeHandler 
 
 void QuantumKeyConsumer::removeAttributeHandler(AbstractQuantumKeyAttributeHandler *handler) {
     //aquire write lock to work on map
-    boost::unique_lock<boost::shared_mutex> wl(map_mutex);
+    boost::unique_lock<boost::mutex> wl(map_mutex);
     if(handler == NULL) return;
 
-    QKC_INFO << "remove quantum consumer for key:" << key << " and attribute:" << handler->getAttributeName();
+    QKC_INFO << "remove quantum handler for key:" << key << " and attribute:" << handler->getAttributeName();
     uintptr_t handler_key = reinterpret_cast<uintptr_t>(handler);
     if(!map_attribute_handler.count(handler_key)) return;
     map_attribute_handler.erase(handler_key);
@@ -90,6 +92,6 @@ const std::string& QuantumKeyConsumer::getKey() {
 
 const size_t QuantumKeyConsumer::size() {
     //aquire write lock to work on map
-    boost::shared_lock<boost::shared_mutex> rl(map_mutex);
+    boost::unique_lock<boost::mutex> wl(map_mutex);
     return map_attribute_handler.size();
 }

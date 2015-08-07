@@ -118,6 +118,9 @@ namespace chaos {
                 
                 QuantumSlot(const std::string& _key,
                             int  _quantum_multiplier);
+                
+                void sendNewValueConsumer(const KeyValue& _value);
+                void sendNoValueToConsumer();
             public:
                 ~QuantumSlot();
                 
@@ -136,9 +139,8 @@ namespace chaos {
                 
                 void addNewConsumer(QuantumSlotConsumer *_consumer,
                                     unsigned int priotiy);
-                void removeConsumer(QuantumSlotConsumer *_consumer);
-                void sendNewValueConsumer(const KeyValue& _value);
-                void sendNoValueToConsumer();
+                bool removeConsumer(QuantumSlotConsumer *_consumer);
+
                 int32_t size();
             };
         }

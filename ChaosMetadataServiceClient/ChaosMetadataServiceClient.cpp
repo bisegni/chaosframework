@@ -114,7 +114,7 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
         //stop batch system
         network_broker_service.stop(__PRETTY_FUNCTION__);
         //stop monitor manager
-        if(monitor_manager.get()) monitor_manager.stop(__PRETTY_FUNCTION__);
+        if(monitoringIsStarted()) {CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)}
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         throw ex;
@@ -132,7 +132,7 @@ void ChaosMetadataServiceClient::deinit()   throw(CException) {
         
         CHAOS_NOT_THROW(network_broker_service.deinit(__PRETTY_FUNCTION__);)
         
-        if(monitor_manager.get())CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
+        if(monitoringIsStarted()){CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)}
             CMSC_LAPP << "-------------------------------------------------------------------------";
         CMSC_LAPP << "Metadata service client has been stopped";
         CMSC_LAPP << "-------------------------------------------------------------------------";
@@ -204,6 +204,7 @@ void ChaosMetadataServiceClient::disableMonitoring() throw(CException) {
         CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
         CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
     }
+    monitor_manager.reset(NULL,"");
 }
 
 bool ChaosMetadataServiceClient::monitoringIsStarted() {

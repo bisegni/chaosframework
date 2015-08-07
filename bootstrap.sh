@@ -342,12 +342,11 @@ if [ ! -d "$PREFIX/include/event2" ]; then
     git checkout $LIB_EVENT_VERSION
     git pull
     ./autogen.sh
-    ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+    ./configure --disable-openssl --prefix=$PREFIX $CROSS_HOST_CONFIGURE
     do_make "LIBEVENT" 1
     echo "LIBEVENT done"
 fi
-
-#if [ -z "$CHAOS_NO_LIBUV" ]; then
+#if [ -z "$CHAOS_NO_LIBUV" ]; thenl
 #    echo "Setup LIBUV"
 #if [ ! -f "$PREFIX/include/uv.h" ]; then
 #
