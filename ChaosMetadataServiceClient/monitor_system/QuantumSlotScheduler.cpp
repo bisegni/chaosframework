@@ -95,6 +95,23 @@ void QuantumSlotScheduler::stop() throw (chaos::CException) {
     QSS_INFO<< "Stop forwarded ASIO infrastructure";
     ios.stop();
     QSS_INFO<< "ASIO Stopped";
+    
+    QSS_INFO<< "Clean unmanaged slot consumer add and remove request";
+    SlotConsumerInfo *ci = NULL;
+    while(queue_new_quantum_slot_consumer.pop(ci)){
+        if(!ci) continue;
+        try {
+            if(ci->operation) {
+                //we need to add it
+                QSS_INFO << boost::str(boost::format("The key consumer [%1%-%2%-%3%] can't be added we are stopping all")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);
+            } else {
+                _removeKeyConsumer(ci);
+            }
+        } catch(...){
+            
+        }
+        delete(ci);
+    }
 }
 
 void QuantumSlotScheduler::deinit() throw (chaos::CException) {
@@ -182,13 +199,15 @@ void QuantumSlotScheduler::scanSlot() {
             QSS_INFO << "Scan thread to slow we need more thread here";
         }
     }
+    //clean the queue and process only delete operation
     QSS_INFO << "Leaving scan thread:" << boost::this_thread::get_id();
 }
 
-void QuantumSlotScheduler::_checkRemoveAndAddNewConsumer() {
+bool QuantumSlotScheduler::_checkRemoveAndAddNewConsumer() {
+    bool something_has_been_processed = true;
     SlotConsumerInfo *new_consumer_info = NULL;
     //! try to get new one
-    if(!queue_new_quantum_slot_consumer.pop(new_consumer_info)) return;
+    if(!(something_has_been_processed = queue_new_quantum_slot_consumer.pop(new_consumer_info))) return something_has_been_processed;
     try {
         if(new_consumer_info->operation) {
             //we need to add it
@@ -200,6 +219,7 @@ void QuantumSlotScheduler::_checkRemoveAndAddNewConsumer() {
         
     }
     delete(new_consumer_info);
+    return something_has_been_processed;
 }
 
 //! add a new thread to the fetcher job
@@ -275,16 +295,16 @@ void QuantumSlotScheduler::addKeyConsumer(const std::string& key_to_monitor,
                                           QuantumSlotConsumer *consumer,
                                           unsigned int consumer_priority) {
     CHAOS_ASSERT(consumer)
-    
     //add the new slot
     std::string quantum_consumer_key = CHAOS_QSS_COMPOSE_QUANTUM_CONSUMER_KEY(key_to_monitor,
                                                                               quantum_multiplier,
                                                                               consumer);
     if(map_quantum_slot_consumer.count(quantum_consumer_key)) {
-        QSS_DBG << "Consumer already present";
+        QSS_ERR << boost::str(boost::format("Key consumer alredy registere [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
         return;
     }
-    
+    QSS_INFO << boost::str(boost::format("Add new key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
+
     //increment the index to indicate that has passed scheduler publi layer
     consumer->free_of_work = false;
     consumer->usage_counter++;
@@ -302,7 +322,7 @@ void QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
                                              unsigned int quantum_multiplier,
                                              QuantumSlotConsumer *consumer) {
     CHAOS_ASSERT(consumer)
-    DEBUG_CODE(QSS_DBG << "Start removeing the quantum slot consumer for key:" << key_to_monitor << "and quantum multiplier:" << quantum_multiplier);
+    QSS_INFO << boost::str(boost::format("Start removing key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
 
     //prepare key
     std::string quantum_consumer_key = CHAOS_QSS_COMPOSE_QUANTUM_CONSUMER_KEY(key_to_monitor,
@@ -321,7 +341,7 @@ void QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
     
     //waith for completiotion on consumer
     consumer->waitForCompletition();
-    DEBUG_CODE(QSS_DBG << "Cleanly removed the quantum slot consumer for key:" << key_to_monitor << "and quantum multiplier:" << quantum_multiplier);
+    QSS_INFO << boost::str(boost::format("Cleanly removed key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
 }
 
 //---------called by the scheduler thread----------
@@ -345,11 +365,12 @@ void QuantumSlotScheduler::_addKeyConsumer(SlotConsumerInfo *ci) {
     
     //! add consumer to slot
     quantum_slot->addNewConsumer(ci->consumer, ci->consumer_priority);
+    DEBUG_CODE(QSS_DBG << boost::str(boost::format("Added key consumer [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
 }
 
 void QuantumSlotScheduler::_removeKeyConsumer(SlotConsumerInfo *ci) {
     CHAOS_ASSERT(ci)
-    DEBUG_CODE(QSS_DBG << "Start removeing the quantum slot consumer for key:" << ci->key_to_monitor << "and quantum multiplier:" << ci->quantum_multiplier);
+    DEBUG_CODE(QSS_DBG << boost::str(boost::format("Start removing key consumer [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
 
     //prepare key
     std::string quantum_slot_key = CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(ci->key_to_monitor,
@@ -362,11 +383,11 @@ void QuantumSlotScheduler::_removeKeyConsumer(SlotConsumerInfo *ci) {
     boost::shared_ptr<QuantumSlot> quantum_slot = it->quantum_slot;
     //try to remove the consumer, if we dont have success, it mean that the consumer has been removed directly from quantum sot object
     if(quantum_slot->removeConsumer(ci->consumer)) {
-        DEBUG_CODE(QSS_DBG << "whe have removed the quantum slot consumer for key:" << ci->key_to_monitor << "and quantum multiplier:" << ci->quantum_multiplier << " from scheduler");
+        DEBUG_CODE(QSS_DBG << boost::str(boost::format("we have removed key consumer [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
         //we have succesfull remove it and we can notify
         ci->consumer->setFreeOfWork();
-        DEBUG_CODE(QSS_DBG << "whe have signaled the quantum slot consumer for key:" << ci->key_to_monitor << "and quantum multiplier:" << ci->quantum_multiplier);
+        DEBUG_CODE(QSS_DBG << boost::str(boost::format("we have signaled key consumer that it is free of work [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
     } else {
-        DEBUG_CODE(QSS_DBG << "the quantum slot consumer for key:" << ci->key_to_monitor << "and quantum multiplier:" << ci->quantum_multiplier << "has been removed directly by the slot");
+        DEBUG_CODE(QSS_DBG << boost::str(boost::format("The key consumer has been removed directly by the slot [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
     }
 }

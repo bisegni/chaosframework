@@ -169,7 +169,7 @@ int main(int argc, char * argv[]) {
         HearbeatHandler *hb_handler = new HearbeatHandler();
         for(int idx = 0; idx < 100; idx++) {
             ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handler);
-            usleep(5000000);
+            usleep(500000);
             ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handler);
         }
         delete(hb_handler);
@@ -180,6 +180,8 @@ int main(int argc, char * argv[]) {
             hb_handlers[idx]->tag = boost::lexical_cast<std::string>(idx);
             ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handlers[idx]);
         }
+        
+        usleep(5000000);
         
         for(int idx = 0; idx < 100; idx++) {
             ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handlers[idx]);

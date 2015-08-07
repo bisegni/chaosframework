@@ -248,7 +248,7 @@ namespace chaos {
                 void _removeKeyConsumer(SlotConsumerInfo *ci);
                 
                 //!check the internal queue if there are new consumer to add
-                inline void _checkRemoveAndAddNewConsumer();
+                inline bool _checkRemoveAndAddNewConsumer();
             public:
                 
                 void init(void *init_data) throw (chaos::CException);
