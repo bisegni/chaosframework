@@ -28,3 +28,5 @@ For further documentation please visit:
 http://chaos.infn.it                        - public information site
 https://opensource-confluence.infn.it       - public user and developer site
 https://github.com/bisegni/chaosframework   - public source code usefull to collaborate with us
+
+release 1.0.0 (alpha 1 build 1)
