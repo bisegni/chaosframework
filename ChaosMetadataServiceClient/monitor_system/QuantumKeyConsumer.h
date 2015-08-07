@@ -43,7 +43,7 @@ namespace chaos {
             public QuantumSlotConsumer {
                 friend class QuantumSlotScheduler;
                 const std::string       key;
-                boost::shared_mutex     map_mutex;
+                boost::mutex            map_mutex;
                 AttributeHandlerMap     map_attribute_handler;
                 
             protected:

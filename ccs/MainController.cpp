@@ -109,7 +109,7 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     a.processEvents();
     //initialize !CHAOS metadata service client
     ChaosMetadataServiceClient::getInstance()->init(argc, argv);
-
+    ChaosMetadataServiceClient::getInstance()->start();
     splash->showMessage(QObject::tr("!CHAOS Control Studio Initilized!"),
                         Qt::AlignLeft | Qt::AlignBottom, Qt::lightGray);
     a.processEvents();
@@ -131,6 +131,7 @@ void MainController::deinit() {
     QThreadPool::globalInstance()->waitForDone();
 
     //! deinitialize !CHOAS  metadata service client
+    ChaosMetadataServiceClient::getInstance()->stop();
     ChaosMetadataServiceClient::getInstance()->deinit();
 
     qDebug() << "!CHAOS Control Studio closed!";

@@ -21,7 +21,7 @@ ChaosLabel::ChaosLabel(QWidget * parent,
 }
 
 ChaosLabel::~ChaosLabel() {
-
+    stopMonitoring();
 }
 
 void ChaosLabel::setNodeUniqueID(const QString& node_uid) {
@@ -90,6 +90,7 @@ bool labelValueShowTrackStatus();
 
 int ChaosLabel::startMonitoring() {
     if(monitoring) return -1;
+    monitoring = true;
     if(trackStatus()) {
         if(!ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
                                                                                       20,
@@ -102,11 +103,13 @@ int ChaosLabel::startMonitoring() {
             return -3;
         }
     }
+
     return 0;
 }
 
 int ChaosLabel::stopMonitoring() {
     if(!monitoring) return -1;
+    monitoring = false;
     if(!ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
                                                                                      20,
                                                                                      &healt_heartbeat_handler)) {

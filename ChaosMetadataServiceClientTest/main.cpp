@@ -86,6 +86,10 @@ protected:
                       const int64_t value) {
         MSCT_INFO << "Tag:"<<tag<<" key:" << key << " attribute:" << attribute << " value:" << (uint64_t)value;
     }
+    void consumeValueNotFound(const std::string& key,
+                                      const std::string& attribute) {
+        MSCT_INFO << "Tag:"<<tag<<" key:" << key << " attribute:" << attribute << " no value found";
+    }
 public:
     std::string tag;
 };
@@ -107,6 +111,7 @@ protected:
 public:
     std::string tag;
 };
+
 
 void asyncTest(EchoTestProxy *echo_proxy_test) {
     
@@ -143,58 +148,46 @@ void asyncTest(EchoTestProxy *echo_proxy_test) {
 int main(int argc, char * argv[]) {
     boost::thread_group tg;
     try{
-        StatusHandler status_handler;
-        BinaryHandler bin_handler("sin_wave");
-        //HearbeatHandler *hb_handler_1 = new HearbeatHandler();
-        //HearbeatHandler *hb_handler_2 = new HearbeatHandler();
-        
-        //hb_handler_1->tag = "_1";
-        //hb_handler_2->tag = "_2";
-        TestMonitorConsumer test_consumer[400];
-        global_counter = 0;
-        error_count = 0;
-        no_result_count=0;
+        unsigned int quantum_multiplier;
+        std::string device_id;
+        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >("device-id",
+                                                                                                              "Specify the device",
+                                                                                                              &device_id);
+        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >("qm",
+                                                                                                               "Specify the quantum multiplier to use",
+                                                                                                               &quantum_multiplier);
         ChaosMetadataServiceClient::getInstance()->init(argc, argv);
+        
+        if(!device_id.size()) CHAOS_EXCEPTION(-1, "Invalid device id")
+        
         ChaosMetadataServiceClient::getInstance()->start();
         
         ChaosMetadataServiceClient::getInstance()->addServerAddress("pcbisegni.lnf.infn.it:5000");
         
         ChaosMetadataServiceClient::getInstance()->enableMonitoring();
         
-//        ChaosMetadataServiceClient::getInstance()->addKeyConsumer("rt-claudio-1_o",
-//                                                                  10,
-//                                                                  &test_consumer[0]);
-        ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandler("rt-claudio-1_o", 20, &bin_handler);
-        //ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_1);
-        //ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_2);
-        
-        sleep(20);
-        
-//        ChaosMetadataServiceClient::getInstance()->removeKeyConsumer("rt-claudio-1_o",
-//                                                                     10,
-//                                                                     &test_consumer[0]);
-        ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandler("rt-claudio-1_o", 20, &bin_handler);
-        //ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_2);
-        //ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 10, hb_handler_1);
-        //delete(hb_handler_1);delete(hb_handler_2);
+        HearbeatHandler *hb_handler = new HearbeatHandler();
         for(int idx = 0; idx < 100; idx++) {
-            HearbeatHandler *hb_handler_1 = new HearbeatHandler();
-            hb_handler_1->tag = boost::lexical_cast<std::string>(idx);
-            ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt("rt-claudio-1", 1, hb_handler_1);
+            ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handler);
             usleep(500000);
-            ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt("rt-claudio-1", 1, hb_handler_1);
-            delete(hb_handler_1);
+            ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handler);
+        }
+        delete(hb_handler);
+        
+        HearbeatHandler *hb_handlers[100];
+        for(int idx = 0; idx < 100; idx++) {
+            hb_handlers[idx] = new HearbeatHandler();
+            hb_handlers[idx]->tag = boost::lexical_cast<std::string>(idx);
+            ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handlers[idx]);
         }
         
-        //EchoTestProxy *echo_proxy_test = ChaosMetadataServiceClient::getInstance()->getApiProxy<EchoTestProxy>(1000);
-        //tg.add_thread(new boost::thread(&asyncTest, echo_proxy_test));
-        //tg.add_thread(new boost::thread(&asyncTest, echo_proxy_test));
-        //tg.join_all();
-        std::cout << "\nTest finisched with 2 thread\n" << std::flush;
-        std::cout << "global_counter"<<global_counter<<"\n" << std::flush;
-        std::cout << "error_count"<<error_count<<"\n" << std::flush;
-        std::cout << "no_result_count"<<no_result_count<<"\n" << std::flush;
+        usleep(5000000);
         
+        for(int idx = 0; idx < 100; idx++) {
+            ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handlers[idx]);
+            delete(hb_handlers[idx]);
+        }
+        ChaosMetadataServiceClient::getInstance()->disableMonitoring();
         ChaosMetadataServiceClient::getInstance()->stop();
         ChaosMetadataServiceClient::getInstance()->deinit();
     }catch(chaos::CException& ex) {
