@@ -15,7 +15,6 @@ class ChaosLabel:
         public QLabel {
     Q_OBJECT
 
-    uint64_t last_recevide_timeout;
     unsigned int p_timeout_for_alive;
     Q_PROPERTY(unsigned int timeout_for_alive READ timeoutForAlive WRITE setTimeoutForAlive)
 
@@ -62,7 +61,7 @@ public:
 
     virtual int stopMonitoring();
 
-    bool isOnline();
+    bool isOnline(uint64_t received_ts);
     void	setText(const QString &string);
 protected slots:
     virtual void valueUpdated(const QString& node_uid,
@@ -85,6 +84,7 @@ signals:
                       const QString& value);
 protected:
     bool monitoring;
+    uint64_t last_recevide_ts;
     HealthHartbeatHandler healt_heartbeat_handler;
     HealtStatusHandler healt_status_handler;
     boost::shared_ptr<AbstractTSTaggedAttributeHandler> handler_sptr;

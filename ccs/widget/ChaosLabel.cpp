@@ -9,8 +9,8 @@ ChaosLabel::ChaosLabel(QWidget * parent,
                        Qt::WindowFlags f):
     QLabel(parent, f),
     monitoring(false),
-    last_recevide_timeout(false) {
-    setTimeoutForAlive(5000);
+    last_recevide_ts(0) {
+    setTimeoutForAlive(6000);
 
     connect(&healt_status_handler,
             SIGNAL(valueUpdated(QString,QString,QVariant)),
@@ -127,9 +127,8 @@ void ChaosLabel::valueUpdated(const QString& node_uid,
                               const QString& attribute_name,
                               const QVariant& attribute_value) {
     if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0) {
-        last_recevide_timeout = attribute_value.toLongLong();
-        bool is_on_line = isOnline();
-        if(!isOnline()) {
+        bool is_on_line = isOnline(attribute_value.toLongLong());
+        if(!is_on_line) {
             setStyleSheet("QLabel { color : #E65566; }");
         } else {
             if(current_value == attribute_value) {
@@ -155,8 +154,10 @@ void ChaosLabel::valueUpdated(const QString& node_uid,
     setText(attribute_value.toString());
 }
 
-bool ChaosLabel::isOnline() {
-    return (QDateTime::currentDateTimeUtc().currentMSecsSinceEpoch() - last_recevide_timeout) <= timeoutForAlive();
+bool ChaosLabel::isOnline(uint64_t received_ts) {
+    bool online = received_ts - last_recevide_ts <= timeoutForAlive();
+    last_recevide_ts = received_ts;
+    return online;
 }
 
 //slots hiding

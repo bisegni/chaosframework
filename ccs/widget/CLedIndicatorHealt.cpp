@@ -2,7 +2,7 @@
 #include <chaos/common/chaos_constants.h>
 
 #include <QDateTime>
-
+#include <QDebug>
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
@@ -70,8 +70,8 @@ void CLedIndicatorHealt::valueUpdated(const QString& node_uid,
             setState(0);
             manageOnlineFlag(Indeterminated);
         } else {
-            uint64_t time_diff = QDateTime::currentDateTimeUtc().currentMSecsSinceEpoch() - current_timestamp;
-            if(time_diff <= 5000) {
+            uint64_t time_diff = current_timestamp - last_recevied_ts;
+            if(time_diff <= 6000) {
                 //in time
                 setState(2);
                 manageOnlineFlag(Online);
@@ -80,7 +80,10 @@ void CLedIndicatorHealt::valueUpdated(const QString& node_uid,
                 setState(1);
                 manageOnlineFlag(Offline);
             }
+            qDebug() << node_uid <<" - current ST:" << current_timestamp << " Last received ts:" << last_recevied_ts << " diff:" << time_diff;
         }
+        //memorize the received timestamp
+        last_recevied_ts = current_timestamp;
     }
 }
 
@@ -88,4 +91,5 @@ void CLedIndicatorHealt::valueNotFound(const QString& node_uid,
                                        const QString& attribute_name) {
     setState(0);
     manageOnlineFlag(Indeterminated);
+    qDebug() << "Current ST not found for:" << node_uid;
 }
