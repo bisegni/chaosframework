@@ -679,7 +679,7 @@ namespace chaos {
         static const char * const DPCK_DEVICE_ID                       = chaos::NodeDefinitionKey::NODE_UNIQUE_ID;
         
         //!this define the acquisition timestamp of the data represented by the dataset[uint64_t]
-        static const char * const DPCK_TIMESTAMP                       = chaos::NodeDefinitionKey::NODE_TIMESTAMP;
+        static const char * const DPCK_TIMESTAMP                       = "dpck_ats";//chaos::NodeDefinitionKey::NODE_TIMESTAMP;
         
         //!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) int32_t]
         static const char * const DPCK_DATASET_TYPE                    = "dpck_ds_type";
