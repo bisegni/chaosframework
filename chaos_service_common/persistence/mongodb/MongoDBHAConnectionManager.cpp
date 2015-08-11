@@ -78,7 +78,7 @@ void MongoAuthHook::onCreate( mongo::DBClientBase * conn ) {
 	if(has_autentication){
 		MDBHAC_LDBG_ << "Autenticate on - " << conn->getServerAddress();
 		if(!conn->auth(db, user, pwd, err)) {
-			MDBHAC_LERR_ << conn->getServerAddress() << " -> " << err;
+			MDBHAC_LERR_ << conn->getServerAddress() << " -> " << err << " user:" << user << " pwd:" <<pwd;
 		}
 	} else {
 		MDBHAC_LDBG_ << "No Autenticate on - " << conn->getServerAddress();
@@ -441,7 +441,7 @@ int MongoDBHAConnectionManager::remove( const std::string &ns , mongo::Query q ,
 			conn->conn().remove(ns, q, justOne, wc);
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
-			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
+			MDBHAC_LERR_ << "MongoDBHAConnectionManager::remove" << " -> " << ex.what();
 			MONGO_DB_GET_ERROR(conn, err);
 			DELETE_OBJ_POINTER(conn)
 			CONTINUE_ON_NEXT_CONNECTION(err)

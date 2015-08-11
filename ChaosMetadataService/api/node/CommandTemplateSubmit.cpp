@@ -53,13 +53,19 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
     
     GET_DATA_ACCESS(NodeDataAccess, n_da, -3)
     
+    //list of command instance
+    CommandInstanceList command_instance_list;
+    
     N_CTS_DBG << "validate all command instance";
     std::auto_ptr<CMultiTypeDataArrayWrapper> submission_task_list(api_data->getVectorValue("submission_task"));
     for(int idx =0;
         idx < submission_task_list->size();
         idx++) {
         boost::shared_ptr<CDataWrapper>  submission_task(submission_task_list->getCDataWrapperElementAtIndex(idx));
-        processSubmissionTask(n_da, submission_task);
+        //!process the instance
+        processSubmissionTask(n_da,
+                              submission_task,
+                              command_instance_list);
     }
     
     //if we have reaced this point we should have all instance well formed
@@ -80,7 +86,8 @@ CDataWrapper *CommandTemplateSubmit::execute(CDataWrapper *api_data,
 }
 
 void CommandTemplateSubmit::processSubmissionTask(NodeDataAccess *n_da,
-                                                  boost::shared_ptr<CDataWrapper> submission_task) {
+                                                  boost::shared_ptr<CDataWrapper> submission_task,
+                                                  CommandInstanceList& command_instance_list) {
     CHECK_KEY_THROW_AND_LOG(submission_task.get(), NodeDefinitionKey::NODE_UNIQUE_ID, N_CTS_ERR, -1, "The node unique id is mandatory")
     CHECK_KEY_THROW_AND_LOG(submission_task.get(), "template_name", N_CTS_ERR, -2, "The name of tempalte is mandatory")
     CHECK_KEY_THROW_AND_LOG(submission_task.get(), BatchCommandAndParameterDescriptionkey::BC_UNIQUE_ID, N_CTS_ERR, -3, "The command unique id is mandatory")
