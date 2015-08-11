@@ -82,7 +82,7 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updatePlot()));
-    timer->start(100);
+    timer->start(30);
 }
 
 NodeAttributePlotting::~NodeAttributePlotting() {
