@@ -135,7 +135,7 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 void ZMQDirectIOServer::worker(bool priority_service) {
 	char						header_buffer[DIRECT_IO_HEADER_SIZE];
 	int							linger				= 0;
-	int							water_mark			= 10;
+	int							water_mark			= 1000;
 	int							timeout				= 1000;
 	void						*socket				= NULL;
     int							err					= 0;

@@ -56,11 +56,11 @@ public QuantumSlotConsumer {
     void quantumSlotHasData(const std::string& key,
                             const KeyValue& value) {
         //print fetched data
-        MSCT_INFO << key << " - " << value->getJSONString() <<std::endl;
+        std::cout << key <<  " - " << value->getJSONString() << "\n" << std::flush;
     };
     void quantumSlotHasNoData(const std::string& key) {
         //print fetched data
-        MSCT_INFO << key << " - " << "No Data" <<std::endl;
+        std::cout << key << " - " << "No Data" <<std::endl;
     };
 };
 
@@ -87,7 +87,7 @@ protected:
         MSCT_INFO << "Tag:"<<tag<<" key:" << key << " attribute:" << attribute << " value:" << (uint64_t)value;
     }
     void consumeValueNotFound(const std::string& key,
-                                      const std::string& attribute) {
+                              const std::string& attribute) {
         MSCT_INFO << "Tag:"<<tag<<" key:" << key << " attribute:" << attribute << " no value found";
     }
 public:
@@ -147,46 +147,41 @@ void asyncTest(EchoTestProxy *echo_proxy_test) {
 
 int main(int argc, char * argv[]) {
     boost::thread_group tg;
+    unsigned int quantum_multiplier;
+    unsigned int wait_seconds;
+    std::string device_id;
+    TestMonitorConsumer *node_consumer = NULL;
+    
+    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >("device-id",
+                                                                                                          "Specify the device",
+                                                                                                          &device_id);
+    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >("qm",
+                                                                                                           "Specify the quantum multiplier to use",
+                                                                                                           &quantum_multiplier);
+    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >("monitor-timeout",
+                                                                                                           "Specify the time that we need to monitor the device in seconds",
+                                                                                                           &wait_seconds);
     try{
-        unsigned int quantum_multiplier;
-        std::string device_id;
-        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >("device-id",
-                                                                                                              "Specify the device",
-                                                                                                              &device_id);
-        ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >("qm",
-                                                                                                               "Specify the quantum multiplier to use",
-                                                                                                               &quantum_multiplier);
+
         ChaosMetadataServiceClient::getInstance()->init(argc, argv);
         
         if(!device_id.size()) CHAOS_EXCEPTION(-1, "Invalid device id")
+            
+            ChaosMetadataServiceClient::getInstance()->start();
         
-        ChaosMetadataServiceClient::getInstance()->start();
-        
-        ChaosMetadataServiceClient::getInstance()->addServerAddress("pcbisegni.lnf.infn.it:5000");
+        ChaosMetadataServiceClient::getInstance()->addServerAddress("chaost-mds1.chaos.lnf.infn.it:5000");
         
         ChaosMetadataServiceClient::getInstance()->enableMonitoring();
         
-        HearbeatHandler *hb_handler = new HearbeatHandler();
-        for(int idx = 0; idx < 100; idx++) {
-            ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handler);
-            usleep(500000);
-            ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handler);
-        }
-        delete(hb_handler);
+        node_consumer = new TestMonitorConsumer();
+        ChaosMetadataServiceClient::getInstance()->addKeyConsumer(device_id,
+                                                                  quantum_multiplier,
+                                                                  node_consumer);
+        sleep(wait_seconds);
+        ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(device_id,
+                                                                     quantum_multiplier,
+                                                                     node_consumer);
         
-        HearbeatHandler *hb_handlers[100];
-        for(int idx = 0; idx < 100; idx++) {
-            hb_handlers[idx] = new HearbeatHandler();
-            hb_handlers[idx]->tag = boost::lexical_cast<std::string>(idx);
-            ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handlers[idx]);
-        }
-        
-        usleep(5000000);
-        
-        for(int idx = 0; idx < 100; idx++) {
-            ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(device_id, quantum_multiplier, hb_handlers[idx]);
-            delete(hb_handlers[idx]);
-        }
         ChaosMetadataServiceClient::getInstance()->disableMonitoring();
         ChaosMetadataServiceClient::getInstance()->stop();
         ChaosMetadataServiceClient::getInstance()->deinit();
@@ -195,5 +190,6 @@ int main(int argc, char * argv[]) {
     }catch(...) {
         std::cerr << "Unrecognized error";
     }
+    if(node_consumer) delete(node_consumer);
     return 0;
 }
