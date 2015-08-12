@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
+INCLUDE_DIRECTORIES(../)
 
 SET(mcl_src ChaosMetadataServiceClient.cpp)
 
@@ -76,6 +77,9 @@ INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/
 
 FILE(GLOB files "api_proxy/node/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/node)
+
+FILE(GLOB files "api_proxy/service/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/service)
 
 FILE(GLOB files "monitor_system/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/monitor_system)
