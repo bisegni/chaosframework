@@ -353,12 +353,14 @@ void ZMQDirectIOServer::worker(bool priority_service) {
                 //sending identity
                 err = stringSendMore(socket, identity.c_str());
                 if(err == -1) {
+                    DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
                     err = zmq_errno();
                     ZMQDIO_SRV_LERR_ << "Error sending identity for answer with error:"<< zmq_strerror(err);
                 } else {
                     //sending envelop delimiter
                     err = stringSendMore(socket, EmptyMessage);
                     if(err == -1) {
+                        DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
                         err = zmq_errno();
                         ZMQDIO_SRV_LERR_ << "Error sending envelop delimiter for answer with error:"<< zmq_strerror(err);
                     } else {
@@ -374,18 +376,19 @@ void ZMQDirectIOServer::worker(bool priority_service) {
                         if(err == -1) {
                             err = zmq_errno();
                             ZMQDIO_SRV_LERR_ << "Error creating message for asnwer with error:" <<zmq_strerror(err);
+                            DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
                         } else {
                             ZMQ_DO_AGAIN(err = zmq_sendmsg(socket, &answer_data, 0);)
                             if(err == -1) {
                                 err = zmq_errno();
                                 ZMQDIO_SRV_LAPP_ << "Error sending answer whit error:" << zmq_strerror(err);
+                                DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
                             }
                         }
                         //close the message
                         zmq_msg_close(&answer_data);
                     }
                 }
-                DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
             }
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
