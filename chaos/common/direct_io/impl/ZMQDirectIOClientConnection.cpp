@@ -233,17 +233,19 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
        data_pack->header.dispatcher_header.fields.synchronous_answer) {
         std::string empty_delimiter;
         //receive the zmq evenlod delimiter
-        err = stringReceive(socket, empty_delimiter);
+        ZMQ_DO_AGAIN(err = stringReceive(socket, empty_delimiter);)
         if(err != -1) {
             //DirectIOSynchronousAnswer
             zmq_msg_t msg;
             err = zmq_msg_init(&msg);
             if(err == -1) {
-                ZMQDIO_CONNECTION_LERR_ << "Error initializing message for asynchronous answer";
+                err = zmq_errno();
+                ZMQDIO_CONNECTION_LERR_ << "Error initializing message for asynchronous answer with error" << zmq_strerror(err);;
             } else {
-                err = zmq_recvmsg(socket, &msg, 0);
+                ZMQ_DO_AGAIN(err = zmq_recvmsg(socket, &msg, 0);)
                 if(err == -1) {
-                    ZMQDIO_CONNECTION_LERR_ << "Error getting message for asynchronous answer";
+                    err = zmq_errno();
+                    ZMQDIO_CONNECTION_LERR_ << "Error getting message for asynchronous answer with code:"<< zmq_strerror(err);
                 } else {
                     //we have message
                     *synchronous_answer = (DirectIOSynchronousAnswer*)calloc(sizeof(DirectIOSynchronousAnswer), 1);
@@ -259,6 +261,9 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
             //close received message
             err = zmq_msg_close(&msg);
             //err need to be euqal to 0 for riget things
+        } else {
+            err = zmq_errno();
+            ZMQDIO_CONNECTION_LERR_ << "Error waiting envelop delimiter with code:"<< zmq_strerror(err);
         }
     }
     
