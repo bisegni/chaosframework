@@ -171,8 +171,8 @@ DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string s
 	const int output_buffer_dim = 1;
 	const int linger_period = 0;
 	const int timeout = 5000;
-	const int min_reconnection_ivl = 100;
-	const int max_reconnection_ivl = 500;
+	const int min_reconnection_ivl = 5000;
+	const int max_reconnection_ivl = 10000;
 	
 	void *socket_priority = NULL;
 	void *socket_service = NULL;
