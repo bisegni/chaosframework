@@ -338,6 +338,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
             if(data_pack->header.dispatcher_header.fields.synchronous_answer) {
                 //the client waith an answer
                 synchronous_answer = (DirectIOSynchronousAnswerPtr) calloc(sizeof(synchronous_answer), 1);
+                synchronous_answer->answer_data = NULL;
             }
             
             //dispatch to endpoint
@@ -348,10 +349,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
                     ZMQDIO_SRV_LERR_ << "Erasing memory for data to return due to error";
                     DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
                 }
-
-            }
-            //check if we need to send async answer
-            if(send_synchronous_answer) {
+            } else if(send_synchronous_answer) {
                 //sending identity
                 err = stringSendMore(socket, identity.c_str());
                 if(err == -1) {
@@ -376,19 +374,18 @@ void ZMQDirectIOServer::worker(bool priority_service) {
                         if(err == -1) {
                             err = zmq_errno();
                             ZMQDIO_SRV_LERR_ << "Error creating message for asnwer with error:" <<zmq_strerror(err);
-                            DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
                         } else {
                             ZMQ_DO_AGAIN(err = zmq_sendmsg(socket, &answer_data, 0);)
                             if(err == -1) {
                                 err = zmq_errno();
                                 ZMQDIO_SRV_LAPP_ << "Error sending answer whit error:" << zmq_strerror(err);
-                                DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
                             }
                         }
                         //close the message
                         zmq_msg_close(&answer_data);
                     }
                 }
+                DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
             }
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)

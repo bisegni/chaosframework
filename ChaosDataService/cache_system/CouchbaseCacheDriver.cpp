@@ -170,7 +170,7 @@ int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  v
 	if(last_err != LCB_SUCCESS) {
 		CCDLERR_<< "Fail to set value with last_err "<< last_err << " with message " << last_err_str;
 		last_err = LCB_SUCCESS;
-		return -1;
+		return -2;
 	}
 	return 0;
 }
