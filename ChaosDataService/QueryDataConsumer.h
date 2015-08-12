@@ -39,6 +39,7 @@
 #include <chaos/common/network/NetworkBroker.h>
 
 #include <boost/atomic.hpp>
+#include <boost/thread.hpp>
 
 using namespace chaos::common::utility;
 using namespace chaos::common::data;
@@ -69,6 +70,7 @@ namespace chaos{
 			DirectIODeviceServerChannel				*device_channel;
 			DirectIOSystemAPIServerChannel			*system_api_channel;
 			
+            boost::mutex                            mutex_cache_driver_get_last;
 			cache_system::CacheDriver				*cache_driver_get_last;
 			db_system::DBDriver						*db_driver;
 			vfs::VFSManager                         *vfs_manager_instance;

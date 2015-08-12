@@ -303,6 +303,9 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
                                        uint32_t channel_data_len,
                                        DirectIOSynchronousAnswerPtr synchronous_answer) {
     //debug check
+    //protected access to cached driver
+    boost::unique_lock<boost::mutex> wl(mutex_cache_driver_get_last);
+    //get data
     int err = cache_driver_get_last->getData(channel_data,
                                              channel_data_len,
                                              &synchronous_answer->answer_data,
