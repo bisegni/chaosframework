@@ -346,8 +346,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
             if(err) {
                 ZMQDIO_SRV_LERR_ << "Error returned by endler:" << err;
                 if(synchronous_answer) {
-                    ZMQDIO_SRV_LERR_ << "Erasing memory for data to return due to error";
-                    DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
+                    ZMQDIO_SRV_LERR_ << "Answer will not be forwarderd";
                 }
             } else if(send_synchronous_answer) {
                 //sending identity
