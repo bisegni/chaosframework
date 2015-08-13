@@ -156,7 +156,7 @@ int DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
     CHAOS_ASSERT(job_ptr->request_header)
     CHAOS_ASSERT(job_ptr->data_pack)
     CHAOS_ASSERT(cache_driver_ptr)
-    
+    bool to delete_here = (job_ptr->request_header->tag == 1);
 	switch(job_ptr->request_header->tag) {
 		case 0:// storicize only
 			err = DataWorker::submitJobInfo(job_info);
@@ -184,7 +184,7 @@ int DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
 		}
 	}
 	
-	if(job_ptr->request_header->tag == 1) {
+	if(delete_here) {
 		free(job_ptr->request_header);
 		free(job_ptr->data_pack);
 		free(job_info);

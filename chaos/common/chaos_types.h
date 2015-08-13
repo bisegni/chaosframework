@@ -26,27 +26,39 @@
 #include <boost/ptr_container/ptr_container.hpp>
 
 #include <map>
+#include <queue>
+#include <deque>
 #include <vector>
 
-#define  CHAOS_DEFINE_VECTOR_FOR_TYPE(t, name)\
-typedef std::vector< t >                   name;\
-typedef std::vector< t >::iterator         name ## Iterator;\
-typedef std::vector< t >::const_iterator   name ## ConstIterator;
+#define  CHAOS_DEFINE_VECTOR_FOR_TYPE(t, n)\
+typedef std::vector< t >                   n;\
+typedef std::vector< t >::iterator         n ## Iterator;\
+typedef std::vector< t >::const_iterator   n ## ConstIterator;
 
-#define  CHAOS_DEFINE_PTR_VECTOR_FOR_TYPE(t, name)\
-typedef boost::ptr_vector< t >                   name;\
-typedef boost::ptr_vector< t >::iterator         name ## Iterator;\
-typedef boost::ptr_vector< t >::const_iterator   name ## ConstIterator;
+#define  CHAOS_DEFINE_QUEUE_FOR_TYPE(t, n)\
+typedef std::queue< t >                   n;\
+typedef std::queue< t >::iterator         n ## Iterator;\
+typedef std::queue< t >::const_iterator   n ## ConstIterator;
 
-#define  CHAOS_DEFINE_MAP_FOR_TYPE(t1, t2, name)\
-typedef std::map< t1, t2 >                   name;\
-typedef std::map< t1, t2 >::iterator         name ## Iterator;\
-typedef std::map< t1, t2 >::const_iterator   name ## ConstIterator;
+#define  CHAOS_DEFINE_DEQUE_FOR_TYPE(t, n)\
+typedef std::deque< t >                   n;\
+typedef std::deque< t >::iterator         n ## Iterator;\
+typedef std::deque< t >::const_iterator   n ## ConstIterator;
 
-#define  CHAOS_DEFINE_PTR_MAP_FOR_TYPE(t1, t2, name)\
-typedef boost::ptr_map< t1, t2 >                   name;\
-typedef boost::ptr_map< t1, t2 >::iterator         name ## Iterator;\
-typedef boost::ptr_map< t1, t2 >::const_iterator   name ## ConstIterator;
+#define  CHAOS_DEFINE_PTR_VECTOR_FOR_TYPE(t, n)\
+typedef boost::ptr_vector< t >                   n;\
+typedef boost::ptr_vector< t >::iterator         n ## Iterator;\
+typedef boost::ptr_vector< t >::const_iterator   n ## ConstIterator;
+
+#define  CHAOS_DEFINE_MAP_FOR_TYPE(t1, t2, n)\
+typedef std::map< t1, t2 >                   n;\
+typedef std::map< t1, t2 >::iterator         n ## Iterator;\
+typedef std::map< t1, t2 >::const_iterator   n ## ConstIterator;
+
+#define  CHAOS_DEFINE_PTR_MAP_FOR_TYPE(t1, t2, n)\
+typedef boost::ptr_map< t1, t2 >                   n;\
+typedef boost::ptr_map< t1, t2 >::iterator         n ## Iterator;\
+typedef boost::ptr_map< t1, t2 >::const_iterator   n ## ConstIterator;
 
 #define CHAOS_DEFINE_GET_PTR_MAP_ELEMENT(map, element_type, element_key)\
 dynamic_cast<element_type*>(&map.at(element_key));
