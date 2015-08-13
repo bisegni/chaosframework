@@ -1677,13 +1677,13 @@
       ]
     },
     {
-      "unit_server_alias": "LIBERA04",
+      "unit_server_alias": "LIBERA03",
       "private_key": null,
       "public_key": null,
       "cu_desc": [
         {
-          "unit_server_alias": "LIBERA04",
-          "cu_id": "LIBERA04/LIBERA_ACQUIRE0",
+          "unit_server_alias": "LIBERA03",
+          "cu_id": "LIBERA03/LIBERA_ACQUIRE0",
           "cu_type": "::driver::daq::libera::SCLiberaCU",
           "cu_param": "",
           "auto_load": true,
@@ -1697,8 +1697,118 @@
           "AttrDesc": []
         },
         {
-          "unit_server_alias": "LIBERA04",
-          "cu_id": "LIBERA04/LIBERA_ACQUIRE1",
+          "unit_server_alias": "LIBERA03",
+          "cu_id": "LIBERA03/LIBERA_ACQUIRE1",
+          "cu_type": "::driver::daq::libera::SCLiberaCU",
+          "cu_param": "",
+          "auto_load": true,
+          "DriverDescription": [
+            {
+              "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
+              "DriverDescriptionVersion": "1.0.0",
+              "DriverDescriptionInitParam": ""
+            }
+          ],
+          "AttrDesc": []
+        }
+      ]
+    },
+    {
+      "unit_server_alias": "LIBERA07",
+      "private_key": null,
+      "public_key": null,
+      "cu_desc": [
+        {
+          "unit_server_alias": "LIBERA07",
+          "cu_id": "LIBERA07/LIBERA_ACQUIRE0",
+          "cu_type": "::driver::daq::libera::SCLiberaCU",
+          "cu_param": "",
+          "auto_load": true,
+          "DriverDescription": [
+            {
+              "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
+              "DriverDescriptionVersion": "1.0.0",
+              "DriverDescriptionInitParam": ""
+            }
+          ],
+          "AttrDesc": []
+        },
+        {
+          "unit_server_alias": "LIBERA07",
+          "cu_id": "LIBERA07/LIBERA_ACQUIRE1",
+          "cu_type": "::driver::daq::libera::SCLiberaCU",
+          "cu_param": "",
+          "auto_load": true,
+          "DriverDescription": [
+            {
+              "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
+              "DriverDescriptionVersion": "1.0.0",
+              "DriverDescriptionInitParam": ""
+            }
+          ],
+          "AttrDesc": []
+        }
+      ]
+    },{
+      "unit_server_alias": "LIBERA08",
+      "private_key": null,
+      "public_key": null,
+      "cu_desc": [
+        {
+          "unit_server_alias": "LIBERA08",
+          "cu_id": "LIBERA08/LIBERA_ACQUIRE0",
+          "cu_type": "::driver::daq::libera::SCLiberaCU",
+          "cu_param": "",
+          "auto_load": true,
+          "DriverDescription": [
+            {
+              "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
+              "DriverDescriptionVersion": "1.0.0",
+              "DriverDescriptionInitParam": ""
+            }
+          ],
+          "AttrDesc": []
+        },
+        {
+          "unit_server_alias": "LIBERA08",
+          "cu_id": "LIBERA08/LIBERA_ACQUIRE1",
+          "cu_type": "::driver::daq::libera::SCLiberaCU",
+          "cu_param": "",
+          "auto_load": true,
+          "DriverDescription": [
+            {
+              "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
+              "DriverDescriptionVersion": "1.0.0",
+              "DriverDescriptionInitParam": ""
+            }
+          ],
+          "AttrDesc": []
+        }
+      ]
+    },
+{
+      "unit_server_alias": "LIBERA09",
+      "private_key": null,
+      "public_key": null,
+      "cu_desc": [
+        {
+          "unit_server_alias": "LIBERA09",
+          "cu_id": "LIBERA09/LIBERA_ACQUIRE0",
+          "cu_type": "::driver::daq::libera::SCLiberaCU",
+          "cu_param": "",
+          "auto_load": true,
+          "DriverDescription": [
+            {
+              "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
+              "DriverDescriptionVersion": "1.0.0",
+              "DriverDescriptionInitParam": ""
+            }
+          ],
+          "AttrDesc": []
+        },
+        {
+          "unit_server_alias": "LIBERA09",
+          "cu_id": "LIBERA09/LIBERA_ACQUIRE1",
           "cu_type": "::driver::daq::libera::SCLiberaCU",
           "cu_param": "",
           "auto_load": true,
