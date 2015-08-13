@@ -167,9 +167,7 @@ int main(int argc, char * argv[]) {
         
         if(!device_id.size()) CHAOS_EXCEPTION(-1, "Invalid device id")
             
-            ChaosMetadataServiceClient::getInstance()->start();
-        
-        ChaosMetadataServiceClient::getInstance()->addServerAddress("chaost-mds1.chaos.lnf.infn.it:5000");
+        ChaosMetadataServiceClient::getInstance()->start();
         
         ChaosMetadataServiceClient::getInstance()->enableMonitoring();
         
