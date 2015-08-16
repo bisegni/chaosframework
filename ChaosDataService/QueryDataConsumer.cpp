@@ -54,7 +54,8 @@ settings(NULL),
 server_endpoint(NULL),
 device_channel(NULL),
 system_api_channel(NULL),
-cache_driver_get_last(NULL) {}
+cache_driver_get_last(NULL),
+device_data_worker_index(0) {}
 
 QueryDataConsumer::~QueryDataConsumer() {}
 
@@ -62,34 +63,34 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     if(!settings)  throw chaos::CException(-1, "No setting provided", __FUNCTION__);
     if(!settings->cache_driver_setting.cache_driver_impl.size())  throw chaos::CException(-2, "No cache implemetation provided", __FUNCTION__);
     if(!settings->cache_driver_setting.startup_chache_servers.size())  throw chaos::CException(-3, "No cache servers provided", __FUNCTION__);
-    
+
     //get new chaos direct io endpoint
     server_endpoint = network_broker->getDirectIOServerEndpoint();
     if(!server_endpoint) throw chaos::CException(-4, "Invalid server endpoint", __FUNCTION__);
     QDCAPP_ << "QueryDataConsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
-    
+
     QDCAPP_ << "Allocating DirectIODeviceServerChannel";
     device_channel = (DirectIODeviceServerChannel*)server_endpoint->getNewChannelInstance("DirectIODeviceServerChannel");
     if(!device_channel) throw chaos::CException(-5, "Error allocating device server channel", __FUNCTION__);
     device_channel->setHandler(this);
-    
+
     QDCAPP_ << "Allocating DirectIOSystemAPIServerChannel";
     system_api_channel = (DirectIOSystemAPIServerChannel*)server_endpoint->getNewChannelInstance("DirectIOSystemAPIServerChannel");
     if(!system_api_channel) throw chaos::CException(-5, "Error allocating system api server channel", __FUNCTION__);
     system_api_channel->setHandler(this);
-    
+
     //
     cache_impl_name = settings->cache_driver_setting.cache_driver_impl;
     cache_impl_name.append("CacheDriver");
     QDCAPP_ << "The cache implementation to allocate is " << cache_impl_name;
-    
+
     db_impl_name = settings->db_driver_impl;
     db_impl_name.append("DBDriver");
     QDCAPP_ << "The db implementation to allocate is " << db_impl_name;
     //device data worker instance
     device_data_worker = (chaos::data_service::worker::DataWorker**) malloc(sizeof(chaos::data_service::worker::DataWorker**) * settings->cache_driver_setting.caching_worker_num);
     if(!device_data_worker) throw chaos::CException(-5, "Error allocating device workers", __FUNCTION__);
-    
+
     //get the cached driver
     cache_driver_get_last = ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
     if(ChaosDataService::getInstance()->setting.cache_driver_setting.log_metric) {
@@ -100,7 +101,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
                                              &settings->cache_driver_setting,
                                              cache_driver_get_last->getName(),
                                              __PRETTY_FUNCTION__);
-    
+
     //allocate query manager
     if(!settings->cache_only) {
         query_engine = new query_engine::QueryEngine(network_broker->getNewDirectIOClientInstance(),
@@ -117,7 +118,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     }
     chaos::data_service::worker::DeviceSharedDataWorker *tmp = NULL;
     for(int idx = 0; idx < settings->cache_driver_setting.caching_worker_num; idx++) {
-        
+
         if(ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
             QDCAPP_ << "Enable caching worker log metric";
             //install the data worker taht grab the metric
@@ -139,7 +140,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
         tmp->updateServerConfiguration();
         tmp->start();
     }
-    
+
     QDCAPP_ << "Allocating Snapshot worker";
     if(!settings->cache_only) {
         snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(cache_impl_name,
@@ -154,17 +155,17 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
         }
         ((chaos::data_service::worker::SnapshotCreationWorker*)snapshot_data_worker)->updateServerConfiguration();
     }
-    
+
     //add server to cache driver
     for(cache_system::CacheServerListIterator iter = settings->cache_driver_setting.startup_chache_servers.begin();
         iter != settings->cache_driver_setting.startup_chache_servers.end();
         iter++) {
         cache_driver_get_last->addServer(*iter);
     }
-    
+
     //fix the update on server
     cache_driver_get_last->updateConfig();
-    
+
     //start virtual file mantainers timer
     if(!settings->cache_only) {
         QDCAPP_ << "Start virtual file mantainers timer with a timeout of " << settings->vfile_mantainer_delay*1000 << "seconds";
@@ -175,7 +176,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 void QueryDataConsumer::start() throw (chaos::CException) {
     //start query engine
     if(query_engine) StartableService::startImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
-    
+
     //! start the snapshot creation worker
     if(!settings->cache_only &&
        snapshot_data_worker) {
@@ -189,7 +190,7 @@ void QueryDataConsumer::stop() throw (chaos::CException) {
        snapshot_data_worker) {
         StartableService::stopImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
     }
-    
+
     //stop query engine
     if(query_engine) StartableService::stopImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
 }
@@ -199,17 +200,17 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
         QDCAPP_ << "Remove virtual file mantainers timer";
         chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
     }
-    
+
     if(server_endpoint) {
         QDCAPP_ << "Release direct io device channel into the endpoint";
         server_endpoint->releaseChannelInstance(device_channel);
     }
-    
+
     if(query_engine) {
         StartableService::deinitImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
         DELETE_OBJ_POINTER(query_engine)
     }
-    
+
     QDCAPP_ << "Deallocating device push data worker list";
     for(int idx = 0; idx < settings->cache_driver_setting.caching_worker_num; idx++) {
         QDCAPP_ << "Release device worker "<< idx;
@@ -232,7 +233,7 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
         delete(snapshot_data_worker);
         snapshot_data_worker = NULL;
     }
-    
+
     //delete the cache driver
     if(cache_driver_get_last) {
         delete(cache_driver_get_last);
@@ -277,7 +278,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
                                              DirectIOSynchronousAnswerPtr synchronous_answer) {
     //debug check
     CHAOS_ASSERT(query_engine)
-    
+
     //compose the DirectIO endpoint where forward the answer
     std::string answer_server_description = boost::str(boost::format("%1%:%2%:%3%|%4%") %
                                                        UI64_TO_STRIP(header->field.address) %
@@ -358,7 +359,7 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
         }
         //print error also on log
         DEBUG_CODE(QDCDBG_ << api_result->error_message << "[" << job->snapshot_name << "]");
-        
+
         if(concatenated_unique_id_memory) free(concatenated_unique_id_memory);
         delete job;
     } else {
@@ -415,7 +416,7 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
     CHAOS_ASSERT(header)
     CHAOS_ASSERT(api_result)
     CHAOS_ASSERT(db_driver)
-    
+
     //trduce int to postfix channel type
     switch(header->field.channel_type) {
         case 0:
@@ -431,7 +432,7 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
             channel_type = DataPackPrefixID::SYSTEM_DATASE_PREFIX;
             break;
     }
-    
+
     if((err = db_driver->snapshotGetDatasetForProducerKey(header->field.snap_name,
                                                           producer_id,
                                                           channel_type,
@@ -447,7 +448,7 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
         } else {
             api_result->error = -2;
             std::strcpy(api_result->error_message, "Channel data not found in snapshot");
-            
+
         }
     }
     return err;
