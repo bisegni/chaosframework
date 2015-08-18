@@ -164,7 +164,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
     int water_mark = 1;
     int timeout = 5000;
     
-    //set the alive time to one minut
+    //set the alive time to one minute
     alive_for_ms = 1000*60;
     
     //create zmq socket
@@ -181,7 +181,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
         url.append(pool_identification);
         if((err = zmq_connect(new_socket, url.c_str()))) {
         } else {
-            DEBUG_CODE(ZMQC_LDBG << "ZMQ new socket created for "<<pool_identification;)
+            DEBUG_CODE(ZMQC_LDBG << "New socket for "<<pool_identification;)
         }
     }
     
@@ -197,8 +197,9 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
     return new_socket;
 }
 
-void ZMQClient::deallocateResource(void* resource_to_deallocate) {
+void ZMQClient::deallocateResource(const std::string& pool_identification, void* resource_to_deallocate) {
     CHAOS_ASSERT(resource_to_deallocate)
+    DEBUG_CODE(ZMQC_LDBG << "delete socket for "<<pool_identification;)
     zmq_close(resource_to_deallocate);
 }
 

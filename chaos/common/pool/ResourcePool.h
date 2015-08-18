@@ -29,28 +29,37 @@ namespace chaos {
         namespace pool {
             
 #define CHAOS_RESOURCE_POOL_DELETE_SLOT(x)\
-resource_pooler_helper->deallocateResource(x->resource_pooled);\
+resource_pooler_helper->deallocateResource(pool_identity, x->resource_pooled);\
 delete(x);
             
-            //! abstract resource pool manager
+            //! Abstract resource pool manager
             /*!
-             This clas srpesent an abstract container for the managment of abstract resource pooling.
+             Resource pool abstract class permit to create a pool manager for an abstract resource type
+             The creation and release of a resource is demanded to an implementation of the abastract class
+             @ResourcePool::ResourcePoolHelper
              */
             template<typename R>
             class ResourcePool {
             public:
                 //!helper class for resource managin
                 /*!
-                    Subclass need to extedn this class to permit the managment of resource livenes
+                    Subclass need to extends this class to permit the manage the creation and deallocation 
+                 of the resource
                 */
                 class ResourcePoolHelper {
                     friend class ResourcePool;
                 protected:
+                    //! allocate a new resource
                     virtual R allocateResource(const std::string& pool_identification, uint32_t& alive_for_ms) = 0;
-                    virtual void deallocateResource(R resource_to_deallocate) = 0;
+                    //!deallocate a resource
+                    virtual void deallocateResource(const std::string& pool_identification, R resource_to_deallocate) = 0;
                 };
                 
                 //!Resource pool slot
+                /*!
+                 Identify a slot with an already created resource that is available into the pool.
+                 Every slot is a time-to-live after the wich, when is possible, it will be free.
+                 */
                 struct ResourceSlot {
                     R resource_pooled;
                     //the timestamp in milliseconds (according to chaos timestamp) that this slot is valid

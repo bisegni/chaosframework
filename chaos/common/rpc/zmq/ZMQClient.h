@@ -57,7 +57,7 @@ namespace chaos {
         
         //resource pool handler
         void* allocateResource(const std::string& pool_identification, uint32_t& alive_for_ms);
-        void deallocateResource(void* resource_to_deallocate);
+        void deallocateResource(const std::string& pool_identification, void* resource_to_deallocate);
         
         //timer handler
         void timeout();
