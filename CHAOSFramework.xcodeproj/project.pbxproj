@@ -680,6 +680,7 @@
 		32EFCD6618BDE3A400B5EB77 /* IODirectIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EFCD6418BDE3A400B5EB77 /* IODirectIODriver.cpp */; };
 		32EFCD6718BDE3A400B5EB77 /* IODirectIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */; };
 		32F158641B7B4B5400B6A5DF /* CacheDriverSharedMetricIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F158631B7B4B5400B6A5DF /* CacheDriverSharedMetricIO.cpp */; };
+		32F158681B7C9D8400B6A5DF /* ResourcePool.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F158661B7C9D8400B6A5DF /* ResourcePool.h */; };
 		32F1FC6B1A7652BE000C9B0C /* ObjectPriorityQueueTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F1FC691A7652BE000C9B0C /* ObjectPriorityQueueTest.cpp */; };
 		32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */; };
 		32F2241C179AE3BC00853F62 /* RTAbstractControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */; };
@@ -1627,6 +1628,7 @@
 		32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IODirectIODriver.h; sourceTree = "<group>"; };
 		32F158621B7B459100B6A5DF /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32F158631B7B4B5400B6A5DF /* CacheDriverSharedMetricIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriverSharedMetricIO.cpp; sourceTree = "<group>"; };
+		32F158661B7C9D8400B6A5DF /* ResourcePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourcePool.h; sourceTree = "<group>"; };
 		32F1FC691A7652BE000C9B0C /* ObjectPriorityQueueTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectPriorityQueueTest.cpp; sourceTree = "<group>"; };
 		32F1FC6A1A7652BE000C9B0C /* ObjectPriorityQueueTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectPriorityQueueTest.h; sourceTree = "<group>"; };
 		32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTAbstractControlUnit.cpp; sourceTree = "<group>"; };
@@ -2670,6 +2672,7 @@
 				326DB40914B38BC00018A8D0 /* ChaosPool.h */,
 				326DB40A14B38BC00018A8D0 /* CPoolMemory.h */,
 				326DB40B14B38BC00018A8D0 /* CPoolMemoryObject.h */,
+				32F158661B7C9D8400B6A5DF /* ResourcePool.h */,
 			);
 			path = pool;
 			sourceTree = "<group>";
@@ -3727,6 +3730,7 @@
 				32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */,
 				324A4B31191A405700975394 /* element.h in Headers */,
 				320C218A151B555A00BD0F41 /* EventServer.h in Headers */,
+				32F158681B7C9D8400B6A5DF /* ResourcePool.h in Headers */,
 				32BE864815A0CEAF00818C39 /* LogManager.h in Headers */,
 				328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */,
 				327967D615E029C70003C6DA /* AsioImplEventServer.h in Headers */,

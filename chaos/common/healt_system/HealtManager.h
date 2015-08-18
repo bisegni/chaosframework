@@ -52,9 +52,9 @@ namespace chaos {
                     //permit to lock the intere set
                 boost::shared_mutex mutex_metric_set;
 
-                NodeHealtSet(const std::string& node_uid){
-                    node_key = node_uid + chaos::NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
-                }
+                NodeHealtSet(const std::string& node_uid):
+                has_changed(false),
+                node_key(node_uid + chaos::NodeHealtDefinitionKey::HEALT_KEY_POSTFIX) {}
             };
 
             //! define map for node health information
