@@ -34,7 +34,7 @@ namespace chaos {
                 AUTO_START
             }AutoFlag;
             
-            typedef struct NodeSearchIndex {
+            struct NodeSearchIndex {
                 uint64_t seq;
                 std::string node_uid;
                 
