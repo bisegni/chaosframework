@@ -41,8 +41,7 @@ namespace chaos_vfs = chaos::data_service::vfs;
 DeviceSharedDataWorker::DeviceSharedDataWorker(const std::string& _cache_impl_name,
 											   vfs::VFSManager *_vfs_manager_instance):
 cache_impl_name(_cache_impl_name),
-vfs_manager_instance(_vfs_manager_instance),
-cache_driver_ptr(NULL) {}
+vfs_manager_instance(_vfs_manager_instance){}
 
 DeviceSharedDataWorker::~DeviceSharedDataWorker() {}
 
@@ -71,12 +70,6 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 			thread_cookie[idx] = _tc_ptr;
 		}
 	}
-	cache_driver_ptr = ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
-    if(ChaosDataService::getInstance()->setting.cache_driver_setting.log_metric) {
-        DSDW_LDBG_ << "Enable cache log metric";
-        cache_driver_ptr = new cache_system::CacheDriverMetricCollector(cache_driver_ptr);
-    }
-	InizializableService::initImplementation(cache_driver_ptr, &ChaosDataService::getInstance()->setting.cache_driver_setting, "CacheDriver", __PRETTY_FUNCTION__);
 }
 
 void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
@@ -87,13 +80,6 @@ void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
 		}
 		
 		std::memset(thread_cookie, 0, sizeof(void*)*settings.job_thread_number);
-	}
-	
-	if(cache_driver_ptr) {
-		try {
-			InizializableService::deinitImplementation(cache_driver_ptr, "CacheDriver", __PRETTY_FUNCTION__);
-		} catch(...) {}
-		delete(cache_driver_ptr);
 	}
 	DataWorker::deinit();
 }
@@ -138,58 +124,6 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 			break;
 		}
 	}
-}
-
-
-void DeviceSharedDataWorker::addServer(std::string server_description) {
-	cache_driver_ptr->addServer(server_description);
-}
-
-void DeviceSharedDataWorker::updateServerConfiguration() {
-	cache_driver_ptr->updateConfig();
-}
-
-int DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
-	int err = 0;
-    if(!job_info) return 0;
-	DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
-    CHAOS_ASSERT(job_ptr->request_header)
-    CHAOS_ASSERT(job_ptr->data_pack)
-    CHAOS_ASSERT(cache_driver_ptr)
-    bool to_delete = (job_ptr->request_header->tag == 1);
-	switch(job_ptr->request_header->tag) {
-		case 0:// storicize only
-			err = DataWorker::submitJobInfo(job_info);
-			break;
-			
-		case 2:// storicize and live
-			cache_driver_ptr->putData(GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
-									  job_ptr->request_header->key_len,
-									  job_ptr->data_pack,
-									  job_ptr->data_pack_len);
-			//if we have the file manager configure we can push the job for write data in storage workfloy
-			err = DataWorker::submitJobInfo(job_info);
-			break;
-			
-		case 1:{// live only only
-			cache_driver_ptr->putData(GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
-									  job_ptr->request_header->key_len,
-									  job_ptr->data_pack,
-									  job_ptr->data_pack_len);
-			break;
-		}
-		default: {
-			DSDW_LERR_ << "Bad storage tag: " << job_ptr->request_header->tag;
-			break;
-		}
-	}
-	
-	if(to_delete) {
-		free(job_ptr->request_header);
-		free(job_ptr->data_pack);
-		free(job_info);
-	}
-	return err;
 }
 
 //!

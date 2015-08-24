@@ -59,12 +59,9 @@ namespace chaos{
          */
         class ChaosDataService : public ChaosCommon<ChaosDataService> {
             friend class Singleton<ChaosDataService>;
-            
 			RunMode run_mode;
             static WaitSemaphore waitCloseSemaphore;
-			
-			
-			
+    
             ChaosDataService();
             ~ChaosDataService();
             static void signalHanlder(int);

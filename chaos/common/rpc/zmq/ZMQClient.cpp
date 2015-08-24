@@ -208,7 +208,7 @@ void ZMQClient::timeout() {
     boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
     SocketMapIterator it = map_socket.begin();
     while(it != map_socket.end()){
-        it->second->mantainance();
+        it->second->maintenance();
         if( it->second->getSize() == 0 ) {
             ZMQC_LAPP << "Delete socket pool for:" << it->first;
             map_socket.erase( it++ ); // advance before iterator become invalid

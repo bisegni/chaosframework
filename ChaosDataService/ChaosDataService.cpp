@@ -22,6 +22,7 @@
 #include <csignal>
 
 #include "ChaosDataService.h"
+#include "DriverPoolManager.h"
 
 #include <boost/format.hpp>
 #include <chaos/common//direct_io/DirectIOServerEndpoint.h>
@@ -173,7 +174,10 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			InizializableService::initImplementation(db_driver_ptr, &setting.db_driver_setting, db_driver_ptr->getName(), __PRETTY_FUNCTION__);
 		}
 		
-		//chec if we ar ein cache only
+        //initilize driver pool manager
+        InizializableService::initImplementation(DriverPoolManager::getInstance(), NULL, "DriverPoolManager", __PRETTY_FUNCTION__);
+        
+		//check if we are in cache only
 		if(!setting.cache_only) {
 			//configure the domain url equal to the directio io server one plus the deafult endpoint "0"
 			setting.file_manager_setting.storage_driver_setting.domain.local_url = network_broker->getDirectIOUrl();
@@ -191,7 +195,6 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			CDSLAPP_ << "Allocate the Query Data Consumer";
 			data_consumer.reset(new QueryDataConsumer(vfs_file_manager.get(), db_driver_ptr), "QueryDataConsumer");
 			if(!data_consumer.get()) throw chaos::CException(-7, "Error instantiating data consumer", __PRETTY_FUNCTION__);
-			data_consumer->settings = &setting;
 			data_consumer->network_broker = network_broker.get();
 			data_consumer.init(NULL, __PRETTY_FUNCTION__);
 		}
@@ -279,10 +282,6 @@ void ChaosDataService::deinit() throw(CException) {
 	   stage_data_consumer.get()) {
 		stage_data_consumer.deinit(__PRETTY_FUNCTION__);
 	}
-	if(network_broker.get()) {
-		CDSLAPP_ << "Deinitializing CHAOS Data Service";
-		network_broker.deinit(__PRETTY_FUNCTION__);
-	}
 	
 	//deinitialize vfs file manager
 	vfs_file_manager.deinit(__PRETTY_FUNCTION__);
@@ -297,6 +296,14 @@ void ChaosDataService::deinit() throw(CException) {
 		delete (db_driver_ptr);
 	}
 	
+    //deinitilize driver pool manager
+    InizializableService::deinitImplementation(DriverPoolManager::getInstance(), "DriverPoolManager", __PRETTY_FUNCTION__);
+    
+    if(network_broker.get()) {
+        CDSLAPP_ << "Deinitializing CHAOS Data Service";
+        network_broker.deinit(__PRETTY_FUNCTION__);
+    }
+    
 	ChaosCommon<ChaosDataService>::deinit();
 	
 	CDSLAPP_ << "Chaos Data service will exit now";

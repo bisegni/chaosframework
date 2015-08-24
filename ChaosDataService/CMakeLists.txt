@@ -6,6 +6,7 @@ SET(src main.cpp)
 SET(src  ${src} ../chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp)
 
 SET(src  ${src} ChaosDataService.cpp
+                DriverPoolManager.cpp
                 QueryDataConsumer.cpp
                 StageDataConsumer.cpp)
 
@@ -17,13 +18,13 @@ SET(src  ${src} worker/DataWorker.cpp
 
 SET(src  ${src} cache_system/CacheDriver.cpp
                 cache_system/MemcachedCacheDriver.cpp
-				        cache_system/CouchbaseCacheDriver.cpp
+                cache_system/CouchbaseCacheDriver.cpp
                 cache_system/CacheDriverMetricCollector.cpp
                 cache_system/CacheDriverSharedMetricIO.cpp)
 
 SET(src  ${src} db_system/DBDriver.cpp
                 db_system/MongoDBDriver.cpp
-				        db_system/DBIndexCursor.cpp
+                db_system/DBIndexCursor.cpp
                 db_system/MongoDBIndexCursor.cpp)
 
 SET(src  ${src} query_engine/QueryEngine.cpp)
