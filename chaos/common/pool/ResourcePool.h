@@ -58,8 +58,8 @@ delete(x);
                 
                 //!Resource pool slot
                 /*!
-                 Identify a slot with an already created resource that is available into the pool.
-                 Every slot is a time-to-live after the wich, when is possible, it will be free.
+                 Realize a pool manager for an abstract resource. The ResourcePoolHelper abstract pure class is used to
+                 manage resource allcoation and deallcoation. All liveness and pool managment is done by this class.
                  */
                 struct ResourceSlot {
                     R resource_pooled;
@@ -75,11 +75,25 @@ delete(x);
                 };
                 
 
-                //!Resource pool
+                //!Resource pool base constructor
+                /*!
+                 Base constructor of the pool manager
+                 \param _pool_identity a string that identify the pool forwarded into the ResourcePoolHelper class to identify the caller
+                 \param _resource_pooler_helper pointe to the helper class implementation
+                 \param __initial_number_of_resource specify the number for resources that need to be allocated during the init phase
+                 */
                 ResourcePool(const std::string& _pool_identity,
-                             ResourcePoolHelper *_resource_pooler_helper):
+                             ResourcePoolHelper *_resource_pooler_helper,
+                             unsigned int _initial_number_of_resource = 0):
                 pool_identity(_pool_identity),
+                initial_number_of_resource(_initial_number_of_resource),
                 resource_pooler_helper(_resource_pooler_helper){
+                    //prellocate initial resource
+                    for(int idx = 0;
+                        idx < initial_number_of_resource;
+                        idx++) {
+                        _pushNewResourceinPool();
+                    }
                 }
                 
                 ~ResourcePool() {
@@ -98,35 +112,23 @@ delete(x);
                  it provide the allcoation of a new resource and return it
                  */
                 ResourceSlot *getNewResource() {
-                    uint32_t alive_for_ms;
                     boost::unique_lock<boost::mutex> l(mutex_r_pool);
                     ResourceSlot *resource_slot_ptr = NULL;
                     if(r_pool.empty()) {
                         //create temporare autoPtr for safe operation in case of exception
-                        std::auto_ptr<ResourceSlot> _temp_resource_lot;
-                        try {
-                            _temp_resource_lot.reset(new ResourceSlot(pool_identity,
-                                                                      resource_pooler_helper->allocateResource(pool_identity,
-                                                                                                               alive_for_ms)));
-                            if(_temp_resource_lot->resource_pooled) {
-                                //we have a valid resource wo we need to set his liveness
-                                _temp_resource_lot->valid_until = chaos::common::utility::TimingUtil::getTimeStamp() + alive_for_ms;
-
-                            }
-                        } catch (...) {}
-                        
-                        if(_temp_resource_lot->resource_pooled == NULL) {
+                        _pushNewResourceinPool();
+                        if(r_pool.empty()) {
                             //error creating resource
+                           return NULL;
                         } else {
-                            //all is gone well so we can release the temp smatr pointer to result pointer
-                            resource_slot_ptr = _temp_resource_lot.release();
+                            
                         }
-                    } else {
-                        //return alread allcoated one
-                        resource_slot_ptr = r_pool.front();
-                        //remove associated pointr
-                        r_pool.pop_front();
                     }
+                    
+                    //return alread allcoated one
+                    resource_slot_ptr = r_pool.front();
+                    //remove associated pointr
+                    r_pool.pop_front();
                     return resource_slot_ptr;
                 }
                 
@@ -166,11 +168,41 @@ delete(x);
                 typedef std::deque< ResourceSlot* > SocketPoolQueue;
                 //pool identification
                 const std::string pool_identity;
+                unsigned int initial_number_of_resource;
                 ResourcePoolHelper *resource_pooler_helper;
                 
                 //pool queue structure
                 boost::mutex mutex_r_pool;
                 SocketPoolQueue r_pool;
+                
+                //! allocate a new resource
+                /*!
+                 Performa a new resource allocation and push new one on pool queue
+                 */
+                inline void _pushNewResourceinPool() {
+                    uint32_t alive_for_ms = 0;
+                    
+                    //create temporare autoPtr for safe operation in case of exception
+                    std::auto_ptr<ResourceSlot> _temp_resource_lot;
+                    try {
+                        _temp_resource_lot.reset(new ResourceSlot(pool_identity,
+                                                                  resource_pooler_helper->allocateResource(pool_identity,
+                                                                                                           alive_for_ms)));
+                        if(_temp_resource_lot->resource_pooled) {
+                            //we have a valid resource wo we need to set his liveness
+                            _temp_resource_lot->valid_until = chaos::common::utility::TimingUtil::getTimeStamp() + alive_for_ms;
+                            
+                        }
+                    } catch (...) {}
+                    
+                    if(_temp_resource_lot->resource_pooled == NULL) {
+                        //error creating resource
+                    } else {
+                        //all is gone well so we can release the temp smatr pointer to result pointer
+                        r_pool.push_front(_temp_resource_lot.release());
+                    }
+
+                }
             };
         }
     }

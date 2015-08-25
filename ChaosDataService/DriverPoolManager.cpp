@@ -37,27 +37,29 @@ using namespace chaos::data_service::cache_system;
 
 CacheDriverPool::CacheDriverPool():
 instance_created(0),
-pool("cache_driver", this) {}
+cache_impl_name(ChaosDataService::getInstance()->setting.cache_driver_setting.cache_driver_impl + "CacheDriver"),
+minimum_instance_in_pool(ChaosDataService::getInstance()->setting.cache_driver_setting.caching_pool_min_instances_number),
+pool("cache_driver",
+     this,
+     minimum_instance_in_pool) {}
 
 CacheDriverPool::~CacheDriverPool() {}
 
 CacheDriver* CacheDriverPool::allocateResource(const std::string& pool_identification,
                                                uint32_t& alive_for_ms) {
     CacheDriver *pooled_driver = NULL;
-    
+    DEBUG_CODE(DP_LOG_INFO << "New pool request allocation for cache driver:" << cache_impl_name;)
     //increment and check instance created
-    if(++instance_created > 2) {
+    if(instance_created+1 > minimum_instance_in_pool) {
         alive_for_ms = 1000*60*10; //one hour
     } else {
         //we want at least two active driver instance
         alive_for_ms = std::numeric_limits<uint32_t>::max();
     }
-    
+    DEBUG_CODE(DP_LOG_INFO << "requested resource need to live for ms:" << alive_for_ms;)
+
     //pooled_driver
     try{
-        std::string cache_impl_name = ChaosDataService::getInstance()->setting.cache_driver_setting.cache_driver_impl;
-        cache_impl_name.append("CacheDriver");
-        DP_LOG_INFO << "New pool request allcoation for cache driver:" << cache_impl_name;
         pooled_driver = ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
         if(ChaosDataService::getInstance()->setting.cache_driver_setting.log_metric) {
             DP_LOG_INFO << "Enable cache log metric";
@@ -78,6 +80,12 @@ CacheDriver* CacheDriverPool::allocateResource(const std::string& pool_identific
         
         //fix the update on server
         pooled_driver->updateConfig();
+        
+        //incremnt create counter
+        instance_created++;
+        
+        //porint infor debug
+        DEBUG_CODE(DP_LOG_INFO << "Allocation done for cache driver:" << cache_impl_name << " total created:" << instance_created;)
     } catch(chaos::CException& ex) {
         
     }

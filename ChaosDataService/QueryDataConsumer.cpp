@@ -75,10 +75,6 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     if(!system_api_channel) throw chaos::CException(-5, "Error allocating system api server channel", __FUNCTION__);
     system_api_channel->setHandler(this);
     
-    //device data worker instance
-    device_data_worker = (chaos::data_service::worker::DataWorker**) malloc(sizeof(chaos::data_service::worker::DataWorker**) * ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_num);
-    if(!device_data_worker) throw chaos::CException(-5, "Error allocating device workers", __FUNCTION__);
-    
     //allocate query manager
     if(!ChaosDataService::getInstance()->setting.cache_only) {
         query_engine = new query_engine::QueryEngine(network_broker->getNewDirectIOClientInstance(),
@@ -93,17 +89,22 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
         dsdwm_metric.reset(new worker::DeviceSharedDataWorkerMetric("DeviceSharedDataWorkerMetric",
                                                                     ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric_update_interval));
     }
+    //device data worker instances
     chaos::data_service::worker::DeviceSharedDataWorker *tmp = NULL;
-    for(int idx = 0; idx < ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_num; idx++) {
+    device_data_worker = (chaos::data_service::worker::DataWorker**) malloc(sizeof(chaos::data_service::worker::DataWorker**) * ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_num);
+    if(!device_data_worker) throw chaos::CException(-5, "Error allocating device workers", __FUNCTION__);
+    for(int idx = 0;
+        idx < ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_num;
+        idx++) {
         
         if(ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
             QDCAPP_ << "Enable caching worker log metric";
             //install the data worker taht grab the metric
-            tmp = new worker::DeviceSharedDataWorkerMetricCollector(cache_impl_name,
+            device_data_worker[idx] = tmp = new worker::DeviceSharedDataWorkerMetricCollector(cache_impl_name,
                                                                     vfs_manager_instance,
                                                                     dsdwm_metric);
         } else {
-            tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name,
+            device_data_worker[idx] = tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name,
                                                                           vfs_manager_instance);
         }
         tmp->init(&ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_setting);
@@ -112,23 +113,18 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     
     QDCAPP_ << "Allocating Snapshot worker";
     if(!ChaosDataService::getInstance()->setting.cache_only) {
-        snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(cache_impl_name,
-                                                                                       db_driver,
+        snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(db_driver,
                                                                                        network_broker);
         if(!snapshot_data_worker) throw chaos::CException(-5, "Error allocating snapshot worker", __FUNCTION__);
         StartableService::initImplementation(snapshot_data_worker, init_data, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
-        for(cache_system::CacheServerListIterator iter = ChaosDataService::getInstance()->setting.cache_driver_setting.startup_chache_servers.begin();
-            iter != ChaosDataService::getInstance()->setting.cache_driver_setting.startup_chache_servers.end();
-            iter++) {
-            ((chaos::data_service::worker::SnapshotCreationWorker*)snapshot_data_worker)->addServer(*iter);
-        }
-        ((chaos::data_service::worker::SnapshotCreationWorker*)snapshot_data_worker)->updateServerConfiguration();
     }
     
     //start virtual file mantainers timer
     if(!ChaosDataService::getInstance()->setting.cache_only) {
         QDCAPP_ << "Start virtual file mantainers timer with a timeout of " << ChaosDataService::getInstance()->setting.vfile_mantainer_delay*1000 << "seconds";
-        chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, ChaosDataService::getInstance()->setting.vfile_mantainer_delay*1000);
+        chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
+                                                                                   ChaosDataService::getInstance()->setting.vfile_mantainer_delay*1000,
+                                                                                   ChaosDataService::getInstance()->setting.vfile_mantainer_delay*1000);
     }
 }
 
