@@ -129,6 +129,13 @@ LERR_ << "Message:" << x.errorMessage;\
 LERR_ << "Error Code;" << x.errorCode;\
 LERR_ << "-----------Exception------------";
 
+#define DECODE_CHAOS_EXCEPTION_ON_LOG(l, x) \
+l << "-----------Exception------------\n"\
+    << "Domain:" << x.errorDomain << "\n"\
+    << "Message:" << x.errorMessage << "\n"\
+    << "Error Code;" << x.errorCode << "\n"\
+    << "-----------Exception------------";
+
 #define DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(dw, ex)\
 dw->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ex.errorCode);\
 dw->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, ex.errorDomain);\

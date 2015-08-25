@@ -43,8 +43,14 @@ namespace chaos{
         public CachePoolHelper,
         public chaos::common::utility::InizializableService {
             friend class DriverPoolManager;
-            //create instances
+            //!created instances
             unsigned int instance_created;
+            
+            //!keep track of how many instance in pol need to be present at startup
+            unsigned int minimum_instance_in_pool;
+            
+            //complete implementation name of cache driver
+            std::string cache_impl_name;
             
             //pool container
             chaos::common::pool::ResourcePool<chaos::data_service::cache_system::CacheDriver*> pool;
