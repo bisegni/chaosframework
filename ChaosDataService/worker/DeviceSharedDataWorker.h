@@ -70,7 +70,6 @@ namespace chaos{
 				std::string					cache_impl_name;
 				vfs::VFSManager				*vfs_manager_instance;
 				uint64_t					last_stage_file_hb;
-				cache_system::CacheDriver	*cache_driver_ptr;
 			protected:
 				void executeJob(WorkerJobPtr job_info,
 								void* cookie);
@@ -80,9 +79,6 @@ namespace chaos{
 				~DeviceSharedDataWorker();
 				void init(void *init_data) throw (chaos::CException);
 				void deinit() throw (chaos::CException);
-				void addServer(std::string server_description);
-				void updateServerConfiguration();
-				int submitJobInfo(WorkerJobPtr job_info);
 				void mantain() throw (chaos::CException);
 			};
 		}

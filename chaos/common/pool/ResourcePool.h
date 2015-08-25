@@ -23,6 +23,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/utility/TimingUtil.h>
 
 namespace chaos {
     namespace common {
@@ -140,7 +141,7 @@ delete(x);
                     return r_pool.size();
                 }
                 
-                void mantainance() {
+                void maintenance() {
                     //lock pool
                     boost::unique_lock<boost::mutex> l(mutex_r_pool);
                     //check maximum 3 element

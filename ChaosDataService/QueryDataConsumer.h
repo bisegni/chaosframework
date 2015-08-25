@@ -63,15 +63,12 @@ namespace chaos{
 			std::string cache_impl_name;
 			std::string db_impl_name;
 			
-			ChaosDataServiceSetting					*settings;
 			NetworkBroker							*network_broker;
 			
             DirectIOServerEndpoint					*server_endpoint;
 			DirectIODeviceServerChannel				*device_channel;
 			DirectIOSystemAPIServerChannel			*system_api_channel;
 			
-            boost::mutex                            mutex_cache_driver_get_last;
-			cache_system::CacheDriver				*cache_driver_get_last;
 			db_system::DBDriver						*db_driver;
 			vfs::VFSManager                         *vfs_manager_instance;
             

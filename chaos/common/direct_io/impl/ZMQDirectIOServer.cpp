@@ -92,7 +92,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
     if(zmq_context == NULL) throw chaos::CException(0, "Error creating zmq context", __PRETTY_FUNCTION__);
     
     //et the thread number
-    zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 1);
+    zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 2);
     ZMQDIO_SRV_LAPP_ << "ZMQ context created";
     
     //queue thread
