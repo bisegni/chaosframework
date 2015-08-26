@@ -189,11 +189,11 @@ void HealtManager::addNewNode(const std::string& node_uid) {
     
     //add default standard metric
     healt_metric->map_metric.insert(make_pair(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP,
-                                                    boost::shared_ptr<HealtMetric>(new Int64HealtMetric(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP))));
+                                              boost::shared_ptr<HealtMetric>(new Int64HealtMetric(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP))));
     healt_metric->map_metric.insert(make_pair(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC,
-                                                    boost::shared_ptr<HealtMetric>(new Int64HealtMetric(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC))));
+                                              boost::shared_ptr<HealtMetric>(new Int64HealtMetric(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC))));
     healt_metric->map_metric.insert(make_pair(NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                    boost::shared_ptr<HealtMetric>(new StringHealtMetric(NodeHealtDefinitionKey::NODE_HEALT_STATUS))));
+                                              boost::shared_ptr<HealtMetric>(new StringHealtMetric(NodeHealtDefinitionKey::NODE_HEALT_STATUS))));
     //reset the counter for publishing pushses
     healt_metric->fire_counter = healt_metric->fire_counter_configured = (last_fire_counter_set++ % TIMESTAMP_VALIDITY);
 }
@@ -355,13 +355,13 @@ CDataWrapper*  HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_ma
                                                  uint64_t push_timestamp) {
     CDataWrapper *node_data_pack = new CDataWrapper();
     if(node_data_pack) {
-    //set the push timestamp
-    static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
-    //scan all metrics
-    BOOST_FOREACH(HealtNodeElementMap::value_type map_metric_element, element_map) {
-        //add metric to cdata wrapper
-        map_metric_element.second->addMetricToCD(node_data_pack);
-    }
+        //set the push timestamp
+        static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
+        //scan all metrics
+        BOOST_FOREACH(HealtNodeElementMap::value_type map_metric_element, element_map) {
+            //add metric to cdata wrapper
+            map_metric_element.second->addMetricToCD(node_data_pack);
+        }
     }
     return node_data_pack;
 }
@@ -386,7 +386,7 @@ void HealtManager::timeout() {
     for(HealtNodeMapIterator it = map_node.begin();
         it != map_node.end();
         it++) {
-        if(--it->second->fire_counter == 0) {
+        if(--it->second->fire_counter <= 0) {
             // get metric ptr
             _publish(it->second);
             

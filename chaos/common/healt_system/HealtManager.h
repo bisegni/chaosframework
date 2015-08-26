@@ -52,11 +52,11 @@ namespace chaos {
                     //!permit to lock the intere set
                 boost::shared_mutex mutex_metric_set;
 
-                //!keep track of how is the start valu eof the counter
+                    //!keep track of how is the start valu eof the counter
                 unsigned int fire_counter_configured;
                 
                     //!we it reach 0 the metric is published
-                unsigned int fire_counter;
+                int fire_counter;
                 
                 NodeHealtSet(const std::string& node_uid):
                 has_changed(false),
