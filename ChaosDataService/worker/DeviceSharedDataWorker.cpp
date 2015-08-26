@@ -93,6 +93,7 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
     CHAOS_ASSERT(job_ptr->request_header);
     CHAOS_ASSERT(job_ptr->data_pack);
     CHAOS_ASSERT(this_thread_cookie)
+    CHAOS_ASSERT(this_thread_cookie->vfs_stage_file)
     
 	//check what kind of push we have
 	//read lock on mantainance mutex
@@ -101,8 +102,6 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 		case 0:// storicize only
 		case 2:// storicize and live
 			//write data on stage file
-            CHAOS_ASSERT(job_ptr->data_pack)
-			CHAOS_ASSERT(this_thread_cookie->vfs_stage_file)
 			if((err = this_thread_cookie->vfs_stage_file->write(job_ptr->data_pack, job_ptr->data_pack_len))) {
 				DSDW_LERR_<< "Error writing data to file " << this_thread_cookie->vfs_stage_file->getVFSFileInfo()->vfs_fpath;
 			}

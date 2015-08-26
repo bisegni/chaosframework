@@ -206,7 +206,8 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
     CHAOS_ASSERT(header)
     CHAOS_ASSERT(channel_data)
     int err = 0;
-    bool send_to_storage_layer = (header->tag == 1);
+    //! if tag is == 1 the datapack is in liveonly
+    bool send_to_storage_layer = (header->tag != 1);
     switch(header->tag) {
         case 0:// storicize only
             
@@ -241,7 +242,8 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
         if(device_data_worker[index_to_use]->submitJobInfo(job)) {
             DEBUG_CODE(QDCDBG_ << "error pushing data into worker queue");
             delete job;
-        } else {
+            free(header);
+            free(channel_data);
             err = -2;
         }
     } else {
