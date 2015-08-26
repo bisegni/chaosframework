@@ -196,6 +196,9 @@ void HealtManager::addNewNode(const std::string& node_uid) {
                                               boost::shared_ptr<HealtMetric>(new StringHealtMetric(NodeHealtDefinitionKey::NODE_HEALT_STATUS))));
     //reset the counter for publishing pushses
     healt_metric->fire_counter = healt_metric->fire_counter_configured = (last_fire_counter_set++ % TIMESTAMP_VALIDITY);
+    
+    //print log info for newly created set
+    HM_INFO << "Added new healt set for node :" << node_uid << " with push counter of " << healt_metric->fire_counter_configured;
 }
 
 void HealtManager::removeNode(const std::string& node_uid) {
