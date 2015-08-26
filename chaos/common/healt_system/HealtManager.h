@@ -32,6 +32,7 @@
 #include <chaos/common/chaos_types.h>
 
 #include <boost/thread.hpp>
+#include <boost/random.hpp>
 
 namespace chaos {
     namespace common{
@@ -49,9 +50,12 @@ namespace chaos {
                     //is the metric node map
                 HealtNodeElementMap map_metric;
 
-                    //permit to lock the intere set
+                    //!permit to lock the intere set
                 boost::shared_mutex mutex_metric_set;
 
+                    //!we it reach 0 the metric is published
+                unsigned int fire_counter;
+                
                 NodeHealtSet(const std::string& node_uid):
                 has_changed(false),
                 node_key(node_uid + chaos::NodeHealtDefinitionKey::HEALT_KEY_POSTFIX) {}
@@ -67,13 +71,21 @@ namespace chaos {
              Every Node within a process can register itself on helat managment and request to update standard value
              or custom one. These infromation are memoryzed in key taht is a composition between the ndk_uid and the
              postfix '_healt'.
+             The time for auto push is set to one seconds and the handler decrement, at each fire, the fire_counter of
+             the NodeHealtSet Structure. when the counter reach the 0 it the healt set is published and the counter
+             is reset to a new random value
              */
             class HealtManager:
             public chaos::common::async_central::TimerHandler,
             public chaos::common::utility::Singleton<HealtManager>,
             public chaos::common::utility::StartableService {
                 friend class chaos::common::utility::Singleton<HealtManager>;
-
+                //random number generation
+                boost::random::mt19937 rng;
+                // see pseudo-random number generators
+                boost::random::uniform_int_distribution<> secs_rand_generator;
+                boost::variate_generator< boost::random::mt19937 , random::uniform_int_distribution<> > secs_random_producer;
+                
                 HealtNodeMap                                        map_node;
                 boost::shared_mutex                                 map_node_mutex;
 
