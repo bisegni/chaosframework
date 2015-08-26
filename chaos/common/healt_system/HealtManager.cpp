@@ -389,9 +389,6 @@ void HealtManager::timeout() {
         if(--it->second->fire_counter <= 0) {
             // get metric ptr
             _publish(it->second);
-            
-            //reinit the counter
-            it->second->fire_counter = it->second->fire_counter_configured;
         }
     }
 }
@@ -412,4 +409,7 @@ void HealtManager::_publish(const boost::shared_ptr<NodeHealtSet>& heath_set) {
     } else {
         HM_ERR << "Error allocating health datapack for node:" << heath_set->node_key;
     }
+    
+    //reset push counter
+    heath_set->fire_counter = heath_set->fire_counter_configured;
 }
