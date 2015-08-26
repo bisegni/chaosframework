@@ -32,7 +32,6 @@
 #include <chaos/common/chaos_types.h>
 
 #include <boost/thread.hpp>
-#include <boost/random.hpp>
 
 namespace chaos {
     namespace common{
@@ -53,6 +52,9 @@ namespace chaos {
                     //!permit to lock the intere set
                 boost::shared_mutex mutex_metric_set;
 
+                //!keep track of how is the start valu eof the counter
+                unsigned int fire_counter_configured;
+                
                     //!we it reach 0 the metric is published
                 unsigned int fire_counter;
                 
@@ -80,11 +82,8 @@ namespace chaos {
             public chaos::common::utility::Singleton<HealtManager>,
             public chaos::common::utility::StartableService {
                 friend class chaos::common::utility::Singleton<HealtManager>;
-                //random number generation
-                boost::random::mt19937 rng;
-                // see pseudo-random number generators
-                boost::random::uniform_int_distribution<> secs_rand_generator;
-                boost::variate_generator< boost::random::mt19937 , random::uniform_int_distribution<> > secs_random_producer;
+                
+                unsigned int last_fire_counter_set;
                 
                 HealtNodeMap                                        map_node;
                 boost::shared_mutex                                 map_node_mutex;

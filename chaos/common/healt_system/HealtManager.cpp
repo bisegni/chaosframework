@@ -53,17 +53,14 @@ if(tmp)tmp->value = v;
 Int64HealtMetric *ts_tmp = static_cast<Int64HealtMetric*>(node_metrics_ptr->map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC].get());\
 ts_tmp->value = TimingUtil::getTimeStamp();
 
+#define TIMESTAMP_VALIDITY 5 //a node with timestamp no old more than this value is reputaded alive
+
 HealtManager::HealtManager():
 network_broker_ptr(NULL),
 mds_message_channel(NULL),
-rng(),
-secs_rand_generator(1,5),
-secs_random_producer(rng, secs_rand_generator){
-    
-}
-HealtManager::~HealtManager() {
-    
-}
+last_fire_counter_set(0){}
+
+HealtManager::~HealtManager() {}
 
 void HealtManager::setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker) {
     network_broker_ptr = _network_broker;
@@ -198,7 +195,7 @@ void HealtManager::addNewNode(const std::string& node_uid) {
     healt_metric->map_metric.insert(make_pair(NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                     boost::shared_ptr<HealtMetric>(new StringHealtMetric(NodeHealtDefinitionKey::NODE_HEALT_STATUS))));
     //reset the counter for publishing pushses
-    healt_metric->fire_counter = (unsigned int)secs_random_producer();
+    healt_metric->fire_counter = healt_metric->fire_counter_configured = (last_fire_counter_set++ % TIMESTAMP_VALIDITY);
 }
 
 void HealtManager::removeNode(const std::string& node_uid) {
@@ -394,7 +391,7 @@ void HealtManager::timeout() {
             _publish(it->second);
             
             //reinit the counter
-            it->second->fire_counter = secs_random_producer();
+            it->second->fire_counter = it->second->fire_counter_configured;
         }
     }
 }
