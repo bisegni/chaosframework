@@ -77,7 +77,7 @@
       </widget>
      </item>
      <item>
-      <widget class="LedIndicatorAliveTSWidget" name="ledIndicatorHelatTS" native="true">
+      <widget class="CLedIndicatorHealt" name="ledIndicatorHealt" native="true">
        <property name="minimumSize">
         <size>
          <width>16</width>
@@ -130,7 +130,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="labelStatus">
+      <widget class="ChaosLabel" name="labelStatus">
        <property name="font">
         <font>
          <pointsize>11</pointsize>
@@ -147,10 +147,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LedIndicatorAliveTSWidget</class>
+   <class>CLedIndicatorHealt</class>
    <extends>QWidget</extends>
-   <header>widget/LedIndicatorAliveTSWidget.h</header>
+   <header>widget/CLedIndicatorHealt.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ChaosLabel</class>
+   <extends>QLabel</extends>
+   <header>widget/ChaosLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

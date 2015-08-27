@@ -5,8 +5,6 @@
 
 #include <QFrame>
 
-#include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
-
 namespace Ui {
 class HealtPresenterWidget;
 }
@@ -28,14 +26,8 @@ public:
                                   QWidget *parent = 0);
     ~HealtPresenterWidget();
 public slots:
-    void updateAttributeValue(const QString& key,
-                              const QString& attribute_name,
-                              const QVariant& attribute_value);
+
 private:
-    HealtStatusHandler      status_handler;
-    HealthHartbeatHandler   hb_handler;
-    QString         node_key;
-    qulonglong last_time_stamp;
     Ui::HealtPresenterWidget *ui;
 };
 

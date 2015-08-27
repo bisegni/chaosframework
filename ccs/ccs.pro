@@ -58,7 +58,6 @@ SOURCES += main.cpp\
     node/data/ChaosAbstractTableModel.cpp \
     node/control_unit/ControlUnitEditor.cpp \
     node/data/FixedInputChannelDatasetTableModel.cpp \
-    widget/LedIndicatorAliveTSWidget.cpp \
     logic/property_switch/MultiPropertyLogicSwitch.cpp \
     logic/property_switch/SwitchAggregator.cpp \
     node/data/ChaosAbstractDataSetTableModel.cpp \
@@ -110,7 +109,6 @@ HEADERS  += \
     node/data/ChaosAbstractTableModel.h \
     node/control_unit/ControlUnitEditor.h \
     node/data/FixedInputChannelDatasetTableModel.h \
-    widget/LedIndicatorAliveTSWidget.h \
     logic/property_switch/MultiPropertyLogicSwitch.h \
     logic/property_switch/SwitchAggregator.h \
     node/data/ChaosAbstractDataSetTableModel.h \
