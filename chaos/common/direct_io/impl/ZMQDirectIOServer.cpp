@@ -140,6 +140,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
     void						*socket				= NULL;
     int							err					= 0;
     bool						send_synchronous_answer = false;
+    std::string                 identity;
     DirectIODataPack			*data_pack			= NULL;
     DirectIOSynchronousAnswerPtr synchronous_answer = NULL;
     
@@ -238,102 +239,11 @@ void ZMQDirectIOServer::worker(bool priority_service) {
     ZMQDIO_SRV_LAPP_ << "Entering in the thread loop for " << PS_STR(priority_service) << " socket";
     while (run_server) {
         try {
-            //received the zmq identity
-            std::string identity;
-            std::string empty_delimiter;
-            err = stringReceive(socket, identity);
-            if(err == -1) {
+            if((err = reveiceDatapack(socket,
+                                     identity,
+                                     &data_pack))) {
                 continue;
             }
-            
-            //receive the zmq evenlop delimiter
-            err = stringReceive(socket, empty_delimiter);
-            if(err == -1 ) {
-                continue;
-            }
-            
-            
-            //read header
-            err = zmq_recv(socket, header_buffer, DIRECT_IO_HEADER_SIZE, 0);
-            if(err == -1 ||
-               err != DIRECT_IO_HEADER_SIZE) {
-                continue;
-            }
-            
-            //create new datapack
-            data_pack = new DirectIODataPack();
-            
-            //clear all memory
-            std::memset(data_pack, 0, sizeof(DirectIODataPack));
-            
-            //set dispatch header data
-            data_pack->header.dispatcher_header.raw_data = DIRECT_IO_GET_DISPATCHER_DATA(header_buffer);
-            
-            //get the synchronous answer flag;
-            send_synchronous_answer = data_pack->header.dispatcher_header.fields.synchronous_answer;
-            
-            //check what i need to reice
-            switch(data_pack->header.dispatcher_header.fields.channel_part) {
-                case DIRECT_IO_CHANNEL_PART_EMPTY:
-                    break;
-                case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
-                    //init header data buffer
-                    data_pack->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
-                    data_pack->channel_header_data = malloc(data_pack->header.channel_header_size);
-                    data_pack->channel_data = NULL;
-                    
-                    //init message with buffer
-                    err = zmq_recv(socket, data_pack->channel_header_data, data_pack->header.channel_header_size, 0);
-                    //err = zmq_msg_recv(&m_header_data, socket, 0);
-                    if(err == -1) {
-                        free(data_pack->channel_header_data);
-                        delete data_pack;
-                        continue;
-                    }
-                    break;
-                case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
-                    //init data buffer
-                    data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
-                    data_pack->channel_data = malloc(data_pack->header.channel_data_size);
-                    data_pack->channel_header_data = NULL;
-                    
-                    //init message with buffer
-                    err = zmq_recv(socket, data_pack->channel_data, data_pack->header.channel_data_size, 0);
-                    if(err == -1) {
-                        free(data_pack->channel_data);
-                        delete data_pack;
-                        continue;
-                    }
-                    break;
-                case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
-                    
-                    //init header data and channel data buffers
-                    data_pack->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
-                    data_pack->channel_header_data = malloc(data_pack->header.channel_header_size);
-                    
-                    data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
-                    data_pack->channel_data = malloc(data_pack->header.channel_data_size);
-                    
-                    //reiceve all data
-                    err = zmq_recv(socket, data_pack->channel_header_data, data_pack->header.channel_header_size, 0);
-                    //err = zmq_msg_recv(&m_header_data, socket, 0);
-                    if(err == -1) {
-                        free(data_pack->channel_header_data);
-                        free(data_pack->channel_data);
-                        delete data_pack;
-                        continue;
-                    }
-                    err = zmq_recv(socket, data_pack->channel_data, data_pack->header.channel_data_size, 0);
-                    //err = zmq_msg_recv(&m_channel_data, socket, 0);
-                    if(err == -1) {
-                        free(data_pack->channel_header_data);
-                        free(data_pack->channel_data);
-                        delete data_pack;
-                        continue;
-                    }
-                    break;
-            }
-            
             //check if we need to send async answer
             if(data_pack->header.dispatcher_header.fields.synchronous_answer) {
                 //the client waith an answer
@@ -348,17 +258,16 @@ void ZMQDirectIOServer::worker(bool priority_service) {
                 if(synchronous_answer) {
                     ZMQDIO_SRV_LERR_ << "Answer will not be forwarderd";
                 }
-            } else if(send_synchronous_answer) {
+            } else if(data_pack->header.dispatcher_header.fields.synchronous_answer) {
                 //sending identity
-                err = stringSendMore(socket, identity.c_str());
-                if(err == -1) {
+                if((err = stringSendMore(socket, identity.c_str()))) {
                     DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
                     err = zmq_errno();
                     ZMQDIO_SRV_LERR_ << "Error sending identity for answer with error:"<< zmq_strerror(err);
                 } else {
                     //sending envelop delimiter
-                    err = stringSendMore(socket, EmptyMessage);
-                    if(err == -1) {
+                    
+                    if((err = sendStartEnvelop(socket))) {
                         DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
                         err = zmq_errno();
                         ZMQDIO_SRV_LERR_ << "Error sending envelop delimiter for answer with error:"<< zmq_strerror(err);
@@ -377,7 +286,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
                             ZMQDIO_SRV_LERR_ << "Error creating message for asnwer with error:" <<zmq_strerror(err);
                             DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
                         } else {
-                            ZMQ_DO_AGAIN(err = zmq_sendmsg(socket, &answer_data, 0);)
+                            err = zmq_sendmsg(socket, &answer_data, 0);
                             if(err == -1) {
                                 err = zmq_errno();
                                 ZMQDIO_SRV_LAPP_ << "Error sending answer whit error:" << zmq_strerror(err);

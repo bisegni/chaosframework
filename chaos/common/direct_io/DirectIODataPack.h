@@ -72,7 +72,7 @@ pack->channel_data = d_ptr;
 			} DirectIOSynchronousAnswer, *DirectIOSynchronousAnswerPtr;
 
 			
-            //! DirectIO data pack structure. It is write in little endian
+            //! DirectIO data pack structure. It is wrote in little endian
 			/*!
 			 This represent the data pack sent over direct io infrastructure
 			 It is composed by an header that transport:

@@ -66,8 +66,6 @@ std::string DirectIOServerEndpoint::getUrl() {
 channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::registerChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) {
 	if(!channel_instance) return NULL;
 	// gest exsclusive access
-	//boost::upgrade_lock<boost::shared_mutex> lock(mutex_channel_slot);
-	//boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
 	spinlock.lock();
 	DIOSE_LDBG_ << "Register channel " << channel_instance->getName() << " with route index " << (int)channel_instance->getChannelRouterIndex();
 	if(channel_instance->getChannelRouterIndex() > (MAX_ENDPOINT_CHANNEL-1)) return NULL;
@@ -79,13 +77,10 @@ channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::registerChannelIn
 //! Dispose the channel
 void DirectIOServerEndpoint::deregisterChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) {
 	if(!channel_instance) return;
-	// get exsclusive access
-	//boost::upgrade_lock<boost::shared_mutex> lock(mutex_channel_slot);
-	//boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
-	
-	// now we have exclusive access
 	if(channel_instance->getChannelRouterIndex() > (MAX_ENDPOINT_CHANNEL-1)) return;
+    spinlock.lock();
 	channel_slot[channel_instance->getChannelRouterIndex()] = NULL;
+    spinlock.unlock();
 }
 
 
