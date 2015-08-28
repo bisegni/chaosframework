@@ -76,24 +76,24 @@ namespace chaos {
 					inline int64_t writeToSocket(void *socket,
 												 std::string& identity,
 												 DirectIODataPack *data_pack,
-												 DirectIOClientDeallocationHandler *header_deallocation_handler,
-												 DirectIOClientDeallocationHandler *data_deallocation_handler,
-												 DirectIOSynchronousAnswer **synchronous_answer = NULL);
+												 DirectIODeallocationHandler *header_deallocation_handler,
+												 DirectIODeallocationHandler *data_deallocation_handler,
+												 DirectIODataPack **synchronous_answer = NULL);
 					void monitorWorker();
 					
 				protected:
 					
                     // send the data to the server layer on priority channel
                     int64_t sendPriorityData(DirectIODataPack *data_pack,
-											 DirectIOClientDeallocationHandler *header_deallocation_handler,
-											 DirectIOClientDeallocationHandler *data_deallocation_handler,
-											 DirectIOSynchronousAnswer **synchronous_answer = NULL);
+											 DirectIODeallocationHandler *header_deallocation_handler,
+											 DirectIODeallocationHandler *data_deallocation_handler,
+											 DirectIODataPack **synchronous_answer = NULL);
                     
                     // send the data to the server layer on the service channel
                     int64_t sendServiceData(DirectIODataPack *data_pack,
-											DirectIOClientDeallocationHandler *header_deallocation_handler,
-											DirectIOClientDeallocationHandler *data_deallocation_handler,
-											DirectIOSynchronousAnswer **synchronous_answer = NULL);
+											DirectIODeallocationHandler *header_deallocation_handler,
+											DirectIODeallocationHandler *data_deallocation_handler,
+											DirectIODataPack **synchronous_answer = NULL);
 				};
 				
 			}

@@ -21,6 +21,7 @@
 #define CHAOSFramework_DirectIOHandler_h
 
 #include <stdint.h>
+#include <chaos/common/direct_io/DirectIOTypes.h>
 #include <chaos/common/direct_io/DirectIODataPack.h>
 namespace chaos {
 	namespace common {
@@ -40,8 +41,12 @@ namespace chaos {
 				 \param data_buffer is an handle to avoid poiter that will contains the pointer to the received data.
 				 \param data_size the size of the received data
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
+                 \param synchronous_answer the datapacke for the sinchronous answer.
 				 */
-				virtual int priorityDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) = 0;
+                virtual int priorityDataReceived(DirectIODataPack *data_pack,
+                                                 DirectIODataPack *synchronous_answer,
+                                                 DirectIODeallocationHandler **answer_header_deallocation_handler,
+                                                 DirectIODeallocationHandler **answer_data_deallocation_handler) = 0;
                 
                 //! Event for a new data received
 				/*!
@@ -49,11 +54,18 @@ namespace chaos {
 				 \param data_buffer is an handle to avoid poiter that will contains the pointer to the received data.
 				 \param data_size the size of the received data
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
+                 \param synchronous_answer the datapacke for the sinchronous answer.
 				 */
-				virtual int serviceDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) = 0;
+				virtual int serviceDataReceived(DirectIODataPack *data_pack,
+                                                DirectIODataPack *synchronous_answer,
+                                                DirectIODeallocationHandler **answer_header_deallocation_handler,
+                                                DirectIODeallocationHandler **answer_data_deallocation_handler) = 0;
 			};
 			
-			typedef int (chaos::common::direct_io::DirectIOHandler::*DirectIOHandlerPtr)(chaos::common::direct_io::DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer);
+			typedef int (chaos::common::direct_io::DirectIOHandler::*DirectIOHandlerPtr)(chaos::common::direct_io::DirectIODataPack *data_pack,
+                                                                                         chaos::common::direct_io::DirectIODataPack *synchronous_answer,
+                                                                                         chaos::common::direct_io::DirectIODeallocationHandler **answer_header_deallocation_handler,
+                                                                                         chaos::common::direct_io::DirectIODeallocationHandler **answer_data_deallocation_handler);
 			
 			#define DirectIOHandlerPtrCaller(instance,variable) ((*instance).*variable)
 		}

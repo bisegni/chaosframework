@@ -37,7 +37,7 @@ namespace chaos {
 					friend class DirectIOClientConnection;
 					
 					class DirectIOPerformanceClientChannelDeallocator:
-					public DirectIOClientDeallocationHandler {
+					public DirectIODeallocationHandler {
 					protected:
 						void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
 					};

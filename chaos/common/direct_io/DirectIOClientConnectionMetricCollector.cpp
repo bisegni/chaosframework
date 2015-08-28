@@ -48,9 +48,9 @@ DirectIOClientConnectionMetricCollector::~DirectIOClientConnectionMetricCollecto
 
 //! inherited method
 int64_t DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPack *data_pack,
-                                                                  DirectIOClientDeallocationHandler *header_deallocation_handler,
-                                                                  DirectIOClientDeallocationHandler *data_deallocation_handler,
-                                                                  DirectIOSynchronousAnswer **asynchronous_answer) {
+                                                                  DirectIODeallocationHandler *header_deallocation_handler,
+                                                                  DirectIODeallocationHandler *data_deallocation_handler,
+                                                                  DirectIODataPack **asynchronous_answer) {
     CHAOS_ASSERT(wrapped_connection && shared_collector)
     //inrement packec count
     shared_collector->incrementPackCount();
@@ -66,9 +66,9 @@ int64_t DirectIOClientConnectionMetricCollector::sendPriorityData(DirectIODataPa
 
 //! inherited method
 int64_t DirectIOClientConnectionMetricCollector::sendServiceData(DirectIODataPack *data_pack,
-                                                                 DirectIOClientDeallocationHandler *header_deallocation_handler,
-                                                                 DirectIOClientDeallocationHandler *data_deallocation_handler,
-                                                                 DirectIOSynchronousAnswer **asynchronous_answer) {
+                                                                 DirectIODeallocationHandler *header_deallocation_handler,
+                                                                 DirectIODeallocationHandler *data_deallocation_handler,
+                                                                 DirectIODataPack **asynchronous_answer) {
     CHAOS_ASSERT(wrapped_connection && shared_collector)
     //inrement packec count
     shared_collector->incrementPackCount();

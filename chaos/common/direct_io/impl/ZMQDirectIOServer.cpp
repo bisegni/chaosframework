@@ -45,11 +45,6 @@ using namespace chaos::common::direct_io;
 
 DEFINE_CLASS_FACTORY(ZMQDirectIOServer, DirectIOServer);
 
-void free_answer(void *data, void *hint) {
-    chaos::common::direct_io::DirectIOSynchronousAnswerPtr answer_data = static_cast<chaos::common::direct_io::DirectIOSynchronousAnswerPtr>(hint);
-    DIRECTIO_FREE_ANSWER_DATA(answer_data)
-}
-
 ZMQDirectIOServer::ZMQDirectIOServer(std::string alias):DirectIOServer(alias) {
     zmq_context = NULL;
     priority_socket = NULL;
@@ -142,162 +137,102 @@ void ZMQDirectIOServer::worker(bool priority_service) {
     bool						send_synchronous_answer = false;
     std::string                 identity;
     DirectIODataPack			*data_pack			= NULL;
-    DirectIOSynchronousAnswerPtr synchronous_answer = NULL;
+    DirectIODataPack            *data_pack_answer   = NULL;
+    DirectIODataPack            data_pack_answer_stack_alloc;
+    DirectIODeallocationHandler *answer_header_deallocation_handler = NULL;
+    DirectIODeallocationHandler *answer_data_deallocation_handler   = NULL;
     
     ZMQDIO_SRV_LAPP_ << "Startup thread for " << PS_STR(priority_service);
     
     //allcoate the delegate for this thread
     DirectIOHandlerPtr delegate = priority_service?&DirectIOHandler::serviceDataReceived:&DirectIOHandler::priorityDataReceived;
     
-    if(priority_service) {
-        ZMQDIO_SRV_LAPP_ << "Allocating and binding service socket to " << service_socket_bind_str;
-        socket = zmq_socket (zmq_context, ZMQ_ROUTER);
-        err = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(int));
-        if(err) {
-            std::string msg = boost::str( boost::format("Error Setting linget to service socket"));
-            ZMQDIO_SRV_LAPP_ << msg;
-            return;
-        }
-        err = zmq_setsockopt (socket, ZMQ_RCVHWM, &water_mark, sizeof(int));
-        if(err) {
-            std::string msg = boost::str( boost::format("Error Setting ZMQ_RCVHWM to service socket"));
-            ZMQDIO_SRV_LAPP_ << msg;
-            return;
-        }
-        
-        err = zmq_setsockopt (socket, ZMQ_SNDHWM, &water_mark, sizeof(int));
-        if(err) {
-            std::string msg = boost::str( boost::format("Error Setting ZMQ_SNDHWM to service socket"));
-            ZMQDIO_SRV_LAPP_ << msg;
-            return;
-        }
-        
-        err = zmq_setsockopt (socket, ZMQ_SNDTIMEO, &timeout, sizeof(int));
-        if(err) {
-            std::string msg = boost::str( boost::format("Error Setting ZMQ_SNDTIMEO to service socket"));
-            ZMQDIO_SRV_LAPP_ << msg;
-            return;
-        }
-        
-        err = zmq_setsockopt (socket, ZMQ_RCVTIMEO, &timeout, sizeof(int));
-        if(err) {
-            std::string msg = boost::str( boost::format("Error Setting ZMQ_RCVTIMEO to service socket"));
-            ZMQDIO_SRV_LAPP_ << msg;
-            return;
-        }
-        
-        err = zmq_bind(socket, service_socket_bind_str.c_str());
-        if(err) {
-            std::string msg = boost::str( boost::format("Error binding service socket to  %1% ") % service_socket_bind_str);
-            ZMQDIO_SRV_LAPP_ << msg;
-            return;
-        }
-    } else {
-        ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
-        socket = zmq_socket (zmq_context, ZMQ_ROUTER);
-        int linger = 1;
-        err = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(int));
-        if(err) {
-            std::string msg = boost::str( boost::format("Error Setting linget to priority socket"));
-            ZMQDIO_SRV_LAPP_ << msg;
-            return;
-        }
-        err = zmq_setsockopt (socket, ZMQ_RCVHWM, &water_mark, sizeof(int));
-        if(err) {
-            std::string msg = boost::str( boost::format("Error Setting watermark to priority socket"));
-            ZMQDIO_SRV_LAPP_ << msg;
-            return;
-        }
-        err = zmq_setsockopt (socket, ZMQ_SNDHWM, &water_mark, sizeof(int));
-        if(err) {
-            std::string msg = boost::str( boost::format("Error Setting watermark to priority socket"));
-            ZMQDIO_SRV_LAPP_ << msg;
-            return;
-        }
-        
-        err = zmq_setsockopt (socket, ZMQ_SNDTIMEO, &timeout, sizeof(int));
-        if(err) {
-            std::string msg = boost::str( boost::format("Error Setting ZMQ_SNDTIMEO to priority socket"));
-            ZMQDIO_SRV_LAPP_ << msg;
-            return;
-        }
-        
-        err = zmq_setsockopt (socket, ZMQ_SNDTIMEO, &timeout, sizeof(int));
-        if(err) {
-            std::string msg = boost::str( boost::format("Error Setting ZMQ_RCVTIMEO to service socket"));
-            ZMQDIO_SRV_LAPP_ << msg;
-            return;
-        }
-        
-        err = zmq_bind(socket, priority_socket_bind_str.c_str());
-        if(err) {
-            std::string msg = boost::str( boost::format("Error binding priority socket to  %1% ") % priority_socket_bind_str);
-            ZMQDIO_SRV_LAPP_ << msg;
-            return;
-        }
+    ZMQDIO_SRV_LAPP_ << "Allocating and binding " << PS_STR(priority_service) << " socket";
+    socket = zmq_socket (zmq_context, ZMQ_ROUTER);
+    err = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(int));
+    if(err) {
+        std::string msg = boost::str(boost::format("Error Setting linget to %1% socket")%PS_STR(priority_service));
+        ZMQDIO_SRV_LAPP_ << msg;
+        return;
     }
+    err = zmq_setsockopt (socket, ZMQ_RCVHWM, &water_mark, sizeof(int));
+    if(err) {
+        std::string msg = boost::str(boost::format("Error Setting watermark to %1% socket")%PS_STR(priority_service));
+        ZMQDIO_SRV_LAPP_ << msg;
+        return;
+    }
+    err = zmq_setsockopt (socket, ZMQ_SNDHWM, &water_mark, sizeof(int));
+    if(err) {
+        std::string msg = boost::str(boost::format("Error Setting watermark to %1% socket")%PS_STR(priority_service));
+        ZMQDIO_SRV_LAPP_ << msg;
+        return;
+    }
+    
+    err = zmq_setsockopt (socket, ZMQ_SNDTIMEO, &timeout, sizeof(int));
+    if(err) {
+        std::string msg = boost::str(boost::format("Error Setting ZMQ_SNDTIMEO to %1% socket")%PS_STR(priority_service));
+        ZMQDIO_SRV_LAPP_ << msg;
+        return;
+    }
+    
+    err = zmq_setsockopt (socket, ZMQ_SNDTIMEO, &timeout, sizeof(int));
+    if(err) {
+        std::string msg = boost::str(boost::format("Error Setting ZMQ_RCVTIMEO to %1% socket")%PS_STR(priority_service));
+        ZMQDIO_SRV_LAPP_ << msg;
+        return;
+    }
+    
+    if(priority_service) {
+        err = zmq_bind(socket, priority_socket_bind_str.c_str());
+    } else {
+        err = zmq_bind(socket, service_socket_bind_str.c_str());
+    }
+    
+    if(err) {
+        std::string msg = boost::str( boost::format("Error binding %1% socket to  %2% ")%PS_STR(priority_service) % priority_socket_bind_str);
+        ZMQDIO_SRV_LAPP_ << msg;
+        return;
+    }
+
     ZMQDIO_SRV_LAPP_ << "Entering in the thread loop for " << PS_STR(priority_service) << " socket";
     while (run_server) {
         try {
+            data_pack                           = NULL;
+            data_pack_answer                    = NULL;
+            answer_header_deallocation_handler  = NULL;
+            answer_data_deallocation_handler    = NULL;
             if((err = reveiceDatapack(socket,
                                      identity,
                                      &data_pack))) {
                 continue;
-            }
-            //check if we need to send async answer
-            if(data_pack->header.dispatcher_header.fields.synchronous_answer) {
-                //the client waith an answer
-                synchronous_answer = (DirectIOSynchronousAnswerPtr) calloc(sizeof(synchronous_answer), 1);
-                synchronous_answer->answer_data = NULL;
-            }
-            
-            //dispatch to endpoint
-            err = DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack, synchronous_answer);
-            if(err) {
-                ZMQDIO_SRV_LERR_ << "Error returned by endler:" << err;
-                if(synchronous_answer) {
-                    ZMQDIO_SRV_LERR_ << "Answer will not be forwarderd";
+            } else {
+                //check if we need to sen an answer
+                if((send_synchronous_answer = (bool)data_pack->header.dispatcher_header.fields.synchronous_answer)) {
+                    //associate to the pointer the stack allocated data
+                    data_pack_answer = &data_pack_answer_stack_alloc;
+                    memset(data_pack_answer, 0, sizeof(DirectIODataPack));
                 }
-            } else if(data_pack->header.dispatcher_header.fields.synchronous_answer) {
-                //sending identity
-                if((err = stringSendMore(socket, identity.c_str()))) {
-                    DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
-                    err = zmq_errno();
-                    ZMQDIO_SRV_LERR_ << "Error sending identity for answer with error:"<< zmq_strerror(err);
-                } else {
-                    //sending envelop delimiter
-                    
-                    if((err = sendStartEnvelop(socket))) {
-                        DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
-                        err = zmq_errno();
-                        ZMQDIO_SRV_LERR_ << "Error sending envelop delimiter for answer with error:"<< zmq_strerror(err);
+
+                //call handler
+                err = DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack,
+                                                                       data_pack_answer,
+                                                                       &answer_header_deallocation_handler,
+                                                                       &answer_data_deallocation_handler);
+                if(send_synchronous_answer) {
+                    if((err = sendDatapack(socket,
+                                       identity,
+                                       data_pack_answer,
+                                       answer_header_deallocation_handler,
+                                          answer_data_deallocation_handler))){
+                        ZMQDIO_SRV_LAPP_ << "Error sending answer with code:" << err;
                     } else {
-                        //send the data
-                        zmq_msg_t answer_data;
-                        //construct answer zmq message
-                        err = zmq_msg_init_data (&answer_data,
-                                                 synchronous_answer->answer_data,
-                                                 synchronous_answer->answer_size,
-                                                 free_answer,
-                                                 synchronous_answer);
-                        
-                        if(err == -1) {
-                            err = zmq_errno();
-                            ZMQDIO_SRV_LERR_ << "Error creating message for asnwer with error:" <<zmq_strerror(err);
-                            DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
-                        } else {
-                            err = zmq_sendmsg(socket, &answer_data, 0);
-                            if(err == -1) {
-                                err = zmq_errno();
-                                ZMQDIO_SRV_LAPP_ << "Error sending answer whit error:" << zmq_strerror(err);
-                                DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
-                            }
-                        }
-                        //close the message
-                        zmq_msg_close(&answer_data);
+                        //anser si sent well
                     }
+                    //alocation is not needed because it is created into the stack
+                    //free(data_pack_answer);
                 }
             }
+
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
         }

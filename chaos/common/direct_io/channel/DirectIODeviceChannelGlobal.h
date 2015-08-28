@@ -64,12 +64,20 @@ namespace chaos {
                 
                 //! Name space for grupping the varius headers for every DeviceChannelOpcode
                 namespace opcode_headers {
+                    /*!
+                     base result header to standardize base result for
+                     those api that return something in an synchronous way
+                     */
+                    typedef struct DirectIOChannelBaseResultHeader {
+                        int32_t err;
+                    }DirectIOChannelBaseResultHeader;
+                    
                     //-----------------------------------DEVICE CHANNEL--------------------------------
 #define	GET_PUT_OPCODE_FIXED_PART_LEN	2
                     //!macro used to get pointer to the start of the key data
 #define GET_PUT_OPCODE_KEY_PTR(h) (void*)((char*)h+2)
                     
-                    //! Heder for the DeviceChannelOpcodePutOutput[WithCache] opcodes
+                    //! Header for the DeviceChannelOpcodePutOutput[WithCache] opcodes
                     typedef struct DirectIODeviceChannelHeaderPutOpcode {
                         //! The 8 bit tag field
                         uint8_t tag;
@@ -81,7 +89,7 @@ namespace chaos {
                     *DirectIODeviceChannelHeaderDataPtr;
                     
 //#define GET_OPCODE_HEADER_LEN 14
-                    //! Header for the DeviceChannelOpcodeGetOutputFromCache opcode
+                    //! Header for the DirectIODeviceChannelHeaderGetOpcode opcode
                     /*!
                      this is the header for request the last output channel dataset
                      found on shared dataproxy cache. The key of the item to search
@@ -104,6 +112,17 @@ namespace chaos {
                         } field;
                     } DirectIODeviceChannelHeaderGetOpcode,
                     *DirectIODeviceChannelHeaderGetOpcodePtr;
+                    
+                    
+                    //! Header for DirectIODeviceChannelHeaderGetOpcode asynchronous result
+                    /*!
+                     the found data is sent as data part of direct io protocol
+                     */
+                    typedef struct DirectIODeviceChannelHeaderGetOpcodeResult {
+                        //! The lenght of found data
+                        uint32_t value_len;
+                    } DirectIODeviceChannelHeaderGetOpcodeResult,
+                    *DirectIODeviceChannelHeaderGetOpcodeResultPtr;
                     
 //#define QUERY_DATA_CLOUD_OPCODE_HEADER_LEN 24
                     //! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode
@@ -131,12 +150,6 @@ namespace chaos {
                         } field;
                     } DirectIODeviceChannelHeaderOpcodeQueryDataCloud,
                     *DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr;
-                    
-                    //! bring the metadata infromation of the query result
-                    typedef struct QueryResultMetadata {
-                        //! is the number of total element found by query
-                        uint64_t number_of_element_found;
-                    } QueryResultMetadata;
                     
 //#define QUERY_DATA_CLOUD_START_RESULT_OPCODE_HEADER_LEN 16
                     //! Header for the DeviceChannelOpcodeQueryDataCloudStartAnswer opcode
@@ -252,17 +265,17 @@ namespace chaos {
                     *DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr;
                     
                     //!result of the new and delete api
-                    typedef  struct DirectIOSystemAPISnapshotResult {
+                    typedef  struct DirectIOSystemAPISnapshotResultHeader {
                         int32_t		error;
                         char		error_message[256];
-                    }DirectIOSystemAPISnapshotResult,
-                    *DirectIOSystemAPISnapshotResultPtr;
+                    }DirectIOSystemAPISnapshotResultHeader,
+                    *DirectIOSystemAPISnapshotResultHeaderPtr;
 					
 					#define GET_SYSTEM_API_GET_SNAPSHOT_RESULT_BASE_PTR(h) ((char*)h+sizeof(chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPISnapshotResult)+4)
                     //!result of the new and delete api
                     typedef  struct DirectIOSystemAPIGetDatasetSnapshotResult {
                         //! api result
-                        DirectIOSystemAPISnapshotResult api_result;
+                        DirectIOSystemAPISnapshotResultHeader api_result;
                         
                         //channels lenght
                         uint32_t channel_len;

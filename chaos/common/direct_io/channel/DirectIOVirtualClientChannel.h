@@ -34,13 +34,13 @@ namespace chaos {
 			struct DirectIODataPack;
 			
 			//! forward declaration
-			class DirectIOClientDeallocationHandler;
+			class DirectIODeallocationHandler;
 			
             namespace channel {
 				
 				class DirectIOVirtualClientChannel :
 				protected DirectIOVirtualChannel,
-				protected DirectIOClientDeallocationHandler {
+				protected DirectIODeallocationHandler {
 					friend class chaos::common::direct_io::DirectIOClientConnection;
                     
 					DirectIOForwarderHandler  forward_handler;
@@ -48,7 +48,7 @@ namespace chaos {
 				protected:
 					
 					//! subclass can override this with custom persisint() after channel allocation) implementation
-					DirectIOClientDeallocationHandler *header_deallocator;
+					DirectIODeallocationHandler *header_deallocator;
 					
 					//!only virtual channel class can access this class to permit
 					//! the regulatio of the call
@@ -56,17 +56,17 @@ namespace chaos {
 					
 					//priority socket
 					int64_t sendPriorityData(chaos::common::direct_io::DirectIODataPack *data_pack,
-											 DirectIOSynchronousAnswer **synchronous_answer = NULL);
+											 DirectIODataPack **synchronous_answer = NULL);
 					int64_t sendPriorityData(chaos::common::direct_io::DirectIODataPack *data_pack,
-											 DirectIOClientDeallocationHandler *data_deallocator,
-											 DirectIOSynchronousAnswer **synchronous_answer = NULL);
+											 DirectIODeallocationHandler *data_deallocator,
+											 DirectIODataPack **synchronous_answer = NULL);
 					
 					//service socket
 					int64_t sendServiceData(chaos::common::direct_io::DirectIODataPack *data_pack,
-											DirectIOSynchronousAnswer **synchronous_answer = NULL);
+											DirectIODataPack **synchronous_answer = NULL);
 					int64_t sendServiceData(chaos::common::direct_io::DirectIODataPack *data_pack,
-											DirectIOClientDeallocationHandler *data_deallocator,
-											DirectIOSynchronousAnswer **synchronous_answer = NULL);
+											DirectIODeallocationHandler *data_deallocator,
+											DirectIODataPack **synchronous_answer = NULL);
 					
 					// prepare header for defaut connection data
 					inline DirectIODataPack *completeChannnelDataPack(DirectIODataPack *data_pack, bool synchronous_answer = false) {

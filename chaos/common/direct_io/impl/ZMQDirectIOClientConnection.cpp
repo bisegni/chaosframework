@@ -42,9 +42,9 @@ ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {
 
 // send the data to the server layer on priority channel
 int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pack,
-                                                      DirectIOClientDeallocationHandler *header_deallocation_handler,
-                                                      DirectIOClientDeallocationHandler *data_deallocation_handler,
-                                                      DirectIOSynchronousAnswer **synchronous_answer) {
+                                                      DirectIODeallocationHandler *header_deallocation_handler,
+                                                      DirectIODeallocationHandler *data_deallocation_handler,
+                                                      DirectIODataPack **synchronous_answer) {
     return writeToSocket(socket_priority,
                          priority_identity,
                          completeDataPack(data_pack),
@@ -55,9 +55,9 @@ int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pac
 
 // send the data to the server layer on the service channel
 int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack,
-                                                     DirectIOClientDeallocationHandler *header_deallocation_handler,
-                                                     DirectIOClientDeallocationHandler *data_deallocation_handler,
-                                                     DirectIOSynchronousAnswer **synchronous_answer) {
+                                                     DirectIODeallocationHandler *header_deallocation_handler,
+                                                     DirectIODeallocationHandler *data_deallocation_handler,
+                                                     DirectIODataPack **synchronous_answer) {
     return writeToSocket(socket_service,
                          service_identity,
                          completeDataPack(data_pack),
@@ -70,69 +70,28 @@ int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack
 int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
                                                    std::string& identity,
                                                    DirectIODataPack *data_pack,
-                                                   DirectIOClientDeallocationHandler *header_deallocation_handler,
-                                                   DirectIOClientDeallocationHandler *data_deallocation_handler,
-                                                   DirectIOSynchronousAnswer **synchronous_answer) {
+                                                   DirectIODeallocationHandler *header_deallocation_handler,
+                                                   DirectIODeallocationHandler *data_deallocation_handler,
+                                                   DirectIODataPack **synchronous_answer) {
     assert(socket && data_pack);
     int err = 0;
-    uint16_t sending_opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
-
+    
     if((err = sendDatapack(socket,
-                       identity,
-                       data_pack,
-                       header_deallocation_handler,
-                          data_deallocation_handler))) {
+                           data_pack,
+                           header_deallocation_handler,
+                           data_deallocation_handler))) {
+        ZMQDIO_CONNECTION_LERR_ << "Error sending datapack with code:" << err;
     } else if(data_pack->header.dispatcher_header.fields.synchronous_answer) {
-        std::string empty_delimiter;
-        //receive the zmq evenlod delimiter
-        if((err = receiveStartEnvelop(socket))){
-            ZMQDIO_CONNECTION_LERR_ << "Error sending start envelope:" << err;
+        //we need an aswer
+        if((err = reveiceDatapack(socket,
+                                 synchronous_answer))) {
+            ZMQDIO_CONNECTION_LERR_ << "Error receiving answer datapack with code:" << err;
         } else {
-            zmq_msg_t msg;
-            err = zmq_msg_init(&msg);
-            if(err == -1) {
-                err = zmq_errno();
-                ZMQDIO_CONNECTION_LERR_ << "Error initializing message for asynchronous answer with error" << zmq_strerror(err);
-            } else {
-                err = zmq_recvmsg(socket, &msg, 0);
-                if(err == -1) {
-                    err = zmq_errno();
-                    ZMQDIO_CONNECTION_LERR_ << "Error getting message for asynchronous answer with code:"<< zmq_strerror(err);
-                } else {
-                    //we have message
-                    *synchronous_answer = (DirectIOSynchronousAnswer*)calloc(sizeof(DirectIOSynchronousAnswer), 1);
-                    //copy data
-                    (*synchronous_answer)->answer_size = (uint32_t)zmq_msg_size(&msg);
-                    if(err > 0) {
-                        //if we have some data copy it  otjerwhise we have an empty pack
-                        (*synchronous_answer)->answer_data = malloc((*synchronous_answer)->answer_size);
-                        std::memcpy((*synchronous_answer)->answer_data , zmq_msg_data(&msg), (*synchronous_answer)->answer_size);
-                    }
-                }
-            }
-            //close received message
-            err = zmq_msg_close(&msg);
-            //err need to be euqal to 0 for riget things
+            //get the error from remote api
+            err = (*synchronous_answer)->header.dispatcher_header.fields.err;
         }
     }
-    
-    if(data_pack->channel_header_data != NULL) {
-        //delete channel custom header
-        DirectIOForwarder::freeSentData(data_pack->channel_header_data,
-                                        new DisposeSentMemoryInfo(header_deallocation_handler,
-                                                                  DisposeSentMemoryInfo::SentPartHeader,
-                                                                  sending_opcode));
-    }
-    
-    if(data_pack->channel_data != NULL) {
-        //delete channel data
-        DirectIOForwarder::freeSentData(data_pack->channel_data,
-                                        new DisposeSentMemoryInfo(data_deallocation_handler,
-                                                                  DisposeSentMemoryInfo::SentPartData,
-                                                                  sending_opcode));
-    }
+    //remove datapack;
     free(data_pack);
-    
-    //send data
     return err;
 }

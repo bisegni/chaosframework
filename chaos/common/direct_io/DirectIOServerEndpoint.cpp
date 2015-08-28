@@ -98,25 +98,39 @@ void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServ
 }
 
 // Event for a new data received
-int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) {
+int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPack *data_pack,
+                                                 DirectIODataPack *synchronous_answer,
+                                                 DirectIODeallocationHandler **answer_header_deallocation_handler,
+                                                 DirectIODeallocationHandler **answer_data_deallocation_handler) {
 	int err = 0;
 	spinlock.lock();
 	DEBUG_CODE(DIOSE_LDBG_ << "New priority message for channel index:" << data_pack->header.dispatcher_header.fields.channel_idx;)
 	//boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
-	if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx])
-		err =  channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack, synchronous_answer);
+    if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]) {
+		err =  channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack,
+                                                                                                                              synchronous_answer,
+                                                                                                                              answer_header_deallocation_handler,
+                                                                                                                              answer_data_deallocation_handler);
+    }
 	spinlock.unlock();
 	return err;
 }
 
 // Event for a new data received
-int DirectIOServerEndpoint::serviceDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) {
+int DirectIOServerEndpoint::serviceDataReceived(DirectIODataPack *data_pack,
+                                                DirectIODataPack *synchronous_answer,
+                                                DirectIODeallocationHandler **answer_header_deallocation_handler,
+                                                DirectIODeallocationHandler **answer_data_deallocation_handler) {
 	int err = 0;
 	spinlock.lock();
 	DEBUG_CODE(DIOSE_LDBG_ << "New service message for channel index:" << data_pack->header.dispatcher_header.fields.channel_idx;)
 	//boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
-	if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx])
-		err = channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack, synchronous_answer);
+    if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]) {
+		err = channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack,
+                                                                                                                             synchronous_answer,
+                                                                                                                             answer_header_deallocation_handler,
+                                                                                                                             answer_data_deallocation_handler);
+    }
 	spinlock.unlock();
 	return err;
 }

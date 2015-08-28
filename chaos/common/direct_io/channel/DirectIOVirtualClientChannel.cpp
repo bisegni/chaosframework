@@ -32,7 +32,7 @@ header_deallocator(this) {}
 DirectIOVirtualClientChannel::~DirectIOVirtualClientChannel() {}
 
 int64_t DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPack *data_pack,
-													   DirectIOSynchronousAnswer **synchronous_answer) {
+													   DirectIODataPack **synchronous_answer) {
 	//set the endpoint that need the receive the pack on the other side
 	//data_pack->header.dispatcher_header.fields.route_addr = endpoint;
 	//set the channel route index within the endpoint
@@ -44,8 +44,8 @@ int64_t DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io:
 }
 
 int64_t DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPack *data_pack,
-													   DirectIOClientDeallocationHandler *data_deallocator,
-													   DirectIOSynchronousAnswer **synchronous_answer) {
+													   DirectIODeallocationHandler *data_deallocator,
+													   DirectIODataPack **synchronous_answer) {
 	//set the endpoint that need the receive the pack on the other side
 	//data_pack->header.dispatcher_header.fields.route_addr = endpoint;
 	//set the channel route index within the endpoint
@@ -57,7 +57,7 @@ int64_t DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io:
 }
 
 int64_t DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPack *data_pack,
-													  DirectIOSynchronousAnswer **synchronous_answer) {
+													  DirectIODataPack **synchronous_answer) {
 	//set the endpoint that need the receive the pack on the other side
 	//data_pack->header.dispatcher_header.fields.route_addr = endpoint;
 	//set the channel route index within the endpoint
@@ -69,8 +69,8 @@ int64_t DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::
 }
 
 int64_t DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPack *data_pack,
-													   DirectIOClientDeallocationHandler *data_deallocator,
-													   DirectIOSynchronousAnswer **synchronous_answer) {
+													   DirectIODeallocationHandler *data_deallocator,
+													   DirectIODataPack **synchronous_answer) {
 	//set the endpoint that need the receive the pack on the other side
 	//data_pack->header.dispatcher_header.fields.route_addr = endpoint;
 	//set the channel route index within the endpoint

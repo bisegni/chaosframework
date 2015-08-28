@@ -58,7 +58,7 @@ namespace chaos {
 						virtual int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
 															void *concatenated_unique_id_memory,
 															uint32_t concatenated_unique_id_memory_size,
-															DirectIOSystemAPISnapshotResult *api_result)
+															DirectIOSystemAPISnapshotResultHeader &result_header)
 						{DELETE_HEADER_DATA(header, concatenated_unique_id_memory) return 0;};
 						
 						//! Manage the delete operation on an existing snapshot
@@ -69,7 +69,7 @@ namespace chaos {
 						\return error on the forwading of the event
 						 */
 						virtual int consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-															   DirectIOSystemAPISnapshotResult *api_result)
+															   DirectIOSystemAPISnapshotResultHeader &result_header)
 						{DELETE_HEADER(header) return 0;};
 						
 						//! Return the dataset for a producerkey ona specific snapshot
@@ -82,7 +82,7 @@ namespace chaos {
 																   const std::string& producer_id,
 																   void **channel_found_data,
 																   uint32_t& channel_found_data_length,
-																   DirectIOSystemAPISnapshotResult *api_result)
+																   DirectIOSystemAPISnapshotResultHeader &result_header)
 						{DELETE_HEADER(header) return 0;};
 					} DirectIOSystemAPIServerChannelHandler;
 					
@@ -96,7 +96,9 @@ namespace chaos {
 					
 					//! endpoint entry method
 					int consumeDataPack(DirectIODataPack *dataPack,
-										DirectIOSynchronousAnswerPtr synchronous_answer);
+										DirectIODataPack *synchronous_answer,
+                                        DirectIODeallocationHandler **answer_header_deallocation_handler,
+                                        DirectIODeallocationHandler **answer_data_deallocation_handler);
 				};
 			}
 		}

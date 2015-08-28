@@ -64,12 +64,6 @@ pack->channel_header_data = h_ptr;
 pack->header.dispatcher_header.fields.channel_part = pack->header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_DATA_ONLY;\
 pack->header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(d_size);\
 pack->channel_data = d_ptr;
-			
-			
-			typedef struct DirectIOSynchronousAnswer {
-				void *answer_data;
-				uint32_t answer_size;
-			} DirectIOSynchronousAnswer, *DirectIOSynchronousAnswerPtr;
 
 			
             //! DirectIO data pack structure. It is wrote in little endian
@@ -93,18 +87,18 @@ pack->channel_data = d_ptr;
 						struct dispatcher_header {
 							//! destination routing address
 							uint16_t	route_addr;
-							//! check when a request need a synchronous answer
-							uint16_t	synchronous_answer:1;
-							//! unused padding data
-							uint16_t	unused:15;
+                            //! unused padding data
+                            uint16_t	err;
 							//! channel index
 							uint16_t	channel_idx: 8;
 							//! channel tag
 							uint16_t    channel_part: 8;
 							//! channel tag
 							uint16_t    channel_opcode: 8;
-							//! channel tag
-							uint16_t    channel_specified_tag: 8;
+                            //! check when a request need a synchronous answer
+                            uint16_t	synchronous_answer:1;
+                            //! channel tag
+                            uint16_t    unused: 7;
 						} fields;
 					} dispatcher_header;
 					

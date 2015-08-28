@@ -131,21 +131,41 @@ void DirectIODispatcher::releaseEndpoint(DirectIOServerEndpoint *endpoint_to_rel
 }
 
 // Event for a new data received
-int DirectIODispatcher::priorityDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) {
+int DirectIODispatcher::priorityDataReceived(DirectIODataPack *data_pack,
+                                             DirectIODataPack *synchronous_answer,
+                                             DirectIODeallocationHandler **answer_header_deallocation_handler,
+                                             DirectIODeallocationHandler **answer_data_deallocation_handler) {
 	int err = -1;
 	//get route index and call delegator
 	if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
-		err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->priorityDataReceived(data_pack, synchronous_answer);
+		err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->priorityDataReceived(data_pack,
+                                                                                                                         synchronous_answer,
+                                                                                                                         answer_header_deallocation_handler,
+                                                                                                                         answer_data_deallocation_handler);
+        if(synchronous_answer) {
+            //set error on result datapack
+            synchronous_answer->header.dispatcher_header.fields.err = (int16_t)err;
+        }
 	}
 	return err;
 }
 
 // Event for a new data received
-int DirectIODispatcher::serviceDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) {
+int DirectIODispatcher::serviceDataReceived(DirectIODataPack *data_pack,
+                                            DirectIODataPack *synchronous_answer,
+                                            DirectIODeallocationHandler **answer_header_deallocation_handler,
+                                            DirectIODeallocationHandler **answer_data_deallocation_handler) {
 	int err = -1;
 	//get route index and call delegator
 	if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
-		err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->serviceDataReceived(data_pack, synchronous_answer);
+		err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->serviceDataReceived(data_pack,
+                                                                                                                        synchronous_answer,
+                                                                                                                        answer_header_deallocation_handler,
+                                                                                                                        answer_data_deallocation_handler);
+        if(synchronous_answer) {
+            //set error on result datapack
+            synchronous_answer->header.dispatcher_header.fields.err = (int16_t)err;
+        }
 	}
 	return err;
 }

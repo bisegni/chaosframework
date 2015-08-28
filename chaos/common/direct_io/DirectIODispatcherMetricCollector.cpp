@@ -73,7 +73,9 @@ void DirectIODispatcherMetricCollector::releaseEndpoint(DirectIOServerEndpoint *
 
 // Event for a new data received
 int DirectIODispatcherMetricCollector::priorityDataReceived(DirectIODataPack *data_pack,
-                                                            DirectIOSynchronousAnswerPtr synchronous_answer) {
+                                                            DirectIODataPack *synchronous_answer,
+                                                            DirectIODeallocationHandler **answer_header_deallocation_handler,
+                                                            DirectIODeallocationHandler **answer_data_deallocation_handler) {
     //inrement packec count
     pack_count++;
     
@@ -82,12 +84,16 @@ int DirectIODispatcherMetricCollector::priorityDataReceived(DirectIODataPack *da
 
     //flow back to base class
     return DirectIODispatcher::priorityDataReceived(data_pack,
-                                                    synchronous_answer);
+                                                    synchronous_answer,
+                                                    answer_header_deallocation_handler,
+                                                    answer_data_deallocation_handler);
 }
 
 // Event for a new data received
 int DirectIODispatcherMetricCollector::serviceDataReceived(DirectIODataPack *data_pack,
-                                                           DirectIOSynchronousAnswerPtr synchronous_answer) {
+                                                           DirectIODataPack *synchronous_answer,
+                                                           DirectIODeallocationHandler **answer_header_deallocation_handler,
+                                                           DirectIODeallocationHandler **answer_data_deallocation_handler) {
     //inrement packec count
     pack_count++;
     
@@ -96,7 +102,9 @@ int DirectIODispatcherMetricCollector::serviceDataReceived(DirectIODataPack *dat
 
     //flow back to base class
     return DirectIODispatcher::serviceDataReceived(data_pack,
-                                                   synchronous_answer);
+                                                   synchronous_answer,
+                                                   answer_header_deallocation_handler,
+                                                   answer_data_deallocation_handler);
 }
 
 void DirectIODispatcherMetricCollector::fetchMetricForTimeDiff(uint64_t time_diff) {

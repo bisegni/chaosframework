@@ -66,11 +66,20 @@ namespace chaos {
                                         std::string& identity,
                                         DirectIODataPack **data_pack_handle);
                     
+                    int reveiceDatapack(void *socket,
+                                        DirectIODataPack **data_pack_handle);
+                    
+                    //! send direct io datapack
                     int sendDatapack(void *socket,
                                      std::string identity,
                                      DirectIODataPack *data_pack,
-                                     DirectIOClientDeallocationHandler *header_deallocation_handler,
-                                     DirectIOClientDeallocationHandler *data_deallocation_handler);
+                                     DirectIODeallocationHandler *header_deallocation_handler,
+                                     DirectIODeallocationHandler *data_deallocation_handler);
+                    
+                    int sendDatapack(void *socket,
+                                     DirectIODataPack *data_pack,
+                                     DirectIODeallocationHandler *header_deallocation_handler,
+                                     DirectIODeallocationHandler *data_deallocation_handler);
                 };
                 
             }

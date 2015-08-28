@@ -45,105 +45,105 @@ DirectIOSystemAPIClientChannel::~DirectIOSystemAPIClientChannel() {
 // start a new Snapshot creation
 int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string& snapshot_name,
 															   const std::vector<std::string>& producer_keys,
-															   DirectIOSystemAPISnapshotResult **api_result_handle) {
+															   DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle) {
 	int64_t err = 0;
-	DirectIOSynchronousAnswer *answer = NULL;
-	if(snapshot_name.size() > 255) {
-		//bad Snapshot name size
-		return -1000;
-	}
-	//allocate the datapack
-	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
-	
-	//allocate the header
-	DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr new_snapshot_opcode_header =
-	(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr)calloc(sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader), 1);
-	
-	//set opcode
-	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeNewSnapshotDataset);
-	
-		//copy the snapshot name to the header
-	std::memcpy(new_snapshot_opcode_header->field.snap_name, snapshot_name.c_str(), snapshot_name.size());
-
-	//set header
-	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, new_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
-	if(producer_keys.size()) {
-		//we have also a set of producer key so senti it in the data part of message
-		std::string producer_key_concatenation;
-		for(std::vector<std::string>::const_iterator it = producer_keys.begin();
-			it != producer_keys.end();) {
-			//add key
-			producer_key_concatenation.append(*it);
-			
-			if((++it) != producer_keys.end()) {
-				producer_key_concatenation.append(",");
-			}
-		}
-		//set the header field for the producer concatenation string
-		new_snapshot_opcode_header->field.producer_key_set_len = TO_LITTE_ENDNS_NUM(uint32_t, (uint32_t)producer_key_concatenation.size());
-
-		//copy the memory for forwarding buffer
-		void * producer_key_concatenation_memory = calloc(producer_key_concatenation.size(), 1);
-		std::memcpy(producer_key_concatenation_memory, producer_key_concatenation.c_str(), producer_key_concatenation.size());
-		//set as data
-		DIRECT_IO_SET_CHANNEL_DATA(data_pack, producer_key_concatenation_memory, (uint32_t)producer_key_concatenation.size());
-	}
-	//send data with synchronous answer flag
-	if((err = (int)sendServiceData(data_pack, &answer))) {
-		//error getting last value
-		if(answer && answer->answer_data) free(answer->answer_data);
-	} else {
-		//we got answer
-		if(answer && answer->answer_size == sizeof(DirectIOSystemAPISnapshotResult)) {
-			*api_result_handle  = static_cast<DirectIOSystemAPISnapshotResult*>(answer->answer_data);
-			(*api_result_handle)->error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->error);
-		} else {
-			*api_result_handle = NULL;
-		}
-	}
-	if(answer) free(answer);
+//	DirectIODataPack *answer = NULL;
+//	if(snapshot_name.size() > 255) {
+//		//bad Snapshot name size
+//		return -1000;
+//	}
+//	//allocate the datapack
+//	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
+//	
+//	//allocate the header
+//	DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr new_snapshot_opcode_header =
+//	(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr)calloc(sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader), 1);
+//	
+//	//set opcode
+//	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeNewSnapshotDataset);
+//	
+//		//copy the snapshot name to the header
+//	std::memcpy(new_snapshot_opcode_header->field.snap_name, snapshot_name.c_str(), snapshot_name.size());
+//
+//	//set header
+//	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, new_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
+//	if(producer_keys.size()) {
+//		//we have also a set of producer key so senti it in the data part of message
+//		std::string producer_key_concatenation;
+//		for(std::vector<std::string>::const_iterator it = producer_keys.begin();
+//			it != producer_keys.end();) {
+//			//add key
+//			producer_key_concatenation.append(*it);
+//			
+//			if((++it) != producer_keys.end()) {
+//				producer_key_concatenation.append(",");
+//			}
+//		}
+//		//set the header field for the producer concatenation string
+//		new_snapshot_opcode_header->field.producer_key_set_len = TO_LITTE_ENDNS_NUM(uint32_t, (uint32_t)producer_key_concatenation.size());
+//
+//		//copy the memory for forwarding buffer
+//		void * producer_key_concatenation_memory = calloc(producer_key_concatenation.size(), 1);
+//		std::memcpy(producer_key_concatenation_memory, producer_key_concatenation.c_str(), producer_key_concatenation.size());
+//		//set as data
+//		DIRECT_IO_SET_CHANNEL_DATA(data_pack, producer_key_concatenation_memory, (uint32_t)producer_key_concatenation.size());
+//	}
+//	//send data with synchronous answer flag
+//	if((err = (int)sendServiceData(data_pack, &answer))) {
+//		//error getting last value
+//		if(answer && answer->answer_data) free(answer->answer_data);
+//	} else {
+//		//we got answer
+//		if(answer && answer->answer_size == sizeof(DirectIOSystemAPISnapshotResult)) {
+//			*api_result_handle  = static_cast<DirectIOSystemAPISnapshotResult*>(answer->answer_data);
+//			(*api_result_handle)->error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->error);
+//		} else {
+//			*api_result_handle = NULL;
+//		}
+//	}
+//	if(answer) free(answer);
 	return err;
 }
 
 //! delete the snapshot identified by name
 int64_t DirectIOSystemAPIClientChannel::deleteDatasetSnapshot(const std::string& snapshot_name,
-															  DirectIOSystemAPISnapshotResult **api_result_handle) {
+															  DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle) {
 	int64_t err = 0;
-	DirectIOSynchronousAnswer *answer = NULL;
-	if(snapshot_name.size() > 255) {
-		//bad Snapshot name size
-		return -1000;
-	}
-	//allocate the datapack
-	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
-	
-	//allocate the header
-	DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr new_snapshot_opcode_header =
-	(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr)calloc(sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader), 1);
-	
-	//set opcode
-	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeDeleteSnapshotDataset);
-	
-	//copy the snapshot name to the header
-	std::memcpy(new_snapshot_opcode_header->field.snap_name, snapshot_name.c_str(), snapshot_name.size());
-	
-	//set header
-	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, new_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
-	
-	//send data with synchronous answer flag
-	if((err = (int)sendServiceData(data_pack, &answer))) {
-		//error getting last value
-		if(answer && answer->answer_data) free(answer->answer_data);
-	} else {
-		//we got answer
-		if(answer && answer->answer_size == sizeof(DirectIOSystemAPISnapshotResult)) {
-			*api_result_handle  = static_cast<DirectIOSystemAPISnapshotResult*>(answer->answer_data);
-			(*api_result_handle)->error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->error);
-		} else {
-			*api_result_handle = NULL;
-		}
-	}
-	if(answer) free(answer);
+//	DirectIODataPack *answer = NULL;
+//	if(snapshot_name.size() > 255) {
+//		//bad Snapshot name size
+//		return -1000;
+//	}
+//	//allocate the datapack
+//	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
+//	
+//	//allocate the header
+//	DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr new_snapshot_opcode_header =
+//	(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr)calloc(sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader), 1);
+//	
+//	//set opcode
+//	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeDeleteSnapshotDataset);
+//	
+//	//copy the snapshot name to the header
+//	std::memcpy(new_snapshot_opcode_header->field.snap_name, snapshot_name.c_str(), snapshot_name.size());
+//	
+//	//set header
+//	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, new_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
+//	
+//	//send data with synchronous answer flag
+//	if((err = (int)sendServiceData(data_pack, &answer))) {
+//		//error getting last value
+//		if(answer && answer->answer_data) free(answer->answer_data);
+//	} else {
+//		//we got answer
+//		if(answer && answer->answer_size == sizeof(DirectIOSystemAPISnapshotResult)) {
+//			*api_result_handle  = static_cast<DirectIOSystemAPISnapshotResult*>(answer->answer_data);
+//			(*api_result_handle)->error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->error);
+//		} else {
+//			*api_result_handle = NULL;
+//		}
+//	}
+//	if(answer) free(answer);
 	return err;
 }
 
@@ -153,53 +153,53 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
 																		 uint32_t channel_type,
 																		 DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle) {
 	int64_t err = 0;
-	DirectIOSynchronousAnswer *answer = NULL;
-	if(snapshot_name.size() > 255) {
-		//bad Snapshot name size
-		return -1000;
-	}
-	//allocate the datapack
-	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
-	
-	//allocate the header
-	DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr get_snapshot_opcode_header =
-	(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr)calloc(sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader), 1);
-	
-	//set opcode
-	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey);
-	
-	//copy the snapshot name to the header
-	std::memcpy(get_snapshot_opcode_header->field.snap_name, snapshot_name.c_str(), snapshot_name.size());
-	get_snapshot_opcode_header->field.channel_type = channel_type;
-	
-	//set header
-	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, get_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
-	if(producer_key.size()) {
-		
-		//set the header field for the producer concatenation string
-		get_snapshot_opcode_header->field.producer_key_set_len = TO_LITTE_ENDNS_NUM(uint32_t, (uint32_t)producer_key.size());
-		
-		//copy the memory for forwarding buffer
-		void * producer_key_send_buffer = malloc(producer_key.size());
-		std::memcpy(producer_key_send_buffer, producer_key.c_str(), producer_key.size());
-		//set as data
-		DIRECT_IO_SET_CHANNEL_DATA(data_pack, producer_key_send_buffer, (uint32_t)producer_key.size());
-	}
-	//send data with synchronous answer flag
-	if((err = (int)sendServiceData(data_pack, &answer))) {
-		//error getting last value
-		if(answer && answer->answer_data) free(answer->answer_data);
-	} else {
-		//we got answer
-		if(answer && answer->answer_data) {
-			*api_result_handle  = static_cast<DirectIOSystemAPIGetDatasetSnapshotResult*>(answer->answer_data);
-			(*api_result_handle)->api_result.error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->api_result.error);
-		} else {
-			*api_result_handle = NULL;
-		}
-	}
-	if(answer) free(answer);
-	return err;
+//	DirectIODataPack *answer = NULL;
+//	if(snapshot_name.size() > 255) {
+//		//bad Snapshot name size
+//		return -1000;
+//	}
+//	//allocate the datapack
+//	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
+//	
+//	//allocate the header
+//	DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr get_snapshot_opcode_header =
+//	(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr)calloc(sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader), 1);
+//	
+//	//set opcode
+//	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey);
+//	
+//	//copy the snapshot name to the header
+//	std::memcpy(get_snapshot_opcode_header->field.snap_name, snapshot_name.c_str(), snapshot_name.size());
+//	get_snapshot_opcode_header->field.channel_type = channel_type;
+//	
+//	//set header
+//	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, get_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
+//	if(producer_key.size()) {
+//		
+//		//set the header field for the producer concatenation string
+//		get_snapshot_opcode_header->field.producer_key_set_len = TO_LITTE_ENDNS_NUM(uint32_t, (uint32_t)producer_key.size());
+//		
+//		//copy the memory for forwarding buffer
+//		void * producer_key_send_buffer = malloc(producer_key.size());
+//		std::memcpy(producer_key_send_buffer, producer_key.c_str(), producer_key.size());
+//		//set as data
+//		DIRECT_IO_SET_CHANNEL_DATA(data_pack, producer_key_send_buffer, (uint32_t)producer_key.size());
+//	}
+//	//send data with synchronous answer flag
+//	if((err = (int)sendServiceData(data_pack, &answer))) {
+//		//error getting last value
+//		if(answer && answer->answer_data) free(answer->answer_data);
+//	} else {
+//		//we got answer
+//		if(answer && answer->answer_data) {
+//			*api_result_handle  = static_cast<DirectIOSystemAPIGetDatasetSnapshotResult*>(answer->answer_data);
+//			(*api_result_handle)->api_result.error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->api_result.error);
+//		} else {
+//			*api_result_handle = NULL;
+//		}
+//	}
+//	if(answer) free(answer);
+//	return err;
 	return 0;
 }
 

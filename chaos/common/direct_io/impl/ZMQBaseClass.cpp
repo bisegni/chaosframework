@@ -103,22 +103,28 @@ int ZMQBaseClass::receiveStartEnvelop(void *socket) {
 int ZMQBaseClass::reveiceDatapack(void *socket,
                                   std::string& identity,
                                   DirectIODataPack **data_pack_handle) {
+    if(stringReceive(socket, identity) == -1) {
+        return zmq_errno();
+    }
+    return reveiceDatapack(socket,
+                           data_pack_handle);
+}
+
+int ZMQBaseClass::reveiceDatapack(void *socket,
+                                  DirectIODataPack **data_pack_handle) {
     int                     err = 0;
     std::string             empty_delimiter;
     char					header_buffer[DIRECT_IO_HEADER_SIZE];
     
-    if((err = stringReceive(socket, identity)) == -1) {
-        return zmq_errno();
-    }
-    
     //receive the zmq evenlop delimiter
-    if((err = stringReceive(socket, empty_delimiter)) == -1) {
-        return zmq_errno();
+    if((err = receiveStartEnvelop(socket))) {
+        return err;
     }
     
     //read header
-    err = zmq_recv(socket, header_buffer, DIRECT_IO_HEADER_SIZE, 0);
-    if(err == -1) {
+    if((err = zmq_recv(socket,
+                       header_buffer,
+                       DIRECT_IO_HEADER_SIZE, 0)) == -1) {
         return zmq_errno();
     }
     
@@ -127,7 +133,7 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     }
     
     //create new datapack
-    *data_pack_handle = new DirectIODataPack();
+    *data_pack_handle = (DirectIODataPack*)calloc(1, sizeof(DirectIODataPack));
     
     //clear all memory
     std::memset(C_DIO_GET_HANDLE_POINTER(data_pack_handle), 0, sizeof(DirectIODataPack));
@@ -218,11 +224,32 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     return err;
 }
 
+#define SYNC_DELETE_HEADER_AND_DATA(mem,dealloc,part,opcode)\
+DirectIOForwarder::freeSentData(mem,\
+new DisposeSentMemoryInfo(dealloc,\
+part,\
+opcode));
+
 int ZMQBaseClass::sendDatapack(void *socket,
                                std::string identity,
                                DirectIODataPack *data_pack,
-                               DirectIOClientDeallocationHandler *header_deallocation_handler,
-                               DirectIOClientDeallocationHandler *data_deallocation_handler) {
+                               DirectIODeallocationHandler *header_deallocation_handler,
+                               DirectIODeallocationHandler *data_deallocation_handler) {
+    //send identity
+    if(stringSendMore(socket, identity.c_str()) == -1) {
+        return zmq_errno();
+    }
+    
+    return sendDatapack(socket,
+                        data_pack,
+                        header_deallocation_handler,
+                        data_deallocation_handler);
+}
+
+int ZMQBaseClass::sendDatapack(void *socket,
+                               DirectIODataPack *data_pack,
+                               DirectIODeallocationHandler *header_deallocation_handler,
+                               DirectIODeallocationHandler *data_deallocation_handler) {
     int err = 0;
     zmq_msg_t msg_data;
     zmq_msg_t msg_header_data;
@@ -233,12 +260,9 @@ int ZMQBaseClass::sendDatapack(void *socket,
     data_pack->header.channel_header_size = DIRECT_IO_SET_CHANNEL_HEADER_SIZE(data_pack->header.channel_header_size);
     data_pack->header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(data_pack->header.channel_data_size);
     
-    //send identity
-    //stringSendMore(socket, identity.c_str());
-    
-    //send zmq envelop delimiter
-    //stringSendMore(socket, EmptyMessage);
-    sendStartEnvelop(socket);
+    if((err = sendStartEnvelop(socket)) == -1) {
+        return zmq_errno();
+    }
     
     //check what send
     switch(data_pack->header.dispatcher_header.fields.channel_part) {
@@ -264,6 +288,11 @@ int ZMQBaseClass::sendDatapack(void *socket,
                                                                    DisposeSentMemoryInfo::SentPartHeader,
                                                                    sending_opcode));
                 if (err == -1) {
+                    err = zmq_errno();
+                    SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_header_data,
+                                                header_deallocation_handler,
+                                                DisposeSentMemoryInfo::SentPartHeader,
+                                                sending_opcode);
                     ZMQDIO_BASE_LERR_ << "Error initializing message for message header";
                 } else {
                     //channel_header_data memory not more managed by us
@@ -293,9 +322,16 @@ int ZMQBaseClass::sendDatapack(void *socket,
                                          data_pack->channel_data,
                                          data_pack->header.channel_data_size,
                                          DirectIOForwarder::freeSentData,
-                                         new DisposeSentMemoryInfo(data_deallocation_handler, DisposeSentMemoryInfo::SentPartData, sending_opcode));
+                                         new DisposeSentMemoryInfo(data_deallocation_handler,
+                                                                   DisposeSentMemoryInfo::SentPartData,
+                                                                   sending_opcode));
                 if(err == -1) {
+                    //delete data
                     err = zmq_errno();
+                    SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_data,
+                                                data_deallocation_handler,
+                                                DisposeSentMemoryInfo::SentPartData,
+                                                sending_opcode);
                     ZMQDIO_BASE_LERR_ << "Error initializing message for channel data with error:"<< zmq_strerror(err);
                 } else {
                     //we not manage anymore channel data
@@ -331,6 +367,10 @@ int ZMQBaseClass::sendDatapack(void *socket,
                                                                    sending_opcode));
                 if(err == -1) {
                     err = zmq_errno();
+                    SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_header_data,
+                                                header_deallocation_handler,
+                                                DisposeSentMemoryInfo::SentPartHeader,
+                                                sending_opcode);
                     ZMQDIO_BASE_LERR_ << "Error initializing message for channel custom header with error:"<< zmq_strerror(err);
                 } else {
                     //we not manage anymore channel custom header
@@ -352,6 +392,10 @@ int ZMQBaseClass::sendDatapack(void *socket,
                                                                            sending_opcode));
                         if(err == -1) {
                             err = zmq_errno();
+                            SYNC_DELETE_HEADER_AND_DATA(data_pack->channel_data,
+                                                        data_deallocation_handler,
+                                                        DisposeSentMemoryInfo::SentPartData,
+                                                        sending_opcode);
                             ZMQDIO_BASE_LERR_ << "Error initializing message for channel data with error:"<< zmq_strerror(err);
                         } else {
                             //we not manage anymore the channel data
