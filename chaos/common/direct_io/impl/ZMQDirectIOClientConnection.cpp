@@ -86,9 +86,6 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
         if((err = reveiceDatapack(socket,
                                  synchronous_answer))) {
             ZMQDIO_CONNECTION_LERR_ << "Error receiving answer datapack with code:" << err;
-        } else {
-            //get the error from remote api
-            err = (*synchronous_answer)->header.dispatcher_header.fields.err;
         }
     }
     //remove datapack;

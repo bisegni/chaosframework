@@ -65,7 +65,7 @@ namespace chaos {
 						virtual int consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
 													 void *channel_data,
 													 uint32_t channel_data_len)
-						{DELETE_HEADER_DATA(header, channel_data) return 0;};
+						{DELETE_HEADER_DATA(header, channel_data) return -1;};
 						
 						//! Receive the key of the live data channel to read
 						/*!
@@ -82,7 +82,7 @@ namespace chaos {
                                                     uint32_t key_len,
                                                     opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
                                                     void **result_value)
-						{DELETE_HEADER_DATA(header, key_data) return 0;};
+						{DELETE_HEADER_DATA(header, key_data) return -1;};
 						
 						//! Receive the query information for search on data cloud
 						/*!
@@ -98,7 +98,7 @@ namespace chaos {
 														  const std::string& search_key,
 														  uint64_t search_start_ts,
 														  uint64_t search_end_ts)
-						{DELETE_HEADER(header) return 0;};
+						{DELETE_HEADER(header) return -1;};
 						
 						//! Receive the start result answering sequence for a query from the quered node
 						/*!
@@ -107,7 +107,7 @@ namespace chaos {
 						 to the query splitting across server.
 						 */
 						virtual int consumeDataCloudQueryStartResult(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult *header)
-						{DELETE_HEADER(header) return 0;}
+						{DELETE_HEADER(header) return -1;}
 						
 						//! Receive the result to a submitted query
 						/*!
@@ -120,7 +120,7 @@ namespace chaos {
 						virtual int consumeDataCloudQueryResult(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *header,
 																void *data_found,
 																uint32_t data_lenght)
-						{DELETE_HEADER_DATA(header, data_found) return 0;};
+						{DELETE_HEADER_DATA(header, data_found) return -1;};
 						
 						//! Receive the end message for the results answering sequence from the answering node
 						/*!
@@ -133,7 +133,7 @@ namespace chaos {
 						virtual int consumeDataCloudQueryEndResult(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult *header,
 																   void *error_message_string_data,
 																   uint32_t error_message_string_data_length)
-						{DELETE_HEADER_DATA(header, error_message_string_data) return 0;}
+						{DELETE_HEADER_DATA(header, error_message_string_data) return -1;}
 
 					} DirectIODeviceServerChannelHandler;
 

@@ -128,8 +128,11 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
         return zmq_errno();
     }
     
+    //check if we have received the rigth header number of bytes
     if(err != DIRECT_IO_HEADER_SIZE) {
         return -1;
+    } else {
+        err = 0;
     }
     
     //create new datapack

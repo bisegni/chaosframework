@@ -80,7 +80,7 @@ int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string
 //			}
 //		}
 //		//set the header field for the producer concatenation string
-//		new_snapshot_opcode_header->field.producer_key_set_len = TO_LITTE_ENDNS_NUM(uint32_t, (uint32_t)producer_key_concatenation.size());
+//		new_snapshot_opcode_header->field.producer_key_set_len = TO_LITTEL_ENDNS_NUM(uint32_t, (uint32_t)producer_key_concatenation.size());
 //
 //		//copy the memory for forwarding buffer
 //		void * producer_key_concatenation_memory = calloc(producer_key_concatenation.size(), 1);
@@ -177,7 +177,7 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
 //	if(producer_key.size()) {
 //		
 //		//set the header field for the producer concatenation string
-//		get_snapshot_opcode_header->field.producer_key_set_len = TO_LITTE_ENDNS_NUM(uint32_t, (uint32_t)producer_key.size());
+//		get_snapshot_opcode_header->field.producer_key_set_len = TO_LITTEL_ENDNS_NUM(uint32_t, (uint32_t)producer_key.size());
 //		
 //		//copy the memory for forwarding buffer
 //		void * producer_key_send_buffer = malloc(producer_key.size());

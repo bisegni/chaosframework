@@ -136,6 +136,8 @@ int DirectIODispatcher::priorityDataReceived(DirectIODataPack *data_pack,
                                              DirectIODeallocationHandler **answer_header_deallocation_handler,
                                              DirectIODeallocationHandler **answer_data_deallocation_handler) {
 	int err = -1;
+    //convert dispatch header to correct endianes
+    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack)
 	//get route index and call delegator
 	if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
 		err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->priorityDataReceived(data_pack,
@@ -145,6 +147,9 @@ int DirectIODispatcher::priorityDataReceived(DirectIODataPack *data_pack,
         if(synchronous_answer) {
             //set error on result datapack
             synchronous_answer->header.dispatcher_header.fields.err = (int16_t)err;
+            
+            //convert dispatch header to correct endianes
+            DIRECT_IO_DATAPACK_TO_ENDIAN(synchronous_answer)
         }
 	}
 	return err;
@@ -156,6 +161,8 @@ int DirectIODispatcher::serviceDataReceived(DirectIODataPack *data_pack,
                                             DirectIODeallocationHandler **answer_header_deallocation_handler,
                                             DirectIODeallocationHandler **answer_data_deallocation_handler) {
 	int err = -1;
+    //convert dispatch header to correct endianes
+    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack)
 	//get route index and call delegator
 	if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
 		err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->serviceDataReceived(data_pack,
@@ -164,7 +171,10 @@ int DirectIODispatcher::serviceDataReceived(DirectIODataPack *data_pack,
                                                                                                                         answer_data_deallocation_handler);
         if(synchronous_answer) {
             //set error on result datapack
-            synchronous_answer->header.dispatcher_header.fields.err = (int16_t)err;
+            synchronous_answer->header.dispatcher_header.fields.err = err;
+            
+            //convert dispatch header to correct endianes
+            DIRECT_IO_DATAPACK_TO_ENDIAN(synchronous_answer)
         }
 	}
 	return err;

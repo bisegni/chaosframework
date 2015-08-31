@@ -1,11 +1,4 @@
-//
-//  
-//  ChaosFramework
-//
-//  Created by bisegni on 11/07/11.
-//  Copyright 2011 INFN. All rights reserved.
-//
-/*	
+/*
  *	ActionDescriptor.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio. 

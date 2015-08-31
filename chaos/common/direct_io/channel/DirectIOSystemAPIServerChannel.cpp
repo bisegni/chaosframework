@@ -65,7 +65,7 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
 			//								 (DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data);
 			//fix endianes into api result
 			//((DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data)->error =
-			//TO_LITTE_ENDNS_NUM(int32_t, ((DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data)->error);
+			//TO_LITTEL_ENDNS_NUM(int32_t, ((DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data)->error);
 			break;
 		}
 			
@@ -83,7 +83,7 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
 			//									(DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data);
 			//fix endianes into api result
 			//((DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data)->error =
-			//TO_LITTE_ENDNS_NUM(int32_t, ((DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data)->error);
+			//TO_LITTEL_ENDNS_NUM(int32_t, ((DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data)->error);
 			break;
 		}
 			
@@ -126,7 +126,7 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
 //			}
 //			//fix endianes into api result
 //			((DirectIOSystemAPIGetDatasetSnapshotResult*)synchronous_answer->answer_data)->api_result.error =
-//			TO_LITTE_ENDNS_NUM(int32_t, ((DirectIOSystemAPIGetDatasetSnapshotResult*)synchronous_answer->answer_data)->api_result.error);
+//			TO_LITTEL_ENDNS_NUM(int32_t, ((DirectIOSystemAPIGetDatasetSnapshotResult*)synchronous_answer->answer_data)->api_result.error);
 			break;
 		}
 		default:

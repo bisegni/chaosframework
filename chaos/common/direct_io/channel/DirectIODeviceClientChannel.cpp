@@ -109,10 +109,10 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const std::string& ke
     void *data = (void*)malloc(key.size());
     std::memcpy(data, key.c_str(), key.size());
     
-    get_opcode_header->field.address = TO_LITTE_ENDNS_NUM(uint64_t, answer_server_info.ip);
-    get_opcode_header->field.p_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.p_server_port);
-    get_opcode_header->field.s_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.s_server_port);
-    get_opcode_header->field.endpoint = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.endpoint);
+    get_opcode_header->field.address = TO_LITTEL_ENDNS_NUM(uint64_t, answer_server_info.ip);
+    get_opcode_header->field.p_port = TO_LITTEL_ENDNS_NUM(uint16_t, answer_server_info.p_server_port);
+    get_opcode_header->field.s_port = TO_LITTEL_ENDNS_NUM(uint16_t, answer_server_info.s_server_port);
+    get_opcode_header->field.endpoint = TO_LITTEL_ENDNS_NUM(uint16_t, answer_server_info.endpoint);
     
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeGetLastOutput);
@@ -130,8 +130,10 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const std::string& ke
             //get the header
             opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header = static_cast<opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult*>(answer->channel_header_data);
             result_header->value_len = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->value_len);
-            size = result_header->value_len;
-            *result = answer->channel_data;
+            if(result_header->value_len > 0) {
+                size = result_header->value_len;
+                *result = answer->channel_data;
+            }
         } else {
             *result = NULL;
             size = 0;
@@ -157,10 +159,10 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key, uint
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
     
     //fill the hader
-    query_data_cloud_header->field.address = TO_LITTE_ENDNS_NUM(uint64_t, answer_server_info.ip);
-    query_data_cloud_header->field.p_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.p_server_port);
-    query_data_cloud_header->field.s_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.s_server_port);
-    query_data_cloud_header->field.endpoint = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.endpoint);
+    query_data_cloud_header->field.address = TO_LITTEL_ENDNS_NUM(uint64_t, answer_server_info.ip);
+    query_data_cloud_header->field.p_port = TO_LITTEL_ENDNS_NUM(uint16_t, answer_server_info.p_server_port);
+    query_data_cloud_header->field.s_port = TO_LITTEL_ENDNS_NUM(uint16_t, answer_server_info.s_server_port);
+    query_data_cloud_header->field.endpoint = TO_LITTEL_ENDNS_NUM(uint16_t, answer_server_info.endpoint);
     
     query_id = UUIDUtil::generateUUIDLite();
     query_id.resize(8);
@@ -198,7 +200,7 @@ int64_t DirectIODeviceClientChannel::startQueryDataCloudResult(const std::string
     std::strncpy(cq_start_result_header->field.query_id, query_id.c_str(), 8);
     
     //configure the header
-    cq_start_result_header->field.total_element_found = TO_LITTE_ENDNS_NUM(uint64_t, total_element_found);
+    cq_start_result_header->field.total_element_found = TO_LITTEL_ENDNS_NUM(uint64_t, total_element_found);
     
     //set the header for forward
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cq_start_result_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult))
@@ -223,7 +225,7 @@ int64_t DirectIODeviceClientChannel::sendResultToQueryDataCloud(const std::strin
     //copy the query id on header
     std::strncpy(cq_result_header->field.query_id, query_id.c_str(), 8);
     
-    cq_result_header->field.element_index = TO_LITTE_ENDNS_NUM(uint64_t, element_index);
+    cq_result_header->field.element_index = TO_LITTEL_ENDNS_NUM(uint64_t, element_index);
     
     //set header and data for the query
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cq_result_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult))
@@ -248,8 +250,8 @@ int64_t DirectIODeviceClientChannel::endQueryDataCloudResult(const std::string& 
     std::strncpy(cq_end_result_header->field.query_id, query_id.c_str(), 8);
     
     //configure the header
-    cq_end_result_header->field.error = TO_LITTE_ENDNS_NUM(int32_t, error);
-    cq_end_result_header->field.error_message_length = TO_LITTE_ENDNS_NUM(uint32_t, (uint32_t)error_message.size());
+    cq_end_result_header->field.error = TO_LITTEL_ENDNS_NUM(int32_t, error);
+    cq_end_result_header->field.error_message_length = TO_LITTEL_ENDNS_NUM(uint32_t, (uint32_t)error_message.size());
     
     //set the header for forward
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cq_end_result_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult))
