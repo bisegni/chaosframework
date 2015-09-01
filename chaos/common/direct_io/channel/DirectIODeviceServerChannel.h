@@ -37,8 +37,19 @@ namespace chaos {
 				/*!
 				 This channel answer to the client api for data managment, push, get last data and various query
 				 */
-				DECLARE_CLASS_FACTORY(DirectIODeviceServerChannel, DirectIOVirtualServerChannel), public chaos::common::direct_io::DirectIOEndpointHandler {
+				DECLARE_CLASS_FACTORY(DirectIODeviceServerChannel, DirectIOVirtualServerChannel),
+                public chaos::common::direct_io::DirectIOEndpointHandler {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceServerChannel)
+                    
+                    class DirectIODeviceServerChannelDeallocator:
+                    public DirectIODeallocationHandler {
+                    protected:
+                        void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
+                    };
+                    //static deallocator forthis channel
+                    static DirectIODeviceServerChannelDeallocator STATIC_DirectIODeviceServerChannelDeallocator;
+                    
+                    
 				public:
 					//! Device handler definition
 					typedef class DirectIODeviceServerChannelHandler {
@@ -53,9 +64,8 @@ namespace chaos {
 						 */
 						virtual int consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
 													 void *channel_data,
-													 uint32_t channel_data_len,
-													 DirectIOSynchronousAnswerPtr synchronous_answer)
-						{DELETE_HEADER_DATA(header, channel_data) return 0;};
+													 uint32_t channel_data_len)
+						{DELETE_HEADER_DATA(header, channel_data) return -1;};
 						
 						//! Receive the key of the live data channel to read
 						/*!
@@ -68,10 +78,11 @@ namespace chaos {
 								on the live system
 						 */
 						virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header,
-													 void *key_data,
-													 uint32_t key_len,
-													 DirectIOSynchronousAnswerPtr synchronous_answer)
-						{DELETE_HEADER_DATA(header, key_data) return 0;};
+                                                    void *key_data,
+                                                    uint32_t key_len,
+                                                    opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
+                                                    void **result_value)
+						{DELETE_HEADER_DATA(header, key_data) return -1;};
 						
 						//! Receive the query information for search on data cloud
 						/*!
@@ -86,9 +97,8 @@ namespace chaos {
 						virtual int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud *header,
 														  const std::string& search_key,
 														  uint64_t search_start_ts,
-														  uint64_t search_end_ts,
-														  DirectIOSynchronousAnswerPtr synchronous_answer)
-						{DELETE_HEADER(header) return 0;};
+														  uint64_t search_end_ts)
+						{DELETE_HEADER(header) return -1;};
 						
 						//! Receive the start result answering sequence for a query from the quered node
 						/*!
@@ -97,7 +107,7 @@ namespace chaos {
 						 to the query splitting across server.
 						 */
 						virtual int consumeDataCloudQueryStartResult(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult *header)
-						{DELETE_HEADER(header) return 0;}
+						{DELETE_HEADER(header) return -1;}
 						
 						//! Receive the result to a submitted query
 						/*!
@@ -109,9 +119,8 @@ namespace chaos {
 						 */
 						virtual int consumeDataCloudQueryResult(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *header,
 																void *data_found,
-																uint32_t data_lenght,
-																DirectIOSynchronousAnswerPtr synchronous_answer)
-						{DELETE_HEADER_DATA(header, data_found) return 0;};
+																uint32_t data_lenght)
+						{DELETE_HEADER_DATA(header, data_found) return -1;};
 						
 						//! Receive the end message for the results answering sequence from the answering node
 						/*!
@@ -124,7 +133,7 @@ namespace chaos {
 						virtual int consumeDataCloudQueryEndResult(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult *header,
 																   void *error_message_string_data,
 																   uint32_t error_message_string_data_length)
-						{DELETE_HEADER_DATA(header, error_message_string_data) return 0;}
+						{DELETE_HEADER_DATA(header, error_message_string_data) return -1;}
 
 					} DirectIODeviceServerChannelHandler;
 
@@ -135,7 +144,10 @@ namespace chaos {
 					
 					DirectIODeviceServerChannel(std::string alias);
 					
-					int consumeDataPack(DirectIODataPack *dataPack, DirectIOSynchronousAnswerPtr synchronous_answer);
+					int consumeDataPack(DirectIODataPack *dataPack,
+                                        DirectIODataPack *synchronous_answer,
+                                        DirectIODeallocationHandler **answer_header_deallocation_handler,
+                                        DirectIODeallocationHandler **answer_data_deallocation_handler);
 				};
 			}
 		}

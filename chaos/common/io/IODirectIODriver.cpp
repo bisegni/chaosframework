@@ -220,7 +220,7 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
 		if(snapshot_result && snapshot_result->channel_data) {
 			//we have the dataaset
 			try {
-				*cdatawrapper_handler = new chaos_data::CDataWrapper((const char*)GET_SYSTEM_API_GET_SNAPSHOT_RESULT_BASE_PTR(snapshot_result));
+				//*cdatawrapper_handler = new chaos_data::CDataWrapper((const char*)GET_SYSTEM_API_GET_SNAPSHOT_RESULT_BASE_PTR(snapshot_result));
 			} catch (std::exception& ex) {
 				IODirectIODriver_LERR_ << "Error deserializing the dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name << " with error:" << ex.what();
 			} catch (...) {
@@ -414,8 +414,7 @@ int IODirectIODriver::consumeDataCloudQueryStartResult(chaos_dio_channel::opcode
  ---------------------------------------------------------------------------------*/
 int IODirectIODriver::consumeDataCloudQueryResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *header,
 												  void *data_found,
-												  uint32_t data_lenght,
-												  chaos_dio::DirectIOSynchronousAnswerPtr synchronous_answer){
+												  uint32_t data_lenght){
 	std::string query_id(header->field.query_id, 8);
 	
 	//acquire read lock

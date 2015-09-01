@@ -27,7 +27,10 @@ namespace chaos {
 		namespace direct_io {
 			class DirectIOEndpointHandler {
 			public:
-				virtual int consumeDataPack(DirectIODataPack *dataPack, DirectIOSynchronousAnswerPtr synchronous_answer = NULL) = 0;
+                virtual int consumeDataPack(DirectIODataPack *dataPack,
+                                            DirectIODataPack *synchronous_answer,
+                                            DirectIODeallocationHandler **answer_header_deallocation_handler ,
+                                            DirectIODeallocationHandler **answer_data_deallocation_handler) = 0;
 			};
 		}
 	}

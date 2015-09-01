@@ -55,7 +55,7 @@ namespace chaos {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceClientChannel)
 					
 					class DirectIODeviceClientChannelDeallocator:
-					public DirectIOClientDeallocationHandler {
+					public DirectIODeallocationHandler {
 					protected:
 						void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
 					};
@@ -112,7 +112,7 @@ namespace chaos {
 													   uint64_t element_index,
 													   void *data,
 													   uint32_t data_len,
-													   DirectIOClientDeallocationHandler *data_deallocator = NULL);
+													   DirectIODeallocationHandler *data_deallocator = NULL);
 					
 					//! Set the end of the answer to a query
 					/*!

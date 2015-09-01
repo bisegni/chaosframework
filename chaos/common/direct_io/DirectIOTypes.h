@@ -64,6 +64,46 @@ namespace chaos {
 					DirectIOServiceChannel
 				} DirectIOChannelType;
 			}
+            
+            //--------------asynchronous memory managment-----------------------
+            //!forward decalration
+            class DirectIODeallocationHandler;
+            
+            //!strucutre to maintains the information about sent buffer
+            //! and his associated clean handler
+            struct DisposeSentMemoryInfo {
+                //! specify the part of the datapack to free
+                typedef enum SentPart {
+                    SentPartHeader,
+                    SentPartData
+                }SentPart;
+                
+                //!memory deallcoation handler
+                DirectIODeallocationHandler	*data_deallocator;
+                //! sent part type
+                SentPart	sent_part;
+                //! channel opcode
+                uint16_t	sent_opcode;
+                
+                //! defautl constructor
+                DisposeSentMemoryInfo(DirectIODeallocationHandler *_data_deallocator,
+                                      SentPart _sent_part,
+                                      uint16_t _sent_opcode):
+                data_deallocator(_data_deallocator),
+                sent_part(_sent_part),
+                sent_opcode(_sent_opcode){};
+            };
+            
+            //! forward decalration
+            class DirectIOForwarder;
+            
+            //! handler for the theallocation of sent data
+            class DirectIODeallocationHandler {
+                friend class DirectIOForwarder;
+            protected:
+                //overriding ofr free object fuunction for the tempalted key object container superclass
+                virtual void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr) = 0;
+            };
 		}
 	}
 }

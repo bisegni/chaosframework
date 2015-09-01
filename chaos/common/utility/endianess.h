@@ -115,7 +115,7 @@ namespace chaos {
     
     return do_byte_swap<from, to, T>()(value);
 			}
-#define  TO_LITTE_ENDNS_NUM(type, n) chaos::common::utility::byte_swap<chaos::common::utility::host_endian, chaos::common::utility::little_endian, type>(n)
+#define  TO_LITTEL_ENDNS_NUM(type, n) chaos::common::utility::byte_swap<chaos::common::utility::host_endian, chaos::common::utility::little_endian, type>(n)
 #define  TO_LITTE_ENDNS(type, ptr, offset) chaos::common::utility::byte_swap<chaos::common::utility::host_endian, chaos::common::utility::little_endian, type>(*((type*)((char*)ptr)+offset))
 #define  FROM_LITTLE_ENDNS(type, ptr, offset) chaos::common::utility::byte_swap<chaos::common::utility::little_endian, chaos::common::utility::host_endian,  type>(*((type*)((char*)ptr)+offset))
 #define  FROM_LITTLE_ENDNS_NUM(type, n) chaos::common::utility::byte_swap<chaos::common::utility::little_endian, chaos::common::utility::host_endian, type>(n)

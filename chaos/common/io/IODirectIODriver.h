@@ -169,8 +169,7 @@ namespace chaos{
                     // overrid of the query result method for class DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler[run in another thread]
                 int consumeDataCloudQueryResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *header,
                                                 void *data_found,
-                                                uint32_t data_lenght,
-                                                chaos_direct_io::DirectIOSynchronousAnswerPtr synchronous_answer);
+                                                uint32_t data_lenght);
                 
                     // overrid the method method for class DirectIODeviceServerChannel::consumeDataCloudQueryEndResult[run in another thread]
                 int consumeDataCloudQueryEndResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult *header,

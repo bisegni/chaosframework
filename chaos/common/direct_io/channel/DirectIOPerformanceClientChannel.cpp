@@ -55,7 +55,7 @@ int64_t DirectIOPerformanceClientChannel::sendRoundTripMessage() {
 	boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time();
 	boost::posix_time::time_duration duration( time.time_of_day() );
 	
-	header->field.start_rt_ts = TO_LITTE_ENDNS_NUM(uint64_t, duration.total_microseconds());
+	header->field.start_rt_ts = TO_LITTEL_ENDNS_NUM(uint64_t, duration.total_microseconds());
 	//rt_opcode_header->fields.
 	//set the header
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, (uint32_t)sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip))
@@ -77,7 +77,7 @@ int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(uint64_t receiv
 	boost::posix_time::time_duration duration( time.time_of_day() );
 	
 	header->field.start_rt_ts = received_ts;
-	header->field.receiver_rt_ts = TO_LITTE_ENDNS_NUM(uint64_t, duration.total_microseconds());
+	header->field.receiver_rt_ts = TO_LITTEL_ENDNS_NUM(uint64_t, duration.total_microseconds());
 	//rt_opcode_header->fields.
 	//set the header
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, (uint32_t)sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip))
@@ -97,7 +97,7 @@ int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(opcode_headers:
 	boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time();
 	boost::posix_time::time_duration duration( time.time_of_day() );
 	
-	received_header->field.receiver_rt_ts =TO_LITTE_ENDNS_NUM(uint64_t, duration.total_microseconds());
+	received_header->field.receiver_rt_ts =TO_LITTEL_ENDNS_NUM(uint64_t, duration.total_microseconds());
 	//rt_opcode_header->fields.
 	//set the header
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, received_header, (uint32_t)sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip))

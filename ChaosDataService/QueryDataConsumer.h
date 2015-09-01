@@ -80,37 +80,36 @@ namespace chaos{
 			//---------------- DirectIODeviceServerChannelHandler -----------------------
             int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
 								void *channel_data,
-								uint32_t channel_data_len,
-								DirectIOSynchronousAnswerPtr synchronous_answer);
+								uint32_t channel_data_len);
 			
             int consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
 								void *channel_data,
 								uint32_t channel_data_len,
-								DirectIOSynchronousAnswerPtr synchronous_answer);
+                                opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
+                                void **result_value);
 			
 			int consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud *header,
 									  const std::string& search_key,
 									  uint64_t search_start_ts,
-									  uint64_t search_end_ts,
-									  DirectIOSynchronousAnswerPtr synchronous_answer);
+									  uint64_t search_end_ts);
 			
 			//---------------- DirectIOSystemAPIServerChannelHandler -----------------------
 			// Manage the creation of a snapshot
 			int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
 										void *concatenated_unique_id_memory,
 										uint32_t concatenated_unique_id_memory_size,
-										DirectIOSystemAPISnapshotResult *api_result);
+										DirectIOSystemAPISnapshotResultHeader& api_result);
 			
 			// Manage the delete operation on an existing snapshot
 			int consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-										   DirectIOSystemAPISnapshotResult *api_result);
+										   DirectIOSystemAPISnapshotResultHeader& api_result);
 			
 			// Return the dataset for a producerkey ona specific snapshot
 			int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
 											   const std::string& producer_id,
 											   void **channel_found_data,
 											   uint32_t& channel_found_data_length,
-											   DirectIOSystemAPISnapshotResult *api_result);
+											   DirectIOSystemAPISnapshotResultHeader& api_result);
 			//async central timer hook
 			void timeout();
         public:

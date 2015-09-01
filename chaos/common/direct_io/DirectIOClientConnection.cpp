@@ -30,11 +30,10 @@
 using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 
-#define DIOVCC_LOG_HEAD "[DirectIOVirtualClientChannel: "<< server_description <<"] - "
 
-#define DIOVCCLAPP_ LAPP_ << DIOVCC_LOG_HEAD
-#define DIOVCCLDBG_ LDBG_ << DIOVCC_LOG_HEAD
-#define DIOVCCLERR_ LERR_ << DIOVCC_LOG_HEAD
+#define DIOVCCLAPP_ INFO_LOG(DirectIOClientConnection)
+#define DIOVCCLDBG_ DBG_LOG(DirectIOClientConnection)
+#define DIOVCCLERR_ ERR_LOG(DirectIOClientConnection)
 
 // current client ip in string form
 std::string DirectIOClientConnection::my_str_ip;

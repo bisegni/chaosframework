@@ -54,7 +54,18 @@ namespace chaos {
 #define DIRECT_IO_CHANNEL_PART_DATA_ONLY		2
 #define DIRECT_IO_CHANNEL_PART_HEADER_DATA		3
 			
+#define DIRECT_IO_DATAPACK_FROM_ENDIAN(x)\
+x->header.dispatcher_header.endianes.field_1 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_1);\
+x->header.dispatcher_header.endianes.field_2 = FROM_LITTLE_ENDNS_NUM(int16_t, x->header.dispatcher_header.endianes.field_2);\
+x->header.dispatcher_header.endianes.field_3 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_3);\
+x->header.dispatcher_header.endianes.field_4 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_4);
 
+#define DIRECT_IO_DATAPACK_TO_ENDIAN(x)\
+x->header.dispatcher_header.endianes.field_1 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_1);\
+x->header.dispatcher_header.endianes.field_2 = TO_LITTEL_ENDNS_NUM(int16_t, x->header.dispatcher_header.endianes.field_2);\
+x->header.dispatcher_header.endianes.field_3 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_3);\
+x->header.dispatcher_header.endianes.field_4 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_4);
+            
 #define DIRECT_IO_SET_CHANNEL_HEADER(pack, h_ptr, h_size)\
 pack->header.dispatcher_header.fields.channel_part = pack->header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_HEADER_ONLY;\
 pack->header.channel_header_size = DIRECT_IO_SET_CHANNEL_HEADER_SIZE(h_size);\
@@ -64,15 +75,9 @@ pack->channel_header_data = h_ptr;
 pack->header.dispatcher_header.fields.channel_part = pack->header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_DATA_ONLY;\
 pack->header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(d_size);\
 pack->channel_data = d_ptr;
-			
-			
-			typedef struct DirectIOSynchronousAnswer {
-				void *answer_data;
-				uint32_t answer_size;
-			} DirectIOSynchronousAnswer, *DirectIOSynchronousAnswerPtr;
 
 			
-            //! DirectIO data pack structure. It is write in little endian
+            //! DirectIO data pack structure. It is wrote in little endian
 			/*!
 			 This represent the data pack sent over direct io infrastructure
 			 It is composed by an header that transport:
@@ -93,19 +98,27 @@ pack->channel_data = d_ptr;
 						struct dispatcher_header {
 							//! destination routing address
 							uint16_t	route_addr;
-							//! check when a request need a synchronous answer
-							uint16_t	synchronous_answer:1;
-							//! unused padding data
-							uint16_t	unused:15;
+                            //! unused padding data
+                            int16_t	err;
 							//! channel index
 							uint16_t	channel_idx: 8;
 							//! channel tag
 							uint16_t    channel_part: 8;
 							//! channel tag
 							uint16_t    channel_opcode: 8;
-							//! channel tag
-							uint16_t    channel_specified_tag: 8;
+                            //! check when a request need a synchronous answer
+                            uint16_t	synchronous_answer:1;
+                            //! channel tag
+                            uint16_t    unused: 7;
 						} fields;
+                        
+                        //!convenient struct for endianes conversion
+                        struct endian_header {
+                            uint16_t	field_1;
+                            int16_t     field_2;
+                            uint16_t    field_3;
+                            uint16_t    field_4;
+                        } endianes;
 					} dispatcher_header;
 					
 					//! channel header size (if present > 0)

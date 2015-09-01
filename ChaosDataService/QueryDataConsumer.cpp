@@ -201,8 +201,7 @@ void QueryDataConsumer::timeout() {
 #pragma mark DirectIODeviceServerChannelHandler
 int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
                                        void *channel_data,
-                                       uint32_t channel_data_len,
-                                       DirectIOSynchronousAnswerPtr synchronous_answer) {
+                                       uint32_t channel_data_len) {
     CHAOS_ASSERT(header)
     CHAOS_ASSERT(channel_data)
     int err = 0;
@@ -257,8 +256,7 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
 int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud *header,
                                              const std::string& search_key,
                                              uint64_t search_start_ts,
-                                             uint64_t search_end_ts,
-                                             DirectIOSynchronousAnswerPtr synchronous_answer) {
+                                             uint64_t search_end_ts) {
     //debug check
     CHAOS_ASSERT(query_engine)
     
@@ -285,7 +283,8 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
 int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
                                        void *channel_data,
                                        uint32_t channel_data_len,
-                                       DirectIOSynchronousAnswerPtr synchronous_answer) {
+                                       opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
+                                       void **result_value) {
     int err = 0;
     //debug check
     //protected access to cached driver
@@ -294,8 +293,8 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
         //get data
         err = cache_slot->resource_pooled->getData(channel_data,
                                                    channel_data_len,
-                                                   &synchronous_answer->answer_data,
-                                                   synchronous_answer->answer_size);
+                                                   result_value,
+                                                   result_header->value_len);
     } catch(...) {
         
     }
@@ -310,20 +309,20 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
 int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
                                                void *concatenated_unique_id_memory,
                                                uint32_t concatenated_unique_id_memory_size,
-                                               DirectIOSystemAPISnapshotResult *api_result) {
+                                               DirectIOSystemAPISnapshotResultHeader& api_result) {
     int err = 0;
     //check if we can work
     if(ChaosDataService::getInstance()->setting.cache_only) {
         //data service is in cache only mode throw the error
-        api_result->error = -1;
-        std::strncpy(api_result->error_message, "Chaos Data Service is in cache only", 255);
+        api_result.error = -1;
+        std::strncpy(api_result.error_message, "Chaos Data Service is in cache only", 255);
         //delete header
         if(header) free(header);
         return 0;
     }
     //debug check
     CHAOS_ASSERT(snapshot_data_worker)
-    CHAOS_ASSERT(api_result)
+    //CHAOS_ASSERT(api_result)
     //prepare and submit the job into worker
     chaos::data_service::worker::SnapshotCreationJob *job = new chaos::data_service::worker::SnapshotCreationJob();
     //copy snapshot name
@@ -334,26 +333,26 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
         job->concatenated_unique_id_memory_size = concatenated_unique_id_memory_size;
     }
     if((err = snapshot_data_worker->submitJobInfo(job))) {
-        api_result->error = err;
+        api_result.error = err;
         switch (err) {
             case 1: {
                 //there is already a snapshot with same name managed tha other job
-                std::strncpy(api_result->error_message, "There is already a snapshot with same name managed tha other job", 255);
+                std::strncpy(api_result.error_message, "There is already a snapshot with same name managed tha other job", 255);
                 break;
             }
             default:
                 //other errors
-                std::strncpy(api_result->error_message, "Error creating new snapshot", 255);
+                std::strncpy(api_result.error_message, "Error creating new snapshot", 255);
                 break;
         }
         //print error also on log
-        DEBUG_CODE(QDCDBG_ << api_result->error_message << "[" << job->snapshot_name << "]");
+        DEBUG_CODE(QDCDBG_ << api_result.error_message << "[" << job->snapshot_name << "]");
         
         if(concatenated_unique_id_memory) free(concatenated_unique_id_memory);
         delete job;
     } else {
-        api_result->error = 0;
-        std::strcpy(api_result->error_message, "Creation submitted");
+        api_result.error = 0;
+        std::strcpy(api_result.error_message, "Creation submitted");
     }
     if(header) free(header);
     return 0;
@@ -361,26 +360,26 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
 
 // Manage the delete operation on an existing snapshot
 int QueryDataConsumer::consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
-                                                  DirectIOSystemAPISnapshotResult *api_result) {
+                                                  DirectIOSystemAPISnapshotResultHeader& api_result) {
     int err = 0;
     if(ChaosDataService::getInstance()->setting.cache_only) {
         //data service is in cache only mode throw the error
-        api_result->error = -1;
-        std::strncpy(api_result->error_message, "Chaos Data Service is in cache only", 255);
+        api_result.error = -1;
+        std::strncpy(api_result.error_message, "Chaos Data Service is in cache only", 255);
         //delete header
         if(header) free(header);
         return 0;
     }
     //debug check
     CHAOS_ASSERT(db_driver)
-    CHAOS_ASSERT(api_result)
+    //CHAOS_ASSERT(api_result)
     if((err = db_driver->snapshotDeleteWithName(header->field.snap_name))) {
-        api_result->error = err;
-        std::strcpy(api_result->error_message, "Error deleteing the snapshot");
-        QDCERR_ << api_result->error_message << "->" << header->field.snap_name;
+        api_result.error = err;
+        std::strcpy(api_result.error_message, "Error deleteing the snapshot");
+        QDCERR_ << api_result.error_message << "->" << header->field.snap_name;
     } else {
-        api_result->error = 0;
-        std::strcpy(api_result->error_message, "Snapshot deleted");
+        api_result.error = 0;
+        std::strcpy(api_result.error_message, "Snapshot deleted");
     }
     return err;
 }
@@ -390,20 +389,20 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
                                                       const std::string& producer_id,
                                                       void **channel_found_data,
                                                       uint32_t& channel_found_data_length,
-                                                      DirectIOSystemAPISnapshotResult *api_result) {
+                                                      DirectIOSystemAPISnapshotResultHeader& api_result) {
     int err = 0;
     std::string channel_type;
     if(ChaosDataService::getInstance()->setting.cache_only) {
         //data service is in cache only mode throw the error
-        api_result->error = -1;
-        std::strncpy(api_result->error_message, "Chaos Data Service is in cache only", 255);
+        api_result.error = -1;
+        std::strncpy(api_result.error_message, "Chaos Data Service is in cache only", 255);
         //delete header
         if(header) free(header);
         return -1;
     }
     //debug check
     CHAOS_ASSERT(header)
-    CHAOS_ASSERT(api_result)
+    //CHAOS_ASSERT(api_result)
     CHAOS_ASSERT(db_driver)
     
     //trduce int to postfix channel type
@@ -427,16 +426,16 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
                                                           channel_type,
                                                           channel_found_data,
                                                           channel_found_data_length))) {
-        api_result->error = err;
-        std::strcpy(api_result->error_message, "Error retriving the snapshoted dataaset for producer key");
-        QDCERR_ << api_result->error_message << "[" << header->field.snap_name << "/" << producer_id<<"]";
+        api_result.error = err;
+        std::strcpy(api_result.error_message, "Error retriving the snapshoted dataaset for producer key");
+        QDCERR_ << api_result.error_message << "[" << header->field.snap_name << "/" << producer_id<<"]";
     } else {
         if(*channel_found_data) {
-            api_result->error = 0;
-            std::strcpy(api_result->error_message, "Snapshot found");
+            api_result.error = 0;
+            std::strcpy(api_result.error_message, "Snapshot found");
         } else {
-            api_result->error = -2;
-            std::strcpy(api_result->error_message, "Channel data not found in snapshot");
+            api_result.error = -2;
+            std::strcpy(api_result.error_message, "Channel data not found in snapshot");
             
         }
     }
