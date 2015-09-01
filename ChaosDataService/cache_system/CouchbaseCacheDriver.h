@@ -65,6 +65,7 @@ namespace chaos {
 				std::vector<std::string> all_server_to_use;
 				typedef std::vector<std::string>::iterator ServerIterator;
 
+                ResultValue get_result;
 				
 				CouchbaseCacheDriver(std::string alias);
 
@@ -83,9 +84,6 @@ namespace chaos {
 									   lcb_storage_t operation,
 									   lcb_error_t error,
 									   const lcb_store_resp_t *resp);
-				
-				boost::lockfree::queue<ResultValue*, boost::lockfree::fixed_sized<false> > result_queue;
-				void addAnswer(ResultValue *got_value);
             public:
 				~CouchbaseCacheDriver();
 				

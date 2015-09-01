@@ -13,12 +13,6 @@ PreferenceDialog::PreferenceDialog(QWidget *parent) :
             SIGNAL(accepted()),
             SLOT(saveAllPreference()));
     connect(ui->buttonBox,
-            SIGNAL(accepted()),
-            SLOT(close()));
-    connect(ui->buttonBox,
-            SIGNAL(accepted()),
-            SLOT(close()));
-    connect(ui->buttonBox,
             SIGNAL(rejected()),
             SLOT(close()));
     connect(ui->buttonBox,

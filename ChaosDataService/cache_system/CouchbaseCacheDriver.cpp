@@ -63,15 +63,14 @@ void CouchbaseCacheDriver::getCallback(lcb_t instance,
 									   lcb_error_t error,
 									   const lcb_get_resp_t *resp) {
 	(void)instance;
-	ResultValue *result = new ResultValue();
-    result->err = error;
-	if(error == LCB_SUCCESS) {
-		result->value_len = (uint32_t)resp->v.v0.nbytes;
-		result->value = std::malloc(resp->v.v0.nbytes);
-		std::memcpy(result->value, resp->v.v0.bytes, resp->v.v0.nbytes);
+	if((((CouchbaseCacheDriver*)cookie)->get_result.err = error) == LCB_SUCCESS) {
+		((CouchbaseCacheDriver*)cookie)->get_result.value_len = (uint32_t)resp->v.v0.nbytes;
+		((CouchbaseCacheDriver*)cookie)->get_result.value = std::malloc(resp->v.v0.nbytes);
+		std::memcpy(((CouchbaseCacheDriver*)cookie)->get_result.value,
+                    resp->v.v0.bytes,
+                    resp->v.v0.nbytes);
 
 	}
-	((CouchbaseCacheDriver*)cookie)->addAnswer(result);
 }
 
 void CouchbaseCacheDriver::setCallback(lcb_t instance,
@@ -84,7 +83,7 @@ void CouchbaseCacheDriver::setCallback(lcb_t instance,
 
 CouchbaseCacheDriver::CouchbaseCacheDriver(std::string alias):
 CacheDriver(alias),
-instance(NULL),result_queue(1) {
+instance(NULL) {
 	lcb_uint32_t ver;
 	const char *msg = lcb_get_version(&ver);
 	CCDLAPP_ << "Couchbase sdk version: " << msg;
@@ -159,22 +158,16 @@ int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  v
 		return last_err;
 	}
 	lcb_wait(instance);
-	ResultValue *result = NULL;
-	if(result_queue.pop(result)){
+	if(get_result.err == LCB_SUCCESS){
         //last_err = result->err;
-		*value = (void*)result->value;
-		value_len = result->value_len;
-		delete result;
+		*value = (void*)get_result.value;
+		value_len = get_result.value_len;
 	}
 	if(last_err != LCB_SUCCESS) {
 		CCDLERR_<< "Fail to get value with last_err "<< last_err << " with message " << last_err_str;
 		return last_err;
 	}
 	return 0;
-}
-
-void CouchbaseCacheDriver::addAnswer(ResultValue *got_value) {
-	result_queue.push(got_value);
 }
 
 bool CouchbaseCacheDriver::validateString(std::string& server_description) {
