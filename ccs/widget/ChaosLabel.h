@@ -61,7 +61,6 @@ public:
 
     virtual int stopMonitoring();
 
-    bool isOnline(uint64_t received_ts);
     void	setText(const QString &string);
 protected slots:
     virtual void valueUpdated(const QString& node_uid,
@@ -71,6 +70,8 @@ protected slots:
     virtual void valueUpdated(const QString& node_uid,
                               const QString& attribute_name,
                               const QVariant& attribute_value);
+    virtual void valueNotFound(const QString& node_uid,
+                              const QString& attribute_name);
 
 signals:
     void nodeUniqueIDChanged(const QString& last_node_uid,
@@ -84,7 +85,8 @@ signals:
                       const QString& value);
 protected:
     bool monitoring;
-    uint64_t last_recevide_ts;
+    uint64_t last_recevied_ts;
+    uint32_t zero_diff_count;
     HealthHartbeatHandler healt_heartbeat_handler;
     HealtStatusHandler healt_status_handler;
     boost::shared_ptr<AbstractTSTaggedAttributeHandler> handler_sptr;
