@@ -9,8 +9,6 @@ class PreferenceMDSHostListModel :
     Q_OBJECT
 public:
     explicit PreferenceMDSHostListModel(QObject *parent = 0);
-
-protected:
     bool setData(const QModelIndex & index,
                  const QVariant & value,
                  int role = Qt::EditRole);

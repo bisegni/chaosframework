@@ -10,7 +10,9 @@ PreferenceMDSHostListModel::PreferenceMDSHostListModel(QObject *parent):
 bool PreferenceMDSHostListModel::setData(const QModelIndex & index,
                                          const QVariant & value,
                                          int role) {
-    bool result = true;
+    bool result = false;
 
-    return result;
+    return  QStringListModel::setData(index,
+                                      value,
+                                      role);
 }
