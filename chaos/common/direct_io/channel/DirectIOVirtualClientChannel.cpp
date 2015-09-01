@@ -55,7 +55,9 @@ int64_t DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io:
 	DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack)
 	//send pack
     int64_t err = client_instance->sendPriorityData(completeChannnelDataPack(data_pack, synchronous_answer!=NULL), header_deallocator, data_deallocator, synchronous_answer);
-    if(*synchronous_answer) {
+    if(err &&
+       synchronous_answer &&
+       *synchronous_answer) {
         //convert default DirectIO hader to little endian
         DIRECT_IO_DATAPACK_TO_ENDIAN((*synchronous_answer))
         //report api error as function error
@@ -88,6 +90,7 @@ int64_t DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::
 	//send pack
     int64_t err = client_instance->sendPriorityData(completeChannnelDataPack(data_pack, synchronous_answer!=NULL), header_deallocator, data_deallocator, synchronous_answer);;
     if(err &&
+       synchronous_answer &&
        *synchronous_answer) {
         //convert default DirectIO hader to little endian
         DIRECT_IO_DATAPACK_TO_ENDIAN((*synchronous_answer))
