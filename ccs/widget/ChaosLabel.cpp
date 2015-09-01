@@ -9,12 +9,16 @@ ChaosLabel::ChaosLabel(QWidget * parent,
                        Qt::WindowFlags f):
     QLabel(parent, f),
     monitoring(false),
-    last_recevide_ts(0) {
+    last_recevied_ts(0),
+    zero_diff_count(0) {
     setTimeoutForAlive(6000);
 
     connect(&healt_status_handler,
             SIGNAL(valueUpdated(QString,QString,QVariant)),
             SLOT(valueUpdated(QString,QString,QVariant)));
+    connect(&healt_status_handler,
+            SIGNAL(valueNotFound(QString,QString)),
+            SLOT(valueNotFound(QString,QString)));
     connect(&healt_heartbeat_handler,
             SIGNAL(valueUpdated(QString,QString,QVariant)),
             SLOT(valueUpdated(QString,QString,QVariant)));
@@ -127,14 +131,16 @@ void ChaosLabel::valueUpdated(const QString& node_uid,
                               const QString& attribute_name,
                               const QVariant& attribute_value) {
     if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0) {
-        bool is_on_line = isOnline(attribute_value.toLongLong());
-        if(!is_on_line) {
-            setStyleSheet("QLabel { color : #E65566; }");
+        uint64_t received_ts = attribute_value.toLongLong();
+        uint64_t time_diff = last_recevied_ts = received_ts;
+        if(time_diff > 0) {
+            setStyleSheet("QLabel { color : #4EB66B; }");
         } else {
-            if(current_value == attribute_value) {
-                setStyleSheet("QLabel { color : gray; }");
+            if(++zero_diff_count > 2) {
+                //timeouted
+                 setStyleSheet("QLabel { color : #E65566; }");
             } else {
-                setStyleSheet("QLabel { color : #4EB66B; }");
+                //in this case we do nothing perhaps we can to fast to check
             }
         }
     }else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
@@ -145,6 +151,13 @@ void ChaosLabel::valueUpdated(const QString& node_uid,
     }
 }
 
+void ChaosLabel::valueNotFound(const QString& node_uid,
+                               const QString& attribute_name) {
+    if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0) {
+        last_recevied_ts = zero_diff_count = 0;
+        setStyleSheet("QLabel { color : gray; }");
+    }
+}
 
 void ChaosLabel::valueUpdated(const QString& node_uid,
                               const QString& attribute_name,
@@ -152,12 +165,6 @@ void ChaosLabel::valueUpdated(const QString& node_uid,
                               const QVariant& attribute_value) {
     //write the value
     setText(attribute_value.toString());
-}
-
-bool ChaosLabel::isOnline(uint64_t received_ts) {
-    bool online = received_ts - last_recevide_ts <= timeoutForAlive();
-    last_recevide_ts = received_ts;
-    return online;
 }
 
 //slots hiding

@@ -47,7 +47,7 @@ private:
     QSharedPointer<QIcon> timeouted;
     QSharedPointer<QIcon> alive;
     uint64_t last_recevied_ts;
-
+    uint32_t zero_diff_count;
     void manageOnlineFlag(AliveState current_alive_state);
 };
 
