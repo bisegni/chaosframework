@@ -63,7 +63,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             break;
         }
         case opcode::DeviceChannelOpcodeGetLastOutput: {
-            if(synchronous_answer) return -1000;
+            if(synchronous_answer == NULL) return -1000;
             //allocate variable for result
             void *result_data = NULL;
             opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderGetOpcode* >(dataPack->channel_header_data);
