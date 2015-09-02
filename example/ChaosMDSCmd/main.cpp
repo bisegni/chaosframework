@@ -99,7 +99,7 @@ int initialize_from_old_mds(std::string conf){
              int chan=0;
             std::stringstream ss;
             ss<<"data_server"<<cnt;
-            
+
             GET_CONFIG_STRING(data_servers->getCDataWrapperElementAtIndex(cnt),hostname);
           //  GET_CONFIG_INT(data_servers->getCDataWrapperElementAtIndex(cnt),id_server);
             pnt=hostname.begin()+hostname.rfind('|');
@@ -108,8 +108,8 @@ int initialize_from_old_mds(std::string conf){
                 schan.assign(pnt+1,hostname.end());
                 chan=atoi(schan.c_str());
                 hostname.erase(pnt,hostname.end());
-            } 
-            
+            }
+
             std::cout<<"* found dataserver["<<cnt<<"]:"<<hostname<<" channel:"<<chan<<std::endl;
             EXECUTE_CHAOS_API(api_proxy::data_service::UpdateDS,3000,ss.str(),hostname,chan);
             EXECUTE_CHAOS_API(api_proxy::data_service::NewDS,3000,ss.str(),hostname,chan);
@@ -205,7 +205,7 @@ int main (int argc, char* argv[] )
 
     }
     if(operation_defined){
-            ChaosMetadataServiceClient::getInstance()->enableMonitoring();
+            ChaosMetadataServiceClient::getInstance()->enableMonitor();
 
         ChaosMetadataServiceClient::getInstance()->start();
     }

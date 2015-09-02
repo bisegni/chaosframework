@@ -23,6 +23,9 @@ void HealtMonitorWidget::startMonitoringNode(const QString& node_key) {
 
     map_node_healt_wdg.insert(node_key, healt_presenter);
     healt_list_presenter->addHealtWidget(healt_presenter);
+
+    //show if necessary the monitor widget
+    if(isHidden()) show();
 }
 
 void HealtMonitorWidget::stopMonitoringNode(const QString& node_key) {
