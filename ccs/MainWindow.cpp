@@ -108,9 +108,8 @@ void MainWindow::on_actionAdd_New_Unit_Server_triggered(){
 
 
 void MainWindow::reconfigure() {
-    ChaosMetadataServiceClient::getInstance()->disableMonitoring();
-    ChaosMetadataServiceClient::getInstance()->clearServerList();
     QSettings settings;
+    ChaosMetadataServiceClient::getInstance()->clearServerList();
     settings.beginGroup("network");
     int mds_address_size = settings.beginReadArray("mds_address");
 
@@ -124,14 +123,9 @@ void MainWindow::reconfigure() {
     if(mds_address_size &&
             !ChaosMetadataServiceClient::getInstance()->monitoringIsStarted()) {
         //try to start it
-        try{
-            ChaosMetadataServiceClient::getInstance()->enableMonitoring();
-        }catch(chaos::CException &ex) {
-            ChaosMetadataServiceClient::getInstance()->disableMonitoring();
-            QMessageBox::information(this, tr("Monitoring Startup"), tr(ex.what()));
-        }
+       on_actionEnable_Monitoring_triggered();
     }
-    ChaosMetadataServiceClient::getInstance()->enableMonitoring();
+    ChaosMetadataServiceClient::getInstance()->reconfigureMonitor();
 }
 
 void MainWindow::asyncApiTimeout(const QString& tag) {
@@ -146,6 +140,24 @@ void MainWindow::asyncApiError(const QString& tag, QSharedPointer<chaos::CExcept
                              QString("The api with tag %1 has give the error:\n%2").arg(tag, api_exception->what()));
 }
 
-void MainWindow::asyncApiResult(const QString& tag, QSharedPointer<chaos::common::data::CDataWrapper> api_data) {
+void MainWindow::asyncApiResult(const QString& tag,
+                                QSharedPointer<chaos::common::data::CDataWrapper> api_data) {
 
+}
+
+void MainWindow::on_actionEnable_Monitoring_triggered() {
+    try{
+        ChaosMetadataServiceClient::getInstance()->enableMonitor();
+        ui->actionEnable_Monitoring->setEnabled(false);
+        ui->actionDisable_Monitoring->setEnabled(true);
+    }catch(chaos::CException &ex) {
+        ChaosMetadataServiceClient::getInstance()->disableMonitor();
+        QMessageBox::information(this, tr("Monitoring Startup"), tr(ex.what()));
+    }
+}
+
+void MainWindow::on_actionDisable_Monitoring_triggered() {
+    ChaosMetadataServiceClient::getInstance()->disableMonitor();
+    ui->actionEnable_Monitoring->setEnabled(true);
+    ui->actionDisable_Monitoring->setEnabled(false);
 }

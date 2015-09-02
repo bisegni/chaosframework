@@ -176,7 +176,7 @@ int main(int argc, char * argv[]) {
                                                                   quantum_multiplier,
                                                                   node_consumer);
         //sleep(2);
-        //ChaosMetadataServiceClient::getInstance()->reco
+        //ChaosMetadataServiceClient::getInstance()->reconfigureMonitor();
         sleep(wait_seconds);
         ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(device_id,
                                                                      quantum_multiplier,
