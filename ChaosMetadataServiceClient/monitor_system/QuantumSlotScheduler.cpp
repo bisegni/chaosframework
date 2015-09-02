@@ -95,7 +95,9 @@ void QuantumSlotScheduler::stop() throw (chaos::CException) {
     QSS_INFO<< "Stop forwarded ASIO infrastructure";
     ios.stop();
     QSS_INFO<< "ASIO Stopped";
-    
+}
+
+void QuantumSlotScheduler::deinit() throw (chaos::CException) {
     QSS_INFO<< "Clean unmanaged slot consumer add and remove request";
     SlotConsumerInfo *ci = NULL;
     while(queue_new_quantum_slot_consumer.pop(ci)){
@@ -112,10 +114,6 @@ void QuantumSlotScheduler::stop() throw (chaos::CException) {
         }
         delete(ci);
     }
-}
-
-void QuantumSlotScheduler::deinit() throw (chaos::CException) {
-    
 }
 
 //! set a new lits of server to use for fetch values

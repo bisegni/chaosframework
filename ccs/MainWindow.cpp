@@ -108,6 +108,7 @@ void MainWindow::on_actionAdd_New_Unit_Server_triggered(){
 
 
 void MainWindow::reconfigure() {
+    ChaosMetadataServiceClient::getInstance()->disableMonitoring();
     ChaosMetadataServiceClient::getInstance()->clearServerList();
     QSettings settings;
     settings.beginGroup("network");
@@ -130,6 +131,7 @@ void MainWindow::reconfigure() {
             QMessageBox::information(this, tr("Monitoring Startup"), tr(ex.what()));
         }
     }
+    ChaosMetadataServiceClient::getInstance()->enableMonitoring();
 }
 
 void MainWindow::asyncApiTimeout(const QString& tag) {
