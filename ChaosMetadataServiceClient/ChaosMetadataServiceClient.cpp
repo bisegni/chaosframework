@@ -82,6 +82,9 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
         
         api_proxy_manager.reset(new ApiProxyManager(network_broker_service.get(), &setting), "ApiProxyManager");
         api_proxy_manager.init(NULL, __PRETTY_FUNCTION__);
+        
+        monitor_manager.reset(new MonitorManager(network_broker_service.get(), &setting), "MonitorManager");
+        monitor_manager.init(NULL, __PRETTY_FUNCTION__);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         throw ex;
@@ -111,10 +114,10 @@ void ChaosMetadataServiceClient::start()  throw(CException) {
  */
 void ChaosMetadataServiceClient::stop()   throw(CException) {
     try {
-        //stop batch system
-        network_broker_service.stop(__PRETTY_FUNCTION__);
         //stop monitor manager
-        if(monitoringIsStarted()) {CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)}
+        CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
+        //stop batch system
+        CHAOS_NOT_THROW(network_broker_service.stop(__PRETTY_FUNCTION__);)
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         throw ex;
@@ -128,6 +131,9 @@ void ChaosMetadataServiceClient::deinit()   throw(CException) {
     
     //deinit api system
     try{
+        
+        CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
+        
         CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__);)
         
         CHAOS_NOT_THROW(network_broker_service.deinit(__PRETTY_FUNCTION__);)
@@ -152,7 +158,19 @@ void ChaosMetadataServiceClient::addServerAddress(const std::string& server_addr
     api_proxy_manager->addServerAddress(server_address_and_port);
 }
 
-void ChaosMetadataServiceClient::enableMonitoring() throw(CException) {
+void ChaosMetadataServiceClient::enableMonitor() throw(CException) {
+    //configure data driver
+    reconfigureMonitor();
+    
+    //start the monitor manager
+    monitor_manager.start(__PRETTY_FUNCTION__);
+}
+
+void ChaosMetadataServiceClient::disableMonitor() throw(CException) {
+    CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
+}
+
+void ChaosMetadataServiceClient::reconfigureMonitor() throw(CException) {
     std::vector<std::string> endpoints_list;
     
     CMSC_LDBG << "Ask to metadata server for cds enpoint for monitoring";
@@ -192,19 +210,8 @@ void ChaosMetadataServiceClient::enableMonitoring() throw(CException) {
         CMSC_LDBG<< "Add " << server << " to server list";
         endpoints_list.push_back(server);
     }
-    monitor_manager.reset(new MonitorManager(network_broker_service.get(), &setting), "MonitorManager");
-    monitor_manager.init(NULL, __PRETTY_FUNCTION__);
+    
     monitor_manager->resetEndpointList(endpoints_list);
-    //start the monitor manager
-    monitor_manager.start(__PRETTY_FUNCTION__);
-}
-
-void ChaosMetadataServiceClient::disableMonitoring() throw(CException) {
-    if(monitor_manager.get()) {
-        CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
-        CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
-    }
-    monitor_manager.reset(NULL,"");
 }
 
 bool ChaosMetadataServiceClient::monitoringIsStarted() {

@@ -33,6 +33,10 @@ private slots:
     void asyncApiError(const QString& tag, QSharedPointer<chaos::CException> api_exception);
     void asyncApiResult(const QString& tag, QSharedPointer<chaos::common::data::CDataWrapper> api_data);
 
+    void on_actionEnable_Monitoring_triggered();
+
+    void on_actionDisable_Monitoring_triggered();
+
 private:
     ApiAsyncProcessor api_processor;
     HealtMonitorWidget *healt_widget;

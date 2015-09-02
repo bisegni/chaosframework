@@ -87,9 +87,11 @@ namespace chaos {
             
             void addServerAddress(const std::string& server_address_and_port);
             
-            void enableMonitoring() throw(CException);
+            void enableMonitor() throw(CException);
             
-            void disableMonitoring() throw(CException);
+            void disableMonitor() throw(CException);
+            
+            void reconfigureMonitor() throw(CException);
             
             bool monitoringIsStarted();
             

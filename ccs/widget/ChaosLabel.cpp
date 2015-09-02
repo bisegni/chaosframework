@@ -132,7 +132,7 @@ void ChaosLabel::valueUpdated(const QString& node_uid,
                               const QVariant& attribute_value) {
     if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0) {
         uint64_t received_ts = attribute_value.toLongLong();
-        uint64_t time_diff = last_recevied_ts = received_ts;
+        uint64_t time_diff = last_recevied_ts - received_ts;
         if(time_diff > 0) {
             setStyleSheet("QLabel { color : #4EB66B; }");
         } else {
@@ -143,6 +143,7 @@ void ChaosLabel::valueUpdated(const QString& node_uid,
                 //in this case we do nothing perhaps we can to fast to check
             }
         }
+        last_recevied_ts = received_ts;
     }else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
         //write the value
         setToolTip(attribute_value.toString());

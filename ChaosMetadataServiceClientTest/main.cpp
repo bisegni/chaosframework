@@ -169,18 +169,20 @@ int main(int argc, char * argv[]) {
             
         ChaosMetadataServiceClient::getInstance()->start();
         
-        ChaosMetadataServiceClient::getInstance()->enableMonitoring();
+        ChaosMetadataServiceClient::getInstance()->enableMonitor();
         
         node_consumer = new TestMonitorConsumer();
         ChaosMetadataServiceClient::getInstance()->addKeyConsumer(device_id,
                                                                   quantum_multiplier,
                                                                   node_consumer);
+        sleep(2);
+        ChaosMetadataServiceClient::getInstance()->reconfigureMonitor();
         sleep(wait_seconds);
         ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(device_id,
                                                                      quantum_multiplier,
                                                                      node_consumer);
         
-        ChaosMetadataServiceClient::getInstance()->disableMonitoring();
+        ChaosMetadataServiceClient::getInstance()->disableMonitor();
         ChaosMetadataServiceClient::getInstance()->stop();
         ChaosMetadataServiceClient::getInstance()->deinit();
     }catch(chaos::CException& ex) {
