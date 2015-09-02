@@ -1,7 +1,6 @@
 #ifndef PREFERENCEMDSHOSTLISTMODEL_H
 #define PREFERENCEMDSHOSTLISTMODEL_H
 
-#include <QRegExp>
 #include <QStringListModel>
 
 class PreferenceMDSHostListModel :
