@@ -63,14 +63,11 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             break;
         }
         case opcode::DeviceChannelOpcodeGetLastOutput: {
-            
-            opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderGetOpcode* >(dataPack->channel_header_data);
+            if(synchronous_answer) return -1000;
             //allocate variable for result
             void *result_data = NULL;
-            opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header = NULL;
-            if(synchronous_answer){
-                result_header = (DirectIODeviceChannelHeaderGetOpcodeResult*)calloc(sizeof(DirectIODeviceChannelHeaderGetOpcodeResult), 1);
-            }
+            opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderGetOpcode* >(dataPack->channel_header_data);
+            opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header = (DirectIODeviceChannelHeaderGetOpcodeResult*)calloc(sizeof(DirectIODeviceChannelHeaderGetOpcodeResult), 1);
             
             //decode the endianes off the data
             header->field.endpoint = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.endpoint);
@@ -83,8 +80,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                                            dataPack->header.channel_data_size,
                                            result_header,
                                            &result_data);
-            if((err == 0) &&
-               synchronous_answer){
+            if(err == 0){
                 //set the result header and data
                 DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderGetOpcodeResult))
                 DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->value_len)
