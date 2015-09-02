@@ -62,6 +62,9 @@ int64_t DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io:
         DIRECT_IO_DATAPACK_TO_ENDIAN((*synchronous_answer))
         //report api error as function error
         err = (*synchronous_answer)->header.dispatcher_header.fields.err;
+    } else {
+        //bad eeror we want an aswer bu received nothing
+        err = -10000;
     }
 	return err;
 }
@@ -96,6 +99,9 @@ int64_t DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::
         DIRECT_IO_DATAPACK_TO_ENDIAN((*synchronous_answer))
         //report api error as function error
         err = (*synchronous_answer)->header.dispatcher_header.fields.err;
+    } else {
+        //bad eeror we want an aswer bu received nothing
+        err = -10000;
     }
     return err;
 }
