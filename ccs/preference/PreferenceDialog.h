@@ -1,9 +1,10 @@
 #ifndef PREFERENCEDIALOG_H
 #define PREFERENCEDIALOG_H
 
+#include "PreferenceMDSHostListModel.h"
+
 #include <QDialog>
 #include <QSettings>
-#include <QStringListModel>
 #include <QAbstractButton>
 namespace Ui {
 class PreferenceDialog;
@@ -28,7 +29,7 @@ private slots:
     void clicked(QAbstractButton *clicked_button);
 private:
     QSettings settings;
-    QStringListModel *list_model_mds_address;
+    PreferenceMDSHostListModel list_model_mds_address;
     Ui::PreferenceDialog *ui;
 };
 
