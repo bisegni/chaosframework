@@ -47,11 +47,17 @@ queue_active_slot(100),
 queue_new_quantum_slot_consumer(100),
 set_slots_index_quantum(boost::multi_index::get<ss_current_quantum>(set_slots)),
 set_slots_index_key_slot(boost::multi_index::get<ss_quantum_slot_key>(set_slots)) {
-    
+    //launch asio thread
+    //stop asio thread
+    QSS_INFO<< "Put ASIO infrastructure into thread";
+    ios_thread.reset(new boost::thread(boost::bind(&boost::asio::io_service::run, &ios)));
 }
 
 QuantumSlotScheduler::~QuantumSlotScheduler() {
-    
+    //stop asio thread
+    QSS_INFO<< "Stop forwarded ASIO infrastructure";
+    ios.stop();
+    QSS_INFO<< "ASIO Stopped";
 }
 
 
@@ -59,14 +65,12 @@ void QuantumSlotScheduler::init(void *init_data) throw (chaos::CException) {
     CHAOS_LASSERT_EXCEPTION(network_broker, QSS_ERR, -1, "No network broker instance found")
     data_driver_impl = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL);
     CHAOS_LASSERT_EXCEPTION((data_driver_impl.compare("IODirect") == 0), QSS_ERR, -2, "Only IODirect implementation is supported")
+
 }
 
 void QuantumSlotScheduler::start() throw (chaos::CException) {
     work_on_scan = true;
     work_on_fetch = true;
-    
-    //launch asio thread
-    ios_thread.reset(new boost::thread(boost::bind(&boost::asio::io_service::run, &ios)));
     
     //add scanner thread
     scanner_threads.add_thread(new boost::thread(bind(&QuantumSlotScheduler::scanSlot, this)));
@@ -90,14 +94,10 @@ void QuantumSlotScheduler::stop() throw (chaos::CException) {
     condition_fetch.notify_all();
     fetcher_threads.join_all();
     QSS_INFO<< "Fetcher thread stopped";
-    
-    //stop asio thread
-    QSS_INFO<< "Stop forwarded ASIO infrastructure";
-    ios.stop();
-    QSS_INFO<< "ASIO Stopped";
 }
 
 void QuantumSlotScheduler::deinit() throw (chaos::CException) {
+    
     QSS_INFO<< "Clean unmanaged slot consumer add and remove request";
     SlotConsumerInfo *ci = NULL;
     while(queue_new_quantum_slot_consumer.pop(ci)){
@@ -124,15 +124,8 @@ void QuantumSlotScheduler::setDataDriverEndpoints(const std::vector<std::string>
     QSS_INFO<< "New servers has been configured";
     if(fetcher_threads.size() == 0) return; //no thread are active so never has been started
     
-    work_on_fetch = false;
-    condition_scan.notify_all();
-    fetcher_threads.join_all();
-    QSS_INFO<< "Stoppped all current fetcher thread";
-    
-    work_on_fetch = true;
-    condition_fetch.notify_all();
-    addNewfetcherThread();
-    QSS_INFO<< "New fetcher thread created";
+    stop();
+    start();
 }
 
 void QuantumSlotScheduler::scanSlot() {

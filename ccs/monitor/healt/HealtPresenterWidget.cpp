@@ -19,9 +19,9 @@ HealtPresenterWidget::HealtPresenterWidget(const QString &node_to_check,
     ui->ledIndicatorHealt->startMonitoring();
 
     ui->labelStatus->setNodeUniqueID(node_to_check);
+    ui->labelStatus->setTrackStatus(true);
+    ui->labelStatus->setLabelValueShowTrackStatus(true);
     ui->labelStatus->startMonitoring();
-
-    //handler connection
 
     setFrameStyle(QFrame::StyledPanel | QFrame::Raised);
     setLineWidth(2);
