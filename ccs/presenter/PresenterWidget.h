@@ -37,7 +37,14 @@ public:
 
     void setThisTabIndex(int index);
 
-    virtual bool canClose() = 0;
+    //! Called befor window is closed
+    /*!
+     * Called before window is closed, here the implementation
+     * can dispose resource
+     * \brief isClosing
+     * \return
+     */
+    virtual bool isClosing() = 0;
     virtual void initUI() = 0;
 
 public slots:

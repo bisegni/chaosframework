@@ -41,9 +41,6 @@ UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
 }
 
 UnitServerEditor::~UnitServerEditor() {
-    //start monitor on chaos ui
-    ui->chaosLabelHealtStatus->stopMonitoring();
-    ui->chaosLedIndicatorHealt->stopMonitoring();
     delete ui;
 }
 
@@ -101,7 +98,10 @@ void UnitServerEditor::initUI() {
     updateAll();
 }
 
-bool UnitServerEditor::canClose() {
+bool UnitServerEditor::isClosing() {
+    //stop monitoring
+    ui->chaosLabelHealtStatus->stopMonitoring();
+    ui->chaosLedIndicatorHealt->stopMonitoring();
     return true;
 }
 

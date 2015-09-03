@@ -74,7 +74,7 @@ void CLedIndicatorHealt::valueUpdated(const QString& node_uid,
             manageOnlineFlag(Online);
             zero_diff_count = 0;
         } else {
-            if(++zero_diff_count > 2) {
+            if(++zero_diff_count > 3) {
                 //timeouted
                 setState(1);
                 manageOnlineFlag(Offline);
@@ -83,8 +83,6 @@ void CLedIndicatorHealt::valueUpdated(const QString& node_uid,
             }
         }
         last_recevied_ts = current_timestamp;
-        qDebug() << node_uid <<" - current ST:" << current_timestamp << " Last received ts:" << last_recevied_ts << " diff:" << time_diff;
-        //memorize the received timestamp
     }
 }
 
@@ -93,5 +91,4 @@ void CLedIndicatorHealt::valueNotFound(const QString& node_uid,
     setState(0);
     manageOnlineFlag(Indeterminated);
     last_recevied_ts = zero_diff_count = 0;
-    qDebug() << "Current ST not found for:" << node_uid;
 }

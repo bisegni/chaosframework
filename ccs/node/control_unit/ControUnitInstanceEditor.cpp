@@ -225,7 +225,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
 
 }
 
-bool ControUnitInstanceEditor::canClose() {
+bool ControUnitInstanceEditor::isClosing() {
     return true;
 }
 

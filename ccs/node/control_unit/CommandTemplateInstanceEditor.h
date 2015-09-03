@@ -23,7 +23,7 @@ public slots:
     void submitInstance();
 protected:
     void initUI();
-    bool canClose();
+    bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
     boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::TemplateSubmission> getTempalteSubmissionTask();

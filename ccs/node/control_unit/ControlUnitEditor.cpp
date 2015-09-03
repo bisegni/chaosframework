@@ -46,10 +46,6 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
 
 ControlUnitEditor::~ControlUnitEditor() {
     //shutdown monitoring of channel
-    dataset_input_table_model.setAttributeMonitoring(false);
-    dataset_output_table_model.setAttributeMonitoring(false);
-    //remove monitoring on cu and us
-    manageMonitoring(false);
     delete ui;
 }
 
@@ -247,7 +243,11 @@ void ControlUnitEditor::changedNodeState(const QString& node_uid,
     }
 }
 
-bool ControlUnitEditor::canClose() {
+bool ControlUnitEditor::isClosing() {
+    dataset_input_table_model.setAttributeMonitoring(false);
+    dataset_output_table_model.setAttributeMonitoring(false);
+    //remove monitoring on cu and us
+    manageMonitoring(false);
     return true;
 }
 

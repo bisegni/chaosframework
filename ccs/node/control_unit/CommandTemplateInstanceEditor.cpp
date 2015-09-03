@@ -36,7 +36,7 @@ void CommandTemplateInstanceEditor::initUI() {
                                                                                        command_uid.toStdString()));
 }
 
-bool CommandTemplateInstanceEditor::canClose() {
+bool CommandTemplateInstanceEditor::isClosing() {
     return true;
 }
 

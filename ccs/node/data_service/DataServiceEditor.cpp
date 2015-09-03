@@ -78,7 +78,7 @@ void DataServiceEditor::initUI() {
                     GET_CHAOS_API_PTR(data_service::GetAllDS)->execute());
 }
 
-bool DataServiceEditor::canClose() {
+bool DataServiceEditor::isClosing() {
     return true;
 }
 

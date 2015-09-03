@@ -136,7 +136,7 @@ void ChaosLabel::valueUpdated(const QString& node_uid,
         if(time_diff > 0) {
             setStyleSheet("QLabel { color : #4EB66B; }");
         } else {
-            if(++zero_diff_count > 2) {
+            if(++zero_diff_count > 3) {
                 //timeouted
                  setStyleSheet("QLabel { color : #E65566; }");
             } else {

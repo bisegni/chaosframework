@@ -58,7 +58,7 @@ void ControlUnitCommandTemplateEditor::initUI() {
     }
 }
 
-bool ControlUnitCommandTemplateEditor::canClose() {
+bool ControlUnitCommandTemplateEditor::isClosing() {
     return true;
 }
 

@@ -126,6 +126,8 @@ void MainController::init(int argc, char **argv, QApplication& a) {
 }
 
 void MainController::deinit() {
+    //close all editors
+    w.disposeResource();
     //clear the qthread pool
     QThreadPool::globalInstance()->clear();
     QThreadPool::globalInstance()->waitForDone();

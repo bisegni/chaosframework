@@ -33,7 +33,7 @@ class SearchNodeResult :
     void stopHealtMonitorAction();
 protected:
     void initUI();
-    bool canClose();
+    bool isClosing();
 
 public:
     explicit SearchNodeResult(bool _selection_mode = false,

@@ -38,6 +38,13 @@ MainWindow::~MainWindow(){
     delete ui;
 }
 
+void MainWindow::disposeResource() {
+    //close all subwidows
+    ui->mdiAreaEditor->closeAllSubWindows();
+    //close all healt widget
+    healt_widget->closeAllMonitor();
+}
+
 void MainWindow::on_actionOpenNode_triggered(){
     //opena a specified node, knowing the unique identifier
     bool ok;

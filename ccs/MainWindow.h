@@ -18,7 +18,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
+    void disposeResource();
 private slots:
     void on_actionOpenNode_triggered();
     void on_actionSearch_Node_triggered();

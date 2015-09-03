@@ -39,7 +39,7 @@ void PresenterWidget::closeTab() {
 }
 
 void PresenterWidget::closeEvent(QCloseEvent *event) {
-    if(canClose()){
+    if(isClosing()){
         event->accept();
     }
 }

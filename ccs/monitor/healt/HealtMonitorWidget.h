@@ -22,7 +22,7 @@ public:
 public slots:
     void startMonitoringNode(const QString& node_key);
     void stopMonitoringNode(const QString& node_key);
-
+    void closeAllMonitor();
 private:
      QMap<QString, HealtPresenterWidget*> map_node_healt_wdg;
      HealtWidgetsListPresenteWidget *healt_list_presenter;

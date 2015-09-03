@@ -29,7 +29,7 @@ SearchNodeResult::~SearchNodeResult()
     delete ui;
 }
 
-bool SearchNodeResult::canClose() {
+bool SearchNodeResult::isClosing() {
     return true;
 }
 
