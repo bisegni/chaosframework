@@ -186,6 +186,7 @@ void QueryEngine::disposeQuery(DataCloudQuery *query) {
  ---------------------------------------------------------------------------------*/
 void QueryEngine::disposeClientConnectionInfo(ClientConnectionInfo *client_info) {
 	CHAOS_ASSERT(client_info)
+    if(client_info == NULL) return;
 	std::string connection_custom_id = client_info->connection->getCustomStringIdentification();
 	std::string server_desc = client_info->connection->getServerDescription();
 	

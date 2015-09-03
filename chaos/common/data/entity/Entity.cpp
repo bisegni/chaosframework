@@ -95,30 +95,19 @@ int32_t Entity::updateProperty(uint32_t propertyID, uint32_t keyID, double prope
 }
 
 int32_t Entity::getAllProperty(ptr_vector<chaos::edb::KeyIdAndValue>& propertys) {
-	int32_t error = 0;
-	if(!(error = database->searchPropertyForEntity(entityID, propertys))) {
-		return error;
-	}
-	return error;
+	return database->searchPropertyForEntity(entityID, propertys);
 }
 
 int32_t Entity::getPropertyByKeyID(uint32_t keyID, ptr_vector<chaos::edb::KeyIdAndValue>& propertys) {
 	int32_t error = 0;
 	vector<uint32_t> keys;
 	keys.push_back(keyID);
-	if(!(error = database->searchPropertyForEntity(entityID, keys, propertys))) {
-		return error;
-	}
-	return error;
+	return database->searchPropertyForEntity(entityID, keys, propertys);
 }
 
 
 int32_t Entity::getPropertyByKeyID(vector<uint32_t>& keyIDs, ptr_vector<chaos::edb::KeyIdAndValue>& propertys) {
-	int32_t error = 0;
-	if(!(error = database->searchPropertyForEntity(entityID, keyIDs, propertys))) {
-		return error;
-	}
-	return error;
+	return database->searchPropertyForEntity(entityID, keyIDs, propertys);
 }
 
 int32_t Entity::deleteProrperty(uint32_t propertyID) {

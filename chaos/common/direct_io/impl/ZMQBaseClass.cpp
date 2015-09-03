@@ -98,8 +98,6 @@ int ZMQBaseClass::receiveStartEnvelop(void *socket) {
     return  stringReceive(socket, empty_delimiter);
 }
 
-#define C_DIO_GET_HANDLE_POINTER(X) (*X)
-
 int ZMQBaseClass::reveiceDatapack(void *socket,
                                   std::string& identity,
                                   DirectIODataPack **data_pack_handle) {
@@ -115,7 +113,7 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     int                     err = 0;
     std::string             empty_delimiter;
     char					header_buffer[DIRECT_IO_HEADER_SIZE];
-    
+    DirectIODataPack        *data_pack_ptr = NULL;
     //receive the zmq evenlop delimiter
     if((err = receiveStartEnvelop(socket))) {
         return err;
@@ -136,34 +134,34 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     }
     
     //create new datapack
-    *data_pack_handle = (DirectIODataPack*)calloc(1, sizeof(DirectIODataPack));
+    data_pack_ptr = *data_pack_handle = (DirectIODataPack*)calloc(1, sizeof(DirectIODataPack));
     
     //clear all memory
-    std::memset(C_DIO_GET_HANDLE_POINTER(data_pack_handle), 0, sizeof(DirectIODataPack));
+    std::memset(data_pack_ptr, 0, sizeof(DirectIODataPack));
     
     //set dispatch header data
-    C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.dispatcher_header.raw_data = DIRECT_IO_GET_DISPATCHER_DATA(header_buffer);
+    data_pack_ptr->header.dispatcher_header.raw_data = DIRECT_IO_GET_DISPATCHER_DATA(header_buffer);
     
     //check what i need to reice
-    switch(C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.dispatcher_header.fields.channel_part) {
+    switch(data_pack_ptr->header.dispatcher_header.fields.channel_part) {
         case DIRECT_IO_CHANNEL_PART_EMPTY:
             break;
         case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
             //init header data buffer
-            C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
-            C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_header_data = malloc(C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.channel_header_size);
-            C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_data = NULL;
+            data_pack_ptr->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
+            data_pack_ptr->channel_header_data = malloc(data_pack_ptr->header.channel_header_size);
+            data_pack_ptr->channel_data = NULL;
             
             //init message with buffer
             err = zmq_recv(socket,
-                           C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_header_data,
-                           C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.channel_header_size,
+                           data_pack_ptr->channel_header_data,
+                           data_pack_ptr->header.channel_header_size,
                            0);
             //err = zmq_msg_recv(&m_header_data, socket, 0);
             if(err == -1) {
                 err = zmq_errno();
-                free(C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_header_data);
-                delete C_DIO_GET_HANDLE_POINTER(data_pack_handle);
+                free(data_pack_ptr->channel_header_data);
+                free(data_pack_ptr);
             } else {
                 //if all goes weel we need to have 0 error an no the byte received
                 err = 0;
@@ -171,56 +169,58 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
             break;
         case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
             //init data buffer
-            C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
-            C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_data = malloc(C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.channel_data_size);
-            C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_header_data = NULL;
+            data_pack_ptr->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
+            data_pack_ptr->channel_data = malloc(data_pack_ptr->header.channel_data_size);
+            data_pack_ptr->channel_header_data = NULL;
             
             //init message with buffer
             err = zmq_recv(socket,
-                           C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_data,
-                           C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.channel_data_size,
+                           data_pack_ptr->channel_data,
+                           data_pack_ptr->header.channel_data_size,
                            0);
             if(err == -1) {
                 err = zmq_errno();
-                free(C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_data);
-                delete C_DIO_GET_HANDLE_POINTER(data_pack_handle);
+                free(data_pack_ptr->channel_data);
+                free(data_pack_ptr);
             } else {
                 //if all goes weel we need to have 0 error an no the byte received
                 err = 0;
             }
             break;
         case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
-            //init header data and channel data buffers
-            C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
-            C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_header_data = malloc(C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.channel_header_size);
+            //allocate header buffer
+            data_pack_ptr->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
+            data_pack_ptr->channel_header_data = malloc(data_pack_ptr->header.channel_header_size);
             
-            C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
-            C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_data = malloc(C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.channel_data_size);
-            
-            //reiceve all data
+            //receive the header
             err = zmq_recv(socket,
-                           C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_header_data,
-                           C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.channel_header_size,
+                           data_pack_ptr->channel_header_data,
+                           data_pack_ptr->header.channel_header_size,
                            0);
             if(err == -1) {
+                //error reading buffer so we need to delete header memory and datapack
                 err = zmq_errno();
-                free(C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_header_data);
-                free(C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_data);
-                delete C_DIO_GET_HANDLE_POINTER(data_pack_handle);
-            }
-            
-            err = zmq_recv(socket,
-                           C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_data,
-                           C_DIO_GET_HANDLE_POINTER(data_pack_handle)->header.channel_data_size,
-                           0);
-            if(err == -1) {
-                err = zmq_errno();
-                free(C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_header_data);
-                free(C_DIO_GET_HANDLE_POINTER(data_pack_handle)->channel_data);
-                delete C_DIO_GET_HANDLE_POINTER(data_pack_handle);
+                free(data_pack_ptr->channel_header_data);
+                free(data_pack_ptr);
             } else {
-                //if all goes weel we need to have 0 error an no the byte received
-                err = 0;
+                //allocate data buffer
+                data_pack_ptr->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
+                data_pack_ptr->channel_data = malloc(data_pack_ptr->header.channel_data_size);
+                //receive the data
+                err = zmq_recv(socket,
+                               data_pack_ptr->channel_data,
+                               data_pack_ptr->header.channel_data_size,
+                               0);
+                if(err == -1) {
+                    //error reading data so we need to delete previous readed header, data memory and datapack
+                    err = zmq_errno();
+                    free(data_pack_ptr->channel_header_data);
+                    free(data_pack_ptr->channel_data);
+                    free(data_pack_ptr);
+                } else {
+                    //if all goes weel we need to have 0 error an no the byte received
+                    err = 0;
+                }
             }
             break;
     }

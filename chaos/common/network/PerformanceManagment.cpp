@@ -163,10 +163,9 @@ void  PerformanceManagment::freeObject(std::string server_description, DirectIOP
 }
 
 chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_data::CDataWrapper *param, bool& detach) throw(chaos::CException) {
-	if(!param) return NULL;
-	if(!param->hasKey(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION))
-		throw chaos::CException(-1, "Requester server description not found", __PRETTY_FUNCTION__);
-	
+    CHECK_CDW_THROW_AND_LOG(param, PMLERR_, -1, "No parameter has been set")
+    CHECK_KEY_THROW_AND_LOG_FORMATTED(param, PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION, PMLERR_, -2, "No %1% key has been set",%PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION)
+    
 	chaos_data::CDataWrapper *result = NULL;
 	
 	//we can initiate performance session allcoation
@@ -180,6 +179,9 @@ chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_da
 	getLocalDirectIOClientInstance();
 	//get the local connection to the requester form shared client
 	DirectIOClientConnection *client_connection = global_performance_connection->getNewConnection(req_server_description);
+    if(client_connection == NULL) {LOG_AND_TROW(PMLERR_, -3, "Got NULL cleint connection from getNewConnection")}
+    
+    //set this class as handler
 	client_connection->setEventHandler(this);
 	
 	//get the server endpoint for the requester

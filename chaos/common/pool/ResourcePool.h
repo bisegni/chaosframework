@@ -63,12 +63,14 @@ delete(x);
                  */
                 struct ResourceSlot {
                     R resource_pooled;
-                    //the timestamp in milliseconds (according to chaos timestamp) that this slot is valid
+                    //!the timestamp in milliseconds (according to chaos timestamp) that this slot is valid
                     //! after that time, when it is possible the slot will be removed
                     uint64_t valid_until;
+                    //! parent pool identification
                     const std::string pool_identification;
                     ResourceSlot(const std::string& _pool_identification,
                                  R _resource_pooled):
+                    valid_until(1000*60),//! default valuew is a time to live of one minuts
                     pool_identification(_pool_identification),
                     resource_pooled(_resource_pooled){}
                     ~ResourceSlot() {}

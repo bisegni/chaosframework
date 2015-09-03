@@ -65,7 +65,8 @@ void ZMQClient::init(void *init_data) throw(CException) {
     ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> initialized";
     
     ZMQC_LAPP << "ConnectionPool initialization";
-    CHAOS_ASSERT(zmq_context = zmq_ctx_new())
+    zmq_context = zmq_ctx_new();
+    CHAOS_ASSERT(zmq_context)
     
     //et the thread number
     zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, threadNumber);
@@ -77,15 +78,17 @@ void ZMQClient::init(void *init_data) throw(CException) {
  start the rpc adapter
  */
 void ZMQClient::start() throw(CException) {
+    int err = 0;
     //start timere after and repeat every one minut
-    chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 60000, 60000);
+    if((err = chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 60000, 60000))) {LOG_AND_TROW(ZMQC_LERR, err, "Error adding timer")}
 }
 
 /*
  start the rpc adapter
  */
 void ZMQClient::stop() throw(CException) {
-    chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+    int err = 0;
+    if((err = chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this))) {LOG_AND_TROW(ZMQC_LERR, err, "Error removing timer")}
 }
 
 /*
@@ -186,7 +189,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
     }
     
     if(err) {
-        if(socket) {
+        if(new_socket) {
             ZMQC_LERR << "Error during configuration of the socket for "<<pool_identification;
             zmq_close(new_socket);
             //reset socket

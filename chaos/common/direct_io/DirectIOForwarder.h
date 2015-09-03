@@ -42,7 +42,7 @@ namespace chaos {
 				static void freeSentData(void *data, void *hint) {
 					DisposeSentMemoryInfo *free_info = static_cast<DisposeSentMemoryInfo*>(hint);
 					free_info->data_deallocator->freeSentData(data, free_info);
-					free(hint);
+					delete(free_info);
 				}
 				
 				//! send the data to the server layer on priority channel

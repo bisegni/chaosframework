@@ -305,10 +305,12 @@ bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
                 
             case ErrorCode::EC_MDS_NODE_ID_NOT_SELF_MANAGEABLE:
                 WUMAPP_ << "id is not self manageable";
+                SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
+                break;
+                
             default:
                 WUMERR_ << "work unit "<< device_id<<" failed to register, error ack:"<<ack_val;
                 SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
-                
                 break;
         }
     } else {

@@ -220,17 +220,10 @@ int CouchbaseCacheDriver::updateConfig() {
 	//clear the configuration
 	memset(&create_options, 0, sizeof(create_options));
 	
-	lcb_config_transport_t transports[] = {
-		LCB_CONFIG_TRANSPORT_CCCP,
-		LCB_CONFIG_TRANSPORT_LIST_END
-	};
-	
 	//create_options
 	create_options.version = 3;
-	//create_options.v.v3.transports = transports;
 	if(bucket_user.size()) create_options.v.v3.username = bucket_user.c_str();
 	if(bucket_pwd.size()) create_options.v.v3.passwd = bucket_pwd.c_str();
-	//if(bucket_name.size()) create_options.v.v3.bucket = bucket_name.c_str();
 	
 	all_server_str.assign("couchbase://");
 	for (ServerIterator iter = all_server_to_use.begin();
