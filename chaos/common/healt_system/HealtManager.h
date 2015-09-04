@@ -53,14 +53,12 @@ namespace chaos {
                 boost::shared_mutex mutex_metric_set;
 
                     //!keep track of how is the start valu eof the counter
-                unsigned int fire_counter_configured;
-                
-                    //!we it reach 0 the metric is published
-                int fire_counter;
+                unsigned int fire_slot;
                 
                 NodeHealtSet(const std::string& node_uid):
                 has_changed(false),
-                node_key(node_uid + chaos::NodeHealtDefinitionKey::HEALT_KEY_POSTFIX) {}
+                node_key(node_uid + chaos::NodeHealtDefinitionKey::HEALT_KEY_POSTFIX),
+                fire_slot(0){}
             };
 
             //! define map for node health information
@@ -84,7 +82,8 @@ namespace chaos {
                 friend class chaos::common::utility::Singleton<HealtManager>;
                 
                 unsigned int last_fire_counter_set;
-                
+                //!incremented at every timer timeout modded with HEALT_FIRE_SLOTS the result is the slot to fire
+                unsigned int current_fire_slot;
                 HealtNodeMap                                        map_node;
                 boost::shared_mutex                                 map_node_mutex;
 

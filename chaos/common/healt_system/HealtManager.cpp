@@ -53,12 +53,14 @@ if(tmp)tmp->value = v;
 Int64HealtMetric *ts_tmp = static_cast<Int64HealtMetric*>(node_metrics_ptr->map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC].get());\
 ts_tmp->value = TimingUtil::getTimeStamp();
 
-#define TIMESTAMP_VALIDITY 5 //a node with timestamp no old more than this value is reputaded alive
+#define HEALT_FIRE_SLOTS 5 //define slot by a seconds
+
 
 HealtManager::HealtManager():
 network_broker_ptr(NULL),
 mds_message_channel(NULL),
-last_fire_counter_set(0){}
+last_fire_counter_set(0),
+current_fire_slot(0){}
 
 HealtManager::~HealtManager() {}
 
@@ -195,10 +197,10 @@ void HealtManager::addNewNode(const std::string& node_uid) {
     healt_metric->map_metric.insert(make_pair(NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                               boost::shared_ptr<HealtMetric>(new StringHealtMetric(NodeHealtDefinitionKey::NODE_HEALT_STATUS))));
     //reset the counter for publishing pushses
-    healt_metric->fire_counter = healt_metric->fire_counter_configured = (last_fire_counter_set++ % TIMESTAMP_VALIDITY);
+    healt_metric->fire_slot = (last_fire_counter_set++ % HEALT_FIRE_SLOTS);
     
     //print log info for newly created set
-    HM_INFO << "Added new healt set for node :" << node_uid << " with push counter of " << healt_metric->fire_counter_configured;
+    HM_INFO << "Added new healt set for node :" << node_uid << " with push counter of " << healt_metric->fire_slot;
 }
 
 void HealtManager::removeNode(const std::string& node_uid) {
@@ -381,38 +383,31 @@ void HealtManager::publishNodeHealt(const std::string& node_uid) {
 }
 
 void HealtManager::timeout() {
-    //allocate the datapack
-    std::auto_ptr<CDataWrapper> data_pack;
-    
     //publish all registered metric
     boost::shared_lock<boost::shared_mutex> rl(map_node_mutex);
     for(HealtNodeMapIterator it = map_node.begin();
         it != map_node.end();
         it++) {
-        if(--it->second->fire_counter <= 0) {
+        if(it->second->fire_slot == current_fire_slot) {
             // get metric ptr
             _publish(it->second);
         }
     }
+    //go to next slot
+    ++current_fire_slot %= HEALT_FIRE_SLOTS;
 }
 
 void HealtManager::_publish(const boost::shared_ptr<NodeHealtSet>& heath_set) {
     //lock the driver for bublishing
     boost::unique_lock<boost::mutex> wl_io(mutex_publishing);
     
-    //get the push timestamp
-    uint64_t push_timestamp = TimingUtil::getTimeStamp();
-    
     //send datapack
     CDataWrapper *data_pack = prepareNodeDataPack(heath_set->map_metric,
-                                                  push_timestamp);
+                                                  TimingUtil::getTimeStamp());
     if(data_pack) {
         io_data_driver->storeData(heath_set->node_key,
                                   data_pack);
     } else {
         HM_ERR << "Error allocating health datapack for node:" << heath_set->node_key;
     }
-    
-    //reset push counter
-    heath_set->fire_counter = heath_set->fire_counter_configured;
 }
