@@ -75,3 +75,4 @@ ChaosMDSLite/RefServer.jardesc
 /example/UIToolkitTest/powersupply/nbproject/private/
 *.json
 /.project
+.idea/
