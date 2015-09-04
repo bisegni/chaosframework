@@ -36,23 +36,23 @@
 namespace chaos {
     namespace common{
         namespace healt_system {
-
+            
             //! define the map for the metric
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<HealtMetric>, HealtNodeElementMap)
-
+            
             struct NodeHealtSet {
-                    //notify when some metric has chagned
+                //notify when some metric has chagned
                 bool    has_changed;
-                    //the key to use for the node publishing operation
+                //the key to use for the node publishing operation
                 std::string   node_key;
-
-                    //is the metric node map
+                
+                //is the metric node map
                 HealtNodeElementMap map_metric;
-
-                    //!permit to lock the intere set
+                
+                //!permit to lock the intere set
                 boost::shared_mutex mutex_metric_set;
-
-                    //!keep track of how is the start valu eof the counter
+                
+                //!keep track of how is the start valu eof the counter
                 unsigned int fire_slot;
                 
                 NodeHealtSet(const std::string& node_uid):
@@ -60,11 +60,11 @@ namespace chaos {
                 node_key(node_uid + chaos::NodeHealtDefinitionKey::HEALT_KEY_POSTFIX),
                 fire_slot(0){}
             };
-
+            
             //! define map for node health information
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<NodeHealtSet>, HealtNodeMap)
-
-                //! Is the root class for the healt managment system
+            
+            //! Is the root class for the healt managment system
             /*!
              !CHAOS helat system consits in a set of information, about nodes, published to the central data service
              or requested by other node.
@@ -80,75 +80,144 @@ namespace chaos {
             public chaos::common::utility::Singleton<HealtManager>,
             public chaos::common::utility::StartableService {
                 friend class chaos::common::utility::Singleton<HealtManager>;
-                
+                //! counter for positioning new node healt set into the right fire slot
                 unsigned int last_fire_counter_set;
                 //!incremented at every timer timeout modded with HEALT_FIRE_SLOTS the result is the slot to fire
                 unsigned int current_fire_slot;
+                
+                //! the map of the nodes healt
                 HealtNodeMap                                        map_node;
                 boost::shared_mutex                                 map_node_mutex;
-
+                
+                //! network broker and channel for comunicate with mds
                 chaos::common::network::NetworkBroker               *network_broker_ptr;
                 chaos::common::message::MultiAddressMessageChannel  *mds_message_channel;
                 
+                //! permit to lock the access to publishing direct io channel
                 boost::mutex                                        mutex_publishing;
+                
+                //! drive rfor publishing the data
                 std::auto_ptr<chaos::common::io::IODataDriver>      io_data_driver;
                 
+                //! private non locked push method for a healt set
                 inline void _publish(const boost::shared_ptr<NodeHealtSet>& heath_set);
             protected:
+                //! default constructor and destructor
                 HealtManager();
                 ~HealtManager();
+                
+                //! timer handler for check what slot needs to be fired
                 void timeout();
                 chaos::common::data::CDataWrapper* prepareNodeDataPack(HealtNodeElementMap& element_map,
                                                                        uint64_t push_timestamp);
+                
+                //!protected mehoto to talk with mds to receive the cds server where publish the data
                 void sayHello() throw (chaos::CException);
             public:
+                //! inherited method
                 void init(void *init_data) throw (chaos::CException);
+                
+                //! inherited method
                 void start() throw (chaos::CException);
+                
+                //! inherited method
                 void stop() throw (chaos::CException);
+                
+                //! inherited method
                 void deinit() throw (chaos::CException);
-
-                    //s
+                
+                //!comodity method
                 void setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker);
-
+                
+                //!add a new node to the healt system
                 void addNewNode(const std::string& node_uid);
                 
+                //!remove a node from the heatl system
                 void removeNode(const std::string& node_uid);
                 
+                //! add a new metric to the already registered node
                 void addNodeMetric(const std::string& node_uid,
                                    const std::string& node_metric,
                                    chaos::DataType::DataType metric_type);
                 
+                //! update the value for a metric
+                /*!
+                 \param node_uid node for wich we need to update the metric value
+                 \param node_metric identify the metric to update
+                 \param int32_value is the new integer value of the metric
+                 \param publish, if true the node is publish after metris is updated
+                 */
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         int32_t int32_value,
                                         bool publish = false);
                 
+                //! update the value for a metric
+                /*!
+                 \param node_uid node for wich we need to update the metric value
+                 \param node_metric identify the metric to update
+                 \param int64_value is the new integer value of the metric
+                 \param publish, if true the node is publish after metris is updated
+                 */
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         int64_t int64_value,
                                         bool publish = false);
                 
+                //! update the value for a metric
+                /*!
+                 \param node_uid node for wich we need to update the metric value
+                 \param node_metric identify the metric to update
+                 \param double_value is the new double value of the metric
+                 \param publish, if true the node is publish after metris is updated
+                 */
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         double double_value,
+                                        
                                         bool publish = false);
                 
+                //! update the value for a metric
+                /*!
+                 \param node_uid node for wich we need to update the metric value
+                 \param node_metric identify the metric to update
+                 \param str_value is the new string value of the metric
+                 \param publish, if true the node is publish after metris is updated
+                 */
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         const std::string& str_value,
                                         bool publish = false);
                 
+                //! update the value for a metric
+                /*!
+                 \param node_uid node for wich we need to update the metric value
+                 \param node_metric identify the metric to update
+                 \param str_value is the new string value of the metric
+                 \param publish, if true the node is publish after metris is updated
+                 */
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         const char * c_str_value,
                                         bool publish = false);
                 
+                //! update the value for a metric
+                /*!
+                 \param node_uid node for wich we need to update the metric value
+                 \param node_metric identify the metric to update
+                 \param bool_value is the new bool value of the metric
+                 \param publish, if true the node is publish after metris is updated
+                 */
                 void addNodeMetricValue(const std::string& node_uid,
                                         const std::string& node_metric,
                                         const bool bool_value,
                                         bool publish = false);
-
-                    //publish the healt for the ndoe uid
+                
+                //!publish health information for a node
+                /*!
+                 \param node_uid the node identification id for which we need to
+                                    publish the healt data.
+                 */
                 void publishNodeHealt(const std::string& node_uid);
             };
         }
