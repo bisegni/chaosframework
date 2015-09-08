@@ -41,7 +41,7 @@ private slots:
     virtual void valueNotFound(const QString& node_uid,
                               const QString& attribute_name);
 private:
-    HealthHartbeatHandler hb_health_handler;
+    HealthHeartbeatHandler hb_health_handler;
     AliveState alive_state;
     QSharedPointer<QIcon> no_ts;
     QSharedPointer<QIcon> timeouted;

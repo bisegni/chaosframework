@@ -95,31 +95,31 @@ protected:
     void registerMonitorHandler(const QString& monitor_key,
                                 const unsigned int dataset_type,
                                 unsigned int quantum_multiplier,
-                                chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                AbstractAttributeHandler *monitor_attribute_handler);
     void unregisterMonitorHandler(const QString& monitor_key,
                                   const unsigned int dataset_type,
                                   unsigned int quantum_multiplier,
-                                  chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                  AbstractAttributeHandler *monitor_attribute_handler);
     void registerMonitorHandler(const std::string& monitor_key,
                                 const unsigned int dataset_type,
                                 unsigned int quantum_multiplier,
-                                chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                AbstractAttributeHandler *monitor_attribute_handler);
     void unregisterMonitorHandler(const std::string& monitor_key,
                                   const unsigned int dataset_type,
                                   unsigned int quantum_multiplier,
-                                  chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                  AbstractAttributeHandler *monitor_attribute_handler);
     void registerHealtMonitorHandler(const QString& monitor_key,
                                      unsigned int quantum_multiplier,
-                                     chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                     AbstractAttributeHandler *monitor_attribute_handler);
     void unregisterHealtMonitorHandler(const QString& monitor_key,
                                        unsigned int quantum_multiplier,
-                                       chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                       AbstractAttributeHandler *monitor_attribute_handler);
     void registerHealtMonitorHandler(const std::string& monitor_key,
                                      unsigned int quantum_multiplier,
-                                     chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                     AbstractAttributeHandler *monitor_attribute_handler);
     void unregisterHealtMonitorHandler(const std::string& monitor_key,
                                        unsigned int quantum_multiplier,
-                                       chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                       AbstractAttributeHandler *monitor_attribute_handler);
     //contextual menu utility
     void registerWidgetForContextualMenu(QWidget *contextual_menu_parent,
                                          QMap<QString, QVariant> *widget_contextual_menu_action,

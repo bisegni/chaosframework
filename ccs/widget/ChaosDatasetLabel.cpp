@@ -48,7 +48,7 @@ void ChaosDatasetLabel::valueUpdated(const QString& node_uid,
 int ChaosDatasetLabel::startMonitoring() {
     int err = 0;
     bool ok = true;
-    if(err = ChaosLabel::startMonitoring()){
+    if((err = ChaosLabel::startMonitoring())){
         stopMonitoring();
         return err;
     }
@@ -59,11 +59,11 @@ int ChaosDatasetLabel::startMonitoring() {
         return -5;
     }
 
-    monitor_system::AbstractQuantumTSTaggedAttributeHandler *handler_ptr = dynamic_cast<monitor_system::AbstractQuantumTSTaggedAttributeHandler*>(handler_sptr.get());
-    if(handler_ptr == NULL) {
-        stopMonitoring();
-        return -6;
-    }
+   // monitor_system::AbstractQuantumTSTaggedAttributeHandler *handler_ptr = dynamic_cast<monitor_system::AbstractQuantumTSTaggedAttributeHandler*>(handler_sptr.get());
+    //if(handler_ptr == NULL) {
+    //    stopMonitoring();
+    //    return -6;
+   // }
     //connect the handler
     connect(handler_sptr.get(),
             SIGNAL(valueUpdated(QString,QString,uint64_t,QVariant)),
@@ -72,7 +72,7 @@ int ChaosDatasetLabel::startMonitoring() {
     if(!ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForDataset(nodeUniqueID().toStdString(),
                                                                                     getChaosDataset(),
                                                                                     20,
-                                                                                    handler_ptr)){
+                                                                                    handler_sptr->getQuantumAttributeHandler())){
         stopMonitoring();
         return -7;
     }
@@ -82,15 +82,14 @@ int ChaosDatasetLabel::startMonitoring() {
 
 int ChaosDatasetLabel::stopMonitoring() {
     int err = 0;
-    if(err = ChaosLabel::stopMonitoring()){
+    if((err = ChaosLabel::stopMonitoring())){
         return err;
     }
     //we can stop
-    monitor_system::AbstractQuantumTSTaggedAttributeHandler *handler_ptr = dynamic_cast<monitor_system::AbstractQuantumTSTaggedAttributeHandler*>(handler_sptr.get());
     if(!ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForDataset(nodeUniqueID().toStdString(),
                                                                                        getChaosDataset(),
                                                                                        20,
-                                                                                       handler_ptr)) {
+                                                                                       handler_sptr->getQuantumAttributeHandler())) {
         return -5;
     }
     monitoring = false;

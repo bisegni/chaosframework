@@ -179,4 +179,5 @@ FORMS    += \
     plot/NodeAttributePlotting.ui
 
 DISTFILES += \
-    dark_orange.stylesheet
+    dark_orange.stylesheet \
+    CMakeLists.txt
