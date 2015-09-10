@@ -1528,13 +1528,13 @@
       "cu_desc": []
     },
     {
-      "unit_server_alias": "CRIO9068_LNF",
+      "unit_server_alias": "LNF",
       "private_key": null,
       "public_key": null,
       "cu_desc": [
         {
-          "unit_server_alias": "CRIO9068_LNF",
-          "cu_id": "CRIO_LNF/CRIO0",
+          "unit_server_alias": "LNF",
+          "cu_id": "LNF/CRIO",
           "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
           "cu_param": "",
           "auto_load": true,
@@ -1542,7 +1542,48 @@
             {
               "DriverDescriptionName": "GenericPowerSupplyDD",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": "SimPSupply:/dev/ttyXX,11,100:200.200:300,700:300"
+              "DriverDescriptionInitParam": "SimPSupply:/dev/ttyXX,11,100:200,200:300,700:300"
+            }
+          ],
+          "AttrDesc": [
+            {
+              "ds_attr_name": "max_current",
+              "ds_max_range": "",
+              "ds_min_range": "",
+              "ds_default_value": "700"
+            },
+            {
+              "ds_attr_name": "slope_down",
+              "ds_max_range": "10",
+              "ds_min_range": "1",
+              "ds_default_value": "1"
+            },
+            {
+              "ds_attr_name": "slope_up",
+              "ds_max_range": "10",
+              "ds_min_range": "1",
+              "ds_default_value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit_server_alias": "LNS",
+      "private_key": null,
+      "public_key": null,
+      "cu_desc": [
+        {
+          "unit_server_alias": "LNS",
+          "cu_id": "LNS/CRIO",
+          "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
+          "cu_param": "",
+          "auto_load": true,
+          "DriverDescription": [
+            {
+              "DriverDescriptionName": "GenericPowerSupplyDD",
+              "DriverDescriptionVersion": "1.0.0",
+              "DriverDescriptionInitParam": "SimPSupply:/dev/ttyXX,11,100:200,200:300,700:300"
             }
           ],
           "AttrDesc": [
@@ -1617,7 +1658,7 @@
             {
               "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": ""
+              "DriverDescriptionInitParam": "0"
             }
           ],
           "AttrDesc": []
@@ -1632,7 +1673,7 @@
             {
               "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": ""
+              "DriverDescriptionInitParam": "1"
             }
           ],
           "AttrDesc": []
@@ -1654,7 +1695,7 @@
             {
               "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": "libera"
+              "DriverDescriptionInitParam": "0"
             }
           ],
           "AttrDesc": []
@@ -1669,7 +1710,7 @@
             {
               "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": "libera"
+              "DriverDescriptionInitParam": "1"
             }
           ],
           "AttrDesc": []
@@ -1691,7 +1732,7 @@
             {
               "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": ""
+              "DriverDescriptionInitParam": "0"
             }
           ],
           "AttrDesc": []
@@ -1706,7 +1747,7 @@
             {
               "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": ""
+              "DriverDescriptionInitParam": "1"
             }
           ],
           "AttrDesc": []
@@ -1728,7 +1769,7 @@
             {
               "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": ""
+              "DriverDescriptionInitParam": "0"
             }
           ],
           "AttrDesc": []
@@ -1743,7 +1784,7 @@
             {
               "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": ""
+              "DriverDescriptionInitParam": "1"
             }
           ],
           "AttrDesc": []
@@ -1764,7 +1805,7 @@
             {
               "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": ""
+              "DriverDescriptionInitParam": "0"
             }
           ],
           "AttrDesc": []
@@ -1779,7 +1820,7 @@
             {
               "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": ""
+              "DriverDescriptionInitParam": "1"
             }
           ],
           "AttrDesc": []
@@ -1801,7 +1842,7 @@
             {
               "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": ""
+              "DriverDescriptionInitParam": "0"
             }
           ],
           "AttrDesc": []
@@ -1816,7 +1857,7 @@
             {
               "DriverDescriptionName": "LiberaBrillianceCSPIDriver",
               "DriverDescriptionVersion": "1.0.0",
-              "DriverDescriptionInitParam": ""
+              "DriverDescriptionInitParam": "1"
             }
           ],
           "AttrDesc": []

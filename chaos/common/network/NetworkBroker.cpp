@@ -124,7 +124,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
 
     }
 	//---------------------------- D I R E C T I/O ----------------------------
-	
+	/*	
 	//---------------------------- E V E N T ----------------------------
     if(globalConfiguration->hasKey(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION)) {
         event_dispatcher = ObjectFactoryRegister<AbstractEventDispatcher>::getInstance()->getNewInstanceByName("DefaultEventDispatcher");
@@ -152,7 +152,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         StartableService::initImplementation(event_client, static_cast<void*>(globalConfiguration), event_client->getName(), __PRETTY_FUNCTION__);
     }
 	//---------------------------- E V E N T ----------------------------
-    
+	*/
 	//---------------------------- R P C ----------------------------
     if(globalConfiguration->hasKey(InitOption::OPT_RPC_IMPLEMENTATION)){
 		//get the dispatcher
@@ -245,7 +245,7 @@ void NetworkBroker::deinit() throw(CException) {
     CHAOS_NOT_THROW(StartableService::deinitImplementation(direct_io_server, direct_io_server->getName(), "NetworkBroker::deinit");)
 	DELETE_OBJ_POINTER(direct_io_server);
 	//---------------------------- D I R E C T I/O ----------------------------
-	
+	/*
 	//---------------------------- E V E N T ----------------------------
     MB_LAPP  << "Deallocate all event channel";
     for (map<string, event::channel::EventChannel*>::iterator channnelIter = active_event_channel.begin();
@@ -273,7 +273,7 @@ void NetworkBroker::deinit() throw(CException) {
     CHAOS_NOT_THROW(StartableService::deinitImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);)
     DELETE_OBJ_POINTER(event_dispatcher);
 	//---------------------------- E V E N T ----------------------------
-	
+	*/
     //---------------------------- R P C SYNC ----------------------------
     if(sync_rpc_server) CHAOS_NOT_THROW(StartableService::deinitImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)
     //---------------------------- R P C SYNC ----------------------------
@@ -314,9 +314,11 @@ void NetworkBroker::deinit() throw(CException) {
  */
 void NetworkBroker::start() throw(CException){
     StartableService::startImplementation(direct_io_server, direct_io_server->getName(), __PRETTY_FUNCTION__);
+    /*
     StartableService::startImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);
     StartableService::startImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);
     StartableService::startImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);
+    */
     StartableService::startImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);
     StartableService::startImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);
     StartableService::startImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);
@@ -333,9 +335,11 @@ void NetworkBroker::stop() throw(CException) {
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(StartableService::stopImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(StartableService::stopImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(StartableService::stopImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);)
+			 /*
+			   CHAOS_NOT_THROW(StartableService::stopImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);)
+			   CHAOS_NOT_THROW(StartableService::stopImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);)
+			   CHAOS_NOT_THROW(StartableService::stopImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);)
+			 */
     CHAOS_NOT_THROW(StartableService::stopImplementation(direct_io_server, direct_io_server->getName(), __PRETTY_FUNCTION__);)
 }
 
