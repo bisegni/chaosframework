@@ -34,7 +34,6 @@ namespace chaos {
         //! for print the help
         static const char * const	OPT_HELP                            = "help";
         //! config file parameter
-
         static const char * const   OPT_CONF_FILE						= "conf-file";
         //! enable metric loggin on console backend
         static const char * const   OPT_LOG_METRIC_ON_CONSOLE           = "log-metric-on-console";
@@ -42,7 +41,6 @@ namespace chaos {
         static const char * const   OPT_LOG_METRIC_ON_FILE              = "log-metric-on-file";
         //! enable metric loggin on file backend
         static const char * const   OPT_LOG_METRIC_ON_FILE_PATH         = "log-metric-on-file-path";
-
         //! activate the loggin of metric on rpc system
         static const char * const   OPT_RPC_LOG_METRIC                  = "rpc-log-metric";
         //! the time between the update of rpc metric on persistence backend (in seconds)
@@ -75,8 +73,8 @@ namespace chaos {
         static const char * const   OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT = "direct-io-client-log-metric-mep";
         //! the time between the update of rpc metric on persistence backend (in seconds)
         static const char * const   OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL = "direct-io-log-metric-update-interval";
-        //! Specify the live data servers address with the type host:port it is a multitoken parameter
-        static const char * const   OPT_LIVE_DATA_SERVER_ADDRESS        = "live-data-servers";
+        //!disable the event system
+        static const char * const   OPT_EVENT_DISABLE                   = "event-disable";
         //! Specify the metadata address for the metadataserver
         static const char * const   OPT_METADATASERVER_ADDRESS          = "metadata-server";
         //! Specify when the log must be forwarded on console
