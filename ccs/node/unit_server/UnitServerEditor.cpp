@@ -251,7 +251,7 @@ void UnitServerEditor::on_pushButtonCreateNewInstance_clicked()
 {
     //check if we have selected a type
     QModelIndexList selected_index = ui->listViewCUType->selectionModel()->selectedIndexes();
-    if(!selected_index.size() == 1) {
+    if(!(selected_index.size() == 1)) {
         QMessageBox::information(this,
                                  tr("New Instance creation error"),
                                  tr("Instance creation needs a one control unit type selected!"));

@@ -20,8 +20,8 @@ struct AttributeInfo {
 
 typedef QMap< QString, QSharedPointer<AttributeInfo> >           DoeMapAI;
 typedef QMap< QString, QSharedPointer<AttributeInfo> >::iterator DoeMapAIIterator;
-typedef QMap< QString, QSharedPointer<chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler> > DoeMapHandler;
-typedef QMap< QString, QSharedPointer<chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler> >::iterator DoeMapHandlerIterator;
+typedef QMap< QString, QSharedPointer<AbstractAttributeHandler> > DoeMapHandler;
+typedef QMap< QString, QSharedPointer<AbstractAttributeHandler> >::iterator DoeMapHandlerIterator;
 
 class ChaosAbstractDataSetTableModel:
         public ChaosAbstractTableModel {
@@ -51,22 +51,7 @@ protected:
 protected slots:
     void consumeValue(const QString& key,
                       const QString& attribute,
-                      const bool value);
-    void consumeValue(const QString& key,
-                      const QString& attribute,
-                      const int32_t value);
-    void consumeValue(const QString& key,
-                      const QString& attribute,
-                      const int64_t value);
-    void consumeValue(const QString& key,
-                      const QString& attribute,
-                      const double value);
-    void consumeValue(const QString& key,
-                      const QString& attribute,
-                      const QString& value);
-    void consumeValue(const QString& key,
-                      const QString& attribute,
-                      const boost::shared_ptr<chaos::common::data::SerializationBuffer>& value);
+                      const QVariant& value);
 private:
     QString base64Encode(QString string);
 };

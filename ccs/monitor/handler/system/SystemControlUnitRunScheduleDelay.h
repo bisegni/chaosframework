@@ -1,5 +1,5 @@
-#ifndef SYSTEMCONTROLUNIT
-#define SYSTEMCONTROLUNIT
+#ifndef ccs_SystemControlUnitRunScheduleDelay
+#define ccs_SystemControlUnitRunScheduleDelay
 #include "../AbstractAttributeHandler.h"
 #include <ChaosMetadataServiceClient/monitor_system/AbstractQuantumKeyAttributeHandler.h>
 class SystemControlUnitRunScheduleDelay:
@@ -16,9 +16,17 @@ protected:
                           QString::fromStdString(attribute),
                           QVariant::fromValue<int64_t>(value));
     }
+    void consumeValueNotFound(const std::string& key,
+                              const std::string& attribute) {
+        //emit value not foud
+        emit valueNotFound(QString::fromStdString(key),
+                           QString::fromStdString(attribute));
+    }
 public:
-    SystemControlUnitRunScheduleDelay(bool event_on_change = false):
-    QuantumKeyAttributeInt64Handler(std::string(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY), event_on_value_change){}
+    SystemControlUnitRunScheduleDelay(bool event_on_change):
+        AbstractAttributeHandler(this),
+        QuantumKeyAttributeInt64Handler(std::string(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY),
+                                        event_on_change){}
 };
 #endif // SYSTEMCONTROLUNIT
 

@@ -139,7 +139,6 @@ void NodeAttributePlotting::_addRemoveToPlot(QSharedPointer<PlotInfo> plot_info,
 
     //general check
     unsigned int dataset_type = 0;
-    monitor_system::AbstractQuantumTSTaggedAttributeHandler *chaos_handler = dynamic_cast<monitor_system::AbstractQuantumTSTaggedAttributeHandler*>(plot_info->monitor_handler.data());
     switch(plot_info->direction) {
     case chaos::DataType::Input:
         dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
@@ -158,18 +157,17 @@ void NodeAttributePlotting::_addRemoveToPlot(QSharedPointer<PlotInfo> plot_info,
                 SLOT(valueUpdated(QString,QString,uint64_t,QVariant)));
 
         //activate monitoring
-        monitor_system::AbstractQuantumTSTaggedAttributeHandler *chaos_handler = dynamic_cast<monitor_system::AbstractQuantumTSTaggedAttributeHandler*>(plot_info->monitor_handler.data());
         ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForDataset(node_uid.toStdString(),
                                                                                     dataset_type,
                                                                                     plot_info->quantum_multiplier,
-                                                                                    chaos_handler);
+                                                                                    plot_info->monitor_handler.data()->getQuantumAttributeHandler());
         map_plot_info.insert(attribute_name, plot_info);
     } else {
         //remove plot from monitor
         ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForDataset(node_uid.toStdString(),
                                                                                         dataset_type,
                                                                                         plot_info->quantum_multiplier,
-                                                                                        chaos_handler);
+                                                                                        plot_info->monitor_handler.data()->getQuantumAttributeHandler());
 
         //we can remove the plot from graph and map
         ui->qCustomPlotTimed->removeGraph(plot_info->graph);

@@ -32,6 +32,7 @@ public:
     MonitorTSTaggedBoolAttributeHandler(const QString& attribute_name,
                                         const QString& ts_attribute_name,
                                         bool event_on_change = false):
+       AbstractTSTaggedAttributeHandler(this),
         chaos::metadata_service_client::monitor_system::QuantumTSTaggedBoolAttributeHandler(attribute_name.toStdString(),
                                                                                             ts_attribute_name.toStdString(),
                                                                                             event_on_change){}

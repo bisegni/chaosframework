@@ -87,7 +87,7 @@ protected:
     bool monitoring;
     uint64_t last_recevied_ts;
     uint32_t zero_diff_count;
-    HealthHartbeatHandler healt_heartbeat_handler;
+    HealthHeartbeatHandler healt_heartbeat_handler;
     HealtStatusHandler healt_status_handler;
     boost::shared_ptr<AbstractTSTaggedAttributeHandler> handler_sptr;
     //hide public default slot

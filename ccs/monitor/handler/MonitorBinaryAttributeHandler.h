@@ -17,21 +17,18 @@ protected:
         //emit new value
         emit valueUpdated(QString::fromStdString(key),
                           QString::fromStdString(attribute),
-                          value);
+                          QVariant::fromValue<QSharedPointer<ChaosByteArray> >(QSharedPointer<ChaosByteArray>(new ChaosByteArray(value))));
     }
     void consumeValueNotFound(const std::string& key,
                               const std::string& attribute) {
         //emit value not foud
         emit valueNotFound(QString::fromStdString(key),
-                          QString::fromStdString(attribute));
+                           QString::fromStdString(attribute));
     }
-signals:
-    void valueUpdated(const QString& key,
-                      const QString& attribute_name,
-                      const boost::shared_ptr<chaos::common::data::SerializationBuffer>& value);
 public:
     MonitorBinaryAttributeHandler(const QString& attribute_name,
                                   bool event_on_change = false):
+        AbstractAttributeHandler(this),
         chaos::metadata_service_client::monitor_system::QuantumKeyAttributeBinaryHandler(attribute_name.toStdString(),
                                                                                          event_on_change){}
 };
