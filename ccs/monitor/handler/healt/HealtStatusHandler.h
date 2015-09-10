@@ -1,5 +1,5 @@
-#ifndef HEALTSTATUSHANDLER_H
-#define HEALTSTATUSHANDLER_H
+#ifndef ccs_HealtStatusHandler
+#define ccs_HealtStatusHandler
 #include "../AbstractAttributeHandler.h"
 
 class HealtStatusHandler:
@@ -16,9 +16,15 @@ protected:
                           QString::fromStdString(attribute),
                           QString::fromStdString(value));
     }
-
+    void consumeValueNotFound(const std::string& key,
+                              const std::string& attribute) {
+        //emit value not foud
+        emit valueNotFound(QString::fromStdString(key),
+                           QString::fromStdString(attribute));
+    }
 public:
     HealtStatusHandler(bool event_on_change = false):
-    HealtStatusAttributeHandler(event_on_change){}
+        AbstractAttributeHandler(this),
+        HealtStatusAttributeHandler(event_on_change){}
 };
 #endif // HEALTSTATUSHANDLER_H
