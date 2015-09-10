@@ -6,6 +6,7 @@ project(ccs)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 INCLUDE_DIRECTORIES( ../usr/local/include )
 LINK_DIRECTORIES( ../usr/local/lib )
@@ -103,6 +104,7 @@ add_executable(ccs main.cpp
     data/DatasetAttributeReader.cpp
     widget/CLedIndicatorHealt.cpp
     preference/PreferenceMDSHostListModel.cpp
+    image/image.qrc
     ${ccs_include_moc}
     ${UIS_HDRS})
 
