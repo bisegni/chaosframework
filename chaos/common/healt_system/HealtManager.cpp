@@ -53,7 +53,8 @@ if(tmp)tmp->value = v;
 Int64HealtMetric *ts_tmp = static_cast<Int64HealtMetric*>(node_metrics_ptr->map_metric[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC].get());\
 ts_tmp->value = TimingUtil::getTimeStamp();
 
-#define HEALT_FIRE_SLOTS 5 //define slot by a seconds
+#define HEALT_FIRE_TIMEOUT 6 //timeout for next healt fire for every registered node
+#define HEALT_FIRE_SLOTS 3 //define slot by a seconds
 
 
 HealtManager::HealtManager():
@@ -162,7 +163,7 @@ void HealtManager::start() throw (chaos::CException) {
     }
     
     //add timer to publish all node healt very 5 second
-    AsyncCentralManager::getInstance()->addTimer(this, 0, 1000);
+    AsyncCentralManager::getInstance()->addTimer(this, 0, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
 }
 
 void HealtManager::stop() throw (chaos::CException) {
