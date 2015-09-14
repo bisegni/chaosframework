@@ -248,13 +248,14 @@ void NodeAttributePlotting::valueUpdated(const QString& node_uid,
                                          const QString& attribute_name,
                                          uint64_t timestamp,
                                          const QVariant& attribute_value) {
-    qDebug() << "add valu to plot for :" <<  attribute_name;
+
     lock_read_write_for_plot.lockForRead();
     bool local_ts = node_uid.compare(node_uid_input_dataset) == 0;
     double key = local_ts ?(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0):(timestamp/1000.0);
     double key_for_old = key-plot_ageing;
     map_plot_info[attribute_name]->graph->addData(key, attribute_value.toDouble());
     map_plot_info[attribute_name]->graph->removeDataBefore(key_for_old);
+    //qDebug() << "add value to plot for :" <<  attribute_name << " with value:" << attribute_value.toString() << " plot point size:" << map_plot_info[attribute_name]->graph->data()->size();
     lock_read_write_for_plot.unlock();
 }
 
