@@ -533,6 +533,8 @@
 		32B1E8131B2EDB2800221E49 /* CommandTemplateSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8111B2EDB2800221E49 /* CommandTemplateSubmit.cpp */; };
 		32B1E8161B2EDB4700221E49 /* CommandInstanceSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8141B2EDB4700221E49 /* CommandInstanceSubmit.cpp */; };
 		32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8171B2FFCE500221E49 /* CommandCommonUtility.cpp */; };
+		32B222E11BA71566009BBA9E /* NodeMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B222DD1BA71566009BBA9E /* NodeMonitor.cpp */; settings = {ASSET_TAGS = (); }; };
+		32B222E21BA71566009BBA9E /* NodeSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B222DF1BA71566009BBA9E /* NodeSearch.cpp */; settings = {ASSET_TAGS = (); }; };
 		32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */; };
 		32B4192C1B0DE55E00C3CA7D /* ChangeNodeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */; };
 		32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B4192B1B0DE55E00C3CA7D /* ChangeNodeState.h */; };
@@ -1440,6 +1442,10 @@
 		32B1E8151B2EDB4700221E49 /* CommandInstanceSubmit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandInstanceSubmit.h; sourceTree = "<group>"; };
 		32B1E8171B2FFCE500221E49 /* CommandCommonUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandCommonUtility.cpp; sourceTree = "<group>"; };
 		32B1E8181B2FFCE500221E49 /* CommandCommonUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandCommonUtility.h; sourceTree = "<group>"; };
+		32B222DD1BA71566009BBA9E /* NodeMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeMonitor.cpp; sourceTree = "<group>"; };
+		32B222DE1BA71566009BBA9E /* NodeMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeMonitor.h; sourceTree = "<group>"; };
+		32B222DF1BA71566009BBA9E /* NodeSearch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeSearch.cpp; sourceTree = "<group>"; };
+		32B222E01BA71566009BBA9E /* NodeSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeSearch.h; sourceTree = "<group>"; };
 		32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSBatchExecutor.cpp; sourceTree = "<group>"; };
 		32B3E11C1A7A3923007B7802 /* MDSBatchExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSBatchExecutor.h; sourceTree = "<group>"; };
 		32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeNodeState.cpp; sourceTree = "<group>"; };
@@ -1869,6 +1875,10 @@
 			isa = PBXGroup;
 			children = (
 				32F158621B7B459100B6A5DF /* CMakeLists.txt */,
+				32B222DD1BA71566009BBA9E /* NodeMonitor.cpp */,
+				32B222DE1BA71566009BBA9E /* NodeMonitor.h */,
+				32B222DF1BA71566009BBA9E /* NodeSearch.cpp */,
+				32B222E01BA71566009BBA9E /* NodeSearch.h */,
 				322085DC1AC5A0E200F1B71A /* main.cpp */,
 			);
 			path = ChaosMetadataServiceClientTest;
@@ -4258,6 +4268,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32B222E11BA71566009BBA9E /* NodeMonitor.cpp in Sources */,
+				32B222E21BA71566009BBA9E /* NodeSearch.cpp in Sources */,
 				322085DD1AC5A0E200F1B71A /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
