@@ -24,6 +24,7 @@
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 #include "NodeMonitor.h"
+#include "NodeSearchTest.h"
 
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -80,7 +81,12 @@ int main(int argc, char *argv[]){
 		break;
 	  }
 	  case 1:{
+		if(!ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->hasOption("device-id")){LOG_AND_TROW(MSCT_ERR, -3, "Device id is usede, in search, as search string")}
+		//create search node utility class
+		NodeSearchTest ns(5);
 
+		//try search and waith the termination
+		ns.testSearch(device_id);
 	  }
 	}
 

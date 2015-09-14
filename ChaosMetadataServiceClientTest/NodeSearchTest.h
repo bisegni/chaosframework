@@ -23,13 +23,11 @@
 
 #include <string>
 
-class NodeSearch{
-  std::string node_uid;
+class NodeSearchTest {
   uint32_t page_length;
  public:
-  NodeSearch(const std::string &node_uid,
-			   uint32_t page_length);
-  void testSearch();
+  NodeSearchTest(uint32_t page_length);
+  void testSearch(const std::string& search_string);
 };
 
 

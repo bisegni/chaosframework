@@ -38,7 +38,7 @@ void NodeMonitor::monitor_node(){
 															monitor_quantum_slot,
 															this);
 
-  //wait the desiderate amoun tof time
+  //wait the desiderate amount tof time
   sleep(monitor_duration);
 
   //remove this class as handler from the monitor system
