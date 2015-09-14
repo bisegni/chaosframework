@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 
-SET(mclt main.cpp)
+SET(mclt main.cpp NodeMonitor.cpp NodeMonitor.h)
 
 ADD_EXECUTABLE(ChaosMetadataServiceClientTest ${mclt})
 
