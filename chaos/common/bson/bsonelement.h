@@ -205,7 +205,7 @@ namespace bson {
         bool isNumber() const;
 
         /** Return double value for this field. MUST be NumberDouble type. */
-        double _numberDouble() const {return (portable_cast<  bool>( value() )); }
+        double _numberDouble() const {return (portable_cast<  double>( value() )); }
         /** Return int value for this field. MUST be NumberInt type. */
         int _numberInt() const {
             return portable_cast<int>(value());
