@@ -13084,259 +13084,259 @@
       <item path="ChaosMetadataService/api/control_unit/ControlUnitGroup.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/control_unit/DeleteInstance.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/control_unit/GetCurrentDataset.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/control_unit/GetFullDescription.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/control_unit/GetInstance.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/control_unit/InitDeinit.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/control_unit/SearchInstancesByUS.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/control_unit/SetInputDatasetAttributeValues.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/control_unit/SetInstanceDescription.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/control_unit/StartStop.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/data_service/AssociationControlUnit.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/data_service/DataServiceApiGroup.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/data_service/DeleteDS.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/data_service/GetAllDataService.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/data_service/GetAssociationByDS.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/data_service/GetBestEndpoints.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/data_service/NewDS.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/data_service/UpdateDS.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/healt/HealtApiGroup.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/healt/ProcessBye.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/healt/ProcessHello.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/ChangeNodeState.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/CommandCommonUtility.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/CommandGet.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/CommandInstanceSubmit.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/CommandTemplateDelete.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/CommandTemplateGet.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/CommandTemplateSearch.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/CommandTemplateSet.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/CommandTemplateSubmit.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/GetCommandAndTemplateDescription.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/NodeCreateUnitServer.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/NodeGetDescription.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/NodeGroup.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/NodeRegister.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/NodeSearch.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/node/UpdateProperty.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
@@ -13357,21 +13357,21 @@
       <item path="ChaosMetadataService/api/service/ResetAll.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/service/ServiceApiGroup.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/api/unit_server/GetDescription.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -13384,7 +13384,7 @@
       <item path="ChaosMetadataService/api/unit_server/LoadUnloadControlUnit.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -13397,7 +13397,7 @@
       <item path="ChaosMetadataService/api/unit_server/ManageCUType.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -13410,7 +13410,7 @@
       <item path="ChaosMetadataService/api/unit_server/NewUS.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -13468,42 +13468,42 @@
       <item path="ChaosMetadataService/batch/control_unit/ApplyChangeSet.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/batch/control_unit/IDSTControlUnitBatchCommand.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/batch/control_unit/RegistrationAckBatchCommand.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/batch/node/SubmitBatchCommand.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/batch/node/UpdatePropertyCommand.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
       <item path="ChaosMetadataService/batch/unit_server/LoadUnloadControlUnit.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
         </ccTool>
       </item>
@@ -13545,7 +13545,7 @@
       <item path="ChaosMetadataService/persistence/data_access/ControlUnitDataAccess.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -13558,7 +13558,7 @@
       <item path="ChaosMetadataService/persistence/data_access/DataServiceDataAccess.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -13571,7 +13571,7 @@
       <item path="ChaosMetadataService/persistence/data_access/NodeDataAccess.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -13615,7 +13615,7 @@
       <item path="ChaosMetadataService/persistence/data_access/UtilityDataAccess.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -13628,7 +13628,7 @@
       <item path="ChaosMetadataService/persistence/mongodb/MongoDBControlUnitDataAccess.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -13641,7 +13641,7 @@
       <item path="ChaosMetadataService/persistence/mongodb/MongoDBDataServiceDataAccess.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -13654,7 +13654,7 @@
       <item path="ChaosMetadataService/persistence/mongodb/MongoDBNodeDataAccess.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -13711,7 +13711,7 @@
       <item path="ChaosMetadataService/persistence/mongodb/MongoDBUtilityDataAccess.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -13724,7 +13724,7 @@
       <item path="ChaosMetadataServiceClient/ChaosMetadataServiceClient.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="7">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -14240,7 +14240,16 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="6">
+        <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ASIO_DISABLE_EVENTFD</Elem>
+            <Elem>NDEBUG</Elem>
+            <Elem>__BSON_USEMEMCPY__</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/action/ActionExecutionSafetySystem.cpp"
@@ -14248,20 +14257,45 @@
             tool="1"
             flavor2="4">
         <ccTool flags="6">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>DEBUG=1</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/action/DeclareAction.cpp"
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="6">
+        <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ASIO_DISABLE_EVENTFD</Elem>
+            <Elem>NDEBUG</Elem>
+            <Elem>__BSON_USEMEMCPY__</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/action/DomainActions.cpp"
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="6">
+        <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ASIO_DISABLE_EVENTFD</Elem>
+            <Elem>NDEBUG</Elem>
+            <Elem>__BSON_USEMEMCPY__</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/action/EventAction.cpp"
@@ -14269,6 +14303,13 @@
             tool="1"
             flavor2="4">
         <ccTool flags="6">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>DEBUG=1</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/async_central/AsyncCentralManager.cpp"
@@ -14281,7 +14322,7 @@
       <item path="chaos/common/async_central/TimerHandler.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
         </ccTool>
       </item>
@@ -14312,7 +14353,7 @@
       <item path="chaos/common/batch_command/BatchCommandDescription.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
           <incDir>
             <pElem>.</pElem>
@@ -14402,17 +14443,20 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="6">
+        <ccTool flags="3">
           <incDir>
             <pElem>.</pElem>
             <pElem>../..</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
             <pElem>bin/bin_common</pElem>
           </incDir>
           <preprocessorList>
             <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>BOOST_ASIO_DISABLE_EVENTFD</Elem>
             <Elem>CHAOS</Elem>
-            <Elem>DEBUG=1</Elem>
+            <Elem>DEBUG</Elem>
+            <Elem>NDEBUG</Elem>
+            <Elem>__BSON_USEMEMCPY__</Elem>
             <Elem>chaos_common_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -14453,9 +14497,11 @@
           </incDir>
           <preprocessorList>
             <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>BOOST_ASIO_DISABLE_EVENTFD</Elem>
             <Elem>CHAOS</Elem>
             <Elem>DEBUG</Elem>
             <Elem>NDEBUG</Elem>
+            <Elem>__BSON_USEMEMCPY__</Elem>
             <Elem>chaos_common_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -14903,7 +14949,7 @@
       <item path="chaos/common/direct_io/DirectIOClientConnectionMetricCollector.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
           <incDir>
             <pElem>.</pElem>
@@ -14922,7 +14968,7 @@
       <item path="chaos/common/direct_io/DirectIOClientConnectionSharedMetricIO.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
           <incDir>
             <pElem>.</pElem>
@@ -14960,7 +15006,7 @@
       <item path="chaos/common/direct_io/DirectIODispatcherMetricCollector.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
           <incDir>
             <pElem>.</pElem>
@@ -15691,14 +15737,14 @@
             ex="false"
             tool="1"
             flavor2="0">
-        <ccTool flags="6">
+        <ccTool flags="3">
         </ccTool>
       </item>
       <item path="chaos/common/healt_system/HealtMetric.cpp"
             ex="false"
             tool="1"
             flavor2="0">
-        <ccTool flags="6">
+        <ccTool flags="3">
         </ccTool>
       </item>
       <item path="chaos/common/io/IODataDriver.cpp" ex="false" tool="1" flavor2="4">
@@ -15724,7 +15770,7 @@
         </ccTool>
       </item>
       <item path="chaos/common/log/LogManager.cpp" ex="false" tool="1" flavor2="4">
-        <ccTool flags="6">
+        <ccTool flags="3">
         </ccTool>
       </item>
       <item path="chaos/common/memory/ManagedMemory.cpp"
@@ -15758,28 +15804,28 @@
       <item path="chaos/common/message/MessageRequestFuture.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
         </ccTool>
       </item>
       <item path="chaos/common/message/MultiAddressMessageChannel.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
         </ccTool>
       </item>
       <item path="chaos/common/message/MultiAddressMessageRequestFuture.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
         </ccTool>
       </item>
       <item path="chaos/common/message/NodeMessageChannel.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
         </ccTool>
       </item>
@@ -15793,42 +15839,42 @@
       <item path="chaos/common/metric/AbstractMetricBackend.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
         </ccTool>
       </item>
       <item path="chaos/common/metric/CSVFileMetricBackend.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
         </ccTool>
       </item>
       <item path="chaos/common/metric/ConsoleMetricBackend.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
         </ccTool>
       </item>
       <item path="chaos/common/metric/FileMetricBackend.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
         </ccTool>
       </item>
       <item path="chaos/common/metric/MetricCollector.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
         </ccTool>
       </item>
       <item path="chaos/common/metric/MetricCollectorIO.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
         </ccTool>
       </item>
@@ -15924,7 +15970,7 @@
       <item path="chaos/common/rpc/RpcClientMetricCollector.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
           <incDir>
             <pElem>.</pElem>
@@ -15959,7 +16005,7 @@
       <item path="chaos/common/rpc/RpcServerMetricCollector.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="6">
           <incDir>
             <pElem>.</pElem>
@@ -16579,7 +16625,7 @@
       <item path="chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
@@ -16595,7 +16641,7 @@
       <item path="chaos_service_common/persistence/mongodb/MongoDBAccessor.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>ChaosMetadataService</pElem>
@@ -16607,7 +16653,7 @@
       <item path="chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="0">
           <incDir>
             <pElem>ChaosDataService</pElem>
@@ -62581,13 +62627,11 @@
           <incDir>
             <pElem>.</pElem>
             <pElem>../..</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
-            <pElem>bin/bin_common</pElem>
           </incDir>
           <preprocessorList>
             <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>CHAOS</Elem>
-            <Elem>DEBUG=1</Elem>
+            <Elem>DEBUG</Elem>
             <Elem>chaos_common_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -62794,13 +62838,16 @@
           <incDir>
             <pElem>.</pElem>
             <pElem>../..</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
             <pElem>bin/bin_common</pElem>
           </incDir>
           <preprocessorList>
             <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>BOOST_ASIO_DISABLE_EVENTFD</Elem>
             <Elem>CHAOS</Elem>
-            <Elem>DEBUG=1</Elem>
+            <Elem>DEBUG</Elem>
+            <Elem>NDEBUG</Elem>
+            <Elem>__BSON_USEMEMCPY__</Elem>
             <Elem>chaos_common_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -62826,13 +62873,16 @@
           <incDir>
             <pElem>.</pElem>
             <pElem>../..</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
             <pElem>bin/bin_common</pElem>
           </incDir>
           <preprocessorList>
             <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>BOOST_ASIO_DISABLE_EVENTFD</Elem>
             <Elem>CHAOS</Elem>
-            <Elem>DEBUG=1</Elem>
+            <Elem>DEBUG</Elem>
+            <Elem>NDEBUG</Elem>
+            <Elem>__BSON_USEMEMCPY__</Elem>
             <Elem>chaos_common_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>

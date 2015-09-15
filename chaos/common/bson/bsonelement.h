@@ -34,10 +34,12 @@ namespace bson {
 }
 
 template <typename T,typename Y>
-T portable_cast(Y*pnt){
+T portable_cast(Y pnt){
 #ifdef __BSON_USEMEMCPY__
     T tmp;
+    massert(-180970,"Invalid cast with source pointer null",pnt!=NULL);
      memcpy(&tmp,(void*)pnt,sizeof(T));
+    // std::cerr<< __func__ <<" conversion of:0x"<<std::hex<<(unsigned long)pnt<<" result:"<<tmp<< std::endl;
      return tmp;
 #else
      return *reinterpret_cast< const T * >(pnt);
@@ -114,7 +116,7 @@ namespace bson {
         operator std::string() const { return toString(); }
 
         /** Returns the type of the element */
-        BSONType type() const { return (BSONType) *reinterpret_cast< const signed char * >(data); }
+        BSONType type() const { return ( BSONType)portable_cast<  signed char  >(data); }
 
         /** retrieve a field within this element
             throws exception if *this is not an embedded object
@@ -203,7 +205,7 @@ namespace bson {
         bool isNumber() const;
 
         /** Return double value for this field. MUST be NumberDouble type. */
-        double _numberDouble() const {return (reinterpret_cast< const PackedDouble* >( value() ))->d; }
+        double _numberDouble() const {return (portable_cast<  bool>( value() )); }
         /** Return int value for this field. MUST be NumberInt type. */
         int _numberInt() const {
             return portable_cast<int>(value());
@@ -517,7 +519,7 @@ namespace bson {
         case NumberLong:
             return (portable_cast< long long >( value() ) != 0);
         case NumberDouble:
-            return (reinterpret_cast < const PackedDouble* >(value ()))->d != 0;
+            return (portable_cast < double >(value ()))!= 0;
         case NumberInt:
             return(portable_cast< int >( value() ) != 0);
         case bson::Bool:

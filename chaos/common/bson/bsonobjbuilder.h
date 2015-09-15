@@ -689,7 +689,11 @@ namespace bson {
             _b.appendNum((char) EOO);
             char *data = _b.buf() + _offset;
             int size = _b.len() - _offset;
+#ifdef __BSON_USEMEMCPY__
+            memcpy((void*)data,(void*)&size,sizeof(int));
+#else
             *((int*)data) = size;
+#endif
             if ( _tracker )
                 _tracker->got( size );
             return data;

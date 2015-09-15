@@ -1528,13 +1528,54 @@
       "cu_desc": []
     },
     {
-      "unit_server_alias": "LNF",
+      "unit_server_alias": "LNF/TEST/CRIO0",
       "private_key": null,
       "public_key": null,
       "cu_desc": [
         {
-          "unit_server_alias": "LNF",
-          "cu_id": "LNF/CRIO",
+          "unit_server_alias": "LNF/TEST/CRIO0",
+          "cu_id": "LNF/TEST/CRIO0/SUPPLY",
+          "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
+          "cu_param": "",
+          "auto_load": true,
+          "DriverDescription": [
+            {
+              "DriverDescriptionName": "GenericPowerSupplyDD",
+              "DriverDescriptionVersion": "1.0.0",
+              "DriverDescriptionInitParam": "SimPSupply:/dev/ttyXX,11,100:200,200:300,700:300"
+            }
+          ],
+          "AttrDesc": [
+            {
+              "ds_attr_name": "max_current",
+              "ds_max_range": "",
+              "ds_min_range": "",
+              "ds_default_value": "700"
+            },
+            {
+              "ds_attr_name": "slope_down",
+              "ds_max_range": "10",
+              "ds_min_range": "1",
+              "ds_default_value": "1"
+            },
+            {
+              "ds_attr_name": "slope_up",
+              "ds_max_range": "10",
+              "ds_min_range": "1",
+              "ds_default_value": "1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "unit_server_alias": "TEST_US",
+      "private_key": null,
+      "public_key": null,
+      "cu_desc": [
+        {
+          "unit_server_alias": "TEST_US",
+          "cu_id": "TEST_US/SUPPLY",
           "cu_type": "::driver::powersupply::SCPowerSupplyControlUnit",
           "cu_param": "",
           "auto_load": true,

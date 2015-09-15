@@ -560,7 +560,7 @@ dodouble:
         break;
         default: {
             StringBuilder ss;
-            ss << "BSONElement: bad type " << (int) type();
+            ss << "BSONElement: bad type " <<(int) type();
             std::string msg = ss.str();
             massert( 13655 , msg.c_str(),false);
         }
