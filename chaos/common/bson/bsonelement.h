@@ -205,7 +205,7 @@ namespace bson {
         bool isNumber() const;
 
         /** Return double value for this field. MUST be NumberDouble type. */
-        double _numberDouble() const {return (portable_cast<  double>( value() )); }
+        double _numberDouble() const {return (portable_cast<  PackedDouble>( value() ).d); }
         /** Return int value for this field. MUST be NumberInt type. */
         int _numberInt() const {
             return portable_cast<int>(value());
@@ -519,7 +519,7 @@ namespace bson {
         case NumberLong:
             return (portable_cast< long long >( value() ) != 0);
         case NumberDouble:
-            return (portable_cast < double >(value ()))!= 0;
+            return (portable_cast < PackedDouble >(value ()).d!= 0);
         case NumberInt:
             return(portable_cast< int >( value() ) != 0);
         case bson::Bool:

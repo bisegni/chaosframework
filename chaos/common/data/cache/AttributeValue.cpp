@@ -21,7 +21,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValue.h>
-
+#include <assert.h>
 #include <boost/lexical_cast.hpp>
 
 #define AVLAPP_ LAPP_ << "[AttributeValue -" << "] - "
@@ -44,9 +44,9 @@ name(_name),
 index(_index),
 type(_type) {
 	if(size) {
-		value_buffer = std::calloc(size, 1);
-		if(!value_buffer) {
-			AVLERR_ << "error allcoating current_value memory";
+		if(!setNewSize(size)) {
+			AVLERR_ << "error allocating current_value memory";
+                        assert(0);
 		}
 	}
 }
@@ -82,17 +82,13 @@ bool AttributeValue::setValue(const void* value_ptr,
  ---------------------------------------------------------------------------------*/
 bool AttributeValue::setNewSize(uint32_t _new_size) {
 	bool result = true;
-	switch(type) {
-		case chaos::DataType::TYPE_BYTEARRAY:
-		case chaos::DataType::TYPE_STRING:
-			value_buffer = (double*)realloc(value_buffer, (size = _new_size)*2);
-			if((result = (value_buffer != NULL))) {
-				std::memset(value_buffer, 0, size);
-			}
-			break;
-		default:
-			break;
-	}
+        // generate aligned memory allocations
+        size = _new_size + (4 - (_new_size%4));
+        value_buffer = (void*)realloc(value_buffer, size );
+        if((result = (value_buffer != NULL))) {
+               // std::memset(value_buffer, 0, size);
+        }
+		
 	return result;
 }
 
