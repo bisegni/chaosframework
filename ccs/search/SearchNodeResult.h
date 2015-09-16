@@ -20,10 +20,10 @@ class SearchNodeResult :
     QString tag;
     int current_page;
     int current_page_length;
+    uint64_t page_first_element_seq;
+    uint64_t page_last_element_seq;
     bool selection_mode;
 
-    //query proxy
-    chaos::metadata_service_client::api_proxy::node::NodeSearch *ns_proxy;
     //api has ben called successfully
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
