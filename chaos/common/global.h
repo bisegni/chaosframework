@@ -51,6 +51,19 @@
     BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
 #endif 
 
+#define CHAOS_BOOST_LOCK_EXCEPTION_CACTH(exception_name, exception_code)\
+catch(boost::exception_detail::error_info_injector<boost::io::too_many_args>& exception_name){\
+exception_code\
+}
+
+#define CHAOS_BOOST_LOCK_WRAP_EXCEPTION(code, return_code)\
+try{\
+code\
+}catch(boost::exception_detail::error_info_injector<boost::io::too_many_args>& lock_exception){\
+return_code\
+}
+
+
 #define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLFatal)
 #define LDBG_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLDebug)
 #define LWRN_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLWarning)
@@ -69,7 +82,7 @@ log << "("<<num<<") " << msg;\
 throw chaos::CException(num, msg, __PRETTY_FUNCTION__);
 
 #define LOG_AND_TROW_FORMATTED(log, num, f, p)\
-LOG_AND_TROW(log, num, boost::str(boost::format(f)p))
+CHAOS_BOOST_LOCK_WRAP_EXCEPTION( LOG_AND_TROW(log, num, boost::str(boost::format(f)p)), log << lock_exception.what();)
 
 #define CHAOS_LASSERT_EXCEPTION(assertion, log, num, msg)\
 if(!assertion) {LOG_AND_TROW(log, num, msg)}
@@ -173,6 +186,7 @@ l\
 }catch(...){\
 	x\
 }
+
 /*
  Abstraction for the server delegator
  */
