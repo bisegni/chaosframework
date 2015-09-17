@@ -42,27 +42,28 @@ MessageRequestFuture::~MessageRequestFuture() {
 }
 
 bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
+    bool result = false;
     try{
         if(request_result.get()) {
-            return true;
-        }
-        //! whait for result
-        if(timeout_in_milliseconds >= 0) {
-            future.wait_for(boost::chrono::milliseconds(timeout_in_milliseconds));
-        } else {
-            future.wait();
-        }
-        
-        if(future.is_ready() &&
-           future.has_value()) {
-            MRF_PARSE_CDWPTR_RESULT(future.get())
-            return true;
-        } else {
-            return false;
+            result = true;
+        } else{
+            //! whait for result
+            if (timeout_in_milliseconds >= 0){
+                future.wait_for(boost::chrono::milliseconds(timeout_in_milliseconds));
+            }else{
+                future.wait();
+            }
+
+            if (future.is_ready() &&
+                future.has_value()){
+                MRF_PARSE_CDWPTR_RESULT(future.get())
+                result = true;
+            }
         }
     } catch (boost::broken_promise &e) {
         MRF_ERR << "Broken pormisess error:" << e.what();
     }
+    return result;
 }
 
 //! try to get the result waiting for a determinate period of time

@@ -308,7 +308,7 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
     //compose query
     
     //filter on sequence
-    bson_find_and << BSON( "seq" << BSON("$gte"<<last_unique_id));
+    bson_find_and << BSON( "seq" << BSON("$gt"<<last_unique_id));
     
     //filter on type
     if(search_type>0) {

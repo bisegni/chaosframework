@@ -61,7 +61,16 @@
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="QLineEdit" name="lineEditSearchCriteria"/>
+        <widget class="QLineEdit" name="lineEditSearchCriteria">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="placeholderText">
+          <string>search string</string>
+         </property>
+        </widget>
        </item>
        <item row="0" column="4">
         <widget class="QPushButton" name="pushButtonStartSearch">
@@ -74,7 +83,7 @@
           <string>Search</string>
          </property>
          <property name="default">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -109,8 +118,14 @@
        <attribute name="horizontalHeaderMinimumSectionSize">
         <number>20</number>
        </attribute>
+       <attribute name="verticalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
        <attribute name="verticalHeaderDefaultSectionSize">
         <number>20</number>
+       </attribute>
+       <attribute name="verticalHeaderHighlightSections">
+        <bool>false</bool>
        </attribute>
       </widget>
      </item>
@@ -119,36 +134,6 @@
        <property name="spacing">
         <number>4</number>
        </property>
-       <item>
-        <widget class="QPushButton" name="pushButtonPrevPage">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>&lt;&lt;</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonNextPage">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>&gt;&gt;</string>
-         </property>
-        </widget>
-       </item>
        <item>
         <spacer name="horizontalSpacer_2">
          <property name="orientation">
@@ -183,6 +168,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineEditSearchCriteria</tabstop>
+  <tabstop>pushButtonStartSearch</tabstop>
+  <tabstop>comboBoxSearchType</tabstop>
+  <tabstop>tableViewResult</tabstop>
+  <tabstop>pushButtonActionOnSelected</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
