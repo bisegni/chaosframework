@@ -15,15 +15,18 @@ using namespace chaos::metadata_service_client::api_proxy::node;
 SearchNodeResult::SearchNodeResult(bool _selection_mode,
                                    const QString &_tag) :
     PresenterWidget(NULL),
-    current_page(0),
-    current_page_length(30),
-    page_first_element_seq(0),
-    page_last_element_seq(0),
+    current_page_length(200),
     selection_mode(_selection_mode),
     tag(_tag),
-    ui(new Ui::SearchNodeResult)
-{
+    ui(new Ui::SearchNodeResult) {
     ui->setupUi(this);
+
+    ui->lineEditSearchCriteria->setFocus();
+
+    search_timer.setSingleShot(true);
+    connect(&search_timer,
+            SIGNAL(timeout()),
+            SLOT(on_pushButtonStartSearch_clicked()));
 }
 
 SearchNodeResult::~SearchNodeResult()
@@ -86,16 +89,7 @@ void SearchNodeResult::onApiDone(const QString& tag,
             std::auto_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
 
             if(arr->size()) {
-                //we have values
-
                 //get first element seq
-
-                auto_ptr<CDataWrapper> first_node(arr->getCDataWrapperElementAtIndex(0));
-                page_first_element_seq = first_node->hasKey("seq")?first_node->getUInt64Value("seq"):page_first_element_seq;
-
-                auto_ptr<CDataWrapper> last_node(arr->getCDataWrapperElementAtIndex(arr->size()));
-                page_last_element_seq = last_node->hasKey("seq")?last_node->getUInt64Value("seq"):page_last_element_seq;
-
                 for(int i = 0;
                     i < arr->size();
                     i++) {
@@ -116,22 +110,6 @@ void SearchNodeResult::onApiDone(const QString& tag,
             qDebug() << "No data found";
         }
     }
-}
-
-void SearchNodeResult::on_pushButtonNextPage_clicked()
-{
-    qDebug() << "Fetch next page";
-    //submit api
-    submitApiResult("search_result",
-                    GET_CHAOS_API_PTR(node::NodeSearch)->execute(ui->lineEditSearchCriteria->text().toStdString(),
-                                                                 ui->comboBoxSearchType->currentIndex(),
-                                                                 page_last_element_seq,
-                                                                 current_page_length));
-}
-
-void SearchNodeResult::on_pushButtonPrevPage_clicked()
-{
-    qDebug() << "Fetch prev";
 }
 
 void SearchNodeResult::on_tableViewResult_clicked(const QModelIndex &index)
@@ -206,5 +184,17 @@ void SearchNodeResult::on_tableViewResult_doubleClicked(const QModelIndex &index
             qDebug() << "Open control unit editor for" << node_uid->text();
             addWidgetToPresenter(new ControlUnitEditor(node_uid->text()));
         }
+    }
+}
+
+void SearchNodeResult::on_lineEditSearchCriteria_textEdited(const QString &search_string) {
+    qDebug() << "on_lineEditSearchCriteria_textEdited:" << search_string;
+    if(search_string.size()) {
+        //restart timer
+        search_timer.start(500);
+    } else {
+        //if no string we not perform the search
+        search_timer.stop();
+        table_model->setRowCount(0);
     }
 }

@@ -35,7 +35,7 @@
  create a return a BSON object with a query expresion with a regular expression like:
  { field_name: {$regex:regex}}
  */
-#define MONGODB_REGEX_ON_FILED(field_name, regex) BSON(field_name << BSON("$regex" << regex))
+#define MONGODB_REGEX_ON_FILED(field_name, regex) BSON(field_name << BSON("$regex" << regex <<"$options" << "-i"))
 
 //copy chaos data wrapper key into the bson obj builder
 #define MDB_COPY_STRING_CDWKEY_TO_BUILDER(b, o, k)\
