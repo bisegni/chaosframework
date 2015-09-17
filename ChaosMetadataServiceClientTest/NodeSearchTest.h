@@ -22,6 +22,7 @@
 #define CHAOS_NODESEARCH_H
 
 #include <string>
+#include <stdint.h>
 
 class NodeSearchTest {
   uint32_t page_length;

@@ -18,10 +18,11 @@
  *    	limitations under the License.
  */
 
-#include <iostream>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+
+#include <iostream>
 
 #include "NodeMonitor.h"
 #include "NodeSearchTest.h"
