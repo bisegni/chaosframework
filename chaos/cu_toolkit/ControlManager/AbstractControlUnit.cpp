@@ -1011,22 +1011,23 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
 
         switch(value_set->type) {
             case DataType::TYPE_BOOLEAN:
-                output_attribute_dataset->addBoolValue(value_set->name.c_str(), *value_set->getValuePtr<bool>());
+                output_attribute_dataset->addBoolValue(value_set->name, *value_set->getValuePtr<bool>());
                 break;
             case DataType::TYPE_INT32:
-                output_attribute_dataset->addInt32Value(value_set->name.c_str(), *value_set->getValuePtr<int32_t>());
+                output_attribute_dataset->addInt32Value(value_set->name, *value_set->getValuePtr<int32_t>());
                 break;
             case DataType::TYPE_INT64:
-                output_attribute_dataset->addInt64Value(value_set->name.c_str(), *value_set->getValuePtr<int64_t>());
+                output_attribute_dataset->addInt64Value(value_set->name, *value_set->getValuePtr<int64_t>());
                 break;
             case DataType::TYPE_DOUBLE:
-                output_attribute_dataset->addDoubleValue(value_set->name.c_str(), *value_set->getValuePtr<double>());
+                output_attribute_dataset->addDoubleValue(value_set->name, *value_set->getValuePtr<double>());
                 break;
             case DataType::TYPE_STRING:
-                output_attribute_dataset->addStringValue(value_set->name.c_str(), value_set->getValuePtr<const char>());
+                DEBUG_CODE(ACULAPP_ << value_set->name<<"-"<<value_set->getValuePtr<const char>();)
+                output_attribute_dataset->addStringValue(value_set->name, value_set->getValuePtr<const char>());
                 break;
             case DataType::TYPE_BYTEARRAY:
-                output_attribute_dataset->addBinaryValue(value_set->name.c_str(), value_set->getValuePtr<char>(), value_set->size);
+                output_attribute_dataset->addBinaryValue(value_set->name, value_set->getValuePtr<char>(), value_set->size);
                 break;
         }
     }
@@ -1108,22 +1109,23 @@ void AbstractControlUnit::fillCDatawrapperWithCachedValue(std::vector<AttributeV
         
         switch((*it)->type) {
             case DataType::TYPE_BOOLEAN:
-                dataset.addBoolValue((*it)->name.c_str(), *(*it)->getValuePtr<bool>());
+                dataset.addBoolValue((*it)->name, *(*it)->getValuePtr<bool>());
                 break;
             case DataType::TYPE_INT32:
-                dataset.addInt32Value((*it)->name.c_str(), *(*it)->getValuePtr<int32_t>());
+                dataset.addInt32Value((*it)->name, *(*it)->getValuePtr<int32_t>());
                 break;
             case DataType::TYPE_INT64:
-                dataset.addInt64Value((*it)->name.c_str(), *(*it)->getValuePtr<int64_t>());
+                dataset.addInt64Value((*it)->name, *(*it)->getValuePtr<int64_t>());
                 break;
             case DataType::TYPE_DOUBLE:
-                dataset.addDoubleValue((*it)->name.c_str(), *(*it)->getValuePtr<double>());
+                dataset.addDoubleValue((*it)->name, *(*it)->getValuePtr<double>());
                 break;
             case DataType::TYPE_STRING:
-                dataset.addStringValue((*it)->name.c_str(), (*it)->getValuePtr<const char>());
+                DEBUG_CODE(ACULAPP_ << (*it)->name<<"-"<<(*it)->getValuePtr<const char>();)
+                dataset.addStringValue((*it)->name, (*it)->getValuePtr<const char>());
                 break;
             case DataType::TYPE_BYTEARRAY:
-                dataset.addBinaryValue((*it)->name.c_str(), (*it)->getValuePtr<char>(), (*it)->size);
+                dataset.addBinaryValue((*it)->name, (*it)->getValuePtr<char>(), (*it)->size);
                 break;
         }
     }

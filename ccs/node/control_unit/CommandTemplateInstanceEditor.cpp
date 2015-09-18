@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QLineEdit>
+#include <QIntValidator>
 
 const QString TAG_CMD_FETCH_TEMPLATE_AND_COMMAND = QString("cmd_fetch_template_command");
 const QString TAG_CMD_INSTANCE_SUBMIT = QString("cmd_instance_sumission");
@@ -22,35 +23,52 @@ CommandTemplateInstanceEditor::CommandTemplateInstanceEditor(const QString& _nod
     command_uid(_command_uid),
     close_after_submition(false){
     ui->setupUi(this);
+    setFocusPolicy(Qt::StrongFocus);
+    QObject::installEventFilter(this);
+    ui->lineEditNumberofInstances->setValidator(new QIntValidator(1,1000));
+    ui->lineEditNumberofInstances->setVisible(false);
 }
 
 CommandTemplateInstanceEditor::~CommandTemplateInstanceEditor() {
     delete ui;
 }
 
-void CommandTemplateInstanceEditor::keyPressEvent(QKeyEvent *key_evt) {
-    switch(key_evt->key()) {
-    case Qt::Key_Control:
-        close_after_submition = true;
-        ui->pushButtonSubmitInstance->setText("Submit Instance and Close");
-        break;
-
-    default:
-        break;
+bool CommandTemplateInstanceEditor::eventFilter(QObject *object, QEvent *event) {
+    bool managed = false;
+    if (object == this) {
+        if(event->type() == QEvent::KeyPress){
+            QKeyEvent *key_evt = static_cast<QKeyEvent *>(event);
+            switch(key_evt->key()) {
+            case Qt::Key_Control:
+                close_after_submition = true;
+                ui->pushButtonSubmitInstance->setText("Submit Instance and Close");
+                managed = true;
+                break;
+            case Qt::Key_Alt:
+                ui->lineEditNumberofInstances->setVisible(true);
+                break;
+            default:
+                break;
+            }
+        } else if (event->type() == QEvent::KeyRelease) {
+            QKeyEvent *key_evt = static_cast<QKeyEvent *>(event);
+            switch(key_evt->key()) {
+            case Qt::Key_Control:
+                close_after_submition = false;
+                ui->pushButtonSubmitInstance->setText("Submit Instance");
+                managed = true;
+                break;
+            case Qt::Key_Alt:
+                ui->lineEditNumberofInstances->setVisible(false);
+                break;
+            default:
+                break;
+            }
+        }
     }
+    return managed;
 }
 
-void CommandTemplateInstanceEditor::keyReleaseEvent(QKeyEvent *key_evt) {
-    switch(key_evt->key()) {
-    case Qt::Key_Control:
-        close_after_submition = false;
-        ui->pushButtonSubmitInstance->setText("Submit Instance");
-        break;
-
-    default:
-        break;
-    }
-}
 void CommandTemplateInstanceEditor::initUI() {
     setTabTitle("Instance creation");
     ui->labelNodeUniqueID->setText(node_uid);
@@ -83,7 +101,7 @@ void CommandTemplateInstanceEditor::onApiDone(const QString& tag,
                              QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
     } else if(tag.compare(TAG_CMD_INSTANCE_SUBMIT) == 0) {
         //instance has bee saved so we can close the panel
-        closeTab();
+        if(close_after_submition) {closeTab();}
     }
 }
 

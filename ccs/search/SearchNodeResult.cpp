@@ -20,7 +20,7 @@ SearchNodeResult::SearchNodeResult(bool _selection_mode,
     tag(_tag),
     ui(new Ui::SearchNodeResult) {
     ui->setupUi(this);
-
+    setFocusPolicy(Qt::StrongFocus);
     ui->lineEditSearchCriteria->setFocus();
 
     search_timer.setSingleShot(true);

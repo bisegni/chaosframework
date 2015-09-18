@@ -180,8 +180,11 @@ bool AttributeCache::hasChanged() {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-bool AttributeCache::setNewSize(VariableIndexType attribute_index, uint32_t new_size) {
-	return mapAttributeIndex[attribute_index]->setNewSize(new_size);
+bool AttributeCache::setNewSize(VariableIndexType attribute_index,
+                                uint32_t new_size,
+                                bool clear_mem) {
+	return mapAttributeIndex[attribute_index]->setNewSize(new_size,
+                                                          clear_mem);
 }
 
 /*---------------------------------------------------------------------------------

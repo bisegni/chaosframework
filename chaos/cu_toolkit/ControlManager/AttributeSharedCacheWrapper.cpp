@@ -60,17 +60,23 @@ void AttributeSharedCacheWrapper::setOutputAttributeValue(VariableIndexType attr
 }
 
 bool AttributeSharedCacheWrapper::setOutputAttributeNewSize(const std::string& attribute_name,
-															uint32_t new_size) {
+															uint32_t new_size,
+                                                            bool clear_mem) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
 	AttributeCache& attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
-	return attribute_setting.setNewSize(attribute_setting.getIndexForName(attribute_name), new_size);
+	return attribute_setting.setNewSize(attribute_setting.getIndexForName(attribute_name),
+                                        new_size,
+                                        clear_mem);
 }
 
 bool AttributeSharedCacheWrapper::setOutputAttributeNewSize(VariableIndexType attribute_index,
-															uint32_t new_size) {
+                                                            uint32_t new_size,
+                                                            bool clear_mem) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
 	AttributeCache& attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
-	return attribute_setting.setNewSize(attribute_index, new_size);
+	return attribute_setting.setNewSize(attribute_index,
+                                        new_size,
+                                        clear_mem);
 }
 
 boost::shared_ptr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getLockOnOutputAttributeCache(bool write_lock) {

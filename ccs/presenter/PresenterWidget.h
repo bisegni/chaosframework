@@ -23,8 +23,7 @@
 class CommandPresenter;
 
 class PresenterWidget:
-        public QWidget
-{
+        public QWidget {
     Q_OBJECT
     friend class CommandPresenter;
 

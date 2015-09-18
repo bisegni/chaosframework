@@ -102,7 +102,9 @@ namespace chaos{
 					bool hasChanged();
 					
 					//! set new size on attribute by index
-					bool setNewSize(VariableIndexType attribute_index, uint32_t new_size);
+					bool setNewSize(VariableIndexType attribute_index,
+                                    uint32_t new_size,
+                                    bool clear_mem = false);
 					
 					//! check if an attribute is present
 					bool hasAttribute(const std::string& attribute_name);

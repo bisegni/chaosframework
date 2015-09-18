@@ -71,7 +71,8 @@ namespace chaos{
 					~AttributeValue();
 					
 					//! change the size of the attribute value
-					bool setNewSize(uint32_t _new_size);
+					bool setNewSize(uint32_t _new_size,
+                                    bool clear_mem = false);
 					
 					//! set a new value in buffer
 					/*!

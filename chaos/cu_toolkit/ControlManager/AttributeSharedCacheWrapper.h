@@ -155,11 +155,13 @@ namespace chaos{
 				
 				//!
 				bool setOutputAttributeNewSize(const std::string& attribute_name,
-											   uint32_t new_size);
+											   uint32_t new_size,
+                                               bool clear_mem = false);
 				
 				//!
 				bool setOutputAttributeNewSize(VariableIndexType attribute_index,
-											   uint32_t new_size);
+											   uint32_t new_size,
+                                               bool clear_mem = false);
 				
 				//!
 				boost::shared_ptr<SharedCacheLockDomain> getLockOnOutputAttributeCache(bool write_lock = true);
