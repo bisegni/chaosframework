@@ -27,7 +27,7 @@ using namespace chaos::common::batch_command;
 using namespace chaos::cu::control_manager::slow_command;
 using namespace chaos::cu::control_manager::slow_command::command;
 
-#define SCWC_INFO INFO_LOG(TestCorrelatingCommand) << "[" <<getDeviceID() << " - " << getUID()<< "] "
+#define SCWC_INFO INFO_LOG(SCWaitCommand) << "[" <<getDeviceID() << " - " << getUID()<< "] "
 
 #define SCWaitCommand_DELAY_KEY "delay"
 
@@ -44,7 +44,8 @@ BATCH_COMMAND_CLOSE_DESCRIPTION()
 
 // return the implemented handler
 uint8_t SCWaitCommand::implementedHandler() {
-    return  HandlerType::HT_Set;
+    return  HandlerType::HT_Set |
+    HandlerType::HT_Correlation;
 }
 
 // Start the command execution
@@ -60,7 +61,7 @@ void SCWaitCommand::setHandler(CDataWrapper *data) {
     }
     
     uint32_t delay = data->getUInt32Value(SCWaitCommand_DELAY_KEY);
-    setFeatures(features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)(delay*1000));
+    setFeatures(features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)delay);
     DEBUG_CODE(SCWC_INFO << "timeout set to " << delay << " milliseconds";)
 }
 

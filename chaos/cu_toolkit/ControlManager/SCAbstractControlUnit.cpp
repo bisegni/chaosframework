@@ -251,6 +251,11 @@ void SCAbstractControlUnit::submitSlowCommand(const std::string command_alias,
 CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
     uint64_t command_id =0;
     std::auto_ptr<CDataWrapper> result_for_command;
+    
+    //cal first the superclass method because the datasetAttributeValues is not detached
+    CDataWrapper *result = AbstractControlUnit::setDatasetAttribute(datasetAttributeValues, detachParam);
+    
+    //check if we have a command
     if(datasetAttributeValues->hasKey(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS)) {
         CHAOS_ASSERT(slow_command_executor)
         std::string command_alias = datasetAttributeValues->getStringValue(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS);
@@ -267,7 +272,7 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
         if(attr_value) {
             std::string cmd_param = datasetAttributeValues->getJSONString();
             //add new size
-            attr_value->setNewSize((uint32_t)cmd_param.size());
+            attr_value->setNewSize((uint32_t)cmd_param.size()+1, true);
             
             //set the value without notify because command value are managed internally only
             attr_value->setValue(cmd_param.c_str(), (uint32_t)cmd_param.size(), true);
@@ -275,15 +280,12 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
             //push input dataset change
             pushInputDataset();
         }
-        //construct the result
-        result_for_command.reset(new CDataWrapper());
-        result_for_command->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
-    }
-    CDataWrapper *result = AbstractControlUnit::setDatasetAttribute(datasetAttributeValues, detachParam);
-    if(result) {
-        result_for_command->copyKeyTo(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, *result);
-    } else {
-        result = result_for_command.release();
+        //construct the result if we don't already have it
+        if(!result) {
+            result = new CDataWrapper();
+        }
+        //add command id into the result
+        result->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
     }
     return result;
 }
