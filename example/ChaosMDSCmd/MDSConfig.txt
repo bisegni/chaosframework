@@ -1927,6 +1927,30 @@
         }
       ]
     },
+{
+
+
+      "unit_server_alias": "ACCUMULATOR/BPM",
+      "private_key": null,
+      "public_key": null,
+      "cu_desc": [
+        {
+          "unit_server_alias": "ACCUMULATOR/BPM",
+          "cu_id": "ACCUMULATOR/BPM/BPMSYNC_SIM",
+          "cu_type": "BasicSensor",
+          "cu_param": "BPBA1001X BPBA1001Y BPSA1001X BPSA1001Y BPBA1002X BPBA1002Y BPBA2001X BPBA2001Y BPSA2001X BPSA2001Y BPBA2002X BPBA2002Y BPBA3001X BPBA3001Y BPSA3001X BPSA3001Y BPBA3002X BPBA3002Y BPBA4001X BPBA4001Y BPBA4002X BPBA4002Y BPSA4001X BPSA4001Y",
+          "auto_load": true,
+          "DriverDescription": [
+            {
+              "DriverDescriptionName": "VBPMSync",
+              "DriverDescriptionVersion": "1.0.0",
+              "DriverDescriptionInitParam": "/dev/ttyxx"
+            }
+          ],
+          "AttrDesc": []
+        }
+      ]
+    },
     {
       "unit_server_alias": "TEST_UNIT",
       "private_key": null,

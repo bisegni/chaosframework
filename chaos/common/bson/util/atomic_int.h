@@ -75,7 +75,7 @@ namespace bson {
         InterlockedAdd((volatile long *)&x,by);
     }
 # endif
-#elif GCC_VERSION >=40700 //defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
+#elif GCC_VERSION >=40700 && ! defined(DISABLE_COMPARE_AND_SWAP)
     // this is in GCC >= 4.1
     inline void AtomicUInt::set(unsigned newX) { __sync_synchronize(); x = newX; }
     AtomicUInt AtomicUInt::operator++() {
@@ -127,7 +127,7 @@ namespace bson {
     void AtomicUInt::signedAdd(int by) {
         atomic_int_helper(&x, by);
     }
-#elif defined(GCC_VERSION) && GCC_VERSION<40700 && GCC_VERSION >=40100
+#elif defined(GCC_VERSION) 
 
     // this is in GCC >= 4.1
     inline void AtomicUInt::set(unsigned newX) {__sync_synchronize(); x = newX; }
