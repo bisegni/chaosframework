@@ -44,7 +44,9 @@ BATCH_COMMAND_CLOSE_DESCRIPTION()
 
 // return the implemented handler
 uint8_t SCWaitCommand::implementedHandler() {
+    //we need to implements all handler because we need to pause all
     return  HandlerType::HT_Set |
+    HandlerType::HT_Acquisition |
     HandlerType::HT_Correlation;
 }
 
