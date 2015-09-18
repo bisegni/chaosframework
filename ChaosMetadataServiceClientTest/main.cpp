@@ -37,69 +37,69 @@ using namespace chaos::metadata_service_client::api_proxy::node;
 #define MSCT_ERR    INFO_LOG(MetadataServiceClientTest)
 
 int main(int argc, char *argv[]){
-  boost::thread_group tg;
-  uint32_t quantum_multiplier;
-  uint32_t wait_seconds;
-  uint32_t operation;
-  std::string device_id;
-
-  ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("op",
-																									  "Specify the operation to do[0-monitor a device id, 1-search node id]",
-																									  &operation);
-
-  ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>("device-id",
-																									  "Specify the device",
-																									  &device_id);
-
-  ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("qm",
-																								   "Specify the quantum multiplier to use",
-																								   1,
-																								   &quantum_multiplier);
-
-  ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("monitor-timeout",
-																								   "Specify the time that we need to monitor the device in seconds",
-																								   10
-																									   & wait_seconds);
-  try{
-
-	ChaosMetadataServiceClient::getInstance()->init(argc, argv);
-
-	ChaosMetadataServiceClient::getInstance()->start();
-
-	ChaosMetadataServiceClient::getInstance()->enableMonitor();
-
-	switch (operation){
-	  case 0:{
-
-		if (device_id.size() == 0) {LOG_AND_TROW(MSCT_ERR, -1, "Invalid device id")}
-		if (quantum_multiplier == 0) {LOG_AND_TROW(MSCT_ERR, -2, "Quantum multiplier can't be 0")}
-		//create monitor class
-		NodeMonitor nm(device_id,
-					   wait_seconds,
-					   quantum_multiplier);
-		//start and wait for monitor termination
-		nm.monitor_node();
-		break;
-	  }
-	  case 1:{
-		if(!ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->hasOption("device-id")){LOG_AND_TROW(MSCT_ERR, -3, "Device id is usede, in search, as search string")}
-		//create search node utility class
-		NodeSearchTest ns(5);
-
-		//try search and waith the termination
-		ns.testSearch(device_id);
-	  }
-	}
-
-	ChaosMetadataServiceClient::getInstance()->disableMonitor();
-	ChaosMetadataServiceClient::getInstance()->stop();
-	ChaosMetadataServiceClient::getInstance()->deinit();
-  }
-  catch (chaos::CException &ex){
-	DECODE_CHAOS_EXCEPTION(ex)
-  }
-  catch (...){
-	std::cerr << "Unrecognized error";
-  }
-  return 0;
+    boost::thread_group tg;
+    uint32_t quantum_multiplier;
+    uint32_t wait_seconds;
+    uint32_t operation;
+    std::string device_id;
+    
+    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("op",
+                                                                                                     "Specify the operation to do[0-monitor a device id, 1-search node id]",
+                                                                                                     &operation);
+    
+    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>("device-id",
+                                                                                                        "Specify the device",
+                                                                                                        &device_id);
+    
+    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("qm",
+                                                                                                     "Specify the quantum multiplier to use",
+                                                                                                     1,
+                                                                                                     &quantum_multiplier);
+    
+    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("monitor-timeout",
+                                                                                                     "Specify the time that we need to monitor the device in seconds",
+                                                                                                     10,
+                                                                                                     & wait_seconds);
+    try{
+        
+        ChaosMetadataServiceClient::getInstance()->init(argc, argv);
+        
+        ChaosMetadataServiceClient::getInstance()->start();
+        
+        ChaosMetadataServiceClient::getInstance()->enableMonitor();
+        
+        switch (operation){
+            case 0:{
+                
+                if (device_id.size() == 0) {LOG_AND_TROW(MSCT_ERR, -1, "Invalid device id")}
+                if (quantum_multiplier == 0) {LOG_AND_TROW(MSCT_ERR, -2, "Quantum multiplier can't be 0")}
+                //create monitor class
+                NodeMonitor nm(device_id,
+                               wait_seconds,
+                               quantum_multiplier);
+                //start and wait for monitor termination
+                nm.monitor_node();
+                break;
+            }
+            case 1:{
+                if(!ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->hasOption("device-id")){LOG_AND_TROW(MSCT_ERR, -3, "Device id is usede, in search, as search string")}
+                //create search node utility class
+                NodeSearchTest ns(5);
+                
+                //try search and waith the termination
+                ns.testSearch(device_id);
+            }
+        }
+        
+        ChaosMetadataServiceClient::getInstance()->disableMonitor();
+        ChaosMetadataServiceClient::getInstance()->stop();
+        ChaosMetadataServiceClient::getInstance()->deinit();
+    }
+    catch (chaos::CException &ex){
+        DECODE_CHAOS_EXCEPTION(ex)
+    }
+    catch (...){
+        std::cerr << "Unrecognized error";
+    }
+    return 0;
 }

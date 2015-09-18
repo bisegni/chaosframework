@@ -1,6 +1,7 @@
 #include "UnitServerEditor.h"
 #include "ui_UnitServerEditor.h"
 #include "../control_unit/ControUnitInstanceEditor.h"
+#include "../control_unit/ControlUnitEditor.h"
 #include <chaos/common/data/CDataWrapper.h>
 
 #include <QDebug>
@@ -89,8 +90,8 @@ void UnitServerEditor::initUI() {
     ui->chaosLabelHealtStatus->setLabelValueShowTrackStatus(true);
     ui->chaosLedIndicatorHealt->setNodeUniqueID(node_unique_id);
     connect(ui->chaosLedIndicatorHealt,
-            SIGNAL(changedOnlineStatus(QString,bool)),
-            SLOT(changedNodeOnlineStatus(QString,bool)));
+            SIGNAL(changedOnlineStatus(QString,CLedIndicatorHealt::AliveState)),
+            SLOT(changedNodeOnlineStatus(QString,CLedIndicatorHealt::AliveState)));
     //start monitor on chaos ui
     ui->chaosLabelHealtStatus->startMonitoring();
     ui->chaosLedIndicatorHealt->startMonitoring();
@@ -400,8 +401,14 @@ void UnitServerEditor::on_pushButtonRemoveCUType_clicked() {
 }
 
 void UnitServerEditor::changedNodeOnlineStatus(const QString& node_uid,
-                                               bool new_online_status) {
-    if(new_online_status) {
+                                               CLedIndicatorHealt::AliveState alive_state) {
+    if(alive_state == CLedIndicatorHealt::Online) {
         updateAll();
     }
+}
+
+void UnitServerEditor::on_tableView_doubleClicked(const QModelIndex &index) {
+    QStandardItem *node_uid = table_model->item(index.row(), 0);
+    qDebug() << "Open control unit editor for" << node_uid->text();
+    addWidgetToPresenter(new ControlUnitEditor(node_uid->text()));
 }

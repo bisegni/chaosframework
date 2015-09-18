@@ -28,6 +28,8 @@ protected:
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
     boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::TemplateSubmission> getTempalteSubmissionTask();
 
+    void keyPressEvent(QKeyEvent *key_evt);
+    void keyReleaseEvent(QKeyEvent *key_evt);
 private:
     //create the user interface for set the requested parameter
     void configureForTemplate(QSharedPointer<chaos::common::data::CDataWrapper> template_description,
@@ -38,6 +40,7 @@ private:
 
     QMap<QString, CDSAttrQLineEdit*> map_attr_name_value_editor;
     Ui::CommandTemplateInstanceEditor *ui;
+    bool close_after_submition;
 };
 
 #endif // COMMANDTEMPLATEINSTANCEEDITOR_H

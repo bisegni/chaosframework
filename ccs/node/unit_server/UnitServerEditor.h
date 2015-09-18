@@ -2,6 +2,7 @@
 #define UNITSERVEREDITOR_H
 
 #include "../../presenter/PresenterWidget.h"
+#include "../../widget/CLedIndicatorHealt.h"
 
 #include <QItemSelection>
 #include <QStringListModel>
@@ -63,7 +64,9 @@ private slots:
     void on_pushButtonRemoveCUType_clicked();
 
     void changedNodeOnlineStatus(const QString& node_uid,
-                                 bool new_online_status);
+                                 CLedIndicatorHealt::AliveState alive_state);
+    void on_tableView_doubleClicked(const QModelIndex &index);
+
 protected:
     void initUI();
     bool isClosing();

@@ -2,8 +2,9 @@
 #include "ui_CommandTemplateInstanceEditor.h"
 #include "../../widget/CDSAttrQLineEdit.h"
 
-#include <QLineEdit>
 #include <QDebug>
+#include <QKeyEvent>
+#include <QLineEdit>
 
 const QString TAG_CMD_FETCH_TEMPLATE_AND_COMMAND = QString("cmd_fetch_template_command");
 const QString TAG_CMD_INSTANCE_SUBMIT = QString("cmd_instance_sumission");
@@ -18,7 +19,8 @@ CommandTemplateInstanceEditor::CommandTemplateInstanceEditor(const QString& _nod
     ui(new Ui::CommandTemplateInstanceEditor),
     node_uid(_node_uid),
     template_name(_template_name),
-    command_uid(_command_uid) {
+    command_uid(_command_uid),
+    close_after_submition(false){
     ui->setupUi(this);
 }
 
@@ -26,6 +28,29 @@ CommandTemplateInstanceEditor::~CommandTemplateInstanceEditor() {
     delete ui;
 }
 
+void CommandTemplateInstanceEditor::keyPressEvent(QKeyEvent *key_evt) {
+    switch(key_evt->key()) {
+    case Qt::Key_Control:
+        close_after_submition = true;
+        ui->pushButtonSubmitInstance->setText("Submit Instance and Close");
+        break;
+
+    default:
+        break;
+    }
+}
+
+void CommandTemplateInstanceEditor::keyReleaseEvent(QKeyEvent *key_evt) {
+    switch(key_evt->key()) {
+    case Qt::Key_Control:
+        close_after_submition = false;
+        ui->pushButtonSubmitInstance->setText("Submit Instance");
+        break;
+
+    default:
+        break;
+    }
+}
 void CommandTemplateInstanceEditor::initUI() {
     setTabTitle("Instance creation");
     ui->labelNodeUniqueID->setText(node_uid);
@@ -55,7 +80,7 @@ void CommandTemplateInstanceEditor::onApiDone(const QString& tag,
         }
 
         configureForTemplate(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description")),
-                                QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
+                             QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
     } else if(tag.compare(TAG_CMD_INSTANCE_SUBMIT) == 0) {
         //instance has bee saved so we can close the panel
         closeTab();
