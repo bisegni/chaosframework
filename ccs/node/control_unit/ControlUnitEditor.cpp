@@ -41,7 +41,9 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     connect(ui->ledIndicatorHealtTSUnitServer,
             SIGNAL(changedOnlineStatus(QString, CLedIndicatorHealt::AliveState)),
             SLOT(changedOnlineStatus(QString, CLedIndicatorHealt::AliveState)));
-
+    connect(ui->labelControlUnitStatus,
+            SIGNAL(valueChanged(QString,QString)),
+            SLOT(controlUnitStatusChanged(QString,QString)));
 }
 
 ControlUnitEditor::~ControlUnitEditor() {
@@ -218,7 +220,8 @@ void ControlUnitEditor::changedOnlineStatus(const QString& node_uid,
     if(node_uid.compare(control_unit_unique_id) == 0) {
         if(node_alive_state == CLedIndicatorHealt::Online) {
             //Control unit has becomed online so we need to reload all information
-            updateAllControlUnitInfomration();
+            submitApiResult(QString(TAG_CU_INFO),
+                            GET_CHAOS_API_PTR(node::GetNodeDescription)->execute(control_unit_unique_id.toStdString()));
         }
         //state changed for control unit
         qDebug()<< "change cu online status for:" << node_uid << " as:" <<getStatusString(ui->ledIndicatorHealtTSControlUnit->getState());
@@ -227,6 +230,15 @@ void ControlUnitEditor::changedOnlineStatus(const QString& node_uid,
         //state changed for unit server
         qDebug()<< "change us online status for:" << node_uid << " as:" <<getStatusString(ui->ledIndicatorHealtTSUnitServer->getState());
         logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(ui->ledIndicatorHealtTSUnitServer->getState()));
+    }
+}
+
+void ControlUnitEditor::controlUnitStatusChanged(const QString& control_unit_id,
+                                                 const QString& status) {
+    qDebug()<< "changed status for:" << control_unit_id << " as:" <<status;
+    if(status.compare(tr(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT)) == 0) {
+        submitApiResult(QString(TAG_CU_DATASET),
+                        GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(control_unit_unique_id.toStdString()));
     }
 }
 

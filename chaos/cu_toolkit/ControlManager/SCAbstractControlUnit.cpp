@@ -18,10 +18,11 @@
  *    	limitations under the License.
  */
 
-#include <chaos/common/batch_command/BatchCommandConstants.h>
+#include <chaos/common/batch_command/BatchCommand.h>
 
 #include <chaos/cu_toolkit/ControlManager/SCAbstractControlUnit.h>
-#include <chaos/cu_toolkit/ControlManager/slow_command/command/SetAttributeCommand.h>
+
+#include <chaos/cu_toolkit/ControlManager/slow_command/command/SCWaitCommand.h>
 
 
 using namespace chaos;
@@ -29,7 +30,7 @@ using namespace chaos;
 using namespace chaos::cu;
 using namespace chaos::cu::control_manager;
 using namespace chaos::cu::control_manager::slow_command;
-
+using namespace chaos::cu::control_manager::slow_command::command;
 using namespace chaos::common::data;
 using namespace chaos::common::data::cache;
 using namespace chaos::common::utility;
@@ -95,6 +96,8 @@ void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configur
     //call superclass method
     AbstractControlUnit::_defineActionAndDataset(setup_configuration);
     //add the batch command description to the configuration
+    SCACU_LAPP_ << "Install default slow commands for node id:" << DatasetDB::getDeviceID();
+    installCommand(BATCH_COMMAND_GET_DESCRIPTION(SCWaitCommand), false);
     
     std::vector< boost::shared_ptr<BatchCommandDescription> > batch_command_description;
     slow_command_executor->getCommandsDescriptions(batch_command_description);
@@ -134,14 +137,11 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
     //init executor
     StartableService::initImplementation(slow_command_executor, (void*)NULL, "Slow Command Executor", __PRETTY_FUNCTION__);
     
-    SCACU_LAPP_ << "Install default slow command for device " << DatasetDB::getDeviceID();
-    installCommand<command::SetAttributeCommand>(chaos_batch::BatchCommandsKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
-    
-    SCACU_LAPP_ << "Initializing slow command sandbox for device " << DatasetDB::getDeviceID();
+    SCACU_LAPP_ << "Initializing slow command sandbox for node id " << DatasetDB::getDeviceID();
     
     
     //now we can call funciton for custom definition of the shared variable
-    SCACU_LAPP_ << "Setting up custom shared variable for device " << DatasetDB::getDeviceID();
+    SCACU_LAPP_ << "Setting up custom shared variable for node id " << DatasetDB::getDeviceID();
 }
 
 /*
@@ -163,24 +163,24 @@ void SCAbstractControlUnit::deinit() throw(CException) {
 }
 
 /*
- Starto the  Control Unit scheduling for device
+ Starto the  Control Unit scheduling for node
  */
 void SCAbstractControlUnit::start() throw(CException) {
     //call parent impl
     AbstractControlUnit::start();
     
-    SCACU_LAPP_ << "Start sandbox for device:" << DatasetDB::getDeviceID();
+    SCACU_LAPP_ << "Start sandbox for node id:" << DatasetDB::getDeviceID();
     StartableService::startImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
 }
 
 /*
- Stop the Custom Control Unit scheduling for device
+ Stop the Custom Control Unit scheduling for node
  */
 void SCAbstractControlUnit::stop() throw(CException) {
     //call parent impl
     AbstractControlUnit::stop();
     
-    SCACU_LAPP_ << "Stop slow command executor for device:" << DatasetDB::getDeviceID();
+    SCACU_LAPP_ << "Stop slow command executor for node id:" << DatasetDB::getDeviceID();
     StartableService::stopImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
 }
 

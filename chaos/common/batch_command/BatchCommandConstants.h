@@ -47,11 +47,10 @@ namespace chaos {
             /** @defgroup BatchCommandsKey chaos slow control default command keys
              @{
              */
-            //! Name space for grupping the key nedded for the custom slow control commands
+            //! Name space for grupping the key nedded for the defaults slow control commands
             namespace BatchCommandsKey {
-                static const char * const   ATTRIBUTE_SET_VALUE_CMD_ALIAS   = "set_attr_val";
-                static const char * const   ATTRIBUTE_SET_NAME              = "attr_set_name";
-                static const char * const   ATTRIBUTE_SET_VALUE             = "attr_set_value";
+                static const char * const   DEFAULT_WAIT_COMMAND_ALIAS          = "sc_wait";
+                static const char * const   DEFAULT_WAIT_COMMAND_DELAY_KEY      = "delay";
             }
             /** @} */ // end of BatchCommandsKey
             

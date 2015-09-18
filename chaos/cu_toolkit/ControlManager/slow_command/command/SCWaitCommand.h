@@ -1,9 +1,9 @@
 /*
- *	SetAttributeCommand.h
+ *	SCWaitCommand.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2015 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#ifndef SCWaitCommand_h
+#define SCWaitCommand_h
 
-#ifndef __CHAOSFramework__SetAttributeCommand__
-#define __CHAOSFramework__SetAttributeCommand__
 
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
 
@@ -32,16 +32,19 @@ namespace chaos {
                     
                     //! Set Property Command
                     /*!
-                      This command permit to update an attribute into the shared setting instance
+                     This command permit to update an attribute into the shared setting instance
                      of the sandbox.
                      */
-                    class SetAttributeCommand : public SlowCommand {
+                    DEFINE_BATCH_COMMAND_CLASS(SCWaitCommand, SlowCommand) {
                     protected:
                         // return the implemented handler
                         uint8_t implementedHandler();
                         
-                        // Start the command execution
+                        // Set the needed timout
                         void setHandler(chaos::common::data::CDataWrapper *data);
+                        
+                        
+                        bool timeoutHandler();
                     };
                     
                 }
@@ -50,4 +53,4 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__SetAttributeCommand__) */
+#endif /* SCWaitCommand_hpp */

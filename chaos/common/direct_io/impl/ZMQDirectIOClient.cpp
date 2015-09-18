@@ -317,20 +317,21 @@ void ZMQDirectIOClient::_releaseConnectionImpl(DirectIOClientConnection *connect
 	ZMQDIOLAPP_ << "Release the connection for " << connection_to_release->getServerDescription();
 
 	ZMQDIOLAPP_ << "Close priority socket for " << conn->getServerDescription();
+	err = zmq_disconnect(conn->socket_priority, conn->monitor_info->monitor_url.c_str());
+    if(err) ZMQDIOLERR_ << "Error disconnecting priority socket from monitor for " << conn->getServerDescription();
     err = zmq_close(conn->socket_priority);
-	//seem that disconnection from somewhere can let the monitor will repsond to the disable action 
-	err = zmq_disconnect(conn->socket_priority, "tcp://0.0.0.0.:1111");
-    if(err) ZMQDIOLERR_ << "Error closing priority socket for " << conn->getServerDescription();
-    //zmq_close(socket_priority);
+    if(err) ZMQDIOLERR_ << "Error disconnecting priority socket for " << conn->getServerDescription();
+    //seem that disconnection from somewhere can let the monitor will repsond to the disable action
     
     ZMQDIOLAPP_ << "Close service socket for" << conn->getServerDescription();
     err = zmq_close(conn->socket_service);
     if(err) ZMQDIOLERR_ << "Error closing service socket for " << conn->getServerDescription();
 
 	//stop the monitor
-	if(conn->monitor_info && conn->monitor_info->monitor_socket) {
+	if(conn->monitor_info &&
+       conn->monitor_info->monitor_socket) {
 		if(conn->monitor_info->monitor_thread) {
-			err = zmq_socket_monitor(conn->socket_priority, NULL, 0);
+			//err = zmq_socket_monitor(conn->socket_priority, NULL, 0);
 			ZMQDIOLAPP_ << "disable monitor socket for " << conn->getServerDescription();
 			
 			if(conn->monitor_info->monitor_thread->joinable())

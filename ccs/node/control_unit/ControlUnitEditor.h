@@ -48,6 +48,8 @@ private slots:
                           const QString& value);
     void templateSaved(const QString& tempalte_name,
                        const QString& command_uid);
+    void controlUnitStatusChanged(const QString& control_unit_id,
+                                  const QString& status);
 
     void on_pushButtonLoadAction_clicked();
 

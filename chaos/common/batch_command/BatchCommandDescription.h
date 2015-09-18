@@ -39,8 +39,8 @@ Get ## BatchCommandDescription ## c
 #define BATCH_COMMAND_DECLARE_DESCRIPTION(c)\
 boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> BATCH_COMMAND_FUNCTION_GET_DESCRIPTION(c)();
 
-#define BATCH_COMMAND_OPEN_DESC(n,c, alias, d, uid)\
-boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription>  n GetBatchCommandDescription ## c (){\
+#define BATCH_COMMAND_OPEN_DESC(n, c, alias, d, uid)\
+boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> n GetBatchCommandDescription ## c (){\
 boost::shared_ptr<chaos::common::batch_command::BatchCommandDescription> result(new chaos::common::batch_command::BatchCommandDescription( alias, d, uid));
 
 #define BATCH_COMMAND_ADD_BOOL_PARAM(p, d, flag)\
