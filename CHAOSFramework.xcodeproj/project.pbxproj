@@ -430,6 +430,7 @@
 		328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78051A7A9FE40008C070 /* AbstractApi.cpp */; };
 		328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E78071A7AAA070008C070 /* NodeDataAccess.cpp */; };
 		328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E780A1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp */; };
+		328EFD611BA724A8009A832D /* NodeSearchTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328EFD5F1BA724A8009A832D /* NodeSearchTest.cpp */; settings = {ASSET_TAGS = (); }; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
 		32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32919A091764E68F00724874 /* DriverAccessor.cpp */; };
 		32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32919A0A1764E68F00724874 /* DriverAccessor.h */; };
@@ -533,6 +534,7 @@
 		32B1E8131B2EDB2800221E49 /* CommandTemplateSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8111B2EDB2800221E49 /* CommandTemplateSubmit.cpp */; };
 		32B1E8161B2EDB4700221E49 /* CommandInstanceSubmit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8141B2EDB4700221E49 /* CommandInstanceSubmit.cpp */; };
 		32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E8171B2FFCE500221E49 /* CommandCommonUtility.cpp */; };
+		32B222E11BA71566009BBA9E /* NodeMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B222DD1BA71566009BBA9E /* NodeMonitor.cpp */; settings = {ASSET_TAGS = (); }; };
 		32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */; };
 		32B4192C1B0DE55E00C3CA7D /* ChangeNodeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */; };
 		32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B4192B1B0DE55E00C3CA7D /* ChangeNodeState.h */; };
@@ -1297,6 +1299,8 @@
 		328E78081A7AAA070008C070 /* NodeDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeDataAccess.h; sourceTree = "<group>"; };
 		328E780A1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBNodeDataAccess.cpp; sourceTree = "<group>"; };
 		328E780B1A7AAB640008C070 /* MongoDBNodeDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBNodeDataAccess.h; sourceTree = "<group>"; };
+		328EFD5F1BA724A8009A832D /* NodeSearchTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeSearchTest.cpp; sourceTree = "<group>"; };
+		328EFD601BA724A8009A832D /* NodeSearchTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeSearchTest.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
 		32919A091764E68F00724874 /* DriverAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DriverAccessor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32919A0A1764E68F00724874 /* DriverAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DriverAccessor.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1440,6 +1444,8 @@
 		32B1E8151B2EDB4700221E49 /* CommandInstanceSubmit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandInstanceSubmit.h; sourceTree = "<group>"; };
 		32B1E8171B2FFCE500221E49 /* CommandCommonUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandCommonUtility.cpp; sourceTree = "<group>"; };
 		32B1E8181B2FFCE500221E49 /* CommandCommonUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandCommonUtility.h; sourceTree = "<group>"; };
+		32B222DD1BA71566009BBA9E /* NodeMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeMonitor.cpp; sourceTree = "<group>"; };
+		32B222DE1BA71566009BBA9E /* NodeMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeMonitor.h; sourceTree = "<group>"; };
 		32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSBatchExecutor.cpp; sourceTree = "<group>"; };
 		32B3E11C1A7A3923007B7802 /* MDSBatchExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSBatchExecutor.h; sourceTree = "<group>"; };
 		32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeNodeState.cpp; sourceTree = "<group>"; };
@@ -1869,6 +1875,10 @@
 			isa = PBXGroup;
 			children = (
 				32F158621B7B459100B6A5DF /* CMakeLists.txt */,
+				32B222DD1BA71566009BBA9E /* NodeMonitor.cpp */,
+				32B222DE1BA71566009BBA9E /* NodeMonitor.h */,
+				328EFD5F1BA724A8009A832D /* NodeSearchTest.cpp */,
+				328EFD601BA724A8009A832D /* NodeSearchTest.h */,
 				322085DC1AC5A0E200F1B71A /* main.cpp */,
 			);
 			path = ChaosMetadataServiceClientTest;
@@ -4258,7 +4268,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32B222E11BA71566009BBA9E /* NodeMonitor.cpp in Sources */,
 				322085DD1AC5A0E200F1B71A /* main.cpp in Sources */,
+				328EFD611BA724A8009A832D /* NodeSearchTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

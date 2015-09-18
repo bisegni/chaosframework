@@ -184,7 +184,8 @@ void HealtManager::deinit() throw (chaos::CException) {
 }
 
 void HealtManager::addNewNode(const std::string& node_uid) {
-    boost::unique_lock<boost::shared_mutex> wl(map_node_mutex);
+    
+    CHAOS_BOOST_LOCK_WRAP_EXCEPTION(boost::unique_lock<boost::shared_mutex> wl(map_node_mutex);, return;)
     if(map_node.count(node_uid) != 0) return;
     boost::shared_ptr<NodeHealtSet> healt_metric = boost::shared_ptr<NodeHealtSet>(new NodeHealtSet(node_uid));
     //add new node in map
@@ -214,147 +215,163 @@ void HealtManager::removeNode(const std::string& node_uid) {
 void HealtManager::addNodeMetric(const std::string& node_uid,
                                  const std::string& node_metric,
                                  chaos::DataType::DataType metric_type) {
-    boost::unique_lock<boost::shared_mutex> rl_map(map_node_mutex);
-    
-    //we need node but no metric
-    HEALT_NEED_NODE_NO_METRIC_PRESENCE(node_uid, node_metric)
-    // read lock
-    boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
-    //unlock map
-    rl_map.unlock();
-    
-    boost::shared_ptr<HealtMetric> metric;
-    switch(metric_type) {
-        case chaos::DataType::TYPE_BOOLEAN:
-            break;
-        case chaos::DataType::TYPE_INT32:
-            metric.reset(new Int32HealtMetric(node_metric));
-            break;
-        case chaos::DataType::TYPE_INT64:
-            metric.reset(new Int64HealtMetric(node_metric));
-            break;
-        case chaos::DataType::TYPE_DOUBLE:
-            metric.reset(new DoubleHealtMetric(node_metric));
-            break;
-        case chaos::DataType::TYPE_STRING:
-            metric.reset(new StringHealtMetric(node_metric));
-            break;
-            
-        default:
-            break;
-    }
-    //add metric
-    node_metrics_ptr->map_metric.insert(make_pair(node_metric, metric));
+    try{
+        boost::unique_lock<boost::shared_mutex> rl_map(map_node_mutex);
+        
+        //we need node but no metric
+        HEALT_NEED_NODE_NO_METRIC_PRESENCE(node_uid, node_metric)
+        // read lock
+        boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
+        //unlock map
+        rl_map.unlock();
+        
+        boost::shared_ptr<HealtMetric> metric;
+        switch(metric_type) {
+            case chaos::DataType::TYPE_BOOLEAN:
+                break;
+            case chaos::DataType::TYPE_INT32:
+                metric.reset(new Int32HealtMetric(node_metric));
+                break;
+            case chaos::DataType::TYPE_INT64:
+                metric.reset(new Int64HealtMetric(node_metric));
+                break;
+            case chaos::DataType::TYPE_DOUBLE:
+                metric.reset(new DoubleHealtMetric(node_metric));
+                break;
+            case chaos::DataType::TYPE_STRING:
+                metric.reset(new StringHealtMetric(node_metric));
+                break;
+                
+            default:
+                break;
+        }
+        //add metric
+        node_metrics_ptr->map_metric.insert(make_pair(node_metric, metric));
+    }CHAOS_BOOST_LOCK_EXCEPTION_CACTH(lock_exception,)
 }
 
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
                                       const std::string& node_metric,
                                       int32_t int32_value,
                                       bool publish) {
-    boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
-    HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
-    
-    // read lock
-    boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
-    
-    //
-    wl.unlock();
-    
-    //work on local shared pointer
-    HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
-    HEALT_SET_METRIC_VALUE(node_metrics_ptr,
-                           Int32HealtMetric,
-                           node_metric,
-                           int32_value);
-    if(publish) {publishNodeHealt(node_uid);}
+    try{
+        boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
+        HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
+        
+        // read lock
+        boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
+        
+        //
+        wl.unlock();
+        
+        //work on local shared pointer
+        HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
+        HEALT_SET_METRIC_VALUE(node_metrics_ptr,
+                               Int32HealtMetric,
+                               node_metric,
+                               int32_value);
+        if(publish) {publishNodeHealt(node_uid);}
+    }CHAOS_BOOST_LOCK_EXCEPTION_CACTH(lock_exception,)
 }
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
                                       const std::string& node_metric,
                                       int64_t int64_value,
                                       bool publish) {
-    boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
-    HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
-    // read lock
-    boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
-    // unlock all map
-    wl.unlock();
-    //work on local shared pointer
-    HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
-    HEALT_SET_METRIC_VALUE(node_metrics_ptr,
-                           Int64HealtMetric,
-                           node_metric,
-                           int64_value);
-    if(publish) {publishNodeHealt(node_uid);}
+    try{
+        
+        boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
+        HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
+        // read lock
+        boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
+        // unlock all map
+        wl.unlock();
+        //work on local shared pointer
+        HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
+        HEALT_SET_METRIC_VALUE(node_metrics_ptr,
+                               Int64HealtMetric,
+                               node_metric,
+                               int64_value);
+        if(publish) {publishNodeHealt(node_uid);}
+    }CHAOS_BOOST_LOCK_EXCEPTION_CACTH(lock_exception,)
 }
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
                                       const std::string& node_metric,
                                       double double_value,
                                       bool publish) {
-    boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
-    HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
-    // read lock
-    boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
-    // unlock all map
-    wl.unlock();
-    HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
-    HEALT_SET_METRIC_VALUE(node_metrics_ptr,
-                           DoubleHealtMetric,
-                           node_metric,
-                           double_value);
-    if(publish) {publishNodeHealt(node_uid);}
+    try{
+        boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
+        HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
+        // read lock
+        boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
+        // unlock all map
+        wl.unlock();
+        HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
+        HEALT_SET_METRIC_VALUE(node_metrics_ptr,
+                               DoubleHealtMetric,
+                               node_metric,
+                               double_value);
+        if(publish) {publishNodeHealt(node_uid);}
+    }CHAOS_BOOST_LOCK_EXCEPTION_CACTH(lock_exception,)
 }
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
                                       const std::string& node_metric,
                                       const std::string& str_value,
                                       bool publish) {
-    boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
-    HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
-    // read lock
-    boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
-    // unlock all map
-    wl.unlock();
-    HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
-    HEALT_SET_METRIC_VALUE(node_metrics_ptr,
-                           StringHealtMetric,
-                           node_metric,
-                           str_value);
-    if(publish) {publishNodeHealt(node_uid);}
+    
+    try{boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
+        HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
+        // read lock
+        boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
+        // unlock all map
+        wl.unlock();
+        HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
+        HEALT_SET_METRIC_VALUE(node_metrics_ptr,
+                               StringHealtMetric,
+                               node_metric,
+                               str_value);
+        if(publish) {publishNodeHealt(node_uid);}
+    }CHAOS_BOOST_LOCK_EXCEPTION_CACTH(lock_exception,)
 }
 
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
                                       const std::string& node_metric,
                                       const char * c_str_value,
                                       bool publish) {
-    boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
-    HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
-    // read lock
-    boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
-    // unlock all map
-    wl.unlock();
-    HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
-    HEALT_SET_METRIC_VALUE(node_metrics_ptr,
-                           StringHealtMetric,
-                           node_metric,
-                           c_str_value);
-    if(publish) {publishNodeHealt(node_uid);}
+    try{boost::shared_lock<boost::shared_mutex> wl(map_node_mutex);
+        
+        HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
+        // read lock
+        boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
+        // unlock all map
+        wl.unlock();
+        HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
+        HEALT_SET_METRIC_VALUE(node_metrics_ptr,
+                               StringHealtMetric,
+                               node_metric,
+                               c_str_value);
+        if(publish) {publishNodeHealt(node_uid);}
+    }CHAOS_BOOST_LOCK_EXCEPTION_CACTH(lock_exception,)
 }
 
 void HealtManager::addNodeMetricValue(const std::string& node_uid,
                                       const std::string& node_metric,
                                       const bool bool_value,
                                       bool publish) {
-    boost::unique_lock<boost::shared_mutex> wl(map_node_mutex);
-    HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
-    // read lock
-    boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
-    // unlock all map
-    wl.unlock();
-    HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
-    HEALT_SET_METRIC_VALUE(node_metrics_ptr,
-                           BoolHealtMetric,
-                           node_metric,
-                           bool_value);
-    if(publish) {publishNodeHealt(node_uid);}
+    
+    try{boost::unique_lock<boost::shared_mutex> wl(map_node_mutex);
+        
+        HEALT_NEED_NODE_AND_METRIC_PRESENCE(node_uid, node_metric)
+        // read lock
+        boost::shared_ptr<NodeHealtSet> node_metrics_ptr = map_node[node_uid];
+        // unlock all map
+        wl.unlock();
+        HEALT_SET_METRIC_TIMESTAMP_LAST_METRIC(node_metrics_ptr)
+        HEALT_SET_METRIC_VALUE(node_metrics_ptr,
+                               BoolHealtMetric,
+                               node_metric,
+                               bool_value);
+        if(publish) {publishNodeHealt(node_uid);}
+    }CHAOS_BOOST_LOCK_EXCEPTION_CACTH(lock_exception,)
 }
 
 CDataWrapper*  HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_map,

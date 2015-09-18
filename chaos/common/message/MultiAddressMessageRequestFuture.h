@@ -22,79 +22,83 @@
 
 #include <chaos/common/message/MessageRequestFuture.h>
 
-namespace chaos {
-    namespace common{
-        namespace message {
-            class MultiAddressMessageChannel;
+namespace chaos{
+namespace common{
+namespace message{
+class MultiAddressMessageChannel;
 
-                //! Future class that manage the HA waiting the result of a request for an MultiAddressMessageChannel
-            /*!
-                this future class embed the real future class givin calling the send request of a channel. If there is any send error
-             or timeout while we are waiting a requets, another remote node is used and a new future for this is received.
-             The HA is interelly achieved by this future class. 
-             NOTE: This class is no more valid after that the MultiAddressMessageChannel from which has been created. If used after parent deallcoation
-             memory crash will occur.
-             */
-            class MultiAddressMessageRequestFuture {
-                    //friend class for private constructor
-                friend class chaos::common::message::MultiAddressMessageChannel;
+//! Future class that manage the HA waiting the result of a request for an MultiAddressMessageChannel
+/*!
+	this future class embed the real future class givin calling the send request of a channel. If there is any send error
+ or timeout while we are waiting a requets, another remote node is used and a new future for this is received.
+ The HA is interelly achieved by this future class.
+ NOTE: This class is no more valid after that the MultiAddressMessageChannel from which has been created. If used after parent deallcoation
+ memory crash will occur.
+ */
+class MultiAddressMessageRequestFuture{
+  //friend class for private constructor
+  friend class chaos::common::message::MultiAddressMessageChannel;
 
-                    //global timeout
-                int32_t timeout_in_milliseconds;
+  //global timeout
+  int32_t timeout_in_milliseconds;
 
-                    //! point to the parent channel
-                MultiAddressMessageChannel *parent_mn_message_channel;
-                    //!information for the request for the retransmission
-                std::string last_used_address;
-                std::string action_domain;
-                std::string action_name;
-                auto_ptr<chaos::common::data::CDataWrapper> message_pack;
+  //! point to the parent channel
+  MultiAddressMessageChannel *parent_mn_message_channel;
+  //!information for the request for the retransmission
+  std::string last_used_address;
+  std::string action_domain;
+  std::string action_name;
+  auto_ptr<chaos::common::data::CDataWrapper> message_pack;
 
-                    //! error information for the request
-                int         current_error;
-                std::string current_error_message;
-                std::string current_error_domain;
+  //! error information for the request
+  int current_error;
+  std::string current_error_message;
+  std::string current_error_domain;
 
-                    //! point to the current future
-                auto_ptr<MessageRequestFuture> current_future;
+  //! point to the current future
+  auto_ptr<MessageRequestFuture> current_future;
 
-                    //!private constructor
-                MultiAddressMessageRequestFuture(chaos::common::message::MultiAddressMessageChannel *_parent_mn_message_channel,
-                                                 const std::string& _action_domain,
-                                                 const std::string& _action_name,
-                                                 chaos::common::data::CDataWrapper *_message_pack,
-                                                 int32_t _timeout_in_milliseconds);
-                inline void resetErrorResult();
-                inline void retryOfflineServer();
+  //!private constructor
+  MultiAddressMessageRequestFuture(chaos::common::message::MultiAddressMessageChannel *_parent_mn_message_channel,
+								   const std::string &_action_domain,
+								   const std::string &_action_name,
+								   chaos::common::data::CDataWrapper *_message_pack,
+								   int32_t _timeout_in_milliseconds);
+  inline void resetErrorResult();
+  inline void retryOfflineServer();
 
-            public:
-                    //!private destructor
-                ~MultiAddressMessageRequestFuture();
-                    //set the global timeout
-                /*!
-                 if the timeout is reached and no data is received,
-                 the current server is put offline.
-                 */
-                void setTimeout(int32_t _timeout_in_milliseconds);
+ public:
+  //!private destructor
+  ~MultiAddressMessageRequestFuture();
+  //set the global timeout
+  /*!
+   if the timeout is reached and no data is received,
+   the current server is put offline.
+   */
+  void setTimeout(int32_t _timeout_in_milliseconds);
 
-                    //! wait until data is received
-                bool wait();
+  //! wait until data is received
+  /*!
+   * The wait for an aswer of for the reached timeout
+   * \return true if something has been received
+   */
+  bool wait();
 
-                    //! try to get the result waiting for a determinate period of time
-                chaos::common::data::CDataWrapper *getResult();
+  //! try to get the result waiting for a determinate period of time
+  chaos::common::data::CDataWrapper *getResult();
 
 
-                chaos::common::data::CDataWrapper *detachResult();
+  chaos::common::data::CDataWrapper *detachResult();
 
-                int getError() const;
+  int getError() const;
 
-                const std::string& getErrorDomain() const;
+  const std::string &getErrorDomain() const;
 
-                const std::string& getErrorMessage() const;
-            };
+  const std::string &getErrorMessage() const;
+};
 
-        }
-    }
+}
+}
 }
 
 #endif /* defined(__CHAOSFramework__MultiAddressMessageRequestFuture__) */
