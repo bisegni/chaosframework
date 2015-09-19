@@ -8,7 +8,7 @@ SET(cu_lib_src  ${cu_lib_src} ControlManager/AbstractControlUnit.cpp ControlMana
 SET(cu_lib_src  ${cu_lib_src} ControlManager/SCAbstractControlUnit.cpp ControlManager/RTAbstractControlUnit.cpp ControlManager/WorkUnitManagement.cpp)
 SET(cu_lib_src  ${cu_lib_src} ControlManager/IOCU.cpp)
 
-SET(cu_lib_src  ${cu_lib_src} ControlManager/slow_command/SlowCommandExecutor.cpp ControlManager/slow_command/SlowCommand.cpp ControlManager/slow_command/command/SetAttributeCommand.cpp
+SET(cu_lib_src  ${cu_lib_src} ControlManager/slow_command/SlowCommandExecutor.cpp ControlManager/slow_command/SlowCommand.cpp ControlManager/slow_command/command/SCWaitCommand.cpp
 								ControlManager/AttributeSharedCacheWrapper.cpp)
 
 IF(BUILD_FORCE_STATIC)
