@@ -51,7 +51,7 @@ namespace chaos {
 				uint64_t schedule_dalay;
 				bool scheduler_run;
 				boost::scoped_ptr<boost::thread>  scheduler_thread;
-                
+
 				/*!
 				 Define the control unit DataSet and Action into
 				 a CDataWrapper
@@ -93,7 +93,6 @@ namespace chaos {
 				 Thread method for the scheduler
 				 */
 				void executeOnThread();
-
 			public:
 				
 				/*! default constructor

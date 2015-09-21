@@ -479,7 +479,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     
     //add healt metric for newly create control unit instance
     HealtManager::getInstance()->addNewNode(work_unit_id);
-    
+
     //tag control uinit for mds managed
     instance->control_key = "mds";
     

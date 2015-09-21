@@ -64,12 +64,13 @@ control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
+push_dataset_counter(0),
+last_push_rate_grap_ts(0),
 attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
 thread_schedule_daly_cached_value(NULL),
-key_data_storage(NULL){
-}
+key_data_storage(NULL){}
 
 //! Contructor with driver
 AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
@@ -82,11 +83,14 @@ control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
+push_dataset_counter(0),
+last_push_rate_grap_ts(0),
 attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
 thread_schedule_daly_cached_value(NULL),
 key_data_storage(NULL){
+    
     //copy array
     for (int idx = 0; idx < _control_unit_drivers.size(); idx++){
         control_unit_drivers.push_back(_control_unit_drivers[idx]);
@@ -108,7 +112,6 @@ key_data_storage(NULL){
         driver_manager::driver::DriverAccessor *accessorInstance = driver_manager::DriverManager::getInstance()->getNewAccessorForDriverInstance(unitNeededDrivers[idx]);
         accessorInstances.push_back(accessorInstance);
     }
-    
 }
 
 /*!
@@ -154,6 +157,10 @@ void AbstractControlUnit::setKeyDataStorage(KeyDataStorage* _key_data_storage) {
  are defined the action for the input element of the dataset
  */
 void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
+    //add metric for data
+    HealtManager::getInstance()->addNodeMetric(control_unit_id,
+                                               "ds_output_rate",
+                                               chaos::DataType::TYPE_DOUBLE);
     vector<std::string> tempStringVector;
     
     if(control_unit_id.size()) {
@@ -269,11 +276,11 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
     std::vector<string> attribute_names;
     if(getServiceState() == common::utility::service_state_machine::InizializableServiceType::IS_INITIATED) {
         return NULL;
-     //   throw CException(-1, DatasetDB::getDeviceID()+" already in initialized", __PRETTY_FUNCTION__);
+        //   throw CException(-1, DatasetDB::getDeviceID()+" already in initialized", __PRETTY_FUNCTION__);
     }
     if(getServiceState() != common::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED) throw CException(-1, DatasetDB::getDeviceID()+" need to be in deinit", __PRETTY_FUNCTION__);
     if(!attribute_value_shared_cache) throw CException(-3, "No Shared cache implementation found for:"+DatasetDB::getDeviceID(), __PRETTY_FUNCTION__);
-
+    
     try {
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
@@ -361,7 +368,7 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
     }
     if(getServiceState() != common::utility::service_state_machine::InizializableServiceType::IS_INITIATED &&
        getServiceState() != common::utility::service_state_machine::StartableServiceType::SS_STOPPED) throw CException(-1, DatasetDB::getDeviceID()+" need to be in the init or stop state to be started", __PRETTY_FUNCTION__);
-
+    
     ACULDBG_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
     StartableService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
     
@@ -402,10 +409,10 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
     //first we start the deinitializaiton of the implementation unit
     if(getServiceState() == service_state_machine::StartableServiceType::SS_STOPPED) {
         return NULL;
-     //   throw CException(-1, DatasetDB::getDeviceID()+" already stopped", __PRETTY_FUNCTION__);
+        //   throw CException(-1, DatasetDB::getDeviceID()+" already stopped", __PRETTY_FUNCTION__);
     }
     if(getServiceState() != service_state_machine::StartableServiceType::SS_STARTED) throw CException(-1, DatasetDB::getDeviceID()+" need to be started to be stopped", __PRETTY_FUNCTION__);
-
+    
     try {
         //set healt to start
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
@@ -493,7 +500,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
     }
     if(getServiceState() != common::utility::service_state_machine::InizializableServiceType::IS_INITIATED &&
        getServiceState() != common::utility::service_state_machine::StartableServiceType::SS_STOPPED) throw CException(-1, DatasetDB::getDeviceID()+" need to be in the init or stop state to be initialized", __PRETTY_FUNCTION__);
-
+    
     //first we start the deinitializaiton of the implementation unit
     try {
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
@@ -634,15 +641,15 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *dataset_at
 void AbstractControlUnit::init(void *init_data) throw(CException) {
     CDataWrapper *init_configuration = static_cast<CDataWrapper*>(init_data);
     /*if(!init_configuration ||
-       !init_configuration->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
-        throw CException(-1, "No Device Init information in param", __PRETTY_FUNCTION__);
-    }
-    
-    std::string deviceID = init_configuration->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-    if(deviceID.compare(DatasetDB::getDeviceID())) {
-        ACULERR_ << "device:" << deviceID << "not known by this Work Unit";
-        throw CException(-2, "Device not known by this control unit", __PRETTY_FUNCTION__);
-    }*/
+     !init_configuration->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
+     throw CException(-1, "No Device Init information in param", __PRETTY_FUNCTION__);
+     }
+     
+     std::string deviceID = init_configuration->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+     if(deviceID.compare(DatasetDB::getDeviceID())) {
+     ACULERR_ << "device:" << deviceID << "not known by this Work Unit";
+     throw CException(-2, "Device not known by this control unit", __PRETTY_FUNCTION__);
+     }*/
     
     //cast to the CDatawrapper instance
     ACULAPP_ << "Initialize CU Database for device:" << DatasetDB::getDeviceID();
@@ -669,10 +676,17 @@ void AbstractControlUnit::start() throw(CException) {
     pushCustomDataset();
     attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
     pushSystemDataset();
+    
+    //register timer for push statistic
+    chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 5000, 5000);
+    //get timestamp for first pushes metric acquisition
+    last_push_rate_grap_ts = TimingUtil::getTimeStamp();
 }
 
 // Startable Service method
 void AbstractControlUnit::stop() throw(CException) {
+    //remove timer for push statistic
+    chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
 }
 
 // Startable Service method
@@ -826,6 +840,22 @@ void AbstractControlUnit::_updateAcquistionTimestamp(uint64_t alternative_ts) {
 void AbstractControlUnit::_updateRunScheduleDelay(uint64_t new_scehdule_delay) {
     *thread_schedule_daly_cached_value->getValuePtr<uint64_t>() = new_scehdule_delay;
     thread_schedule_daly_cached_value->markAsChanged();
+}
+
+//!timer for update push metric
+void AbstractControlUnit::_updatePushRateMetric() {
+    uint64_t rate_acq_ts = TimingUtil::getTimeStamp();
+    double time_offset = (rate_acq_ts - last_push_rate_grap_ts)/1000; //time in seconds
+    double output_ds_rate = push_dataset_counter/time_offset; //rate in seconds
+    
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    "ds_output_rate",
+                                                    output_ds_rate);
+    
+    //keep track of acquire timestamp
+    last_push_rate_grap_ts = rate_acq_ts;
+    //reset pushe count
+    push_dataset_counter = 0;
 }
 
 //!handler calledfor restor a control unit to a determinate point
@@ -1007,8 +1037,8 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
         idx++) {
         //
         AttributeValue * value_set = cache_output_attribute_vector[idx];
-	assert(value_set);
-
+        assert(value_set);
+        
         switch(value_set->type) {
             case DataType::TYPE_BOOLEAN:
                 output_attribute_dataset->addBoolValue(value_set->name, *value_set->getValuePtr<bool>());
@@ -1034,6 +1064,9 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
     
     //now we nede to push the outputdataset
     key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, output_attribute_dataset);
+    
+    //update counter
+    push_dataset_counter++;
     
     //reset chagned attribute into output dataset
     output_attribute_cache.resetChangedIndex();
@@ -1131,3 +1164,8 @@ void AbstractControlUnit::fillCDatawrapperWithCachedValue(std::vector<AttributeV
     }
 }
 
+//!timer for update push metric
+void AbstractControlUnit::timeout() {
+    //update push metric
+    _updatePushRateMetric();
+}

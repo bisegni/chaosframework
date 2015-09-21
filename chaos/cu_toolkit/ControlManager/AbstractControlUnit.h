@@ -30,6 +30,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
+#include <chaos/common/async_central/async_central.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/action/ActionDescriptor.h>
@@ -84,6 +85,7 @@ namespace chaos{
 			public DriverErogatorInterface,
 			public DeclareAction,
 			protected DatasetDB,
+            protected chaos::common::async_central::TimerHandler,
 			public common::utility::StartableService {
 				//friendly class declaration
 				friend class ControlManager;
@@ -107,6 +109,13 @@ namespace chaos{
 				//! control unit load param
 				std::string control_unit_param;
 				
+                
+                //! keep track of how many push has been done for every dataset
+                //! 0 - output, 1-input, 2-custom
+                uint32_t    push_dataset_counter;
+                //! identify last timestamp whene the push rate has been acquired;
+                uint64_t    last_push_rate_grap_ts;
+                
 				//! control unit driver information list
 				ControlUnitDriverList control_unit_drivers;
 				
@@ -263,6 +272,9 @@ namespace chaos{
                 
                 void _updateRunScheduleDelay(uint64_t new_scehdule_delay);
                 
+                //!timer for update push metric
+                void _updatePushRateMetric();
+
                 //! Abstract Method that need to be used by the sublcass to define the dataset
 				/*!
 				 Subclass, in this method can call the api to create the dataset, after this method
@@ -363,6 +375,8 @@ namespace chaos{
 					return attribute_shared_cache_wrapper;
 				}
 				
+                //!timer for update push metric
+                void timeout();
 			public:
 				
 				//! Default Contructor
