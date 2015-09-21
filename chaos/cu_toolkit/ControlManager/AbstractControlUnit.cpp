@@ -159,7 +159,7 @@ void AbstractControlUnit::setKeyDataStorage(KeyDataStorage* _key_data_storage) {
 void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
     //add metric for data
     HealtManager::getInstance()->addNodeMetric(control_unit_id,
-                                               "ds_output_rate",
+                                               ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
                                                chaos::DataType::TYPE_DOUBLE);
     vector<std::string> tempStringVector;
     
@@ -849,7 +849,7 @@ void AbstractControlUnit::_updatePushRateMetric() {
     double output_ds_rate = push_dataset_counter/time_offset; //rate in seconds
     
     HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
-                                                    "ds_output_rate",
+                                                    ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
                                                     output_ds_rate);
     
     //keep track of acquire timestamp

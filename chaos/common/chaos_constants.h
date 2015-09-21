@@ -293,6 +293,18 @@ namespace chaos {
     }
     /** @} */ // end of NodeHealtDefinitionValue
     
+    /** @defgroup ControlUnitHealtDefinitionValue !CHAOS control unit specific key
+     *  @{
+     */
+    //! This namespace enclose all the control unit specific healt key
+    namespace ControlUnitHealtDefinitionValue {
+        //!define the key that contains the rate of the output dataset pushes per second
+        static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_RATE  = "cuh_dso_prate";
+
+    }
+    /** @} */ // end of NodeHealtDefinitionValue
+    
+    
     /** @defgroup NodeDomainAndActionRPC !CHAOS node rpc key description
      *  @{
      */
@@ -689,9 +701,6 @@ namespace chaos {
         static const unsigned int DPCK_DATASET_TYPE_CUSTOM             = 2;
         //! the constant that represent the system dataset type
         static const unsigned int DPCK_DATASET_TYPE_SYSTEM             = 3;
-        
-        //!define the key that contains the rate of the output dataset pushes per second
-        static const char * const DPCK_DATASET_PUSH_RATE                = "dpck_ds_rate";
     }
     /** @} */ // end of DataPackCommonKey
     
