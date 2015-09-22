@@ -501,6 +501,7 @@
         <in>moc_HealtPresenterWidget.cpp</in>
         <in>moc_HealtStatusHandler.cpp</in>
         <in>moc_HealtWidgetsListPresenteWidget.cpp</in>
+        <in>moc_LedIndicatorAliveTSWidget.cpp</in>
         <in>moc_LedIndicatorWidget.cpp</in>
         <in>moc_MainWindow.cpp</in>
         <in>moc_MonitorBinaryAttributeHandler.cpp</in>
@@ -518,7 +519,6 @@
         <in>moc_MultiPropertyLogicSwitch.cpp</in>
         <in>moc_NodeAttributePlotting.cpp</in>
         <in>moc_PreferenceDialog.cpp</in>
-        <in>moc_PreferenceMDSHostListModel.cpp</in>
         <in>moc_PresenterWidget.cpp</in>
         <in>moc_SearchNode.cpp</in>
         <in>moc_SearchNodeResult.cpp</in>
@@ -1148,8 +1148,9 @@
             </df>
             <df name="slow_command">
               <df name="command">
+                <in>SCWaitCommand.cpp</in>
+                <in>SCWaitCommand.h</in>
                 <in>SetAttributeCommand.cpp</in>
-                <in>SetAttributeCommand.h</in>
               </df>
               <in>SlowCommand.cpp</in>
               <in>SlowCommand.h</in>
@@ -1673,6 +1674,10 @@
         <in>metadata_service_client_types.h</in>
       </df>
       <df name="ChaosMetadataServiceClientTest">
+        <in>NodeMonitor.cpp</in>
+        <in>NodeMonitor.h</in>
+        <in>NodeSearchTest.cpp</in>
+        <in>NodeSearchTest.h</in>
         <in>main.cpp</in>
       </df>
       <df name="ChaosNodeDirectory">
@@ -1770,8 +1775,6 @@
         </df>
         <df name="CMakeTmp">
         </df>
-        <df name="Progress">
-        </df>
       </df>
       <df name="Documentation">
         <df name="html">
@@ -1819,6 +1822,8 @@
           <in>main.cpp</in>
         </df>
         <df name="ChaosMDSCmd">
+          <df name="build">
+          </df>
           <in>main.cpp</in>
         </df>
         <df name="ChaosPerformanceTester">
@@ -25789,6 +25794,7 @@
                 </df>
                 <df name="models">
                   <in>LucidTemperatureDriver.h</in>
+                  <in>VBPMSync.h</in>
                   <in>VTemperatureDriver.h</in>
                   <in>ZBSensorCollector.h</in>
                   <in>ZBSensorNode.h</in>
@@ -26267,8 +26273,6 @@
               <df name="benchmark-local">
               </df>
               <df name="test-local-services">
-                <df name="wget_test1">
-                </df>
               </df>
             </df>
           </df>
@@ -26285,6 +26289,8 @@
                 </df>
               </df>
               <df name="CMakeTmp">
+              </df>
+              <df name="Progress">
               </df>
               <df name="UnitServer.dir">
               </df>

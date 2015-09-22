@@ -220,9 +220,14 @@ x = hasOption(y);
 		}
         
         /**
-         *return the cdatawrapper that contains the global configuraiton
+         *return the cdatawrapper that contains the global configuration
          */
         chaos_data::CDataWrapper *getConfiguration();
+        
+        /**
+         * @param conf the cdatawrapper that contains the global configuration
+         */
+        void setConfiguration(chaos_data::CDataWrapper *conf);
         
         /**
          *Add the metadataserver address

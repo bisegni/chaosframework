@@ -364,6 +364,9 @@ void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kv
 chaos_data::CDataWrapper *GlobalConfiguration::getConfiguration(){
     return &configuration;
 }
+void GlobalConfiguration::setConfiguration(chaos_data::CDataWrapper *conf){
+    configuration.copyAllTo(*conf);
+}
 
 /**
  *Add the metadataserver address
