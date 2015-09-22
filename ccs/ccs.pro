@@ -84,7 +84,8 @@ SOURCES += main.cpp\
     data/DatasetReader.cpp \
     data/DatasetAttributeReader.cpp \
     widget/CLedIndicatorHealt.cpp \
-    preference/PreferenceMDSHostListModel.cpp
+    preference/PreferenceMDSHostListModel.cpp \
+    widget/ChaosHealtLabel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -158,7 +159,8 @@ HEADERS  += \
     data/data.h \
     widget/CLedIndicatorHealt.h \
     monitor/handler/MonitorBinaryAttributeHandler.h \
-    preference/PreferenceMDSHostListModel.h
+    preference/PreferenceMDSHostListModel.h \
+    widget/ChaosHealtLabel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

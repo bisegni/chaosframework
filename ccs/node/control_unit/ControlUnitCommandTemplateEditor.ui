@@ -233,6 +233,9 @@
            <property name="accessibleName">
             <string>Run Step delay</string>
            </property>
+           <property name="text">
+            <string>1000000</string>
+           </property>
            <property name="placeholderText">
             <string>1000000</string>
            </property>
@@ -274,6 +277,9 @@
            <property name="accessibleName">
             <string>Submission Retry</string>
            </property>
+           <property name="text">
+            <string>1000</string>
+           </property>
            <property name="placeholderText">
             <string>1000</string>
            </property>
@@ -306,6 +312,9 @@
            </property>
            <property name="accessibleName">
             <string>Priority Value</string>
+           </property>
+           <property name="text">
+            <string>50</string>
            </property>
            <property name="placeholderText">
             <string>50</string>

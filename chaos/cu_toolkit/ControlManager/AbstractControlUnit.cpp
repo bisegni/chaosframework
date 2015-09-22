@@ -845,7 +845,7 @@ void AbstractControlUnit::_updateRunScheduleDelay(uint64_t new_scehdule_delay) {
 //!timer for update push metric
 void AbstractControlUnit::_updatePushRateMetric() {
     uint64_t rate_acq_ts = TimingUtil::getTimeStamp();
-    double time_offset = (rate_acq_ts - last_push_rate_grap_ts)/1000; //time in seconds
+    double time_offset = (double(rate_acq_ts - last_push_rate_grap_ts))/1000.0; //time in seconds
     double output_ds_rate = push_dataset_counter/time_offset; //rate in seconds
     
     HealtManager::getInstance()->addNodeMetricValue(control_unit_id,

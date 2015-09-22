@@ -298,7 +298,7 @@ namespace chaos {
      */
     //! This namespace enclose all the control unit specific healt key
     namespace ControlUnitHealtDefinitionValue {
-        //!define the key that contains the rate of the output dataset pushes per second
+        //!define the key that contains the rate of the output dataset pushes per second[double]
         static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_RATE  = "cuh_dso_prate";
 
     }

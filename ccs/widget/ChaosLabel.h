@@ -70,8 +70,8 @@ protected slots:
     virtual void valueUpdated(const QString& node_uid,
                               const QString& attribute_name,
                               const QVariant& attribute_value);
-    virtual void valueNotFound(const QString& node_uid,
-                              const QString& attribute_name);
+    virtual void valueNotFound(const QString& _node_uid,
+                              const QString& _attribute_name);
 
 signals:
     void nodeUniqueIDChanged(const QString& last_node_uid,
@@ -89,7 +89,6 @@ protected:
     uint32_t zero_diff_count;
     HealthHeartbeatHandler healt_heartbeat_handler;
     HealtStatusHandler healt_status_handler;
-    boost::shared_ptr<AbstractTSTaggedAttributeHandler> handler_sptr;
     //hide public default slot
     void	clear();
     void	setMovie(QMovie * movie);

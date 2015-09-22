@@ -153,12 +153,17 @@ void ControlUnitEditor::initUI() {
             SIGNAL(valueChanged(QString,QString)),
             SLOT(changedNodeState(QString,QString)));
 
-    //show the current thread schedule delay
+    //chaos label for the current thread schedule delay
     ui->labelRunScheduleDelaySet->setNodeUniqueID(control_unit_unique_id);
     ui->labelRunScheduleDelaySet->setAttributeName(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
     ui->labelRunScheduleDelaySet->setAttributeType(chaos::DataType::TYPE_INT64);
     ui->labelRunScheduleDelaySet->setTrackStatus(true);
     ui->labelRunScheduleDelaySet->setDataset(ChaosDatasetLabel::DatasetSystem);
+
+    //chaos label for the current output dataset push rate
+    ui->chaosLabelDSOutputPushRate->setNodeUniqueID(control_unit_unique_id);
+    ui->chaosLabelDSOutputPushRate->setAttributeName(chaos::ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE);
+    ui->chaosLabelDSOutputPushRate->setAttributeType(chaos::DataType::TYPE_DOUBLE);
 
     //thread schedule update
     ui->lineEditRunScheduleDelay->setValidator(new QIntValidator(0,60000000));
@@ -202,6 +207,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         ui->labelControlUnitStatus->startMonitoring();
         ui->labelRunScheduleDelaySet->startMonitoring();
         ui->ledIndicatorHealtTSControlUnit->startMonitoring();
+        ui->chaosLabelDSOutputPushRate->startMonitoring();
     }else{
         if(unit_server_parent_unique_id.size()) {
             //remove old unit server for healt
@@ -211,6 +217,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         ui->labelControlUnitStatus->stopMonitoring();
         ui->labelRunScheduleDelaySet->stopMonitoring();
         ui->ledIndicatorHealtTSControlUnit->stopMonitoring();
+        ui->chaosLabelDSOutputPushRate->stopMonitoring();
     }
 }
 

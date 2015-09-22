@@ -127,11 +127,11 @@ int ChaosLabel::stopMonitoring() {
     return 0;
 }
 
-void ChaosLabel::valueUpdated(const QString& node_uid,
-                              const QString& attribute_name,
-                              const QVariant& attribute_value) {
-    if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0) {
-        uint64_t received_ts = attribute_value.toLongLong();
+void ChaosLabel::valueUpdated(const QString& _node_uid,
+                              const QString& _attribute_name,
+                              const QVariant& _attribute_value) {
+    if(_attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0) {
+        uint64_t received_ts = _attribute_value.toLongLong();
         uint64_t time_diff = last_recevied_ts - received_ts;
         if(time_diff > 0) {
             setStyleSheet("QLabel { color : #4EB66B; }");
@@ -139,34 +139,40 @@ void ChaosLabel::valueUpdated(const QString& node_uid,
         } else {
             if(++zero_diff_count > 3) {
                 //timeouted
-                 setStyleSheet("QLabel { color : #E65566; }");
+                setStyleSheet("QLabel { color : #E65566; }");
             } else {
                 //in this case we do nothing perhaps we can to fast to check
             }
         }
         last_recevied_ts = received_ts;
-    }else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
+    } else if(_attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
         //write the value
-        setToolTip(attribute_value.toString());
+        setToolTip(_attribute_value.toString());
         if(labelValueShowTrackStatus())
-            setText(attribute_value.toString());
+            setText(_attribute_value.toString());
+    } else if(_attribute_name.compare(attributeName()) == 0) {
+        //we have a value given by an handler that doesn't expose the timestamp
+        setText(_attribute_value.toString());
     }
 }
 
-void ChaosLabel::valueNotFound(const QString& node_uid,
-                               const QString& attribute_name) {
-    if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0) {
+void ChaosLabel::valueNotFound(const QString& _node_uid,
+                               const QString& _attribute_name) {
+    if(_attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0) {
         last_recevied_ts = zero_diff_count = 0;
         setStyleSheet("QLabel { color : gray; }");
     }
 }
 
-void ChaosLabel::valueUpdated(const QString& node_uid,
-                              const QString& attribute_name,
-                              uint64_t timestamp,
-                              const QVariant& attribute_value) {
+void ChaosLabel::valueUpdated(const QString& _node_uid,
+                              const QString& _attribute_name,
+                              uint64_t _timestamp,
+                              const QVariant& _attribute_value) {
     //write the value
-    setText(attribute_value.toString());
+    if(_attribute_name.compare(attributeName()) == 0) {
+        //we have a value given by an handler that doesn't expose the timestamp
+        setText(_attribute_value.toString());
+    }
 }
 
 //slots hiding

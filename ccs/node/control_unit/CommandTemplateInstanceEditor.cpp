@@ -107,6 +107,7 @@ void CommandTemplateInstanceEditor::onApiDone(const QString& tag,
 
 boost::shared_ptr<node::TemplateSubmission> CommandTemplateInstanceEditor::getTempalteSubmissionTask() {
     bool ok = false;
+
     boost::shared_ptr<node::TemplateSubmission> submission_info(new node::TemplateSubmission());
     submission_info->node_unique_id = node_uid.toStdString();
     submission_info->template_name = template_name.toStdString();
@@ -131,11 +132,16 @@ boost::shared_ptr<node::TemplateSubmission> CommandTemplateInstanceEditor::getTe
 
 void CommandTemplateInstanceEditor::submitInstance() {
     node::TemplateSubmissionList submission_list;
-    boost::shared_ptr<node::TemplateSubmission>  instance = getTempalteSubmissionTask();
-    if(instance.get() == NULL) return;
-    submission_list.push_back(instance);
-    //whe have all submission pack completed
 
+    //check how many instance of the command we need to submit
+    unsigned int instance_number = (ui->lineEditNumberofInstances->text().size()==0)?1:ui->lineEditNumberofInstances->text().toUInt();
+
+    for(unsigned int idx = 0; idx < instance_number; idx++) {
+        boost::shared_ptr<node::TemplateSubmission>  instance = getTempalteSubmissionTask();
+        if(instance.get() == NULL) break;
+        submission_list.push_back(instance);
+    }
+    //whe have all submission pack completed
     submitApiResult(TAG_CMD_INSTANCE_SUBMIT,
                     GET_CHAOS_API_PTR(node::CommandTemplateSubmit)->execute(submission_list));
 }

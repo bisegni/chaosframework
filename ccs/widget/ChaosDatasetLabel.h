@@ -3,7 +3,7 @@
 
 #include "ChaosLabel.h"
 class ChaosDatasetLabel :
-        public ChaosLabel{
+        public ChaosLabel {
     Q_OBJECT
 
     Q_PROPERTY(Dataset dataset READ dataset WRITE setDataset NOTIFY datasetChanged)
@@ -32,6 +32,7 @@ protected slots:
     private:
         Dataset p_dataset;
         unsigned int getChaosDataset();
+        boost::shared_ptr<AbstractTSTaggedAttributeHandler> handler_sptr;
         boost::shared_ptr<AbstractTSTaggedAttributeHandler>
         getChaosAttributeHandlerForType(ChaosDataType chaos_type, bool &ok);
 
