@@ -31,9 +31,8 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
-static void my_free (void *data, void *hint)
-{
-    delete (char*)data;
+static void my_free (void *data, void *hint) {
+    free (data);
 }
 
 DEFINE_CLASS_FACTORY(ZMQServer, RpcServer);
@@ -124,7 +123,7 @@ void ZMQServer::executeOnThread(){
     int	linger = 500;
     int	water_mark = 10;
     int	send_timeout = 5000;
-    auto_ptr<CDataWrapper> cdataWrapperPack;
+    auto_ptr<CDataWrapper> data_pack;
 
     void *receiver = zmq_socket (zmqContext, ZMQ_REP);
     if(!receiver) return;
@@ -174,19 +173,24 @@ void ZMQServer::executeOnThread(){
                     ZMQS_LDBG << "Message Received";
                         //  Send reply back to client
                         //dispatch the command
-                    cdataWrapperPack.reset(commandHandler->dispatchCommand(new CDataWrapper((const char*)zmq_msg_data(&request))));
-                    auto_ptr<SerializationBuffer> result(cdataWrapperPack->getBSONData());
-                    result->disposeOnDelete = false;
+                    data_pack.reset(commandHandler->dispatchCommand(new CDataWrapper((const char*)zmq_msg_data(&request))));
+                    //get serailizaiton
+                    auto_ptr<SerializationBuffer> result(data_pack->getBSONData());
+                    //create zmq message
                     err = zmq_msg_init_data(&response, (void*)result->getBufferPtr(), result->getBufferLen(), my_free, NULL);
                     if(err == -1) {
+                        //there was an error
                         int32_t sent_error = zmq_errno();
                         std::string error_message = zmq_strerror(sent_error);
                         ZMQS_LERR << "Error initializing the response message with code:" << sent_error << " message:" <<error_message;
                     } else {
-                        ZMQS_LDBG << "Send ack";
-                        auto_ptr<SerializationBuffer> result(cdataWrapperPack->getBSONData());
+                        //no error on create message
+                        //at this time memory is managed by zmq
                         result->disposeOnDelete = false;
-                        ZMQ_DO_AGAIN(zmq_sendmsg(receiver, &response, ZMQ_NOBLOCK);)
+                        //auto_ptr<SerializationBuffer> result(data_pack->getBSONData());
+                        //result->disposeOnDelete = false;
+                        ZMQS_LDBG << "Send ack";
+                        err = zmq_sendmsg(receiver, &response, ZMQ_NOBLOCK);
                         if(err == -1) {
                             int32_t sent_error = zmq_errno();
                             std::string error_message =zmq_strerror(sent_error);

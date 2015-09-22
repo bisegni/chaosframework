@@ -42,7 +42,7 @@ using namespace boost::algorithm;
 DEFINE_CLASS_FACTORY(ZMQClient, RpcClient);
 
 static void my_free (void *data, void *hint) {
-    free(char*)data;
+    free(data);
 }
 
 

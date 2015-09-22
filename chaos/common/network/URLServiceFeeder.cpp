@@ -83,7 +83,7 @@ URLServiceFeeder::URLService *URLServiceFeeder::getNextFromSetByPriority() {
 void URLServiceFeeder::removeFromOnlineQueue(uint32_t url_index) {
     SetUrlPositionIndexIterator it = set_urls_online.get<position_index>().find(url_index);
     if(it == set_urls_online.get<position_index>().end()) return;
-    URLServiceIndex serv_by_it = *it;
+    //URLServiceIndex serv_by_it = *it;
     set_urls_online.get<position_index>().erase(url_index);
 }
 /*!
