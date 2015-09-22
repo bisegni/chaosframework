@@ -102,8 +102,10 @@ vector< boost::shared_ptr<ActionParamDescription> >& AbstractActionDescriptor::g
 /*
  Add a new param
  */
-void AbstractActionDescriptor::addParam(const char*const paramName, DataType::DataType type, const char*const description){
-    boost::shared_ptr<ActionParamDescription> desc (new ActionParamDescription(paramName));
+void AbstractActionDescriptor::addParam(const std::string& param_name,
+                                        DataType::DataType type,
+                                        const std::string& description){
+    boost::shared_ptr<ActionParamDescription> desc (new ActionParamDescription(param_name));
     desc->paramType = type;
     desc->paramDescription = description;
     paramDescriptionVec.push_back(desc);

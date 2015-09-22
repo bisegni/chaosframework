@@ -32,12 +32,11 @@ ZMQDirectIOClientConnection::ZMQDirectIOClientConnection(std::string server_desc
 DirectIOClientConnection(server_description, endpoint),
 socket_priority(_socket_priority),
 socket_service(_socket_service),
-monitor_info(NULL) {
-}
+monitor_info(new ConnectionMonitorInfo()) {}
 
 
 ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {
-    
+    if(monitor_info) delete(monitor_info);
 }
 
 // send the data to the server layer on priority channel

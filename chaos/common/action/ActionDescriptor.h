@@ -50,7 +50,7 @@ namespace chaos {
         DataType::DataType paramType;
         
         ActionParamDescription(){}
-        ActionParamDescription(const char*const _paramName):paramName(_paramName){}
+        ActionParamDescription(const std::string& _paramName):paramName(_paramName){}
     };
     
     /*!
@@ -125,7 +125,9 @@ namespace chaos {
         /*!
          Add a new param
          */
-        void addParam(const char*const, DataType::DataType, const char*const);
+        void addParam(const std::string& param_name,
+                      DataType::DataType type,
+                      const std::string& description);
     };
     
     //define the ptr style defined
@@ -149,7 +151,10 @@ namespace chaos {
          that implement the action. be aware that the object reference is never deallocated by
          this class
          */
-        ActionDescriptor(T* _objectReference, ActionPointerDef _actionPointer, const string & _domainName, const string & _actionName) {
+        ActionDescriptor(T* _objectReference,
+                         ActionPointerDef _actionPointer,
+                         const std::string& _domainName,
+                         const std::string& _actionName) {
                 //set the object reference
             objectReference = _objectReference;
                 //set the action offset 

@@ -255,7 +255,6 @@ DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string s
         
         
         //DEBUG_CODE(ZMQDIOLDBG_ << "Allocating monitor socket thread for monitor url " << monitor_url;)
-        result->monitor_info = new ConnectionMonitorInfo();
         result->monitor_info->run = true;
         result->monitor_info->monitor_thread = NULL;
         result->monitor_info->monitor_socket = NULL;

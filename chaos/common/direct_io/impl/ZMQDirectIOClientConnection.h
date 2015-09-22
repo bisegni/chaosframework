@@ -66,7 +66,7 @@ namespace chaos {
 					std::string service_identity;
 					void *socket_service;
 					
-					ConnectionMonitorInfo *monitor_info;
+                    ConnectionMonitorInfo *monitor_info;
 					
                     boost::shared_mutex mutex_socket_manipolation;
 					
