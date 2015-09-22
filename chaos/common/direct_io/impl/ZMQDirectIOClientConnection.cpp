@@ -31,13 +31,10 @@ using namespace chaos::common::direct_io::impl;
 ZMQDirectIOClientConnection::ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service, uint16_t endpoint):
 DirectIOClientConnection(server_description, endpoint),
 socket_priority(_socket_priority),
-socket_service(_socket_service),
-monitor_info(new ConnectionMonitorInfo()) {}
+socket_service(_socket_service) {}
 
 
-ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {
-    if(monitor_info) delete(monitor_info);
-}
+ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {}
 
 // send the data to the server layer on priority channel
 int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pack,

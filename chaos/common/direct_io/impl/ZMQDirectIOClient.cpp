@@ -255,18 +255,18 @@ DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string s
         
         
         //DEBUG_CODE(ZMQDIOLDBG_ << "Allocating monitor socket thread for monitor url " << monitor_url;)
-        result->monitor_info->run = true;
-        result->monitor_info->monitor_thread = NULL;
-        result->monitor_info->monitor_socket = NULL;
-        result->monitor_info->unique_identification = result->getUniqueUUID();
+        result->monitor_info.run = true;
+        result->monitor_info.monitor_thread = NULL;
+        result->monitor_info.monitor_socket = NULL;
+        result->monitor_info.unique_identification = result->getUniqueUUID();
         //result->getConnectionHash();
         
         //register socket for monitoring
-        result->monitor_info->monitor_url = boost::str( boost::format("inproc://%1%") % result->getUniqueUUID());
-        err = zmq_socket_monitor(socket_priority, result->monitor_info->monitor_url.c_str(), ZMQ_EVENT_ALL);
+        result->monitor_info.monitor_url = boost::str( boost::format("inproc://%1%") % result->getUniqueUUID());
+        err = zmq_socket_monitor(socket_priority, result->monitor_info.monitor_url.c_str(), ZMQ_EVENT_ALL);
         if(err) throw chaos::CException(err, "Error activating monitor on service socket", __FUNCTION__);
         
-        result->monitor_info->monitor_thread = new boost::thread(boost::bind(&ZMQDirectIOClient::socketMonitor, this, zmq_context, result->monitor_info->monitor_url.c_str(), result->monitor_info));
+        result->monitor_info.monitor_thread = new boost::thread(boost::bind(&ZMQDirectIOClient::socketMonitor, this, zmq_context, result->monitor_info.monitor_url.c_str(), &result->monitor_info));
         
         //register client with the hash of the xzmq decoded endpoint address (tcp://ip:port)
         DEBUG_CODE(ZMQDIOLDBG_ << "Register client for " << server_description << " with zmq decoded hash " << result->getUniqueUUID();)
@@ -312,20 +312,20 @@ void ZMQDirectIOClient::_releaseConnectionImpl(DirectIOClientConnection *connect
     int err = 0;
     ZMQDirectIOClientConnection *conn=reinterpret_cast<ZMQDirectIOClientConnection*>(connection_to_release);
     if(!conn) return;
-    CHAOS_ASSERT(conn->monitor_info)
+    //CHAOS_ASSERT(conn->monitor_info)
     //stop the monitor
     ZMQDIOLAPP_ << "Release the connection for: " << connection_to_release->getServerDescription();
     
     //disable monitor
-    conn->monitor_info->run = false;
+    conn->monitor_info.run = false;
     //err = zmq_disconnect(conn->socket_priority, "tcp://0.0.0.0.:1111");
     err = zmq_socket_monitor(conn->socket_priority, NULL, 0);
     if(err) ZMQDIOLERR_ << "Error closing monitor socket for " << conn->getServerDescription();
     
-    if(conn->monitor_info->monitor_thread) {
-        if(conn->monitor_info->monitor_thread->joinable())
-            conn->monitor_info->monitor_thread->join();
-        delete(conn->monitor_info->monitor_thread);
+    if(conn->monitor_info.monitor_thread) {
+        if(conn->monitor_info.monitor_thread->joinable())
+            conn->monitor_info.monitor_thread->join();
+        delete(conn->monitor_info.monitor_thread);
     }
     ZMQDIOLAPP_ << "Disabled monitor socket for " << conn->getServerDescription();
     
