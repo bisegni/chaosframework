@@ -247,7 +247,7 @@ int64_t DirectIODeviceClientChannel::endQueryDataCloudResult(const std::string& 
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloudEndResult);
     
     //copy the query id on header
-    std::strncpy(cq_end_result_header->field.query_id, query_id.c_str(), 8);
+    std::memcpy(cq_end_result_header->field.query_id, query_id.c_str(), 8);
     
     //configure the header
     cq_end_result_header->field.error = TO_LITTEL_ENDNS_NUM(int32_t, error);

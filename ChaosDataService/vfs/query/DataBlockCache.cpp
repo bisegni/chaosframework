@@ -95,7 +95,11 @@ int DataBlockCache::getFetcherForBlockWithPath(const std::string& datablock_path
 		*fetcher = new DataBlockFetcher(storage_driver, datablock_path);
 		if(!(*fetcher) ||
 		   (err = (*fetcher)->open())) {
-			//error
+			//in case of error we need to check if the object as bee created but the file is not accessible
+            if(*fetcher) {
+                delete(*fetcher);
+                *fetcher = NULL;
+            }
 		} else {
 			//all is gone well and we can put the fetcher in hashmap
 			map_path_datablock.insert(make_pair(datablock_path, *fetcher));

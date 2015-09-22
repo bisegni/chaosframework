@@ -82,7 +82,11 @@ log << "("<<num<<") " << msg;\
 throw chaos::CException(num, msg, __PRETTY_FUNCTION__);
 
 #define LOG_AND_TROW_FORMATTED(log, num, f, p)\
-CHAOS_BOOST_LOCK_WRAP_EXCEPTION( LOG_AND_TROW(log, num, boost::str(boost::format(f)p)), log << lock_exception.what();)
+try{\
+CHAOS_BOOST_LOCK_WRAP_EXCEPTION( LOG_AND_TROW(log, num, boost::str(boost::format(f)p)), log << lock_exception.what();)\
+}catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector< boost::io::bad_format_string> >& exc) {\
+log<< exc.what();\
+}
 
 #define CHAOS_LASSERT_EXCEPTION(assertion, log, num, msg)\
 if(!assertion) {LOG_AND_TROW(log, num, msg)}

@@ -140,7 +140,7 @@ hook(NULL){
 }
 
 MongoDBHAConnectionManager::~MongoDBHAConnectionManager() {
-	
+    if(hook) delete(hook);
 	std::queue< boost::shared_ptr<mongo::ConnectionString> > empty_queue;
 	std::swap(valid_connection_queue, empty_queue);
 	std::swap(offline_connection_queue, empty_queue);
