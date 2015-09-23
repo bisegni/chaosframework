@@ -20,7 +20,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <<memory>
+#include <memory>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/NewUS.h>
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/ManageCUType.h>
@@ -94,7 +94,7 @@ int initialize_from_old_mds(std::string conf){
     EXECUTE_CHAOS_API(api_proxy::service::ResetAll,3000);
   //  std::cout<<"json:"<<data.getJSONString()<<std::endl;
     std::auto_ptr<CMultiTypeDataArrayWrapper> data_servers(mdsconf.getVectorValue("data_servers"));
-    if(data_servers){
+    if(data_servers.get()){
          for(int cnt=0;cnt<data_servers->size();cnt++){
              std::basic_string<char>::iterator  pnt;
              int chan=0;
