@@ -290,6 +290,10 @@ namespace chaos {
         static const char * const NODE_HEALT_STATUS_STOP        = "Stop";
         //! stopped status
         static const char * const NODE_HEALT_STATUS_STOPING     = "Stoping";
+        //! recoverable error status
+        static const char * const NODE_HEALT_STATUS_RERROR      = "Recoverable Error";
+        //! fatal error status
+        static const char * const NODE_HEALT_STATUS_FERROR      = "Fatal Error";
     }
     /** @} */ // end of NodeHealtDefinitionValue
     
@@ -630,7 +634,9 @@ namespace chaos {
             //! define the node has been stopped
             STOP    = 3,
             //!define an error state of the node, in error state the node wait until someone clear the error and put it again in START/STOP/DEINIT
-            ERROR,
+            RECOVERABLE_ERROR = 4,
+            //!define an error state of the node, in this case the error can't be recovered so it is equivalent to a deinit state
+            FATAL_ERROR = 5,
             //!define the status of the node cannot be retrieved 
             UNDEFINED
         } ControlUnitState;

@@ -68,11 +68,11 @@ bool StartableService::initImplementation(StartableService *impl, void *initData
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         SS_LDBG  << "Initializing " << implName;
-        if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::initialize()) == boost::msm::back::HANDLED_TRUE) {
+        if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::init()) == boost::msm::back::HANDLED_TRUE) {
 			try {
 				impl->init(initData);
 			} catch (CException& ex) {
-				impl->StartableService::state_machine.process_event(service_state_machine::EventType::deinitialize());
+				impl->StartableService::state_machine.process_event(service_state_machine::EventType::deinit());
 				throw ex;
 			}
             
@@ -99,7 +99,7 @@ bool StartableService::deinitImplementation(StartableService *impl, const string
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         SS_LDBG  << "Deinitializing " << implName;
-        if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::deinitialize()) == boost::msm::back::HANDLED_TRUE) {
+        if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::init()) == boost::msm::back::HANDLED_TRUE) {
 			impl->deinit();
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_DEINTIATED;
         } else {
@@ -127,7 +127,7 @@ bool StartableService::startImplementation(StartableService *impl, const string 
 			try{
 				impl->start();
 			}catch(CException& ex) {
-				impl->StartableService::state_machine.process_event(service_state_machine::EventType::initialize());
+				impl->StartableService::state_machine.process_event(service_state_machine::EventType::init());
 				throw ex;
 			}
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::StartableServiceType::SS_STARTED;

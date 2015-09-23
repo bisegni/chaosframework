@@ -456,6 +456,10 @@
 		3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3299363418A7C4F60093E7F2 /* ChaosDataService.cpp */; };
 		32995C421BAC57A300F68148 /* SCWaitCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32995C401BAC57A300F68148 /* SCWaitCommand.cpp */; settings = {ASSET_TAGS = (); }; };
 		32995C431BAC57A300F68148 /* SCWaitCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 32995C411BAC57A300F68148 /* SCWaitCommand.h */; settings = {ASSET_TAGS = (); }; };
+		32995C461BB2D1F700F68148 /* SWEService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32995C441BB2D1F700F68148 /* SWEService.cpp */; settings = {ASSET_TAGS = (); }; };
+		32995C471BB2D1F700F68148 /* SWEService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32995C451BB2D1F700F68148 /* SWEService.h */; settings = {ASSET_TAGS = (); }; };
+		32995C4A1BB2FF2600F68148 /* CheckList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32995C481BB2FF2600F68148 /* CheckList.cpp */; settings = {ASSET_TAGS = (); }; };
+		32995C4B1BB2FF2600F68148 /* CheckList.h in Headers */ = {isa = PBXBuildFile; fileRef = 32995C491BB2FF2600F68148 /* CheckList.h */; settings = {ASSET_TAGS = (); }; };
 		329C1EFD1B55286100A84D55 /* RpcServerMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1EFB1B55286100A84D55 /* RpcServerMetricCollector.cpp */; };
 		329C1EFE1B55286100A84D55 /* RpcServerMetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1EFC1B55286100A84D55 /* RpcServerMetricCollector.h */; };
 		329C1F011B5540F900A84D55 /* MetricCollectorIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1EFF1B5540F900A84D55 /* MetricCollectorIO.cpp */; };
@@ -615,8 +619,6 @@
 		32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB736E16FE3432008575F0 /* ReaderDataService.h */; };
 		32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB7CDE17099C8D00767FC1 /* DataCache.cpp */; };
 		32CB7CE117099C8D00767FC1 /* DataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB7CDF17099C8D00767FC1 /* DataCache.h */; };
-		32CDA9A4198932C500663D8B /* LoadableService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CDA9A2198932C500663D8B /* LoadableService.cpp */; };
-		32CDA9A5198932C500663D8B /* LoadableService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CDA9A3198932C500663D8B /* LoadableService.h */; };
 		32CFC5C51AF55FED00E2A0B6 /* IOCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFC5C31AF55FED00E2A0B6 /* IOCU.cpp */; };
 		32CFC5C61AF55FED00E2A0B6 /* IOCU.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFC5C41AF55FED00E2A0B6 /* IOCU.h */; };
 		32CFC5CA1AF5601300E2A0B6 /* BasicIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFC5C71AF5601300E2A0B6 /* BasicIODriver.cpp */; };
@@ -1331,6 +1333,10 @@
 		3299363518A7C4F60093E7F2 /* ChaosDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosDataService.h; sourceTree = "<group>"; };
 		32995C401BAC57A300F68148 /* SCWaitCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SCWaitCommand.cpp; sourceTree = "<group>"; };
 		32995C411BAC57A300F68148 /* SCWaitCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCWaitCommand.h; sourceTree = "<group>"; };
+		32995C441BB2D1F700F68148 /* SWEService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWEService.cpp; sourceTree = "<group>"; };
+		32995C451BB2D1F700F68148 /* SWEService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWEService.h; sourceTree = "<group>"; };
+		32995C481BB2FF2600F68148 /* CheckList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckList.cpp; sourceTree = "<group>"; };
+		32995C491BB2FF2600F68148 /* CheckList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckList.h; sourceTree = "<group>"; };
 		329C1EFB1B55286100A84D55 /* RpcServerMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServerMetricCollector.cpp; sourceTree = "<group>"; };
 		329C1EFC1B55286100A84D55 /* RpcServerMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerMetricCollector.h; sourceTree = "<group>"; };
 		329C1EFF1B5540F900A84D55 /* MetricCollectorIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetricCollectorIO.cpp; sourceTree = "<group>"; };
@@ -1547,8 +1553,6 @@
 		32CB736E16FE3432008575F0 /* ReaderDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReaderDataService.h; sourceTree = "<group>"; };
 		32CB7CDE17099C8D00767FC1 /* DataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataCache.cpp; sourceTree = "<group>"; };
 		32CB7CDF17099C8D00767FC1 /* DataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataCache.h; sourceTree = "<group>"; };
-		32CDA9A2198932C500663D8B /* LoadableService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableService.cpp; sourceTree = "<group>"; };
-		32CDA9A3198932C500663D8B /* LoadableService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableService.h; sourceTree = "<group>"; };
 		32CFC5C31AF55FED00E2A0B6 /* IOCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IOCU.cpp; sourceTree = "<group>"; };
 		32CFC5C41AF55FED00E2A0B6 /* IOCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOCU.h; sourceTree = "<group>"; };
 		32CFC5C71AF5601300E2A0B6 /* BasicIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicIODriver.cpp; sourceTree = "<group>"; };
@@ -2761,8 +2765,10 @@
 				32BFF90D176C842E00D27A04 /* InizializableService.h */,
 				32BFF910176C862A00D27A04 /* StartableService.cpp */,
 				32BFF911176C862A00D27A04 /* StartableService.h */,
-				32CDA9A2198932C500663D8B /* LoadableService.cpp */,
-				32CDA9A3198932C500663D8B /* LoadableService.h */,
+				32995C441BB2D1F700F68148 /* SWEService.cpp */,
+				32995C451BB2D1F700F68148 /* SWEService.h */,
+				32995C481BB2FF2600F68148 /* CheckList.cpp */,
+				32995C491BB2FF2600F68148 /* CheckList.h */,
 				32F7FEA218A5066600FC03AB /* FastDelegate.h */,
 				32F7FEA318A5066600FC03AB /* FastDelegateBind.h */,
 				326DB42514B38BC00018A8D0 /* ArrayPointer.h */,
@@ -3696,6 +3702,7 @@
 				326DB48614B38BC00018A8D0 /* CNodeNetworkAddress.h in Headers */,
 				326DB48814B38BC00018A8D0 /* ChaosThread.h in Headers */,
 				32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */,
+				32995C471BB2D1F700F68148 /* SWEService.h in Headers */,
 				324A4B76191A428500975394 /* jsobj.h in Headers */,
 				322DE35518D467E5006F1551 /* ConcuredUsedItem.h in Headers */,
 				326DB48E14B38BC00018A8D0 /* ArrayPointer.h in Headers */,
@@ -3780,6 +3787,7 @@
 				32661C761AA867E100F1A721 /* MessageRequestFuture.h in Headers */,
 				325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */,
 				325DE9F615EC03F800D6F34E /* EventAction.h in Headers */,
+				32995C4B1BB2FF2600F68148 /* CheckList.h in Headers */,
 				3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */,
 				324A4B59191A41EF00975394 /* windows_basic.h in Headers */,
 				325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */,
@@ -3898,7 +3906,6 @@
 				327F51DF1952E81D00BA3D01 /* DirectIOURLManagment.h in Headers */,
 				329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */,
 				32A91FCB1A49AF0700DCF364 /* RpcSyncServer.h in Headers */,
-				32CDA9A5198932C500663D8B /* LoadableService.h in Headers */,
 				32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */,
 				32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */,
 				324A4B7C191A428500975394 /* html.h in Headers */,
@@ -4423,6 +4430,7 @@
 				32F5B00A1B5F998F00457A63 /* CSVFileMetricBackend.cpp in Sources */,
 				32FB20181A3F0FAB00307A86 /* AttributeValue.cpp in Sources */,
 				324A4B75191A428500975394 /* jsobj.cpp in Sources */,
+				32995C4A1BB2FF2600F68148 /* CheckList.cpp in Sources */,
 				329C1F011B5540F900A84D55 /* MetricCollectorIO.cpp in Sources */,
 				326DB45C14B38BC00018A8D0 /* CDataWrapper.cpp in Sources */,
 				326DB45E14B38BC00018A8D0 /* CUSchemaDB.cpp in Sources */,
@@ -4451,7 +4459,6 @@
 				32F5B0061B5F8EBF00457A63 /* FileMetricBackend.cpp in Sources */,
 				329C1EFD1B55286100A84D55 /* RpcServerMetricCollector.cpp in Sources */,
 				32C100FB191B847800478F40 /* TimerHandler.cpp in Sources */,
-				32CDA9A4198932C500663D8B /* LoadableService.cpp in Sources */,
 				324A4B9E191A569800975394 /* hex.cpp in Sources */,
 				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,
 				329C1F0D1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp in Sources */,
@@ -4478,6 +4485,7 @@
 				32EE897F191A792000DE2F29 /* stringutils.cpp in Sources */,
 				32C4C86D193491F2002DA741 /* URLServiceFeeder.cpp in Sources */,
 				325013BC15E9258C00DCB13E /* EventClient.cpp in Sources */,
+				32995C461BB2D1F700F68148 /* SWEService.cpp in Sources */,
 				324A4B2D191A405700975394 /* document.cpp in Sources */,
 				32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */,
 				324A4B96191A557700975394 /* time_support.cpp in Sources */,

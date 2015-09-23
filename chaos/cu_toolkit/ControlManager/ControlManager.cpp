@@ -319,10 +319,12 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
             switch (i->second->getCurrentState()) {
                 case UnitStatePublishingFailure:
                     LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance is erased because is in publishing failure state";
+                    //we need to remove the node within the healt manager
                     HealtManager::getInstance()->removeNode(i->second->work_unit_instance->getCUID());
                     break;
                 case UnitStateUnpublished:
                     LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance is erased becase has been successfully unpublished";
+                    //we need to remove the node within the healt manager
                     HealtManager::getInstance()->removeNode(i->second->work_unit_instance->getCUID());
                     break;
                 case UnitStatePublished:

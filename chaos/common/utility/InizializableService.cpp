@@ -70,11 +70,11 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
     if(impl == NULL) throw CException(-1, "Implementation is null", domainString);
     try {
         IS_LAPP  << "Initializing " << implName;
-        if(impl->state_machine.process_event(service_state_machine::EventType::initialize()) == boost::msm::back::HANDLED_TRUE) {
+        if(impl->state_machine.process_event(service_state_machine::EventType::init()) == boost::msm::back::HANDLED_TRUE) {
 			try {
 				impl->init(initData);
 			}catch(CException& ex) {
-				impl->InizializableService::state_machine.process_event(service_state_machine::EventType::deinitialize());
+				impl->InizializableService::state_machine.process_event(service_state_machine::EventType::deinit());
 				throw ex;
 			}
             
@@ -86,7 +86,7 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
     } catch (CException& ex) {
         IS_LERR  << "Error Initializing";
         DECODE_CHAOS_EXCEPTION_ON_LOG(IS_LERR, ex);
-        impl->state_machine.process_event(service_state_machine::EventType::deinitialize());
+        impl->state_machine.process_event(service_state_machine::EventType::deinit());
         throw ex;
 	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
 		IS_LERR  << "Error Deinitializing " << ex.what();
@@ -102,7 +102,7 @@ bool InizializableService::deinitImplementation(InizializableService *impl, cons
     if(impl == NULL) throw CException(-1, "Implementation is null", domainString);
     try {
         IS_LAPP  << "Deinitializing " << implName;
-        if(impl->state_machine.process_event(service_state_machine::EventType::deinitialize()) == boost::msm::back::HANDLED_TRUE) {
+        if(impl->state_machine.process_event(service_state_machine::EventType::deinit()) == boost::msm::back::HANDLED_TRUE) {
             impl->deinit();
         } else {
             throw CException(-2, "Service cant be deinitialized", domainString);
