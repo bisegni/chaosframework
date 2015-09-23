@@ -34,21 +34,23 @@
             <file>file:/home/michelo/progetti/chaos_bundle/chaosframework/chaos/common/event/EventServer.h</file>
         </group>
         <group name="CHAOS"/>
-        <group name="CHAOS_BUNDLE_DEVELOPMENT">
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/common/exception/CException.h</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/ChaosMetadataServiceClient/ChaosMetadataServiceClient.cpp</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/common/global.h</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/ChaosMetadataServiceClient/ChaosMetadataServiceClient.h</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/cu_toolkit/ControlManager/AbstractControlUnit.cpp</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/ChaosMetadataService/persistence/persistence_types.h</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/common/chaos_constants.h</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/ChaosMetadataServiceClient/CMakeLists.txt</file>
-        </group>
         <group name="HW/CHAOS_BUNDLE">
             <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/cu_toolkit/ControlManager/AbstractControlUnit.cpp</file>
             <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/common/data/CDataWrapper.cpp</file>
             <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/common/bson/bsonelement.h</file>
             <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/common/bson/bsonobj.h</file>
+        </group>
+        <group name="CHAOS_BUNDLE_DEVELOPMENT">
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/common/exception/CException.h</file>
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/ui_toolkit/HighLevelApi/DeviceController.h</file>
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/ChaosMetadataServiceClient/ChaosMetadataServiceClient.cpp</file>
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/common/message/DeviceMessageChannel.cpp</file>
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/ui_toolkit/HighLevelApi/DeviceController.cpp</file>
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/ChaosMetadataService/persistence/persistence_types.h</file>
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/common/chaos_constants.h</file>
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/example/ChaosMDSCmd/main.cpp</file>
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/ChaosMetadataServiceClient/CMakeLists.txt</file>
+            <file>file:/home/michelo/chaos_bundle_development/chaosframework/example/ChaosCLI/main.cpp</file>
         </group>
     </open-files>
 </project-private>

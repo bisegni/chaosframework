@@ -452,6 +452,8 @@
           <in>CLedIndicatorHealt.h</in>
           <in>ChaosDatasetLabel.cpp</in>
           <in>ChaosDatasetLabel.h</in>
+          <in>ChaosHealtLabel.cpp</in>
+          <in>ChaosHealtLabel.h</in>
           <in>ChaosLabel.cpp</in>
           <in>ChaosLabel.h</in>
           <in>LedIndicatorWidget.cpp</in>
@@ -25750,6 +25752,10 @@
               <df name="chaos-mess">
                 <in>ChaosMESS.h</in>
                 <in>DummyDriver.h</in>
+              </df>
+              <df name="misc">
+                <in>ChaosDatasetAttribute.h</in>
+                <in>ChaosDatasetAttributeSyncronizer.h</in>
               </df>
               <df name="modbus">
                 <df name="core">

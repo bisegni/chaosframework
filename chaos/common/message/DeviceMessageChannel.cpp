@@ -119,6 +119,7 @@ int DeviceMessageChannel::getType(std::string& control_unit_type, uint32_t milli
 //------------------------------------
 int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, uint32_t millisecToWait) {
     CDataWrapper message_data;
+    deviceState=CUStateKey::UNDEFINED;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
 											  NodeDomainAndActionRPC::ACTION_NODE_GET_STATE,

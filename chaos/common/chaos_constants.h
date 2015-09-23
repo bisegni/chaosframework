@@ -621,10 +621,18 @@ namespace chaos {
          those of the stat machine internally defined into teh chaos::utility::StartableService.
          */
         typedef enum {
+            //! define the node in uninitialized
             DEINIT  = 0,
+            //! define the node is initialized and is ready to start
             INIT    = 1,
+            //! define the node is running
             START   = 2,
-            STOP    = 3
+            //! define the node has been stopped
+            STOP    = 3,
+            //!define an error state of the node, in error state the node wait until someone clear the error and put it again in START/STOP/DEINIT
+            ERROR,
+            //!define the status of the node cannot be retrieved 
+            UNDEFINED
         } ControlUnitState;
     }
     /** @} */ // end of CUStateKey
@@ -968,5 +976,10 @@ namespace chaos {
         }
         /** @} */ // end of EventConfiguration
     }
+    
+    /*
+     * separator to be used in node naming 
+     */
+    static const char PATH_SEPARATOR                                                ='/';
 }
 #endif

@@ -819,6 +819,7 @@ void DeviceController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
 //---------------------------------------------------------------------------------------------------
 int DeviceController::getTimeStamp(uint64_t& live){
 	CDataWrapper * d= current_output_dataset.get();
+        live =0;
 	if(d){
 		live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
 		return 0;

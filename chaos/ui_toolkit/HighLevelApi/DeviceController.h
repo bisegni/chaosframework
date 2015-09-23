@@ -170,6 +170,8 @@ namespace chaos {
 
 			/*!
              Get time stamp of last packet
+                         * @param [out] live output timestamp, set 0 on error
+                         * @return 0 on success, negative otherwise
              */
 			int getTimeStamp(uint64_t& live);
             /*!
@@ -338,6 +340,8 @@ namespace chaos {
                 //!Get device state
             /*!
              Return the current device state
+             * @param [out] deviceState returned state, if error UNDEFINED state set
+             * @return 0 on success
              */
             int getState(CUStateKey::ControlUnitState& deviceState);
             
