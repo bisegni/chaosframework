@@ -262,6 +262,7 @@ namespace chaos {
                 \param submission_checker_steps_delay (optional) is the delay between two steps of the submission checker
                 \param slow_command_data (optional) is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
                         take palce. The memory of that parameter is not free
+             * @return 0 on success
              */
             int submitSlowControlCommand(string commandAlias,
                                          chaos::common::batch_command::SubmissionRuleType::SubmissionRule submissionRule,
@@ -285,6 +286,7 @@ namespace chaos {
 				\param submission_checker_steps_delay (optional) is the delay between two steps of the submission checker
 				\param slow_command_data (optional) is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
 						take palce. The memory of that parameter is not free
+             * @return 0 on success
              */
             int submitSlowControlCommand(string commandAlias,
 										 chaos::common::batch_command::SubmissionRuleType::SubmissionRule submissionRule,
