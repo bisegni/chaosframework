@@ -20,6 +20,36 @@
         <in>main.cpp</in>
       </df>
       <df name="bin">
+        <df name="bin_cds">
+          <df name="CMakeFiles">
+            <df name="ChaosDataService.dir">
+              <df name="__">
+                <df name="chaos_service_common">
+                  <df name="persistence">
+                    <df name="mongodb">
+                    </df>
+                  </df>
+                </df>
+              </df>
+              <df name="cache_system">
+              </df>
+              <df name="db_system">
+              </df>
+              <df name="indexer">
+              </df>
+              <df name="query_engine">
+              </df>
+              <df name="vfs">
+                <df name="query">
+                </df>
+                <df name="storage_system">
+                </df>
+              </df>
+              <df name="worker">
+              </df>
+            </df>
+          </df>
+        </df>
         <df name="bin_common">
           <df name="CMakeFiles">
             <df name="chaos_common.dir">
@@ -115,6 +145,50 @@
               </df>
               <df name="driver_manager">
                 <df name="driver">
+                </df>
+              </df>
+            </df>
+          </df>
+        </df>
+        <df name="bin_metadata_service">
+          <df name="CMakeFiles">
+            <df name="ChaosMetadataService.dir">
+              <df name="__">
+                <df name="chaos_service_common">
+                  <df name="persistence">
+                    <df name="data_access">
+                    </df>
+                    <df name="mongodb">
+                    </df>
+                  </df>
+                </df>
+              </df>
+              <df name="api">
+                <df name="control_unit">
+                </df>
+                <df name="data_service">
+                </df>
+                <df name="healt">
+                </df>
+                <df name="node">
+                </df>
+                <df name="service">
+                </df>
+                <df name="unit_server">
+                </df>
+              </df>
+              <df name="batch">
+                <df name="control_unit">
+                </df>
+                <df name="node">
+                </df>
+                <df name="unit_server">
+                </df>
+              </df>
+              <df name="persistence">
+                <df name="data_access">
+                </df>
+                <df name="mongodb">
                 </df>
               </df>
             </df>
@@ -429,6 +503,7 @@
         <in>moc_HealtPresenterWidget.cpp</in>
         <in>moc_HealtStatusHandler.cpp</in>
         <in>moc_HealtWidgetsListPresenteWidget.cpp</in>
+        <in>moc_LedIndicatorAliveTSWidget.cpp</in>
         <in>moc_LedIndicatorWidget.cpp</in>
         <in>moc_MainWindow.cpp</in>
         <in>moc_MonitorBinaryAttributeHandler.cpp</in>
@@ -446,7 +521,6 @@
         <in>moc_MultiPropertyLogicSwitch.cpp</in>
         <in>moc_NodeAttributePlotting.cpp</in>
         <in>moc_PreferenceDialog.cpp</in>
-        <in>moc_PreferenceMDSHostListModel.cpp</in>
         <in>moc_PresenterWidget.cpp</in>
         <in>moc_SearchNode.cpp</in>
         <in>moc_SearchNodeResult.cpp</in>
@@ -1750,6 +1824,8 @@
           <in>main.cpp</in>
         </df>
         <df name="ChaosMDSCmd">
+          <df name="build">
+          </df>
           <in>main.cpp</in>
         </df>
         <df name="ChaosPerformanceTester">
@@ -25627,104 +25703,65 @@
             </df>
             <df name="common">
               <df name="crest">
-                <in>chaos_crest.h</in>
               </df>
               <df name="debug">
-                <in>debug.h</in>
               </df>
               <df name="modbus">
                 <df name="core">
-                  <in>AbstractModbus.h</in>
-                  <in>LibModBusWrap.h</in>
                 </df>
-                <in>modbus.h</in>
               </df>
               <df name="powersupply">
                 <df name="core">
-                  <in>AbstractPowerSupply.h</in>
                 </df>
                 <df name="Ocem">
-                  <in>OcemE642X.h</in>
                 </df>
                 <df name="Simulator">
-                  <in>SimPSupply.h</in>
                 </df>
-                <in>powersupply.h</in>
               </df>
               <df name="serial">
                 <df name="core">
-                  <in>AbstractSerialComm.h</in>
-                  <in>PosixSerialComm.h</in>
-                  <in>posixserialcomm_cwrap.h</in>
                 </df>
                 <df name="Ocem">
-                  <in>OcemProtocol.h</in>
                 </df>
-                <in>serial.h</in>
               </df>
               <df name="test">
-                <in>CUTest.h</in>
-                <in>CUTestReport.h</in>
               </df>
             </df>
             <df name="core">
-              <in>AbstractDataImportDriver.h</in>
-              <in>DataImport.h</in>
-              <in>DataImportDriverInterface.h</in>
             </df>
             <df name="driver">
               <df name="chaos-mess">
-                <in>ChaosMESS.h</in>
-                <in>DummyDriver.h</in>
+              </df>
+              <df name="daq">
+                <df name="models">
+                  <df name="Libera">
+                    <df name="cspi">
+                    </df>
+                  </df>
+                </df>
               </df>
               <df name="misc">
-                <in>ChaosDatasetAttribute.h</in>
-                <in>ChaosDatasetAttributeSyncronizer.h</in>
               </df>
               <df name="modbus">
                 <df name="core">
-                  <in>ChaosModbusInterface.h</in>
-                  <in>modbusDriver.h</in>
                 </df>
-                <in>ModbusControlUnit.h</in>
-                <in>ModbusFemtoUnit.h</in>
+              </df>
+              <df name="oscilloscopes">
               </df>
               <df name="plc">
                 <df name="s7lib">
-                  <in>log2.h</in>
-                  <in>nodave.h</in>
-                  <in>openSocket.h</in>
-                  <in>setport.h</in>
                 </df>
-                <in>S7ControlUnit.h</in>
-                <in>SiemensS7TcpDriver.h</in>
-                <in>SiemensS7TcpDriverTypes.h</in>
               </df>
               <df name="powersupply">
                 <df name="core">
-                  <in>ChaosPowerSupplyInterface.h</in>
-                  <in>ChaosUIPowersupplyCWrapper.h</in>
                 </df>
                 <df name="models">
-                  <in>GenericPowerSupplyDD.h</in>
                 </df>
-                <in>SCPowerSupplyControlUnit.h</in>
               </df>
               <df name="sensors">
                 <df name="core">
-                  <in>AbstractSensorDriver.h</in>
-                  <in>BasicSensor.h</in>
-                  <in>SensorDriverInterface.h</in>
                 </df>
                 <df name="models">
-                  <in>LucidTemperatureDriver.h</in>
-                  <in>VBPMSync.h</in>
-                  <in>VTemperatureDriver.h</in>
-                  <in>ZBSensorCollector.h</in>
-                  <in>ZBSensorNode.h</in>
-                  <in>ZBSensorNodeC.h</in>
-                  <in>ZBSensorNodeD.h</in>
-                  <in>ZBSensorNodeS.h</in>
                 </df>
               </df>
             </df>
@@ -25906,24 +25943,130 @@
               <in>modbus.h</in>
             </df>
             <df name="models">
-              <df name="Libera">
-                <df name="cspi">
-                  <in>bbfp.h</in>
-                  <in>cordic.h</in>
-                  <in>cspi.h</in>
-                  <in>cspi_impl.h</in>
-                  <in>debug.h</in>
-                  <in>dpp.h</in>
-                  <in>dscd.h</in>
-                  <in>ebpp.h</in>
-                  <in>eventd.h</in>
-                  <in>hbpp.h</in>
-                  <in>llrf.h</in>
-                  <in>lplld.h</in>
-                  <in>pool.h</in>
-                </df>
+            </df>
+            <df name="mongo">
+              <df name="base">
+                <in>disallow_copying.h</in>
+                <in>error_codes.h</in>
+                <in>parse_number.h</in>
+                <in>status-inl.h</in>
+                <in>status.h</in>
+                <in>status_with.h</in>
+                <in>string_data-inl.h</in>
+                <in>string_data.h</in>
               </df>
-              <in>MemcachedDataImporterDriver.h</in>
+              <df name="bson">
+                <df name="util">
+                  <in>builder.h</in>
+                  <in>misc.h</in>
+                </df>
+                <in>bson-inl.h</in>
+                <in>bson.h</in>
+                <in>bson_db.h</in>
+                <in>bson_field.h</in>
+                <in>bsonelement.h</in>
+                <in>bsonmisc.h</in>
+                <in>bsonobj.h</in>
+                <in>bsonobjbuilder.h</in>
+                <in>bsonobjiterator.h</in>
+                <in>bsontypes.h</in>
+                <in>inline_decls.h</in>
+                <in>oid.h</in>
+                <in>optime.h</in>
+                <in>ordering.h</in>
+              </df>
+              <df name="client">
+                <in>autolib.h</in>
+                <in>bulk_operation_builder.h</in>
+                <in>bulk_update_builder.h</in>
+                <in>bulk_upsert_builder.h</in>
+                <in>connpool.h</in>
+                <in>dbclient.h</in>
+                <in>dbclient_rs.h</in>
+                <in>dbclientcursor.h</in>
+                <in>dbclientinterface.h</in>
+                <in>exceptions.h</in>
+                <in>export_macros.h</in>
+                <in>gridfs.h</in>
+                <in>index_spec.h</in>
+                <in>init.h</in>
+                <in>options.h</in>
+                <in>redef_macros.h</in>
+                <in>sasl_client_authenticate.h</in>
+                <in>undef_macros.h</in>
+                <in>write_concern.h</in>
+                <in>write_options.h</in>
+                <in>write_result.h</in>
+              </df>
+              <df name="db">
+                <in>jsobj.h</in>
+                <in>json.h</in>
+              </df>
+              <df name="logger">
+                <in>appender.h</in>
+                <in>component_message_log_domain.h</in>
+                <in>labeled_level.h</in>
+                <in>log_component.h</in>
+                <in>log_component_settings.h</in>
+                <in>log_domain.h</in>
+                <in>log_manager.h</in>
+                <in>log_severity-inl.h</in>
+                <in>log_severity.h</in>
+                <in>logger.h</in>
+                <in>logstream_builder.h</in>
+                <in>message_event.h</in>
+                <in>message_log_domain.h</in>
+                <in>tee.h</in>
+              </df>
+              <df name="platform">
+                <in>atomic_intrinsics.h</in>
+                <in>atomic_intrinsics_gcc_atomic.h</in>
+                <in>atomic_intrinsics_gcc_intel.h</in>
+                <in>atomic_intrinsics_gcc_sync.h</in>
+                <in>atomic_intrinsics_win32.h</in>
+                <in>atomic_word.h</in>
+                <in>atomic_word_cxx11.h</in>
+                <in>atomic_word_intrinsics.h</in>
+                <in>basic.h</in>
+                <in>compiler.h</in>
+                <in>compiler_gcc.h</in>
+                <in>compiler_msvc.h</in>
+                <in>cstdint.h</in>
+                <in>float_utils.h</in>
+                <in>hash_namespace.h</in>
+                <in>process_id.h</in>
+                <in>unordered_map.h</in>
+                <in>windows_basic.h</in>
+              </df>
+              <df name="stdx">
+                <in>functional.h</in>
+              </df>
+              <df name="util">
+                <df name="concurrency">
+                  <in>thread_name.h</in>
+                </df>
+                <df name="mongoutils">
+                  <in>str.h</in>
+                </df>
+                <df name="net">
+                  <in>hostandport.h</in>
+                  <in>message.h</in>
+                  <in>message_port.h</in>
+                  <in>operation.h</in>
+                  <in>sock.h</in>
+                  <in>ssl_manager.h</in>
+                </df>
+                <in>assert_util.h</in>
+                <in>background.h</in>
+                <in>bufreader.h</in>
+                <in>debug_util.h</in>
+                <in>goodies.h</in>
+                <in>hex.h</in>
+                <in>log.h</in>
+                <in>time_support.h</in>
+              </df>
+              <in>config.h</in>
+              <in>version.h</in>
             </df>
             <df name="mongoose">
               <in>Controller.h</in>
@@ -25949,6 +26092,14 @@
             <in>evrpc.h</in>
             <in>evutil.h</in>
             <in>mongoose.h</in>
+            <in>sigar.h</in>
+            <in>sigar_fileinfo.h</in>
+            <in>sigar_format.h</in>
+            <in>sigar_getline.h</in>
+            <in>sigar_log.h</in>
+            <in>sigar_private.h</in>
+            <in>sigar_ptql.h</in>
+            <in>sigar_util.h</in>
             <in>zconf.h</in>
             <in>zlib.h</in>
             <in>zmq.h</in>
@@ -26004,12 +26155,8 @@
                   </df>
                 </df>
                 <df name="source">
-                  <in>__template_name__.cpp</in>
-                  <in>__template_name__.h</in>
-                  <in>main.cpp</in>
                 </df>
                 <df name="test">
-                  <in>main.cpp</in>
                 </df>
               </df>
               <df name="driver.tmpl">
@@ -26018,12 +26165,6 @@
                   </df>
                 </df>
                 <df name="source">
-                  <in>__template_name__ControlUnit.cpp</in>
-                  <in>__template_name__ControlUnit.h</in>
-                  <in>__template_name__Driver.cpp</in>
-                  <in>__template_name__Driver.h</in>
-                  <in>__template_name__DriverSwitch.cpp</in>
-                  <in>main.cpp</in>
                 </df>
               </df>
               <df name="rtcu.tmpl">
@@ -26032,14 +26173,8 @@
                   </df>
                 </df>
                 <df name="source">
-                  <in>__template_name__.cpp</in>
-                  <in>__template_name__.h</in>
-                  <in>__template_name__Driver.cpp</in>
-                  <in>__template_name__Driver.h</in>
-                  <in>main.cpp</in>
                 </df>
                 <df name="test">
-                  <in>__template_name__Client.cpp</in>
                 </df>
               </df>
               <df name="sccu.tmpl">
@@ -26048,24 +26183,8 @@
                   </df>
                 </df>
                 <df name="source">
-                  <in>DefaultCommand.cpp</in>
-                  <in>DefaultCommand.h</in>
-                  <in>DummyDriver.cpp</in>
-                  <in>DummyDriver.h</in>
-                  <in>__template_name__.cpp</in>
-                  <in>__template_name__.h</in>
-                  <in>__template_name__CommandSample.cpp</in>
-                  <in>__template_name__CommandSample.h</in>
-                  <in>__template_name__DefaultCommand.cpp</in>
-                  <in>__template_name__DefaultCommand.h</in>
-                  <in>__template_name__Driver.cpp</in>
-                  <in>__template_name__Driver.h</in>
-                  <in>__template_name__Interface.cpp</in>
-                  <in>__template_name__Interface.h</in>
-                  <in>main.cpp</in>
                 </df>
                 <df name="test">
-                  <in>__template_name__Client.cpp</in>
                 </df>
               </df>
             </df>
@@ -26073,8 +26192,6 @@
               <df name="benchmark-local">
               </df>
               <df name="test-local-services">
-                <df name="wget_test1">
-                </df>
               </df>
             </df>
           </df>
@@ -26084,18 +26201,17 @@
             <df name="CMakeFiles">
               <df name="2.8.12.2">
                 <df name="CompilerIdC">
-                  <in>CMakeCCompilerId.c</in>
                 </df>
                 <df name="CompilerIdCXX">
-                  <in>CMakeCXXCompilerId.cpp</in>
                 </df>
               </df>
               <df name="CMakeTmp">
               </df>
+              <df name="Progress">
+              </df>
               <df name="UnitServer.dir">
               </df>
             </df>
-            <in>main.cpp</in>
           </df>
           <df name="vfs">
           </df>

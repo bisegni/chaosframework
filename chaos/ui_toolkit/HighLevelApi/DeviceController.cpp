@@ -19,6 +19,7 @@
  */
 
 #include "DeviceController.h"
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/common/io/IOMemcachedIODriver.h>
 
@@ -421,10 +422,13 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
        result_data->hasKey(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id
 		command_id = result_data->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
-	}
+	} else {
+            if(result_data)
+                LERR_<<"missing key:"<<BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64<<" :"<<result_data->getJSONString();
+        }
 	//forward the request
     if(result_data) delete(result_data);
-	return err;
+     return err;
 }
 
 //---------------------------------------------------------------------------------------------------

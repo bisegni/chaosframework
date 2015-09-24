@@ -156,6 +156,36 @@ if chaos_exclude "libuv";then
 fi
 
 
+# if [ ! -f "$PREFIX/include/sigar.h" ] || [ ! -f "$PREFIX/lib/libsigar.a" ]; then
+#     echo "* need sigar"
+#     if [ ! -d "$BASE_EXTERNAL/sigar" ]; then
+# 	cd "$BASE_EXTERNAL"
+# 	if !( git clone http://github.com/hyperic/sigar.git ); then
+# 	echo "## cannot download libsigar from http://github.com/hyperic/sigar.git "
+# 	exit 1;
+# 	fi
+#     fi
+    
+#     if [ -d "$BASE_EXTERNAL/sigar" ]; then
+# 	cd $BASE_EXTERNAL/sigar
+# 	echo "entering in $BASE_EXTERNAL/sigar"
+# 	echo "using $CC and $CXX"
+# 	./autogen.sh
+# 	if [ -n "$CHAOS_STATIC" ]; then
+# 	    ./configure --enable-maintainer-mode --enable-static --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+# 	else
+# 	    ./configure --enable-maintainer-mode --enable-shared --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+# 	fi
+	
+# 	do_make "sigar" 1
+#     else
+# 	echo "$BASE_EXTERNAL/sigar not found"
+# 	exit 1
+#     fi
+# fi
+
+
+
 if [ ! -f "$PREFIX/include/zlib.h" ] || [ ! -f "$PREFIX/lib/libz.a" ]; then
     echo "* need zlib"
     if [ ! -d "$BASE_EXTERNAL/zlib-$ZLIB_VERSION" ]; then
