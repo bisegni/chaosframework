@@ -12,9 +12,9 @@
 
 
 using namespace chaos::cu::driver_manager::driver;
-#define BasicIODriverLAPP_		LAPP_ << "[BasicIODriver] "
-#define BasicIODriverLDBG_		LDBG_ << "[BasicIODriver] "
-#define BasicIODriverLERR_		LERR_ << "[BasicIODriver] "
+#define BasicIODriverLAPP_		INFO_LOG(BasicIODriverInterface)
+#define BasicIODriverLDBG_		DBG_LOG(BasicIODriverInterface)
+#define BasicIODriverLERR_		ERR_LOG(BasicIODriverInterface)
 
 int BasicIODriverInterface::read(void *buffer,int addr,int bcount){
     

@@ -50,9 +50,9 @@ using namespace chaos::cu::control_manager;
 using namespace chaos::cu::driver_manager;
 using namespace chaos::cu::driver_manager::driver;
 
-#define ACULAPP_ LAPP_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] - "
-#define ACULDBG_ LDBG_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] - "
-#define ACULERR_ LERR_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"]("<<__LINE__<<") - "
+#define ACULAPP_ LAPP_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] -"<<__FUNCTION__<<"-"
+#define ACULDBG_ LDBG_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] -"<<__FUNCTION__<<"-"
+#define ACULERR_ LERR_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"](-"<<__FUNCTION__<<"-"<<__LINE__<<") - "
 
 //! Contructor with type and id
 AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
@@ -1053,7 +1053,7 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
                 output_attribute_dataset->addDoubleValue(value_set->name, *value_set->getValuePtr<double>());
                 break;
             case DataType::TYPE_STRING:
-                DEBUG_CODE(ACULAPP_ << value_set->name<<"-"<<value_set->getValuePtr<const char>();)
+                //DEBUG_CODE(ACULAPP_ << value_set->name<<"-"<<value_set->getValuePtr<const char>();)
                 output_attribute_dataset->addStringValue(value_set->name, value_set->getValuePtr<const char>());
                 break;
             case DataType::TYPE_BYTEARRAY:

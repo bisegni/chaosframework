@@ -26,9 +26,9 @@
 #include <boost/lexical_cast.hpp>
 
 
-#define BasicIODriverLAPP_		LAPP_ << "[BasicIODriver] "
-#define BasicIODriverLDBG_		LDBG_ << "[BasicIODriver] "
-#define BasicIODriverLERR_		LERR_ << "[BasicIODriver] "
+#define BasicIODriverLAPP_		INFO_LOG(BasicIODriver)
+#define BasicIODriverLDBG_		DBG_LOG(BasicIODriver)
+#define BasicIODriverLERR_		ERR_LOG(BasicIODriver)
 using namespace chaos::cu::driver_manager::driver;
 
 

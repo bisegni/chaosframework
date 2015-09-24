@@ -34,12 +34,14 @@
             <file>file:/home/michelo/progetti/chaos_bundle/chaosframework/chaos/common/event/EventServer.h</file>
         </group>
         <group name="CHAOS"/>
+        <group name="CHAOS_BUNDLE_DEVELOPMENT"/>
         <group name="HW/CHAOS_BUNDLE">
-            <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/cu_toolkit/ControlManager/AbstractControlUnit.cpp</file>
+            <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/common/bson/bsonobj.h</file>
+            <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/cu_toolkit/driver_manager/driver/BasicIODriverInterface.h</file>
             <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/common/data/CDataWrapper.cpp</file>
             <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/common/bson/bsonelement.h</file>
-            <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/common/bson/bsonobj.h</file>
+            <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/cu_toolkit/ControlManager/IOCU.cpp</file>
+            <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/cu_toolkit/ControlManager/AbstractControlUnit.cpp</file>
         </group>
-        <group name="CHAOS_BUNDLE_DEVELOPMENT"/>
     </open-files>
 </project-private>
