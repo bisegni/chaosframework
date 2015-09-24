@@ -147,7 +147,8 @@ SET(common_lib_src  ${common_lib_src}	utility/NamedService.cpp
                     utility/StartableService.cpp
                     utility/InizializableService.cpp
                     utility/SWEService.cpp
-                    utility/CheckList.cpp)
+                    utility/CheckList.cpp
+                    utility/AggregatedCheckList.cpp)
 
 SET(common_lib_src  ${common_lib_src}	batch_command/BatchCommandExecutor.cpp
                     batch_command/BatchCommandSandbox.cpp

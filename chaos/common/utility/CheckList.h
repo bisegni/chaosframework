@@ -37,8 +37,11 @@ namespace chaos {
                 std::set<std::string> list_element_to_do;
                 std::set<std::string> list_element_done;
             public:
-                //! ad a new element in the check-list
+                //! add a new element in the check-list
                 void addElement(const std::string& element_to_do);
+                
+                //! remove an element from the check-list
+                void removeElement(const std::string& element_to_remove);
                 
                 //! tag an element of the check list as done
                 void doneOnElement(const std::string& element_to_do);

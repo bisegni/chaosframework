@@ -460,6 +460,8 @@
 		32995C471BB2D1F700F68148 /* SWEService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32995C451BB2D1F700F68148 /* SWEService.h */; settings = {ASSET_TAGS = (); }; };
 		32995C4A1BB2FF2600F68148 /* CheckList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32995C481BB2FF2600F68148 /* CheckList.cpp */; settings = {ASSET_TAGS = (); }; };
 		32995C4B1BB2FF2600F68148 /* CheckList.h in Headers */ = {isa = PBXBuildFile; fileRef = 32995C491BB2FF2600F68148 /* CheckList.h */; settings = {ASSET_TAGS = (); }; };
+		32995C4E1BB421D400F68148 /* AggregatedCheckList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32995C4C1BB421D400F68148 /* AggregatedCheckList.cpp */; settings = {ASSET_TAGS = (); }; };
+		32995C4F1BB421D400F68148 /* AggregatedCheckList.h in Headers */ = {isa = PBXBuildFile; fileRef = 32995C4D1BB421D400F68148 /* AggregatedCheckList.h */; settings = {ASSET_TAGS = (); }; };
 		329C1EFD1B55286100A84D55 /* RpcServerMetricCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1EFB1B55286100A84D55 /* RpcServerMetricCollector.cpp */; };
 		329C1EFE1B55286100A84D55 /* RpcServerMetricCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 329C1EFC1B55286100A84D55 /* RpcServerMetricCollector.h */; };
 		329C1F011B5540F900A84D55 /* MetricCollectorIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329C1EFF1B5540F900A84D55 /* MetricCollectorIO.cpp */; };
@@ -1337,6 +1339,8 @@
 		32995C451BB2D1F700F68148 /* SWEService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWEService.h; sourceTree = "<group>"; };
 		32995C481BB2FF2600F68148 /* CheckList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckList.cpp; sourceTree = "<group>"; };
 		32995C491BB2FF2600F68148 /* CheckList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckList.h; sourceTree = "<group>"; };
+		32995C4C1BB421D400F68148 /* AggregatedCheckList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AggregatedCheckList.cpp; sourceTree = "<group>"; };
+		32995C4D1BB421D400F68148 /* AggregatedCheckList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AggregatedCheckList.h; sourceTree = "<group>"; };
 		329C1EFB1B55286100A84D55 /* RpcServerMetricCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServerMetricCollector.cpp; sourceTree = "<group>"; };
 		329C1EFC1B55286100A84D55 /* RpcServerMetricCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerMetricCollector.h; sourceTree = "<group>"; };
 		329C1EFF1B5540F900A84D55 /* MetricCollectorIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetricCollectorIO.cpp; sourceTree = "<group>"; };
@@ -2769,6 +2773,8 @@
 				32995C451BB2D1F700F68148 /* SWEService.h */,
 				32995C481BB2FF2600F68148 /* CheckList.cpp */,
 				32995C491BB2FF2600F68148 /* CheckList.h */,
+				32995C4C1BB421D400F68148 /* AggregatedCheckList.cpp */,
+				32995C4D1BB421D400F68148 /* AggregatedCheckList.h */,
 				32F7FEA218A5066600FC03AB /* FastDelegate.h */,
 				32F7FEA318A5066600FC03AB /* FastDelegateBind.h */,
 				326DB42514B38BC00018A8D0 /* ArrayPointer.h */,
@@ -3877,6 +3883,7 @@
 				32543B1B1AFA6D28008D58EC /* HealtMetric.h in Headers */,
 				32640A30169DCC5800450962 /* FetcherDeviceTracker.h in Headers */,
 				32640A31169DCC5800450962 /* TrackerListener.h in Headers */,
+				32995C4F1BB421D400F68148 /* AggregatedCheckList.h in Headers */,
 				32640A33169DCC5800450962 /* TransformTracker.h in Headers */,
 				324A4B4F191A41EF00975394 /* compiler.h in Headers */,
 				32640A34169DCC5800450962 /* CommonBuffer.h in Headers */,
@@ -4427,6 +4434,7 @@
 				326DB43314B38BC00018A8D0 /* DeclareAction.cpp in Sources */,
 				326DB43514B38BC00018A8D0 /* DomainActions.cpp in Sources */,
 				326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */,
+				32995C4E1BB421D400F68148 /* AggregatedCheckList.cpp in Sources */,
 				32F5B00A1B5F998F00457A63 /* CSVFileMetricBackend.cpp in Sources */,
 				32FB20181A3F0FAB00307A86 /* AttributeValue.cpp in Sources */,
 				324A4B75191A428500975394 /* jsobj.cpp in Sources */,

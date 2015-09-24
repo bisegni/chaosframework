@@ -56,6 +56,7 @@ bool MessageRequestFuture::wait(int32_t timeout_in_milliseconds) {
 
             if (future.is_ready() &&
                 future.has_value()){
+                DEBUG_CODE(MRF_DBG << future.get()->getJSONString();)
                 MRF_PARSE_CDWPTR_RESULT(future.get())
                 result = true;
             }

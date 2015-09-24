@@ -1,5 +1,5 @@
 /*
- *	CheckList.cpp
+ *	AggregatedCheckList.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,29 +18,22 @@
  *    	limitations under the License.
  */
 
-#include <chaos/common/utility/CheckList.h>
+#include <chaos/common/utility/AggregatedCheckList.h>
 
 using namespace chaos::common::utility;
 
-void CheckList::addElement(const std::string& element_to_do){
-    list_element_to_do.insert(element_to_do);
+void AggregatedCheckList::addCheckList(const std::string& check_list_name) {
+    KOCheckListContainer::registerElement(check_list_name, new CheckList());
 }
 
-void CheckList::removeElement(const std::string& element_to_remove) {
-    list_element_to_do.erase(element_to_remove);
-    list_element_done.erase(element_to_remove);
+void AggregatedCheckList::removeCheckList(const std::string& check_list_name) {
+    KOCheckListContainer::deregisterElementKey(check_list_name);
 }
 
-void CheckList::doneOnElement(const std::string& element_done){
-    list_element_to_do.erase(element_done);
-    list_element_done.insert(element_done);
+CheckList *AggregatedCheckList::getSharedCheckList(const std::string& check_list_name) {
+    return KOCheckListContainer::accessItem(check_list_name);
 }
 
-void CheckList::redoElement(const std::string& element_to_redo){
-    list_element_to_do.insert(element_to_redo);
-    list_element_done.erase(element_to_redo);
-}
-
-std::set<std::string> CheckList::elementToDo() {
-    return std::set<std::string>(list_element_to_do);
+void AggregatedCheckList::freeObject(std::string key, CheckList* element) {
+    free(element);
 }

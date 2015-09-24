@@ -185,6 +185,34 @@ bool SWEService::goInFatalError(SWEService *impl, const std::string & impl_name,
             //keep track of current state
             impl->serviceState = impl->state_machine.current_state()[0];
             
+            switch(impl->last_state) {
+                case CUStateKey::INIT:{
+                    CHAOS_NOT_THROW(impl->deinit();)
+                    break;
+                }
+                
+                case CUStateKey::START:{
+                    CHAOS_NOT_THROW(impl->stop();)
+                    CHAOS_NOT_THROW(impl->deinit();)
+                    break;
+                }
+                    
+                case CUStateKey::STOP:{
+                    CHAOS_NOT_THROW(impl->deinit();)
+                    break;
+                }
+                    
+                case CUStateKey::DEINIT:{
+                    break;
+                }
+                    
+                case CUStateKey::RECOVERABLE_ERROR:{
+                    CHAOS_NOT_THROW(impl->stop();)
+                    CHAOS_NOT_THROW(impl->deinit();)
+                    break;
+                }
+            }
+            
             //call fatal error handler
             impl->fatalErrorFromState(impl->last_state);
         }else {
