@@ -99,7 +99,7 @@ bool StartableService::deinitImplementation(StartableService *impl, const string
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         SS_LDBG  << "Deinitializing " << implName;
-        if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::init()) == boost::msm::back::HANDLED_TRUE) {
+        if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::deinit()) == boost::msm::back::HANDLED_TRUE) {
 			impl->deinit();
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_DEINTIATED;
         } else {

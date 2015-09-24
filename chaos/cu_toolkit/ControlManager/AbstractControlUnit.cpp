@@ -70,7 +70,10 @@ attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
 timestamp_acq_cached_value(NULL),
 thread_schedule_daly_cached_value(NULL),
-key_data_storage(NULL){}
+key_data_storage(NULL){
+    //initialize check list
+    _initChecklist();
+}
 
 //! Contructor with driver
 AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
@@ -112,8 +115,30 @@ key_data_storage(NULL){
         driver_manager::driver::DriverAccessor *accessorInstance = driver_manager::DriverManager::getInstance()->getNewAccessorForDriverInstance(unitNeededDrivers[idx]);
         accessorInstances.push_back(accessorInstance);
     }
+    
+    //initialize check list
+    _initChecklist();
 }
 
+void AbstractControlUnit::_initChecklist() {
+    check_list_sub_service.addCheckList("_init");
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_CALL_INIT_STATE);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_INIT_SHARED_CACHE);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_COMPLETE_OUTPUT_ATTRIBUTE);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_COMPLETE_INPUT_ATTRIBUTE);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_INIT_SYSTEM_CACHE);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_CALL_UNIT_INIT);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_UPDATE_CONFIGURATION);
+    
+    check_list_sub_service.addCheckList("init");
+    check_list_sub_service.getSharedCheckList("init")->addElement(INIT_SM_PHASE_INIT_DB);
+    check_list_sub_service.getSharedCheckList("init")->addElement(INIT_SM_PHASE_CREATE_DATA_STORAGE);
+    
+    
+    check_list_sub_service.addCheckList("start_services");
+}
 /*!
  Destructor a new CU with an identifier
  */
@@ -276,7 +301,6 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
     std::vector<string> attribute_names;
     if(getServiceState() == common::utility::service_state_machine::InizializableServiceType::IS_INITIATED) {
         return NULL;
-        //   throw CException(-1, DatasetDB::getDeviceID()+" already in initialized", __PRETTY_FUNCTION__);
     }
     if(getServiceState() != common::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED) throw CException(-1, DatasetDB::getDeviceID()+" need to be in deinit", __PRETTY_FUNCTION__);
     if(!attribute_value_shared_cache) throw CException(-3, "No Shared cache implementation found for:"+DatasetDB::getDeviceID(), __PRETTY_FUNCTION__);
@@ -286,54 +310,77 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_INITING,
                                                         true);
-        StartableService::initImplementation(this, static_cast<void*>(init_configuration), "AbstractControlUnit", __PRETTY_FUNCTION__);
-        //the init of the implementation unit goes after the infrastructure one
-        ACULDBG_ << "Start internal and custom inititialization:"+DatasetDB::getDeviceID();
         
-        
-        ACULAPP_ << "Allocate the user cache wrapper for:"+DatasetDB::getDeviceID();
-        attribute_shared_cache_wrapper = new AttributeSharedCacheWrapper(attribute_value_shared_cache);
-        
-        ACULAPP_ << "Populating shared attribute cache for input attribute";
-        DatasetDB::getDatasetAttributesName(DataType::Input, attribute_names);
-        initAttributeOnSharedAttributeCache(DOMAIN_INPUT, attribute_names);
-        
-        ACULAPP_ << "Populating shared attribute cache for output attribute";
-        attribute_names.clear();
-        DatasetDB::getDatasetAttributesName(DataType::Output, attribute_names);
-        initAttributeOnSharedAttributeCache(DOMAIN_OUTPUT, attribute_names);
-        
-        ACULAPP_ << "Complete shared attribute cache for output attribute";
-        completeOutputAttribute();
-        
-        ACULAPP_ << "Complete shared attribute cache for input attribute";
-        completeInputAttribute();
-        
-        ACULAPP_ << "Populating shared attribute cache for system attribute";
-        initSystemAttributeOnSharedAttributeCache();
-        
-        
-        //define the implementations custom variable
-        unitDefineCustomAttribute();
-        
-        //create fast vector access for cached value
-        fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT),
-                              cache_output_attribute_vector);
-        
-        fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT),
-                              cache_input_attribute_vector);
-        
-        fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM),
-                              cache_system_attribute_vector);
-        
-        fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM),
-                              cache_custom_attribute_vector);
-        
-        //initialize implementations
-        unitInit();
-        
-        //call update param function
-        updateConfiguration(init_configuration, detachParam);
+        //rpc initialize service
+        CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_init"){
+        case INIT_RPC_PHASE_CALL_INIT_STATE:{
+            //call init sequence
+            StartableService::initImplementation(this, static_cast<void*>(init_configuration), "AbstractControlUnit", __PRETTY_FUNCTION__);
+            break;
+        }
+        case INIT_SM_PHASE_INIT_SHARED_CACHE: {
+            ACULAPP_ << "Allocate the user cache wrapper for:"+DatasetDB::getDeviceID();
+            attribute_shared_cache_wrapper = new AttributeSharedCacheWrapper(attribute_value_shared_cache);
+            
+            ACULAPP_ << "Populating shared attribute cache for input attribute";
+            DatasetDB::getDatasetAttributesName(DataType::Input, attribute_names);
+            initAttributeOnSharedAttributeCache(DOMAIN_INPUT, attribute_names);
+            
+            ACULAPP_ << "Populating shared attribute cache for output attribute";
+            attribute_names.clear();
+            DatasetDB::getDatasetAttributesName(DataType::Output, attribute_names);
+            initAttributeOnSharedAttributeCache(DOMAIN_OUTPUT, attribute_names);
+            break;
+        }
+            
+        case INIT_SM_PHASE_COMPLETE_OUTPUT_ATTRIBUTE:{
+            ACULAPP_ << "Complete shared attribute cache for output attribute";
+            completeOutputAttribute();
+            break;
+        }
+        case INIT_SM_PHASE_COMPLETE_INPUT_ATTRIBUTE:{
+            ACULAPP_ << "Complete shared attribute cache for input attribute";
+            completeInputAttribute();
+            break;
+        }
+            
+        case INIT_SM_PHASE_INIT_SYSTEM_CACHE:{
+            ACULAPP_ << "Populating shared attribute cache for system attribute";
+            initSystemAttributeOnSharedAttributeCache();
+            break;
+        }
+        case INIT_SM_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE:{
+            //define the implementations custom variable
+            unitDefineCustomAttribute();
+            break;
+        }
+        case INIT_SM_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR:{
+            //create fast vector access for cached value
+            fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT),
+                                  cache_output_attribute_vector);
+            
+            fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT),
+                                  cache_input_attribute_vector);
+            
+            fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM),
+                                  cache_system_attribute_vector);
+            
+            fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM),
+                                  cache_custom_attribute_vector);
+            break;
+        }
+        case INIT_SM_PHASE_CALL_UNIT_INIT:{
+            //initialize implementations
+            unitInit();
+            break;
+        }
+        case INIT_RPC_PHASE_UPDATE_CONFIGURATION:{
+            //call update param function
+            updateConfiguration(init_configuration, detachParam);
+            break;
+        }
+        }
+        CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_init")
         
         //set healt to init
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
@@ -508,37 +555,69 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINITING,
                                                         true);
         
-        ACULDBG_ << "Deinit custom deinitialization for device:" << DatasetDB::getDeviceID();
-        unitDeinit();
-        
-        //saftely deinititalize the abstract control unit
-        try {
-            StartableService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
-        } catch (CException& ex) {
-            ACULAPP_ <<"Exception de-initializing  \""<< DatasetDB::getDeviceID()<< "\":"<<ex.what();
+        //rpc initialize service
+        CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "_init"){
+        case INIT_RPC_PHASE_CALL_INIT_STATE:{
+            //saftely deinititalize the abstract control unit
+            try {
+                StartableService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
+            } catch (CException& ex) {
+                ACULAPP_ <<"Exception de-initializing  \""<< DatasetDB::getDeviceID()<< "\":"<<ex.what();
+                
+            }
+            break;
+        }
+        case INIT_SM_PHASE_INIT_SHARED_CACHE: {
+            ACULAPP_ << "Deallocate the user cache wrapper for:"+DatasetDB::getDeviceID();
+            if(attribute_shared_cache_wrapper) {
+                delete(attribute_shared_cache_wrapper);
+                attribute_shared_cache_wrapper = NULL;
+            }
+            break;
+        }
             
+        case INIT_SM_PHASE_COMPLETE_OUTPUT_ATTRIBUTE:{
+            break;
         }
-        
-        //clear all cache sub_structure
-        cache_output_attribute_vector.clear();
-        cache_input_attribute_vector.clear();
-        cache_custom_attribute_vector.clear();
-        cache_system_attribute_vector.clear();
-        
-        ACULAPP_ << "Deallocate the user cache wrapper";
-        if(attribute_shared_cache_wrapper) {
-            delete(attribute_shared_cache_wrapper);
-            attribute_shared_cache_wrapper = NULL;
+        case INIT_SM_PHASE_COMPLETE_INPUT_ATTRIBUTE:{
+            break;
         }
+            
+        case INIT_SM_PHASE_INIT_SYSTEM_CACHE:{
+            break;
+        }
+        case INIT_SM_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE:{
+            unitDefineCustomAttribute();
+            break;
+        }
+        case INIT_SM_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR:{
+            //clear all cache sub_structure
+            cache_output_attribute_vector.clear();
+            cache_input_attribute_vector.clear();
+            cache_custom_attribute_vector.clear();
+            cache_system_attribute_vector.clear();
+            break;
+        }
+        case INIT_SM_PHASE_CALL_UNIT_INIT:{
+            ACULDBG_ << "Deinit custom deinitialization for device:" << DatasetDB::getDeviceID();
+            unitDeinit();
+            break;
+        }
+        case INIT_RPC_PHASE_UPDATE_CONFIGURATION:{
+            break;
+        }
+        }
+        CHAOS_CHECK_LIST_END_SCAN_DONE(check_list_sub_service, "_init")
         
         //set healt to deinit
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT,
+                                                        true);
     } catch (CException& ex) {
         ACULDBG_ << "Exception on unit deinit:" << ex.what();
     }
-    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
-                                                    NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT,
-                                                    true);
+    
     return NULL;
 }
 
@@ -639,28 +718,35 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *dataset_at
 
 // Startable Service method
 void AbstractControlUnit::init(void *init_data) throw(CException) {
-    CDataWrapper *init_configuration = static_cast<CDataWrapper*>(init_data);
-    /*if(!init_configuration ||
-     !init_configuration->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
-     throw CException(-1, "No Device Init information in param", __PRETTY_FUNCTION__);
-     }
-     
-     std::string deviceID = init_configuration->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-     if(deviceID.compare(DatasetDB::getDeviceID())) {
-     ACULERR_ << "device:" << deviceID << "not known by this Work Unit";
-     throw CException(-2, "Device not known by this control unit", __PRETTY_FUNCTION__);
-     }*/
-    
-    //cast to the CDatawrapper instance
-    ACULAPP_ << "Initialize CU Database for device:" << DatasetDB::getDeviceID();
-    DatasetDB::addAttributeToDataSetFromDataWrapper(*init_configuration);
-    
-    //initialize key data storage for device id
-    ACULAPP_ << "Create KeyDataStorage device:" << DatasetDB::getDeviceID();
-    key_data_storage = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(DatasetDB::getDeviceID());
-    
-    ACULAPP_ << "Call KeyDataStorage init implementation for deviceID:" << DatasetDB::getDeviceID();
-    key_data_storage->init(init_configuration);
+    //the init of the implementation unit goes after the infrastructure one
+    ACULDBG_ << "Start internal and custom inititialization:"+DatasetDB::getDeviceID();
+    //rpc initialize service
+    CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "init"){
+    case INIT_SM_PHASE_INIT_DB:{
+        //call init sequence
+        CDataWrapper *init_configuration = static_cast<CDataWrapper*>(init_data);
+        
+        //cast to the CDatawrapper instance
+        ACULAPP_ << "Initialize CU Database for device:" << DatasetDB::getDeviceID();
+        DatasetDB::addAttributeToDataSetFromDataWrapper(*init_configuration);
+        break;
+    }
+        
+    case INIT_SM_PHASE_CREATE_DATA_STORAGE: {
+        //call init sequence
+        CDataWrapper *init_configuration = static_cast<CDataWrapper*>(init_data);
+        //call update param function
+        //initialize key data storage for device id
+        ACULAPP_ << "Create KeyDataStorage device:" << DatasetDB::getDeviceID();
+        key_data_storage = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(DatasetDB::getDeviceID());
+        
+        ACULAPP_ << "Call KeyDataStorage init implementation for deviceID:" << DatasetDB::getDeviceID();
+        key_data_storage->init(init_configuration);
+        
+        break;
+    }
+    }
+    CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "init")
 }
 
 // Startable Service method

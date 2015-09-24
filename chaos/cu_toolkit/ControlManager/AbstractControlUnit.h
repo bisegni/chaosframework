@@ -30,14 +30,15 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-#include <chaos/common/async_central/async_central.h>
-#include <chaos/common/data/cache/AttributeValueSharedCache.h>
-#include <chaos/common/general/Configurable.h>
-#include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
+#include <chaos/common/general/Configurable.h>
+#include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/utility/StartableService.h>
+#include <chaos/common/utility/AggregatedCheckList.h>
+#include <chaos/common/async_central/async_central.h>
+#include <chaos/common/data/cache/AttributeValueSharedCache.h>
 
 #include <chaos/common/data/DatasetDB.h>
 
@@ -75,6 +76,25 @@ namespace chaos{
             namespace slow_command {
                 class SlowCommandExecutor;
             }
+            
+            
+            typedef enum {
+                INIT_RPC_PHASE_CALL_INIT_STATE = 0,
+                INIT_SM_PHASE_INIT_SHARED_CACHE,
+                INIT_SM_PHASE_COMPLETE_OUTPUT_ATTRIBUTE,
+                INIT_SM_PHASE_COMPLETE_INPUT_ATTRIBUTE,
+                INIT_SM_PHASE_INIT_SYSTEM_CACHE,
+                INIT_SM_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE,
+                INIT_SM_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR,
+                INIT_SM_PHASE_CALL_UNIT_INIT,
+                INIT_RPC_PHASE_UPDATE_CONFIGURATION
+            }InitRPCPhase;
+            
+            typedef enum {
+                INIT_SM_PHASE_INIT_DB = 0,
+                INIT_SM_PHASE_CREATE_DATA_STORAGE,
+            }InitSMPhase;
+            
             //!  Base class for control unit !CHAOS node
 			/*!
 			 This is the abstraction of the contorl unit node of CHAOS. This class extends DeclareAction
@@ -109,10 +129,10 @@ namespace chaos{
 				//! control unit load param
 				std::string control_unit_param;
 				
-                
                 //! keep track of how many push has been done for every dataset
                 //! 0 - output, 1-input, 2-custom
                 uint32_t    push_dataset_counter;
+                
                 //! identify last timestamp whene the push rate has been acquired;
                 uint64_t    last_push_rate_grap_ts;
                 
@@ -137,6 +157,11 @@ namespace chaos{
                 
                 //! fast access for thread scheduledaly cached value
                 AttributeValue *thread_schedule_daly_cached_value;
+                
+                //! check list of services for initialization and start state
+                chaos::common::utility::AggregatedCheckList check_list_sub_service;
+                
+                void _initChecklist();
                 
 				/*!
 				 Add a new KeyDataStorage for a specific key

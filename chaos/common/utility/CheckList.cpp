@@ -22,25 +22,29 @@
 
 using namespace chaos::common::utility;
 
-void CheckList::addElement(const std::string& element_to_do){
+void CheckList::addElement(int element_to_do){
     list_element_to_do.insert(element_to_do);
 }
 
-void CheckList::removeElement(const std::string& element_to_remove) {
+void CheckList::removeElement(int element_to_remove) {
     list_element_to_do.erase(element_to_remove);
     list_element_done.erase(element_to_remove);
 }
 
-void CheckList::doneOnElement(const std::string& element_done){
+void CheckList::doneOnElement(int element_done){
     list_element_to_do.erase(element_done);
     list_element_done.insert(element_done);
 }
 
-void CheckList::redoElement(const std::string& element_to_redo){
+void CheckList::redoElement(int element_to_redo){
     list_element_to_do.insert(element_to_redo);
     list_element_done.erase(element_to_redo);
 }
 
-std::set<std::string> CheckList::elementToDo() {
-    return std::set<std::string>(list_element_to_do);
+std::set<int> CheckList::elementToDo() {
+    return std::set<int>(list_element_to_do);
+}
+
+std::set<int> CheckList::elementDone() {
+    return std::set<int>(list_element_done);
 }

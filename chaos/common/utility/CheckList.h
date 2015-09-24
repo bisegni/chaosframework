@@ -34,23 +34,26 @@ namespace chaos {
              some of them. In this case this class can help to keep track waht element remain to enable.
              */
             class CheckList {
-                std::set<std::string> list_element_to_do;
-                std::set<std::string> list_element_done;
+                std::set<int> list_element_to_do;
+                std::set<int> list_element_done;
             public:
                 //! add a new element in the check-list
-                void addElement(const std::string& element_to_do);
+                void addElement(int element_to_do);
                 
                 //! remove an element from the check-list
-                void removeElement(const std::string& element_to_remove);
+                void removeElement(int element_to_remove);
                 
                 //! tag an element of the check list as done
-                void doneOnElement(const std::string& element_to_do);
+                void doneOnElement(int element_to_do);
                 
                 //!tag an element of the check list as to-do
-                void redoElement(const std::string& element_to_do);
+                void redoElement(int element_to_do);
                 
                 //! give a copy of the set with the element to do
-                std::set<std::string> elementToDo();
+                std::set<int> elementToDo();
+                
+                //! give a copy of the set with the element done
+                std::set<int> elementDone();
             };
             
         }
