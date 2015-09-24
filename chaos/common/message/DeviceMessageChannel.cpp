@@ -152,7 +152,8 @@ int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues, bool
 }
 
     //------------------------------------
-int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy, uint32_t millisecToWait) {
+int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy,
+                                           uint32_t millisecToWait) {
     CDataWrapper message_data;
     message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
     message_data.addInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY, scheduledDealy);
@@ -165,7 +166,9 @@ int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy, uint32_t mil
 }
 
 //------------------------------------
-void DeviceMessageChannel::sendCustomMessage(const std::string& action_name, CDataWrapper* const message_data, bool queued) {
+void DeviceMessageChannel::sendCustomMessage(const std::string& action_name,
+                                             CDataWrapper* const message_data,
+                                             bool queued) {
     sendMessage(deviceNetworkAddress->node_id,
                 action_name,
 				message_data,
@@ -173,15 +176,20 @@ void DeviceMessageChannel::sendCustomMessage(const std::string& action_name, CDa
 }
 
 //------------------------------------
-int DeviceMessageChannel::sendCustomRequest(const std::string& action_name, CDataWrapper* const message_data, CDataWrapper** resultData, uint32_t millisecToWait, bool async, bool queued) {
+int DeviceMessageChannel::sendCustomRequest(const std::string& action_name,
+                                            CDataWrapper* const message_data,
+                                            CDataWrapper** result_data,
+                                            uint32_t millisec_to_wait,
+                                            bool async,
+                                            bool queued) {
     auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
                                               action_name,
                                               message_data,
-                                              millisecToWait,
+                                              millisec_to_wait,
                                               async,
                                               !queued));
-    if(getLastErrorCode() == ErrorCode::EC_NO_ERROR && resultData) {
-        *resultData = result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
+    if(getLastErrorCode() == ErrorCode::EC_NO_ERROR) {
+        *result_data = result.release();
     }
     return getLastErrorCode();
 }
