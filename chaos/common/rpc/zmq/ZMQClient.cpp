@@ -183,7 +183,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
         url.append(pool_identification);
         if((err = zmq_connect(new_socket, url.c_str()))) {
         } else {
-            DEBUG_CODE(ZMQC_LDBG << "New socket for "<<pool_identification;)
+            DEBUG_CODE(ZMQC_LAPP << "New socket for "<<pool_identification;)
         }
     }
     
@@ -201,7 +201,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
 
 void ZMQClient::deallocateResource(const std::string& pool_identification, void* resource_to_deallocate) {
     CHAOS_ASSERT(resource_to_deallocate)
-    DEBUG_CODE(ZMQC_LDBG << "delete socket for "<<pool_identification;)
+    DEBUG_CODE(ZMQC_LAPP << "delete socket for "<<pool_identification;)
     zmq_close(resource_to_deallocate);
 }
 

@@ -63,7 +63,10 @@ mds_message_channel(NULL),
 last_fire_counter_set(0),
 current_fire_slot(0){}
 
-HealtManager::~HealtManager() {}
+HealtManager::~HealtManager() {
+    //clear node map
+    map_node.clear();
+}
 
 void HealtManager::setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker) {
     network_broker_ptr = _network_broker;

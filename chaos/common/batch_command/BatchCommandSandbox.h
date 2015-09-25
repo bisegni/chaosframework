@@ -168,7 +168,6 @@ namespace chaos{
 				
 				//default private constructor and destructor
                 BatchCommandSandbox();
-                ~BatchCommandSandbox();
                 
                 //! execute a complete step of the command (acquire -> correlation) and check if the new command can be installed
                 /*!
@@ -201,6 +200,7 @@ namespace chaos{
                 
                 bool enqueueCommand(CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
             public:
+                ~BatchCommandSandbox();
                 //! Command features modification rpc action
                 /*!
                  Updat ethe modiable features of the running command

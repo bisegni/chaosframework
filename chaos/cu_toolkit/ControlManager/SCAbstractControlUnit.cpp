@@ -128,9 +128,6 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
     //call parent impl
     AbstractControlUnit::init(initData);
     
-    
-    //associate the data storage and dataset database..this need to be associated before the executor initialization
-    slow_command_executor->key_data_storage = AbstractControlUnit::key_data_storage;
     //control unit is it'self the database
     slow_command_executor->dataset_attribute_db_ptr = this;
     
@@ -155,7 +152,6 @@ void SCAbstractControlUnit::deinit() throw(CException) {
         SCACU_LAPP_ << "Deinitialize the command executor for " << DatasetDB::getDeviceID();
         StartableService::deinitImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
         //deassociate the data storage
-        slow_command_executor->key_data_storage = NULL;
         slow_command_executor->dataset_attribute_db_ptr = NULL;
     } else {
         SCACU_LAPP_ << "No command executor allocated for " << DatasetDB::getDeviceID();

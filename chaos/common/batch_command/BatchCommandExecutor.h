@@ -91,7 +91,7 @@ namespace chaos {
                 RWMutex sandbox_map_mutex;
                 
                 //! map for the sandbox instances
-                std::map<unsigned int, BatchCommandSandbox*> sandbox_map;
+                std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> > sandbox_map;
                 
                 //! shared mutext foe the command event history
                 RWMutex								command_state_rwmutex;

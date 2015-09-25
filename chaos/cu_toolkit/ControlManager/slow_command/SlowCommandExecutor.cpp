@@ -54,7 +54,6 @@ last_ru_id_cache(NULL),
 last_error_code(NULL),
 last_error_message(NULL),
 last_error_domain(NULL),
-key_data_storage(NULL),
 driverAccessorsErogator(NULL){}
 
 SlowCommandExecutor::~SlowCommandExecutor(){
@@ -66,8 +65,6 @@ SlowCommandExecutor::~SlowCommandExecutor(){
 
 // Initialize instance
 void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
-	std::vector<std::string> attribute_names;
-	
 	//initialize superclass
 	BatchCommandExecutor::init(initData);
 }

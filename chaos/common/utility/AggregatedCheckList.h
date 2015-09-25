@@ -36,7 +36,6 @@ for(std::set<int>::iterator it = cl ## to_do.begin();\
 it != cl ## to_do.end();\
 it++) {\
 switch(*it) {\
-cl.getSharedCheckList(cln)->doneOnElement(*it);
             
 #define CHAOS_CHECK_LIST_DONE(cl, cln, id)\
 case id:\
@@ -52,7 +51,10 @@ for(std::set<int>::reverse_iterator it = cl ## done.rbegin();\
 it != cl ## done.rend();\
 it++) {\
 switch(*it) {\
-cl.getSharedCheckList(cln)->redoElement(*it);
+            
+#define CHAOS_CHECK_LIST_REDO(cl, cln, id)\
+case id:\
+cl.getSharedCheckList(cln)->redoElement(id);
             
 #define CHAOS_CHECK_LIST_END_SCAN_DONE(cl, cln)\
 }\

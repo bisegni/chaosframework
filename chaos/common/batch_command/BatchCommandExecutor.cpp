@@ -77,11 +77,12 @@ capper_work(false) {
                                                                      BatchCommandExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY,
                                                                      "Flush the non active command history state");
     
-    
+    //if not sandbox has been added force to create one
+    addNewSandboxInstance();
 }
 
 void BatchCommandExecutor::addNewSandboxInstance() {
-    BatchCommandSandbox *tmp_ptr = new BatchCommandSandbox();
+    boost::shared_ptr<BatchCommandSandbox> tmp_ptr(new BatchCommandSandbox());
     tmp_ptr->event_handler = this;
     tmp_ptr->identification.append(executorID);
     tmp_ptr->identification.append("-sandbox-");
@@ -99,7 +100,7 @@ unsigned int BatchCommandExecutor::getNumberOfSandboxInstance() {
 }
 
 void BatchCommandExecutor::getSandboxID(std::vector<std::string> & sandbox_id){
-    for(std::map<unsigned int, BatchCommandSandbox*>::iterator it = sandbox_map.begin();
+    for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
         it != sandbox_map.end();
         it++){
         sandbox_id.push_back(it->second->identification);
@@ -123,13 +124,13 @@ void BatchCommandExecutor::addSandboxInstance(unsigned int _sandbox_number) {
 
 BatchCommandExecutor::~BatchCommandExecutor() {
     
-    BCELAPP_ << "Removing all the instance of sandbox";
-    for(std::map<unsigned int, BatchCommandSandbox*>::iterator it = sandbox_map.begin();
-        it != sandbox_map.end();
-        it++) {
-        BCELAPP_ << "Dispose instance " << it->first;
-        if(it->second) delete(it->second);
-    }
+ //   BCELAPP_ << "Removing all the instance of sandbox";
+ //   for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
+ //       it != sandbox_map.end();
+  //      it++) {
+  //      BCELAPP_ << "Dispose instance " << it->first;
+  //      if(it->second) delete(it->second);
+  //  }
     
     // the instancer of the command can't be uninstalled at deinit step
     // because the executor live  one o one with the control unit.
@@ -156,8 +157,6 @@ BatchCommandExecutor::~BatchCommandExecutor() {
 void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
     ReadLock       lock(sandbox_map_mutex);
     
-    std::vector<string> attribute_names;
-    
     //reset the command sequence on initialization
     command_sequence_id = 0;
     
@@ -170,19 +169,14 @@ void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
                                              "global_attribute_cache",
                                              __PRETTY_FUNCTION__);
     
-    if(sandbox_map.size() == 0) {
-        //if not sandbox has been added force to create one
-        addNewSandboxInstance();
-    }
-    
     BCELAPP_ << "Initializing all the instance of sandbox";
-    for(std::map<unsigned int, BatchCommandSandbox*>::iterator it = sandbox_map.begin();
+    for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
         it != sandbox_map.end();
         it++) {
-        BatchCommandSandbox *tmp_ptr =  it->second;
+        boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
         //init the sand box
         BCELAPP_ << "Initilize instance " << tmp_ptr->identification;
-        StartableService::initImplementation(tmp_ptr,
+        StartableService::initImplementation(tmp_ptr.get(),
                                              initData,
                                              "BatchCommandSandbox",
                                              __PRETTY_FUNCTION__);
@@ -207,13 +201,13 @@ void BatchCommandExecutor::start() throw(chaos::CException) {
         StartableService::start();
         
         BCELAPP_ << "Starting all the instance of sandbox";
-        for(std::map<unsigned int, BatchCommandSandbox*>::iterator it = sandbox_map.begin();
+        for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
             it != sandbox_map.end();
             it++) {
-            BatchCommandSandbox *tmp_ptr =  it->second;
+            boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
             BCELAPP_ << "Starting instance " << tmp_ptr->identification;
             //starting the sand box
-            StartableService::startImplementation(tmp_ptr,
+            StartableService::startImplementation(tmp_ptr.get(),
                                                   "SlowCommandSandbox",
                                                   __PRETTY_FUNCTION__);
         }
@@ -237,14 +231,14 @@ void BatchCommandExecutor::stop() throw(chaos::CException) {
     
     //lock for queue access
     BCELAPP_ << "Stopping all the instance of sandbox";
-    for(std::map<unsigned int, BatchCommandSandbox*>::iterator it = sandbox_map.begin();
+    for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
         it != sandbox_map.end();
         it++) {
-        BatchCommandSandbox *tmp_ptr =  it->second;
+        boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
         BCELAPP_ << "Stop instance " << tmp_ptr->identification;
         
         //stopping the sand box
-        StartableService::stopImplementation(tmp_ptr,
+        StartableService::stopImplementation(tmp_ptr.get(),
                                              "SlowCommandSandbox",
                                              __PRETTY_FUNCTION__);
     }
@@ -256,13 +250,13 @@ void BatchCommandExecutor::deinit() throw(chaos::CException) {
     ReadLock       lock(sandbox_map_mutex);
     
     BCELAPP_ << "Deinitializing all the instance of sandbox";
-    for(std::map<unsigned int, BatchCommandSandbox*>::iterator it = sandbox_map.begin();
+    for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
         it != sandbox_map.end();
         it++) {
-        BatchCommandSandbox *tmp_ptr =  it->second;
+        boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
         BCELAPP_ << "Deinitializing instance " << tmp_ptr->identification;
         //deinit the sand box
-        StartableService::deinitImplementation(tmp_ptr,
+        StartableService::deinitImplementation(tmp_ptr.get(),
                                                "SlowCommandSandbox",
                                                __PRETTY_FUNCTION__);
     }
@@ -518,7 +512,7 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
     if(sandbox_map.count(execution_channel) == 0)
         throw CException(-3, "Execution channel not found", "BatchCommandExecutor::submitCommand");
     
-    BatchCommandSandbox *tmp_ptr = sandbox_map[execution_channel];
+    boost::shared_ptr<BatchCommandSandbox> tmp_ptr = sandbox_map[execution_channel];
     
     //get priority if submitted
     uint32_t priority = commandDescription->hasKey(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32) ? commandDescription->getUInt32Value(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32):50;
@@ -580,7 +574,7 @@ CDataWrapper* BatchCommandExecutor::setCommandFeatures(CDataWrapper *params, boo
     //get execution channel if submitted
     uint32_t execution_channel = params->hasKey(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL) ? params->getUInt32Value(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL):COMMAND_BASE_SANDOXX_ID;
     
-    BatchCommandSandbox *tmp_ptr = sandbox_map[execution_channel];
+    boost::shared_ptr<BatchCommandSandbox> tmp_ptr = sandbox_map[execution_channel];
     
     //lock the scheduler
     boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutextAccessCurrentCommand);
@@ -616,7 +610,7 @@ CDataWrapper* BatchCommandExecutor::setCommandFeatures(CDataWrapper *params, boo
 void BatchCommandExecutor::setCommandFeatures(features::Features& features) throw (CException) {
     ReadLock       lock(sandbox_map_mutex);
     
-    BatchCommandSandbox *tmp_ptr = sandbox_map[0];
+    boost::shared_ptr<BatchCommandSandbox> tmp_ptr = sandbox_map[0];
     tmp_ptr->setCommandFeatures(features);
 }
 
@@ -624,7 +618,7 @@ void BatchCommandExecutor::setCommandFeatures(features::Features& features) thro
 CDataWrapper* BatchCommandExecutor::killCurrentCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
     ReadLock       lock(sandbox_map_mutex);
     
-    BatchCommandSandbox *tmp_ptr = sandbox_map[0];
+    boost::shared_ptr<BatchCommandSandbox> tmp_ptr = sandbox_map[0];
     
     if(!tmp_ptr->currentExecutingCommand) return NULL;
     BCELAPP_ << "Kill current command into the executor id: " << executorID;

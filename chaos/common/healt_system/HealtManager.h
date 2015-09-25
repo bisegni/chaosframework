@@ -59,6 +59,11 @@ namespace chaos {
                 has_changed(false),
                 node_key(node_uid + chaos::NodeHealtDefinitionKey::HEALT_KEY_POSTFIX),
                 fire_slot(0){}
+                
+                ~NodeHealtSet() {
+                    //!clear all metric
+                    map_metric.clear();
+                }
             };
             
             //! define map for node health information

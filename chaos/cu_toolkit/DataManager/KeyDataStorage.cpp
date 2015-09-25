@@ -47,6 +47,11 @@ io_data_driver(_io_data_driver) {
 
 KeyDataStorage::~KeyDataStorage() {
 	restore_point_map.clear();
+    if(io_data_driver) {
+        delete(io_data_driver);
+        io_data_driver = NULL;
+    }
+    
 }
 
 void KeyDataStorage::init(void *init_parameter) throw (chaos::CException) {

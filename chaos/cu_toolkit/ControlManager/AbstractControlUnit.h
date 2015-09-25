@@ -162,11 +162,6 @@ namespace chaos{
                 chaos::common::utility::AggregatedCheckList check_list_sub_service;
                 
                 void _initChecklist();
-                
-				/*!
-				 Add a new KeyDataStorage for a specific key
-				 */
-				void setKeyDataStorage(data_manager::KeyDataStorage *_keyDatStorage);
 				
 				/*!
 				 Initialize the Custom Contro Unit and return the configuration
@@ -244,7 +239,7 @@ namespace chaos{
 				string control_unit_instance;
                 
 				//! Momentary driver for push data into the central memory
-				data_manager::KeyDataStorage*  key_data_storage;
+                std::auto_ptr<data_manager::KeyDataStorage>  key_data_storage;
 				
 				//! fast cached attribute vector accessor
 				std::vector<AttributeValue*> cache_output_attribute_vector;

@@ -78,9 +78,6 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
                 class SlowCommandExecutor : private chaos_batch::BatchCommandExecutor {
 
                     friend class chaos::cu::control_manager::SCAbstractControlUnit;
-
-                    //!Live push driver
-                    data_manager::KeyDataStorage  *key_data_storage;
                     
                     //! the reference to the master device database
                     chaos_data::DatasetDB *dataset_attribute_db_ptr;
