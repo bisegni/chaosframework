@@ -116,23 +116,27 @@ void MainWindow::on_actionAdd_New_Unit_Server_triggered(){
 
 void MainWindow::reconfigure() {
     QSettings settings;
-    ChaosMetadataServiceClient::getInstance()->clearServerList();
-    settings.beginGroup("network");
-    int mds_address_size = settings.beginReadArray("mds_address");
+    try{
+        ChaosMetadataServiceClient::getInstance()->clearServerList();
+        settings.beginGroup("network");
+        int mds_address_size = settings.beginReadArray("mds_address");
 
-    for (int i = 0; i < mds_address_size; ++i) {
-        settings.setArrayIndex(i);
-        ChaosMetadataServiceClient::getInstance()->addServerAddress(settings.value("address").toString().toStdString());
+        for (int i = 0; i < mds_address_size; ++i) {
+            settings.setArrayIndex(i);
+            ChaosMetadataServiceClient::getInstance()->addServerAddress(settings.value("address").toString().toStdString());
+        }
+        settings.endArray();
+        settings.endGroup();
+        //check if monitoring is started
+        if(mds_address_size &&
+                !ChaosMetadataServiceClient::getInstance()->monitoringIsStarted()) {
+            //try to start it
+            on_actionEnable_Monitoring_triggered();
+        }
+        ChaosMetadataServiceClient::getInstance()->reconfigureMonitor();
+    }catch(...) {
+
     }
-    settings.endArray();
-    settings.endGroup();
-    //check if monitoring is started
-    if(mds_address_size &&
-            !ChaosMetadataServiceClient::getInstance()->monitoringIsStarted()) {
-        //try to start it
-       on_actionEnable_Monitoring_triggered();
-    }
-    ChaosMetadataServiceClient::getInstance()->reconfigureMonitor();
 }
 
 void MainWindow::asyncApiTimeout(const QString& tag) {

@@ -73,7 +73,7 @@ namespace chaos {
 			public utility::NamedService,
 			public utility::InizializableService,
 			public DirectIOURLManagment,
-			protected DCKeyObjectContainer {
+            protected DCKeyObjectContainer::FreeHandler {
 				friend class chaos::common::network::NetworkBroker;
 				
 				std::string			impl_alias;
@@ -89,6 +89,9 @@ namespace chaos {
                 
                 //! Release the connection
                 virtual void _releaseConnectionImpl(DirectIOClientConnection *connection_to_release) = 0;
+                
+                DCKeyObjectContainer map_connections;
+                void freeObject(const DCKeyObjectContainer::TKOCElement& element);
 			public:
                 DirectIOClient(std::string alias);
 				virtual ~DirectIOClient();

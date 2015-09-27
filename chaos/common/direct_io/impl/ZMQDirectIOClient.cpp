@@ -85,7 +85,7 @@ void *ZMQDirectIOClient::socketMonitor (void *ctx, const char * address, Connect
     rc = zmq_connect (monitor_info->monitor_socket, address);
     if(rc) return NULL;
     while (monitor_info->run && !readMesg(monitor_info->monitor_socket, &event, addr)) {
-        if((connection = DCKeyObjectContainer::accessItem(monitor_info->unique_identification))) {
+        if((connection = map_connections.accessItem(monitor_info->unique_identification))) {
             switch (event.event) {
                 case ZMQ_EVENT_CONNECTED:
                     DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECTED to " << connection->getServerDescription();)
@@ -153,7 +153,7 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
 void ZMQDirectIOClient::deinit() throw(chaos::CException) {
     int err = 0;
     //remove all active connection (never need to be exists at this step)
-    DCKeyObjectContainer::clearElement();
+    map_connections.clearElement();
     //destroy the zmq context
     ZMQDIOLAPP_ << "Destroing zmq context";
     thread_run = false;
@@ -270,7 +270,7 @@ DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string s
         
         //register client with the hash of the xzmq decoded endpoint address (tcp://ip:port)
         DEBUG_CODE(ZMQDIOLDBG_ << "Register client for " << server_description << " with zmq decoded hash " << result->getUniqueUUID();)
-        DCKeyObjectContainer::registerElement(result->getUniqueUUID(), result);
+        map_connections.registerElement(result->getUniqueUUID(), result);
         
         url = boost::str( boost::format("tcp://%1%") % priority_endpoint);
         DEBUG_CODE(ZMQDIOLDBG_ << "connect to priority endpoint " << url;)
@@ -301,7 +301,7 @@ DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string s
             if(err) ZMQDIOLERR_ << "Error closing service socket";
         }
         if(result) {
-            DCKeyObjectContainer::deregisterElementKey(result->getUniqueUUID());
+            map_connections.deregisterElementKey(result->getUniqueUUID());
             delete(result);
         }
     }
@@ -343,14 +343,15 @@ void ZMQDirectIOClient::_releaseConnectionImpl(DirectIOClientConnection *connect
     
     //	}
     
-    DCKeyObjectContainer::deregisterElementKey(conn->getUniqueUUID());
+    map_connections.deregisterElementKey(conn->getUniqueUUID());
     delete(connection_to_release);
     
 }
 
 
-void ZMQDirectIOClient::freeObject(uint32_t hash, DirectIOClientConnection *connection) {
-    if(!connection) return;
+void ZMQDirectIOClient::freeObject(const DCKeyObjectContainer::TKOCElement& element) {
+    if(!element.element) return;
+    DirectIOClientConnection *connection = static_cast<DirectIOClientConnection *>(element.element);
     ZMQDIOLAPP_ << "Autorelease connection for " << connection->getServerDescription();
     releaseConnection(connection);
 }

@@ -68,7 +68,7 @@ namespace chaos {
 					int readMesg(void* s, zmq_event_t* event, char* ep);
 					void *socketMonitor(void *s, const char * address, ConnectionMonitorInfo *monitor_info);
 					//overriding ofr free object fuunction for the tempalted key object container superclass
-					void freeObject(uint32_t hash, DirectIOClientConnection *connection);
+                    void freeObject(const DCKeyObjectContainer::TKOCElement& element);
                     
                     //! get new connection
                     DirectIOClientConnection *_getNewConnectionImpl(std::string server_description, uint16_t endpoint);

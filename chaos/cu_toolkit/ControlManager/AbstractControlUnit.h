@@ -30,6 +30,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
+
+#include <chaos/common/debug/tracey.hpp>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
@@ -114,6 +116,8 @@ namespace chaos{
 				friend class SCAbstractControlUnit;
 				friend class RTAbstractControlUnit;
                 friend class slow_command::SlowCommandExecutor;
+                //enable trace for heap into control unit environment
+                tracey::scope sc;
 			public:
 				//! definition of the type for the driver list
 				typedef std::vector<DrvRequestInfo>				ControlUnitDriverList;

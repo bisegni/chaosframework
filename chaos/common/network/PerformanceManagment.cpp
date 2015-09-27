@@ -34,6 +34,7 @@ using namespace chaos::common::direct_io;
 
 PerformanceManagment::PerformanceManagment(NetworkBroker *_network_broker):
 network_broker(_network_broker),
+map_sessions(this),
 global_performance_connection(NULL){
 	//create the description for init preformance session rpc action
 	AbstActionDescShrPtr
@@ -127,7 +128,7 @@ void  PerformanceManagment::handleEvent(DirectIOClientConnection *client_connect
 		PMLDBG_ << "Performance session for remote address "<<client_connection->getServerDescription() << " Already in purge map";
 		return;
 	}
-	map_purgeable_performance_node.insert(make_pair(client_connection->getServerDescription(), PMKeyObjectContainer::accessItem(client_connection->getURL())));
+	map_purgeable_performance_node.insert(make_pair(client_connection->getServerDescription(), map_sessions.accessItem(client_connection->getURL())));
 	PMLDBG_ << "Performance session for remote address "<<client_connection->getServerDescription() << " added in purge map";
 	
 }
@@ -155,11 +156,11 @@ void  PerformanceManagment::disposePerformanceNode(DirectIOPerformanceSession *p
 		network_broker->releaseDirectIOServerEndpoint(performance_node->server_endpoint);
 	}
 	
-	PMKeyObjectContainer::deregisterElementKey(server_description);
+	map_sessions.deregisterElementKey(server_description);
 }
 
-void  PerformanceManagment::freeObject(std::string server_description, DirectIOPerformanceSession *performance_node) {
-	disposePerformanceNode(performance_node);
+void  PerformanceManagment::freeObject(const PMKeyObjectContainer::TKOCElement& element_to_dispose) {
+	disposePerformanceNode(static_cast<DirectIOPerformanceSession*>(element_to_dispose.element));
 }
 
 chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_data::CDataWrapper *param, bool& detach) throw(chaos::CException) {
@@ -171,7 +172,7 @@ chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_da
 	//we can initiate performance session allcoation
 	std::string req_server_description = param->getStringValue(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION);
 	
-	if(PMKeyObjectContainer::hasKey(req_server_description))
+	if(map_sessions.hasKey(req_server_description))
 		throw chaos::CException(-2, "performance sesison for requester already allocated", __PRETTY_FUNCTION__);
 	
 	PMLAPP_<< "Create new performance session for " << req_server_description;
@@ -209,7 +210,7 @@ chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_da
 		throw chaos::CException(-3, "Generic exception on initialization of performance loop", __PRETTY_FUNCTION__);
 	}
 	//register performance node
-	PMKeyObjectContainer::registerElement(req_server_description, performace_node);
+	map_sessions.registerElement(req_server_description, performace_node);
 	
 	//get the node server description for send it to the requester
 	return result;
@@ -222,11 +223,11 @@ chaos_data::CDataWrapper* PerformanceManagment::stopPerformanceSession(chaos_dat
 	//we can initiate performance session allcoation
 	std::string req_server_description = param->getStringValue(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION);
 	
-	if(!PMKeyObjectContainer::hasKey(req_server_description))
+	if(!map_sessions.hasKey(req_server_description))
 		throw chaos::CException(-2, "performance sesison for requester already allocated", __PRETTY_FUNCTION__);
 	
 	//we can proceed to the closing of the performance session
-	DirectIOPerformanceSession *performace_node = PMKeyObjectContainer::accessItem(req_server_description);
+	DirectIOPerformanceSession *performace_node = map_sessions.accessItem(req_server_description);
 	
 	// dispose the sesison node
 	disposePerformanceNode(performace_node);

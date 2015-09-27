@@ -66,10 +66,13 @@ cl.getSharedCheckList(cln)->redoElement(id);
              Represent an aggregaiton of one or more named check lists.
              */
             class AggregatedCheckList:
-            protected KOCheckListContainer {
+            protected KOCheckListContainer::FreeHandler {
+                KOCheckListContainer map;
             protected:
-                void freeObject(std::string key, CheckList* element);
+                void freeObject(const KOCheckListContainer::TKOCElement& elemet_to_delete);
             public:
+                AggregatedCheckList();
+                ~AggregatedCheckList();
                 void addCheckList(const std::string& check_list_name);
                 void removeCheckList(const std::string& check_list_name);
                 CheckList *getSharedCheckList(const std::string& check_list_name);

@@ -215,6 +215,9 @@ void ControlManager::deinit() throw(CException) {
     vector<string> allCUDeviceIDToStop;
     LCMAPP_  << "Deinit the Control Manager";
     LCMAPP_  << "system action deinitialization";
+    
+    chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
+    
     //deregistering the action
     CommandManager::getInstance()->deregisterAction(this);
     LCMAPP_  << "system action deinitialized";

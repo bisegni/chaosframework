@@ -22,18 +22,24 @@
 
 using namespace chaos::common::utility;
 
+AggregatedCheckList::AggregatedCheckList():
+map(this){}
+
+AggregatedCheckList::~AggregatedCheckList() {}
+
 void AggregatedCheckList::addCheckList(const std::string& check_list_name) {
-    KOCheckListContainer::registerElement(check_list_name, new CheckList());
+    map.registerElement(check_list_name, new CheckList());
 }
 
 void AggregatedCheckList::removeCheckList(const std::string& check_list_name) {
-    KOCheckListContainer::deregisterElementKey(check_list_name);
+    map.deregisterElementKey(check_list_name);
 }
 
 CheckList *AggregatedCheckList::getSharedCheckList(const std::string& check_list_name) {
-    return KOCheckListContainer::accessItem(check_list_name);
+    return map.accessItem(check_list_name);
 }
 
-void AggregatedCheckList::freeObject(std::string key, CheckList* element) {
-    free(element);
+void AggregatedCheckList::freeObject(const KOCheckListContainer::TKOCElement& element_to_dispose) {
+    CheckList *to_dispose = static_cast<CheckList*>(element_to_dispose.element);
+    delete(to_dispose);
 }

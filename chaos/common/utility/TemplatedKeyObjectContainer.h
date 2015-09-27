@@ -31,6 +31,7 @@ namespace chaos {
             template<typename T>
             void dummy_free(T e) {}
             
+            
             template<typename K, typename O >
             class TemplatedKeyObjectContainer {
                 boost::shared_mutex mutex_organizer_map;
@@ -38,21 +39,37 @@ namespace chaos {
             public:
                 typedef typename std::map< K, O >::iterator     ContainerOrganizerIterator;
                 
+                typedef struct TKOCElement {
+                    const void* key;
+                    void* element;
+                }TKOCElement;
+                
+                class FreeHandler {
+                public:
+                    virtual void freeObject(const TKOCElement& elemet_to_delete) = 0;
+                };
+                
             protected:
                 std::map< K, O > organizer_map;
                 
             protected:
-                virtual void freeObject(K key, O element) {}
+                FreeHandler *free_handler;
                 
             public:
-                TemplatedKeyObjectContainer(){};
-                ~TemplatedKeyObjectContainer(){clearElement();};
+                TemplatedKeyObjectContainer(FreeHandler *_free_handler):
+                free_handler(_free_handler){};
+                
+                virtual ~TemplatedKeyObjectContainer(){
+                    clearElement();
+                };
                 
                 void clearElement() {
                     for(ContainerOrganizerIterator iter = organizer_map.begin();
                         iter != organizer_map.end();
                         iter++) {
-                        freeObject(iter->first, iter->second);
+                        CHAOS_ASSERT(free_handler)
+                        TKOCElement e = {static_cast<const void*>(&iter->first), static_cast<void*>(iter->second)};
+                        free_handler->freeObject(e);
                     }
                     organizer_map.clear();
                 }

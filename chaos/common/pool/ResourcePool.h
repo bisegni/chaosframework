@@ -31,6 +31,7 @@ namespace chaos {
             
 #define CHAOS_RESOURCE_POOL_DELETE_SLOT(x)\
 resource_pooler_helper->deallocateResource(pool_identity, x->resource_pooled);\
+created_resources--;\
 delete(x);
             
             //! Abstract resource pool manager
@@ -44,9 +45,9 @@ delete(x);
             public:
                 //!helper class for resource managin
                 /*!
-                    Subclass need to extends this class to permit the manage the creation and deallocation 
+                 Subclass need to extends this class to permit the manage the creation and deallocation
                  of the resource
-                */
+                 */
                 class ResourcePoolHelper {
                     friend class ResourcePool;
                 protected:
@@ -76,7 +77,7 @@ delete(x);
                     ~ResourceSlot() {}
                 };
                 
-
+                
                 //!Resource pool base constructor
                 /*!
                  Base constructor of the pool manager
@@ -89,6 +90,7 @@ delete(x);
                              unsigned int _initial_number_of_resource = 0):
                 pool_identity(_pool_identity),
                 initial_number_of_resource(_initial_number_of_resource),
+                created_resources(0),
                 resource_pooler_helper(_resource_pooler_helper){
                     //prellocate initial resource
                     for(int idx = 0;
@@ -121,7 +123,7 @@ delete(x);
                         _pushNewResourceinPool();
                         if(r_pool.empty()) {
                             //error creating resource
-                           return NULL;
+                            return NULL;
                         } else {
                             
                         }
@@ -142,7 +144,7 @@ delete(x);
                 
                 size_t getSize() {
                     boost::unique_lock<boost::mutex> l(mutex_r_pool);
-                    return r_pool.size();
+                    return created_resources;
                 }
                 
                 void maintenance() {
@@ -171,6 +173,7 @@ delete(x);
                 //pool identification
                 const std::string pool_identity;
                 unsigned int initial_number_of_resource;
+                uint64_t created_resources;
                 ResourcePoolHelper *resource_pooler_helper;
                 
                 //pool queue structure
@@ -193,6 +196,7 @@ delete(x);
                         if(_temp_resource_lot->resource_pooled) {
                             //we have a valid resource wo we need to set his liveness
                             _temp_resource_lot->valid_until = chaos::common::utility::TimingUtil::getTimeStamp() + alive_for_ms;
+                            created_resources++;
                             
                         }
                     } catch (...) {}
@@ -203,7 +207,7 @@ delete(x);
                         //all is gone well so we can release the temp smatr pointer to result pointer
                         r_pool.push_front(_temp_resource_lot.release());
                     }
-
+                    
                 }
             };
         }
