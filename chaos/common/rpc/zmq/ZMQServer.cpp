@@ -29,8 +29,11 @@
 #define DEFAULT_MSGPACK_DISPATCHER_PORT             8888
 #define DEFAULT_MSGPACK_DISPATCHER_THREAD_NUMBER    4
 
+using namespace std;
 using namespace chaos;
+using namespace boost;
 using namespace chaos::common::data;
+
 static void my_free (void *data, void *hint) {
     free (data);
 }

@@ -49,7 +49,7 @@ namespace chaos {
         protected:
             uint8_t threadNumber;            
                 //Default Server Constructor
-            EventClient(string alias);
+            EventClient(std::string alias);
             
             /*
              init the event adapter

@@ -70,7 +70,7 @@ void DriverManager::deinit() throw(chaos::CException) {
 	
 	//deinitialize all allcoated driver
 	mapParameterLiveInstance.clear();
-	for(std::map<string, AbstractDriver*>::iterator it = mapDriverUUIDHashLiveInstance.begin();
+    for(std::map<std::string, AbstractDriver*>::iterator it = mapDriverUUIDHashLiveInstance.begin();
 		it != mapDriverUUIDHashLiveInstance.end();
 		it++){
 		

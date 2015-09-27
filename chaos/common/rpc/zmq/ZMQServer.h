@@ -32,7 +32,6 @@
 
 
 namespace chaos {
-    using namespace std;
     /*
      Class that implement the Chaos RPC adapter for 0mq protocoll
      */
@@ -40,11 +39,11 @@ namespace chaos {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQServer)
         int threadNumber;
         void *zmqContext;
-        stringstream bindStr;
-        thread_group threadGroup;
+        std::stringstream bindStr;
+        boost::thread_group threadGroup;
         bool runServer;
         
-        ZMQServer(const string& alias);
+        ZMQServer(const std::string& alias);
         virtual ~ZMQServer();
     public:
 

@@ -44,6 +44,12 @@
 #include <chaos/common/log/LogManager.h>
 
 #include <cassert>
+
+//#include <chaos/common/debug/debug_new.h>
+
+
+#include <stdlib.h>
+
 #if BOOST_VERSION > 105300
     //allocate the logger
     BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
@@ -62,7 +68,6 @@ code\
 }catch(boost::exception_detail::error_info_injector<boost::io::too_many_args>& lock_exception){\
 return_code\
 }
-
 
 #define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLFatal)
 #define LDBG_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLDebug)

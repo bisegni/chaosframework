@@ -20,6 +20,7 @@
 
 #include <chaos/common/event/EventClient.h>
 
+using namespace std;
 using namespace chaos;
 using namespace chaos::event;
 

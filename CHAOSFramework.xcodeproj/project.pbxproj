@@ -300,9 +300,6 @@
 		326DB47314B38BC00018A8D0 /* IODataDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40314B38BC00018A8D0 /* IODataDriver.h */; };
 		326DB47414B38BC00018A8D0 /* IOMemcachedIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB40414B38BC00018A8D0 /* IOMemcachedIODriver.cpp */; };
 		326DB47514B38BC00018A8D0 /* IOMemcachedIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40514B38BC00018A8D0 /* IOMemcachedIODriver.h */; };
-		326DB47814B38BC00018A8D0 /* ChaosPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40914B38BC00018A8D0 /* ChaosPool.h */; };
-		326DB47914B38BC00018A8D0 /* CPoolMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40A14B38BC00018A8D0 /* CPoolMemory.h */; };
-		326DB47A14B38BC00018A8D0 /* CPoolMemoryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40B14B38BC00018A8D0 /* CPoolMemoryObject.h */; };
 		326DB47B14B38BC00018A8D0 /* ChaosProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40D14B38BC00018A8D0 /* ChaosProcessingQueue.h */; };
 		326DB47C14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40E14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h */; };
 		326DB47D14B38BC00018A8D0 /* CObjectProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40F14B38BC00018A8D0 /* CObjectProcessingQueue.h */; };
@@ -483,6 +480,13 @@
 		329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */; };
 		329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 329FFFD0170712CE00D69CDE /* ManagedMemory.h */; };
 		32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */; };
+		32A273F31BB5AA0F00572083 /* _nvwa.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A273EE1BB5AA0F00572083 /* _nvwa.h */; settings = {ASSET_TAGS = (); }; };
+		32A273F41BB5AA0F00572083 /* c++11.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A273EF1BB5AA0F00572083 /* c++11.h */; settings = {ASSET_TAGS = (); }; };
+		32A273F51BB5AA0F00572083 /* debug_new.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A273F01BB5AA0F00572083 /* debug_new.h */; settings = {ASSET_TAGS = (); }; };
+		32A273F61BB5AA0F00572083 /* fast_mutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A273F11BB5AA0F00572083 /* fast_mutex.h */; settings = {ASSET_TAGS = (); }; };
+		32A273F71BB5AA0F00572083 /* static_assert.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A273F21BB5AA0F00572083 /* static_assert.h */; settings = {ASSET_TAGS = (); }; };
+		32A273FA1BB7235200572083 /* tracey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A273F81BB7235200572083 /* tracey.cpp */; settings = {ASSET_TAGS = (); }; };
+		32A273FB1BB7235200572083 /* tracey.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32A273F91BB7235200572083 /* tracey.hpp */; settings = {ASSET_TAGS = (); }; };
 		32A391C418FE923E001C5A73 /* TemplatedKeyValueHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A391C218FE923E001C5A73 /* TemplatedKeyValueHashMap.h */; };
 		32A40D471A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A40D451A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp */; };
 		32A40D481A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A40D451A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp */; };
@@ -1136,9 +1140,6 @@
 		326DB40314B38BC00018A8D0 /* IODataDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = IODataDriver.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40414B38BC00018A8D0 /* IOMemcachedIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = IOMemcachedIODriver.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB40514B38BC00018A8D0 /* IOMemcachedIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = IOMemcachedIODriver.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB40914B38BC00018A8D0 /* ChaosPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosPool.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB40A14B38BC00018A8D0 /* CPoolMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPoolMemory.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB40B14B38BC00018A8D0 /* CPoolMemoryObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPoolMemoryObject.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40D14B38BC00018A8D0 /* ChaosProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosProcessingQueue.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40E14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectProcessingPriorityQueue.h; sourceTree = "<group>"; };
 		326DB40F14B38BC00018A8D0 /* CObjectProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CObjectProcessingQueue.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1373,6 +1374,14 @@
 		329FFFD0170712CE00D69CDE /* ManagedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedMemory.h; sourceTree = "<group>"; };
 		32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorker.cpp; sourceTree = "<group>"; };
 		32A10C0218C87806006EA04C /* DeviceSharedDataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorker.h; sourceTree = "<group>"; };
+		32A273EC1BB5A97C00572083 /* debug_new.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debug_new.cpp; sourceTree = "<group>"; };
+		32A273EE1BB5AA0F00572083 /* _nvwa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _nvwa.h; sourceTree = "<group>"; };
+		32A273EF1BB5AA0F00572083 /* c++11.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "c++11.h"; sourceTree = "<group>"; };
+		32A273F01BB5AA0F00572083 /* debug_new.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug_new.h; sourceTree = "<group>"; };
+		32A273F11BB5AA0F00572083 /* fast_mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fast_mutex.h; sourceTree = "<group>"; };
+		32A273F21BB5AA0F00572083 /* static_assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = static_assert.h; sourceTree = "<group>"; };
+		32A273F81BB7235200572083 /* tracey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tracey.cpp; sourceTree = "<group>"; };
+		32A273F91BB7235200572083 /* tracey.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tracey.hpp; sourceTree = "<group>"; };
 		32A391C218FE923E001C5A73 /* TemplatedKeyValueHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyValueHashMap.h; sourceTree = "<group>"; };
 		32A40D451A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBHAConnectionManager.cpp; sourceTree = "<group>"; };
 		32A40D461A9CD751000D9A35 /* MongoDBHAConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBHAConnectionManager.h; sourceTree = "<group>"; };
@@ -2538,6 +2547,7 @@
 				32640A07169DCC1B00450962 /* caching_system */,
 				326DB3E614B38BC00018A8D0 /* data */,
 				326DB3EF14B38BC00018A8D0 /* dispatcher */,
+				32A273EB1BB5A93D00572083 /* debug */,
 				32C3543317885A36009ED581 /* extension */,
 				326DB3FC14B38BC00018A8D0 /* exception */,
 				320C2180151B2BF200BD0F41 /* event */,
@@ -2692,9 +2702,6 @@
 		326DB40814B38BC00018A8D0 /* pool */ = {
 			isa = PBXGroup;
 			children = (
-				326DB40914B38BC00018A8D0 /* ChaosPool.h */,
-				326DB40A14B38BC00018A8D0 /* CPoolMemory.h */,
-				326DB40B14B38BC00018A8D0 /* CPoolMemoryObject.h */,
 				32F158661B7C9D8400B6A5DF /* ResourcePool.h */,
 			);
 			path = pool;
@@ -3170,6 +3177,21 @@
 				329FFFD0170712CE00D69CDE /* ManagedMemory.h */,
 			);
 			path = memory;
+			sourceTree = "<group>";
+		};
+		32A273EB1BB5A93D00572083 /* debug */ = {
+			isa = PBXGroup;
+			children = (
+				32A273F81BB7235200572083 /* tracey.cpp */,
+				32A273F91BB7235200572083 /* tracey.hpp */,
+				32A273EE1BB5AA0F00572083 /* _nvwa.h */,
+				32A273EF1BB5AA0F00572083 /* c++11.h */,
+				32A273F11BB5AA0F00572083 /* fast_mutex.h */,
+				32A273F21BB5AA0F00572083 /* static_assert.h */,
+				32A273F01BB5AA0F00572083 /* debug_new.h */,
+				32A273EC1BB5A97C00572083 /* debug_new.cpp */,
+			);
+			path = debug;
 			sourceTree = "<group>";
 		};
 		32A40D421A9CD4A0000D9A35 /* chaos_service_common */ = {
@@ -3689,10 +3711,7 @@
 				32FB20191A3F0FAB00307A86 /* AttributeValue.h in Headers */,
 				326DB47514B38BC00018A8D0 /* IOMemcachedIODriver.h in Headers */,
 				324A4B78191A428500975394 /* json.h in Headers */,
-				326DB47814B38BC00018A8D0 /* ChaosPool.h in Headers */,
 				324A4B56191A41EF00975394 /* strtoll.h in Headers */,
-				326DB47914B38BC00018A8D0 /* CPoolMemory.h in Headers */,
-				326DB47A14B38BC00018A8D0 /* CPoolMemoryObject.h in Headers */,
 				326DB47B14B38BC00018A8D0 /* ChaosProcessingQueue.h in Headers */,
 				324A4B7E191A428500975394 /* safe_num-inl.h in Headers */,
 				326DB47C14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h in Headers */,
@@ -3735,6 +3754,7 @@
 				326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */,
 				3253F303189AEF8000959CA7 /* DirectIOVirtualServerChannel.h in Headers */,
 				329603271876B45000CDCADA /* BatchCommandExecutor.h in Headers */,
+				32A273F71BB5AA0F00572083 /* static_assert.h in Headers */,
 				3206F1AE19C18A8D00C437D8 /* QueryFuture.h in Headers */,
 				32556B0919B5F2FA0004ABC5 /* DBDriver.h in Headers */,
 				32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */,
@@ -3767,6 +3787,7 @@
 				3272FE1715E1053100B096FB /* EventForwarder.h in Headers */,
 				32DF603815E14C7700312C94 /* NamedService.h in Headers */,
 				32DF603C15E14D5F00312C94 /* AlertEventDescriptor.h in Headers */,
+				32A273F41BB5AA0F00572083 /* c++11.h in Headers */,
 				3251B5151A768A9E00EF3F82 /* HashMapTest.h in Headers */,
 				32DF604015E14F5A00312C94 /* InstrumentEventDescriptor.h in Headers */,
 				32DF604415E1502700312C94 /* CommandEventDescriptor.h in Headers */,
@@ -3802,6 +3823,7 @@
 				3253F2FF189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h in Headers */,
 				32B89C9E15F39DB500B17AAA /* ActionExecutionSafetySystem.h in Headers */,
 				32B89CA215F3D1E100B17AAA /* InstrumentEventChannel.h in Headers */,
+				32A273F61BB5AA0F00572083 /* fast_mutex.h in Headers */,
 				32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */,
 				324A4B97191A557700975394 /* time_support.h in Headers */,
 				3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */,
@@ -3845,6 +3867,7 @@
 				3220F98218A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h in Headers */,
 				32B571FE168E02CE0002A198 /* bsonmisc.h in Headers */,
 				32B571FF168E02CE0002A198 /* bsonobj.h in Headers */,
+				32A273FB1BB7235200572083 /* tracey.hpp in Headers */,
 				32B57200168E02CE0002A198 /* bsonobjbuilder.h in Headers */,
 				32B57201168E02CE0002A198 /* bsonobjiterator.h in Headers */,
 				329C1F0A1B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.h in Headers */,
@@ -3898,6 +3921,7 @@
 				32640A39169DCC5800450962 /* IdFactory.h in Headers */,
 				32640A3A169DCC5800450962 /* MillisTime.h in Headers */,
 				32640A3B169DCC5800450962 /* IteratorBase.h in Headers */,
+				32A273F51BB5AA0F00572083 /* debug_new.h in Headers */,
 				32F7FEA118A4FD9B00FC03AB /* DirectIOEndpointHandler.h in Headers */,
 				32A391C418FE923E001C5A73 /* TemplatedKeyValueHashMap.h in Headers */,
 				32640A3C169DCC5800450962 /* IteratorGarbage.h in Headers */,
@@ -3918,6 +3942,7 @@
 				324A4B7C191A428500975394 /* html.h in Headers */,
 				324A4B46191A41EF00975394 /* atomic_intrinsics_gcc_generic.h in Headers */,
 				32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */,
+				32A273F31BB5AA0F00572083 /* _nvwa.h in Headers */,
 				329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */,
 				323386BB1AD3D78E008863DC /* MultiAddressMessageRequestFuture.h in Headers */,
 				327CFF0A1708C4EB0069497B /* FastHash.h in Headers */,
@@ -4518,6 +4543,7 @@
 				325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */,
 				3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */,
 				32B89C9D15F39DB500B17AAA /* ActionExecutionSafetySystem.cpp in Sources */,
+				32A273FA1BB7235200572083 /* tracey.cpp in Sources */,
 				329C1F051B5643EF00A84D55 /* DirectIODispatcherMetricCollector.cpp in Sources */,
 				32B89CA115F3D1E100B17AAA /* InstrumentEventChannel.cpp in Sources */,
 				32FB201C1A3F11C400307A86 /* AttributeCache.cpp in Sources */,
@@ -5168,6 +5194,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
 					"-lmemcached",
@@ -5209,6 +5236,7 @@
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
 					"-lmemcached",
@@ -5257,6 +5285,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
 					"-lmemcached",
@@ -5297,6 +5326,7 @@
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
 					"-lmemcached",

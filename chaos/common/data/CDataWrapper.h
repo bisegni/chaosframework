@@ -21,7 +21,6 @@
 #define CDataWrapper_H
 
 #include <chaos/common/bson/bson.h>
-#include <chaos/common/pool/CPoolMemoryObject.h>
 
 #include <boost/scoped_ptr.hpp>
 

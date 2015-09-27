@@ -20,6 +20,8 @@
 
 #include <chaos/common/metric/CSVFileMetricBackend.h>
 
+#include <fstream>
+
 using namespace chaos::common::metric;
 
 CVSFileMetricBackend::CVSFileMetricBackend(const std::string& _backend_identity,
@@ -28,7 +30,7 @@ CVSFileMetricBackend::CVSFileMetricBackend(const std::string& _backend_identity,
 FileMetricBackend(_backend_identity,
                   _file_path,
                   ".csv",
-                  (append?fstream::app:fstream::trunc)| fstream::out){
+                  (append?std::fstream::app:std::fstream::trunc)| std::fstream::out){
 
 }
 
