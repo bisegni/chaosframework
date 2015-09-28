@@ -1,3 +1,4 @@
+#ifdef __CHAOS_DEBUG_MEMORY__
 #ifndef TRACEY_H
 #define TRACEY_H
 
@@ -166,3 +167,5 @@ extern "C" {
 #endif
 
 #endif /* TRACEY_H */
+
+#endif //__CHAOS_DEBUG_MEMORY__

@@ -1,4 +1,4 @@
-/*
+   /*
  * Tracey, a simple and lightweight memory leak detector
  * Copyright (c) 2011,2012,2013,2014 Mario 'rlyeh' Rodriguez
  *
@@ -66,6 +66,7 @@
  */
 
 // A few speed tweaks before loading STL on MSVC
+#ifdef __CHAOS_DEBUG_MEMORY__
 
 #ifdef _SECURE_SCL
 #undef _SECURE_SCL
@@ -3250,9 +3251,9 @@ namespace tracey
 		}
 
 		bool view_report( const std::string &html ) {
-			$windows( return std::system( tracey::string("start \1", html).c_str() ), true );
-			$apple( return std::system( tracey::string("open \1", html).c_str() ), true );
-			$linux( return std::system( tracey::string("xdg-open \1", html).c_str() ), true );
+			//$windows( return std::system( tracey::string("start \1", html).c_str() ), true );
+			//$apple( return std::system( tracey::string("open \1", html).c_str() ), true );
+			//$linux( return std::system( tracey::string("xdg-open \1", html).c_str() ), true );
 			return false;
 		}
 
@@ -4029,3 +4030,4 @@ extern "C" {
 		}
 }
 
+#endif //__CHAOS_DEBUG_MEMORY__

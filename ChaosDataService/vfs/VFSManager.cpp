@@ -41,6 +41,7 @@ using namespace chaos::data_service::vfs;
  ---------------------------------------------------------------------------------*/
 VFSManager::VFSManager(db_system::DBDriver *_db_driver_ptr):
 setting(NULL),
+map_vfs_file(this),
 db_driver_ptr(_db_driver_ptr){
     
 }
@@ -133,21 +134,24 @@ void VFSManager::timeout() {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void VFSManager::freeObject(std::string key,
-                            VFSFilesForPath *element) {
+void VFSManager::freeObject(const VFSManagerKeyObjectContainer::TKOCElement& element) {
+    
+    VFSFilesForPath *vfs_file_for_path = element.element;
+    
     //lock the files info for path
-    boost::unique_lock<boost::mutex> lock(element->_mutex);
+    boost::unique_lock<boost::mutex> lock(vfs_file_for_path->_mutex);
+
     
     //delete all file
-    for(FileInstanceMapIterator iter = element->map_logical_files.begin();
-        iter != element->map_logical_files.end();
+    for(FileInstanceMapIterator iter = vfs_file_for_path->map_logical_files.begin();
+        iter != vfs_file_for_path->map_logical_files.end();
         iter++) {
         VFSFM_LAPP_ << "delete file instance -> "<< iter->second->vfs_file_info.identify_key;
         delete(iter->second);
     }
     
     //remove all deleted element
-    element->map_logical_files.clear();
+    vfs_file_for_path->map_logical_files.clear();
 }
 
 /*---------------------------------------------------------------------------------
@@ -171,12 +175,12 @@ int VFSManager::getFile(std::string area,
     }
     
     //get or create the infro for logical file isntance
-    if(VFSManagerKeyObjectContainer::hasKey(vfs_fpath)) {
-        files_for_path = VFSManagerKeyObjectContainer::accessItem(vfs_fpath);
+    if(map_vfs_file.hasKey(vfs_fpath)) {
+        files_for_path = map_vfs_file.accessItem(vfs_fpath);
     } else {
         files_for_path =  new VFSFilesForPath();
         if(!files_for_path) return -3;
-        VFSManagerKeyObjectContainer::registerElement(vfs_fpath, files_for_path);
+        map_vfs_file.registerElement(vfs_fpath, files_for_path);
     }
     
     //lock the files info for path
@@ -216,12 +220,12 @@ int VFSManager::getWriteableStageFile(std::string
     }
     
     //get or create the infro for logical file isntance
-    if(VFSManagerKeyObjectContainer::hasKey(writeable_stage_file->getVFSFileInfo()->vfs_fpath)) {
-        files_for_path = VFSManagerKeyObjectContainer::accessItem(writeable_stage_file->getVFSFileInfo()->vfs_fpath);
+    if(map_vfs_file.hasKey(writeable_stage_file->getVFSFileInfo()->vfs_fpath)) {
+        files_for_path = map_vfs_file.accessItem(writeable_stage_file->getVFSFileInfo()->vfs_fpath);
     } else {
         files_for_path =  new VFSFilesForPath();
         if(!files_for_path) return -3;
-        VFSManagerKeyObjectContainer::registerElement(writeable_stage_file->getVFSFileInfo()->vfs_fpath, files_for_path);
+        map_vfs_file.registerElement(writeable_stage_file->getVFSFileInfo()->vfs_fpath, files_for_path);
     }
     
     //lock the files info for path
@@ -260,12 +264,12 @@ int VFSManager::getReadableStageFile(std::string stage_vfs_relative_path,
     }
     
     //get or create the infro for logical file isntance
-    if(VFSManagerKeyObjectContainer::hasKey(readable_stage_file->getVFSFileInfo()->vfs_fpath)) {
-        files_for_path = VFSManagerKeyObjectContainer::accessItem(readable_stage_file->getVFSFileInfo()->vfs_fpath);
+    if(map_vfs_file.hasKey(readable_stage_file->getVFSFileInfo()->vfs_fpath)) {
+        files_for_path = map_vfs_file.accessItem(readable_stage_file->getVFSFileInfo()->vfs_fpath);
     } else {
         files_for_path =  new VFSFilesForPath();
         if(!files_for_path) return -3;
-        VFSManagerKeyObjectContainer::registerElement(readable_stage_file->getVFSFileInfo()->vfs_fpath, files_for_path);
+        map_vfs_file.registerElement(readable_stage_file->getVFSFileInfo()->vfs_fpath, files_for_path);
     }
     
     //lock the files info for path
@@ -304,12 +308,12 @@ int VFSManager::getWriteableDataFile(std::string data_vfs_relative_path,
     }
     
     //get or create the infro for logical file isntance
-    if(VFSManagerKeyObjectContainer::hasKey(writeable_data_file->getVFSFileInfo()->vfs_fpath)) {
-        files_for_path = VFSManagerKeyObjectContainer::accessItem(writeable_data_file->getVFSFileInfo()->vfs_fpath);
+    if(map_vfs_file.hasKey(writeable_data_file->getVFSFileInfo()->vfs_fpath)) {
+        files_for_path = map_vfs_file.accessItem(writeable_data_file->getVFSFileInfo()->vfs_fpath);
     } else {
         files_for_path =  new VFSFilesForPath();
         if(!files_for_path) return -3;
-        VFSManagerKeyObjectContainer::registerElement(writeable_data_file->getVFSFileInfo()->vfs_fpath, files_for_path);
+        map_vfs_file.registerElement(writeable_data_file->getVFSFileInfo()->vfs_fpath, files_for_path);
     }
     
     //lock the files info for path
@@ -351,8 +355,8 @@ int VFSManager::releaseFile(VFSFile *l_file) {
     VFSFilesForPath *files_for_path = NULL;
     
     //check if the file belong to this manager
-    if(VFSManagerKeyObjectContainer::hasKey(l_file->vfs_file_info.vfs_fpath)) {
-        files_for_path = VFSManagerKeyObjectContainer::accessItem(l_file->vfs_file_info.vfs_fpath);
+    if(map_vfs_file.hasKey(l_file->vfs_file_info.vfs_fpath)) {
+        files_for_path = map_vfs_file.accessItem(l_file->vfs_file_info.vfs_fpath);
     } else {
         return -1;
     }

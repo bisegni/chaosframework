@@ -72,21 +72,24 @@ namespace chaos {
 			class VFSManager :
 			public common::utility::InizializableService,
 			public chaos::common::async_central::TimerHandler,
-			protected VFSManagerKeyObjectContainer {
+            protected VFSManagerKeyObjectContainer::FreeHandler {
 				//! point to user allcoated configuration structure, the instance
 				//! will be deallocated at thedestruction of this class
 				VFSManagerSetting *setting;
-				
+                
+                //!maps VFSFilesForPath
+                VFSManagerKeyObjectContainer map_vfs_file;
+                
 				//!index driver pointer
 				db_system::DBDriver *db_driver_ptr;
 				
 				//!storage driver pointer
 				storage_system::StorageDriver *storage_driver_ptr;
-				
+
 				void timeout();
 				//void giveDomainHeartbeat(const boost::system::error_code& e);
 			protected:
-				void freeObject(std::string key, VFSFilesForPath *element);
+                void freeObject(const VFSManagerKeyObjectContainer::TKOCElement& element);
 			public:
 				VFSManager(db_system::DBDriver *_db_driver_ptr);
 				~VFSManager();

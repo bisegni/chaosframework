@@ -351,7 +351,7 @@ void ZMQDirectIOClient::_releaseConnectionImpl(DirectIOClientConnection *connect
 
 void ZMQDirectIOClient::freeObject(const DCKeyObjectContainer::TKOCElement& element) {
     if(!element.element) return;
-    DirectIOClientConnection *connection = static_cast<DirectIOClientConnection *>(element.element);
+    DirectIOClientConnection *connection = element.element;
     ZMQDIOLAPP_ << "Autorelease connection for " << connection->getServerDescription();
     releaseConnection(connection);
 }

@@ -30,8 +30,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-
-#include <chaos/common/debug/tracey.hpp>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
@@ -48,8 +46,9 @@
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 
-#define INIT_STATE      0
-#define START_STATE     1
+#ifdef __CHAOS_DEBUG_MEMORY_CU__
+#include <chaos/common/debug/tracey.hpp>
+#endif
 
 #define CU_OPT_IN_MEMORY_DATABASE "cu-db-in-memory"
 
@@ -117,7 +116,9 @@ namespace chaos{
 				friend class RTAbstractControlUnit;
                 friend class slow_command::SlowCommandExecutor;
                 //enable trace for heap into control unit environment
+#ifdef __CHAOS_DEBUG_MEMORY_CU__
                 tracey::scope sc;
+#endif
 			public:
 				//! definition of the type for the driver list
 				typedef std::vector<DrvRequestInfo>				ControlUnitDriverList;

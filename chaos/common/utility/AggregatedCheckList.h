@@ -60,6 +60,7 @@ cl.getSharedCheckList(cln)->redoElement(id);
 }\
 }
             
+            
             typedef TemplatedKeyObjectContainer<std::string, CheckList* > KOCheckListContainer;
             
             /*!

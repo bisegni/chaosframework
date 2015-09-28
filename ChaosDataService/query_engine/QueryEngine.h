@@ -117,7 +117,7 @@ namespace chaos {
 			
 			//!hash table superclass type definition
 			typedef chaos::common::utility::TemplatedKeyValueHashMap< ClientConnectionInfo* > DirectIOChannelHashTable;
-			typedef std::map<string, ClientConnectionInfo*>::iterator MapConnectionIterator;
+            typedef std::map<std::string, ClientConnectionInfo*>::iterator MapConnectionIterator;
 			
 			/*!
 			 This class is the central that perform asynchronous answering to the
@@ -137,7 +137,7 @@ namespace chaos {
 				boost::lockfree::queue<DataCloudQuery*, boost::lockfree::fixed_sized<false> > query_queue;
 				
 				boost::shared_mutex						mutex_map_query_id_connection;
-				std::map<string, ClientConnectionInfo*> map_query_id_connection;
+                std::map<std::string, ClientConnectionInfo*> map_query_id_connection;
 				
 				//! send data to the requester
 				int  getChannelForQuery(DataCloudQuery *query,

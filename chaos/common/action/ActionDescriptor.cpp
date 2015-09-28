@@ -23,13 +23,15 @@ using namespace std;
 using namespace boost;
 
 
+
 AbstractActionDescriptor::AbstractActionDescriptor(){
     fired=false;
     enabled=true;
 }
 
 AbstractActionDescriptor::~AbstractActionDescriptor() {
-    
+    fired=false;
+    enabled=false;
 }
 
 /*

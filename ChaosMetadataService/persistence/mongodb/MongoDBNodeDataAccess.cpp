@@ -30,6 +30,7 @@
 #define MDBNDA_DBG  DBG_LOG(MongoDBNodeDataAccess)
 #define MDBNDA_ERR  ERR_LOG(MongoDBNodeDataAccess)
 
+using namespace boost;
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
 using namespace chaos::service_common::persistence::mongodb;

@@ -40,8 +40,8 @@ namespace chaos {
                 typedef typename std::map< K, O >::iterator     ContainerOrganizerIterator;
                 
                 typedef struct TKOCElement {
-                    const void* key;
-                    void* element;
+                    const K& key;
+                    O element;
                 }TKOCElement;
                 
                 class FreeHandler {
@@ -68,7 +68,7 @@ namespace chaos {
                         iter != organizer_map.end();
                         iter++) {
                         CHAOS_ASSERT(free_handler)
-                        TKOCElement e = {static_cast<const void*>(&iter->first), static_cast<void*>(iter->second)};
+                        TKOCElement e = {iter->first, iter->second};
                         free_handler->freeObject(e);
                     }
                     organizer_map.clear();

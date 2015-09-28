@@ -1066,11 +1066,12 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
 }
 
 /*
- Update the configuration for all descendand tree in the Control Uniti class struccture
+ Update the configuration for all descendant tree in the Control Uniti class struccture
  */
 CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack, bool& detachParam) throw (CException) {
     //check to see if the device can ben initialized
-    if(StartableService::getServiceState() == INIT_STATE) {
+    if(StartableService::getServiceState() != chaos::CUStateKey::INIT &&
+       StartableService::getServiceState() != chaos::CUStateKey::START) {
         ACULAPP_ << "device:" << DatasetDB::getDeviceID() << " not initialized";
         throw CException(-3, "Device Not Initilized", __PRETTY_FUNCTION__);
     }

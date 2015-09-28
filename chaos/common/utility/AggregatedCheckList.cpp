@@ -22,16 +22,21 @@
 
 using namespace chaos::common::utility;
 
+
+#define ACK_INFO INFO_LOG(AggregatedCheckList)
+
 AggregatedCheckList::AggregatedCheckList():
 map(this){}
 
 AggregatedCheckList::~AggregatedCheckList() {}
 
 void AggregatedCheckList::addCheckList(const std::string& check_list_name) {
+    DEBUG_CODE(ACK_INFO << "Add new checklist for:" << check_list_name;)
     map.registerElement(check_list_name, new CheckList());
 }
 
 void AggregatedCheckList::removeCheckList(const std::string& check_list_name) {
+    DEBUG_CODE(ACK_INFO << "Remove checklist for:" << check_list_name;)
     map.deregisterElementKey(check_list_name);
 }
 
@@ -40,6 +45,6 @@ CheckList *AggregatedCheckList::getSharedCheckList(const std::string& check_list
 }
 
 void AggregatedCheckList::freeObject(const KOCheckListContainer::TKOCElement& element_to_dispose) {
-    CheckList *to_dispose = static_cast<CheckList*>(element_to_dispose.element);
-    delete(to_dispose);
+    DEBUG_CODE(ACK_INFO << "Auto remove checklist for:" << element_to_dispose.key;)
+    delete(element_to_dispose.element);
 }

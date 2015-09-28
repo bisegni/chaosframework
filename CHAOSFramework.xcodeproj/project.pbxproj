@@ -480,11 +480,6 @@
 		329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */; };
 		329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 329FFFD0170712CE00D69CDE /* ManagedMemory.h */; };
 		32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */; };
-		32A273F31BB5AA0F00572083 /* _nvwa.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A273EE1BB5AA0F00572083 /* _nvwa.h */; settings = {ASSET_TAGS = (); }; };
-		32A273F41BB5AA0F00572083 /* c++11.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A273EF1BB5AA0F00572083 /* c++11.h */; settings = {ASSET_TAGS = (); }; };
-		32A273F51BB5AA0F00572083 /* debug_new.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A273F01BB5AA0F00572083 /* debug_new.h */; settings = {ASSET_TAGS = (); }; };
-		32A273F61BB5AA0F00572083 /* fast_mutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A273F11BB5AA0F00572083 /* fast_mutex.h */; settings = {ASSET_TAGS = (); }; };
-		32A273F71BB5AA0F00572083 /* static_assert.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A273F21BB5AA0F00572083 /* static_assert.h */; settings = {ASSET_TAGS = (); }; };
 		32A273FA1BB7235200572083 /* tracey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A273F81BB7235200572083 /* tracey.cpp */; settings = {ASSET_TAGS = (); }; };
 		32A273FB1BB7235200572083 /* tracey.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32A273F91BB7235200572083 /* tracey.hpp */; settings = {ASSET_TAGS = (); }; };
 		32A391C418FE923E001C5A73 /* TemplatedKeyValueHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A391C218FE923E001C5A73 /* TemplatedKeyValueHashMap.h */; };
@@ -1374,12 +1369,6 @@
 		329FFFD0170712CE00D69CDE /* ManagedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedMemory.h; sourceTree = "<group>"; };
 		32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorker.cpp; sourceTree = "<group>"; };
 		32A10C0218C87806006EA04C /* DeviceSharedDataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorker.h; sourceTree = "<group>"; };
-		32A273EC1BB5A97C00572083 /* debug_new.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debug_new.cpp; sourceTree = "<group>"; };
-		32A273EE1BB5AA0F00572083 /* _nvwa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _nvwa.h; sourceTree = "<group>"; };
-		32A273EF1BB5AA0F00572083 /* c++11.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "c++11.h"; sourceTree = "<group>"; };
-		32A273F01BB5AA0F00572083 /* debug_new.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug_new.h; sourceTree = "<group>"; };
-		32A273F11BB5AA0F00572083 /* fast_mutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fast_mutex.h; sourceTree = "<group>"; };
-		32A273F21BB5AA0F00572083 /* static_assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = static_assert.h; sourceTree = "<group>"; };
 		32A273F81BB7235200572083 /* tracey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tracey.cpp; sourceTree = "<group>"; };
 		32A273F91BB7235200572083 /* tracey.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tracey.hpp; sourceTree = "<group>"; };
 		32A391C218FE923E001C5A73 /* TemplatedKeyValueHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyValueHashMap.h; sourceTree = "<group>"; };
@@ -3184,12 +3173,6 @@
 			children = (
 				32A273F81BB7235200572083 /* tracey.cpp */,
 				32A273F91BB7235200572083 /* tracey.hpp */,
-				32A273EE1BB5AA0F00572083 /* _nvwa.h */,
-				32A273EF1BB5AA0F00572083 /* c++11.h */,
-				32A273F11BB5AA0F00572083 /* fast_mutex.h */,
-				32A273F21BB5AA0F00572083 /* static_assert.h */,
-				32A273F01BB5AA0F00572083 /* debug_new.h */,
-				32A273EC1BB5A97C00572083 /* debug_new.cpp */,
 			);
 			path = debug;
 			sourceTree = "<group>";
@@ -3754,7 +3737,6 @@
 				326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */,
 				3253F303189AEF8000959CA7 /* DirectIOVirtualServerChannel.h in Headers */,
 				329603271876B45000CDCADA /* BatchCommandExecutor.h in Headers */,
-				32A273F71BB5AA0F00572083 /* static_assert.h in Headers */,
 				3206F1AE19C18A8D00C437D8 /* QueryFuture.h in Headers */,
 				32556B0919B5F2FA0004ABC5 /* DBDriver.h in Headers */,
 				32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */,
@@ -3787,7 +3769,6 @@
 				3272FE1715E1053100B096FB /* EventForwarder.h in Headers */,
 				32DF603815E14C7700312C94 /* NamedService.h in Headers */,
 				32DF603C15E14D5F00312C94 /* AlertEventDescriptor.h in Headers */,
-				32A273F41BB5AA0F00572083 /* c++11.h in Headers */,
 				3251B5151A768A9E00EF3F82 /* HashMapTest.h in Headers */,
 				32DF604015E14F5A00312C94 /* InstrumentEventDescriptor.h in Headers */,
 				32DF604415E1502700312C94 /* CommandEventDescriptor.h in Headers */,
@@ -3823,7 +3804,6 @@
 				3253F2FF189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h in Headers */,
 				32B89C9E15F39DB500B17AAA /* ActionExecutionSafetySystem.h in Headers */,
 				32B89CA215F3D1E100B17AAA /* InstrumentEventChannel.h in Headers */,
-				32A273F61BB5AA0F00572083 /* fast_mutex.h in Headers */,
 				32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */,
 				324A4B97191A557700975394 /* time_support.h in Headers */,
 				3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */,
@@ -3921,7 +3901,6 @@
 				32640A39169DCC5800450962 /* IdFactory.h in Headers */,
 				32640A3A169DCC5800450962 /* MillisTime.h in Headers */,
 				32640A3B169DCC5800450962 /* IteratorBase.h in Headers */,
-				32A273F51BB5AA0F00572083 /* debug_new.h in Headers */,
 				32F7FEA118A4FD9B00FC03AB /* DirectIOEndpointHandler.h in Headers */,
 				32A391C418FE923E001C5A73 /* TemplatedKeyValueHashMap.h in Headers */,
 				32640A3C169DCC5800450962 /* IteratorGarbage.h in Headers */,
@@ -3942,7 +3921,6 @@
 				324A4B7C191A428500975394 /* html.h in Headers */,
 				324A4B46191A41EF00975394 /* atomic_intrinsics_gcc_generic.h in Headers */,
 				32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */,
-				32A273F31BB5AA0F00572083 /* _nvwa.h in Headers */,
 				329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */,
 				323386BB1AD3D78E008863DC /* MultiAddressMessageRequestFuture.h in Headers */,
 				327CFF0A1708C4EB0069497B /* FastHash.h in Headers */,
@@ -5179,6 +5157,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					__CHAOS_DEBUG_MEMORY__,
+					__CHAOS_DEBUG_MEMORY_CU__,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
@@ -5224,6 +5204,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = BOOST_ALL_DYN_LINK;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -5270,6 +5251,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					__CHAOS_DEBUG_MEMORY__,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";

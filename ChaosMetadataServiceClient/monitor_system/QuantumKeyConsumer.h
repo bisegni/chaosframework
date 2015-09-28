@@ -21,6 +21,7 @@
 #ifndef __CHAOSFramework__QuantumTypedConsumer__
 #define __CHAOSFramework__QuantumTypedConsumer__
 
+#include <chaos/common/global.h>
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system_types.h>
 #include <ChaosMetadataServiceClient/monitor_system/AbstractQuantumKeyAttributeHandler.h>
 

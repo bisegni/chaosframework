@@ -160,7 +160,7 @@ void  PerformanceManagment::disposePerformanceNode(DirectIOPerformanceSession *p
 }
 
 void  PerformanceManagment::freeObject(const PMKeyObjectContainer::TKOCElement& element_to_dispose) {
-	disposePerformanceNode(static_cast<DirectIOPerformanceSession*>(element_to_dispose.element));
+	disposePerformanceNode(element_to_dispose.element);
 }
 
 chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_data::CDataWrapper *param, bool& detach) throw(chaos::CException) {
