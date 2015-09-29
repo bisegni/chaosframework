@@ -57,6 +57,9 @@ SET(common_lib_src  ${common_lib_src}	data/CDataWrapper.cpp
                     data/cache/LFDataCache.cpp)
 
 SET(common_lib_src  ${common_lib_src}
+                    debug/tracey.cpp)
+
+SET(common_lib_src  ${common_lib_src}
                     data/cache/ChannelValueAccessor.cpp
                     data/cache/KeyGroupCache.cpp
                     data/cache/AttributeValue.cpp
