@@ -141,13 +141,8 @@ namespace chaos {
             int err = 0;
             struct utsname u_name;
             
-            if (std::signal((int) SIGINFO, print_memory_leak_status) == SIG_ERR){
+            if (std::signal((int) 29, print_memory_leak_status) == SIG_ERR){
                 std::cout << "SIGINFO Signal handler registraiton error";
-                exit(-1);
-            }
-                
-            if (std::signal((int) SIGUSR1, print_memory_leak_status) == SIG_ERR){
-                std::cout << "SIDUSR1 Signal handler registraiton error";
                 exit(-1);
             }
             //startup logger

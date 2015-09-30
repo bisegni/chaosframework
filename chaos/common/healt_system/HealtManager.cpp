@@ -160,7 +160,7 @@ void HealtManager::start() throw (chaos::CException) {
             sayHello();
         } catch(chaos::CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
-            continue;
+            throw ex;
         }
         break;
     }
