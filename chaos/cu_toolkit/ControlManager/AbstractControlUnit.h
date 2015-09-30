@@ -81,13 +81,13 @@ namespace chaos{
             
             typedef enum {
                 INIT_RPC_PHASE_CALL_INIT_STATE = 0,
-                INIT_SM_PHASE_INIT_SHARED_CACHE,
-                INIT_SM_PHASE_COMPLETE_OUTPUT_ATTRIBUTE,
-                INIT_SM_PHASE_COMPLETE_INPUT_ATTRIBUTE,
-                INIT_SM_PHASE_INIT_SYSTEM_CACHE,
-                INIT_SM_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE,
-                INIT_SM_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR,
-                INIT_SM_PHASE_CALL_UNIT_INIT,
+                INIT_RPC_PHASE_INIT_SHARED_CACHE,
+                INIT_RPC_PHASE_COMPLETE_OUTPUT_ATTRIBUTE,
+                INIT_RPC_PHASE_COMPLETE_INPUT_ATTRIBUTE,
+                INIT_RPC_PHASE_INIT_SYSTEM_CACHE,
+                INIT_RPC_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE,
+                INIT_RPC_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR,
+                INIT_RPC_PHASE_CALL_UNIT_INIT,
                 INIT_RPC_PHASE_UPDATE_CONFIGURATION
             }InitRPCPhase;
             
@@ -95,6 +95,17 @@ namespace chaos{
                 INIT_SM_PHASE_INIT_DB = 0,
                 INIT_SM_PHASE_CREATE_DATA_STORAGE,
             }InitSMPhase;
+            
+            
+            typedef enum {
+                START_RPC_PHASE_IMPLEMENTATION = 0,
+                START_RPC_PHASE_UNIT
+            }StartRPCPhase;
+            
+            typedef enum {
+                START_SM_PHASE_PUSH_DATASET = 0,
+                START_SM_PHASE_STAT_TIMER
+            }StartSMPhase;
             
             //!  Base class for control unit !CHAOS node
 			/*!

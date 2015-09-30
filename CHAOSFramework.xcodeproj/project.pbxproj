@@ -629,6 +629,7 @@
 		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
 		32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95E15E4DBD3005D607E /* EventFactory.h */; };
+		32D09FE61BBC1EA30059A926 /* ProcInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D09FE41BBC1EA30059A926 /* ProcInfo.h */; settings = {ASSET_TAGS = (); }; };
 		32D421B317271572008A326E /* BsonFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D421B117271572008A326E /* BsonFragment.cpp */; };
 		32D421B417271572008A326E /* BsonFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D421B217271572008A326E /* BsonFragment.h */; };
 		32D5CB32179D233E00A8427E /* chaos_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D5CB31179D233E00A8427E /* chaos_types.h */; };
@@ -1566,6 +1567,8 @@
 		32CFF95A15E4D950005D607E /* EventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDescriptor.h; sourceTree = "<group>"; };
 		32CFF95D15E4DBD3005D607E /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
 		32CFF95E15E4DBD3005D607E /* EventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventFactory.h; sourceTree = "<group>"; };
+		32D09FE31BBC1EA30059A926 /* ProcInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcInfo.cpp; sourceTree = "<group>"; };
+		32D09FE41BBC1EA30059A926 /* ProcInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcInfo.h; sourceTree = "<group>"; };
 		32D24FAF1A7AAD15002D65CE /* DataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataAccess.h; sourceTree = "<group>"; };
 		32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mongo_db_constants.h; sourceTree = "<group>"; };
 		32D421B117271572008A326E /* BsonFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BsonFragment.cpp; sourceTree = "<group>"; };
@@ -3173,6 +3176,8 @@
 			children = (
 				32A273F81BB7235200572083 /* tracey.cpp */,
 				32A273F91BB7235200572083 /* tracey.hpp */,
+				32D09FE31BBC1EA30059A926 /* ProcInfo.cpp */,
+				32D09FE41BBC1EA30059A926 /* ProcInfo.h */,
 			);
 			path = debug;
 			sourceTree = "<group>";
@@ -3867,6 +3872,7 @@
 				324A4B2A191A405700975394 /* const_element.h in Headers */,
 				324A4B0D191A3F6A00975394 /* disallow_copying.h in Headers */,
 				32983F7517896FE1004599A3 /* ObjectInstancer.h in Headers */,
+				32D09FE61BBC1EA30059A926 /* ProcInfo.h in Headers */,
 				3296031F1876B45000CDCADA /* AttributeValueSharedCache.h in Headers */,
 				32640A27169DCC5800450962 /* BufferTracker.h in Headers */,
 				329603241876B45000CDCADA /* BatchCommandConstants.h in Headers */,
@@ -5186,6 +5192,7 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
+					"-lsigar",
 					"-lmongoose",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -5229,6 +5236,7 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
+					"-lsigar",
 					"-lmongoose",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

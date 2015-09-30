@@ -123,13 +123,13 @@ key_data_storage(NULL){
 void AbstractControlUnit::_initChecklist() {
     check_list_sub_service.addCheckList("_init");
     check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_CALL_INIT_STATE);
-    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_INIT_SHARED_CACHE);
-    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_COMPLETE_OUTPUT_ATTRIBUTE);
-    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_COMPLETE_INPUT_ATTRIBUTE);
-    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_INIT_SYSTEM_CACHE);
-    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE);
-    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR);
-    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_SM_PHASE_CALL_UNIT_INIT);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_INIT_SHARED_CACHE);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_COMPLETE_OUTPUT_ATTRIBUTE);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_COMPLETE_INPUT_ATTRIBUTE);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_INIT_SYSTEM_CACHE);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_CALL_UNIT_INIT);
     check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_UPDATE_CONFIGURATION);
     
     check_list_sub_service.addCheckList("init");
@@ -137,7 +137,13 @@ void AbstractControlUnit::_initChecklist() {
     check_list_sub_service.getSharedCheckList("init")->addElement(INIT_SM_PHASE_CREATE_DATA_STORAGE);
     
     
-    check_list_sub_service.addCheckList("start_services");
+    check_list_sub_service.addCheckList("_start");
+    check_list_sub_service.getSharedCheckList("_start")->addElement(START_RPC_PHASE_IMPLEMENTATION);
+    check_list_sub_service.getSharedCheckList("_start")->addElement(START_RPC_PHASE_UNIT);
+    
+    check_list_sub_service.addCheckList("start");
+    check_list_sub_service.getSharedCheckList("start")->addElement(START_SM_PHASE_PUSH_DATASET);
+    check_list_sub_service.getSharedCheckList("start")->addElement(START_SM_PHASE_STAT_TIMER);
 }
 /*!
  Destructor a new CU with an identifier
@@ -311,7 +317,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
                 StartableService::initImplementation(this, static_cast<void*>(init_configuration), "AbstractControlUnit", __PRETTY_FUNCTION__);
                 break;
             }
-            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_SM_PHASE_INIT_SHARED_CACHE) {
+            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_INIT_SHARED_CACHE) {
                 ACULAPP_ << "Allocate the user cache wrapper for:"+DatasetDB::getDeviceID();
                 attribute_shared_cache_wrapper = new AttributeSharedCacheWrapper(attribute_value_shared_cache);
                 
@@ -326,28 +332,28 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
                 break;
             }
             
-            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_SM_PHASE_COMPLETE_OUTPUT_ATTRIBUTE){
+            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_COMPLETE_OUTPUT_ATTRIBUTE){
                 ACULAPP_ << "Complete shared attribute cache for output attribute";
                 completeOutputAttribute();
                 break;
             }
-            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_SM_PHASE_COMPLETE_INPUT_ATTRIBUTE){
+            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_COMPLETE_INPUT_ATTRIBUTE){
                 ACULAPP_ << "Complete shared attribute cache for input attribute";
                 completeInputAttribute();
                 break;
             }
             
-            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_SM_PHASE_INIT_SYSTEM_CACHE){
+            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_INIT_SYSTEM_CACHE){
                 ACULAPP_ << "Populating shared attribute cache for system attribute";
                 initSystemAttributeOnSharedAttributeCache();
                 break;
             }
-            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_SM_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE){
+            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE){
                 //define the implementations custom variable
                 unitDefineCustomAttribute();
                 break;
             }
-            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_SM_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR){
+            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR){
                 //create fast vector access for cached value
                 fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT),
                                       cache_output_attribute_vector);
@@ -362,7 +368,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
                                       cache_custom_attribute_vector);
                 break;
             }
-            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_SM_PHASE_CALL_UNIT_INIT){
+            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_UNIT_INIT){
                 //initialize implementations
                 unitInit();
                 break;
@@ -409,15 +415,23 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
     if(getServiceState() != common::utility::service_state_machine::InizializableServiceType::IS_INITIATED &&
        getServiceState() != common::utility::service_state_machine::StartableServiceType::SS_STOPPED) throw CException(-1, DatasetDB::getDeviceID()+" need to be in the init or stop state to be started", __PRETTY_FUNCTION__);
     
-    ACULDBG_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
-    StartableService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
-    
     try {
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_STARTING,
                                                         true);
-        unitStart();
+        
+        CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_start"){
+            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_IMPLEMENTATION){
+                StartableService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
+                break;
+            }
+            
+            CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_UNIT){
+                unitStart();
+            }
+        }
+        CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_start")
         
         //set healt to start
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
@@ -459,8 +473,18 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOPING,
                                                         true);
-        ACULDBG_ << "Stop sublass for deviceID:" << DatasetDB::getDeviceID();
-        unitStop();
+        CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "_start"){
+            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_start", START_RPC_PHASE_IMPLEMENTATION){
+                StartableService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
+                break;
+            }
+            
+            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_start", START_RPC_PHASE_UNIT){
+                unitStop();
+            }
+        }
+        CHAOS_CHECK_LIST_END_SCAN_DONE(check_list_sub_service, "_start")
+        
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP,
@@ -469,14 +493,6 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
         ACULAPP_ <<"Exception stopping  \""<< DatasetDB::getDeviceID()<< "\""<<ex.what()<<", stopping...";
         ACULDBG_ << "Exception on unit deinit:" << ex.what();
     }
-    
-    //call start method of the startable interface
-    StartableService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
-    
-    //set healt to stop
-    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
-                                                    NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP);
     
     return NULL;
 }
@@ -513,7 +529,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
                 }
                 break;
             }
-            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_SM_PHASE_INIT_SHARED_CACHE) {
+            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_INIT_SHARED_CACHE) {
                 ACULAPP_ << "Deallocate the user cache wrapper for:"+DatasetDB::getDeviceID();
                 if(attribute_shared_cache_wrapper) {
                     delete(attribute_shared_cache_wrapper);
@@ -522,21 +538,21 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
                 break;
             }
             
-            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_SM_PHASE_COMPLETE_OUTPUT_ATTRIBUTE){
+            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_COMPLETE_OUTPUT_ATTRIBUTE){
                 break;
             }
-            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_SM_PHASE_COMPLETE_INPUT_ATTRIBUTE){
+            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_COMPLETE_INPUT_ATTRIBUTE){
                 break;
             }
             
-            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_SM_PHASE_INIT_SYSTEM_CACHE){
+            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_INIT_SYSTEM_CACHE){
                 break;
             }
-            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_SM_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE){
+            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE){
                 unitDefineCustomAttribute();
                 break;
             }
-            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_SM_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR){
+            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR){
                 //clear all cache sub_structure
                 cache_output_attribute_vector.clear();
                 cache_input_attribute_vector.clear();
@@ -544,7 +560,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
                 cache_system_attribute_vector.clear();
                 break;
             }
-            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_SM_PHASE_CALL_UNIT_INIT){
+            CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_UNIT_INIT){
                 ACULDBG_ << "Deinit custom deinitialization for device:" << DatasetDB::getDeviceID();
                 unitDeinit();
                 break;
@@ -716,76 +732,93 @@ void AbstractControlUnit::init(void *init_data) throw(CException) {
     ACULDBG_ << "Start internal and custom inititialization:"+DatasetDB::getDeviceID();
     //rpc initialize service
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "init"){
-    CHAOS_CHECK_LIST_DONE(check_list_sub_service, "init", INIT_SM_PHASE_INIT_DB){
-        //call init sequence
-        CDataWrapper *init_configuration = static_cast<CDataWrapper*>(init_data);
+        CHAOS_CHECK_LIST_DONE(check_list_sub_service, "init", INIT_SM_PHASE_INIT_DB){
+            //call init sequence
+            CDataWrapper *init_configuration = static_cast<CDataWrapper*>(init_data);
+            
+            //cast to the CDatawrapper instance
+            ACULAPP_ << "Initialize CU Database for device:" << DatasetDB::getDeviceID();
+            DatasetDB::addAttributeToDataSetFromDataWrapper(*init_configuration);
+            break;
+        }
         
-        //cast to the CDatawrapper instance
-        ACULAPP_ << "Initialize CU Database for device:" << DatasetDB::getDeviceID();
-        DatasetDB::addAttributeToDataSetFromDataWrapper(*init_configuration);
-        break;
-    }
-        
-    CHAOS_CHECK_LIST_DONE(check_list_sub_service, "init", INIT_SM_PHASE_CREATE_DATA_STORAGE) {
-        //call init sequence
-        CDataWrapper *init_configuration = static_cast<CDataWrapper*>(init_data);
-        //call update param function
-        //initialize key data storage for device id
-        ACULAPP_ << "Create KeyDataStorage device:" << DatasetDB::getDeviceID();
-        key_data_storage.reset(DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(DatasetDB::getDeviceID()));
-        
-        ACULAPP_ << "Call KeyDataStorage init implementation for deviceID:" << DatasetDB::getDeviceID();
-        key_data_storage->init(init_configuration);
-        
-        break;
-    }
+        CHAOS_CHECK_LIST_DONE(check_list_sub_service, "init", INIT_SM_PHASE_CREATE_DATA_STORAGE) {
+            //call init sequence
+            CDataWrapper *init_configuration = static_cast<CDataWrapper*>(init_data);
+            //call update param function
+            //initialize key data storage for device id
+            ACULAPP_ << "Create KeyDataStorage device:" << DatasetDB::getDeviceID();
+            key_data_storage.reset(DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(DatasetDB::getDeviceID()));
+            
+            ACULAPP_ << "Call KeyDataStorage init implementation for deviceID:" << DatasetDB::getDeviceID();
+            key_data_storage->init(init_configuration);
+            
+            break;
+        }
     }
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "init")
 }
 
 // Startable Service method
 void AbstractControlUnit::start() throw(CException) {
-    //init on shared cache the all the dataaset with the default value
-    //set first timestamp for simulate the run step
-    *timestamp_acq_cached_value->getValuePtr<uint64_t>() = TimingUtil::getTimeStamp();
-    attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT).markAllAsChanged();
-    pushOutputDataset();
-    attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT).markAllAsChanged();
-    pushInputDataset();
-    attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM).markAllAsChanged();
-    pushCustomDataset();
-    attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
-    pushSystemDataset();
-    
-    //register timer for push statistic
-    chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 5000, 5000);
-    //get timestamp for first pushes metric acquisition
-    last_push_rate_grap_ts = TimingUtil::getTimeStamp();
+    CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "start"){
+        CHAOS_CHECK_LIST_DONE(check_list_sub_service, "start", START_SM_PHASE_PUSH_DATASET){
+            //init on shared cache the all the dataaset with the default value
+            //set first timestamp for simulate the run step
+            *timestamp_acq_cached_value->getValuePtr<uint64_t>() = TimingUtil::getTimeStamp();
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT).markAllAsChanged();
+            pushOutputDataset();
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT).markAllAsChanged();
+            pushInputDataset();
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM).markAllAsChanged();
+            pushCustomDataset();
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+            pushSystemDataset();
+            break;
+        }
+        
+        CHAOS_CHECK_LIST_DONE(check_list_sub_service, "start", START_SM_PHASE_STAT_TIMER){
+            //register timer for push statistic
+            chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 5000, 5000);
+            //get timestamp for first pushes metric acquisition
+            last_push_rate_grap_ts = TimingUtil::getTimeStamp();
+        }
+    }
+    CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "start")
 }
 
 // Startable Service method
 void AbstractControlUnit::stop() throw(CException) {
-    //remove timer for push statistic
-    chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+    CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "start"){
+        CHAOS_CHECK_LIST_REDO(check_list_sub_service, "start", START_SM_PHASE_PUSH_DATASET){
+            break;
+        }
+        
+        CHAOS_CHECK_LIST_REDO(check_list_sub_service, "start", START_SM_PHASE_STAT_TIMER){
+            //remove timer for push statistic
+            chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+        }
+    }
+    CHAOS_CHECK_LIST_END_SCAN_DONE(check_list_sub_service, "start")
 }
 
 // Startable Service method
 void AbstractControlUnit::deinit() throw(CException) {
     //rpc initialize service
     CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "init"){
-    CHAOS_CHECK_LIST_REDO(check_list_sub_service, "init",  INIT_SM_PHASE_INIT_DB){
-        break;
-    }
-        
-    CHAOS_CHECK_LIST_REDO(check_list_sub_service, "init", INIT_SM_PHASE_CREATE_DATA_STORAGE) {
-        //remove key data storage
-        if(key_data_storage.get()) {
-            ACULDBG_ << "Delete data storage driver for device:" << DatasetDB::getDeviceID();
-            key_data_storage->deinit();
-            key_data_storage.reset();
+        CHAOS_CHECK_LIST_REDO(check_list_sub_service, "init",  INIT_SM_PHASE_INIT_DB){
+            break;
         }
-        break;
-    }
+        
+        CHAOS_CHECK_LIST_REDO(check_list_sub_service, "init", INIT_SM_PHASE_CREATE_DATA_STORAGE) {
+            //remove key data storage
+            if(key_data_storage.get()) {
+                ACULDBG_ << "Delete data storage driver for device:" << DatasetDB::getDeviceID();
+                key_data_storage->deinit();
+                key_data_storage.reset();
+            }
+            break;
+        }
     }
     CHAOS_CHECK_LIST_END_SCAN_DONE(check_list_sub_service, "init")
 }

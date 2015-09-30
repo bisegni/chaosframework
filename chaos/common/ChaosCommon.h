@@ -40,6 +40,7 @@
 #include <iostream>
 #include <string>
 #include <chaos/common/debug/tracey.hpp>
+//#include <chaos/common/debug/ProcInfo.h>
 #include <boost/format.hpp>
 #endif
 
@@ -140,7 +141,7 @@ namespace chaos {
         void init(void *init_data) throw (CException) {
             int err = 0;
             struct utsname u_name;
-
+            
             if (std::signal((int) 29, print_memory_leak_status) == SIG_ERR){
                 std::cout << "SIGINFO Signal handler registraiton error";
                 exit(-1);
@@ -183,7 +184,7 @@ namespace chaos {
             
             LAPP_ << "The local address choosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
             
-            //Starting Async centrla
+            //Starting Async central
             LAPP_ << "Initilizing async central";
             common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), init_data, "AsyncCentralManager", __PRETTY_FUNCTION__);
             }
