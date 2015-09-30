@@ -25,7 +25,7 @@
 #include <sstream>
 #include <fstream>
 #include <csignal>
-
+#include <signal.h>
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/async_central/AsyncCentralManager.h>
@@ -140,8 +140,15 @@ namespace chaos {
         void init(void *init_data) throw (CException) {
             int err = 0;
             struct utsname u_name;
-            
+
             if (std::signal((int) 29, print_memory_leak_status) == SIG_ERR){
+                std::cout << "SIGINFO Signal handler registraiton error";
+                exit(-1);
+                }
+
+
+            // SIGINFO is not defined in ARM architectures
+            if (std::signal((int) SIGUSR1, print_memory_leak_status) == SIG_ERR){
                 std::cout << "SIGINFO Signal handler registraiton error";
                 exit(-1);
             }

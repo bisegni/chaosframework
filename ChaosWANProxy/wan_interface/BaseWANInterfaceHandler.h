@@ -22,7 +22,7 @@
 
 #include <vector>
 #include <string>
-
+#include <chaos/common/ChaosCommon.h>
 #include "AbstractWANInterfaceResponse.h"
 #include "../utility/TypedConstrainedHashMap.h"
 #include "../api/AbstractApiGroup.h"

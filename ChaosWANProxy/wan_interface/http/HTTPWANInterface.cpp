@@ -205,10 +205,10 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 	
 	//remove the prefix and tokenize the url
 	std::vector<std::string> api_token_list;
-	algorithm::split(api_token_list,
+	boost::algorithm::split(api_token_list,
 					 api_uri,
-					 algorithm::is_any_of("/"),
-					 algorithm::token_compress_on);
+					 boost::algorithm::is_any_of("/"),
+					 boost::algorithm::token_compress_on);
 	//check if we havethe domain and api name in the uri and the content is json
 	if(api_token_list.size()>= 2 &&
 	   json) {
