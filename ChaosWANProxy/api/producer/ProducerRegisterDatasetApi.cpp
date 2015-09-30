@@ -23,7 +23,7 @@
 #include <string>
 
 #include <chaos/common/chaos_constants.h>
-
+#include <chaos/common/ChaosCommon.h>
 #include <boost/lexical_cast.hpp>
 
 using namespace chaos::common::data;
