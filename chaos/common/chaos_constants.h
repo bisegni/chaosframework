@@ -35,6 +35,16 @@ namespace chaos {
         static const char * const	OPT_HELP                            = "help";
         //! config file parameter
         static const char * const   OPT_CONF_FILE						= "conf-file";
+        //! Specify when the log must be forwarded on console
+        static const char * const   OPT_LOG_ON_CONSOLE                  = "log-on-console";
+        //! Specify when the log must be forwarded on file
+        static const char * const   OPT_LOG_ON_FILE                     = "log-on-file";
+        //! Specify when the file path of the log
+        static const char * const   OPT_LOG_FILE                        = "log-file";
+        //! Specify the level of the log going
+        static const char * const   OPT_LOG_LEVEL                       = "log-level";
+        //! Specify the log max size
+        static const char * const   OPT_LOG_MAX_SIZE_MB                 = "log-max-size";
         //! enable metric loggin on console backend
         static const char * const   OPT_LOG_METRIC_ON_CONSOLE           = "log-metric-on-console";
         //! enable metric loggin on file backend
@@ -77,14 +87,6 @@ namespace chaos {
         static const char * const   OPT_EVENT_DISABLE                   = "event-disable";
         //! Specify the metadata address for the metadataserver
         static const char * const   OPT_METADATASERVER_ADDRESS          = "metadata-server";
-        //! Specify when the log must be forwarded on console
-        static const char * const   OPT_LOG_ON_CONSOLE                  = "log-on-console";
-        //! Specify when the log must be forwarded on file
-        static const char * const   OPT_LOG_ON_FILE                     = "log-on-file";
-        //! Specify when the file path of the log
-        static const char * const   OPT_LOG_FILE                        = "log-file";
-        //! Specifi the level of the log going
-        static const char * const   OPT_LOG_LEVEL                       = "log-level";
         //! Specify the ip where publish the framework
         static const char * const   OPT_PUBLISHING_IP                   = "publishing-ip";
         //! use the interface name to determinate the ip where publish itself

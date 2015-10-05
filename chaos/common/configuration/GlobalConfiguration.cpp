@@ -49,6 +49,11 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_HELP, "Produce help message");
         //cache parameter
         addOption<std::string>(InitOption::OPT_CONF_FILE,"File configuration path");
+        addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
+        addOption(InitOption::OPT_LOG_ON_FILE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on file");
+        addOption(InitOption::OPT_LOG_FILE, po::value< string >()->default_value("chaos_frameowrk.log"), "Specify when the file path of the log");
+        addOption(InitOption::OPT_LOG_LEVEL, po::value< string >()->default_value("info"), "Specify the level of the log using the value [debug, info, notice, warning, fatal]");
+        addOption(InitOption::OPT_LOG_MAX_SIZE_MB, po::value< uint32_t >()->default_value(10), "Specify the max size in megabytes fo the file log");
         addOption(InitOption::OPT_LOG_METRIC_ON_CONSOLE, po::value< bool >()->default_value(true), "Enable the logging metric on console");
         addOption(InitOption::OPT_LOG_METRIC_ON_FILE, po::value< bool >()->default_value(false), "Enable the logging metric on file");
         addOption(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, po::value< string >()->default_value("./"), "Specify the path of metric logs");
@@ -71,10 +76,6 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_RPC_IMPL_KV_PARAM, po::value<string>(),"RPC implementation key value parameter[k|v-k1|v1]");
         addOption(InitOption::OPT_EVENT_DISABLE, po::value< bool >()->default_value(false), "Disable the event system [by default it is enable]");
         addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< string >()->default_value("localhost:5000"), "Metadataserver server:port address");
-        addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
-        addOption(InitOption::OPT_LOG_ON_FILE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on file");
-        addOption(InitOption::OPT_LOG_FILE, po::value< string >()->default_value("chaos_frameowrk.log"), "Specify when the file path of the log");
-        addOption(InitOption::OPT_LOG_LEVEL, po::value< string >()->default_value("info"), "Specify the level of the log using the value [debug, info, notice, warning, fatal]"),
         addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
         addOption(InitOption::OPT_PUBLISHING_INTERFACE, po::value< string >(), "Specify the interface where to publish the framework rpc system");
     }catch (po::error &e) {
@@ -218,6 +219,9 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     
     CHECK_AND_DEFINE_OPTION(string, logLevel, InitOption::OPT_LOG_LEVEL)
     configuration.addInt32Value(InitOption::OPT_LOG_LEVEL, filterLogLevel(logLevel));
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, log_max_size_mb, InitOption::OPT_LOG_MAX_SIZE_MB, 10)
+    configuration.addInt32Value(InitOption::OPT_LOG_MAX_SIZE_MB, log_max_size_mb);
     
     CHECK_AND_DEFINE_OPTION(string, publishingIp, InitOption::OPT_PUBLISHING_IP)
     bool isIp = regex_match(publishingIp, common::utility::ServerIPRegExp);
