@@ -44,8 +44,19 @@ LLRpcApi::LLRpcApi() {
 /*
  */
 LLRpcApi::~LLRpcApi() {
-	if(network_broker)
+	if(network_broker){
 		delete (network_broker);
+                network_broker = NULL;
+        }
+}
+void LLRpcApi::init(chaos::common::network::NetworkBroker *nb){
+     LLRA_LAPP_ << "Using a specified NetworkBroker:"<<nb;
+     if(network_broker){
+         //remove the previous
+         delete(network_broker);
+     }
+     network_broker=nb;
+     direct_io_client = network_broker->getSharedDirectIOClientInstance();
 }
 
 /*

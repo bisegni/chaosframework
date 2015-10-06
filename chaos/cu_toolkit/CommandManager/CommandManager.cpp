@@ -121,6 +121,10 @@ MDSMessageChannel *CommandManager::getMetadataserverChannel() {
     return broker->getMetadataserverMessageChannel();
 }
 
+NetworkBroker *CommandManager::getNetworkBroker() {
+    return broker;
+}
+
 /*
  Send message over rpc channel
  */

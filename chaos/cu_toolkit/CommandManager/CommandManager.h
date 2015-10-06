@@ -110,7 +110,13 @@ namespace chaos{
 				/*
 				 Get MEtadataserver channel
 				 */
-                chaos::common::message::MDSMessageChannel *getMetadataserverChannel();
+                                chaos::common::message::MDSMessageChannel *getMetadataserverChannel();
+                                
+                                /*
+                                 * get Network broker
+                                 */
+                                NetworkBroker *getNetworkBroker();
+
 				
 				//! delete an mds message channel
 				void deleteMDSChannel(chaos::common::message::MDSMessageChannel *mds_channel);

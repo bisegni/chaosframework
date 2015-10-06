@@ -84,14 +84,7 @@ namespace chaos {
 			boost::mutex				mutex_map_dio_addr_conn;
             std::map<std::string, DIOConn*>	map_dio_addr_conn;
 			
-			/*
-			 LL Rpc Api static initialization it should be called once for application
-			 */
-			void init() throw (CException);
-			/*
-			 Deinitialization of LL rpc api
-			 */
-			void deinit() throw (CException);
+			
 			
 			/*
 			 */
@@ -102,6 +95,20 @@ namespace chaos {
 			~LLRpcApi();
 			
 		public:
+                    
+                    /*
+			 LL Rpc Api static initialization it should be called once for application
+			 */
+			void init() throw (CException);
+                        
+                        /*
+                         * use a specified network broker
+                         */
+                        void init(chaos::common::network::NetworkBroker *network_broker);
+			/*
+			 Deinitialization of LL rpc api
+			 */
+			void deinit() throw (CException);
 			chaos::common::io::IODataDriver *getDataProxyChannelNewInstance() throw(CException);
 			
 			/*!
