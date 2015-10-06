@@ -155,7 +155,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
             CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ui->lineEditControlUnitUniqueID)
             CHECK_AND_SET_LABEL("control_unit_implementation", ui->labelControlUnitType)
             CHECK_AND_SET_CHECK("auto_load", ui->checkBoxAutoLoad)
-            CHECK_AND_SET_LABEL("load_parameter", ui->textEditLoadParameter)
+            CHECK_AND_SET_LABEL(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, ui->textEditLoadParameter)
 
             //add driverdesc
             if(api_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
