@@ -659,27 +659,6 @@ namespace chaos {
     }
     /** @} */ // end of NodeDomainAndActionRPC
     
-    namespace common {
-        namespace utility {
-            namespace service_state_machine {
-                
-                namespace InizializableServiceType {
-                    typedef enum {
-                        IS_DEINTIATED = 0,
-                        IS_INITIATED = 1
-                    } InizializableServiceState;
-                }
-                
-                namespace StartableServiceType {
-                    typedef enum {
-                        SS_STARTED = 2,
-                        SS_STOPPED = 3
-                    } StartableServiceState;
-                }
-            }
-        }
-    }
-    
     
     /** @defgroup DataPackPrefixID Chaos Data Prefix
      This collection is a set for the prefix used for identify the domain

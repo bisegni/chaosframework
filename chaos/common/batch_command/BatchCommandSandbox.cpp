@@ -730,7 +730,7 @@ void BatchCommandSandbox::killCurrentCommand() {
 bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority) {
 	CHAOS_ASSERT(command_impl)
 	boost::recursive_mutex::scoped_lock lock_checker(mutexNextCommandChecker);
-	if(StartableService::serviceState == service_state_machine::InizializableServiceType::IS_DEINTIATED) return false;
+	if(StartableService::serviceState == CUStateKey::DEINIT) return false;
 
 	//
 	SCSLDBG_ << "New command enqueue";

@@ -60,11 +60,11 @@ namespace chaos {
                     typedef boost::msm::front::Row <  service_state_machine::RecoverableError ,  EventType::deinit  , service_state_machine::Deinit  , boost::msm::front::none , boost::msm::front::none > re_deinit_row;
                    
                     //----------------fatal error states-----------------
-                    typedef boost::msm::front::Row <  service_state_machine::Init   ,  EventType::fatal_error  , service_state_machine::FatalError  , boost::msm::front::none , boost::msm::front::none > init_fe_row;
-                    typedef boost::msm::front::Row <  service_state_machine::Start  ,  EventType::fatal_error  , service_state_machine::FatalError  , boost::msm::front::none , boost::msm::front::none > start_fe_row;
-                    typedef boost::msm::front::Row <  service_state_machine::Stop   ,  EventType::fatal_error  , service_state_machine::FatalError  , boost::msm::front::none , boost::msm::front::none > stop_fe_row;
-                    typedef boost::msm::front::Row <  service_state_machine::Deinit ,  EventType::fatal_error  , service_state_machine::FatalError  , boost::msm::front::none , boost::msm::front::none > deinit_fe_row;
-                    
+                    typedef boost::msm::front::Row <  service_state_machine::Init       ,  EventType::fatal_error   , service_state_machine::FatalError    , boost::msm::front::none , boost::msm::front::none > init_fe_row;
+                    typedef boost::msm::front::Row <  service_state_machine::Start      ,  EventType::fatal_error   , service_state_machine::FatalError    , boost::msm::front::none , boost::msm::front::none > start_fe_row;
+                    typedef boost::msm::front::Row <  service_state_machine::Stop       ,  EventType::fatal_error   , service_state_machine::FatalError    , boost::msm::front::none , boost::msm::front::none > stop_fe_row;
+                    typedef boost::msm::front::Row <  service_state_machine::Deinit     ,  EventType::fatal_error   , service_state_machine::FatalError    , boost::msm::front::none , boost::msm::front::none > deinit_fe_row;
+                    typedef boost::msm::front::Row <  service_state_machine::FatalError ,  EventType::init          , service_state_machine::Init          , boost::msm::front::none , boost::msm::front::none > fe_init_row;
                     // the initial state of the player SM. Must be defined
                     typedef Deinit initial_state;
                     

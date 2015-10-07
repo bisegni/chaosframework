@@ -397,7 +397,7 @@ void BatchCommandExecutor::setDefaultCommand(const string& command_alias, unsign
     // check if we can set the default, the condition are:
     // the executor and the sandbox are in the init state or in stop state
     if(StartableService::serviceState ==
-       service_state_machine::StartableServiceType::SS_STARTED) {
+       CUStateKey::START) {
         throw CException(1, "The command infrastructure is in running state", "BatchCommandExecutor::setDefaultCommand");
     }
     
@@ -500,7 +500,7 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
         throw CException(-1, "Invalid parameter", "BatchCommandExecutor::setCommandFeatures");
     
     if(serviceState !=
-       service_state_machine::StartableServiceType::SS_STARTED)
+       CUStateKey::START)
         throw CException(-2, "Slow command executor is not started", "BatchCommandExecutor::submitCommand");
     
     WriteLock       lock(sandbox_map_mutex);

@@ -35,7 +35,7 @@
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/action/ActionDescriptor.h>
-#include <chaos/common/utility/StartableService.h>
+#include <chaos/common/utility/SWEService.h>
 #include <chaos/common/utility/AggregatedCheckList.h>
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
@@ -118,7 +118,7 @@ namespace chaos{
 			public DeclareAction,
 			protected DatasetDB,
             protected chaos::common::async_central::TimerHandler,
-			public common::utility::StartableService {
+			public common::utility::SWEService {
 				//friendly class declaration
 				friend class ControlManager;
 				friend class WorkUnitManagement;
@@ -177,8 +177,20 @@ namespace chaos{
                 //! check list of services for initialization and start state
                 chaos::common::utility::AggregatedCheckList check_list_sub_service;
                 
+                //! init configuration
+                std::auto_ptr<CDataWrapper> init_configuration;
+                
                 void _initChecklist();
 				
+                void doInitRpCheckList();
+                void doInitSMCheckList();
+                void doStartRpCheckList();
+                void doStartSMCheckList();
+                void redoInitRpCheckList(bool throw_exception = true);
+                void redoInitSMCheckList(bool throw_exception = true);
+                void redoStartRpCheckList(bool throw_exception = true);
+                void redoStartSMCheckList(bool throw_exception = true);
+                
 				/*!
 				 Initialize the Custom Contro Unit and return the configuration
 				 */
@@ -222,6 +234,18 @@ namespace chaos{
 				// Startable Service method
 				void deinit() throw(CException);
 				
+                //! State machine is gone into recoverable error
+                void recoverableErrorFromState(int last_state);
+                
+                //! State machine is gone into recoverable error
+                bool beforeRecoverErrorFromState(int last_state);
+                
+                //! State machine is gone into recoverable error
+                void recoveredToState(int last_state);
+                
+                //! State machine is gone into an unrecoverable error
+                void fatalErrorFromState(int last_state);
+                
 				//! initialize the dataset attributes (input and output)
 				void initAttributeOnSharedAttributeCache(SharedCacheDomain domain,
 														std::vector<string>& attribute_names);
