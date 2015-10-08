@@ -84,6 +84,13 @@ void print_state(CUStateKey::ControlUnitState state) {
         case CUStateKey::DEINIT:
             std::cout << "Deinitilized:"<<state;
             break;
+            
+        case CUStateKey::RECOVERABLE_ERROR:
+            std::cout << "Recovable Error:"<<state;
+            break;
+           case CUStateKey::FATAL_ERROR:
+            std::cout << "Fatal Error:"<<state;
+            break;  
         default:
             std::cout << "Uknown:"<<state;
             
@@ -138,7 +145,7 @@ int main (int argc, char* argv[] )
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<long>(OPT_SCHEDULE_TIME, "the time in microseconds for devide schedule time");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_PRINT_STATE, "Print the state of the device", false, &printState);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_PRINT_TYPE, "Print the type of the control unit of the device", false, &printType);
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<int32_t>(OPT_PRINT_DATASET, "print the dataset for the domain -1=no-print, 0=output, 1=input, 2=custom, 3=system", -1, &print_domain_current_value);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<int32_t>(OPT_PRINT_DATASET, "print the dataset for the domain -1=no-print, 0=output, 1=input, 2=custom, 3=system 4=health ...", -1, &print_domain_current_value);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption< vector<string> >(OPT_GET_DS_VALUE, "Print last value of the dataset keys[to use with opcode 11]", &key_to_show, true);
         
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_SL_ALIAS, "The alias associted to the command for the slow control cu", "", &scAlias);
@@ -196,7 +203,6 @@ int main (int argc, char* argv[] )
         if(err == ErrorCode::EC_TIMEOUT) {
             control_unit_type="unknown";
         }
-        
         if((control_unit_type =="rtcu") || (control_unit_type =="sccu")){
             err = controller->getState(deviceState);
             if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");
@@ -208,9 +214,12 @@ int main (int argc, char* argv[] )
         }
         
         if(printState) {
+            uint64_t err;
             //err = controller->getState(deviceState);
-            if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");
-            std::cout << "Current state:";
+            err = controller->getState(deviceState);
+
+            if(err == 0) throw CException(5, "Error retrving the state", "Get state for device");
+            std::cout << "Current state ["<<err<<"]:";
             print_state(deviceState);
             std::cout << std::endl;
         }
@@ -225,14 +234,12 @@ int main (int argc, char* argv[] )
         }
         
         if(print_domain_current_value >= 0) {
-            if(print_domain_current_value > 3) {
-                std::cout << "bad domain type";
-            } else {
-                controller->fetchCurrentDatatasetFromDomain((DatasetDomain)print_domain_current_value);
-                if(controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value) != NULL) {
-                    std::cout << controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value)->getJSONString() <<std::endl;
-                }
+            
+            controller->fetchCurrentDatatasetFromDomain((DatasetDomain)print_domain_current_value);
+            if(controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value) != NULL) {
+                std::cout << controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value)->getJSONString() <<std::endl;
             }
+           
         }
         
         switch (op) {

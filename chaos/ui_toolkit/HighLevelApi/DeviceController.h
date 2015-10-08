@@ -43,7 +43,8 @@ namespace chaos {
 			DatasetDomainOutput = 0,
 			DatasetDomainInput,
 			DatasetDomainCustom,
-			DatasetDomainSystem
+			DatasetDomainSystem,
+                        DatasetDomainHealth
 		} DatasetDomain;
 		
             //! Controller for a single device instance
@@ -58,11 +59,10 @@ namespace chaos {
             uint32_t millisecToWait;
                 //! represent the device id controlled by this instance
             std::string device_id;
-            std::string output_key;
-            std::string input_key;
-            std::string system_key;
-            std::string custom_key;
-				//!cached cu type
+            
+            std::vector<std::string> channel_keys;
+            
+            			//!cached cu type
             std::string cu_type;
 			
                 //! Metadata Server channel for get device information
@@ -77,10 +77,8 @@ namespace chaos {
             //auto_ptr<CDataWrapper> lastDeviceDefinition;
             
                 //!point to the freashest live value for this device dataset
-            auto_ptr<chaos::common::data::CDataWrapper> current_output_dataset;
-			auto_ptr<chaos::common::data::CDataWrapper> current_input_dataset;
-			auto_ptr<chaos::common::data::CDataWrapper> current_custom_dataset;
-			auto_ptr<chaos::common::data::CDataWrapper> current_system_dataset;
+            std::vector<auto_ptr<chaos::common::data::CDataWrapper>* >current_dataset;
+            
 			
                 //mutext for multi threading track operation
             boost::recursive_mutex trackMutext;
@@ -135,6 +133,12 @@ namespace chaos {
                 //! the fetcher thread method
             void executeOnThread(const std::string&) throw(CException);
         public:
+
+            /**
+             * return the number of output channels
+             * @return return the nyumber of predefined output channels
+             */
+            int getChannelsNum();
 
             //!Return the deviceID of the device
             /*!
@@ -343,9 +347,9 @@ namespace chaos {
             /*!
              Return the current device state
              * @param [out] deviceState returned state, if error UNDEFINED state set
-             * @return 0 on success
+             * @return the timestamp of the hearthbeat, 0 if error
              */
-            int getState(CUStateKey::ControlUnitState& deviceState);
+            uint64_t getState(CUStateKey::ControlUnitState& deviceState);
             
             /*!
              Setup the structure to accelerate the tracking of the live data
@@ -375,8 +379,8 @@ namespace chaos {
 			//!return the last fetched dataset for the domain
 			chaos::common::data::CDataWrapper * getCurrentDatasetForDomain(DatasetDomain domain);
 			
-			//! fetch from the chaso central cache the dataset associated to the domain
-			void fetchCurrentDatatasetFromDomain(DatasetDomain domain);
+	     //! fetch from the chaso central cache the dataset associated to the domain
+            chaos::common::data::CDataWrapper *  fetchCurrentDatatasetFromDomain(DatasetDomain domain);
 			
             /*!
              Fetch the current live value form live storage

@@ -19,6 +19,7 @@
  */
 
 #include "DeviceController.h"
+#include "usr/local/include/chaos/common/chaos_constants.h"
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/common/io/IOMemcachedIODriver.h>
@@ -41,15 +42,20 @@ using namespace chaos::common::batch_command;
 DeviceController::DeviceController(string& _deviceID):
 device_id(_deviceID),
 datasetDB(true) {
+    const auto_ptr<chaos::common::data::CDataWrapper> d;
     mdsChannel = NULL;
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;
     millisecToWait = MSEC_WAIT_OPERATION;
-	
-	output_key	= device_id + DataPackPrefixID::OUTPUT_DATASE_PREFIX;
-	input_key	= device_id + DataPackPrefixID::INPUT_DATASE_PREFIX;
-	system_key	= device_id + DataPackPrefixID::SYSTEM_DATASE_PREFIX;
-	custom_key	= device_id + DataPackPrefixID::CUSTOM_DATASE_PREFIX;
+    channel_keys.push_back(device_id + DataPackPrefixID::OUTPUT_DATASE_PREFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::INPUT_DATASE_PREFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::CUSTOM_DATASE_PREFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::SYSTEM_DATASE_PREFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::HEALTH_DATASE_PREFIX);
+  //  current_dataset.push_back(d);
+    for(int cnt=0;cnt<channel_keys.size();cnt++)
+        current_dataset.push_back(new auto_ptr<chaos::common::data::CDataWrapper> ());
+    
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -68,6 +74,9 @@ DeviceController::~DeviceController() {
     if(ioLiveDataDriver){
         ioLiveDataDriver->deinit();
         delete(ioLiveDataDriver);
+    }
+    for(int cnt=0;cnt<channel_keys.size();cnt++){
+        delete current_dataset[cnt];
     }
 }
 
@@ -219,10 +228,18 @@ int DeviceController::getDeviceAttributeType(const string& attributesName, DataT
 //---------------------------------------------------------------------------------------------------
 int DeviceController::getType(std::string& control_unit_type) {
 	int err = 0;
-	if(!cu_type.size()) {
-		err = deviceChannel->getType(cu_type, millisecToWait);
-	}
+	if(cu_type.empty()) {
+		CDataWrapper*tmp=fetchCurrentDatatasetFromDomain(DatasetDomainSystem);
+                if(tmp && tmp->hasKey(DataPackSystemKey::DP_SYS_UNIT_TYPE)){
+                    std::string t=tmp->getCStringValue(DataPackSystemKey::DP_SYS_UNIT_TYPE);
+                    cu_type = t;
+                } else {
+                    return -1;
+                }
+                
+        }
 	control_unit_type = cu_type;
+
 	return err;
 }
 
@@ -265,11 +282,35 @@ int DeviceController::restoreDeviceToTag(const std::string& restore_tag) {
 }
 
 //---------------------------------------------------------------------------------------------------
-int DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
-	CHAOS_ASSERT(deviceChannel)
-	return deviceChannel->getState(deviceState, millisecToWait);
+uint64_t DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
+    uint64_t ret=0;
+    CDataWrapper*tmp=fetchCurrentDatatasetFromDomain(DatasetDomainHealth);
+    deviceState=CUStateKey::UNDEFINED;
+    if(tmp && tmp->hasKey(NodeHealtDefinitionKey::NODE_HEALT_STATUS)){
+        std::string state=tmp->getCStringValue(NodeHealtDefinitionKey::NODE_HEALT_STATUS);
+        if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_START) || (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_STARTING))
+            deviceState=CUStateKey::START;
+        else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP) || (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOPING))
+            deviceState= CUStateKey::STOP;
+        else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT) || (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_INITING))
+            deviceState= CUStateKey::INIT;
+        else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT) || (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINITING))
+            deviceState= CUStateKey::DEINIT;
+        else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR))
+            deviceState= CUStateKey::RECOVERABLE_ERROR;
+        else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR))
+            deviceState= CUStateKey::FATAL_ERROR;
+        
+        if(tmp->hasKey(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP)){
+            ret = tmp->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP);
+        }
+    } 
+    return ret;
 }
 
+int DeviceController::getChannelsNum(){
+    return channel_keys.size();
+}
 //---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(string& attributeName, int32_t attributeValue) {
 	return setAttributeValue(attributeName.c_str(), attributeValue);
@@ -760,69 +801,39 @@ void DeviceController::addAttributeToTrack(string& attrbiuteName) {
 
 //---------------------------------------------------------------------------------------------------
 CDataWrapper * DeviceController::getLiveCDataWrapperPtr() {
-	return current_output_dataset.get();
+	return current_dataset[DatasetDomainOutput]->get();
 }
 
 
 //---------------------------------------------------------------------------------------------------
 CDataWrapper * DeviceController::getCurrentDatasetForDomain(DatasetDomain domain) {
-	CDataWrapper *result = NULL;
-	switch(domain) {
-		case DatasetDomainOutput:
-			result = current_output_dataset.get();
-			break;
-		case DatasetDomainInput:
-			result = current_input_dataset.get();
-			break;
-		case DatasetDomainCustom:
-			result = current_custom_dataset.get();
-			break;
-		case DatasetDomainSystem:
-			result = current_system_dataset.get();
-			break;
-	}
-	return result;
+        if(domain<current_dataset.size()){
+            return current_dataset[domain]->get();
+        }
+        return NULL;
 }
 
 //---------------------------------------------------------------------------------------------------
-void DeviceController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
+chaos::common::data::CDataWrapper *  DeviceController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
 	CHAOS_ASSERT(ioLiveDataDriver)
 	char *value = NULL;
 	unsigned long value_len = 0;
-	switch(domain) {
-		case DatasetDomainOutput:
-		  value = ioLiveDataDriver->retriveRawData(output_key, (size_t*)&value_len);
-			//check if some value has bee fetcher
-			if(!value) return;
-			current_output_dataset.reset(new CDataWrapper(value));
-			break;
-		case DatasetDomainInput:
-			value = ioLiveDataDriver->retriveRawData(input_key, (size_t*)&value_len);
-			//check if some value has bee fetcher
-			if(!value) return;
-			current_input_dataset.reset(new CDataWrapper(value));
-			break;
-		case DatasetDomainCustom:
-			value = ioLiveDataDriver->retriveRawData(custom_key, (size_t*)&value_len);
-			//check if some value has bee fetcher
-			if(!value) return;
-			current_custom_dataset.reset(new CDataWrapper(value));
-			break;
-		case DatasetDomainSystem:
-			value = ioLiveDataDriver->retriveRawData(system_key, (size_t*)&value_len);
-			//check if some value has bee fetcher
-			if(!value) return;
-			current_system_dataset.reset(new CDataWrapper(value));
-			break;
-		default:
-			return;
-	}
-	free(value);
+        
+        if(domain<current_dataset.size()){
+            value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
+            if(value){
+                chaos::common::data::CDataWrapper *tmp = new CDataWrapper(value);
+                current_dataset[domain]->reset(tmp);
+                free(value);
+                return tmp;
+            }
+        }
+        return NULL;
 }
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::getTimeStamp(uint64_t& live){
-	CDataWrapper * d= current_output_dataset.get();
+	CDataWrapper * d= getLiveCDataWrapperPtr();
         live =0;
 	if(d){
 		live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
@@ -856,7 +867,7 @@ void DeviceController::fetchCurrentDeviceValue() {
 	fetchCurrentDatatasetFromDomain(DatasetDomainOutput);
 	
 	if(trackingAttribute.size() == 0) return;
-	CDataWrapper *tmpPtr = current_output_dataset.get();
+	CDataWrapper *tmpPtr = current_dataset[DatasetDomainOutput]->get();
 	
 	//add timestamp value
 	int64_t got_ts = tmpPtr->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
@@ -894,7 +905,7 @@ void DeviceController::fetchCurrentDeviceValue() {
 }
 
 CDataWrapper *DeviceController::getCurrentData(){
-	return current_output_dataset.get();
+	return current_dataset[DatasetDomainOutput]->get();
 }
 
 //! get datapack between time itervall
