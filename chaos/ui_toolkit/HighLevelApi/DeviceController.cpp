@@ -19,7 +19,7 @@
  */
 
 #include "DeviceController.h"
-#include "usr/local/include/chaos/common/chaos_constants.h"
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/common/io/IOMemcachedIODriver.h>
