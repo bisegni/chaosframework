@@ -692,7 +692,7 @@ namespace chaos {
         static const char * const INPUT_DATASE_PREFIX = "_i";
         static const char * const CUSTOM_DATASE_PREFIX = "_c";
         static const char * const SYSTEM_DATASE_PREFIX = "_s";
-        static const char * const HEALTH_DATASE_PREFIX = "_healt";
+        static const char * const HEALTH_DATASE_PREFIX = NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
     }
     /** @} */ // end of DataPackPrefixID
     
