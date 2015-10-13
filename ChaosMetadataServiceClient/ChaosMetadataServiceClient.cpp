@@ -76,14 +76,11 @@ void ChaosMetadataServiceClient::init(int argc, char* argv[]) throw (CException)
 void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
     try {
         ChaosCommon<ChaosMetadataServiceClient>::init(init_data);
-        // network broker
-        network_broker_service.reset(NetworkBroker::getInstance(), "NetworkBroker");
-        network_broker_service.init(NULL, __PRETTY_FUNCTION__);
         
-        api_proxy_manager.reset(new ApiProxyManager(network_broker_service.get(), &setting), "ApiProxyManager");
+        api_proxy_manager.reset(new ApiProxyManager(network_broker_service, &setting), "ApiProxyManager");
         api_proxy_manager.init(NULL, __PRETTY_FUNCTION__);
         
-        monitor_manager.reset(new MonitorManager(network_broker_service.get(), &setting), "MonitorManager");
+        monitor_manager.reset(new MonitorManager(network_broker_service, &setting), "MonitorManager");
         monitor_manager.init(NULL, __PRETTY_FUNCTION__);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -96,8 +93,8 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
  */
 void ChaosMetadataServiceClient::start()  throw(CException) {
     try {
-        //start network brocker
-        network_broker_service.start(__PRETTY_FUNCTION__);
+        ChaosCommon<ChaosMetadataServiceClient>::start();
+        
         CMSC_LAPP << "-------------------------------------------------------------------------";
         CMSC_LAPP << "!CHAOS Metadata service client started";
         CMSC_LAPP << "RPC Server address: "	<< network_broker_service->getRPCUrl();
@@ -117,7 +114,7 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
         //stop monitor manager
         CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
         //stop batch system
-        CHAOS_NOT_THROW(network_broker_service.stop(__PRETTY_FUNCTION__);)
+        CHAOS_NOT_THROW( ChaosCommon<ChaosMetadataServiceClient>::stop();)
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         throw ex;
@@ -130,22 +127,17 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
 void ChaosMetadataServiceClient::deinit()   throw(CException) {
     
     //deinit api system
-    try{
-        
-        CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
-        
-        CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__);)
-        
-        CHAOS_NOT_THROW(network_broker_service.deinit(__PRETTY_FUNCTION__);)
-        
-        if(monitoringIsStarted()){CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)}
-            CMSC_LAPP << "-------------------------------------------------------------------------";
-        CMSC_LAPP << "Metadata service client has been stopped";
-        CMSC_LAPP << "-------------------------------------------------------------------------";
-    } catch (CException& ex) {
-        DECODE_CHAOS_EXCEPTION(ex)
-        throw ex;
-    }
+    CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
+    
+    CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__);)
+    
+    if(monitoringIsStarted()){CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)}
+    
+    CHAOS_NOT_THROW(ChaosCommon<ChaosMetadataServiceClient>::deinit();)
+    
+    CMSC_LAPP << "-------------------------------------------------------------------------";
+    CMSC_LAPP << "Metadata service client has been stopped";
+    CMSC_LAPP << "-------------------------------------------------------------------------";
 }
 
 void ChaosMetadataServiceClient::clearServerList() {

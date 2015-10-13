@@ -33,6 +33,7 @@
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/log/LogManager.h>
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 #ifdef __CHAOS_DEBUG_MEMORY__
@@ -146,64 +147,66 @@ namespace chaos {
                 std::cout << "SIGINFO Signal handler registraiton error";
                 exit(-1);
                 }
-
-
-            // SIGINFO is not defined in ARM architectures
-            if (std::signal((int) SIGUSR1, print_memory_leak_status) == SIG_ERR){
-                std::cout << "SIGINFO Signal handler registraiton error";
-                exit(-1);
-            }
-            //startup logger
-            logManager.init();
-            
-            //print chaos library header
-            PRINT_LIB_HEADER
-            
-            err = uname(&u_name);
-            if(err==-1){
-                LAPP_ << "Platform: " << strerror(errno);
-            } else {
-                LAPP_ << "Platform: " << u_name.sysname << " " << u_name.nodename << " " << u_name.release << " " << u_name.version << " " << u_name.machine;
-            }
-            
-            LAPP_ << "Boost version: " << (BOOST_VERSION / 100000) << "."<< ((BOOST_VERSION / 100) % 1000)<< "."<< (BOOST_VERSION / 100000);
-            LAPP_ << "Compiler Version: " << BOOST_COMPILER;
-            LAPP_ << "-----------------------------------------";
-            
-            //find our ip
-            string local_ip;
-            if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){
-                local_ip = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_IP);
-            } else {
-                if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_INTERFACE))
-                    local_ip = common::utility::InetUtility::scanForLocalNetworkAddress(GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_INTERFACE));
-                else
-                    local_ip = common::utility::InetUtility::scanForLocalNetworkAddress();
-            }
-            GlobalConfiguration::getInstance()->addLocalServerAddress(local_ip);
-            
-            LAPP_ << "The local address choosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
-            
-            //Starting Async central
-            LAPP_ << "Initilizing async central";
-            common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), init_data, "AsyncCentralManager", __PRETTY_FUNCTION__);
-            }
                 
-            void deinit() throw (CException) {
-                LAPP_ << "DeInitilizing async central";
-                common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__);
-            }
-            
-            void start() throw (CException) {
                 
-            }
-            void stop() throw (CException) {
+                // SIGINFO is not defined in ARM architectures
+                if (std::signal((int) SIGUSR1, print_memory_leak_status) == SIG_ERR){
+                    std::cout << "SIGINFO Signal handler registraiton error";
+                    exit(-1);
+                }
+                //startup logger
+                logManager.init();
                 
-            }
-            
-            GlobalConfiguration *getGlobalConfigurationInstance() {
-                return GlobalConfiguration::getInstance();
-            }
-   };
-}
+                //print chaos library header
+                PRINT_LIB_HEADER
+                
+                err = uname(&u_name);
+                if(err==-1){
+                    LAPP_ << "Platform: " << strerror(errno);
+                } else {
+                    LAPP_ << "Platform: " << u_name.sysname << " " << u_name.nodename << " " << u_name.release << " " << u_name.version << " " << u_name.machine;
+                }
+                
+                LAPP_ << "Boost version: " << (BOOST_VERSION / 100000) << "."<< ((BOOST_VERSION / 100) % 1000)<< "."<< (BOOST_VERSION / 100000);
+                LAPP_ << "Compiler Version: " << BOOST_COMPILER;
+                LAPP_ << "-----------------------------------------";
+                
+                //find our ip
+                string local_ip;
+                if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){
+                    local_ip = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_IP);
+                } else {
+                    if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_INTERFACE))
+                        local_ip = common::utility::InetUtility::scanForLocalNetworkAddress(GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_INTERFACE));
+                    else
+                        local_ip = common::utility::InetUtility::scanForLocalNetworkAddress();
+                }
+                GlobalConfiguration::getInstance()->addLocalServerAddress(local_ip);
+                
+                LAPP_ << "The local address choosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
+                
+                //Starting Async central
+                LAPP_ << "Initilizing async central";
+                common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), init_data, "AsyncCentralManager", __PRETTY_FUNCTION__);
+                
+                common::utility::StartableService::initImplementation(chaos::common::network::NetworkBroker::getInstance(), init_data, "NetworkBroker", __PRETTY_FUNCTION__);
+                }
+                
+                void deinit() throw (CException) {
+                    CHAOS_NOT_THROW(common::utility::StartableService::deinitImplementation(chaos::common::network::NetworkBroker::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__);)
+                    CHAOS_NOT_THROW(common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__);)
+                }
+                
+                void start() throw (CException) {
+                    common::utility::StartableService::startImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__);
+                }
+                void stop() throw (CException) {
+                    common::utility::StartableService::stopImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__);
+                }
+                
+                GlobalConfiguration *getGlobalConfigurationInstance() {
+                    return GlobalConfiguration::getInstance();
+                }
+                };
+                }
 #endif

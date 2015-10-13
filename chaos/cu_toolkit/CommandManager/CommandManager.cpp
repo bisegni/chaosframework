@@ -54,14 +54,12 @@ CommandManager::CommandManager(){
 /*
  */
 CommandManager::~CommandManager(){
-	if(broker) delete(broker);
 }
 
 /*
  * Initzialize the datamanager
  */
 void CommandManager::init(void *initParam) throw(CException) {
-    broker->init();
     AbstActionDescShrPtr 
     actionDescription = DeclareAction::addActionDescritionInstance<CommandManager>(this, 
                                                                                    &CommandManager::shutdown, 
@@ -87,24 +85,20 @@ void CommandManager::deinit() throw(CException) {
 
         //deregistering the action
     broker->deregisterAction(this);
-    broker->deinit();
 }
 
 /*
  * Start all sub process
  */
 void CommandManager::start() throw(CException) {
-    broker->start();
         //start healt manager singleton
     StartableService::startImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
 }
 
 //-----------------------
 void CommandManager::stop() throw(CException) {
-        //stop healt manager singleton
+         //stop healt manager singleton
     StartableService::stopImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
-        //stop the broker
-    broker->stop();
 }
 
 /*

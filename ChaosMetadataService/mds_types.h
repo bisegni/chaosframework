@@ -40,7 +40,7 @@ namespace chaos{
         
         struct ApiSubserviceAccessor {
             //! network broker for talk with others chaos node
-            common::utility::StartableServiceContainer<chaos::common::network::NetworkBroker> network_broker_service;
+            chaos::common::network::NetworkBroker *network_broker_service;
             
             //! batch executor engine
             common::utility::StartableServiceContainer<batch::MDSBatchExecutor> batch_executor;

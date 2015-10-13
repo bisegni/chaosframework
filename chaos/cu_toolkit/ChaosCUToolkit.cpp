@@ -125,6 +125,8 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
  */ 
 void ChaosCUToolkit::start() throw(CException){
     try {
+        ChaosCommon<ChaosCUToolkit>::start();
+
         LAPP_ << "Starting !CHAOS Control Unit System";
         //start command manager, this manager must be the last to startup
         StartableService::startImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::start");
@@ -169,6 +171,8 @@ void ChaosCUToolkit::stop() throw(CException) {
     
     //stop command manager, this manager must be the last to startup
     StartableService::stopImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop");
+
+    ChaosCommon<ChaosCUToolkit>::stop();
 }
 
 /*

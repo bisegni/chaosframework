@@ -37,43 +37,26 @@ uint32_t DIOConn::garbage_counter = 0;
 /*
  */
 LLRpcApi::LLRpcApi() {
-	network_broker = NetworkBroker::getInstance();
 	direct_io_client = NULL;
 }
 
 /*
  */
 LLRpcApi::~LLRpcApi() {
-	if(network_broker){
-		delete (network_broker);
-                network_broker = NULL;
-        }
 }
 void LLRpcApi::init(chaos::common::network::NetworkBroker *nb){
      LLRA_LAPP_ << "Using a specified NetworkBroker:"<<nb;
-     if(network_broker){
-         //remove the previous
-         delete(network_broker);
-     }
-     network_broker=nb;
-     direct_io_client = network_broker->getSharedDirectIOClientInstance();
+
+     direct_io_client = NetworkBroker::getInstance()->getSharedDirectIOClientInstance();
 }
 
 /*
  LL Rpc Api static initialization it should be called once for application
  */
 void LLRpcApi::init()  throw (CException) {
-    LLRA_LAPP_ << "Init NetworkBroker";
-    network_broker->init();
-    LLRA_LAPP_ << "NetworkBroker Initialized";
-    LLRA_LAPP_ << "Starting NetworkBroker";
-    network_broker->start();
-    LLRA_LAPP_ << "NetworkBroker Started";
 	
 	//get new direct io client
-	direct_io_client = network_broker->getSharedDirectIOClientInstance();
-	//if(!direct_io_client) throw CException(-1, "Invalid direct io client instance", __PRETTY_FUNCTION__);
-	//InizializableService::initImplementation(direct_io_client, NULL, "DirectIOCLient", __PRETTY_FUNCTION__);
+	direct_io_client = NetworkBroker::getInstance()->getSharedDirectIOClientInstance();
 }
 
 /*
@@ -81,16 +64,6 @@ void LLRpcApi::init()  throw (CException) {
  */
 void LLRpcApi::deinit()  throw (CException) {
     LLRA_LAPP_ << "Deinit LLRpcApi";
-	//if(direct_io_client) {
-		//InizializableService::deinitImplementation(direct_io_client, "DirectIOCLient", __PRETTY_FUNCTION__);
-		//delete direct_io_client;
-	//}
-	
-    LLRA_LAPP_ << "Stop NetworkBroker";
-    network_broker->stop();
-    LLRA_LAPP_ << "Deinit NetworkBroker";
-    network_broker->deinit();
-    LLRA_LAPP_ << "NetworkBroker deinitialized";
 }
 
 /*
@@ -107,7 +80,7 @@ IODataDriver *LLRpcApi::getDataProxyChannelNewInstance() throw(CException) {
 			IODirectIODriverInitParam init_param;
 			std::memset(&init_param, 0, sizeof(IODirectIODriverInitParam));
 			//get client and endpoint
-			init_param.network_broker = network_broker;
+			init_param.network_broker = NetworkBroker::getInstance();
 			init_param.client_instance = NULL;
 			init_param.endpoint_instance = NULL;
 			((IODirectIODriver*)result)->setDirectIOParam(init_param);
@@ -119,43 +92,43 @@ IODataDriver *LLRpcApi::getDataProxyChannelNewInstance() throw(CException) {
 /*
  */
 MDSMessageChannel *LLRpcApi::getNewMetadataServerChannel() {
-    return network_broker->getMetadataserverMessageChannel();
+    return NetworkBroker::getInstance()->getMetadataserverMessageChannel();
 }
 
 /*!
  Return a new device channel
  */
 DeviceMessageChannel *LLRpcApi::getNewDeviceMessageChannel(CDeviceNetworkAddress *deviceNetworkAddress) {
-    return network_broker->getDeviceMessageChannelFromAddress(deviceNetworkAddress);
+    return NetworkBroker::getInstance()->getDeviceMessageChannelFromAddress(deviceNetworkAddress);
 }
 
 /*!
  Return a new device channel
  */
 chaos::common::message::PerformanceNodeChannel *LLRpcApi::getNewPerformanceChannel(CNetworkAddress *note_network_address) {
-    return network_broker->getPerformanceChannelFromAddress(note_network_address);
+    return NetworkBroker::getInstance()->getPerformanceChannelFromAddress(note_network_address);
 }
 
 void LLRpcApi::deleteMessageChannel(MessageChannel *channelToDispose) {
-    network_broker->disposeMessageChannel(channelToDispose);
+    NetworkBroker::getInstance()->disposeMessageChannel(channelToDispose);
 }
 /*!
  Delete a previously instantiatedchannel
  */
 void LLRpcApi::deleteMessageChannel(NodeMessageChannel *channelToDispose) {
-	network_broker->disposeMessageChannel(channelToDispose);
+	NetworkBroker::getInstance()->disposeMessageChannel(channelToDispose);
 }
 
 event::channel::AlertEventChannel *LLRpcApi::getNewAlertEventChannel() throw (CException) {
-    return network_broker->getNewAlertEventChannel();
+    return NetworkBroker::getInstance()->getNewAlertEventChannel();
 }
 
 event::channel::InstrumentEventChannel *LLRpcApi::getNewInstrumentEventChannel() throw (CException) {
-    return network_broker->getNewInstrumentEventChannel();
+    return NetworkBroker::getInstance()->getNewInstrumentEventChannel();
 }
 
 void LLRpcApi::disposeEventChannel(event::channel::EventChannel *eventChannel) throw (CException) {
-    network_broker->disposeEventChannel(eventChannel);
+    NetworkBroker::getInstance()->disposeEventChannel(eventChannel);
 }
 
 SystemApiChannel *LLRpcApi::getSystemApiClientChannel(const std::string& direct_io_address) {

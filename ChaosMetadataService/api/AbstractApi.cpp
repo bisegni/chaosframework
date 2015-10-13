@@ -54,5 +54,5 @@ MDSBatchExecutor *AbstractApi::getBatchExecutor() {
 
 NetworkBroker *AbstractApi::getNetworkBroker() {
     CHAOS_ASSERT(subservice)
-    return subservice->network_broker_service.get();
+    return subservice->network_broker_service;
 }
