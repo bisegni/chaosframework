@@ -1687,6 +1687,8 @@
         <in>metadata_service_client_types.h</in>
       </df>
       <df name="ChaosMetadataServiceClientTest">
+        <df name="build">
+        </df>
         <in>NodeMonitor.cpp</in>
         <in>NodeMonitor.h</in>
         <in>NodeSearchTest.cpp</in>
@@ -26321,6 +26323,8 @@
               </df>
               <df name="CMakeTmp">
               </df>
+              <df name="Progress">
+              </df>
               <df name="UnitServer.dir">
               </df>
             </df>
@@ -26357,8 +26361,6 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
-        <gdb_signals>
-        </gdb_signals>
         <gdb_options>
           <DebugOptions>
           </DebugOptions>
@@ -26372,6 +26374,7 @@
         <runcommandpicklist>
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
           <runcommandpicklistitem> ChaosCLI --device-id LIBERA01/LIBERA_ACQUIRE0 --metadata-server chaost-mds1.chaos.lnf.infn.it:5000 --print-dataset 2 --print-state 1</runcommandpicklistitem>
+          <runcommandpicklistitem>ChaosCLI --device-id LIBERA01/LIBERA_ACQUIRE0 --metadata-server chaost-mds1.chaos.lnf.infn.it:5000 --print-dataset 2 --print-state 1</runcommandpicklistitem>
         </runcommandpicklist>
         <runcommand>ChaosCLI --device-id LIBERA01/LIBERA_ACQUIRE0 --metadata-server chaost-mds1.chaos.lnf.infn.it:5000 --print-dataset 2 --print-state 1</runcommand>
         <rundir>/home/michelo/chaos_bundle_development/chaos-x86_64-dynamic-release/bin</rundir>

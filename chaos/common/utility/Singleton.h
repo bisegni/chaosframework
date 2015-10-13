@@ -57,7 +57,7 @@ friend class Singleton<ClassName>;
 						t = new T();
 					}
 				}
-				
+
 			protected:
 				~Singleton() {}
 				Singleton() {}

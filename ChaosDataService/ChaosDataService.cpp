@@ -160,7 +160,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		
 		//allocate the network broker
 		CDSLAPP_ << "Allocate Network Brocker";
-		network_broker.reset(new NetworkBroker(), "NetworkBroker");
+		network_broker.reset(NetworkBroker::getInstance(), "NetworkBroker");
 		if(!network_broker.get()) throw chaos::CException(-5, "Error instantiating network broker", __PRETTY_FUNCTION__);
 		network_broker.init(NULL, __PRETTY_FUNCTION__);
 		

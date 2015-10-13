@@ -29,8 +29,8 @@ using namespace std;
 using namespace boost;
 
 #define LDEF_CMD_DISPTC_APP_ LAPP_ << "[DefaultCommandDispatcher] - "
-#define LDEF_CMD_DISPTC_DBG_ LDBG_ << "[DefaultCommandDispatcher] - "
-#define LDEF_CMD_DISPTC_ERR_ LERR_ << "[DefaultCommandDispatcher] ("<< __LINE__ <<") -"
+#define LDEF_CMD_DISPTC_DBG_ LDBG_ << "[DefaultCommandDispatcher] - ("<< __PRETTY_FUNCTION__
+#define LDEF_CMD_DISPTC_ERR_ LERR_ << "[DefaultCommandDispatcher] ("<< __PRETTY_FUNCTION__<<":"<<__LINE__ <<") -"
 
 DEFINE_CLASS_FACTORY(DefaultCommandDispatcher, AbstractCommandDispatcher);
 

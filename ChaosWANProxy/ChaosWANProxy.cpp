@@ -86,7 +86,7 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 			throw CException(-3, "Error registering SIG_ERR signal", __PRETTY_FUNCTION__);
 		}
 		
-		network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
+		network_broker_service.reset(NetworkBroker::getInstance(), "NetworkBroker");
 		network_broker_service.init(NULL, __PRETTY_FUNCTION__);
 		
 		persistence_driver.reset(new DefaultPersistenceDriver(network_broker_service.get()), "DefaultPresistenceDriver");

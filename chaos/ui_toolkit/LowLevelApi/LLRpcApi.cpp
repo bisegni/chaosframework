@@ -37,7 +37,7 @@ uint32_t DIOConn::garbage_counter = 0;
 /*
  */
 LLRpcApi::LLRpcApi() {
-	network_broker = new NetworkBroker();
+	network_broker = NetworkBroker::getInstance();
 	direct_io_client = NULL;
 }
 

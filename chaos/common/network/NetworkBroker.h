@@ -87,7 +87,8 @@ namespace chaos {
 			 It abstract the !CHAOS rule for sending message and wait for answer and other facility.
 			 */
 			class NetworkBroker:
-			public utility::StartableService {
+			public utility::StartableService,public utility::Singleton<NetworkBroker> {
+                            friend utility::Singleton<NetworkBroker> ;
 				//! performance session managment
 				chaos::common::network::PerformanceManagment performance_session_managment;
 				
@@ -152,10 +153,12 @@ namespace chaos {
 				 */
                 chaos::common::message::MessageChannel *getNewMessageChannelForRemoteHost(chaos::common::network::CNetworkAddress *node_network_address,
                                                                                           EntityType type);
+                                //! Basic Constructor
+				NetworkBroker();
+				
+                                                                                            
 			public:
 				
-				//! Basic Constructor
-				NetworkBroker();
 				
 				//! Basic Destructor
 				virtual ~NetworkBroker();

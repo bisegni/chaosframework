@@ -43,7 +43,7 @@ using namespace chaos::cu::command_manager;
 /*
  */
 CommandManager::CommandManager(){
-    broker = new NetworkBroker();
+    broker = NetworkBroker::getInstance();
     canUseMetadataServer = GlobalConfiguration::getInstance()->isMEtadataServerConfigured();
     if(canUseMetadataServer){
         metadataServerAddress = GlobalConfiguration::getInstance()->getMetadataServerAddress();

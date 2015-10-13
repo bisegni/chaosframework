@@ -91,7 +91,7 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
 		}
 		
         // network broker
-		api_subsystem_accessor.network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
+		api_subsystem_accessor.network_broker_service.reset(NetworkBroker::getInstance(), "NetworkBroker");
 		api_subsystem_accessor.network_broker_service.init(NULL, __PRETTY_FUNCTION__);
 		
         //! batch system

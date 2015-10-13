@@ -1962,7 +1962,7 @@
           "unit_server_alias": "ACCUMULATOR/BPM",
           "cu_id": "ACCUMULATOR/BPM/BPMSYNC",
           "cu_type": "DafneAccumulatorBPMSync",
-          "cu_param": "LIBERA01 LIBERA07 LIBERA09 LIBERA03 LIBERA08 LIBERA02",
+          "cu_param": "LIBERA07 LIBERA01 LIBERA09 LIBERA03 LIBERA08 LIBERA02",
           "auto_load": true,
           "DriverDescription": [],
           "AttrDesc": []

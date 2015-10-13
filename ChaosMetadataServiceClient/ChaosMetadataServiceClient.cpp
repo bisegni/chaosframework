@@ -77,7 +77,7 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
     try {
         ChaosCommon<ChaosMetadataServiceClient>::init(init_data);
         // network broker
-        network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
+        network_broker_service.reset(NetworkBroker::getInstance(), "NetworkBroker");
         network_broker_service.init(NULL, __PRETTY_FUNCTION__);
         
         api_proxy_manager.reset(new ApiProxyManager(network_broker_service.get(), &setting), "ApiProxyManager");
