@@ -77,10 +77,10 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
     try {
         ChaosCommon<ChaosMetadataServiceClient>::init(init_data);
         
-        api_proxy_manager.reset(new ApiProxyManager(network_broker_service, &setting), "ApiProxyManager");
+        api_proxy_manager.reset(new ApiProxyManager(NetworkBroker::getInstance(), &setting), "ApiProxyManager");
         api_proxy_manager.init(NULL, __PRETTY_FUNCTION__);
         
-        monitor_manager.reset(new MonitorManager(network_broker_service, &setting), "MonitorManager");
+        monitor_manager.reset(new MonitorManager(NetworkBroker::getInstance(), &setting), "MonitorManager");
         monitor_manager.init(NULL, __PRETTY_FUNCTION__);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -97,8 +97,8 @@ void ChaosMetadataServiceClient::start()  throw(CException) {
         
         CMSC_LAPP << "-------------------------------------------------------------------------";
         CMSC_LAPP << "!CHAOS Metadata service client started";
-        CMSC_LAPP << "RPC Server address: "	<< network_broker_service->getRPCUrl();
-        CMSC_LAPP << "DirectIO Server address: " << network_broker_service->getDirectIOUrl();
+        CMSC_LAPP << "RPC Server address: "	<< NetworkBroker::getInstance()->getRPCUrl();
+        CMSC_LAPP << "DirectIO Server address: " << NetworkBroker::getInstance()->getDirectIOUrl();
         CMSC_LAPP << "-------------------------------------------------------------------------";
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
