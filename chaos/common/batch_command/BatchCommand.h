@@ -146,7 +146,11 @@ namespace chaos{
             public:
                 //! return the unique id for the command instance
                 uint64_t getUID();
-                
+                /**
+                 * Return the alias of the command
+                 * @return the alis name of the command
+                 */
+                std::string getAlias(){return command_alias;}
                 //! return the identification of the device
                 std::string& getDeviceID();
 				
