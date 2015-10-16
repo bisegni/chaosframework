@@ -60,6 +60,7 @@ datasetDB(true) {
 
 //---------------------------------------------------------------------------------------------------
 DeviceController::~DeviceController() {
+    LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<device_id;
     stopTracking();
     
     if(mdsChannel){
