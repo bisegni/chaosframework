@@ -225,12 +225,13 @@ void BatchCommandSandbox::stop() throw(chaos::CException) {
 
 	//waith that the current command will terminate the work
 	//SCSLDBG_ << "Wait on conditionWaithSchedulerEnd";
-	try{
+/*	try{
 		conditionWaithSchedulerEnd.wait(lockScheduler);
+                
 	}catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::condition_error> >& ex) {
 		SCSLDBG_<< ex.what();
 	}
-
+*/
 	SCSLAPP_ << "Join on schedulerThread";
 	threadScheduler->join();
 	threadNextCommandChecker->join();

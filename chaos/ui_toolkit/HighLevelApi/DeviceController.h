@@ -100,11 +100,6 @@ namespace chaos {
              */
             DeviceController(string& _deviceID);
  
-            //!Public destructor
-            /*!
-             All can destruct an isntance of the device controller
-             */
-            ~DeviceController();
             
                 //! update inromation for talking with device
             /*!
@@ -134,6 +129,12 @@ namespace chaos {
             void executeOnThread(const std::string&) throw(CException);
         public:
 
+             //!Public destructor
+            /*!
+             All can destruct an isntance of the device controller
+             */
+            ~DeviceController();
+           
             /**
              * return the number of output channels
              * @return return the nyumber of predefined output channels

@@ -40,15 +40,6 @@
             <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/common/bson/bsonelement.h</file>
             <file>file:/ntfs/Users/michelo/LINUX/chaos_bundle/chaosframework/chaos/common/bson/bsonobj.h</file>
         </group>
-        <group name="CHAOS_BUNDLE_DEVELOPMENT">
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/cu_toolkit/ControlManager/AttributeSharedCacheWrapper.cpp</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/usr/local/include/chaos/common/pool/ResourcePool.h</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/common/rpc/zmq/ZMQClient.cpp</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/common/async_central/TimerHandler.cpp</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/common/pool/ResourcePool.h</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/common/rpc/zmq/ZMQClient.h</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/common/utility/ObjectFactoryRegister.h</file>
-            <file>file:/home/michelo/chaos_bundle_development/chaosframework/chaos/common/utility/TemplatedKeyObjectContainer.h</file>
-        </group>
+        <group name="CHAOS_BUNDLE_DEVELOPMENT"/>
     </open-files>
 </project-private>
