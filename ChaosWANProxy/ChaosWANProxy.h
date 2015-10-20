@@ -53,9 +53,6 @@ namespace chaos {
 			
 			static WaitSemaphore waitCloseSemaphore;
 			
-			//! network broker for talk with others chaos node
-			chaos::common::utility::StartableServiceContainer<NetworkBroker> network_broker_service;
-			
 			chaos::common::utility::InizializableServiceContainer<chaos::wan_proxy::persistence::DefaultPersistenceDriver> persistence_driver;
 			
 			ChaosWANProxy();

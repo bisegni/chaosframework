@@ -212,8 +212,8 @@ void BatchCommandSandbox::start() throw(chaos::CException) {
 // Start the implementation
 void BatchCommandSandbox::stop() throw(chaos::CException) {
 	//we ned to get the lock on the scheduler
-	boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
-	SCSLDBG_ << "Lock on mutexNextCommandChecker acquired for stop";
+	//boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
+	//SCSLDBG_ << "Lock on mutexNextCommandChecker acquired for stop";
 
 	//se the flag to the end o fthe scheduler
 	SCSLAPP_ << "Set scheduler work flag to false";
@@ -225,15 +225,22 @@ void BatchCommandSandbox::stop() throw(chaos::CException) {
 
 	//waith that the current command will terminate the work
 	//SCSLDBG_ << "Wait on conditionWaithSchedulerEnd";
-	try{
+/*	try{
 		conditionWaithSchedulerEnd.wait(lockScheduler);
+                
 	}catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::condition_error> >& ex) {
 		SCSLDBG_<< ex.what();
 	}
+*/
+        if(threadScheduler->joinable()){
+            SCSLAPP_ << "Join on schedulerThread";
 
-	SCSLAPP_ << "Join on schedulerThread";
-	threadScheduler->join();
-	threadNextCommandChecker->join();
+            threadScheduler->join();
+        }
+        if(threadNextCommandChecker->joinable()){
+            SCSLAPP_ << "Join on threadNextCommandChecker";
+            threadNextCommandChecker->join();
+        }
 	SCSLAPP_ << "schedulerThread terminated";
 }
 

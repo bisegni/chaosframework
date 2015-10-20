@@ -158,12 +158,6 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 							getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_DB_DRIVER_KVP));
 		}
 		
-		//allocate the network broker
-		CDSLAPP_ << "Allocate Network Brocker";
-		network_broker.reset(new NetworkBroker(), "NetworkBroker");
-		if(!network_broker.get()) throw chaos::CException(-5, "Error instantiating network broker", __PRETTY_FUNCTION__);
-		network_broker.init(NULL, __PRETTY_FUNCTION__);
-		
 		//allocate the db driver
 		if(!setting.cache_only && setting.db_driver_impl.compare("")) {
 			//we have a db driver setuped
@@ -180,7 +174,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		//check if we are in cache only
 		if(!setting.cache_only) {
 			//configure the domain url equal to the directio io server one plus the deafult endpoint "0"
-			setting.file_manager_setting.storage_driver_setting.domain.local_url = network_broker->getDirectIOUrl();
+			setting.file_manager_setting.storage_driver_setting.domain.local_url = NetworkBroker::getInstance()->getDirectIOUrl();
 			setting.file_manager_setting.storage_driver_setting.domain.local_url.append("|0");
 			
 			//initialize vfs file manager
@@ -195,7 +189,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			CDSLAPP_ << "Allocate the Query Data Consumer";
 			data_consumer.reset(new QueryDataConsumer(vfs_file_manager.get(), db_driver_ptr), "QueryDataConsumer");
 			if(!data_consumer.get()) throw chaos::CException(-7, "Error instantiating data consumer", __PRETTY_FUNCTION__);
-			data_consumer->network_broker = network_broker.get();
+			data_consumer->network_broker = NetworkBroker::getInstance();
 			data_consumer.init(NULL, __PRETTY_FUNCTION__);
 		}
 		if(run_mode == INDEXER ||
@@ -216,8 +210,8 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
  */
 void ChaosDataService::start() throw(CException) {
 	try {
-		network_broker.start(__PRETTY_FUNCTION__);
-		
+        ChaosCommon<ChaosDataService>::start();
+        
 		if(run_mode == QUERY ||
 		   run_mode == BOTH) {
 			data_consumer.start( __PRETTY_FUNCTION__);
@@ -229,7 +223,7 @@ void ChaosDataService::start() throw(CException) {
 		
 		//print information header on CDS address
 		CDSLAPP_ << "--------------------------------------------------------------------------------------";
-		CDSLAPP_ << "Chaos Data Service published with url: " << network_broker->getDirectIOUrl() << "|0";
+		CDSLAPP_ << "Chaos Data Service published with url: " << NetworkBroker::getInstance()->getDirectIOUrl() << "|0";
 		CDSLAPP_ << "--------------------------------------------------------------------------------------";
 		
 		waitCloseSemaphore.wait();
@@ -253,8 +247,6 @@ void ChaosDataService::start() throw(CException) {
  */
 void ChaosDataService::stop() throw(CException) {
 	
-	network_broker.stop(__PRETTY_FUNCTION__);
-	
 	if(run_mode == QUERY ||
 	   run_mode == BOTH) {
 		data_consumer.stop( __PRETTY_FUNCTION__);
@@ -263,6 +255,8 @@ void ChaosDataService::stop() throw(CException) {
 	   run_mode == BOTH) {
 		stage_data_consumer.stop(__PRETTY_FUNCTION__);
 	}
+    
+    ChaosCommon<ChaosDataService>::stop();
 }
 
 /*
@@ -275,7 +269,7 @@ void ChaosDataService::deinit() throw(CException) {
 	   data_consumer.get()) {
 		data_consumer.deinit(__PRETTY_FUNCTION__);
 		CDSLAPP_ << "Release the endpoint associated to the Data Consumer";
-		network_broker->releaseDirectIOServerEndpoint(data_consumer->server_endpoint);
+        NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(data_consumer->server_endpoint);
 	}
 	if((run_mode == INDEXER ||
 		run_mode == BOTH ) &&
@@ -298,11 +292,6 @@ void ChaosDataService::deinit() throw(CException) {
 	
     //deinitilize driver pool manager
     InizializableService::deinitImplementation(DriverPoolManager::getInstance(), "DriverPoolManager", __PRETTY_FUNCTION__);
-    
-    if(network_broker.get()) {
-        CDSLAPP_ << "Deinitializing CHAOS Data Service";
-        network_broker.deinit(__PRETTY_FUNCTION__);
-    }
     
 	ChaosCommon<ChaosDataService>::deinit();
 	

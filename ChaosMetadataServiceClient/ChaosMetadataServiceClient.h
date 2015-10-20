@@ -41,10 +41,6 @@ namespace chaos {
         public ChaosCommon<ChaosMetadataServiceClient>,
         public ServerDelegator {
             friend class common::utility::Singleton<ChaosMetadataServiceClient>;
-            
-            //!network broker service
-            common::utility::StartableServiceContainer<chaos::common::network::NetworkBroker> network_broker_service;
-            
             //!api proxy service
             common::utility::InizializableServiceContainer<chaos::metadata_service_client::api_proxy::ApiProxyManager> api_proxy_manager;
             

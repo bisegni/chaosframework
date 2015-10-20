@@ -5163,8 +5163,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					__CHAOS_DEBUG_MEMORY__,
-					__CHAOS_DEBUG_MEMORY_CU__,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
@@ -5192,7 +5190,6 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
-					"-lsigar",
 					"-lmongoose",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -5236,7 +5233,6 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
-					"-lsigar",
 					"-lmongoose",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -5259,7 +5255,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					__CHAOS_DEBUG_MEMORY__,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";

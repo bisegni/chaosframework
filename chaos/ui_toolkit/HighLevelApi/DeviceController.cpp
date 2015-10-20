@@ -23,7 +23,6 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/common/io/IOMemcachedIODriver.h>
-
 #include <boost/lexical_cast.hpp>
 
 using namespace std;
@@ -42,6 +41,7 @@ using namespace chaos::common::batch_command;
 DeviceController::DeviceController(string& _deviceID):
 device_id(_deviceID),
 datasetDB(true) {
+    
     const auto_ptr<chaos::common::data::CDataWrapper> d;
     mdsChannel = NULL;
     deviceChannel = NULL;
@@ -60,6 +60,7 @@ datasetDB(true) {
 
 //---------------------------------------------------------------------------------------------------
 DeviceController::~DeviceController() {
+    LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<device_id;
     stopTracking();
     
     if(mdsChannel){
@@ -294,7 +295,7 @@ uint64_t DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
             deviceState= CUStateKey::STOP;
         else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT) || (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_INITING))
             deviceState= CUStateKey::INIT;
-        else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT) || (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINITING))
+        else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT) || (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINITING)|| (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD))
             deviceState= CUStateKey::DEINIT;
         else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR))
             deviceState= CUStateKey::RECOVERABLE_ERROR;
