@@ -293,19 +293,19 @@ CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *update_pa
     CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
     std::auto_ptr<CDataWrapper> cu_properties;
     CDataWrapper *cu_property_container = NULL;
-    if(update_pack->hasKey(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY)){
+    if(update_pack->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
         cu_property_container = update_pack;
     } else  if(update_pack->hasKey("property_abstract_control_unit") &&
                update_pack->isCDataWrapperValue("property_abstract_control_unit")){
         cu_properties.reset(update_pack->getCSDataValue("property_abstract_control_unit"));
-        if(cu_properties->hasKey(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY)) {
+        if(cu_properties->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
             cu_property_container = cu_properties.get();
         }
     }
     
     if(cu_property_container) {
         //we need to configure the delay  from a run() call and the next
-        uint64_t new_schedule_daly = cu_property_container->getUInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
+        uint64_t new_schedule_daly = cu_property_container->getUInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY);
         chaos_batch::features::Features features;
         std::memset(&features, 0, sizeof(chaos_batch::features::Features));
         //features.featuresFlag &= chaos_batch::features::FeaturesFlagTypes::FF_LOCK_USER_MOD;
@@ -313,6 +313,7 @@ CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *update_pa
         slow_command_executor->setCommandFeatures(features);
         //update cached value
         _updateRunScheduleDelay(new_schedule_daly);
+        //push the dataset on data server
         pushSystemDataset();
     }
     return result;

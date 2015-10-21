@@ -182,14 +182,14 @@ namespace chaos{
                 
                 void _initChecklist();
 				
-                void doInitRpCheckList();
-                void doInitSMCheckList();
-                void doStartRpCheckList();
-                void doStartSMCheckList();
-                void redoInitRpCheckList(bool throw_exception = true);
-                void redoInitSMCheckList(bool throw_exception = true);
-                void redoStartRpCheckList(bool throw_exception = true);
-                void redoStartSMCheckList(bool throw_exception = true);
+                void doInitRpCheckList() throw(CException);
+                void doInitSMCheckList() throw(CException);
+                void doStartRpCheckList() throw(CException);
+                void doStartSMCheckList() throw(CException);
+                void redoInitRpCheckList(bool throw_exception = true) throw(CException);
+                void redoInitSMCheckList(bool throw_exception = true) throw(CException);
+                void redoStartRpCheckList(bool throw_exception = true) throw(CException);
+                void redoStartSMCheckList(bool throw_exception = true) throw(CException);
                 
 				/*!
 				 Initialize the Custom Contro Unit and return the configuration
@@ -211,6 +211,8 @@ namespace chaos{
 				 */
 				virtual CDataWrapper* _stop(CDataWrapper*, bool& detachParam) throw(CException);
 				
+                //!Recover from a recoverable error state
+                virtual CDataWrapper* _recover(CDataWrapper *deinitParam, bool& detachParam) throw(CException);
 				/*!
 				 Restore the control unit to a precise tag
 				 */
@@ -235,7 +237,7 @@ namespace chaos{
 				void deinit() throw(CException);
 				
                 //! State machine is gone into recoverable error
-                void recoverableErrorFromState(int last_state);
+                void recoverableErrorFromState(int last_state, chaos::CException& ex);
                 
                 //! State machine is gone into recoverable error
                 bool beforeRecoverErrorFromState(int last_state);
@@ -244,7 +246,7 @@ namespace chaos{
                 void recoveredToState(int last_state);
                 
                 //! State machine is gone into an unrecoverable error
-                void fatalErrorFromState(int last_state);
+                void fatalErrorFromState(int last_state, chaos::CException& ex);
                 
 				//! initialize the dataset attributes (input and output)
 				void initAttributeOnSharedAttributeCache(SharedCacheDomain domain,
@@ -335,6 +337,20 @@ namespace chaos{
                 //!timer for update push metric
                 void _updatePushRateMetric();
 
+                //!put abstract control unit state machine in recoverable error
+                /*!
+                 This method set the control unit status to "rerror" and valorize the health
+                 error keys with the exception values
+                 */
+                void _goInRecoverableError(chaos::CException recoverable_exception);
+                
+                //!put abstract control unit state machine in fatal error
+                /*!
+                 This method set the control unit status to "ferror" and valorize the health
+                 error keys with the exception values
+                 */
+                void _goInFatalError(chaos::CException recoverable_exception);
+                
                 //! Abstract Method that need to be used by the sublcass to define the dataset
 				/*!
 				 Subclass, in this method can call the api to create the dataset, after this method

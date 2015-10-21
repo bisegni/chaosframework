@@ -60,6 +60,10 @@ namespace chaos{
         errorMessage(eMessage),
         errorDomain(eDomain) {composeMsg();};
         
+        CException(const CException& _exception):errorCode(_exception.errorCode),
+        errorMessage(_exception.errorMessage),
+        errorDomain(_exception.errorDomain) {composeMsg();};
+        
         virtual ~CException() throw() {};
         
         virtual const char* what() const throw() {

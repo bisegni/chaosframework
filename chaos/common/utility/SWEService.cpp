@@ -49,12 +49,12 @@ bool SWEService::deinitImplementation(SWEService& impl, const string & impl_name
     return deinitImplementation(&impl, impl_name,  domain_string);
 }
 
-bool SWEService::goInFatalError(SWEService& impl, const std::string & impl_name,  const std::string & domain_string) {
-    return goInFatalError(&impl, impl_name, domain_string);
+bool SWEService::goInFatalError(SWEService& impl, chaos::CException& ex,  const std::string & impl_name,  const std::string & domain_string) {
+    return goInFatalError(&impl, ex, impl_name, domain_string);
 }
 
-bool SWEService::goInRecoverableError(SWEService& impl, const std::string & impl_name,  const std::string & domain_string) {
-    return goInRecoverableError(&impl, impl_name, domain_string);
+bool SWEService::goInRecoverableError(SWEService& impl, chaos::CException& ex,  const std::string & impl_name,  const std::string & domain_string) {
+    return goInRecoverableError(&impl, ex, impl_name, domain_string);
 }
 
 bool SWEService::recoverError(SWEService& impl, const std::string & impl_name,  const std::string & domain_string) {
@@ -170,7 +170,7 @@ bool SWEService::stopImplementation(SWEService *impl, const string & impl_name, 
 }
 
 
-bool SWEService::goInFatalError(SWEService *impl, const std::string & impl_name,  const std::string & domain_string) {
+bool SWEService::goInFatalError(SWEService *impl,  chaos::CException& ex, const std::string & impl_name,  const std::string & domain_string) {
     bool result = true;
     
     try {
@@ -214,7 +214,7 @@ bool SWEService::goInFatalError(SWEService *impl, const std::string & impl_name,
             }
             
             //call fatal error handler
-            impl->fatalErrorFromState(impl->last_state);
+            impl->fatalErrorFromState(impl->last_state, ex);
         }else {
             DEBUG_CODE(LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Service cant flow to next state and current is -> %1%" , %impl->state_machine.current_state()[0]))
         }
@@ -229,7 +229,7 @@ bool SWEService::goInFatalError(SWEService *impl, const std::string & impl_name,
     return result;
 }
 
-bool SWEService::goInRecoverableError(SWEService *impl, const std::string & impl_name,  const std::string & domain_string) {
+bool SWEService::goInRecoverableError(SWEService *impl, chaos::CException& ex, const std::string & impl_name,  const std::string & domain_string) {
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domain_string);
@@ -242,7 +242,7 @@ bool SWEService::goInRecoverableError(SWEService *impl, const std::string & impl
         DEBUG_CODE(SWE_LDBG  << "Going into recoverable state for " << impl_name;)
         if(impl->SWEService::state_machine.process_event(service_state_machine::EventType::fatal_error())  == boost::msm::back::HANDLED_TRUE) {
             impl->serviceState = impl->state_machine.current_state()[0];
-            impl->recoverableErrorFromState(impl->last_state);
+            impl->recoverableErrorFromState(impl->last_state, ex);
         }else {
             DEBUG_CODE(LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Service cant flow to next state and current is -> %1%" , %impl->state_machine.current_state()[0]))
         }

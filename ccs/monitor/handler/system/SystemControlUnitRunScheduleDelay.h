@@ -25,7 +25,7 @@ protected:
 public:
     SystemControlUnitRunScheduleDelay(bool event_on_change):
         AbstractAttributeHandler(this),
-        QuantumKeyAttributeInt64Handler(std::string(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY),
+        QuantumKeyAttributeInt64Handler(std::string(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY),
                                         event_on_change){}
 };
 #endif // SYSTEMCONTROLUNIT

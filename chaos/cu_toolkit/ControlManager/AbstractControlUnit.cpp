@@ -200,6 +200,15 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     HealtManager::getInstance()->addNodeMetric(control_unit_id,
                                                ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
                                                chaos::DataType::TYPE_DOUBLE);
+    HealtManager::getInstance()->addNodeMetric(control_unit_id,
+                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
+                                               chaos::DataType::TYPE_INT32);
+    HealtManager::getInstance()->addNodeMetric(control_unit_id,
+                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
+                                               chaos::DataType::TYPE_STRING);
+    HealtManager::getInstance()->addNodeMetric(control_unit_id,
+                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
+                                               chaos::DataType::TYPE_STRING);
     vector<std::string> tempStringVector;
     
     if(control_unit_id.size()) {
@@ -257,14 +266,22 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
                                                      &AbstractControlUnit::_stop,
                                                      NodeDomainAndActionRPC::ACTION_NODE_STOP,
                                                      "Stop the control unit scheduling");
+    
+    addActionDescritionInstance<AbstractControlUnit>(this,
+                                                     &AbstractControlUnit::_recover,
+                                                     NodeDomainAndActionRPC::ACTION_NODE_RECOVERY,
+                                                     "Recovery a recoverable state, going to the last state");
+    
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_unitRestoreToSnapshot,
                                                      NodeDomainAndActionRPC::ACTION_NODE_RESTORE,
                                                      "Restore contorl unit to a snapshot tag");
+    
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_getState,
                                                      NodeDomainAndActionRPC::ACTION_NODE_GET_STATE,
                                                      "Get the state of the running control unit");
+    
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_getInfo,
                                                      NodeDomainAndActionRPC::ACTION_CU_GET_INFO,
@@ -309,7 +326,7 @@ void AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::Dec
 
 //----------------------------------------- checklist method ------------------------------------------------
 #pragma mark checklist method
-void AbstractControlUnit::doInitRpCheckList() {
+void AbstractControlUnit::doInitRpCheckList() throw(CException) {
     std::vector<string> attribute_names;
     //rpc initialize service
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_init"){
@@ -383,7 +400,7 @@ void AbstractControlUnit::doInitRpCheckList() {
     }
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_init")
 }
-void AbstractControlUnit::doInitSMCheckList() {
+void AbstractControlUnit::doInitSMCheckList() throw(CException) {
     //rpc initialize service
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "init"){
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "init", INIT_SM_PHASE_INIT_DB){
@@ -409,7 +426,7 @@ void AbstractControlUnit::doInitSMCheckList() {
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "init")
 }
 
-void AbstractControlUnit::doStartRpCheckList() {
+void AbstractControlUnit::doStartRpCheckList() throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_start"){
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_IMPLEMENTATION){
             SWEService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
@@ -423,7 +440,7 @@ void AbstractControlUnit::doStartRpCheckList() {
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_start")
 }
 
-void AbstractControlUnit::doStartSMCheckList() {
+void AbstractControlUnit::doStartSMCheckList() throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "start"){
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "start", START_SM_PHASE_PUSH_DATASET){
             //init on shared cache the all the dataaset with the default value
@@ -450,7 +467,7 @@ void AbstractControlUnit::doStartSMCheckList() {
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "start")
 }
 
-void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) {
+void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) throw(CException) {
     //rpc initialize service
     CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "_init"){
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_INIT_STATE){
@@ -484,10 +501,10 @@ void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) {
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR){
             //clear all cache sub_structure
             CHEK_IF_NEED_TO_THROW(throw_exception,
-            cache_output_attribute_vector.clear();
-            cache_input_attribute_vector.clear();
-            cache_custom_attribute_vector.clear();
-            cache_system_attribute_vector.clear();)
+                                  cache_output_attribute_vector.clear();
+                                  cache_input_attribute_vector.clear();
+                                  cache_custom_attribute_vector.clear();
+                                  cache_system_attribute_vector.clear();)
             break;
         }
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_UNIT_INIT){
@@ -502,7 +519,7 @@ void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) {
     CHAOS_CHECK_LIST_END_SCAN_DONE(check_list_sub_service, "_init")
 }
 
-void AbstractControlUnit::redoInitSMCheckList(bool throw_exception) {
+void AbstractControlUnit::redoInitSMCheckList(bool throw_exception) throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "init"){
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "init",  INIT_SM_PHASE_INIT_DB){
             break;
@@ -511,19 +528,19 @@ void AbstractControlUnit::redoInitSMCheckList(bool throw_exception) {
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "init", INIT_SM_PHASE_CREATE_DATA_STORAGE) {
             //remove key data storage
             CHEK_IF_NEED_TO_THROW(throw_exception,
-            if(key_data_storage.get()) {
-                ACULDBG_ << "Delete data storage driver for device:" << DatasetDB::getDeviceID();
-                key_data_storage->deinit();
-                key_data_storage.reset();
-            }
-            )
+                                  if(key_data_storage.get()) {
+                                      ACULDBG_ << "Delete data storage driver for device:" << DatasetDB::getDeviceID();
+                                      key_data_storage->deinit();
+                                      key_data_storage.reset();
+                                  }
+                                  )
             break;
         }
     }
     CHAOS_CHECK_LIST_END_SCAN_DONE(check_list_sub_service, "init")
 }
 
-void AbstractControlUnit::redoStartRpCheckList(bool throw_exception) {
+void AbstractControlUnit::redoStartRpCheckList(bool throw_exception) throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "_start"){
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_start", START_RPC_PHASE_IMPLEMENTATION){
             CHEK_IF_NEED_TO_THROW(throw_exception, SWEService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);)
@@ -537,7 +554,7 @@ void AbstractControlUnit::redoStartRpCheckList(bool throw_exception) {
     CHAOS_CHECK_LIST_END_SCAN_DONE(check_list_sub_service, "_start")
 }
 
-void AbstractControlUnit::redoStartSMCheckList(bool throw_exception) {
+void AbstractControlUnit::redoStartSMCheckList(bool throw_exception) throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "start"){
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "start", START_SM_PHASE_PUSH_DATASET){
             break;
@@ -582,8 +599,8 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT,
                                                         true);
     }catch(CException& ex) {
-        //go to unrecoverable error
-        SWEService::goInFatalError(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
+        //go in falta error
+        SWEService::goInFatalError(this, ex, "AbstractControlUnit", __PRETTY_FUNCTION__);
         throw ex;
     }
     return NULL;
@@ -616,8 +633,8 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_START,
                                                         true);
     }catch(CException& ex) {
-        //inthis case i need to stop the abstract control unit
-        SWEService::goInRecoverableError(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
+        //go in falta error
+        SWEService::goInFatalError(this, ex, "AbstractControlUnit", __PRETTY_FUNCTION__);
         throw ex;
     }
     return NULL;
@@ -648,7 +665,8 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP,
                                                         true);
     } catch (CException& ex) {
-        SWEService::goInRecoverableError(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
+        //go in falta error
+        SWEService::goInFatalError(this, ex, "AbstractControlUnit", __PRETTY_FUNCTION__);
         throw ex;
     }
     
@@ -683,13 +701,43 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT,
                                                         true);
     } catch (CException& ex) {
-        SWEService::goInFatalError(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
+        //go in falta error
+        SWEService::goInFatalError(this, ex, "AbstractControlUnit", __PRETTY_FUNCTION__);
         throw ex;
     }
     
     return NULL;
 }
 
+/*
+ deinit all datastorage
+ */
+CDataWrapper* AbstractControlUnit::_recover(CDataWrapper *deinitParam,
+                                            bool& detachParam) throw(CException) {
+    if(getServiceState() != CUStateKey::RECOVERABLE_ERROR) throw CException(-1, DatasetDB::getDeviceID()+" need to be recoverable errore in the way to be recoverable!", __PRETTY_FUNCTION__);
+    
+    //first we start the deinitializaiton of the implementation unit
+    try {
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINITING,
+                                                        true);
+        
+        redoInitRpCheckList();
+        
+        //set healt to deinit
+        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT,
+                                                        true);
+    } catch (CException& ex) {
+        //go in falta error
+        SWEService::goInFatalError(this, ex, "AbstractControlUnit", __PRETTY_FUNCTION__);
+        throw ex;
+    }
+    
+    return NULL;
+}
 
 //! fill cache with found dataset at the restore point
 void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDataStorageDomain domain,
@@ -836,7 +884,6 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *dataset_at
 // Startable Service method
 void AbstractControlUnit::init(void *init_data) throw(CException) {
     //the init of the implementation unit goes after the infrastructure one
-    ACULDBG_ << "Start internal and custom inititialization:"+DatasetDB::getDeviceID();
     doInitSMCheckList();
 }
 
@@ -856,13 +903,62 @@ void AbstractControlUnit::deinit() throw(CException) {
 }
 
 //! State machine is gone into recoverable error
-void AbstractControlUnit::recoverableErrorFromState(int last_state) {
+void AbstractControlUnit::recoverableErrorFromState(int last_state, chaos::CException& ex) {
     ACULERR_ << "recoverableErrorFromState with state:" << last_state;
+    
+    //update healt tstatus to report recoverable error
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR,
+                                                    false);
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
+                                                    0,
+                                                    false);
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
+                                                    "",
+                                                    false);
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
+                                                    "",
+                                                    true);
 }
 
 //! State machine is gone into recoverable error
 bool AbstractControlUnit::beforeRecoverErrorFromState(int last_state) {
     ACULERR_ << "beforeRecoverErrorFromState with state:" << last_state;
+    std::string last_state_str;
+    switch(last_state) {
+        case CUStateKey::INIT:
+            last_state_str = NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT;
+            break;
+        case CUStateKey::DEINIT:
+            last_state_str = NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT;
+            break;
+        case CUStateKey::START:
+            last_state_str = NodeHealtDefinitionValue::NODE_HEALT_STATUS_START;
+            break;
+        case CUStateKey::STOP:
+            last_state_str = NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP;
+            break;
+    }
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                    last_state_str,
+                                                    false);
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
+                                                    0,
+                                                    false);
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
+                                                    "",
+                                                    false);
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
+                                                    "",
+                                                    true);
     return true;
 }
 
@@ -872,23 +968,26 @@ void AbstractControlUnit::recoveredToState(int last_state) {
 }
 
 //! State machine is gone into an unrecoverable error
-void AbstractControlUnit::fatalErrorFromState(int last_state) {
+void AbstractControlUnit::fatalErrorFromState(int last_state, chaos::CException& ex) {
     ACULERR_ << "fatalErrorFromState with state:" << last_state;
-    switch (last_state) {
-        case CUStateKey::INIT:
-            redoInitRpCheckList(false);
-            break;
-        case CUStateKey::START:
-            redoStartRpCheckList(false);
-            break;
-        case CUStateKey::STOP:
-            redoInitRpCheckList(false);
-            break;
-        case CUStateKey::DEINIT:
-            redoInitRpCheckList(false);
-            break;
-    }
-    //stop all activated service
+    //update healt tstatus to report recoverable error
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_STATUS,
+                                                    NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR,
+                                                    false);
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
+                                                    ex.errorCode,
+                                                    false);
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
+                                                    ex.errorMessage,
+                                                    false);
+    HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
+                                                    NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
+                                                    ex.errorDomain,
+                                                    true);
+
 }
 
 void AbstractControlUnit::fillCachedValueVector(AttributeCache& attribute_cache,
@@ -968,7 +1067,6 @@ void AbstractControlUnit::completeOutputAttribute() {
 }
 
 void AbstractControlUnit::completeInputAttribute() {
-    
 }
 
 AbstractSharedDomainCache *AbstractControlUnit::_getAttributeCache() {
@@ -980,22 +1078,21 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     
     //add heart beat attribute
     ACULDBG_ << "Adding syste attribute on shared cache";
-    //domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_HEARTBEAT, 0, DataType::TYPE_INT64);
-    domain_attribute_setting.addAttribute(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY, 0, DataType::TYPE_INT64);
-    thread_schedule_daly_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY));
+    domain_attribute_setting.addAttribute(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, 0, DataType::TYPE_INT64);
+    thread_schedule_daly_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY));
     
     //add unit type
-    domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_UNIT_TYPE, (uint32_t)control_unit_type.size(), DataType::TYPE_STRING);
-    domain_attribute_setting.setValueForAttribute(domain_attribute_setting.getNumberOfAttributes()-1, control_unit_type.c_str(),  (uint32_t)control_unit_type.size());
+    //domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_UNIT_TYPE, (uint32_t)control_unit_type.size(), DataType::TYPE_STRING);
+    //domain_attribute_setting.setValueForAttribute(domain_attribute_setting.getNumberOfAttributes()-1, control_unit_type.c_str(),  (uint32_t)control_unit_type.size());
     
     //add error attribute
-    domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR, 0, DataType::TYPE_INT32);
+    //domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR, 0, DataType::TYPE_INT32);
     
     //add error message attribute
-    domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR_MESSAGE, 255, DataType::TYPE_STRING);
+    //domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR_MESSAGE, 255, DataType::TYPE_STRING);
     
     //add error domain
-    domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR_DOMAIN, 255, DataType::TYPE_STRING);
+    //domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR_DOMAIN, 255, DataType::TYPE_STRING);
 }
 
 /*
@@ -1044,6 +1141,22 @@ void AbstractControlUnit::_updatePushRateMetric() {
     last_push_rate_grap_ts = rate_acq_ts;
     //reset pushe count
     push_dataset_counter = 0;
+}
+
+//!put abstract control unit state machine in recoverable error
+void AbstractControlUnit::_goInRecoverableError(chaos::CException recoverable_exception) {
+    //change state machine
+    if(SWEService::goInRecoverableError(this, recoverable_exception, "RTAbstractControlUnit", __PRETTY_FUNCTION__)) {
+        //update healt the status to report recoverable error
+       
+    }
+}
+
+//!put abstract control unit state machine in fatal error
+void AbstractControlUnit::_goInFatalError(chaos::CException recoverable_exception) {
+    //change state machine
+    if(SWEService::goInFatalError(this, recoverable_exception, "RTAbstractControlUnit", __PRETTY_FUNCTION__)) {
+    }
 }
 
 //!handler calledfor restor a control unit to a determinate point
@@ -1177,7 +1290,7 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
         throw CException(-3, "Device Not Initilized", __PRETTY_FUNCTION__);
     }
     
-    //check to see if the device can ben initialized
+    //forward property change pack to the data driver
     key_data_storage->updateConfiguration(updatePack);
     
     return NULL;

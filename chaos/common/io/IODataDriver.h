@@ -89,7 +89,7 @@ namespace chaos{
 				 */
 				virtual void storeRawData(const std::string& key,
 										  chaos_data::SerializationBuffer *serialization,
-										  int store_hint = 2)  throw(CException) = 0;
+										  int store_hint = 1)  throw(CException) = 0;
 
 				/*!
 				 * This method retrive the cached object by CSDawrapperUsed as query key and

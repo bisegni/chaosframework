@@ -208,7 +208,7 @@ void ChaosMetadataServiceClient::reconfigureMonitor() throw(CException) {
 
 bool ChaosMetadataServiceClient::monitoringIsStarted() {
     return monitor_manager.get() &&
-    (monitor_manager->getServiceState() == common::utility::service_state_machine::StartableServiceType::SS_STARTED);
+    (monitor_manager->getServiceState() == CUStateKey::START);
 }
 
 //! add a new quantum slot for key

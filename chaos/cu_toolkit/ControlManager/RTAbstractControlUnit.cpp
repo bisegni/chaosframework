@@ -24,6 +24,7 @@
 #include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
 
 #include <boost/format.hpp>
+#include <boost/thread.hpp>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -99,7 +100,7 @@ void RTAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigura
 	//add the scekdule dalay for the sandbox
 	if(schedule_dalay){
 		//in this case ovverride the config file
-		setupConfiguration.addInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY , schedule_dalay);
+		setupConfiguration.addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY , schedule_dalay);
 	}
 }
 
@@ -223,19 +224,19 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* update_pa
 	CDataWrapper *result = AbstractControlUnit::updateConfiguration(update_pack, detach_param);
     std::auto_ptr<CDataWrapper> cu_properties;
     CDataWrapper *cu_property_container = NULL;
-	if(update_pack->hasKey(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY)){
+	if(update_pack->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
         cu_property_container = update_pack;
     } else  if(update_pack->hasKey("property_abstract_control_unit") &&
                update_pack->isCDataWrapperValue("property_abstract_control_unit")){
         cu_properties.reset(update_pack->getCSDataValue("property_abstract_control_unit"));
-        if(cu_properties->hasKey(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY)) {
+        if(cu_properties->hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
             cu_property_container = cu_properties.get();
         }
     }
     
     if(cu_property_container) {
         //we need to configure the delay  from a run() call and the next
-        uint64_t uSecdelay = cu_property_container->getUInt64Value(ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
+        uint64_t uSecdelay = cu_property_container->getUInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY);
         //check if we need to update the scehdule time
         if(uSecdelay != schedule_dalay){
             RTCULAPP_ << "Update schedule delay in:" << uSecdelay << " microsecond";
@@ -259,15 +260,24 @@ void RTAbstractControlUnit::executeOnThread() {
 	while(scheduler_run) {
         counter++;
         start_execution_stat += (start_execution = TimingUtil::getTimeStampInMicrosends());
+        //udpate output dataset timestamp tag
         _updateAcquistionTimestamp((uint64_t)(start_execution/1000));
-        //! exec the control unit step
-		unitRun();
+        try{
+            //! exec the control unit step
+            unitRun();
+        } catch(CException& ex) {
+            //go in recoverable error
+            boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, this, ex)).detach();
+        }  catch(...) {
+            CException ex(-1, "undefined error", __PRETTY_FUNCTION__);
+            //go in recoverable error
+            boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, this, ex)).detach();
+        }
 		
-		//! check if the output dataset need to be pushed
+		// check if the output dataset need to be pushed
 		pushOutputDataset(true);
-		
+        //calculate the number of microsencods to wait
         time_to_sleep = schedule_dalay - ((processing_time = TimingUtil::getTimeStampInMicrosends()) - start_execution);
-        //RTCULDBG_ << boost::str(boost::format("start_execution:%1%\nprocessing_time=%2%\ntime_to_sleep=%3%")%start_execution%processing_time%time_to_sleep);
         if(time_to_sleep<0)continue;
 		//check if we are in sequential or in threaded mode
         boost::this_thread::sleep_for(boost::chrono::microseconds(time_to_sleep));

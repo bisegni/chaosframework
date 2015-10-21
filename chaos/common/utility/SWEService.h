@@ -92,7 +92,7 @@ namespace chaos {
             protected:
                 
                 //! State machine is gone into recoverable error
-                virtual void recoverableErrorFromState(int last_state) = 0;
+                virtual void recoverableErrorFromState(int last_state, chaos::CException& ex) = 0;
                 
                 //! State machine is gone into recoverable error
                 /*!
@@ -107,7 +107,7 @@ namespace chaos {
                 virtual void recoveredToState(int last_state) = 0;
                 
                 //! State machine is gone into an unrecoverable error
-                virtual void fatalErrorFromState(int last_state) = 0;
+                virtual void fatalErrorFromState(int last_state, chaos::CException& ex ) = 0;
                 
             public:
                 SWEService();
@@ -126,11 +126,11 @@ namespace chaos {
                 static bool deinitImplementation(SWEService& impl, const std::string & impl_name,  const std::string & domain_string);
                 static bool deinitImplementation(SWEService *impl, const std::string & impl_name,  const std::string & domain_string);
                 
-                static bool goInFatalError(SWEService& impl, const std::string & impl_name,  const std::string & domain_string);
-                static bool goInFatalError(SWEService *impl, const std::string & impl_name,  const std::string & domain_string);
+                static bool goInFatalError(SWEService& impl, chaos::CException& ex, const std::string & impl_name,  const std::string & domain_string);
+                static bool goInFatalError(SWEService *impl, chaos::CException& ex,  const std::string & impl_name,  const std::string & domain_string);
                 
-                static bool goInRecoverableError(SWEService& impl, const std::string & impl_name,  const std::string & domain_string);
-                static bool goInRecoverableError(SWEService *impl, const std::string & impl_name,  const std::string & domain_string);
+                static bool goInRecoverableError(SWEService& impl, chaos::CException& ex, const std::string & impl_name,  const std::string & domain_string);
+                static bool goInRecoverableError(SWEService *impl, chaos::CException& ex,  const std::string & impl_name,  const std::string & domain_string);
                 
                 static bool recoverError(SWEService& impl, const std::string & impl_name,  const std::string & domain_string);
                 static bool recoverError(SWEService *impl, const std::string & impl_name,  const std::string & domain_string);
