@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QStandardItem>
 #include <QMessageBox>
+#include <QInputDialog>
 
 #include <cassert>
 
@@ -99,6 +100,9 @@ void ControUnitInstanceEditor::initUI() {
                         GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(ui->lineEditControlUnitUniqueID->text().toStdString()));
     }
 
+    //get unit server information
+    submitApiResult(QString("get_us_description"),
+                    GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(ui->labelUnitServer->text().toStdString()));
 }
 
 control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSetInstanceApi() {
@@ -121,8 +125,8 @@ control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSet
         QString drv_vers = table_model_driver_spec->item(idx, 1)->text();
         QString drv_init = table_model_driver_spec->item(idx, 2)->text();
         set_instance_api_hepler.addDriverDescription(drv_name.toStdString(),
-                                                      drv_vers.toStdString(),
-                                                      drv_init.toStdString());
+                                                     drv_vers.toStdString(),
+                                                     drv_init.toStdString());
         qDebug() << "Added driver description for: "<< drv_name << "-" << drv_vers <<"-"<<drv_init;
     }
 
@@ -222,7 +226,6 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
             ui->pushButtonEditAttribute->setEnabled(false);
         }
     }
-
 }
 
 bool ControUnitInstanceEditor::isClosing() {
@@ -240,6 +243,17 @@ void ControUnitInstanceEditor::onApiDone(const QString& tag,
     } else if(tag.compare("get_instance") == 0) {
         //fill gui with instance info
         fillUIFromInstanceInfo(api_result);
+    } else if(tag.compare("get_us_description") == 0) {
+        //we have unit server description
+        if(api_result->hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) {
+            //get the vector of unit type
+            std::auto_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
+            for(int i = 0;
+                i < arr->size();
+                i++) {
+                cu_type_list.append(QString::fromStdString(arr->getStringElementAtIndex(i)));
+            }
+        }
     }
 }
 
@@ -413,3 +427,17 @@ void ControUnitInstanceEditor::tableDriverDescriptionSelectionChanged(const QIte
     qDebug() << "tableDriverDescriptionSelectionChanged, edit enable state:" << enable;
 }
 
+
+void ControUnitInstanceEditor::on_pushButtonChooseControlUnitType_clicked() {
+    bool ok = false;
+    QString type = QInputDialog::getItem(this,
+                                         tr("Select control unit type"),
+                                         tr("Type:"),
+                                         cu_type_list,
+                                         0,
+                                         false,
+                                         &ok);
+    if(ok) {
+        ui->labelControlUnitType->setText(type);
+    }
+}

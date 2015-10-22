@@ -26,6 +26,7 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/TemplatedKeyObjectContainer.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
+#include <chaos/common/async_central/async_central.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/lockfree/queue.hpp>
@@ -55,7 +56,8 @@ namespace chaos {
 			public chaos::common::utility::StartableService,
 			public chaos::DeclareAction,
 			public direct_io::DirectIOClientConnectionEventHandler,
-            protected PMKeyObjectContainer::FreeHandler {
+            protected PMKeyObjectContainer::FreeHandler,
+            protected chaos::common::async_central::TimerHandler {
 				friend class chaos::common::network::NetworkBroker;
 				chaos::common::network::NetworkBroker	*network_broker;
 				
@@ -75,8 +77,9 @@ namespace chaos {
 				
 				void  disposePerformanceNode(chaos_direct_io::DirectIOPerformanceSession *performance_node);
 				void purge_map();
-				void purge_worker();
-				
+                //TimerHandler inherited method
+                void timeout();
+                
 				chaos_direct_io::DirectIOClient *getLocalDirectIOClientInstance();
 			protected:
 				//! Start the implementation

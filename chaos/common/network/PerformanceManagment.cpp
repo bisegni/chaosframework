@@ -31,6 +31,7 @@
 using namespace chaos::common::utility;
 using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
+using namespace chaos::common::async_central;
 
 PerformanceManagment::PerformanceManagment(NetworkBroker *_network_broker):
 network_broker(_network_broker),
@@ -65,16 +66,18 @@ void PerformanceManagment::init(void *init_parameter) throw(chaos::CException) {
 //Start the implementation
 void PerformanceManagment::start() throw(chaos::CException) {
 	PMLAPP_ << "Start the purger thread";
-	work_on_purge = true;
-	thread_purge.reset(new boost::thread(& PerformanceManagment::purge_worker, this));
+	//work_on_purge = true;
+	//thread_purge.reset(new boost::thread(& PerformanceManagment::purge_worker, this));
+    AsyncCentralManager::getInstance()->addTimer(this, 0, 5000);
 }
 
 //Stop the implementation
 void PerformanceManagment::stop() throw(chaos::CException) {
 	PMLAPP_ << "Stop the purger thread";
-	work_on_purge = false;
-	purge_wait_semaphore.unlock();
-	thread_purge->join();
+	//work_on_purge = false;
+	//purge_wait_semaphore.unlock();
+	//thread_purge->join();
+    AsyncCentralManager::getInstance()->removeTimer(this);
 	PMLAPP_ << "Purger thread stoppped";
 	
 	PMLAPP_ << "Remove all orfaned performance session";
@@ -101,11 +104,8 @@ void PerformanceManagment::deinit() throw(chaos::CException) {
 	//}
 }
 
-void PerformanceManagment::purge_worker() {
-	while(work_on_purge) {
-		purge_map();
-		purge_wait_semaphore.wait(5000);
-	}
+void PerformanceManagment::timeout() {
+	purge_map();
 }
 
 void PerformanceManagment::purge_map() {

@@ -40,6 +40,7 @@
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/StartStop.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/InitDeinit.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/GetInstance.h>
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/CopyInstance.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/DeleteInstance.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/GetCurrentDataset.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SearchInstancesByUS.h>

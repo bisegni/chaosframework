@@ -175,7 +175,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Choose Type</string>
+           <string>Change Type</string>
           </property>
          </widget>
         </item>
