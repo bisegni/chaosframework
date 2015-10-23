@@ -67,8 +67,6 @@ namespace chaos {
                     
                     // inherited method
                     bool timeoutHandler();
-                private:
-                    int prepareRequestForAutoload(const std::string& cu_uid);
                 };
             }
         }
