@@ -65,7 +65,7 @@ void QuantumSlotScheduler::init(void *init_data) throw (chaos::CException) {
     CHAOS_LASSERT_EXCEPTION(network_broker, QSS_ERR, -1, "No network broker instance found")
     data_driver_impl = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL);
     CHAOS_LASSERT_EXCEPTION((data_driver_impl.compare("IODirect") == 0), QSS_ERR, -2, "Only IODirect implementation is supported")
-
+    
 }
 
 void QuantumSlotScheduler::start() throw (chaos::CException) {
@@ -205,7 +205,7 @@ bool QuantumSlotScheduler::_checkRemoveAndAddNewConsumer() {
             _addKeyConsumer(new_consumer_info);
         } else {
             _removeKeyConsumer(new_consumer_info);
-        }  
+        }
     } catch(...){
         
     }
@@ -259,12 +259,15 @@ void QuantumSlotScheduler::dispath_new_value_async(const boost::system::error_co
 void QuantumSlotScheduler::fetchValue(boost::shared_ptr<IODataDriver> data_driver) {
     QuantumSlot *cur_slot = NULL;
     QSS_INFO << "Entering fetcher thread:" << boost::this_thread::get_id();
+    boost::unique_lock<boost::mutex> lock_on_fetch(mutex_fetch_value, boost::defer_lock);
     boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_fetch);
     while(work_on_fetch) {
         if(queue_active_slot.pop(cur_slot)) {
             //we have slot available
             size_t          data_found_size;
+            lock_on_fetch.lock();
             const char * data_found = data_driver->retriveRawData(cur_slot->key, &data_found_size);
+            lock_on_fetch.unlock();
             async_timer.async_wait(boost::bind(&QuantumSlotScheduler::dispath_new_value_async,
                                                this,
                                                boost::asio::placeholders::error,
@@ -295,7 +298,7 @@ void QuantumSlotScheduler::addKeyConsumer(const std::string& key_to_monitor,
         return;
     }
     QSS_INFO << boost::str(boost::format("Add new key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
-
+    
     //increment the index to indicate that has passed scheduler publi layer
     consumer->free_of_work = false;
     consumer->usage_counter++;
@@ -314,7 +317,7 @@ void QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
                                              QuantumSlotConsumer *consumer) {
     CHAOS_ASSERT(consumer)
     QSS_INFO << boost::str(boost::format("Start removing key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
-
+    
     //prepare key
     std::string quantum_consumer_key = CHAOS_QSS_COMPOSE_QUANTUM_CONSUMER_KEY(key_to_monitor,
                                                                               quantum_multiplier,
@@ -362,11 +365,11 @@ void QuantumSlotScheduler::_addKeyConsumer(SlotConsumerInfo *ci) {
 void QuantumSlotScheduler::_removeKeyConsumer(SlotConsumerInfo *ci) {
     CHAOS_ASSERT(ci)
     DEBUG_CODE(QSS_DBG << boost::str(boost::format("Start removing key consumer [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
-
+    
     //prepare key
     std::string quantum_slot_key = CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(ci->key_to_monitor,
                                                                       ci->quantum_multiplier);
-
+    
     
     SSSlotTypeQuantumSlotKeyIndexIterator it = set_slots_index_key_slot.find(quantum_slot_key);
     if(it == set_slots_index_key_slot.end()) return;
@@ -381,4 +384,16 @@ void QuantumSlotScheduler::_removeKeyConsumer(SlotConsumerInfo *ci) {
     } else {
         DEBUG_CODE(QSS_DBG << boost::str(boost::format("The key consumer has been removed directly by the slot [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
     }
+}
+
+std::auto_ptr<CDataWrapper> QuantumSlotScheduler::getLastDataset(const std::string& dataset_key) {
+    size_t data_found_size;
+    std::auto_ptr<CDataWrapper> result;
+    boost::unique_lock<boost::mutex>  lock_on_fetch(mutex_fetch_value);
+    const char *data_found = data_driver->retriveRawData(dataset_key, &data_found_size);
+    if(data_found) {
+        result.reset(new CDataWrapper(data_found));
+        delete(data_found);
+    }
+    return result;
 }

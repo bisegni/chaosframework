@@ -260,11 +260,11 @@ namespace chaos {
         static const char * const NODE_HEALT_TIMESTAMP_LAST_METRIC      = "nh_ts_lst_metric";
         //! define the status of a node (loaded, initilized, deinitialized, started, stopped, unloaded)
         static const char * const NODE_HEALT_STATUS                     = "nh_status";
-        //!last node error code
+        //!last node error code [int32]
         static const char * const NODE_HEALT_LAST_ERROR_CODE            = "nh_lec";
-        //!last node error message
+        //!last node error message [string]
         static const char * const NODE_HEALT_LAST_ERROR_MESSAGE         = "nh_lem";
-        //!last node error domain
+        //!last node error domain [string]
         static const char * const NODE_HEALT_LAST_ERROR_DOMAIN          = "nh_led";
     }
     /** @} */ // end of NodeHealtDefinitionKey

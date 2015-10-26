@@ -108,7 +108,7 @@ namespace chaos {
                                         int quantum_multiplier,
                                         monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
                                         unsigned int consumer_priority = 500);
-
+            
             //! add a new handler for a single attribute for a healt data for a key
             bool addKeyAttributeHandlerForHealt(const std::string& key_to_monitor,
                                                 int quantum_multiplier,
@@ -146,8 +146,19 @@ namespace chaos {
                                                      int quantum_multiplier,
                                                      monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler);
             
-            std::string getDatasetKeyFromGeneralKey(const std::string& key, const unsigned int dataset_type);
-            std::string getHealtKeyFromGeneralKey(const std::string& key);
+            //! get the corresponding dataset key for a dataset type
+            /*!
+             \param node_uid, is the uniqu eid of the server
+             \param dataset_type is the type of the dataset
+             */
+            std::string getDatasetKeyFromGeneralKey(const std::string& node_uid, const unsigned int dataset_type);
+            
+            //! get the corresponding healt key for node uid
+            std::string getHealtKeyFromGeneralKey(const std::string& node_uid);
+            
+            //!get dataset ina synchornous way
+            std::auto_ptr<chaos::common::data::CDataWrapper> getLastDataset(const std::string& unique_node_id,
+                                                                            const unsigned int dataset_type);
         };
     }
 }
