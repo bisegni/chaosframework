@@ -201,7 +201,7 @@ void ChaosLabel::quantumSlotHasData(const std::string& key, const KeyValue& valu
         const QString err_num = QString::number(value->getInt32Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE));
         const QString err_str = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE));
         const QString err_dom = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN));
-        const QString error_tooltip = QString("Error Number: %s\nError Message:%s\nError Domain:%s").arg(err_num,err_str,err_dom);
+        const QString error_tooltip = QString("Error Number: %1\nError Message:%2\nError Domain:%3").arg(err_num,err_str,err_dom);
         setToolTip(error_tooltip);
     } else {
         //show status also on label
