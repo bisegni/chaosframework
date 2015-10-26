@@ -63,7 +63,7 @@ void ControlUnitEditor::initUI() {
     //for load button
     logic_switch_aggregator.addNewLogicSwitch("cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("cu_can_operate", "us_alive","online");
-    logic_switch_aggregator.addKeyRefValue("cu_can_operate", "us_state","Load");
+    logic_switch_aggregator.addKeyRefValue("cu_can_operate", "us_state",chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
 
     logic_switch_aggregator.addNewLogicSwitch("load");
     logic_switch_aggregator.connectSwitch("load", "cu_can_operate");
@@ -74,32 +74,33 @@ void ControlUnitEditor::initUI() {
     logic_switch_aggregator.addNewLogicSwitch("unload");
     logic_switch_aggregator.connectSwitch("unload", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("unload", "cu_alive","online");
-    logic_switch_aggregator.addKeyRefValue("unload", "cu_state","Load");
-    logic_switch_aggregator.addKeyRefValue("unload", "cu_state","Deinit");
+    logic_switch_aggregator.addKeyRefValue("unload", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
+    logic_switch_aggregator.addKeyRefValue("unload", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT);
+    logic_switch_aggregator.addKeyRefValue("unload", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("unload", ui->pushButtonUnload, "enabled", true, false);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("unload", ui->pushButtonInitAction, "enabled", true, false);
 
     logic_switch_aggregator.addNewLogicSwitch("start");
     logic_switch_aggregator.connectSwitch("start", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("start", "cu_alive","online");
-    logic_switch_aggregator.addKeyRefValue("start", "cu_state","Init");
-    logic_switch_aggregator.addKeyRefValue("start", "cu_state","Stop");
+    logic_switch_aggregator.addKeyRefValue("start", "cu_state",chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT);
+    logic_switch_aggregator.addKeyRefValue("start", "cu_state",chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonStartAction, "enabled", true, false);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonDeinitAction, "enabled", true, false);
 
     logic_switch_aggregator.addNewLogicSwitch("stop");
     logic_switch_aggregator.connectSwitch("stop", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("stop", "cu_alive","online");
-    logic_switch_aggregator.addKeyRefValue("stop", "cu_state","Start");
+    logic_switch_aggregator.addKeyRefValue("stop", "cu_state",chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_START);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("stop", ui->pushButtonStopAction, "enabled", true, false);
 
 
     logic_switch_aggregator.addNewLogicSwitch("update_property");
     logic_switch_aggregator.connectSwitch("update_property", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("update_property", "cu_alive","online");
-    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state","Init");
-    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state","Start");
-    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state","Stop");
+    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT);
+    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_START);
+    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("update_property", ui->pushButtonSetRunScheduleDelay, "enabled", true, false);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("update_property", ui->lineEditRunScheduleDelay, "enabled", true, false);
 

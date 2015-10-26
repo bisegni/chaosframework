@@ -656,7 +656,7 @@ namespace chaos {
             RECOVERABLE_ERROR = 4,
             //!define an error state of the node, in this case the error can't be recovered so it is equivalent to a deinit state
             FATAL_ERROR = 5,
-            //!define the status of the node cannot be retrieved 
+            //!define the status of the node cannot be retrieved
             UNDEFINED
         } ControlUnitState;
     }

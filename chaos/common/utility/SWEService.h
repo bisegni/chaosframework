@@ -76,10 +76,19 @@ namespace chaos {
                     start_stop_row,
                     stop_start_row,
                     stop_deinit_row,
+                    init_re_row,
+                    start_re_row,
+                    stop_re_row,
+                    deinit_re_row,
+                    re_init_row,
+                    re_start_row,
+                    re_stop_row,
+                    re_deinit_row,
                     init_fe_row,
                     start_fe_row,
                     stop_fe_row,
-                    deinit_fe_row> {};
+                    deinit_fe_row,
+                    fe_init_row> {};
                     
                     template <class FSM,class Event>
                     void no_transition(Event const& ,FSM&, int ) {}

@@ -579,7 +579,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
     if(getServiceState() == CUStateKey::INIT) {
         return NULL;
     }
-    if(getServiceState() != CUStateKey::DEINIT) throw CException(-1, DatasetDB::getDeviceID()+" need to be in deinit", __PRETTY_FUNCTION__);
+    //if(getServiceState() != CUStateKey::DEINIT) throw CException(-1, DatasetDB::getDeviceID()+" need to be in deinit", __PRETTY_FUNCTION__);
     if(!attribute_value_shared_cache) throw CException(-3, "No Shared cache implementation found for:"+DatasetDB::getDeviceID(), __PRETTY_FUNCTION__);
     
     try {
@@ -616,8 +616,8 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
         return NULL;
         //throw CException(-1, DatasetDB::getDeviceID()+" already started", __PRETTY_FUNCTION__);
     }
-    if(getServiceState() != CUStateKey::INIT &&
-       getServiceState() != CUStateKey::STOP) throw CException(-1, DatasetDB::getDeviceID()+" need to be in the init or stop state to be started", __PRETTY_FUNCTION__);
+    //if(getServiceState() != CUStateKey::INIT &&
+    //   getServiceState() != CUStateKey::STOP) throw CException(-1, DatasetDB::getDeviceID()+" need to be in the init or stop state to be started", __PRETTY_FUNCTION__);
     
     try {
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
@@ -650,7 +650,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
         return NULL;
         //   throw CException(-1, DatasetDB::getDeviceID()+" already stopped", __PRETTY_FUNCTION__);
     }
-    if(getServiceState() != CUStateKey::START) throw CException(-1, DatasetDB::getDeviceID()+" need to be started to be stopped", __PRETTY_FUNCTION__);
+    //if(getServiceState() != CUStateKey::START) throw CException(-1, DatasetDB::getDeviceID()+" need to be started to be stopped", __PRETTY_FUNCTION__);
     
     try {
         //set healt to start
@@ -683,8 +683,8 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
         return NULL;
         //throw CException(-1, DatasetDB::getDeviceID()+" already deinitlized", __PRETTY_FUNCTION__);
     }
-    if(getServiceState() != CUStateKey::INIT &&
-       getServiceState() != CUStateKey::STOP) throw CException(-1, DatasetDB::getDeviceID()+" need to be in the init or stop state to be initialized", __PRETTY_FUNCTION__);
+    //if(getServiceState() != CUStateKey::INIT &&
+    //   getServiceState() != CUStateKey::STOP) throw CException(-1, DatasetDB::getDeviceID()+" need to be in the init or stop state to be initialized", __PRETTY_FUNCTION__);
     
     //first we start the deinitializaiton of the implementation unit
     try {
@@ -970,7 +970,29 @@ void AbstractControlUnit::recoveredToState(int last_state) {
 //! State machine is gone into an unrecoverable error
 void AbstractControlUnit::fatalErrorFromState(int last_state, chaos::CException& ex) {
     ACULERR_ << "fatalErrorFromState with state:" << last_state;
-    //update healt tstatus to report recoverable error
+    switch(last_state) {
+        case CUStateKey::INIT:
+            //deinit
+            //CHAOS_NOT_THROW(redoInitSMCheckList(false);)
+            deinit();
+            CHAOS_NOT_THROW(redoInitRpCheckList(false);)
+            break;
+        case CUStateKey::DEINIT:
+            
+            break;
+        case CUStateKey::START:
+            //stop
+            //CHAOS_NOT_THROW(redoStartSMCheckList(false);)
+            stop();
+            CHAOS_NOT_THROW(redoStartRpCheckList(false);)
+            //deinit
+            //CHAOS_NOT_THROW(redoInitSMCheckList(false);)
+            deinit();
+            CHAOS_NOT_THROW(redoInitRpCheckList(false);)
+            break;
+        case CUStateKey::STOP:
+            break;
+    }    //update healt tstatus to report recoverable error
     HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                     NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                     NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR,
@@ -987,7 +1009,6 @@ void AbstractControlUnit::fatalErrorFromState(int last_state, chaos::CException&
                                                     NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
                                                     ex.errorDomain,
                                                     true);
-
 }
 
 void AbstractControlUnit::fillCachedValueVector(AttributeCache& attribute_cache,

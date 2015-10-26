@@ -239,7 +239,7 @@ void ControUnitInstanceEditor::onApiDone(const QString& tag,
                                  tr("Instance Save"),
                                  tr("Instance has been successfull saved"));
         //close editor
-        closeTab();
+        //closeTab();
     } else if(tag.compare("get_instance") == 0) {
         //fill gui with instance info
         fillUIFromInstanceInfo(api_result);

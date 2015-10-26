@@ -72,14 +72,9 @@ bool SWEService::initImplementation(SWEService *impl, void *initData, const stri
         SWE_LDBG  << "Initializing " << impl_name;
         if(impl->SWEService::state_machine.process_event(service_state_machine::EventType::init()) == boost::msm::back::HANDLED_TRUE) {
             impl->serviceState = impl->state_machine.current_state()[0]; //service_state_machine::InizializableServiceType::IS_INITIATED;
-            try {
-                impl->init(initData);
-            } catch (CException& ex) {
-                impl->SWEService::state_machine.process_event(service_state_machine::EventType::deinit());
-                throw ex;
-            }
+            impl->init(initData);
         } else {
-            DEBUG_CODE(LOG_AND_TROW_FORMATTED(SWE_LDBG, -3, "Service cant flow to next state and current is -> %1%" , %impl->state_machine.current_state()[0]))
+            DEBUG_CODE(LOG_AND_TROW_FORMATTED(SWE_LDBG, -3, "Service cant'be initilized because current state is -> %1%" , %impl->state_machine.current_state()[0]))
         }
         SWE_LDBG  << impl_name << "Initialized";
     } catch (CException& ex) {
@@ -101,11 +96,11 @@ bool SWEService::deinitImplementation(SWEService *impl, const string & impl_name
         if(impl->serviceState == CUStateKey::RECOVERABLE_ERROR) {LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Recoverable error state need to be recovered for %1%", %domain_string)}
         
         SWE_LDBG  << "Deinitializing " << impl_name;
-        if(impl->SWEService::state_machine.process_event(service_state_machine::EventType::init()) == boost::msm::back::HANDLED_TRUE) {
+        if(impl->SWEService::state_machine.process_event(service_state_machine::EventType::deinit()) == boost::msm::back::HANDLED_TRUE) {
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_DEINTIATED;
             impl->deinit();
         } else {
-            DEBUG_CODE(LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Service cant flow to next state and current is -> %1%" , %impl->state_machine.current_state()[0]))
+            DEBUG_CODE(LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Service cant'be deinitialized because current state is -> %1%" , %impl->state_machine.current_state()[0]))
         }
         SWE_LDBG  << impl_name << "Deinitialized";
     } catch (CException& ex) {
@@ -130,7 +125,7 @@ bool SWEService::startImplementation(SWEService *impl, const string & impl_name,
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::SWEServiceType::SS_STARTED;
             impl->start();
         }else {
-            DEBUG_CODE(LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Service cant flow to next state and current is -> %1%" , %impl->state_machine.current_state()[0]))
+            DEBUG_CODE(LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Service cant'be started because current state is -> %1%" , %impl->state_machine.current_state()[0]))
         }
         SWE_LDBG  << impl_name << " Started";
     } catch (CException& ex) {
@@ -156,7 +151,7 @@ bool SWEService::stopImplementation(SWEService *impl, const string & impl_name, 
             impl->serviceState = impl->state_machine.current_state()[0];
             impl->stop();
         }else {
-            DEBUG_CODE(LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Service cant flow to next state and current is -> %1%" , %impl->state_machine.current_state()[0]))
+            DEBUG_CODE(LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Service cant'be stopped because current state is -> %1%" , %impl->state_machine.current_state()[0]))
         }
         SWE_LDBG  << impl_name << " Stopped";
     } catch (CException& ex) {
@@ -184,35 +179,35 @@ bool SWEService::goInFatalError(SWEService *impl,  chaos::CException& ex, const 
         if(impl->SWEService::state_machine.process_event(service_state_machine::EventType::fatal_error())  == boost::msm::back::HANDLED_TRUE) {
             //keep track of current state
             impl->serviceState = impl->state_machine.current_state()[0];
-            
-            switch(impl->last_state) {
-                case CUStateKey::INIT:{
-                    CHAOS_NOT_THROW(impl->deinit();)
-                    break;
-                }
-                
-                case CUStateKey::START:{
-                    CHAOS_NOT_THROW(impl->stop();)
-                    CHAOS_NOT_THROW(impl->deinit();)
-                    break;
-                }
-                    
-                case CUStateKey::STOP:{
-                    CHAOS_NOT_THROW(impl->deinit();)
-                    break;
-                }
-                    
-                case CUStateKey::DEINIT:{
-                    break;
-                }
-                    
-                case CUStateKey::RECOVERABLE_ERROR:{
-                    CHAOS_NOT_THROW(impl->stop();)
-                    CHAOS_NOT_THROW(impl->deinit();)
-                    break;
-                }
-            }
-            
+            /*
+             switch(impl->last_state) {
+             case CUStateKey::INIT:{
+             CHAOS_NOT_THROW(impl->deinit();)
+             break;
+             }
+             
+             case CUStateKey::START:{
+             CHAOS_NOT_THROW(impl->stop();)
+             CHAOS_NOT_THROW(impl->deinit();)
+             break;
+             }
+             
+             case CUStateKey::STOP:{
+             CHAOS_NOT_THROW(impl->deinit();)
+             break;
+             }
+             
+             case CUStateKey::DEINIT:{
+             break;
+             }
+             
+             case CUStateKey::RECOVERABLE_ERROR:{
+             CHAOS_NOT_THROW(impl->stop();)
+             CHAOS_NOT_THROW(impl->deinit();)
+             break;
+             }
+             }
+             */
             //call fatal error handler
             impl->fatalErrorFromState(impl->last_state, ex);
         }else {
