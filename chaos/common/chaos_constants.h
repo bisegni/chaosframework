@@ -344,7 +344,7 @@ namespace chaos {
         static const char * const ACTION_NODE_STOP                                  = "stopNodeUnit";
         
         //! recovery a recoverable state of the node
-        static const char * const ACTION_NODE_RECOVERY                              = "recoveryNodeUnit";
+        static const char * const ACTION_NODE_RECOVER                               = "recoverNodeUnit";
         
         //! pause the run method for a determinated device
         static const char * const ACTION_NODE_RESTORE                               = "restoreNodeUnit";

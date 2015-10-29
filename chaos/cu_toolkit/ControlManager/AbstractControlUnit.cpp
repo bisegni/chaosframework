@@ -718,18 +718,11 @@ CDataWrapper* AbstractControlUnit::_recover(CDataWrapper *deinitParam,
     
     //first we start the deinitializaiton of the implementation unit
     try {
-        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
-                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINITING,
-                                                        true);
-        
-        redoInitRpCheckList();
-        
-        //set healt to deinit
-        HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
-                                                        NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                        NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT,
-                                                        true);
+        if(SWEService::recoverError(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
+            
+        } else {
+            
+        }
     } catch (CException& ex) {
         //go in falta error
         SWEService::goInFatalError(this, ex, "AbstractControlUnit", __PRETTY_FUNCTION__);

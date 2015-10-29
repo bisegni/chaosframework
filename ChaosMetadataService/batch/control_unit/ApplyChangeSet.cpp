@@ -20,7 +20,6 @@
 
 #include "ApplyChangeSet.h"
 
-
 using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::metadata_service::batch::control_unit;

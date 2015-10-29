@@ -544,6 +544,10 @@
 		32B2999C1BD92B18000D3716 /* CopyInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B2999A1BD92B18000D3716 /* CopyInstance.cpp */; };
 		32B2999D1BD92B18000D3716 /* CopyInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B2999B1BD92B18000D3716 /* CopyInstance.h */; };
 		32B299A11BDA7CAA000D3716 /* CUCommonUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B2999F1BDA7CAA000D3716 /* CUCommonUtility.cpp */; };
+		32B299A41BE25ABE000D3716 /* RecoverError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B299A21BE25ABE000D3716 /* RecoverError.cpp */; };
+		32B299A71BE26933000D3716 /* RecoverError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B299A51BE26933000D3716 /* RecoverError.cpp */; };
+		32B299AA1BE27945000D3716 /* RecoverError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B299A81BE27945000D3716 /* RecoverError.cpp */; };
+		32B299AB1BE27945000D3716 /* RecoverError.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B299A91BE27945000D3716 /* RecoverError.h */; };
 		32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */; };
 		32B4192C1B0DE55E00C3CA7D /* ChangeNodeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */; };
 		32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B4192B1B0DE55E00C3CA7D /* ChangeNodeState.h */; };
@@ -1465,6 +1469,12 @@
 		32B2999B1BD92B18000D3716 /* CopyInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyInstance.h; sourceTree = "<group>"; };
 		32B2999F1BDA7CAA000D3716 /* CUCommonUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CUCommonUtility.cpp; sourceTree = "<group>"; };
 		32B299A01BDA7CAA000D3716 /* CUCommonUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUCommonUtility.h; sourceTree = "<group>"; };
+		32B299A21BE25ABE000D3716 /* RecoverError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RecoverError.cpp; sourceTree = "<group>"; };
+		32B299A31BE25ABE000D3716 /* RecoverError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecoverError.h; sourceTree = "<group>"; };
+		32B299A51BE26933000D3716 /* RecoverError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RecoverError.cpp; sourceTree = "<group>"; };
+		32B299A61BE26933000D3716 /* RecoverError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecoverError.h; sourceTree = "<group>"; };
+		32B299A81BE27945000D3716 /* RecoverError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RecoverError.cpp; sourceTree = "<group>"; };
+		32B299A91BE27945000D3716 /* RecoverError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecoverError.h; sourceTree = "<group>"; };
 		32B3E11B1A7A3923007B7802 /* MDSBatchExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSBatchExecutor.cpp; sourceTree = "<group>"; };
 		32B3E11C1A7A3923007B7802 /* MDSBatchExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSBatchExecutor.h; sourceTree = "<group>"; };
 		32B4192A1B0DE55E00C3CA7D /* ChangeNodeState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeNodeState.cpp; sourceTree = "<group>"; };
@@ -2090,6 +2100,8 @@
 				32C7ED151B6F8E480038BD26 /* GetFullDescription.h */,
 				32B419321B16148A00C3CA7D /* SetInputDatasetAttributeValues.cpp */,
 				32B419331B16148A00C3CA7D /* SetInputDatasetAttributeValues.h */,
+				32B299A21BE25ABE000D3716 /* RecoverError.cpp */,
+				32B299A31BE25ABE000D3716 /* RecoverError.h */,
 			);
 			path = control_unit;
 			sourceTree = "<group>";
@@ -2115,6 +2127,8 @@
 				32B419361B16236300C3CA7D /* SetInputDatasetAttributeValues.h */,
 				32B2999A1BD92B18000D3716 /* CopyInstance.cpp */,
 				32B2999B1BD92B18000D3716 /* CopyInstance.h */,
+				32B299A81BE27945000D3716 /* RecoverError.cpp */,
+				32B299A91BE27945000D3716 /* RecoverError.h */,
 			);
 			path = control_unit;
 			sourceTree = "<group>";
@@ -2410,6 +2424,8 @@
 				32C067BC1AEFE5DD000B1ED9 /* IDSTControlUnitBatchCommand.h */,
 				32B419391B17715700C3CA7D /* ApplyChangeSet.cpp */,
 				32B4193A1B17715700C3CA7D /* ApplyChangeSet.h */,
+				32B299A51BE26933000D3716 /* RecoverError.cpp */,
+				32B299A61BE26933000D3716 /* RecoverError.h */,
 				3210EE1F1AE7E0FB006ADC0B /* control_unit_batch.h */,
 			);
 			path = control_unit;
@@ -4053,6 +4069,7 @@
 				327F39B01AEAA2500000C845 /* AssociationControlUnit.h in Headers */,
 				3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */,
 				32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */,
+				32B299AB1BE27945000D3716 /* RecoverError.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4340,6 +4357,7 @@
 				32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */,
 				3235FDCA1A6FF45600EC83A9 /* GetDescription.cpp in Sources */,
 				325FC8611AF7C8B200DB9D66 /* GetCurrentDataset.cpp in Sources */,
+				32B299A41BE25ABE000D3716 /* RecoverError.cpp in Sources */,
 				3235FDD91A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp in Sources */,
 				327F39A31AEA49C00000C845 /* DeleteDS.cpp in Sources */,
 				32610F931AE671A300779B84 /* InitDeinit.cpp in Sources */,
@@ -4400,6 +4418,7 @@
 				327791E21B67728300FEDD52 /* ServiceApiGroup.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
 				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
+				32B299A71BE26933000D3716 /* RecoverError.cpp in Sources */,
 				32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */,
 			);
@@ -4693,6 +4712,7 @@
 				32B1E7FD1B2B06CE00221E49 /* CommandGet.cpp in Sources */,
 				327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */,
 				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
+				32B299AA1BE27945000D3716 /* RecoverError.cpp in Sources */,
 				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				32AE8BA31B678C1500FAC528 /* ResetAll.cpp in Sources */,

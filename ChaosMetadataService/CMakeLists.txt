@@ -46,8 +46,10 @@ SET(cnd_src  ${cnd_src}	api/control_unit/SetInputDatasetAttributeValues.cpp
                         api/control_unit/DeleteInstance.cpp
                         api/control_unit/InitDeinit.cpp
                         api/control_unit/StartStop.cpp
+                        api/control_unit/CopyInstance.cpp
+                        api/control_unit/RecoverError.cpp
                         api/control_unit/GetCurrentDataset.cpp
-												api/control_unit/GetFullDescription.cpp)
+						api/control_unit/GetFullDescription.cpp)
 
 SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/NodeCreateUnitServer.cpp
@@ -67,7 +69,7 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/GetCommandAndTemplateDescription.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
-                        persistence/data_access/NodeDataAccess.cpp
+              ll          persistence/data_access/NodeDataAccess.cpp
                         persistence/data_access/UtilityDataAccess.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
                         persistence/data_access/DataServiceDataAccess.cpp)
@@ -90,7 +92,8 @@ SET(cnd_src  ${cnd_src}	batch/unit_server/UnitServerAckBatchCommand.cpp
 
 SET(cnd_src  ${cnd_src}	batch/control_unit/RegistrationAckBatchCommand.cpp
                         batch/control_unit/IDSTControlUnitBatchCommand.cpp
-                        batch/control_unit/ApplyChangeSet.cpp)
+                        batch/control_unit/ApplyChangeSet.cpp
+                        batch/control_unit/RecoverError.cpp)
 
 ADD_EXECUTABLE(ChaosMetadataService ${cnd_src})
 

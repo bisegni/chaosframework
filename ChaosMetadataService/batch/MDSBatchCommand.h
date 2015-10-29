@@ -121,6 +121,10 @@ namespace chaos{
                 void sendRequest(RequestInfo& request_info,
                                  chaos::common::data::CDataWrapper *message) throw (chaos::CException);
                 
+                //! send a message toa remote rpc action
+                void sendMessage(RequestInfo& request_info,
+                                 chaos::common::data::CDataWrapper *message) throw (chaos::CException);
+                
                 void manageRequestPhase(RequestInfo& request_info) throw (chaos::CException);
                 
                 template<typename T>

@@ -28,6 +28,7 @@
 #include "GetFullDescription.h"
 #include "SetInputDatasetAttributeValues.h"
 #include "CopyInstance.h"
+#include "RecoverError.h"
 
 using namespace chaos::metadata_service::api::control_unit;
 DEFINE_CLASS_FACTORY_NO_ALIAS(ControlUnitGroup, chaos::metadata_service::api::AbstractApiGroup);
@@ -45,6 +46,7 @@ AbstractApiGroup("control_unit"){
     addApi<GetFullDescription>();
     addApi<SetInputDatasetAttributeValues>();
     addApi<CopyInstance>();
+    addApi<RecoverError>();
 }
 
 ControlUnitGroup::~ControlUnitGroup() {
