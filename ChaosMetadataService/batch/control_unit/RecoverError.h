@@ -23,6 +23,8 @@
 
 #include "../mds_service_batch.h"
 
+#include <boost/shared_ptr.hpp>
+
 namespace chaos {
     namespace metadata_service{
         namespace batch {
@@ -35,7 +37,7 @@ namespace chaos {
                     uint32_t retry_number;
                     
                     //array that contain all requests
-                    std::vector<std::auto_ptr<RequestInfo> > requests;
+                    std::vector< boost::shared_ptr<RequestInfo> > requests;
                     
                     std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> cu_ids;
                 public:

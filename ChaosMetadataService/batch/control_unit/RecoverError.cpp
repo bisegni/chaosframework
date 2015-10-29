@@ -69,9 +69,10 @@ void RecoverError::setHandler(CDataWrapper *data) {
             } else {
                 std::auto_ptr<CDataWrapper> cu_desc(tmp_pointer);
                 //set the phase to send message
-                requests.push_back(createRequest(cu_desc->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
-                                                 cu_desc->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN),
-                                                 chaos::NodeDomainAndActionRPC::ACTION_NODE_RECOVER));
+                
+                requests.push_back(boost::shared_ptr<RequestInfo>(createRequest(cu_desc->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
+                                                                                cu_desc->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN),
+                                                                                chaos::NodeDomainAndActionRPC::ACTION_NODE_RECOVER).release()));
   
             }
         }
@@ -87,7 +88,7 @@ void RecoverError::acquireHandler() {
 void RecoverError::ccHandler() {
     MDSBatchCommand::ccHandler();
     
-    for(std::vector< std::auto_ptr<RequestInfo> >::iterator it = requests.begin();
+    for(std::vector< boost::shared_ptr<RequestInfo> >::iterator it = requests.begin();
         it != requests.end();
         it++ ) {
         //send message without waiting for replay

@@ -269,7 +269,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_recover,
-                                                     NodeDomainAndActionRPC::ACTION_NODE_RECOVERY,
+                                                     NodeDomainAndActionRPC::ACTION_NODE_RECOVER,
                                                      "Recovery a recoverable state, going to the last state");
     
     addActionDescritionInstance<AbstractControlUnit>(this,
