@@ -231,12 +231,12 @@ if [ ! -f $PREFIX/include/json/json.h ]; then
     git checkout pre-clang
     make clean
     rm CMakeCache.txt
-    if [ -n "$CHAOS_STATIC" ]; then
-	CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF
-    else
-	CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DJSONCPP_LIB_BUILD_SHARED=ON
-    fi
-    
+    # if [ -n "$CHAOS_STATIC" ]; then
+    # 	CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF
+    # else
+    # 	CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DJSONCPP_LIB_BUILD_SHARED=ON
+    # fi
+    CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF
     do_make "jsoncpp" 1
 fi
 
@@ -257,12 +257,13 @@ if [ ! -f $PREFIX/include/mongoose.h ]; then
     fi
     rm CMakeCache.txt
     make clean
+    CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
 # -DHAS_JSONCPP=ON
-   if [ -n "$CHAOS_STATIC" ]; then
-       CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
-   else
-       CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DSHAREDLIB=ON -DHAS_JSONCPP=ON -DJSONCPP_DIR=$PREFIX
-   fi
+   # if [ -n "$CHAOS_STATIC" ]; then
+   #     CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
+   # else
+   #     CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DSHAREDLIB=ON -DHAS_JSONCPP=ON -DJSONCPP_DIR=$PREFIX
+   # fi
 
 	do_make "mongoose-cpp" 1
 fi
@@ -347,12 +348,12 @@ if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; the
     fi
 
     ./autogen.sh
-    if [ -n "$CHAOS_STATIC" ]; then
-	./configure --enable-static --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-    else
-	./configure --enable-shared --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-    fi
-
+    # if [ -n "$CHAOS_STATIC" ]; then
+    # 	./configure --enable-static --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+    # else
+    # 	./configure --enable-shared --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+    # fi
+    ./configure --enable-static --prefix=$PREFIX $CROSS_HOST_CONFIGURE
     do_make "MODBUS" 1
 
     echo "libmodbus done"
@@ -413,11 +414,12 @@ if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
     git checkout -b good_for_chaos $COUCHBASE_VERSION
     fi
     cd $BASE_EXTERNAL/libcouchbase
-    if [ -n "$CHAOS_STATIC" ]; then
-	cmake $CHAOS_CMAKE_FLAGS -DLCB_BUILD_STATIC=true -DLCB_NO_SSL=true .
-    else
-	cmake $CHAOS_CMAKE_FLAGS .
-    fi
+    cmake $CHAOS_CMAKE_FLAGS -DLCB_BUILD_STATIC=true -DLCB_NO_SSL=true .
+    # if [ -n "$CHAOS_STATIC" ]; then
+    # 	cmake $CHAOS_CMAKE_FLAGS -DLCB_BUILD_STATIC=true -DLCB_NO_SSL=true .
+    # else
+    # 	cmake $CHAOS_CMAKE_FLAGS .
+    # fi
     do_make "COUCHBASE" 1
     echo "Couchbase done"
 fi
