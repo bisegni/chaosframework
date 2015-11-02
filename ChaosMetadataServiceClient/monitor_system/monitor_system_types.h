@@ -53,7 +53,7 @@ namespace chaos {
                 boost::atomic<unsigned int> usage_counter;
                 //!relase any lock on conditional interal variable
                 void setFreeOfWork() {
-                    boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_free);
+                    boost::mutex::scoped_lock lock_on_condition(mutex_condition_free);
                     free_of_work = true;
                     condition_free.notify_one();
                 }
@@ -69,7 +69,7 @@ namespace chaos {
                 virtual void quantumSlotHasNoData(const std::string& key) = 0;
                 //! waith on conditional interval variable that is fired when the consumer can be released
                 void waitForCompletition() {
-                    boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_free);
+                    boost::mutex::scoped_lock lock_on_condition(mutex_condition_free);
                     while(!free_of_work) {
                         condition_free.wait(lock_on_condition);
                     }

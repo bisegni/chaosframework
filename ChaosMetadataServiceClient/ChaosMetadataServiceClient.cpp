@@ -307,9 +307,9 @@ bool ChaosMetadataServiceClient::removeKeyConsumer(const std::string& key_to_mon
                                                    int quantum_multiplier,
                                                    monitor_system::QuantumSlotConsumer *consumer) {
     CHAOS_ASSERT(monitor_manager.get());
-    monitor_manager->addKeyConsumer(key_to_monitor,
-                                    quantum_multiplier,
-                                    consumer);
+    monitor_manager->removeKeyConsumer(key_to_monitor,
+                                       quantum_multiplier,
+                                       consumer);
     return true;
 }
 

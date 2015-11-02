@@ -88,7 +88,8 @@ namespace chaos{
                 INIT_RPC_PHASE_CALL_UNIT_DEFINE_ATTRIBUTE,
                 INIT_RPC_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR,
                 INIT_RPC_PHASE_CALL_UNIT_INIT,
-                INIT_RPC_PHASE_UPDATE_CONFIGURATION
+                INIT_RPC_PHASE_UPDATE_CONFIGURATION,
+                INIT_RPC_PHASE_PUSH_DATASET
             }InitRPCPhase;
             
             typedef enum {
@@ -103,8 +104,7 @@ namespace chaos{
             }StartRPCPhase;
             
             typedef enum {
-                START_SM_PHASE_PUSH_DATASET = 0,
-                START_SM_PHASE_STAT_TIMER
+                START_SM_PHASE_STAT_TIMER = 0
             }StartSMPhase;
             
             //!  Base class for control unit !CHAOS node

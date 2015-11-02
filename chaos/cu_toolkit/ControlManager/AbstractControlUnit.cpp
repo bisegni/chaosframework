@@ -137,6 +137,7 @@ key_data_storage(NULL){
 }
 
 void AbstractControlUnit::_initChecklist() {
+    //init checklists
     check_list_sub_service.addCheckList("_init");
     check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_CALL_INIT_STATE);
     check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_INIT_SHARED_CACHE);
@@ -147,6 +148,7 @@ void AbstractControlUnit::_initChecklist() {
     check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_CREATE_FAST_ACCESS_CASCHE_VECTOR);
     check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_CALL_UNIT_INIT);
     check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_UPDATE_CONFIGURATION);
+    check_list_sub_service.getSharedCheckList("_init")->addElement(INIT_RPC_PHASE_PUSH_DATASET);
     
     check_list_sub_service.addCheckList("init");
     check_list_sub_service.getSharedCheckList("init")->addElement(INIT_SM_PHASE_INIT_DB);
@@ -158,7 +160,6 @@ void AbstractControlUnit::_initChecklist() {
     check_list_sub_service.getSharedCheckList("_start")->addElement(START_RPC_PHASE_UNIT);
     
     check_list_sub_service.addCheckList("start");
-    check_list_sub_service.getSharedCheckList("start")->addElement(START_SM_PHASE_PUSH_DATASET);
     check_list_sub_service.getSharedCheckList("start")->addElement(START_SM_PHASE_STAT_TIMER);
 }
 /*!
@@ -397,6 +398,21 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             key_data_storage->updateConfiguration(init_configuration.get());
             break;
         }
+        CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_PUSH_DATASET){
+            //init on shared cache the all the dataaset with the default value
+            //set first timestamp for simulate the run step
+            *timestamp_acq_cached_value->getValuePtr<uint64_t>() = TimingUtil::getTimeStamp();
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT).markAllAsChanged();
+            pushOutputDataset();
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT).markAllAsChanged();
+            pushInputDataset();
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM).markAllAsChanged();
+            pushCustomDataset();
+            attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
+            pushSystemDataset();
+            break;
+        }
+
     }
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_init")
 }
@@ -442,21 +458,6 @@ void AbstractControlUnit::doStartRpCheckList() throw(CException) {
 
 void AbstractControlUnit::doStartSMCheckList() throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "start"){
-        CHAOS_CHECK_LIST_DONE(check_list_sub_service, "start", START_SM_PHASE_PUSH_DATASET){
-            //init on shared cache the all the dataaset with the default value
-            //set first timestamp for simulate the run step
-            *timestamp_acq_cached_value->getValuePtr<uint64_t>() = TimingUtil::getTimeStamp();
-            attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT).markAllAsChanged();
-            pushOutputDataset();
-            attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT).markAllAsChanged();
-            pushInputDataset();
-            attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM).markAllAsChanged();
-            pushCustomDataset();
-            attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
-            pushSystemDataset();
-            break;
-        }
-        
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "start", START_SM_PHASE_STAT_TIMER){
             //register timer for push statistic
             chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 5000, 5000);
@@ -515,6 +516,9 @@ void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) throw(CExcep
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_UPDATE_CONFIGURATION) {
             break;
         }
+        CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_PUSH_DATASET){
+            break;
+        }
     }
     CHAOS_CHECK_LIST_END_SCAN_DONE(check_list_sub_service, "_init")
 }
@@ -556,10 +560,6 @@ void AbstractControlUnit::redoStartRpCheckList(bool throw_exception) throw(CExce
 
 void AbstractControlUnit::redoStartSMCheckList(bool throw_exception) throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "start"){
-        CHAOS_CHECK_LIST_REDO(check_list_sub_service, "start", START_SM_PHASE_PUSH_DATASET){
-            break;
-        }
-        
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "start", START_SM_PHASE_STAT_TIMER){
             //remove timer for push statistic
             CHEK_IF_NEED_TO_THROW(throw_exception, chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);)
@@ -906,16 +906,18 @@ void AbstractControlUnit::recoverableErrorFromState(int last_state, chaos::CExce
                                                     false);
     HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                     NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
-                                                    0,
+                                                    ex.errorCode,
                                                     false);
     HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                     NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
-                                                    "",
+                                                    ex.errorMessage,
                                                     false);
     HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                     NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
-                                                    "",
+                                                    ex.errorDomain,
                                                     true);
+    //we stop the run action
+    redoStartSMCheckList();
 }
 
 //! State machine is gone into recoverable error
@@ -952,6 +954,8 @@ bool AbstractControlUnit::beforeRecoverErrorFromState(int last_state) {
                                                     NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
                                                     "",
                                                     true);
+    //restart the cotnrol unit
+    doStartSMCheckList();
     return true;
 }
 

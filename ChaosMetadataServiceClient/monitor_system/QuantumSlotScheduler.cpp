@@ -101,18 +101,18 @@ void QuantumSlotScheduler::deinit() throw (chaos::CException) {
     QSS_INFO<< "Clean unmanaged slot consumer add and remove request";
     SlotConsumerInfo *ci = NULL;
     while(queue_new_quantum_slot_consumer.pop(ci)){
-        if(!ci) continue;
+        std::auto_ptr<SlotConsumerInfo> auto_ci(ci);
         try {
             if(ci->operation) {
                 //we need to add it
                 QSS_INFO << boost::str(boost::format("The key consumer [%1%-%2%-%3%] can't be added we are stopping all")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);
             } else {
-                _removeKeyConsumer(ci);
+                _removeKeyConsumer(auto_ci.get());
             }
         } catch(...){
             
         }
-        delete(ci);
+        //delete(ci);
     }
 }
 
@@ -200,16 +200,17 @@ bool QuantumSlotScheduler::_checkRemoveAndAddNewConsumer() {
     //! try to get new one
     if(!(something_has_been_processed = queue_new_quantum_slot_consumer.pop(new_consumer_info))) return something_has_been_processed;
     try {
-        if(new_consumer_info->operation) {
+        std::auto_ptr<SlotConsumerInfo> auto_ci(new_consumer_info);
+        if(auto_ci->operation) {
             //we need to add it
-            _addKeyConsumer(new_consumer_info);
+            _addKeyConsumer(auto_ci.get());
         } else {
-            _removeKeyConsumer(new_consumer_info);
+            _removeKeyConsumer(auto_ci.get());
         }
     } catch(...){
         
     }
-    delete(new_consumer_info);
+    //delete(new_consumer_info);
     return something_has_been_processed;
 }
 
@@ -297,11 +298,13 @@ void QuantumSlotScheduler::addKeyConsumer(const std::string& key_to_monitor,
         QSS_ERR << boost::str(boost::format("Key consumer alredy registere [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
         return;
     }
-    QSS_INFO << boost::str(boost::format("Add new key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
     
     //increment the index to indicate that has passed scheduler publi layer
     consumer->free_of_work = false;
     consumer->usage_counter++;
+    
+    QSS_INFO << boost::str(boost::format("Add new key consumer [%1%-%2%-%3%(%4%)]")%key_to_monitor%quantum_multiplier%consumer%consumer->usage_counter);
+
     
     //push into lock free queue for add the consumer
     queue_new_quantum_slot_consumer.push(new SlotConsumerInfo(true,
@@ -332,7 +335,7 @@ void QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
                                                               quantum_multiplier,
                                                               consumer,
                                                               0));
-    
+    QSS_INFO << boost::str(boost::format("Wait for remove of key consumer [%1%-%2%-%3%(%4%)]")%key_to_monitor%quantum_multiplier%consumer%consumer->usage_counter);
     //waith for completiotion on consumer
     consumer->waitForCompletition();
     QSS_INFO << boost::str(boost::format("Cleanly removed key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);

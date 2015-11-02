@@ -74,7 +74,8 @@ unsigned int ChaosLabel::timeoutForAlive() {
 }
 
 void ChaosLabel::setTrackStatus(bool track_status) {
-    if(p_track_status == track_status) return;
+    //do nothing if monitor is activated or the state is the same
+    if(monitoring || p_track_status == track_status) return;
     p_track_status = track_status;
 }
 
@@ -101,29 +102,20 @@ int ChaosLabel::startMonitoring() {
                                                                       this)) {
             return -2;
         }
-        //        if(!ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(nodeUniqueID().toStdString(),
-        //                                                                                      20,
-        //                                                                                      &healt_heartbeat_handler)) {
-        //            return -3;
-        //        }
     }
-    
     return 0;
 }
 
 int ChaosLabel::stopMonitoring() {
     if(!monitoring) return -1;
     monitoring = false;
-    if(!ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(ChaosMetadataServiceClient::getInstance()->getHealtKeyFromGeneralKey(nodeUniqueID().toStdString()),
-                                                                     20,
-                                                                     this)) {
-        return -2;
+    if(trackStatus()) {
+        if(!ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(ChaosMetadataServiceClient::getInstance()->getHealtKeyFromGeneralKey(nodeUniqueID().toStdString()),
+                                                                         20,
+                                                                         this)) {
+            return -2;
+        }
     }
-    //    if(!ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
-    //                                                                                     20,
-    //                                                                                     &healt_status_handler)) {
-    //        return -3;
-    //    }
     return 0;
 }
 

@@ -268,10 +268,12 @@ void RTAbstractControlUnit::executeOnThread() {
         } catch(CException& ex) {
             //go in recoverable error
             boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, this, ex)).detach();
+            boost::this_thread::sleep_for(boost::chrono::seconds(2));
         }  catch(...) {
             CException ex(-1, "undefined error", __PRETTY_FUNCTION__);
             //go in recoverable error
             boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, this, ex)).detach();
+            boost::this_thread::sleep_for(boost::chrono::seconds(2));
         }
 		
 		// check if the output dataset need to be pushed
