@@ -98,7 +98,7 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,1,0,0,1">
+      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,1,0,0,0,1">
        <property name="leftMargin">
         <number>2</number>
        </property>
@@ -114,25 +114,7 @@
        <property name="spacing">
         <number>4</number>
        </property>
-       <item row="0" column="4">
-        <widget class="QLabel" name="label_6">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>US Status:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="5">
+       <item row="0" column="7">
         <widget class="ChaosLabel" name="labelUnitServerStatus">
          <property name="font">
           <font>
@@ -178,7 +160,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item row="0" column="3">
         <widget class="ChaosLabel" name="labelControlUnitStatus">
          <property name="font">
           <font>
@@ -193,7 +175,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
+       <item row="0" column="5">
         <widget class="CLedIndicatorHealt" name="ledIndicatorHealtTSUnitServer" native="true">
          <property name="minimumSize">
           <size>
@@ -209,6 +191,45 @@
          </property>
          <property name="statusTip">
           <string>The healt status of the unit server that host the control unit</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <widget class="QLabel" name="label_6">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>US Status:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="pushButtonRecoverError">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Restore a previous state that generate the recoverable error</string>
+         </property>
+         <property name="statusTip">
+          <string>Restore a previous state that generate the recoverable error</string>
+         </property>
+         <property name="text">
+          <string>Recover</string>
          </property>
         </widget>
        </item>

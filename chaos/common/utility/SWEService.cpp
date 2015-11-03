@@ -235,7 +235,7 @@ bool SWEService::goInRecoverableError(SWEService *impl, chaos::CException& ex, c
         }
         
         DEBUG_CODE(SWE_LDBG  << "Going into recoverable state for " << impl_name;)
-        if(impl->SWEService::state_machine.process_event(service_state_machine::EventType::fatal_error())  == boost::msm::back::HANDLED_TRUE) {
+        if(impl->SWEService::state_machine.process_event(service_state_machine::EventType::recoverable_error())  == boost::msm::back::HANDLED_TRUE) {
             impl->serviceState = impl->state_machine.current_state()[0];
             impl->recoverableErrorFromState(impl->last_state, ex);
         }else {
@@ -258,39 +258,39 @@ bool SWEService::recoverError(SWEService *impl, const std::string & impl_name,  
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domain_string);
         DEBUG_CODE(SWE_LDBG  << "Try to recover error " << impl_name;)
-        if(impl->SWEService::state_machine.process_event(service_state_machine::EventType::fatal_error())  == boost::msm::back::HANDLED_TRUE) {
-            impl->serviceState = impl->state_machine.current_state()[0];
-            //call handler for infor the we are going to the last state
-            if(impl->beforeRecoverErrorFromState(impl->last_state)) {
-                //we can go to the last error
-                switch (impl->last_state) {
-                    case CUStateKey::INIT : {
-                        impl->init(NULL);
-                        break;
-                    }
-                        
-                        
-                    case CUStateKey::START:{
-                        impl->start();
-                        break;
-                    }
-                        
-                    case CUStateKey::STOP:{
-                        change_state_result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::stop())  == boost::msm::back::HANDLED_TRUE);
-                        break;
-                    }
-                    default:
-                        break;
+        impl->serviceState = impl->state_machine.current_state()[0];
+        //call handler for infor the we are going to the last state
+        if(impl->beforeRecoverErrorFromState(impl->last_state)) {
+            //we can go to the last error
+            switch (impl->last_state) {
+                case CUStateKey::INIT : {
+                    change_state_result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::init())  == boost::msm::back::HANDLED_TRUE);
+                    break;
                 }
-                
-                impl->recoveredToState(impl->last_state);
+                    
+                case CUStateKey::START:{
+                    change_state_result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::start())  == boost::msm::back::HANDLED_TRUE);
+                    break;
+                }
+                    
+                case CUStateKey::STOP:{
+                    change_state_result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::stop())  == boost::msm::back::HANDLED_TRUE);
+                    break;
+                }
+                    
+                case CUStateKey::DEINIT:{
+                    change_state_result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::deinit())  == boost::msm::back::HANDLED_TRUE);
+                    break;
+                }
+                default:
+                    break;
             }
+            impl->recoveredToState(impl->last_state);
             
             impl->last_state = -1;
-        }else {
-            DEBUG_CODE(LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Service cant flow to next state and current is -> %1%" , %impl->state_machine.current_state()[0]))
+        } else {
+            DEBUG_CODE(SWE_LDBG  << impl_name << " recover aborted by implementation";)
         }
-        DEBUG_CODE(SWE_LDBG  << impl_name << " error has been recovered";)
     } catch (CException& ex) {
         SWE_LAPP  << "Error recovering error for " << impl_name << " with "<< ex.what();
     } catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){

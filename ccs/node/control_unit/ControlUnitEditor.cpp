@@ -18,6 +18,7 @@ static const QString TAG_CU_APPLY_CHANGESET = QString("g_cu_apply_changeset");
 static const QString TAG_CU_SEARCH_TEMPLATE = QString("g_cu_search_template");
 static const QString TAG_CU_DELETE_TEMPLATE = QString("g_cu_delete_template");
 static const QString TAG_CU_SET_THREAD_SCHEDULE_DELAY = QString("g_cu_thrd_sch_del");
+static const QString TAG_CU_RECOVER_ERROR = QString("g_cu_rec_err");
 
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
@@ -52,6 +53,7 @@ ControlUnitEditor::~ControlUnitEditor() {
 }
 
 void ControlUnitEditor::initUI() {
+    ui->pushButtonRecoverError->setVisible(false);
     //add model to table
     ui->tableViewOutputChannel->setModel(&dataset_output_table_model);
     ui->tableViewOutputChannel->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -94,7 +96,6 @@ void ControlUnitEditor::initUI() {
     logic_switch_aggregator.addKeyRefValue("stop", "cu_state",chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_START);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("stop", ui->pushButtonStopAction, "enabled", true, false);
 
-
     logic_switch_aggregator.addNewLogicSwitch("update_property");
     logic_switch_aggregator.connectSwitch("update_property", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("update_property", "cu_alive","online");
@@ -103,6 +104,13 @@ void ControlUnitEditor::initUI() {
     logic_switch_aggregator.addKeyRefValue("update_property", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("update_property", ui->pushButtonSetRunScheduleDelay, "enabled", true, false);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("update_property", ui->lineEditRunScheduleDelay, "enabled", true, false);
+
+    logic_switch_aggregator.addNewLogicSwitch("recover_error");
+    logic_switch_aggregator.connectSwitch("recover_error", "cu_can_operate");
+    logic_switch_aggregator.addKeyRefValue("recover_error", "cu_alive","online");
+    logic_switch_aggregator.addKeyRefValue("recover_error", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR);
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("recover_error", ui->pushButtonRecoverError, "enabled", true, false);
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("recover_error", ui->pushButtonRecoverError, "visible", true, false);
 
     //set the status on not_found for either the control unit and unit serve
     logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(0));
@@ -545,4 +553,12 @@ void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
 void ControlUnitEditor::on_pushButton_clicked() {
     NodeAttributePlotting *plot_viewer = new NodeAttributePlotting(control_unit_unique_id, NULL);
     plot_viewer->show();
+}
+
+void ControlUnitEditor::on_pushButtonRecoverError_clicked() {
+    //recover error api call
+    std::vector<std::string> uids;
+    uids.push_back(control_unit_unique_id.toStdString())            ;
+    submitApiResult(TAG_CU_RECOVER_ERROR,
+                    GET_CHAOS_API_PTR(control_unit::RecoverError)->execute(uids));
 }

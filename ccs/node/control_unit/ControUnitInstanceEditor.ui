@@ -249,16 +249,47 @@
            <number>2</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="checkBoxAutoLoad">
-            <property name="font">
-             <font>
-              <pointsize>11</pointsize>
-             </font>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="text">
-             <string>autoload</string>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="checkBoxAutoLoad">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Auto Load</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBoxAutoInit">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Auto Init</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="checkBoxAutoStart">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Auto Start</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">

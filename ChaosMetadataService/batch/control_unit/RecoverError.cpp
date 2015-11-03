@@ -30,7 +30,6 @@ using namespace chaos::metadata_service::batch::control_unit;
 
 DEFINE_MDS_COMAMND_ALIAS(RecoverError)
 
-
 RecoverError::RecoverError():
 MDSBatchCommand(),
 retry_number(0) {
@@ -47,7 +46,7 @@ void RecoverError::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
     CHECK_CDW_THROW_AND_LOG(data, CU_RE_BC_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID , CU_RE_BC_ERR, -2, "The ndk_uid key is mandatory")
-    if(data->isVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) throw CException(-3, "ndk_uid key need to be a vectoro of string", __PRETTY_FUNCTION__);
+    if(!data->isVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) throw CException(-3, "ndk_uid key need to be a vectoro of string", __PRETTY_FUNCTION__);
     
     std::string uid;
     int         err         = 0;
@@ -93,6 +92,7 @@ void RecoverError::ccHandler() {
         //send message without waiting for replay
         sendMessage(*(*it), NULL);
     }
+    BC_END_RUNNIG_PROPERTY
 }
 
 // inherited method

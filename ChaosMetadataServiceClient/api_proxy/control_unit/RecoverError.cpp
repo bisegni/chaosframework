@@ -40,9 +40,8 @@ ApiProxyResult RecoverError::execute(const std::vector<std::string>& cu_uids) {
         it != cu_uids.end();
         it++){
         message->appendStringToArray(*it);
-
     }
-    
+    message->finalizeArrayForKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     //call api
     return callApi(message.release());
 }

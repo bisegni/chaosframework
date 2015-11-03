@@ -114,6 +114,7 @@ AbstractSharedDomainCache *RTAbstractControlUnit::_getAttributeCache() {
 void RTAbstractControlUnit::init(void *initData) throw(CException) {
 	//call parent impl
 	AbstractControlUnit::init(initData);
+    
 	scheduler_run = false;
 	last_hearbeat_time = 0;
 	//RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
@@ -127,7 +128,6 @@ void RTAbstractControlUnit::init(void *initData) throw(CException) {
  Starto the  Control Unit scheduling for device
  */
 void RTAbstractControlUnit::start() throw(CException) {
-    _updateRunScheduleDelay(schedule_dalay);
 	//call parent impl
 	AbstractControlUnit::start();
 	
@@ -145,13 +145,12 @@ void RTAbstractControlUnit::start() throw(CException) {
  Stop the Custom Control Unit scheduling for device
  */
 void RTAbstractControlUnit::stop() throw(CException) {
-	//call parent impl
-	AbstractControlUnit::stop();
-	
 	//manage the thread
 	RTCULAPP_ << "Stopping thread for device:" << DatasetDB::getDeviceID();
 	threadStartStopManagment(false);
 	RTCULAPP_ << "Thread for device stopped:" << DatasetDB::getDeviceID();
+    //call parent impl
+    AbstractControlUnit::stop();
 }
 
 /*!
@@ -244,6 +243,9 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* update_pa
             _updateRunScheduleDelay(schedule_dalay);
             pushSystemDataset();
         }
+    } else {
+        //if we have no entries for scheduler try to setup it with default value
+        _updateRunScheduleDelay(schedule_dalay);
     }
 	return result;
 }

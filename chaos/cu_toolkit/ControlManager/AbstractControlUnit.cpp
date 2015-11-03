@@ -394,8 +394,10 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             break;
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_UPDATE_CONFIGURATION){
+            bool detach_fake = false;
+
             //call update param function
-            key_data_storage->updateConfiguration(init_configuration.get());
+            updateConfiguration(init_configuration.get(), detach_fake);
             break;
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_PUSH_DATASET){
@@ -917,7 +919,7 @@ void AbstractControlUnit::recoverableErrorFromState(int last_state, chaos::CExce
                                                     ex.errorDomain,
                                                     true);
     //we stop the run action
-    redoStartSMCheckList();
+    CHAOS_NOT_THROW(stop();)
 }
 
 //! State machine is gone into recoverable error
@@ -955,7 +957,7 @@ bool AbstractControlUnit::beforeRecoverErrorFromState(int last_state) {
                                                     "",
                                                     true);
     //restart the cotnrol unit
-    doStartSMCheckList();
+    CHAOS_NOT_THROW(start();)
     return true;
 }
 
@@ -1141,6 +1143,8 @@ void AbstractControlUnit::_updateAcquistionTimestamp(uint64_t alternative_ts) {
 }
 
 void AbstractControlUnit::_updateRunScheduleDelay(uint64_t new_scehdule_delay) {
+    if(*thread_schedule_daly_cached_value->getValuePtr<uint64_t>() == new_scehdule_delay) return;
+    //we need to update the value
     *thread_schedule_daly_cached_value->getValuePtr<uint64_t>() = new_scehdule_delay;
     thread_schedule_daly_cached_value->markAsChanged();
 }
