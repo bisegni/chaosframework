@@ -119,31 +119,28 @@ int ChaosLabel::stopMonitoring() {
     return 0;
 }
 
+void ChaosLabel::_updateStatusColor() {
+    bool offline = (zero_diff_count > 3) || (last_recevied_ts = 0);
+    if(!offline) {
+        if(last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
+             last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
+            setStyleSheet("QLabel { color : #FF7C00; }");
+        }else{
+            setStyleSheet("QLabel { color : #4EB66B; }");
+        }
+    } else {
+        if(last_recevied_ts == 0) {
+            setStyleSheet("QLabel { color : gray; }");
+        } else {
+            setStyleSheet("QLabel { color : #E65566; }");
+        }
+    }
+}
+
 void ChaosLabel::valueUpdated(const QString& _node_uid,
                               const QString& _attribute_name,
                               const QVariant& _attribute_value) {
-    if(_attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0) {
-        uint64_t received_ts = _attribute_value.toLongLong();
-        uint64_t time_diff = last_recevied_ts - received_ts;
-        if(time_diff > 0) {
-            setStyleSheet("QLabel { color : #4EB66B; }");
-            zero_diff_count = 0;
-        } else {
-            if(++zero_diff_count > 3) {
-                //timeouted
-                setStyleSheet("QLabel { color : #E65566; }");
-            } else {
-                //in this case we do nothing perhaps we can to fast to check
-            }
-        }
-        last_recevied_ts = received_ts;
-    } else if(_attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
-        //write the value
-        setToolTip(_attribute_value.toString());
-        if(labelValueShowTrackStatus()) {
-            setText(_attribute_value.toString());
-        }
-    } else if(_attribute_name.compare(attributeName()) == 0) {
+    if(_attribute_name.compare(attributeName()) == 0) {
         //we have a value given by an handler that doesn't expose the timestamp
         setText(_attribute_value.toString());
     }
@@ -151,10 +148,6 @@ void ChaosLabel::valueUpdated(const QString& _node_uid,
 
 void ChaosLabel::valueNotFound(const QString& _node_uid,
                                const QString& _attribute_name) {
-    if(_attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0) {
-        last_recevied_ts = zero_diff_count = 0;
-        setStyleSheet("QLabel { color : gray; }");
-    }
 }
 
 void ChaosLabel::valueUpdated(const QString& _node_uid,
@@ -171,24 +164,23 @@ void ChaosLabel::valueUpdated(const QString& _node_uid,
 void ChaosLabel::quantumSlotHasData(const std::string& key, const KeyValue& value) {
     uint64_t received_ts = value->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP);
     uint64_t time_diff = last_recevied_ts - received_ts;
-    QString status = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
+    last_status = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
     
     if(time_diff > 0) {
-        setStyleSheet("QLabel { color : #4EB66B; }");
+        //setStyleSheet("QLabel { color : #4EB66B; }");
         zero_diff_count = 0;
     } else {
         if(++zero_diff_count > 3) {
             //timeouted
-            setStyleSheet("QLabel { color : #E65566; }");
+            //setStyleSheet("QLabel { color : #E65566; }");
         } else {
             //in this case we do nothing perhaps we can to fast to check
         }
     }
-    last_recevied_ts = received_ts;
-    
+
     //write the value
-    if(status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
-            status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
+    if(last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
+            last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
         //we need to show error
         const QString err_num = QString::number(value->getInt32Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE));
         const QString err_str = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE));
@@ -197,17 +189,22 @@ void ChaosLabel::quantumSlotHasData(const std::string& key, const KeyValue& valu
         setToolTip(error_tooltip);
     } else {
         //show status also on label
-        setToolTip(status);
+        setToolTip(last_status);
     }
     
     if(labelValueShowTrackStatus()) {
-        setText(status);
+        setText(last_status);
     }
+
+    //update color
+    _updateStatusColor();
+    last_recevied_ts = received_ts;
 }
 
 void ChaosLabel::quantumSlotHasNoData(const std::string& key) {
     last_recevied_ts = zero_diff_count = 0;
-    setStyleSheet("QLabel { color : gray; }");
+    //setStyleSheet("QLabel { color : gray; }");
+    _updateStatusColor();
 }
 
 //slots hiding

@@ -258,7 +258,6 @@ bool SWEService::recoverError(SWEService *impl, const std::string & impl_name,  
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domain_string);
         DEBUG_CODE(SWE_LDBG  << "Try to recover error " << impl_name;)
-        impl->serviceState = impl->state_machine.current_state()[0];
         //call handler for infor the we are going to the last state
         if(impl->beforeRecoverErrorFromState(impl->last_state)) {
             //we can go to the last error
@@ -285,6 +284,9 @@ bool SWEService::recoverError(SWEService *impl, const std::string & impl_name,  
                 default:
                     break;
             }
+            
+            impl->serviceState = impl->state_machine.current_state()[0];
+            
             impl->recoveredToState(impl->last_state);
             
             impl->last_state = -1;

@@ -36,6 +36,8 @@ class ChaosLabel:
     Q_PROPERTY(bool label_value_show_track_status READ labelValueShowTrackStatus WRITE setLabelValueShowTrackStatus)
 
     QVariant current_value;
+    QString  last_status;
+    void _updateStatusColor();
 public:
     ChaosLabel(QWidget * parent = 0, Qt::WindowFlags f = 0);
     ~ChaosLabel();
