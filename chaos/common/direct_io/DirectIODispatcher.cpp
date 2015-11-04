@@ -45,7 +45,8 @@ DirectIODispatcher::DirectIODispatcher():available_endpoint_slot(MAX_ENDPOINT_NU
 }
 
 DirectIODispatcher::~DirectIODispatcher(){
-	
+    CHAOS_NOT_THROW(stop();)
+    CHAOS_NOT_THROW(deinit();)
 }
 
 // Initialize instance
@@ -95,6 +96,7 @@ void DirectIODispatcher::deinit() throw(chaos::CException) {
 		
 		DIOD_LAPP_ << "Free slot array memory";
 		free(endpoint_slot_array);
+                endpoint_slot_array=NULL;
 	}
 }
 

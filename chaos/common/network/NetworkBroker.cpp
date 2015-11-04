@@ -72,7 +72,8 @@ direct_io_client(NULL) {
 /*!
  */
 NetworkBroker::~NetworkBroker() {
-    
+    CHAOS_NOT_THROW(stop(););
+    CHAOS_NOT_THROW(deinit(););
 }
 
 /*!

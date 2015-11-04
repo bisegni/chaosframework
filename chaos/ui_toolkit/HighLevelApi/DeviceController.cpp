@@ -60,7 +60,7 @@ datasetDB(true) {
 
 //---------------------------------------------------------------------------------------------------
 DeviceController::~DeviceController() {
-    LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<device_id;
+   LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<device_id;
     stopTracking();
     
     if(mdsChannel){
@@ -70,6 +70,7 @@ DeviceController::~DeviceController() {
     
     if(deviceChannel){
         LLRpcApi::getInstance()->deleteMessageChannel(deviceChannel);
+        
     }
     
     if(ioLiveDataDriver){
@@ -637,7 +638,7 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
 
 //---------------------------------------------------------------------------------------------------
 void DeviceController::initializeAttributeIndexMap() {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
+//	boost::mutex::scoped_lock lock(trackMutext);
 	vector<string> attributeNames;
 	RangeValueInfo attributerangeInfo;
 	
@@ -672,7 +673,7 @@ void DeviceController::initializeAttributeIndexMap() {
 void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attributeName,
 																DataType::DataSetAttributeIOAttribute attributeDirection,
 																DataType::DataType attrbiuteType) {
-	boost::recursive_mutex::scoped_lock  lock(trackMutext);
+	//boost::mutex::scoped_lock  lock(trackMutext);
 	if(attributeDirection == DataType::Output ||
 	   attributeDirection == DataType::Bidirectional ){
 		
@@ -710,7 +711,7 @@ void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attribut
 
 //---------------------------------------------------------------------------------------------------
 DataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
+	boost::mutex::scoped_lock lock(trackMutext);
 	DataBuffer * result = NULL;
 	//allocate attribute traccking
 	if(attributeTypeMap.count(attributeName) == 0 || attributeDirectionMap.count(attributeName) == 0 ) return result;
@@ -733,7 +734,7 @@ DataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
 
 //---------------------------------------------------------------------------------------------------
 PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attributeName) {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
+	boost::mutex::scoped_lock lock(trackMutext);
 	PointerBuffer * result = NULL;
 	//allocate attribute traccking
 	if(attributeTypeMap.count(attributeName) == 0 || attributeDirectionMap.count(attributeName) == 0 ) return result;
@@ -755,7 +756,7 @@ DataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialDimensio
 
 //---------------------------------------------------------------------------------------------------
 void DeviceController::deinitializeAttributeIndexMap() {
-	//boost::recursive_mutex::scoped_lock lock(trackMutext);
+//	boost::mutex::scoped_lock lock(trackMutext);
 	//dispose circula buffer
 	for (std::map<string,  SingleBufferCircularBuffer<int32_t> *>::iterator iter = int32AttributeLiveBuffer.begin();
 		 iter != int32AttributeLiveBuffer.end();
@@ -788,7 +789,7 @@ void DeviceController::deinitializeAttributeIndexMap() {
 
 //---------------------------------------------------------------------------------------------------
 void DeviceController::addAttributeToTrack(string& attrbiuteName) {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
+	boost::mutex::scoped_lock lock(trackMutext);
 	
 	//add attribute name to list of tracking attribute
 	trackingAttribute.push_back(attrbiuteName);
@@ -844,7 +845,7 @@ int DeviceController::getTimeStamp(uint64_t& live){
 }
 //---------------------------------------------------------------------------------------------------
 void DeviceController::setupTracking() {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
+	boost::mutex::scoped_lock lock(trackMutext);
 	
 	//init live buffer
 	initializeAttributeIndexMap();
@@ -856,13 +857,13 @@ void DeviceController::setupTracking() {
 
 //---------------------------------------------------------------------------------------------------
 void DeviceController::stopTracking() {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
+	boost::mutex::scoped_lock lock(trackMutext);
 	deinitializeAttributeIndexMap();
 }
 
 //---------------------------------------------------------------------------------------------------
 void DeviceController::fetchCurrentDeviceValue() {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
+	boost::mutex::scoped_lock lock(trackMutext);
 	
 	//! fetch the output odmain
 	fetchCurrentDatatasetFromDomain(DatasetDomainOutput);

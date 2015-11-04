@@ -38,6 +38,7 @@ ChaosUIToolkit::ChaosUIToolkit(){
  
  */
 ChaosUIToolkit::~ChaosUIToolkit(){
+    deinit();
 }
 
     //! C and C++ attribute parser

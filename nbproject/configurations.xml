@@ -12532,6 +12532,8 @@
         <element flagsID="4" commonFlags="-O3 -fPIC -O2 -O3 -O2"/>
         <element flagsID="5" commonFlags="-O3 -fPIC -g -O2 -O3"/>
         <element flagsID="6" commonFlags="-fPIC -O2 -O3"/>
+        <element flagsID="7" commonFlags="-fPIC -fPIC -fPIC -O3 -O2 -O3 -O2"/>
+        <element flagsID="8" commonFlags="-fPIC -fPIC -fPIC -O3 -fPIC -O2 -O3"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -12554,7 +12556,7 @@
             flavor2="4">
       </item>
       <item path="ChaosDataExport/cde.cpp" ex="false" tool="1" flavor2="4">
-        <ccTool flags="2">
+        <ccTool flags="7">
         </ccTool>
       </item>
       <item path="ChaosDataService/ChaosDataService.cpp"
@@ -12583,7 +12585,7 @@
       <item path="ChaosDataService/DriverPoolManager.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="2">
           <incDir>
             <pElem>.</pElem>
@@ -13823,7 +13825,7 @@
       <item path="ChaosMetadataServiceClient/api_proxy/service/ResetAll.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="4">
         </ccTool>
       </item>
@@ -13900,21 +13902,21 @@
       <item path="ChaosMetadataServiceClientTest/NodeMonitor.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="2">
         </ccTool>
       </item>
       <item path="ChaosMetadataServiceClientTest/NodeSearchTest.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="2">
         </ccTool>
       </item>
       <item path="ChaosMetadataServiceClientTest/main.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="2">
         </ccTool>
       </item>
@@ -16503,7 +16505,7 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="8">
           <incDir>
             <pElem>.</pElem>
             <pElem>../..</pElem>
@@ -16511,7 +16513,6 @@
             <pElem>bin/bin_uitoolkit</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>CHAOS</Elem>
             <Elem>DEBUG</Elem>
             <Elem>NDEBUG</Elem>
@@ -16523,7 +16524,7 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="8">
           <incDir>
             <pElem>.</pElem>
             <pElem>../..</pElem>
@@ -16531,7 +16532,6 @@
             <pElem>bin/bin_uitoolkit</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>CHAOS</Elem>
             <Elem>DEBUG</Elem>
             <Elem>NDEBUG</Elem>
@@ -16543,14 +16543,14 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="8">
         </ccTool>
       </item>
       <item path="chaos/ui_toolkit/HighLevelApi/HLDataApi.cpp"
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="8">
         </ccTool>
       </item>
       <item path="chaos/ui_toolkit/HighLevelApi/HLInfrastructureApi.cpp"
@@ -16558,6 +16558,9 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/ui_toolkit/LowLevelApi/LLDataApi.cpp"
@@ -16651,18 +16654,18 @@
       <item path="example/BenchTest/main_reactor.cpp" ex="false" tool="1" flavor2="4">
       </item>
       <item path="example/ChaosCLI/main.cpp" ex="false" tool="1" flavor2="4">
-        <ccTool flags="2">
+        <ccTool flags="7">
         </ccTool>
       </item>
       <item path="example/ChaosMDSCmd/main.cpp" ex="false" tool="1" flavor2="4">
-        <ccTool flags="2">
+        <ccTool flags="7">
         </ccTool>
       </item>
       <item path="example/ChaosPerformanceTester/main.cpp"
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="2">
+        <ccTool flags="7">
         </ccTool>
       </item>
       <item path="example/UIToolkitTest/controldialog.cpp"
@@ -62265,7 +62268,6 @@
             <pElem>bin/chaos_cde</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>CHAOS</Elem>
             <Elem>DEBUG</Elem>
             <Elem>NDEBUG</Elem>
@@ -62914,7 +62916,6 @@
             <pElem>bin/bin_uitoolkit</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>CHAOS</Elem>
             <Elem>DEBUG</Elem>
             <Elem>NDEBUG</Elem>
@@ -62985,7 +62986,6 @@
             <pElem>bin/chaos_cli</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>CHAOS</Elem>
             <Elem>DEBUG</Elem>
             <Elem>NDEBUG</Elem>
@@ -63002,7 +63002,6 @@
             <pElem>bin/ChaosMDSCmd</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>CHAOS</Elem>
             <Elem>DEBUG</Elem>
             <Elem>NDEBUG</Elem>
@@ -63019,7 +63018,6 @@
             <pElem>bin/ChaosPerformanceTester</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>CHAOS</Elem>
             <Elem>DEBUG</Elem>
             <Elem>NDEBUG</Elem>

@@ -25720,6 +25720,9 @@
               <df name="debug">
                 <in>debug.h</in>
               </df>
+              <df name="labview">
+                <in>lv2chaos.h</in>
+              </df>
               <df name="modbus">
                 <df name="core">
                   <in>AbstractModbus.h</in>
@@ -25784,7 +25787,10 @@
                       <in>pool.h</in>
                     </df>
                     <in>ChaosControllerLibera.h</in>
+                    <in>CmdAcquireDafneAccumulatorBPM.h</in>
                     <in>CmdDafneAccumulatorBPM.h</in>
+                    <in>CmdDefaultDafneAccumulatorBPM.h</in>
+                    <in>CmdEnvDafneAccumulatorBPM.h</in>
                     <in>CmdLiberaAcquire.h</in>
                     <in>CmdLiberaDefault.h</in>
                     <in>CmdLiberaEnv.h</in>
@@ -26329,8 +26335,6 @@
                 </df>
               </df>
               <df name="CMakeTmp">
-              </df>
-              <df name="Progress">
               </df>
               <df name="UnitServer.dir">
               </df>
@@ -28873,6 +28877,8 @@
               </df>
               <df name="debug">
               </df>
+              <df name="labview">
+              </df>
               <df name="modbus">
                 <df name="core">
                 </df>
@@ -29093,8 +29099,6 @@
               </df>
               <df name="CMakeTmp">
               </df>
-              <df name="Progress">
-              </df>
               <df name="UnitServer.dir">
               </df>
             </df>
@@ -29130,8 +29134,6 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
-        <gdb_signals>
-        </gdb_signals>
         <gdb_options>
           <DebugOptions>
           </DebugOptions>

@@ -81,7 +81,7 @@ namespace chaos {
             
 			
                 //mutext for multi threading track operation
-            boost::recursive_mutex trackMutext;
+            boost::mutex trackMutext;
             
                 //!store the type of the attribute for fast retrieve
             std::map<std::string, DataType::DataSetAttributeIOAttribute> attributeDirectionMap;
