@@ -1,6 +1,6 @@
 #include "ControlUnitEditor.h"
 #include "ui_ControlUnitEditor.h"
-
+#include "ControUnitInstanceEditor.h"
 #include "CommandTemplateInstanceEditor.h"
 #include "../../widget/list/delegate/TwoLineInformationListItemDelegate.h"
 #include "../../plot/NodeAttributePlotting.h"
@@ -54,6 +54,7 @@ ControlUnitEditor::~ControlUnitEditor() {
 
 void ControlUnitEditor::initUI() {
     ui->pushButtonRecoverError->setVisible(false);
+    ui->pushButtonEditInstance->setEnabled(false);
     //add model to table
     ui->tableViewOutputChannel->setModel(&dataset_output_table_model);
     ui->tableViewOutputChannel->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -303,7 +304,10 @@ void ControlUnitEditor::onApiDone(const QString& tag,
                         GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(control_unit_unique_id.toStdString()));
     } else if(tag.compare(TAG_CU_INSTANCE) == 0) {
         if(api_result.isNull()) return;
-        if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)){
+        //enable the button for editing instance
+        bool has_node_parent = api_result->hasKey(chaos::NodeDefinitionKey::NODE_PARENT);
+        ui->pushButtonEditInstance->setEnabled(has_node_parent);
+        if(has_node_parent){
             const QString new_u_s = QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT));
             if(unit_server_parent_unique_id.compare(new_u_s) != 0) {
                 //whe ahve unit server changed
@@ -561,4 +565,11 @@ void ControlUnitEditor::on_pushButtonRecoverError_clicked() {
     uids.push_back(control_unit_unique_id.toStdString())            ;
     submitApiResult(TAG_CU_RECOVER_ERROR,
                     GET_CHAOS_API_PTR(control_unit::RecoverError)->execute(uids));
+}
+
+void ControlUnitEditor::on_pushButtonOpenInstanceEditor_clicked() {
+    qDebug() << "Open instance editor for control unit:"<< control_unit_unique_id << " and unit server:" << unit_server_parent_unique_id;
+    addWidgetToPresenter(new ControUnitInstanceEditor(unit_server_parent_unique_id,
+                                                      control_unit_unique_id,
+                                                      true));
 }

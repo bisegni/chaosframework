@@ -37,15 +37,15 @@ network_broker(_network_broker),
 message_channel_for_job(NULL),
 multiaddress_message_channel_for_job(NULL),
 abstract_persistance_driver(NULL){
-        //node server command
+    //node server command
     installCommand(node::UpdatePropertyCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::UpdatePropertyCommand));
     installCommand(node::SubmitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::SubmitBatchCommand));
     
-        //unit server command
+    //unit server command
     installCommand(unit_server::UnitServerAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::UnitServerAckCommand));
     installCommand(unit_server::LoadUnloadControlUnit::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::LoadUnloadControlUnit));
-
-        //control unit command
+    
+    //control unit command
     installCommand(control_unit::ApplyChangeSet::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::ApplyChangeSet));
     installCommand(control_unit::RecoverError::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::RecoverError));
     installCommand(control_unit::RegistrationAckBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::RegistrationAckBatchCommand));
@@ -100,11 +100,15 @@ void MDSBatchExecutor::deinit() throw(chaos::CException) {
 }
 
 //allocate a new command
-chaos::common::batch_command::BatchCommand *MDSBatchExecutor::instanceCommandInfo(const std::string& command_alias,
-                                                                                  CDataWrapper *command_info) {
+chaos::common::batch_command::BatchCommand * MDSBatchExecutor::instanceCommandInfo(const std::string& command_alias,
+                                                                                   uint32_t submission_rule,
+                                                                                   uint32_t submission_retry_delay,
+                                                                                   uint64_t scheduler_step_delay) {
     //install command into the batch command executor root class
     MDSBatchCommand *result = (MDSBatchCommand*) BatchCommandExecutor::instanceCommandInfo(command_alias,
-                                                                                           command_info);
+                                                                                           submission_rule,
+                                                                                           submission_retry_delay,
+                                                                                           scheduler_step_delay);
     
     //customize the newly create batch command
     if(result) {

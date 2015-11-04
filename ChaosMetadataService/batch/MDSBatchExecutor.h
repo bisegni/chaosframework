@@ -50,9 +50,11 @@ namespace chaos{
                 //dataaccess abstract driver
                 chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
             protected:
-                //allocate a new command
-                common::batch_command::BatchCommand *instanceCommandInfo(const std::string& command_alias,
-                                                                         chaos::common::data::CDataWrapper *command_info);
+                //overload to permit the customization of newly created command instance
+                common::batch_command::BatchCommand *  instanceCommandInfo(const std::string& command_alias,
+                                                                           uint32_t submission_rule,
+                                                                           uint32_t submission_retry_delay,
+                                                                           uint64_t scheduler_step_delay);
                 
                 //overlodaed command event handler
                 void handleCommandEvent(uint64_t command_seq,

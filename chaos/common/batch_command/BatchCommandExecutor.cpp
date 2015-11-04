@@ -124,13 +124,13 @@ void BatchCommandExecutor::addSandboxInstance(unsigned int _sandbox_number) {
 
 BatchCommandExecutor::~BatchCommandExecutor() {
     
- //   BCELAPP_ << "Removing all the instance of sandbox";
- //   for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
- //       it != sandbox_map.end();
-  //      it++) {
-  //      BCELAPP_ << "Dispose instance " << it->first;
-  //      if(it->second) delete(it->second);
-  //  }
+    //   BCELAPP_ << "Removing all the instance of sandbox";
+    //   for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
+    //       it != sandbox_map.end();
+    //      it++) {
+    //      BCELAPP_ << "Dispose instance " << it->first;
+    //      if(it->second) delete(it->second);
+    //  }
     
     // the instancer of the command can't be uninstalled at deinit step
     // because the executor live  one o one with the control unit.
@@ -185,7 +185,7 @@ void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
     BCELAPP_ << "Check if we need to use the dafult command or we have pause instance";
     if(default_command_alias.size()) {
         BCELAPP_ << "Set the default command ->"<<default_command_alias;
-        BatchCommand * def_cmd_impl = instanceCommandInfo(default_command_alias, NULL);
+        BatchCommand * def_cmd_impl = instanceCommandInfo(default_command_alias, (CDataWrapper*)NULL);
         def_cmd_impl->unique_id = ++command_sequence_id;
         sandbox_map[default_command_sandbox_instance]->enqueueCommand(NULL, def_cmd_impl, 50);
         DEBUG_CODE(BCELDBG_ << "Command " << default_command_alias << " successfull installed";)
@@ -447,6 +447,35 @@ void BatchCommandExecutor::getAllCommandAlias(std::vector<std::string>& commands
 
 //! Check if the waithing command can be installed
 BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& command_alias, CDataWrapper *submissionInfo) {
+    uint32_t submission_rule = SubmissionRuleType::SUBMIT_NORMAL;
+    uint32_t submission_retry_delay = 1000000;
+    uint64_t scheduler_step_delay = 1000000;
+    
+    if(submissionInfo) {
+        if(submissionInfo->hasKey(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32)) {
+            submission_rule = submissionInfo->getInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32);
+        }
+        
+        //check if the comamnd pack has some feature to setup in the command instance
+        if(submissionInfo->hasKey(BatchCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64)) {
+            scheduler_step_delay = submissionInfo->getInt64Value(BatchCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64);
+        }
+        
+        if(submissionInfo->hasKey(BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32)) {
+            submission_retry_delay = submissionInfo->getInt32Value(BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32);
+        }
+    }
+    return instanceCommandInfo(command_alias,
+                               submission_rule,
+                               submission_retry_delay,
+                               scheduler_step_delay);
+}
+
+//! Check if the waithing command can be installed
+BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& command_alias,
+                                                        uint32_t submission_rule,//SubmissionRuleType::SUBMIT_NORMAL
+                                                        uint32_t submission_retry_delay,
+                                                        uint64_t scheduler_step_delay) {
     DEBUG_CODE(BCELDBG_ << "Instancing command " << command_alias;)
     BatchCommand *instance = NULL;
     if(map_command_description.count(command_alias)) {
@@ -459,30 +488,20 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& comma
             instance->sharedAttributeCachePtr = &global_attribute_cache;
             //set the alias for this command
             //instance->setCommandAlias(command_alias);
-            if(submissionInfo) {
-                if(submissionInfo->hasKey(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32)) {
-                    instance->submissionRule = submissionInfo->getInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32);
-                    DEBUG_CODE(BCELDBG_ << "Submission rule for command " << command_alias << " is: " << ((uint16_t)instance->submissionRule);)
-                } else {
-                    instance->submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
-                }
-                
-                //check if the comamnd pack has some feature to setup in the command instance
-                if(submissionInfo->hasKey(BatchCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64)) {
-                    instance->commandFeatures.featuresFlag |= features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY;
-                    instance->commandFeatures.featureSchedulerStepsDelay = submissionInfo->getInt64Value(BatchCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64);
-                    DEBUG_CODE(BCELDBG_ << "Set custom  SCHEDULER_STEP_TIME_INTERVALL to " << instance->commandFeatures.featureSchedulerStepsDelay << " microseconds";)
-                }
-                
-                if(submissionInfo->hasKey(BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32)) {
-                    instance->commandFeatures.featuresFlag |= features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY;
-                    instance->commandFeatures.featureSubmissionRetryDelay = submissionInfo->getInt32Value(BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32);
-                    DEBUG_CODE(BCELDBG_ << "Set custom  SUBMISSION_RETRY_DELAY to " << instance->commandFeatures.featureSubmissionRetryDelay << " milliseconds";)
-                }
-                
-                //get the assigned id
-                instance->unique_id = submissionInfo->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
-            }
+            
+            instance->submissionRule = submission_rule;
+            DEBUG_CODE(BCELDBG_ << "Submission rule for command " << command_alias << " is: " << ((uint16_t)instance->submissionRule);)
+            
+            instance->commandFeatures.featuresFlag |= features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY;
+            instance->commandFeatures.featureSchedulerStepsDelay = scheduler_step_delay;
+            DEBUG_CODE(BCELDBG_ << "Set custom  SCHEDULER_STEP_TIME_INTERVALL to " << instance->commandFeatures.featureSchedulerStepsDelay << " microseconds";)
+            
+            instance->commandFeatures.featuresFlag |= features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY;
+            instance->commandFeatures.featureSubmissionRetryDelay = submission_retry_delay;
+            DEBUG_CODE(BCELDBG_ << "Set custom  SUBMISSION_RETRY_DELAY to " << instance->commandFeatures.featureSubmissionRetryDelay << " milliseconds";)
+            
+            //get the assigned id
+            instance->unique_id = ++command_sequence_id;
         } else {
             DEBUG_CODE(BCELDBG_ << "Error instantiating the command " << command_alias;)
         }
@@ -491,6 +510,7 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& comma
     }
     return instance;
 }
+
 
 // Submite a batch command
 void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
@@ -520,13 +540,16 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
     BCELDBG_ << "Submit new command "<<batch_command_alias << "with info:" << commandDescription->getJSONString();
     
     //add unique id for command
-    command_id = ++command_sequence_id;
-    commandDescription->addInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
+    //command_id = ++command_sequence_id;
+    //commandDescription->addInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
     
     //queue the command
-    //commandSubmittedQueue.push(new PriorityQueuedElement<CDataWrapper>(commandDescription, priority, true));
     BatchCommand *cmd_instance = instanceCommandInfo(batch_command_alias, commandDescription);
     if(cmd_instance) {
+        //report unique id
+        command_id = cmd_instance->unique_id;
+        
+        //enqueue command insandbox
         tmp_ptr->enqueueCommand(commandDescription, cmd_instance, priority);
     } else {
         throw CException(-4, "Command instantiation failed", "BatchCommandExecutor::submitCommand");
@@ -534,6 +557,42 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
     }
 }
 
+void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
+                                         chaos_data::CDataWrapper *command_data,
+                                         uint64_t& command_id,
+                                         uint32_t execution_channel,
+                                         uint32_t priority,
+                                         uint32_t submission_rule,
+                                         uint32_t submission_retry_delay,
+                                         uint64_t scheduler_step_delay)  throw (CException) {
+    if(sandbox_map.count(execution_channel) == 0)
+        throw CException(-3, "Execution channel not found", "BatchCommandExecutor::submitCommand");
+    
+    boost::shared_ptr<BatchCommandSandbox> sandbox_ptr = sandbox_map[execution_channel];
+
+    BCELDBG_ << "Submit new command "<< batch_command_alias <<
+                "with execution_channel:" << execution_channel <<
+                " priority:"<<priority<<
+                " submission_rule:"<<submission_rule<<
+                " submission_retry_delay:"<<submission_retry_delay<<
+                " scheduler_step_delay:"<<scheduler_step_delay;
+
+    //queue the command
+    BatchCommand *cmd_instance = instanceCommandInfo(batch_command_alias,
+                                                     submission_rule,
+                                                     submission_retry_delay,
+                                                     scheduler_step_delay);
+    if(cmd_instance) {
+        //report unique id
+        command_id = cmd_instance->unique_id;
+        
+        //enqueue command insandbox
+        sandbox_ptr->enqueueCommand(command_data, cmd_instance, priority);
+    } else {
+        throw CException(-4, "Command instantiation failed", "BatchCommandExecutor::submitCommand");
+        
+    }
+}
 //----------------------------public rpc command---------------------------
 
 //! Get queued command via rpc command

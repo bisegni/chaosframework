@@ -47,8 +47,12 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
     instance_description.addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, api_data.unit_server_uid);
         //add the control unit implementation
     instance_description.addStringValue("control_unit_implementation", api_data.control_unit_implementation);
-        //add the control unit implementation
+        //add the auto load setting
     instance_description.addBoolValue("auto_load", api_data.auto_load);
+        //add the auto init setting
+    instance_description.addBoolValue("auto_init", api_data.auto_init);
+        //add the auto start setting
+    instance_description.addBoolValue("auto_start", api_data.auto_start);
         // set the load parameter
     instance_description.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, api_data.load_parameter);
         //add driver description
