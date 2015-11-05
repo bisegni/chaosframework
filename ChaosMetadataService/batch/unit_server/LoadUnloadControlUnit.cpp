@@ -17,8 +17,10 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #include "LoadUnloadControlUnit.h"
 
+#include "../control_unit/IDSTControlUnitBatchCommand.h"
 #include "../../common/CUCommonUtility.h"
 
 using namespace chaos::common::data;
@@ -121,7 +123,30 @@ void LoadUnloadControlUnit::ccHandler() {
             break;
         }
             
-        case MESSAGE_PHASE_COMPLETED:
+        case MESSAGE_PHASE_COMPLETED:{
+            //in this case we need to check wahtever we need to auto init or autoload
+           /* int err = 0;
+            CDataWrapper *tmp_ptr = NULL;
+            if((err = getDataAccess<mds_data_access::ControlUnitDataAccess>()->getInstanceDescription(cu_id, &tmp_ptr))) {
+                LOG_AND_TROW_FORMATTED(BATHC_CU_LUL_ERR, err, "Error %1% durring fetch of instance for unit server %2%", %err%cu_id)
+            } else if(tmp_ptr) {
+                std::auto_ptr<CDataWrapper> auto_inst(tmp_ptr);
+                bool auto_init = auto_inst->hasKey("auto_init")?auto_inst->getBoolValue("auto_init"):false;
+                bool auto_start = auto_inst->hasKey("auto_start")?auto_inst->getBoolValue("auto_start"):false;
+                
+                std::auto_ptr<CDataWrapper> init_start_datapack(new CDataWrapper());
+                init_start_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
+                
+                if(auto_init || auto_start) {
+                    uint32_t sandbox_index = getNextSandboxToUse();
+                    submitCommand(GET_MDS_COMMAND_ALIAS(batch::control_unit::IDSTControlUnitBatchCommand),
+                                  init_start_datapack,
+                                  );
+                    
+                    
+                }
+            }*/
+        }
         case MESSAGE_PHASE_TIMEOUT:{
             BC_END_RUNNIG_PROPERTY
             break;

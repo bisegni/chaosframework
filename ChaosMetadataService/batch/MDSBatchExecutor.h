@@ -29,6 +29,9 @@
 #include <chaos/common/batch_command/BatchCommandExecutor.h>
 
 #include <chaos_service_common/persistence/data_access/AbstractPersistenceDriver.h>
+
+#include <boost/thread/mutex.hpp>
+
 namespace chaos{
     namespace metadata_service {
         class ChaosMetadataService;
@@ -49,6 +52,10 @@ namespace chaos{
                 
                 //dataaccess abstract driver
                 chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
+                
+                //! used to track what sandbox has been used last time
+                uint32_t        last_used_sb_idx;
+                boost::mutex    mutex_sandbox_id;
             protected:
                 //overload to permit the customization of newly created command instance
                 common::batch_command::BatchCommand *  instanceCommandInfo(const std::string& command_alias,
@@ -85,9 +92,19 @@ namespace chaos{
                 // Deinitialize instance
                 void deinit() throw(chaos::CException);
                 
+                //! return the number of the sandbox
+                uint32_t getNextSandboxToUse();
+                
                 //! Install a command associated with a type
                 void installCommand(const std::string& alias,
                                     chaos::common::utility::NestedObjectInstancer<MDSBatchCommand, common::batch_command::BatchCommand> *instancer);
+                //! submit a command using all sandbox in round robin way
+                uint64_t submitCommand(const std::string& batch_command_alias,
+                                       chaos::common::data::CDataWrapper * command_data);
+                //! submit a command forcing a sandbox
+                uint64_t submitCommand(const std::string& batch_command_alias,
+                                       chaos::common::data::CDataWrapper * command_data,
+                                       uint32_t sandbox_id);
             };
         }
     }

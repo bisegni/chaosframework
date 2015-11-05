@@ -44,7 +44,7 @@ RecoverError::~RecoverError() {
 }
 
 CDataWrapper *RecoverError::execute(CDataWrapper *api_data,
-                                          bool& detach_data) throw(chaos::CException) {
+                                    bool& detach_data) throw(chaos::CException) {
     CHECK_CDW_THROW_AND_LOG(api_data, CU_RNU_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID , CU_RNU_ERR, -2, "The ndk_uid key is mandatory")
     if(!api_data->isVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) throw CException(-3, "ndk_uid key need to be a vectoro of string", __PRETTY_FUNCTION__);
@@ -80,9 +80,8 @@ CDataWrapper *RecoverError::execute(CDataWrapper *api_data,
         batch_data->finalizeArrayForKey(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
         
         //launch the batch command
-        getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::control_unit::RecoverError)),
-                                          batch_data.release(),
-                                          command_id);
+        command_id = getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::control_unit::RecoverError)),
+                                                       batch_data.release());
     }
     
     return NULL;

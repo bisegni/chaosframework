@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 #include "MDSBatchCommand.h"
+#include "MDSBatchExecutor.h"
 
 using namespace chaos::common::network;
 using namespace chaos::metadata_service::batch;
@@ -142,4 +143,24 @@ void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info) throw (chaos
         case MESSAGE_PHASE_TIMEOUT:
             break;
     }
+}
+uint32_t MDSBatchCommand::getNextSandboxToUse() {
+    CHAOS_ASSERT(executor_instance)
+    return executor_instance->getNextSandboxToUse();
+}
+
+uint64_t MDSBatchCommand::submitCommand(const std::string& batch_command_alias,
+                                        chaos_data::CDataWrapper *command_data,
+                                        uint32_t sandbox_id) {
+    CHAOS_ASSERT(executor_instance)
+    return executor_instance->submitCommand(batch_command_alias,
+                                            command_data,
+                                            sandbox_id);
+}
+
+uint64_t MDSBatchCommand::submitCommand(const std::string& batch_command_alias,
+                                        chaos_data::CDataWrapper *command_data) {
+    CHAOS_ASSERT(executor_instance)
+    return executor_instance->submitCommand(batch_command_alias,
+                                            command_data);
 }
