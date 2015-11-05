@@ -29,7 +29,11 @@ using namespace chaos::common::batch_command;
 
 //! default constructor
 MDSBatchCommand::MDSBatchCommand():
-BatchCommand(){
+BatchCommand(),
+message_channel(NULL),
+multiaddress_message_channel(NULL),
+executor_instance(NULL),
+abstract_persistance_driver(NULL){
     
 }
 

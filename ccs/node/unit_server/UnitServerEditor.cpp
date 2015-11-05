@@ -192,7 +192,6 @@ void UnitServerEditor::onApiDone(const QString& tag,
             ui->labelRegistrationTimestamp->setText(tr("No registration timestamp found!"));
         }
 
-
         QStringList cy_type_list;
         if(api_result->hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) {
             //get the vector of unit type
@@ -266,8 +265,7 @@ void UnitServerEditor::on_pushButtonCreateNewInstance_clicked()
                                                       selected_index.first().data().toString()));
 }
 
-void UnitServerEditor::on_pushButtonUpdateAllInfo_clicked()
-{
+void UnitServerEditor::on_pushButtonUpdateAllInfo_clicked() {
     updateAll();
 }
 

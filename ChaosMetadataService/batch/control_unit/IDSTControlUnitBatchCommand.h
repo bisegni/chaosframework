@@ -44,7 +44,7 @@ namespace chaos {
                     uint32_t retry_number;
 
                     CNetworkAddress * control_unit_address;
-                    chaos::common::data::CDataWrapper *message;
+                    std::auto_ptr<chaos::common::data::CDataWrapper> message;
                     std::auto_ptr<RequestInfo> request;
 
                     std::string cu_id;
@@ -52,6 +52,8 @@ namespace chaos {
                     IDSTAction  action;
                     
                     std::auto_ptr<CDataWrapper> initialize(const std::string& cu_uid);
+                    std::auto_ptr<CDataWrapper> start(const std::string& cu_uid);
+                    std::auto_ptr<CDataWrapper> stop(const std::string& cu_uid);
                     std::auto_ptr<CDataWrapper> deinitialize(const std::string& cu_uid);
                     boost::shared_ptr<CDataWrapper> mergeDatasetAttributeWithSetup(boost::shared_ptr<CDataWrapper> element_in_dataset,
                                                                                    boost::shared_ptr<CDataWrapper> element_in_setup);

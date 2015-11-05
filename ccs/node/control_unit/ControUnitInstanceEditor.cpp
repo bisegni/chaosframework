@@ -114,6 +114,10 @@ control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSet
     set_instance_api_hepler.control_unit_implementation = ui->labelControlUnitType->text().toStdString();
     //autoload
     set_instance_api_hepler.auto_load = ui->checkBoxAutoLoad->isChecked();
+    //autoload
+    set_instance_api_hepler.auto_init = ui->checkBoxAutoInit->isChecked();
+    //autoload
+    set_instance_api_hepler.auto_start = ui->checkBoxAutoStart->isChecked();
     //load parameter
     set_instance_api_hepler.load_parameter = ui->textEditLoadParameter->toPlainText().toStdString();
     //add all driver description
@@ -155,10 +159,12 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
     table_model_driver_spec->setRowCount(0);
     table_model_dataset_attribute_setup->setRowCount(0);
 
-    CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_PARENT, ui->labelUnitServer)
+            CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_PARENT, ui->labelUnitServer)
             CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ui->lineEditControlUnitUniqueID)
             CHECK_AND_SET_LABEL("control_unit_implementation", ui->labelControlUnitType)
             CHECK_AND_SET_CHECK("auto_load", ui->checkBoxAutoLoad)
+            CHECK_AND_SET_CHECK("auto_init", ui->checkBoxAutoInit)
+            CHECK_AND_SET_CHECK("auto_start", ui->checkBoxAutoStart)
             CHECK_AND_SET_LABEL(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, ui->textEditLoadParameter)
 
             //add driverdesc

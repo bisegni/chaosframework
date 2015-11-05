@@ -30,7 +30,7 @@ using namespace chaos::metadata_service::batch;
 #define MDS_BATCH_COMMAND_INSTANCER(BatchCommandClass) new chaos::common::utility::NestedObjectInstancer<MDSBatchCommand, common::batch_command::BatchCommand>(\
 new chaos::common::utility::TypedObjectInstancer<BatchCommandClass, MDSBatchCommand>())
 
-#define MDS_BATCH_SANDBOX_COUNT 4
+#define MDS_BATCH_SANDBOX_COUNT 1
 
 MDSBatchExecutor::MDSBatchExecutor(const std::string& executor_id,
                                    chaos::common::network::NetworkBroker *_network_broker):
@@ -125,6 +125,8 @@ chaos::common::batch_command::BatchCommand * MDSBatchExecutor::instanceCommandIn
     
     //customize the newly create batch command
     if(result) {
+        //set this instance
+        result->executor_instance = this;
         //allocoate new message channel
         result->message_channel = message_channel_for_job;
         result->multiaddress_message_channel = multiaddress_message_channel_for_job;

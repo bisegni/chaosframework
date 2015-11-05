@@ -93,7 +93,6 @@ void IDSTControlUnitBatchCommand::setHandler(CDataWrapper *data) {
     } else {
         LOG_AND_TROW(CU_IDST_BC_ERR, -3, "Control Unit information not found!")
     }
-    message = data;
 }
 
 // inherited method
@@ -109,21 +108,25 @@ void IDSTControlUnitBatchCommand::ccHandler() {
             switch(action) {
                 case ACTION_INIT:
                     request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_INIT;
+                    message = initialize(cu_id);
                     break;
                 case ACTION_START:
                     request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_START;
+                    message = start(cu_id);
                     break;
                 case ACTION_STOP:
                     request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_STOP;
+                    message = stop(cu_id);
                     break;
                 case ACTION_DEINIT:
                     request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_DEINIT;
+                    message = deinitialize(cu_id);
                     break;
             }
             
             //send message for action
             sendRequest(*request,
-                        message);
+                        message.get());
             break;
         }
         case MESSAGE_PHASE_SENT: {
@@ -285,6 +288,18 @@ std:auto_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description
     //sethte aciton type
     init_datapack->addInt32Value("action", (int32_t)0);
     return init_datapack;
+}
+
+std::auto_ptr<CDataWrapper> IDSTControlUnitBatchCommand::start(const std::string& cu_uid) {
+    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+    result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
+    return result;
+}
+
+std::auto_ptr<CDataWrapper> IDSTControlUnitBatchCommand::stop(const std::string& cu_uid) {
+    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+    result->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
+    return result;
 }
 
 std::auto_ptr<CDataWrapper> IDSTControlUnitBatchCommand::deinitialize(const std::string& cu_uid) {

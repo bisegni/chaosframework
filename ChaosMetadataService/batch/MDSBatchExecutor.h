@@ -59,9 +59,9 @@ namespace chaos{
             protected:
                 //overload to permit the customization of newly created command instance
                 common::batch_command::BatchCommand *  instanceCommandInfo(const std::string& command_alias,
-                                                                           uint32_t submission_rule,
-                                                                           uint32_t submission_retry_delay,
-                                                                           uint64_t scheduler_step_delay);
+                                                                           uint32_t submission_rule = common::batch_command::SubmissionRuleType::SUBMIT_NORMAL,
+                                                                           uint32_t submission_retry_delay = 1000,
+                                                                           uint64_t scheduler_step_delay = 1000000);
                 
                 //overlodaed command event handler
                 void handleCommandEvent(uint64_t command_seq,

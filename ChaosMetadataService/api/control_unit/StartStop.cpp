@@ -49,7 +49,7 @@ CDataWrapper *StartStop::execute(CDataWrapper *api_data,
     int err                     = 0;
     uint64_t command_id         = 0;
     CDataWrapper *tmp_ptr       = NULL;
-    std::auto_ptr<CDataWrapper> cu_base_description;
+    std::auto_ptr<CDataWrapper> cu_base_description(new CDataWrapper());
     
     const std::string cu_uid = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     const bool start = api_data->getBoolValue("start");
@@ -62,14 +62,10 @@ CDataWrapper *StartStop::execute(CDataWrapper *api_data,
     } else if(tmp_ptr == NULL) {
         LOG_AND_TROW(CU_STASTO_ERR, err, boost::str(boost::format("No control unit node dafault description found for unique id:%1% ") % cu_uid));
     }
-    cu_base_description.reset(tmp_ptr); tmp_ptr=NULL;
+    delete(tmp_ptr);
     
-    //copy rpc information in the init datapack
-    CHECK_KEY_THROW_AND_LOG(cu_base_description, NodeDefinitionKey::NODE_RPC_ADDR, CU_STASTO_ERR, -2, "No rpc addres in the control unit descirption")
-    cu_base_description->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, cu_base_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR));
-    CHECK_KEY_THROW_AND_LOG(cu_base_description, NodeDefinitionKey::NODE_RPC_DOMAIN, CU_STASTO_ERR, -3, "No rpc domain in the control unit descirption")
-    cu_base_description->addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, cu_base_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN));
-    
+    //set the control unique id in the init datapack
+    cu_base_description->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     //set the aciton type
     cu_base_description->addInt32Value("action", (start?1:2));
     //launch initilization in background

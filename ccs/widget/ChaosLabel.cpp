@@ -120,6 +120,7 @@ int ChaosLabel::stopMonitoring() {
 }
 
 void ChaosLabel::_updateStatusColor() {
+    if(!monitoring) return;
     bool offline = (zero_diff_count > 3) || (last_recevied_ts = 0);
     if(!offline) {
         if(last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||

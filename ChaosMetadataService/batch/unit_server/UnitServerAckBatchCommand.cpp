@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 #include "UnitServerAckBatchCommand.h"
+#include "../control_unit/IDSTControlUnitBatchCommand.h"
 #include "../../common/CUCommonUtility.h"
 
 using namespace chaos::common::data;

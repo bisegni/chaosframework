@@ -152,7 +152,7 @@ namespace chaos {
                  */
                 virtual BatchCommand *instanceCommandInfo(const std::string& command_alias,
                                                           uint32_t submission_rule = SubmissionRuleType::SUBMIT_NORMAL,
-                                                          uint32_t submission_retry_delay = 1000000,
+                                                          uint32_t submission_retry_delay = 1000,
                                                           uint64_t scheduler_step_delay = 1000000);
                 
                 //! Get the statistic for the current running command rpc action
@@ -287,7 +287,7 @@ namespace chaos {
                                    uint32_t execution_channel,
                                    uint32_t priority = 50,
                                    uint32_t submission_rule = SubmissionRuleType::SUBMIT_NORMAL,
-                                   uint32_t submission_retry_delay = 1000000,
+                                   uint32_t submission_retry_delay = 1000,
                                    uint64_t scheduler_step_delay = 1000000)  throw (CException);
                 
                 //! Add a number of sandobx to this instance of executor
