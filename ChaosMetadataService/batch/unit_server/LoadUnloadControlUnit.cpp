@@ -40,14 +40,8 @@ static const char * const LoadUnloadControlUnit_NO_RPC_ADDRESS = "No unit server
 static const char * const LoadUnloadControlUnit_NO_LOAD_UNLOAD = "No load or unload has been specified";
 
 LoadUnloadControlUnit::LoadUnloadControlUnit():
-MDSBatchCommand() {
-    //set default scheduler delay 1 second
-    setFeatures(chaos::common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
-    //set the timeout to 10 seconds
-    setFeatures(chaos::common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
-}
-LoadUnloadControlUnit::~LoadUnloadControlUnit() {
-}
+MDSBatchCommand() {}
+LoadUnloadControlUnit::~LoadUnloadControlUnit() {}
 
 // inherited method
 void LoadUnloadControlUnit::setHandler(CDataWrapper *data) {

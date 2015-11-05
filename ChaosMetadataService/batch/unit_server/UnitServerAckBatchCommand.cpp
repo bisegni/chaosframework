@@ -18,7 +18,7 @@
  *    	limitations under the License.
  */
 #include "UnitServerAckBatchCommand.h"
-#include "../control_unit/IDSTControlUnitBatchCommand.h"
+
 #include "../../common/CUCommonUtility.h"
 
 using namespace chaos::common::data;
@@ -36,12 +36,7 @@ DEFINE_MDS_COMAMND_ALIAS(UnitServerAckCommand)
 UnitServerAckCommand::UnitServerAckCommand():
 MDSBatchCommand(),
 message_data(NULL),
-phase(USAP_ACK_US){
-    //set default scheduler delay 1 second
-    setFeatures(chaos::common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)10000);
-    //set the timeout to 10 seconds
-    //setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
-}
+phase(USAP_ACK_US){}
 
 UnitServerAckCommand::~UnitServerAckCommand() {}
 

@@ -55,16 +55,9 @@ IDSTControlUnitBatchCommand::IDSTControlUnitBatchCommand():
 MDSBatchCommand(),
 retry_number(0),
 cu_id(),
-action(ACTION_INIT) {
-    //set default scheduler delay 1 second
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
-    //set the timeout to 10 seconds
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
-    
-}
+action(ACTION_INIT) {}
 
-IDSTControlUnitBatchCommand::~IDSTControlUnitBatchCommand() {
-}
+IDSTControlUnitBatchCommand::~IDSTControlUnitBatchCommand() {}
 
 // inherited method
 void IDSTControlUnitBatchCommand::setHandler(CDataWrapper *data) {

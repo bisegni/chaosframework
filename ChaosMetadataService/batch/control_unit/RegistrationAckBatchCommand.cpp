@@ -20,6 +20,8 @@
 
 #include "RegistrationAckBatchCommand.h"
 
+#include "../control_unit/IDSTControlUnitBatchCommand.h"
+
 using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::metadata_service::batch::control_unit;
@@ -36,15 +38,8 @@ static const char * const RegistrationAckBatchCommand_NO_RPC_DOM = "No rpc domai
 static const char * const RegistrationAckBatchCommand_NO_RESULT_FOUND = "No ack result found";
 
 RegistrationAckBatchCommand::RegistrationAckBatchCommand():
-MDSBatchCommand(){
-    //set default scheduler delay 1 second
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
-    //set the timeout to 10 seconds
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
-    
-}
-RegistrationAckBatchCommand::~RegistrationAckBatchCommand() {
-}
+MDSBatchCommand(){}
+RegistrationAckBatchCommand::~RegistrationAckBatchCommand() {}
 
 // inherited method
 void RegistrationAckBatchCommand::setHandler(CDataWrapper *data) {
@@ -91,7 +86,41 @@ void RegistrationAckBatchCommand::ccHandler() {
             break;
         }
             
-        case MESSAGE_PHASE_COMPLETED:
+        case MESSAGE_PHASE_COMPLETED: {
+            int err = 0;
+            CDataWrapper *tmp_ptr = NULL;
+            if((err = getDataAccess<mds_data_access::ControlUnitDataAccess>()->getInstanceDescription(cu_id, &tmp_ptr))) {
+                LOG_AND_TROW_FORMATTED(CU_RACK_ERR, err, "Error %1% durring fetch of instance for unit server %2%", %err%cu_id)
+            } else if(tmp_ptr) {
+                std::auto_ptr<CDataWrapper> auto_inst(tmp_ptr);
+                bool auto_init = auto_inst->hasKey("auto_init")?auto_inst->getBoolValue("auto_init"):false;
+                bool auto_start = auto_inst->hasKey("auto_start")?auto_inst->getBoolValue("auto_start"):false;
+                
+                if(auto_init || auto_start) {
+                    uint32_t sandbox_index = getNextSandboxToUse();
+                    if(auto_init){
+                        std::auto_ptr<CDataWrapper> init_datapack(new CDataWrapper());
+                        init_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
+                        init_datapack->addInt32Value("action", (int32_t)0);
+                        submitCommand(GET_MDS_COMMAND_ALIAS(batch::control_unit::IDSTControlUnitBatchCommand),
+                                      init_datapack.release(),
+                                      sandbox_index);
+                    }
+                    if(auto_start){
+                        std::auto_ptr<CDataWrapper> start_datapack(new CDataWrapper());
+                        start_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
+                        start_datapack->addInt32Value("action", (int32_t)1);
+                        submitCommand(GET_MDS_COMMAND_ALIAS(batch::control_unit::IDSTControlUnitBatchCommand),
+                                      start_datapack.release(),
+                                      sandbox_index);
+                    }
+                    
+                }
+            }
+            
+            
+
+        }
         case MESSAGE_PHASE_TIMEOUT: {
             BC_END_RUNNIG_PROPERTY
             break;
