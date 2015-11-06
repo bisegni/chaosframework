@@ -21,6 +21,7 @@ ENDIF()
 
 message(STATUS "Using ${BUILD_PREFIX} as installation directory")
 
+SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 
 message(STATUS "Configure Common Layer")
 ADD_SUBDIRECTORY(chaos/common bin/bin_common)

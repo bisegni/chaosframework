@@ -178,7 +178,6 @@ ENDIF()
 #SET_TARGET_PROPERTIES(chaos_common_static PROPERTIES OUTPUT_NAME chaos_common)
 
 #set_target_properties(chaos_common PROPERTIES VERSION 1.0.0 SOVERSION 1)
-
 TARGET_LINK_LIBRARIES(chaos_common ${common_lib_library})
 
 

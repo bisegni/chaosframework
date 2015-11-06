@@ -468,7 +468,7 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
     fi
     cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
 
-    if !(./configure --without-memcached --without-libtest --disable-sasl --prefix=$PREFIX $CROSS_HOST_CONFIGURE); then
+    if !(./configure --without-memcached --enable-static --with-pic --disable-shared --without-libtest --disable-sasl --prefix=$PREFIX $CROSS_HOST_CONFIGURE); then
 	echo "Memcached configuration failed"
 	exit 1
     fi
@@ -503,9 +503,9 @@ if [ ! -f "$PREFIX/include/zmq.h" ]; then
 
     ./autogen.sh
 if [ -z "$CHAOS_DISABLE_EVENTFD" ];then
-    ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE --with-gnu-ld
+    ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE --with-gnu-ld --enable-static
 else
-  ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE --with-gnu-ld --disable-eventfd
+  ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE --with-gnu-ld --disable-eventfd --enable-static 
 fi
     do_make "ZMQ" 1
     echo "ZMQ done"
