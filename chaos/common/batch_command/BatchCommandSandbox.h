@@ -126,7 +126,7 @@ namespace chaos{
                 PriorityCommandCompare > command_submitted_queue;
                 
                 //!Mutex used for sincronize the introspection of the current command
-                boost::recursive_mutex          mutexNextCommandChecker;
+                boost::mutex          mutex_next_command_queue;
                 
                 //! instance to the checker thread
                 std::auto_ptr<boost::thread>    threadNextCommandChecker;

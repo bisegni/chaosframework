@@ -31,6 +31,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::async_central;
 using namespace chaos::common::batch_command;
 
 #define PURGE_TS_DELAY	500
@@ -44,8 +45,7 @@ using namespace chaos::common::batch_command;
 BatchCommandExecutor::BatchCommandExecutor(const std::string& _executorID):
 executorID(_executorID),
 default_command_sandbox_instance(COMMAND_BASE_SANDOXX_ID),
-command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE),
-capper_work(false) {
+command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE) {
     // this need to be removed from here need to be implemented the def undef services
     // register the public rpc api
     std::string rpcActionDomain = executorID; //+ BatchCommandExecutorRpcActionKey::COMMAND_EXECUTOR_POSTFIX_DOMAIN;
@@ -212,8 +212,8 @@ void BatchCommandExecutor::start() throw(chaos::CException) {
                                                   __PRETTY_FUNCTION__);
         }
         
-        capper_work = true;
-        capper_thread.reset(new boost::thread(&BatchCommandExecutor::capWorker, this));
+        //start capper timer
+        AsyncCentralManager::getInstance()->addTimer(this, PURGE_TS_DELAY, PURGE_TS_DELAY);
     } catch (...) {
         BCELAPP_ << "Error starting";
         throw CException(1000, "Generic Error", "BatchCommandExecutor::start");
@@ -223,11 +223,9 @@ void BatchCommandExecutor::start() throw(chaos::CException) {
 // Start the implementation
 void BatchCommandExecutor::stop() throw(chaos::CException) {
     ReadLock       lock(sandbox_map_mutex);
-    
-    capper_work = false;
-    capper_wait_sem.unlock();
-    capper_thread->join();
-    capper_thread.reset();
+
+    //!remove capper timer
+    AsyncCentralManager::getInstance()->removeTimer(this);
     
     //lock for queue access
     BCELAPP_ << "Stopping all the instance of sandbox";
@@ -374,13 +372,9 @@ void BatchCommandExecutor::capCommanaQueue() {
     
 }
 
-void BatchCommandExecutor::capWorker() {
-    DEBUG_CODE(BCELDBG_ << "Starting capper thread";)
-    while(capper_work) {
-        capCommanaQueue();
-        capper_wait_sem.wait(PURGE_TS_DELAY);
-    }
-    DEBUG_CODE(BCELDBG_ << "Leaving capper thread with command_state_queue.size()" << command_state_queue.size();)
+void BatchCommandExecutor::timeout() {
+    //capping the queue
+    capCommanaQueue();
 }
 
 //! Add a new command state structure to the queue (checking the alredy presence)

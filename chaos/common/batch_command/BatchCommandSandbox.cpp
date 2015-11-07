@@ -212,8 +212,6 @@ void BatchCommandSandbox::start() throw(chaos::CException) {
 // Start the implementation
 void BatchCommandSandbox::stop() throw(chaos::CException) {
 	//we ned to get the lock on the scheduler
-	//boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
-	//SCSLDBG_ << "Lock on mutexNextCommandChecker acquired for stop";
 
 	//se the flag to the end o fthe scheduler
 	SCSLAPP_ << "Set scheduler work flag to false";
@@ -247,10 +245,6 @@ void BatchCommandSandbox::stop() throw(chaos::CException) {
 //! Deinit the implementation
 void BatchCommandSandbox::deinit() throw(chaos::CException) {
 	PRIORITY_ELEMENT(CommandInfoAndImplementation)  *nextAvailableCommand = NULL;
-
-	//we ned to get the lock on the scheduler
-	boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
-	SCSLDBG_ << "Lock on mutexNextCommandChecker acquired for deinit";
 
 	SCSLAPP_ << "Delete scheduler thread";
 	threadScheduler.reset();
@@ -287,14 +281,14 @@ void BatchCommandSandbox::deinit() throw(chaos::CException) {
 }
 
 #define WAIT_ON_NEXT_CMD \
-lockOnNextCommandMutex.unlock(); \
+lock_next_command_queue.unlock(); \
 waithForNextCheck.wait(); \
-lockOnNextCommandMutex.lock();
+lock_next_command_queue.lock();
 
 #define TIMED_WAIT_ON_NEXT_CMD(x) \
-lockOnNextCommandMutex.unlock(); \
+lock_next_command_queue.unlock(); \
 waithForNextCheck.wait(x); \
-lockOnNextCommandMutex.lock();
+lock_next_command_queue.lock();
 
 void BatchCommandSandbox::checkNextCommand() {
 	bool canWork = scheduleWorkFlag;
@@ -312,7 +306,7 @@ void BatchCommandSandbox::checkNextCommand() {
 	}
 	SCSLDBG_ << "[checkNextCommand] checkNextCommand can work";
 	//manage the lock on next command mutex
-	boost::recursive_mutex::scoped_lock lockOnNextCommandMutex(mutexNextCommandChecker);
+    boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue);
 
 	while(canWork) {
 
@@ -729,19 +723,22 @@ void BatchCommandSandbox::killCurrentCommand() {
 
 bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority) {
 	CHAOS_ASSERT(command_impl)
-	boost::recursive_mutex::scoped_lock lock_checker(mutexNextCommandChecker);
+    
 	if(StartableService::serviceState == CUStateKey::DEINIT) return false;
 
 	//
-	SCSLDBG_ << "New command enqueue";
-	command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl), priority, true));
+    {
+        DEBUG_CODE(SCSLDBG_ << "Try to lock for command enqueue";)
+        boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue);
+        command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl), priority, true));
+        SCSLDBG_ << "New command enqueued";
 
+    }
 	//fire the waiting command
 	if(event_handler) event_handler->handleCommandEvent(command_impl->unique_id,
 														BatchCommandEventType::EVT_QUEUED,
 														(void*)command_impl->command_alias.c_str(),
 														(uint32_t)command_impl->command_alias.size());
-	lock_checker.unlock();
 	waithForNextCheck.unlock();
 	return true;
 }

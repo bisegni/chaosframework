@@ -42,7 +42,7 @@
 #include <chaos/common/batch_command/BatchCommandSandboxEventHandler.h>
 #include <chaos/common/batch_command/BatchCommandDescription.h>
 #include <chaos/common/thread/WaitSemaphore.h>
-
+#include <chaos/common/async_central/async_central.h>
 //#include <boost/container/deque.hpp>
 //#include <boost/container/map.hpp>
 
@@ -72,7 +72,8 @@ namespace chaos {
             class BatchCommandExecutor:
             public utility::StartableService,
             public chaos::DeclareAction,
-            public BatchCommandSandboxEventHandler {
+            public BatchCommandSandboxEventHandler,
+            public chaos::common::async_central::TimerHandler {
                 typedef boost::shared_mutex			RWMutex;
                 typedef boost::shared_lock<RWMutex>	ReadLock;
                 typedef boost::unique_lock<RWMutex>	WriteLock;
@@ -98,10 +99,6 @@ namespace chaos {
                 //! command state queue dimension
                 uint16_t							command_state_queue_max_size;
                 
-                //keep track for the last purge ts
-                bool	capper_work;
-                boost::shared_ptr<boost::thread> capper_thread;
-                chaos::WaitSemaphore				capper_wait_sem;
                 //the queue of the insert state (this permit to have an order by insertion time)
                 std::deque< boost::shared_ptr<CommandState> >			command_state_queue;
                 //the map is used for fast access id/pointer
@@ -122,9 +119,6 @@ namespace chaos {
                 
                 //! Add a new command state structure to the queue (checking the alredy presence)
                 inline boost::shared_ptr<CommandState> getCommandState(uint64_t command_sequence);
-                
-                //permit to regulate the queue of command state
-                void capWorker();
             protected:
                 //command event handler
                 virtual void handleCommandEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_value_ptr, uint32_t type_value_size);
@@ -194,6 +188,8 @@ namespace chaos {
                  */
                 chaos_data::CDataWrapper* flushCommandStates(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
                 
+                //!Inherited by TimerHandler for capper operation
+                void timeout();
             public:
                 
                 //! Private constructor
