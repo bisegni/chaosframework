@@ -145,10 +145,12 @@ int DirectIODispatcher::priorityDataReceived(DirectIODataPack *data_pack,
     DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack);
     
     CHAOS_ASSERT(tmp_addr == data_pack->header.dispatcher_header.fields.route_addr);
-    
+    if(data_pack->header.dispatcher_header.fields.route_addr>=MAX_ENDPOINT_NUMBER){
+      DIOD_LERR_ << "The endpoint address " << data_pack->header.dispatcher_header.fields.route_addr << "is invalid";
+      return err;
+    }
 	//get route index and call delegator
-	if(data_pack->header.dispatcher_header.fields.route_addr<MAX_ENDPOINT_NUMBER &&
-       endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
+	if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
 		err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->priorityDataReceived(data_pack,
                                                                                                                          synchronous_answer,
                                                                                                                          answer_header_deallocation_handler,
@@ -170,11 +172,20 @@ int DirectIODispatcher::serviceDataReceived(DirectIODataPack *data_pack,
                                             DirectIODeallocationHandler **answer_header_deallocation_handler,
                                             DirectIODeallocationHandler **answer_data_deallocation_handler) {
 	int err = -1;
+    
+    CHAOS_ASSERT(data_pack);
+    
+    uint16_t tmp_addr = data_pack->header.dispatcher_header.fields.route_addr;
     //convert dispatch header to correct endianes
-    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack)
-	//get route index and call delegator
-    if(data_pack->header.dispatcher_header.fields.route_addr<MAX_ENDPOINT_NUMBER &&
-       endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
+    DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack);
+    
+    CHAOS_ASSERT(tmp_addr == data_pack->header.dispatcher_header.fields.route_addr);
+    
+      if(data_pack->header.dispatcher_header.fields.route_addr>=MAX_ENDPOINT_NUMBER){
+      DIOD_LERR_ << "The endpoint address " << data_pack->header.dispatcher_header.fields.route_addr << "is invalid";
+      return err;
+    }
+    if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
 		err = endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->serviceDataReceived(data_pack,
                                                                                                                         synchronous_answer,
                                                                                                                         answer_header_deallocation_handler,
@@ -186,13 +197,6 @@ int DirectIODispatcher::serviceDataReceived(DirectIODataPack *data_pack,
             //convert dispatch header to correct endianes
             DIRECT_IO_DATAPACK_TO_ENDIAN(synchronous_answer);
         }
-    } else {
-        if(!endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
-            DIOD_LERR_ << "The endpoint " << data_pack->header.dispatcher_header.fields.route_addr << "is disable";
-        }
-        if(data_pack->header.dispatcher_header.fields.route_addr>=MAX_ENDPOINT_NUMBER) {
-            DIOD_LERR_ << "The endpoint address " << data_pack->header.dispatcher_header.fields.route_addr << "is invalid";
-        }
-    }
+    } 
 	return err;
 }

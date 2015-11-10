@@ -72,10 +72,6 @@ fi
 
 
 
-CROSS_HOST_CONFIGURE=""
-if [ -n "$CHAOS_CROSS_HOST" ]; then
-    CROSS_HOST_CONFIGURE="--host=$CHAOS_CROSS_HOST"
-fi
 
 do_make() {
     # make clean
@@ -331,35 +327,34 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 else
     echo "Boost Already present"
 fi
-
 ### install libmodbus
-if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; then
-    echo "* need libmodbus"
+# if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; then
+#     echo "* need libmodbus"
 
-    if [ ! -d "$BASE_EXTERNAL/libmodbus" ]; then
-        echo "Install libmodbus"
-        git clone https://github.com/stephane/libmodbus.git $BASE_EXTERNAL/libmodbus
-        cd $BASE_EXTERNAL/libmodbus
-	git checkout v3.0.5
-    else
-        echo "Update libmodbus"
-        cd $BASE_EXTERNAL/libmodbus/
-        git pull v3.05
-    fi
+#     if [ ! -d "$BASE_EXTERNAL/libmodbus" ]; then
+#         echo "Install libmodbus"
+#         git clone https://github.com/stephane/libmodbus.git $BASE_EXTERNAL/libmodbus
+#         cd $BASE_EXTERNAL/libmodbus
+# 	git checkout v3.0.5
+#     else
+#         echo "Update libmodbus"
+#         cd $BASE_EXTERNAL/libmodbus/
+#         git pull v3.05
+#     fi
 
-    ./autogen.sh
-    # if [ -n "$CHAOS_STATIC" ]; then
-    # 	./configure --enable-static --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-    # else
-    # 	./configure --enable-shared --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-    # fi
-    ./configure --enable-static --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-    do_make "MODBUS" 1
+#     ./autogen.sh
+#     # if [ -n "$CHAOS_STATIC" ]; then
+#     # 	./configure --enable-static --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+#     # else
+#     # 	./configure --enable-shared --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+#     # fi
+#     ./configure --enable-static --prefix=${CMAKE_INSTALL_PREFIX} $CROSS_HOST_CONFIGURE
+#     do_make "MODBUS" 1
 
-    echo "libmodbus done"
-fi
+#     echo "libmodbus done"
+# fi
 
-echo "Setup LIBEVENT :$LIB_EVENT_VERSION"
+echo "Setup LIBEVENT  $CHAOS_LIBEVENT_CONFIGURE :$LIB_EVENT_VERSION"
 if [ ! -d "$PREFIX/include/event2" ]; then
     echo "* need libevent"
     if [ ! -d "$BASE_EXTERNAL/libevent" ]; then
@@ -373,7 +368,8 @@ if [ ! -d "$PREFIX/include/event2" ]; then
     git checkout $LIB_EVENT_VERSION
     git pull
     ./autogen.sh
-    ./configure --disable-openssl --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+   
+    ./configure $CHAOS_LIBEVENT_CONFIGURE
     do_make "LIBEVENT" 1
     echo "LIBEVENT done"
 fi
@@ -401,7 +397,7 @@ fi
 #fi
 
 if [ -z "$CHAOS_NO_COUCHBASE" ]; then
-echo "Setup Couchbase sdk"
+echo "Setup Couchbase sdk, $CHAOS_CB_CONFIGURE"
 if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
     echo "* need couchbase"
     if [ ! -d "$BASE_EXTERNAL/libcouchbase" ]; then
@@ -414,12 +410,8 @@ if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
     git checkout -b good_for_chaos $COUCHBASE_VERSION
     fi
     cd $BASE_EXTERNAL/libcouchbase
-    cmake $CHAOS_CMAKE_FLAGS -DLCB_BUILD_STATIC=true -DLCB_NO_SSL=true .
-    # if [ -n "$CHAOS_STATIC" ]; then
-    # 	cmake $CHAOS_CMAKE_FLAGS -DLCB_BUILD_STATIC=true -DLCB_NO_SSL=true .
-    # else
-    # 	cmake $CHAOS_CMAKE_FLAGS .
-    # fi
+    cmake $CHAOS_CB_CONFIGURE .
+
     do_make "COUCHBASE" 1
     echo "Couchbase done"
 fi
@@ -468,7 +460,7 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
     fi
     cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
 
-    if !(./configure --without-memcached --enable-static --with-pic --disable-shared --without-libtest --disable-sasl --prefix=$PREFIX $CROSS_HOST_CONFIGURE); then
+    if !(./configure $CHAOS_LIBMEMCACHED_CONFIGURE ); then
 	echo "Memcached configuration failed"
 	exit 1
     fi
@@ -484,34 +476,31 @@ echo "skipping libmemcached"
 fi
 
 if [ -z "$CHAOS_NO_ZMQ" ]; then
-echo "Setup ZMQ"
-if [ ! -f "$PREFIX/include/zmq.h" ]; then
-    echo "* need zmq"
-    if [ ! -d "$BASE_EXTERNAL/$ZMQ_VERSION" ]; then
-	echo "Download zmq source"
-
-	if !(git clone https://github.com/zeromq/$ZMQ_VERSION.git $BASE_EXTERNAL/$ZMQ_VERSION); then
-	    echo "## cannot git clone  https://github.com/zeromq/$ZMQ_VERSION.git"
-	    exit 1
+    echo "Setup ZMQ $CHAOS_ZMQ_CONFIGURE"
+    if [ ! -f "$PREFIX/include/zmq.h" ]; then
+	echo "* need zmq"
+	if [ ! -d "$BASE_EXTERNAL/$ZMQ_VERSION" ]; then
+	    echo "Download zmq source"
+	    
+	    if !(git clone https://github.com/zeromq/$ZMQ_VERSION.git $BASE_EXTERNAL/$ZMQ_VERSION); then
+		echo "## cannot git clone  https://github.com/zeromq/$ZMQ_VERSION.git"
+		exit 1
+	    fi
+	else
+	    echo "Update zmq source"
+	    cd $BASE_EXTERNAL/$ZMQ_VERSION
+	    git pull
 	fi
-    else
-	echo "Update zmq source"
 	cd $BASE_EXTERNAL/$ZMQ_VERSION
-	git pull
+	
+	./autogen.sh
+    ./configure $CHAOS_ZMQ_CONFIGURE
+    
     fi
-    cd $BASE_EXTERNAL/$ZMQ_VERSION
-
-    ./autogen.sh
-if [ -z "$CHAOS_DISABLE_EVENTFD" ];then
-    ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE --with-gnu-ld --enable-static
-else
-  ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE --with-gnu-ld --disable-eventfd --enable-static 
-fi
     do_make "ZMQ" 1
     echo "ZMQ done"
-fi
 else
-echo "skipping ZMQ"
+    echo "skipping ZMQ"
 fi
 
 

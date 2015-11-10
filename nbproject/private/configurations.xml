@@ -25725,7 +25725,7 @@
                   <in>AbstractModbus.h</in>
                   <in>LibModBusWrap.h</in>
                 </df>
-                <in>modbus.h</in>
+                <in>ModBus.h</in>
               </df>
               <df name="powersupply">
                 <df name="core">
@@ -25764,6 +25764,41 @@
               <df name="chaos-mess">
                 <in>ChaosMESS.h</in>
                 <in>DummyDriver.h</in>
+              </df>
+              <df name="daq">
+                <df name="models">
+                  <df name="Libera">
+                    <df name="cspi">
+                      <in>bbfp.h</in>
+                      <in>cordic.h</in>
+                      <in>cspi.h</in>
+                      <in>cspi_impl.h</in>
+                      <in>debug.h</in>
+                      <in>dpp.h</in>
+                      <in>dscd.h</in>
+                      <in>ebpp.h</in>
+                      <in>eventd.h</in>
+                      <in>hbpp.h</in>
+                      <in>llrf.h</in>
+                      <in>lplld.h</in>
+                      <in>pool.h</in>
+                    </df>
+                    <in>ChaosControllerLibera.h</in>
+                    <in>CmdAcquireDafneAccumulatorBPM.h</in>
+                    <in>CmdDafneAccumulatorBPM.h</in>
+                    <in>CmdDefaultDafneAccumulatorBPM.h</in>
+                    <in>CmdEnvDafneAccumulatorBPM.h</in>
+                    <in>CmdLiberaAcquire.h</in>
+                    <in>CmdLiberaDefault.h</in>
+                    <in>CmdLiberaEnv.h</in>
+                    <in>CmdLiberaTime.h</in>
+                    <in>DafneAccumulatorBPMSync.h</in>
+                    <in>LiberaBrillianceCSPIDriver.h</in>
+                    <in>LiberaData.h</in>
+                    <in>SCDafneAccumulatorBPMSync.h</in>
+                    <in>SCLiberaCU.h</in>
+                  </df>
+                </df>
               </df>
               <df name="misc">
                 <in>ChaosController.h</in>
@@ -26185,6 +26220,8 @@
             </df>
           </df>
           <df name="tools">
+            <df name="config">
+            </df>
             <df name="package_template">
               <df name="DEBIAN">
               </df>
@@ -26297,8 +26334,6 @@
                 </df>
               </df>
               <df name="CMakeTmp">
-              </df>
-              <df name="Progress">
               </df>
               <df name="UnitServer.dir">
               </df>
@@ -28867,6 +28902,14 @@
             <df name="driver">
               <df name="chaos-mess">
               </df>
+              <df name="daq">
+                <df name="models">
+                  <df name="Libera">
+                    <df name="cspi">
+                    </df>
+                  </df>
+                </df>
+              </df>
               <df name="misc">
               </df>
               <df name="modbus">
@@ -28974,6 +29017,8 @@
             </df>
           </df>
           <df name="tools">
+            <df name="config">
+            </df>
             <df name="package_template">
               <df name="DEBIAN">
               </df>
@@ -29052,8 +29097,6 @@
                 </df>
               </df>
               <df name="CMakeTmp">
-              </df>
-              <df name="Progress">
               </df>
               <df name="UnitServer.dir">
               </df>

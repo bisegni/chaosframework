@@ -56,13 +56,13 @@ namespace chaos {
 			
 #define DIRECT_IO_DATAPACK_FROM_ENDIAN(x)\
 x->header.dispatcher_header.endianes.field_1 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_1);\
-x->header.dispatcher_header.endianes.field_2 = FROM_LITTLE_ENDNS_NUM(int16_t, x->header.dispatcher_header.endianes.field_2);\
+x->header.dispatcher_header.endianes.field_2 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_2);\
 x->header.dispatcher_header.endianes.field_3 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_3);\
 x->header.dispatcher_header.endianes.field_4 = FROM_LITTLE_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_4);
 
 #define DIRECT_IO_DATAPACK_TO_ENDIAN(x)\
 x->header.dispatcher_header.endianes.field_1 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_1);\
-x->header.dispatcher_header.endianes.field_2 = TO_LITTEL_ENDNS_NUM(int16_t, x->header.dispatcher_header.endianes.field_2);\
+x->header.dispatcher_header.endianes.field_2 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_2);\
 x->header.dispatcher_header.endianes.field_3 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_3);\
 x->header.dispatcher_header.endianes.field_4 = TO_LITTEL_ENDNS_NUM(uint16_t, x->header.dispatcher_header.endianes.field_4);
             

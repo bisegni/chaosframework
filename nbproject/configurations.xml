@@ -12534,6 +12534,8 @@
         <element flagsID="6" commonFlags="-fPIC -O2 -O3"/>
         <element flagsID="7" commonFlags="-fPIC -fPIC -fPIC -O3 -O2 -O3 -O2"/>
         <element flagsID="8" commonFlags="-fPIC -fPIC -fPIC -O3 -fPIC -O2 -O3"/>
+        <element flagsID="9"
+                 commonFlags="-fPIC -fPIC -fPIC -fPIC -fPIC -O3 -fPIC -O2 -O3"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -14881,7 +14883,7 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="9">
           <incDir>
             <pElem>.</pElem>
             <pElem>../..</pElem>
@@ -14889,7 +14891,6 @@
             <pElem>bin/bin_common</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>CHAOS</Elem>
             <Elem>DEBUG</Elem>
             <Elem>NDEBUG</Elem>
@@ -15196,7 +15197,7 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="9">
           <incDir>
             <pElem>.</pElem>
             <pElem>../..</pElem>
@@ -15204,7 +15205,6 @@
             <pElem>bin/bin_common</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>CHAOS</Elem>
             <Elem>DEBUG</Elem>
             <Elem>NDEBUG</Elem>
@@ -15256,7 +15256,7 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="9">
           <incDir>
             <pElem>.</pElem>
             <pElem>../..</pElem>
@@ -15264,7 +15264,6 @@
             <pElem>bin/bin_common</pElem>
           </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>CHAOS</Elem>
             <Elem>DEBUG</Elem>
             <Elem>NDEBUG</Elem>

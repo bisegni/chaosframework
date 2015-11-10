@@ -104,6 +104,10 @@ int ZMQBaseClass::reveiceDatapack(void *socket,
     if(stringReceive(socket, identity) == -1) {
         return zmq_errno();
     }
+    if(identity.size()==0){
+        ZMQDIO_BASE_LERR_<<" malformed packet, empty identity";
+        return -12000;
+    }
     return reveiceDatapack(socket,
                            data_pack_handle);
 }
