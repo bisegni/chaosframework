@@ -337,6 +337,8 @@ void ControlUnitEditor::onApiDone(const QString& tag,
         //tempalte delete operaion
         updateTemplateSearch();
     }
+    PresenterWidget::onApiDone(tag,
+                               api_result);
 }
 
 void ControlUnitEditor::fillInfo(const QSharedPointer<chaos::common::data::CDataWrapper>& node_info) {

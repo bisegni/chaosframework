@@ -230,6 +230,8 @@ void UnitServerEditor::onApiDone(const QString& tag,
     }else if(tag.compare(TAG_CU_REMOVE_TYPE_AND_UPDATE_LIST)==0) {
         updateAll();
     }
+    PresenterWidget::onApiDone(tag,
+                               api_result);
 }
 
 void UnitServerEditor::fillTableWithInstance( QSharedPointer<CDataWrapper> cu_instance) {

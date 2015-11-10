@@ -261,6 +261,8 @@ void ControUnitInstanceEditor::onApiDone(const QString& tag,
             }
         }
     }
+    PresenterWidget::onApiDone(tag,
+                               api_result);
 }
 
 void ControUnitInstanceEditor::on_pushButtonSaveInstance_clicked()

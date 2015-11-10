@@ -110,6 +110,7 @@ void SearchNodeResult::onApiDone(const QString& tag,
             qDebug() << "No data found";
         }
     }
+    PresenterWidget::onApiDone(tag, api_result);
 }
 
 void SearchNodeResult::on_tableViewResult_clicked(const QModelIndex &index)

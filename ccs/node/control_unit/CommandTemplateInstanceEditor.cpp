@@ -103,6 +103,8 @@ void CommandTemplateInstanceEditor::onApiDone(const QString& tag,
         //instance has bee saved so we can close the panel
         if(close_after_submition) {closeTab();}
     }
+    PresenterWidget::onApiDone(tag,
+                               api_result);
 }
 
 boost::shared_ptr<node::TemplateSubmission> CommandTemplateInstanceEditor::getTempalteSubmissionTask() {
