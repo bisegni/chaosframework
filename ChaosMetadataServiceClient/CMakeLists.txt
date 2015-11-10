@@ -39,7 +39,7 @@ SET(mcl_src ${mcl_src}      api_proxy/control_unit/SetInputDatasetAttributeValue
                             api_proxy/control_unit/InitDeinit.cpp
                             api_proxy/control_unit/StartStop.cpp
                             api_proxy/control_unit/CopyInstance.cpp
-                            api_proxy/control_unit/recoverError.cpp)
+                            api_proxy/control_unit/RecoverError.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
                             api_proxy/unit_server/NewUS.cpp

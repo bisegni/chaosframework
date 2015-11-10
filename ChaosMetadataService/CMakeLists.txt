@@ -69,7 +69,7 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/GetCommandAndTemplateDescription.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
-              ll          persistence/data_access/NodeDataAccess.cpp
+                        persistence/data_access/NodeDataAccess.cpp
                         persistence/data_access/UtilityDataAccess.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
                         persistence/data_access/DataServiceDataAccess.cpp)
