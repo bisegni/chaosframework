@@ -317,17 +317,17 @@ void BatchCommandSandbox::checkNextCommand() {
 				PRIORITY_ELEMENT(CommandInfoAndImplementation)  *command_to_delete = NULL;
 				PRIORITY_ELEMENT(CommandInfoAndImplementation)  *next_available_command = NULL;
 				//compute the runnig state or fault
-				DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] try to acquire lock";)
+				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] try to acquire lock";)
 				boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand);
-				DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] lock acquired";)
+				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] lock acquired";)
 				// cehck waht we need to do with current and submitted command
                 lock_next_command_queue.lock();
 				next_available_command = command_submitted_queue.top();
-				DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] got next command";)
+				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] got next command";)
 				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] check installation for enw command with pointer =" << std::hex << next_available_command << std::dec;)
 
 				if(next_available_command->element->cmdImpl->implementedHandler()<=1) {
-					DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] we have only a set handler";)
+					DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] we have only a set handler";)
 					installHandler(next_available_command);
 					command_submitted_queue.pop();
                     lock_next_command_queue.unlock();
@@ -473,9 +473,9 @@ void BatchCommandSandbox::checkNextCommand() {
 			}
 		} else {
 			DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] command submitted queue is empty";)
-			DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] try to acquire lock";)
+			DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] try to acquire lock";)
 			boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand);
-			DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] lock acquired on mutextAccessCurrentCommand";)
+			DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] lock acquired on mutextAccessCurrentCommand";)
 			DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] checking current running command";)
 			bool curre_cmd_ended =  currentExecutingCommand && (currentExecutingCommand->element->cmdImpl->runningProperty>=RunningPropertyType::RP_End);
 
@@ -529,7 +529,7 @@ void BatchCommandSandbox::checkNextCommand() {
 					DELETE_OBJ_POINTER(command_to_delete);
 				}
 			}
-			DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] unlock the mutextAccessCurrentCommand";)
+			DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] unlock the mutextAccessCurrentCommand";)
 			//unloc current command mutex
 			lockForCurrentCommandMutex.unlock();
 			DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] wait undefinitly";)

@@ -164,11 +164,13 @@ uint64_t MDSBatchExecutor::submitCommand(const std::string& batch_command_alias,
 
 uint64_t MDSBatchExecutor::submitCommand(const std::string& batch_command_alias,
                                          chaos::common::data::CDataWrapper* command_data,
-                                         uint32_t sandbox_id) {
+                                         uint32_t sandbox_id,
+                                         uint32_t priority) {
     uint64_t command_id;
     BatchCommandExecutor::submitCommand(batch_command_alias,
                                         command_data,
                                         command_id,
-                                        sandbox_id);
+                                        sandbox_id,
+                                        priority);
     return command_id;
 }

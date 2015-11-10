@@ -100,18 +100,22 @@ void IDSTControlUnitBatchCommand::ccHandler() {
         case MESSAGE_PHASE_UNSENT: {
             switch(action) {
                 case ACTION_INIT:
+                    CU_IDST_BC_INFO << "Send init command to " << cu_id;
                     request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_INIT;
                     message = initialize(cu_id);
                     break;
                 case ACTION_START:
+                    CU_IDST_BC_INFO << "Send start command to " << cu_id;
                     request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_START;
                     message = start(cu_id);
                     break;
                 case ACTION_STOP:
+                    CU_IDST_BC_INFO << "Send stop command to " << cu_id;
                     request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_STOP;
                     message = stop(cu_id);
                     break;
                 case ACTION_DEINIT:
+                    CU_IDST_BC_INFO << "Send deinit command to " << cu_id;
                     request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_DEINIT;
                     message = deinitialize(cu_id);
                     break;
@@ -184,7 +188,7 @@ std::auto_ptr<CDataWrapper> IDSTControlUnitBatchCommand::initialize(const std::s
     init_datapack->addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, cu_base_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN));
     
     if((err = getDataAccess<mds_data_access::ControlUnitDataAccess>()->getInstanceDescription(cu_uid,
-                                            &result))){
+                                                                                              &result))){
         LOG_AND_TROW(CU_IDST_BC_ERR, err, boost::str(boost::format("Error fetching the control unit instance description for control unit:%1%") % cu_uid));
     } else if(result == NULL) {
         LOG_AND_TROW(CU_IDST_BC_ERR, err, boost::str(boost::format("No instance found for control unit: %1%") % cu_uid));
@@ -195,7 +199,7 @@ std::auto_ptr<CDataWrapper> IDSTControlUnitBatchCommand::initialize(const std::s
     
     //get the dataset of the control unit
     if((err = getDataAccess<mds_data_access::ControlUnitDataAccess>()->getDataset(cu_uid,
-                                &result))) {
+                                                                                  &result))) {
         LOG_AND_TROW(CU_IDST_BC_ERR, err, boost::str(boost::format("Error fetching dataset for control unit %1%") % cu_uid));
     } else if(result == NULL){
         LOG_AND_TROW(CU_IDST_BC_ERR, err, boost::str(boost::format("No dataset found for control unit: %1%") % cu_uid));
@@ -207,7 +211,7 @@ std::auto_ptr<CDataWrapper> IDSTControlUnitBatchCommand::initialize(const std::s
     std::vector<std::string> associated_ds;
     //load the asosciated dataservice
     if((err = getDataAccess<mds_data_access::ControlUnitDataAccess>()->getDataServiceAssociated(cu_uid,
-                                              associated_ds))){
+                                                                                                associated_ds))){
         LOG_AND_TROW(CU_IDST_BC_ERR, err, boost::str(boost::format("Error loading the associated data service for the control unit %1%") % cu_uid));
     }
     
@@ -234,8 +238,8 @@ std:auto_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description
         boost::shared_ptr<CDataWrapper> element_configuration;
         //get the dataset element setup
         if((err = getDataAccess<mds_data_access::ControlUnitDataAccess>()->getInstanceDatasetAttributeConfiguration(cu_uid,
-                                                                  ds_attribute_name,
-                                                                  element_configuration))) {
+                                                                                                                    ds_attribute_name,
+                                                                                                                    element_configuration))) {
             LOG_AND_TROW(CU_IDST_BC_ERR, err, boost::str(boost::format("Error loading the configuration for the the dataset's attribute: %1% for control unit: %2%") % ds_attribute_name % cu_uid));
         } else if((direction == chaos::DataType::Input ||
                    direction == chaos::DataType::Bidirectional) &&

@@ -158,11 +158,13 @@ uint32_t MDSBatchCommand::getNextSandboxToUse() {
 
 uint64_t MDSBatchCommand::submitCommand(const std::string& batch_command_alias,
                                         chaos_data::CDataWrapper *command_data,
-                                        uint32_t sandbox_id) {
+                                        uint32_t sandbox_id,
+                                        uint32_t priority) {
     CHAOS_ASSERT(executor_instance)
     return executor_instance->submitCommand(batch_command_alias,
                                             command_data,
-                                            sandbox_id);
+                                            sandbox_id,
+                                            priority);
 }
 
 uint64_t MDSBatchCommand::submitCommand(const std::string& batch_command_alias,

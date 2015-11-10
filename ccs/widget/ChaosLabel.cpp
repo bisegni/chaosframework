@@ -120,11 +120,11 @@ int ChaosLabel::stopMonitoring() {
 }
 
 void ChaosLabel::_updateStatusColor() {
-    if(!monitoring) return;
+    if(!monitoring || !trackStatus()) return;
     bool offline = (zero_diff_count > 3) || (last_recevied_ts = 0);
     if(!offline) {
         if(last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
-             last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
+                last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
             setStyleSheet("QLabel { color : #FF7C00; }");
         }else{
             setStyleSheet("QLabel { color : #4EB66B; }");
@@ -163,6 +163,9 @@ void ChaosLabel::valueUpdated(const QString& _node_uid,
 }
 
 void ChaosLabel::quantumSlotHasData(const std::string& key, const KeyValue& value) {
+    if(!value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) ||
+            !value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS)) return;
+
     uint64_t received_ts = value->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP);
     uint64_t time_diff = last_recevied_ts - received_ts;
     last_status = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));

@@ -44,7 +44,6 @@ NodeRegister::~NodeRegister() {
 chaos::common::data::CDataWrapper *NodeRegister::execute(chaos::common::data::CDataWrapper *api_data,
                                                          bool& detach_data) throw (chaos::CException){
     CHECK_CDW_THROW_AND_LOG(api_data, USRA_ERR, -1, "No parameter found")
-    USRA_INFO << api_data->getJSONString();
     
     chaos::common::data::CDataWrapper *result = NULL;
     if(!api_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {

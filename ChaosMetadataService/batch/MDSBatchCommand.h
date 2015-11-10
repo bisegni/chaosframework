@@ -141,7 +141,8 @@ namespace chaos{
                 
                 uint64_t submitCommand(const std::string& batch_command_alias,
                                        chaos_data::CDataWrapper *command_data,
-                                       uint32_t sandbox_id);
+                                       uint32_t sandbox_id,
+                                       uint32_t priority = 50);
                 
                 uint64_t submitCommand(const std::string& batch_command_alias,
                                        chaos_data::CDataWrapper *command_data);

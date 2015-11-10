@@ -104,7 +104,8 @@ namespace chaos{
                 //! submit a command forcing a sandbox
                 uint64_t submitCommand(const std::string& batch_command_alias,
                                        chaos::common::data::CDataWrapper * command_data,
-                                       uint32_t sandbox_id);
+                                       uint32_t sandbox_id,
+                                       uint32_t priority = 50);
             };
         }
     }
