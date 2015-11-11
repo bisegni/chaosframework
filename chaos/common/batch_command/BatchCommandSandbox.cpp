@@ -212,8 +212,6 @@ void BatchCommandSandbox::start() throw(chaos::CException) {
 // Start the implementation
 void BatchCommandSandbox::stop() throw(chaos::CException) {
 	//we ned to get the lock on the scheduler
-	//boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
-	//SCSLDBG_ << "Lock on mutexNextCommandChecker acquired for stop";
 
 	//se the flag to the end o fthe scheduler
 	SCSLAPP_ << "Set scheduler work flag to false";
@@ -247,10 +245,6 @@ void BatchCommandSandbox::stop() throw(chaos::CException) {
 //! Deinit the implementation
 void BatchCommandSandbox::deinit() throw(chaos::CException) {
 	PRIORITY_ELEMENT(CommandInfoAndImplementation)  *nextAvailableCommand = NULL;
-
-	//we ned to get the lock on the scheduler
-	boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
-	SCSLDBG_ << "Lock on mutexNextCommandChecker acquired for deinit";
 
 	SCSLAPP_ << "Delete scheduler thread";
 	threadScheduler.reset();
@@ -287,16 +281,13 @@ void BatchCommandSandbox::deinit() throw(chaos::CException) {
 }
 
 #define WAIT_ON_NEXT_CMD \
-lockOnNextCommandMutex.unlock(); \
-waithForNextCheck.wait(); \
-lockOnNextCommandMutex.lock();
+waithForNextCheck.wait();
 
 #define TIMED_WAIT_ON_NEXT_CMD(x) \
-lockOnNextCommandMutex.unlock(); \
-waithForNextCheck.wait(x); \
-lockOnNextCommandMutex.lock();
+waithForNextCheck.wait(x);
 
 void BatchCommandSandbox::checkNextCommand() {
+    bool queue_empty = false;
 	bool canWork = scheduleWorkFlag;
 	RunningVSSubmissioneResult current_check_value;
 
@@ -312,28 +303,34 @@ void BatchCommandSandbox::checkNextCommand() {
 	}
 	SCSLDBG_ << "[checkNextCommand] checkNextCommand can work";
 	//manage the lock on next command mutex
-	boost::recursive_mutex::scoped_lock lockOnNextCommandMutex(mutexNextCommandChecker);
+    boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue, boost::defer_lock_t());
 
 	while(canWork) {
-
-		if(!command_submitted_queue.empty()){
+        //lock the command queue access
+        lock_next_command_queue.lock();
+        queue_empty = command_submitted_queue.empty();
+        lock_next_command_queue.unlock();
+        //check for emotness
+		if(!queue_empty){
 			if(currentExecutingCommand) {
 				PRIORITY_ELEMENT(CommandInfoAndImplementation)  *tmp_command = NULL;
 				PRIORITY_ELEMENT(CommandInfoAndImplementation)  *command_to_delete = NULL;
 				PRIORITY_ELEMENT(CommandInfoAndImplementation)  *next_available_command = NULL;
 				//compute the runnig state or fault
-				DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] try to acquire lock";)
+				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] try to acquire lock";)
 				boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand);
-				DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] lock acquired";)
+				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] lock acquired";)
 				// cehck waht we need to do with current and submitted command
+                lock_next_command_queue.lock();
 				next_available_command = command_submitted_queue.top();
-				DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] got next command";)
+				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] got next command";)
 				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] check installation for enw command with pointer =" << std::hex << next_available_command << std::dec;)
 
 				if(next_available_command->element->cmdImpl->implementedHandler()<=1) {
-					DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] we have only a set handler";)
+					DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] we have only a set handler";)
 					installHandler(next_available_command);
 					command_submitted_queue.pop();
+                    lock_next_command_queue.unlock();
 					if(event_handler) {
 						if(next_available_command->element->cmdImpl->runningProperty == RunningPropertyType::RP_Fault){
 							event_handler->handleCommandEvent(next_available_command->element->cmdImpl->unique_id,
@@ -355,6 +352,7 @@ void BatchCommandSandbox::checkNextCommand() {
 						DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] RSR_NO_CHANGE";)
 						DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] so waith for awake signal by other submission or command fault or end";)
 						lockForCurrentCommandMutex.unlock();
+                        lock_next_command_queue.unlock();
 						WAIT_ON_NEXT_CMD
 						DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] awaked " << __LINE__;)
 						continue; //we must recontorl the top element because it could be have changed
@@ -364,6 +362,7 @@ void BatchCommandSandbox::checkNextCommand() {
 						DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] RSR_TIMED_RETRY";)
 						DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] wait the command submission retry period";)
 						lockForCurrentCommandMutex.unlock();
+                        lock_next_command_queue.unlock();
 						TIMED_WAIT_ON_NEXT_CMD(next_available_command->element->cmdImpl->commandFeatures.featureSubmissionRetryDelay);
 						DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] awaked " << __LINE__;)
 						continue; //we must recontorl the top element because it could be have changed
@@ -373,6 +372,7 @@ void BatchCommandSandbox::checkNextCommand() {
 						//the stack feature need that the
 						DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] RSR_STACK_CURENT_COMMAND";)
 						command_submitted_queue.pop();
+                        lock_next_command_queue.unlock();
 						DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in command_submitted_queue " << command_submitted_queue.size();)
 						tmp_command = currentExecutingCommand;
 						if(installHandler(next_available_command)) {
@@ -403,6 +403,7 @@ void BatchCommandSandbox::checkNextCommand() {
 					case RSR_CURRENT_CMD_HAS_FAULTED:
 						tmp_command = currentExecutingCommand;
 						command_submitted_queue.pop();
+                        lock_next_command_queue.unlock();
 						DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in command_submitted_queue " << command_submitted_queue.size();)
 
 						removeHandler(tmp_command);
@@ -459,19 +460,22 @@ void BatchCommandSandbox::checkNextCommand() {
 				//delete
 				if(command_to_delete) DELETE_OBJ_POINTER(command_to_delete);
 			} else {
+                lock_next_command_queue.lock();
 				PRIORITY_ELEMENT(CommandInfoAndImplementation)  *nextAvailableCommand = command_submitted_queue.top();
 				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] there isn't any current runnig command";)
 				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Install command with pointer " << std::hex << nextAvailableCommand<< std::dec;)
 				installHandler(nextAvailableCommand);
 				command_submitted_queue.pop();
+                //lock the command queue access
+                lock_next_command_queue.unlock();
 				DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in command_submitted_queue " << command_submitted_queue.size();)
 				threadSchedulerPauseCondition.unlock();
 			}
 		} else {
 			DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] command submitted queue is empty";)
-			DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] try to acquire lock";)
+			DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] try to acquire lock";)
 			boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand);
-			DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] lock acquired on mutextAccessCurrentCommand";)
+			DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] lock acquired on mutextAccessCurrentCommand";)
 			DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] checking current running command";)
 			bool curre_cmd_ended =  currentExecutingCommand && (currentExecutingCommand->element->cmdImpl->runningProperty>=RunningPropertyType::RP_End);
 
@@ -525,7 +529,7 @@ void BatchCommandSandbox::checkNextCommand() {
 					DELETE_OBJ_POINTER(command_to_delete);
 				}
 			}
-			DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] unlock the mutextAccessCurrentCommand";)
+			DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] unlock the mutextAccessCurrentCommand";)
 			//unloc current command mutex
 			lockForCurrentCommandMutex.unlock();
 			DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] wait undefinitly";)
@@ -729,19 +733,22 @@ void BatchCommandSandbox::killCurrentCommand() {
 
 bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority) {
 	CHAOS_ASSERT(command_impl)
-	boost::recursive_mutex::scoped_lock lock_checker(mutexNextCommandChecker);
-	if(StartableService::serviceState == service_state_machine::InizializableServiceType::IS_DEINTIATED) return false;
+    
+	if(StartableService::serviceState == CUStateKey::DEINIT) return false;
 
 	//
-	SCSLDBG_ << "New command enqueue";
-	command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl), priority, true));
+    {
+        DEBUG_CODE(SCSLDBG_ << "Try to lock for command enqueue";)
+        boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue);
+        command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl), priority, true));
+        SCSLDBG_ << "New command enqueued";
 
+    }
 	//fire the waiting command
 	if(event_handler) event_handler->handleCommandEvent(command_impl->unique_id,
 														BatchCommandEventType::EVT_QUEUED,
 														(void*)command_impl->command_alias.c_str(),
 														(uint32_t)command_impl->command_alias.size());
-	lock_checker.unlock();
 	waithForNextCheck.unlock();
 	return true;
 }

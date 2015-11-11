@@ -59,6 +59,8 @@ private slots:
     void cuInstanceStartSelected();
     void cuInstanceStopSelected();
 
+    void duplicateInstance();
+
     void on_pushButtonUpdateControlUnitType_clicked();
     void on_pushButtonAddNewCUType_clicked();
     void on_pushButtonRemoveCUType_clicked();

@@ -147,10 +147,13 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             WUMAPP_ << "Setup Control Unit Sanbox for cu with instance";
             try{
                 work_unit_instance->_defineActionAndDataset(mds_registration_message);
-            }catch(chaos::CException& e) {
-                DECODE_CHAOS_EXCEPTION(e)
+            }catch(chaos::CException& ex) {
+                chaos::common::utility::SWEService::goInFatalError(work_unit_instance.get(), ex, "Setup phase", __PRETTY_FUNCTION__);
+                DECODE_CHAOS_EXCEPTION(ex)
                 SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
             }catch(...) {
+                chaos::CException c(-10000, "Undefined error", __PRETTY_FUNCTION__);
+                chaos::common::utility::SWEService::goInFatalError(work_unit_instance.get(), c, "Setup phase", __PRETTY_FUNCTION__);
                 WUMERR_ << "Unexpected error during control unit definition";
                 SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
             }

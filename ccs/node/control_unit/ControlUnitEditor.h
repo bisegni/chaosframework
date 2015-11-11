@@ -85,6 +85,10 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_pushButtonRecoverError_clicked();
+
+    void on_pushButtonOpenInstanceEditor_clicked();
+
 private:
     QString getStatusString(int status);
 

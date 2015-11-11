@@ -57,7 +57,7 @@ namespace chaos {
 				 a CDataWrapper
 				 */
 				void _defineActionAndDataset(chaos_data::CDataWrapper&) throw(CException);
-				
+                
 				//! init rt control unit
 				void init(void *initData) throw(CException);
 				

@@ -33,7 +33,7 @@ using namespace chaos::common::utility;
  */
 InizializableService::InizializableService() {
         //set the default value
-    serviceState = service_state_machine::InizializableServiceType::IS_DEINTIATED;
+    serviceState = CUStateKey::DEINIT;
 }
 
 /*!

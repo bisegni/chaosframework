@@ -17,11 +17,15 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #include "LoadUnloadControlUnit.h"
 
+#include "../control_unit/IDSTControlUnitBatchCommand.h"
+#include "../../common/CUCommonUtility.h"
 
 using namespace chaos::common::data;
 using namespace chaos::common::network;
+using namespace chaos::metadata_service::common;
 using namespace chaos::metadata_service::batch::unit_server;
 
 #define BATHC_CU_LUL_INFO INFO_LOG(LoadUnloadControlUnit)
@@ -36,14 +40,8 @@ static const char * const LoadUnloadControlUnit_NO_RPC_ADDRESS = "No unit server
 static const char * const LoadUnloadControlUnit_NO_LOAD_UNLOAD = "No load or unload has been specified";
 
 LoadUnloadControlUnit::LoadUnloadControlUnit():
-MDSBatchCommand() {
-    //set default scheduler delay 1 second
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
-    //set the timeout to 10 seconds
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
-}
-LoadUnloadControlUnit::~LoadUnloadControlUnit() {
-}
+MDSBatchCommand() {}
+LoadUnloadControlUnit::~LoadUnloadControlUnit() {}
 
 // inherited method
 void LoadUnloadControlUnit::setHandler(CDataWrapper *data) {
@@ -85,7 +83,14 @@ void LoadUnloadControlUnit::setHandler(CDataWrapper *data) {
     } else {
         us_address = data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR);
     }
-    
+    //prepare load data pack to sento to control unit
+    if(load){
+        load_unload_pack = CUCommonUtility::prepareRequestPackForLoadControlUnit(cu_id,
+                                                                                 getDataAccess<mds_data_access::ControlUnitDataAccess>());
+    } else {
+        load_unload_pack.reset(new CDataWrapper());
+        load_unload_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
+    }
     //set the send command phase
     request = createRequest(us_address,
                             UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
@@ -102,11 +107,8 @@ void LoadUnloadControlUnit::ccHandler() {
     MDSBatchCommand::ccHandler();
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT:{
-            CDataWrapper message;
-            message.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
-            if(load){message.addStringValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE, cu_type);}
             sendRequest(*request,
-                        &message);
+                        load_unload_pack.get());
             
             break;
         }

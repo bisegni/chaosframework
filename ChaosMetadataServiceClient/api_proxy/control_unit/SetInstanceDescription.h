@@ -60,6 +60,16 @@ namespace chaos {
                      */
                     bool auto_load;
 
+                    /*!
+                     specify if the control unit, hosted by an unit server, need to be initialized after his load phase
+                     */
+                    bool auto_init;
+                    
+                    /*!
+                     specify if the control unit, hosted by an unit server, need to be started after his init phase
+                     */
+                    bool auto_start;
+                    
                         //! the string is passed to the control unit for the load phase
                     std::string load_parameter;
 

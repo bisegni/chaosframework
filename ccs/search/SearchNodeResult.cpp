@@ -110,6 +110,7 @@ void SearchNodeResult::onApiDone(const QString& tag,
             qDebug() << "No data found";
         }
     }
+    PresenterWidget::onApiDone(tag, api_result);
 }
 
 void SearchNodeResult::on_tableViewResult_clicked(const QModelIndex &index)
@@ -121,11 +122,13 @@ void SearchNodeResult::on_tableViewResult_clicked(const QModelIndex &index)
 void SearchNodeResult::on_pushButtonStartSearch_clicked()
 {
     //submit api
-    submitApiResult("search_result",
-                    GET_CHAOS_API_PTR(node::NodeSearch)->execute(ui->lineEditSearchCriteria->text().toStdString(),
-                                                                 ui->comboBoxSearchType->currentIndex(),
-                                                                 0,
-                                                                 current_page_length));
+    if(ui->lineEditSearchCriteria->text().size() >=3) {
+        submitApiResult("search_result",
+                        GET_CHAOS_API_PTR(node::NodeSearch)->execute(ui->lineEditSearchCriteria->text().toStdString(),
+                                                                     ui->comboBoxSearchType->currentIndex(),
+                                                                     0,
+                                                                     current_page_length));
+    }
 }
 
 void SearchNodeResult::on_pushButtonActionOnSelected_clicked() {
@@ -189,7 +192,7 @@ void SearchNodeResult::on_tableViewResult_doubleClicked(const QModelIndex &index
 
 void SearchNodeResult::on_lineEditSearchCriteria_textEdited(const QString &search_string) {
     qDebug() << "on_lineEditSearchCriteria_textEdited:" << search_string;
-    if(search_string.size()) {
+    if(search_string.size() >= 3) {
         //restart timer
         search_timer.start(500);
     } else {

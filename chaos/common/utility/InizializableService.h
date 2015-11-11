@@ -80,7 +80,7 @@ namespace chaos {
 			class InizializableService {
 				boost::msm::back::state_machine< service_state_machine::id_states_machine > state_machine;
 			protected:
-				uint8_t serviceState;
+				unsigned int serviceState;
 				
 				//! Initialize instance
 				virtual void init(void*) throw(chaos::CException);

@@ -60,11 +60,11 @@ namespace chaos {
                     typedef boost::msm::front::Row <  service_state_machine::RecoverableError ,  EventType::deinit  , service_state_machine::Deinit  , boost::msm::front::none , boost::msm::front::none > re_deinit_row;
                    
                     //----------------fatal error states-----------------
-                    typedef boost::msm::front::Row <  service_state_machine::Init   ,  EventType::fatal_error  , service_state_machine::FatalError  , boost::msm::front::none , boost::msm::front::none > init_fe_row;
-                    typedef boost::msm::front::Row <  service_state_machine::Start  ,  EventType::fatal_error  , service_state_machine::FatalError  , boost::msm::front::none , boost::msm::front::none > start_fe_row;
-                    typedef boost::msm::front::Row <  service_state_machine::Stop   ,  EventType::fatal_error  , service_state_machine::FatalError  , boost::msm::front::none , boost::msm::front::none > stop_fe_row;
-                    typedef boost::msm::front::Row <  service_state_machine::Deinit ,  EventType::fatal_error  , service_state_machine::FatalError  , boost::msm::front::none , boost::msm::front::none > deinit_fe_row;
-                    
+                    typedef boost::msm::front::Row <  service_state_machine::Init       ,  EventType::fatal_error   , service_state_machine::FatalError    , boost::msm::front::none , boost::msm::front::none > init_fe_row;
+                    typedef boost::msm::front::Row <  service_state_machine::Start      ,  EventType::fatal_error   , service_state_machine::FatalError    , boost::msm::front::none , boost::msm::front::none > start_fe_row;
+                    typedef boost::msm::front::Row <  service_state_machine::Stop       ,  EventType::fatal_error   , service_state_machine::FatalError    , boost::msm::front::none , boost::msm::front::none > stop_fe_row;
+                    typedef boost::msm::front::Row <  service_state_machine::Deinit     ,  EventType::fatal_error   , service_state_machine::FatalError    , boost::msm::front::none , boost::msm::front::none > deinit_fe_row;
+                    typedef boost::msm::front::Row <  service_state_machine::FatalError ,  EventType::init          , service_state_machine::Init          , boost::msm::front::none , boost::msm::front::none > fe_init_row;
                     // the initial state of the player SM. Must be defined
                     typedef Deinit initial_state;
                     
@@ -76,10 +76,19 @@ namespace chaos {
                     start_stop_row,
                     stop_start_row,
                     stop_deinit_row,
+                    init_re_row,
+                    start_re_row,
+                    stop_re_row,
+                    deinit_re_row,
+                    re_init_row,
+                    re_start_row,
+                    re_stop_row,
+                    re_deinit_row,
                     init_fe_row,
                     start_fe_row,
                     stop_fe_row,
-                    deinit_fe_row> {};
+                    deinit_fe_row,
+                    fe_init_row> {};
                     
                     template <class FSM,class Event>
                     void no_transition(Event const& ,FSM&, int ) {}
@@ -92,7 +101,7 @@ namespace chaos {
             protected:
                 
                 //! State machine is gone into recoverable error
-                virtual void recoverableErrorFromState(int last_state) = 0;
+                virtual void recoverableErrorFromState(int last_state, chaos::CException& ex) = 0;
                 
                 //! State machine is gone into recoverable error
                 /*!
@@ -107,7 +116,7 @@ namespace chaos {
                 virtual void recoveredToState(int last_state) = 0;
                 
                 //! State machine is gone into an unrecoverable error
-                virtual void fatalErrorFromState(int last_state) = 0;
+                virtual void fatalErrorFromState(int last_state, chaos::CException& ex ) = 0;
                 
             public:
                 SWEService();
@@ -126,11 +135,11 @@ namespace chaos {
                 static bool deinitImplementation(SWEService& impl, const std::string & impl_name,  const std::string & domain_string);
                 static bool deinitImplementation(SWEService *impl, const std::string & impl_name,  const std::string & domain_string);
                 
-                static bool goInFatalError(SWEService& impl, const std::string & impl_name,  const std::string & domain_string);
-                static bool goInFatalError(SWEService *impl, const std::string & impl_name,  const std::string & domain_string);
+                static bool goInFatalError(SWEService& impl, chaos::CException& ex, const std::string & impl_name,  const std::string & domain_string);
+                static bool goInFatalError(SWEService *impl, chaos::CException& ex,  const std::string & impl_name,  const std::string & domain_string);
                 
-                static bool goInRecoverableError(SWEService& impl, const std::string & impl_name,  const std::string & domain_string);
-                static bool goInRecoverableError(SWEService *impl, const std::string & impl_name,  const std::string & domain_string);
+                static bool goInRecoverableError(SWEService& impl, chaos::CException& ex, const std::string & impl_name,  const std::string & domain_string);
+                static bool goInRecoverableError(SWEService *impl, chaos::CException& ex,  const std::string & impl_name,  const std::string & domain_string);
                 
                 static bool recoverError(SWEService& impl, const std::string & impl_name,  const std::string & domain_string);
                 static bool recoverError(SWEService *impl, const std::string & impl_name,  const std::string & domain_string);

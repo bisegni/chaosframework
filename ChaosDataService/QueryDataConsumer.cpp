@@ -206,7 +206,7 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
     CHAOS_ASSERT(channel_data)
     int err = 0;
     //! if tag is == 1 the datapack is in liveonly
-    bool send_to_storage_layer = (header->tag != 1);
+    bool send_to_storage_layer = (header->tag != 1) && (ChaosDataService::getInstance()->setting.cache_only == false);
     switch(header->tag) {
         case 0:// storicize only
             

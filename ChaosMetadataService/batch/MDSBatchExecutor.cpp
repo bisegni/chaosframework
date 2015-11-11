@@ -30,25 +30,32 @@ using namespace chaos::metadata_service::batch;
 #define MDS_BATCH_COMMAND_INSTANCER(BatchCommandClass) new chaos::common::utility::NestedObjectInstancer<MDSBatchCommand, common::batch_command::BatchCommand>(\
 new chaos::common::utility::TypedObjectInstancer<BatchCommandClass, MDSBatchCommand>())
 
+#define MDS_BATCH_SANDBOX_COUNT 1
+
 MDSBatchExecutor::MDSBatchExecutor(const std::string& executor_id,
                                    chaos::common::network::NetworkBroker *_network_broker):
 BatchCommandExecutor(executor_id),
 network_broker(_network_broker),
 message_channel_for_job(NULL),
 multiaddress_message_channel_for_job(NULL),
-abstract_persistance_driver(NULL){
-        //node server command
+abstract_persistance_driver(NULL),
+last_used_sb_idx(3){
+    //node server command
     installCommand(node::UpdatePropertyCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::UpdatePropertyCommand));
     installCommand(node::SubmitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::SubmitBatchCommand));
     
-        //unit server command
+    //unit server command
     installCommand(unit_server::UnitServerAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::UnitServerAckCommand));
     installCommand(unit_server::LoadUnloadControlUnit::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::LoadUnloadControlUnit));
-
-        //control unit command
+    
+    //control unit command
     installCommand(control_unit::ApplyChangeSet::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::ApplyChangeSet));
+    installCommand(control_unit::RecoverError::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::RecoverError));
     installCommand(control_unit::RegistrationAckBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::RegistrationAckBatchCommand));
     installCommand(control_unit::IDSTControlUnitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::IDSTControlUnitBatchCommand));
+    
+    //add all sandbox instances
+    addSandboxInstance(MDS_BATCH_SANDBOX_COUNT);
 }
 
 MDSBatchExecutor::~MDSBatchExecutor(){}
@@ -98,15 +105,28 @@ void MDSBatchExecutor::deinit() throw(chaos::CException) {
     BatchCommandExecutor::deinit();
 }
 
+//! return the number of the sandbox
+uint32_t MDSBatchExecutor::getNextSandboxToUse() {
+    boost::lock_guard<boost::mutex> l(mutex_sandbox_id);
+    last_used_sb_idx++;
+    return (last_used_sb_idx %= MDS_BATCH_SANDBOX_COUNT);
+}
+
 //allocate a new command
-chaos::common::batch_command::BatchCommand *MDSBatchExecutor::instanceCommandInfo(const std::string& command_alias,
-                                                                                  CDataWrapper *command_info) {
+chaos::common::batch_command::BatchCommand * MDSBatchExecutor::instanceCommandInfo(const std::string& command_alias,
+                                                                                   uint32_t submission_rule,
+                                                                                   uint32_t submission_retry_delay,
+                                                                                   uint64_t scheduler_step_delay) {
     //install command into the batch command executor root class
     MDSBatchCommand *result = (MDSBatchCommand*) BatchCommandExecutor::instanceCommandInfo(command_alias,
-                                                                                           command_info);
+                                                                                           submission_rule,
+                                                                                           submission_retry_delay,
+                                                                                           scheduler_step_delay);
     
     //customize the newly create batch command
     if(result) {
+        //set this instance
+        result->executor_instance = this;
         //allocoate new message channel
         result->message_channel = message_channel_for_job;
         result->multiaddress_message_channel = multiaddress_message_channel_for_job;
@@ -129,4 +149,28 @@ void MDSBatchExecutor::handleSandboxEvent(const std::string& sandbox_id,
                                           void* type_value_ptr,
                                           uint32_t type_value_size) {
     
+}
+
+uint64_t MDSBatchExecutor::submitCommand(const std::string& batch_command_alias,
+                                         chaos::common::data::CDataWrapper * command_data) {
+    uint64_t command_id;
+    last_used_sb_idx++;
+    BatchCommandExecutor::submitCommand(batch_command_alias,
+                                        command_data,
+                                        command_id,
+                                        getNextSandboxToUse());
+    return command_id;
+}
+
+uint64_t MDSBatchExecutor::submitCommand(const std::string& batch_command_alias,
+                                         chaos::common::data::CDataWrapper* command_data,
+                                         uint32_t sandbox_id,
+                                         uint32_t priority) {
+    uint64_t command_id;
+    BatchCommandExecutor::submitCommand(batch_command_alias,
+                                        command_data,
+                                        command_id,
+                                        sandbox_id,
+                                        priority);
+    return command_id;
 }

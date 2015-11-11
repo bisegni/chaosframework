@@ -79,6 +79,9 @@ namespace chaos{
                 chaos::common::message::MessageChannel *message_channel;
                 chaos::common::message::MultiAddressMessageChannel *multiaddress_message_channel;
                 
+                //executor used for submit command witin command
+                MDSBatchExecutor *executor_instance;
+                
                 //dataaccess abstract driver
                 chaos::service_common::persistence::data_access::AbstractPersistenceDriver *abstract_persistance_driver;
             protected:
@@ -121,6 +124,10 @@ namespace chaos{
                 void sendRequest(RequestInfo& request_info,
                                  chaos::common::data::CDataWrapper *message) throw (chaos::CException);
                 
+                //! send a message toa remote rpc action
+                void sendMessage(RequestInfo& request_info,
+                                 chaos::common::data::CDataWrapper *message) throw (chaos::CException);
+                
                 void manageRequestPhase(RequestInfo& request_info) throw (chaos::CException);
                 
                 template<typename T>
@@ -128,6 +135,17 @@ namespace chaos{
                     CHAOS_ASSERT(abstract_persistance_driver)
                     return abstract_persistance_driver->getDataAccess<T>();
                 }
+                
+                
+                uint32_t getNextSandboxToUse();
+                
+                uint64_t submitCommand(const std::string& batch_command_alias,
+                                       chaos_data::CDataWrapper *command_data,
+                                       uint32_t sandbox_id,
+                                       uint32_t priority = 50);
+                
+                uint64_t submitCommand(const std::string& batch_command_alias,
+                                       chaos_data::CDataWrapper *command_data);
             };
             
         }

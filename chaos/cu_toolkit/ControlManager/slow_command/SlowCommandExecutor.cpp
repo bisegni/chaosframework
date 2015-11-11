@@ -156,7 +156,7 @@ void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
 		case BatchCommandEventType::EVT_FAULT: {
 			if(type_value_size == sizeof(FaultDescription)) {
 				FaultDescription *faul_desc = static_cast<FaultDescription*>(type_value_ptr);
-				if(!last_error_code) {
+				/*if(!last_error_code) {
 					last_error_code = getAttributeSharedCache()->getAttributeValue(DOMAIN_SYSTEM,
 																				   DataPackSystemKey::DP_SYS_LAST_ERROR);
 				}
@@ -169,9 +169,13 @@ void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
 																					 DataPackSystemKey::DP_SYS_LAST_ERROR_DOMAIN);
 				}
 				//write error on cache
-				last_error_code->setValue(&faul_desc->code, sizeof(int32_t));
-				last_error_message->setValue(faul_desc->description.c_str(), (int32_t)faul_desc->description.size());
-				last_error_domain->setValue(faul_desc->domain.c_str(), (int32_t)faul_desc->domain.size());
+				//last_error_code->setValue(&faul_desc->code, sizeof(int32_t));
+				//last_error_message->setValue(faul_desc->description.c_str(), (int32_t)faul_desc->description.size());
+				//last_error_domain->setValue(faul_desc->domain.c_str(), (int32_t)faul_desc->domain.size());*/
+                CException ex(faul_desc->code, faul_desc->description, faul_desc->domain);
+                //async go into recoverable error
+                boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
+
 			}
 			break;
 		}

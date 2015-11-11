@@ -208,7 +208,7 @@ void ChaosMetadataServiceClient::reconfigureMonitor() throw(CException) {
 
 bool ChaosMetadataServiceClient::monitoringIsStarted() {
     return monitor_manager.get() &&
-    (monitor_manager->getServiceState() == common::utility::service_state_machine::StartableServiceType::SS_STARTED);
+    (monitor_manager->getServiceState() == CUStateKey::START);
 }
 
 //! add a new quantum slot for key
@@ -216,7 +216,7 @@ bool ChaosMetadataServiceClient::addKeyConsumer(const std::string& key_to_monito
                                                 int quantum_multiplier,
                                                 monitor_system::QuantumSlotConsumer *consumer,
                                                 int consumer_priority) {
-    if(monitor_manager.get() == NULL) return false;
+    CHAOS_ASSERT(monitor_manager.get());
     monitor_manager->addKeyConsumer(key_to_monitor,
                                     quantum_multiplier,
                                     consumer,
@@ -230,7 +230,7 @@ bool ChaosMetadataServiceClient::addKeyConsumerForHealt(const std::string& key_t
                                                         monitor_system::QuantumSlotConsumer *consumer,
                                                         int consumer_priority) {
     // compose healt key for node
-    std::string healt_key = getHealtKeyFromGeneralKey(key_to_monitor);
+    const std::string healt_key = getHealtKeyFromGeneralKey(key_to_monitor);
     // call api for register the conusmer
     return addKeyConsumer(healt_key,
                           quantum_multiplier,
@@ -242,7 +242,7 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandler(const std::string& key_t
                                                         int quantum_multiplier,
                                                         AbstractQuantumKeyAttributeHandler *attribute_handler,
                                                         unsigned int consumer_priority) {
-    if(monitor_manager.get() == NULL) return false;
+    CHAOS_ASSERT(monitor_manager.get());
     monitor_manager->addKeyAttributeHandler(key_to_monitor,
                                             quantum_multiplier,
                                             attribute_handler,
@@ -256,7 +256,7 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForHealt(const std::strin
                                                                 monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
                                                                 unsigned int consumer_priority) {
     // compose healt key for node
-    std::string healt_key = getHealtKeyFromGeneralKey(key_to_monitor);
+    const std::string healt_key = getHealtKeyFromGeneralKey(key_to_monitor);
     // call api for register the conusmer
     return addKeyAttributeHandler(healt_key,
                                   quantum_multiplier,
@@ -306,10 +306,10 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForDataset(const std::str
 bool ChaosMetadataServiceClient::removeKeyConsumer(const std::string& key_to_monitor,
                                                    int quantum_multiplier,
                                                    monitor_system::QuantumSlotConsumer *consumer) {
-    if(monitor_manager.get() == NULL) return false;
-    monitor_manager->addKeyConsumer(key_to_monitor,
-                                    quantum_multiplier,
-                                    consumer);
+    CHAOS_ASSERT(monitor_manager.get());
+    monitor_manager->removeKeyConsumer(key_to_monitor,
+                                       quantum_multiplier,
+                                       consumer);
     return true;
 }
 
@@ -361,28 +361,28 @@ bool ChaosMetadataServiceClient::removeKeyAttributeHandlerForDataset(const std::
                                      attribute_handler);
 }
 
-std::string ChaosMetadataServiceClient::getDatasetKeyFromGeneralKey(const std::string& key,
+std::string ChaosMetadataServiceClient::getDatasetKeyFromGeneralKey(const std::string& node_uid,
                                                                     const unsigned int dataset_type) {
     switch(dataset_type) {
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
             return boost::str(boost::format("%1%%2%")%
-                              key%
+                              node_uid%
                               DataPackPrefixID::OUTPUT_DATASE_PREFIX);
             break;
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
             return boost::str(boost::format("%1%%2%")%
-                              key%
+                              node_uid%
                               DataPackPrefixID::INPUT_DATASE_PREFIX);
             break;
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
             return boost::str(boost::format("%1%%2%")%
-                              key%
+                              node_uid%
                               DataPackPrefixID::CUSTOM_DATASE_PREFIX);
             break;
             
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
             return boost::str(boost::format("%1%%2%")%
-                              key%
+                              node_uid%
                               DataPackPrefixID::SYSTEM_DATASE_PREFIX);
             break;
         default:
@@ -390,8 +390,14 @@ std::string ChaosMetadataServiceClient::getDatasetKeyFromGeneralKey(const std::s
     }
 }
 
-std::string ChaosMetadataServiceClient::getHealtKeyFromGeneralKey(const std::string& key) {
+std::string ChaosMetadataServiceClient::getHealtKeyFromGeneralKey(const std::string& node_uid) {
     return boost::str(boost::format("%1%%2%")%
-                      key%
+                      node_uid%
                       NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
+}
+
+std::auto_ptr<chaos::common::data::CDataWrapper> ChaosMetadataServiceClient::getLastDataset(const std::string& unique_node_id,
+                                                                                            const unsigned int dataset_type) {
+    CHAOS_ASSERT(monitor_manager.get());
+    return monitor_manager->getLastDataset(getDatasetKeyFromGeneralKey(unique_node_id, dataset_type));
 }

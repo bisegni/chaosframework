@@ -12,7 +12,8 @@
 typedef chaos::DataType::DataType ChaosDataType;
 
 class ChaosLabel:
-        public QLabel {
+        public QLabel,
+        public chaos::metadata_service_client::monitor_system::QuantumSlotConsumer {
     Q_OBJECT
 
     unsigned int p_timeout_for_alive;
@@ -35,6 +36,8 @@ class ChaosLabel:
     Q_PROPERTY(bool label_value_show_track_status READ labelValueShowTrackStatus WRITE setLabelValueShowTrackStatus)
 
     QVariant current_value;
+    QString  last_status;
+    void _updateStatusColor();
 public:
     ChaosLabel(QWidget * parent = 0, Qt::WindowFlags f = 0);
     ~ChaosLabel();
@@ -73,6 +76,9 @@ protected slots:
     virtual void valueNotFound(const QString& _node_uid,
                               const QString& _attribute_name);
 
+    void quantumSlotHasData(const std::string& key, const chaos::metadata_service_client::monitor_system::KeyValue& value);
+
+    void quantumSlotHasNoData(const std::string& key);
 signals:
     void nodeUniqueIDChanged(const QString& last_node_uid,
                              const QString& new_node_uid);

@@ -260,6 +260,12 @@ namespace chaos {
         static const char * const NODE_HEALT_TIMESTAMP_LAST_METRIC      = "nh_ts_lst_metric";
         //! define the status of a node (loaded, initilized, deinitialized, started, stopped, unloaded)
         static const char * const NODE_HEALT_STATUS                     = "nh_status";
+        //!last node error code [int32]
+        static const char * const NODE_HEALT_LAST_ERROR_CODE            = "nh_lec";
+        //!last node error message [string]
+        static const char * const NODE_HEALT_LAST_ERROR_MESSAGE         = "nh_lem";
+        //!last node error domain [string]
+        static const char * const NODE_HEALT_LAST_ERROR_DOMAIN          = "nh_led";
     }
     /** @} */ // end of NodeHealtDefinitionKey
     
@@ -336,6 +342,9 @@ namespace chaos {
         
         //! pause the run method for a determinated device
         static const char * const ACTION_NODE_STOP                                  = "stopNodeUnit";
+        
+        //! recovery a recoverable state of the node
+        static const char * const ACTION_NODE_RECOVER                               = "recoverNodeUnit";
         
         //! pause the run method for a determinated device
         static const char * const ACTION_NODE_RESTORE                               = "restoreNodeUnit";
@@ -456,9 +465,6 @@ namespace chaos {
      */
     //! Name space for grupping key for the control unit node type
     namespace ControlUnitNodeDefinitionKey {
-        //! represent the delay beetwen a subseguent cu start method call
-        static const char * const THREAD_SCHEDULE_DELAY                             = "cudk_thr_sch_delay";
-        
         //! param to pass to the control unit during load operation[ string]
         static const char * const CONTROL_UNIT_LOAD_PARAM                           = "cudk_load_param";
         
@@ -534,6 +540,17 @@ namespace chaos {
         static const char * const CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET  = "cunrpc_ida_cs";
         
     }
+    
+    /** @defgroup Contorl unit system key
+     *  This is the collection of the key representing the property that are exposed into system dataset
+     *  @{
+     */
+    //! Name space for grupping control unit system property
+    namespace ControlUnitDatapackSystemKey {
+        //! represent the delay beetwen a subseguent cu start method call it is a property of a control unit
+        static const char * const THREAD_SCHEDULE_DELAY                             = "cudk_thr_sch_delay";
+    }
+    /** @} */ // end of ControlUnitNodeDefinitionKey
     
     /** @defgroup CUType Control Unit Default Type
      *  This is the collection of the key for the classification of the control unit types
@@ -639,7 +656,7 @@ namespace chaos {
             RECOVERABLE_ERROR = 4,
             //!define an error state of the node, in this case the error can't be recovered so it is equivalent to a deinit state
             FATAL_ERROR = 5,
-            //!define the status of the node cannot be retrieved 
+            //!define the status of the node cannot be retrieved
             UNDEFINED
         } ControlUnitState;
     }
@@ -658,27 +675,6 @@ namespace chaos {
         static const char * const PARAM_REGISTER_NODE_RESULT      = "mdsndk_rpc_p_reg_result";
     }
     /** @} */ // end of NodeDomainAndActionRPC
-    
-    namespace common {
-        namespace utility {
-            namespace service_state_machine {
-                
-                namespace InizializableServiceType {
-                    typedef enum {
-                        IS_DEINTIATED = 0,
-                        IS_INITIATED = 1
-                    } InizializableServiceState;
-                }
-                
-                namespace StartableServiceType {
-                    typedef enum {
-                        SS_STARTED = 2,
-                        SS_STOPPED = 3
-                    } StartableServiceState;
-                }
-            }
-        }
-    }
     
     
     /** @defgroup DataPackPrefixID Chaos Data Prefix

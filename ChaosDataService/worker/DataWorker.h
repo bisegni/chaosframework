@@ -61,6 +61,8 @@ namespace chaos {
 				bool work;
 				
 				boost::atomic<uint64_t> job_in_queue;
+                
+                unsigned int max_element;
 			protected:
 				void * * thread_cookie;
 				

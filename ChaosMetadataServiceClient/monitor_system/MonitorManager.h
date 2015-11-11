@@ -97,6 +97,8 @@ namespace chaos {
                                                int quantum_multiplier,
                                                AbstractQuantumKeyAttributeHandler *attribute_handler);
                 
+                //! return the current dataset for a determinate dataset key in a synchornous way
+                std::auto_ptr<chaos::common::data::CDataWrapper> getLastDataset(const std::string& dataset_key);
             };
         }
     }

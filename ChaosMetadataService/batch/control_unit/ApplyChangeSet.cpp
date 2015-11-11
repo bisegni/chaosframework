@@ -20,7 +20,6 @@
 
 #include "ApplyChangeSet.h"
 
-
 using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::metadata_service::batch::control_unit;
@@ -35,13 +34,7 @@ DEFINE_MDS_COMAMND_ALIAS(ApplyChangeSet)
 ApplyChangeSet::ApplyChangeSet():
 MDSBatchCommand(),
 retry_number(0),
-cu_id(){
-    //set default scheduler delay 1 second
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
-    //set the timeout to 10 seconds
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
-    
-}
+cu_id(){}
 
 ApplyChangeSet::~ApplyChangeSet() {}
 

@@ -126,7 +126,7 @@ namespace chaos{
                 PriorityCommandCompare > command_submitted_queue;
                 
                 //!Mutex used for sincronize the introspection of the current command
-                boost::recursive_mutex          mutexNextCommandChecker;
+                boost::mutex          mutex_next_command_queue;
                 
                 //! instance to the checker thread
                 std::auto_ptr<boost::thread>    threadNextCommandChecker;
@@ -180,6 +180,11 @@ namespace chaos{
                  */
                 void runCommand();
                 
+                //! check if there are command waiting to be submitted
+                /*!
+                 If are presento command to be submited, this method check the submission properting and the
+                 curren executin gcommand running property. If there is a match new command is installed.
+                 */
                 void checkNextCommand();
                 
             protected:

@@ -117,18 +117,21 @@ void UnitServerEditor::customMenuRequested(QPoint pos){
         QAction *menuDI = new QAction("Deinit", this);
         QAction *menuStart = new QAction("Start", this);
         QAction *menuStop = new QAction("Stop", this);
+        QAction *menuDuplicate = new QAction("Duplicate", this);
         connect(menuL, SIGNAL(triggered()), this, SLOT(cuInstanceLoadSelected()));
         connect(menuUL, SIGNAL(triggered()), this, SLOT(cuInstanceUnloadSelected()));
         connect(menuI, SIGNAL(triggered()), this, SLOT(cuInstanceInitSelected()));
         connect(menuDI, SIGNAL(triggered()), this, SLOT(cuInstanceDeinitSelected()));
         connect(menuStart, SIGNAL(triggered()), this, SLOT(cuInstanceStartSelected()));
         connect(menuStop, SIGNAL(triggered()), this, SLOT(cuInstanceStopSelected()));
+        connect(menuDuplicate, SIGNAL(triggered()), this, SLOT(duplicateInstance()));
         menu->addAction(menuL);
         menu->addAction(menuUL);
         menu->addAction(menuI);
         menu->addAction(menuDI);
         menu->addAction(menuStart);
         menu->addAction(menuStop);
+        menu->addAction(menuDuplicate);
         menu->popup(ui->tableView->viewport()->mapToGlobal(pos));
     }
 }
@@ -189,7 +192,6 @@ void UnitServerEditor::onApiDone(const QString& tag,
             ui->labelRegistrationTimestamp->setText(tr("No registration timestamp found!"));
         }
 
-
         QStringList cy_type_list;
         if(api_result->hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) {
             //get the vector of unit type
@@ -228,6 +230,8 @@ void UnitServerEditor::onApiDone(const QString& tag,
     }else if(tag.compare(TAG_CU_REMOVE_TYPE_AND_UPDATE_LIST)==0) {
         updateAll();
     }
+    PresenterWidget::onApiDone(tag,
+                               api_result);
 }
 
 void UnitServerEditor::fillTableWithInstance( QSharedPointer<CDataWrapper> cu_instance) {
@@ -263,8 +267,7 @@ void UnitServerEditor::on_pushButtonCreateNewInstance_clicked()
                                                       selected_index.first().data().toString()));
 }
 
-void UnitServerEditor::on_pushButtonUpdateAllInfo_clicked()
-{
+void UnitServerEditor::on_pushButtonUpdateAllInfo_clicked() {
     updateAll();
 }
 
@@ -362,7 +365,32 @@ void UnitServerEditor::cuInstanceStopSelected() {
         submitApiResult(QString("cu_start"),
                         GET_CHAOS_API_PTR(control_unit::StartStop)->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
                                                                             false));
-    }}
+    }
+}
+
+void UnitServerEditor::duplicateInstance() {
+    bool ok = false;
+    foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
+        QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+        QString source_cu_id = QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        QString destination_cu_id = QInputDialog::getText(this,
+                                                 (tr("Duplicate instance:")+source_cu_id),
+                                                 tr("Unique ID destination:"),
+                                                 QLineEdit::Normal,
+                                                 tr(""), &ok);
+        if (ok && !destination_cu_id.isEmpty()) {
+            qDebug() << "Duplicate " << source_cu_id;
+            //load the selected cu
+            submitApiResult(QString("copy_instance"),
+                            GET_CHAOS_API_PTR(control_unit::CopyInstance)->execute(source_cu_id.toStdString(),
+                                                                                   node_unique_id.toStdString(),
+                                                                                   destination_cu_id.toStdString(),
+                                                                                   node_unique_id.toStdString()));
+        } else if (!ok) {
+            break;
+        }
+    }
+}
 
 void UnitServerEditor::on_pushButtonAddNewCUType_clicked() {
     bool ok = false;

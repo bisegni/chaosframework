@@ -29,7 +29,7 @@ class PresenterWidget:
 
     QMdiSubWindow *editor_subwindow;
     CommandPresenter *presenter_instance;
-
+    unsigned int submitted_api;
 public:
     explicit PresenterWidget(QWidget *parent = NULL);
     ~PresenterWidget();

@@ -118,7 +118,7 @@ void CouchbaseCacheDriver::deinit() throw (chaos::CException) {
 }
 
 int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  void *value, uint32_t value_len) {
-	CHAOS_ASSERT(getServiceState() == common::utility::service_state_machine::InizializableServiceType::IS_INITIATED)
+    CHAOS_ASSERT(getServiceState() == CUStateKey::INIT)
 	//boost::shared_lock<boost::shared_mutex> lock(mutex_server);
 	lcb_store_cmd_t cmd;
     const lcb_store_cmd_t * const commands[] = { &cmd };
@@ -143,7 +143,7 @@ int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  v
 
 int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  void **value, uint32_t& value_len) {
 	//boost::shared_lock<boost::shared_mutex> lock(mutex_server);
-	CHAOS_ASSERT(getServiceState() == service_state_machine::InizializableServiceType::IS_INITIATED)
+	CHAOS_ASSERT(getServiceState() == CUStateKey::INIT)
     CHAOS_ASSERT(value)
     
 	lcb_get_cmd_t cmd;

@@ -28,10 +28,6 @@ namespace chaos {
             namespace control_unit {
                 class InitDeinit:
                 public AbstractApi {
-                    void initialize(const std::string& cu_uid);
-                    void deinitialize(const std::string& cu_uid);
-                    boost::shared_ptr<CDataWrapper>     mergeDatasetAttributeWithSetup(boost::shared_ptr<CDataWrapper> element_in_dataset,
-                                                                                       boost::shared_ptr<CDataWrapper> element_in_setup);
                 public:
                     InitDeinit();
                     ~InitDeinit();

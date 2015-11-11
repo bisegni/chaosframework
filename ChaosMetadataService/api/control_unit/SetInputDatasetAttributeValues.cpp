@@ -163,9 +163,8 @@ CDataWrapper *SetInputDatasetAttributeValues::execute(CDataWrapper *api_data,
         CU_SIDAV_INFO << batch_message_per_cu->getJSONString();
         //submit the changes fo the current control unit
         //launch initilization in background
-        getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::control_unit::ApplyChangeSet)),
-                                          batch_message_per_cu.release(),
-                                          command_id);
+        command_id = getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::control_unit::ApplyChangeSet)),
+                                                       batch_message_per_cu.release());
     }
     return NULL;
 }

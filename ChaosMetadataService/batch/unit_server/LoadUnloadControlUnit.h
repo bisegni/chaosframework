@@ -39,6 +39,7 @@ namespace chaos {
                     std::string us_address;
 
                     std::auto_ptr<RequestInfo> request;
+                    std::auto_ptr<CDataWrapper> load_unload_pack;
                 public:
                     LoadUnloadControlUnit();
                     ~LoadUnloadControlUnit();

@@ -21,6 +21,7 @@ class ControUnitInstanceEditor :
    // QString control_unit_uid;
 
     bool is_in_editing;
+    QStringList cu_type_list;
 
     //table model
     QStandardItemModel *table_model_driver_spec;
@@ -82,6 +83,8 @@ private slots:
                                     const QString& attribute_default_value,
                                     const QString& attribute_default_max_value,
                                     const QString& attribute_default_min_value);
+    void on_pushButtonChooseControlUnitType_clicked();
+
 private:
     Ui::ControUnitInstanceEditor *ui;
 };

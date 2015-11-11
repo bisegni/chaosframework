@@ -42,7 +42,7 @@
 #include <chaos/common/batch_command/BatchCommandSandboxEventHandler.h>
 #include <chaos/common/batch_command/BatchCommandDescription.h>
 #include <chaos/common/thread/WaitSemaphore.h>
-
+#include <chaos/common/async_central/async_central.h>
 //#include <boost/container/deque.hpp>
 //#include <boost/container/map.hpp>
 
@@ -61,7 +61,7 @@ namespace chaos {
             class BatchCommandSandbox;
             
             //! Macro for helping the allocation of the isntancer of the class implementing the slow command
-//#define BATCHCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::BatchCommand>()
+            //#define BATCHCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::BatchCommand>()
             
             typedef std::map<string,  boost::shared_ptr<BatchCommandDescription> >              MapCommandDescription;
             typedef std::map<string,  boost::shared_ptr<BatchCommandDescription> >::iterator    MapCommandDescriptionIterator;
@@ -70,9 +70,10 @@ namespace chaos {
              This class is the environment where the exeecution of the slow command handlers take place.
              */
             class BatchCommandExecutor:
-			public utility::StartableService,
-			public chaos::DeclareAction,
-			public BatchCommandSandboxEventHandler {
+            public utility::StartableService,
+            public chaos::DeclareAction,
+            public BatchCommandSandboxEventHandler,
+            public chaos::common::async_central::TimerHandler {
                 typedef boost::shared_mutex			RWMutex;
                 typedef boost::shared_lock<RWMutex>	ReadLock;
                 typedef boost::unique_lock<RWMutex>	WriteLock;
@@ -97,11 +98,7 @@ namespace chaos {
                 RWMutex								command_state_rwmutex;
                 //! command state queue dimension
                 uint16_t							command_state_queue_max_size;
-				
-				//keep track for the last purge ts
-				bool	capper_work;
-				boost::shared_ptr<boost::thread> capper_thread;
-				chaos::WaitSemaphore				capper_wait_sem;
+                
                 //the queue of the insert state (this permit to have an order by insertion time)
                 std::deque< boost::shared_ptr<CommandState> >			command_state_queue;
                 //the map is used for fast access id/pointer
@@ -122,20 +119,17 @@ namespace chaos {
                 
                 //! Add a new command state structure to the queue (checking the alredy presence)
                 inline boost::shared_ptr<CommandState> getCommandState(uint64_t command_sequence);
-
-				//permit to regulate the queue of command state
-				void capWorker();
             protected:
-				//command event handler
-				virtual void handleCommandEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_value_ptr, uint32_t type_value_size);
-				
-				//! general sandbox event handler
-				virtual void handleSandboxEvent(const std::string& sandbox_id, BatchSandboxEventType::BatchSandboxEventType type, void* type_value_ptr, uint32_t type_value_size);
-
-				//! Global cache shared across the sandbox it can be alsog given
+                //command event handler
+                virtual void handleCommandEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_value_ptr, uint32_t type_value_size);
+                
+                //! general sandbox event handler
+                virtual void handleSandboxEvent(const std::string& sandbox_id, BatchSandboxEventType::BatchSandboxEventType type, void* type_value_ptr, uint32_t type_value_size);
+                
+                //! Global cache shared across the sandbox it can be alsog given
                 AttributeValueSharedCache  global_attribute_cache;
                 
-                //! Check if the waithing command can be installed
+                //! instanziate a command by CDataWrapper description
                 /*!
                  Perform the instantiation of the command instace assocaite
                  to the alias contained into the submissionInfo param.
@@ -143,7 +137,17 @@ namespace chaos {
                  */
                 virtual BatchCommand *instanceCommandInfo(const std::string& command_alias,
                                                           chaos_data::CDataWrapper *submissionInfo);
-
+                
+                //! instanziate a command by alias and submission parameter
+                /*!
+                 Perform the instantiation of the command instace assocaite
+                 to the alias contained into the submissionInfo param.
+                 \param the submission param of the command
+                 */
+                virtual BatchCommand *instanceCommandInfo(const std::string& command_alias,
+                                                          uint32_t submission_rule = SubmissionRuleType::SUBMIT_NORMAL,
+                                                          uint32_t submission_retry_delay = 1000,
+                                                          uint64_t scheduler_step_delay = 1000000);
                 
                 //! Get the statistic for the current running command rpc action
                 /*!
@@ -183,7 +187,9 @@ namespace chaos {
                  non ended command state, will be remove from the history.
                  */
                 chaos_data::CDataWrapper* flushCommandStates(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
-
+                
+                //!Inherited by TimerHandler for capper operation
+                void timeout();
             public:
                 
                 //! Private constructor
@@ -211,12 +217,12 @@ namespace chaos {
                  \param sandbox_instance is the 1-based index of the sandbox where install the command
                  */
                 void setDefaultCommand(const string& alias, unsigned int sandbox_instance = COMMAND_BASE_SANDOXX_ID);
-				
+                
                 /*!
                  \ingroup API_Slow_Control
                  */
-				const std::string & getDefaultCommand();
-				
+                const std::string & getDefaultCommand();
+                
                 //! return all the command description
                 /*!
                  \ingroup API_Slow_Control
@@ -234,16 +240,16 @@ namespace chaos {
                  \param instancer the instance of the instancer that will produce the "instance" of the command
                  */
                 void installCommand(const string& alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer);
-				
+                
                 //! Install a command by his description
                 void installCommand(boost::shared_ptr<BatchCommandDescription> command_description);
                 
-				//!return all the aliases of the installe batch command
-				/*!
-				 \param commands_alias will be filled with the alias of the
-				 registered commands
-				 */
-				void getAllCommandAlias(std::vector<std::string>& commands_alias);
+                //!return all the aliases of the installe batch command
+                /*!
+                 \param commands_alias will be filled with the alias of the
+                 registered commands
+                 */
+                void getAllCommandAlias(std::vector<std::string>& commands_alias);
                 
                 //! Submit a batch command
                 /*!
@@ -257,16 +263,39 @@ namespace chaos {
                                    chaos_data::CDataWrapper *command_data,
                                    uint64_t& command_id)  throw (CException);
                 
+                //! Submit a batch command
+                /*!
+                 The information for the command are contained into the DataWrapper data serialization,
+                 they are put into the commandSubmittedQueue for to wait to be executed.
+                 \param batch_command_alias alias of the batch command to submit
+                 \param command_data the data of the command
+                 \param execution_channel is the index tha tidentify the sandbox where run the command
+                 \param is the priority respect to other waiting instances
+                 \param submission_rule, is the rule taht detarminate what appen to the current executing command,
+                        when this instance nede to be executed within the sandbox
+                 \param submission_retry_delay is the daly between a retry and another that the sandbox do for install command
+                 \param scheduler_step_delay is delay between a run step and the next
+                 \param command_id return the associated command id
+                 */
+                void submitCommand(const std::string& batch_command_alias,
+                                   chaos_data::CDataWrapper *command_data,
+                                   uint64_t& command_id,
+                                   uint32_t execution_channel,
+                                   uint32_t priority = 50,
+                                   uint32_t submission_rule = SubmissionRuleType::SUBMIT_NORMAL,
+                                   uint32_t submission_retry_delay = 1000,
+                                   uint64_t scheduler_step_delay = 1000000)  throw (CException);
+                
                 //! Add a number of sandobx to this instance of executor
                 void addSandboxInstance(unsigned int _sandbox_number);
-				
-				//! return the number of sandbox installed
-				unsigned int getNumberOfSandboxInstance();
-				
-				void getSandboxID(std::vector<std::string> & sandbox_id);
-				
-				//! return the shared, between commadn, attribute cache
-				AbstractSharedDomainCache *getAttributeSharedCache();
+                
+                //! return the number of sandbox installed
+                unsigned int getNumberOfSandboxInstance();
+                
+                void getSandboxID(std::vector<std::string> & sandbox_id);
+                
+                //! return the shared, between commadn, attribute cache
+                AbstractSharedDomainCache *getAttributeSharedCache();
             };
         }
     }
