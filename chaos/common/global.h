@@ -47,8 +47,9 @@
 
 //#include <chaos/common/debug/debug_new.h>
 
-
 #include <stdlib.h>
+
+#include <math.h>
 
 #if BOOST_VERSION > 105300
     //allocate the logger
@@ -133,6 +134,8 @@ assert(x);
     LDBG_<<"message:"<<msg;\
     throw chaos::CException(e,msg,ss.str());}
     
+#define CHAOS_SET_REPCISION_TO_DOUBLE(number, decimal)\
+(double)((int)(number*pow(10,decimal)))/pow(10,decimal)
 
     //epoc for time stamp calculation
 const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
