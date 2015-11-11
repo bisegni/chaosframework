@@ -10,7 +10,8 @@ ChaosLabel::ChaosLabel(QWidget * parent,
     QLabel(parent, f),
     monitoring(false),
     last_recevied_ts(0),
-    zero_diff_count(0) {
+    zero_diff_count(0),
+    p_double_print_precision(2){
     setTimeoutForAlive(6000);
     
     connect(&healt_status_handler,
@@ -63,6 +64,14 @@ void ChaosLabel::setAttributeType(ChaosDataType attribute_type) {
 
 ChaosDataType ChaosLabel::attributeType() {
     return p_attribute_type;
+}
+
+void ChaosLabel::setDoublePrintPrecision(int double_print_precision) {
+    p_double_print_precision = double_print_precision;
+}
+
+int ChaosLabel::doublePrintPrecision() {
+    return p_double_print_precision;
 }
 
 void ChaosLabel::setTimeoutForAlive(unsigned int timeout_for_alive) {
@@ -219,8 +228,12 @@ void	ChaosLabel::setNum(double num){QLabel::setNum(num);}
 void	ChaosLabel::setPicture(const QPicture & picture){QLabel::picture();}
 void	ChaosLabel::setPixmap(const QPixmap &pixmap){QLabel::setPixmap(pixmap);}
 void	ChaosLabel::setText(const QString &string){
-    if(text().compare(string) == 0) return;
-    QLabel::setText(string);
+    QString tmp_str = string;
+    if(attributeType() == chaos::DataType::TYPE_DOUBLE) {
+        tmp_str = QString::number( tmp_str.toDouble(), 'f', doublePrintPrecision() );
+    }
+    if(text().compare(tmp_str) == 0) return;
+    QLabel::setText(tmp_str);
     emit valueChanged(nodeUniqueID(),
                       string);
 }

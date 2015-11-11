@@ -29,6 +29,9 @@ class ChaosLabel:
     Q_PROPERTY(ChaosDataType attribute_type READ attributeType WRITE setAttributeType NOTIFY attributeTypeChanged)
     Q_ENUMS(ChaosDataType)
 
+    int p_double_print_precision;
+    Q_PROPERTY(int double_print_precision READ doublePrintPrecision WRITE setDoublePrintPrecision)
+
     bool p_track_status;
     Q_PROPERTY(bool track_status READ trackStatus WRITE setTrackStatus)
 
@@ -50,6 +53,9 @@ public:
 
     void setAttributeType(ChaosDataType attribute_type);
     ChaosDataType attributeType();
+
+    void setDoublePrintPrecision(int double_print_precision);
+    int doublePrintPrecision();
 
     void setTimeoutForAlive(unsigned int timeout_for_alive);
     unsigned int timeoutForAlive();

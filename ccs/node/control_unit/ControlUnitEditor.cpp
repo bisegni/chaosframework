@@ -53,6 +53,7 @@ ControlUnitEditor::~ControlUnitEditor() {
 }
 
 void ControlUnitEditor::initUI() {
+    setWindowTitle(QString("Control unit '%1' editor").arg(control_unit_unique_id));
     ui->pushButtonRecoverError->setVisible(false);
     ui->pushButtonEditInstance->setEnabled(false);
     //add model to table
@@ -174,7 +175,7 @@ void ControlUnitEditor::initUI() {
     ui->chaosLabelDSOutputPushRate->setNodeUniqueID(control_unit_unique_id);
     ui->chaosLabelDSOutputPushRate->setAttributeName(chaos::ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE);
     ui->chaosLabelDSOutputPushRate->setAttributeType(chaos::DataType::TYPE_DOUBLE);
-
+    ui->chaosLabelDSOutputPushRate->setDoublePrintPrecision(2);
     //thread schedule update
     ui->lineEditRunScheduleDelay->setValidator(new QIntValidator(0,60000000));
     // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));

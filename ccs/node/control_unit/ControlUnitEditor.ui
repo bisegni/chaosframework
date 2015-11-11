@@ -225,8 +225,8 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>60</width>
-           <height>20</height>
+           <width>15</width>
+           <height>15</height>
           </size>
          </property>
          <property name="baseSize">
@@ -237,7 +237,7 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>8</pointsize>
           </font>
          </property>
          <property name="toolTip">
@@ -247,7 +247,7 @@
           <string>Restore a previous state that generate the recoverable error</string>
          </property>
          <property name="text">
-          <string>Recover</string>
+          <string>R</string>
          </property>
         </widget>
        </item>

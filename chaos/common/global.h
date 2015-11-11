@@ -49,8 +49,6 @@
 
 #include <stdlib.h>
 
-#include <math.h>
-
 #if BOOST_VERSION > 105300
     //allocate the logger
     BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
@@ -134,8 +132,8 @@ assert(x);
     LDBG_<<"message:"<<msg;\
     throw chaos::CException(e,msg,ss.str());}
     
-#define CHAOS_SET_REPCISION_TO_DOUBLE(number, decimal)\
-(double)((int)(number*pow(10,decimal)))/pow(10,decimal)
+#define CHAOS_SET_PRECISION_TO_DOUBLE(number, factor)\
+((double)((int)(number*factor))/factor)
 
     //epoc for time stamp calculation
 const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
