@@ -35,7 +35,7 @@ multiaddress_message_channel(NULL),
 executor_instance(NULL),
 abstract_persistance_driver(NULL){
     //set default scheduler delay 0,5 second
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)500000);
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
     //set the timeout to 10 seconds
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
 }

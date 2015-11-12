@@ -40,7 +40,7 @@ class ChaosLabel:
 
     QVariant current_value;
     QString  last_status;
-    void _updateStatusColor();
+
 public:
     ChaosLabel(QWidget * parent = 0, Qt::WindowFlags f = 0);
     ~ChaosLabel();
@@ -81,10 +81,7 @@ protected slots:
                               const QVariant& attribute_value);
     virtual void valueNotFound(const QString& _node_uid,
                               const QString& _attribute_name);
-
-    void quantumSlotHasData(const std::string& key, const chaos::metadata_service_client::monitor_system::KeyValue& value);
-
-    void quantumSlotHasNoData(const std::string& key);
+    void _updateStatusColor();
 signals:
     void nodeUniqueIDChanged(const QString& last_node_uid,
                              const QString& new_node_uid);
@@ -108,7 +105,8 @@ protected:
     void	setNum(double num);
     void	setPicture(const QPicture & picture);
     void	setPixmap(const QPixmap &pixmap);
-
+    void quantumSlotHasData(const std::string& key, const chaos::metadata_service_client::monitor_system::KeyValue& value);
+    void quantumSlotHasNoData(const std::string& key);
 };
 
 #endif // CHAOSLABEL_H
