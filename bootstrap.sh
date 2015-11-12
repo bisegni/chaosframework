@@ -495,10 +495,10 @@ if [ -z "$CHAOS_NO_ZMQ" ]; then
 	
 	./autogen.sh
     ./configure $CHAOS_ZMQ_CONFIGURE
-    
-    fi
     do_make "ZMQ" 1
     echo "ZMQ done"
+    fi
+
 else
     echo "skipping ZMQ"
 fi

@@ -187,6 +187,8 @@
                 <df name="unit_server">
                 </df>
               </df>
+              <df name="common">
+              </df>
               <df name="persistence">
                 <df name="data_access">
                 </df>
@@ -1395,6 +1397,8 @@
           <df name="control_unit">
             <in>ControlUnitGroup.cpp</in>
             <in>ControlUnitGroup.h</in>
+            <in>CopyInstance.cpp</in>
+            <in>CopyInstance.h</in>
             <in>DeleteInstance.cpp</in>
             <in>DeleteInstance.h</in>
             <in>GetCurrentDataset.cpp</in>
@@ -1405,6 +1409,8 @@
             <in>GetInstance.h</in>
             <in>InitDeinit.cpp</in>
             <in>InitDeinit.h</in>
+            <in>RecoverError.cpp</in>
+            <in>RecoverError.h</in>
             <in>SearchInstancesByUS.cpp</in>
             <in>SearchInstancesByUS.h</in>
             <in>SetInputDatasetAttributeValues.cpp</in>
@@ -1512,6 +1518,8 @@
             <in>ApplyChangeSet.h</in>
             <in>IDSTControlUnitBatchCommand.cpp</in>
             <in>IDSTControlUnitBatchCommand.h</in>
+            <in>RecoverError.cpp</in>
+            <in>RecoverError.h</in>
             <in>RegistrationAckBatchCommand.cpp</in>
             <in>RegistrationAckBatchCommand.h</in>
             <in>control_unit_batch.h</in>
@@ -1536,6 +1544,10 @@
           <in>MDSBatchExecutor.h</in>
           <in>batch_impl.h</in>
           <in>mds_service_batch.h</in>
+        </df>
+        <df name="common">
+          <in>CUCommonUtility.cpp</in>
+          <in>CUCommonUtility.h</in>
         </df>
         <df name="persistence">
           <df name="data_access">
@@ -1581,6 +1593,8 @@
       <df name="ChaosMetadataServiceClient">
         <df name="api_proxy">
           <df name="control_unit">
+            <in>CopyInstance.cpp</in>
+            <in>CopyInstance.h</in>
             <in>DeleteInstance.cpp</in>
             <in>DeleteInstance.h</in>
             <in>GetCurrentDataset.cpp</in>
@@ -1589,6 +1603,8 @@
             <in>GetInstance.h</in>
             <in>InitDeinit.cpp</in>
             <in>InitDeinit.h</in>
+            <in>RecoverError.cpp</in>
+            <in>RecoverError.h</in>
             <in>SearchInstancesByUS.cpp</in>
             <in>SearchInstancesByUS.h</in>
             <in>SetInputDatasetAttributeValues.cpp</in>
@@ -25649,10 +25665,12 @@
             <df name="ChaosMetadataServiceClient">
               <df name="api_proxy">
                 <df name="control_unit">
+                  <in>CopyInstance.h</in>
                   <in>DeleteInstance.h</in>
                   <in>GetCurrentDataset.h</in>
                   <in>GetInstance.h</in>
                   <in>InitDeinit.h</in>
+                  <in>RecoverError.h</in>
                   <in>SearchInstancesByUS.h</in>
                   <in>SetInputDatasetAttributeValues.h</in>
                   <in>SetInstanceDescription.h</in>
@@ -26522,6 +26540,8 @@
                 <df name="unit_server">
                 </df>
               </df>
+              <df name="common">
+              </df>
               <df name="persistence">
                 <df name="data_access">
                 </df>
@@ -26878,6 +26898,8 @@
           </df>
           <df name="unit_server">
           </df>
+        </df>
+        <df name="common">
         </df>
         <df name="persistence">
           <df name="data_access">
