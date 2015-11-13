@@ -145,6 +145,18 @@ void ChaosLabel::_updateStatusColor() {
             setStyleSheet("QLabel { color : #E65566; }");
         }
     }
+
+    //if label need to represent the statu print it
+    if(labelValueShowTrackStatus()) {
+        QString tmp_str = last_status;
+        if(attributeType() == chaos::DataType::TYPE_DOUBLE) {
+            tmp_str = QString::number( last_status.toDouble(), 'f', doublePrintPrecision() );
+        }
+        if(text().compare(tmp_str) == 0) return;
+        setText(tmp_str);
+        emit valueChanged(nodeUniqueID(),
+                          tmp_str);
+    }
 }
 
 void ChaosLabel::valueUpdated(const QString& _node_uid,
@@ -204,20 +216,16 @@ void ChaosLabel::quantumSlotHasData(const std::string& key, const KeyValue& valu
         //show status also on label
         setToolTip(last_status);
     }
-    
-    if(labelValueShowTrackStatus()) {
-        setText(last_status);
-    }
 
-    //update color
-    _updateStatusColor();
+    //update color on main thread
+    QMetaObject::invokeMethod(this, "_updateStatusColor",  Qt::QueuedConnection);
     last_recevied_ts = received_ts;
 }
 
 void ChaosLabel::quantumSlotHasNoData(const std::string& key) {
     last_recevied_ts = zero_diff_count = 0;
-    //setStyleSheet("QLabel { color : gray; }");
-    _updateStatusColor();
+    //update color on main thread
+    QMetaObject::invokeMethod(this, SLOT(_updateStatusColor()));
 }
 
 //slots hiding
@@ -227,13 +235,4 @@ void	ChaosLabel::setNum(int num){QLabel::setNum(num);}
 void	ChaosLabel::setNum(double num){QLabel::setNum(num);}
 void	ChaosLabel::setPicture(const QPicture & picture){QLabel::picture();}
 void	ChaosLabel::setPixmap(const QPixmap &pixmap){QLabel::setPixmap(pixmap);}
-void	ChaosLabel::setText(const QString &string){
-    QString tmp_str = string;
-    if(attributeType() == chaos::DataType::TYPE_DOUBLE) {
-        tmp_str = QString::number( tmp_str.toDouble(), 'f', doublePrintPrecision() );
-    }
-    if(text().compare(tmp_str) == 0) return;
-    QLabel::setText(tmp_str);
-    emit valueChanged(nodeUniqueID(),
-                      string);
-}
+void	ChaosLabel::setText(const QString &string){QLabel::setText(string);}
