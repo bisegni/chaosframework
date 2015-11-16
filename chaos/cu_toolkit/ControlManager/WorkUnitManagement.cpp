@@ -164,7 +164,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
         case UnitStatePublishing: {
             // don't pollute, ask every 20s
             if((publishing_counter_delay%10) == 0){
-                WUMAPP_  << "send registration to mds with delay ountre to:" << publishing_counter_delay;
+                WUMAPP_  << "send registration to mds with delay counter to:" << publishing_counter_delay;
                 if(sendConfPackToMDS(mds_registration_message)) {
                     WUMERR_ << "Error forwarding registration message to mds";
                 }
