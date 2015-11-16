@@ -149,14 +149,7 @@ void ChaosLabel::_updateStatusColor() {
 
     //if label need to represent the statu print it
     if(labelValueShowTrackStatus()) {
-        QString tmp_str = last_status;
-        if(attributeType() == chaos::DataType::TYPE_DOUBLE) {
-            tmp_str = QString::number( last_status.toDouble(), 'f', doublePrintPrecision() );
-        }
-        if(text().compare(tmp_str) == 0) return;
-        setText(tmp_str);
-        emit valueChanged(nodeUniqueID(),
-                          tmp_str);
+        setText(last_status);
     }
 }
 
@@ -236,4 +229,13 @@ void	ChaosLabel::setNum(int num){QLabel::setNum(num);}
 void	ChaosLabel::setNum(double num){QLabel::setNum(num);}
 void	ChaosLabel::setPicture(const QPicture & picture){QLabel::picture();}
 void	ChaosLabel::setPixmap(const QPixmap &pixmap){QLabel::setPixmap(pixmap);}
-void	ChaosLabel::setText(const QString &string){QLabel::setText(string);}
+void	ChaosLabel::setText(const QString &string){
+    QString tmp_str = string;
+    if(attributeType() == chaos::DataType::TYPE_DOUBLE) {
+        tmp_str = QString::number( tmp_str.toDouble(), 'f', doublePrintPrecision() );
+    }
+    if(text().compare(tmp_str) == 0) return;
+    QLabel::setText(tmp_str);
+    emit valueChanged(nodeUniqueID(),
+                      tmp_str);
+}
