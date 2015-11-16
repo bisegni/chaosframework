@@ -119,7 +119,7 @@ void WorkUnitManagement::turnOFF() throw (CException) {
 }
 
 /*---------------------------------------------------------------------------------
-
+ 
  ---------------------------------------------------------------------------------*/
 void WorkUnitManagement::scheduleSM() throw (CException) {
     WUMDBG_ << "Start state machine step";
@@ -143,7 +143,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             publishing_counter_delay = 0;
             WUMAPP_ << "Control unit is unpublished, need to be setup";
             //associate the event channel to the control unit
-
+            
             WUMAPP_ << "Setup Control Unit Sanbox for cu with instance";
             try{
                 work_unit_instance->_defineActionAndDataset(mds_registration_message);
@@ -182,8 +182,11 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
                 CommandManager::getInstance()->registerAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
             }
-
-                //set healt to load
+            
+            //send load completion to the mds
+            sendLoadCompletionToMDS(work_unit_instance->getCUID());
+            
+            //set healt to load
             HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                             NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
@@ -227,7 +230,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                     DECODE_CHAOS_EXCEPTION(ex);
                 }
             }
-
+            
             try{
                 WUMAPP_  << "Deiniting Work Unit";
                 work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
@@ -249,17 +252,17 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             
             WUMAPP_  << "work unit is going to be unpublished";
             SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublished())
-                //set healt to unload
+            //set healt to unload
             HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                             NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
             break;
         }
     }
-        //publish if something has changed
+    //publish if something has changed
     HealtManager::getInstance()->publishNodeHealt(work_unit_instance->getCUID());
     WUMDBG_ << "End state machine step";
-
+    
 }
 bool WorkUnitManagement::smNeedToSchedule() {
     UnitState s = getCurrentState();
@@ -272,17 +275,32 @@ bool WorkUnitManagement::smNeedToSchedule() {
 int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
     // dataToSend can't be sent because it is porperty of the CU
     //so we need to copy it
-
+    
     auto_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
     CDataWrapper mdsPack(serBuf->getBufferPtr());
     //add action for metadata server
     //add local ip and port
-
+    
     int err = 0;
     
     //register CU from mds
     if((err = mds_channel->sendNodeRegistration(mdsPack))) {
         WUMERR_ << "Error forwarding registration message with code " <<mds_channel->getLastErrorCode() << "\n"
+        "message: " << mds_channel->getLastErrorMessage() <<"\n"<<
+        "domain: " << mds_channel->getLastErrorDomain() <<"\n";
+    }
+    return err;
+}
+
+int WorkUnitManagement::sendLoadCompletionToMDS(const std::string& control_unit_uid) {
+    
+    int err = 0;
+    CDataWrapper mdsPack;
+    mdsPack.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, control_unit_uid);
+    mdsPack.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+    //register CU from mds
+    if((err = mds_channel->sendNodeLoadCompletion(mdsPack))) {
+        WUMERR_ << "Error forwarding load completion message with code " <<mds_channel->getLastErrorCode() << "\n"
         "message: " << mds_channel->getLastErrorMessage() <<"\n"<<
         "domain: " << mds_channel->getLastErrorDomain() <<"\n";
     }

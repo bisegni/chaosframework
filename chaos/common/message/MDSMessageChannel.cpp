@@ -69,24 +69,46 @@ int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset, bool 
 
 
 //! Send unit server description to MDS
-int MDSMessageChannel::sendNodeRegistration(CDataWrapper& deviceDataset, bool requestCheck, uint32_t millisecToWait) {
+int MDSMessageChannel::sendNodeRegistration(CDataWrapper& node_description, bool requestCheck, uint32_t millisecToWait) {
     string currentBrokerIpPort;
     //get rpc receive port
     getRpcPublishedHostAndPort(currentBrokerIpPort);
-    deviceDataset.addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
+    node_description.addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
     
     //set our timestamp
-    deviceDataset.addInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP, chaos::common::utility::TimingUtil::getTimeStamp());
+    node_description.addInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP, chaos::common::utility::TimingUtil::getTimeStamp());
     
     if(requestCheck){
         auto_ptr<CDataWrapper> deviceRegistrationCheck(sendRequest(nodeAddress->node_id,
                                                                    MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE,
-                                                                   &deviceDataset,
+                                                                   &node_description,
                                                                    millisecToWait));
     } else {
         sendMessage(nodeAddress->node_id,
                     MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE,
-                    &deviceDataset);
+                    &node_description);
+    }
+    return getLastErrorCode();
+}
+
+int MDSMessageChannel::sendNodeLoadCompletion(CDataWrapper& node_information, bool requestCheck, uint32_t millisecToWait) {
+    string currentBrokerIpPort;
+    //get rpc receive port
+    getRpcPublishedHostAndPort(currentBrokerIpPort);
+    node_information.addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
+    
+    //set our timestamp
+    node_information.addInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP, chaos::common::utility::TimingUtil::getTimeStamp());
+    
+    if(requestCheck){
+        auto_ptr<CDataWrapper> deviceRegistrationCheck(sendRequest(nodeAddress->node_id,
+                                                                   MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION,
+                                                                   &node_information,
+                                                                   millisecToWait));
+    } else {
+        sendMessage(nodeAddress->node_id,
+                    MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION,
+                    &node_information);
     }
     return getLastErrorCode();
 }
@@ -94,7 +116,6 @@ int MDSMessageChannel::sendNodeRegistration(CDataWrapper& deviceDataset, bool re
 //! Get all active device id
 int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t millisecToWait) {
     //send request and wait the response
-    int err = ErrorCode::EC_NO_ERROR;
     auto_ptr<CDataWrapper> resultAnswer(sendRequest(nodeAddress->node_id,
                                                     ChaosSystemDomainAndActionLabel::MDS_GET_ALL_DEVICE,
                                                     NULL,

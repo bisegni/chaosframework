@@ -673,6 +673,9 @@ namespace chaos {
         
         //! key that idetify the result of the node registration[int32]
         static const char * const PARAM_REGISTER_NODE_RESULT      = "mdsndk_rpc_p_reg_result";
+        
+        //! the key for the control unit load completion registration
+        static const char * const ACTION_NODE_LOAD_COMPLETION  = "mdsndk_rpc_a_load_completion_node";
     }
     /** @} */ // end of NodeDomainAndActionRPC
     

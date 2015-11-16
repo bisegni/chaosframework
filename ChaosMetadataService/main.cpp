@@ -29,6 +29,10 @@ using namespace chaos::metadata_service;
 int main(int argc, char * argv[]) {
 	try {
 		//cache parameter
+        ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_BATCH_SANDBOX_SIZE,
+                                                                                                    "Specify number of the sanbox to use into the batch subsytem",
+                                                                                                    &ChaosMetadataService::getInstance()->setting.batch_sandbox_size);
+        
 		ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_PERSITENCE_IMPL,
 																										"Specify the implementation of the persistence layer",
 																										&ChaosMetadataService::getInstance()->setting.persistence_implementation);

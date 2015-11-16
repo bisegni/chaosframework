@@ -20,6 +20,7 @@
 		3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3208AAB81AC56A51000860D9 /* ApiProxy.h */; };
 		3208AABD1AC56C1C000860D9 /* GetNodeDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3208AABB1AC56C1C000860D9 /* GetNodeDescription.cpp */; };
 		3208AABE1AC56C1C000860D9 /* GetNodeDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 3208AABC1AC56C1C000860D9 /* GetNodeDescription.h */; };
+		32092B401BFA353F006A4D06 /* NodeLoadCompletion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32092B3E1BFA353F006A4D06 /* NodeLoadCompletion.cpp */; };
 		320C218A151B555A00BD0F41 /* EventServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 320C2189151B555A00BD0F41 /* EventServer.h */; };
 		320C218C151B556E00BD0F41 /* EventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320C218B151B556E00BD0F41 /* EventServer.cpp */; };
 		320DEA6219CB209500ED66AB /* DataBlockCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320DEA6019CB209500ED66AB /* DataBlockCache.cpp */; };
@@ -795,6 +796,8 @@
 		3208AAB81AC56A51000860D9 /* ApiProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiProxy.h; sourceTree = "<group>"; };
 		3208AABB1AC56C1C000860D9 /* GetNodeDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodeDescription.cpp; sourceTree = "<group>"; };
 		3208AABC1AC56C1C000860D9 /* GetNodeDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetNodeDescription.h; sourceTree = "<group>"; };
+		32092B3E1BFA353F006A4D06 /* NodeLoadCompletion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeLoadCompletion.cpp; sourceTree = "<group>"; };
+		32092B3F1BFA353F006A4D06 /* NodeLoadCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeLoadCompletion.h; sourceTree = "<group>"; };
 		320C2189151B555A00BD0F41 /* EventServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventServer.h; sourceTree = "<group>"; };
 		320C218B151B556E00BD0F41 /* EventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventServer.cpp; sourceTree = "<group>"; };
 		320DEA6019CB209500ED66AB /* DataBlockCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataBlockCache.cpp; sourceTree = "<group>"; };
@@ -3118,6 +3121,8 @@
 				328E77FE1A7A94140008C070 /* NodeGroup.h */,
 				328E78001A7A94810008C070 /* NodeRegister.cpp */,
 				328E78011A7A94810008C070 /* NodeRegister.h */,
+				32092B3E1BFA353F006A4D06 /* NodeLoadCompletion.cpp */,
+				32092B3F1BFA353F006A4D06 /* NodeLoadCompletion.h */,
 				328D0FEF1A8A034E001A2001 /* NodeSearch.cpp */,
 				328D0FF01A8A034E001A2001 /* NodeSearch.h */,
 				32B9F3F51AC4186300380FE9 /* NodeCreateUnitServer.cpp */,
@@ -4350,6 +4355,7 @@
 				32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */,
 				32AE8BA71B67B4A100FAC528 /* ResetAll.cpp in Sources */,
 				325FC85A1AF77A7900DB9D66 /* NewUS.cpp in Sources */,
+				32092B401BFA353F006A4D06 /* NodeLoadCompletion.cpp in Sources */,
 				324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */,
 				327F39A01AEA47980000C845 /* GetAssociationByDS.cpp in Sources */,
 				328E77FF1A7A94140008C070 /* NodeGroup.cpp in Sources */,

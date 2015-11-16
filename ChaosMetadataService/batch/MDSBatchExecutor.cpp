@@ -21,6 +21,7 @@
 #include "unit_server/unit_server_batch.h"
 #include "control_unit/control_unit_batch.h"
 #include "node/node_batch.h"
+#include "../ChaosMetadataService.h"
 
 using namespace chaos::metadata_service::batch;
 #define BCE_INFO INFO_LOG(BatchCommandExecutor)
@@ -30,7 +31,7 @@ using namespace chaos::metadata_service::batch;
 #define MDS_BATCH_COMMAND_INSTANCER(BatchCommandClass) new chaos::common::utility::NestedObjectInstancer<MDSBatchCommand, common::batch_command::BatchCommand>(\
 new chaos::common::utility::TypedObjectInstancer<BatchCommandClass, MDSBatchCommand>())
 
-#define MDS_BATCH_SANDBOX_COUNT 1
+#define MDS_DEFAULT_BATCH_SANDBOX_COUNT 1
 
 MDSBatchExecutor::MDSBatchExecutor(const std::string& executor_id,
                                    chaos::common::network::NetworkBroker *_network_broker):
@@ -55,7 +56,11 @@ last_used_sb_idx(3){
     installCommand(control_unit::IDSTControlUnitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::IDSTControlUnitBatchCommand));
     
     //add all sandbox instances
-    addSandboxInstance(MDS_BATCH_SANDBOX_COUNT);
+    if(ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_BATCH_SANDBOX_SIZE)) {
+        addSandboxInstance(ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_BATCH_SANDBOX_SIZE));
+    } else {
+        addSandboxInstance(MDS_DEFAULT_BATCH_SANDBOX_COUNT);
+    }
 }
 
 MDSBatchExecutor::~MDSBatchExecutor(){}
@@ -109,7 +114,7 @@ void MDSBatchExecutor::deinit() throw(chaos::CException) {
 uint32_t MDSBatchExecutor::getNextSandboxToUse() {
     boost::lock_guard<boost::mutex> l(mutex_sandbox_id);
     last_used_sb_idx++;
-    return (last_used_sb_idx %= MDS_BATCH_SANDBOX_COUNT);
+    return (last_used_sb_idx %= getNumberOfSandboxInstance());
 }
 
 //allocate a new command

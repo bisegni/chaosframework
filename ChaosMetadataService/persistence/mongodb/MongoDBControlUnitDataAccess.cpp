@@ -744,9 +744,7 @@ int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeConfiguration(const
                                        query,
                                        &prj))){
             
-        }else if(result_bson.isEmpty()){
-            MDBCUDA_ERR << "No attribute has bee foundt";
-        } else {
+        } else if(!result_bson.isEmpty()){
             std::vector<mongo::BSONElement> result_array = result_bson.getFieldDotted("instance_description.attribute_value_descriptions").Array();
             if(result_array.size()!=0) {
                 mongo::BSONObj attribute_config = result_array[0].Obj();

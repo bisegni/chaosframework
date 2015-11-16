@@ -132,6 +132,7 @@ namespace chaos {
                 int     publishing_counter_delay;
                 
                 int sendConfPackToMDS(CDataWrapper& dataToSend);
+                int sendLoadCompletionToMDS(const std::string& control_unit_uid);
                 inline string getCurrentStateString();
             public:
                 chaos::common::message::MDSMessageChannel   *mds_channel;
