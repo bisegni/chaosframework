@@ -105,7 +105,7 @@ void RegistrationAckBatchCommand::ccHandler() {
                         submitCommand(GET_MDS_COMMAND_ALIAS(batch::control_unit::IDSTControlUnitBatchCommand),
                                       init_datapack.release(),
                                       sandbox_index,
-                                      100);
+                                      0);
                     }
                     if(auto_start){
                         std::auto_ptr<CDataWrapper> start_datapack(new CDataWrapper());
@@ -114,7 +114,7 @@ void RegistrationAckBatchCommand::ccHandler() {
                         submitCommand(GET_MDS_COMMAND_ALIAS(batch::control_unit::IDSTControlUnitBatchCommand),
                                       start_datapack.release(),
                                       sandbox_index,
-                                      50);
+                                      0);
                     }
                     
                 }

@@ -60,6 +60,8 @@ private slots:
     void cuInstanceStopSelected();
 
     void duplicateInstance();
+    void moveToUnitServer();
+    void copyToUnitServer();
 
     void on_pushButtonUpdateControlUnitType_clicked();
     void on_pushButtonAddNewCUType_clicked();
@@ -74,7 +76,6 @@ protected:
     bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
-
 private:
     QStandardItemModel *table_model;
     Ui::UnitServerEditor *ui;

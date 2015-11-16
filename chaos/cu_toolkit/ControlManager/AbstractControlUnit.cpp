@@ -334,7 +334,7 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
         
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_INIT_STATE){
             //call init sequence
-            SWEService::initImplementation(this, NULL, "AbstractControlUnit", __PRETTY_FUNCTION__);
+            init(NULL);
             break;
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_INIT_SHARED_CACHE) {
@@ -395,7 +395,7 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
         }
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_init", INIT_RPC_PHASE_UPDATE_CONFIGURATION){
             bool detach_fake = false;
-
+            
             //call update param function
             updateConfiguration(init_configuration.get(), detach_fake);
             break;
@@ -414,7 +414,7 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             pushSystemDataset();
             break;
         }
-
+        
     }
     CHAOS_CHECK_LIST_END_SCAN_TO_DO(check_list_sub_service, "_init")
 }
@@ -447,7 +447,7 @@ void AbstractControlUnit::doInitSMCheckList() throw(CException) {
 void AbstractControlUnit::doStartRpCheckList() throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_start"){
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_IMPLEMENTATION){
-            SWEService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
+            start();
             break;
         }
         
@@ -475,7 +475,7 @@ void AbstractControlUnit::redoInitRpCheckList(bool throw_exception) throw(CExcep
     CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "_init"){
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_CALL_INIT_STATE){
             //saftely deinititalize the abstract control unit
-            CHEK_IF_NEED_TO_THROW(throw_exception, SWEService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);)
+            CHEK_IF_NEED_TO_THROW(throw_exception, deinit();)
             break;
         }
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_init", INIT_RPC_PHASE_INIT_SHARED_CACHE) {
@@ -549,7 +549,7 @@ void AbstractControlUnit::redoInitSMCheckList(bool throw_exception) throw(CExcep
 void AbstractControlUnit::redoStartRpCheckList(bool throw_exception) throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_DONE(check_list_sub_service, "_start"){
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_start", START_RPC_PHASE_IMPLEMENTATION){
-            CHEK_IF_NEED_TO_THROW(throw_exception, SWEService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);)
+            CHEK_IF_NEED_TO_THROW(throw_exception, stop();)
             break;
         }
         
@@ -582,9 +582,12 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
         return NULL;
     }
     //if(getServiceState() != CUStateKey::DEINIT) throw CException(-1, DatasetDB::getDeviceID()+" need to be in deinit", __PRETTY_FUNCTION__);
-    if(!attribute_value_shared_cache) throw CException(-3, "No Shared cache implementation found for:"+DatasetDB::getDeviceID(), __PRETTY_FUNCTION__);
-    
+    if(!attribute_value_shared_cache) throw CException(-1, "No Shared cache implementation found for:"+DatasetDB::getDeviceID(), __PRETTY_FUNCTION__);
+    if(!SWEService::initImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
+        LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be initilized [state mismatch]!", %DatasetDB::getDeviceID());
+    }
     try {
+        
         //update configuraiton and own it
         detachParam = true;
         this->init_configuration.reset(init_configuration);
@@ -614,14 +617,12 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
 CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
                                           bool& detachParam) throw(CException) {
     //call start method of the startable interface
-    if(getServiceState() == CUStateKey::START){
-        return NULL;
-        //throw CException(-1, DatasetDB::getDeviceID()+" already started", __PRETTY_FUNCTION__);
+    if(!SWEService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
+        LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be started [state mismatch]!", %DatasetDB::getDeviceID());
     }
-    //if(getServiceState() != CUStateKey::INIT &&
-    //   getServiceState() != CUStateKey::STOP) throw CException(-1, DatasetDB::getDeviceID()+" need to be in the init or stop state to be started", __PRETTY_FUNCTION__);
     
     try {
+        
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_STARTING,
@@ -648,11 +649,9 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
 CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
                                          bool& detachParam) throw(CException) {
     //first we start the deinitializaiton of the implementation unit
-    if(getServiceState() == CUStateKey::STOP) {
-        return NULL;
-        //   throw CException(-1, DatasetDB::getDeviceID()+" already stopped", __PRETTY_FUNCTION__);
+    if(!SWEService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
+        LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be stoped [state mismatch]!", %DatasetDB::getDeviceID());
     }
-    //if(getServiceState() != CUStateKey::START) throw CException(-1, DatasetDB::getDeviceID()+" need to be started to be stopped", __PRETTY_FUNCTION__);
     
     try {
         //set healt to start
@@ -681,12 +680,12 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
  */
 CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
                                            bool& detachParam) throw(CException) {
-    if(getServiceState() == CUStateKey::DEINIT){
+    /*if(getServiceState() == CUStateKey::DEINIT){
         return NULL;
-        //throw CException(-1, DatasetDB::getDeviceID()+" already deinitlized", __PRETTY_FUNCTION__);
+    }*/
+    if(!SWEService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
+        LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be deinitilized [state mismatch]!", %DatasetDB::getDeviceID());
     }
-    //if(getServiceState() != CUStateKey::INIT &&
-    //   getServiceState() != CUStateKey::STOP) throw CException(-1, DatasetDB::getDeviceID()+" need to be in the init or stop state to be initialized", __PRETTY_FUNCTION__);
     
     //first we start the deinitializaiton of the implementation unit
     try {
@@ -1102,8 +1101,8 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     thread_schedule_daly_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY));
     
     //add unit type
-    //domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_UNIT_TYPE, (uint32_t)control_unit_type.size(), DataType::TYPE_STRING);
-    //domain_attribute_setting.setValueForAttribute(domain_attribute_setting.getNumberOfAttributes()-1, control_unit_type.c_str(),  (uint32_t)control_unit_type.size());
+    domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_UNIT_TYPE, (uint32_t)control_unit_type.size(), DataType::TYPE_STRING);
+    domain_attribute_setting.setValueForAttribute(domain_attribute_setting.getNumberOfAttributes()-1, control_unit_type.c_str(),  (uint32_t)control_unit_type.size());
     
     //add error attribute
     //domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR, 0, DataType::TYPE_INT32);
@@ -1170,7 +1169,7 @@ void AbstractControlUnit::_goInRecoverableError(chaos::CException recoverable_ex
     //change state machine
     if(SWEService::goInRecoverableError(this, recoverable_exception, "RTAbstractControlUnit", __PRETTY_FUNCTION__)) {
         //update healt the status to report recoverable error
-       
+        
     }
 }
 

@@ -33,6 +33,8 @@ namespace chaos {
                     struct fatal_error {};
                 }
                 
+                
+                
                 // States
                 struct RecoverableError : public boost::msm::front::state<> {};
                 struct FatalError : public boost::msm::front::state<> {};
@@ -129,8 +131,8 @@ namespace chaos {
                 static bool stopImplementation(SWEService& impl, const std::string & impl_name,  const std::string & domain_string);
                 static bool stopImplementation(SWEService *impl, const std::string & impl_name,  const std::string & domain_string);
                 
-                static bool initImplementation(SWEService& impl, void *initData, const std::string & impl_name,  const std::string & domain_string);
-                static bool initImplementation(SWEService *impl, void *initData, const std::string & impl_name,  const std::string & domain_string);
+                static bool initImplementation(SWEService& impl, const std::string & impl_name,  const std::string & domain_string);
+                static bool initImplementation(SWEService *impl, const std::string & impl_name,  const std::string & domain_string);
                 
                 static bool deinitImplementation(SWEService& impl, const std::string & impl_name,  const std::string & domain_string);
                 static bool deinitImplementation(SWEService *impl, const std::string & impl_name,  const std::string & domain_string);

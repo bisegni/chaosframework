@@ -46,7 +46,6 @@ protected:
     bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
-
 private slots:
     void on_pushButtonSaveInstance_clicked();
 

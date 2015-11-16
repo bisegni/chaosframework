@@ -130,8 +130,9 @@ int ChaosLabel::stopMonitoring() {
 
 void ChaosLabel::_updateStatusColor() {
     if(!monitoring || !trackStatus()) return;
-    bool offline = (zero_diff_count > 3) || (last_recevied_ts = 0);
+    bool offline = (zero_diff_count > 3) || (last_recevied_ts == 0);
     if(!offline) {
+        //the target is online and working
         if(last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
                 last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
             setStyleSheet("QLabel { color : #FF7C00; }");

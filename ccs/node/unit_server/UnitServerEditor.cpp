@@ -14,6 +14,9 @@
 #include <QTimeZone>
 #include <QLocale>
 #include <QInputDialog>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMimeData>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -76,6 +79,8 @@ void UnitServerEditor::initUI() {
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             this, SLOT(handleSelectionChanged(QItemSelection)));
 
+    ui->tableView->setAcceptDrops(true);
+
     connect(ui->tableView->selectionModel(),
             SIGNAL(currentChanged(QModelIndex,QModelIndex)),
             SLOT(tableCurrentChanged(QModelIndex,QModelIndex)));
@@ -118,6 +123,8 @@ void UnitServerEditor::customMenuRequested(QPoint pos){
         QAction *menuStart = new QAction("Start", this);
         QAction *menuStop = new QAction("Stop", this);
         QAction *menuDuplicate = new QAction("Duplicate", this);
+        QAction *menuCopyTo = new QAction("Copy To", this);
+        QAction *menuMoveTo = new QAction("Move To", this);
         connect(menuL, SIGNAL(triggered()), this, SLOT(cuInstanceLoadSelected()));
         connect(menuUL, SIGNAL(triggered()), this, SLOT(cuInstanceUnloadSelected()));
         connect(menuI, SIGNAL(triggered()), this, SLOT(cuInstanceInitSelected()));
@@ -125,6 +132,8 @@ void UnitServerEditor::customMenuRequested(QPoint pos){
         connect(menuStart, SIGNAL(triggered()), this, SLOT(cuInstanceStartSelected()));
         connect(menuStop, SIGNAL(triggered()), this, SLOT(cuInstanceStopSelected()));
         connect(menuDuplicate, SIGNAL(triggered()), this, SLOT(duplicateInstance()));
+        connect(menuCopyTo, SIGNAL(triggered()), this, SLOT(copyToUnitServer()));
+        connect(menuMoveTo, SIGNAL(triggered()), this, SLOT(moveToUnitServer()));
         menu->addAction(menuL);
         menu->addAction(menuUL);
         menu->addAction(menuI);
@@ -390,6 +399,14 @@ void UnitServerEditor::duplicateInstance() {
             break;
         }
     }
+}
+
+void UnitServerEditor::moveToUnitServer() {
+
+}
+
+void UnitServerEditor::copyToUnitServer() {
+
 }
 
 void UnitServerEditor::on_pushButtonAddNewCUType_clicked() {

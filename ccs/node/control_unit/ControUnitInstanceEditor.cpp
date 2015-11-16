@@ -7,7 +7,6 @@
 #include <QStandardItem>
 #include <QMessageBox>
 #include <QInputDialog>
-
 #include <cassert>
 
 using namespace chaos::common::data;
