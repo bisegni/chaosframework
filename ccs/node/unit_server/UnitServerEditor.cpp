@@ -2,6 +2,7 @@
 #include "ui_UnitServerEditor.h"
 #include "../control_unit/ControUnitInstanceEditor.h"
 #include "../control_unit/ControlUnitEditor.h"
+
 #include <chaos/common/data/CDataWrapper.h>
 
 #include <QDebug>
@@ -17,6 +18,7 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
+#include <QStringRef>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -32,6 +34,7 @@ const QString TAG_CU_SI = "cu_si";
 UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
     PresenterWidget(NULL),
     node_unique_id(_node_unique_id),
+    move_copy_search_instance(NULL),
     ui(new Ui::UnitServerEditor) {
     ui->setupUi(this);
     ui->splitterTypeInstances->setStretchFactor(0,0);
@@ -108,6 +111,11 @@ bool UnitServerEditor::isClosing() {
     //stop monitoring
     ui->chaosLabelHealtStatus->stopMonitoring();
     ui->chaosLedIndicatorHealt->stopMonitoring();
+    if( move_copy_search_instance) {
+        move_copy_search_instance->close();
+        delete( move_copy_search_instance);
+        move_copy_search_instance = NULL;
+    }
     return true;
 }
 
@@ -383,10 +391,10 @@ void UnitServerEditor::duplicateInstance() {
         QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
         QString source_cu_id = QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
         QString destination_cu_id = QInputDialog::getText(this,
-                                                 (tr("Duplicate instance:")+source_cu_id),
-                                                 tr("Unique ID destination:"),
-                                                 QLineEdit::Normal,
-                                                 tr(""), &ok);
+                                                          (tr("Duplicate instance:")+source_cu_id),
+                                                          tr("Unique ID destination:"),
+                                                          QLineEdit::Normal,
+                                                          tr(""), &ok);
         if (ok && !destination_cu_id.isEmpty()) {
             qDebug() << "Duplicate " << source_cu_id;
             //load the selected cu
@@ -402,11 +410,58 @@ void UnitServerEditor::duplicateInstance() {
 }
 
 void UnitServerEditor::moveToUnitServer() {
-
+    QString tag = "move<";
+    foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
+        QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+        QString source_cu_id = QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        tag.append(source_cu_id);
+        tag.append("<");
+    }
+    tag.resize(tag.size()-1);
+    move_copy_search_instance = new SearchNodeResult(true, tag);
+    connect(move_copy_search_instance, SIGNAL(selectedNodes(QString,QVector<QPair<QString,QString> >)), SLOT(selectedUnitServer(QString,QVector<QPair<QString,QString> >)));
 }
 
 void UnitServerEditor::copyToUnitServer() {
+    QString tag = "copy<";
+    foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
+        QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+        QString source_cu_id = QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        tag.append(source_cu_id);
+        tag.append("<");
+    }
+    tag.resize(tag.size()-1);
+    move_copy_search_instance = new SearchNodeResult(true, tag);
+    connect(move_copy_search_instance, SIGNAL(selectedNodes(QString,QVector<QPair<QString,QString> >)), SLOT(selectedUnitServer(QString,QVector<QPair<QString,QString> >)));
+}
 
+void UnitServerEditor::selectedUnitServer(const QString& tag, const QVector< QPair<QString,QString> >& selected_item) {
+    int first_separator = tag.indexOf("<");
+    if(first_separator == -1) return;
+
+    QStringRef operation(&tag, 0, first_separator-1);
+    QStringRef instances(&tag, first_separator, tag.size());
+    QVector<QStringRef> instance_to_apply = instances.split("<");
+
+    foreach(QStringRef instance, instance_to_apply) {
+//        foreach(QPair<QString,QString>  us_selected, selected_item) {
+//            if(tag.compare(tr("move") == 0)) {
+//            } else if(tag.compare("copy")==0){
+//                //copy or move insnace to all target
+//                submitApiResult(QString("copy_instance"),
+//                                GET_CHAOS_API_PTR(control_unit::CopyInstance)->execute(instance.toStdString(),
+//                                                                                       node_unique_id.toStdString(),
+//                                                                                       instance.toStdString(),
+//                                                                                       us_selected.toStdString()));
+//            } else {
+//                break;
+//            }
+//        }
+    }
+
+    move_copy_search_instance->close();
+    delete(move_copy_search_instance);
+    move_copy_search_instance = NULL;
 }
 
 void UnitServerEditor::on_pushButtonAddNewCUType_clicked() {

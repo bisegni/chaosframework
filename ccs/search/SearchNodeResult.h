@@ -8,10 +8,17 @@
 #include <QTableView>
 #include <QItemDelegate>
 #include <QStandardItemModel>
+#include <QList>
 
 namespace Ui {
 class SearchNodeResult;
 }
+
+typedef enum SearchNodeType {
+    SNT_ALL_TYPE,
+    SNT_UNIT_SERVER,
+    SNT_CONTROL_UNIT
+} SearchNodeType;
 
 class SearchNodeResult :
         public PresenterWidget
@@ -20,6 +27,7 @@ class SearchNodeResult :
     //! search property
 
     QString tag;
+    QList<SearchNodeType> selectable_types;
     int current_page_length;
     bool selection_mode;
 
@@ -37,6 +45,9 @@ protected:
 public:
     explicit SearchNodeResult(bool _selection_mode = false,
                               const QString& _tag = QString());
+    SearchNodeResult(bool _selection_mode,
+                     const QList<SearchNodeType>& _selectable_types,
+                     const QString& _tag = QString());
     ~SearchNodeResult();
 
 signals:

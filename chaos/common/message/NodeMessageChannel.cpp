@@ -96,3 +96,18 @@ std::auto_ptr<MessageRequestFuture> NodeMessageChannel::sendRequestWithFuture(co
                                                  action_name,
                                                  request_pack);
 }
+
+//! return last sendxxx error code
+int32_t NodeMessageChannel::getLastErrorCode() {
+    return MessageChannel::getLastErrorCode();
+}
+
+//! return last sendxxx error message
+const std::string& NodeMessageChannel::getLastErrorMessage() {
+    return MessageChannel::getLastErrorMessage();
+}
+
+//! return last sendxxx error domain
+const std::string& NodeMessageChannel::getLastErrorDomain() {
+    return MessageChannel::getLastErrorDomain();
+}

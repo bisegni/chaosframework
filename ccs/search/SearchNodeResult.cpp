@@ -20,17 +20,20 @@ SearchNodeResult::SearchNodeResult(bool _selection_mode,
     tag(_tag),
     ui(new Ui::SearchNodeResult) {
     ui->setupUi(this);
-    setFocusPolicy(Qt::StrongFocus);
-    ui->lineEditSearchCriteria->setFocus();
 
-    search_timer.setSingleShot(true);
-    connect(&search_timer,
-            SIGNAL(timeout()),
-            SLOT(on_pushButtonStartSearch_clicked()));
 }
 
-SearchNodeResult::~SearchNodeResult()
-{
+SearchNodeResult::SearchNodeResult(bool _selection_mode,
+                                   const QList<SearchNodeType>& _selectable_types,
+                                   const QString& _tag):
+    current_page_length(200),
+    selection_mode(_selection_mode),
+    tag(_tag),
+    selectable_types(_selectable_types) {
+    ui->setupUi(this);
+}
+
+SearchNodeResult::~SearchNodeResult() {
     delete ui;
 }
 
@@ -39,6 +42,14 @@ bool SearchNodeResult::isClosing() {
 }
 
 void SearchNodeResult::initUI() {
+    setFocusPolicy(Qt::StrongFocus);
+    ui->lineEditSearchCriteria->setFocus();
+
+    search_timer.setSingleShot(true);
+    connect(&search_timer,
+            SIGNAL(timeout()),
+            SLOT(on_pushButtonStartSearch_clicked()));
+
     setTabTitle("Search Nodes");
 
     if(selection_mode){
@@ -48,7 +59,23 @@ void SearchNodeResult::initUI() {
     }
 
     QStringList search_types;
-    search_types << "All types" << "Unit server" << "Control unit";
+    if(selectable_types.size() == 0) {
+        search_types << "All types" << "Unit server" << "Control unit";
+    } else {
+        foreach(SearchNodeType searchable_type , selectable_types) {
+            switch(searchable_type) {
+            case SNT_ALL_TYPE:
+                search_types << "All types";
+                break;
+            case SNT_UNIT_SERVER:
+                search_types << "Unit server";
+                break;
+            case SNT_CONTROL_UNIT:
+                search_types << "Control unit";
+                break;
+            }
+        }
+    }
     ui->comboBoxSearchType->addItems(search_types);
 
     // Create a new model

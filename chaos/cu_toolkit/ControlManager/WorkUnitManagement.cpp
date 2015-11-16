@@ -278,12 +278,15 @@ int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
     //add action for metadata server
     //add local ip and port
 
-        //add default node value
-        //mdsPack.addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
-        //mdsPack.addInt64Value(NodeDefinitionKey::NODE_TIMESTAMP, chaos::common::utility::TimingUtil::getTimeStamp());
-
+    int err = 0;
+    
     //register CU from mds
-    return mds_channel->sendNodeRegistration(mdsPack);
+    if((err = mds_channel->sendNodeRegistration(mdsPack))) {
+        WUMERR_ << "Error forwarding registration message with code " <<mds_channel->getLastErrorCode() << "\n"
+        "message: " << mds_channel->getLastErrorMessage() <<"\n"<<
+        "domain: " << mds_channel->getLastErrorDomain() <<"\n";
+    }
+    return err;
 }
 
 bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {

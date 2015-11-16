@@ -98,6 +98,15 @@ namespace chaos {
                 std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string& node_id,
                                                                           const std::string& action_name,
                                                                           chaos::common::data::CDataWrapper *request_pack);
+                
+                //! return last sendxxx error code
+                int32_t getLastErrorCode();
+                
+                //! return last sendxxx error message
+                const std::string& getLastErrorMessage();
+                
+                //! return last sendxxx error domain
+                const std::string& getLastErrorDomain();
 			};
 		}
 	}

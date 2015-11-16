@@ -3,6 +3,7 @@
 
 #include "../../presenter/PresenterWidget.h"
 #include "../../widget/CLedIndicatorHealt.h"
+#include "../../search/SearchNodeResult.h"
 
 #include <QItemSelection>
 #include <QStringListModel>
@@ -76,7 +77,10 @@ protected:
     bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+protected slots:
+        void selectedUnitServer(const QString& tag, const QVector<QPair<QString,QString> >& selected_item);
 private:
+    SearchNodeResult    *move_copy_search_instance;
     QStandardItemModel *table_model;
     Ui::UnitServerEditor *ui;
 };
