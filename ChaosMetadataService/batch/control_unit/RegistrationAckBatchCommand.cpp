@@ -70,6 +70,7 @@ void RegistrationAckBatchCommand::acquireHandler() {
             message.addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT, reg_result);
             sendMessage(*request,
                         &message);
+            BC_END_RUNNIG_PROPERTY
         }
         default:
             break;

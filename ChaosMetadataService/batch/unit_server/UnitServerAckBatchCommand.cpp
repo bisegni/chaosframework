@@ -36,7 +36,11 @@ DEFINE_MDS_COMAMND_ALIAS(UnitServerAckCommand)
 UnitServerAckCommand::UnitServerAckCommand():
 MDSBatchCommand(),
 message_data(NULL),
-phase(USAP_ACK_US){}
+phase(USAP_ACK_US){
+//
+    //timeout need to be removed because the unit serve can have alot of cu
+    clearFeatures(chaos::common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT);
+}
 
 UnitServerAckCommand::~UnitServerAckCommand() {}
 
@@ -79,10 +83,9 @@ void UnitServerAckCommand::ccHandler() {
         case USAP_ACK_US: {
             switch(request->phase) {
                 case MESSAGE_PHASE_UNSENT:
-                    sendRequest(*request,
+                    sendMessage(*request,
                                 message_data);
                     break;
-                    
                 case MESSAGE_PHASE_SENT:
                     manageRequestPhase(*request);
                     break;
@@ -146,6 +149,7 @@ void UnitServerAckCommand::ccHandler() {
                         USAC_ERR << "Error creating autoload datapack for:"<<last_worked_cu.node_uid<<" with code:" << err;
                         BC_END_RUNNIG_PROPERTY
                     } else {
+                        USAC_INFO << "Autoload control unit " << last_worked_cu.node_uid;
                         request = createRequest(message_data->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR),
                                                 UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
                                                 UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT);
@@ -161,8 +165,11 @@ void UnitServerAckCommand::ccHandler() {
                 case MESSAGE_PHASE_UNSENT:
                     sendMessage(*request,
                                 autoload_pack.get());
+                    break;
+                    
                 case MESSAGE_PHASE_SENT:
                     manageRequestPhase(*request);
+                    break;
                     
                 case MESSAGE_PHASE_COMPLETED:{
                     //after terminate the control unit ack try to fetch cu autoload
