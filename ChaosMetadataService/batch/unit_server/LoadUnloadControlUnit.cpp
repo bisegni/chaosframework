@@ -100,18 +100,27 @@ void LoadUnloadControlUnit::setHandler(CDataWrapper *data) {
 // inherited method
 void LoadUnloadControlUnit::acquireHandler() {
     MDSBatchCommand::acquireHandler();
+    switch(request->phase) {
+        case MESSAGE_PHASE_UNSENT:{
+            sendMessage(*request,
+                        load_unload_pack.get());
+            BC_END_RUNNIG_PROPERTY
+            break;
+        }
+        case MESSAGE_PHASE_SENT:
+        case MESSAGE_PHASE_COMPLETED:
+        case MESSAGE_PHASE_TIMEOUT:
+            break;
+    }
 }
 
 // inherited method
 void LoadUnloadControlUnit::ccHandler() {
     MDSBatchCommand::ccHandler();
     switch(request->phase) {
-        case MESSAGE_PHASE_UNSENT:{
-            sendRequest(*request,
-                        load_unload_pack.get());
-            
+        case MESSAGE_PHASE_UNSENT:
             break;
-        }
+            
         case MESSAGE_PHASE_SENT:{
             manageRequestPhase(*request);
             break;

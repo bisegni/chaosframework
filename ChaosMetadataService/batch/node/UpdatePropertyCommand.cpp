@@ -74,8 +74,9 @@ void UpdatePropertyCommand::ccHandler() {
     MDSBatchCommand::ccHandler();
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
-            sendRequest(*request,
+            sendMessage(*request,
                         update_property_pack.get());
+            BC_END_RUNNIG_PROPERTY
         }
             
         case MESSAGE_PHASE_SENT: {

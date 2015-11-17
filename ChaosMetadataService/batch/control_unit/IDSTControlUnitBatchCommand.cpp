@@ -91,11 +91,6 @@ void IDSTControlUnitBatchCommand::setHandler(CDataWrapper *data) {
 // inherited method
 void IDSTControlUnitBatchCommand::acquireHandler() {
     MDSBatchCommand::acquireHandler();
-}
-
-// inherited method
-void IDSTControlUnitBatchCommand::ccHandler() {
-    MDSBatchCommand::ccHandler();
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
             switch(action) {
@@ -122,8 +117,24 @@ void IDSTControlUnitBatchCommand::ccHandler() {
             }
             
             //send message for action
-            sendRequest(*request,
+            sendMessage(*request,
                         message.get());
+            BC_END_RUNNIG_PROPERTY
+            break;
+        }
+        case MESSAGE_PHASE_SENT:
+        case MESSAGE_PHASE_COMPLETED:
+        case MESSAGE_PHASE_TIMEOUT: {
+            break;
+        }
+    }
+}
+
+// inherited method
+void IDSTControlUnitBatchCommand::ccHandler() {
+    MDSBatchCommand::ccHandler();
+    switch(request->phase) {
+        case MESSAGE_PHASE_UNSENT: {
             break;
         }
         case MESSAGE_PHASE_SENT: {

@@ -68,7 +68,7 @@ void RegistrationAckBatchCommand::acquireHandler() {
             CDataWrapper message;
             message.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
             message.addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT, reg_result);
-            sendRequest(*request,
+            sendMessage(*request,
                         &message);
         }
         default:

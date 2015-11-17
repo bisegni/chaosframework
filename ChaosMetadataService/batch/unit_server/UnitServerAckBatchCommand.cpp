@@ -159,13 +159,10 @@ void UnitServerAckCommand::ccHandler() {
         case USAP_CU_AUTOLOAD: {
             switch(request->phase) {
                 case MESSAGE_PHASE_UNSENT:
-                    sendRequest(*request,
+                    sendMessage(*request,
                                 autoload_pack.get());
-                    break;
-                    
                 case MESSAGE_PHASE_SENT:
                     manageRequestPhase(*request);
-                    break;
                     
                 case MESSAGE_PHASE_COMPLETED:{
                     //after terminate the control unit ack try to fetch cu autoload

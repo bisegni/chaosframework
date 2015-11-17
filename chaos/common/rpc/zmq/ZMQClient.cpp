@@ -183,7 +183,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
         url.append(pool_identification);
         if((err = zmq_connect(new_socket, url.c_str()))) {
         } else {
-            DEBUG_CODE(ZMQC_LAPP << "New socket for "<<pool_identification;)
+            DEBUG_CODE(ZMQC_LDBG << "New socket for "<<pool_identification;)
         }
     }
     
@@ -201,7 +201,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
 
 void ZMQClient::deallocateResource(const std::string& pool_identification, void* resource_to_deallocate) {
     CHAOS_ASSERT(resource_to_deallocate)
-    DEBUG_CODE(ZMQC_LAPP << "delete socket for "<<pool_identification;)
+    DEBUG_CODE(ZMQC_LDBG << "delete socket for "<<pool_identification;)
     zmq_close(resource_to_deallocate);
 }
 
@@ -212,7 +212,7 @@ void ZMQClient::timeout() {
     while(it != map_socket.end()){
         it->second->maintenance();
         if( it->second->getSize() == 0 ) {
-            ZMQC_LAPP << "Delete socket pool for:" << it->first;
+             DEBUG_CODE(ZMQC_LDBG << "Delete socket pool for:" << it->first;)
             map_socket.erase( it++ ); // advance before iterator become invalid
         } else {
             ++it;
@@ -246,7 +246,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
         }
         
         if(!socket_info->resource_pooled) {
-            ZMQC_LDBG << "Socket creation error";
+            ZMQC_LERR << "Socket creation error";
             forwadSubmissionResultError(messageInfo,
                                         -1,
                                         "Socket creation error",
@@ -317,9 +317,9 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
             }
         }
     }catch (std::exception& e) {
-        ZMQC_LAPP << "Error during message forwarding:"<< e.what();
+        ZMQC_LERR << "Error during message forwarding:"<< e.what();
     } catch (...) {
-        ZMQC_LAPP << "General error during message forwarding:";
+        ZMQC_LERR << "General error during message forwarding:";
     }
     releaseSocket(socket_info);
     zmq_msg_close (&message);

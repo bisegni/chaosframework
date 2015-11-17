@@ -55,19 +55,28 @@ void ApplyChangeSet::setHandler(CDataWrapper *data) {
 // inherited method
 void ApplyChangeSet::acquireHandler() {
     MDSBatchCommand::acquireHandler();
+    switch(request->phase) {
+        case MESSAGE_PHASE_UNSENT: {
+            
+            //send message for action
+            sendMessage(*request,
+                        message);
+            BC_END_RUNNIG_PROPERTY
+            break;
+        }
+        case MESSAGE_PHASE_SENT:
+        case MESSAGE_PHASE_COMPLETED:
+        case MESSAGE_PHASE_TIMEOUT:
+            break;
+    }
 }
 
 // inherited method
 void ApplyChangeSet::ccHandler() {
     MDSBatchCommand::ccHandler();
     switch(request->phase) {
-        case MESSAGE_PHASE_UNSENT: {
-            
-            //send message for action
-            sendRequest(*request,
-                        message);
+        case MESSAGE_PHASE_UNSENT:
             break;
-        }
         case MESSAGE_PHASE_SENT: {
             manageRequestPhase(*request);
             break;

@@ -82,6 +82,8 @@ chaos::common::data::CDataWrapper *NodeLoadCompletion::controlUnitCompletion(cha
     
     cu_id = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
     
+    CU_LC_INFO << "Register control unit "<<cu_id;
+
     if((err = cu_da->getInstanceDescription(cu_id, &tmp_ptr))) {
         LOG_AND_TROW_FORMATTED(CU_LC_ERR, err, "Error %1% durring fetch of instance for unit server %2%", %err%cu_id)
     } else if(tmp_ptr) {

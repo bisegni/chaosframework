@@ -83,11 +83,15 @@ chaos::common::data::CDataWrapper *NodeRegister::unitServerRegistration(chaos::c
     uint64_t    nodes_seq = 0;
     detach_data = true;
     
+   
     //fetch the unit server data access
     GET_DATA_ACCESS(UnitServerDataAccess, us_da, -1)
     GET_DATA_ACCESS(UtilityDataAccess, u_da, -2)
     
     const std::string unit_server_alias = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+    
+    USRA_INFO << "Register unit server " << unit_server_alias;
+    
     try {
         if((err = us_da->checkPresence(unit_server_alias, is_present))) {
             //err
@@ -162,6 +166,9 @@ chaos::common::data::CDataWrapper *NodeRegister::controlUnitRegistration(chaos::
     //allocate datapack for batch command
     std::auto_ptr<CDataWrapper> ack_command(new CDataWrapper());
     const std::string cu_uid = api_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
+    
+    USRA_INFO << "Register control unit " << cu_uid;
+    
     //set cu id to the batch command datapack
     ack_command->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
                                 cu_uid);
