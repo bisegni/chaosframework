@@ -579,10 +579,7 @@ void ControlManager::timeout() {
             if(use_unit_server) {
                 if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublishing()) == boost::msm::back::HANDLED_TRUE){
                     //gone to publishing
-                    if((publishing_counter_delay%10) == 0){
-                        sendUnitServerRegistration();
-                    }
-                    publishing_counter_delay++;
+                    sendUnitServerRegistration();
                 } else {
                     LCMERR_ << "[Unpublished] i can't be here";
                 }
@@ -594,7 +591,10 @@ void ControlManager::timeout() {
             //Publishing
         case 1:
             LCMAPP_ << "[Publishing] Send another registration pack to mds";
-            sendUnitServerRegistration();
+            if((publishing_counter_delay%10) == 0){
+                sendUnitServerRegistration();
+            }
+            publishing_counter_delay++;
             break;
             //Published
         case 2:

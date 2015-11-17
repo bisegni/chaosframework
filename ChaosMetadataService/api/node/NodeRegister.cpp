@@ -142,7 +142,8 @@ chaos::common::data::CDataWrapper *NodeRegister::unitServerRegistration(chaos::c
     
     //all is gone weel
     command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::unit_server::UnitServerAckCommand),
-                                      api_data);
+                                                   api_data,
+                                                   1000);
     
     USRA_INFO << "Sent ack for registration ok to the unit server " << unit_server_alias;
     return NULL;
@@ -204,7 +205,8 @@ chaos::common::data::CDataWrapper *NodeRegister::controlUnitRegistration(chaos::
         
         //set the code to inform cu that all is gone well
         command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::control_unit::RegistrationAckBatchCommand),
-                                          ack_command.release());
+                                                       ack_command.release(),
+                                                       1000);
         USRA_INFO << "Sent ack for registration ok to the control unit " << cu_uid << " with commadn id:" <<command_id;
     } catch (chaos::CException& ex) {
         ack_command->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
