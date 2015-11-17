@@ -17,8 +17,7 @@ ControUnitInstanceEditor::ControUnitInstanceEditor(const QString& unit_server_ui
                                                    const QString& control_unit_type):
     PresenterWidget(NULL),
     is_in_editing(false),
-    ui(new Ui::ControUnitInstanceEditor)
-{
+    ui(new Ui::ControUnitInstanceEditor) {
     ui->setupUi(this);
     ui->labelUnitServer->setText(unit_server_uid);
     ui->labelControlUnitType->setText(control_unit_type);
@@ -29,12 +28,11 @@ ControUnitInstanceEditor::ControUnitInstanceEditor(const QString& unit_server_ui
                                                    bool edit_instance):
     PresenterWidget(NULL),
     is_in_editing(edit_instance),
-    ui(new Ui::ControUnitInstanceEditor)
-{
+    ui(new Ui::ControUnitInstanceEditor) {
     ui->setupUi(this);
     ui->labelUnitServer->setText(unit_server_uid);
     ui->lineEditControlUnitUniqueID->setText(control_unit_uid);
-    ui->lineEditControlUnitUniqueID->setEnabled(false);
+    //ui->lineEditControlUnitUniqueID->setEnabled(false);
 }
 
 ControUnitInstanceEditor::~ControUnitInstanceEditor()

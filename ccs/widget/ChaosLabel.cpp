@@ -219,7 +219,7 @@ void ChaosLabel::quantumSlotHasData(const std::string& key, const KeyValue& valu
 void ChaosLabel::quantumSlotHasNoData(const std::string& key) {
     last_recevied_ts = zero_diff_count = 0;
     //update color on main thread
-    QMetaObject::invokeMethod(this, SLOT(_updateStatusColor()));
+    QMetaObject::invokeMethod(this, "_updateStatusColor",  Qt::QueuedConnection);
 }
 
 //slots hiding

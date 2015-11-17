@@ -56,6 +56,7 @@ namespace chaos{
                 //! used to track what sandbox has been used last time
                 uint32_t        last_used_sb_idx;
                 boost::mutex    mutex_sandbox_id;
+                boost::mutex    mutex_sandbox_submission;
             protected:
                 //overload to permit the customization of newly created command instance
                 common::batch_command::BatchCommand *  instanceCommandInfo(const std::string& command_alias,

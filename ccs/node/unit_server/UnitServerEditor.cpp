@@ -149,6 +149,8 @@ void UnitServerEditor::customMenuRequested(QPoint pos){
         menu->addAction(menuStart);
         menu->addAction(menuStop);
         menu->addAction(menuDuplicate);
+        menu->addAction(menuCopyTo);
+        menu->addAction(menuMoveTo);
         menu->popup(ui->tableView->viewport()->mapToGlobal(pos));
     }
 }
@@ -410,6 +412,11 @@ void UnitServerEditor::duplicateInstance() {
 }
 
 void UnitServerEditor::moveToUnitServer() {
+    if(ui->tableView->selectionModel()->selectedRows().size() == 0) return;
+    if(move_copy_search_instance){
+        move_copy_search_instance->show();
+        return;
+    }
     QString tag = "move<";
     foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
         QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
@@ -423,6 +430,11 @@ void UnitServerEditor::moveToUnitServer() {
 }
 
 void UnitServerEditor::copyToUnitServer() {
+    if(ui->tableView->selectionModel()->selectedRows().size() == 0) return;
+    if(move_copy_search_instance){
+        move_copy_search_instance->show();
+        return;
+    }
     QString tag = "copy<";
     foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
         QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
@@ -433,32 +445,45 @@ void UnitServerEditor::copyToUnitServer() {
     tag.resize(tag.size()-1);
     move_copy_search_instance = new SearchNodeResult(true, tag);
     connect(move_copy_search_instance, SIGNAL(selectedNodes(QString,QVector<QPair<QString,QString> >)), SLOT(selectedUnitServer(QString,QVector<QPair<QString,QString> >)));
+    addWidgetToPresenter(move_copy_search_instance);
 }
 
 void UnitServerEditor::selectedUnitServer(const QString& tag, const QVector< QPair<QString,QString> >& selected_item) {
-    int first_separator = tag.indexOf("<");
-    if(first_separator == -1) return;
 
-    QStringRef operation(&tag, 0, first_separator-1);
-    QStringRef instances(&tag, first_separator, tag.size());
+    int first_separator = tag.indexOf("<");
+    QStringRef operation(&tag, 0, first_separator);
+    QStringRef instances(&tag, first_separator+1, tag.size()-operation.size()-1);
     QVector<QStringRef> instance_to_apply = instances.split("<");
 
     foreach(QStringRef instance, instance_to_apply) {
-//        foreach(QPair<QString,QString>  us_selected, selected_item) {
-//            if(tag.compare(tr("move") == 0)) {
-//            } else if(tag.compare("copy")==0){
-//                //copy or move insnace to all target
-//                submitApiResult(QString("copy_instance"),
-//                                GET_CHAOS_API_PTR(control_unit::CopyInstance)->execute(instance.toStdString(),
-//                                                                                       node_unique_id.toStdString(),
-//                                                                                       instance.toStdString(),
-//                                                                                       us_selected.toStdString()));
-//            } else {
-//                break;
-//            }
-//        }
+        for(QVector<QPair<QString,QString> >::const_iterator it = selected_item.begin();
+            it != selected_item.end();
+            it++){
+            if(operation.compare(tr("move")) == 0) {
+            } else if(operation.compare(tr("copy"))==0){
+                bool ok = false;
+                QString cu_uid = instance.toString();
+                QString us_uid = it->first;
+                QString new_cu_uid = QString("%2/%1").arg(cu_uid, us_uid);
+                QString destination_cu_id = QInputDialog::getText(this,
+                                                                  (QString("Duplicate instance:%1 to unit server:%2").arg(cu_uid, us_uid)),
+                                                                  tr("Unique ID destination:"),
+                                                                  QLineEdit::Normal,
+                                                                  new_cu_uid,
+                                                                  &ok);
+                if(ok && destination_cu_id.size()) {
+                    //copy or move insnace to all target
+                    submitApiResult(QString("copy_instance"),
+                                    GET_CHAOS_API_PTR(control_unit::CopyInstance)->execute(instance.string()->toStdString(),
+                                                                                           node_unique_id.toStdString(),
+                                                                                           instance.string()->toStdString(),
+                                                                                           it->first.toStdString()));
+                }
+            } else {
+                break;
+            }
+        }
     }
-
     move_copy_search_instance->close();
     delete(move_copy_search_instance);
     move_copy_search_instance = NULL;

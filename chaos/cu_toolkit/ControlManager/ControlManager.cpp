@@ -590,8 +590,8 @@ void ControlManager::timeout() {
             break;
             //Publishing
         case 1:
-            LCMAPP_ << "[Publishing] Send another registration pack to mds";
             if((publishing_counter_delay%10) == 0){
+                LCMAPP_ << "[Publishing] Send another registration pack to mds";
                 sendUnitServerRegistration();
             }
             publishing_counter_delay++;
@@ -661,7 +661,7 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
                                                                     NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                                     NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
                 } else {
-                    LCMAPP_ << "Registration ACK received,bad  SM state "<<(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()));
+                    LCMERR_ << "Registration ACK received,bad  SM state "<<(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()));
                     throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for published event", __PRETTY_FUNCTION__);
                 }
                 break;
