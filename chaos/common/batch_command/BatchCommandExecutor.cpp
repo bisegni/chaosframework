@@ -562,6 +562,8 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
     if(sandbox_map.count(execution_channel) == 0)
         throw CException(-3, "Execution channel not found", "BatchCommandExecutor::submitCommand");
     
+    WriteLock       lock(sandbox_map_mutex);
+    
     boost::shared_ptr<BatchCommandSandbox> sandbox_ptr = sandbox_map[execution_channel];
 
     BCELDBG_ << "Submit new command "<< batch_command_alias <<

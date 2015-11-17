@@ -25,8 +25,8 @@
 
 using namespace chaos::metadata_service::batch;
 #define BCE_INFO INFO_LOG(BatchCommandExecutor)
-#define BCE_DBG  INFO_DBG(BatchCommandExecutor)
-#define BCE_ERR  INFO_ERR(BatchCommandExecutor)
+#define BCE_DBG  DBG_LOG(BatchCommandExecutor)
+#define BCE_ERR  ERR_LOG(BatchCommandExecutor)
 
 #define MDS_BATCH_COMMAND_INSTANCER(BatchCommandClass) new chaos::common::utility::NestedObjectInstancer<MDSBatchCommand, common::batch_command::BatchCommand>(\
 new chaos::common::utility::TypedObjectInstancer<BatchCommandClass, MDSBatchCommand>())
@@ -145,7 +145,7 @@ void MDSBatchExecutor::handleCommandEvent(uint64_t command_seq,
                                           common::batch_command::BatchCommandEventType::BatchCommandEventType type,
                                           void* type_value_ptr,
                                           uint32_t type_value_size) {
-    
+    BCE_DBG << "Command Event [command_seq:"<<command_seq << " BatchCommandEventType:" << type;
 }
 
 //! general sandbox event handler
@@ -153,13 +153,12 @@ void MDSBatchExecutor::handleSandboxEvent(const std::string& sandbox_id,
                                           common::batch_command::BatchSandboxEventType::BatchSandboxEventType type,
                                           void* type_value_ptr,
                                           uint32_t type_value_size) {
-    
+    BCE_DBG << "Command Sandbox Event [sandbox_id:"<< sandbox_id << " BatchSandboxEventType:" << type;
 }
 
 uint64_t MDSBatchExecutor::submitCommand(const std::string& batch_command_alias,
                                          chaos::common::data::CDataWrapper * command_data) {
     uint64_t command_id;
-    boost::lock_guard<boost::mutex> ls(mutex_sandbox_submission);
     boost::lock_guard<boost::mutex> lid(mutex_sandbox_id);
     last_used_sb_idx++;
     BatchCommandExecutor::submitCommand(batch_command_alias,
@@ -173,7 +172,6 @@ uint64_t MDSBatchExecutor::submitCommand(const std::string& batch_command_alias,
                                          chaos::common::data::CDataWrapper* command_data,
                                          uint32_t sandbox_id,
                                          uint32_t priority) {
-    boost::lock_guard<boost::mutex> ls(mutex_sandbox_submission);
     uint64_t command_id;
     BatchCommandExecutor::submitCommand(batch_command_alias,
                                         command_data,
