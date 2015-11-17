@@ -54,7 +54,8 @@ using namespace std;
 /*
  Constructor
  */
-ControlManager::ControlManager() {}
+ControlManager::ControlManager():
+publishing_counter_delay(0){}
 
 /*
  Desctructor
@@ -574,11 +575,14 @@ void ControlManager::timeout() {
     switch (unit_server_sm.current_state()[0]) {
             //Unpublished
         case 0:
-            LCMDBG_ << "[Unpublished] Send first registration pack to mds";
+            LCMAPP_ << "[Unpublished] Send first registration pack to mds";
             if(use_unit_server) {
                 if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublishing()) == boost::msm::back::HANDLED_TRUE){
                     //gone to publishing
-                    sendUnitServerRegistration();
+                    if((publishing_counter_delay%10) == 0){
+                        sendUnitServerRegistration();
+                    }
+                    publishing_counter_delay++;
                 } else {
                     LCMERR_ << "[Unpublished] i can't be here";
                 }
@@ -589,20 +593,20 @@ void ControlManager::timeout() {
             break;
             //Publishing
         case 1:
-            LCMDBG_ << "[Publishing] Send another registration pack to mds";
+            LCMAPP_ << "[Publishing] Send another registration pack to mds";
             sendUnitServerRegistration();
             break;
             //Published
         case 2:
-            LCMDBG_ << "[Published] Unit server registration completed, turn off the timer";
+            LCMAPP_ << "[Published] Unit server registration completed, turn off the timer";
             chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
             
-            LCMDBG_ << "[Published] Start control units registration state machine";
+            LCMAPP_ << "[Published] Start control units registration state machine";
             startControlUnitSMThread();
             break;
             //Published failed
         case 3:
-            LCMDBG_ << "[Published failed] Perform Unpublishing state";
+            LCMAPP_ << "[Published failed] Perform Unpublishing state";
             chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
             use_unit_server = false;
             break;

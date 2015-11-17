@@ -144,6 +144,7 @@ namespace chaos {
 				
 				//unit server state machine
 				bool					use_unit_server;
+                unsigned int            publishing_counter_delay;
 				std::string				unit_server_alias;
 				std::string				unit_server_key;
 				boost::shared_mutex		unit_server_sm_mutex;
