@@ -64,49 +64,59 @@ CDataWrapper *CopyInstance::execute(CDataWrapper *api_data,
     bool different_us = (us_src.compare(us_dst) != 0);
     
     GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -6)
-    
+    GET_DATA_ACCESS(UnitServerDataAccess, us_da, -6)
     if((err = cu_da->getInstanceDescription(us_src, cu_src, &tmp_ptr))){
         LOG_AND_TROW_FORMATTED(CU_CI_ERR, -7, "Error (%3%) getting instance for control unit %1% and unit server %2%", %cu_src%us_src%err)
     } else if(tmp_ptr == NULL) {
         LOG_AND_TROW_FORMATTED(CU_CI_ERR, -8, "No instance found for control unit %1% and unit server %2%", %cu_src%us_src)
         
     }
+    source_instance.reset(tmp_ptr);
+    
+    CHECK_KEY_THROW_AND_LOG(source_instance.get(),
+                            "control_unit_implementation",
+                            CU_CI_ERR,
+                            -9,
+                            "The source control unit istance doesnt have the control unit type");
     
     if(different_us) {
-        //move to another unit server
-    } else {
-        //copy within the same unit server
-        //compose destination instane changing only the unit server that host the instance
-        source_instance.reset(tmp_ptr);
-        source_instance->getAllKey(keys);
-        for(std::vector<std::string>::iterator it = keys.begin();
-            it != keys.end();
-            it++) {
-            if(it->compare(NodeDefinitionKey::NODE_PARENT) == 0){
-                destination_instance->addStringValue(NodeDefinitionKey::NODE_PARENT, us_dst);
-            } else {
-                source_instance->copyKeyTo(*it, *destination_instance.get());
-            }
-        }
+        //move to another unit server so we need to add the control unit type to this us
         
-        //check if control unit node exists
-        if((err = cu_da->checkPresence(cu_dst,
-                                       presence))){
-            LOG_AND_TROW_FORMATTED(CU_CI_ERR, -9, "Error (%1%) checking presence for control unit %2%", %err%cu_dst)
-        }
-        if (!presence) {
-            //add new control unit node
-            auto_ptr<CDataWrapper> node_min_dec(new CDataWrapper());
-            node_min_dec->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_dst);
-            node_min_dec->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
-            //need to be create a new empty node
-            if((err = cu_da->insertNewControlUnit(*node_min_dec.get()))) {
-                LOG_AND_TROW_FORMATTED(CU_CI_ERR, -10, "Error (%1%) creating node for control unit %2%", %err%cu_dst)
-            }
-        }
-        if((err = cu_da->setInstanceDescription(cu_dst, *destination_instance.get()))) {
-            LOG_AND_TROW_FORMATTED(CU_CI_ERR, -11, "Error (%1%) setting the instance for control unit %2%", %err%cu_dst)
+        //add the new control unit
+        us_da->addCUType(us_dst, source_instance->getStringValue("control_unit_implementation"));
+        
+    }
+    //copy within the same unit server
+    //compose destination instane changing only the unit server that host the instance
+    source_instance->getAllKey(keys);
+    for(std::vector<std::string>::iterator it = keys.begin();
+        it != keys.end();
+        it++) {
+        if(it->compare(NodeDefinitionKey::NODE_PARENT) == 0){
+            destination_instance->addStringValue(NodeDefinitionKey::NODE_PARENT, us_dst);
+        } else {
+            source_instance->copyKeyTo(*it, *destination_instance.get());
         }
     }
+    
+    //check if control unit node exists
+    if((err = cu_da->checkPresence(cu_dst,
+                                   presence))){
+        LOG_AND_TROW_FORMATTED(CU_CI_ERR, -9, "Error (%1%) checking presence for control unit %2%", %err%cu_dst)
+    }
+    if (!presence) {
+        //add new control unit node
+        auto_ptr<CDataWrapper> node_min_dec(new CDataWrapper());
+        node_min_dec->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_dst);
+        node_min_dec->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
+        //need to be create a new empty node
+        if((err = cu_da->insertNewControlUnit(*node_min_dec.get()))) {
+            LOG_AND_TROW_FORMATTED(CU_CI_ERR, -10, "Error (%1%) creating node for control unit %2%", %err%cu_dst)
+        }
+    }
+    if((err = cu_da->setInstanceDescription(cu_dst, *destination_instance.get()))) {
+        LOG_AND_TROW_FORMATTED(CU_CI_ERR, -11, "Error (%1%) setting the instance for control unit %2%", %err%cu_dst)
+    }
+    
     return NULL;
 }

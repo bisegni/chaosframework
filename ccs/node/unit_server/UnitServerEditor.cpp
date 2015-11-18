@@ -474,9 +474,9 @@ void UnitServerEditor::selectedUnitServer(const QString& tag, const QVector< QPa
                 if(ok && destination_cu_id.size()) {
                     //copy or move insnace to all target
                     submitApiResult(QString("copy_instance"),
-                                    GET_CHAOS_API_PTR(control_unit::CopyInstance)->execute(instance.string()->toStdString(),
+                                    GET_CHAOS_API_PTR(control_unit::CopyInstance)->execute(instance.toString().toStdString(),
                                                                                            node_unique_id.toStdString(),
-                                                                                           instance.string()->toStdString(),
+                                                                                           destination_cu_id.toStdString(),
                                                                                            it->first.toStdString()));
                 }
             } else {
