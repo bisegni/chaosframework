@@ -159,8 +159,6 @@ void MDSBatchExecutor::handleSandboxEvent(const std::string& sandbox_id,
 uint64_t MDSBatchExecutor::submitCommand(const std::string& batch_command_alias,
                                          chaos::common::data::CDataWrapper * command_data) {
     uint64_t command_id;
-    boost::lock_guard<boost::mutex> lid(mutex_sandbox_id);
-    last_used_sb_idx++;
     BatchCommandExecutor::submitCommand(batch_command_alias,
                                         command_data,
                                         command_id,
