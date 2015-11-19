@@ -107,6 +107,9 @@ if(cdw == NULL) {LOG_AND_TROW_FORMATTED(log, num, frmt, param)}
 #define CHECK_KEY_THROW_AND_LOG_FORMATTED(cdw, key, log, num, frmt, param)\
 if(cdw->hasKey(key) == false) {LOG_AND_TROW_FORMATTED(log, num, frmt, param)}
 
+#define CHECK_ASSERTION_THROW_AND_LOG(assertion, log, num, msg)\
+if(assertion == false) {LOG_AND_TROW(log, num, msg)}
+
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true
 #ifndef DEBUG

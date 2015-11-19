@@ -422,7 +422,7 @@ namespace chaos {
         static const char * const ACTION_UNIT_SERVER_REG_ACK                        = "unitServerRegistrationACK";
         
         //! Action that is called to inform the node of the registration status of the hosted control unit
-        static const char * const ACTION_REGISTRATION_CONTROL_UNIT_ACK        = "ndk_rpc_reg_cu_ack";
+        static const char * const ACTION_REGISTRATION_CONTROL_UNIT_ACK              = "ndk_rpc_reg_cu_ack";
         
         //! driver params passed during load operation for a specified control unit
         static const char * const PARAM_CU_LOAD_DRIVER_PARAMS                       = "controlUnitDriverParams";
@@ -431,7 +431,13 @@ namespace chaos {
         /*!
          Represent the control unit type to be load or unload
          */
-        static const char * const PARAM_CONTROL_UNIT_TYPE                     = "usn_rpc_par_control_unit_type";
+        static const char * const PARAM_CONTROL_UNIT_TYPE                           = "usn_rpc_par_control_unit_type";
+        
+        //! List of command to execute at the startup of the control unit [vector of CDataWrapper]
+        /*!
+         Represent the control unit type to be load or unload
+         */
+        static const char * const PARAM_CONTROL_UNIT_STARTUP_COMMAND                = "usn_rpc_par_control_unit_sc";
     }
     /** @} */ // end of UnitServerNodeDomainAndActionRPC
     

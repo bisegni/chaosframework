@@ -78,45 +78,5 @@ chaos::common::data::CDataWrapper *NodeLoadCompletion::controlUnitCompletion(cha
     std::string                                 temp_node_uid       = "";
     std::string                                 cu_id               = "";
     
-    GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -4)
-    
-    cu_id = api_data->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID);
-    
-    CU_LC_INFO << "Load completed for control unit "<<cu_id;
-
-    if((err = cu_da->getInstanceDescription(cu_id, &tmp_ptr))) {
-        LOG_AND_TROW_FORMATTED(CU_LC_ERR, err, "Error %1% durring fetch of instance for unit server %2%", %err%cu_id)
-    } else if(tmp_ptr) {
-        std::auto_ptr<CDataWrapper> auto_inst(tmp_ptr);
-        bool auto_init = auto_inst->hasKey("auto_init")?auto_inst->getBoolValue("auto_init"):false;
-        bool auto_start = auto_inst->hasKey("auto_start")?auto_inst->getBoolValue("auto_start"):false;
-        
-        if(auto_init || auto_start) {
-            uint32_t sandbox_index = getBatchExecutor()->getNextSandboxToUse();
-            if(auto_init){
-                std::auto_ptr<CDataWrapper> init_datapack(new CDataWrapper());
-                init_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
-                init_datapack->addInt32Value("action", (int32_t)0);
-                
-                command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::control_unit::IDSTControlUnitBatchCommand),
-                                                               init_datapack.release(),
-                                                               sandbox_index,
-                                                               10);
-                
-                CU_LC_INFO << "Submitted init command for control unit "<<cu_id<< " with id:" << command_id << " on sandbox:" << sandbox_index;
-            }
-            if(auto_start){
-                std::auto_ptr<CDataWrapper> start_datapack(new CDataWrapper());
-                start_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
-                start_datapack->addInt32Value("action", (int32_t)1);
-                command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::control_unit::IDSTControlUnitBatchCommand),
-                                                               start_datapack.release(),
-                                                               sandbox_index,
-                                                               0);
-                CU_LC_INFO << "Submitted start command for control unit "<<cu_id<< " with id:" << command_id << " on sandbox:" << sandbox_index;
-            }
-            
-        }
-    }
     return NULL;
 }

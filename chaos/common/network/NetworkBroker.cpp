@@ -59,7 +59,7 @@ event_dispatcher(NULL),
 rpc_server(NULL),
 rpc_client(NULL),
 sync_rpc_server(NULL),
-command_dispatcher(NULL),
+rpc_dispatcher(NULL),
 direct_io_dispatcher(NULL),
 direct_io_server(NULL),
 direct_io_client(NULL) {
@@ -162,11 +162,11 @@ void NetworkBroker::init(void *initData) throw(CException) {
     if(globalConfiguration->hasKey(InitOption::OPT_RPC_IMPLEMENTATION)){
         //get the dispatcher
         MB_LAPP  << "Setup RPC sublayer";
-        command_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
-        if(!command_dispatcher)
+        rpc_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
+        if(!rpc_dispatcher)
             throw CException(-6, "Command dispatcher implementation not found", __PRETTY_FUNCTION__);
         
-        if(!StartableService::initImplementation(command_dispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", __PRETTY_FUNCTION__))
+        if(!StartableService::initImplementation(rpc_dispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", __PRETTY_FUNCTION__))
             throw CException(-7, "Command dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
         
         
@@ -185,7 +185,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         if(StartableService::initImplementation(rpc_server, static_cast<void*>(globalConfiguration), rpc_server->getName(), __PRETTY_FUNCTION__)) {
             //set the handler on the rpc server
-            rpc_server->setCommandDispatcher(command_dispatcher);
+            rpc_server->setCommandDispatcher(rpc_dispatcher);
         }
         
         
@@ -197,11 +197,11 @@ void NetworkBroker::init(void *initData) throw(CException) {
         }
         
         //! connect dispatch to manage error durign request forwarding
-        rpc_client->setServerHandler(command_dispatcher);
+        rpc_client->setServerHandler(rpc_dispatcher);
         
         if(StartableService::initImplementation(rpc_client, static_cast<void*>(globalConfiguration), rpc_client->getName(), __PRETTY_FUNCTION__)) {
             //set the forwarder into dispatcher for answere
-            command_dispatcher->setRpcForwarder(rpc_client);
+            rpc_dispatcher->setRpcForwarder(rpc_client);
         }
     } else {
         throw CException(-10, "No RPC Adapter type found in configuration", __PRETTY_FUNCTION__);
@@ -224,7 +224,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         if(StartableService::initImplementation(sync_rpc_server, static_cast<void*>(globalConfiguration), sync_rpc_server->getName(), __PRETTY_FUNCTION__)) {
             //set the handler on the rpc server
-            sync_rpc_server->setCommandDispatcher(command_dispatcher);
+            sync_rpc_server->setCommandDispatcher(rpc_dispatcher);
         }
     }
     //---------------------------- R P C SYNC ----------------------------
@@ -310,8 +310,8 @@ void NetworkBroker::deinit() throw(CException) {
     DELETE_OBJ_POINTER(rpc_server);
     
     MB_LAPP  << "Deinit Command Dispatcher";
-    CHAOS_NOT_THROW(StartableService::deinitImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
-    DELETE_OBJ_POINTER(command_dispatcher);
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(rpc_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
+    DELETE_OBJ_POINTER(rpc_dispatcher);
     //---------------------------- R P C ----------------------------
     
 }
@@ -326,7 +326,7 @@ void NetworkBroker::start() throw(CException){
         StartableService::startImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);
         StartableService::startImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);
     }
-    StartableService::startImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);
+    StartableService::startImplementation(rpc_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);
     StartableService::startImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);
     StartableService::startImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);
     if(sync_rpc_server){StartableService::startImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);}
@@ -341,7 +341,7 @@ void NetworkBroker::stop() throw(CException) {
     if(sync_rpc_server){CHAOS_NOT_THROW(StartableService::stopImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)}
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(StartableService::stopImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(StartableService::stopImplementation(rpc_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
     if(!GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE)) {
         CHAOS_NOT_THROW(StartableService::stopImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);)
         CHAOS_NOT_THROW(StartableService::stopImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);)
@@ -505,7 +505,7 @@ bool NetworkBroker::submitEvent(event::EventDescriptor *event) {
  */
 void NetworkBroker::registerAction(DeclareAction* declare_action_class) {
     CHAOS_ASSERT(declare_action_class)
-    command_dispatcher->registerAction(declare_action_class);
+    rpc_dispatcher->registerAction(declare_action_class);
 }
 
 /*
@@ -513,7 +513,7 @@ void NetworkBroker::registerAction(DeclareAction* declare_action_class) {
  */
 void NetworkBroker::deregisterAction(DeclareAction* declare_action_class) {
     CHAOS_ASSERT(declare_action_class)
-    command_dispatcher->deregisterAction(declare_action_class);
+    rpc_dispatcher->deregisterAction(declare_action_class);
 }
 
 #pragma mark Message Submission
@@ -530,6 +530,21 @@ bool NetworkBroker::submitMessage(const string& host,
     nfi->setMessage(message);
     //add answer id to datawrapper
     return rpc_client->submitMessage(nfi, on_this_thread);
+}
+
+//!send interparocess message
+/*!
+ forward the message directly to the dispatcher for broadcasting it
+ to the registered rpc domain
+ */
+chaos::common::data::CDataWrapper *NetworkBroker::submitInterProcessMessage(chaos::common::data::CDataWrapper *message,
+                                              bool onThisThread) {
+    CHAOS_ASSERT(rpc_dispatcher)
+    if(onThisThread) {
+        return rpc_dispatcher->executeCommandSync(message);
+    }else{
+        return rpc_dispatcher->dispatchCommand(message);
+    }
 }
 
 /*!

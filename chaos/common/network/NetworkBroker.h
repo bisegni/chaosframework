@@ -128,7 +128,7 @@ namespace chaos {
                 chaos::common::sync_rpc::RpcSyncServer *sync_rpc_server;
                 
 				//rpc action dispatcher
-				AbstractCommandDispatcher *command_dispatcher;
+				AbstractCommandDispatcher *rpc_dispatcher;
 				
 				//! Rpc server for message dispatcher
 				AbstractEventDispatcher *event_dispatcher;
@@ -295,9 +295,18 @@ namespace chaos {
 				bool submiteRequest(const string& serverAndPort,
                                     chaos::common::data::CDataWrapper *request,
                                     std::string sender_node_id,
-                                    uint32_t sender_request_id0,
+                                    uint32_t sender_request_id,
 									bool onThisThread=false);
 				
+                
+                //!send interparocess message
+                /*!
+                 forward the message directly to the dispatcher for broadcasting it 
+                 to the registered rpc domain
+                 */
+                chaos::common::data::CDataWrapper *submitInterProcessMessage(chaos::common::data::CDataWrapper *message,
+                                                                             bool onThisThread=false);
+                
 				//!message submition
 				/*!
 				 Submit a message to the metadata server

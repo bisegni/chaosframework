@@ -63,3 +63,47 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::prepareRequestPackForLoadControlUni
     }
     return result_pack;
 }
+
+void CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(const std::string& cu_uid,
+                                                                   ControlUnitDataAccess *cu_da,
+                                                                   CDataWrapper *auto_load_pack) {
+    CUCU_DBG << "Prepare autoload request for:" << cu_uid;
+    int err = 0;
+    CDataWrapper * tmp_ptr = NULL;
+    //if the control unit to load need also to be initilized and started we compose the startup command to achieve this
+    if((err = cu_da->getInstanceDescription(cu_uid, &tmp_ptr))) {
+        LOG_AND_TROW_FORMATTED(CUCU_ERR, err, "Error %1% durring fetch of instance for unit server %2%", %err%cu_da)
+    } else if(tmp_ptr) {
+        std::auto_ptr<CDataWrapper> auto_inst(tmp_ptr);
+        bool auto_init = auto_inst->hasKey("auto_init")?auto_inst->getBoolValue("auto_init"):false;
+        bool auto_start = auto_inst->hasKey("auto_start")?auto_inst->getBoolValue("auto_start"):false;
+        
+        if(auto_init || auto_start) {
+            if(auto_init){
+                std::auto_ptr<CDataWrapper> init_datapack(new CDataWrapper());
+                init_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
+                
+                std::auto_ptr<CDataWrapper> init_message_datapack(new CDataWrapper());
+                init_message_datapack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, NodeDomainAndActionRPC::ACTION_NODE_INIT);
+                init_message_datapack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *init_datapack);
+                
+                auto_load_pack->appendCDataWrapperToArray(*init_message_datapack);
+            }
+            if(auto_start){
+                std::auto_ptr<CDataWrapper> start_datapack(new CDataWrapper());
+                start_datapack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
+                
+                std::auto_ptr<CDataWrapper> start_message_datapack(new CDataWrapper());
+                start_message_datapack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, NodeDomainAndActionRPC::ACTION_NODE_START);
+                start_message_datapack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *start_datapack);
+                auto_load_pack->appendCDataWrapperToArray(*start_message_datapack);
+            }
+            
+            //finalize startup command array
+            auto_load_pack->finalizeArrayForKey(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND);
+        }
+    }
+}
+
+
+

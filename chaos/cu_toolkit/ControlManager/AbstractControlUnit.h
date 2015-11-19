@@ -39,8 +39,9 @@
 #include <chaos/common/utility/AggregatedCheckList.h>
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
-
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/DatasetDB.h>
+#include <chaos/common/chaos_types.h>
 
 #include <chaos/cu_toolkit/ControlManager/AttributeSharedCacheWrapper.h>
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
@@ -72,6 +73,7 @@ namespace chaos{
 			using namespace chaos::cu::driver_manager;
 			using namespace chaos::cu::driver_manager::driver;
 			
+            //forward declaration
 			class ControlManager;
 			class WorkUnitManagement;
             namespace slow_command {
@@ -106,6 +108,8 @@ namespace chaos{
             typedef enum {
                 START_SM_PHASE_STAT_TIMER = 0
             }StartSMPhase;
+            
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::CDataWrapper*, ACUStartupCommandList)
             
             //!  Base class for control unit !CHAOS node
 			/*!
@@ -145,6 +149,13 @@ namespace chaos{
 				//! control unit load param
 				std::string control_unit_param;
 				
+                //!these are the startup command list
+                /*!
+                 The startup command are a set of command that are sent within the load command and
+                 are executed after the control unit is completely load. This are enterely managed by ControlManager.
+                 */
+                ACUStartupCommandList list_startup_command;
+                
                 //! keep track of how many push has been done for every dataset
                 //! 0 - output, 1-input, 2-custom
                 uint32_t    push_dataset_counter;

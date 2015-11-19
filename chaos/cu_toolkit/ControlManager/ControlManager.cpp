@@ -435,15 +435,15 @@ void ControlManager::manageControlUnit() {
 //! message for load operation
 CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& detach) throw (CException) {
     //check param
-    IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
-    IN_ACTION_PARAM_CHECK(!message_data->hasKey(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE), -2, "No instancer alias")
-    IN_ACTION_PARAM_CHECK(!message_data->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID), -3, "No id for the work unit instance found")
+    CHECK_CDW_THROW_AND_LOG(message_data, LCMERR_, -1, "No param found");
+    CHECK_KEY_THROW_AND_LOG(message_data, UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE, LCMERR_, -2, "No instancer alias");
+    CHECK_KEY_THROW_AND_LOG(message_data, NodeDefinitionKey::NODE_UNIQUE_ID, LCMERR_, -3, "No id for the work unit instance found");
     
     std::string work_unit_type = message_data->getStringValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_TYPE);
     LCMAPP_ << "Get new request for instance the work unit with alias:" << work_unit_type;
     
     WriteLock write_instancer_lock(mutex_map_cu_instancer);
-    IN_ACTION_PARAM_CHECK(!map_cu_alias_instancer.count(work_unit_type), -2, "No work unit instancer's found for the alias")
+    CHECK_ASSERTION_THROW_AND_LOG(map_cu_alias_instancer.count(work_unit_type), LCMERR_, -2, "No work unit instancer's found for the alias")
     
     std::string work_unit_id = message_data->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     std::string load_options = CDW_STR_KEY(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM);
@@ -453,8 +453,8 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     ReadLock read_registered_lock(mutex_map_cuid_registered_instance);
     
     // we can't have two different work unit with the same unique identifier within the same process
-    IN_ACTION_PARAM_CHECK(map_cuid_reg_unreg_instance.count(work_unit_id), -3, "Another work unit use the same id")
-    IN_ACTION_PARAM_CHECK(map_cuid_registered_instance.count(work_unit_id), -4, "Another work unit use the same id")
+    CHECK_ASSERTION_THROW_AND_LOG(!map_cuid_reg_unreg_instance.count(work_unit_id), LCMERR_, -3, "Another work unit use the same id")
+    CHECK_ASSERTION_THROW_AND_LOG(!map_cuid_registered_instance.count(work_unit_id), LCMERR_, -4, "Another work unit use the same id")
     
     LCMDBG_ << "instantiate work unit ->" << "device_id:" <<work_unit_id<< " load_options:"<< load_options;
     //scan all the driver description forwarded
@@ -467,9 +467,9 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
         for( int idx = 0; idx < driver_descriptions->size(); idx++) {
             LCMDBG_ << "scan " << idx << " driver";
             boost::scoped_ptr<CDataWrapper> driver_desc(driver_descriptions->getCDataWrapperElementAtIndex(idx));
-            IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME), -4, "No driver name found")
-            IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION), -5, "No driver version found")
-            IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER), -6, "No driver init param name found")
+            CHECK_KEY_THROW_AND_LOG(driver_desc, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME, LCMERR_, -4, "No driver name found");
+            CHECK_KEY_THROW_AND_LOG(driver_desc, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION, LCMERR_, -5, "No driver version found");
+            CHECK_KEY_THROW_AND_LOG(driver_desc, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_INIT_PARAMETER, LCMERR_, -6, "No driver init param name found");
             LCMDBG_ << "scan " << idx << " driver";
             cu_driver_manager::driver::DrvRequestInfo drv = {driver_desc->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_NAME),
                 driver_desc->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION_VERSION),
@@ -480,8 +480,8 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     }
     
     //submit new instance of the requested control unit
-    AbstractControlUnit *instance = map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params);
-    IN_ACTION_PARAM_CHECK(instance==NULL, -7, "Error creating work unit instance")
+    std::auto_ptr<AbstractControlUnit> instance(map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params));
+    CHECK_ASSERTION_THROW_AND_LOG(instance.get(), LCMERR_, -7, "Error creating work unit instance");
     
     //add healt metric for newly create control unit instance
     HealtManager::getInstance()->addNewNode(work_unit_id);
@@ -489,8 +489,22 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     //tag control uinit for mds managed
     instance->control_key = "mds";
     
-    //submit contorl unit to state machine scheduling thread
-    submitControlUnit(instance);
+    if(message_data->hasKey(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND)) {
+        //we need to check if the key is a vector
+        CHECK_KEY_THROW_AND_LOG(message_data, UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND, LCMERR_, -8, "The startup command key need to be a vector of CDataWrapper");
+        
+        //get the vector value
+        std::auto_ptr<CMultiTypeDataArrayWrapper> vector_values(message_data->getVectorValue(UnitServerNodeDomainAndActionRPC::PARAM_CONTROL_UNIT_STARTUP_COMMAND));
+        for(int idx = 0;
+            idx < vector_values->size();
+            idx++) {
+            //push command into the startup command vector of the control unit
+            instance->list_startup_command.push_back(vector_values->getCDataWrapperElementAtIndex(idx));
+        }
+    }
+    
+    //submit contorl unit releaseing the auto_ptr
+    submitControlUnit(instance.release());
     return NULL;
 }
 

@@ -32,7 +32,11 @@ namespace chaos {
             class CUCommonUtility {
             public:
                 static std::auto_ptr<chaos::common::data::CDataWrapper> prepareRequestPackForLoadControlUnit(const std::string& cu_uid,
-                                                                                                      chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da);
+                                                                                                             chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da);
+                
+                static void prepareAutoInitAndStartInAutoLoadControlUnit(const std::string& cu_uid,
+                                                                         chaos::metadata_service::persistence::data_access::ControlUnitDataAccess *cu_da,
+                                                                         chaos::common::data::CDataWrapper *auto_load_pack);
             };
             
         }

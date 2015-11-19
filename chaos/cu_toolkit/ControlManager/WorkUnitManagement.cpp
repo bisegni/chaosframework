@@ -23,6 +23,8 @@
 
 #include <chaos/common/healt_system/HealtManager.h>
 
+#include <chaos/common/network/NetworkBroker.h>
+
 #define WUMHADER "[" << std::string(work_unit_instance->getCUInstance()) + std::string("-") + std::string(work_unit_instance->getCUID()) << "-"<<getCurrentStateString()<<"] - "
 #define WUMAPP_ INFO_LOG(WorkUnitManagement) << WUMHADER
 #define WUMDBG_ DBG_LOG(WorkUnitManagement) << WUMHADER
@@ -34,6 +36,7 @@ throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for f
 }
 
 using namespace chaos::common::data;
+using namespace chaos::common::network;
 using namespace chaos::common::healt_system;
 
 using namespace chaos::cu::command_manager;
@@ -182,6 +185,24 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
                 CommandManager::getInstance()->registerAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
             }
+            
+            //check if the control unit hase some startup command
+            for(ACUStartupCommandListIterator it = work_unit_instance->list_startup_command.begin();
+                it != work_unit_instance->list_startup_command.end();
+                it++) {
+                
+                //we need to add the domain of the new created control unit to the messages
+                (*it)->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, work_unit_instance->getCUInstance());
+                //submit startup command
+                std::auto_ptr<CDataWrapper> submittion_result(NetworkBroker::getInstance()->submitInterProcessMessage(*it));
+                
+                if(submittion_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
+                    //error submitting startup command
+                    WUMERR_ << "Error submitting startup command:" << submittion_result->getJSONString();
+                }
+            }
+            //remove all startup comamnd that will be deleted from the
+            work_unit_instance->list_startup_command.clear();
             
             //send load completion to the mds
             sendLoadCompletionToMDS(work_unit_instance->getCUID());
