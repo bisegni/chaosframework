@@ -84,8 +84,7 @@ namespace chaos {
             boost::mutex trackMutext;
             
                 //!store the type of the attribute for fast retrieve
-            std::map<std::string, DataType::DataSetAttributeIOAttribute> attributeDirectionMap;
-            std::map<std::string, DataType::DataType> attributeTypeMap;
+            std::map<std::string, common::data::RangeValueInfo> attributeValueMap;
             std::vector<std::string> trackingAttribute;
             
                 //!map for live data circular buffer
@@ -199,7 +198,12 @@ namespace chaos {
              Get the direction of the attribute
              */
             int getDeviceAttributeType(const std::string& attributesName, DataType::DataType& type);
-			
+	
+            /**
+             * 
+             * @return a vector with the information of the dataset
+             */
+            std::vector<chaos::common::data::RangeValueInfo> getDeviceValuesInfo();
 			//!
             int getAttributeStrValue(const std::string attributesName, std::string& attribute_value);
 			

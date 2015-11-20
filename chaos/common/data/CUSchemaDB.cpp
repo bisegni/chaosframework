@@ -29,13 +29,16 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 
+#include <chaos/common/chaos_constants.h>
+
 using namespace std;
 using namespace boost;
 using namespace chaos;
 using namespace chaos::common::data;
 
 #define MAKE_KEY(key, tmp) entityDB->getIDForKey(key, tmp);\
-mapDatasetKeyForID.insert(make_pair<const char *, uint32_t>(key, tmp));
+mapDatasetKeyForID.insert(make_pair<const char *, uint32_t>(key, tmp));\
+LDBG_<<"inserting "<<key<<" :"<<tmp;
 
 void RangeValueInfo::reset() {
     defaultValue.clear();
@@ -43,6 +46,9 @@ void RangeValueInfo::reset() {
     minRange.clear();
     maxSize = 0;
     valueType = (DataType::DataType)0;
+    cardinality=0;
+    dir=chaos::DataType::Undefined;
+    binType=chaos::DataType::SUB_TYPE_NONE;   
 }
 
 CUSchemaDB::CUSchemaDB() {
@@ -294,6 +300,8 @@ void CUSchemaDB::addBinaryAttributeAsSubtypeToDataSet(const std::string& node_ui
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE], (int64_t)DataType::TYPE_BYTEARRAY);
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE], (int64_t)subtype);
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY], (int64_t)cardinality);
+       // if(typeMaxDimension)addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE], (int64_t)typeMaxDimension);
+
         device->isChild(*element_dataset.get(), isChild);
         if(!isChild) device->addChild(*element_dataset);
     }
@@ -509,7 +517,8 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     string attributeDescription;
     auto_ptr<CDataWrapper> elementDescription;
     auto_ptr<CMultiTypeDataArrayWrapper> elementsDescriptions;
-    
+    //LDBG_<<"["<<__PRETTY_FUNCTION__<<"] Dataset:"<<attributeDataWrapper.getJSONString();
+
     if(!attributeDataWrapper.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) return;
     attributeDeviceID = attributeDataWrapper.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     //get the entity for device
@@ -567,6 +576,19 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
                 if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE)){
                     addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE], (int64_t)elementDescription->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE));
                 }
+                
+                if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)){
+                    addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE], (int64_t)elementDescription->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
+                }
+                
+                if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY)){
+                    addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY], (int64_t)elementDescription->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY));
+                }
+                
+                if(elementDescription->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_ENCODING)){
+                    addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_ENCODING], elementDescription->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_MIME_ENCODING));
+                }
+                
             }
         }
     }
@@ -840,7 +862,7 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
     vector<uint32_t> keyToGot;
     ptr_vector<entity::Entity> attrEntityVec;
     ptr_vector<edb::KeyIdAndValue> attrPropertyVec;
-    
+    rangeInfo.reset();
     //clear all information
     kiv.keyID = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME];
     kiv.type = edb::KEY_STR_VALUE;
@@ -871,7 +893,7 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
     
     (&attrEntityVec[0])->getPropertyByKeyID(keyToGot, attrPropertyVec);
     if(!attrPropertyVec.size()) return 1;
-    
+    rangeInfo.name=attributesName;
     for (ptr_vector<edb::KeyIdAndValue>::iterator attrPropertyIterator = attrPropertyVec.begin();
          attrPropertyIterator != attrPropertyVec.end();
          attrPropertyIterator++) {
@@ -886,6 +908,12 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
             rangeInfo.minRange = kivPtr->value.strValue;
         } else if(kivPtr->keyID == keyIdAttrType) {
             rangeInfo.valueType = (DataType::DataType)kivPtr->value.numValue;
+        } else if(kivPtr->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE]){
+            rangeInfo.binType = (DataType::BinarySubtype)kivPtr->value.numValue;
+        } else if(kivPtr->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY]){
+            rangeInfo.cardinality = (uint32_t)kivPtr->value.numValue;
+        } else if(kivPtr->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION]){
+            rangeInfo.dir = (DataType::DataSetAttributeIOAttribute)kivPtr->value.numValue;
         } else if(kivPtr->keyID == keyIdAttrDefaultValue) {
             switch (kivPtr->type) {
                 case edb::KEY_DOUBLE_VALUE:
@@ -901,6 +929,8 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
             
         }
     }
+    LDBG_<<"range info "<<rangeInfo.name<<",binType:"<< rangeInfo.binType ;
+
     return 0;
 }
 

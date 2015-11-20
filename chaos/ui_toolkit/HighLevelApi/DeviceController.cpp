@@ -112,7 +112,7 @@ void DeviceController::updateChannel() throw(CException) {
     if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
     
     auto_ptr<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
-    
+     
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
     
     err = mdsChannel->getNetworkAddressForDevice(device_id, &devAddress, millisecToWait);
@@ -217,10 +217,10 @@ int DeviceController::getAttributeStrValue(string attribute_name, string& attrib
 	return err;
 }
 //---------------------------------------------------------------------------------------------------
-int DeviceController::getDeviceAttributeType(const string& attributesName, DataType::DataType& type) {
+int DeviceController::getDeviceAttributeType(const string& attr, DataType::DataType& type) {
 	int err = 0;
-	if(attributeTypeMap.count(attributesName)){
-		type = attributeTypeMap[attributesName];
+	if(attributeValueMap.count(attr)){
+		type = attributeValueMap[attr].valueType;
 	} else {
 		err = -1;
 	}
@@ -599,18 +599,25 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
 	return setAttributeValue(attributeName, attributeValue,(uint32_t)strlen(attributeValue));
 }
 
+ std::vector<chaos::common::data::RangeValueInfo> DeviceController::getDeviceValuesInfo(){
+     std::vector<chaos::common::data::RangeValueInfo> ret;
+     for(std::map<std::string,chaos::common::data::RangeValueInfo>::iterator i= attributeValueMap.begin();i!=attributeValueMap.end();i++)
+         ret.push_back(i->second);
+     
+     return ret;
+ }
 //---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(string& attributeName, const char* attributeValue, uint32_t size) {
 	CDataWrapper attributeValuePack;
 	const char *attrname=attributeName.c_str();
 	
-	if(attributeTypeMap.find(attributeName) == attributeTypeMap.end() )
+	if(attributeValueMap.find(attributeName) == attributeValueMap.end() )
 		return ErrorCode::EC_ATTRIBUTE_NOT_FOUND;
 	
-	if(attributeDirectionMap[attributeName]==DataType::Output)
+	if(attributeValueMap[attributeName].dir==DataType::Output)
 		return ErrorCode::EC_ATTRIBUTE_BAD_DIR;
 	
-	switch (attributeTypeMap[attributeName]) {
+	switch (attributeValueMap[attributeName].valueType) {
 		case DataType::TYPE_INT64:
 			attributeValuePack.addInt64Value(attrname, boost::lexical_cast<int64_t>(attributeValue));
 			return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
@@ -642,18 +649,19 @@ void DeviceController::initializeAttributeIndexMap() {
 	vector<string> attributeNames;
 	RangeValueInfo attributerangeInfo;
 	
-	attributeTypeMap.clear();
-	attributeDirectionMap.clear();
+	attributeValueMap.clear();
 	
 	//get all attribute name from db
 	datasetDB.getDatasetAttributesName(DataType::Input, attributeNames);
 	for (vector<string>::iterator iter = attributeNames.begin();
 		 iter != attributeNames.end();
 		 iter++) {
-		
-		datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo);
-		attributeDirectionMap.insert(make_pair(*iter, (DataType::DataSetAttributeIOAttribute)DataType::Input));
-		attributeTypeMap.insert(make_pair(*iter, (DataType::DataType)attributerangeInfo.valueType));
+            LDBG_<<"ATTR IN:"<<*iter;
+		if(datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo)!=0){
+                    LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
+                }
+                LDBG_<<"IN attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
+		attributeValueMap.insert(make_pair(*iter, attributerangeInfo));
 	}
 	
 	attributeNames.clear();
@@ -661,10 +669,14 @@ void DeviceController::initializeAttributeIndexMap() {
 	for (vector<string>::iterator iter = attributeNames.begin();
 		 iter != attributeNames.end();
 		 iter++) {
-		
-		datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo);
-		attributeDirectionMap.insert(make_pair(*iter, (DataType::DataSetAttributeIOAttribute)DataType::Output));
-		attributeTypeMap.insert(make_pair(*iter, (DataType::DataType)attributerangeInfo.valueType));
+		 LDBG_<<"ATTR OUT:"<<*iter;
+
+		if(datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo)!=0){
+                    LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
+
+                }
+		LDBG_<<"OUT attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
+                attributeValueMap.insert(make_pair(*iter, attributerangeInfo));
 	}
 	
 }
@@ -677,7 +689,7 @@ void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attribut
 	if(attributeDirection == DataType::Output ||
 	   attributeDirection == DataType::Bidirectional ){
 		
-		switch (attributeTypeMap[attributeName]) {
+		switch (attributeValueMap[attributeName].valueType) {
 				
 			case DataType::TYPE_INT32:{
 				SingleBufferCircularBuffer<int32_t> *newBuffer = new SingleBufferCircularBuffer<int32_t>(30);
@@ -714,9 +726,9 @@ DataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
 	boost::mutex::scoped_lock lock(trackMutext);
 	DataBuffer * result = NULL;
 	//allocate attribute traccking
-	if(attributeTypeMap.count(attributeName) == 0 || attributeDirectionMap.count(attributeName) == 0 ) return result;
+	if(attributeValueMap.count(attributeName) == 0  ) return result;
 	
-	switch (attributeTypeMap[attributeName]) {
+	switch (attributeValueMap[attributeName].valueType) {
 		case DataType::TYPE_INT32:
 			result = int32AttributeLiveBuffer[attributeName];
 			break;
@@ -737,9 +749,9 @@ PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attributeName)
 	boost::mutex::scoped_lock lock(trackMutext);
 	PointerBuffer * result = NULL;
 	//allocate attribute traccking
-	if(attributeTypeMap.count(attributeName) == 0 || attributeDirectionMap.count(attributeName) == 0 ) return result;
+	if(attributeValueMap.count(attributeName) == 0  ) return result;
 	
-	switch (attributeTypeMap[attributeName]) {
+	switch (attributeValueMap[attributeName].valueType) {
 		case DataType::TYPE_BYTEARRAY:
 			result = pointerAttributeLiveBuffer[attributeName];
 			break;
@@ -788,17 +800,17 @@ void DeviceController::deinitializeAttributeIndexMap() {
 }
 
 //---------------------------------------------------------------------------------------------------
-void DeviceController::addAttributeToTrack(string& attrbiuteName) {
+void DeviceController::addAttributeToTrack(string& attr) {
 	boost::mutex::scoped_lock lock(trackMutext);
 	
 	//add attribute name to list of tracking attribute
-	trackingAttribute.push_back(attrbiuteName);
+	trackingAttribute.push_back(attr);
 	
 	//allocate attribute traccking
-	if(attributeTypeMap.count(attrbiuteName) == 0 || attributeDirectionMap.count(attrbiuteName) == 0 ) return;
+	if(attributeValueMap.count(attr) == 0  ) return;
 	
 	//allcoate the buffer for the new attribute to track
-	allocateNewLiveBufferForAttributeAndType(attrbiuteName, attributeDirectionMap[attrbiuteName], attributeTypeMap[attrbiuteName]);
+	allocateNewLiveBufferForAttributeAndType(attr, attributeValueMap[attr].dir, attributeValueMap[attr].valueType);
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -884,7 +896,7 @@ void DeviceController::fetchCurrentDeviceValue() {
 		const char *key = (*iter).c_str();
 		if(!tmpPtr->hasKey(key)) continue;
 		
-		switch (attributeTypeMap[*iter]) {
+		switch (attributeValueMap[*iter].valueType) {
 			case DataType::TYPE_INT32:
 				int32AttributeLiveBuffer[*iter]->addValue(tmpPtr->getInt32Value(key));
 				break;
