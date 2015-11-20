@@ -44,8 +44,12 @@ void SwitchAggregator::connectSwitch(const QString& switch_name_where_attach,
     map_switch[switch_name_where_attach]->attachLogicSwitch(*map_switch[switch_name_to_attach], negation);
 }
 
-void    SwitchAggregator::switchChangedState(const QString& logic_switch_name,
-                                             bool state) {
+void SwitchAggregator::switchChangedState(const QString& logic_switch_name,
+                                          bool state) {
+    //emit first the signal
+    emit stateChangedOnSwitch(logic_switch_name,
+                              state);
+    //broadcast signal
     QList< QSharedPointer<AbstractAttributeSetter> > setter_list = map_attribute_setter.values(logic_switch_name);
     foreach (QSharedPointer<AbstractAttributeSetter> setter, setter_list) {
         setter->setValueForState(state);

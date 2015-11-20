@@ -12,7 +12,9 @@
 #include <QObject>
 
 static const QString TAG_CU_INFO = QString("g_cu_i");
+static const QString TAG_CU_INFO_FOR_UPDATE = QString("g_cu_i_update");
 static const QString TAG_CU_DATASET = QString("g_cu_d");
+static const QString TAG_CU_DATASET_FOR_UPDATE = QString("g_cu_d_update");
 static const QString TAG_CU_INSTANCE = QString("g_cu_instance");
 static const QString TAG_CU_APPLY_CHANGESET = QString("g_cu_apply_changeset");
 static const QString TAG_CU_SEARCH_TEMPLATE = QString("g_cu_search_template");
@@ -117,6 +119,11 @@ void ControlUnitEditor::initUI() {
     //set the status on not_found for either the control unit and unit serve
     logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(0));
     logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(0));
+
+    //connect slot to logic switch signals
+    connect(&logic_switch_aggregator,
+            SIGNAL(stateChangedOnSwitch(QString,bool)),
+            SLOT(onLogicSwitchChangeState(QString,bool)));
 
     //set control unit uid label
     ui->labelUniqueIdentifier->setText(control_unit_unique_id);
@@ -236,11 +243,6 @@ void ControlUnitEditor::manageMonitoring(bool start) {
 void ControlUnitEditor::changedOnlineStatus(const QString& node_uid,
                                             CLedIndicatorHealt::AliveState node_alive_state) {
     if(node_uid.compare(control_unit_unique_id) == 0) {
-        if(node_alive_state == CLedIndicatorHealt::Online) {
-            //Control unit has becomed online so we need to reload all information
-            submitApiResult(QString(TAG_CU_INFO),
-                            GET_CHAOS_API_PTR(node::GetNodeDescription)->execute(control_unit_unique_id.toStdString()));
-        }
         //state changed for control unit
         qDebug()<< "change cu online status for:" << node_uid << " as:" <<getStatusString(ui->ledIndicatorHealtTSControlUnit->getState());
         logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(ui->ledIndicatorHealtTSControlUnit->getState()));
@@ -411,7 +413,9 @@ void ControlUnitEditor::templateSaved(const QString& tempalte_name,
 
 void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
                                                  bool switch_activate) {
-
+    if(switch_name.compare("update_property") == 0) {
+        updateAllControlUnitInfomration();
+    }
 }
 
 void ControlUnitEditor::handleSelectionChangedOnListWiew(const QItemSelection& selection,
