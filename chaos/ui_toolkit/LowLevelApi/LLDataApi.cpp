@@ -1,8 +1,8 @@
-/*	
+/*
  *	LLDataApi.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,19 +20,13 @@
 #include "LLDataApi.h"
 
 #include "../../common/global.h"
-#include "../../common/io/IOMemcachedIODriver.h"
 
 using namespace chaos;
 using namespace chaos::ui;
 
 LLDataApi::LLDataApi() {
-    liveDriver = new IOMemcachedIODriver("Alias");
-    liveDriver->init(NULL);
+
 }
 
 LLDataApi::~LLDataApi() {
-    if(liveDriver){
-        liveDriver->deinit();
-        DELETE_OBJ_POINTER(liveDriver)
-    }
 }

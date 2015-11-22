@@ -299,8 +299,6 @@
 		326DB47014B38BC00018A8D0 /* Configurable.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3FF14B38BC00018A8D0 /* Configurable.h */; };
 		326DB47214B38BC00018A8D0 /* global.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40114B38BC00018A8D0 /* global.h */; };
 		326DB47314B38BC00018A8D0 /* IODataDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40314B38BC00018A8D0 /* IODataDriver.h */; };
-		326DB47414B38BC00018A8D0 /* IOMemcachedIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB40414B38BC00018A8D0 /* IOMemcachedIODriver.cpp */; };
-		326DB47514B38BC00018A8D0 /* IOMemcachedIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40514B38BC00018A8D0 /* IOMemcachedIODriver.h */; };
 		326DB47B14B38BC00018A8D0 /* ChaosProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40D14B38BC00018A8D0 /* ChaosProcessingQueue.h */; };
 		326DB47C14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40E14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h */; };
 		326DB47D14B38BC00018A8D0 /* CObjectProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40F14B38BC00018A8D0 /* CObjectProcessingQueue.h */; };
@@ -1145,8 +1143,6 @@
 		326DB3FF14B38BC00018A8D0 /* Configurable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Configurable.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40114B38BC00018A8D0 /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = global.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40314B38BC00018A8D0 /* IODataDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = IODataDriver.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB40414B38BC00018A8D0 /* IOMemcachedIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = IOMemcachedIODriver.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		326DB40514B38BC00018A8D0 /* IOMemcachedIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = IOMemcachedIODriver.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40D14B38BC00018A8D0 /* ChaosProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosProcessingQueue.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40E14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectProcessingPriorityQueue.h; sourceTree = "<group>"; };
 		326DB40F14B38BC00018A8D0 /* CObjectProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CObjectProcessingQueue.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -2715,8 +2711,6 @@
 			children = (
 				32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */,
 				326DB40314B38BC00018A8D0 /* IODataDriver.h */,
-				326DB40414B38BC00018A8D0 /* IOMemcachedIODriver.cpp */,
-				326DB40514B38BC00018A8D0 /* IOMemcachedIODriver.h */,
 				32EFCD6418BDE3A400B5EB77 /* IODirectIODriver.cpp */,
 				32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */,
 				3206F1AB19C18A8D00C437D8 /* QueryFuture.cpp */,
@@ -3742,7 +3736,6 @@
 				326DB47314B38BC00018A8D0 /* IODataDriver.h in Headers */,
 				324A4B4B191A41EF00975394 /* basic.h in Headers */,
 				32FB20191A3F0FAB00307A86 /* AttributeValue.h in Headers */,
-				326DB47514B38BC00018A8D0 /* IOMemcachedIODriver.h in Headers */,
 				324A4B78191A428500975394 /* json.h in Headers */,
 				324A4B56191A41EF00975394 /* strtoll.h in Headers */,
 				326DB47B14B38BC00018A8D0 /* ChaosProcessingQueue.h in Headers */,
@@ -4511,7 +4504,6 @@
 				326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */,
 				326DB46D14B38BC00018A8D0 /* DomainActionsScheduler.cpp in Sources */,
 				323386BA1AD3D78E008863DC /* MultiAddressMessageRequestFuture.cpp in Sources */,
-				326DB47414B38BC00018A8D0 /* IOMemcachedIODriver.cpp in Sources */,
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,
 				32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */,
 				32B73E9618D9A74600F0B187 /* DirectIOPerformanceClientChannel.cpp in Sources */,

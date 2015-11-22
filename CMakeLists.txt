@@ -72,6 +72,9 @@ ADD_SUBDIRECTORY(example/ChaosPerformanceTester bin/ChaosPerformanceTester)
 message(STATUS "Configure ChaosMemCacheTest test excutable")
 ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest bin/cache_test)
 
+message(STATUS "Configure ChaosArchitectureTests test excutable")
+ADD_SUBDIRECTORY(ArchitectureTests bin/architecture_test)
+
 # message(STATUS "Configure Chaos Snapshot Utility")
 # ADD_SUBDIRECTORY(ChaosSnapshotUtility/ChaosSnapshotUtility bin/chaos_snap_util)
 

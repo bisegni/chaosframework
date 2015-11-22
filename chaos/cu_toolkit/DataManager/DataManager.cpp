@@ -22,7 +22,6 @@
 #include <chaos/common/global.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
-#include <chaos/common/io/IOMemcachedIODriver.h>
 #include <chaos/common/io/IODirectIODriver.h>
 
 #include <chaos/cu_toolkit/DataManager/DataManager.h>

@@ -15,7 +15,6 @@
 #include <chaos/common/batch_command/BatchCommandExecutor.h>
 #include <chaos/common/batch_command/BatchCommandConstants.h>
 
-using namespace chaos::chrono;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::batch_command;
