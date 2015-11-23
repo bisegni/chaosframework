@@ -1808,8 +1808,6 @@
         </df>
         <df name="CMakeTmp">
         </df>
-        <df name="Progress">
-        </df>
       </df>
       <df name="Documentation">
         <df name="html">
@@ -27075,8 +27073,6 @@
           </df>
         </df>
         <df name="CMakeTmp">
-        </df>
-        <df name="Progress">
         </df>
       </df>
       <df name="Documentation">

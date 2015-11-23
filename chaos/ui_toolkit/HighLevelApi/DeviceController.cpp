@@ -656,7 +656,6 @@ void DeviceController::initializeAttributeIndexMap() {
 	for (vector<string>::iterator iter = attributeNames.begin();
 		 iter != attributeNames.end();
 		 iter++) {
-            LDBG_<<"ATTR IN:"<<*iter;
 		if(datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo)!=0){
                     LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
                 }
@@ -669,7 +668,6 @@ void DeviceController::initializeAttributeIndexMap() {
 	for (vector<string>::iterator iter = attributeNames.begin();
 		 iter != attributeNames.end();
 		 iter++) {
-		 LDBG_<<"ATTR OUT:"<<*iter;
 
 		if(datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo)!=0){
                     LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;

@@ -37,8 +37,7 @@ using namespace chaos;
 using namespace chaos::common::data;
 
 #define MAKE_KEY(key, tmp) entityDB->getIDForKey(key, tmp);\
-mapDatasetKeyForID.insert(make_pair<const char *, uint32_t>(key, tmp));\
-LDBG_<<"inserting "<<key<<" :"<<tmp;
+mapDatasetKeyForID.insert(make_pair<const char *, uint32_t>(key, tmp));
 
 void RangeValueInfo::reset() {
     defaultValue.clear();
@@ -884,13 +883,19 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
     uint32_t keyIdAttrDefaultValue = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE];
     uint32_t keyIdAttrType = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE];
     uint32_t keyIdAttrMaxSize = mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE];
+    uint32_t keyIdAttrBinType =mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE];
+    uint32_t keyIdAttrCardinality =mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY];
+    uint32_t keyIdAttrDir =mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION];
     
     keyToGot.push_back(keyIdAttrMaxRng);
     keyToGot.push_back(keyIdAttrMinRng);
     keyToGot.push_back(keyIdAttrDefaultValue);
     keyToGot.push_back(keyIdAttrType);
     keyToGot.push_back(keyIdAttrMaxSize);
-    
+    keyToGot.push_back(keyIdAttrBinType);
+    keyToGot.push_back(keyIdAttrCardinality);
+    keyToGot.push_back(keyIdAttrDir);
+
     (&attrEntityVec[0])->getPropertyByKeyID(keyToGot, attrPropertyVec);
     if(!attrPropertyVec.size()) return 1;
     rangeInfo.name=attributesName;
@@ -908,11 +913,11 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
             rangeInfo.minRange = kivPtr->value.strValue;
         } else if(kivPtr->keyID == keyIdAttrType) {
             rangeInfo.valueType = (DataType::DataType)kivPtr->value.numValue;
-        } else if(kivPtr->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE]){
+        } else if(kivPtr->keyID == keyIdAttrBinType){
             rangeInfo.binType = (DataType::BinarySubtype)kivPtr->value.numValue;
-        } else if(kivPtr->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY]){
+        } else if(kivPtr->keyID == keyIdAttrCardinality){
             rangeInfo.cardinality = (uint32_t)kivPtr->value.numValue;
-        } else if(kivPtr->keyID == mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION]){
+        } else if(kivPtr->keyID == keyIdAttrDir){
             rangeInfo.dir = (DataType::DataSetAttributeIOAttribute)kivPtr->value.numValue;
         } else if(kivPtr->keyID == keyIdAttrDefaultValue) {
             switch (kivPtr->type) {
