@@ -1,30 +1,23 @@
 cmake_minimum_required(VERSION 2.6)
 include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
-INCLUDE_DIRECTORIES(../)
 
-SET(ArchitectureTests main.cpp)
-SET(ArchitectureTests
-    ${ArchitectureTests}
+SET(ArchitectureTestsSrc main.cpp)
+SET(ArchitectureTestsSrc
+    ${ArchitectureTestsSrc}
     utility/HashMapTest.cpp)
-SET(ArchitectureTests
-    ${ArchitectureTests}
+SET(ArchitectureTestsSrc
+    ${ArchitectureTestsSrc}
     network/FeederTest.cpp)
-SET(ArchitectureTests
-    ${ArchitectureTests}
+SET(ArchitectureTestsSrc
+    ${ArchitectureTestsSrc}
     thread/ObjectQueueTest.cpp
     thread/ObjectPriorityQueueTest.cpp)
 
-ADD_EXECUTABLE(ArchitectureTests ${ArchitectureTests})
 
-SET(ArchitectureTestsLib $ENV{CHAOS_LINK_LIBRARY})
-separate_arguments(ArchitectureTestsLib)
-SET(ChaosNodeDirectoryLib chaos_common ${ArchitectureTestsLib})
+ADD_EXECUTABLE(ArchitectureTests ${ArchitectureTestsSrc})
 
-
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	TARGET_LINK_LIBRARIES(ArchitectureTests pthread dl ${ArchitectureTestsLib})
-ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	TARGET_LINK_LIBRARIES(ArchitectureTests dl ${ArchitectureTestsLib})
-ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-
+IF(BUILD_FORCE_STATIC)
+  SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
+ENDIF()
+TARGET_LINK_LIBRARIES(ArchitectureTests chaos_common ${FrameworkLib})
 INSTALL_TARGETS(/bin ArchitectureTests)
