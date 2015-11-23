@@ -3,10 +3,16 @@ include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 INCLUDE_DIRECTORIES(../)
 
 SET(ArchitectureTests main.cpp)
-SET(src  ${ArchitectureTests} utility/HashMapTest.cpp)
-SET(src  ${ArchitectureTests} network/FeederTest.cpp)
-SET(src  ${ArchitectureTests} thread/ObjectQueueTest.cpp
-							  thread/ObjectPriorityQueueTest.cpp)
+SET(ArchitectureTests
+    ${ArchitectureTests}
+    utility/HashMapTest.cpp)
+SET(ArchitectureTests
+    ${ArchitectureTests}
+    network/FeederTest.cpp)
+SET(ArchitectureTests
+    ${ArchitectureTests}
+    thread/ObjectQueueTest.cpp
+    thread/ObjectPriorityQueueTest.cpp)
 
 ADD_EXECUTABLE(ArchitectureTests ${ArchitectureTests})
 
