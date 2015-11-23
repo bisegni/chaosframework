@@ -568,7 +568,7 @@ void BatchCommandSandbox::runCommand() {
 			correlationHandlerFunctor();
 
 			//compute step duration
-			stat.lastCmdStepTime = stat.lastCmdStepStart - TimingUtil::getTimeStamp();
+			stat.lastCmdStepTime = TimingUtil::getTimeStamp() - stat.lastCmdStepStart;
             if(event_handler) {
                 //signal the step of the run
                 event_handler->handleSandboxEvent(identification,

@@ -36,17 +36,17 @@ DEFINE_MDS_COMAMND_ALIAS(UnitServerAckCommand)
 UnitServerAckCommand::UnitServerAckCommand():
 MDSBatchCommand(),
 message_data(NULL),
-phase(USAP_ACK_US){
-//
-    //timeout need to be removed because the unit serve can have alot of cu
-    clearFeatures(chaos::common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT);
-}
+phase(USAP_ACK_US){}
 
 UnitServerAckCommand::~UnitServerAckCommand() {}
 
 // inherited method
 void UnitServerAckCommand::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
+    
+    //override default schedule time for this command
+    //setFeatures(chaos::common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000);
+
     CHECK_CDW_THROW_AND_LOG(data, USAC_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID, USAC_ERR, -2, "The unique id of unit server is mandatory")
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_RPC_ADDR, USAC_ERR, -3, "The rpc address of unit server is mandatory")

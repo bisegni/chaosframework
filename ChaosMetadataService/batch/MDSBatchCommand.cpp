@@ -33,17 +33,10 @@ BatchCommand(),
 message_channel(NULL),
 multiaddress_message_channel(NULL),
 executor_instance(NULL),
-abstract_persistance_driver(NULL){
-    //set default scheduler delay 0,5 second
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)250000);
-    //set the timeout to 10 seconds
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
-}
+abstract_persistance_driver(NULL){}
 
 //! default destructor
-MDSBatchCommand::~MDSBatchCommand() {
-    
-}
+MDSBatchCommand::~MDSBatchCommand() {}
 
 chaos::common::message::MessageChannel*
 MDSBatchCommand::getMessageChannel() {
@@ -66,6 +59,11 @@ uint8_t MDSBatchCommand::implementedHandler() {
 
 // inherited method
 void MDSBatchCommand::setHandler(chaos_data::CDataWrapper *data) {
+    //set default scheduler delay 0,5 second
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)50000);
+    //set the timeout to 10 seconds
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
+    //set in exclusive running property
     BC_EXEC_RUNNIG_PROPERTY
 }
 

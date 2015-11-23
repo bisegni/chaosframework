@@ -145,7 +145,17 @@ void MDSBatchExecutor::handleCommandEvent(uint64_t command_seq,
                                           common::batch_command::BatchCommandEventType::BatchCommandEventType type,
                                           void* type_value_ptr,
                                           uint32_t type_value_size) {
-    BCE_DBG << "Command Event [command_seq:"<<command_seq << " BatchCommandEventType:" << type;
+    std::string type_string;
+    switch(type){
+        case common::batch_command::BatchCommandEventType::EVT_QUEUED: type_string = "Queued"; break;
+        case common::batch_command::BatchCommandEventType::EVT_WAITING: type_string = "Waiting to submit"; break;
+        case common::batch_command::BatchCommandEventType::EVT_RUNNING: type_string = "Command is set for run"; break;
+        case common::batch_command::BatchCommandEventType::EVT_PAUSED: type_string = "Command is set in pause"; break;
+        case common::batch_command::BatchCommandEventType::EVT_COMPLETED: type_string = "Command is completed"; break;
+        case common::batch_command::BatchCommandEventType::EVT_FAULT: type_string = "Command has fault"; break;
+        case common::batch_command::BatchCommandEventType::EVT_KILLED: type_string = "Command killed"; break;
+    }
+    BCE_INFO << "Command Event [command_seq:"<<command_seq << " BatchCommandEventType:" << type_string;
 }
 
 //! general sandbox event handler
@@ -153,7 +163,7 @@ void MDSBatchExecutor::handleSandboxEvent(const std::string& sandbox_id,
                                           common::batch_command::BatchSandboxEventType::BatchSandboxEventType type,
                                           void* type_value_ptr,
                                           uint32_t type_value_size) {
-    BCE_DBG << "Command Sandbox Event [sandbox_id:"<< sandbox_id << " BatchSandboxEventType:" << type;
+    //BCE_INFO << "Command Sandbox Event [sandbox_id:"<< sandbox_id << " BatchSandboxEventType:" << type;
 }
 
 uint64_t MDSBatchExecutor::submitCommand(const std::string& batch_command_alias,
