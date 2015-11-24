@@ -138,11 +138,11 @@ BatchCommandExecutor::~BatchCommandExecutor() {
     // this mean that until executor live the command remain installed
     // and the CU is not redefined unti it is reloaded but startup
     // a and so new executor will be used
-    BCELAPP_ << "Removing all the instacer of the command";
+    BCELAPP_ << "Removing all the instances of the command";
     for(MapCommandDescriptionIterator it = map_command_description.begin();
         it != map_command_description.end();
         it++) {
-        BCELAPP_ << "Dispose instancer " << it->first;
+        BCELAPP_ << "Dispose instance " << it->first;
         // if(it->second) delete(it->second);
     }
     
@@ -175,20 +175,20 @@ void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
         it++) {
         boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
         //init the sand box
-        BCELAPP_ << "Initilize instance " << tmp_ptr->identification;
+        BCELAPP_ << "Initialize instance " << tmp_ptr->identification;
         StartableService::initImplementation(tmp_ptr.get(),
                                              initData,
                                              "BatchCommandSandbox",
                                              __PRETTY_FUNCTION__);
     }
     
-    BCELAPP_ << "Check if we need to use the dafult command or we have pause instance";
+    BCELAPP_ << "Check if we need to use the default command or we have pause instance";
     if(default_command_alias.size()) {
-        BCELAPP_ << "Set the default command ->"<<default_command_alias;
+        BCELAPP_ << "Set the default command ->"<<"\""<<default_command_alias<<"\"";
         BatchCommand * def_cmd_impl = instanceCommandInfo(default_command_alias, (CDataWrapper*)NULL);
         def_cmd_impl->unique_id = ++command_sequence_id;
         sandbox_map[default_command_sandbox_instance]->enqueueCommand(NULL, def_cmd_impl, 50);
-        DEBUG_CODE(BCELDBG_ << "Command " << default_command_alias << " successfull installed";)
+        DEBUG_CODE(BCELDBG_ << "Command \"" << default_command_alias << "\" successfully installed";)
     }
 }
 

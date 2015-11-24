@@ -20,6 +20,18 @@
         <in>main.cpp</in>
       </df>
       <df name="bin">
+        <df name="architecture_test">
+          <df name="CMakeFiles">
+            <df name="ArchitectureTests.dir">
+              <df name="network">
+              </df>
+              <df name="thread">
+              </df>
+              <df name="utility">
+              </df>
+            </df>
+          </df>
+        </df>
         <df name="bin_cds">
           <df name="CMakeFiles">
             <df name="ChaosDataService.dir">
@@ -120,6 +132,8 @@
               <df name="network">
               </df>
               <df name="plugin">
+              </df>
+              <df name="property">
               </df>
               <df name="rpc">
                 <df name="zmq">
@@ -972,7 +986,6 @@
             <in>IODirectIODriver.cpp</in>
             <in>IODirectIODriver.h</in>
             <in>IOMemcachedIODriver.cpp</in>
-            <in>IOMemcachedIODriver.h</in>
             <in>QueryFuture.cpp</in>
             <in>QueryFuture.h</in>
           </df>
@@ -25096,9 +25109,7 @@
                   <in>EventAction.h</in>
                 </df>
                 <df name="async_central">
-                  <in>AsyncCentralManager.cpp</in>
                   <in>AsyncCentralManager.h</in>
-                  <in>TimerHandler.cpp</in>
                   <in>TimerHandler.h</in>
                   <in>async_central.h</in>
                 </df>
@@ -25107,7 +25118,6 @@
                   <in>BatchCommand.cpp</in>
                   <in>BatchCommand.h</in>
                   <in>BatchCommandConstants.h</in>
-                  <in>BatchCommandDescription.cpp</in>
                   <in>BatchCommandDescription.h</in>
                   <in>BatchCommandException.h</in>
                   <in>BatchCommandExecutor.cpp</in>
@@ -25131,27 +25141,10 @@
                     <in>string_data-inl.h</in>
                     <in>string_data.cpp</in>
                     <in>string_data.h</in>
-                    <in>stringutils.cpp</in>
                     <in>stringutils.h</in>
                   </df>
                   <df name="bsondemo">
                     <in>bsondemo.cpp</in>
-                  </df>
-                  <df name="murmurhash3">
-                    <in>MurmurHash3.cpp</in>
-                    <in>MurmurHash3.h</in>
-                  </df>
-                  <df name="mutable">
-                    <in>algorithm.h</in>
-                    <in>const_element-inl.h</in>
-                    <in>const_element.h</in>
-                    <in>damage_vector.h</in>
-                    <in>document-inl.h</in>
-                    <in>document.cpp</in>
-                    <in>document.h</in>
-                    <in>element-inl.h</in>
-                    <in>element.cpp</in>
-                    <in>element.h</in>
                   </df>
                   <df name="platform">
                     <in>atomic_intrinsics.h</in>
@@ -25167,7 +25160,6 @@
                     <in>cstdint.h</in>
                     <in>float_utils.h</in>
                     <in>hash_namespace.h</in>
-                    <in>process_id.cpp</in>
                     <in>process_id.h</in>
                     <in>random.cpp</in>
                     <in>random.h</in>
@@ -25177,16 +25169,6 @@
                     <in>windows_basic.h</in>
                   </df>
                   <df name="util">
-                    <df name="concurrency">
-                      <in>mutex.h</in>
-                      <in>threadlocal.h</in>
-                    </df>
-                    <df name="mongoutils">
-                      <in>checksum.h</in>
-                      <in>hash.h</in>
-                      <in>html.h</in>
-                      <in>str.h</in>
-                    </df>
                     <in>assert_util.cpp</in>
                     <in>assert_util.h</in>
                     <in>atomic_int.h</in>
@@ -25197,7 +25179,6 @@
                     <in>bufreader.h</in>
                     <in>builder.h</in>
                     <in>embedded_builder.h</in>
-                    <in>hex.cpp</in>
                     <in>hex.h</in>
                     <in>jsobj.cpp</in>
                     <in>jsobj.h</in>
@@ -25205,10 +25186,8 @@
                     <in>json.h</in>
                     <in>md5.cpp</in>
                     <in>md5.h</in>
-                    <in>md5.hpp</in>
                     <in>misc.h</in>
                     <in>safe_num-inl.h</in>
-                    <in>safe_num.cpp</in>
                     <in>safe_num.h</in>
                     <in>stringutils.cpp</in>
                     <in>time_support.cpp</in>
@@ -25226,13 +25205,11 @@
                   <in>bsonmisc.h</in>
                   <in>bsonobj.h</in>
                   <in>bsonobjbuilder.h</in>
-                  <in>bsonobjbuilder_test.cpp</in>
                   <in>bsonobjiterator.h</in>
                   <in>bsontypes.h</in>
                   <in>inline_decls.h</in>
                   <in>oid.cpp</in>
                   <in>oid.h</in>
-                  <in>optime.cpp</in>
                   <in>optime.h</in>
                   <in>ordering.h</in>
                 </df>
@@ -25279,23 +25256,16 @@
                   <df name="broker">
                     <df name="publisher">
                       <in>PublisherDataService.cpp</in>
-                      <in>PublisherDataService.h</in>
                     </df>
                     <df name="reader">
                       <in>ReaderDataService.cpp</in>
-                      <in>ReaderDataService.h</in>
                     </df>
                     <in>DataBroker.cpp</in>
-                    <in>DataBroker.h</in>
                   </df>
                   <df name="cache">
-                    <in>AbstractSharedDomainCache.cpp</in>
                     <in>AbstractSharedDomainCache.h</in>
-                    <in>AttributeCache.cpp</in>
                     <in>AttributeCache.h</in>
-                    <in>AttributeValue.cpp</in>
                     <in>AttributeValue.h</in>
-                    <in>AttributeValueSharedCache.cpp</in>
                     <in>AttributeValueSharedCache.h</in>
                     <in>CacheGlobal.h</in>
                     <in>ChannelValueAccessor.cpp</in>
@@ -25318,9 +25288,7 @@
                   <df name="entity_db">
                     <df name="sqlite_impl">
                       <in>SQLiteEntityDB.cpp</in>
-                      <in>SQLiteEntityDB.h</in>
                       <in>sqlite3.c</in>
-                      <in>sqlite3.h</in>
                     </df>
                     <in>EntityDB.cpp</in>
                     <in>EntityDB.h</in>
@@ -25334,12 +25302,6 @@
                   <in>CUSchemaDB.h</in>
                   <in>DatasetDB.cpp</in>
                   <in>DatasetDB.h</in>
-                </df>
-                <df name="debug">
-                  <in>ProcInfo.cpp</in>
-                  <in>ProcInfo.h</in>
-                  <in>tracey.cpp</in>
-                  <in>tracey.hpp</in>
                 </df>
                 <df name="direct_io">
                   <df name="channel">
@@ -25355,9 +25317,7 @@
                     <in>DirectIOPerformanceClientChannel.h</in>
                     <in>DirectIOPerformanceServerChannel.cpp</in>
                     <in>DirectIOPerformanceServerChannel.h</in>
-                    <in>DirectIOSystemAPIClientChannel.cpp</in>
                     <in>DirectIOSystemAPIClientChannel.h</in>
-                    <in>DirectIOSystemAPIServerChannel.cpp</in>
                     <in>DirectIOSystemAPIServerChannel.h</in>
                     <in>DirectIOVirtualChannel.cpp</in>
                     <in>DirectIOVirtualChannel.h</in>
@@ -25383,14 +25343,11 @@
                   <in>DirectIOClient.h</in>
                   <in>DirectIOClientConnection.cpp</in>
                   <in>DirectIOClientConnection.h</in>
-                  <in>DirectIOClientConnectionMetricCollector.cpp</in>
                   <in>DirectIOClientConnectionMetricCollector.h</in>
-                  <in>DirectIOClientConnectionSharedMetricIO.cpp</in>
                   <in>DirectIOClientConnectionSharedMetricIO.h</in>
                   <in>DirectIODataPack.h</in>
                   <in>DirectIODispatcher.cpp</in>
                   <in>DirectIODispatcher.h</in>
-                  <in>DirectIODispatcherMetricCollector.cpp</in>
                   <in>DirectIODispatcherMetricCollector.h</in>
                   <in>DirectIOEndpointHandler.h</in>
                   <in>DirectIOForwarder.h</in>
@@ -25403,7 +25360,6 @@
                   <in>DirectIOServerEndpoint.h</in>
                   <in>DirectIOServerPublicInterface.h</in>
                   <in>DirectIOTypes.h</in>
-                  <in>DirectIOURLManagment.cpp</in>
                   <in>DirectIOURLManagment.h</in>
                   <in>ServerFeeder.cpp</in>
                 </df>
@@ -25485,12 +25441,6 @@
                 <df name="general">
                   <in>Configurable.h</in>
                 </df>
-                <df name="healt_system">
-                  <in>HealtManager.cpp</in>
-                  <in>HealtManager.h</in>
-                  <in>HealtMetric.cpp</in>
-                  <in>HealtMetric.h</in>
-                </df>
                 <df name="io">
                   <in>IODataDriver.cpp</in>
                   <in>IODataDriver.h</in>
@@ -25498,7 +25448,6 @@
                   <in>IODirectIODriver.h</in>
                   <in>IOMemcachedIODriver.cpp</in>
                   <in>IOMemcachedIODriver.h</in>
-                  <in>QueryFuture.cpp</in>
                   <in>QueryFuture.h</in>
                 </df>
                 <df name="log">
@@ -25516,31 +25465,12 @@
                   <in>MDSMessageChannel.h</in>
                   <in>MessageChannel.cpp</in>
                   <in>MessageChannel.h</in>
-                  <in>MessageRequestFuture.cpp</in>
                   <in>MessageRequestFuture.h</in>
-                  <in>MultiAddressMessageChannel.cpp</in>
                   <in>MultiAddressMessageChannel.h</in>
-                  <in>MultiAddressMessageRequestFuture.cpp</in>
                   <in>MultiAddressMessageRequestFuture.h</in>
-                  <in>NodeMessageChannel.cpp</in>
                   <in>NodeMessageChannel.h</in>
                   <in>PerformanceNodeChannel.cpp</in>
                   <in>PerformanceNodeChannel.h</in>
-                </df>
-                <df name="metric">
-                  <in>AbstractMetricBackend.cpp</in>
-                  <in>AbstractMetricBackend.h</in>
-                  <in>CSVFileMetricBackend.cpp</in>
-                  <in>CSVFileMetricBackend.h</in>
-                  <in>ConsoleMetricBackend.cpp</in>
-                  <in>ConsoleMetricBackend.h</in>
-                  <in>FileMetricBackend.cpp</in>
-                  <in>FileMetricBackend.h</in>
-                  <in>MetricCollector.cpp</in>
-                  <in>MetricCollector.h</in>
-                  <in>MetricCollectorIO.cpp</in>
-                  <in>MetricCollectorIO.h</in>
-                  <in>metric.h</in>
                 </df>
                 <df name="network">
                   <in>CNodeNetworkAddress.h</in>
@@ -25549,9 +25479,7 @@
                   <in>NetworkForwardInfo.h</in>
                   <in>PerformanceManagment.cpp</in>
                   <in>PerformanceManagment.h</in>
-                  <in>URL.cpp</in>
                   <in>URL.h</in>
-                  <in>URLServiceFeeder.cpp</in>
                   <in>URLServiceFeeder.h</in>
                 </df>
                 <df name="plugin">
@@ -25576,19 +25504,12 @@
                 </df>
                 <df name="property">
                   <in>Property.h</in>
-                  <in>PropertyCollector.cpp</in>
                   <in>PropertyCollector.h</in>
                 </df>
                 <df name="rpc">
                   <df name="msgpack">
                     <in>MsgPackClient.cpp</in>
                     <in>MsgPackServer.cpp</in>
-                  </df>
-                  <df name="tcpuv">
-                    <in>TCPUVClient.cpp</in>
-                    <in>TCPUVClient.h</in>
-                    <in>TCPUVServer.cpp</in>
-                    <in>TCPUVServer.h</in>
                   </df>
                   <df name="zmq">
                     <in>ZMQClient.cpp</in>
@@ -25599,20 +25520,16 @@
                   <in>ChaosRpc.h</in>
                   <in>RpcClient.cpp</in>
                   <in>RpcClient.h</in>
-                  <in>RpcClientMetricCollector.cpp</in>
                   <in>RpcClientMetricCollector.h</in>
                   <in>RpcMessageForwarder.h</in>
                   <in>RpcServer.cpp</in>
                   <in>RpcServer.h</in>
                   <in>RpcServerHandler.h</in>
-                  <in>RpcServerMetricCollector.cpp</in>
                   <in>RpcServerMetricCollector.h</in>
                 </df>
                 <df name="sync_rpc">
                   <in>ChaosSyncRpc.h</in>
-                  <in>HTTPRpcSyncServer.cpp</in>
                   <in>HTTPRpcSyncServer.h</in>
-                  <in>RpcSyncServer.cpp</in>
                   <in>RpcSyncServer.h</in>
                 </df>
                 <df name="thread">
@@ -25628,11 +25545,9 @@
                   <in>WaitSemaphore.h</in>
                 </df>
                 <df name="utility">
-                  <in>AggregatedCheckList.cpp</in>
                   <in>AggregatedCheckList.h</in>
                   <in>ArrayPointer.h</in>
                   <in>Atomic.h</in>
-                  <in>CheckList.cpp</in>
                   <in>CheckList.h</in>
                   <in>ConcuredUsedItem.h</in>
                   <in>Delegate.h</in>
@@ -25646,7 +25561,6 @@
                   <in>ObjectFactoryRegister.h</in>
                   <in>ObjectInstancer.h</in>
                   <in>ObjectSlot.h</in>
-                  <in>SWEService.cpp</in>
                   <in>SWEService.h</in>
                   <in>SingleBufferCircularBuffer.h</in>
                   <in>Singleton.h</in>
@@ -25687,8 +25601,6 @@
                   </df>
                   <df name="slow_command">
                     <df name="command">
-                      <in>SCWaitCommand.cpp</in>
-                      <in>SCWaitCommand.h</in>
                       <in>SetAttributeCommand.cpp</in>
                     </df>
                     <in>SlowCommand.cpp</in>
@@ -25698,18 +25610,15 @@
                   </df>
                   <in>AbstractControlUnit.cpp</in>
                   <in>AbstractControlUnit.h</in>
-                  <in>AttributeSharedCacheWrapper.cpp</in>
                   <in>AttributeSharedCacheWrapper.h</in>
                   <in>ControlManager.cpp</in>
                   <in>ControlManager.h</in>
                   <in>DSAttributeHandlerExecutionEngine.cpp</in>
-                  <in>IOCU.cpp</in>
                   <in>IOCU.h</in>
                   <in>RTAbstractControlUnit.cpp</in>
                   <in>RTAbstractControlUnit.h</in>
                   <in>SCAbstractControlUnit.cpp</in>
                   <in>SCAbstractControlUnit.h</in>
-                  <in>WorkUnitManagement.cpp</in>
                   <in>WorkUnitManagement.h</in>
                 </df>
                 <df name="DataManager">
@@ -25729,9 +25638,7 @@
                     <in>AbstractDriver.h</in>
                     <in>AbstractDriverPlugin.cpp</in>
                     <in>AbstractDriverPlugin.h</in>
-                    <in>BasicIODriver.cpp</in>
                     <in>BasicIODriver.h</in>
-                    <in>BasicIODriverInterface.cpp</in>
                     <in>BasicIODriverInterface.h</in>
                     <in>DriverAccessor.cpp</in>
                     <in>DriverAccessor.h</in>
@@ -25749,7 +25656,6 @@
               <df name="ui_toolkit">
                 <df name="caching">
                   <in>LiveDataFetcher.cpp</in>
-                  <in>LiveDataFetcher.h</in>
                 </df>
                 <df name="HighLevelApi">
                   <in>DeviceController.cpp</in>
@@ -25758,10 +25664,6 @@
                   <in>HLDataApi.h</in>
                   <in>HLInfrastructureApi.cpp</in>
                   <in>HLInfrastructureApi.h</in>
-                </df>
-                <df name="Labview">
-                  <df name="LV12">
-                  </df>
                 </df>
                 <df name="LowLevelApi">
                   <in>LLDataApi.cpp</in>
@@ -25851,13 +25753,6 @@
               <df name="debug">
                 <in>debug.h</in>
               </df>
-              <df name="modbus">
-                <df name="core">
-                  <in>AbstractModbus.h</in>
-                  <in>LibModBusWrap.h</in>
-                </df>
-                <in>ModBus.h</in>
-              </df>
               <df name="powersupply">
                 <df name="core">
                   <in>AbstractPowerSupply.h</in>
@@ -25941,14 +25836,6 @@
                 <in>SCDataSync.h</in>
                 <in>remoteGroupAccessDriver.h</in>
                 <in>remoteGroupAccessInterface.h</in>
-              </df>
-              <df name="modbus">
-                <df name="core">
-                  <in>ChaosModbusInterface.h</in>
-                  <in>modbusDriver.h</in>
-                </df>
-                <in>ModbusControlUnit.h</in>
-                <in>ModbusFemtoUnit.h</in>
               </df>
               <df name="oscilloscopes">
                 <in>Tektronicks.h</in>
@@ -26165,12 +26052,6 @@
               <in>pool.h</in>
               <in>util.h</in>
               <in>version.h</in>
-            </df>
-            <df name="modbus">
-              <in>modbus-rtu.h</in>
-              <in>modbus-tcp.h</in>
-              <in>modbus-version.h</in>
-              <in>modbus.h</in>
             </df>
             <df name="models">
               <in>MemcachedDataImporterDriver.h</in>
@@ -26466,6 +26347,8 @@
               </df>
               <df name="CMakeTmp">
               </df>
+              <df name="Progress">
+              </df>
               <df name="UnitServer.dir">
               </df>
             </df>
@@ -26486,6 +26369,18 @@
         </df>
       </df>
       <df name="bin">
+        <df name="architecture_test">
+          <df name="CMakeFiles">
+            <df name="ArchitectureTests.dir">
+              <df name="network">
+              </df>
+              <df name="thread">
+              </df>
+              <df name="utility">
+              </df>
+            </df>
+          </df>
+        </df>
         <df name="bin_cds">
           <df name="CMakeFiles">
             <df name="ChaosDataService.dir">
@@ -26586,6 +26481,8 @@
               <df name="network">
               </df>
               <df name="plugin">
+              </df>
+              <df name="property">
               </df>
               <df name="rpc">
                 <df name="zmq">
@@ -28887,17 +28784,9 @@
                 <df name="bson">
                   <df name="base">
                   </df>
-                  <df name="murmurhash3">
-                  </df>
-                  <df name="mutable">
-                  </df>
                   <df name="platform">
                   </df>
                   <df name="util">
-                    <df name="concurrency">
-                    </df>
-                    <df name="mongoutils">
-                    </df>
                   </df>
                 </df>
                 <df name="caching_system">
@@ -28917,22 +28806,12 @@
                 <df name="configuration">
                 </df>
                 <df name="data">
-                  <df name="broker">
-                    <df name="publisher">
-                    </df>
-                    <df name="reader">
-                    </df>
-                  </df>
                   <df name="cache">
                   </df>
                   <df name="entity">
                   </df>
                   <df name="entity_db">
-                    <df name="sqlite_impl">
-                    </df>
                   </df>
-                </df>
-                <df name="debug">
                 </df>
                 <df name="direct_io">
                   <df name="channel">
@@ -28956,8 +28835,6 @@
                 </df>
                 <df name="general">
                 </df>
-                <df name="healt_system">
-                </df>
                 <df name="io">
                 </df>
                 <df name="log">
@@ -28965,8 +28842,6 @@
                 <df name="memory">
                 </df>
                 <df name="message">
-                </df>
-                <df name="metric">
                 </df>
                 <df name="network">
                 </df>
@@ -28979,8 +28854,6 @@
                 <df name="property">
                 </df>
                 <df name="rpc">
-                  <df name="tcpuv">
-                  </df>
                   <df name="zmq">
                   </df>
                 </df>
@@ -28996,8 +28869,6 @@
                 </df>
                 <df name="ControlManager">
                   <df name="slow_command">
-                    <df name="command">
-                    </df>
                   </df>
                 </df>
                 <df name="DataManager">
@@ -29008,13 +28879,7 @@
                 </df>
               </df>
               <df name="ui_toolkit">
-                <df name="caching">
-                </df>
                 <df name="HighLevelApi">
-                </df>
-                <df name="Labview">
-                  <df name="LV12">
-                  </df>
                 </df>
                 <df name="LowLevelApi">
                 </df>
@@ -29042,10 +28907,6 @@
               <df name="crest">
               </df>
               <df name="debug">
-              </df>
-              <df name="modbus">
-                <df name="core">
-                </df>
               </df>
               <df name="powersupply">
                 <df name="core">
@@ -29078,10 +28939,6 @@
                 </df>
               </df>
               <df name="misc">
-              </df>
-              <df name="modbus">
-                <df name="core">
-                </df>
               </df>
               <df name="oscilloscopes">
               </df>
@@ -29127,8 +28984,6 @@
               </df>
             </df>
             <df name="libmemcachedutil-1.0">
-            </df>
-            <df name="modbus">
             </df>
             <df name="models">
             </df>
@@ -29265,6 +29120,8 @@
               </df>
               <df name="CMakeTmp">
               </df>
+              <df name="Progress">
+              </df>
               <df name="UnitServer.dir">
               </df>
             </df>
@@ -29300,6 +29157,8 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
+        <gdb_signals>
+        </gdb_signals>
         <gdb_options>
           <DebugOptions>
           </DebugOptions>
