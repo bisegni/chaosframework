@@ -499,7 +499,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
             idx < vector_values->size();
             idx++) {
             //push command into the startup command vector of the control unit
-            instance->list_startup_command.push_back(vector_values->getCDataWrapperElementAtIndex(idx));
+            instance->list_startup_command.push_back(boost::shared_ptr<chaos::common::data::CDataWrapper>(vector_values->getCDataWrapperElementAtIndex(idx)));
         }
     }
     

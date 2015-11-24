@@ -413,7 +413,7 @@ void ControlUnitEditor::templateSaved(const QString& tempalte_name,
 
 void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
                                                  bool switch_activate) {
-    if(switch_name.compare("update_property") == 0) {
+    if(switch_name.compare("unload") == 0) {
         updateAllControlUnitInfomration();
     }
 }

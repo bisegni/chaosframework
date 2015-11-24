@@ -131,11 +131,15 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
     cu_base_description.reset(result); result=NULL;
     
     //copy rpc information in the init datapack
-    CHECK_KEY_THROW_AND_LOG(cu_base_description, NodeDefinitionKey::NODE_RPC_ADDR, CUCU_ERR, -3, "No rpc addres in the control unit descirption")
-    init_datapack->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, cu_base_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR));
+    if(init_datapack->hasKey(NodeDefinitionKey::NODE_RPC_ADDR)) {
+        //CHECK_KEY_THROW_AND_LOG(cu_base_description, NodeDefinitionKey::NODE_RPC_ADDR, CUCU_ERR, -3, "No rpc addres in the control unit descirption")
+        init_datapack->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, cu_base_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR));
+    }
     
-    CHECK_KEY_THROW_AND_LOG(cu_base_description, NodeDefinitionKey::NODE_RPC_DOMAIN, CUCU_ERR, -3, "No rpc domain in the control unit descirption")
-    init_datapack->addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, cu_base_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN));
+    if(init_datapack->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)) {
+        //CHECK_KEY_THROW_AND_LOG(cu_base_description, NodeDefinitionKey::NODE_RPC_DOMAIN, CUCU_ERR, -3, "No rpc domain in the control unit descirption")
+        init_datapack->addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, cu_base_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN));
+    }
     
     if((err = cu_da->getInstanceDescription(cu_uid,
                                             &result))){

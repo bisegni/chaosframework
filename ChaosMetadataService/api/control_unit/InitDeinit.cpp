@@ -52,6 +52,7 @@ CDataWrapper *InitDeinit::execute(CDataWrapper *api_data,
     int err = 0;
     uint64_t command_id;
     CDataWrapper *tmp_ptr = NULL;
+
     std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
     
     GET_DATA_ACCESS(NodeDataAccess, n_da, -1)
@@ -60,7 +61,10 @@ CDataWrapper *InitDeinit::execute(CDataWrapper *api_data,
     } else if(tmp_ptr == NULL) {
         LOG_AND_TROW(CU_INDEIN_ERR, err, boost::str(boost::format("No control unit node dafault description found for unique id:%1% ") % cu_uid));
     }
-    delete(tmp_ptr);
+    std::auto_ptr<CDataWrapper> cu_desk(tmp_ptr);
+    CHECK_KEY_THROW_AND_LOG(cu_desk.get(), NodeDefinitionKey::NODE_RPC_ADDR, CU_INDEIN_ERR, -4, "No rpc addres in the control unit descirption")
+    CHECK_KEY_THROW_AND_LOG(cu_desk.get(), NodeDefinitionKey::NODE_RPC_DOMAIN, CU_INDEIN_ERR, -5, "No rpc domain in the control unit descirption")
+    
     //set the control unique id in the init datapack
     data_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_uid);
     

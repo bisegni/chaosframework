@@ -24,6 +24,7 @@
 #include <chaos/common/healt_system/HealtManager.h>
 
 #include <chaos/common/network/NetworkBroker.h>
+#include <chaos/common/chaos_types.h>
 
 #define WUMHADER "[" << std::string(work_unit_instance->getCUInstance()) + std::string("-") + std::string(work_unit_instance->getCUID()) << "-"<<getCurrentStateString()<<"] - "
 #define WUMAPP_ INFO_LOG(WorkUnitManagement) << WUMHADER
@@ -41,6 +42,9 @@ using namespace chaos::common::healt_system;
 
 using namespace chaos::cu::command_manager;
 using namespace chaos::cu::control_manager;
+
+
+CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, MessageKeyArray)
 
 /*---------------------------------------------------------------------------------
  
@@ -178,6 +182,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             
         case UnitStatePublished: {
             active = false;
+            MessageKeyArray all_cmd_key;
             WUMAPP_ << "work unit has been successfully published";
             WUMAPP_ << "Register RPC action for cu whith instance";
             std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
@@ -186,15 +191,27 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 CommandManager::getInstance()->registerAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
             }
             
-            //check if the control unit hase some startup command
+            //check if the control unit hase some startup command (every startup command is a boost shared point so we dont need to delete it
             for(ACUStartupCommandListIterator it = work_unit_instance->list_startup_command.begin();
                 it != work_unit_instance->list_startup_command.end();
                 it++) {
+                std::auto_ptr<CDataWrapper> rpc_message(new CDataWrapper);
+                all_cmd_key.clear();
+                (*it)->getAllKey(all_cmd_key);
                 
+                for(MessageKeyArrayIterator kit = all_cmd_key.begin();
+                    kit != all_cmd_key.end();
+                    kit++) {
+                    if((kit->compare(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN) == 0)) {
+                        continue;
+                    }
+                    (*it)->copyKeyTo(*kit, *rpc_message);
+                }
                 //we need to add the domain of the new created control unit to the messages
-                (*it)->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, work_unit_instance->getCUInstance());
+                rpc_message->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, work_unit_instance->getCUInstance());
+
                 //submit startup command
-                std::auto_ptr<CDataWrapper> submittion_result(NetworkBroker::getInstance()->submitInterProcessMessage(*it));
+                std::auto_ptr<CDataWrapper> submittion_result(NetworkBroker::getInstance()->submitInterProcessMessage(rpc_message.release()));
                 
                 if(submittion_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
                     //error submitting startup command

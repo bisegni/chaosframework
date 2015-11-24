@@ -109,7 +109,7 @@ namespace chaos{
                 START_SM_PHASE_STAT_TIMER = 0
             }StartSMPhase;
             
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::CDataWrapper*, ACUStartupCommandList)
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ACUStartupCommandList)
             
             //!  Base class for control unit !CHAOS node
 			/*!

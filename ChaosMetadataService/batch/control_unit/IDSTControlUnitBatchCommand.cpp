@@ -98,9 +98,9 @@ void IDSTControlUnitBatchCommand::acquireHandler() {
                     CU_IDST_BC_INFO << "Send init command to " << cu_id;
                     request->remote_action = NodeDomainAndActionRPC::ACTION_NODE_INIT;
                     message = common::CUCommonUtility::initDataPack(cu_id,
-                                                            getDataAccess<mds_data_access::NodeDataAccess>(),
-                                                            getDataAccess<mds_data_access::ControlUnitDataAccess>(),
-                                                            getDataAccess<mds_data_access::DataServiceDataAccess>());
+                                                                    getDataAccess<mds_data_access::NodeDataAccess>(),
+                                                                    getDataAccess<mds_data_access::ControlUnitDataAccess>(),
+                                                                    getDataAccess<mds_data_access::DataServiceDataAccess>());
                     break;
                 case ACTION_START:
                     CU_IDST_BC_INFO << "Send start command to " << cu_id;
