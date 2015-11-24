@@ -58,6 +58,14 @@ namespace chaos {
                 string defaultValue;
                 //!Type of the value
                 DataType::DataType valueType;
+                //!Type of binary
+                DataType::BinarySubtype binType;
+                  //!cardinality 0 means auto.
+                uint32_t cardinality;
+                //! direction
+                DataType::DataSetAttributeIOAttribute dir;
+                //! name
+                std::string name;
                 //! reset all filed
                 void reset();
             } RangeValueInfo;

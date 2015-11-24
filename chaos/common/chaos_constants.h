@@ -614,7 +614,8 @@ namespace chaos {
             SUB_TYPE_STRING,
             //! the subtype is represented by a specific mime type tagged in specific dataset constants
             SUB_TYPE_MIME,
-            
+            //! no specific encoding
+            SUB_TYPE_NONE,
             //! unsigned flag
             SUB_TYPE_UNSIGNED = 0x200,
         } BinarySubtype;
@@ -626,12 +627,14 @@ namespace chaos {
         
         //!define the direction of dataset element
         typedef enum DataSetAttributeIOAttribute{
-            //!define an atribute in input
+            //!define an attribute in input
             Input = 0,
-            //!define an atribute in output
+            //!define an attribute in output
             Output=1,
-            //!define an atribute either two direction
+            //!define an attribute with two directions
             Bidirectional=2,
+                    
+            Undefined
         } DataSetAttributeIOAttribute;
     }
     
