@@ -32,7 +32,7 @@ ControUnitInstanceEditor::ControUnitInstanceEditor(const QString& unit_server_ui
     ui->setupUi(this);
     ui->labelUnitServer->setText(unit_server_uid);
     ui->lineEditControlUnitUniqueID->setText(control_unit_uid);
-    //ui->lineEditControlUnitUniqueID->setEnabled(false);
+    ui->lineEditControlUnitUniqueID->setEnabled(false);
 }
 
 ControUnitInstanceEditor::~ControUnitInstanceEditor()

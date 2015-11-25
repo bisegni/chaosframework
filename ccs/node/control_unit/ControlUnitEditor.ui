@@ -42,10 +42,22 @@
     <number>4</number>
    </property>
    <item>
-    <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
+    <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1">
      <property name="spacing">
       <number>4</number>
      </property>
+     <item row="1" column="0" alignment="Qt::AlignRight">
+      <widget class="QLabel" name="label_r_t">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Rpc info:</string>
+       </property>
+      </widget>
+     </item>
      <item row="2" column="0" alignment="Qt::AlignRight">
       <widget class="QLabel" name="label_4">
        <property name="font">
@@ -58,33 +70,6 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="labelUniqueIdentifier">
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
-       <property name="statusTip">
-        <string>The unique identifier of the control unit</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" alignment="Qt::AlignRight">
-      <widget class="QLabel" name="label_r_t">
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Rpc info</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0" alignment="Qt::AlignRight">
       <widget class="QLabel" name="label">
        <property name="font">
@@ -93,11 +78,96 @@
         </font>
        </property>
        <property name="text">
-        <string>Unique ID:</string>
+        <string>Identification:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="1" column="2">
+      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0,1,0,0">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <item alignment="Qt::AlignRight">
+        <widget class="QLabel" name="label_3">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Address:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelRemoteAddress">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="statusTip">
+          <string>The rpc address of the control unit</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item alignment="Qt::AlignRight">
+        <widget class="QLabel" name="label_5">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Domain:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelRpcDomain">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="statusTip">
+          <string>The rpc doman where the control unit expose his rpc action</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_11">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Hosted on US:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelUnitServerUID">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>unit server uid</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="2" column="2">
       <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,1,0,0,0,1">
        <property name="leftMargin">
         <number>2</number>
@@ -253,86 +323,60 @@
        </item>
       </layout>
      </item>
-     <item row="1" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0,1,0,1">
+     <item row="0" column="2">
+      <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,1,0,0">
        <property name="spacing">
         <number>4</number>
        </property>
-       <item alignment="Qt::AlignRight">
-        <widget class="QLabel" name="label_3">
+       <item>
+        <widget class="QLabel" name="label_15">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Address:</string>
+          <string>UniqueID:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelRemoteAddress">
+        <widget class="QLabel" name="labelUniqueIdentifier">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
           </font>
          </property>
          <property name="statusTip">
-          <string>The rpc address of the control unit</string>
+          <string>The unique identifier of the control unit</string>
          </property>
          <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item alignment="Qt::AlignRight">
-        <widget class="QLabel" name="label_5">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Domain:</string>
+          <string>---</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelRpcDomain">
+        <widget class="QLabel" name="label_16">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
           </font>
          </property>
-         <property name="statusTip">
-          <string>The rpc doman where the control unit expose his rpc action</string>
-         </property>
          <property name="text">
-          <string/>
+          <string>Type:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_11">
+        <widget class="QLabel" name="labelType">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
+           <italic>true</italic>
           </font>
          </property>
          <property name="text">
-          <string>Hosted on US:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="labelUnitServerUID">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>unit server uid</string>
+          <string>---</string>
          </property>
         </widget>
        </item>

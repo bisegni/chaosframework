@@ -155,12 +155,67 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
     if((err = cu_da->getDataset(cu_uid,
                                 &result))) {
         LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetching dataset for control unit %1%") % cu_uid));
-    } else if(result == NULL){
-        LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("No dataset found for control unit: %1%") % cu_uid));
+    } else if(result != NULL){
+        //we have the published dataset
+        dataset_description.reset(result);
+        
+        std:auto_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());
+        for(int idx = 0; idx <
+            dataset_element_vec->size();
+            idx++) {
+            //get the dataset element
+            std::auto_ptr<CDataWrapper> element(dataset_element_vec->getCDataWrapperElementAtIndex(idx));
+            const std::string  ds_attribute_name = element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
+            int32_t direction = element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION);
+            
+            boost::shared_ptr<CDataWrapper> element_configuration;
+            //get the dataset element setup
+            if((err = cu_da->getInstanceDatasetAttributeConfiguration(cu_uid,
+                                                                      ds_attribute_name,
+                                                                      element_configuration))) {
+                LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the configuration for the the dataset's attribute: %1% for control unit: %2%") % ds_attribute_name % cu_uid));
+            } else if((direction == chaos::DataType::Input ||
+                       direction == chaos::DataType::Bidirectional) &&
+                      element_configuration.get() != NULL){
+                //we can retrive the configured attribute
+                std::auto_ptr<CDataWrapper> init_ds_attribute = mergeDatasetAttributeWithSetup(element.get(),
+                                                                                               element_configuration.get());
+                init_dataset->appendCDataWrapperToArray(*init_ds_attribute.get());
+            } else {
+                init_dataset->appendCDataWrapperToArray(*element.get());
+            }
+        }
+        init_dataset->finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+        
+        //add configurad dataset to the init datapack
+        init_datapack->addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, *init_dataset.get());
+    } else {
+        //we have no dataset configure, in this case we send back only the configuration witho merge
+        if((err = cu_da->getInstanceDescription(cu_uid, &result))) {
+            LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetching the isntance for control unit %1%") % cu_uid));
+        } else if(result != NULL) {
+            std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());
+            if(instance_description->hasKey("attribute_value_descriptions") &&
+               instance_description->isVectorValue("attribute_value_descriptions")) {
+                //we have a configuration so we try to send it as dataset
+                std::auto_ptr<CMultiTypeDataArrayWrapper> instance_description_array(result->getVectorValue("attribute_value_descriptions"));
+                for(int aai = 0;
+                    aai < instance_description_array->size();
+                    aai++) {
+                    
+                    std::auto_ptr<CDataWrapper> attribute(instance_description_array->getCDataWrapperElementAtIndex(aai));
+                    
+                    init_dataset->appendCDataWrapperToArray(*attribute.get());
+                }
+            }
+            init_dataset->finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+            
+            //add configurad dataset to the init datapack
+            init_datapack->addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, *init_dataset.get());
+        }
     }
     
-    //we have the published dataset
-    dataset_description.reset(result);
     
     std::vector<std::string> associated_ds;
     //load the asosciated dataservice
@@ -178,38 +233,6 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
         }
     }
     
-    //whe have all now we can compose the datapack to send in ckaground
-    std:auto_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
-    std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());
-    for(int idx = 0; idx <
-        dataset_element_vec->size();
-        idx++) {
-        //get the dataset element
-        std::auto_ptr<CDataWrapper> element(dataset_element_vec->getCDataWrapperElementAtIndex(idx));
-        const std::string  ds_attribute_name = element->getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME);
-        int32_t direction = element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION);
-        
-        boost::shared_ptr<CDataWrapper> element_configuration;
-        //get the dataset element setup
-        if((err = cu_da->getInstanceDatasetAttributeConfiguration(cu_uid,
-                                                                  ds_attribute_name,
-                                                                  element_configuration))) {
-            LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error loading the configuration for the the dataset's attribute: %1% for control unit: %2%") % ds_attribute_name % cu_uid));
-        } else if((direction == chaos::DataType::Input ||
-                   direction == chaos::DataType::Bidirectional) &&
-                  element_configuration.get() != NULL){
-            //we can retrive the configured attribute
-            std::auto_ptr<CDataWrapper> init_ds_attribute = mergeDatasetAttributeWithSetup(element.get(),
-                                                                                           element_configuration.get());
-            init_dataset->appendCDataWrapperToArray(*init_ds_attribute.get());
-        } else {
-            init_dataset->appendCDataWrapperToArray(*element.get());
-        }
-    }
-    init_dataset->finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
-    
-    //add configurad dataset to the init datapack
-    init_datapack->addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, *init_dataset.get());
     
     //add endpoint(data service) where the control unit need to publish his dataset
     if(associated_ds.size()) {

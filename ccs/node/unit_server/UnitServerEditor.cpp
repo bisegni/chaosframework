@@ -427,6 +427,7 @@ void UnitServerEditor::moveToUnitServer() {
     tag.resize(tag.size()-1);
     move_copy_search_instance = new SearchNodeResult(true, tag);
     connect(move_copy_search_instance, SIGNAL(selectedNodes(QString,QVector<QPair<QString,QString> >)), SLOT(selectedUnitServer(QString,QVector<QPair<QString,QString> >)));
+    addWidgetToPresenter(move_copy_search_instance);
 }
 
 void UnitServerEditor::copyToUnitServer() {
@@ -459,6 +460,7 @@ void UnitServerEditor::selectedUnitServer(const QString& tag, const QVector< QPa
         for(QVector<QPair<QString,QString> >::const_iterator it = selected_item.begin();
             it != selected_item.end();
             it++){
+            QString destination_cu_id = instance.toString();
             if(operation.compare(tr("move")) == 0) {
             } else if(operation.compare(tr("copy"))==0){
                 bool ok = false;
@@ -472,16 +474,18 @@ void UnitServerEditor::selectedUnitServer(const QString& tag, const QVector< QPa
                                                                   new_cu_uid,
                                                                   &ok);
                 if(ok && destination_cu_id.size()) {
-                    //copy or move insnace to all target
-                    submitApiResult(QString("copy_instance"),
-                                    GET_CHAOS_API_PTR(control_unit::CopyInstance)->execute(instance.toString().toStdString(),
-                                                                                           node_unique_id.toStdString(),
-                                                                                           destination_cu_id.toStdString(),
-                                                                                           it->first.toStdString()));
+                   continue;
                 }
             } else {
                 break;
             }
+
+            //copy or move insnace to all target
+            submitApiResult(QString("copy_instance"),
+                            GET_CHAOS_API_PTR(control_unit::CopyInstance)->execute(instance.toString().toStdString(),
+                                                                                   node_unique_id.toStdString(),
+                                                                                   destination_cu_id.toStdString(),
+                                                                                   it->first.toStdString()));
         }
     }
     move_copy_search_instance->close();
