@@ -2,6 +2,7 @@
 #define HEALTMONITORWIDGET_H
 
 #include "../handler/handler.h"
+#include "../../presenter/CommandPresenter.h"
 #include "HealtWidgetsListPresenteWidget.h"
 
 #include <QDockWidget>
@@ -13,10 +14,10 @@
 class HealtPresenterWidget;
 
 class HealtMonitorWidget :
-        public QDockWidget
-{
+        public QDockWidget {
     Q_OBJECT
 public:
+    CommandPresenter *global_command_presenter;
     explicit HealtMonitorWidget(QWidget *parent = 0);
 
 public slots:

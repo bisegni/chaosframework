@@ -62,7 +62,11 @@ CDataWrapper *CopyInstance::execute(CDataWrapper *api_data,
     const std::string us_dst = api_data->getStringValue("ndk_uid_us_dst");
     
     bool different_us = (us_src.compare(us_dst) != 0);
+    //!
+    bool same_cui_id = (cu_src.compare(cu_dst) == 0);
+    bool move_operation = api_data->hasKey("move")?api_data->getBoolValue("move"):false;
     
+    GET_DATA_ACCESS(NodeDataAccess, n_da, -6)
     GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -6)
     GET_DATA_ACCESS(UnitServerDataAccess, us_da, -6)
     if((err = cu_da->getInstanceDescription(us_src, cu_src, &tmp_ptr))){
@@ -84,6 +88,13 @@ CDataWrapper *CopyInstance::execute(CDataWrapper *api_data,
         
         //add the new control unit
         us_da->addCUType(us_dst, source_instance->getStringValue("control_unit_implementation"));
+        
+        if(same_cui_id) {
+            //control unit need to be move so we need to erase the instance for it befor add it
+            if((err = cu_da->deleteInstanceDescription(us_src, cu_src))){
+                LOG_AND_TROW_FORMATTED(CU_CI_ERR, -7, "Error (%3%) erasing instance for control unit %1% and unit server %2%", %cu_src%us_src%err)
+            }
+        }
         
     }
     //copy within the same unit server
@@ -118,5 +129,10 @@ CDataWrapper *CopyInstance::execute(CDataWrapper *api_data,
         LOG_AND_TROW_FORMATTED(CU_CI_ERR, -11, "Error (%1%) setting the instance for control unit %2%", %err%cu_dst)
     }
     
+    if(move_operation &&
+       same_cui_id == false) {
+        //we need to remove the
+        n_da->deleteNode(cu_src);
+    }
     return NULL;
 }

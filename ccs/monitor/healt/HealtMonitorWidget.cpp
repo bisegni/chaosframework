@@ -7,7 +7,8 @@
 #include <QScrollArea>
 
 HealtMonitorWidget::HealtMonitorWidget(QWidget * parent):
-    QDockWidget(tr("Healt Monitor"), parent) {
+    QDockWidget(tr("Healt Monitor"), parent),
+    global_command_presenter(NULL) {
     setStyleSheet("::title { position: relative; text-align: right }");
     setMinimumWidth(240);
 
@@ -19,7 +20,7 @@ HealtMonitorWidget::HealtMonitorWidget(QWidget * parent):
 
 void HealtMonitorWidget::startMonitoringNode(const QString& node_key) {
     if(map_node_healt_wdg.contains(node_key)) return;
-    HealtPresenterWidget *healt_presenter = new HealtPresenterWidget(node_key);
+    HealtPresenterWidget *healt_presenter = new HealtPresenterWidget(global_command_presenter, node_key);
 
     map_node_healt_wdg.insert(node_key, healt_presenter);
     healt_list_presenter->addHealtWidget(healt_presenter);

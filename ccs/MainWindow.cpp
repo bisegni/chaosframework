@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //allocate the presenter
     command_presenter = new CommandPresenter(this, ui->mdiAreaEditor);
     addDockWidget(Qt::RightDockWidgetArea, healt_widget = new HealtMonitorWidget(this));
+    healt_widget->global_command_presenter = command_presenter;
     healt_widget->hide();
     //connect healt monitoring slot to prensenter signal
     connect(command_presenter,
