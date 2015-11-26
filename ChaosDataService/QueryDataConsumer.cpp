@@ -308,15 +308,6 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
                                                uint32_t concatenated_unique_id_memory_size,
                                                DirectIOSystemAPISnapshotResultHeader& api_result) {
     int err = 0;
-    //check if we can work
-    /*if(ChaosDataService::getInstance()->setting.cache_only) {
-     //data service is in cache only mode throw the error
-     api_result.error = -1;
-     std::strncpy(api_result.error_message, "Chaos Data Service is in cache only", 255);
-     //delete header
-     if(header) free(header);
-     return 0;
-     }*/
     //debug check
     CHAOS_ASSERT(snapshot_data_worker)
     //CHAOS_ASSERT(api_result)
@@ -359,14 +350,6 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
 int QueryDataConsumer::consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
                                                   DirectIOSystemAPISnapshotResultHeader& api_result) {
     int err = 0;
-    if(ChaosDataService::getInstance()->setting.cache_only) {
-        //data service is in cache only mode throw the error
-        api_result.error = -1;
-        std::strncpy(api_result.error_message, "Chaos Data Service is in cache only", 255);
-        //delete header
-        if(header) free(header);
-        return 0;
-    }
     //debug check
     CHAOS_ASSERT(db_driver)
     //CHAOS_ASSERT(api_result)
