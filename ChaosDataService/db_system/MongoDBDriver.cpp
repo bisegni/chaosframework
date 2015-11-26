@@ -1045,7 +1045,7 @@ int MongoDBDriver::snapshotCreateNewWithName(const std::string& snapshot_name,
 		
 		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q);
 		if(err == 11000) {
-			//already exis a snapshot with taht name so no error need to be throw
+			//already exis a snapshot with that name so no error need to be throw
 			err = 1;
 		}
 	} catch( const mongo::DBException &e ) {
