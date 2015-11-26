@@ -91,7 +91,7 @@ int64_t DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::
     //convert default DirectIO hader to little endian
 	DIRECT_IO_DATAPACK_FROM_ENDIAN(data_pack)
 	//send pack
-    int64_t err = client_instance->sendPriorityData(completeChannnelDataPack(data_pack, synchronous_answer!=NULL), header_deallocator, data_deallocator, synchronous_answer);;
+    int64_t err = client_instance->sendPriorityData(completeChannnelDataPack(data_pack, synchronous_answer!=NULL), header_deallocator, data_deallocator, synchronous_answer);
     if(!err &&
        synchronous_answer &&
        *synchronous_answer) {
@@ -99,9 +99,6 @@ int64_t DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::
         DIRECT_IO_DATAPACK_TO_ENDIAN((*synchronous_answer))
         //report api error as function error
         err = (*synchronous_answer)->header.dispatcher_header.fields.err;
-    } else {
-        //bad eeror we want an aswer bu received nothing
-        err = -10000;
     }
     return err;
 }

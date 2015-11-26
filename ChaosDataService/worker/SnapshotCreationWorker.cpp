@@ -125,6 +125,10 @@ int SnapshotCreationWorker::storeDatasetTypeInSnapsnot(const std::string& job_wo
 	return err;
 }
 
+#define FREE_JOB(x)\
+if(x->concatenated_unique_id_memory_size) {free(x->concatenated_unique_id_memory);}\
+free(x);
+
 void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 	int err = 0;
 	
@@ -137,8 +141,7 @@ void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 														 true))) {
 		SCW_LERR_<< "error incrementing the snapshot job counter for " << job_ptr->snapshot_name << " with error: " << err;
 		//delete job memory
-		free(job_info);
-		
+		FREE_JOB(job_ptr)
 		return;
 	}
 	try {
@@ -149,15 +152,15 @@ void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 			std::string concatenated_keys((const char*)job_ptr->concatenated_unique_id_memory, job_ptr->concatenated_unique_id_memory_size);
 			//split the concatenated string
 			boost::split( snapped_producer_keys, concatenated_keys, is_any_of(","), token_compress_on );
-			free(job_ptr->concatenated_unique_id_memory);
 		}
 		
 		//get the unique id to snap
 		if(snapped_producer_keys.size()) {
-			SCW_LDBG_ << "make snapshot on the user producer'id set";
+			SCW_LDBG_ << "make snapshot on the user producer id set";
 		} else {
-			SCW_LDBG_ << "make snapshot on all producer key";
-			mds_channel->getAllDeviceID(snapped_producer_keys);
+			SCW_LERR_ << "Snapshoot need to have target node id";
+            FREE_JOB(job_ptr)
+            return;
 		}
 		
 		//scann all id
@@ -193,5 +196,5 @@ void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 		SCW_LERR_<< "error decrementig the snapshot job counter for " << job_ptr->snapshot_name << " with error: " << err;
 	}
 	//delete job memory
-	free(job_info);
+	FREE_JOB(job_ptr)
 }

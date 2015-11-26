@@ -120,12 +120,11 @@ int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t mil
                                                     ChaosSystemDomainAndActionLabel::MDS_GET_ALL_DEVICE,
                                                     NULL,
                                                     millisecToWait));
-    if(getLastErrorCode() == ErrorCode::EC_NO_ERROR && resultAnswer->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){
-        auto_ptr<CDataWrapper> allDeviceInfo(resultAnswer->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
-        if(allDeviceInfo->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)){
+    if(getLastErrorCode() == ErrorCode::EC_NO_ERROR){
+        if(resultAnswer.get() &&
+           resultAnswer->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
             //there is a result
-            auto_ptr<CMultiTypeDataArrayWrapper> allDeviceInfoVec(allDeviceInfo->getVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID));
-            
+            auto_ptr<CMultiTypeDataArrayWrapper> allDeviceInfoVec(resultAnswer->getVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID));
             for (int idx = 0; idx < allDeviceInfoVec->size(); idx++) {
                 deviceIDVec.push_back(allDeviceInfoVec->getStringElementAtIndex(idx));
             }

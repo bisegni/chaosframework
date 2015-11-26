@@ -48,7 +48,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                                                  DirectIODeallocationHandler **answer_header_deallocation_handler,
                                                  DirectIODeallocationHandler **answer_data_deallocation_handler) {
     CHAOS_ASSERT(handler)
-    int err = 0;
+    int err = -1;
     //set the clean handler
     *answer_data_deallocation_handler = *answer_header_deallocation_handler = &STATIC_DirectIODeviceServerChannelDeallocator;
     

@@ -54,7 +54,8 @@ query_engine(NULL),
 server_endpoint(NULL),
 device_channel(NULL),
 system_api_channel(NULL),
-device_data_worker_index(0) {}
+device_data_worker_index(0),
+snapshot_data_worker(NULL){}
 
 QueryDataConsumer::~QueryDataConsumer() {}
 
@@ -101,23 +102,22 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
             QDCAPP_ << "Enable caching worker log metric";
             //install the data worker taht grab the metric
             device_data_worker[idx] = tmp = new worker::DeviceSharedDataWorkerMetricCollector(cache_impl_name,
-                                                                    vfs_manager_instance,
-                                                                    dsdwm_metric);
+                                                                                              vfs_manager_instance,
+                                                                                              dsdwm_metric);
         } else {
             device_data_worker[idx] = tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name,
-                                                                          vfs_manager_instance);
+                                                                                                    vfs_manager_instance);
         }
         tmp->init(&ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_setting);
         tmp->start();
     }
     
     QDCAPP_ << "Allocating Snapshot worker";
-    if(!ChaosDataService::getInstance()->setting.cache_only) {
-        snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(db_driver,
-                                                                                       network_broker);
-        if(!snapshot_data_worker) throw chaos::CException(-5, "Error allocating snapshot worker", __FUNCTION__);
-        StartableService::initImplementation(snapshot_data_worker, init_data, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
-    }
+    
+    snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(db_driver,
+                                                                                   network_broker);
+    if(!snapshot_data_worker) throw chaos::CException(-5, "Error allocating snapshot worker", __FUNCTION__);
+    StartableService::initImplementation(snapshot_data_worker, init_data, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
     
     //start virtual file mantainers timer
     if(!ChaosDataService::getInstance()->setting.cache_only) {
@@ -133,16 +133,14 @@ void QueryDataConsumer::start() throw (chaos::CException) {
     if(query_engine) StartableService::startImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
     
     //! start the snapshot creation worker
-    if(!ChaosDataService::getInstance()->setting.cache_only &&
-       snapshot_data_worker) {
+    if(snapshot_data_worker) {
         StartableService::startImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
     }
 }
 
 void QueryDataConsumer::stop() throw (chaos::CException) {
     //! stop the snapshot creation worker
-    if(!ChaosDataService::getInstance()->setting.cache_only &&
-       snapshot_data_worker) {
+    if(snapshot_data_worker) {
         StartableService::stopImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
     }
     
@@ -178,8 +176,7 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
         dsdwm_metric.reset();
     }
     //! deinit the snapshot creation worker
-    if(!ChaosDataService::getInstance()->setting.cache_only &&
-       snapshot_data_worker) {
+    if(snapshot_data_worker) {
         try{
             StartableService::deinitImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
         } catch(...) {
@@ -208,21 +205,21 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
     //! if tag is == 1 the datapack is in liveonly
     bool send_to_storage_layer = (header->tag != 1) && (ChaosDataService::getInstance()->setting.cache_only == false);
     switch(header->tag) {
-        case 0:// storicize only
+            case 0:// storicize only
             
             break;
             
-        case 2:// storicize and live
-        case 1:{// live only only
-            //protected access to cached driver
-            CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
-            err = cache_slot->resource_pooled->putData(GET_PUT_OPCODE_KEY_PTR(header),
-                                                       header->key_len,
-                                                       channel_data,
-                                                       channel_data_len);
-            DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
-            break;
-        }
+            case 2:// storicize and live
+            case 1:{// live only only
+                //protected access to cached driver
+                CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
+                err = cache_slot->resource_pooled->putData(GET_PUT_OPCODE_KEY_PTR(header),
+                                                           header->key_len,
+                                                           channel_data,
+                                                           channel_data_len);
+                DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
+                break;
+            }
         default: {
             QDCERR_ << "Bad storage tag: " << header->tag;
             break;
@@ -312,14 +309,14 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
                                                DirectIOSystemAPISnapshotResultHeader& api_result) {
     int err = 0;
     //check if we can work
-    if(ChaosDataService::getInstance()->setting.cache_only) {
-        //data service is in cache only mode throw the error
-        api_result.error = -1;
-        std::strncpy(api_result.error_message, "Chaos Data Service is in cache only", 255);
-        //delete header
-        if(header) free(header);
-        return 0;
-    }
+    /*if(ChaosDataService::getInstance()->setting.cache_only) {
+     //data service is in cache only mode throw the error
+     api_result.error = -1;
+     std::strncpy(api_result.error_message, "Chaos Data Service is in cache only", 255);
+     //delete header
+     if(header) free(header);
+     return 0;
+     }*/
     //debug check
     CHAOS_ASSERT(snapshot_data_worker)
     //CHAOS_ASSERT(api_result)
@@ -335,11 +332,11 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
     if((err = snapshot_data_worker->submitJobInfo(job))) {
         api_result.error = err;
         switch (err) {
-            case 1: {
-                //there is already a snapshot with same name managed tha other job
-                std::strncpy(api_result.error_message, "There is already a snapshot with same name managed tha other job", 255);
-                break;
-            }
+                case 1: {
+                    //there is already a snapshot with same name managed tha other job
+                    std::strncpy(api_result.error_message, "There is already a snapshot with same name managed tha other job", 255);
+                    break;
+                }
             default:
                 //other errors
                 std::strncpy(api_result.error_message, "Error creating new snapshot", 255);
@@ -407,16 +404,16 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
     
     //trduce int to postfix channel type
     switch(header->field.channel_type) {
-        case 0:
+            case 0:
             channel_type = DataPackPrefixID::OUTPUT_DATASE_PREFIX;
             break;
-        case 1:
+            case 1:
             channel_type = DataPackPrefixID::INPUT_DATASE_PREFIX;
             break;
-        case 2:
+            case 2:
             channel_type = DataPackPrefixID::CUSTOM_DATASE_PREFIX;
             break;
-        case 3:
+            case 3:
             channel_type = DataPackPrefixID::SYSTEM_DATASE_PREFIX;
             break;
     }

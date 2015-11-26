@@ -28,6 +28,10 @@ using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
 DEFINE_CLASS_FACTORY(DirectIOSystemAPIServerChannel, DirectIOVirtualServerChannel);
+
+//define the static deallocator class
+DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelDeallocator DirectIOSystemAPIServerChannel::STATIC_DirectIOSystemAPIServerChannelDeallocator;
+
 DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannel(std::string alias):
 DirectIOVirtualServerChannel(alias, DIOSystemAPI_Channel_Index),
 handler(NULL) {
@@ -44,28 +48,35 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                                                     DirectIODeallocationHandler **answer_header_deallocation_handler,
                                                     DirectIODeallocationHandler **answer_data_deallocation_handler) {
 	CHAOS_ASSERT(handler)
-	int err = 0;
+	int err = -1;
+    
+    //set the clean handler
+    *answer_data_deallocation_handler = *answer_header_deallocation_handler = &STATIC_DirectIOSystemAPIServerChannelDeallocator;
+    
 	// the opcode
 	opcode::SystemAPIChannelOpcode  channel_opcode = static_cast<opcode::SystemAPIChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
 	
 	switch (channel_opcode) {
 		case opcode::SystemAPIChannelOpcodeNewSnapshotDataset: {
-			//set the answer pointer
-			//synchronous_answer->answer_data = std::calloc(sizeof(DirectIOSystemAPISnapshotResult), 1);
-			//synchronous_answer->answer_size = sizeof(DirectIOSystemAPISnapshotResult);
-			
+            if(synchronous_answer == NULL) return -1000;
+            
 			//get the header
-			//opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr >(dataPack->channel_header_data);
-			//header->field.producer_key_set_len = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.producer_key_set_len);
+            DirectIOSystemAPISnapshotResultHeader *result_header = (DirectIOSystemAPISnapshotResultHeader*)calloc(sizeof(DirectIOSystemAPISnapshotResultHeader), 1);
+			opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr >(dataPack->channel_header_data);
+			header->field.producer_key_set_len = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.producer_key_set_len);
 
 			//call the handler
-			//handler->consumeNewSnapshotEvent(header,
-			//								 dataPack->channel_data,
-			//								 dataPack->header.channel_data_size,
-			//								 (DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data);
-			//fix endianes into api result
-			//((DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data)->error =
-			//TO_LITTEL_ENDNS_NUM(int32_t, ((DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data)->error);
+			err = handler->consumeNewSnapshotEvent(header,
+											 dataPack->channel_data,
+											 dataPack->header.channel_data_size,
+											 *result_header);
+            
+            if(err == 0){
+                                //set the result header and data
+                //fix endianes into api result
+                result_header->error = TO_LITTEL_ENDNS_NUM(int32_t, result_header->error);
+                DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIOSystemAPISnapshotResultHeader))
+            }
 			break;
 		}
 			
@@ -138,4 +149,32 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
 	
 	//return no result
 	return err;
+}
+
+//! default data deallocator implementation
+void DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelDeallocator::freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr) {
+    switch(free_info_ptr->sent_part) {
+            case DisposeSentMemoryInfo::SentPartHeader:{
+                switch (free_info_ptr->sent_opcode) {
+                        case opcode::SystemAPIChannelOpcodeNewSnapshotDataset:
+                        free(sent_data_ptr);
+                        break;
+                        
+                    default:
+                        break;
+                }
+                break;
+            }
+            
+            case DisposeSentMemoryInfo::SentPartData: {
+                switch (free_info_ptr->sent_opcode) {
+                        case opcode::SystemAPIChannelOpcodeNewSnapshotDataset:
+                        break;
+                        
+                    default:
+                        break;
+                }
+                break;
+            }
+    }
 }
