@@ -372,14 +372,6 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
                                                       DirectIOSystemAPISnapshotResultHeader& api_result) {
     int err = 0;
     std::string channel_type;
-    if(ChaosDataService::getInstance()->setting.cache_only) {
-        //data service is in cache only mode throw the error
-        api_result.error = -1;
-        std::strncpy(api_result.error_message, "Chaos Data Service is in cache only", 255);
-        //delete header
-        if(header) free(header);
-        return -1;
-    }
     //debug check
     CHAOS_ASSERT(header)
     //CHAOS_ASSERT(api_result)

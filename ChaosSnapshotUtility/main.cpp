@@ -41,7 +41,7 @@ int main(int argc, char * argv[]) {
 	std::vector<std::string> device_id_list;
 	std::string snap_name;
 	std::string cds_addr;
-	uint32_t ds_type;
+	uint32_t ds_type = 0;
 	uint32_t timeout = 0;
 	unsigned int operation = 0;
 	try{
@@ -123,10 +123,12 @@ int main(int argc, char * argv[]) {
 						std::cout << "Error code:" << get_system_api_result->api_result.error << std::endl;
 						std::cout << "Error message:" << get_system_api_result->api_result.error_message << std::endl;
 						if(get_system_api_result->channel_data) {
-							auto_ptr<CDataWrapper> data(new CDataWrapper(((char*)get_system_api_result+sizeof(chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPIGetDatasetSnapshotResult) + 4)));
-							std::cout << "Data found-------------------------"<< std::endl;
+							auto_ptr<CDataWrapper> data(new CDataWrapper((char*)get_system_api_result->channel_data));
+							std::cout << "Data found-------------------------" << std::endl;;
 							std::cout << data->getJSONString() << std::endl;
+                            std::cout << "Data found-------------------------" << std::endl;;
 						}
+                        free(get_system_api_result->channel_data);
 						free(get_system_api_result);
 					} else {
 						std::cout << "no result received" << std::endl;
