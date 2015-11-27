@@ -797,8 +797,8 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
     
     if(!key_data_storage.get()) throw CException(-2, "Key data storage driver not allocated", __PRETTY_FUNCTION__);
     
-    boost::shared_ptr<AttributeValueSharedCache> attribute_value_shared_cache( new AttributeValueSharedCache());
-    if(!attribute_value_shared_cache.get()) throw CException(-3, "failed to allocate restore cache", __PRETTY_FUNCTION__);
+     boost::shared_ptr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
+    if(!restore_cache.get()) throw CException(-3, "failed to allocate restore cache", __PRETTY_FUNCTION__);
     
     boost::shared_ptr<CDataWrapper> dataset_at_tag;
     //get tag alias
@@ -812,7 +812,6 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
         throw CException(err, "Error loading dataset form snapshot", __PRETTY_FUNCTION__);
     } else {
         
-        boost::shared_ptr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
         restore_cache->init(NULL);
         
         for(int idx = 0; idx < 4; idx++) {
@@ -844,8 +843,13 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
                 for(int idx = 0;
                     idx < dataset_key.size();
                     idx++) {
-                    AttributeValue *key_value = input_cache.getValueSettingForIndex(input_cache.getIndexForName(dataset_key[idx]));
+                    AttributeValue *key_value = NULL;
                     
+                    if(input_cache.hasName(dataset_key[idx])) {
+                        key_value = input_cache.getValueSettingForIndex(input_cache.getIndexForName(dataset_key[idx]));
+                    } else {
+                        continue;
+                    }
                     uint32_t value_size = dataset_at_tag->getValueSize(dataset_key[idx]);
                     
                     // fetch raw data ptr address

@@ -128,6 +128,10 @@ VariableIndexType AttributeCache::getIndexForName(const std::string& name ) {
 	return mapAttributeNameIndex[name];
 }
 
+bool AttributeCache::hasName(const std::string& name) {
+    return mapAttributeNameIndex.count(name) != 0;
+}
+
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
