@@ -348,13 +348,14 @@ void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
     //if the channel has bee disconnected turn the relative index offline, if onli reput it online
     boost::unique_lock<boost::shared_mutex>(mutext_feeder);
     uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
-    DEBUG_CODE(IODirectIODriver_DLDBG_ << "Manage event for service with index " << service_index << " and url" << client_connection->getURL();)
     switch(event) {
         case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:
+            DEBUG_CODE(IODirectIODriver_LINFO_ << "Manage Connected event to service with index " << service_index << " and url" << client_connection->getURL();)
             connectionFeeder.setURLOnline(service_index);
             break;
             
         case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:
+            DEBUG_CODE(IODirectIODriver_LINFO_ << "Manage Disconnected event for service with index " << service_index << " and url" << client_connection->getURL();)
             connectionFeeder.setURLOffline(service_index);
             break;
     }
