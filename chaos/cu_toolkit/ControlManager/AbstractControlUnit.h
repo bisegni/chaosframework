@@ -420,7 +420,7 @@ namespace chaos{
 				 that contain the four domain filled with the attribute/value faound
 				 on saved tag
 				 */
-				virtual void unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) throw(CException);
+				virtual bool unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) throw(CException);
 				
 				//! this andler is called befor the input attribute will be updated
 				virtual void unitInputAttributePreChangeHandler() throw(CException);
