@@ -416,13 +416,11 @@ namespace chaos{
 				/*!
 				 On the call of this handler the cache restore part is filled with the dataset
 				 that at restore point was pushed by control unit.
-				 \parram restore_snapshot_tag is the alias of the snapshot of the needed datasets
-				 \param restore_cache is the cache, like norma used in control unit development,
+				 \param snapshot_cache is the cache, like norma used in control unit development,
 				 that contain the four domain filled with the attribute/value faound
 				 on saved tag
 				 */
-				virtual void unitRestoreToSnapshot(const std::string& restore_snapshot_tag,
-												   AbstractSharedDomainCache * const restore_cache) throw(CException);
+				virtual void unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) throw(CException);
 				
 				//! this andler is called befor the input attribute will be updated
 				virtual void unitInputAttributePreChangeHandler() throw(CException);

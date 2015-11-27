@@ -829,8 +829,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
         
         try {
             //unitRestoreToSnapshot
-            unitRestoreToSnapshot(restore_snapshot_tag,
-                                  restore_cache.get());
+            unitRestoreToSnapshot(restore_cache.get());
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex);
         }
@@ -1181,8 +1180,7 @@ void AbstractControlUnit::_goInFatalError(chaos::CException recoverable_exceptio
 }
 
 //!handler calledfor restor a control unit to a determinate point
-void AbstractControlUnit::unitRestoreToSnapshot(const std::string& restore_snapshot_tag,
-                                                AbstractSharedDomainCache * const restore_cache) throw(CException) {
+void AbstractControlUnit::unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) throw(CException) {
     
 }
 
