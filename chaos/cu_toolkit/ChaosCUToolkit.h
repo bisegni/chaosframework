@@ -28,10 +28,11 @@
 #include <chaos/common/ChaosCommon.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 
-#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
-#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
+#include <chaos/cu_toolkit/control_manager/ControlManager.h>
+#include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
+#include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/cu_toolkit/driver_manager/DriverManager.h>
-#include <chaos/cu_toolkit/ControlManager/ControlManager.h>
+
 namespace chaos{
     namespace cu {
         /*! \page page_cut The Control Unit Toolkit

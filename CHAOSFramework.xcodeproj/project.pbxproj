@@ -2833,24 +2833,24 @@
 				326DB49B14B3A3E50018A8D0 /* ChaosCUToolkit.cpp */,
 				326DB49C14B3A3E50018A8D0 /* ChaosCUToolkit.h */,
 				32954969176B90A800B5A064 /* driver_manager */,
-				326DB49D14B3A3E50018A8D0 /* CommandManager */,
-				326DB4A414B3A3E50018A8D0 /* ControlManager */,
-				326DB4AB14B3A3E50018A8D0 /* DataManager */,
+				326DB49D14B3A3E50018A8D0 /* command_manager */,
+				326DB4A414B3A3E50018A8D0 /* control_manager */,
+				326DB4AB14B3A3E50018A8D0 /* data_manager */,
 			);
 			path = cu_toolkit;
 			sourceTree = "<group>";
 		};
-		326DB49D14B3A3E50018A8D0 /* CommandManager */ = {
+		326DB49D14B3A3E50018A8D0 /* command_manager */ = {
 			isa = PBXGroup;
 			children = (
 				326DB49E14B3A3E50018A8D0 /* CommandManager.cpp */,
 				326DB49F14B3A3E50018A8D0 /* CommandManager.h */,
 				326DB4A014B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h */,
 			);
-			path = CommandManager;
+			path = command_manager;
 			sourceTree = "<group>";
 		};
-		326DB4A414B3A3E50018A8D0 /* ControlManager */ = {
+		326DB4A414B3A3E50018A8D0 /* control_manager */ = {
 			isa = PBXGroup;
 			children = (
 				325F8B4E1763AED200EFE616 /* slow_command */,
@@ -2869,10 +2869,10 @@
 				326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */,
 				326DB4A814B3A3E50018A8D0 /* ControlManager.h */,
 			);
-			path = ControlManager;
+			path = control_manager;
 			sourceTree = "<group>";
 		};
-		326DB4AB14B3A3E50018A8D0 /* DataManager */ = {
+		326DB4AB14B3A3E50018A8D0 /* data_manager */ = {
 			isa = PBXGroup;
 			children = (
 				326DB4B014B3A3E50018A8D0 /* DataManager.cpp */,
@@ -2881,7 +2881,7 @@
 				326DB4B314B3A3E50018A8D0 /* KeyDataStorage.cpp */,
 				326DB4B414B3A3E50018A8D0 /* KeyDataStorage.h */,
 			);
-			path = DataManager;
+			path = data_manager;
 			sourceTree = "<group>";
 		};
 		326DB4CF14B3B0040018A8D0 /* ui_toolkit */ = {

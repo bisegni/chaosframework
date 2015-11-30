@@ -1,15 +1,33 @@
-SET(cu_lib_src  ChaosCUToolkit.cpp CommandManager/CommandManager.cpp)
+SET(cu_lib_src
+    ChaosCUToolkit.cpp
+    command_manager/CommandManager.cpp)
 
-SET(cu_lib_src  ${cu_lib_src} driver_manager/DriverManager.cpp driver_manager/driver/AbstractDriver.cpp driver_manager/driver/DriverAccessor.cpp                driver_manager/driver/DriverPluginLoader.cpp driver_manager/driver/AbstractDriverPlugin.cpp)
-SET(cu_lib_src  ${cu_lib_src} driver_manager/driver/BasicIODriver.cpp driver_manager/driver/BasicIODriverInterface.cpp)
+SET(cu_lib_src  ${cu_lib_src}
+    driver_manager/DriverManager.cpp
+    driver_manager/driver/AbstractDriver.cpp
+    driver_manager/driver/DriverAccessor.cpp
+    driver_manager/driver/DriverPluginLoader.cpp
+    driver_manager/driver/AbstractDriverPlugin.cpp)
 
-SET(cu_lib_src  ${cu_lib_src} DataManager/DataManager.cpp DataManager/KeyDataStorage.cpp)
-SET(cu_lib_src  ${cu_lib_src} ControlManager/AbstractControlUnit.cpp ControlManager/ControlManager.cpp)
-SET(cu_lib_src  ${cu_lib_src} ControlManager/SCAbstractControlUnit.cpp ControlManager/RTAbstractControlUnit.cpp ControlManager/WorkUnitManagement.cpp)
-SET(cu_lib_src  ${cu_lib_src} ControlManager/IOCU.cpp)
+SET(cu_lib_src  ${cu_lib_src}
+    driver_manager/driver/BasicIODriver.cpp
+    driver_manager/driver/BasicIODriverInterface.cpp)
 
-SET(cu_lib_src  ${cu_lib_src} ControlManager/slow_command/SlowCommandExecutor.cpp ControlManager/slow_command/SlowCommand.cpp ControlManager/slow_command/command/SCWaitCommand.cpp
-								ControlManager/AttributeSharedCacheWrapper.cpp)
+SET(cu_lib_src  ${cu_lib_src}
+    data_manager/DataManager.cpp
+    data_manager/KeyDataStorage.cpp)
+
+SET(cu_lib_src  ${cu_lib_src}
+    control_manager/AbstractControlUnit.cpp
+    control_manager/ControlManager.cpp
+    control_manager/SCAbstractControlUnit.cpp
+    control_manager/RTAbstractControlUnit.cpp
+    control_manager/WorkUnitManagement.cpp
+    control_manager/IOCU.cpp
+    control_manager/slow_command/SlowCommandExecutor.cpp
+    control_manager/slow_command/SlowCommand.cpp
+    control_manager/slow_command/command/SCWaitCommand.cpp
+    control_manager/AttributeSharedCacheWrapper.cpp)
 
 IF(BUILD_FORCE_STATIC)
 ADD_LIBRARY(chaos_cutoolkit STATIC ${cu_lib_src})
