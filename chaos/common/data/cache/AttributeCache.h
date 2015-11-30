@@ -69,6 +69,8 @@ namespace chaos{
 											  uint32_t size);
 					
 					
+                    bool hasName(const std::string& name);
+                    
 					VariableIndexType getIndexForName(const std::string& name );
 					
 					//! get all attribute name in this set

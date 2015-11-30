@@ -681,8 +681,8 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
 CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
                                            bool& detachParam) throw(CException) {
     /*if(getServiceState() == CUStateKey::DEINIT){
-        return NULL;
-    }*/
+     return NULL;
+     }*/
     if(!SWEService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
         LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be deinitilized [state mismatch]!", %DatasetDB::getDeviceID());
     }
@@ -797,8 +797,8 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
     
     if(!key_data_storage.get()) throw CException(-2, "Key data storage driver not allocated", __PRETTY_FUNCTION__);
     
-    boost::shared_ptr<AttributeValueSharedCache> attribute_value_shared_cache( new AttributeValueSharedCache());
-    if(!attribute_value_shared_cache.get()) throw CException(-3, "failed to allocate restore cache", __PRETTY_FUNCTION__);
+     boost::shared_ptr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
+    if(!restore_cache.get()) throw CException(-3, "failed to allocate restore cache", __PRETTY_FUNCTION__);
     
     boost::shared_ptr<CDataWrapper> dataset_at_tag;
     //get tag alias
@@ -812,7 +812,6 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
         throw CException(err, "Error loading dataset form snapshot", __PRETTY_FUNCTION__);
     } else {
         
-        boost::shared_ptr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
         restore_cache->init(NULL);
         
         for(int idx = 0; idx < 4; idx++) {
@@ -829,7 +828,39 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
         
         try {
             //unitRestoreToSnapshot
-            unitRestoreToSnapshot(restore_cache.get());
+            if(unitRestoreToSnapshot(restore_cache.get())){
+                // the list of the key
+                std::vector<std::string> dataset_key;
+                //restore has been succesfull applyed so we need to valorize the input dataset
+                AttributeCache& input_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
+                //set input cache
+                dataset_at_tag = key_data_storage->getDatasetFromRestorePoint(restore_snapshot_tag,
+                                                                              KeyDataStorageDomainInput);
+                
+                // get all key name
+                dataset_at_tag->getAllKey(dataset_key);
+                
+                for(int idx = 0;
+                    idx < dataset_key.size();
+                    idx++) {
+                    AttributeValue *key_value = NULL;
+                    
+                    if(input_cache.hasName(dataset_key[idx])) {
+                        key_value = input_cache.getValueSettingForIndex(input_cache.getIndexForName(dataset_key[idx]));
+                    } else {
+                        continue;
+                    }
+                    uint32_t value_size = dataset_at_tag->getValueSize(dataset_key[idx]);
+                    
+                    // fetch raw data ptr address
+                    const char * raw_value_ptr = dataset_at_tag->getRawValuePtr(dataset_key[idx]);
+                    
+                    // set the new value with main cache
+                    key_value->setValue(raw_value_ptr, value_size);
+                }
+                //tag as changed
+                pushInputDataset();
+            }
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex);
         }
@@ -1180,7 +1211,7 @@ void AbstractControlUnit::_goInFatalError(chaos::CException recoverable_exceptio
 }
 
 //!handler calledfor restor a control unit to a determinate point
-void AbstractControlUnit::unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) throw(CException) {
+bool AbstractControlUnit::unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) throw(CException) {
     
 }
 
