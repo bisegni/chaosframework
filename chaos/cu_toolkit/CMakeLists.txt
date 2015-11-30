@@ -51,28 +51,25 @@ INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/driver_manager)
 FILE(GLOB files "driver_manager/driver/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/driver_manager/driver)
 
-FILE(GLOB files "CommandManager/*.h")
-INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/CommandManager)
+FILE(GLOB files "command_manager/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/command_manager)
 
 FILE(GLOB files "ConfigurationManager/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ConfigurationManager)
 
-FILE(GLOB files "ControlManager/*.h")
-INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ControlManager)
+FILE(GLOB files "control_manager/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/control_manager)
 
-FILE(GLOB files "ControlManager/handler/*.h")
-INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ControlManager/handler)
+FILE(GLOB files "control_manager/handler/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/control_manager/handler)
 
-FILE(GLOB files "ControlManager/slow_command/*.h")
-INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ControlManager/slow_command)
+FILE(GLOB files "control_manager/slow_command/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/control_manager/slow_command)
 
 #we don't install default command header
 
-FILE(GLOB files "DataManager/*.h")
-INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/DataManager)
-
-FILE(GLOB files "DataManager/DataBuffer/*.h")
-INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/DataManager/DataBuffer)
+FILE(GLOB files "data_manager/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/data_manager)
 
 INSTALL(TARGETS chaos_cutoolkit
         DESTINATION "lib"
