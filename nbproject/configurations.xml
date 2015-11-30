@@ -16206,14 +16206,14 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/CommandManager/CommandManager.cpp"
+      <item path="chaos/cu_toolkit/command_manager/CommandManager.cpp"
             ex="false"
             tool="1"
             flavor2="4">
         <ccTool flags="3">
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/AbstractControlUnit.cpp"
+      <item path="chaos/cu_toolkit/control_manager/AbstractControlUnit.cpp"
             ex="false"
             tool="1"
             flavor2="4">
@@ -16232,7 +16232,7 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/AttributeSharedCacheWrapper.cpp"
+      <item path="chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.cpp"
             ex="false"
             tool="1"
             flavor2="4">
@@ -16252,7 +16252,7 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/ControlManager.cpp"
+      <item path="chaos/cu_toolkit/control_manager/ControlManager.cpp"
             ex="false"
             tool="1"
             flavor2="4">
@@ -16271,31 +16271,12 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/DSAttributeHandlerExecutionEngine.cpp"
+      <item path="chaos/cu_toolkit/control_manager/DSAttributeHandlerExecutionEngine.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/IOCU.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool flags="11">
-          <incDir>
-            <pElem>.</pElem>
-            <pElem>../..</pElem>
-            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
-            <pElem>bin/bin_cutoolkit</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>CHAOS</Elem>
-            <Elem>DEBUG</Elem>
-            <Elem>NDEBUG</Elem>
-            <Elem>chaos_cutoolkit_EXPORTS</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.cpp"
+      <item path="chaos/cu_toolkit/control_manager/IOCU.cpp"
             ex="false"
             tool="1"
             flavor2="4">
@@ -16314,7 +16295,7 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/SCAbstractControlUnit.cpp"
+      <item path="chaos/cu_toolkit/control_manager/RTAbstractControlUnit.cpp"
             ex="false"
             tool="1"
             flavor2="4">
@@ -16333,7 +16314,7 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/WorkUnitManagement.cpp"
+      <item path="chaos/cu_toolkit/control_manager/SCAbstractControlUnit.cpp"
             ex="false"
             tool="1"
             flavor2="4">
@@ -16352,17 +16333,36 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/handler/DSAttributeHandler.cpp"
+      <item path="chaos/cu_toolkit/control_manager/WorkUnitManagement.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="11">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>CHAOS</Elem>
+            <Elem>DEBUG</Elem>
+            <Elem>NDEBUG</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="chaos/cu_toolkit/control_manager/handler/DSAttributeHandler.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/perf_test/PerfTestCU.cpp"
+      <item path="chaos/cu_toolkit/control_manager/perf_test/PerfTestCU.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.cpp"
+      <item path="chaos/cu_toolkit/control_manager/slow_command/SlowCommand.cpp"
             ex="false"
             tool="1"
             flavor2="4">
@@ -16376,7 +16376,7 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/slow_command/SlowCommandExecutor.cpp"
+      <item path="chaos/cu_toolkit/control_manager/slow_command/SlowCommandExecutor.cpp"
             ex="false"
             tool="1"
             flavor2="4">
@@ -16390,7 +16390,7 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/slow_command/command/SCWaitCommand.cpp"
+      <item path="chaos/cu_toolkit/control_manager/slow_command/command/SCWaitCommand.cpp"
             ex="false"
             tool="1"
             flavor2="4">
@@ -16404,7 +16404,7 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/ControlManager/slow_command/command/SetAttributeCommand.cpp"
+      <item path="chaos/cu_toolkit/control_manager/slow_command/command/SetAttributeCommand.cpp"
             ex="false"
             tool="1"
             flavor2="4">
@@ -16419,32 +16419,12 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/DataManager/DataBuffer/OutputDataBuffer.cpp"
+      <item path="chaos/cu_toolkit/data_manager/DataBuffer/OutputDataBuffer.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="chaos/cu_toolkit/DataManager/DataManager.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-        <ccTool flags="3">
-          <incDir>
-            <pElem>.</pElem>
-            <pElem>../..</pElem>
-            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
-            <pElem>bin/bin_cutoolkit</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
-            <Elem>CHAOS</Elem>
-            <Elem>DEBUG</Elem>
-            <Elem>NDEBUG</Elem>
-            <Elem>chaos_cutoolkit_EXPORTS</Elem>
-          </preprocessorList>
-        </ccTool>
-      </item>
-      <item path="chaos/cu_toolkit/DataManager/KeyDataStorage.cpp"
+      <item path="chaos/cu_toolkit/data_manager/DataManager.cpp"
             ex="false"
             tool="1"
             flavor2="4">
@@ -16464,7 +16444,27 @@
           </preprocessorList>
         </ccTool>
       </item>
-      <item path="chaos/cu_toolkit/DataManager/MultiBufferDataStorage.cpp"
+      <item path="chaos/cu_toolkit/data_manager/KeyDataStorage.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="3">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>CHAOS</Elem>
+            <Elem>DEBUG</Elem>
+            <Elem>NDEBUG</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
+        </ccTool>
+      </item>
+      <item path="chaos/cu_toolkit/data_manager/MultiBufferDataStorage.cpp"
             ex="false"
             tool="1"
             flavor2="4">
@@ -62987,7 +62987,7 @@
           </preprocessorList>
         </ccTool>
       </folder>
-      <folder path="0/chaos/cu_toolkit/ControlManager/slow_command">
+      <folder path="0/chaos/cu_toolkit/control_manager/slow_command">
         <ccTool>
           <incDir>
             <pElem>.</pElem>
@@ -63772,77 +63772,77 @@
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/CommandManager/CommandManager.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/command_manager/CommandManager.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/ControlManager/AbstractControlUnit.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/control_manager/AbstractControlUnit.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/ControlManager/ControlManager.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/control_manager/ControlManager.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/ControlManager/DSAttributeHandlerExecutionEngine.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/control_manager/DSAttributeHandlerExecutionEngine.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/control_manager/RTAbstractControlUnit.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/ControlManager/SCAbstractControlUnit.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/control_manager/SCAbstractControlUnit.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/ControlManager/handler/DSAttributeHandler.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/control_manager/handler/DSAttributeHandler.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/ControlManager/perf_test/PerfTestCU.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/control_manager/perf_test/PerfTestCU.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/control_manager/slow_command/SlowCommand.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/ControlManager/slow_command/SlowCommandExecutor.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/control_manager/slow_command/SlowCommandExecutor.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/ControlManager/slow_command/command/SetAttributeCommand.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/control_manager/slow_command/command/SetAttributeCommand.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/DataManager/DataBuffer/OutputDataBuffer.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/data_manager/DataBuffer/OutputDataBuffer.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/DataManager/DataManager.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/data_manager/DataManager.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/DataManager/KeyDataStorage.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/data_manager/KeyDataStorage.cpp"
             ex="false"
             tool="1"
             flavor2="4">
       </item>
-      <item path="usr/local/include/chaos/cu_toolkit/DataManager/MultiBufferDataStorage.cpp"
+      <item path="usr/local/include/chaos/cu_toolkit/data_manager/MultiBufferDataStorage.cpp"
             ex="false"
             tool="1"
             flavor2="4">
