@@ -74,8 +74,3 @@ INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/data_manager)
 INSTALL(TARGETS chaos_cutoolkit
         DESTINATION "lib"
         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
-
-# INSTALL(TARGETS chaos_cutoolkit_static
-#         DESTINATION "lib"
-#         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
-
