@@ -21,7 +21,7 @@
 #include <limits>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
-#include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
+#include <chaos/cu_toolkit/control_manager/RTAbstractControlUnit.h>
 
 #include <boost/format.hpp>
 #include <boost/thread.hpp>

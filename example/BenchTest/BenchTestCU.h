@@ -26,7 +26,7 @@
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
 #include <chaos/common/utility/Atomic.h>
-#include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
+#include <chaos/cu_toolkit/control_manager/RTAbstractControlUnit.h>
 
 using namespace std;
 using namespace chaos;

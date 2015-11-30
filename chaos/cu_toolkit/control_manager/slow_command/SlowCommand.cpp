@@ -18,7 +18,7 @@
  *    	limitations under the License.
  */
 #include <string>
-#include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
+#include <chaos/cu_toolkit/control_manager/slow_command/SlowCommand.h>
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::cu::control_manager;

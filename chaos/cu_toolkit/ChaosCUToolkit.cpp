@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
-#include <chaos/cu_toolkit/DataManager/DataManager.h>
-#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
+#include <chaos/cu_toolkit/data_manager/DataManager.h>
+#include <chaos/cu_toolkit/command_manager/CommandManager.h>
 
 #include <csignal>
 

@@ -36,8 +36,8 @@
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/async_central/async_central.h>
 
-#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
-#include <chaos/cu_toolkit/ControlManager/WorkUnitManagement.h>
+#include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
+#include <chaos/cu_toolkit/control_manager/WorkUnitManagement.h>
 
 #include <boost/thread.hpp>
 #include <boost/msm/back/state_machine.hpp>

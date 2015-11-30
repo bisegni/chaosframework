@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
-#include <chaos/cu_toolkit/ControlManager/WorkUnitManagement.h>
+#include <chaos/cu_toolkit/command_manager/CommandManager.h>
+#include <chaos/cu_toolkit/control_manager/WorkUnitManagement.h>
 
 #include <chaos/common/healt_system/HealtManager.h>
 

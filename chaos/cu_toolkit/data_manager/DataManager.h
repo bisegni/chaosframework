@@ -29,7 +29,7 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/StartableService.h>
 
-#include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
+#include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 
 namespace chaos_io = chaos::common::io;
 namespace chaos_data = chaos::common::data;

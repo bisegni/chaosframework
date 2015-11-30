@@ -36,7 +36,7 @@
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/StartableService.h>
-#include <chaos/cu_toolkit/CommandManager/CommandManagerDefaultAdapters.h>
+#include <chaos/cu_toolkit/command_manager/CommandManagerDefaultAdapters.h>
 
 
 using namespace boost;

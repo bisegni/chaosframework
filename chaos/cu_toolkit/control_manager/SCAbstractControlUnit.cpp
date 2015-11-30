@@ -20,9 +20,9 @@
 
 #include <chaos/common/batch_command/BatchCommand.h>
 
-#include <chaos/cu_toolkit/ControlManager/SCAbstractControlUnit.h>
+#include <chaos/cu_toolkit/control_manager/SCAbstractControlUnit.h>
 
-#include <chaos/cu_toolkit/ControlManager/slow_command/command/SCWaitCommand.h>
+#include <chaos/cu_toolkit/control_manager/slow_command/command/SCWaitCommand.h>
 
 
 using namespace chaos;

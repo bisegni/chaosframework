@@ -23,9 +23,9 @@
 
 #include <chaos/common/global.h>
 
-#include <chaos/cu_toolkit/ControlManager/SCAbstractControlUnit.h>
-#include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
-#include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandExecutor.h>
+#include <chaos/cu_toolkit/control_manager/SCAbstractControlUnit.h>
+#include <chaos/cu_toolkit/control_manager/slow_command/SlowCommand.h>
+#include <chaos/cu_toolkit/control_manager/slow_command/SlowCommandExecutor.h>
 
 
 

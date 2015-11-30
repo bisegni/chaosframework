@@ -21,8 +21,8 @@
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/healt_system/HealtManager.h>
-#include <chaos/cu_toolkit/ControlManager/ControlManager.h>
-#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
+#include <chaos/cu_toolkit/control_manager/ControlManager.h>
+#include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 #include <boost/scoped_ptr.hpp>

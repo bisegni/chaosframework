@@ -22,9 +22,9 @@
 #define __CHAOSFramework__SCAbstractControlUnit__
 #include <string>
 
-#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
+#include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
 
-#include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandExecutor.h>
+#include <chaos/cu_toolkit/control_manager/slow_command/SlowCommandExecutor.h>
 
 namespace chaos {
     namespace cu {

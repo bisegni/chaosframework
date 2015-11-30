@@ -20,7 +20,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
-#include <chaos/cu_toolkit/ControlManager/slow_command/command/SCWaitCommand.h>
+#include <chaos/cu_toolkit/control_manager/slow_command/command/SCWaitCommand.h>
 
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;

@@ -43,8 +43,8 @@
 #include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/chaos_types.h>
 
-#include <chaos/cu_toolkit/ControlManager/AttributeSharedCacheWrapper.h>
-#include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
+#include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
+#include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 
 #ifdef __CHAOS_DEBUG_MEMORY_CU__

@@ -19,7 +19,7 @@
  */
 #include <vector>
 #include <iostream>
-#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
+#include <chaos/cu_toolkit/command_manager/CommandManager.h>
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>

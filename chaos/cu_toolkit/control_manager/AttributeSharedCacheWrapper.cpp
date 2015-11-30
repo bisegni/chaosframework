@@ -18,7 +18,7 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/ControlManager/AttributeSharedCacheWrapper.h>
+#include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
 
 using namespace chaos::cu::control_manager;
 using namespace chaos::common::data::cache;

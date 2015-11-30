@@ -23,10 +23,10 @@
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 
-#include <chaos/cu_toolkit/DataManager/DataManager.h>
+#include <chaos/cu_toolkit/data_manager/DataManager.h>
 #include <chaos/cu_toolkit/driver_manager/DriverManager.h>
-#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
-#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
+#include <chaos/cu_toolkit/command_manager/CommandManager.h>
+#include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
 
 #include <iostream>
 #include <fstream>
@@ -1212,7 +1212,7 @@ void AbstractControlUnit::_goInFatalError(chaos::CException recoverable_exceptio
 
 //!handler calledfor restor a control unit to a determinate point
 bool AbstractControlUnit::unitRestoreToSnapshot(AbstractSharedDomainCache * const snapshot_cache) throw(CException) {
-    
+    return false;
 }
 
 //! this andler is called befor the input attribute will be updated

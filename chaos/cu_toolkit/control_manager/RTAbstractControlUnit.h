@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__RTAbstractControlUnit__
 #define __CHAOSFramework__RTAbstractControlUnit__
 
-#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
+#include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
 
 #include <boost/thread.hpp>
 #include <boost/scoped_ptr.hpp>

@@ -20,7 +20,7 @@
 #ifndef __IOCU_H__
 #define __IOCU_H__
 
-#include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
+#include <chaos/cu_toolkit/control_manager/RTAbstractControlUnit.h>
 #include <chaos/cu_toolkit/driver_manager/driver/BasicIODriverInterface.h>
 
 class IOCU : public chaos::cu::control_manager::RTAbstractControlUnit {
