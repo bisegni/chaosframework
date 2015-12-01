@@ -1,5 +1,5 @@
 /*
- *	ServiceApiGroup.cpp
+ *	general_batc.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,21 +18,9 @@
  *    	limitations under the License.
  */
 
-#include "ServiceApiGroup.h"
-#include "ResetAll.h"
-#include "RestoreSnapshot.h"
+#ifndef general_batch_h
+#define general_batch_h
 
-using namespace chaos::metadata_service::api::service;
+#include "RestoreSnapshotBatch.h"
 
-DEFINE_CLASS_FACTORY_NO_ALIAS(ServiceApiGroup,
-                              chaos::metadata_service::api::AbstractApiGroup);
-
-ServiceApiGroup::ServiceApiGroup():
-AbstractApiGroup("service"){
-    addApi<ResetAll>();
-    addApi<RestoreSnapshot>();
-}
-
-ServiceApiGroup::~ServiceApiGroup() {
-
-}
+#endif /* general_batch_h */

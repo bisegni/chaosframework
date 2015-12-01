@@ -1,5 +1,5 @@
 /*
- *	RestoreSnapshot.hpp
+ *	RestoreSnapshotBatch.hpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,18 +18,16 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__RestoreSnapshot_h
-#define __CHAOSFramework__RestoreSnapshot_h
+#ifndef __CHAOSFramework__RestoreSnapshotBatch_h
+#define __CHAOSFramework__RestoreSnapshotBatch_h
 
 #include "../mds_service_batch.h"
-
-#include <chaos/common/chaos_types.h>
 
 namespace chaos {
     namespace metadata_service{
         namespace batch {
             class MDSBatchExcecutor;
-            namespace node {
+            namespace general {
                 
                 typedef enum RestorePhase {
                     NEW_RESTORE_REQUEST,
@@ -37,8 +35,8 @@ namespace chaos {
                     NO_MORE_NODE
                 } RestorePhase;
                 
-                //!Bbatch command for submit batch command within a node
-                class RestoreSnapshot:
+                //!batch command for submit batch command within a node
+                class RestoreSnapshotBatch:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
                     //request for the command submission
@@ -50,8 +48,8 @@ namespace chaos {
                     unsigned int node_index;
                     RestorePhase restore_phase;
                 public:
-                    RestoreSnapshot();
-                    ~RestoreSnapshot();
+                    RestoreSnapshotBatch();
+                    ~RestoreSnapshotBatch();
                 protected:
                     // inherited method
                     void setHandler(chaos_data::CDataWrapper *data);
@@ -71,4 +69,4 @@ namespace chaos {
 }
 
 
-#endif /* RestoreSnapshot_hpp */
+#endif /* RestoreSnapshotBatch_hpp */

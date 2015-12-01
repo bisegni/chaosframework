@@ -1,5 +1,5 @@
 /*
- *	RestoreSnapshot.cpp
+ *	RestoreSnapshotBatch.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,25 +18,25 @@
  *    	limitations under the License.
  */
 
-#include "RestoreSnapshot.h"
+#include "RestoreSnapshotBatch.h"
 
 using namespace chaos::common::data;
 using namespace chaos::common::network;
-using namespace chaos::metadata_service::batch::node;
+using namespace chaos::metadata_service::batch::general;
 
-#define G_RS_INFO INFO_LOG(RestoreSnapshot)
-#define G_RS_DBG  DBG_LOG(RestoreSnapshot)
-#define G_RS_ERR  ERR_LOG(RestoreSnapshot)
+#define G_RS_INFO INFO_LOG(RestoreSnapshotBatch)
+#define G_RS_DBG  DBG_LOG(RestoreSnapshotBatch)
+#define G_RS_ERR  ERR_LOG(RestoreSnapshotBatch)
 
-DEFINE_MDS_COMAMND_ALIAS(RestoreSnapshot)
+DEFINE_MDS_COMAMND_ALIAS(RestoreSnapshotBatch)
 
-RestoreSnapshot::RestoreSnapshot():
+RestoreSnapshotBatch::RestoreSnapshotBatch():
 MDSBatchCommand() {}
 
-RestoreSnapshot::~RestoreSnapshot() {}
+RestoreSnapshotBatch::~RestoreSnapshotBatch() {}
 
 // inherited method
-void RestoreSnapshot::setHandler(CDataWrapper *data) {
+void RestoreSnapshotBatch::setHandler(CDataWrapper *data) {
     MDSBatchCommand::setHandler(data);
     int err = 0;
     
@@ -57,12 +57,12 @@ void RestoreSnapshot::setHandler(CDataWrapper *data) {
 }
 
 // inherited method
-void RestoreSnapshot::acquireHandler() {
+void RestoreSnapshotBatch::acquireHandler() {
     MDSBatchCommand::acquireHandler();
 }
 
 // inherited method
-void RestoreSnapshot::ccHandler() {
+void RestoreSnapshotBatch::ccHandler() {
     int err = 0;
     CDataWrapper *tmp_ptr = NULL;
     
@@ -143,6 +143,6 @@ void RestoreSnapshot::ccHandler() {
 }
 
 // inherited method
-bool RestoreSnapshot::timeoutHandler() {
+bool RestoreSnapshotBatch::timeoutHandler() {
     return MDSBatchCommand::timeoutHandler();
 }
