@@ -50,23 +50,23 @@ namespace chaos {
                      \param node_uid_list the list of the node (identified by node unique id) to include into
                      snapshot.
                      */
-                    int createNewSnapshot(const std::string& snapshot_name,
-                                          const std::vector<std::string> node_uid_list);
+                    virtual int createNewSnapshot(const std::string& snapshot_name,
+                                                  const std::vector<std::string> node_uid_list);
                     
                     //! get the node uid in a snapshot
                     /*!
                      \param snapshot_name the name of the snapshot
                      \param node_in_snapshot is the list of the node present in the snapshot
                      */
-                    int getNodeInSnapshot(const std::string& snapshot_name,
-                                          std::vector<std::string> node_in_snapshot);
+                    virtual int getNodeInSnapshot(const std::string& snapshot_name,
+                                                  std::vector<std::string> node_in_snapshot);
                     
                     //! delete a snapshot
                     /*!
                      remove interelly the snapshot.
                      \param snapshot_name the name of the new snapshot
                      */
-                    int deleteSnapshot(const std::string& snapshot_name);
+                    virtual int deleteSnapshot(const std::string& snapshot_name);
                     
                 };
                 

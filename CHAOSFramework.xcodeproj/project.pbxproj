@@ -661,6 +661,7 @@
 		32DF604815E1505F00312C94 /* CustomEventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF604615E1505F00312C94 /* CustomEventDescriptor.h */; };
 		32E09CED1C0DB2800069752F /* SnapshotDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CEB1C0DB2800069752F /* SnapshotDataAccess.cpp */; };
 		32E09CF01C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CEE1C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp */; };
+		32E09CF41C0DE2890069752F /* RestoreSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CF21C0DE2890069752F /* RestoreSnapshot.cpp */; };
 		32E0EF3718CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E0EF3518CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp */; };
 		32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */; };
 		32E5D24D1A75664C0001E97F /* ObjectQueueTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32ABC2681A73FB83008DB3A7 /* ObjectQueueTest.cpp */; };
@@ -1623,6 +1624,8 @@
 		32E09CEC1C0DB2800069752F /* SnapshotDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapshotDataAccess.h; sourceTree = "<group>"; };
 		32E09CEE1C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBSnapshotDataAccess.cpp; sourceTree = "<group>"; };
 		32E09CEF1C0DC7100069752F /* MongoDBSnapshotDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBSnapshotDataAccess.h; sourceTree = "<group>"; };
+		32E09CF21C0DE2890069752F /* RestoreSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSnapshot.cpp; sourceTree = "<group>"; };
+		32E09CF31C0DE2890069752F /* RestoreSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestoreSnapshot.h; sourceTree = "<group>"; };
 		32E0EF3518CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQDirectIOClientConnection.cpp; sourceTree = "<group>"; };
 		32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOClientConnection.h; sourceTree = "<group>"; };
 		32E977561A6E65B800D89C15 /* api_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
@@ -3365,6 +3368,7 @@
 				32FA1EF21A7A462200A46800 /* MDSBatchCommand.h */,
 				320E77401A7FD9A6001FB8BC /* mds_service_batch.h */,
 				327D83D91AF1185700AD7000 /* batch_impl.h */,
+				32E09CF11C0DE2500069752F /* general */,
 				32761A3D1B37F1DD006C8719 /* node */,
 				32610F9A1AE676A400779B84 /* control_unit */,
 				320E773B1A7FBD1E001FB8BC /* unit_server */,
@@ -3627,6 +3631,15 @@
 				32CFF95E15E4DBD3005D607E /* EventFactory.h */,
 			);
 			path = evt_desc;
+			sourceTree = "<group>";
+		};
+		32E09CF11C0DE2500069752F /* general */ = {
+			isa = PBXGroup;
+			children = (
+				32E09CF21C0DE2890069752F /* RestoreSnapshot.cpp */,
+				32E09CF31C0DE2890069752F /* RestoreSnapshot.h */,
+			);
+			path = general;
 			sourceTree = "<group>";
 		};
 		32E9A5411A66C41E00545BB4 /* utility */ = {
@@ -4427,6 +4440,7 @@
 				32568C8B1B3D54650006988C /* UpdatePropertyCommand.cpp in Sources */,
 				32B1E8161B2EDB4700221E49 /* CommandInstanceSubmit.cpp in Sources */,
 				327791E21B67728300FEDD52 /* ServiceApiGroup.cpp in Sources */,
+				32E09CF41C0DE2890069752F /* RestoreSnapshot.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
 				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
 				32B299A71BE26933000D3716 /* RecoverError.cpp in Sources */,
