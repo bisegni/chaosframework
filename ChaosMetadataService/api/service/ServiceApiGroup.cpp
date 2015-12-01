@@ -21,7 +21,7 @@
 #include "ServiceApiGroup.h"
 #include "ResetAll.h"
 #include "RestoreSnapshot.h"
-
+#include "CreateNewSnapshot.h"
 using namespace chaos::metadata_service::api::service;
 
 DEFINE_CLASS_FACTORY_NO_ALIAS(ServiceApiGroup,
@@ -31,6 +31,7 @@ ServiceApiGroup::ServiceApiGroup():
 AbstractApiGroup("service"){
     addApi<ResetAll>();
     addApi<RestoreSnapshot>();
+    addApi<CreateNewSnapshot>();
 }
 
 ServiceApiGroup::~ServiceApiGroup() {

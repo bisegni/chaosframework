@@ -1,5 +1,5 @@
 /*
- *	RestoreSnapshot.h
+ *	CreateNewSnapshot.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -17,9 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
-#ifndef __CHAOSFramework__RestoreSnapshot_h
-#define __CHAOSFramework__RestoreSnapshot_h
+#ifndef __CHAOSFramework__CreateNewSnapshot_h
+#define __CHAOSFramework__CreateNewSnapshot_h
 
 #include "ChaosMetadataService/api/AbstractApi.h"
 
@@ -28,15 +27,15 @@ namespace chaos {
         namespace api {
             namespace service {
                 
-                //! restore all node contained in the snapshot
+                //! Crea te a new snapshot specifing the node to include
                 /*!
                  
                  */
-                class RestoreSnapshot:
+                class CreateNewSnapshot:
                 public AbstractApi {
                 public:
-                    RestoreSnapshot();
-                    ~RestoreSnapshot();
+                    CreateNewSnapshot();
+                    ~CreateNewSnapshot();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
                 };
                 
@@ -45,4 +44,4 @@ namespace chaos {
     }
 }
 
-#endif /* RestoreSnapshot_h */
+#endif /* CreateNewSnapshot_h */

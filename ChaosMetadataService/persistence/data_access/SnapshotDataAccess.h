@@ -68,6 +68,13 @@ namespace chaos {
                      */
                     virtual int deleteSnapshot(const std::string& snapshot_name);
                     
+                    //! check the snapshot work sate
+                    /*!
+                     The snapshot is created in an asynchronous way so this api return the state of
+                     the work on snapshot
+                     \param work_free is true is the snapshot is finished to be elaborated
+                     */
+                    virtual int getSnapshotWorkingState(const std::string& snapshot_name, bool& work_free) = 0;
                 };
                 
             }

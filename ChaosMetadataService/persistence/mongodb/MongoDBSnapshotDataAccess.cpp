@@ -43,19 +43,26 @@ SnapshotDataAccess(_data_service_da){}
 
 MongoDBSnapshotDataAccess::~MongoDBSnapshotDataAccess() {}
 
-// inherited method
 int MongoDBSnapshotDataAccess::createNewSnapshot(const std::string& snapshot_name,
                                                  const std::vector<std::string> node_uid_list) {
     return SnapshotDataAccess::createNewSnapshot(snapshot_name,
                                                  node_uid_list);
 }
 
-// inherited method
 int MongoDBSnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_name,
                                                  vector<std::string> node_in_snapshot) {
     int err = 0;
+    bool work_free = false;
     std::vector<mongo::BSONObj>     result;
     try {
+        
+        if((err = getSnapshotWorkingState(snapshot_name, work_free))){
+            return err;
+        } if(work_free == false) {
+            MDBDSDA_ERR << "Snapshot " << snapshot_name << " is still be elaborated";
+            return -10000;
+        }
+        
         //we first need to fetch all node uid attacched to the snapshot
         mongo::BSONObj q = BSON("snap_name" << snapshot_name);
         
@@ -90,7 +97,55 @@ int MongoDBSnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_nam
     return err;
 }
 
-// inherited method
 int MongoDBSnapshotDataAccess::deleteSnapshot(const std::string& snapshot_name) {
+    int err = 0;
+    bool work_free = false;
+    if((err = getSnapshotWorkingState(snapshot_name, work_free))){
+        return err;
+    } if(work_free == false) {
+        MDBDSDA_ERR << "Snapshot " << snapshot_name << " is still be elaborated";
+        return -10000;
+    }
     return SnapshotDataAccess::deleteSnapshot(snapshot_name);
+}
+
+int MongoDBSnapshotDataAccess::getSnapshotWorkingState(const std::string& snapshot_name,
+                                                       bool& work_free) {
+    int err = 0;
+    mongo::BSONObj  snapshot_info;
+    try {
+        //we first need to fetch all node uid attacched to the snapshot
+        mongo::BSONObj q = BSON("snap_name" << snapshot_name);
+        
+        
+        DEBUG_CODE(MDBDSDA_DBG<<log_message("getSnapshotWorkingState",
+                                            "find",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.jsonString()));)
+
+        
+        if((err = connection->findOne(snapshot_info,
+                                     MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT),
+                                     q))) {
+             MDBDSDA_ERR << "Error getting snapsho description with code:" << err;
+        } else if(snapshot_info.isEmpty()) {
+            err = - 10000;
+            MDBDSDA_ERR << "Snapshto description has not been found" << err;
+        } else {
+            //we have snapshot description
+            if(snapshot_info.hasField("job_concurency")) {
+                 work_free  = snapshot_info.getIntField("job_concurency") == 0;
+            } else {
+                work_free = false;
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        MDBDSDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBDSDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    
+    return err;
 }

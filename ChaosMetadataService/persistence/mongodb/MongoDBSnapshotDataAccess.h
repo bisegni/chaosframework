@@ -54,6 +54,10 @@ namespace chaos {
                     
                     // inherited method
                     int deleteSnapshot(const std::string& snapshot_name);
+                    
+                    // inherited method
+                    int getSnapshotWorkingState(const std::string& snapshot_name,
+                                                bool& work_free);
                 };
                 
             }
