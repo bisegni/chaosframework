@@ -85,7 +85,9 @@ SOURCES += main.cpp\
     data/DatasetAttributeReader.cpp \
     widget/CLedIndicatorHealt.cpp \
     preference/PreferenceMDSHostListModel.cpp \
-    widget/ChaosHealtLabel.cpp
+    widget/ChaosHealtLabel.cpp \
+    snapshot/SnapshotManager.cpp \
+    snapshot/SnapshotTableModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -160,7 +162,9 @@ HEADERS  += \
     widget/CLedIndicatorHealt.h \
     monitor/handler/MonitorBinaryAttributeHandler.h \
     preference/PreferenceMDSHostListModel.h \
-    widget/ChaosHealtLabel.h
+    widget/ChaosHealtLabel.h \
+    snapshot/SnapshotManager.h \
+    snapshot/SnapshotTableModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -178,7 +182,8 @@ FORMS    += \
     node/control_unit/ControlUnitEditor.ui \
     node/control_unit/ControlUnitCommandTemplateEditor.ui \
     node/control_unit/CommandTemplateInstanceEditor.ui \
-    plot/NodeAttributePlotting.ui
+    plot/NodeAttributePlotting.ui \
+    snapshot/SnapshotManager.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

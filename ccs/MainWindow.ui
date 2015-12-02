@@ -105,7 +105,14 @@
     <addaction name="separator"/>
     <addaction name="actionShow_Monitor_View"/>
    </widget>
+   <widget class="QMenu" name="menuData">
+    <property name="title">
+     <string>Data</string>
+    </property>
+    <addaction name="actionSnapshot_Manager"/>
+   </widget>
    <addaction name="menuNode"/>
+   <addaction name="menuData"/>
    <addaction name="menuTools"/>
    <addaction name="menuWindows"/>
    <addaction name="menuMonitor"/>
@@ -211,6 +218,11 @@
   <action name="actionAdd_New_Unit_Server">
    <property name="text">
     <string>Add New Unit Server</string>
+   </property>
+  </action>
+  <action name="actionSnapshot_Manager">
+   <property name="text">
+    <string>Snapshot Manager</string>
    </property>
   </action>
  </widget>

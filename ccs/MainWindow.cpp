@@ -5,7 +5,7 @@
 #include "node/data_service/DataServiceEditor.h"
 #include "search/SearchNodeResult.h"
 #include "preference/PreferenceDialog.h"
-
+#include "snapshot/SnapshotManager.h"
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 #include <QInputDialog>
@@ -172,4 +172,8 @@ void MainWindow::on_actionDisable_Monitoring_triggered() {
     ChaosMetadataServiceClient::getInstance()->disableMonitor();
     ui->actionEnable_Monitoring->setEnabled(true);
     ui->actionDisable_Monitoring->setEnabled(false);
+}
+
+void MainWindow::on_actionSnapshot_Manager_triggered() {
+    command_presenter->showCommandPresenter(new SnapshotManager());
 }
