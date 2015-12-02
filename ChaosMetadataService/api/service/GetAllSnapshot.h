@@ -1,5 +1,5 @@
 /*
- *	ResetAll.h
+ *	GetAllSnapshot.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,29 +18,31 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__ResetAll__
-#define __CHAOSFramework__ResetAll__
+#ifndef __CHAOSFramework__GetAllSnapshot_h
+#define __CHAOSFramework__GetAllSnapshot_h
 
-#include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
+#include "ChaosMetadataService/api/AbstractApi.h"
 
 namespace chaos {
-    namespace metadata_service_client {
-        namespace api_proxy {
+    namespace metadata_service {
+        namespace api {
             namespace service {
                 
-                //! Reset all metadata service backend database
-                class ResetAll:
-                public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(ResetAll)
-                protected:
-                    API_PROXY_CD_DECLARATION(ResetAll)
+                //! Get the list of all snapshot
+                /*!
+                 
+                 */
+                class GetAllSnapshot:
+                public AbstractApi {
                 public:
-                    
-                    ApiProxyResult execute();
+                    GetAllSnapshot();
+                    ~GetAllSnapshot();
+                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
                 };
+                
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__ResetAll__) */
+#endif /* GetAllSnapshot_hpp */

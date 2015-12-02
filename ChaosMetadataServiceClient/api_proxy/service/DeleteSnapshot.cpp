@@ -1,5 +1,5 @@
 /*
- *	ServiceApiGroup.cpp
+ *	DeleteSnapshot.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,25 +18,21 @@
  *    	limitations under the License.
  */
 
-#include "ResetAll.h"
-#include "GetAllSnapshot.h"
-#include "RestoreSnapshot.h"
-#include "ServiceApiGroup.h"
-#include "CreateNewSnapshot.h"
+#include <ChaosMetadataServiceClient/api_proxy/service/DeleteSnapshot.h>
 
-using namespace chaos::metadata_service::api::service;
+using namespace chaos;
+using namespace chaos::metadata_service_client::api_proxy;
+using namespace chaos::metadata_service_client::api_proxy::service;
 
-DEFINE_CLASS_FACTORY_NO_ALIAS(ServiceApiGroup,
-                              chaos::metadata_service::api::AbstractApiGroup);
+API_PROXY_CD_DEFINITION(DeleteSnapshot,
+                        "service",
+                        "deleteSnapshot")
 
-ServiceApiGroup::ServiceApiGroup():
-AbstractApiGroup("service"){
-    addApi<ResetAll>();
-    addApi<GetAllSnapshot>();
-    addApi<RestoreSnapshot>();
-    addApi<CreateNewSnapshot>();
-}
-
-ServiceApiGroup::~ServiceApiGroup() {
-
+/*!
+ 
+ */
+ApiProxyResult DeleteSnapshot::execute(const std::string& snapshot_name) {
+    common::data::CDataWrapper *message = new common::data::CDataWrapper();
+    message->addStringValue("snapshot_name", snapshot_name);
+    return callApi(message);
 }

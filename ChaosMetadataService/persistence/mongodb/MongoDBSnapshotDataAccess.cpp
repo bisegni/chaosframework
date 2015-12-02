@@ -149,3 +149,41 @@ int MongoDBSnapshotDataAccess::getSnapshotWorkingState(const std::string& snapsh
     
     return err;
 }
+
+int MongoDBSnapshotDataAccess::getAllSnapshot(chaos::metadata_service::persistence::data_access::SnapshotList& snapshot_desriptions) {
+    int err = 0;
+    try {
+        
+        //we first need to fetch all node uid attacched to the snapshot
+        mongo::BSONObj q;
+        
+        //! project only the node id
+        mongo::BSONObj prj = BSON("snap_name" << 1 << "snap_ts" << 1 << "job_concurency" << 1);
+        
+        DEBUG_CODE(MDBDSDA_DBG<<log_message("getAllSnapshot",
+                                            "qury",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "prj",
+                                                                    q.jsonString(),
+                                                                    prj.jsonString()));)
+        
+        std::auto_ptr<mongo::DBClientCursor> query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT_DATA),
+                                                                              q,
+                                                                              0,
+                                                                              0,
+                                                                              &prj);
+        while(query_result->more()) {
+            mongo::BSONObj n = query_result->next();
+            snapshot_desriptions.push_back(chaos::metadata_service::persistence::data_access::SnapshotElementPtr(new CDataWrapper(n.objdata())));
+        }
+        
+    } catch (const mongo::DBException &e) {
+        MDBDSDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBDSDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    
+    return err;
+}

@@ -19,7 +19,6 @@
  */
 
 #include "CreateNewSnapshot.h"
-#include "../../batch/general/RestoreSnapshotBatch.h"
 
 #define S_CNS_INFO INFO_LOG(RestoreSnapshot)
 #define S_CNS_DBG  DBG_LOG(RestoreSnapshot)

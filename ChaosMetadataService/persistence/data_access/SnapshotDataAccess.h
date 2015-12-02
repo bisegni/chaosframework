@@ -23,12 +23,17 @@
 
 #include "../persistence.h"
 
+#include <chaos/common/chaos_types.h>
+
 namespace chaos {
     namespace metadata_service {
         namespace persistence {
             namespace data_access {
                 
                 class DataServiceDataAccess;
+                
+                typedef boost::shared_ptr<common::data::CDataWrapper> SnapshotElementPtr;
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(SnapshotElementPtr, SnapshotList)
                 
                 class SnapshotDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
@@ -75,6 +80,9 @@ namespace chaos {
                      \param work_free is true is the snapshot is finished to be elaborated
                      */
                     virtual int getSnapshotWorkingState(const std::string& snapshot_name, bool& work_free) = 0;
+                    
+                    //! Return all shapshot
+                    virtual int getAllSnapshot(SnapshotList& snapshot_desriptions) = 0;
                 };
                 
             }

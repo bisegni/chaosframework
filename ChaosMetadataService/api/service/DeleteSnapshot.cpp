@@ -19,7 +19,6 @@
  */
 
 #include "DeleteSnapshot.h"
-#include "../../batch/general/RestoreSnapshotBatch.h"
 
 #define S_DS_INFO INFO_LOG(DeleteSnapshot)
 #define S_DS_DBG  DBG_LOG(DeleteSnapshot)

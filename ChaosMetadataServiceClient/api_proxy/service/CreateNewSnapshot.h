@@ -1,5 +1,5 @@
 /*
- *	ResetAll.h
+ *	CreateNewSnapshot.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,10 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__ResetAll__
-#define __CHAOSFramework__ResetAll__
+#ifndef __MetadataServiceClient__CreateNewSnapshot_h
+#define __MetadataServiceClient__CreateNewSnapshot_h
+
+#include <chaos/common/chaos_types.h>
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
@@ -28,19 +30,22 @@ namespace chaos {
         namespace api_proxy {
             namespace service {
                 
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, SnapshotNodeList)
+                
                 //! Reset all metadata service backend database
-                class ResetAll:
+                class CreateNewSnapshot:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(ResetAll)
+                    API_PROXY_CLASS(CreateNewSnapshot)
                 protected:
-                    API_PROXY_CD_DECLARATION(ResetAll)
+                    API_PROXY_CD_DECLARATION(CreateNewSnapshot)
                 public:
                     
-                    ApiProxyResult execute();
+                    ApiProxyResult execute(const std::string& snapshot_name,
+                                           const SnapshotNodeList& node_list);
                 };
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__ResetAll__) */
+#endif /* CreateNewSnapshot_h */

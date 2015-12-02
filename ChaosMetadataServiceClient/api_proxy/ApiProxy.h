@@ -48,6 +48,19 @@ x::~x(){}
             //! define the result of an api like shared pointer of @chaos::common::message::MessageRequestFuture
             typedef auto_ptr<chaos::common::message::MultiAddressMessageRequestFuture> ApiProxyResult;
             
+            class ApiResultHelper {
+            protected:
+                ApiProxyResult api_result;
+                int error;
+                std::string error_message;
+                std::string error_domain;
+            public:
+                ApiResultHelper(ApiProxyResult _api_result);
+                virtual ~ApiResultHelper();
+                
+                virtual int update();
+            };
+            
             class ApiProxyManager;
                 //! base class for all proxy api
             class ApiProxy {

@@ -58,6 +58,9 @@ namespace chaos {
                     // inherited method
                     int getSnapshotWorkingState(const std::string& snapshot_name,
                                                 bool& work_free);
+                    
+                    //! Return all shapshot
+                    int getAllSnapshot(chaos::metadata_service::persistence::data_access::SnapshotList& snapshot_desriptions);
                 };
                 
             }

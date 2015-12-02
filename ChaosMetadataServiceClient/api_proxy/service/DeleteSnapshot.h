@@ -1,5 +1,5 @@
 /*
- *	ResetAll.h
+ *	DeleteSnapshot.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__ResetAll__
-#define __CHAOSFramework__ResetAll__
+#ifndef __MetadataServiceClient__DeleteSnapshot_h
+#define __MetadataServiceClient__DeleteSnapshot_h
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
@@ -29,18 +29,18 @@ namespace chaos {
             namespace service {
                 
                 //! Reset all metadata service backend database
-                class ResetAll:
+                class DeleteSnapshot:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(ResetAll)
+                    API_PROXY_CLASS(DeleteSnapshot)
                 protected:
-                    API_PROXY_CD_DECLARATION(ResetAll)
+                    API_PROXY_CD_DECLARATION(DeleteSnapshot)
                 public:
                     
-                    ApiProxyResult execute();
+                    ApiProxyResult execute(const std::string& snapshot_name);
                 };
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__ResetAll__) */
+#endif /* DeleteSnapshot_h */
