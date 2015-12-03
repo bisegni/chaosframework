@@ -42,7 +42,9 @@ value_buffer(NULL),
 size(_size),
 name(_name),
 index(_index),
+buf_size(0),
 type(_type) {
+    
     if(size) {
         //elarge memory buffer and clear it
         if(!setNewSize(size, true)) {
@@ -56,7 +58,11 @@ type(_type) {
  
  ---------------------------------------------------------------------------------*/
 AttributeValue::~AttributeValue() {
-    if(value_buffer) free(value_buffer);
+    if(value_buffer) {
+        buf_size =0;
+        size=0;
+        free(value_buffer);
+    }
 }
 
 /*---------------------------------------------------------------------------------
@@ -69,6 +75,10 @@ bool AttributeValue::setValue(const void* value_ptr,
         value_size = size;
     }
     CHAOS_ASSERT(value_buffer)
+    
+    
+    if(setNewSize(value_size,false)==false)
+        return false;
     
     //copy the new value
     std::memcpy(value_buffer, value_ptr, value_size);
@@ -84,13 +94,20 @@ bool AttributeValue::setValue(const void* value_ptr,
 bool AttributeValue::setNewSize(uint32_t _new_size,
                                 bool clear_mem) {
     bool result = true;
-    // generate aligned memory allocations
-    size = _new_size + (4 - (_new_size%4));
-    value_buffer = (void*)realloc(value_buffer, size );
+    if(_new_size<buf_size){
+        size=_new_size;
+        return true;
+    }
+   // generate aligned memory allocations
+
+    buf_size = _new_size + ((_new_size%4)?(4 - (_new_size%4)):0);
+    
+    size = _new_size;
+    value_buffer = (void*)realloc(value_buffer, buf_size );
     if((result = (value_buffer != NULL))) {
         if(clear_mem) {
             //in case of string we reset the intere memory space
-            std::memset(value_buffer, 0, size);
+            std::memset(value_buffer, 0, buf_size);
         }
     }
     return result;

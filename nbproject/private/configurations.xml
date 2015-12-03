@@ -149,13 +149,23 @@
         <df name="bin_cutoolkit">
           <df name="CMakeFiles">
             <df name="chaos_cutoolkit.dir">
+              <df name="command_manager">
+              </df>
               <df name="CommandManager">
+              </df>
+              <df name="control_manager">
+                <df name="slow_command">
+                  <df name="command">
+                  </df>
+                </df>
               </df>
               <df name="ControlManager">
                 <df name="slow_command">
                   <df name="command">
                   </df>
                 </df>
+              </df>
+              <df name="data_manager">
               </df>
               <df name="DataManager">
               </df>
@@ -1162,23 +1172,16 @@
           <in>version.h</in>
         </df>
         <df name="cu_toolkit">
-          <df name="CommandManager">
+          <df name="command_manager">
             <in>CommandManager.cpp</in>
             <in>CommandManager.h</in>
             <in>CommandManagerDefaultAdapters.h</in>
           </df>
-          <df name="ControlManager">
-            <df name="handler">
-              <in>DSAttributeHandler.cpp</in>
-            </df>
-            <df name="perf_test">
-              <in>PerfTestCU.cpp</in>
-            </df>
+          <df name="control_manager">
             <df name="slow_command">
               <df name="command">
                 <in>SCWaitCommand.cpp</in>
                 <in>SCWaitCommand.h</in>
-                <in>SetAttributeCommand.cpp</in>
               </df>
               <in>SlowCommand.cpp</in>
               <in>SlowCommand.h</in>
@@ -1191,7 +1194,6 @@
             <in>AttributeSharedCacheWrapper.h</in>
             <in>ControlManager.cpp</in>
             <in>ControlManager.h</in>
-            <in>DSAttributeHandlerExecutionEngine.cpp</in>
             <in>IOCU.cpp</in>
             <in>IOCU.h</in>
             <in>RTAbstractControlUnit.cpp</in>
@@ -1201,16 +1203,12 @@
             <in>WorkUnitManagement.cpp</in>
             <in>WorkUnitManagement.h</in>
           </df>
-          <df name="DataManager">
-            <df name="DataBuffer">
-              <in>OutputDataBuffer.cpp</in>
-            </df>
+          <df name="data_manager">
             <in>DataManager.cpp</in>
             <in>DataManager.h</in>
             <in>DataManagerException.h</in>
             <in>KeyDataStorage.cpp</in>
             <in>KeyDataStorage.h</in>
-            <in>MultiBufferDataStorage.cpp</in>
           </df>
           <df name="driver_manager">
             <df name="driver">
@@ -25586,50 +25584,49 @@
                 <in>version.h</in>
               </df>
               <df name="cu_toolkit">
-                <df name="CommandManager">
-                  <in>CommandManager.cpp</in>
+                <df name="command_manager">
                   <in>CommandManager.h</in>
                   <in>CommandManagerDefaultAdapters.h</in>
                 </df>
-                <df name="ControlManager">
-                  <df name="handler">
-                    <in>DSAttributeHandler.cpp</in>
-                  </df>
-                  <df name="perf_test">
-                    <in>PerfTestCU.cpp</in>
-                  </df>
+                <df name="CommandManager">
+                  <in>CommandManager.h</in>
+                  <in>CommandManagerDefaultAdapters.h</in>
+                </df>
+                <df name="control_manager">
                   <df name="slow_command">
-                    <df name="command">
-                      <in>SetAttributeCommand.cpp</in>
-                    </df>
-                    <in>SlowCommand.cpp</in>
                     <in>SlowCommand.h</in>
-                    <in>SlowCommandExecutor.cpp</in>
                     <in>SlowCommandExecutor.h</in>
                   </df>
-                  <in>AbstractControlUnit.cpp</in>
                   <in>AbstractControlUnit.h</in>
                   <in>AttributeSharedCacheWrapper.h</in>
-                  <in>ControlManager.cpp</in>
                   <in>ControlManager.h</in>
-                  <in>DSAttributeHandlerExecutionEngine.cpp</in>
                   <in>IOCU.h</in>
-                  <in>RTAbstractControlUnit.cpp</in>
                   <in>RTAbstractControlUnit.h</in>
-                  <in>SCAbstractControlUnit.cpp</in>
                   <in>SCAbstractControlUnit.h</in>
                   <in>WorkUnitManagement.h</in>
                 </df>
-                <df name="DataManager">
-                  <df name="DataBuffer">
-                    <in>OutputDataBuffer.cpp</in>
+                <df name="ControlManager">
+                  <df name="slow_command">
+                    <in>SlowCommand.h</in>
+                    <in>SlowCommandExecutor.h</in>
                   </df>
-                  <in>DataManager.cpp</in>
+                  <in>AbstractControlUnit.h</in>
+                  <in>AttributeSharedCacheWrapper.h</in>
+                  <in>ControlManager.h</in>
+                  <in>IOCU.h</in>
+                  <in>RTAbstractControlUnit.h</in>
+                  <in>SCAbstractControlUnit.h</in>
+                  <in>WorkUnitManagement.h</in>
+                </df>
+                <df name="data_manager">
                   <in>DataManager.h</in>
                   <in>DataManagerException.h</in>
-                  <in>KeyDataStorage.cpp</in>
                   <in>KeyDataStorage.h</in>
-                  <in>MultiBufferDataStorage.cpp</in>
+                </df>
+                <df name="DataManager">
+                  <in>DataManager.h</in>
+                  <in>DataManagerException.h</in>
+                  <in>KeyDataStorage.h</in>
                 </df>
                 <df name="driver_manager">
                   <df name="driver">
@@ -26580,13 +26577,23 @@
         <df name="bin_cutoolkit">
           <df name="CMakeFiles">
             <df name="chaos_cutoolkit.dir">
+              <df name="command_manager">
+              </df>
               <df name="CommandManager">
+              </df>
+              <df name="control_manager">
+                <df name="slow_command">
+                  <df name="command">
+                  </df>
+                </df>
               </df>
               <df name="ControlManager">
                 <df name="slow_command">
                   <df name="command">
                   </df>
                 </df>
+              </df>
+              <df name="data_manager">
               </df>
               <df name="DataManager">
               </df>
@@ -26904,15 +26911,15 @@
           </df>
         </df>
         <df name="cu_toolkit">
-          <df name="CommandManager">
+          <df name="command_manager">
           </df>
-          <df name="ControlManager">
+          <df name="control_manager">
             <df name="slow_command">
               <df name="command">
               </df>
             </df>
           </df>
-          <df name="DataManager">
+          <df name="data_manager">
           </df>
           <df name="driver_manager">
             <df name="driver">
@@ -28947,11 +28954,19 @@
                 </df>
               </df>
               <df name="cu_toolkit">
+                <df name="command_manager">
+                </df>
                 <df name="CommandManager">
+                </df>
+                <df name="control_manager">
+                  <df name="slow_command">
+                  </df>
                 </df>
                 <df name="ControlManager">
                   <df name="slow_command">
                   </df>
+                </df>
+                <df name="data_manager">
                 </df>
                 <df name="DataManager">
                 </df>

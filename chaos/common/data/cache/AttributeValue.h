@@ -52,6 +52,8 @@ namespace chaos{
 					//! the size of value
 					uint32_t							size;
 					
+                                        //! the size of the buffer
+					uint32_t							buf_size;
 					//! is the datatype that represent the value
 					const chaos::DataType::DataType     type;
 					
