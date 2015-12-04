@@ -934,7 +934,7 @@ int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
             
         }
     }
-    LDBG_<<"range info "<<rangeInfo.name<<",binType:"<< rangeInfo.binType ;
+
 
     return 0;
 }
