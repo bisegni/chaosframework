@@ -56,7 +56,7 @@ void SnapshotManager::on_pushButtonNewSnapshot_clicked() {
 void SnapshotManager::on_pushButtonDeleteSnapshot_clicked() {
     QModelIndexList selected_snapshots = ui->tableViewSnapshotList->selectionModel()->selectedRows();
     foreach(QModelIndex snap, selected_snapshots) {
-        QString snap_name = snapshot_table_model.getCellData(snap.row(), 0);
+        QString snap_name = snapshot_table_model.getCellData(snap.row(), 0).toString();
         submitApiResult(TAG_DELETE_SNAPSHOT,
                         GET_CHAOS_API_PTR(service::DeleteSnapshot)->execute(snap_name.toStdString()));
     }
