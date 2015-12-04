@@ -50,15 +50,10 @@ x::~x(){}
             
             class ApiResultHelper {
             protected:
-                ApiProxyResult api_result;
-                int error;
-                std::string error_message;
-                std::string error_domain;
+                chaos::common::data::CDataWrapper *api_result;
             public:
-                ApiResultHelper(ApiProxyResult _api_result);
+                ApiResultHelper(chaos::common::data::CDataWrapper *_api_result);
                 virtual ~ApiResultHelper();
-                
-                virtual int update();
             };
             
             class ApiProxyManager;

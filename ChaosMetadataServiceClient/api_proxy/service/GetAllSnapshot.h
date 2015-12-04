@@ -39,14 +39,11 @@ namespace chaos {
                 typedef boost::shared_ptr<SnapshotInformation> SnapshotInformationPtr;
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(SnapshotInformationPtr, SnapshotInfoList);
                 
-                class GetAllSnapshotHelper:
-                public ApiResultHelper {
+                class GetAllSnapshotHelper {
                     SnapshotInfoList snapshot_list;
                 public:
-                    GetAllSnapshotHelper(ApiProxyResult _api_result);
+                    GetAllSnapshotHelper(chaos::common::data::CDataWrapper *api_result);
                     ~GetAllSnapshotHelper();
-                    
-                    int update();
                     size_t getSnapshotListSize();
                     const SnapshotInfoList& getSnapshotInfoList();
                 };
@@ -61,7 +58,7 @@ namespace chaos {
                     
                     ApiProxyResult execute(const std::string& query_filter = std::string());
                     
-                    static std::auto_ptr<GetAllSnapshotHelper> getHelper(ApiProxyResult _api_result);
+                    static std::auto_ptr<GetAllSnapshotHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };
             }
         }

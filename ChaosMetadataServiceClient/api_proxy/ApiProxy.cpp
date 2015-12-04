@@ -21,16 +21,11 @@
 using namespace chaos::metadata_service_client::api_proxy;
 
 
-ApiResultHelper::ApiResultHelper(ApiProxyResult _api_result):
+ApiResultHelper::ApiResultHelper(chaos::common::data::CDataWrapper *_api_result):
 api_result(_api_result){}
 
-ApiResultHelper::~ApiResultHelper() {}
-
-int ApiResultHelper::update() {
-    error = api_result->getError();
-    error_message = api_result->getErrorMessage();
-    error_domain = api_result->getErrorMessage();
-    return error;
+ApiResultHelper::~ApiResultHelper() {
+    if(api_result) delete(api_result);
 }
 
 //! default constructor

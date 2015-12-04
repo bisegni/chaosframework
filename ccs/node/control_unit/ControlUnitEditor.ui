@@ -535,7 +535,10 @@
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
            <attribute name="verticalHeaderDefaultSectionSize">
-            <number>20</number>
+            <number>18</number>
+           </attribute>
+           <attribute name="verticalHeaderMinimumSectionSize">
+            <number>18</number>
            </attribute>
           </widget>
          </item>

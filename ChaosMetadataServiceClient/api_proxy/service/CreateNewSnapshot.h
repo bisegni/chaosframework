@@ -39,7 +39,6 @@ namespace chaos {
                 protected:
                     API_PROXY_CD_DECLARATION(CreateNewSnapshot)
                 public:
-                    
                     ApiProxyResult execute(const std::string& snapshot_name,
                                            const SnapshotNodeList& node_list);
                 };

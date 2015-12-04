@@ -35,29 +35,18 @@ ApiProxyResult GetAllSnapshot::execute(const std::string& query_filter) {
     return callApi();
 }
 
-std::auto_ptr<GetAllSnapshotHelper> GetAllSnapshot::getHelper(ApiProxyResult _api_result) {
-    return std::auto_ptr<GetAllSnapshotHelper>(new GetAllSnapshotHelper(_api_result));
+std::auto_ptr<GetAllSnapshotHelper> GetAllSnapshot::getHelper(CDataWrapper *api_result) {
+    return std::auto_ptr<GetAllSnapshotHelper>(new GetAllSnapshotHelper(api_result));
 }
 
 
-GetAllSnapshotHelper::GetAllSnapshotHelper(ApiProxyResult _api_result):
-ApiResultHelper(_api_result){
-    //snapshot_list
-}
-
-GetAllSnapshotHelper::~GetAllSnapshotHelper() {
-    
-}
-
-int GetAllSnapshotHelper::update() {
-    int err = 0;
-    if((err = ApiResultHelper::update()))return err;
+GetAllSnapshotHelper::GetAllSnapshotHelper(CDataWrapper *api_result) {
     
     //now we have the result
     //SnapshotInformationPtr
-    if(!api_result->getResult() || !api_result->getResult()->hasKey("snapshot_list_result")) return err;
+    if(!api_result || !api_result->hasKey("snapshot_list_result")) return;
     
-    std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(api_result->getResult()->getVectorValue("snapshot_list_result"));
+    std::auto_ptr<CMultiTypeDataArrayWrapper> snapshot_desc_list(api_result->getVectorValue("snapshot_list_result"));
     for(int idx = 0;
         idx < snapshot_desc_list->size();
         idx++) {
@@ -73,8 +62,13 @@ int GetAllSnapshotHelper::update() {
         if(tmp_desc->hasKey("job_concurency")) {
             snapshot_information->work_concurency = tmp_desc->getUInt32Value("job_concurency");
         }
+
+        snapshot_list.push_back(snapshot_information);
     }
-    return err;
+}
+
+GetAllSnapshotHelper::~GetAllSnapshotHelper() {
+    
 }
 
 size_t GetAllSnapshotHelper::getSnapshotListSize() {

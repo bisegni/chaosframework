@@ -5,6 +5,7 @@
 #include "SnapshotTableModel.h"
 
 #include <QWidget>
+#include <QItemSelection>
 
 namespace Ui {
 class SnapshotManager;
@@ -23,7 +24,17 @@ public:
     explicit SnapshotManager(QWidget *parent = 0);
     ~SnapshotManager();
 
+private slots:
+    void on_pushButtonNewSnapshot_clicked();
+
+    void on_pushButtonDeleteSnapshot_clicked();
+
+    void on_pushButtonRestoreSnapshot_clicked();
+
+    void tableSelectionChanged(const QItemSelection & from, const QItemSelection & to);
 private:
+    void executeSearch();
+
     SnapshotTableModel snapshot_table_model;
     Ui::SnapshotManager *ui;
 };
