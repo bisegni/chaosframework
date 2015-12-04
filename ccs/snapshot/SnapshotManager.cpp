@@ -1,6 +1,8 @@
 #include "SnapshotManager.h"
 #include "ui_SnapshotManager.h"
 
+#include <QStandardItem>
+
 static QString TAG_SEARCH_SNAPSHOT= "t_ss";
 static QString TAG_DELETE_SNAPSHOT= "t_ds";
 
@@ -56,9 +58,10 @@ void SnapshotManager::on_pushButtonNewSnapshot_clicked() {
 void SnapshotManager::on_pushButtonDeleteSnapshot_clicked() {
     QModelIndexList selected_snapshots = ui->tableViewSnapshotList->selectionModel()->selectedRows();
     foreach(QModelIndex snap, selected_snapshots) {
-        QString snap_name = snapshot_table_model.getCellData(snap.row(), 0).toString();
-        submitApiResult(TAG_DELETE_SNAPSHOT,
-                        GET_CHAOS_API_PTR(service::DeleteSnapshot)->execute(snap_name.toStdString()));
+        //QStandardItem *snap_name_item = snapshot_table_model.data(QModelIndex(snap.row(), 0));
+        //QString snap_name = snap_name_item.data().toString();
+        //submitApiResult(TAG_DELETE_SNAPSHOT,
+                       // GET_CHAOS_API_PTR(service::DeleteSnapshot)->execute(snap_name.toStdString()));
     }
 }
 
