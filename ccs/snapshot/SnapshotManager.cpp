@@ -2,6 +2,7 @@
 #include "ui_SnapshotManager.h"
 
 static QString TAG_SEARCH_SNAPSHOT= "t_ss";
+static QString TAG_DELETE_SNAPSHOT= "t_ds";
 
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -53,7 +54,12 @@ void SnapshotManager::on_pushButtonNewSnapshot_clicked() {
 }
 
 void SnapshotManager::on_pushButtonDeleteSnapshot_clicked() {
-
+    QModelIndexList selected_snapshots = ui->tableViewSnapshotList->selectionModel()->selectedRows();
+    foreach(QModelIndex snap, selected_snapshots) {
+        QString snap_name = snapshot_table_model.getCellData(snap.row(), 0);
+        submitApiResult(TAG_DELETE_SNAPSHOT,
+                        GET_CHAOS_API_PTR(service::DeleteSnapshot)->execute(snap_name.toStdString()));
+    }
 }
 
 void SnapshotManager::on_pushButtonRestoreSnapshot_clicked() {
