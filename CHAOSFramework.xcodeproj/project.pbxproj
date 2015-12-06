@@ -6,6 +6,30 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		3211C65B1C146200003B38BF /* Compile ALL */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 3211C65E1C146200003B38BF /* Build configuration list for PBXAggregateTarget "Compile ALL" */;
+			buildPhases = (
+			);
+			dependencies = (
+				3211C6781C146252003B38BF /* PBXTargetDependency */,
+				3211C67A1C146252003B38BF /* PBXTargetDependency */,
+				3211C67C1C146252003B38BF /* PBXTargetDependency */,
+				3211C67E1C146252003B38BF /* PBXTargetDependency */,
+				3211C6801C146252003B38BF /* PBXTargetDependency */,
+				3211C6821C146252003B38BF /* PBXTargetDependency */,
+				3211C6841C146252003B38BF /* PBXTargetDependency */,
+				3211C6861C146252003B38BF /* PBXTargetDependency */,
+				3211C6881C146252003B38BF /* PBXTargetDependency */,
+				3211C68A1C146252003B38BF /* PBXTargetDependency */,
+				3211C68C1C146252003B38BF /* PBXTargetDependency */,
+			);
+			name = "Compile ALL";
+			productName = "Compile ALL";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		32033D6F1A651DCC004F1B7D /* HTTPWANInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D691A651DCC004F1B7D /* HTTPWANInterface.cpp */; };
 		32033D711A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D6D1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp */; };
@@ -736,6 +760,170 @@
 		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
 		53DADAAF19C8676C00E13DB2 /* SingletonOnArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3211C65F1C14620E003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6611C146217003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6631C14621E003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6651C146223003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6671C146229003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 32661C651AA73D5B00F1A721;
+			remoteInfo = chaos_metadata_service_client;
+		};
+		3211C6691C14622C003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C66B1C146232003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C66D1C146238003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C66F1C14623E003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6711C146245003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6731C146245003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3260278614B307DA00C906CE;
+			remoteInfo = chaos_uitoolkit;
+		};
+		3211C6751C14624A003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3260278614B307DA00C906CE;
+			remoteInfo = chaos_uitoolkit;
+		};
+		3211C6771C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6791C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3260276514B3068100C906CE;
+			remoteInfo = chaos_cutoolkit;
+		};
+		3211C67B1C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3260278614B307DA00C906CE;
+			remoteInfo = chaos_uitoolkit;
+		};
+		3211C67D1C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 323236C6164573C60052CE06;
+			remoteInfo = ChaosMetadataService;
+		};
+		3211C67F1C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 32661C651AA73D5B00F1A721;
+			remoteInfo = chaos_metadata_service_client;
+		};
+		3211C6811C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 322085D91AC5A0E100F1B71A;
+			remoteInfo = ChaosMetadataServiceClientTest;
+		};
+		3211C6831C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 32C7EAD31A5D9E450008DFE8;
+			remoteInfo = ChaosWANProxy;
+		};
+		3211C6851C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 323236D5164573F50052CE06;
+			remoteInfo = ChaosDataService;
+		};
+		3211C6871C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 32B1090C188C1D6200969D3D;
+			remoteInfo = TestAsyncRpc;
+		};
+		3211C6891C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3258AEFF1935EE4C00A66D44;
+			remoteInfo = EchitectureTests;
+		};
+		3211C68B1C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 32809C6B1A97433E00C02C12;
+			remoteInfo = TestCDSQuery;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		322085D81AC5A0E100F1B71A /* CopyFiles */ = {
@@ -4158,6 +4346,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6681C146229003B38BF /* PBXTargetDependency */,
 			);
 			name = ChaosMetadataServiceClientTest;
 			productName = ChaosMetadataServiceClientTest;
@@ -4174,6 +4363,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6641C14621E003B38BF /* PBXTargetDependency */,
 			);
 			name = ChaosMetadataService;
 			productName = ChaosNodeDirectory;
@@ -4190,6 +4380,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C66C1C146232003B38BF /* PBXTargetDependency */,
 			);
 			name = ChaosDataService;
 			productName = ChaosHSTService;
@@ -4207,6 +4398,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6761C14624A003B38BF /* PBXTargetDependency */,
+				3211C6701C14623E003B38BF /* PBXTargetDependency */,
 			);
 			name = EchitectureTests;
 			productName = EchitectureTests;
@@ -4242,6 +4435,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6601C14620E003B38BF /* PBXTargetDependency */,
 			);
 			name = chaos_cutoolkit;
 			productName = chaos_cutoolkit;
@@ -4259,6 +4453,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6621C146217003B38BF /* PBXTargetDependency */,
 			);
 			name = chaos_uitoolkit;
 			productName = chaos_uitoolkit;
@@ -4276,6 +4471,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6661C146223003B38BF /* PBXTargetDependency */,
 			);
 			name = chaos_metadata_service_client;
 			productName = ChaosMetadataServiceClient;
@@ -4293,6 +4489,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6721C146245003B38BF /* PBXTargetDependency */,
+				3211C6741C146245003B38BF /* PBXTargetDependency */,
 			);
 			name = TestCDSQuery;
 			productName = TestCDSQuery;
@@ -4310,6 +4508,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C66E1C146238003B38BF /* PBXTargetDependency */,
 			);
 			name = TestAsyncRpc;
 			productName = TestAsyncRpc;
@@ -4327,6 +4526,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C66A1C14622C003B38BF /* PBXTargetDependency */,
 			);
 			name = ChaosWANProxy;
 			productName = ChaosWANProxy;
@@ -4342,6 +4542,9 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = INFN;
 				TargetAttributes = {
+					3211C65B1C146200003B38BF = {
+						CreatedOnToolsVersion = 7.1.1;
+					};
 					322085D91AC5A0E100F1B71A = {
 						CreatedOnToolsVersion = 6.2;
 					};
@@ -4379,6 +4582,7 @@
 				32B1090C188C1D6200969D3D /* TestAsyncRpc */,
 				3258AEFF1935EE4C00A66D44 /* EchitectureTests */,
 				32809C6B1A97433E00C02C12 /* TestCDSQuery */,
+				3211C65B1C146200003B38BF /* Compile ALL */,
 			);
 		};
 /* End PBXProject section */
@@ -4852,7 +5056,139 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		3211C6601C14620E003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C65F1C14620E003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6621C146217003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C6611C146217003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6641C14621E003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C6631C14621E003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6661C146223003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C6651C146223003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6681C146229003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 32661C651AA73D5B00F1A721 /* chaos_metadata_service_client */;
+			targetProxy = 3211C6671C146229003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C66A1C14622C003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C6691C14622C003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C66C1C146232003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C66B1C146232003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C66E1C146238003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C66D1C146238003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6701C14623E003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C66F1C14623E003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6721C146245003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C6711C146245003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6741C146245003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3260278614B307DA00C906CE /* chaos_uitoolkit */;
+			targetProxy = 3211C6731C146245003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6761C14624A003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3260278614B307DA00C906CE /* chaos_uitoolkit */;
+			targetProxy = 3211C6751C14624A003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6781C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C6771C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C67A1C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3260276514B3068100C906CE /* chaos_cutoolkit */;
+			targetProxy = 3211C6791C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C67C1C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3260278614B307DA00C906CE /* chaos_uitoolkit */;
+			targetProxy = 3211C67B1C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C67E1C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 323236C6164573C60052CE06 /* ChaosMetadataService */;
+			targetProxy = 3211C67D1C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6801C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 32661C651AA73D5B00F1A721 /* chaos_metadata_service_client */;
+			targetProxy = 3211C67F1C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6821C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 322085D91AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */;
+			targetProxy = 3211C6811C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6841C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 32C7EAD31A5D9E450008DFE8 /* ChaosWANProxy */;
+			targetProxy = 3211C6831C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6861C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 323236D5164573F50052CE06 /* ChaosDataService */;
+			targetProxy = 3211C6851C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6881C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 32B1090C188C1D6200969D3D /* TestAsyncRpc */;
+			targetProxy = 3211C6871C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C68A1C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3258AEFF1935EE4C00A66D44 /* EchitectureTests */;
+			targetProxy = 3211C6891C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C68C1C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 32809C6B1A97433E00C02C12 /* TestCDSQuery */;
+			targetProxy = 3211C68B1C146252003B38BF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		3211C65C1C146200003B38BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		3211C65D1C146200003B38BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		322085DE1AC5A0E200F1B71A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4895,17 +5231,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lzmq",
-					"-lboost_log",
 					"-lchaos_metadata_service_client",
 					"-lchaos_common",
-					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -4949,17 +5276,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lzmq",
-					"-lboost_log",
 					"-lchaos_metadata_service_client",
 					"-lchaos_common",
-					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -4998,17 +5316,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
 					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
-					"-lboost_log_setup",
 					"-lmongoclient",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -5041,17 +5350,8 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
 					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
-					"-lboost_log_setup",
 					"-lmongoclient",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -5091,17 +5391,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
 					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
 					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
-					"-lboost_log_setup",
 					"-lcouchbase",
 					"-lmongoclient",
 				);
@@ -5135,17 +5427,9 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
 					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
 					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
-					"-lboost_log_setup",
 					"-lcouchbase",
 					"-lmongoclient",
 				);
@@ -5192,19 +5476,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = "";
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lchaos_common",
-					"-lchaos_uitoolkit",
-					"-lboost_log_setup",
-					"-lboost_log",
-					"-lzmq",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5243,19 +5515,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = "";
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lchaos_common",
-					"-lchaos_uitoolkit",
-					"-lboost_log_setup",
-					"-lboost_log",
-					"-lzmq",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5265,7 +5525,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libstdc++";
-				GCC_PREPROCESSOR_DEFINITIONS = BOOST_ALL_DYN_LINK;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				ONLY_ACTIVE_ARCH = YES;
 			};
 			name = Debug;
@@ -5274,7 +5534,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libstdc++";
-				GCC_PREPROCESSOR_DEFINITIONS = BOOST_ALL_DYN_LINK;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 			};
 			name = Release;
 		};
@@ -5289,6 +5549,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -5338,7 +5599,8 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = BOOST_ALL_DYN_LINK;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -5401,18 +5663,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lboost_log",
-					"-lboost_log_setup",
-					"-lchaos_common",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5442,18 +5693,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lboost_log",
-					"-lboost_log_setup",
-					"-lchaos_common",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5489,18 +5729,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lboost_log",
-					"-lboost_log_setup",
-					"-lchaos_common",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5529,18 +5758,7 @@
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lboost_log",
-					"-lboost_log_setup",
-					"-lchaos_common",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5590,18 +5808,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lboost_log",
-					"-lchaos_common",
-					"-lboost_log_setup",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5646,18 +5853,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lboost_log",
-					"-lchaos_common",
-					"-lboost_log_setup",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5704,19 +5900,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
-					"-lboost_log_setup",
-					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -5759,19 +5944,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
-					"-lboost_log_setup",
-					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -5816,19 +5990,8 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
-					"-lboost_log_setup",
-					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -5868,19 +6031,8 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
-					"-lboost_log_setup",
-					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -5929,17 +6081,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
-					"-lboost_log_setup",
 					"-lmongoose",
 					"-ljsoncpp",
 				);
@@ -5986,17 +6128,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
-					"-lboost_log_setup",
 					"-lmongoose",
 					"-ljsoncpp",
 				);
@@ -6008,6 +6140,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3211C65E1C146200003B38BF /* Build configuration list for PBXAggregateTarget "Compile ALL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3211C65C1C146200003B38BF /* Debug */,
+				3211C65D1C146200003B38BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		322085E01AC5A0E200F1B71A /* Build configuration list for PBXNativeTarget "ChaosMetadataServiceClientTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -17,7 +17,11 @@ SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
                         api/AbstractApiGroup.cpp)
 
 SET(cnd_src  ${cnd_src}	api/service/ServiceApiGroup.cpp
-						api/service/ResetAll.cpp)
+						api/service/ResetAll.cpp
+                        api/service/GetAllSnapshot.cpp
+                        api/service/RestoreSnapshot.cpp
+                        api/service/CreateNewSnapshot.cpp
+                        api/service/DeleteSnapshot.cpp)
 
 SET(cnd_src  ${cnd_src}	api/healt/HealtApiGroup.cpp
                         api/healt/ProcessHello.cpp
@@ -98,7 +102,7 @@ SET(cnd_src  ${cnd_src}	batch/control_unit/RegistrationAckBatchCommand.cpp
                         batch/control_unit/ApplyChangeSet.cpp
                         batch/control_unit/RecoverError.cpp)
 
-SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshot.cpp)
+SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp)
 
 ADD_EXECUTABLE(ChaosMetadataService ${cnd_src})
 
