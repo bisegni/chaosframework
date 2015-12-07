@@ -31,7 +31,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 typedef std::vector< boost::shared_ptr<CDataWrapper> > ResultVector;
 
 DeleteSnapshot::DeleteSnapshot():
-AbstractApi("releteSnapshot"){}
+AbstractApi("deleteSnapshot"){}
 
 DeleteSnapshot::~DeleteSnapshot() {}
 

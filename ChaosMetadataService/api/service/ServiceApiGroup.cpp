@@ -20,6 +20,7 @@
 
 #include "ResetAll.h"
 #include "GetAllSnapshot.h"
+#include "DeleteSnapshot.h"
 #include "RestoreSnapshot.h"
 #include "ServiceApiGroup.h"
 #include "CreateNewSnapshot.h"
@@ -35,6 +36,7 @@ AbstractApiGroup("service"){
     addApi<GetAllSnapshot>();
     addApi<RestoreSnapshot>();
     addApi<CreateNewSnapshot>();
+    addApi<DeleteSnapshot>();
 }
 
 ServiceApiGroup::~ServiceApiGroup() {

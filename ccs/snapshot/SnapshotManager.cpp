@@ -1,5 +1,6 @@
 #include "SnapshotManager.h"
 #include "ui_SnapshotManager.h"
+#include "NewSnapshot.h"
 
 #include <QStandardItem>
 
@@ -40,6 +41,8 @@ void SnapshotManager::onApiDone(const QString& tag,
                                 QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     if(tag.compare(TAG_SEARCH_SNAPSHOT) == 0) {
         snapshot_table_model.updateSnapshotList(std::auto_ptr<service::GetAllSnapshotHelper>(service::GetAllSnapshot::getHelper(api_result.data())));
+    } else if(tag.compare(TAG_DELETE_SNAPSHOT) == 0) {
+        executeSearch();
     }
 
     PresenterWidget::onApiDone(tag, api_result);
@@ -52,16 +55,16 @@ void SnapshotManager::executeSearch() {
 }
 
 void SnapshotManager::on_pushButtonNewSnapshot_clicked() {
-
+    addWidgetToPresenter(new NewSnapshot());
 }
 
 void SnapshotManager::on_pushButtonDeleteSnapshot_clicked() {
     QModelIndexList selected_snapshots = ui->tableViewSnapshotList->selectionModel()->selectedRows();
     foreach(QModelIndex snap, selected_snapshots) {
-        //QStandardItem *snap_name_item = snapshot_table_model.data(QModelIndex(snap.row(), 0));
-        //QString snap_name = snap_name_item.data().toString();
-        //submitApiResult(TAG_DELETE_SNAPSHOT,
-                       // GET_CHAOS_API_PTR(service::DeleteSnapshot)->execute(snap_name.toStdString()));
+        QVariant snap_name_item = snapshot_table_model.data(snap);
+        QString snap_name = snap_name_item.toString();
+        submitApiResult(TAG_DELETE_SNAPSHOT,
+                        GET_CHAOS_API_PTR(service::DeleteSnapshot)->execute(snap_name.toStdString()));
     }
 }
 
@@ -74,4 +77,8 @@ void SnapshotManager::tableSelectionChanged(const QItemSelection & from, const Q
     Q_UNUSED(to)
     ui->pushButtonDeleteSnapshot->setEnabled(ui->tableViewSnapshotList->selectionModel()->selectedRows().size());
     ui->pushButtonRestoreSnapshot->setEnabled(ui->tableViewSnapshotList->selectionModel()->selectedRows().size());
+}
+
+void SnapshotManager::on_pushButtonSearchSnapshot_clicked() {
+    executeSearch();
 }

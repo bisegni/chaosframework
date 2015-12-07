@@ -41,7 +41,6 @@ std::auto_ptr<GetAllSnapshotHelper> GetAllSnapshot::getHelper(CDataWrapper *api_
 
 
 GetAllSnapshotHelper::GetAllSnapshotHelper(CDataWrapper *api_result) {
-    
     //now we have the result
     //SnapshotInformationPtr
     if(!api_result || !api_result->hasKey("snapshot_list_result")) return;

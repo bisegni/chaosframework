@@ -32,6 +32,8 @@ private slots:
     void on_pushButtonRestoreSnapshot_clicked();
 
     void tableSelectionChanged(const QItemSelection & from, const QItemSelection & to);
+    void on_pushButtonSearchSnapshot_clicked();
+
 private:
     void executeSearch();
 

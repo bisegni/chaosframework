@@ -25,6 +25,8 @@
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/chaos_types.h>
 
+#include <boost/format.hpp>
+
 using namespace chaos::common::io;
 using namespace chaos::common::utility;
 using namespace chaos::common::network;
@@ -34,7 +36,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define SDA_DBG  DBG_LOG(SnapshotDataAccess)
 #define SDA_ERR  ERR_LOG(SnapshotDataAccess)
 
-CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, CDSList)
+CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, CDSList)
 
 DEFINE_DA_NAME(SnapshotDataAccess)
 
@@ -47,8 +49,8 @@ SnapshotDataAccess::~SnapshotDataAccess() {}
 int SnapshotDataAccess::createNewSnapshot(const std::string& snapshot_name,
                                           const std::vector<std::string> node_uid_list) {
     
-    IODataDriver *data_driver = ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName("IODirectIODriver");
-    if(data_driver == NULL) return -1;
+    std::auto_ptr<IODataDriver> data_driver(ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName("IODirectIODriver"));
+    if(data_driver.get() == NULL) return -1;
     
     int err = 0;
     CDSList best_cds;
@@ -59,7 +61,7 @@ int SnapshotDataAccess::createNewSnapshot(const std::string& snapshot_name,
     init_param.network_broker = NetworkBroker::getInstance();
     init_param.client_instance = NULL;
     init_param.endpoint_instance = NULL;
-    ((IODirectIODriver*)data_driver)->setDirectIOParam(init_param);
+    ((IODirectIODriver*)data_driver.get())->setDirectIOParam(init_param);
     try{
         data_driver->init(NULL);
         
@@ -68,7 +70,13 @@ int SnapshotDataAccess::createNewSnapshot(const std::string& snapshot_name,
         for(CDSListIterator it = best_cds.begin();
             it != best_cds.end();
             it++) {
-            ((IODirectIODriver*)data_driver)->addServerURL(*it);
+            if(!(*it)->hasKey(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR) || !(*it)->hasKey(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)) continue;
+            
+            //add endpoint
+            const std::string endpoint_addr =  boost::str(boost::format("%1%|%2%")%
+                                                    (*it)->getStringValue(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR)%
+                                                    (*it)->getInt32Value(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT));
+            ((IODirectIODriver*)data_driver.get())->addServerURL(endpoint_addr);
         }
         
         err = data_driver->createNewSnapshot(snapshot_name,
@@ -90,8 +98,8 @@ int SnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_name,
 }
 
 int SnapshotDataAccess::deleteSnapshot(const std::string& snapshot_name) {
-    IODataDriver *data_driver = ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName("IODirectIODriver");
-    if(data_driver == NULL) return -1;
+    std::auto_ptr<IODataDriver> data_driver(ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName("IODirectIODriver"));
+    if(data_driver.get() == NULL) return -1;
     
     int err = 0;
     CDSList best_cds;
@@ -102,7 +110,7 @@ int SnapshotDataAccess::deleteSnapshot(const std::string& snapshot_name) {
     init_param.network_broker = NetworkBroker::getInstance();
     init_param.client_instance = NULL;
     init_param.endpoint_instance = NULL;
-    ((IODirectIODriver*)data_driver)->setDirectIOParam(init_param);
+    ((IODirectIODriver*)data_driver.get())->setDirectIOParam(init_param);
     try{
         data_driver->init(NULL);
         
@@ -111,7 +119,13 @@ int SnapshotDataAccess::deleteSnapshot(const std::string& snapshot_name) {
         for(CDSListIterator it = best_cds.begin();
             it != best_cds.end();
             it++) {
-            ((IODirectIODriver*)data_driver)->addServerURL(*it);
+            if(!(*it)->hasKey(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR) || !(*it)->hasKey(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT)) continue;
+            
+            //add endpoint
+            const std::string endpoint_addr =  boost::str(boost::format("%1%|%2%")%
+                                                          (*it)->getStringValue(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR)%
+                                                          (*it)->getInt32Value(chaos::DataServiceNodeDefinitionKey::DS_DIRECT_IO_ENDPOINT));
+            ((IODirectIODriver*)data_driver.get())->addServerURL(endpoint_addr);
         }
         
         err = data_driver->deleteSnapshot(snapshot_name);

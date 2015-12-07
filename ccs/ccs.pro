@@ -76,7 +76,9 @@ SOURCES += main.cpp\
     preference/PreferenceMDSHostListModel.cpp \
     widget/ChaosHealtLabel.cpp \
     snapshot/SnapshotManager.cpp \
-    snapshot/SnapshotTableModel.cpp
+    snapshot/SnapshotTableModel.cpp \
+    snapshot/NewSnapshot.cpp \
+    snapshot/NodeListModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -153,7 +155,9 @@ HEADERS  += \
     preference/PreferenceMDSHostListModel.h \
     widget/ChaosHealtLabel.h \
     snapshot/SnapshotManager.h \
-    snapshot/SnapshotTableModel.h
+    snapshot/SnapshotTableModel.h \
+    snapshot/NewSnapshot.h \
+    snapshot/NodeListModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -172,7 +176,8 @@ FORMS    += \
     node/control_unit/ControlUnitCommandTemplateEditor.ui \
     node/control_unit/CommandTemplateInstanceEditor.ui \
     plot/NodeAttributePlotting.ui \
-    snapshot/SnapshotManager.ui
+    snapshot/SnapshotManager.ui \
+    snapshot/NewSnapshot.ui
 
 DISTFILES += \
     dark_orange.stylesheet \
