@@ -25,7 +25,7 @@ using namespace chaos::common::data;
 void QueryTest::init(void *init_data) throw (chaos::CException) {
     ChaosCommon<QueryTest>::init(init_data);
     
-    network_broker.reset(new NetworkBroker(), "NetworkBroker");
+    network_broker.reset(NetworkBroker::getInstance(), "NetworkBroker");
     network_broker.init(init_data, __PRETTY_FUNCTION__);
     
     chaos::common::io::IODirectIODriverInitParam io_driver_param;

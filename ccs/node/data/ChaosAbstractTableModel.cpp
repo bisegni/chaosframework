@@ -115,6 +115,10 @@ bool ChaosAbstractTableModel::isCellCheckable(const QModelIndex &index) const {
     return false;
 }
 
+bool ChaosAbstractTableModel::isCellSelectable(const QModelIndex &index) const {
+    return false;
+}
+
 Qt::ItemFlags ChaosAbstractTableModel::flags(const QModelIndex &index) const {
     Qt::ItemFlags flags = Qt::ItemIsEnabled;
     if (!index.isValid()) return flags;
@@ -122,6 +126,8 @@ Qt::ItemFlags ChaosAbstractTableModel::flags(const QModelIndex &index) const {
         flags |= Qt::ItemIsUserCheckable;
     } else if(isCellEditable(index)) {
         flags |= Qt::ItemIsEditable;
+    } else if(isCellSelectable(index)) {
+        flags |= Qt::ItemIsSelectable;
     }
     return flags;
 }

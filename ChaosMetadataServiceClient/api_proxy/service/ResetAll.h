@@ -43,5 +43,4 @@ namespace chaos {
     }
 }
 
-
 #endif /* defined(__CHAOSFramework__ResetAll__) */

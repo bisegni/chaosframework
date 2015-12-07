@@ -243,6 +243,64 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
     return err;
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+//! restore from a tag a dataset associated to a key
+int IODirectIODriver::createNewSnapshot(const std::string& snapshot_tag,
+                                        const std::vector<std::string>& node_list) {
+    int err = 0;
+    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+    IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
+    if(!next_client) return 0;
+    chaos_dio_channel::DirectIOSystemAPIGetDatasetSnapshotResultPtr snapshot_result = NULL;
+    
+    if((err = (int)next_client->system_client_channel->makeNewDatasetSnapshot(snapshot_tag,
+                                                                              node_list,
+                                                                              &snapshot_result))) {
+        IODirectIODriver_LERR_ << "Error creating snapshot:"<<snapshot_tag << " with error:" <<err;
+    } else {
+        if(snapshot_result &&
+           snapshot_result->api_result.error) {
+            err = snapshot_result->api_result.error;
+            //we have the dataaset
+            IODirectIODriver_LERR_ << "Error creating snapshot:"<<snapshot_tag << " with error:" <<snapshot_result->api_result.error << " and message:" << snapshot_result->api_result.error_message;
+        }
+    }
+    //delete the received result if there was one
+    if(snapshot_result) free(snapshot_result);
+    return err;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int IODirectIODriver::deleteSnapshot(const std::string& snapshot_tag) {
+    int err = 0;
+    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+    IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
+    if(!next_client) return 0;
+    chaos_dio_channel::DirectIOSystemAPIGetDatasetSnapshotResultPtr snapshot_result = NULL;
+    
+    if((err = (int)next_client->system_client_channel->deleteDatasetSnapshot(snapshot_tag,
+                                                                             &snapshot_result))) {
+        IODirectIODriver_LERR_ << "Error erasing snapshot:"<<snapshot_tag << " with error:" <<err;
+    } else {
+        if(snapshot_result &&
+           snapshot_result->api_result.error) {
+            err = snapshot_result->api_result.error;
+            //we have the dataaset
+            IODirectIODriver_LERR_ << "Error erasing snapshot:"<<snapshot_tag << " with error:" <<snapshot_result->api_result.error << " and message:" << snapshot_result->api_result.error_message;
+        }
+    }
+    //delete the received result if there was one
+    if(snapshot_result) free(snapshot_result);
+    return err;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void IODirectIODriver::addServerURL(const std::string& url) {
     if(!common::direct_io::DirectIOClient::checkURL(url)) {
         IODirectIODriver_LERR_ << "Url " << url << " non well formed";

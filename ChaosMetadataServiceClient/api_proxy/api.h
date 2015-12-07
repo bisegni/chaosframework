@@ -26,6 +26,10 @@
 //---include all api header
 //----------------------------servcie----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/service/ResetAll.h>
+#include <ChaosMetadataServiceClient/api_proxy/service/GetAllSnapshot.h>
+#include <ChaosMetadataServiceClient/api_proxy/service/DeleteSnapshot.h>
+#include <ChaosMetadataServiceClient/api_proxy/service/RestoreSnapshot.h>
+#include <ChaosMetadataServiceClient/api_proxy/service/CreateNewSnapshot.h>
 
 //----------------------------data service nodes---------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/data_service/NewDS.h>

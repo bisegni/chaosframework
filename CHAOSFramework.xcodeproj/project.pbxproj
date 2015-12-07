@@ -6,6 +6,30 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		3211C65B1C146200003B38BF /* Compile ALL */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 3211C65E1C146200003B38BF /* Build configuration list for PBXAggregateTarget "Compile ALL" */;
+			buildPhases = (
+			);
+			dependencies = (
+				3211C6781C146252003B38BF /* PBXTargetDependency */,
+				3211C67A1C146252003B38BF /* PBXTargetDependency */,
+				3211C67C1C146252003B38BF /* PBXTargetDependency */,
+				3211C67E1C146252003B38BF /* PBXTargetDependency */,
+				3211C6801C146252003B38BF /* PBXTargetDependency */,
+				3211C6821C146252003B38BF /* PBXTargetDependency */,
+				3211C6841C146252003B38BF /* PBXTargetDependency */,
+				3211C6861C146252003B38BF /* PBXTargetDependency */,
+				3211C6881C146252003B38BF /* PBXTargetDependency */,
+				3211C68A1C146252003B38BF /* PBXTargetDependency */,
+				3211C68C1C146252003B38BF /* PBXTargetDependency */,
+			);
+			name = "Compile ALL";
+			productName = "Compile ALL";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		32033D6F1A651DCC004F1B7D /* HTTPWANInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D691A651DCC004F1B7D /* HTTPWANInterface.cpp */; };
 		32033D711A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32033D6D1A651DCC004F1B7D /* HTTPWANInterfaceStringResponse.cpp */; };
@@ -88,6 +112,15 @@
 		32362C1D1ADC0FDF000CA079 /* ControlUnitGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32362C1B1ADC0FDF000CA079 /* ControlUnitGroup.cpp */; };
 		32362C211ADD0C45000CA079 /* SetInstanceDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32362C1F1ADD0C45000CA079 /* SetInstanceDescription.cpp */; };
 		32362C221ADD0C45000CA079 /* SetInstanceDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 32362C201ADD0C45000CA079 /* SetInstanceDescription.h */; };
+		3239EF4A1C0EFE910052BE61 /* RestoreSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3239EF481C0EFE910052BE61 /* RestoreSnapshot.cpp */; };
+		3239EF4B1C0EFE910052BE61 /* RestoreSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 3239EF491C0EFE910052BE61 /* RestoreSnapshot.h */; };
+		3239EF4E1C0EFEA60052BE61 /* CreateNewSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3239EF4C1C0EFEA60052BE61 /* CreateNewSnapshot.cpp */; };
+		3239EF4F1C0EFEA60052BE61 /* CreateNewSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 3239EF4D1C0EFEA60052BE61 /* CreateNewSnapshot.h */; };
+		3239EF521C0EFEB20052BE61 /* DeleteSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3239EF501C0EFEB20052BE61 /* DeleteSnapshot.cpp */; };
+		3239EF531C0EFEB20052BE61 /* DeleteSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 3239EF511C0EFEB20052BE61 /* DeleteSnapshot.h */; };
+		3239EF561C0F1E190052BE61 /* GetAllSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3239EF541C0F1E190052BE61 /* GetAllSnapshot.cpp */; };
+		3239EF591C0F26D90052BE61 /* GetAllSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3239EF571C0F26D90052BE61 /* GetAllSnapshot.cpp */; };
+		3239EF5A1C0F26D90052BE61 /* GetAllSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 3239EF581C0F26D90052BE61 /* GetAllSnapshot.h */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
@@ -659,6 +692,12 @@
 		32DF604415E1502700312C94 /* CommandEventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF604215E1502700312C94 /* CommandEventDescriptor.h */; };
 		32DF604715E1505F00312C94 /* CustomEventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DF604515E1505E00312C94 /* CustomEventDescriptor.cpp */; };
 		32DF604815E1505F00312C94 /* CustomEventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF604615E1505F00312C94 /* CustomEventDescriptor.h */; };
+		32E09CED1C0DB2800069752F /* SnapshotDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CEB1C0DB2800069752F /* SnapshotDataAccess.cpp */; };
+		32E09CF01C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CEE1C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp */; };
+		32E09CF41C0DE2890069752F /* RestoreSnapshotBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CF21C0DE2890069752F /* RestoreSnapshotBatch.cpp */; };
+		32E09CF71C0DED340069752F /* RestoreSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CF51C0DED340069752F /* RestoreSnapshot.cpp */; };
+		32E09CFB1C0E002F0069752F /* CreateNewSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CF91C0E002F0069752F /* CreateNewSnapshot.cpp */; };
+		32E09CFE1C0E05E60069752F /* DeleteSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CFC1C0E05E60069752F /* DeleteSnapshot.cpp */; };
 		32E0EF3718CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E0EF3518CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp */; };
 		32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */; };
 		32E5D24D1A75664C0001E97F /* ObjectQueueTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32ABC2681A73FB83008DB3A7 /* ObjectQueueTest.cpp */; };
@@ -721,6 +760,170 @@
 		32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3E61B00CEE100C57E07 /* QuantumSlotScheduler.cpp */; };
 		53DADAAF19C8676C00E13DB2 /* SingletonOnArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3211C65F1C14620E003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6611C146217003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6631C14621E003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6651C146223003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6671C146229003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 32661C651AA73D5B00F1A721;
+			remoteInfo = chaos_metadata_service_client;
+		};
+		3211C6691C14622C003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C66B1C146232003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C66D1C146238003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C66F1C14623E003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6711C146245003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6731C146245003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3260278614B307DA00C906CE;
+			remoteInfo = chaos_uitoolkit;
+		};
+		3211C6751C14624A003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3260278614B307DA00C906CE;
+			remoteInfo = chaos_uitoolkit;
+		};
+		3211C6771C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 326026E814B301F600C906CE;
+			remoteInfo = chaos_common;
+		};
+		3211C6791C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3260276514B3068100C906CE;
+			remoteInfo = chaos_cutoolkit;
+		};
+		3211C67B1C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3260278614B307DA00C906CE;
+			remoteInfo = chaos_uitoolkit;
+		};
+		3211C67D1C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 323236C6164573C60052CE06;
+			remoteInfo = ChaosMetadataService;
+		};
+		3211C67F1C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 32661C651AA73D5B00F1A721;
+			remoteInfo = chaos_metadata_service_client;
+		};
+		3211C6811C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 322085D91AC5A0E100F1B71A;
+			remoteInfo = ChaosMetadataServiceClientTest;
+		};
+		3211C6831C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 32C7EAD31A5D9E450008DFE8;
+			remoteInfo = ChaosWANProxy;
+		};
+		3211C6851C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 323236D5164573F50052CE06;
+			remoteInfo = ChaosDataService;
+		};
+		3211C6871C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 32B1090C188C1D6200969D3D;
+			remoteInfo = TestAsyncRpc;
+		};
+		3211C6891C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3258AEFF1935EE4C00A66D44;
+			remoteInfo = EchitectureTests;
+		};
+		3211C68B1C146252003B38BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 32809C6B1A97433E00C02C12;
+			remoteInfo = TestCDSQuery;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		322085D81AC5A0E100F1B71A /* CopyFiles */ = {
@@ -898,6 +1101,16 @@
 		32362C1C1ADC0FDF000CA079 /* ControlUnitGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlUnitGroup.h; sourceTree = "<group>"; };
 		32362C1F1ADD0C45000CA079 /* SetInstanceDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetInstanceDescription.cpp; sourceTree = "<group>"; };
 		32362C201ADD0C45000CA079 /* SetInstanceDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetInstanceDescription.h; sourceTree = "<group>"; };
+		3239EF481C0EFE910052BE61 /* RestoreSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSnapshot.cpp; sourceTree = "<group>"; };
+		3239EF491C0EFE910052BE61 /* RestoreSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestoreSnapshot.h; sourceTree = "<group>"; };
+		3239EF4C1C0EFEA60052BE61 /* CreateNewSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateNewSnapshot.cpp; sourceTree = "<group>"; };
+		3239EF4D1C0EFEA60052BE61 /* CreateNewSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateNewSnapshot.h; sourceTree = "<group>"; };
+		3239EF501C0EFEB20052BE61 /* DeleteSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteSnapshot.cpp; sourceTree = "<group>"; };
+		3239EF511C0EFEB20052BE61 /* DeleteSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteSnapshot.h; sourceTree = "<group>"; };
+		3239EF541C0F1E190052BE61 /* GetAllSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetAllSnapshot.cpp; sourceTree = "<group>"; };
+		3239EF551C0F1E190052BE61 /* GetAllSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetAllSnapshot.h; sourceTree = "<group>"; };
+		3239EF571C0F26D90052BE61 /* GetAllSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetAllSnapshot.cpp; sourceTree = "<group>"; };
+		3239EF581C0F26D90052BE61 /* GetAllSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetAllSnapshot.h; sourceTree = "<group>"; };
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
@@ -1617,6 +1830,19 @@
 		32DF604215E1502700312C94 /* CommandEventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandEventDescriptor.h; sourceTree = "<group>"; };
 		32DF604515E1505E00312C94 /* CustomEventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomEventDescriptor.cpp; sourceTree = "<group>"; };
 		32DF604615E1505F00312C94 /* CustomEventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomEventDescriptor.h; sourceTree = "<group>"; };
+		32E09CEB1C0DB2800069752F /* SnapshotDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnapshotDataAccess.cpp; sourceTree = "<group>"; };
+		32E09CEC1C0DB2800069752F /* SnapshotDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapshotDataAccess.h; sourceTree = "<group>"; };
+		32E09CEE1C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBSnapshotDataAccess.cpp; sourceTree = "<group>"; };
+		32E09CEF1C0DC7100069752F /* MongoDBSnapshotDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBSnapshotDataAccess.h; sourceTree = "<group>"; };
+		32E09CF21C0DE2890069752F /* RestoreSnapshotBatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSnapshotBatch.cpp; sourceTree = "<group>"; };
+		32E09CF31C0DE2890069752F /* RestoreSnapshotBatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestoreSnapshotBatch.h; sourceTree = "<group>"; };
+		32E09CF51C0DED340069752F /* RestoreSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSnapshot.cpp; sourceTree = "<group>"; };
+		32E09CF61C0DED340069752F /* RestoreSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestoreSnapshot.h; sourceTree = "<group>"; };
+		32E09CF81C0DF19E0069752F /* general_batch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = general_batch.h; sourceTree = "<group>"; };
+		32E09CF91C0E002F0069752F /* CreateNewSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateNewSnapshot.cpp; sourceTree = "<group>"; };
+		32E09CFA1C0E002F0069752F /* CreateNewSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateNewSnapshot.h; sourceTree = "<group>"; };
+		32E09CFC1C0E05E60069752F /* DeleteSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteSnapshot.cpp; sourceTree = "<group>"; };
+		32E09CFD1C0E05E60069752F /* DeleteSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteSnapshot.h; sourceTree = "<group>"; };
 		32E0EF3518CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQDirectIOClientConnection.cpp; sourceTree = "<group>"; };
 		32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOClientConnection.h; sourceTree = "<group>"; };
 		32E977561A6E65B800D89C15 /* api_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
@@ -2051,6 +2277,8 @@
 				32809C811A9C84F900C02C12 /* MongoDBControlUnitDataAccess.h */,
 				320530DB1AE930200064275B /* MongoDBDataServiceDataAccess.cpp */,
 				320530DC1AE930200064275B /* MongoDBDataServiceDataAccess.h */,
+				32E09CEE1C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp */,
+				32E09CEF1C0DC7100069752F /* MongoDBSnapshotDataAccess.h */,
 				32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */,
 			);
 			path = mongodb;
@@ -2069,6 +2297,8 @@
 				32809C7E1A9C847400C02C12 /* ControlUnitDataAccess.h */,
 				320530D81AE92D770064275B /* DataServiceDataAccess.cpp */,
 				320530D91AE92D770064275B /* DataServiceDataAccess.h */,
+				32E09CEB1C0DB2800069752F /* SnapshotDataAccess.cpp */,
+				32E09CEC1C0DB2800069752F /* SnapshotDataAccess.h */,
 				32D24FAF1A7AAD15002D65CE /* DataAccess.h */,
 			);
 			path = data_access;
@@ -3001,6 +3231,14 @@
 				327791E11B67728300FEDD52 /* ServiceApiGroup.h */,
 				32AE8BA51B67B4A100FAC528 /* ResetAll.cpp */,
 				32AE8BA61B67B4A100FAC528 /* ResetAll.h */,
+				32E09CF51C0DED340069752F /* RestoreSnapshot.cpp */,
+				32E09CF61C0DED340069752F /* RestoreSnapshot.h */,
+				32E09CF91C0E002F0069752F /* CreateNewSnapshot.cpp */,
+				32E09CFA1C0E002F0069752F /* CreateNewSnapshot.h */,
+				32E09CFC1C0E05E60069752F /* DeleteSnapshot.cpp */,
+				32E09CFD1C0E05E60069752F /* DeleteSnapshot.h */,
+				3239EF541C0F1E190052BE61 /* GetAllSnapshot.cpp */,
+				3239EF551C0F1E190052BE61 /* GetAllSnapshot.h */,
 			);
 			path = service;
 			sourceTree = "<group>";
@@ -3291,6 +3529,14 @@
 			children = (
 				32AE8BA11B678C1500FAC528 /* ResetAll.cpp */,
 				32AE8BA21B678C1500FAC528 /* ResetAll.h */,
+				3239EF4C1C0EFEA60052BE61 /* CreateNewSnapshot.cpp */,
+				3239EF4D1C0EFEA60052BE61 /* CreateNewSnapshot.h */,
+				3239EF481C0EFE910052BE61 /* RestoreSnapshot.cpp */,
+				3239EF491C0EFE910052BE61 /* RestoreSnapshot.h */,
+				3239EF501C0EFEB20052BE61 /* DeleteSnapshot.cpp */,
+				3239EF511C0EFEB20052BE61 /* DeleteSnapshot.h */,
+				3239EF571C0F26D90052BE61 /* GetAllSnapshot.cpp */,
+				3239EF581C0F26D90052BE61 /* GetAllSnapshot.h */,
 			);
 			path = service;
 			sourceTree = "<group>";
@@ -3355,6 +3601,7 @@
 				32FA1EF21A7A462200A46800 /* MDSBatchCommand.h */,
 				320E77401A7FD9A6001FB8BC /* mds_service_batch.h */,
 				327D83D91AF1185700AD7000 /* batch_impl.h */,
+				32E09CF11C0DE2500069752F /* general */,
 				32761A3D1B37F1DD006C8719 /* node */,
 				32610F9A1AE676A400779B84 /* control_unit */,
 				320E773B1A7FBD1E001FB8BC /* unit_server */,
@@ -3617,6 +3864,16 @@
 				32CFF95E15E4DBD3005D607E /* EventFactory.h */,
 			);
 			path = evt_desc;
+			sourceTree = "<group>";
+		};
+		32E09CF11C0DE2500069752F /* general */ = {
+			isa = PBXGroup;
+			children = (
+				32E09CF21C0DE2890069752F /* RestoreSnapshotBatch.cpp */,
+				32E09CF31C0DE2890069752F /* RestoreSnapshotBatch.h */,
+				32E09CF81C0DF19E0069752F /* general_batch.h */,
+			);
+			path = general;
 			sourceTree = "<group>";
 		};
 		32E9A5411A66C41E00545BB4 /* utility */ = {
@@ -4034,14 +4291,17 @@
 				32B1E7F71B2AD1CC00221E49 /* CommandTemplateGet.h in Headers */,
 				327F39BF1AEAB6260000C845 /* GetAllDS.h in Headers */,
 				327F39B81AEAA2850000C845 /* DeleteDS.h in Headers */,
+				3239EF531C0EFEB20052BE61 /* DeleteSnapshot.h in Headers */,
 				32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */,
 				327F39A81AEAA2290000C845 /* NewDS.h in Headers */,
 				32EBDF0F1B53A32600278C42 /* ManageCUType.h in Headers */,
 				327F39C31AEFABB00000C845 /* InitDeinit.h in Headers */,
 				32568C931B42C1690006988C /* QuantumTSTaggedAttributeHandler.h in Headers */,
 				328C87371ADFDD410047C79B /* GetInstance.h in Headers */,
+				3239EF5A1C0F26D90052BE61 /* GetAllSnapshot.h in Headers */,
 				3208AABE1AC56C1C000860D9 /* GetNodeDescription.h in Headers */,
 				32B2999D1BD92B18000D3716 /* CopyInstance.h in Headers */,
+				3239EF4B1C0EFE910052BE61 /* RestoreSnapshot.h in Headers */,
 				32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */,
 				3211CCDE1B03402800F9B80E /* QuantumKeyConsumer.h in Headers */,
 				32AE8BA41B678C1500FAC528 /* ResetAll.h in Headers */,
@@ -4055,6 +4315,7 @@
 				32B1E8071B2EA07200221E49 /* CommandTemplateDelete.h in Headers */,
 				328C87331ADFDB9A0047C79B /* SearchInstancesByUS.h in Headers */,
 				3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */,
+				3239EF4F1C0EFEA60052BE61 /* CreateNewSnapshot.h in Headers */,
 				32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */,
 				32B419381B16236300C3CA7D /* SetInputDatasetAttributeValues.h in Headers */,
 				327F39AC1AEAA2390000C845 /* UpdateDS.h in Headers */,
@@ -4085,6 +4346,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6681C146229003B38BF /* PBXTargetDependency */,
 			);
 			name = ChaosMetadataServiceClientTest;
 			productName = ChaosMetadataServiceClientTest;
@@ -4101,6 +4363,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6641C14621E003B38BF /* PBXTargetDependency */,
 			);
 			name = ChaosMetadataService;
 			productName = ChaosNodeDirectory;
@@ -4117,6 +4380,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C66C1C146232003B38BF /* PBXTargetDependency */,
 			);
 			name = ChaosDataService;
 			productName = ChaosHSTService;
@@ -4134,6 +4398,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6761C14624A003B38BF /* PBXTargetDependency */,
+				3211C6701C14623E003B38BF /* PBXTargetDependency */,
 			);
 			name = EchitectureTests;
 			productName = EchitectureTests;
@@ -4169,6 +4435,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6601C14620E003B38BF /* PBXTargetDependency */,
 			);
 			name = chaos_cutoolkit;
 			productName = chaos_cutoolkit;
@@ -4186,6 +4453,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6621C146217003B38BF /* PBXTargetDependency */,
 			);
 			name = chaos_uitoolkit;
 			productName = chaos_uitoolkit;
@@ -4203,6 +4471,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6661C146223003B38BF /* PBXTargetDependency */,
 			);
 			name = chaos_metadata_service_client;
 			productName = ChaosMetadataServiceClient;
@@ -4220,6 +4489,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C6721C146245003B38BF /* PBXTargetDependency */,
+				3211C6741C146245003B38BF /* PBXTargetDependency */,
 			);
 			name = TestCDSQuery;
 			productName = TestCDSQuery;
@@ -4237,6 +4508,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C66E1C146238003B38BF /* PBXTargetDependency */,
 			);
 			name = TestAsyncRpc;
 			productName = TestAsyncRpc;
@@ -4254,6 +4526,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3211C66A1C14622C003B38BF /* PBXTargetDependency */,
 			);
 			name = ChaosWANProxy;
 			productName = ChaosWANProxy;
@@ -4269,6 +4542,9 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = INFN;
 				TargetAttributes = {
+					3211C65B1C146200003B38BF = {
+						CreatedOnToolsVersion = 7.1.1;
+					};
 					322085D91AC5A0E100F1B71A = {
 						CreatedOnToolsVersion = 6.2;
 					};
@@ -4306,6 +4582,7 @@
 				32B1090C188C1D6200969D3D /* TestAsyncRpc */,
 				3258AEFF1935EE4C00A66D44 /* EchitectureTests */,
 				32809C6B1A97433E00C02C12 /* TestCDSQuery */,
+				3211C65B1C146200003B38BF /* Compile ALL */,
 			);
 		};
 /* End PBXProject section */
@@ -4341,6 +4618,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3239EF561C0F1E190052BE61 /* GetAllSnapshot.cpp in Sources */,
 				320530DD1AE930200064275B /* MongoDBDataServiceDataAccess.cpp in Sources */,
 				32B1E8131B2EDB2800221E49 /* CommandTemplateSubmit.cpp in Sources */,
 				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
@@ -4348,6 +4626,7 @@
 				32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */,
 				32AE8BA71B67B4A100FAC528 /* ResetAll.cpp in Sources */,
 				325FC85A1AF77A7900DB9D66 /* NewUS.cpp in Sources */,
+				32E09CF01C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp in Sources */,
 				32092B401BFA353F006A4D06 /* NodeLoadCompletion.cpp in Sources */,
 				324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */,
 				327F39A01AEA47980000C845 /* GetAssociationByDS.cpp in Sources */,
@@ -4364,6 +4643,7 @@
 				32362C1D1ADC0FDF000CA079 /* ControlUnitGroup.cpp in Sources */,
 				32610F961AE671AF00779B84 /* StartStop.cpp in Sources */,
 				32B9F3F41AC3E74C00380FE9 /* AbstractPersistenceDriver.cpp in Sources */,
+				32E09CF71C0DED340069752F /* RestoreSnapshot.cpp in Sources */,
 				32B299991BD900F1000D3716 /* CopyInstance.cpp in Sources */,
 				32B419301B0DE68800C3CA7D /* ChangeNodeState.cpp in Sources */,
 				324EF3DD1AE92379000837AF /* NewDS.cpp in Sources */,
@@ -4392,6 +4672,7 @@
 				32A40D471A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp in Sources */,
 				32B419341B16148A00C3CA7D /* SetInputDatasetAttributeValues.cpp in Sources */,
 				32CAC9E11AE6988200DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
+				32E09CED1C0DB2800069752F /* SnapshotDataAccess.cpp in Sources */,
 				328D0FF41A8A0862001A2001 /* UnitServerDataAccess.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
@@ -4401,6 +4682,7 @@
 				32B3E11D1A7A3923007B7802 /* MDSBatchExecutor.cpp in Sources */,
 				328C872F1ADFC2D60047C79B /* GetInstance.cpp in Sources */,
 				328D0FF11A8A034E001A2001 /* NodeSearch.cpp in Sources */,
+				32E09CFE1C0E05E60069752F /* DeleteSnapshot.cpp in Sources */,
 				32362C1A1ADC0FD2000CA079 /* SetInstanceDescription.cpp in Sources */,
 				32B9F3F71AC4186300380FE9 /* NodeCreateUnitServer.cpp in Sources */,
 				328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */,
@@ -4414,7 +4696,9 @@
 				32761A3C1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */,
 				32568C8B1B3D54650006988C /* UpdatePropertyCommand.cpp in Sources */,
 				32B1E8161B2EDB4700221E49 /* CommandInstanceSubmit.cpp in Sources */,
+				32E09CFB1C0E002F0069752F /* CreateNewSnapshot.cpp in Sources */,
 				327791E21B67728300FEDD52 /* ServiceApiGroup.cpp in Sources */,
+				32E09CF41C0DE2890069752F /* RestoreSnapshotBatch.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
 				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
 				32B299A71BE26933000D3716 /* RecoverError.cpp in Sources */,
@@ -4698,6 +4982,7 @@
 				327F39B31AEAA2680000C845 /* GetAssociationByDS.cpp in Sources */,
 				328C873E1AE01A590047C79B /* DeleteInstance.cpp in Sources */,
 				32362C211ADD0C45000CA079 /* SetInstanceDescription.cpp in Sources */,
+				3239EF521C0EFEB20052BE61 /* DeleteSnapshot.cpp in Sources */,
 				32EBDF0E1B53A32600278C42 /* ManageCUType.cpp in Sources */,
 				32B1E8061B2EA07200221E49 /* CommandTemplateDelete.cpp in Sources */,
 				327F39C21AEFABB00000C845 /* InitDeinit.cpp in Sources */,
@@ -4709,11 +4994,14 @@
 				327F39C61AEFABBB0000C845 /* StartStop.cpp in Sources */,
 				32B1E7FD1B2B06CE00221E49 /* CommandGet.cpp in Sources */,
 				327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */,
+				3239EF4E1C0EFEA60052BE61 /* CreateNewSnapshot.cpp in Sources */,
 				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
 				32B299AA1BE27945000D3716 /* RecoverError.cpp in Sources */,
 				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
+				3239EF591C0F26D90052BE61 /* GetAllSnapshot.cpp in Sources */,
 				32AE8BA31B678C1500FAC528 /* ResetAll.cpp in Sources */,
+				3239EF4A1C0EFE910052BE61 /* RestoreSnapshot.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
 				327F39AB1AEAA2390000C845 /* UpdateDS.cpp in Sources */,
 				32B4192C1B0DE55E00C3CA7D /* ChangeNodeState.cpp in Sources */,
@@ -4768,7 +5056,139 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		3211C6601C14620E003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C65F1C14620E003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6621C146217003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C6611C146217003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6641C14621E003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C6631C14621E003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6661C146223003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C6651C146223003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6681C146229003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 32661C651AA73D5B00F1A721 /* chaos_metadata_service_client */;
+			targetProxy = 3211C6671C146229003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C66A1C14622C003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C6691C14622C003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C66C1C146232003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C66B1C146232003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C66E1C146238003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C66D1C146238003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6701C14623E003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C66F1C14623E003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6721C146245003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C6711C146245003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6741C146245003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3260278614B307DA00C906CE /* chaos_uitoolkit */;
+			targetProxy = 3211C6731C146245003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6761C14624A003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3260278614B307DA00C906CE /* chaos_uitoolkit */;
+			targetProxy = 3211C6751C14624A003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6781C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 326026E814B301F600C906CE /* chaos_common */;
+			targetProxy = 3211C6771C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C67A1C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3260276514B3068100C906CE /* chaos_cutoolkit */;
+			targetProxy = 3211C6791C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C67C1C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3260278614B307DA00C906CE /* chaos_uitoolkit */;
+			targetProxy = 3211C67B1C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C67E1C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 323236C6164573C60052CE06 /* ChaosMetadataService */;
+			targetProxy = 3211C67D1C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6801C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 32661C651AA73D5B00F1A721 /* chaos_metadata_service_client */;
+			targetProxy = 3211C67F1C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6821C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 322085D91AC5A0E100F1B71A /* ChaosMetadataServiceClientTest */;
+			targetProxy = 3211C6811C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6841C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 32C7EAD31A5D9E450008DFE8 /* ChaosWANProxy */;
+			targetProxy = 3211C6831C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6861C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 323236D5164573F50052CE06 /* ChaosDataService */;
+			targetProxy = 3211C6851C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C6881C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 32B1090C188C1D6200969D3D /* TestAsyncRpc */;
+			targetProxy = 3211C6871C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C68A1C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3258AEFF1935EE4C00A66D44 /* EchitectureTests */;
+			targetProxy = 3211C6891C146252003B38BF /* PBXContainerItemProxy */;
+		};
+		3211C68C1C146252003B38BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 32809C6B1A97433E00C02C12 /* TestCDSQuery */;
+			targetProxy = 3211C68B1C146252003B38BF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		3211C65C1C146200003B38BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		3211C65D1C146200003B38BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		322085DE1AC5A0E200F1B71A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4811,17 +5231,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lzmq",
-					"-lboost_log",
 					"-lchaos_metadata_service_client",
 					"-lchaos_common",
-					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -4865,17 +5276,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lzmq",
-					"-lboost_log",
 					"-lchaos_metadata_service_client",
 					"-lchaos_common",
-					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -4914,17 +5316,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
 					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
-					"-lboost_log_setup",
 					"-lmongoclient",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -4957,17 +5350,8 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
 					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
-					"-lboost_log_setup",
 					"-lmongoclient",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -5007,17 +5391,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
 					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
 					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
-					"-lboost_log_setup",
 					"-lcouchbase",
 					"-lmongoclient",
 				);
@@ -5051,17 +5427,9 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
 					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
 					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
-					"-lboost_log_setup",
 					"-lcouchbase",
 					"-lmongoclient",
 				);
@@ -5108,19 +5476,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = "";
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lchaos_common",
-					"-lchaos_uitoolkit",
-					"-lboost_log_setup",
-					"-lboost_log",
-					"-lzmq",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5159,19 +5515,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = "";
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lchaos_common",
-					"-lchaos_uitoolkit",
-					"-lboost_log_setup",
-					"-lboost_log",
-					"-lzmq",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5181,7 +5525,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libstdc++";
-				GCC_PREPROCESSOR_DEFINITIONS = BOOST_ALL_DYN_LINK;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				ONLY_ACTIVE_ARCH = YES;
 			};
 			name = Debug;
@@ -5190,7 +5534,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libstdc++";
-				GCC_PREPROCESSOR_DEFINITIONS = BOOST_ALL_DYN_LINK;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 			};
 			name = Release;
 		};
@@ -5205,6 +5549,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -5254,7 +5599,8 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = BOOST_ALL_DYN_LINK;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -5317,18 +5663,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lboost_log",
-					"-lboost_log_setup",
-					"-lchaos_common",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5358,18 +5693,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lboost_log",
-					"-lboost_log_setup",
-					"-lchaos_common",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5405,18 +5729,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lboost_log",
-					"-lboost_log_setup",
-					"-lchaos_common",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5445,18 +5758,7 @@
 				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lboost_log",
-					"-lboost_log_setup",
-					"-lchaos_common",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5506,18 +5808,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lboost_log",
-					"-lchaos_common",
-					"-lboost_log_setup",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5562,18 +5853,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-lboost_log",
-					"-lchaos_common",
-					"-lboost_log_setup",
-				);
+				OTHER_LDFLAGS = "-lchaos_common";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -5620,19 +5900,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
-					"-lboost_log_setup",
-					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -5675,19 +5944,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
-					"-lboost_log_setup",
-					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -5732,19 +5990,8 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
-					"-lboost_log_setup",
-					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -5784,19 +6031,8 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
-					"-lboost_log_setup",
-					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -5845,17 +6081,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
-					"-lboost_log_setup",
 					"-lmongoose",
 					"-ljsoncpp",
 				);
@@ -5902,17 +6128,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_filesystem",
-					"-lboost_regex",
-					"-levent",
-					"-lboost_log",
 					"-lchaos_common",
-					"-lboost_log_setup",
 					"-lmongoose",
 					"-ljsoncpp",
 				);
@@ -5924,6 +6140,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3211C65E1C146200003B38BF /* Build configuration list for PBXAggregateTarget "Compile ALL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3211C65C1C146200003B38BF /* Debug */,
+				3211C65D1C146200003B38BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		322085E01AC5A0E200F1B71A /* Build configuration list for PBXNativeTarget "ChaosMetadataServiceClientTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

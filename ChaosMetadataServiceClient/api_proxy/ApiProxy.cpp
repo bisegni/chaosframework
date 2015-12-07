@@ -19,7 +19,16 @@
  */
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 using namespace chaos::metadata_service_client::api_proxy;
-    //! default constructor
+
+
+ApiResultHelper::ApiResultHelper(chaos::common::data::CDataWrapper *_api_result):
+api_result(_api_result){}
+
+ApiResultHelper::~ApiResultHelper() {
+    if(api_result) delete(api_result);
+}
+
+//! default constructor
 ApiProxy::ApiProxy(const std::string& _group_name,
                    const std::string& _api_name,
                    chaos::common::message::MultiAddressMessageChannel *_mn_message,
@@ -29,14 +38,14 @@ api_name(_api_name),
 access_counter(0),
 timeout_in_milliseconds(_timeout_in_milliseconds),
 mn_message(_mn_message){
-
+    
 }
-    //! default destructor
+//! default destructor
 ApiProxy::~ApiProxy() {
-
+    
 }
 
-    //! execute an api call
+//! execute an api call
 
 ApiProxyResult ApiProxy::callApi(chaos::common::data::CDataWrapper *api_message) {
     CHAOS_ASSERT(mn_message)
