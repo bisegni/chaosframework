@@ -50,7 +50,7 @@ namespace chaos {
                     
                     // inherited method
                     int getNodeInSnapshot(const std::string& snapshot_name,
-                                          std::vector<std::string> node_in_snapshot);
+                                          std::vector<std::string>& node_in_snapshot);
                     
                     // inherited method
                     int deleteSnapshot(const std::string& snapshot_name);

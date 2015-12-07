@@ -163,11 +163,11 @@ namespace chaos {
 				
 				//! control unit instance mapped with their unique identifier
 				mutable boost::shared_mutex mutex_map_cuid_reg_unreg_instance;
-				map<string, shared_ptr<WorkUnitManagement> > map_cuid_reg_unreg_instance;
+                map<string, boost::shared_ptr<WorkUnitManagement> > map_cuid_reg_unreg_instance;
 				
 				//map
 				mutable boost::shared_mutex mutex_map_cuid_registered_instance;
-				map<string, shared_ptr<WorkUnitManagement> > map_cuid_registered_instance;
+				map<string, boost::shared_ptr<WorkUnitManagement> > map_cuid_registered_instance;
 				
 				//! association by alias and control unit instancer
 				typedef std::map<string, boost::shared_ptr<CUObjectInstancer> >::iterator MapCUAliasInstancerIterator;

@@ -50,7 +50,7 @@ int MongoDBSnapshotDataAccess::createNewSnapshot(const std::string& snapshot_nam
 }
 
 int MongoDBSnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_name,
-                                                 vector<std::string> node_in_snapshot) {
+                                                 vector<std::string>& node_in_snapshot) {
     int err = 0;
     bool work_free = false;
     std::vector<mongo::BSONObj>     result;

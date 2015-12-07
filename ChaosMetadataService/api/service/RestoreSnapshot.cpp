@@ -48,6 +48,6 @@ chaos::common::data::CDataWrapper *RestoreSnapshot::execute(chaos::common::data:
     uint64_t command_id = getBatchExecutor()->submitCommand(std::string(GET_MDS_COMMAND_ALIAS(batch::general::RestoreSnapshotBatch)),
                                                             data_pack.release());
     
-    S_RS_INFO << "Submitted restore for snapshot " << data_pack->getStringValue("snapshot_name") << " with id:" << command_id;
+    S_RS_INFO << "Submitted restore for snapshot " << api_data->getStringValue("snapshot_name") << " with id:" << command_id;
     return NULL;
 }

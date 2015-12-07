@@ -93,7 +93,7 @@ int SnapshotDataAccess::createNewSnapshot(const std::string& snapshot_name,
 
 
 int SnapshotDataAccess::getNodeInSnapshot(const std::string& snapshot_name,
-                      vector<std::string> node_in_snapshot) {
+                                          vector<std::string>& node_in_snapshot) {
     return 0;
 }
 

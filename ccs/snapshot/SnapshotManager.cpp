@@ -4,8 +4,9 @@
 
 #include <QStandardItem>
 
-static QString TAG_SEARCH_SNAPSHOT= "t_ss";
-static QString TAG_DELETE_SNAPSHOT= "t_ds";
+static QString TAG_SEARCH_SNAPSHOT  = "t_a_ss";
+static QString TAG_DELETE_SNAPSHOT  = "t_a_ds";
+static QString TAG_RESTORE_SNAPSHOT = "t_a_rs";
 
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -69,7 +70,13 @@ void SnapshotManager::on_pushButtonDeleteSnapshot_clicked() {
 }
 
 void SnapshotManager::on_pushButtonRestoreSnapshot_clicked() {
-
+    QModelIndexList selected_snapshots = ui->tableViewSnapshotList->selectionModel()->selectedRows();
+    foreach(QModelIndex snap, selected_snapshots) {
+        QVariant snap_name_item = snapshot_table_model.data(snap);
+        QString snap_name = snap_name_item.toString();
+        submitApiResult(TAG_RESTORE_SNAPSHOT,
+                        GET_CHAOS_API_PTR(service::RestoreSnapshot)->execute(snap_name.toStdString()));
+    }
 }
 
 void SnapshotManager::tableSelectionChanged(const QItemSelection & from, const QItemSelection & to) {

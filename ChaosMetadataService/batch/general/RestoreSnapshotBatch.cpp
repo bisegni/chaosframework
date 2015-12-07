@@ -95,6 +95,8 @@ void RestoreSnapshotBatch::ccHandler() {
             const std::string node_rpc_address = node_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
             const std::string node_rpc_domain = node_description->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN);
             
+            G_RS_INFO << "send restore rpc command to " << list_node_in_snapshot[node_index] << " on [" <<node_rpc_address<<","<<node_rpc_domain<<"]";
+            
             restore_message.reset(new CDataWrapper());
             restore_message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, list_node_in_snapshot[node_index]);
             restore_message->addStringValue(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG, snapshot_name);
@@ -110,7 +112,7 @@ void RestoreSnapshotBatch::ccHandler() {
             switch(restore_request->phase) {
                 case MESSAGE_PHASE_UNSENT: {
                     sendMessage(*restore_request,
-                                NULL);
+                                restore_message.release());
                     BC_END_RUNNIG_PROPERTY
                 }
                     
