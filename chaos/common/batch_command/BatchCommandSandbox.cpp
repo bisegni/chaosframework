@@ -479,20 +479,21 @@ void BatchCommandSandbox::checkNextCommand() {
                 threadSchedulerPauseCondition.unlock();
             }
         } else {
-            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] command submitted queue is empty";)
-            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] try to acquire lock";)
-            boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand);
-            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] lock acquired on mutextAccessCurrentCommand";)
-            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] checking current running command";)
-                    bool curre_cmd_ended = currentExecutingCommand && (currentExecutingCommand->element->cmdImpl->runningProperty >= RunningPropertyType::RP_End);
+	  DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] command submitted queue is empty";)
+
+	    DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] checking current running command";)
+	    bool curre_cmd_ended = currentExecutingCommand && (currentExecutingCommand->element->cmdImpl->runningProperty >= RunningPropertyType::RP_End);
 
             if (curre_cmd_ended) {
-                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] we have no running or halted command";)
-                if (!commandStack.empty()) {
-                    PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = currentExecutingCommand;
-                    DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] get and install paused command";)
+	      DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] we have no running or halted command";)
+		DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] try to acquire lock";)
+		boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand);
+	      DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] lock acquired on mutextAccessCurrentCommand";)
+		if (!commandStack.empty()) {
+		  PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = currentExecutingCommand;
+		  DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] get and install paused command";)
                     PRIORITY_ELEMENT(CommandInfoAndImplementation) * nextAvailableCommand = commandStack.top();
-                    DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Install command with pointer " << std::hex << nextAvailableCommand << std::dec;)
+		  DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Install command with pointer " << std::hex << nextAvailableCommand << std::dec;)
                     removeHandler(command_to_delete);
                     installHandler(nextAvailableCommand);
                     commandStack.pop();
@@ -536,13 +537,13 @@ void BatchCommandSandbox::checkNextCommand() {
                     DELETE_OBJ_POINTER(command_to_delete);
                 }
             }
-            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] unlock the mutextAccessCurrentCommand";)
+	    //            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] unlock the mutextAccessCurrentCommand";)
             //unloc current command mutex
-            lockForCurrentCommandMutex.unlock();
+	      //            lockForCurrentCommandMutex.unlock();
             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] wait undefinitly";)
             WAIT_ON_NEXT_CMD
             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] awaked " << __LINE__;)
-        }
+	      }
 
         if (!scheduleWorkFlag) {
             canWork = false;

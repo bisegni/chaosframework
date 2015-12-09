@@ -1034,8 +1034,10 @@ int MongoDBDriver::snapshotCreateNewWithName(const std::string& snapshot_name,
 	//----- generate the random code ------ for this snapshot
 	working_job_unique_id = UUIDUtil::generateUUIDLite();
 	try{
+        uint64_t ts = TimingUtil::getTimeStamp();
 		new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_NAME << snapshot_name;
-		new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_TS << mongo::Date_t(TimingUtil::getTimeStamp());
+		new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_TS_DATE << mongo::Date_t(ts);
+        new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_TS << (long long)ts;
 		new_snapshot_start << MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << working_job_unique_id;
 		
 		mongo::BSONObj q = new_snapshot_start.obj();

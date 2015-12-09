@@ -17,7 +17,11 @@ SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
                         api/AbstractApiGroup.cpp)
 
 SET(cnd_src  ${cnd_src}	api/service/ServiceApiGroup.cpp
-												api/service/ResetAll.cpp)
+						api/service/ResetAll.cpp
+                        api/service/GetAllSnapshot.cpp
+                        api/service/RestoreSnapshot.cpp
+                        api/service/CreateNewSnapshot.cpp
+                        api/service/DeleteSnapshot.cpp)
 
 SET(cnd_src  ${cnd_src}	api/healt/HealtApiGroup.cpp
                         api/healt/ProcessHello.cpp
@@ -73,14 +77,16 @@ SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/NodeDataAccess.cpp
                         persistence/data_access/UtilityDataAccess.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
-                        persistence/data_access/DataServiceDataAccess.cpp)
+                        persistence/data_access/DataServiceDataAccess.cpp
+                        persistence/data_access/SnapshotDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBUnitServerDataAccess.cpp
                         persistence/mongodb/MongoDBNodeDataAccess.cpp
                         persistence/mongodb/MongoDBUtilityDataAccess.cpp
                         persistence/mongodb/MongoDBControlUnitDataAccess.cpp
-                        persistence/mongodb/MongoDBDataServiceDataAccess.cpp)
+                        persistence/mongodb/MongoDBDataServiceDataAccess.cpp
+                        persistence/mongodb/MongoDBSnapshotDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
@@ -95,6 +101,8 @@ SET(cnd_src  ${cnd_src}	batch/control_unit/RegistrationAckBatchCommand.cpp
                         batch/control_unit/IDSTControlUnitBatchCommand.cpp
                         batch/control_unit/ApplyChangeSet.cpp
                         batch/control_unit/RecoverError.cpp)
+
+SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp)
 
 ADD_EXECUTABLE(ChaosMetadataService ${cnd_src})
 

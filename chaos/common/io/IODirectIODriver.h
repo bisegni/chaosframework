@@ -149,7 +149,12 @@ namespace chaos{
                                                    const std::string& key,
                                                    uint32_t dataset_type,
                                                    chaos_data::CDataWrapper **cdatawrapper_handler);
-
+                //! restore from a tag a dataset associated to a key
+                int createNewSnapshot(const std::string& snapshot_tag,
+                                      const std::vector<std::string>& node_list);
+                
+                int deleteSnapshot(const std::string& snapshot_tag);
+                
                 /*
                  * updateConfiguration
                  */

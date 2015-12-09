@@ -18,8 +18,12 @@
  *    	limitations under the License.
  */
 
-#include "ServiceApiGroup.h"
 #include "ResetAll.h"
+#include "GetAllSnapshot.h"
+#include "DeleteSnapshot.h"
+#include "RestoreSnapshot.h"
+#include "ServiceApiGroup.h"
+#include "CreateNewSnapshot.h"
 
 using namespace chaos::metadata_service::api::service;
 
@@ -28,7 +32,11 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(ServiceApiGroup,
 
 ServiceApiGroup::ServiceApiGroup():
 AbstractApiGroup("service"){
-  addApi<ResetAll>();
+    addApi<ResetAll>();
+    addApi<GetAllSnapshot>();
+    addApi<RestoreSnapshot>();
+    addApi<CreateNewSnapshot>();
+    addApi<DeleteSnapshot>();
 }
 
 ServiceApiGroup::~ServiceApiGroup() {

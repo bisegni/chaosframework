@@ -48,6 +48,14 @@ x::~x(){}
             //! define the result of an api like shared pointer of @chaos::common::message::MessageRequestFuture
             typedef auto_ptr<chaos::common::message::MultiAddressMessageRequestFuture> ApiProxyResult;
             
+            class ApiResultHelper {
+            protected:
+                chaos::common::data::CDataWrapper *api_result;
+            public:
+                ApiResultHelper(chaos::common::data::CDataWrapper *_api_result);
+                virtual ~ApiResultHelper();
+            };
+            
             class ApiProxyManager;
                 //! base class for all proxy api
             class ApiProxy {
