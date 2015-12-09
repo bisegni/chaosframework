@@ -74,11 +74,12 @@ bool AttributeValue::setValue(const void* value_ptr,
     if(value_size>size) {
         value_size = size;
     }
-    CHAOS_ASSERT(value_buffer)
     
     
     if(setNewSize(value_size,false)==false)
         return false;
+    
+    CHAOS_ASSERT(value_buffer)
     
     //copy the new value
     std::memcpy(value_buffer, value_ptr, value_size);
