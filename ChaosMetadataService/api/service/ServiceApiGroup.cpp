@@ -24,6 +24,7 @@
 #include "RestoreSnapshot.h"
 #include "ServiceApiGroup.h"
 #include "CreateNewSnapshot.h"
+#include "GetNodesForSnapshot.h"
 
 using namespace chaos::metadata_service::api::service;
 
@@ -37,8 +38,7 @@ AbstractApiGroup("service"){
     addApi<RestoreSnapshot>();
     addApi<CreateNewSnapshot>();
     addApi<DeleteSnapshot>();
+    addApi<GetNodesForSnapshot>();
 }
 
-ServiceApiGroup::~ServiceApiGroup() {
-
-}
+ServiceApiGroup::~ServiceApiGroup() {}

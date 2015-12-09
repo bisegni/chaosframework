@@ -121,6 +121,9 @@
 		3239EF561C0F1E190052BE61 /* GetAllSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3239EF541C0F1E190052BE61 /* GetAllSnapshot.cpp */; };
 		3239EF591C0F26D90052BE61 /* GetAllSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3239EF571C0F26D90052BE61 /* GetAllSnapshot.cpp */; };
 		3239EF5A1C0F26D90052BE61 /* GetAllSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 3239EF581C0F26D90052BE61 /* GetAllSnapshot.h */; };
+		32401CB61C18330000E62866 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CB41C18330000E62866 /* GetNodesForSnapshot.cpp */; };
+		32401CB91C183E2600E62866 /* GetNodesForSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */; };
+		32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
@@ -1111,6 +1114,10 @@
 		3239EF551C0F1E190052BE61 /* GetAllSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetAllSnapshot.h; sourceTree = "<group>"; };
 		3239EF571C0F26D90052BE61 /* GetAllSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetAllSnapshot.cpp; sourceTree = "<group>"; };
 		3239EF581C0F26D90052BE61 /* GetAllSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetAllSnapshot.h; sourceTree = "<group>"; };
+		32401CB41C18330000E62866 /* GetNodesForSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodesForSnapshot.cpp; sourceTree = "<group>"; };
+		32401CB51C18330000E62866 /* GetNodesForSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetNodesForSnapshot.h; sourceTree = "<group>"; };
+		32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodesForSnapshot.cpp; sourceTree = "<group>"; };
+		32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetNodesForSnapshot.h; sourceTree = "<group>"; };
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
@@ -3239,6 +3246,8 @@
 				32E09CFD1C0E05E60069752F /* DeleteSnapshot.h */,
 				3239EF541C0F1E190052BE61 /* GetAllSnapshot.cpp */,
 				3239EF551C0F1E190052BE61 /* GetAllSnapshot.h */,
+				32401CB41C18330000E62866 /* GetNodesForSnapshot.cpp */,
+				32401CB51C18330000E62866 /* GetNodesForSnapshot.h */,
 			);
 			path = service;
 			sourceTree = "<group>";
@@ -3537,6 +3546,8 @@
 				3239EF511C0EFEB20052BE61 /* DeleteSnapshot.h */,
 				3239EF571C0F26D90052BE61 /* GetAllSnapshot.cpp */,
 				3239EF581C0F26D90052BE61 /* GetAllSnapshot.h */,
+				32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */,
+				32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */,
 			);
 			path = service;
 			sourceTree = "<group>";
@@ -4291,6 +4302,7 @@
 				32B1E7F71B2AD1CC00221E49 /* CommandTemplateGet.h in Headers */,
 				327F39BF1AEAB6260000C845 /* GetAllDS.h in Headers */,
 				327F39B81AEAA2850000C845 /* DeleteDS.h in Headers */,
+				32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */,
 				3239EF531C0EFEB20052BE61 /* DeleteSnapshot.h in Headers */,
 				32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */,
 				327F39A81AEAA2290000C845 /* NewDS.h in Headers */,
@@ -4685,6 +4697,7 @@
 				32E09CFE1C0E05E60069752F /* DeleteSnapshot.cpp in Sources */,
 				32362C1A1ADC0FD2000CA079 /* SetInstanceDescription.cpp in Sources */,
 				32B9F3F71AC4186300380FE9 /* NodeCreateUnitServer.cpp in Sources */,
+				32401CB61C18330000E62866 /* GetNodesForSnapshot.cpp in Sources */,
 				328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */,
 				325D2FE21AFB9C2100B2A706 /* ProcessBye.cpp in Sources */,
 				32B9F3F31AC3E74C00380FE9 /* AbstractDataAccess.cpp in Sources */,
@@ -4986,6 +4999,7 @@
 				32EBDF0E1B53A32600278C42 /* ManageCUType.cpp in Sources */,
 				32B1E8061B2EA07200221E49 /* CommandTemplateDelete.cpp in Sources */,
 				327F39C21AEFABB00000C845 /* InitDeinit.cpp in Sources */,
+				32401CB91C183E2600E62866 /* GetNodesForSnapshot.cpp in Sources */,
 				327F39B71AEAA2850000C845 /* DeleteDS.cpp in Sources */,
 				3274A90C1AC2F214000C6A4D /* ApiProxyManager.cpp in Sources */,
 				3208AAB91AC56A51000860D9 /* ApiProxy.cpp in Sources */,
@@ -6147,6 +6161,7 @@
 				3211C65D1C146200003B38BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		322085E01AC5A0E200F1B71A /* Build configuration list for PBXNativeTarget "ChaosMetadataServiceClientTest" */ = {
 			isa = XCConfigurationList;

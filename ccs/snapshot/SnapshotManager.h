@@ -3,6 +3,7 @@
 
 #include "../presenter/PresenterWidget.h"
 #include "SnapshotTableModel.h"
+#include "NodeInSnapshotTableModel.h"
 
 #include <QWidget>
 #include <QItemSelection>
@@ -38,6 +39,7 @@ private:
     void executeSearch();
 
     SnapshotTableModel snapshot_table_model;
+    NodeInSnapshotTableModel node_in_snapshot_list_model;
     Ui::SnapshotManager *ui;
 };
 
