@@ -78,7 +78,8 @@ SOURCES += main.cpp\
     snapshot/SnapshotManager.cpp \
     snapshot/SnapshotTableModel.cpp \
     snapshot/NewSnapshot.cpp \
-    snapshot/NodeListModel.cpp
+    snapshot/NodeListModel.cpp \
+    snapshot/NodeInSnapshotTableModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -157,7 +158,8 @@ HEADERS  += \
     snapshot/SnapshotManager.h \
     snapshot/SnapshotTableModel.h \
     snapshot/NewSnapshot.h \
-    snapshot/NodeListModel.h
+    snapshot/NodeListModel.h \
+    snapshot/NodeInSnapshotTableModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

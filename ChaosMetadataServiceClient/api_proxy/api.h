@@ -30,6 +30,7 @@
 #include <ChaosMetadataServiceClient/api_proxy/service/DeleteSnapshot.h>
 #include <ChaosMetadataServiceClient/api_proxy/service/RestoreSnapshot.h>
 #include <ChaosMetadataServiceClient/api_proxy/service/CreateNewSnapshot.h>
+#include <ChaosMetadataServiceClient/api_proxy/service/GetNodesForSnapshot.h>
 
 //----------------------------data service nodes---------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/data_service/NewDS.h>
