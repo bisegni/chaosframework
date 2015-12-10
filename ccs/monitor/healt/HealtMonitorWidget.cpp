@@ -1,7 +1,6 @@
 #include "HealtMonitorWidget.h"
 #include "HealtPresenterWidget.h"
 
-
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QScrollArea>

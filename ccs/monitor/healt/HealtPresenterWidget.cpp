@@ -20,6 +20,9 @@ HealtPresenterWidget::HealtPresenterWidget(CommandPresenter *_global_command_pre
     global_command_presenter(_global_command_presenter),
     node_uid(node_to_check){
     ui->setupUi(this);
+
+
+    ui->labelUID->setTextFormat(Qt::RichText);
     ui->labelUID->setText(node_uid);
 
     ui->ledIndicatorHealt->setNodeUniqueID(node_uid);
@@ -72,7 +75,7 @@ void HealtPresenterWidget::asyncApiResult(const QString& api_tag,
             ui->pushButtonOpenNodeEditor->setEnabled((type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) ||
                                                      (type.compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0));
             //update string
-            ui->labelUID->setText(QString("%1[%2]").arg(node_uid, type));
+            ui->labelUID->setText(QString("%1-<font color=\"#4EB66B\">[%2]</font>").arg(node_uid, type));
         }
     }
 }
