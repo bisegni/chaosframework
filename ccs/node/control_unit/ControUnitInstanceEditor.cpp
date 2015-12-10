@@ -296,7 +296,7 @@ void ControUnitInstanceEditor::on_pushButtonEditDriverDescription_clicked()
 void ControUnitInstanceEditor::on_pushButtonDeleteDriverDescription_clicked()
 {
     //delete driver description
-    QModelIndexList selected_row = ui->tableViewDriverSpecification->selectionModel()->selectedIndexes();
+    QModelIndexList selected_row = ui->tableViewDriverSpecification->selectionModel()->selectedRows();
     foreach(QModelIndex index, selected_row) {
         table_model_driver_spec->removeRow(index.row());
     }

@@ -95,7 +95,7 @@ void DataWorker::deinit() throw (chaos::CException) {
 
 int DataWorker::submitJobInfo(WorkerJobPtr job_info) {
     //check if we are out of max element in queue, in other case go out
-    if(job_in_queue > max_element) return -1;
+    if(job_in_queue > max_element) return -1000;
 	if(job_in_queue++ % 1000) {
 		DCLDBG_ << "Job in queue " << job_in_queue;
 	}
