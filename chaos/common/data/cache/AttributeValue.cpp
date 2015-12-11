@@ -71,14 +71,14 @@ AttributeValue::~AttributeValue() {
 bool AttributeValue::setValue(const void* value_ptr,
                               uint32_t value_size,
                               bool tag_has_changed) {
-    if(value_size>size) {
-        value_size = size;
+   
+    if(size<value_size){
+        if(setNewSize(value_size,false)==false){
+            return false;
+        } 
     }
-    
-    
-    if(setNewSize(value_size,false)==false)
-        return false;
-    
+    if(value_size==0)
+        return true;
     CHAOS_ASSERT(value_buffer)
     
     //copy the new value
@@ -95,7 +95,7 @@ bool AttributeValue::setValue(const void* value_ptr,
 bool AttributeValue::setNewSize(uint32_t _new_size,
                                 bool clear_mem) {
     bool result = true;
-    if(_new_size<buf_size){
+    if(_new_size<=buf_size){
         size=_new_size;
         return true;
     }
@@ -110,6 +110,9 @@ bool AttributeValue::setNewSize(uint32_t _new_size,
             //in case of string we reset the intere memory space
             std::memset(value_buffer, 0, buf_size);
         }
+    } else {
+        AVLERR_ << "## cannot set size: "<<_new_size;
+        
     }
     return result;
 }
