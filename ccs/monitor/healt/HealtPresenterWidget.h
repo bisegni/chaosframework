@@ -1,6 +1,5 @@
 #ifndef HEALTPRESENTERWIDGET_H
 #define HEALTPRESENTERWIDGET_H
-
 #include "../handler/healt/healt.h"
 #include "../../presenter/CommandPresenter.h"
 #include "../../api_async_processor/ApiAsyncProcessor.h"

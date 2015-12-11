@@ -79,7 +79,8 @@ SOURCES += main.cpp\
     snapshot/SnapshotTableModel.cpp \
     snapshot/NewSnapshot.cpp \
     snapshot/NodeListModel.cpp \
-    snapshot/NodeInSnapshotTableModel.cpp
+    snapshot/NodeInSnapshotTableModel.cpp \
+    monitor/healt/HighlighterForChaosType.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -159,7 +160,8 @@ HEADERS  += \
     snapshot/SnapshotTableModel.h \
     snapshot/NewSnapshot.h \
     snapshot/NodeListModel.h \
-    snapshot/NodeInSnapshotTableModel.h
+    snapshot/NodeInSnapshotTableModel.h \
+    monitor/healt/HighlighterForChaosType.h
 
 FORMS    += \
     search/searchnoderesult.ui \
