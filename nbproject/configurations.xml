@@ -14328,17 +14328,12 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="12">
+        <ccTool flags="8">
           <incDir>
+            <pElem>..</pElem>
             <pElem>../chaos-x86_64-dynamic-release/include</pElem>
-            <pElem>bin/bin_cutoolkit</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
             <pElem>bin/bin_common</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
-            <Elem>chaos_cutoolkit_EXPORTS</Elem>
-          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/data/cache/AttributeValue.cpp"

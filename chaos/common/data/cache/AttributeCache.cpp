@@ -19,7 +19,7 @@
  */
 
 #include <chaos/common/data/cache/AttributeCache.h>
-
+#include <chaos/common/global.h>
 #include <boost/format.hpp>
 
 using namespace chaos::common::data::cache;
@@ -115,6 +115,8 @@ void AttributeCache::getAttributeNames(std::vector<std::string>& names) {
 void AttributeCache::setValueForAttribute(VariableIndexType n,
 											 const void * value,
 											 uint32_t size) {
+CHAOS_ASSERT(n<mapAttributeIndex.size());
+CHAOS_ASSERT(mapAttributeIndex[n].get());
 	mapAttributeIndex[n]->setValue(value, size);
 }
 
