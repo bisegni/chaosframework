@@ -40,7 +40,6 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
     ui->lineEditRangeFrom->setValidator(new QIntValidator());
     ui->lineEditRangeTo->setValidator(new QIntValidator());
 
-    //ui->qCustomPlotTimed->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
     ui->qCustomPlotTimed->setBackground(this->palette().background().color());
     ui->qCustomPlotTimed->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
     ui->qCustomPlotTimed->legend->setFont(QFont(QFont().family(), 8));
@@ -122,6 +121,7 @@ void NodeAttributePlotting::addTimedGraphFor(QSharedPointer<DatasetAttributeRead
     plot_info->graph->setLineStyle(QCPGraph::lsLine);
     plot_info->graph->setName(attribute_name);
     plot_info->graph->setPen(QPen(QColor(random_color_component(), random_color_component(), random_color_component())));
+    plot_info->graph->setAntialiased(true);
     plot_info->graph->addToLegend();
 
     _addRemoveToPlot(plot_info, true);
