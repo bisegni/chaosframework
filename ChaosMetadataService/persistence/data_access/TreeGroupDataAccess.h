@@ -1,5 +1,5 @@
 /*
- *	NodeGroupDataAccess.h
+ *	TreeGroupDataAccess.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,9 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__NodeGroupDataAccess_h
-#define __CHAOSFramework__NodeGroupDataAccess_h
-
+#ifndef __CHAOSFramework__TreeGroupDataAccess_h
+#define __CHAOSFramework__TreeGroupDataAccess_h
 
 #include "../persistence.h"
 
@@ -47,7 +46,7 @@ namespace chaos {
                 //define the list of chaos node contained is a group
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(ChaosNodeInGroupElement, TreeGroupChaosNodeList)
                 
-                class NodeGroupDataAccess:
+                class TreeGroupDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 protected:
 
@@ -55,10 +54,10 @@ namespace chaos {
                     DECLARE_DA_NAME
                     
                     //! default constructor
-                    NodeGroupDataAccess();
+                    TreeGroupDataAccess();
                     
                     //!default destructor
-                    ~NodeGroupDataAccess();
+                    ~TreeGroupDataAccess();
                     
                     //! Add a new group domain
                     /*!
@@ -136,11 +135,10 @@ namespace chaos {
                                                             const unsigned int page_size,
                                                             const std::string& last_node_uid = std::string()) = 0;
                 };
-                
             }
         }
     }
 }
 
 
-#endif /* NodeGroupDataAccess_hpp */
+#endif /* TreeGroupDataAccess_h */

@@ -47,9 +47,6 @@
 		32092B401BFA353F006A4D06 /* NodeLoadCompletion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32092B3E1BFA353F006A4D06 /* NodeLoadCompletion.cpp */; };
 		320C218A151B555A00BD0F41 /* EventServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 320C2189151B555A00BD0F41 /* EventServer.h */; };
 		320C218C151B556E00BD0F41 /* EventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320C218B151B556E00BD0F41 /* EventServer.cpp */; };
-		320CA9511C29D16D00894AAA /* DeleteUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320CA94F1C29D16D00894AAA /* DeleteUS.cpp */; };
-		320CA9541C29D71A00894AAA /* DeleteUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320CA9521C29D71A00894AAA /* DeleteUS.cpp */; };
-		320CA9551C29D71A00894AAA /* DeleteUS.h in Headers */ = {isa = PBXBuildFile; fileRef = 320CA9531C29D71A00894AAA /* DeleteUS.h */; };
 		320DEA6219CB209500ED66AB /* DataBlockCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320DEA6019CB209500ED66AB /* DataBlockCache.cpp */; };
 		320DF98D14E17E2700251621 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 320DF98C14E17E2700251621 /* DeviceController.h */; };
 		320DF99114E190BB00251621 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320DF98F14E17E3D00251621 /* DeviceController.cpp */; };
@@ -519,8 +516,13 @@
 		329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */; };
 		329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 329FFFD0170712CE00D69CDE /* ManagedMemory.h */; };
 		32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */; };
+<<<<<<< fa37720a2937d657d908dedc618f70944187e393
+		32A13EB51C200F740010F3FC /* Delete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A13EB31C200F740010F3FC /* Delete.cpp */; };
 		32A13EB81C2014170010F3FC /* Delete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A13EB61C2014170010F3FC /* Delete.cpp */; };
 		32A13EB91C2014170010F3FC /* Delete.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A13EB71C2014170010F3FC /* Delete.h */; };
+=======
+		32A13EAF1C1F28950010F3FC /* MongoDBTreeGroupDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A13EAD1C1F28950010F3FC /* MongoDBTreeGroupDataAccess.cpp */; };
+>>>>>>> added mongodb impl(to do) for tre group DA
 		32A273FA1BB7235200572083 /* tracey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A273F81BB7235200572083 /* tracey.cpp */; };
 		32A273FB1BB7235200572083 /* tracey.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32A273F91BB7235200572083 /* tracey.hpp */; };
 		32A391C418FE923E001C5A73 /* TemplatedKeyValueHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A391C218FE923E001C5A73 /* TemplatedKeyValueHashMap.h */; };
@@ -1010,10 +1012,6 @@
 		32092B3F1BFA353F006A4D06 /* NodeLoadCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeLoadCompletion.h; sourceTree = "<group>"; };
 		320C2189151B555A00BD0F41 /* EventServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventServer.h; sourceTree = "<group>"; };
 		320C218B151B556E00BD0F41 /* EventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventServer.cpp; sourceTree = "<group>"; };
-		320CA94F1C29D16D00894AAA /* DeleteUS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteUS.cpp; sourceTree = "<group>"; };
-		320CA9501C29D16D00894AAA /* DeleteUS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteUS.h; sourceTree = "<group>"; };
-		320CA9521C29D71A00894AAA /* DeleteUS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteUS.cpp; sourceTree = "<group>"; };
-		320CA9531C29D71A00894AAA /* DeleteUS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteUS.h; sourceTree = "<group>"; };
 		320DEA6019CB209500ED66AB /* DataBlockCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataBlockCache.cpp; sourceTree = "<group>"; };
 		320DEA6119CB209500ED66AB /* DataBlockCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlockCache.h; sourceTree = "<group>"; };
 		320DEA6319CC77F200ED66AB /* ThreadSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadSemaphore.h; sourceTree = "<group>"; };
@@ -1609,8 +1607,15 @@
 		329FFFD0170712CE00D69CDE /* ManagedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedMemory.h; sourceTree = "<group>"; };
 		32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorker.cpp; sourceTree = "<group>"; };
 		32A10C0218C87806006EA04C /* DeviceSharedDataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorker.h; sourceTree = "<group>"; };
+<<<<<<< fa37720a2937d657d908dedc618f70944187e393
+		32A13EB31C200F740010F3FC /* Delete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
+		32A13EB41C200F740010F3FC /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delete.h; sourceTree = "<group>"; };
 		32A13EB61C2014170010F3FC /* Delete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
 		32A13EB71C2014170010F3FC /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delete.h; sourceTree = "<group>"; };
+=======
+		32A13EAD1C1F28950010F3FC /* MongoDBTreeGroupDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBTreeGroupDataAccess.cpp; sourceTree = "<group>"; };
+		32A13EAE1C1F28950010F3FC /* MongoDBTreeGroupDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBTreeGroupDataAccess.h; sourceTree = "<group>"; };
+>>>>>>> added mongodb impl(to do) for tre group DA
 		32A273F81BB7235200572083 /* tracey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tracey.cpp; sourceTree = "<group>"; };
 		32A273F91BB7235200572083 /* tracey.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tracey.hpp; sourceTree = "<group>"; };
 		32A391C218FE923E001C5A73 /* TemplatedKeyValueHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyValueHashMap.h; sourceTree = "<group>"; };
@@ -2279,8 +2284,6 @@
 				325FC8591AF77A7900DB9D66 /* NewUS.h */,
 				32EBDF091B538F4B00278C42 /* ManageCUType.cpp */,
 				32EBDF0A1B538F4B00278C42 /* ManageCUType.h */,
-				320CA94F1C29D16D00894AAA /* DeleteUS.cpp */,
-				320CA9501C29D16D00894AAA /* DeleteUS.h */,
 			);
 			path = unit_server;
 			sourceTree = "<group>";
@@ -2669,8 +2672,6 @@
 				32CAC9E61AE69F3D00DC6AAB /* LoadUnloadControlUnit.h */,
 				325FC85B1AF7910300DB9D66 /* NewUS.cpp */,
 				325FC85C1AF7910300DB9D66 /* NewUS.h */,
-				320CA9521C29D71A00894AAA /* DeleteUS.cpp */,
-				320CA9531C29D71A00894AAA /* DeleteUS.h */,
 				32EBDF0C1B53A32600278C42 /* ManageCUType.cpp */,
 				32EBDF0D1B53A32600278C42 /* ManageCUType.h */,
 			);
@@ -4332,7 +4333,6 @@
 				3239EF531C0EFEB20052BE61 /* DeleteSnapshot.h in Headers */,
 				32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */,
 				327F39A81AEAA2290000C845 /* NewDS.h in Headers */,
-				320CA9551C29D71A00894AAA /* DeleteUS.h in Headers */,
 				32EBDF0F1B53A32600278C42 /* ManageCUType.h in Headers */,
 				327F39C31AEFABB00000C845 /* InitDeinit.h in Headers */,
 				32568C931B42C1690006988C /* QuantumTSTaggedAttributeHandler.h in Headers */,
@@ -4701,7 +4701,6 @@
 				328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */,
 				325D2FDF1AFB65DE00B2A706 /* ProcessHello.cpp in Sources */,
 				32B1E7E51B297A6100221E49 /* CommandTemplateSet.cpp in Sources */,
-				320CA9511C29D16D00894AAA /* DeleteUS.cpp in Sources */,
 				32B1E80A1B2EA77200221E49 /* GetNodeNetworkAddress.cpp in Sources */,
 				32FA1EF31A7A462200A46800 /* MDSBatchCommand.cpp in Sources */,
 				32809C7C1A9C7DDD00C02C12 /* MongoDBUtilityDataAccess.cpp in Sources */,
@@ -5043,7 +5042,6 @@
 				327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */,
 				3239EF4E1C0EFEA60052BE61 /* CreateNewSnapshot.cpp in Sources */,
 				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
-				320CA9541C29D71A00894AAA /* DeleteUS.cpp in Sources */,
 				32B299AA1BE27945000D3716 /* RecoverError.cpp in Sources */,
 				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,

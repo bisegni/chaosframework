@@ -1,5 +1,5 @@
 /*
- *	NodeGroupDataAccess.cpp
+ *	TreeGroupDataAccess.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,20 +18,20 @@
  *    	limitations under the License.
  */
 
-#include "NodeGroupDataAccess.h"
+#include "TreeGroupDataAccess.h"
 
-#define SDA_INFO INFO_LOG(NodeGroupDataAccess)
-#define SDA_DBG  DBG_LOG(NodeGroupDataAccess)
-#define SDA_ERR  ERR_LOG(NodeGroupDataAccess)
+#define SDA_INFO INFO_LOG(TreeGroupDataAccess)
+#define SDA_DBG  DBG_LOG(TreeGroupDataAccess)
+#define SDA_ERR  ERR_LOG(TreeGroupDataAccess)
 
 using namespace chaos::metadata_service::persistence::data_access;
 
-DEFINE_DA_NAME(NodeGroupDataAccess)
+DEFINE_DA_NAME(TreeGroupDataAccess)
 
 
 //! default constructor
-NodeGroupDataAccess::NodeGroupDataAccess():
-AbstractDataAccess("NodeGroupDataAccess"){}
+TreeGroupDataAccess::TreeGroupDataAccess():
+AbstractDataAccess("TreeGroupDataAccess"){}
 
 //!default destructor
-NodeGroupDataAccess::~NodeGroupDataAccess(){}
+TreeGroupDataAccess::~TreeGroupDataAccess(){}
