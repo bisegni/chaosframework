@@ -49,6 +49,7 @@ SET(cnd_src  ${cnd_src}	api/control_unit/SetInputDatasetAttributeValues.cpp
                         api/control_unit/SearchInstancesByUS.cpp
                         api/control_unit/GetInstance.cpp
                         api/control_unit/DeleteInstance.cpp
+			api/control_unit/Delete.cpp
                         api/control_unit/InitDeinit.cpp
                         api/control_unit/StartStop.cpp
                         api/control_unit/CopyInstance.cpp
