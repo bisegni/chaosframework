@@ -42,6 +42,7 @@
 #include <ChaosMetadataServiceClient/api_proxy/data_service/AssociationControlUnit.h>
 
     //----------------------------control unit nodes---------------------------------------
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/Delete.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/StartStop.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/InitDeinit.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/GetInstance.h>

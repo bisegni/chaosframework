@@ -47,7 +47,7 @@ CDataWrapper *RecoverError::execute(CDataWrapper *api_data,
                                     bool& detach_data) throw(chaos::CException) {
     CHECK_CDW_THROW_AND_LOG(api_data, CU_RNU_ERR, -1, "No parameter found")
     CHECK_KEY_THROW_AND_LOG(api_data, chaos::NodeDefinitionKey::NODE_UNIQUE_ID , CU_RNU_ERR, -2, "The ndk_uid key is mandatory")
-    if(!api_data->isVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) throw CException(-3, "ndk_uid key need to be a vectoro of string", __PRETTY_FUNCTION__);
+    if(!api_data->isVectorValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)) throw CException(-3, "ndk_uid key need to be a vector of string", __PRETTY_FUNCTION__);
     
     GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -4)
     

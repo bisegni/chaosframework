@@ -515,6 +515,9 @@
 		329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */; };
 		329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 329FFFD0170712CE00D69CDE /* ManagedMemory.h */; };
 		32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */; };
+		32A13EB51C200F740010F3FC /* Delete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A13EB31C200F740010F3FC /* Delete.cpp */; };
+		32A13EB81C2014170010F3FC /* Delete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A13EB61C2014170010F3FC /* Delete.cpp */; };
+		32A13EB91C2014170010F3FC /* Delete.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A13EB71C2014170010F3FC /* Delete.h */; };
 		32A273FA1BB7235200572083 /* tracey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A273F81BB7235200572083 /* tracey.cpp */; };
 		32A273FB1BB7235200572083 /* tracey.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32A273F91BB7235200572083 /* tracey.hpp */; };
 		32A391C418FE923E001C5A73 /* TemplatedKeyValueHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A391C218FE923E001C5A73 /* TemplatedKeyValueHashMap.h */; };
@@ -1597,6 +1600,10 @@
 		329FFFD0170712CE00D69CDE /* ManagedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedMemory.h; sourceTree = "<group>"; };
 		32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorker.cpp; sourceTree = "<group>"; };
 		32A10C0218C87806006EA04C /* DeviceSharedDataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorker.h; sourceTree = "<group>"; };
+		32A13EB31C200F740010F3FC /* Delete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
+		32A13EB41C200F740010F3FC /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delete.h; sourceTree = "<group>"; };
+		32A13EB61C2014170010F3FC /* Delete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
+		32A13EB71C2014170010F3FC /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delete.h; sourceTree = "<group>"; };
 		32A273F81BB7235200572083 /* tracey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tracey.cpp; sourceTree = "<group>"; };
 		32A273F91BB7235200572083 /* tracey.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = tracey.hpp; sourceTree = "<group>"; };
 		32A391C218FE923E001C5A73 /* TemplatedKeyValueHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyValueHashMap.h; sourceTree = "<group>"; };
@@ -2338,6 +2345,8 @@
 				32B419331B16148A00C3CA7D /* SetInputDatasetAttributeValues.h */,
 				32B299A21BE25ABE000D3716 /* RecoverError.cpp */,
 				32B299A31BE25ABE000D3716 /* RecoverError.h */,
+				32A13EB31C200F740010F3FC /* Delete.cpp */,
+				32A13EB41C200F740010F3FC /* Delete.h */,
 			);
 			path = control_unit;
 			sourceTree = "<group>";
@@ -2365,6 +2374,8 @@
 				32B2999B1BD92B18000D3716 /* CopyInstance.h */,
 				32B299A81BE27945000D3716 /* RecoverError.cpp */,
 				32B299A91BE27945000D3716 /* RecoverError.h */,
+				32A13EB61C2014170010F3FC /* Delete.cpp */,
+				32A13EB71C2014170010F3FC /* Delete.h */,
 			);
 			path = control_unit;
 			sourceTree = "<group>";
@@ -4341,6 +4352,7 @@
 				3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */,
 				32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */,
 				32B299AB1BE27945000D3716 /* RecoverError.h in Headers */,
+				32A13EB91C2014170010F3FC /* Delete.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4716,6 +4728,7 @@
 				328E78091A7AAA070008C070 /* NodeDataAccess.cpp in Sources */,
 				32B299A71BE26933000D3716 /* RecoverError.cpp in Sources */,
 				32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */,
+				32A13EB51C200F740010F3FC /* Delete.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4987,6 +5000,7 @@
 				32761A311B305652006C8719 /* CommandTemplateSubmit.cpp in Sources */,
 				32FFA3EE1B00F95900C57E07 /* QuantumSlotScheduler.cpp in Sources */,
 				3211CCD91B021B8D00F9B80E /* GetBestEndpoints.cpp in Sources */,
+				32A13EB81C2014170010F3FC /* Delete.cpp in Sources */,
 				32610F8C1AE6560A00779B84 /* GetDescription.cpp in Sources */,
 				325FC85D1AF7910300DB9D66 /* NewUS.cpp in Sources */,
 				32761A381B314697006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */,

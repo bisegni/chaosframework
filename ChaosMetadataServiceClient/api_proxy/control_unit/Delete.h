@@ -1,5 +1,5 @@
 /*
- *	RecoverError.h
+ *	Delete.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,9 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__RecoverError_h
-#define __CHAOSFramework__RecoverError_h
+#ifndef __CHAOSFramework__Delete_h
+#define __CHAOSFramework__Delete_h
+
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
@@ -30,24 +31,26 @@ namespace chaos {
         namespace api_proxy {
             namespace control_unit {
                 
-                //! return the current control unit dataset
-                class RecoverError:
+                //! Interelly delete the control unit node
+                /*!
+                 All control unit ifnromation will be deleted
+                 */
+                class Delete:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(RecoverError)
+                    API_PROXY_CLASS(Delete)
                 protected:
                     //! default constructor
-                    API_PROXY_CD_DECLARATION(RecoverError)
+                    API_PROXY_CD_DECLARATION(Delete)
                 public:
-                    //! copy control unit instance
                     /*!
-                     cCpy the instance identifyed by control unit and unit server id to another contorl unit
-                     asociatin git to same or other unit server
+                     \param cu_uid the uid of the control unit to delete
                      */
-                    ApiProxyResult execute(const std::vector<std::string>& cu_uids);
+                    ApiProxyResult execute(const std::string& cu_uid);
                 };
             }
         }
     }
 }
 
-#endif /* RecoverError_h */
+
+#endif /* Delete_h */
