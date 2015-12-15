@@ -18,9 +18,8 @@
  *    	limitations under the License.
  */
 
-#include "MongoDBSnapshotDataAccess.h"
-
 #include "mongo_db_constants.h"
+#include "MongoDBSnapshotDataAccess.h"
 
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/network/NetworkBroker.h>

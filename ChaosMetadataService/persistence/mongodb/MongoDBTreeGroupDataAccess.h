@@ -34,6 +34,24 @@ namespace chaos {
                 class MongoDBPersistenceDriver;
                 
                 //! Data Access for manage the tree group
+                /*!
+                 In mongo db tree structure is done using a parent key within a tree child node. The stirng representation
+                 of the full path is : /root/child1/child2/child3.... Every tree live in a domain that is puth into antoher
+                 key of the single node.
+                 0
+                 node {
+                    node_name:string,
+                    node_parent_path:string
+                    node_domain:string
+                 }
+                 
+                 for describe the example :
+                 node {
+                 node_name:"child3",
+                 node_parent_path:"/root/child1/child2"
+                 node_domain:"domain_name"
+                 }
+                 */
                 class MongoDBTreeGroupDataAccess:
                 public data_access::TreeGroupDataAccess,
                 protected service_common::persistence::mongodb::MongoDBAccessor {
@@ -41,9 +59,18 @@ namespace chaos {
                 protected:
                     MongoDBTreeGroupDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBTreeGroupDataAccess();
+                    
+                    //!check the three path
+                    bool checkPathSintax(const std::string& tree_path);
+                    
+                    /*!
+                     Check if a path is presente, thech is done in this way; last path element is considered as
+                     node name and the ancestor as parent path.
+                     */
+                    int checkPathPresenceForDomain(const std::string& group_domain,
+                                                   const std::string& tree_path,
+                                                   bool& presence);
                 public:
-                    //! Inherited method
-                    int addNewGroupDomain(const std::string& group_domain);
                     
                     //! Inherited method
                     int deleteGroupDomain(const std::string& group_domain);

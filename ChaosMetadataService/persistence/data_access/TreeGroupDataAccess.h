@@ -59,13 +59,6 @@ namespace chaos {
                     //!default destructor
                     ~TreeGroupDataAccess();
                     
-                    //! Add a new group domain
-                    /*!
-                     Add a new node in the tree group
-                     \param group_domain is the domain of the group
-                     */
-                    virtual int addNewGroupDomain(const std::string& group_domain) = 0;
-                    
                     //! remove an intere domain of groups
                     /*!
                      Remove the odmain and all contained tree
