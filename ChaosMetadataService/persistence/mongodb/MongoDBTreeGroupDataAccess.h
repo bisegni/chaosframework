@@ -60,8 +60,20 @@ namespace chaos {
                     MongoDBTreeGroupDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBTreeGroupDataAccess();
                     
+                    bool estractNodeFromPath(const std::string& node_path,
+                                             std::string& node_name,
+                                             std::string& parent_path);
+                    
                     //!check the three path
                     bool checkPathSintax(const std::string& tree_path);
+                    
+                    /*!
+                     Check if a node is presente.
+                     */
+                    int checkNodePresenceForDomain(const std::string& group_domain,
+                                                   const std::string& node_name,
+                                                   const std::string& tree_path,
+                                                   bool& presence);
                     
                     /*!
                      Check if a path is presente, thech is done in this way; last path element is considered as
@@ -77,7 +89,7 @@ namespace chaos {
                     
                     //! Inherited method
                     int addNewNodeGroupToDomain(const std::string& group_domain,
-                                                const std::string& node_group_name,
+                                                const std::string& node_name,
                                                 const std::string& parent_path);
                     
                     //! Inherited method
