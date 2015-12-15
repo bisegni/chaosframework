@@ -97,6 +97,11 @@ namespace chaos {
                                                 const std::string& tree_path);
                     
                     //! Inherited method
+                    int getNodeChildFromPath(const std::string& group_domain,
+                                             const std::string& tree_path,
+                                             std::vector<std::string>& node_child);
+                    
+                    //! Inherited method
                     int addChaosNodeToGroupDomain(const std::string& group_domain,
                                                   const std::string& tree_path,
                                                   const std::string& chaos_node_type,

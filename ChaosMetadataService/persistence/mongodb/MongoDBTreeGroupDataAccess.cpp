@@ -245,8 +245,8 @@ int MongoDBTreeGroupDataAccess::deleteNodeGroupToDomain(const std::string& group
     try {
         //get node and paretn path from full path description
         if((err = checkPathPresenceForDomain(group_domain,
-                                            tree_path,
-                                            presence))){
+                                             tree_path,
+                                             presence))){
             return err;
         }
         if(presence == false) {
@@ -281,6 +281,13 @@ int MongoDBTreeGroupDataAccess::deleteNodeGroupToDomain(const std::string& group
         err = e.errorCode;
     }
     return err;
+}
+
+//! Inherited method
+int MongoDBTreeGroupDataAccess::getNodeChildFromPath(const std::string& group_domain,
+                                                     const std::string& tree_path,
+                                                     std::vector<std::string>& node_child) {
+    return -1;
 }
 
 //! Inherited method
