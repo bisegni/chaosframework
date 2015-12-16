@@ -33,6 +33,8 @@
 
 #include <boost/thread.hpp>
 
+#include <sys/resource.h>
+
 namespace chaos {
     namespace common{
         namespace healt_system {
@@ -106,6 +108,12 @@ namespace chaos {
                 
                 //! private non locked push method for a healt set
                 inline void _publish(const boost::shared_ptr<NodeHealtSet>& heath_set);
+                
+                //!contain information about process resurces
+                struct rusage process_resurce_usage;
+                
+                //! update the information about process
+                inline void updateProcInfo();
             protected:
                 //! default constructor and destructor
                 HealtManager();

@@ -11,6 +11,9 @@ ChaosLabel::ChaosLabel(QWidget * parent,
     monitoring(false),
     last_recevied_ts(0),
     zero_diff_count(0),
+    p_label_value_show_track_status(false),
+    p_track_status(false),
+    p_track_status_process_info(false),
     p_double_print_precision(2){
     setTimeoutForAlive(6000);
     
@@ -92,6 +95,14 @@ bool ChaosLabel::trackStatus() {
     return p_track_status;
 }
 
+void ChaosLabel::setTrackStatusProcessInfo(bool track_status_process_info) {
+    p_track_status_process_info = track_status_process_info;
+}
+
+bool ChaosLabel::trackStatusProcessInfo() {
+    return p_track_status_process_info;
+}
+
 void ChaosLabel::setLabelValueShowTrackStatus(bool label_value_show_track_status) {
     p_label_value_show_track_status = label_value_show_track_status;
 }
@@ -99,8 +110,6 @@ void ChaosLabel::setLabelValueShowTrackStatus(bool label_value_show_track_status
 bool ChaosLabel::labelValueShowTrackStatus() {
     return p_label_value_show_track_status;
 }
-
-bool labelValueShowTrackStatus();
 
 int ChaosLabel::startMonitoring() {
     if(monitoring) return -1;
@@ -180,11 +189,23 @@ void ChaosLabel::valueUpdated(const QString& _node_uid,
 void ChaosLabel::quantumSlotHasData(const std::string& key, const KeyValue& value) {
     if(!value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) ||
             !value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS)) return;
-
+    QString proc_status;
     uint64_t received_ts = value->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP);
     uint64_t time_diff = last_recevied_ts - received_ts;
     last_status = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
-    
+    if(value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME) &&
+            value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME) &&
+            value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)) {
+        proc_status = QString("[usr:%1,sys:%2,swp:%3]").arg(QString::number(value->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME)),
+                                                            QString::number(value->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME)),
+                                                            QString::number(value->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)));
+    }
+    if(trackStatusProcessInfo() && (value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME) &&
+                                    value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME) &&
+                                    value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP))) {
+        last_status = QString("%1 - %2").arg(last_status,
+                                             proc_status);
+    }
     if(time_diff > 0) {
         //setStyleSheet("QLabel { color : #4EB66B; }");
         zero_diff_count = 0;
@@ -208,18 +229,22 @@ void ChaosLabel::quantumSlotHasData(const std::string& key, const KeyValue& valu
         setToolTip(error_tooltip);
     } else {
         //show status also on label
-        setToolTip(last_status);
+        setToolTip(QString("%1 - %2").arg(last_status,
+                                          proc_status));
     }
 
     //update color on main thread
     QMetaObject::invokeMethod(this, "_updateStatusColor",  Qt::QueuedConnection);
     last_recevied_ts = received_ts;
+
+    emit statusChanged(QString::fromStdString(key), value);
 }
 
 void ChaosLabel::quantumSlotHasNoData(const std::string& key) {
     last_recevied_ts = zero_diff_count = 0;
     //update color on main thread
     QMetaObject::invokeMethod(this, "_updateStatusColor",  Qt::QueuedConnection);
+    emit statusNoData(QString::fromStdString(key));
 }
 
 //slots hiding
