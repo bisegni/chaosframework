@@ -32,6 +32,12 @@ HealtPresenterWidget::HealtPresenterWidget(CommandPresenter *_global_command_pre
     ui->labelStatus->setTrackStatus(true);
     ui->labelStatus->setLabelValueShowTrackStatus(true);
     ui->labelStatus->startMonitoring();
+    connect(ui->labelStatus,
+            SIGNAL(statusChanged(QString,chaos::metadata_service_client::monitor_system::KeyValue)),
+            SLOT(statusChanged(QString,chaos::metadata_service_client::monitor_system::KeyValue)));
+    connect(ui->labelStatus,
+            SIGNAL(statusNoData(QString)),
+            SLOT(statusNoData(QString)));
 
     ui->pushButtonOpenNodeEditor->setEnabled(false);
 
@@ -88,4 +94,23 @@ void HealtPresenterWidget::asyncApiError(const QString& tag,
 
 void HealtPresenterWidget::asyncApiTimeout(const QString& tag) {
 
+}
+
+void HealtPresenterWidget::statusChanged(const QString& node_uid,
+                                         const chaos::metadata_service_client::monitor_system::KeyValue& healt_values) {
+    if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME)){
+        ui->labelUsrProc->setText(QString::number(healt_values->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME), 'f', 3 ));
+    }
+    if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME)){
+        ui->labelSysProc->setText(QString::number(healt_values->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME), 'f', 3 ));
+    }
+    if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)){
+        ui->labelSwapProc->setText(QString::number(healt_values->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)));
+    }
+}
+
+void HealtPresenterWidget::statusNoData(const QString& node_uid) {
+    ui->labelUsrProc->setText(tr("---"));
+    ui->labelUsrProc->setText(tr("---"));
+    ui->labelUsrProc->setText(tr("---"));
 }

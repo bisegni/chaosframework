@@ -256,6 +256,12 @@ namespace chaos {
         static const char * const HEALT_KEY_POSTFIX                     = "_healt";
         //! define time stamp of the push (usefull for heart beating)
         static const char * const NODE_HEALT_TIMESTAMP                  = "nh_ts";
+        //! identify the time spent as user by the process and all his thread
+        static const char * const NODE_HEALT_USER_TIME                  = "nh_ut";
+        //! identify the time spent for system call by the process and all his thread
+        static const char * const NODE_HEALT_SYSTEM_TIME                  = "nh_st";
+        //! identify the swap memory used by process
+        static const char * const NODE_HEALT_PROCESS_SWAP               = "nh_sw";
         //! define time stamp of the collection of the last insert metric
         static const char * const NODE_HEALT_TIMESTAMP_LAST_METRIC      = "nh_ts_lst_metric";
         //! define the status of a node (loaded, initilized, deinitialized, started, stopped, unloaded)

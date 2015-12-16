@@ -35,6 +35,9 @@ class ChaosLabel:
     bool p_track_status;
     Q_PROPERTY(bool track_status READ trackStatus WRITE setTrackStatus)
 
+    bool p_track_status_process_info;
+    Q_PROPERTY(bool track_status_process_info READ trackStatusProcessInfo WRITE setTrackStatusProcessInfo)
+
     bool p_label_value_show_track_status;
     Q_PROPERTY(bool label_value_show_track_status READ labelValueShowTrackStatus WRITE setLabelValueShowTrackStatus)
 
@@ -62,6 +65,9 @@ public:
 
     void setTrackStatus(bool track_status);
     bool trackStatus();
+
+    void setTrackStatusProcessInfo(bool track_status_process_info);
+    bool trackStatusProcessInfo();
 
     virtual void setLabelValueShowTrackStatus(bool label_value_show_track_status);
     bool labelValueShowTrackStatus();
@@ -92,6 +98,9 @@ signals:
                               ChaosDataType new_type);
     void valueChanged(const QString& node_uid,
                       const QString& value);
+    void statusChanged(const QString& node_uid,
+                       const chaos::metadata_service_client::monitor_system::KeyValue& healt_values);
+    void statusNoData(const QString& node_uid);
 protected:
     bool monitoring;
     uint64_t last_recevied_ts;
