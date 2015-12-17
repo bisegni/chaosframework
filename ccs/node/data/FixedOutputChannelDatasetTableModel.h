@@ -27,6 +27,8 @@ protected:
     QVariant getCellData(int row, int column) const;
     QVariant getTooltipTextForData(int row, int column) const;
     QVariant getTextAlignForData(int row, int column) const;
+private:
+    QString getSubTypeForCode(int code) const;
 };
 
 #endif // FIXEDOUTPUTCHANNELDATASETTABLEMODEL_H

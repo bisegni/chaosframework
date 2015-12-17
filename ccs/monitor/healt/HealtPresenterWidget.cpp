@@ -100,10 +100,10 @@ void HealtPresenterWidget::statusChanged(const QString& node_uid,
                                          const chaos::metadata_service_client::monitor_system::KeyValue& healt_values) {
     if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME)){
         qDebug()<< healt_values->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME);
-        ui->labelUsrProc->setText(QString::number(healt_values->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME), 'f', 3 ));
+        ui->labelUsrProc->setText(QString::number(healt_values->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME), 'f', 1 ));
     }
     if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME)){
-        ui->labelSysProc->setText(QString::number(healt_values->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME), 'f', 3 ));
+        ui->labelSysProc->setText(QString::number(healt_values->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME), 'f', 1 ));
     }
     if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)){
         ui->labelSwapProc->setText(QString::number(healt_values->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)));
