@@ -72,9 +72,6 @@ void HealtManager::updateProcInfo() {
     getrusage(RUSAGE_SELF, &process_resurce_usage);
     user_time_computed = (double)process_resurce_usage.ru_utime.tv_sec + ((double)process_resurce_usage.ru_utime.tv_usec / 1000000.0);
     system_time_computed = (double)process_resurce_usage.ru_stime.tv_sec + ((double)process_resurce_usage.ru_stime.tv_usec / 1000000.0);
-    
-    HM_INFO << "Updating process time-> usr:" << user_time_computed << " sys:" <<system_time_computed;
-    
 }
 
 void HealtManager::setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker) {
