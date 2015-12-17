@@ -70,6 +70,11 @@ HealtManager::~HealtManager() {
 
 void HealtManager::updateProcInfo() {
     getrusage(RUSAGE_SELF, &process_resurce_usage);
+    user_time_computed = (double)process_resurce_usage.ru_utime.tv_sec + ((double)process_resurce_usage.ru_utime.tv_usec / 1000000.0);
+    system_time_computed = (double)process_resurce_usage.ru_stime.tv_sec + ((double)process_resurce_usage.ru_stime.tv_usec / 1000000.0);
+    
+    HM_INFO << "Updating process time-> usr:" << user_time_computed << " sys:" <<system_time_computed;
+    
 }
 
 void HealtManager::setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker) {
@@ -396,9 +401,9 @@ CDataWrapper*  HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_ma
         
         static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP].get())->value = process_resurce_usage.ru_nswap;
 
-        static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_USER_TIME].get())->value = (double)process_resurce_usage.ru_utime.tv_sec + (double)process_resurce_usage.ru_utime.tv_usec / 1000000.0;
+        static_cast<DoubleHealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_USER_TIME].get())->value = user_time_computed;
 
-        static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME].get())->value = (double)process_resurce_usage.ru_stime.tv_sec + (double)process_resurce_usage.ru_stime.tv_usec / 1000000.0;
+        static_cast<DoubleHealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME].get())->value = system_time_computed;
         
         //scan all metrics
         BOOST_FOREACH(HealtNodeElementMap::value_type map_metric_element, element_map) {

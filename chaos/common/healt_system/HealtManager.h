@@ -111,7 +111,8 @@ namespace chaos {
                 
                 //!contain information about process resurces
                 struct rusage process_resurce_usage;
-                
+                double user_time_computed;
+                double system_time_computed;
                 //! update the information about process
                 inline void updateProcInfo();
             protected:
