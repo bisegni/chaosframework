@@ -284,18 +284,96 @@ int MongoDBTreeGroupDataAccess::deleteNodeGroupToDomain(const std::string& group
 }
 
 //! Inherited method
-int MongoDBTreeGroupDataAccess::getNodeChildFromPath(const std::string& group_domain,
-                                                     const std::string& tree_path,
-                                                     std::vector<std::string>& node_child) {
-    return -1;
-}
-
-//! Inherited method
 int MongoDBTreeGroupDataAccess::addChaosNodeToGroupDomain(const std::string& group_domain,
                                                           const std::string& tree_path,
                                                           const std::string& chaos_node_type,
                                                           const std::string& chaos_node_uid) {
-    return -1;
+    int err = 0;
+    std::string node_name;
+    std::string parent_path;
+    bool presence = false;
+    try {
+        //get node and paretn path from full path description
+        if((err = checkPathPresenceForDomain(group_domain,
+                                             tree_path,
+                                             presence))){
+            return err;
+        }
+        if(presence == false) {
+            MDBTGDA_ERR << "The node for tree path" << tree_path << " is not present";
+            return 0;
+        }
+        
+        
+        //create the bson element that identify the node
+        mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_name <<
+                                chaos::NodeDefinitionKey::NODE_TYPE << chaos_node_type);
+        mongo::BSONObj u = BSON("$addToSet" << BSON_ARRAY("parent_tree_group"<<BSON("tree_domain"<<group_domain<<"tree_path"<<tree_path)));
+        
+        DEBUG_CODE(MDBTGDA_ERR<<log_message("addChaosNodeToGroupDomain",
+                                            "update",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "Update",
+                                                                    q.jsonString(),
+                                                                    u.jsonString()));)
+        
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     q,
+                                     u))){
+            MDBTGDA_ERR << "Error Updating the chaos node "<<chaos_node_uid<<" for add it to the tree path" << tree_path;
+        }
+    } catch (const mongo::DBException &e) {
+        MDBTGDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBTGDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+//! Inherited method
+int MongoDBTreeGroupDataAccess::getNodeChildFromPath(const std::string& group_domain,
+                                                     const std::string& tree_path,
+                                                     std::vector<std::string>& node_child) {
+    int err = 0;
+    bool presence = false;
+    std::auto_ptr<mongo::DBClientCursor> query_result;
+    try {
+        
+        //get node and paretn path from full path description
+        if((err = checkPathPresenceForDomain(group_domain,
+                                             tree_path,
+                                             presence))){
+            return err;
+        }
+        if(presence == false) {
+            MDBTGDA_ERR << "The node for tree path" << tree_path << " is not present";
+            return 0;
+        }
+        
+        //create the bson element that identify the node
+        mongo::BSONObj q = BSON("node_parent_path" << tree_path <<
+                                "node_domain"<< group_domain);
+        
+        DEBUG_CODE(MDBTGDA_ERR<<log_message("getNodeChildFromPath",
+                                            "query",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.jsonString()));)
+        
+        query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_TREE_GROUP), q);
+        while(query_result->more()){
+            mongo::BSONObj element = query_result->next();
+            node_child.push_back(element.getStringField("node_name"));
+        }
+    } catch (const mongo::DBException &e) {
+        MDBTGDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBTGDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
 }
 
 //! Inherited method
@@ -303,7 +381,48 @@ int MongoDBTreeGroupDataAccess::removeChaosNodeFromGroupDomain(const std::string
                                                                const std::string& tree_path,
                                                                const std::string& chaos_node_type,
                                                                const std::string& chaos_node_uid) {
-    return -1;
+    int err = 0;
+    std::string node_name;
+    std::string parent_path;
+    bool presence = false;
+    try {
+        //get node and paretn path from full path description
+        if((err = checkPathPresenceForDomain(group_domain,
+                                             tree_path,
+                                             presence))){
+            return err;
+        }
+        if(presence == false) {
+            MDBTGDA_ERR << "The node for tree path" << tree_path << " is not present";
+            return 0;
+        }
+        
+        
+        //create the bson element that identify the node
+        mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << node_name <<
+                                chaos::NodeDefinitionKey::NODE_TYPE << chaos_node_type);
+        mongo::BSONObj u = BSON("$pop" << BSON_ARRAY("parent_tree_group"<<BSON("tree_domain"<<group_domain<<"tree_path"<<tree_path)));
+        
+        DEBUG_CODE(MDBTGDA_ERR<<log_message("removeChaosNodeFromGroupDomain",
+                                            "update",
+                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                    "Update",
+                                                                    q.jsonString(),
+                                                                    u.jsonString()));)
+        
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     q,
+                                     u))){
+            MDBTGDA_ERR << "Error Updating the chaos node "<<chaos_node_uid<<" for add it to the tree path" << tree_path;
+        }
+    } catch (const mongo::DBException &e) {
+        MDBTGDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBTGDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
 }
 
 //! Inherited method
@@ -312,5 +431,33 @@ int MongoDBTreeGroupDataAccess::getChaosNodeFromGroupDomain(const std::string& g
                                                             data_access::TreeGroupChaosNodeList& chaos_node_list_in_group,
                                                             const unsigned int page_size,
                                                             const std::string& last_node_uid) {
-    return -1;
+    int err = 0;
+    std::string node_name;
+    std::string parent_path;
+    std::auto_ptr<mongo::DBClientCursor> query_result;
+    try {
+        
+        //create the bson element that identify the node
+        mongo::BSONObj q = BSON("parent_tree_group.tree_domain"<<group_domain<<
+                                "parent_tree_group.tree_path"<<tree_path);
+        
+        DEBUG_CODE(MDBTGDA_ERR<<log_message("getNodeChildFromPath",
+                                            "update",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.jsonString()));)
+        
+        query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), q);
+        while(query_result->more()){
+            mongo::BSONObj element = query_result->next();
+            chaos_node_list_in_group.push_back(data_access::ChaosNodeInGroupElement(element.getStringField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
+                                                                                    element.getStringField(chaos::NodeDefinitionKey::NODE_TYPE)));
+        }
+    } catch (const mongo::DBException &e) {
+        MDBTGDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBTGDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
 }
