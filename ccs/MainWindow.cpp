@@ -6,6 +6,8 @@
 #include "search/SearchNodeResult.h"
 #include "preference/PreferenceDialog.h"
 #include "snapshot/SnapshotManager.h"
+#include "tree_group/TreeGroupManager.h"
+
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 #include <QInputDialog>
@@ -176,4 +178,8 @@ void MainWindow::on_actionDisable_Monitoring_triggered() {
 
 void MainWindow::on_actionSnapshot_Manager_triggered() {
     command_presenter->showCommandPresenter(new SnapshotManager());
+}
+
+void MainWindow::on_actionGroup_Manager_triggered() {
+    command_presenter->showCommandPresenter(new TreeGroupManager());
 }

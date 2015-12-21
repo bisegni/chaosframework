@@ -264,7 +264,9 @@ void PresenterWidget::registerWidgetForContextualMenu(QWidget *contextual_menu_p
     if(widget_contextual_menu_action){
         QMapIterator<QString, QVariant> it(*widget_contextual_menu_action);
         while(it.hasNext()) {
-            QAction *action = new QAction(it.key(), contextual_menu_parent);
+            it.next();
+            const QString action_name = it.key();
+            QAction *action = new QAction(action_name, contextual_menu_parent);
             action->setData(it.value());
             contextual_menu_parent->addAction(action);
             connect(action,
@@ -276,6 +278,33 @@ void PresenterWidget::registerWidgetForContextualMenu(QWidget *contextual_menu_p
     if(add_default_node_action)addDefaultNodeAction(contextual_menu_parent);
 }
 
+QAction *PresenterWidget::returnWidgetAction(QWidget *parent,
+                                             const QString& action_name) {
+    foreach (QAction *act,  parent->actions()) {
+        if(act->text().compare(action_name) == 0) {
+            return act;
+        }
+    }
+    return NULL;
+}
+
+void PresenterWidget::enableWidgetAction(QWidget *parent,
+                                         const QString& action_name,
+                                         bool enabled) {
+    QAction *act = NULL;
+    if(act = returnWidgetAction(parent, action_name)){
+        act->setEnabled(enabled);
+    }
+}
+
+void PresenterWidget::setWidgetActionData(QWidget *parent,
+                                          const QString& action_name,
+                                          const QVariant& action_data) {
+    QAction *act = NULL;
+    if(act = returnWidgetAction(parent, action_name)){
+        act->setData(action_data);
+    }
+}
 
 void PresenterWidget::addDefaultNodeAction(QWidget *contextual_menu_parent) {
     QAction *start_healt_monitoring_action = new QAction("Start healt monitor", contextual_menu_parent);

@@ -80,7 +80,8 @@ SOURCES += main.cpp\
     snapshot/NewSnapshot.cpp \
     snapshot/NodeListModel.cpp \
     snapshot/NodeInSnapshotTableModel.cpp \
-    monitor/healt/HighlighterForChaosType.cpp
+    monitor/healt/HighlighterForChaosType.cpp \
+    tree_group/TreeGroupManager.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -161,7 +162,8 @@ HEADERS  += \
     snapshot/NewSnapshot.h \
     snapshot/NodeListModel.h \
     snapshot/NodeInSnapshotTableModel.h \
-    monitor/healt/HighlighterForChaosType.h
+    monitor/healt/HighlighterForChaosType.h \
+    tree_group/TreeGroupManager.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -181,7 +183,8 @@ FORMS    += \
     node/control_unit/CommandTemplateInstanceEditor.ui \
     plot/NodeAttributePlotting.ui \
     snapshot/SnapshotManager.ui \
-    snapshot/NewSnapshot.ui
+    snapshot/NewSnapshot.ui \
+    tree_group/TreeGroupManager.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

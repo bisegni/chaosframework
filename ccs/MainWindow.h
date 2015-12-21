@@ -39,6 +39,8 @@ private slots:
 
     void on_actionSnapshot_Manager_triggered();
 
+    void on_actionGroup_Manager_triggered();
+
 private:
     ApiAsyncProcessor api_processor;
     HealtMonitorWidget *healt_widget;

@@ -110,6 +110,7 @@
      <string>Data</string>
     </property>
     <addaction name="actionSnapshot_Manager"/>
+    <addaction name="actionGroup_Manager"/>
    </widget>
    <addaction name="menuNode"/>
    <addaction name="menuData"/>
@@ -223,6 +224,11 @@
   <action name="actionSnapshot_Manager">
    <property name="text">
     <string>Snapshot Manager</string>
+   </property>
+  </action>
+  <action name="actionGroup_Manager">
+   <property name="text">
+    <string>Group Manager</string>
    </property>
   </action>
  </widget>

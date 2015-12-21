@@ -127,6 +127,17 @@ protected:
     virtual void contextualMenuActionTrigger(const QString& cm_title,
                                              const QVariant& cm_data);
 
+    QAction *returnWidgetAction(QWidget *parent,
+                            const QString& action_name);
+
+    void enableWidgetAction(QWidget *parent,
+                            const QString& action_name,
+                            bool enabled);
+
+    void setWidgetActionData(QWidget *parent,
+                            const QString& action_name,
+                            const QVariant& action_data);
+
     //!submit api result for async wait termination
     void submitApiResult(const QString& api_tag,
                          chaos::metadata_service_client::api_proxy::ApiProxyResult api_result);
