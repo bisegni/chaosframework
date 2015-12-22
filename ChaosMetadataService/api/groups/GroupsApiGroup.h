@@ -1,5 +1,5 @@
 /*
- *	DataAccess.h
+ *	GroupsApiGroup.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -17,13 +17,28 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_DataAccess_h
-#define CHAOSFramework_DataAccess_h
-#include "NodeDataAccess.h"
-#include "UtilityDataAccess.h"
-#include "UnitServerDataAccess.h"
-#include "ControlUnitDataAccess.h"
-#include "DataServiceDataAccess.h"
-#include "SnapshotDataAccess.h"
-#include "TreeGroupDataAccess.h"
-#endif
+
+#ifndef __CHAOSFramework__GroupsApiGroup_h
+#define __CHAOSFramework__GroupsApiGroup_h
+
+#include "../AbstractApiGroup.h"
+
+namespace chaos {
+    namespace metadata_service {
+        namespace api {
+            namespace groups {
+                
+                //! api group for the managment of the producer
+                DECLARE_CLASS_FACTORY(GroupsApiGroup, AbstractApiGroup) {
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(GroupsApiGroup)
+                public:
+                    GroupsApiGroup();
+                    ~GroupsApiGroup();
+                };
+                
+            }
+        }
+    }
+}
+
+#endif /* __CHAOSFramework__GroupsApiGroup_h */

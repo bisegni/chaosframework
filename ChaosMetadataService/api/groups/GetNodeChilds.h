@@ -1,9 +1,9 @@
 /*
- *	ServiceApiGroup.h
+ *	GetNodeChilds.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2016 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -18,27 +18,30 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__ServiceApiGroup__
-#define __CHAOSFramework__ServiceApiGroup__
+#ifndef __CHAOSFramework__GetNodeChilds_h
+#define __CHAOSFramework__GetNodeChilds_h
 
 #include "../AbstractApiGroup.h"
 
 namespace chaos {
     namespace metadata_service {
         namespace api {
-            namespace service {
-                
-                //! api group for the managment of the producer
-                DECLARE_CLASS_FACTORY(ServiceApiGroup, AbstractApiGroup) {
-                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ServiceApiGroup)
+            namespace groups {
+                //! Return all child of a node
+                /*!
+                 
+                 */
+                class GetNodeChilds:
+                public AbstractApi {
                 public:
-                    ServiceApiGroup();
-                    ~ServiceApiGroup();
+                    GetNodeChilds();
+                    ~GetNodeChilds();
+                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
                 };
-                
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__ServiceApiGroup__) */
+#endif /* __CHAOSFramework__GetNodeChild_h */
+

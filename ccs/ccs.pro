@@ -81,7 +81,8 @@ SOURCES += main.cpp\
     snapshot/NodeListModel.cpp \
     snapshot/NodeInSnapshotTableModel.cpp \
     monitor/healt/HighlighterForChaosType.cpp \
-    tree_group/TreeGroupManager.cpp
+    tree_group/TreeGroupManager.cpp \
+    tree_group/DomainListModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -163,7 +164,8 @@ HEADERS  += \
     snapshot/NodeListModel.h \
     snapshot/NodeInSnapshotTableModel.h \
     monitor/healt/HighlighterForChaosType.h \
-    tree_group/TreeGroupManager.h
+    tree_group/TreeGroupManager.h \
+    tree_group/DomainListModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

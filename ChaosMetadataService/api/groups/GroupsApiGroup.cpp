@@ -1,5 +1,5 @@
 /*
- *	DataAccess.h
+ *	GroupsApiGroup.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -17,13 +17,21 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_DataAccess_h
-#define CHAOSFramework_DataAccess_h
-#include "NodeDataAccess.h"
-#include "UtilityDataAccess.h"
-#include "UnitServerDataAccess.h"
-#include "ControlUnitDataAccess.h"
-#include "DataServiceDataAccess.h"
-#include "SnapshotDataAccess.h"
-#include "TreeGroupDataAccess.h"
-#endif
+
+#include "GroupsApiGroup.h"
+#include "AddNode.h"
+#include "GetNodeChilds.h"
+#include "GetDomains.h"
+using namespace chaos::metadata_service::api::groups;
+
+DEFINE_CLASS_FACTORY_NO_ALIAS(GroupsApiGroup,
+                              chaos::metadata_service::api::AbstractApiGroup);
+
+GroupsApiGroup::GroupsApiGroup():
+AbstractApiGroup("groups"){
+    addApi<AddNode>();
+    addApi<GetDomains>();
+    addApi<GetNodeChilds>();
+}
+
+GroupsApiGroup::~GroupsApiGroup() {}

@@ -165,7 +165,7 @@ int MongoDBTreeGroupDataAccess::deleteGroupDomain(const std::string& group_domai
         
         
         DEBUG_CODE(MDBTGDA_ERR<<log_message("deleteGroupDomain",
-                                            "count",
+                                            "remove",
                                             DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                     q.jsonString()));)
         
@@ -173,6 +173,30 @@ int MongoDBTreeGroupDataAccess::deleteGroupDomain(const std::string& group_domai
                                      q))){
             MDBTGDA_ERR << "Error removing all node group in domain "<< group_domain << " with code " << err;
         }
+    } catch (const mongo::DBException &e) {
+        MDBTGDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBTGDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+int MongoDBTreeGroupDataAccess::getAllGroupDomain(std::vector<std::string>& group_domain_list) {
+    int err = 0;
+    std::list<mongo::BSONObj> distinct_values;
+    mongo::BSONObj distinct_result;
+    try {
+        
+        DEBUG_CODE(MDBTGDA_ERR<<log_message("getAllGroupDomain",
+                                            "query",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    "no query"));)
+        
+        distinct_result = connection->distinct(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_TREE_GROUP), "node_domain");
+        
+        if(!distinct_result.isEmpty())distinct_result["values"].Obj().Vals(distinct_values);
     } catch (const mongo::DBException &e) {
         MDBTGDA_ERR << e.what();
         err = -1;
@@ -224,6 +248,35 @@ int MongoDBTreeGroupDataAccess::addNewNodeGroupToDomain(const std::string& group
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_TREE_GROUP),
                                      q))){
             MDBTGDA_ERR << "Error creating a new group node "<<node_name<<"["<<parent_path<<"]in domain "<< group_domain << " with code " << err;
+        }
+    } catch (const mongo::DBException &e) {
+        MDBTGDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBTGDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+//! inherited method
+int MongoDBTreeGroupDataAccess::addNewNodeGroupToDomain(const std::string& group_domain,
+                                                        const std::string& node_group_name) {
+    int err = 0;
+    try {
+        //create the bson element that identify the node
+        mongo::BSONObj q = BSON("node_name" << node_group_name <<
+                                "node_domain"<< group_domain);
+        
+        
+        DEBUG_CODE(MDBTGDA_ERR<<log_message("addNewNodeGroupToDomain",
+                                            "insert",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.jsonString()));)
+        
+        if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_TREE_GROUP),
+                                     q))){
+            MDBTGDA_ERR << "Error creating a new root group node "<<node_group_name<<" in domain "<< group_domain << " with code " << err;
         }
     } catch (const mongo::DBException &e) {
         MDBTGDA_ERR << e.what();
@@ -354,6 +407,37 @@ int MongoDBTreeGroupDataAccess::getNodeChildFromPath(const std::string& group_do
         
         //create the bson element that identify the node
         mongo::BSONObj q = BSON("node_parent_path" << tree_path <<
+                                "node_domain"<< group_domain);
+        
+        DEBUG_CODE(MDBTGDA_ERR<<log_message("getNodeChildFromPath",
+                                            "query",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.jsonString()));)
+        
+        query_result = connection->query(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_TREE_GROUP), q);
+        while(query_result->more()){
+            mongo::BSONObj element = query_result->next();
+            node_child.push_back(element.getStringField("node_name"));
+        }
+    } catch (const mongo::DBException &e) {
+        MDBTGDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBTGDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+//! Inherited method
+int MongoDBTreeGroupDataAccess::getNodeRootFromDomain(const std::string& group_domain,
+                                                      std::vector<std::string>& node_child) {
+    int err = 0;
+    std::auto_ptr<mongo::DBClientCursor> query_result;
+    try {
+        
+        //create the bson element that identify the node
+        mongo::BSONObj q = BSON("node_parent_path" << BSON("$exists"<<false) <<
                                 "node_domain"<< group_domain);
         
         DEBUG_CODE(MDBTGDA_ERR<<log_message("getNodeChildFromPath",

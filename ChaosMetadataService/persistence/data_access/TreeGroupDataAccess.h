@@ -66,6 +66,11 @@ namespace chaos {
                      */
                     virtual int deleteGroupDomain(const std::string& group_domain) = 0;
                     
+                    //! return all domain of the groups
+                    /*!
+                     \param group_domain_list is filled with all domain found
+                     */
+                    virtual int getAllGroupDomain(std::vector<std::string>& group_domain_list) = 0;
                     
                     //! Add a new node in a tree group
                     /*!
@@ -77,6 +82,15 @@ namespace chaos {
                     virtual int addNewNodeGroupToDomain(const std::string& group_domain,
                                                         const std::string& node_group_name,
                                                         const std::string& parent_path) = 0;
+                    
+                    //! Add a new root node in a tree group
+                    /*!
+                     Add a new node in the tree group
+                     \param group_domain is the domain of the node
+                     \param node_group_name is the name of the new node in the tree
+                     */
+                    virtual int addNewNodeGroupToDomain(const std::string& group_domain,
+                                                        const std::string& node_group_name) = 0;
                     
                     //! Delete a node in a tree group
                     /*!
@@ -95,6 +109,13 @@ namespace chaos {
                     virtual int getNodeChildFromPath(const std::string& group_domain,
                                                      const std::string& tree_path,
                                                      std::vector<std::string>& node_child) = 0;
+                    
+                    //!return the list of root node for a domain
+                    /*!
+                     \param group_domain is the domain of the node
+                     */
+                    virtual int getNodeRootFromDomain(const std::string& group_domain,
+                                                      std::vector<std::string>& node_child) = 0;
                     
                     //! Add an entity to a group in a domain
                     /*!

@@ -88,10 +88,15 @@ namespace chaos {
                     int deleteGroupDomain(const std::string& group_domain);
                     
                     //! Inherited method
+                    int getAllGroupDomain(std::vector<std::string>& group_domain_list);
+                    
+                    //! Inherited method
                     int addNewNodeGroupToDomain(const std::string& group_domain,
                                                 const std::string& node_name,
                                                 const std::string& parent_path);
-                    
+                    //! inherited method
+                    int addNewNodeGroupToDomain(const std::string& group_domain,
+                                                const std::string& node_group_name);
                     //! Inherited method
                     int deleteNodeGroupToDomain(const std::string& group_domain,
                                                 const std::string& tree_path);
@@ -100,7 +105,9 @@ namespace chaos {
                     int getNodeChildFromPath(const std::string& group_domain,
                                              const std::string& tree_path,
                                              std::vector<std::string>& node_child);
-                    
+                    //! Inherited method
+                    int getNodeRootFromDomain(const std::string& group_domain,
+                                              std::vector<std::string>& node_child);
                     //! Inherited method
                     int addChaosNodeToGroupDomain(const std::string& group_domain,
                                                   const std::string& tree_path,

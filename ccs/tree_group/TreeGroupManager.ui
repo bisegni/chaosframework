@@ -96,6 +96,24 @@
            </property>
           </spacer>
          </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonUpdateDomainsList">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>update</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
@@ -121,8 +139,13 @@
          </item>
          <item>
           <widget class="QLabel" name="label_2">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="text">
-            <string>selected domain</string>
+            <string>----</string>
            </property>
           </widget>
          </item>
