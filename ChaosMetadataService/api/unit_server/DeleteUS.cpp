@@ -31,7 +31,7 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define US_NEW_ERR  ERR_LOG(DeleteUS)
 
 DeleteUS::DeleteUS():
-AbstractApi("newUS"){
+AbstractApi("deleteUS"){
 
 }
 
