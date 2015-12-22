@@ -194,7 +194,28 @@ int MongoDBUnitServerDataAccess::checkPresence(const std::string& unit_server_un
 //! delete a unit server
 int MongoDBUnitServerDataAccess::deleteUS(const std::string& unit_server_unique_id) {
     CHAOS_ASSERT(node_data_access)
-    return node_data_access->deleteNode(unit_server_unique_id);
+    int err = 0;
+    try {
+        //before removing the unit server we need to delete the control unit associated to it
+        mongo::BSONObj q =  BSON(boost::str(boost::format("instance_description.%1%")%chaos::NodeDefinitionKey::NODE_PARENT) << unit_server_unique_id);
+        DEBUG_CODE(MDBUSDA_DBG<<log_message("deleteUS",
+                                            "remove control unit instance",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.jsonString()));)
+        //after the instance are removed we can proceed to remove the unit server
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), q))){
+            MDBUSDA_ERR << "Error removeing the instnace associated to unit server " << unit_server_unique_id << " with error code " << err;
+        } else {
+            err = node_data_access->deleteNode(unit_server_unique_id);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBUSDA_ERR << e.what();
+        err = e.getCode();
+    } catch (const chaos::CException &e) {
+        MDBUSDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
 }
 
 int MongoDBUnitServerDataAccess::getDescription(const std::string& unit_server_uid,

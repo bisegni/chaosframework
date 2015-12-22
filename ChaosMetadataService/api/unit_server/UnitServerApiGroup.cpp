@@ -35,7 +35,6 @@ AbstractApiGroup(UnitServerNodeDomainAndActionRPC::RPC_DOMAIN){
     addApi<LoadUnloadControlUnit>();
     addApi<NewUS>();
     addApi<DeleteUS>();
-
     addApi<ManageCUType>();
 }
 
