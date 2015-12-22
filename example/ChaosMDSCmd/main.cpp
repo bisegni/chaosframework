@@ -23,9 +23,13 @@
 #include <memory>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/NewUS.h>
+#include <ChaosMetadataServiceClient/api_proxy/unit_server/DeleteUS.h>
+
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/ManageCUType.h>
 
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInstanceDescription.h>
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/Delete.h>
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/DeleteInstance.h>
 
 #include <chaos/common/global.h>
 #include <chaos/common/utility/TimingUtil.h>
@@ -51,7 +55,8 @@ using namespace chaos::metadata_service_client;
 
 namespace chaos_batch = chaos::common::batch_command;
 
-#define OPT_MDS_FILE "mds-conf"
+#define OPT_MDS_FILE "mds-conf,c"
+#define OPT_RESET_CONFIG "reset-conf,r"
 
 
 #define EXECUTE_CHAOS_API(api_name,time_out,...) {\
@@ -91,7 +96,6 @@ int initialize_from_old_mds(std::string conf){
     mdsconf.setSerializedJsonData(stringa.str().c_str());
 
     //! rest ALL
-    EXECUTE_CHAOS_API(api_proxy::service::ResetAll,3000);
   //  std::cout<<"json:"<<data.getJSONString()<<std::endl;
     std::auto_ptr<CMultiTypeDataArrayWrapper> data_servers(mdsconf.getVectorValue("data_servers"));
     if(data_servers.get()){
@@ -112,7 +116,7 @@ int initialize_from_old_mds(std::string conf){
             }
 
             std::cout<<"* found dataserver["<<cnt<<"]:"<<hostname<<" channel:"<<chan<<std::endl;
-            EXECUTE_CHAOS_API(api_proxy::data_service::UpdateDS,3000,ss.str(),hostname,chan);
+            EXECUTE_CHAOS_API(api_proxy::data_service::DeleteDS,3000,ss.str());
             EXECUTE_CHAOS_API(api_proxy::data_service::NewDS,3000,ss.str(),hostname,chan);
 
         }
@@ -125,6 +129,7 @@ int initialize_from_old_mds(std::string conf){
             GET_CONFIG_STRING(usw,unit_server_alias);
             std::cout<<"* found us["<<cnt<<"]:"<<unit_server_alias<<std::endl;
             //GET_CHAOS_API_PTR(api_proxy::unit_server::NewUS)->execute(usname.c_str());
+             EXECUTE_CHAOS_API(api_proxy::unit_server::DeleteUS,3000,unit_server_alias);
              EXECUTE_CHAOS_API(api_proxy::unit_server::NewUS,3000,unit_server_alias);
 
              CMultiTypeDataArrayWrapper* cu_l=usw->getVectorValue("cu_desc");
@@ -142,7 +147,8 @@ int initialize_from_old_mds(std::string conf){
                  cud.unit_server_uid=unit_server_alias;
                  cud.control_unit_implementation=cu_type;
                  //EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,1);
-
+                 EXECUTE_CHAOS_API(api_proxy::control_unit::DeleteInstance,3000,unit_server_alias,cu_id);
+                 EXECUTE_CHAOS_API(api_proxy::control_unit::Delete,3000,cu_id);
                  EXECUTE_CHAOS_API(api_proxy::unit_server::ManageCUType,3000,unit_server_alias,cu_type,0);
 
                  // drivers
@@ -182,10 +188,11 @@ int main (int argc, char* argv[] )
     std::string conf_file;
     std::string mds;
     bool operation_defined=false;
+    bool reset_config=false;
 
   try {
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_MDS_FILE, "MDS configuration file (initialize the MDS with the given json configuration [old style])",&conf_file);
-
+    ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_RESET_CONFIG, po::value<bool>(&reset_config)->default_value(false),"reset MDS configuration");
     ChaosMetadataServiceClient::getInstance()->init(argc, argv);
 
 
@@ -194,6 +201,10 @@ int main (int argc, char* argv[] )
     if (mds.empty()){
         std::cerr<< "# you must define a valid MDS server 'metadata-server'"<<std::endl;
         return -4;
+    }
+    if(reset_config){
+        std::cout<<"* resetting MDS configuration"<<std::endl;
+          EXECUTE_CHAOS_API(api_proxy::service::ResetAll,3000);
     }
     //! [UIToolkit Attribute Init]
     std::cout <<"* MDS:"<<mds<<std::endl;

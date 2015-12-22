@@ -61972,7 +61972,7 @@
           </preprocessorList>
         </ccTool>
       </folder>
-      <folder path="0/example">
+      <folder path="0/example/BenchTest">
         <ccTool>
           <incDir>
             <pElem>../chaos-x86_64-dynamic-release/include</pElem>
@@ -61988,15 +61988,25 @@
       <folder path="0/example/ChaosCLI">
         <ccTool>
           <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
             <pElem>example/ChaosCLI</pElem>
             <pElem>bin/chaos_cli</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </folder>
       <folder path="0/example/ChaosMDSCmd">
         <ccTool>
           <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
             <pElem>example/ChaosMDSCmd</pElem>
+            <pElem>example</pElem>
             <pElem>bin/ChaosMDSCmd</pElem>
           </incDir>
         </ccTool>
@@ -62004,9 +62014,29 @@
       <folder path="0/example/ChaosPerformanceTester">
         <ccTool>
           <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
             <pElem>example/ChaosPerformanceTester</pElem>
             <pElem>bin/ChaosPerformanceTester</pElem>
           </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="0/example/UIToolkitTest">
+        <ccTool>
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </folder>
       <folder path="0/external">

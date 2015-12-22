@@ -1,0 +1,852 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="95">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <df name="api">
+        <df name="control_unit">
+          <in>ControlUnitGroup.cpp</in>
+          <in>CopyInstance.cpp</in>
+          <in>Delete.cpp</in>
+          <in>DeleteInstance.cpp</in>
+          <in>GetCurrentDataset.cpp</in>
+          <in>GetFullDescription.cpp</in>
+          <in>GetInstance.cpp</in>
+          <in>InitDeinit.cpp</in>
+          <in>RecoverError.cpp</in>
+          <in>SearchInstancesByUS.cpp</in>
+          <in>SetInputDatasetAttributeValues.cpp</in>
+          <in>SetInstanceDescription.cpp</in>
+          <in>StartStop.cpp</in>
+        </df>
+        <df name="data_service">
+          <in>AssociationControlUnit.cpp</in>
+          <in>DataServiceApiGroup.cpp</in>
+          <in>DeleteDS.cpp</in>
+          <in>GetAllDataService.cpp</in>
+          <in>GetAssociationByDS.cpp</in>
+          <in>GetBestEndpoints.cpp</in>
+          <in>NewDS.cpp</in>
+          <in>UpdateDS.cpp</in>
+        </df>
+        <df name="healt">
+          <in>HealtApiGroup.cpp</in>
+          <in>ProcessBye.cpp</in>
+          <in>ProcessHello.cpp</in>
+        </df>
+        <df name="node">
+          <in>ChangeNodeState.cpp</in>
+          <in>CommandCommonUtility.cpp</in>
+          <in>CommandGet.cpp</in>
+          <in>CommandInstanceSubmit.cpp</in>
+          <in>CommandTemplateDelete.cpp</in>
+          <in>CommandTemplateGet.cpp</in>
+          <in>CommandTemplateSearch.cpp</in>
+          <in>CommandTemplateSet.cpp</in>
+          <in>CommandTemplateSubmit.cpp</in>
+          <in>GetCommandAndTemplateDescription.cpp</in>
+          <in>GetNodeNetworkAddress.cpp</in>
+          <in>NodeCreateUnitServer.cpp</in>
+          <in>NodeGetDescription.cpp</in>
+          <in>NodeGroup.cpp</in>
+          <in>NodeLoadCompletion.cpp</in>
+          <in>NodeRegister.cpp</in>
+          <in>NodeSearch.cpp</in>
+          <in>UpdateProperty.cpp</in>
+        </df>
+        <df name="service">
+          <in>CreateNewSnapshot.cpp</in>
+          <in>DeleteSnapshot.cpp</in>
+          <in>GetAllSnapshot.cpp</in>
+          <in>GetNodesForSnapshot.cpp</in>
+          <in>ResetAll.cpp</in>
+          <in>RestoreSnapshot.cpp</in>
+          <in>ServiceApiGroup.cpp</in>
+        </df>
+        <df name="unit_server">
+          <in>DeleteUS.cpp</in>
+          <in>GetDescription.cpp</in>
+          <in>LoadUnloadControlUnit.cpp</in>
+          <in>ManageCUType.cpp</in>
+          <in>NewUS.cpp</in>
+          <in>UnitServerApiGroup.cpp</in>
+        </df>
+        <in>AbstractApi.cpp</in>
+        <in>AbstractApiGroup.cpp</in>
+        <in>ApiManagment.cpp</in>
+      </df>
+      <df name="batch">
+        <df name="control_unit">
+          <in>ApplyChangeSet.cpp</in>
+          <in>IDSTControlUnitBatchCommand.cpp</in>
+          <in>RecoverError.cpp</in>
+          <in>RegistrationAckBatchCommand.cpp</in>
+        </df>
+        <df name="general">
+          <in>RestoreSnapshotBatch.cpp</in>
+        </df>
+        <df name="node">
+          <in>SubmitBatchCommand.cpp</in>
+          <in>UpdatePropertyCommand.cpp</in>
+        </df>
+        <df name="unit_server">
+          <in>LoadUnloadControlUnit.cpp</in>
+          <in>UnitServerAckBatchCommand.cpp</in>
+        </df>
+        <in>MDSBatchCommand.cpp</in>
+        <in>MDSBatchExecutor.cpp</in>
+      </df>
+      <df name="CMakeFiles">
+        <df name="2.8.12.2">
+          <df name="CompilerIdC">
+            <in>CMakeCCompilerId.c</in>
+          </df>
+          <df name="CompilerIdCXX">
+            <in>CMakeCXXCompilerId.cpp</in>
+          </df>
+        </df>
+      </df>
+      <df name="common">
+        <in>CUCommonUtility.cpp</in>
+      </df>
+      <df name="persistence">
+        <df name="data_access">
+          <in>ControlUnitDataAccess.cpp</in>
+          <in>DataServiceDataAccess.cpp</in>
+          <in>NodeDataAccess.cpp</in>
+          <in>SnapshotDataAccess.cpp</in>
+          <in>UnitServerDataAccess.cpp</in>
+          <in>UtilityDataAccess.cpp</in>
+        </df>
+        <df name="mongodb">
+          <in>MongoDBControlUnitDataAccess.cpp</in>
+          <in>MongoDBDataServiceDataAccess.cpp</in>
+          <in>MongoDBNodeDataAccess.cpp</in>
+          <in>MongoDBPersistenceDriver.cpp</in>
+          <in>MongoDBSnapshotDataAccess.cpp</in>
+          <in>MongoDBUnitServerDataAccess.cpp</in>
+          <in>MongoDBUtilityDataAccess.cpp</in>
+        </df>
+      </df>
+      <in>ChaosMetadataService.cpp</in>
+      <in>main.cpp</in>
+    </df>
+    <logicalFolder name="Modules"
+                   displayName="Modules"
+                   projectFiles="true"
+                   root="/usr/share/cmake-2.8/Modules">
+      <itemPath>/usr/share/cmake-2.8/Modules/CMakeCCompilerABI.c</itemPath>
+      <itemPath>/usr/share/cmake-2.8/Modules/CMakeCXXCompilerABI.cpp</itemPath>
+      <itemPath>/usr/share/cmake-2.8/Modules/CMakeCompilerABI.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="persistence"
+                   displayName="persistence"
+                   projectFiles="true"
+                   root="../chaos_service_common/persistence">
+      <logicalFolder name="data_access" displayName="data_access" projectFiles="true">
+        <itemPath>../chaos_service_common/persistence/data_access/AbstractDataAccess.cpp</itemPath>
+        <itemPath>../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="mongodb" displayName="mongodb" projectFiles="true">
+        <itemPath>../chaos_service_common/persistence/mongodb/MongoDBAccessor.cpp</itemPath>
+        <itemPath>../chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>CMakeLists.txt</itemPath>
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <flagsDictionary>
+        <element flagsID="0" commonFlags="-O2"/>
+      </flagsDictionary>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile install</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+        </makeTool>
+      </makefileType>
+      <item path="../chaos_service_common/persistence/data_access/AbstractDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="../chaos_service_common/persistence/mongodb/MongoDBAccessor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="../chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="/usr/share/cmake-2.8/Modules/CMakeCCompilerABI.c"
+            ex="false"
+            tool="0"
+            flavor2="2">
+      </item>
+      <item path="/usr/share/cmake-2.8/Modules/CMakeCXXCompilerABI.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="CMakeFiles/2.8.12.2/CompilerIdC/CMakeCCompilerId.c"
+            ex="false"
+            tool="0"
+            flavor2="2">
+      </item>
+      <item path="CMakeFiles/2.8.12.2/CompilerIdCXX/CMakeCXXCompilerId.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="ChaosMetadataService.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/AbstractApi.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/AbstractApiGroup.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/ApiManagment.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/control_unit/ControlUnitGroup.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/control_unit/CopyInstance.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/control_unit/Delete.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/control_unit/DeleteInstance.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/control_unit/GetCurrentDataset.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/control_unit/GetFullDescription.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/control_unit/GetInstance.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/control_unit/InitDeinit.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/control_unit/RecoverError.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/control_unit/SearchInstancesByUS.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/control_unit/SetInputDatasetAttributeValues.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/control_unit/SetInstanceDescription.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/control_unit/StartStop.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/data_service/AssociationControlUnit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/data_service/DataServiceApiGroup.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/data_service/DeleteDS.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/data_service/GetAllDataService.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/data_service/GetAssociationByDS.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/data_service/GetBestEndpoints.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/data_service/NewDS.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/data_service/UpdateDS.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/healt/HealtApiGroup.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/healt/ProcessBye.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/healt/ProcessHello.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/node/ChangeNodeState.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/CommandCommonUtility.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/CommandGet.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/CommandInstanceSubmit.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/CommandTemplateDelete.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/CommandTemplateGet.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/CommandTemplateSearch.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/CommandTemplateSet.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/CommandTemplateSubmit.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/GetCommandAndTemplateDescription.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/GetNodeNetworkAddress.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="api/node/NodeCreateUnitServer.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/NodeGetDescription.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/NodeGroup.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/NodeLoadCompletion.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/NodeRegister.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/NodeSearch.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/node/UpdateProperty.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="api/service/CreateNewSnapshot.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/service/DeleteSnapshot.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/service/GetAllSnapshot.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/service/GetNodesForSnapshot.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/service/ResetAll.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/service/RestoreSnapshot.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/service/ServiceApiGroup.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/unit_server/DeleteUS.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/unit_server/GetDescription.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/unit_server/LoadUnloadControlUnit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/unit_server/ManageCUType.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/unit_server/NewUS.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="api/unit_server/UnitServerApiGroup.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <item path="batch/MDSBatchCommand.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="batch/MDSBatchExecutor.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="batch/control_unit/ApplyChangeSet.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="batch/control_unit/IDSTControlUnitBatchCommand.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="batch/control_unit/RecoverError.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="batch/control_unit/RegistrationAckBatchCommand.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="batch/general/RestoreSnapshotBatch.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="batch/node/SubmitBatchCommand.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="batch/node/UpdatePropertyCommand.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="batch/unit_server/LoadUnloadControlUnit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="batch/unit_server/UnitServerAckBatchCommand.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="common/CUCommonUtility.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+        </ccTool>
+      </item>
+      <folder path="0/api/control_unit">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="0/api/data_service">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="0/api/healt">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="0/api/service">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="0/api/unit_server">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="0/common">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Modules">
+        <cTool>
+          <incDir>
+            <pElem>CMakeFiles/CMakeTmp</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>CMakeFiles/CMakeTmp</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="persistence">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <item path="main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool flags="0">
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>../..</pElem>
+            <pElem>..</pElem>
+            <pElem>../../chaos-x86_64-dynamic-release/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="persistence/data_access/ControlUnitDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="persistence/data_access/DataServiceDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="persistence/data_access/NodeDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="persistence/data_access/SnapshotDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="persistence/data_access/UnitServerDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="persistence/data_access/UtilityDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="persistence/mongodb/MongoDBControlUnitDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="persistence/mongodb/MongoDBDataServiceDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="persistence/mongodb/MongoDBNodeDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="persistence/mongodb/MongoDBPersistenceDriver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="persistence/mongodb/MongoDBSnapshotDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="persistence/mongodb/MongoDBUnitServerDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="persistence/mongodb/MongoDBUtilityDataAccess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

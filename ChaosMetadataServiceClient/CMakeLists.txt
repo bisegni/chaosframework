@@ -40,6 +40,7 @@ SET(mcl_src ${mcl_src}      api_proxy/control_unit/SetInputDatasetAttributeValue
                             api_proxy/control_unit/SearchInstancesByUS.cpp
                             api_proxy/control_unit/GetInstance.cpp
                             api_proxy/control_unit/DeleteInstance.cpp
+                            api_proxy/control_unit/Delete.cpp
                             api_proxy/control_unit/GetCurrentDataset.cpp
                             api_proxy/control_unit/InitDeinit.cpp
                             api_proxy/control_unit/StartStop.cpp
@@ -48,6 +49,7 @@ SET(mcl_src ${mcl_src}      api_proxy/control_unit/SetInputDatasetAttributeValue
 
 SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
                             api_proxy/unit_server/NewUS.cpp
+                            api_proxy/unit_server/DeleteUS.cpp
                             api_proxy/unit_server/LoadUnloadControlUnit.cpp
                             api_proxy/unit_server/ManageCUType.cpp)
 
