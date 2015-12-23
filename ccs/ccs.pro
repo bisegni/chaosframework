@@ -82,7 +82,9 @@ SOURCES += main.cpp\
     snapshot/NodeInSnapshotTableModel.cpp \
     monitor/healt/HighlighterForChaosType.cpp \
     tree_group/TreeGroupManager.cpp \
-    tree_group/DomainListModel.cpp
+    tree_group/DomainListModel.cpp \
+    tree_group/GroupTreeItem.cpp \
+    tree_group/GroupTreeModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -165,7 +167,9 @@ HEADERS  += \
     snapshot/NodeInSnapshotTableModel.h \
     monitor/healt/HighlighterForChaosType.h \
     tree_group/TreeGroupManager.h \
-    tree_group/DomainListModel.h
+    tree_group/DomainListModel.h \
+    tree_group/GroupTreeItem.h \
+    tree_group/GroupTreeModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \
