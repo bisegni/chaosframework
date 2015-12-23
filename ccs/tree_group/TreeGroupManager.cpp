@@ -31,6 +31,7 @@ void TreeGroupManager::initUI() {
                                     &cm_tree_map,
                                     false);
 
+    ui->listViewDomains->setModel(&domain_list_model);
     connect(ui->listViewDomains->selectionModel(),
             SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             SLOT(handleListSelectionChanged(QModelIndex,QModelIndex)));
@@ -42,8 +43,6 @@ void TreeGroupManager::initUI() {
     enableWidgetAction(ui->treeViewDomainsTree,
                        tr("Add New Root"),
                        true);
-
-    ui->listViewDomains->setModel(&domain_list_model);
 
     ui->treeViewDomainsTree->setModel(&tree_model);
     updateDomains();
