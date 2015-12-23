@@ -84,7 +84,8 @@ SOURCES += main.cpp\
     tree_group/TreeGroupManager.cpp \
     tree_group/DomainListModel.cpp \
     tree_group/GroupTreeItem.cpp \
-    tree_group/GroupTreeModel.cpp
+    tree_group/GroupTreeModel.cpp \
+    tree_group/AddNewDomain.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -169,7 +170,8 @@ HEADERS  += \
     tree_group/TreeGroupManager.h \
     tree_group/DomainListModel.h \
     tree_group/GroupTreeItem.h \
-    tree_group/GroupTreeModel.h
+    tree_group/GroupTreeModel.h \
+    tree_group/AddNewDomain.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -190,7 +192,8 @@ FORMS    += \
     plot/NodeAttributePlotting.ui \
     snapshot/SnapshotManager.ui \
     snapshot/NewSnapshot.ui \
-    tree_group/TreeGroupManager.ui
+    tree_group/TreeGroupManager.ui \
+    tree_group/AddNewDomain.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

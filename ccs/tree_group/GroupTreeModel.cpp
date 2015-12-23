@@ -1,5 +1,10 @@
 #include "GroupTreeModel.h"
 
+#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+
+using namespace chaos::metadata_service_client;
+using namespace chaos::metadata_service_client::api_proxy;
+
 GroupTreeModel::GroupTreeModel(QObject *parent):
     QAbstractItemModel(parent){
     rootItem = new GroupTreeItem(tr("Name"), tr("root"));
@@ -88,8 +93,78 @@ int GroupTreeModel::columnCount(const QModelIndex &parent) const {
         return rootItem->columnCount();
 }
 
+void GroupTreeModel::asyncApiResult(const QString& tag,
+                                    QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
+    if(tag.startsWith("domain_")) {
+        QString domain = tag.split("_").front();
+        std::auto_ptr<groups::GetNodeChildsHelper> gnc_helper = groups::GetNodeChilds::getHelper(api_result.data());
+        beginResetModel();
+        for(groups::NodeChildListConstIterator it = gnc_helper->getNodeChildsList().begin();
+            it != gnc_helper->getNodeChildsList().end();
+            it++) {
+            rootItem->appendChild(new GroupTreeItem(QString::fromStdString(*it), domain, rootItem));
+        }
+        endResetModel();
+    } else if(tag.startsWith("add_new_node_")) {
+        QString path = tag.split("_").front();
+        QModelIndex node_index = model_index_load_child_map[path];
+        model_index_load_child_map.remove(path);
+
+        std::auto_ptr<groups::GetNodeChildsHelper> gnc_helper = groups::GetNodeChilds::getHelper(api_result.data());
+
+        //we need to update the child in this index
+        beginInsertRows(node_index, 0, gnc_helper->getNodeChildsListSize()-1);
+        GroupTreeItem *parentItem = static_cast<GroupTreeItem*>(node_index.internalPointer());
+        for(groups::NodeChildListConstIterator it = gnc_helper->getNodeChildsList().begin();
+            it != gnc_helper->getNodeChildsList().end();
+            it++) {
+            parentItem->appendChild(new GroupTreeItem(QString::fromStdString(*it),
+                                                      parentItem->getDomain(),
+                                                      parentItem));
+        }
+        endInsertRows();
+    }
+}
+
+void GroupTreeModel::asyncApiError(const QString& tag,
+                                   QSharedPointer<chaos::CException> api_exception) {
+    if(tag.startsWith("add_new_node_")) {
+            QString path = tag.split("_").front();
+            model_index_load_child_map.remove(path);
+        }
+}
+
+void GroupTreeModel::asyncApiTimeout(const QString& tag) {
+    if(tag.startsWith("add_new_node_")) {
+            QString path = tag.split("_").front();
+            model_index_load_child_map.remove(path);
+        }
+}
+
 void GroupTreeModel::loadRootsForDomain(const QString& domain) {
     beginResetModel();
     rootItem->removeChild();
+    api_processor.submitApiResult("domain_"+domain,
+                                  GET_CHAOS_API_PTR(groups::GetNodeChilds)->execute(domain.toStdString()),
+                                  this,
+                                  SLOT(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
+                                  SLOT(asyncApiError(QString, QSharedPointer<chaos::CException>)),
+                                  SLOT(asyncApiTimeout(QString)));
     endResetModel();
+}
+
+
+void GroupTreeModel::addNewNodeToIndex(const QModelIndex &node_parent, QString node_name) {
+    if(!node_parent.isValid()) return;
+    GroupTreeItem *parentItem = static_cast<GroupTreeItem*>(node_parent.internalPointer());
+    model_index_load_child_map.insert(parentItem->getPathToRoot(), node_parent);
+    api_processor.submitApiResult("add_new_node_"+parentItem->getPathToRoot(),
+                                  GET_CHAOS_API_PTR(groups::AddNode)->execute(parentItem->getDomain().toStdString(),
+                                                                                    node_name.toStdString(),
+                                                                                    parentItem->getPathToRoot().toStdString()),
+                                  this,
+                                  SLOT(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
+                                  SLOT(asyncApiError(QString, QSharedPointer<chaos::CException>)),
+                                  SLOT(asyncApiTimeout(QString)));
+
 }

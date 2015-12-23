@@ -35,8 +35,8 @@ namespace chaos {
                 public:
                     GetNodeChildsHelper(chaos::common::data::CDataWrapper *api_result);
                     ~GetNodeChildsHelper();
-                    size_t GetNodeChildsListSize();
-                    const NodeChildList& GetNodeChildsList();
+                    size_t getNodeChildsListSize();
+                    const NodeChildList& getNodeChildsList();
                 };
                 
                 //! Get all child for a node
@@ -52,7 +52,7 @@ namespace chaos {
                      \param node_path is the path that univocally identify the node within the domain
                      */
                     ApiProxyResult execute(const std::string& node_domain,
-                                           const std::string& node_path);
+                                           const std::string& node_path = std::string());
                     
                     static std::auto_ptr<GetNodeChildsHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };

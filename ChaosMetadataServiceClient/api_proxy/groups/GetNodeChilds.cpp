@@ -34,7 +34,7 @@ API_PROXY_CD_DEFINITION(GetNodeChilds,
 ApiProxyResult GetNodeChilds::execute(const std::string& node_domain,
                                       const std::string& node_path) {
     std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
-    pack->addStringValue("node_path", node_path);
+    if(node_path.size()){pack->addStringValue("node_path", node_path);}
     pack->addStringValue("group_domain", node_domain);
     return callApi(pack.release());
 }
@@ -60,9 +60,10 @@ GetNodeChildsHelper::GetNodeChildsHelper(CDataWrapper *api_result) {
 
 GetNodeChildsHelper::~GetNodeChildsHelper() {}
 
-size_t GetNodeChildsHelper::GetNodeChildsListSize() {
+size_t GetNodeChildsHelper::getNodeChildsListSize() {
     return node_child_list.size();
 }
-const NodeChildList& GetNodeChildsHelper::GetNodeChildsList(){
+
+const NodeChildList& GetNodeChildsHelper::getNodeChildsList(){
     return node_child_list;
 }

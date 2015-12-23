@@ -185,7 +185,7 @@ int MongoDBTreeGroupDataAccess::deleteGroupDomain(const std::string& group_domai
 
 int MongoDBTreeGroupDataAccess::getAllGroupDomain(std::vector<std::string>& group_domain_list) {
     int err = 0;
-    std::list<mongo::BSONObj> distinct_values;
+    std::vector<std::string> distinct_values;
     mongo::BSONObj distinct_result;
     try {
         
@@ -196,7 +196,9 @@ int MongoDBTreeGroupDataAccess::getAllGroupDomain(std::vector<std::string>& grou
         
         distinct_result = connection->distinct(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_TREE_GROUP), "node_domain");
         
-        if(!distinct_result.isEmpty())distinct_result["values"].Obj().Vals(distinct_values);
+        if(!distinct_result.isEmpty() && distinct_result.couldBeArray()){
+            distinct_result.Vals<std::string>(group_domain_list);
+        }
     } catch (const mongo::DBException &e) {
         MDBTGDA_ERR << e.what();
         err = -1;

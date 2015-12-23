@@ -2,9 +2,11 @@
 #define TREEGROUPMANAGER_H
 
 #include <QWidget>
+#include <QItemSelection>
 
 #include "DomainListModel.h"
 #include "../presenter/PresenterWidget.h"
+#include "GroupTreeModel.h"
 
 namespace Ui {
 class TreeGroupManager;
@@ -26,10 +28,15 @@ protected:
 private slots:
     void on_pushButtonUpdateDomainsList_clicked();
 
+    void on_pushButton_clicked();
+
+    void handleListSelectionChanged(const QItemSelection& selection);
 private:
     void contextualMenuActionTrigger(const QString& cm_title,
                                      const QVariant& cm_data);
     Ui::TreeGroupManager *ui;
+
+    GroupTreeModel tree_model;
     DomainListModel domain_list_model;
 };
 

@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__GetNodeChilds_h
-#define __CHAOSFramework__GetNodeChilds_h
+#ifndef __CHAOSFramework__AddNode_h
+#define __CHAOSFramework__AddNode_h
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 

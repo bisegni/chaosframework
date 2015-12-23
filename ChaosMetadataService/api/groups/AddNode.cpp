@@ -63,7 +63,7 @@ chaos::common::data::CDataWrapper *AddNode::execute(chaos::common::data::CDataWr
         }
     } else {
         if((err = tg_da->addNewNodeGroupToDomain(node_domain,
-                                                 node_domain))) {
+                                                 node_name))) {
             LOG_AND_TROW_FORMATTED(G_AN_ERR, -6, "Error creating root node %1% with error code %2%", %node_name%err);
         }
     }

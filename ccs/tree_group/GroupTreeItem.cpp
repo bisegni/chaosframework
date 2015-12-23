@@ -1,14 +1,20 @@
 #include "GroupTreeItem.h"
 
 #include <QVector>
+#include <QSharedPointer>
+#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+
+using namespace chaos::metadata_service_client;
+using namespace chaos::metadata_service_client::api_proxy;
 
 GroupTreeItem::GroupTreeItem(const QString &item_name,
                              const QString &item_domain,
                              GroupTreeItem *parent):
+    QObject(NULL),
     m_item_name(item_name),
     m_item_domain(item_domain),
     m_parent_item(parent) {
-    appendChild(new GroupTreeItem("Loading...", "", this));
+    updatChild();
 }
 
 GroupTreeItem::~GroupTreeItem() {
@@ -73,4 +79,32 @@ QString GroupTreeItem::getPathToRoot() {
         path.resize(path.size()-1);
     }
     return path;
+}
+
+const QString& GroupTreeItem::getDomain() {
+    return m_item_domain;
+}
+
+void GroupTreeItem::updatChild() {
+    api_processor.submitApiResult("get_child",
+                                  GET_CHAOS_API_PTR(groups::GetNodeChilds)->execute(m_item_domain.toStdString(),
+                                                                                    getPathToRoot().toStdString()),
+                                  this,
+                                  SLOT(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
+                                  SLOT(asyncApiError(QString, QSharedPointer<chaos::CException>)),
+                                  SLOT(asyncApiTimeout(QString)));
+}
+
+void GroupTreeItem::asyncApiResult(const QString& tag,
+                                   QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
+    //std::auto_ptr<>
+}
+
+void GroupTreeItem::asyncApiError(const QString& tag,
+                                  QSharedPointer<chaos::CException> api_exception){
+
+}
+
+void GroupTreeItem::asyncApiTimeout(const QString& tag) {
+
 }

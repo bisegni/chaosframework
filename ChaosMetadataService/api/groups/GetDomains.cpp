@@ -60,5 +60,5 @@ chaos::common::data::CDataWrapper *GetDomains::execute(chaos::common::data::CDat
         }
     }
     result->finalizeArrayForKey("domain_list");
-    return NULL;
+    return result.release();
 }

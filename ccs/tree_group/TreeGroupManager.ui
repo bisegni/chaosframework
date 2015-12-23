@@ -55,6 +55,9 @@
            <pointsize>11</pointsize>
           </font>
          </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
         </widget>
        </item>
        <item>
@@ -138,7 +141,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="labelDomainSelected">
            <property name="font">
             <font>
              <pointsize>11</pointsize>

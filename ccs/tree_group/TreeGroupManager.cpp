@@ -1,5 +1,6 @@
 #include "TreeGroupManager.h"
 #include "ui_TreeGroupManager.h"
+#include "AddNewDomain.h"
 
 #include <QDebug>
 #include <QMap>
@@ -20,11 +21,22 @@ TreeGroupManager::~TreeGroupManager() {
 }
 
 void TreeGroupManager::initUI() {
-    QMap<QString, QVariant> cm_map;
-    cm_map.insert(tr("Add New Root"), tr("new"));
+    QMap<QString, QVariant> cm_tree_map;
+    cm_tree_map.insert(tr("Add New Root"), tr("new"));
+
+    QMap<QString, QVariant> cm_list_map;
+    cm_list_map.insert(tr("Select Domain"), tr("select_domain"));
 
     registerWidgetForContextualMenu(ui->treeViewDomainsTree,
-                                    &cm_map,
+                                    &cm_tree_map,
+                                    false);
+
+    connect(ui->listViewDomains->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SLOT(handleListSelectionChanged(QItemSelection)));
+
+    registerWidgetForContextualMenu(ui->listViewDomains,
+                                    &cm_list_map,
                                     false);
 
     enableWidgetAction(ui->treeViewDomainsTree,
@@ -33,6 +45,7 @@ void TreeGroupManager::initUI() {
 
     ui->listViewDomains->setModel(&domain_list_model);
 
+    ui->treeViewDomainsTree->setModel(&tree_model);
     updateDomains();
 }
 
@@ -47,7 +60,9 @@ void TreeGroupManager::onApiDone(const QString& tag,
                                api_result);
 
     if(tag.compare("get_domains") == 0) {
-       domain_list_model.update(groups::GetDomains::getHelper(api_result.data()));
+        domain_list_model.update(groups::GetDomains::getHelper(api_result.data()));
+    } else if(tag.compare("add_domain") == 0) {
+        updateDomains();
     }
 
 }
@@ -58,10 +73,37 @@ void TreeGroupManager::updateDomains() {
 }
 
 void TreeGroupManager::contextualMenuActionTrigger(const QString& cm_title,
-                                                  const QVariant& cm_data){
-    qDebug() << "test";
+                                                   const QVariant& cm_data){
+    if(cm_title.compare("Select Domain")) {
+        ui->labelDomainSelected->setText(cm_data.toString());
+    }
 }
 
+void TreeGroupManager::handleListSelectionChanged(const QItemSelection& selection) {
+    if(selection.indexes().isEmpty()) {
+        enableWidgetAction(ui->treeViewDomainsTree,
+                           tr("Select Domain"),
+                           false);
+    } else {
+        enableWidgetAction(ui->treeViewDomainsTree,
+                           tr("Select Domain"),
+                           true);
+        setWidgetActionData(ui->treeViewDomainsTree,
+                            tr("Select Domain"),
+                            selection.indexes().first().data());
+    }
+}
 void TreeGroupManager::on_pushButtonUpdateDomainsList_clicked() {
     updateDomains();
+}
+
+void TreeGroupManager::on_pushButton_clicked() {
+    AddNewDomain add_new_domain_dialog;
+    int result = add_new_domain_dialog.exec();
+    if(result == 1) {
+        //we can create the new domain with one root
+        submitApiResult("add_domain",
+                        GET_CHAOS_API_PTR(groups::AddNode)->execute(add_new_domain_dialog.getDomainName().toStdString(),
+                                                                    add_new_domain_dialog.getRootName().toStdString()));
+    }
 }
