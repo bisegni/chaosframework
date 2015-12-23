@@ -32,8 +32,8 @@ void TreeGroupManager::initUI() {
                                     false);
 
     connect(ui->listViewDomains->selectionModel(),
-            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-            SLOT(handleListSelectionChanged(QItemSelection)));
+            SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
+            SLOT(handleListSelectionChanged(QModelIndex,QModelIndex)));
 
     registerWidgetForContextualMenu(ui->listViewDomains,
                                     &cm_list_map,
@@ -74,13 +74,14 @@ void TreeGroupManager::updateDomains() {
 
 void TreeGroupManager::contextualMenuActionTrigger(const QString& cm_title,
                                                    const QVariant& cm_data){
-    if(cm_title.compare("Select Domain")) {
+    if(cm_title.compare("Select Domain")==0) {
         ui->labelDomainSelected->setText(cm_data.toString());
     }
 }
 
-void TreeGroupManager::handleListSelectionChanged(const QItemSelection& selection) {
-    if(selection.indexes().isEmpty()) {
+void TreeGroupManager::handleListSelectionChanged(const QModelIndex &current_row,
+                                                  const QModelIndex &previous_row) {
+    if(!current_row.isValid()) {
         enableWidgetAction(ui->treeViewDomainsTree,
                            tr("Select Domain"),
                            false);
@@ -90,7 +91,7 @@ void TreeGroupManager::handleListSelectionChanged(const QItemSelection& selectio
                            true);
         setWidgetActionData(ui->treeViewDomainsTree,
                             tr("Select Domain"),
-                            selection.indexes().first().data());
+                            current_row.data());
     }
 }
 void TreeGroupManager::on_pushButtonUpdateDomainsList_clicked() {

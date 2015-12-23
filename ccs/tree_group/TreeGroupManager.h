@@ -30,7 +30,8 @@ private slots:
 
     void on_pushButton_clicked();
 
-    void handleListSelectionChanged(const QItemSelection& selection);
+    void handleListSelectionChanged(const QModelIndex& current_row,
+                                    const QModelIndex& previous_row);
 private:
     void contextualMenuActionTrigger(const QString& cm_title,
                                      const QVariant& cm_data);
