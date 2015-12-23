@@ -72,5 +72,5 @@ chaos::common::data::CDataWrapper *GetNodeChilds::execute(chaos::common::data::C
         }
     }
     result->finalizeArrayForKey("node_child_list");
-    return NULL;
+    return result.release();
 }

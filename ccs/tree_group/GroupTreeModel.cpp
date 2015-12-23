@@ -95,8 +95,8 @@ int GroupTreeModel::columnCount(const QModelIndex &parent) const {
 
 void GroupTreeModel::asyncApiResult(const QString& tag,
                                     QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
-    if(tag.startsWith("domain_")) {
-        QString domain = tag.split("_").front();
+    if(tag.startsWith("domain>")) {
+        QString domain = tag.split(">").back();
         std::auto_ptr<groups::GetNodeChildsHelper> gnc_helper = groups::GetNodeChilds::getHelper(api_result.data());
         beginResetModel();
         for(groups::NodeChildListConstIterator it = gnc_helper->getNodeChildsList().begin();
@@ -105,8 +105,8 @@ void GroupTreeModel::asyncApiResult(const QString& tag,
             rootItem->appendChild(new GroupTreeItem(QString::fromStdString(*it), domain, rootItem));
         }
         endResetModel();
-    } else if(tag.startsWith("add_new_node_")) {
-        QString path = tag.split("_").front();
+    } else if(tag.startsWith("add_new_node>")) {
+        QString path = tag.split(">").back();
         QModelIndex node_index = model_index_load_child_map[path];
         model_index_load_child_map.remove(path);
 
@@ -128,15 +128,15 @@ void GroupTreeModel::asyncApiResult(const QString& tag,
 
 void GroupTreeModel::asyncApiError(const QString& tag,
                                    QSharedPointer<chaos::CException> api_exception) {
-    if(tag.startsWith("add_new_node_")) {
-            QString path = tag.split("_").front();
+    if(tag.startsWith("add_new_node>")) {
+            QString path = tag.split(">").front();
             model_index_load_child_map.remove(path);
         }
 }
 
 void GroupTreeModel::asyncApiTimeout(const QString& tag) {
-    if(tag.startsWith("add_new_node_")) {
-            QString path = tag.split("_").front();
+    if(tag.startsWith("add_new_node>")) {
+            QString path = tag.split(">").front();
             model_index_load_child_map.remove(path);
         }
 }
@@ -144,7 +144,7 @@ void GroupTreeModel::asyncApiTimeout(const QString& tag) {
 void GroupTreeModel::loadRootsForDomain(const QString& domain) {
     beginResetModel();
     rootItem->removeChild();
-    api_processor.submitApiResult("domain_"+domain,
+    api_processor.submitApiResult("domain>"+domain,
                                   GET_CHAOS_API_PTR(groups::GetNodeChilds)->execute(domain.toStdString()),
                                   this,
                                   SLOT(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
@@ -158,7 +158,7 @@ void GroupTreeModel::addNewNodeToIndex(const QModelIndex &node_parent, QString n
     if(!node_parent.isValid()) return;
     GroupTreeItem *parentItem = static_cast<GroupTreeItem*>(node_parent.internalPointer());
     model_index_load_child_map.insert(parentItem->getPathToRoot(), node_parent);
-    api_processor.submitApiResult("add_new_node_"+parentItem->getPathToRoot(),
+    api_processor.submitApiResult("add_new_node>"+parentItem->getPathToRoot(),
                                   GET_CHAOS_API_PTR(groups::AddNode)->execute(parentItem->getDomain().toStdString(),
                                                                                     node_name.toStdString(),
                                                                                     parentItem->getPathToRoot().toStdString()),

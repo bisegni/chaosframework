@@ -75,20 +75,21 @@ void TreeGroupManager::contextualMenuActionTrigger(const QString& cm_title,
                                                    const QVariant& cm_data){
     if(cm_title.compare("Select Domain")==0) {
         ui->labelDomainSelected->setText(cm_data.toString());
+        tree_model.loadRootsForDomain(cm_data.toString());
     }
 }
 
 void TreeGroupManager::handleListSelectionChanged(const QModelIndex &current_row,
                                                   const QModelIndex &previous_row) {
     if(!current_row.isValid()) {
-        enableWidgetAction(ui->treeViewDomainsTree,
+        enableWidgetAction(ui->listViewDomains,
                            tr("Select Domain"),
                            false);
     } else {
-        enableWidgetAction(ui->treeViewDomainsTree,
+        enableWidgetAction(ui->listViewDomains,
                            tr("Select Domain"),
                            true);
-        setWidgetActionData(ui->treeViewDomainsTree,
+        setWidgetActionData(ui->listViewDomains,
                             tr("Select Domain"),
                             current_row.data());
     }
