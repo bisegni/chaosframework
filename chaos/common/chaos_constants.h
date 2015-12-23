@@ -831,6 +831,9 @@ namespace chaos {
             EC_ATTRIBUTE_BAD_DIR ,
             //!dataset attribute not supported
             EC_ATTRIBUTE_TYPE_NOT_SUPPORTED ,
+            //! has been called a not supported method
+            //! to be used for instance in driver methods that not are supported in a particular Abstraction
+            EC_NODE_OPERATION_NOT_SUPPORTED=-10000,
             
             //!unit server registration is gone well
             EC_MDS_NODE_REGISTRATION_OK = 500,

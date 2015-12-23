@@ -202,15 +202,17 @@ int main (int argc, char* argv[] )
         std::cerr<< "# you must define a valid MDS server 'metadata-server'"<<std::endl;
         return -4;
     }
-    if(reset_config){
-        std::cout<<"* resetting MDS configuration"<<std::endl;
-          EXECUTE_CHAOS_API(api_proxy::service::ResetAll,3000);
-    }
+   
     //! [UIToolkit Attribute Init]
     std::cout <<"* MDS:"<<mds<<std::endl;
+    ChaosMetadataServiceClient::getInstance()->addServerAddress(mds);
+    if(reset_config){
+           std::cout<<"* resetting MDS configuration"<<std::endl;
+              EXECUTE_CHAOS_API(api_proxy::service::ResetAll,3000);
+    }
     if(!conf_file.empty()){
         std::cout<<"* Initializing mds:"<< mds<<" with:"<<conf_file<<endl;
-        ChaosMetadataServiceClient::getInstance()->addServerAddress(mds);
+        
         operation_defined=true;
         initialize_from_old_mds(conf_file);
         return 0;
