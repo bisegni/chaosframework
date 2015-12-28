@@ -103,8 +103,8 @@ void TreeGroupManager::contextualMenuActionTrigger(const QString& cm_title,
         if(parent_item == NULL) return;
         bool ok = false;
         QString node_name = QInputDialog::getText(this,
-                                                  tr("Create new subgroup for path:%1").arg(parent_item->getPathToRoot()),
-                                                  tr("Subgroup Name:"),
+                                                  tr("Create new subgroup "),
+                                                  tr("Subgroup Name for\n%2:").arg(parent_item->getPathToRoot()),
                                                   QLineEdit::Normal,
                                                   tr("New Subgroup Name"),
                                                   &ok);

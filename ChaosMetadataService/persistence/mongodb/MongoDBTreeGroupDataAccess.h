@@ -60,13 +60,6 @@ namespace chaos {
                     MongoDBTreeGroupDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBTreeGroupDataAccess();
                     
-                    bool estractNodeFromPath(const std::string& node_path,
-                                             std::string& node_name,
-                                             std::string& parent_path);
-                    
-                    //!check the three path
-                    bool checkPathSintax(const std::string& tree_path);
-                    
                     /*!
                      Check if a node is presente.
                      */

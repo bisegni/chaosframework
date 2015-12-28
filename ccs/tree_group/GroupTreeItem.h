@@ -5,10 +5,10 @@
 #include <QObject>
 #include <QVariant>
 
-#include "../api_async_processor/ApiAsyncProcessor.h"
+class GroupTreeModel;
 
-class GroupTreeItem:
-public QObject {
+class GroupTreeItem {
+    friend class GroupTreeModel;
 public:
     explicit GroupTreeItem(const QString &item_name,
                            const QString &item_domain,
@@ -26,9 +26,8 @@ public:
     void removeChild();
     QString getPathToRoot();
     const QString& getDomain();
-
 private:
-    ApiAsyncProcessor api_processor;
+    bool fake_for_load;
     QList<GroupTreeItem*> m_child_items;
     const QString m_item_name;
     const QString m_item_domain;

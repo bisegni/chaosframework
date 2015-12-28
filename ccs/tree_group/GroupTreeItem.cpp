@@ -10,10 +10,10 @@ using namespace chaos::metadata_service_client::api_proxy;
 GroupTreeItem::GroupTreeItem(const QString &item_name,
                              const QString &item_domain,
                              GroupTreeItem *parent):
-    QObject(NULL),
     m_item_name(item_name),
     m_item_domain(item_domain),
-    m_parent_item(parent) {
+    m_parent_item(parent),
+    fake_for_load(false) {
 }
 
 GroupTreeItem::~GroupTreeItem() {
@@ -67,6 +67,8 @@ QString GroupTreeItem::getPathToRoot() {
         if(parent->parentItem() == NULL) break;
         // add the name of the parent
         element_in_path.push_front(parent->m_item_name);
+        //get parent
+        parent = parent->m_parent_item;
     }
     if(element_in_path.size()){
         //append all element of the path to the string

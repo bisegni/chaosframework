@@ -49,7 +49,17 @@ namespace chaos {
                 class TreeGroupDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 protected:
-
+                    
+                    //!check the three path sintax
+                    bool checkPathSintax(const std::string& tree_path);
+                    
+                    //! check the node name sintax
+                    bool checkNodeNameSintax(const std::string& node_name);
+                    
+                    //!extract the node name and parent path from the global path to a node
+                    bool estractNodeFromPath(const std::string& node_path,
+                                             std::string& node_name,
+                                             std::string& parent_path);
                 public:
                     DECLARE_DA_NAME
                     

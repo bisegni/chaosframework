@@ -183,10 +183,10 @@
           </font>
          </property>
          <property name="indentation">
-          <number>10</number>
+          <number>20</number>
          </property>
          <property name="rootIsDecorated">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="animated">
           <bool>false</bool>

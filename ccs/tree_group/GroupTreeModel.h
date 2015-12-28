@@ -30,7 +30,7 @@ public:
 
     void loadRootsForDomain(const QString& domain);
     void addNewNodeToIndex(const QModelIndex &node_parent, QString node_name);
-    void updateNodeChildList(const QModelIndex &node_parent);
+    void updateNodeChildList(const QModelIndex &node_parent) const;
 protected slots:
     void asyncApiResult(const QString& tag,
                         QSharedPointer<chaos::common::data::CDataWrapper> api_result);
@@ -41,12 +41,14 @@ protected slots:
     void asyncApiTimeout(const QString& tag);
 
     void _updateNodeChildList(const QModelIndex &parent,
-                                const chaos::metadata_service_client::api_proxy::groups::NodeChildList& child_list);
-
+                              const chaos::metadata_service_client::api_proxy::groups::NodeChildList& child_list);
+    GroupTreeItem *getNewNode(const QString& node_name,
+                              const QString& node_domain,
+                              GroupTreeItem *parent_item);
 private:
-    QMap<QString, QModelIndex> model_index_load_child_map;
-    QMutex mutex_update_model;
-    ApiAsyncProcessor api_processor;
+    mutable QMap<QString, QModelIndex> model_index_load_child_map;
+    mutable QMutex mutex_update_model;
+    mutable ApiAsyncProcessor api_processor;
     GroupTreeItem *rootItem;
     QString current_domain;
 };
