@@ -5,7 +5,7 @@
 
 #include <QMap>
 #include <QString>
-#include <QReadWriteLock>
+#include <QMutex>
 #include <QSharedPointer>
 #include <QAbstractItemModel>
 
@@ -17,7 +17,7 @@ class GroupTreeModel: public QAbstractItemModel {
 public:
     explicit GroupTreeModel(QObject *parent = 0);
     ~GroupTreeModel();
-
+    void clear();
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
     Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
     QVariant headerData(int section, Qt::Orientation orientation,
@@ -30,6 +30,7 @@ public:
 
     void loadRootsForDomain(const QString& domain);
     void addNewNodeToIndex(const QModelIndex &node_parent, QString node_name);
+    void updateNodeChildList(const QModelIndex &node_parent);
 protected slots:
     void asyncApiResult(const QString& tag,
                         QSharedPointer<chaos::common::data::CDataWrapper> api_result);
@@ -39,10 +40,14 @@ protected slots:
 
     void asyncApiTimeout(const QString& tag);
 
+    void _updateNodeChildList(const QModelIndex &parent,
+                                const chaos::metadata_service_client::api_proxy::groups::NodeChildList& child_list);
+
 private:
     QMap<QString, QModelIndex> model_index_load_child_map;
-    QReadWriteLock read_write_lock;
+    QMutex mutex_update_model;
     ApiAsyncProcessor api_processor;
     GroupTreeItem *rootItem;
+    QString current_domain;
 };
 #endif // GRUOPTREEMODEL_H

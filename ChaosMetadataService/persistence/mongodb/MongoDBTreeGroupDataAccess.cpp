@@ -30,7 +30,7 @@
 #define MDBTGDA_DBG  DBG_LOG(MongoDBTreeGroupDataAccess)
 #define MDBTGDA_ERR  ERR_LOG(MongoDBTreeGroupDataAccess)
 
-const boost::regex PathRegularExpression("(\\/[a-zA-Z0-9]+)+");
+const boost::regex PathRegularExpression("(\\/[a-zA-Z0-9_]+)+");
 
 using namespace chaos::common::data;
 using namespace chaos::service_common::persistence::mongodb;
@@ -49,14 +49,15 @@ bool MongoDBTreeGroupDataAccess::estractNodeFromPath(const std::string& node_pat
                                                      std::string& parent_path) {
     if(!checkPathSintax(node_path)) return false;
     std::vector< std::string > tree_path_node;
-    //split the path in the node elements
+    // split the path in the node elements the first slash in path realize an empty string as
+    // first element in tree_path_node vector so root only path give a vector of two element
+    // with an empty string as first element
     boost::split(tree_path_node,
                  node_path, boost::is_any_of("/"),
                  boost::token_compress_on );
-    
     //estract the node name that is the element in the front of the vector
-    node_name = tree_path_node.front();
-    
+    node_name = tree_path_node.back();
+
     //remove node name and slash from path for get parent path
     parent_path = node_path;
     parent_path.resize(parent_path.size()-(node_name.size()+1));
@@ -84,11 +85,12 @@ int MongoDBTreeGroupDataAccess::checkPathPresenceForDomain(const std::string& gr
     std::vector< std::string > tree_path_node;
     try {
         //estract node and parent path from full path
-        if(!estractNodeFromPath(tree_path, node_name, tree_path_tmp)){
+        if(!estractNodeFromPath(tree_path,
+                                node_name,
+                                tree_path_tmp)){
             return -10000;
         }
         
-        //we first need to fetch all node uid attacched to the snapshot
         mongo::BSONObj q = BSON("node_name" << node_name <<
                                 "node_parent_path" << tree_path_tmp <<
                                 "node_domain"<< group_domain);
@@ -268,6 +270,7 @@ int MongoDBTreeGroupDataAccess::addNewNodeGroupToDomain(const std::string& group
     try {
         //create the bson element that identify the node
         mongo::BSONObj q = BSON("node_name" << node_group_name <<
+                                "node_parent_path" << "" <<
                                 "node_domain"<< group_domain);
         
         
@@ -439,7 +442,7 @@ int MongoDBTreeGroupDataAccess::getNodeRootFromDomain(const std::string& group_d
     try {
         
         //create the bson element that identify the node
-        mongo::BSONObj q = BSON("node_parent_path" << BSON("$exists"<<false) <<
+        mongo::BSONObj q = BSON("node_parent_path" << "" <<
                                 "node_domain"<< group_domain);
         
         DEBUG_CODE(MDBTGDA_ERR<<log_message("getNodeChildFromPath",

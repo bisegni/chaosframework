@@ -32,6 +32,9 @@ private slots:
 
     void handleListSelectionChanged(const QModelIndex& current_row,
                                     const QModelIndex& previous_row);
+
+    void handleTreeSelectionChanged(const QItemSelection & selected,
+                                    const QItemSelection & deselected);
 private:
     void contextualMenuActionTrigger(const QString& cm_title,
                                      const QVariant& cm_data);
