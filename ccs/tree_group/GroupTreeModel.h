@@ -31,6 +31,7 @@ public:
     void loadRootsForDomain(const QString& domain);
     void addNewNodeToIndex(const QModelIndex &node_parent, QString node_name);
     void updateNodeChildList(const QModelIndex &node_parent) const;
+    void deleteNode(const QModelIndex &node_to_delete_index);
 protected slots:
     void asyncApiResult(const QString& tag,
                         QSharedPointer<chaos::common::data::CDataWrapper> api_result);

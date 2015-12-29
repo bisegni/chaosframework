@@ -681,6 +681,7 @@
 		32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB736E16FE3432008575F0 /* ReaderDataService.h */; };
 		32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB7CDE17099C8D00767FC1 /* DataCache.cpp */; };
 		32CB7CE117099C8D00767FC1 /* DataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB7CDF17099C8D00767FC1 /* DataCache.h */; };
+		32CE2DA81C328E99004AC2A3 /* DeleteNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CE2DA61C328E98004AC2A3 /* DeleteNode.cpp */; };
 		32CFC5C51AF55FED00E2A0B6 /* IOCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFC5C31AF55FED00E2A0B6 /* IOCU.cpp */; };
 		32CFC5C61AF55FED00E2A0B6 /* IOCU.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFC5C41AF55FED00E2A0B6 /* IOCU.h */; };
 		32CFC5CA1AF5601300E2A0B6 /* BasicIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFC5C71AF5601300E2A0B6 /* BasicIODriver.cpp */; };
@@ -721,6 +722,8 @@
 		32E09CFE1C0E05E60069752F /* DeleteSnapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E09CFC1C0E05E60069752F /* DeleteSnapshot.cpp */; };
 		32E0EF3718CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E0EF3518CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp */; };
 		32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */; };
+		32E2B1B41C32A60D00FCFB42 /* DeleteNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E2B1B21C32A60D00FCFB42 /* DeleteNode.cpp */; };
+		32E2B1B51C32A60D00FCFB42 /* DeleteNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */; };
 		32E5D24D1A75664C0001E97F /* ObjectQueueTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32ABC2681A73FB83008DB3A7 /* ObjectQueueTest.cpp */; };
 		32E9A53E1A66A1B100545BB4 /* AbstractApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */; };
 		32E9A5461A67D02900545BB4 /* ProducerGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9A5441A67D02900545BB4 /* ProducerGroup.cpp */; };
@@ -1839,6 +1842,8 @@
 		32CB736E16FE3432008575F0 /* ReaderDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReaderDataService.h; sourceTree = "<group>"; };
 		32CB7CDE17099C8D00767FC1 /* DataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataCache.cpp; sourceTree = "<group>"; };
 		32CB7CDF17099C8D00767FC1 /* DataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataCache.h; sourceTree = "<group>"; };
+		32CE2DA61C328E98004AC2A3 /* DeleteNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteNode.cpp; sourceTree = "<group>"; };
+		32CE2DA71C328E99004AC2A3 /* DeleteNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteNode.h; sourceTree = "<group>"; };
 		32CFC5C31AF55FED00E2A0B6 /* IOCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IOCU.cpp; sourceTree = "<group>"; };
 		32CFC5C41AF55FED00E2A0B6 /* IOCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOCU.h; sourceTree = "<group>"; };
 		32CFC5C71AF5601300E2A0B6 /* BasicIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicIODriver.cpp; sourceTree = "<group>"; };
@@ -1896,6 +1901,8 @@
 		32E09CFD1C0E05E60069752F /* DeleteSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteSnapshot.h; sourceTree = "<group>"; };
 		32E0EF3518CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQDirectIOClientConnection.cpp; sourceTree = "<group>"; };
 		32E0EF3618CDB37D00CD1808 /* ZMQDirectIOClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOClientConnection.h; sourceTree = "<group>"; };
+		32E2B1B21C32A60D00FCFB42 /* DeleteNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeleteNode.cpp; sourceTree = "<group>"; };
+		32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeleteNode.h; sourceTree = "<group>"; };
 		32E977561A6E65B800D89C15 /* api_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api_types.h; sourceTree = "<group>"; };
 		32E9A53C1A66A1B100545BB4 /* AbstractApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractApi.cpp; sourceTree = "<group>"; };
 		32E9A53D1A66A1B100545BB4 /* AbstractApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
@@ -2549,6 +2556,8 @@
 				3252F35B1C298755004436A8 /* GetNodeChilds.h */,
 				3252F35E1C298760004436A8 /* GetDomains.cpp */,
 				3252F35F1C298760004436A8 /* GetDomains.h */,
+				32E2B1B21C32A60D00FCFB42 /* DeleteNode.cpp */,
+				32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */,
 			);
 			path = groups;
 			sourceTree = "<group>";
@@ -3400,6 +3409,8 @@
 				32864FD21C29568D00DA9B70 /* GetNodeChilds.h */,
 				3252F3521C29847E004436A8 /* GetDomains.cpp */,
 				3252F3531C29847E004436A8 /* GetDomains.h */,
+				32CE2DA61C328E98004AC2A3 /* DeleteNode.cpp */,
+				32CE2DA71C328E99004AC2A3 /* DeleteNode.h */,
 			);
 			path = groups;
 			sourceTree = "<group>";
@@ -4428,6 +4439,7 @@
 				324FD0821B00ACEF003800BA /* MonitorManager.h in Headers */,
 				3234BE7B1B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.h in Headers */,
 				327F39B01AEAA2500000C845 /* AssociationControlUnit.h in Headers */,
+				32E2B1B51C32A60D00FCFB42 /* DeleteNode.h in Headers */,
 				3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */,
 				32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */,
 				32B299AB1BE27945000D3716 /* RecoverError.h in Headers */,
@@ -4777,6 +4789,7 @@
 				320530DA1AE92D770064275B /* DataServiceDataAccess.cpp in Sources */,
 				32B299A11BDA7CAA000D3716 /* CUCommonUtility.cpp in Sources */,
 				32A40D471A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp in Sources */,
+				32CE2DA81C328E99004AC2A3 /* DeleteNode.cpp in Sources */,
 				32B419341B16148A00C3CA7D /* SetInputDatasetAttributeValues.cpp in Sources */,
 				32CAC9E11AE6988200DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				32E09CED1C0DB2800069752F /* SnapshotDataAccess.cpp in Sources */,
@@ -5118,6 +5131,7 @@
 				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				3239EF591C0F26D90052BE61 /* GetAllSnapshot.cpp in Sources */,
+				32E2B1B41C32A60D00FCFB42 /* DeleteNode.cpp in Sources */,
 				32AE8BA31B678C1500FAC528 /* ResetAll.cpp in Sources */,
 				3239EF4A1C0EFE910052BE61 /* RestoreSnapshot.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,

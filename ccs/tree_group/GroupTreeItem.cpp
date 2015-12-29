@@ -83,6 +83,10 @@ QString GroupTreeItem::getPathToRoot() {
     return path;
 }
 
-const QString& GroupTreeItem::getDomain() {
+const QString& GroupTreeItem::getDomain() const {
     return m_item_domain;
+}
+
+const QString& GroupTreeItem::getName() const {
+    return m_item_name;
 }

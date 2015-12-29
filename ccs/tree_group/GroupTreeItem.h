@@ -25,7 +25,8 @@ public:
     GroupTreeItem *parentItem();
     void removeChild();
     QString getPathToRoot();
-    const QString& getDomain();
+    const QString& getDomain() const;
+    const QString& getName() const;
 private:
     bool fake_for_load;
     QList<GroupTreeItem*> m_child_items;

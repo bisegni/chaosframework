@@ -288,18 +288,27 @@ QAction *PresenterWidget::returnWidgetAction(QWidget *parent,
     return NULL;
 }
 
-void PresenterWidget::enableWidgetAction(QWidget *parent,
-                                         const QString& action_name,
-                                         bool enabled) {
+void PresenterWidget::contextualMenuActionSetEnable(QWidget *parent,
+                                                     const QString& action_name,
+                                                     bool enabled) {
     QAction *act = NULL;
     if(act = returnWidgetAction(parent, action_name)){
         act->setEnabled(enabled);
     }
 }
 
-void PresenterWidget::setWidgetActionData(QWidget *parent,
-                                          const QString& action_name,
-                                          const QVariant& action_data) {
+void PresenterWidget::contextualMenuActionSetVisible(QWidget *parent,
+                                                     const QString& action_name,
+                                                     bool visible) {
+    QAction *act = NULL;
+    if(act = returnWidgetAction(parent, action_name)){
+        act->setVisible(visible);
+    }
+}
+
+void PresenterWidget::contextualMenuActionSetData(QWidget *parent,
+                                                  const QString& action_name,
+                                                  const QVariant& action_data) {
     QAction *act = NULL;
     if(act = returnWidgetAction(parent, action_name)){
         act->setData(action_data);

@@ -61,7 +61,7 @@ namespace chaos {
                     ~MongoDBTreeGroupDataAccess();
                     
                     /*!
-                     Check if a node is presente.
+                     Check if a node is present.
                      */
                     int checkNodePresenceForDomain(const std::string& group_domain,
                                                    const std::string& node_name,
@@ -93,7 +93,10 @@ namespace chaos {
                     //! Inherited method
                     int deleteNodeGroupToDomain(const std::string& group_domain,
                                                 const std::string& tree_path);
-                    
+                    //! Inherited method
+                    int deleteNodeGroupToDomain(const std::string& group_domain,
+                                                const std::string& node_group_name,
+                                                const std::string& parent_path);
                     //! Inherited method
                     int getNodeChildFromPath(const std::string& group_domain,
                                              const std::string& tree_path,

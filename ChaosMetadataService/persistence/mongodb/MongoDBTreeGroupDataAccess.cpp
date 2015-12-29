@@ -274,37 +274,68 @@ int MongoDBTreeGroupDataAccess::deleteNodeGroupToDomain(const std::string& group
     int err = 0;
     std::string node_name;
     std::string parent_path;
-    bool presence = false;
     try {
         //get node and paretn path from full path description
-        if((err = checkPathPresenceForDomain(group_domain,
-                                             tree_path,
-                                             presence))){
-            return err;
-        }
-        if(presence == false) {
-            MDBTGDA_ERR << "The node for tree path" << tree_path << " is not present";
-            return 0;
-        }
-        
         if(estractNodeFromPath(tree_path,
                                node_name,
                                parent_path)){
-            //create the bson element that identify the node
-            mongo::BSONObj q = BSON("node_name" << node_name <<
-                                    "node_parent_path" << parent_path <<
-                                    "node_domain"<< group_domain);
-            
-            
-            DEBUG_CODE(MDBTGDA_ERR<<log_message("addNewNodeGroupToDomain",
-                                                "delete",
-                                                DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                                        q.jsonString()));)
-            
-            if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_TREE_GROUP),
-                                         q))){
-                MDBTGDA_ERR << "Error deleting the group node "<<node_name<<"["<<parent_path<<"]in domain "<< group_domain << " with code " << err;
-            }
+            // call api specialized with node name
+            err = deleteNodeGroupToDomain(group_domain,
+                                          node_name,
+                                          parent_path);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBTGDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBTGDA_ERR << e.what();
+        err = e.errorCode;
+    }
+    return err;
+}
+
+//! Inherited method
+int MongoDBTreeGroupDataAccess::deleteNodeGroupToDomain(const std::string& group_domain,
+                                                        const std::string& node_group_name,
+                                                        const std::string& parent_path) {
+    int err = 0;
+    bool presence = false;
+    try {
+        if((err = checkNodePresenceForDomain(group_domain,
+                                             node_group_name,
+                                             parent_path,
+                                             presence))){
+            return err;
+        } else if(presence == false) {
+            MDBTGDA_ERR << "The node "<<node_group_name<<" for parent path" << parent_path << " in the domain "<<group_domain<<" is not present";
+            return 0;
+        }
+    
+        //delete node and child that have node as parent
+        mongo::BSONArrayBuilder or_builder;
+        mongo::BSONArrayBuilder and_builder;
+        //node query
+        or_builder.append(BSON("node_name" << node_group_name <<
+                                "node_parent_path" << parent_path));
+        //child query
+        const std::string path_reg_ex = parent_path + "/" + node_group_name +".*";
+        or_builder.append(BSON("node_parent_path" << BSON("$regex" << path_reg_ex)));
+        
+//        mongo::BSONObj q = BSON("node_name" << node_group_name <<
+//                                "node_parent_path" << parent_path <<
+//                                "node_domain"<< group_domain);
+        and_builder.append(BSON("node_domain"<< group_domain));
+        and_builder.append(BSON("$or" << or_builder.arr()));
+        mongo::BSONObj q = BSON("$and"<< and_builder.arr());
+        
+        DEBUG_CODE(MDBTGDA_ERR<<log_message("addNewNodeGroupToDomain",
+                                            "delete",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q.jsonString()));)
+        
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_TREE_GROUP),
+                                     q))){
+            MDBTGDA_ERR << "Error deleting the group node "<<node_group_name<<"["<<parent_path<<"]in domain "<< group_domain << " with code " << err;
         }
     } catch (const mongo::DBException &e) {
         MDBTGDA_ERR << e.what();

@@ -26,6 +26,7 @@
 //---include all api header
 //----------------------------groups----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/groups/AddNode.h>
+#include <ChaosMetadataServiceClient/api_proxy/groups/DeleteNode.h>
 #include <ChaosMetadataServiceClient/api_proxy/groups/GetDomains.h>
 #include <ChaosMetadataServiceClient/api_proxy/groups/GetNodeChilds.h>
 

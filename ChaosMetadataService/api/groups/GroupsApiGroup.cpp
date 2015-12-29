@@ -22,6 +22,7 @@
 #include "AddNode.h"
 #include "GetNodeChilds.h"
 #include "GetDomains.h"
+#include "DeleteNode.h"
 using namespace chaos::metadata_service::api::groups;
 
 DEFINE_CLASS_FACTORY_NO_ALIAS(GroupsApiGroup,
@@ -30,6 +31,7 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(GroupsApiGroup,
 GroupsApiGroup::GroupsApiGroup():
 AbstractApiGroup("groups"){
     addApi<AddNode>();
+    addApi<DeleteNode>();
     addApi<GetDomains>();
     addApi<GetNodeChilds>();
 }

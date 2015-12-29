@@ -4,6 +4,7 @@
 
 #include <QUuid>
 #include <QDebug>
+#include <QMessageBox>
 
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -128,22 +129,33 @@ void GroupTreeModel::asyncApiResult(const QString& tag,
         //get child list and call update param
         std::auto_ptr<groups::GetNodeChildsHelper> gnc_helper = groups::GetNodeChilds::getHelper(api_result.data());
         _updateNodeChildList(node_index_parent, gnc_helper->getNodeChildsList());
+    } else if(tag.startsWith("_delete_node_")) {
+        mutex_update_model.lock();
+        QModelIndex node_deleted_index = model_index_load_child_map[tag];
+        model_index_load_child_map.remove(tag);
+        mutex_update_model.unlock();
+        //update parent
+        updateNodeChildList(parent(node_deleted_index));
     }
 }
 
 void GroupTreeModel::asyncApiError(const QString& tag,
                                    QSharedPointer<chaos::CException> api_exception) {
-    if(tag.startsWith("_add_new_node_")) {
-        QString path = tag.split(">").front();
-        model_index_load_child_map.remove(path);
-    }
+    mutex_update_model.lock();
+    model_index_load_child_map.remove(tag);
+    mutex_update_model.unlock();
+    QMessageBox::information(NULL,
+                             tr("Api Error"),
+                             tr(api_exception->what()));
 }
 
 void GroupTreeModel::asyncApiTimeout(const QString& tag) {
-    if(tag.startsWith("_add_new_node_")) {
-        QString path = tag.split(">").front();
-        model_index_load_child_map.remove(path);
-    }
+    mutex_update_model.lock();
+    model_index_load_child_map.remove(tag);
+    mutex_update_model.unlock();
+    QMessageBox::information(NULL,
+                             tr("Api Error"),
+                             tr("Timeout"));
 }
 
 void GroupTreeModel::clear() {
@@ -194,16 +206,34 @@ void GroupTreeModel::_updateNodeChildList(const QModelIndex &parent,
     if(parentItem == NULL) return;
 
     mutex_update_model.lock();
-    beginInsertRows(parent, 0, child_list.size()-1);
-    parentItem->removeChild();
-    for(groups::NodeChildListConstIterator it = child_list.begin();
-        it != child_list.end();
-        it++) {
-        parentItem->appendChild(getNewNode(QString::fromStdString(*it),
-                                           parentItem->getDomain(),
-                                           parentItem));
+    //check if we need to add or remove
+    bool need_to_add = child_list.size() >=  parentItem->childCount();
+    if(child_list.size()) {
+        if(need_to_add) {
+            beginInsertRows(parent, 0, child_list.size()-1);
+        }else {
+            beginRemoveColumns(parent, 0, child_list.size()-1);
+        }
+        parentItem->removeChild();
+        for(groups::NodeChildListConstIterator it = child_list.begin();
+            it != child_list.end();
+            it++) {
+            parentItem->appendChild(getNewNode(QString::fromStdString(*it),
+                                               parentItem->getDomain(),
+                                               parentItem));
+        }
+        if(need_to_add) {
+            endInsertRows();
+        }else {
+            endRemoveRows();
+        }
+    } else {
+
+            beginRemoveColumns(parent, 0, 0);
+            parentItem->removeChild();
+            endRemoveColumns();
+
     }
-    endInsertRows();
     mutex_update_model.unlock();
 }
 
@@ -228,6 +258,24 @@ void GroupTreeModel::addNewNodeToIndex(const QModelIndex &node_parent, QString n
                                   GET_CHAOS_API_PTR(groups::AddNode)->execute(parentItem->getDomain().toStdString(),
                                                                               node_name.toStdString(),
                                                                               parentItem->getPathToRoot().toStdString()),
+                                  this,
+                                  SLOT(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
+                                  SLOT(asyncApiError(QString, QSharedPointer<chaos::CException>)),
+                                  SLOT(asyncApiTimeout(QString)));
+}
+
+void GroupTreeModel::deleteNode(const QModelIndex &node_to_delete_index) {
+    if(!node_to_delete_index.isValid()) return;
+    GroupTreeItem *node_to_delete = static_cast<GroupTreeItem*>(node_to_delete_index.internalPointer());
+    QString tag = QString("_delete_node_%1").arg(QUuid::createUuid().toString());
+    QString parent_path = (node_to_delete->m_parent_item!=NULL)?node_to_delete->m_parent_item->getPathToRoot():"";
+    mutex_update_model.lock();
+    model_index_load_child_map.insert(tag, node_to_delete_index);
+    mutex_update_model.unlock();
+    api_processor.submitApiResult(tag,
+                                  GET_CHAOS_API_PTR(groups::DeleteNode)->execute(node_to_delete->m_item_domain.toStdString(),
+                                                                                 node_to_delete->m_item_name.toStdString(),
+                                                                                 parent_path.toStdString()),
                                   this,
                                   SLOT(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
                                   SLOT(asyncApiError(QString, QSharedPointer<chaos::CException>)),

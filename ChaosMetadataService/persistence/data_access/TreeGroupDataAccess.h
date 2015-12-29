@@ -104,12 +104,23 @@ namespace chaos {
                     
                     //! Delete a node in a tree group
                     /*!
-                     Delete a node in the tree group using an absolute path within domain
+                     Delete a node in the tree group using an absolute path within domain, all child will be deleted
                      \param group_domain is the domain of the node
                      \param tree_path is the name of the path to the node to delete
                      */
                     virtual int deleteNodeGroupToDomain(const std::string& group_domain,
                                                         const std::string& tree_path) = 0;
+                    
+                    //! Delete a node in a tree group
+                    /*!
+                     Delete a node in the tree group using an node name, all child will be deleted
+                     \param group_domain is the domain of the node
+                     \param node_group_name is the name of the node to delete in the tree in the tree
+                     \param parent_path is the name of the path of the parent, if parent is null it will be a root node
+                     */
+                    virtual int deleteNodeGroupToDomain(const std::string& group_domain,
+                                                        const std::string& node_group_name,
+                                                        const std::string& parent_path) = 0;
                     
                     //!return the list of node child for the node represented by path
                     /*!
