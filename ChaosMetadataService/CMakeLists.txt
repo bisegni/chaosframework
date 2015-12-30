@@ -16,8 +16,14 @@ SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
                         api/AbstractApi.cpp
                         api/AbstractApiGroup.cpp)
 
+SET(cnd_src  ${cnd_src}	api/groups/GroupsApiGroup.cpp
+												api/groups/AddNode.cpp
+												api/groups/DeleteNode.cpp
+                        api/groups/GetDomains.cpp
+                        api/groups/GetNodeChilds.cpp)
+
 SET(cnd_src  ${cnd_src}	api/service/ServiceApiGroup.cpp
-						api/service/ResetAll.cpp
+												api/service/ResetAll.cpp
                         api/service/GetAllSnapshot.cpp
                         api/service/RestoreSnapshot.cpp
                         api/service/CreateNewSnapshot.cpp
@@ -81,7 +87,8 @@ SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/UtilityDataAccess.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
                         persistence/data_access/DataServiceDataAccess.cpp
-                        persistence/data_access/SnapshotDataAccess.cpp)
+                        persistence/data_access/SnapshotDataAccess.cpp
+												persistence/data_access/TreeGroupDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBUnitServerDataAccess.cpp
@@ -89,7 +96,8 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBUtilityDataAccess.cpp
                         persistence/mongodb/MongoDBControlUnitDataAccess.cpp
                         persistence/mongodb/MongoDBDataServiceDataAccess.cpp
-                        persistence/mongodb/MongoDBSnapshotDataAccess.cpp)
+                        persistence/mongodb/MongoDBSnapshotDataAccess.cpp
+												persistence/mongodb/MongoDBTreeGroupDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
