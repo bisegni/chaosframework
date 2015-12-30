@@ -80,7 +80,12 @@ SOURCES += main.cpp\
     snapshot/NewSnapshot.cpp \
     snapshot/NodeListModel.cpp \
     snapshot/NodeInSnapshotTableModel.cpp \
-    monitor/healt/HighlighterForChaosType.cpp
+    monitor/healt/HighlighterForChaosType.cpp \
+    tree_group/TreeGroupManager.cpp \
+    tree_group/DomainListModel.cpp \
+    tree_group/GroupTreeItem.cpp \
+    tree_group/GroupTreeModel.cpp \
+    tree_group/AddNewDomain.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -161,7 +166,12 @@ HEADERS  += \
     snapshot/NewSnapshot.h \
     snapshot/NodeListModel.h \
     snapshot/NodeInSnapshotTableModel.h \
-    monitor/healt/HighlighterForChaosType.h
+    monitor/healt/HighlighterForChaosType.h \
+    tree_group/TreeGroupManager.h \
+    tree_group/DomainListModel.h \
+    tree_group/GroupTreeItem.h \
+    tree_group/GroupTreeModel.h \
+    tree_group/AddNewDomain.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -181,7 +191,9 @@ FORMS    += \
     node/control_unit/CommandTemplateInstanceEditor.ui \
     plot/NodeAttributePlotting.ui \
     snapshot/SnapshotManager.ui \
-    snapshot/NewSnapshot.ui
+    snapshot/NewSnapshot.ui \
+    tree_group/TreeGroupManager.ui \
+    tree_group/AddNewDomain.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

@@ -23,4 +23,7 @@ static const char * const MONGODB_COLLECTION_SEQUENCES                  = "mds_s
 static const char * const MONGODB_COLLECTION_SNAPSHOT                   = "snapshot";
 static const char * const MONGODB_COLLECTION_SNAPSHOT_DATA              = "snapshot_data";
 
+//-------tree group---------
+static const char * const MONGODB_COLLECTION_TREE_GROUP                 = "mds_tree_group";
+
 #endif

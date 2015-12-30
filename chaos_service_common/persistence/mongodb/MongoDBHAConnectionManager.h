@@ -133,7 +133,10 @@ namespace chaos {
                                mongo::Query q,
                                bool justOne = 0,
                                const mongo::WriteConcern* wc=NULL );
-
+                    
+                    mongo::BSONObj distinct(const std::string &ns,
+                                            const std::string &field);
+                    
                     int ensureIndex(const std::string &database,
                                     const std::string &collection,
                                     mongo::BSONObj keys,

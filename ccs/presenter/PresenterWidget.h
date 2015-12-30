@@ -88,7 +88,7 @@ protected:
     void manageWidgetStateOnForValue(const QString& value);
 
     QString getDatasetKeyFromNodeKey(const QString& node_key,
-                                       unsigned int dataset_type);
+                                     unsigned int dataset_type);
     QString getHealttKeyFromNodeKey(const QString& node_key);
     //local monitor handler management
     void registerMonitorHandler(const QString& monitor_key,
@@ -126,6 +126,19 @@ protected:
 
     virtual void contextualMenuActionTrigger(const QString& cm_title,
                                              const QVariant& cm_data);
+
+    QAction *returnWidgetAction(QWidget *parent,
+                                const QString& action_name);
+
+    void contextualMenuActionSetEnable(QWidget *parent,
+                                       const QString& action_name,
+                                       bool enabled);
+    void contextualMenuActionSetVisible(QWidget *parent,
+                                        const QString& action_name,
+                                        bool visible);
+    void contextualMenuActionSetData(QWidget *parent,
+                                     const QString& action_name,
+                                     const QVariant& action_data);
 
     //!submit api result for async wait termination
     void submitApiResult(const QString& api_tag,
