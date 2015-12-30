@@ -35,6 +35,9 @@ private slots:
 
     void handleTreeSelectionChanged(const QItemSelection & selected,
                                     const QItemSelection & deselected);
+
+    void on_pushButtonAddRoot_clicked();
+
 private:
     void contextualMenuActionTrigger(const QString& cm_title,
                                      const QVariant& cm_data);

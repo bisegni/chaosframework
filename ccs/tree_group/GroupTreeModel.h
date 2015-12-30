@@ -29,6 +29,7 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
     void loadRootsForDomain(const QString& domain);
+    void addNewRoot(QString node_name);
     void addNewNodeToIndex(const QModelIndex &node_parent, QString node_name);
     void updateNodeChildList(const QModelIndex &node_parent) const;
     void deleteNode(const QModelIndex &node_to_delete_index);
@@ -50,7 +51,7 @@ private:
     mutable QMap<QString, QModelIndex> model_index_load_child_map;
     mutable QMutex mutex_update_model;
     mutable ApiAsyncProcessor api_processor;
-    GroupTreeItem *rootItem;
+    GroupTreeItem *root_item;
     QString current_domain;
 };
 #endif // GRUOPTREEMODEL_H

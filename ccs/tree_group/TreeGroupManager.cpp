@@ -129,6 +129,8 @@ void TreeGroupManager::contextualMenuActionTrigger(const QString& cm_title,
         GroupTreeItem *parent_item = static_cast<GroupTreeItem*>(parent_node_index.internalPointer());
         if(parent_item == NULL) return;
         tree_model.deleteNode(parent_node_index);
+    } else if(cm_title.compare(TREE_CM_NEW_ROOT_GROUP) == 0) {
+        on_pushButtonAddRoot_clicked();
     }
 }
 
@@ -193,5 +195,18 @@ void TreeGroupManager::on_pushButton_clicked() {
         submitApiResult("add_domain",
                         GET_CHAOS_API_PTR(groups::AddNode)->execute(add_new_domain_dialog.getDomainName().toStdString(),
                                                                     add_new_domain_dialog.getRootName().toStdString()));
+    }
+}
+
+void TreeGroupManager::on_pushButtonAddRoot_clicked() {
+    bool ok = false;
+    QString root_node_name = QInputDialog::getText(this,
+                                              tr("Create new root"),
+                                              tr("Root node name:"),
+                                              QLineEdit::Normal,
+                                              tr("Root Name"),
+                                              &ok);
+    if(ok && root_node_name.size()>0) {
+        tree_model.addNewRoot(root_node_name);
     }
 }
