@@ -188,6 +188,9 @@ namespace chaos {
                 boost::mutex                            mutex_condition_scan;
                 boost::condition_variable               condition_scan;
                 
+                //mutex for use the data driver for fetching data
+                boost::mutex                            mutex_fetch_value;
+                
                 //!groups for thread that make the scanner
                 bool                                    work_on_scan;
                 boost::thread_group                     scanner_threads;
@@ -270,6 +273,8 @@ namespace chaos {
                                        unsigned int quantum_multiplier,
                                        QuantumSlotConsumer *consumer);
                 
+                //! return the current dataset for a determinate dataset key in a synchornous way
+                std::auto_ptr<chaos::common::data::CDataWrapper> getLastDataset(const std::string& dataset_key);
             };
             
         }

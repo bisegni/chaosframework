@@ -33,7 +33,6 @@
 #include <chaos/common/event/channel/AlertEventChannel.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/common/io/IODirectIODriver.h>
-#include <chaos/common/io/IOMemcachedIODriver.h>
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
 #include <chaos/common/direct_io/channel/DirectIOSystemAPIClientChannel.h>
@@ -43,9 +42,9 @@
 
 namespace chaos {
 	namespace ui{
-		
+
 		class LLRpcApi;
-		
+
 		struct DIOConn {
 			friend class LLRpcApi;
 		private:
@@ -54,7 +53,7 @@ namespace chaos {
 			DIOConn(chaos::common::direct_io::DirectIOClientConnection *_connection):connection(_connection){};
 			~DIOConn(){};
 		};
-		
+
 		struct SystemApiChannel {
 			friend class LLRpcApi;
 			chaos::common::direct_io::channel::DirectIOSystemAPIClientChannel *system_api_channel;
@@ -66,7 +65,7 @@ namespace chaos {
 			system_api_channel(_system_api_channel){};
 			~SystemApiChannel(){};
 		};
-		
+
 		/*
 		 LLRpcApi Class api for rpc system
 		 */
@@ -76,63 +75,70 @@ namespace chaos {
 			friend class common::utility::Singleton<LLRpcApi>;
 			//!chaos network router
 			chaos::common::network::NetworkBroker *network_broker;
-			
+
 			//! root direct io client
 			chaos::common::direct_io::DirectIOClient *direct_io_client;
-			
+
 			//! hasmap for direct io address and connection struct
 			boost::mutex				mutex_map_dio_addr_conn;
             std::map<std::string, DIOConn*>	map_dio_addr_conn;
-			
+
+
+
 			/*
+			 */
+			LLRpcApi();
+
+			/*
+			 */
+			~LLRpcApi();
+
+		public:
+
+                    /*
 			 LL Rpc Api static initialization it should be called once for application
 			 */
 			void init() throw (CException);
+
+                        /*
+                         * use a specified network broker
+                         */
+                        void init(chaos::common::network::NetworkBroker *network_broker);
 			/*
 			 Deinitialization of LL rpc api
 			 */
 			void deinit() throw (CException);
-			
-			/*
-			 */
-			LLRpcApi();
-			
-			/*
-			 */
-			~LLRpcApi();
-			
-		public:
 			chaos::common::io::IODataDriver *getDataProxyChannelNewInstance() throw(CException);
-			
+
 			/*!
 			 Return a new channel for talk with metadata server
 			 */
             chaos::common::message::MDSMessageChannel *getNewMetadataServerChannel();
-			
+
 			/*!
 			 Return a new device channel
 			 */
             chaos::common::message::DeviceMessageChannel *getNewDeviceMessageChannel(chaos::common::network::CDeviceNetworkAddress *device_network_address);
-			
+
             chaos::common::message::PerformanceNodeChannel *getNewPerformanceChannel(chaos::common::network::CNetworkAddress *note_network_address);
-			
+
 			/*!
 			 Delete a previously instantiatedchannel
 			 */
             void deleteMessageChannel(chaos::common::message::MessageChannel*);
-			
+
 			/*!
 			 Delete a previously instantiatedchannel
 			 */
             void deleteMessageChannel(chaos::common::message::NodeMessageChannel*);
-			
+
             chaos::event::channel::AlertEventChannel *getNewAlertEventChannel() throw (CException);
             chaos::event::channel::InstrumentEventChannel *getNewInstrumentEventChannel() throw (CException);
             void disposeEventChannel(chaos::event::channel::EventChannel *) throw (CException);
-			
+
             SystemApiChannel *getSystemApiClientChannel(const std::string& direct_io_address);
 			void releaseSystemApyChannel(SystemApiChannel *system_api_channel);
-			
+
 		};
 	}
 }

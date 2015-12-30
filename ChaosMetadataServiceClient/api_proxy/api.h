@@ -26,6 +26,11 @@
 //---include all api header
 //----------------------------servcie----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/service/ResetAll.h>
+#include <ChaosMetadataServiceClient/api_proxy/service/GetAllSnapshot.h>
+#include <ChaosMetadataServiceClient/api_proxy/service/DeleteSnapshot.h>
+#include <ChaosMetadataServiceClient/api_proxy/service/RestoreSnapshot.h>
+#include <ChaosMetadataServiceClient/api_proxy/service/CreateNewSnapshot.h>
+#include <ChaosMetadataServiceClient/api_proxy/service/GetNodesForSnapshot.h>
 
 //----------------------------data service nodes---------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/data_service/NewDS.h>
@@ -37,9 +42,12 @@
 #include <ChaosMetadataServiceClient/api_proxy/data_service/AssociationControlUnit.h>
 
     //----------------------------control unit nodes---------------------------------------
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/Delete.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/StartStop.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/InitDeinit.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/GetInstance.h>
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/CopyInstance.h>
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/RecoverError.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/DeleteInstance.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/GetCurrentDataset.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/SearchInstancesByUS.h>

@@ -1,6 +1,8 @@
 #include "UnitServerEditor.h"
 #include "ui_UnitServerEditor.h"
 #include "../control_unit/ControUnitInstanceEditor.h"
+#include "../control_unit/ControlUnitEditor.h"
+
 #include <chaos/common/data/CDataWrapper.h>
 
 #include <QDebug>
@@ -13,6 +15,10 @@
 #include <QTimeZone>
 #include <QLocale>
 #include <QInputDialog>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QMimeData>
+#include <QStringRef>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -28,6 +34,7 @@ const QString TAG_CU_SI = "cu_si";
 UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
     PresenterWidget(NULL),
     node_unique_id(_node_unique_id),
+    move_copy_search_instance(NULL),
     ui(new Ui::UnitServerEditor) {
     ui->setupUi(this);
     ui->splitterTypeInstances->setStretchFactor(0,0);
@@ -41,9 +48,6 @@ UnitServerEditor::UnitServerEditor(const QString &_node_unique_id) :
 }
 
 UnitServerEditor::~UnitServerEditor() {
-    //start monitor on chaos ui
-    ui->chaosLabelHealtStatus->stopMonitoring();
-    ui->chaosLedIndicatorHealt->stopMonitoring();
     delete ui;
 }
 
@@ -78,6 +82,8 @@ void UnitServerEditor::initUI() {
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             this, SLOT(handleSelectionChanged(QItemSelection)));
 
+    ui->tableView->setAcceptDrops(true);
+
     connect(ui->tableView->selectionModel(),
             SIGNAL(currentChanged(QModelIndex,QModelIndex)),
             SLOT(tableCurrentChanged(QModelIndex,QModelIndex)));
@@ -92,8 +98,8 @@ void UnitServerEditor::initUI() {
     ui->chaosLabelHealtStatus->setLabelValueShowTrackStatus(true);
     ui->chaosLedIndicatorHealt->setNodeUniqueID(node_unique_id);
     connect(ui->chaosLedIndicatorHealt,
-            SIGNAL(changedOnlineStatus(QString,bool)),
-            SLOT(changedNodeOnlineStatus(QString,bool)));
+            SIGNAL(changedOnlineStatus(QString,CLedIndicatorHealt::AliveState)),
+            SLOT(changedNodeOnlineStatus(QString,CLedIndicatorHealt::AliveState)));
     //start monitor on chaos ui
     ui->chaosLabelHealtStatus->startMonitoring();
     ui->chaosLedIndicatorHealt->startMonitoring();
@@ -101,7 +107,15 @@ void UnitServerEditor::initUI() {
     updateAll();
 }
 
-bool UnitServerEditor::canClose() {
+bool UnitServerEditor::isClosing() {
+    //stop monitoring
+    ui->chaosLabelHealtStatus->stopMonitoring();
+    ui->chaosLedIndicatorHealt->stopMonitoring();
+    if( move_copy_search_instance) {
+        move_copy_search_instance->close();
+        delete( move_copy_search_instance);
+        move_copy_search_instance = NULL;
+    }
     return true;
 }
 
@@ -116,18 +130,27 @@ void UnitServerEditor::customMenuRequested(QPoint pos){
         QAction *menuDI = new QAction("Deinit", this);
         QAction *menuStart = new QAction("Start", this);
         QAction *menuStop = new QAction("Stop", this);
+        QAction *menuDuplicate = new QAction("Duplicate", this);
+        QAction *menuCopyTo = new QAction("Copy To", this);
+        QAction *menuMoveTo = new QAction("Move To", this);
         connect(menuL, SIGNAL(triggered()), this, SLOT(cuInstanceLoadSelected()));
         connect(menuUL, SIGNAL(triggered()), this, SLOT(cuInstanceUnloadSelected()));
         connect(menuI, SIGNAL(triggered()), this, SLOT(cuInstanceInitSelected()));
         connect(menuDI, SIGNAL(triggered()), this, SLOT(cuInstanceDeinitSelected()));
         connect(menuStart, SIGNAL(triggered()), this, SLOT(cuInstanceStartSelected()));
         connect(menuStop, SIGNAL(triggered()), this, SLOT(cuInstanceStopSelected()));
+        connect(menuDuplicate, SIGNAL(triggered()), this, SLOT(duplicateInstance()));
+        connect(menuCopyTo, SIGNAL(triggered()), this, SLOT(copyToUnitServer()));
+        connect(menuMoveTo, SIGNAL(triggered()), this, SLOT(moveToUnitServer()));
         menu->addAction(menuL);
         menu->addAction(menuUL);
         menu->addAction(menuI);
         menu->addAction(menuDI);
         menu->addAction(menuStart);
         menu->addAction(menuStop);
+        menu->addAction(menuDuplicate);
+        menu->addAction(menuCopyTo);
+        menu->addAction(menuMoveTo);
         menu->popup(ui->tableView->viewport()->mapToGlobal(pos));
     }
 }
@@ -188,7 +211,6 @@ void UnitServerEditor::onApiDone(const QString& tag,
             ui->labelRegistrationTimestamp->setText(tr("No registration timestamp found!"));
         }
 
-
         QStringList cy_type_list;
         if(api_result->hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) {
             //get the vector of unit type
@@ -227,6 +249,8 @@ void UnitServerEditor::onApiDone(const QString& tag,
     }else if(tag.compare(TAG_CU_REMOVE_TYPE_AND_UPDATE_LIST)==0) {
         updateAll();
     }
+    PresenterWidget::onApiDone(tag,
+                               api_result);
 }
 
 void UnitServerEditor::fillTableWithInstance( QSharedPointer<CDataWrapper> cu_instance) {
@@ -251,7 +275,7 @@ void UnitServerEditor::on_pushButtonCreateNewInstance_clicked()
 {
     //check if we have selected a type
     QModelIndexList selected_index = ui->listViewCUType->selectionModel()->selectedIndexes();
-    if(!selected_index.size() == 1) {
+    if(!(selected_index.size() == 1)) {
         QMessageBox::information(this,
                                  tr("New Instance creation error"),
                                  tr("Instance creation needs a one control unit type selected!"));
@@ -262,8 +286,7 @@ void UnitServerEditor::on_pushButtonCreateNewInstance_clicked()
                                                       selected_index.first().data().toString()));
 }
 
-void UnitServerEditor::on_pushButtonUpdateAllInfo_clicked()
-{
+void UnitServerEditor::on_pushButtonUpdateAllInfo_clicked() {
     updateAll();
 }
 
@@ -361,7 +384,114 @@ void UnitServerEditor::cuInstanceStopSelected() {
         submitApiResult(QString("cu_start"),
                         GET_CHAOS_API_PTR(control_unit::StartStop)->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
                                                                             false));
-    }}
+    }
+}
+
+void UnitServerEditor::duplicateInstance() {
+    bool ok = false;
+    foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
+        QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+        QString source_cu_id = QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        QString destination_cu_id = QInputDialog::getText(this,
+                                                          (tr("Duplicate instance:")+source_cu_id),
+                                                          tr("Unique ID destination:"),
+                                                          QLineEdit::Normal,
+                                                          tr(""), &ok);
+        if (ok && !destination_cu_id.isEmpty()) {
+            qDebug() << "Duplicate " << source_cu_id;
+            //load the selected cu
+            submitApiResult(QString("copy_instance"),
+                            GET_CHAOS_API_PTR(control_unit::CopyInstance)->execute(source_cu_id.toStdString(),
+                                                                                   node_unique_id.toStdString(),
+                                                                                   destination_cu_id.toStdString(),
+                                                                                   node_unique_id.toStdString()));
+        } else if (!ok) {
+            break;
+        }
+    }
+}
+
+void UnitServerEditor::moveToUnitServer() {
+    if(ui->tableView->selectionModel()->selectedRows().size() == 0) return;
+    if(move_copy_search_instance){
+        move_copy_search_instance->show();
+        return;
+    }
+    QString tag = "move<";
+    foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
+        QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+        QString source_cu_id = QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        tag.append(source_cu_id);
+        tag.append("<");
+    }
+    tag.resize(tag.size()-1);
+    move_copy_search_instance = new SearchNodeResult(true, tag);
+    connect(move_copy_search_instance, SIGNAL(selectedNodes(QString,QVector<QPair<QString,QString> >)), SLOT(selectedUnitServer(QString,QVector<QPair<QString,QString> >)));
+    addWidgetToPresenter(move_copy_search_instance);
+}
+
+void UnitServerEditor::copyToUnitServer() {
+    if(ui->tableView->selectionModel()->selectedRows().size() == 0) return;
+    if(move_copy_search_instance){
+        move_copy_search_instance->show();
+        return;
+    }
+    QString tag = "copy<";
+    foreach (QModelIndex element, ui->tableView->selectionModel()->selectedRows()) {
+        QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
+        QString source_cu_id = QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
+        tag.append(source_cu_id);
+        tag.append("<");
+    }
+    tag.resize(tag.size()-1);
+    move_copy_search_instance = new SearchNodeResult(true, tag);
+    connect(move_copy_search_instance, SIGNAL(selectedNodes(QString,QVector<QPair<QString,QString> >)), SLOT(selectedUnitServer(QString,QVector<QPair<QString,QString> >)));
+    addWidgetToPresenter(move_copy_search_instance);
+}
+
+void UnitServerEditor::selectedUnitServer(const QString& tag, const QVector< QPair<QString,QString> >& selected_item) {
+
+    int first_separator = tag.indexOf("<");
+    QStringRef operation(&tag, 0, first_separator);
+    QStringRef instances(&tag, first_separator+1, tag.size()-operation.size()-1);
+    QVector<QStringRef> instance_to_apply = instances.split("<");
+
+    foreach(QStringRef instance, instance_to_apply) {
+        for(QVector<QPair<QString,QString> >::const_iterator it = selected_item.begin();
+            it != selected_item.end();
+            it++){
+            QString destination_cu_id = instance.toString();
+            if(operation.compare(tr("move")) == 0) {
+            } else if(operation.compare(tr("copy"))==0){
+                bool ok = false;
+                QString cu_uid = instance.toString();
+                QString us_uid = it->first;
+                QString new_cu_uid = QString("%2/%1").arg(cu_uid, us_uid);
+                QString destination_cu_id = QInputDialog::getText(this,
+                                                                  (QString("Duplicate instance:%1 to unit server:%2").arg(cu_uid, us_uid)),
+                                                                  tr("Unique ID destination:"),
+                                                                  QLineEdit::Normal,
+                                                                  new_cu_uid,
+                                                                  &ok);
+                if(ok && destination_cu_id.size()) {
+                   continue;
+                }
+            } else {
+                break;
+            }
+
+            //copy or move insnace to all target
+            submitApiResult(QString("copy_instance"),
+                            GET_CHAOS_API_PTR(control_unit::CopyInstance)->execute(instance.toString().toStdString(),
+                                                                                   node_unique_id.toStdString(),
+                                                                                   destination_cu_id.toStdString(),
+                                                                                   it->first.toStdString()));
+        }
+    }
+    move_copy_search_instance->close();
+    delete(move_copy_search_instance);
+    move_copy_search_instance = NULL;
+}
 
 void UnitServerEditor::on_pushButtonAddNewCUType_clicked() {
     bool ok = false;
@@ -400,8 +530,14 @@ void UnitServerEditor::on_pushButtonRemoveCUType_clicked() {
 }
 
 void UnitServerEditor::changedNodeOnlineStatus(const QString& node_uid,
-                                               bool new_online_status) {
-    if(new_online_status) {
+                                               CLedIndicatorHealt::AliveState alive_state) {
+    if(alive_state == CLedIndicatorHealt::Online) {
         updateAll();
     }
+}
+
+void UnitServerEditor::on_tableView_doubleClicked(const QModelIndex &index) {
+    QStandardItem *node_uid = table_model->item(index.row(), 0);
+    qDebug() << "Open control unit editor for" << node_uid->text();
+    addWidgetToPresenter(new ControlUnitEditor(node_uid->text()));
 }

@@ -5,7 +5,7 @@
 #include "node/data_service/DataServiceEditor.h"
 #include "search/SearchNodeResult.h"
 #include "preference/PreferenceDialog.h"
-
+#include "snapshot/SnapshotManager.h"
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 #include <QInputDialog>
@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //allocate the presenter
     command_presenter = new CommandPresenter(this, ui->mdiAreaEditor);
     addDockWidget(Qt::RightDockWidgetArea, healt_widget = new HealtMonitorWidget(this));
+    healt_widget->global_command_presenter = command_presenter;
     healt_widget->hide();
     //connect healt monitoring slot to prensenter signal
     connect(command_presenter,
@@ -36,6 +37,13 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow(){
     if(command_presenter) delete(command_presenter);
     delete ui;
+}
+
+void MainWindow::disposeResource() {
+    //close all subwidows
+    ui->mdiAreaEditor->closeAllSubWindows();
+    //close all healt widget
+    healt_widget->closeAllMonitor();
 }
 
 void MainWindow::on_actionOpenNode_triggered(){
@@ -108,27 +116,27 @@ void MainWindow::on_actionAdd_New_Unit_Server_triggered(){
 
 
 void MainWindow::reconfigure() {
-    ChaosMetadataServiceClient::getInstance()->clearServerList();
     QSettings settings;
-    settings.beginGroup("network");
-    int mds_address_size = settings.beginReadArray("mds_address");
+    try{
+        ChaosMetadataServiceClient::getInstance()->clearServerList();
+        settings.beginGroup("network");
+        int mds_address_size = settings.beginReadArray("mds_address");
 
-    for (int i = 0; i < mds_address_size; ++i) {
-        settings.setArrayIndex(i);
-        ChaosMetadataServiceClient::getInstance()->addServerAddress(settings.value("address").toString().toStdString());
-    }
-    settings.endArray();
-    settings.endGroup();
-    //check if monitoring is started
-    if(mds_address_size &&
-            !ChaosMetadataServiceClient::getInstance()->monitoringIsStarted()) {
-        //try to start it
-        try{
-            ChaosMetadataServiceClient::getInstance()->enableMonitoring();
-        }catch(chaos::CException &ex) {
-            ChaosMetadataServiceClient::getInstance()->disableMonitoring();
-            QMessageBox::information(this, tr("Monitoring Startup"), tr(ex.what()));
+        for (int i = 0; i < mds_address_size; ++i) {
+            settings.setArrayIndex(i);
+            ChaosMetadataServiceClient::getInstance()->addServerAddress(settings.value("address").toString().toStdString());
         }
+        settings.endArray();
+        settings.endGroup();
+        //check if monitoring is started
+        if(mds_address_size &&
+                !ChaosMetadataServiceClient::getInstance()->monitoringIsStarted()) {
+            //try to start it
+            on_actionEnable_Monitoring_triggered();
+        }
+        ChaosMetadataServiceClient::getInstance()->reconfigureMonitor();
+    }catch(...) {
+
     }
 }
 
@@ -144,6 +152,28 @@ void MainWindow::asyncApiError(const QString& tag, QSharedPointer<chaos::CExcept
                              QString("The api with tag %1 has give the error:\n%2").arg(tag, api_exception->what()));
 }
 
-void MainWindow::asyncApiResult(const QString& tag, QSharedPointer<chaos::common::data::CDataWrapper> api_data) {
+void MainWindow::asyncApiResult(const QString& tag,
+                                QSharedPointer<chaos::common::data::CDataWrapper> api_data) {
 
+}
+
+void MainWindow::on_actionEnable_Monitoring_triggered() {
+    try{
+        ChaosMetadataServiceClient::getInstance()->enableMonitor();
+        ui->actionEnable_Monitoring->setEnabled(false);
+        ui->actionDisable_Monitoring->setEnabled(true);
+    }catch(chaos::CException &ex) {
+        ChaosMetadataServiceClient::getInstance()->disableMonitor();
+        QMessageBox::information(this, tr("Monitoring Startup"), tr(ex.what()));
+    }
+}
+
+void MainWindow::on_actionDisable_Monitoring_triggered() {
+    ChaosMetadataServiceClient::getInstance()->disableMonitor();
+    ui->actionEnable_Monitoring->setEnabled(true);
+    ui->actionDisable_Monitoring->setEnabled(false);
+}
+
+void MainWindow::on_actionSnapshot_Manager_triggered() {
+    command_presenter->showCommandPresenter(new SnapshotManager());
 }

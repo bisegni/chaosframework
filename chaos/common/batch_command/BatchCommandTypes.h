@@ -115,8 +115,8 @@ namespace chaos {
              Used for collect the statistic about current running command.
              */
             typedef struct {
-                uint64_t lastCmdStepStart;	/**< Represent the time collected at the start of the scehduler step (before acquisition phase)[microseconds] */
-                uint64_t lastCmdStepTime;	/**< Represent the time collected at the end of the scehduler step (befor the sleep or pause of the thread)[microseconds] */
+                int64_t lastCmdStepStart;	/**< Represent the time collected at the start of the scehduler step (before acquisition phase)[microseconds] */
+                int64_t lastCmdStepTime;	/**< Represent the time collected at the end of the scehduler step (befor the sleep or pause of the thread)[microseconds] */
 			} SandboxStat;
             
             //! Namespace for the features of the slow command

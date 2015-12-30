@@ -23,21 +23,27 @@
 class CommandPresenter;
 
 class PresenterWidget:
-        public QWidget
-{
+        public QWidget {
     Q_OBJECT
     friend class CommandPresenter;
 
     QMdiSubWindow *editor_subwindow;
     CommandPresenter *presenter_instance;
-
+    unsigned int submitted_api;
 public:
     explicit PresenterWidget(QWidget *parent = NULL);
     ~PresenterWidget();
 
     void setThisTabIndex(int index);
 
-    virtual bool canClose() = 0;
+    //! Called befor window is closed
+    /*!
+     * Called before window is closed, here the implementation
+     * can dispose resource
+     * \brief isClosing
+     * \return
+     */
+    virtual bool isClosing() = 0;
     virtual void initUI() = 0;
 
 public slots:
@@ -88,31 +94,31 @@ protected:
     void registerMonitorHandler(const QString& monitor_key,
                                 const unsigned int dataset_type,
                                 unsigned int quantum_multiplier,
-                                chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                AbstractAttributeHandler *monitor_attribute_handler);
     void unregisterMonitorHandler(const QString& monitor_key,
                                   const unsigned int dataset_type,
                                   unsigned int quantum_multiplier,
-                                  chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                  AbstractAttributeHandler *monitor_attribute_handler);
     void registerMonitorHandler(const std::string& monitor_key,
                                 const unsigned int dataset_type,
                                 unsigned int quantum_multiplier,
-                                chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                AbstractAttributeHandler *monitor_attribute_handler);
     void unregisterMonitorHandler(const std::string& monitor_key,
                                   const unsigned int dataset_type,
                                   unsigned int quantum_multiplier,
-                                  chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                  AbstractAttributeHandler *monitor_attribute_handler);
     void registerHealtMonitorHandler(const QString& monitor_key,
                                      unsigned int quantum_multiplier,
-                                     chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                     AbstractAttributeHandler *monitor_attribute_handler);
     void unregisterHealtMonitorHandler(const QString& monitor_key,
                                        unsigned int quantum_multiplier,
-                                       chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                       AbstractAttributeHandler *monitor_attribute_handler);
     void registerHealtMonitorHandler(const std::string& monitor_key,
                                      unsigned int quantum_multiplier,
-                                     chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                     AbstractAttributeHandler *monitor_attribute_handler);
     void unregisterHealtMonitorHandler(const std::string& monitor_key,
                                        unsigned int quantum_multiplier,
-                                       chaos::metadata_service_client::monitor_system::AbstractQuantumKeyAttributeHandler *monitor_attribute_handler);
+                                       AbstractAttributeHandler *monitor_attribute_handler);
     //contextual menu utility
     void registerWidgetForContextualMenu(QWidget *contextual_menu_parent,
                                          QMap<QString, QVariant> *widget_contextual_menu_action,

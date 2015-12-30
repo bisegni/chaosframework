@@ -210,6 +210,11 @@ int MongoDBControlUnitDataAccess::setDataset(const std::string& cu_unique_id,
                     }
                 }
                 
+                if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY)) {
+                    dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY <<
+                    dataset_element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY);
+                }
+                
                 if(dataset_element->hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE)) {
                     dataset_element_builder << ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE
                     << dataset_element->getInt32Value(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE);
@@ -403,7 +408,9 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         
         //add the load_at_startup field
         updated_field << NodeDefinitionKey::NODE_PARENT << instance_description.getStringValue(NodeDefinitionKey::NODE_PARENT)
-        << "auto_load" << (bool)(instance_description.hasKey("auto_load")?instance_description.getBoolValue("auto_load"):false);
+        << "auto_load" << (bool)(instance_description.hasKey("auto_load")?instance_description.getBoolValue("auto_load"):false)
+        << "auto_init" << (bool)(instance_description.hasKey("auto_init")?instance_description.getBoolValue("auto_init"):false)
+        << "auto_start" << (bool)(instance_description.hasKey("auto_start")?instance_description.getBoolValue("auto_start"):false);
         
         //add unit server parent
         
@@ -601,6 +608,9 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
             
             (*result)->addStringValue(NodeDefinitionKey::NODE_PARENT, instance_description.getStringField(NodeDefinitionKey::NODE_PARENT));
             if(instance_description.hasField("auto_load"))(*result)->addBoolValue("auto_load", instance_description.getBoolField("auto_load"));
+            if(instance_description.hasField("auto_init"))(*result)->addBoolValue("auto_init", instance_description.getBoolField("auto_init"));
+            if(instance_description.hasField("auto_start"))(*result)->addBoolValue("auto_start", instance_description.getBoolField("auto_start"));
+            
             if(instance_description.hasField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM))(*result)->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, instance_description.getStringField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM));
             if(instance_description.hasField("control_unit_implementation"))(*result)->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
             
@@ -740,9 +750,7 @@ int MongoDBControlUnitDataAccess::getInstanceDatasetAttributeConfiguration(const
                                        query,
                                        &prj))){
             
-        }else if(result_bson.isEmpty()){
-            MDBCUDA_ERR << "No attribute has bee foundt";
-        } else {
+        } else if(!result_bson.isEmpty()){
             std::vector<mongo::BSONElement> result_array = result_bson.getFieldDotted("instance_description.attribute_value_descriptions").Array();
             if(result_array.size()!=0) {
                 mongo::BSONObj attribute_config = result_array[0].Obj();

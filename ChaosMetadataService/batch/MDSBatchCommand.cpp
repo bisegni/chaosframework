@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 #include "MDSBatchCommand.h"
+#include "MDSBatchExecutor.h"
 
 using namespace chaos::common::network;
 using namespace chaos::metadata_service::batch;
@@ -28,14 +29,14 @@ using namespace chaos::common::batch_command;
 
 //! default constructor
 MDSBatchCommand::MDSBatchCommand():
-BatchCommand(){
-    
-}
+BatchCommand(),
+message_channel(NULL),
+multiaddress_message_channel(NULL),
+executor_instance(NULL),
+abstract_persistance_driver(NULL){}
 
 //! default destructor
-MDSBatchCommand::~MDSBatchCommand() {
-    
-}
+MDSBatchCommand::~MDSBatchCommand() {}
 
 chaos::common::message::MessageChannel*
 MDSBatchCommand::getMessageChannel() {
@@ -58,6 +59,11 @@ uint8_t MDSBatchCommand::implementedHandler() {
 
 // inherited method
 void MDSBatchCommand::setHandler(chaos_data::CDataWrapper *data) {
+    //set default scheduler delay 0,5 second
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)50000);
+    //set the timeout to 10 seconds
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
+    //set in exclusive running property
     BC_EXEC_RUNNIG_PROPERTY
 }
 
@@ -78,8 +84,8 @@ bool MDSBatchCommand::timeoutHandler() {
 
 //! create a request to a remote rpc action
 std::auto_ptr<RequestInfo> MDSBatchCommand::createRequest(const std::string& remote_address,
-                                         const std::string& remote_domain,
-                                         const std::string& remote_action) throw (chaos::CException) {
+                                                          const std::string& remote_domain,
+                                                          const std::string& remote_action) throw (chaos::CException) {
     return std::auto_ptr<RequestInfo> (new RequestInfo(remote_address,
                                                        remote_domain,
                                                        remote_action));
@@ -96,6 +102,17 @@ void MDSBatchCommand::sendRequest(RequestInfo& request_info,
     request_info.phase = MESSAGE_PHASE_SENT;
 }
 
+void MDSBatchCommand::sendMessage(RequestInfo& request_info,
+                                  chaos::common::data::CDataWrapper *message) throw (chaos::CException) {
+    CHAOS_ASSERT(message_channel)
+    
+    message_channel->sendMessage(request_info.remote_address,
+                                 request_info.remote_domain,
+                                 request_info.remote_action,
+                                 message);
+    request_info.phase = MESSAGE_PHASE_COMPLETED;
+}
+
 void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info) throw (chaos::CException) {
     switch(request_info.phase) {
         case MESSAGE_PHASE_UNSENT:
@@ -109,7 +126,7 @@ void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info) throw (chaos
                 MDSBC_ERR << "request with no future";
                 throw chaos::CException(-2, "request with no future", __PRETTY_FUNCTION__);
             }
-            if(request_info.request_future->wait(5000)) {
+            if(request_info.request_future->wait(1000)) {
                 //we have hd answer
                 if(request_info.request_future->getError()) {
                     MDSBC_ERR << "We have had answer with error"
@@ -121,7 +138,7 @@ void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info) throw (chaos
                 }
                 request_info.phase = MESSAGE_PHASE_COMPLETED;
             } else {
-                if((request_info.retry % 3) == 0) {
+                if((++request_info.retry % 3) == 0) {
                     request_info.phase = MESSAGE_PHASE_TIMEOUT;
                 }
             }
@@ -131,4 +148,26 @@ void MDSBatchCommand::manageRequestPhase(RequestInfo& request_info) throw (chaos
         case MESSAGE_PHASE_TIMEOUT:
             break;
     }
+}
+uint32_t MDSBatchCommand::getNextSandboxToUse() {
+    CHAOS_ASSERT(executor_instance)
+    return executor_instance->getNextSandboxToUse();
+}
+
+uint64_t MDSBatchCommand::submitCommand(const std::string& batch_command_alias,
+                                        chaos_data::CDataWrapper *command_data,
+                                        uint32_t sandbox_id,
+                                        uint32_t priority) {
+    CHAOS_ASSERT(executor_instance)
+    return executor_instance->submitCommand(batch_command_alias,
+                                            command_data,
+                                            sandbox_id,
+                                            priority);
+}
+
+uint64_t MDSBatchCommand::submitCommand(const std::string& batch_command_alias,
+                                        chaos_data::CDataWrapper *command_data) {
+    CHAOS_ASSERT(executor_instance)
+    return executor_instance->submitCommand(batch_command_alias,
+                                            command_data);
 }

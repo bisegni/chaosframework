@@ -19,4 +19,8 @@ static const char * const MONGODB_COLLECTION_NODES_COMMAND              = "mds_n
 static const char * const MONGODB_COLLECTION_NODES_COMMAND_TEMPLATE     = "mds_nodes_command_template";
 static const char * const MONGODB_COLLECTION_SEQUENCES                  = "mds_sequences";
 
+//-------snapshot data------
+static const char * const MONGODB_COLLECTION_SNAPSHOT                   = "snapshot";
+static const char * const MONGODB_COLLECTION_SNAPSHOT_DATA              = "snapshot_data";
+
 #endif

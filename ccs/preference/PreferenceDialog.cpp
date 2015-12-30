@@ -6,18 +6,11 @@ PreferenceDialog::PreferenceDialog(QWidget *parent) :
     ui(new Ui::PreferenceDialog) {
     ui->setupUi(this);
 
-    list_model_mds_address = new QStringListModel(this);
-    ui->listViewMDSAddress->setModel(list_model_mds_address);
+    ui->listViewMDSAddress->setModel(&list_model_mds_address);
 
     connect(ui->buttonBox,
             SIGNAL(accepted()),
             SLOT(saveAllPreference()));
-    connect(ui->buttonBox,
-            SIGNAL(accepted()),
-            SLOT(close()));
-    connect(ui->buttonBox,
-            SIGNAL(accepted()),
-            SLOT(close()));
     connect(ui->buttonBox,
             SIGNAL(rejected()),
             SLOT(close()));
@@ -47,7 +40,7 @@ void PreferenceDialog::loadAllPreference() {
         settings.setArrayIndex(i);
         cy_type_list.append(settings.value("address").toString());
     }
-    list_model_mds_address->setStringList(cy_type_list);
+    list_model_mds_address.setStringList(cy_type_list);
     settings.endArray();
     settings.endGroup();
 }
@@ -55,7 +48,7 @@ void PreferenceDialog::loadAllPreference() {
 void PreferenceDialog::saveAllPreference() {
     settings.beginGroup("network");
     settings.beginWriteArray("mds_address");
-    const QStringList& cy_type_list = list_model_mds_address->stringList();
+    const QStringList& cy_type_list = list_model_mds_address.stringList();
     for (int i = 0; i < cy_type_list.size(); ++i) {
         settings.setArrayIndex(i);
         settings.setValue("address", cy_type_list.at(i));
@@ -68,14 +61,14 @@ void PreferenceDialog::saveAllPreference() {
 }
 
 void PreferenceDialog::on_pushButtonAddNewMDSRpcEndpoint_clicked() {
-    list_model_mds_address->insertRow(list_model_mds_address->rowCount());
-    QModelIndex index = list_model_mds_address->index(list_model_mds_address->rowCount()-1);
-    list_model_mds_address->setData(index, tr("ip:port"));
+    list_model_mds_address.insertRow(list_model_mds_address.rowCount());
+    QModelIndex index = list_model_mds_address.index(list_model_mds_address.rowCount()-1);
+    list_model_mds_address.setData(index, tr("127.0.0.1:5000"));
 }
 
 void PreferenceDialog::on_pushButtonRemoveSelectedMDSRpcEndpoint_clicked() {
     QModelIndexList selected_row =  ui->listViewMDSAddress->selectionModel()->selectedRows();
     foreach(QModelIndex selected, selected_row) {
-        list_model_mds_address->removeRow(selected.row());
+        list_model_mds_address.removeRow(selected.row());
     }
 }

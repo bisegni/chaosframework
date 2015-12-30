@@ -124,7 +124,7 @@ void KeyGroupCache::garbageCache() {
 int KeyGroupCache::addKeyInfo(const char * key, chaos::DataType::DataType type, uint32_t channelMaxLength) {
     int err = 0;
         //check if we can receive other new channel
-    if(getServiceState() != service_state_machine::InizializableServiceType::IS_DEINTIATED)
+    if(getServiceState() != CUStateKey::DEINIT)
         throw CException(1, "Operation not permited, the cache is not initialized","KeyGroupCache::addChannel");
     
         //check if is already present into the hash

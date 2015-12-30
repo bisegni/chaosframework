@@ -2,8 +2,10 @@
 #include "ui_CommandTemplateInstanceEditor.h"
 #include "../../widget/CDSAttrQLineEdit.h"
 
-#include <QLineEdit>
 #include <QDebug>
+#include <QKeyEvent>
+#include <QLineEdit>
+#include <QIntValidator>
 
 const QString TAG_CMD_FETCH_TEMPLATE_AND_COMMAND = QString("cmd_fetch_template_command");
 const QString TAG_CMD_INSTANCE_SUBMIT = QString("cmd_instance_sumission");
@@ -18,12 +20,53 @@ CommandTemplateInstanceEditor::CommandTemplateInstanceEditor(const QString& _nod
     ui(new Ui::CommandTemplateInstanceEditor),
     node_uid(_node_uid),
     template_name(_template_name),
-    command_uid(_command_uid) {
+    command_uid(_command_uid),
+    close_after_submition(false){
     ui->setupUi(this);
+    setFocusPolicy(Qt::StrongFocus);
+    QObject::installEventFilter(this);
+    ui->lineEditNumberofInstances->setValidator(new QIntValidator(1,1000));
+    ui->lineEditNumberofInstances->setVisible(false);
 }
 
 CommandTemplateInstanceEditor::~CommandTemplateInstanceEditor() {
     delete ui;
+}
+
+bool CommandTemplateInstanceEditor::eventFilter(QObject *object, QEvent *event) {
+    bool managed = false;
+    if (object == this) {
+        if(event->type() == QEvent::KeyPress){
+            QKeyEvent *key_evt = static_cast<QKeyEvent *>(event);
+            switch(key_evt->key()) {
+            case Qt::Key_Control:
+                close_after_submition = true;
+                ui->pushButtonSubmitInstance->setText("Submit Instance and Close");
+                managed = true;
+                break;
+            case Qt::Key_Alt:
+                ui->lineEditNumberofInstances->setVisible(true);
+                break;
+            default:
+                break;
+            }
+        } else if (event->type() == QEvent::KeyRelease) {
+            QKeyEvent *key_evt = static_cast<QKeyEvent *>(event);
+            switch(key_evt->key()) {
+            case Qt::Key_Control:
+                close_after_submition = false;
+                ui->pushButtonSubmitInstance->setText("Submit Instance");
+                managed = true;
+                break;
+            case Qt::Key_Alt:
+                ui->lineEditNumberofInstances->setVisible(false);
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    return managed;
 }
 
 void CommandTemplateInstanceEditor::initUI() {
@@ -36,7 +79,7 @@ void CommandTemplateInstanceEditor::initUI() {
                                                                                        command_uid.toStdString()));
 }
 
-bool CommandTemplateInstanceEditor::canClose() {
+bool CommandTemplateInstanceEditor::isClosing() {
     return true;
 }
 
@@ -55,15 +98,18 @@ void CommandTemplateInstanceEditor::onApiDone(const QString& tag,
         }
 
         configureForTemplate(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description")),
-                                QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
+                             QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
     } else if(tag.compare(TAG_CMD_INSTANCE_SUBMIT) == 0) {
         //instance has bee saved so we can close the panel
-        closeTab();
+        if(close_after_submition) {closeTab();}
     }
+    PresenterWidget::onApiDone(tag,
+                               api_result);
 }
 
 boost::shared_ptr<node::TemplateSubmission> CommandTemplateInstanceEditor::getTempalteSubmissionTask() {
     bool ok = false;
+
     boost::shared_ptr<node::TemplateSubmission> submission_info(new node::TemplateSubmission());
     submission_info->node_unique_id = node_uid.toStdString();
     submission_info->template_name = template_name.toStdString();
@@ -88,11 +134,16 @@ boost::shared_ptr<node::TemplateSubmission> CommandTemplateInstanceEditor::getTe
 
 void CommandTemplateInstanceEditor::submitInstance() {
     node::TemplateSubmissionList submission_list;
-    boost::shared_ptr<node::TemplateSubmission>  instance = getTempalteSubmissionTask();
-    if(instance.get() == NULL) return;
-    submission_list.push_back(instance);
-    //whe have all submission pack completed
 
+    //check how many instance of the command we need to submit
+    unsigned int instance_number = (ui->lineEditNumberofInstances->text().size()==0)?1:ui->lineEditNumberofInstances->text().toUInt();
+
+    for(unsigned int idx = 0; idx < instance_number; idx++) {
+        boost::shared_ptr<node::TemplateSubmission>  instance = getTempalteSubmissionTask();
+        if(instance.get() == NULL) break;
+        submission_list.push_back(instance);
+    }
+    //whe have all submission pack completed
     submitApiResult(TAG_CMD_INSTANCE_SUBMIT,
                     GET_CHAOS_API_PTR(node::CommandTemplateSubmit)->execute(submission_list));
 }

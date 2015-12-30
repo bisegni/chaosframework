@@ -23,6 +23,8 @@
 #include <boost/format.hpp>
 
 using namespace chaos::common::rpc;
+using namespace chaos::common::metric;
+
 #define RPCMFC_INFO INFO_LOG(RpcClientMetricCollector)
 #define RPCMFC_LDBG DBG_LOG(RpcClientMetricCollector)
 #define RPCMFC_LERR ERR_LOG(RpcClientMetricCollector)

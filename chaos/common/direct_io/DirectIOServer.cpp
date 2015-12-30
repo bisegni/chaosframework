@@ -61,7 +61,7 @@ void DirectIOServer::deinit() throw(chaos::CException) {
 
 //! Send some data to the server
 void DirectIOServer::setHandler(DirectIODispatcher *_handler_impl) {
-	if(StartableService::getServiceState() != service_state_machine::InizializableServiceType::IS_DEINTIATED)
+	if(StartableService::getServiceState() != CUStateKey::DEINIT)
 		return;
 	handler_impl = _handler_impl;
     handler_impl->server_public_interface = this;
@@ -69,7 +69,7 @@ void DirectIOServer::setHandler(DirectIODispatcher *_handler_impl) {
 
 //! Remove the handler pointer
 void DirectIOServer::clearHandler() {
-	if(StartableService::getServiceState() != service_state_machine::InizializableServiceType::IS_DEINTIATED)
+	if(StartableService::getServiceState() != CUStateKey::DEINIT)
 		return;
 	if(handler_impl) delete(handler_impl);
 }

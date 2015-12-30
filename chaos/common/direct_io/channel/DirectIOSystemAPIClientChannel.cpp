@@ -26,6 +26,10 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 
 DEFINE_CLASS_FACTORY(DirectIOSystemAPIClientChannel, DirectIOVirtualClientChannel);
 
+#define DIOSCC_INFO INFO_LOG(DirectIOSystemAPIClientChannel)
+#define DIOSCC_DBG DBG_LOG(DirectIOSystemAPIClientChannel)
+#define DIOSCC_ERR ERR_LOG(DirectIOSystemAPIClientChannel)
+
 //define the static deallocator class
 DirectIOSystemAPIClientChannel::DirectIOSystemAPIClientChannelDeallocator
 DirectIOSystemAPIClientChannel::STATIC_DirectIOSystemAPIClientChannelDeallocator;
@@ -45,14 +49,19 @@ DirectIOSystemAPIClientChannel::~DirectIOSystemAPIClientChannel() {
 // start a new Snapshot creation
 int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string& snapshot_name,
 															   const std::vector<std::string>& producer_keys,
-															   DirectIOSystemAPISnapshotResult **api_result_handle) {
+															   DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle) {
 	int64_t err = 0;
-	DirectIOSynchronousAnswer *answer = NULL;
 	if(snapshot_name.size() > 255) {
 		//bad Snapshot name size
-		return -1000;
+		return -1001;
 	}
+    
+    if(producer_keys.size() == 0) {
+        //bad Snapshot name size
+        return -1002;
+    }
 	//allocate the datapack
+    DirectIODataPack *answer = NULL;
 	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
 	
 	//allocate the header
@@ -80,7 +89,7 @@ int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string
 			}
 		}
 		//set the header field for the producer concatenation string
-		new_snapshot_opcode_header->field.producer_key_set_len = TO_LITTE_ENDNS_NUM(uint32_t, (uint32_t)producer_key_concatenation.size());
+		new_snapshot_opcode_header->field.producer_key_set_len = TO_LITTEL_ENDNS_NUM(uint32_t, (uint32_t)producer_key_concatenation.size());
 
 		//copy the memory for forwarding buffer
 		void * producer_key_concatenation_memory = calloc(producer_key_concatenation.size(), 1);
@@ -90,31 +99,36 @@ int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string
 	}
 	//send data with synchronous answer flag
 	if((err = (int)sendServiceData(data_pack, &answer))) {
-		//error getting last value
-		if(answer && answer->answer_data) free(answer->answer_data);
-	} else {
-		//we got answer
-		if(answer && answer->answer_size == sizeof(DirectIOSystemAPISnapshotResult)) {
-			*api_result_handle  = static_cast<DirectIOSystemAPISnapshotResult*>(answer->answer_data);
-			(*api_result_handle)->error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->error);
-		} else {
-			*api_result_handle = NULL;
-		}
-	}
-	if(answer) free(answer);
+		//error getting create shapshot result
+        DIOSCC_ERR << "Error on sendServiceData execution with error:" <<err;
+    }  else {
+        //we got answer
+        if(answer) {
+            *api_result_handle = (DirectIOSystemAPIGetDatasetSnapshotResult*)calloc(sizeof(DirectIOSystemAPIGetDatasetSnapshotResult), 1);
+            //get the header
+            opcode_headers::DirectIOSystemAPISnapshotResultHeaderPtr result_header = static_cast<opcode_headers::DirectIOSystemAPISnapshotResultHeaderPtr>(answer->channel_header_data);
+            result_header->error = FROM_LITTLE_ENDNS_NUM(int32_t, result_header->error);
+            
+            (*api_result_handle)->api_result = *result_header;
+        }
+    }
+    if(answer) {
+        if(answer->channel_header_data) free(answer->channel_header_data);
+        free(answer);
+    }
 	return err;
 }
 
 //! delete the snapshot identified by name
 int64_t DirectIOSystemAPIClientChannel::deleteDatasetSnapshot(const std::string& snapshot_name,
-															  DirectIOSystemAPISnapshotResult **api_result_handle) {
+															  DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle) {
 	int64_t err = 0;
-	DirectIOSynchronousAnswer *answer = NULL;
 	if(snapshot_name.size() > 255) {
 		//bad Snapshot name size
 		return -1000;
 	}
 	//allocate the datapack
+    DirectIODataPack *answer = NULL;
 	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
 	
 	//allocate the header
@@ -133,17 +147,22 @@ int64_t DirectIOSystemAPIClientChannel::deleteDatasetSnapshot(const std::string&
 	//send data with synchronous answer flag
 	if((err = (int)sendServiceData(data_pack, &answer))) {
 		//error getting last value
-		if(answer && answer->answer_data) free(answer->answer_data);
+        DIOSCC_ERR << "Error on sendServiceData execution with error:" <<err;
 	} else {
-		//we got answer
-		if(answer && answer->answer_size == sizeof(DirectIOSystemAPISnapshotResult)) {
-			*api_result_handle  = static_cast<DirectIOSystemAPISnapshotResult*>(answer->answer_data);
-			(*api_result_handle)->error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->error);
-		} else {
-			*api_result_handle = NULL;
-		}
+        //we got answer
+        if(answer) {
+            *api_result_handle = (DirectIOSystemAPIGetDatasetSnapshotResult*)calloc(sizeof(DirectIOSystemAPIGetDatasetSnapshotResult), 1);
+            //get the header
+            opcode_headers::DirectIOSystemAPISnapshotResultHeaderPtr result_header = static_cast<opcode_headers::DirectIOSystemAPISnapshotResultHeaderPtr>(answer->channel_header_data);
+            result_header->error = FROM_LITTLE_ENDNS_NUM(int32_t, result_header->error);
+            
+            (*api_result_handle)->api_result = *result_header;
+        }
 	}
-	if(answer) free(answer);
+    if(answer) {
+        if(answer->channel_header_data) free(answer->channel_header_data);
+        free(answer);
+    }
 	return err;
 }
 
@@ -153,12 +172,12 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
 																		 uint32_t channel_type,
 																		 DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle) {
 	int64_t err = 0;
-	DirectIOSynchronousAnswer *answer = NULL;
 	if(snapshot_name.size() > 255) {
 		//bad Snapshot name size
 		return -1000;
 	}
 	//allocate the datapack
+    DirectIODataPack *answer = NULL;
 	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
 	
 	//allocate the header
@@ -169,7 +188,7 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey);
 	
 	//copy the snapshot name to the header
-	std::memcpy(get_snapshot_opcode_header->field.snap_name, snapshot_name.c_str(), snapshot_name.size());
+	std::strncpy(get_snapshot_opcode_header->field.snap_name, snapshot_name.c_str(), 255);
 	get_snapshot_opcode_header->field.channel_type = channel_type;
 	
 	//set header
@@ -177,7 +196,7 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
 	if(producer_key.size()) {
 		
 		//set the header field for the producer concatenation string
-		get_snapshot_opcode_header->field.producer_key_set_len = TO_LITTE_ENDNS_NUM(uint32_t, (uint32_t)producer_key.size());
+		get_snapshot_opcode_header->field.producer_key_set_len = TO_LITTEL_ENDNS_NUM(uint32_t, (uint32_t)producer_key.size());
 		
 		//copy the memory for forwarding buffer
 		void * producer_key_send_buffer = malloc(producer_key.size());
@@ -188,18 +207,24 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
 	//send data with synchronous answer flag
 	if((err = (int)sendServiceData(data_pack, &answer))) {
 		//error getting last value
-		if(answer && answer->answer_data) free(answer->answer_data);
+		DIOSCC_ERR << "Error on sendServiceData execution with error:" <<err;
 	} else {
-		//we got answer
-		if(answer && answer->answer_data) {
-			*api_result_handle  = static_cast<DirectIOSystemAPIGetDatasetSnapshotResult*>(answer->answer_data);
-			(*api_result_handle)->api_result.error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->api_result.error);
-		} else {
-			*api_result_handle = NULL;
-		}
+        //we got answer
+        if(answer) {
+            *api_result_handle = (DirectIOSystemAPIGetDatasetSnapshotResult*)calloc(sizeof(DirectIOSystemAPIGetDatasetSnapshotResult), 1);
+            //get the header
+            opcode_headers::DirectIOSystemAPISnapshotResultHeaderPtr result_header = static_cast<opcode_headers::DirectIOSystemAPISnapshotResultHeaderPtr>(answer->channel_header_data);
+            result_header->channel_data_len = FROM_LITTLE_ENDNS_NUM(uint32_t, result_header->channel_data_len);
+            result_header->error = FROM_LITTLE_ENDNS_NUM(int32_t, result_header->error);
+            
+            (*api_result_handle)->api_result = *result_header;
+            (*api_result_handle)->channel_data = answer->channel_data;
+        }
 	}
-	if(answer) free(answer);
-	return err;
+    if(answer) {
+        if(answer->channel_header_data) free(answer->channel_header_data);
+        free(answer);
+    }
 	return 0;
 }
 

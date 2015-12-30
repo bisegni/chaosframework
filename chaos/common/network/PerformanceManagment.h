@@ -26,6 +26,7 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/TemplatedKeyObjectContainer.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
+#include <chaos/common/async_central/async_central.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/lockfree/queue.hpp>
@@ -55,7 +56,8 @@ namespace chaos {
 			public chaos::common::utility::StartableService,
 			public chaos::DeclareAction,
 			public direct_io::DirectIOClientConnectionEventHandler,
-			protected PMKeyObjectContainer {
+            protected PMKeyObjectContainer::FreeHandler,
+            protected chaos::common::async_central::TimerHandler {
 				friend class chaos::common::network::NetworkBroker;
 				chaos::common::network::NetworkBroker	*network_broker;
 				
@@ -67,6 +69,7 @@ namespace chaos {
 				boost::shared_ptr<boost::thread> thread_purge;
 				
 				boost::shared_mutex	mutex_map_purgeable;
+                PMKeyObjectContainer map_sessions;
 				std::map<std::string, chaos_direct_io::DirectIOPerformanceSession*> map_purgeable_performance_node;
 				
 				PerformanceManagment(NetworkBroker *_network_broker);
@@ -74,8 +77,9 @@ namespace chaos {
 				
 				void  disposePerformanceNode(chaos_direct_io::DirectIOPerformanceSession *performance_node);
 				void purge_map();
-				void purge_worker();
-				
+                //TimerHandler inherited method
+                void timeout();
+                
 				chaos_direct_io::DirectIOClient *getLocalDirectIOClientInstance();
 			protected:
 				//! Start the implementation
@@ -94,7 +98,7 @@ namespace chaos {
 				
 				chaos_data::CDataWrapper* stopPerformanceSession(chaos_data::CDataWrapper *param, bool& detach) throw(chaos::CException);
 				
-				void freeObject(std::string server_description, chaos_direct_io::DirectIOPerformanceSession *performance_node);
+                void freeObject(const PMKeyObjectContainer::TKOCElement& element_to_dispose);
 				
 				void handleEvent(direct_io::DirectIOClientConnection *client_connection, direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
 			};

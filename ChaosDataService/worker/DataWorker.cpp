@@ -18,7 +18,11 @@ using namespace chaos::data_service::worker;
 #define DCLDBG_ LDBG_ << DataWorker_LOG_HEAD << __FUNCTION__
 #define DCLERR_ LERR_ << DataWorker_LOG_HEAD << __FUNCTION__ << " - " << __LINE__ << "-"
 
-DataWorker::DataWorker():work(false), job_queue(1000),job_in_queue(0) {
+DataWorker::DataWorker():
+work(false),
+job_queue(1000),
+job_in_queue(0),
+max_element(1000){
 	std::memset(&settings, 0, sizeof(DataWorkerSetting));
 }
 
@@ -90,6 +94,8 @@ void DataWorker::deinit() throw (chaos::CException) {
 }
 
 int DataWorker::submitJobInfo(WorkerJobPtr job_info) {
+    //check if we are out of max element in queue, in other case go out
+    if(job_in_queue > max_element) return -1000;
 	if(job_in_queue++ % 1000) {
 		DCLDBG_ << "Job in queue " << job_in_queue;
 	}
@@ -97,7 +103,7 @@ int DataWorker::submitJobInfo(WorkerJobPtr job_info) {
 		job_condition.notify_one();
 		return 0;
 	}
-	return -1;
+	return -2;
 }
 
 void DataWorker::mantain() throw (chaos::CException) {

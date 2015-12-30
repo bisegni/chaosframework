@@ -87,15 +87,15 @@ std::ostream& operator<<(std::ostream& out, const level::LogSeverityLevel& level
 }
 
 void LogManager::init() throw(CException) {
-    
     //get the log configuration
-    level::LogSeverityLevel     logLevel        = static_cast<level::LogSeverityLevel>(GlobalConfiguration::getInstance()->getConfiguration()->getInt32Value(InitOption::OPT_LOG_LEVEL));
-    bool                        logOnConsole    =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?
-												GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE):false;
-    bool                        logOnFile       =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?
-												GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE):false;
-    string                      logFileName     = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);
-    
+    level::LogSeverityLevel     logLevel                =   static_cast<level::LogSeverityLevel>(GlobalConfiguration::getInstance()->getConfiguration()->getInt32Value(InitOption::OPT_LOG_LEVEL));
+    bool                        logOnConsole            =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?
+                                                            GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE):false;
+    bool                        logOnFile               =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?
+                                                            GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE):false;
+    string                      logFileName             =   GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);
+    uint32_t                    log_file_max_size_mb    =   GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_LOG_MAX_SIZE_MB);
+
     logging::add_common_attributes();
     boost::shared_ptr< logging::core > logger = boost::log::core::get();
     // Create a backend
@@ -118,15 +118,15 @@ void LogManager::init() throw(CException) {
     
     if(logOnFile){
 #if (BOOST_VERSION / 100000) >= 1 && ((BOOST_VERSION / 100) % 1000) >= 54
-        logging::add_file_log(keywords::file_name = logFileName,                  // file name pattern
-                              keywords::rotation_size = 10 * 1024 * 1024,         // rotate files every 10 MiB...
-                              keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),// ...or at midnight
+        logging::add_file_log(keywords::file_name = logFileName,                                                                    // file name pattern
+                              keywords::rotation_size = log_file_max_size_mb * 1024 * 1024,                                         // rotate files every 10 MiB...
+                              keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),                // ...or at midnight
                               keywords::format = EXTENDEND_LOG_FORMAT,
                               keywords::auto_flush=true);
 #else
-        logging::init_log_to_file(logging::keywords::file_name = logFileName,                  // file name pattern
-                                  logging::keywords::rotation_size = 10 * 1024 * 1024,         // rotate files every 10 MiB...
-                                  logging::keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),// ...or at midnight
+        logging::init_log_to_file(logging::keywords::file_name = logFileName,                                                       // file name pattern
+                                  logging::keywords::rotation_size = log_file_max_size_mb * 1024 * 1024,                            // rotate files every 10 MiB...
+                                  logging::keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),   // ...or at midnight
                                   logging::keywords::format = EXTENDEND_LOG_FORMAT,
                                   logging::keywords::auto_flush=true);
 #endif

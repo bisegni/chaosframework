@@ -141,3 +141,8 @@ void MonitorManager::removeKeyAttributeHandler(const std::string& key_to_monitor
         delete(it->second);
     }
 }
+
+//! return the current dataset for a determinate dataset key in a synchornous way
+std::auto_ptr<chaos::common::data::CDataWrapper> MonitorManager::getLastDataset(const std::string& dataset_key) {
+    return slot_scheduler->getLastDataset(dataset_key);
+}

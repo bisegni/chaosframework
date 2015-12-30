@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #ifndef __CHAOSFramework__StartableService__
 #define __CHAOSFramework__StartableService__
 
@@ -34,22 +35,22 @@ namespace chaos {
 				}
 				
 				// States
-				struct Started : public boost::msm::front::state<> {};
-				struct Stopped : public boost::msm::front::state<> {};
+				struct Start : public boost::msm::front::state<> {};
+				struct Stop : public boost::msm::front::state<> {};
 				
 				// front-end: define the FSM structure
 				struct ss_state_machine : public boost::msm::front::state_machine_def<ss_state_machine>  {
 					
 					
-					typedef boost::msm::front::Row <  service_state_machine::Deinitilized  ,  EventType::initialize    , service_state_machine::Initialized   , boost::msm::front::none , boost::msm::front::none > deinit_init_row;
-					typedef boost::msm::front::Row <  service_state_machine::Initialized   ,  EventType::deinitialize  , service_state_machine::Deinitilized  , boost::msm::front::none , boost::msm::front::none > init_deinit_row;
-					typedef boost::msm::front::Row <  service_state_machine::Initialized   ,  EventType::start         , service_state_machine::Started       , boost::msm::front::none , boost::msm::front::none > init_start_row;
-					typedef boost::msm::front::Row <  service_state_machine::Started       ,  EventType::stop          , service_state_machine::Stopped       , boost::msm::front::none , boost::msm::front::none > start_stop_row;
-					typedef boost::msm::front::Row <  service_state_machine::Stopped       ,  EventType::start         , service_state_machine::Started       , boost::msm::front::none , boost::msm::front::none > stop_start_row;
-					typedef boost::msm::front::Row <  service_state_machine::Stopped       ,  EventType::deinitialize  , service_state_machine::Deinitilized  , boost::msm::front::none , boost::msm::front::none > stop_deinit_row;
+					typedef boost::msm::front::Row <  service_state_machine::Deinit ,  EventType::init    , service_state_machine::Init   , boost::msm::front::none , boost::msm::front::none > deinit_init_row;
+					typedef boost::msm::front::Row <  service_state_machine::Init   ,  EventType::deinit  , service_state_machine::Deinit , boost::msm::front::none , boost::msm::front::none > init_deinit_row;
+					typedef boost::msm::front::Row <  service_state_machine::Init   ,  EventType::start   , service_state_machine::Start  , boost::msm::front::none , boost::msm::front::none > init_start_row;
+					typedef boost::msm::front::Row <  service_state_machine::Start  ,  EventType::stop    , service_state_machine::Stop   , boost::msm::front::none , boost::msm::front::none > start_stop_row;
+					typedef boost::msm::front::Row <  service_state_machine::Stop   ,  EventType::start   , service_state_machine::Start  , boost::msm::front::none , boost::msm::front::none > stop_start_row;
+					typedef boost::msm::front::Row <  service_state_machine::Stop   ,  EventType::deinit  , service_state_machine::Deinit , boost::msm::front::none , boost::msm::front::none > stop_deinit_row;
 					
 					// the initial state of the player SM. Must be defined
-					typedef Deinitilized initial_state;
+					typedef Deinit initial_state;
 					
 					// Transition table for Startable services and his subclass
 					struct transition_table : boost::mpl::vector< deinit_init_row, init_deinit_row, init_start_row, start_stop_row, stop_start_row, stop_deinit_row > {};

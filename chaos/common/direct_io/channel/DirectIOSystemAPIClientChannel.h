@@ -45,7 +45,7 @@ namespace chaos {
 					~DirectIOSystemAPIClientChannel();
 					
 					class DirectIOSystemAPIClientChannelDeallocator:
-					public DirectIOClientDeallocationHandler {
+					public DirectIODeallocationHandler {
 					protected:
 						void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
 					};
@@ -64,7 +64,7 @@ namespace chaos {
 					 */
 					int64_t makeNewDatasetSnapshot(const std::string& snapshot_name,
 												   const std::vector<std::string>& producer_keys,
-												   DirectIOSystemAPISnapshotResult **api_result_handle);
+												   DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle);
 					
 					//! delete the snapshot identified by name
 					/*!
@@ -72,7 +72,7 @@ namespace chaos {
 					 \param snapshot_name the name of the snapshot to delete
 					 */
 					int64_t deleteDatasetSnapshot(const std::string& snapshot_name,
-												  DirectIOSystemAPISnapshotResult **api_result_handle);
+												  DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle);
 					
 					//! get the snapshot for one or more producer key
 					/*!

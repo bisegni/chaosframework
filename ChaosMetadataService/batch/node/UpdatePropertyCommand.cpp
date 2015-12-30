@@ -31,12 +31,7 @@ using namespace chaos::metadata_service::batch::node;
 DEFINE_MDS_COMAMND_ALIAS(UpdatePropertyCommand)
 
 UpdatePropertyCommand::UpdatePropertyCommand():
-MDSBatchCommand() {
-    //set default scheduler delay 1 second
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
-    //set the timeout to 10 seconds
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
-}
+MDSBatchCommand() {}
 
 UpdatePropertyCommand::~UpdatePropertyCommand() {}
 
@@ -79,8 +74,9 @@ void UpdatePropertyCommand::ccHandler() {
     MDSBatchCommand::ccHandler();
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT: {
-            sendRequest(*request,
+            sendMessage(*request,
                         update_property_pack.get());
+            BC_END_RUNNIG_PROPERTY
         }
             
         case MESSAGE_PHASE_SENT: {

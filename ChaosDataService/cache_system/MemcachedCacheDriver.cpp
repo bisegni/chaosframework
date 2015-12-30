@@ -83,5 +83,5 @@ int MemcachedCacheDriver::removeServer(std::string server_desc) {
 }
 
 int MemcachedCacheDriver::updateConfig() {
-	
+    return 0;
 }

@@ -31,7 +31,10 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::sync_rpc;
+
 using namespace Mongoose;
+
+using namespace boost;
 
 #define HTTPRSS_LOG_HEAD "["<<getName()<<"] - "
 

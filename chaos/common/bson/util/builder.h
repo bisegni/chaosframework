@@ -49,6 +49,7 @@ namespace bson {
     */
     struct PackedDouble {
         double d;
+       
     } PACKED_DECL;
 
 

@@ -18,6 +18,8 @@
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/async_central/async_central.h>
+#include <chaos/common/pool/ResourcePool.h>
+#include <chaos/common/chaos_types.h>
 
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
@@ -30,49 +32,15 @@ namespace chaos {
     
     class ZMQClient;
     class SocketEndpointPool;
-    
-    class SocketInfo {
-        friend class ZMQClient;
-        friend class SocketEndpointPool;
-        std::string endpoint;
-        uint64_t last_push_ts;
-        
-        SocketInfo();
-    public:     
-        ~SocketInfo();
-   
-        void *socket;
-    };
-    
-    typedef std::deque< SocketInfo* >                       SocketPoolQueue;
-    typedef std::deque< SocketInfo* > ::reverse_iterator    SocketPoolQueueReverseIterator;
 
-    
-    class SocketEndpointPool {
-        friend class ZMQClient;
-        unsigned int created_socket;
-        void *zmq_context;
-        const std::string endpoint;
-        SocketPoolQueue pool;
-        boost::mutex mutex_pool;
-        
-        SocketEndpointPool(const std::string& _endpoint,
-                           void *_zmq_context);
-    public:
-        ~SocketEndpointPool();
-        SocketInfo *getSocket();
-        unsigned int getSize();
-        void releaseSocket(SocketInfo *socket_info);
-        void mantainance();
-    };
-    
-    typedef std::map<std::string, boost::shared_ptr<SocketEndpointPool> >           SocketMap;
-    typedef std::map<std::string, boost::shared_ptr<SocketEndpointPool> >::iterator SocketMapIterator;
+    //define the pool my for every endpoint
+    CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr< chaos::common::pool::ResourcePool<void*> >, SocketMap)
     
     /*
      Class that manage the MessagePack message send.
      */
     DECLARE_CLASS_FACTORY(ZMQClient, RpcClient),
+    public chaos::common::pool::ResourcePool<void*>::ResourcePoolHelper,
     public CObjectProcessingQueue<NetworkForwardInfo>,
     public chaos::common::async_central::TimerHandler {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQClient)
@@ -82,10 +50,16 @@ namespace chaos {
         boost::shared_mutex map_socket_mutex;
         SocketMap map_socket;
     protected:
+        void *zmq_context;
         virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
-        void *zmqContext;
-        inline SocketInfo *getSocketForNFI(NetworkForwardInfo *nfi);
-        inline void releaseSocket(SocketInfo *socket_info_to_dispose);
+        inline chaos::common::pool::ResourcePool<void*>::ResourceSlot *getSocketForNFI(NetworkForwardInfo *nfi);
+        inline void releaseSocket(chaos::common::pool::ResourcePool<void*>::ResourceSlot *socket_slot_to_release);
+        
+        //resource pool handler
+        void* allocateResource(const std::string& pool_identification, uint32_t& alive_for_ms);
+        void deallocateResource(const std::string& pool_identification, void* resource_to_deallocate);
+        
+        //timer handler
         void timeout();
     public:
         

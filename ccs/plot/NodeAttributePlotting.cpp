@@ -40,7 +40,6 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
     ui->lineEditRangeFrom->setValidator(new QIntValidator());
     ui->lineEditRangeTo->setValidator(new QIntValidator());
 
-    //ui->qCustomPlotTimed->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom);
     ui->qCustomPlotTimed->setBackground(this->palette().background().color());
     ui->qCustomPlotTimed->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
     ui->qCustomPlotTimed->legend->setFont(QFont(QFont().family(), 8));
@@ -82,7 +81,7 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updatePlot()));
-    timer->start(100);
+    timer->start(30);
 }
 
 NodeAttributePlotting::~NodeAttributePlotting() {
@@ -122,6 +121,7 @@ void NodeAttributePlotting::addTimedGraphFor(QSharedPointer<DatasetAttributeRead
     plot_info->graph->setLineStyle(QCPGraph::lsLine);
     plot_info->graph->setName(attribute_name);
     plot_info->graph->setPen(QPen(QColor(random_color_component(), random_color_component(), random_color_component())));
+    plot_info->graph->setAntialiased(true);
     plot_info->graph->addToLegend();
 
     _addRemoveToPlot(plot_info, true);
@@ -139,7 +139,6 @@ void NodeAttributePlotting::_addRemoveToPlot(QSharedPointer<PlotInfo> plot_info,
 
     //general check
     unsigned int dataset_type = 0;
-    monitor_system::AbstractQuantumTSTaggedAttributeHandler *chaos_handler = dynamic_cast<monitor_system::AbstractQuantumTSTaggedAttributeHandler*>(plot_info->monitor_handler.data());
     switch(plot_info->direction) {
     case chaos::DataType::Input:
         dataset_type = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT;
@@ -158,18 +157,17 @@ void NodeAttributePlotting::_addRemoveToPlot(QSharedPointer<PlotInfo> plot_info,
                 SLOT(valueUpdated(QString,QString,uint64_t,QVariant)));
 
         //activate monitoring
-        monitor_system::AbstractQuantumTSTaggedAttributeHandler *chaos_handler = dynamic_cast<monitor_system::AbstractQuantumTSTaggedAttributeHandler*>(plot_info->monitor_handler.data());
         ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForDataset(node_uid.toStdString(),
                                                                                     dataset_type,
                                                                                     plot_info->quantum_multiplier,
-                                                                                    chaos_handler);
+                                                                                    plot_info->monitor_handler.data()->getQuantumAttributeHandler());
         map_plot_info.insert(attribute_name, plot_info);
     } else {
         //remove plot from monitor
         ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForDataset(node_uid.toStdString(),
                                                                                         dataset_type,
                                                                                         plot_info->quantum_multiplier,
-                                                                                        chaos_handler);
+                                                                                        plot_info->monitor_handler.data()->getQuantumAttributeHandler());
 
         //we can remove the plot from graph and map
         ui->qCustomPlotTimed->removeGraph(plot_info->graph);
@@ -250,13 +248,14 @@ void NodeAttributePlotting::valueUpdated(const QString& node_uid,
                                          const QString& attribute_name,
                                          uint64_t timestamp,
                                          const QVariant& attribute_value) {
-    qDebug() << "add valu to plot for :" <<  attribute_name;
+
     lock_read_write_for_plot.lockForRead();
     bool local_ts = node_uid.compare(node_uid_input_dataset) == 0;
     double key = local_ts ?(QDateTime::currentDateTime().toMSecsSinceEpoch()/1000.0):(timestamp/1000.0);
     double key_for_old = key-plot_ageing;
     map_plot_info[attribute_name]->graph->addData(key, attribute_value.toDouble());
     map_plot_info[attribute_name]->graph->removeDataBefore(key_for_old);
+    //qDebug() << "add value to plot for :" <<  attribute_name << " with value:" << attribute_value.toString() << " plot point size:" << map_plot_info[attribute_name]->graph->data()->size();
     lock_read_write_for_plot.unlock();
 }
 

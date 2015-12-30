@@ -50,9 +50,7 @@ namespace chaos {
 					void *monitor_socket;
 					std::string monitor_url;
 				} ConnectionMonitorInfo;
-				
-				const int _send_more_no_wait_flag = ZMQ_SNDMORE;
-				const int _send_no_wait_flag = 0;
+
 				/*!
 				 Class that represetn th eimplementation of one connection of the direct io
 				 connection implemented with zmq
@@ -68,7 +66,7 @@ namespace chaos {
 					std::string service_identity;
 					void *socket_service;
 					
-					ConnectionMonitorInfo *monitor_info;
+                    ConnectionMonitorInfo monitor_info;
 					
                     boost::shared_mutex mutex_socket_manipolation;
 					
@@ -78,24 +76,24 @@ namespace chaos {
 					inline int64_t writeToSocket(void *socket,
 												 std::string& identity,
 												 DirectIODataPack *data_pack,
-												 DirectIOClientDeallocationHandler *header_deallocation_handler,
-												 DirectIOClientDeallocationHandler *data_deallocation_handler,
-												 DirectIOSynchronousAnswer **synchronous_answer = NULL);
+												 DirectIODeallocationHandler *header_deallocation_handler,
+												 DirectIODeallocationHandler *data_deallocation_handler,
+												 DirectIODataPack **synchronous_answer = NULL);
 					void monitorWorker();
 					
 				protected:
 					
                     // send the data to the server layer on priority channel
                     int64_t sendPriorityData(DirectIODataPack *data_pack,
-											 DirectIOClientDeallocationHandler *header_deallocation_handler,
-											 DirectIOClientDeallocationHandler *data_deallocation_handler,
-											 DirectIOSynchronousAnswer **synchronous_answer = NULL);
+											 DirectIODeallocationHandler *header_deallocation_handler,
+											 DirectIODeallocationHandler *data_deallocation_handler,
+											 DirectIODataPack **synchronous_answer = NULL);
                     
                     // send the data to the server layer on the service channel
                     int64_t sendServiceData(DirectIODataPack *data_pack,
-											DirectIOClientDeallocationHandler *header_deallocation_handler,
-											DirectIOClientDeallocationHandler *data_deallocation_handler,
-											DirectIOSynchronousAnswer **synchronous_answer = NULL);
+											DirectIODeallocationHandler *header_deallocation_handler,
+											DirectIODeallocationHandler *data_deallocation_handler,
+											DirectIODataPack **synchronous_answer = NULL);
 				};
 				
 			}

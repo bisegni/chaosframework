@@ -30,7 +30,9 @@
 
 using namespace std;
 using namespace chaos;
+using namespace chaos::common::network;
 using namespace chaos::common::utility;
+
 using namespace chaos::wan_proxy;
 using namespace chaos::wan_proxy::persistence;
 using boost::shared_ptr;
@@ -86,10 +88,7 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 			throw CException(-3, "Error registering SIG_ERR signal", __PRETTY_FUNCTION__);
 		}
 		
-		network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
-		network_broker_service.init(NULL, __PRETTY_FUNCTION__);
-		
-		persistence_driver.reset(new DefaultPersistenceDriver(network_broker_service.get()), "DefaultPresistenceDriver");
+		persistence_driver.reset(new DefaultPersistenceDriver(NetworkBroker::getInstance()), "DefaultPresistenceDriver");
 		persistence_driver.init(NULL, __PRETTY_FUNCTION__);
 		persistence_driver->addServerList(setting.list_cds_server);
 		
@@ -139,9 +138,6 @@ void ChaosWANProxy::init(void *init_data)  throw(CException) {
 void ChaosWANProxy::start()  throw(CException) {
 	//lock o monitor for waith the end
 	try {
-		//start network brocker
-		network_broker_service.start(__PRETTY_FUNCTION__);
-		
 		//start all wan interface
 		for(WanInterfaceListIterator it = wan_active_interfaces.begin();
 			it != wan_active_interfaces.end();
@@ -185,10 +181,6 @@ void ChaosWANProxy::stop()   throw(CException) {
 															 (*it)->getName(),
 															 __PRETTY_FUNCTION__);)
 	}
-	
-	//stop network brocker
-	network_broker_service.stop(__PRETTY_FUNCTION__);
-	
 	//endWaithCondition.notify_one();
 	waitCloseSemaphore.unlock();
 }
@@ -218,9 +210,6 @@ void ChaosWANProxy::deinit()   throw(CException) {
 	}
 	
 	persistence_driver.deinit(__PRETTY_FUNCTION__);
-	
-	//deinit network brocker
-	network_broker_service.deinit(__PRETTY_FUNCTION__);
 }
 
 /*

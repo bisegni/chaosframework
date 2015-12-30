@@ -44,12 +44,29 @@
 #include <chaos/common/log/LogManager.h>
 
 #include <cassert>
+
+//#include <chaos/common/debug/debug_new.h>
+
+#include <stdlib.h>
+
 #if BOOST_VERSION > 105300
     //allocate the logger
     BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
 #else 
     BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
 #endif 
+
+#define CHAOS_BOOST_LOCK_EXCEPTION_CACTH(exception_name, exception_code)\
+catch(boost::exception_detail::error_info_injector<boost::io::too_many_args>& exception_name){\
+exception_code\
+}
+
+#define CHAOS_BOOST_LOCK_WRAP_EXCEPTION(code, return_code)\
+try{\
+code\
+}catch(boost::exception_detail::error_info_injector<boost::io::too_many_args>& lock_exception){\
+return_code\
+}
 
 #define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLFatal)
 #define LDBG_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLDebug)
@@ -69,7 +86,11 @@ log << "("<<num<<") " << msg;\
 throw chaos::CException(num, msg, __PRETTY_FUNCTION__);
 
 #define LOG_AND_TROW_FORMATTED(log, num, f, p)\
-LOG_AND_TROW(log, num, boost::str(boost::format(f)p))
+try{\
+CHAOS_BOOST_LOCK_WRAP_EXCEPTION( LOG_AND_TROW(log, num, boost::str(boost::format(f)p)), log << lock_exception.what();)\
+}catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector< boost::io::bad_format_string> >& exc) {\
+log<< exc.what();\
+}
 
 #define CHAOS_LASSERT_EXCEPTION(assertion, log, num, msg)\
 if(!assertion) {LOG_AND_TROW(log, num, msg)}
@@ -85,6 +106,9 @@ if(cdw == NULL) {LOG_AND_TROW_FORMATTED(log, num, frmt, param)}
 
 #define CHECK_KEY_THROW_AND_LOG_FORMATTED(cdw, key, log, num, frmt, param)\
 if(cdw->hasKey(key) == false) {LOG_AND_TROW_FORMATTED(log, num, frmt, param)}
+
+#define CHECK_ASSERTION_THROW_AND_LOG(assertion, log, num, msg)\
+if(assertion == false) {LOG_AND_TROW(log, num, msg)}
 
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true
@@ -111,6 +135,8 @@ assert(x);
     LDBG_<<"message:"<<msg;\
     throw chaos::CException(e,msg,ss.str());}
     
+#define CHAOS_SET_PRECISION_TO_DOUBLE(number, factor)\
+((double)((int)(number*factor))/factor)
 
     //epoc for time stamp calculation
 const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
@@ -128,6 +154,13 @@ LERR_ << "Domain:" << x.errorDomain;\
 LERR_ << "Message:" << x.errorMessage;\
 LERR_ << "Error Code;" << x.errorCode;\
 LERR_ << "-----------Exception------------";
+
+#define DECODE_CHAOS_EXCEPTION_ON_LOG(l, x) \
+l << "-----------Exception------------\n"\
+    << "Domain:" << x.errorDomain << "\n"\
+    << "Message:" << x.errorMessage << "\n"\
+    << "Error Code;" << x.errorCode << "\n"\
+    << "-----------Exception------------";
 
 #define DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(dw, ex)\
 dw->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ex.errorCode);\
@@ -166,6 +199,7 @@ l\
 }catch(...){\
 	x\
 }
+
 /*
  Abstraction for the server delegator
  */

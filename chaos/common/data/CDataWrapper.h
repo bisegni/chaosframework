@@ -21,7 +21,6 @@
 #define CDataWrapper_H
 
 #include <chaos/common/bson/bson.h>
-#include <chaos/common/pool/CPoolMemoryObject.h>
 
 #include <boost/scoped_ptr.hpp>
 
@@ -69,13 +68,13 @@ namespace chaos {
 					buffer = 0L;
 					disposeOnDelete = true;
 					if(iBuff && iSize){
-						buffer = new char[iSize];
+						buffer = (char*)malloc(iSize);
 						std::memcpy(buffer, iBuff, iSize);
 					}
 				}
 				
 				~SerializationBuffer(){
-					if(disposeOnDelete && buffer) delete buffer;
+					if(disposeOnDelete && buffer) free(buffer);
 				}
 				size_t getBufferLen(){return bSize;};
 				const char *getBufferPtr(){return buffer;};
@@ -131,6 +130,12 @@ namespace chaos {
                 
 				//add a integer value
                 void addInt32Value(const std::string&, int32_t);
+                
+                template <typename T>
+                void addValue(const std::string& key,T val){
+                      bsonBuilder->append(key, static_cast<T>(val));
+                
+                }
 				//add a integer value
 				void addInt32Value(const std::string&, uint32_t);
 				//add a integer value

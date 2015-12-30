@@ -79,7 +79,7 @@ namespace chaos {
             class DirectIOClientConnection  :
 			public DirectIOForwarder,
 			public DirectIOURLManagment,
-			protected DICKeyObjectContainer {
+            protected DICKeyObjectContainer::FreeHandler {
                 friend class DirectIOClient;
 				friend class chaos::common::network::NetworkBroker;
 								
@@ -89,6 +89,7 @@ namespace chaos {
 				std::string     custom_string_identification;
                 uint16_t        endpoint;
 				std::string     unique_uuid;
+                DICKeyObjectContainer map_client_channels;
 				DirectIOClientConnectionStateType::DirectIOClientConnectionStateType current_state;
 
 				//! current client ip in string form
@@ -100,7 +101,7 @@ namespace chaos {
                 DirectIOClientConnectionEventHandler *event_handler;
 				
 				//overriding ofr free object fuunction for the tempalted key object container superclass
-				void freeObject(uint32_t hash, DirectIOClientConnection *connection);
+                void freeObject(const DICKeyObjectContainer::TKOCElement& element);
 				
 				//! callend by client or by implementation when some event occour from socket conenction
 				void lowLevelManageEvent(DirectIOClientConnectionStateType::DirectIOClientConnectionStateType state_type);

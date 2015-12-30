@@ -59,12 +59,21 @@ namespace chaos {
 				//! Send Unit server registration to MDS
 				/*!
 				 Perform the registration of the unit server
-				 \param unitServerDescription the description of the unit server to publish
+				 \param node_description the description of the unit server to publish
 				 \param requestCheck flasg the message has request if it is true
 				 \param millisecToWait delay after wich the wait is interrupt
 				 */
-				int sendNodeRegistration(CDataWrapper& unitServerDescription, bool requestCheck = false, uint32_t millisecToWait = 0);
+				int sendNodeRegistration(CDataWrapper& node_description, bool requestCheck = false, uint32_t millisecToWait = 0);
 				
+                //! Send node load completion to MDS
+                /*!
+                 Inform mds that node load phase has completed
+                 \param node_information infromation for completion phase
+                 \param requestCheck flasg the message has request if it is true
+                 \param millisecToWait delay after wich the wait is interrupt
+                 */
+                int sendNodeLoadCompletion(CDataWrapper& node_information, bool requestCheck = false, uint32_t millisecToWait = 0);
+                
                 //! Send Unit server CU states to MDS
 				/*!
 				 Perform the registration of the unit server

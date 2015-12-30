@@ -70,6 +70,7 @@ namespace chaos {
 #define MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE				"check_code"
 #define MONGO_DB_FIELD_SNAPSHOT_NAME					"snap_name"
 #define MONGO_DB_FIELD_SNAPSHOT_TS						"snap_ts"
+#define MONGO_DB_FIELD_SNAPSHOT_TS_DATE                 "snap_ts_date"
 #define MONGO_DB_FIELD_SNAPSHOT_JOB_CONCURRENCY			"job_concurency"
 			
 			

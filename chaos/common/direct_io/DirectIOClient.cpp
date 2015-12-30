@@ -43,7 +43,9 @@ namespace b_algo = boost::algorithm;
 #define DIOLDBG_ DBG_LOG(DirectIOClient)
 #define DIOLERR_ ERR_LOG(DirectIOClient)
 
-DirectIOClient::DirectIOClient(std::string alias):NamedService(alias) {
+DirectIOClient::DirectIOClient(std::string alias):
+NamedService(alias),
+map_connections(this){
 	
 }
 
@@ -125,4 +127,8 @@ void DirectIOClient::releaseConnection(DirectIOClientConnection *connection_to_r
     } else  {
         _releaseConnectionImpl(connection_to_release);
     }
+}
+
+void DirectIOClient::freeObject(const DCKeyObjectContainer::TKOCElement& element) {
+    
 }

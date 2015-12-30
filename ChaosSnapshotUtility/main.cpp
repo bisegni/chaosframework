@@ -25,7 +25,7 @@
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 
-#define OPT_CU_ID					"device-id"
+#define OPT_CU_ID					"node-id"
 #define OPT_CDS_ADDRESS				"cds-address"
 #define OPT_SNAP_NAME				"snapshot-name"
 #define OPT_SNAPSHOT_OP				"op"
@@ -41,7 +41,7 @@ int main(int argc, char * argv[]) {
 	std::vector<std::string> device_id_list;
 	std::string snap_name;
 	std::string cds_addr;
-	uint32_t ds_type;
+	uint32_t ds_type = 0;
 	uint32_t timeout = 0;
 	unsigned int operation = 0;
 	try{
@@ -64,12 +64,15 @@ int main(int argc, char * argv[]) {
 		if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SNAPSHOT_OP)){
 			throw CException(-3, "Invalid operation set", "check param");
 		}
+        if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CU_ID)){
+            throw CException(-4, "The node id are mandatory", "check param");
+        }
 		if(!snap_name.size()) throw CException(-4, "Snapshot name can't zero-length", "check param");
 		
 		SystemApiChannel *system_api_channel = LLRpcApi::getInstance()->getSystemApiClientChannel(cds_addr);
 		if(!system_api_channel) throw CException(-5, "Invalid system api channel instance", "getSystemApiClientChannel");
 		
-		chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPISnapshotResultPtr system_api_result = NULL;
+		chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPIGetDatasetSnapshotResult *system_api_result = NULL;
 		switch(operation) {
 			case 0:{//new
 				//!make snap on device
@@ -78,8 +81,8 @@ int main(int argc, char * argv[]) {
 																						  &system_api_result))){
 					if(system_api_result) {
 						std::cout << "Snapshot creation report: " << std::endl;
-						std::cout << "Error code:" << system_api_result->error << std::endl;
-						std::cout << "Error message:" << system_api_result->error_message << std::endl;
+						std::cout << "Error code:" << system_api_result->api_result.error << std::endl;
+						std::cout << "Error message:" << system_api_result->api_result.error_message << std::endl;
 						free(system_api_result);
 					} else {
 						std::cout << "no result received" << std::endl;
@@ -94,8 +97,8 @@ int main(int argc, char * argv[]) {
 																						 &system_api_result))){
 					if(system_api_result) {
 						std::cout << "Snapshot delete report: " << std::endl;
-						std::cout << "Error code:" << system_api_result->error << std::endl;
-						std::cout << "Error message:" << system_api_result->error_message << std::endl;
+						std::cout << "Error code:" << system_api_result->api_result.error << std::endl;
+						std::cout << "Error message:" << system_api_result->api_result.error_message << std::endl;
 						free(system_api_result);
 					} else {
 						std::cout << "no result received" << std::endl;
@@ -120,10 +123,12 @@ int main(int argc, char * argv[]) {
 						std::cout << "Error code:" << get_system_api_result->api_result.error << std::endl;
 						std::cout << "Error message:" << get_system_api_result->api_result.error_message << std::endl;
 						if(get_system_api_result->channel_data) {
-							auto_ptr<CDataWrapper> data(new CDataWrapper(((char*)get_system_api_result+sizeof(chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPISnapshotResult) + 4)));
-							std::cout << "Data found-------------------------"<< std::endl;
+							auto_ptr<CDataWrapper> data(new CDataWrapper((char*)get_system_api_result->channel_data));
+							std::cout << "Data found-------------------------" << std::endl;;
 							std::cout << data->getJSONString() << std::endl;
+                            std::cout << "Data found-------------------------" << std::endl;;
 						}
+                        free(get_system_api_result->channel_data);
 						free(get_system_api_result);
 					} else {
 						std::cout << "no result received" << std::endl;

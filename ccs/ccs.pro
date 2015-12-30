@@ -19,20 +19,9 @@ INCLUDEPATH += $$PWD/../usr/local/include
 
 LIBS += -L$$PWD/../usr/local/lib
 
-LIBS +=     -lzmq\
-            -lchaos_common\
+LIBS +=     -lchaos_common\
             -lchaos_metadata_service_client\
-            -lboost_chrono\
-            -lboost_log\
-            -lboost_log_setup\
-            -lboost_system\
-            -lboost_thread\
-            -lboost_program_options\
-            -lboost_regex\
-            -lboost_filesystem\
-            -lmongoose\
-            -ljsoncpp\
-            -lmemcached
+            -ljsoncpp
 
 SOURCES += main.cpp\
     search/SearchNodeResult.cpp \
@@ -58,7 +47,6 @@ SOURCES += main.cpp\
     node/data/ChaosAbstractTableModel.cpp \
     node/control_unit/ControlUnitEditor.cpp \
     node/data/FixedInputChannelDatasetTableModel.cpp \
-    widget/LedIndicatorAliveTSWidget.cpp \
     logic/property_switch/MultiPropertyLogicSwitch.cpp \
     logic/property_switch/SwitchAggregator.cpp \
     node/data/ChaosAbstractDataSetTableModel.cpp \
@@ -84,7 +72,15 @@ SOURCES += main.cpp\
     node/data/DatasetAttributeListModel.cpp \
     data/DatasetReader.cpp \
     data/DatasetAttributeReader.cpp \
-    widget/CLedIndicatorHealt.cpp
+    widget/CLedIndicatorHealt.cpp \
+    preference/PreferenceMDSHostListModel.cpp \
+    widget/ChaosHealtLabel.cpp \
+    snapshot/SnapshotManager.cpp \
+    snapshot/SnapshotTableModel.cpp \
+    snapshot/NewSnapshot.cpp \
+    snapshot/NodeListModel.cpp \
+    snapshot/NodeInSnapshotTableModel.cpp \
+    monitor/healt/HighlighterForChaosType.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -110,7 +106,6 @@ HEADERS  += \
     node/data/ChaosAbstractTableModel.h \
     node/control_unit/ControlUnitEditor.h \
     node/data/FixedInputChannelDatasetTableModel.h \
-    widget/LedIndicatorAliveTSWidget.h \
     logic/property_switch/MultiPropertyLogicSwitch.h \
     logic/property_switch/SwitchAggregator.h \
     node/data/ChaosAbstractDataSetTableModel.h \
@@ -158,7 +153,15 @@ HEADERS  += \
     data/DatasetAttributeReader.h \
     data/data.h \
     widget/CLedIndicatorHealt.h \
-    monitor/handler/MonitorBinaryAttributeHandler.h
+    monitor/handler/MonitorBinaryAttributeHandler.h \
+    preference/PreferenceMDSHostListModel.h \
+    widget/ChaosHealtLabel.h \
+    snapshot/SnapshotManager.h \
+    snapshot/SnapshotTableModel.h \
+    snapshot/NewSnapshot.h \
+    snapshot/NodeListModel.h \
+    snapshot/NodeInSnapshotTableModel.h \
+    monitor/healt/HighlighterForChaosType.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -176,7 +179,10 @@ FORMS    += \
     node/control_unit/ControlUnitEditor.ui \
     node/control_unit/ControlUnitCommandTemplateEditor.ui \
     node/control_unit/CommandTemplateInstanceEditor.ui \
-    plot/NodeAttributePlotting.ui
+    plot/NodeAttributePlotting.ui \
+    snapshot/SnapshotManager.ui \
+    snapshot/NewSnapshot.ui
 
 DISTFILES += \
-    dark_orange.stylesheet
+    dark_orange.stylesheet \
+    CMakeLists.txt

@@ -1,7 +1,8 @@
+ccs/*.cpp_parameters
 ccs/ccs.app/Contents/*
 ccs/*.autosave
-ccs/moc_*
-ccs/ui_*
+ccs/*moc_*
+ccs/*ui_*
 ccs/.qmake.stash
 example/build-UIToolkitTest-*
 ccs/ccs.pro.user
@@ -75,3 +76,9 @@ ChaosMDSLite/RefServer.jardesc
 /example/UIToolkitTest/powersupply/nbproject/private/
 *.json
 /.project
+.idea/
+*.cpp_parameters
+moc_*.cpp
+ccs_automoc.cpp
+ccs/ccs
+ccs/qt_build*

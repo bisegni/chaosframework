@@ -44,9 +44,12 @@ void DirectIOPerformanceServerChannel::setHandler(DirectIOPerformanceServerChann
 	handler = _handler;
 }
 
-int DirectIOPerformanceServerChannel::consumeDataPack(DirectIODataPack *dataPack, DirectIOSynchronousAnswerPtr synchronous_answer) {
+int DirectIOPerformanceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
+                                                      DirectIODataPack *synchronous_answer,
+                                                      DirectIODeallocationHandler **answer_header_deallocation_handler,
+                                                      DirectIODeallocationHandler **answer_data_deallocation_handler) {
 	CHAOS_ASSERT(handler)
-	
+    int err = -1;
     // the opcode
 	opcode::PerformanceChannelOpcode  channel_opcode = static_cast<opcode::PerformanceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
 	
@@ -56,6 +59,7 @@ int DirectIOPerformanceServerChannel::consumeDataPack(DirectIODataPack *dataPack
 			//reallign the pointer to the start of the key
 			header->field.start_rt_ts = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.start_rt_ts);
 			handler->handleReqRoundTripRequest(header);
+            err = 0;
             break;
         }
 			
@@ -64,11 +68,12 @@ int DirectIOPerformanceServerChannel::consumeDataPack(DirectIODataPack *dataPack
 			//reallign the pointer to the start of the key
 			header->field.start_rt_ts = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.start_rt_ts);
 			handler->handleRespRoundTripRequest(header);
+            err = 0;
 			break;
 	}
 	
-	//only data pack is deleted, header data and channel data are managed by hendler
-	delete dataPack;
+	//only data pack is deleted, header data and channel data are managed by handler
+	free(dataPack);
 	
-	return 0;
+	return err;
 }

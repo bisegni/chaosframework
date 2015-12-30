@@ -81,10 +81,10 @@ namespace chaos {
 					is created, the hashing of the input parameter is checked if it is contained in the map. In case
 					of successfull test a live instance is returned.
 				 */
-				std::map<string, chaos::cu::driver_manager::driver::AbstractDriver*> mapParameterLiveInstance;
+                std::map<std::string, chaos::cu::driver_manager::driver::AbstractDriver*> mapParameterLiveInstance;
 				
 				
-				std::map<string, chaos::cu::driver_manager::driver::AbstractDriver*> mapDriverUUIDHashLiveInstance;
+				std::map<std::string, chaos::cu::driver_manager::driver::AbstractDriver*> mapDriverUUIDHashLiveInstance;
 				
 				//!Mutex for priority queue managment
 				boost::shared_mutex    mutextMapAccess;

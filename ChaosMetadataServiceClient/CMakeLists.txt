@@ -1,12 +1,18 @@
 cmake_minimum_required(VERSION 2.6)
 include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
+INCLUDE_DIRECTORIES(../)
 
 SET(mcl_src ChaosMetadataServiceClient.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/ApiProxyManager.cpp
                             api_proxy/ApiProxy.cpp)
 
-SET(mcl_src ${mcl_src}      api_proxy/service/ResetAll.cpp)
+SET(mcl_src ${mcl_src}      api_proxy/service/ResetAll.cpp
+                            api_proxy/service/CreateNewSnapshot.cpp
+                            api_proxy/service/RestoreSnapshot.cpp
+                            api_proxy/service/DeleteSnapshot.cpp
+                            api_proxy/service/GetAllSnapshot.cpp
+                            api_proxy/service/GetNodesForSnapshot.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/node/GetNodeDescription.cpp
                             api_proxy/node/NodeSearch.cpp
@@ -34,12 +40,16 @@ SET(mcl_src ${mcl_src}      api_proxy/control_unit/SetInputDatasetAttributeValue
                             api_proxy/control_unit/SearchInstancesByUS.cpp
                             api_proxy/control_unit/GetInstance.cpp
                             api_proxy/control_unit/DeleteInstance.cpp
+                            api_proxy/control_unit/Delete.cpp
                             api_proxy/control_unit/GetCurrentDataset.cpp
                             api_proxy/control_unit/InitDeinit.cpp
-                            api_proxy/control_unit/StartStop.cpp)
+                            api_proxy/control_unit/StartStop.cpp
+                            api_proxy/control_unit/CopyInstance.cpp
+                            api_proxy/control_unit/RecoverError.cpp)
 
 SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
                             api_proxy/unit_server/NewUS.cpp
+                            api_proxy/unit_server/DeleteUS.cpp
                             api_proxy/unit_server/LoadUnloadControlUnit.cpp
                             api_proxy/unit_server/ManageCUType.cpp)
 
@@ -76,6 +86,9 @@ INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/
 
 FILE(GLOB files "api_proxy/node/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/node)
+
+FILE(GLOB files "api_proxy/service/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/service)
 
 FILE(GLOB files "monitor_system/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/monitor_system)

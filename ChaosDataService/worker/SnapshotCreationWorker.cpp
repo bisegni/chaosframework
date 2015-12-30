@@ -19,6 +19,7 @@
  */
 
 #include "../ChaosDataService.h"
+#include "../DriverPoolManager.h"
 #include "SnapshotCreationWorker.h"
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/data/cache/FastHash.h>
@@ -26,8 +27,11 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+
 using namespace chaos::common::utility;
 using namespace chaos::common::network;
+
+using namespace chaos::data_service;
 using namespace chaos::data_service::worker;
 
 #define SnapshotCreationWorker_LOG_HEAD "[SnapshotCreationWorker] - "
@@ -38,11 +42,8 @@ using namespace chaos::data_service::worker;
 
 //------------------------------------------------------------------------------------------------------------------------
 
-SnapshotCreationWorker::SnapshotCreationWorker(const std::string& _cache_impl_name,
-											   db_system::DBDriver	*_db_driver_ptr,
+SnapshotCreationWorker::SnapshotCreationWorker(db_system::DBDriver	*_db_driver_ptr,
 											   NetworkBroker	*_network_broker):
-cache_impl_name(_cache_impl_name),
-cache_driver_ptr(NULL),
 db_driver_ptr(_db_driver_ptr),
 network_broker(_network_broker),
 mds_channel(NULL){}
@@ -57,28 +58,13 @@ void SnapshotCreationWorker::init(void *init_data) throw (chaos::CException) {
 	SCW_LAPP_ << "get mds channel";
 	mds_channel = network_broker->getMetadataserverMessageChannel();
 	if(!mds_channel) throw CException(-2, "No metadataserver channel created", __PRETTY_FUNCTION__);
-	
-	SCW_LAPP_ << "allocating cache driver";
-	cache_driver_ptr = ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
-	if(!cache_driver_ptr) throw chaos::CException(-3, "Cached driver not found", __PRETTY_FUNCTION__);
-	InizializableService::initImplementation(cache_driver_ptr, &ChaosDataService::getInstance()->setting.cache_driver_setting, "CacheDriver", __PRETTY_FUNCTION__);
 }
 
 void SnapshotCreationWorker::deinit() throw (chaos::CException) {
-	SCW_LAPP_ << "deallocating cache driver";
-	if(cache_driver_ptr) {
-		try{
-			InizializableService::deinitImplementation(cache_driver_ptr, "CacheDriver", __PRETTY_FUNCTION__);
-		} catch(...) {
-		}
-		delete(cache_driver_ptr);
-	}
-	SCW_LAPP_ << "deallocating db driver";
-	
+    SCW_LAPP_ << "deallocating db driver";
 	if(mds_channel && network_broker) {
 		network_broker->disposeMessageChannel(mds_channel);
 	}
-	
 	DataWorker::deinit();
 }
 
@@ -110,26 +96,38 @@ int SnapshotCreationWorker::storeDatasetTypeInSnapsnot(const std::string& job_wo
 	std::string dataset_to_fetch = unique_id + dataset_type;
 	
 	SCW_LDBG_ << "Get live data for " << dataset_to_fetch << " in channel";
-	if((err = cache_driver_ptr->getData((void*)dataset_to_fetch.c_str(), dataset_to_fetch.size(), &data, data_len))) {
-		SCW_LERR_<< "Error retrieving live data for " << dataset_to_fetch << " with error: " << err;
-	} else if(data) {
-		SCW_LDBG_ << "Store data on snapshot for " << dataset_to_fetch;
-		if((err = db_driver_ptr->snapshotAddElementToSnapshot(job_work_code,
-															  snapshot_name,
-															  unique_id,
-															  dataset_to_fetch,
-															  data,
-															  data_len))) {
-			SCW_LERR_<< "Error storign dataset type "<< dataset_type <<" for " << unique_id << " in snapshot " << snapshot_name << " with error: " << err;
-		}
-		
-		free(data);
-	}else {
-		err = -1;
-		SCW_LERR_<< "No data has been fetched for " << dataset_to_fetch;
-	}
+    
+    CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
+    try{
+        //get data
+        if((err = cache_slot->resource_pooled->getData((void*)dataset_to_fetch.c_str(), dataset_to_fetch.size(), &data, data_len))) {
+            SCW_LERR_<< "Error retrieving live data for " << dataset_to_fetch << " with error: " << err;
+        } else if(data) {
+            SCW_LDBG_ << "Store data on snapshot for " << dataset_to_fetch;
+            if((err = db_driver_ptr->snapshotAddElementToSnapshot(job_work_code,
+                                                                  snapshot_name,
+                                                                  unique_id,
+                                                                  dataset_to_fetch,
+                                                                  data,
+                                                                  data_len))) {
+                SCW_LERR_<< "Error storign dataset type "<< dataset_type <<" for " << unique_id << " in snapshot " << snapshot_name << " with error: " << err;
+            }
+            
+            free(data);
+        }else {
+            err = -1;
+            SCW_LERR_<< "No data has been fetched for " << dataset_to_fetch;
+        }
+    } catch(...) {
+        
+    }
+    DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
 	return err;
 }
+
+#define FREE_JOB(x)\
+if(x->concatenated_unique_id_memory_size) {free(x->concatenated_unique_id_memory);}\
+free(x);
 
 void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 	int err = 0;
@@ -143,8 +141,7 @@ void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 														 true))) {
 		SCW_LERR_<< "error incrementing the snapshot job counter for " << job_ptr->snapshot_name << " with error: " << err;
 		//delete job memory
-		free(job_info);
-		
+		FREE_JOB(job_ptr)
 		return;
 	}
 	try {
@@ -155,15 +152,15 @@ void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 			std::string concatenated_keys((const char*)job_ptr->concatenated_unique_id_memory, job_ptr->concatenated_unique_id_memory_size);
 			//split the concatenated string
 			boost::split( snapped_producer_keys, concatenated_keys, is_any_of(","), token_compress_on );
-			free(job_ptr->concatenated_unique_id_memory);
 		}
 		
 		//get the unique id to snap
 		if(snapped_producer_keys.size()) {
-			SCW_LDBG_ << "make snapshot on the user producer'id set";
+			SCW_LDBG_ << "make snapshot on the user producer id set";
 		} else {
-			SCW_LDBG_ << "make snapshot on all producer key";
-			mds_channel->getAllDeviceID(snapped_producer_keys);
+			SCW_LERR_ << "Snapshoot need to have target node id";
+            FREE_JOB(job_ptr)
+            return;
 		}
 		
 		//scann all id
@@ -199,14 +196,5 @@ void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 		SCW_LERR_<< "error decrementig the snapshot job counter for " << job_ptr->snapshot_name << " with error: " << err;
 	}
 	//delete job memory
-	free(job_info);
-}
-
-
-void SnapshotCreationWorker::addServer(std::string server_description) {
-	cache_driver_ptr->addServer(server_description);
-}
-
-void SnapshotCreationWorker::updateServerConfiguration() {
-	cache_driver_ptr->updateConfig();
+	FREE_JOB(job_ptr)
 }

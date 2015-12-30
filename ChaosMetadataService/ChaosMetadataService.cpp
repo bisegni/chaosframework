@@ -65,7 +65,10 @@ void ChaosMetadataService::init(istringstream &initStringStream) throw (CExcepti
  */
 void ChaosMetadataService::init(void *init_data)  throw(CException) {
 	try {
-		ChaosCommon<ChaosMetadataService>::init(init_data);
+        ChaosCommon<ChaosMetadataService>::init(init_data);
+        
+        api_subsystem_accessor.network_broker_service = NetworkBroker::getInstance();
+        
 		if (signal((int) SIGINT, ChaosMetadataService::signalHanlder) == SIG_ERR) {
 			throw CException(-1, "Error registering SIGINT signal", __PRETTY_FUNCTION__);
 		}
@@ -90,13 +93,9 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
 							getGlobalConfigurationInstance()->getOption< std::vector< std::string> >(OPT_PERSITENCE_KV_PARAMTER));
 		}
 		
-        // network broker
-		api_subsystem_accessor.network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
-		api_subsystem_accessor.network_broker_service.init(NULL, __PRETTY_FUNCTION__);
-		
         //! batch system
         api_subsystem_accessor.batch_executor.reset(new MDSBatchExecutor("MDSBatchExecutor",
-                                                                         api_subsystem_accessor.network_broker_service.get()),
+                                                                         api_subsystem_accessor.network_broker_service),
                                                     "MDSBatchExecutor");
         api_subsystem_accessor.batch_executor.init(NULL, __PRETTY_FUNCTION__);
         
@@ -126,8 +125,7 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
 void ChaosMetadataService::start()  throw(CException) {
 	//lock o monitor for waith the end
 	try {
-		//start network brocker
-		api_subsystem_accessor.network_broker_service.start(__PRETTY_FUNCTION__);
+        ChaosCommon<ChaosMetadataService>::start();
         
         //start batch system
         api_subsystem_accessor.batch_executor.start(__PRETTY_FUNCTION__);
@@ -164,11 +162,9 @@ void ChaosMetadataService::stop()   throw(CException) {
     //stop batch system
     api_subsystem_accessor.batch_executor.stop(__PRETTY_FUNCTION__);
     
-	//stop network broker
-	api_subsystem_accessor.network_broker_service.stop(__PRETTY_FUNCTION__);
-	
-	//endWaithCondition.notify_one();
-	waitCloseSemaphore.unlock();
+    ChaosCommon<ChaosMetadataService>::stop();
+    //endWaithCondition.notify_one();
+    waitCloseSemaphore.unlock();
 }
 
 /*
@@ -185,8 +181,8 @@ void ChaosMetadataService::deinit()   throw(CException) {
     //deinit persistence driver system
 	CHAOS_NOT_THROW(api_subsystem_accessor.persistence_driver.deinit(__PRETTY_FUNCTION__);)
 	
-	//deinit network broker
-	CHAOS_NOT_THROW(api_subsystem_accessor.network_broker_service.deinit(__PRETTY_FUNCTION__);)
+    
+    ChaosCommon<ChaosMetadataService>::stop();
 	LAPP_ << "-----------------------------------------";
 	LAPP_ << "Metadata service has been stopped";
 	LAPP_ << "-----------------------------------------";

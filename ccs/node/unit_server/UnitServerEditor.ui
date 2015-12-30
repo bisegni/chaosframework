@@ -354,6 +354,12 @@
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
+         <property name="dragEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="dragDropMode">
+          <enum>QAbstractItemView::DragOnly</enum>
+         </property>
          <property name="selectionMode">
           <enum>QAbstractItemView::MultiSelection</enum>
          </property>
@@ -366,8 +372,14 @@
          <attribute name="horizontalHeaderMinimumSectionSize">
           <number>20</number>
          </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
           <number>20</number>
+         </attribute>
+         <attribute name="verticalHeaderHighlightSections">
+          <bool>false</bool>
          </attribute>
         </widget>
        </item>

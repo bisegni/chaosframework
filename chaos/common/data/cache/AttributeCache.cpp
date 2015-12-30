@@ -19,7 +19,7 @@
  */
 
 #include <chaos/common/data/cache/AttributeCache.h>
-
+#include <chaos/common/global.h>
 #include <boost/format.hpp>
 
 using namespace chaos::common::data::cache;
@@ -115,6 +115,8 @@ void AttributeCache::getAttributeNames(std::vector<std::string>& names) {
 void AttributeCache::setValueForAttribute(VariableIndexType n,
 											 const void * value,
 											 uint32_t size) {
+CHAOS_ASSERT(n<mapAttributeIndex.size());
+CHAOS_ASSERT(mapAttributeIndex[n].get());
 	mapAttributeIndex[n]->setValue(value, size);
 }
 
@@ -126,6 +128,10 @@ VariableIndexType AttributeCache::getIndexForName(const std::string& name ) {
         throw chaos::CException(-1, boost::str(boost::format("No %1% name present in Attribute setting")%name), __PRETTY_FUNCTION__);
 	}
 	return mapAttributeNameIndex[name];
+}
+
+bool AttributeCache::hasName(const std::string& name) {
+    return mapAttributeNameIndex.count(name) != 0;
 }
 
 /*---------------------------------------------------------------------------------
@@ -180,8 +186,11 @@ bool AttributeCache::hasChanged() {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-bool AttributeCache::setNewSize(VariableIndexType attribute_index, uint32_t new_size) {
-	return mapAttributeIndex[attribute_index]->setNewSize(new_size);
+bool AttributeCache::setNewSize(VariableIndexType attribute_index,
+                                uint32_t new_size,
+                                bool clear_mem) {
+	return mapAttributeIndex[attribute_index]->setNewSize(new_size,
+                                                          clear_mem);
 }
 
 /*---------------------------------------------------------------------------------

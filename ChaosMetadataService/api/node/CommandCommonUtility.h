@@ -22,6 +22,7 @@
 #define __CHAOSFramework__CommandCommonUtility__
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/exception/CException.h>
 
 #include <utility>
 

@@ -29,8 +29,8 @@ using namespace std;
 using namespace boost;
 
 #define LDEF_CMD_DISPTC_APP_ LAPP_ << "[DefaultCommandDispatcher] - "
-#define LDEF_CMD_DISPTC_DBG_ LDBG_ << "[DefaultCommandDispatcher] - "
-#define LDEF_CMD_DISPTC_ERR_ LERR_ << "[DefaultCommandDispatcher] ("<< __LINE__ <<") -"
+#define LDEF_CMD_DISPTC_DBG_ LDBG_ << "[DefaultCommandDispatcher] - ("<< __PRETTY_FUNCTION__
+#define LDEF_CMD_DISPTC_ERR_ LERR_ << "[DefaultCommandDispatcher] ("<< __PRETTY_FUNCTION__<<":"<<__LINE__ <<") -"
 
 DEFINE_CLASS_FACTORY(DefaultCommandDispatcher, AbstractCommandDispatcher);
 
@@ -101,15 +101,8 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
         
         if(!das_map.count(domainName)){
             boost::shared_ptr<DomainActionsScheduler> das(new DomainActionsScheduler(getDomainActionsFromName(domainName)));
-#if DEBUG
-            LDEF_CMD_DISPTC_DBG_ << "Allocated new  actions scheduler for domain:" << domainName;
-            LDEF_CMD_DISPTC_DBG_ << "Init actions scheduler for domain:" << domainName;
-            LDEF_CMD_DISPTC_DBG_ << "WE MUST THING ABOUT GET GLOBAL CONF FOR INIT DomainActionsScheduler object";
-#endif
             das->init(1);
-#if DEBUG
-            LDEF_CMD_DISPTC_DBG_ << "Initialized actions scheduler for domain:" << domainName;
-#endif
+            DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Initialized actions scheduler for domain:" << domainName;)
             chaos::common::thread::UpgradeReadToWriteLock uw_lock(ur_lock);
             //add the domain scheduler to map
             das_map.insert(make_pair(domainName, das));

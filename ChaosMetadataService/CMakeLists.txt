@@ -8,14 +8,21 @@ SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/MongoDBHACon
                         ../chaos_service_common/persistence/mongodb/MongoDBAccessor.cpp)
 
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/data_access/AbstractDataAccess.cpp
-												../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
+						../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
+
+SET(cnd_src  ${cnd_src}	common/CUCommonUtility.cpp)
 
 SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
                         api/AbstractApi.cpp
                         api/AbstractApiGroup.cpp)
 
 SET(cnd_src  ${cnd_src}	api/service/ServiceApiGroup.cpp
-												api/service/ResetAll.cpp)
+						api/service/ResetAll.cpp
+                        api/service/GetAllSnapshot.cpp
+                        api/service/RestoreSnapshot.cpp
+                        api/service/CreateNewSnapshot.cpp
+                        api/service/DeleteSnapshot.cpp
+                        api/service/GetNodesForSnapshot.cpp)
 
 SET(cnd_src  ${cnd_src}	api/healt/HealtApiGroup.cpp
                         api/healt/ProcessHello.cpp
@@ -25,6 +32,7 @@ SET(cnd_src  ${cnd_src}	api/unit_server/UnitServerApiGroup.cpp
                         api/unit_server/GetDescription.cpp
                         api/unit_server/LoadUnloadControlUnit.cpp
                         api/unit_server/NewUS.cpp
+                        api/unit_server/DeleteUS.cpp
                         api/unit_server/ManageCUType.cpp)
 
 SET(cnd_src  ${cnd_src}	api/data_service/DataServiceApiGroup.cpp
@@ -42,15 +50,19 @@ SET(cnd_src  ${cnd_src}	api/control_unit/SetInputDatasetAttributeValues.cpp
                         api/control_unit/SearchInstancesByUS.cpp
                         api/control_unit/GetInstance.cpp
                         api/control_unit/DeleteInstance.cpp
+			api/control_unit/Delete.cpp
                         api/control_unit/InitDeinit.cpp
                         api/control_unit/StartStop.cpp
+                        api/control_unit/CopyInstance.cpp
+                        api/control_unit/RecoverError.cpp
                         api/control_unit/GetCurrentDataset.cpp
-												api/control_unit/GetFullDescription.cpp)
+						api/control_unit/GetFullDescription.cpp)
 
 SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/NodeCreateUnitServer.cpp
                         api/node/NodeGetDescription.cpp
                         api/node/NodeRegister.cpp
+                        api/node/NodeLoadCompletion.cpp
                         api/node/NodeSearch.cpp
                         api/node/UpdateProperty.cpp
                         api/node/ChangeNodeState.cpp
@@ -68,14 +80,16 @@ SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/NodeDataAccess.cpp
                         persistence/data_access/UtilityDataAccess.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
-                        persistence/data_access/DataServiceDataAccess.cpp)
+                        persistence/data_access/DataServiceDataAccess.cpp
+                        persistence/data_access/SnapshotDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBUnitServerDataAccess.cpp
                         persistence/mongodb/MongoDBNodeDataAccess.cpp
                         persistence/mongodb/MongoDBUtilityDataAccess.cpp
                         persistence/mongodb/MongoDBControlUnitDataAccess.cpp
-                        persistence/mongodb/MongoDBDataServiceDataAccess.cpp)
+                        persistence/mongodb/MongoDBDataServiceDataAccess.cpp
+                        persistence/mongodb/MongoDBSnapshotDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
@@ -88,7 +102,10 @@ SET(cnd_src  ${cnd_src}	batch/unit_server/UnitServerAckBatchCommand.cpp
 
 SET(cnd_src  ${cnd_src}	batch/control_unit/RegistrationAckBatchCommand.cpp
                         batch/control_unit/IDSTControlUnitBatchCommand.cpp
-                        batch/control_unit/ApplyChangeSet.cpp)
+                        batch/control_unit/ApplyChangeSet.cpp
+                        batch/control_unit/RecoverError.cpp)
+
+SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp)
 
 ADD_EXECUTABLE(ChaosMetadataService ${cnd_src})
 

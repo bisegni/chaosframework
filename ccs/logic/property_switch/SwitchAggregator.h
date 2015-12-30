@@ -68,7 +68,9 @@ public:
                                                                                                                                  value_on,
                                                                                                                                  value_off)));
     }
-
+signals:
+    void stateChangedOnSwitch(const QString& logic_switch_name,
+                              bool state);
 private slots:
     void switchChangedState(const QString& logic_switch_name,
                             bool state);

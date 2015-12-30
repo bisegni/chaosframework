@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="95">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <df name="api_proxy">
+        <df name="control_unit">
+          <in>CopyInstance.cpp</in>
+          <in>Delete.cpp</in>
+          <in>DeleteInstance.cpp</in>
+          <in>GetCurrentDataset.cpp</in>
+          <in>GetInstance.cpp</in>
+          <in>InitDeinit.cpp</in>
+          <in>RecoverError.cpp</in>
+          <in>SearchInstancesByUS.cpp</in>
+          <in>SetInputDatasetAttributeValues.cpp</in>
+          <in>SetInstanceDescription.cpp</in>
+          <in>StartStop.cpp</in>
+        </df>
+        <df name="data_service">
+          <in>AssociationControlUnit.cpp</in>
+          <in>DeleteDS.cpp</in>
+          <in>GetAllDS.cpp</in>
+          <in>GetAssociationByDS.cpp</in>
+          <in>GetBestEndpoints.cpp</in>
+          <in>NewDS.cpp</in>
+          <in>UpdateDS.cpp</in>
+        </df>
+        <df name="node">
+          <in>ChangeNodeState.cpp</in>
+          <in>CommandGet.cpp</in>
+          <in>CommandInstanceSubmit.cpp</in>
+          <in>CommandTemplateDelete.cpp</in>
+          <in>CommandTemplateGet.cpp</in>
+          <in>CommandTemplateSearch.cpp</in>
+          <in>CommandTemplateSet.cpp</in>
+          <in>CommandTemplateSubmit.cpp</in>
+          <in>GetCommandAndTemplateDescription.cpp</in>
+          <in>GetNodeDescription.cpp</in>
+          <in>NodeSearch.cpp</in>
+          <in>UpdateProperty.cpp</in>
+        </df>
+        <df name="service">
+          <in>CreateNewSnapshot.cpp</in>
+          <in>DeleteSnapshot.cpp</in>
+          <in>GetAllSnapshot.cpp</in>
+          <in>GetNodesForSnapshot.cpp</in>
+          <in>ResetAll.cpp</in>
+          <in>RestoreSnapshot.cpp</in>
+        </df>
+        <df name="unit_server">
+          <in>DeleteUS.cpp</in>
+          <in>GetDescription.cpp</in>
+          <in>LoadUnloadControlUnit.cpp</in>
+          <in>ManageCUType.cpp</in>
+          <in>NewUS.cpp</in>
+        </df>
+        <in>ApiProxy.cpp</in>
+        <in>ApiProxyManager.cpp</in>
+      </df>
+      <df name="monitor_system">
+        <in>AbstractQuantumKeyAttributeHandler.cpp</in>
+        <in>MonitorManager.cpp</in>
+        <in>QuantumKeyConsumer.cpp</in>
+        <in>QuantumSlot.cpp</in>
+        <in>QuantumSlotScheduler.cpp</in>
+        <in>QuantumTSTaggedAttributeHandler.cpp</in>
+      </df>
+      <in>ChaosMetadataServiceClient.cpp</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>CMakeLists.txt</itemPath>
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile install</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+        </makeTool>
+      </makefileType>
+      <item path="ChaosMetadataServiceClient.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="api_proxy/ApiProxy.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="api_proxy/ApiProxyManager.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="api_proxy/control_unit/CopyInstance.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/control_unit/Delete.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="api_proxy/control_unit/DeleteInstance.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/control_unit/GetCurrentDataset.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/control_unit/GetInstance.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/control_unit/InitDeinit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/control_unit/RecoverError.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/control_unit/SearchInstancesByUS.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/control_unit/SetInputDatasetAttributeValues.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/control_unit/SetInstanceDescription.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/control_unit/StartStop.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/data_service/AssociationControlUnit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/data_service/DeleteDS.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/data_service/GetAllDS.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/data_service/GetAssociationByDS.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/data_service/GetBestEndpoints.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/data_service/NewDS.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="api_proxy/data_service/UpdateDS.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/node/ChangeNodeState.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="api_proxy/node/CommandGet.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="api_proxy/node/CommandInstanceSubmit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/node/CommandTemplateDelete.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/node/CommandTemplateGet.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/node/CommandTemplateSearch.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/node/CommandTemplateSet.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/node/CommandTemplateSubmit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/node/GetCommandAndTemplateDescription.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/node/GetNodeDescription.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/node/NodeSearch.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="api_proxy/node/UpdateProperty.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="api_proxy/service/CreateNewSnapshot.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/service/DeleteSnapshot.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/service/GetAllSnapshot.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/service/GetNodesForSnapshot.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/service/ResetAll.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="api_proxy/service/RestoreSnapshot.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/unit_server/DeleteUS.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="api_proxy/unit_server/GetDescription.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/unit_server/LoadUnloadControlUnit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/unit_server/ManageCUType.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="api_proxy/unit_server/NewUS.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="monitor_system/AbstractQuantumKeyAttributeHandler.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="monitor_system/MonitorManager.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="monitor_system/QuantumKeyConsumer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="monitor_system/QuantumSlot.cpp" ex="false" tool="1" flavor2="4">
+      </item>
+      <item path="monitor_system/QuantumSlotScheduler.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+      <item path="monitor_system/QuantumTSTaggedAttributeHandler.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

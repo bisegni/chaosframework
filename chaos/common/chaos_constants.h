@@ -34,15 +34,23 @@ namespace chaos {
         //! for print the help
         static const char * const	OPT_HELP                            = "help";
         //! config file parameter
-
         static const char * const   OPT_CONF_FILE						= "conf-file";
+        //! Specify when the log must be forwarded on console
+        static const char * const   OPT_LOG_ON_CONSOLE                  = "log-on-console";
+        //! Specify when the log must be forwarded on file
+        static const char * const   OPT_LOG_ON_FILE                     = "log-on-file";
+        //! Specify when the file path of the log
+        static const char * const   OPT_LOG_FILE                        = "log-file";
+        //! Specify the level of the log going
+        static const char * const   OPT_LOG_LEVEL                       = "log-level";
+        //! Specify the log max size
+        static const char * const   OPT_LOG_MAX_SIZE_MB                 = "log-max-size";
         //! enable metric loggin on console backend
         static const char * const   OPT_LOG_METRIC_ON_CONSOLE           = "log-metric-on-console";
         //! enable metric loggin on file backend
         static const char * const   OPT_LOG_METRIC_ON_FILE              = "log-metric-on-file";
         //! enable metric loggin on file backend
         static const char * const   OPT_LOG_METRIC_ON_FILE_PATH         = "log-metric-on-file-path";
-
         //! activate the loggin of metric on rpc system
         static const char * const   OPT_RPC_LOG_METRIC                  = "rpc-log-metric";
         //! the time between the update of rpc metric on persistence backend (in seconds)
@@ -75,18 +83,10 @@ namespace chaos {
         static const char * const   OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT = "direct-io-client-log-metric-mep";
         //! the time between the update of rpc metric on persistence backend (in seconds)
         static const char * const   OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL = "direct-io-log-metric-update-interval";
-        //! Specify the live data servers address with the type host:port it is a multitoken parameter
-        static const char * const   OPT_LIVE_DATA_SERVER_ADDRESS        = "live-data-servers";
+        //!disable the event system
+        static const char * const   OPT_EVENT_DISABLE                   = "event-disable";
         //! Specify the metadata address for the metadataserver
         static const char * const   OPT_METADATASERVER_ADDRESS          = "metadata-server";
-        //! Specify when the log must be forwarded on console
-        static const char * const   OPT_LOG_ON_CONSOLE                  = "log-on-console";
-        //! Specify when the log must be forwarded on file
-        static const char * const   OPT_LOG_ON_FILE                     = "log-on-file";
-        //! Specify when the file path of the log
-        static const char * const   OPT_LOG_FILE                        = "log-file";
-        //! Specifi the level of the log going
-        static const char * const   OPT_LOG_LEVEL                       = "log-level";
         //! Specify the ip where publish the framework
         static const char * const   OPT_PUBLISHING_IP                   = "publishing-ip";
         //! use the interface name to determinate the ip where publish itself
@@ -256,10 +256,22 @@ namespace chaos {
         static const char * const HEALT_KEY_POSTFIX                     = "_healt";
         //! define time stamp of the push (usefull for heart beating)
         static const char * const NODE_HEALT_TIMESTAMP                  = "nh_ts";
+        //! identify the time spent as user by the process and all his thread
+        static const char * const NODE_HEALT_USER_TIME                  = "nh_ut";
+        //! identify the time spent for system call by the process and all his thread
+        static const char * const NODE_HEALT_SYSTEM_TIME                  = "nh_st";
+        //! identify the swap memory used by process
+        static const char * const NODE_HEALT_PROCESS_SWAP               = "nh_sw";
         //! define time stamp of the collection of the last insert metric
         static const char * const NODE_HEALT_TIMESTAMP_LAST_METRIC      = "nh_ts_lst_metric";
         //! define the status of a node (loaded, initilized, deinitialized, started, stopped, unloaded)
         static const char * const NODE_HEALT_STATUS                     = "nh_status";
+        //!last node error code [int32]
+        static const char * const NODE_HEALT_LAST_ERROR_CODE            = "nh_lec";
+        //!last node error message [string]
+        static const char * const NODE_HEALT_LAST_ERROR_MESSAGE         = "nh_lem";
+        //!last node error domain [string]
+        static const char * const NODE_HEALT_LAST_ERROR_DOMAIN          = "nh_led";
     }
     /** @} */ // end of NodeHealtDefinitionKey
     
@@ -292,8 +304,24 @@ namespace chaos {
         static const char * const NODE_HEALT_STATUS_STOP        = "Stop";
         //! stopped status
         static const char * const NODE_HEALT_STATUS_STOPING     = "Stoping";
+        //! recoverable error status
+        static const char * const NODE_HEALT_STATUS_RERROR      = "Recoverable Error";
+        //! fatal error status
+        static const char * const NODE_HEALT_STATUS_FERROR      = "Fatal Error";
     }
     /** @} */ // end of NodeHealtDefinitionValue
+    
+    /** @defgroup ControlUnitHealtDefinitionValue !CHAOS control unit specific key
+     *  @{
+     */
+    //! This namespace enclose all the control unit specific healt key
+    namespace ControlUnitHealtDefinitionValue {
+        //!define the key that contains the rate of the output dataset pushes per second[double]
+        static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_RATE  = "cuh_dso_prate";
+
+    }
+    /** @} */ // end of NodeHealtDefinitionValue
+    
     
     /** @defgroup NodeDomainAndActionRPC !CHAOS node rpc key description
      *  @{
@@ -320,6 +348,9 @@ namespace chaos {
         
         //! pause the run method for a determinated device
         static const char * const ACTION_NODE_STOP                                  = "stopNodeUnit";
+        
+        //! recovery a recoverable state of the node
+        static const char * const ACTION_NODE_RECOVER                               = "recoverNodeUnit";
         
         //! pause the run method for a determinated device
         static const char * const ACTION_NODE_RESTORE                               = "restoreNodeUnit";
@@ -397,7 +428,7 @@ namespace chaos {
         static const char * const ACTION_UNIT_SERVER_REG_ACK                        = "unitServerRegistrationACK";
         
         //! Action that is called to inform the node of the registration status of the hosted control unit
-        static const char * const ACTION_REGISTRATION_CONTROL_UNIT_ACK        = "ndk_rpc_reg_cu_ack";
+        static const char * const ACTION_REGISTRATION_CONTROL_UNIT_ACK              = "ndk_rpc_reg_cu_ack";
         
         //! driver params passed during load operation for a specified control unit
         static const char * const PARAM_CU_LOAD_DRIVER_PARAMS                       = "controlUnitDriverParams";
@@ -406,7 +437,13 @@ namespace chaos {
         /*!
          Represent the control unit type to be load or unload
          */
-        static const char * const PARAM_CONTROL_UNIT_TYPE                     = "usn_rpc_par_control_unit_type";
+        static const char * const PARAM_CONTROL_UNIT_TYPE                           = "usn_rpc_par_control_unit_type";
+        
+        //! List of command to execute at the startup of the control unit [vector of CDataWrapper]
+        /*!
+         Represent the control unit type to be load or unload
+         */
+        static const char * const PARAM_CONTROL_UNIT_STARTUP_COMMAND                = "usn_rpc_par_control_unit_sc";
     }
     /** @} */ // end of UnitServerNodeDomainAndActionRPC
     
@@ -440,9 +477,6 @@ namespace chaos {
      */
     //! Name space for grupping key for the control unit node type
     namespace ControlUnitNodeDefinitionKey {
-        //! represent the delay beetwen a subseguent cu start method call
-        static const char * const THREAD_SCHEDULE_DELAY                             = "cudk_thr_sch_delay";
-        
         //! param to pass to the control unit during load operation[ string]
         static const char * const CONTROL_UNIT_LOAD_PARAM                           = "cudk_load_param";
         
@@ -519,6 +553,17 @@ namespace chaos {
         
     }
     
+    /** @defgroup Contorl unit system key
+     *  This is the collection of the key representing the property that are exposed into system dataset
+     *  @{
+     */
+    //! Name space for grupping control unit system property
+    namespace ControlUnitDatapackSystemKey {
+        //! represent the delay beetwen a subseguent cu start method call it is a property of a control unit
+        static const char * const THREAD_SCHEDULE_DELAY                             = "cudk_thr_sch_delay";
+    }
+    /** @} */ // end of ControlUnitNodeDefinitionKey
+    
     /** @defgroup CUType Control Unit Default Type
      *  This is the collection of the key for the classification of the control unit types
      *  @{
@@ -575,7 +620,8 @@ namespace chaos {
             SUB_TYPE_STRING,
             //! the subtype is represented by a specific mime type tagged in specific dataset constants
             SUB_TYPE_MIME,
-            
+            //! no specific encoding
+            SUB_TYPE_NONE,
             //! unsigned flag
             SUB_TYPE_UNSIGNED = 0x200,
         } BinarySubtype;
@@ -587,12 +633,14 @@ namespace chaos {
         
         //!define the direction of dataset element
         typedef enum DataSetAttributeIOAttribute{
-            //!define an atribute in input
+            //!define an attribute in input
             Input = 0,
-            //!define an atribute in output
+            //!define an attribute in output
             Output=1,
-            //!define an atribute either two direction
+            //!define an attribute with two directions
             Bidirectional=2,
+                    
+            Undefined
         } DataSetAttributeIOAttribute;
     }
     
@@ -611,10 +659,20 @@ namespace chaos {
          those of the stat machine internally defined into teh chaos::utility::StartableService.
          */
         typedef enum {
+            //! define the node in uninitialized
             DEINIT  = 0,
+            //! define the node is initialized and is ready to start
             INIT    = 1,
+            //! define the node is running
             START   = 2,
-            STOP    = 3
+            //! define the node has been stopped
+            STOP    = 3,
+            //!define an error state of the node, in error state the node wait until someone clear the error and put it again in START/STOP/DEINIT
+            RECOVERABLE_ERROR = 4,
+            //!define an error state of the node, in this case the error can't be recovered so it is equivalent to a deinit state
+            FATAL_ERROR = 5,
+            //!define the status of the node cannot be retrieved
+            UNDEFINED
         } ControlUnitState;
     }
     /** @} */ // end of CUStateKey
@@ -630,29 +688,11 @@ namespace chaos {
         
         //! key that idetify the result of the node registration[int32]
         static const char * const PARAM_REGISTER_NODE_RESULT      = "mdsndk_rpc_p_reg_result";
+        
+        //! the key for the control unit load completion registration
+        static const char * const ACTION_NODE_LOAD_COMPLETION  = "mdsndk_rpc_a_load_completion_node";
     }
     /** @} */ // end of NodeDomainAndActionRPC
-    
-    namespace common {
-        namespace utility {
-            namespace service_state_machine {
-                
-                namespace InizializableServiceType {
-                    typedef enum {
-                        IS_DEINTIATED = 0,
-                        IS_INITIATED = 1
-                    } InizializableServiceState;
-                }
-                
-                namespace StartableServiceType {
-                    typedef enum {
-                        SS_STARTED = 2,
-                        SS_STOPPED = 3
-                    } StartableServiceState;
-                }
-            }
-        }
-    }
     
     
     /** @defgroup DataPackPrefixID Chaos Data Prefix
@@ -666,6 +706,7 @@ namespace chaos {
         static const char * const INPUT_DATASE_PREFIX = "_i";
         static const char * const CUSTOM_DATASE_PREFIX = "_c";
         static const char * const SYSTEM_DATASE_PREFIX = "_s";
+        static const char * const HEALTH_DATASE_PREFIX = NodeHealtDefinitionKey::HEALT_KEY_POSTFIX;
     }
     /** @} */ // end of DataPackPrefixID
     
@@ -679,7 +720,7 @@ namespace chaos {
         static const char * const DPCK_DEVICE_ID                       = chaos::NodeDefinitionKey::NODE_UNIQUE_ID;
         
         //!this define the acquisition timestamp of the data represented by the dataset[uint64_t]
-        static const char * const DPCK_TIMESTAMP                       = chaos::NodeDefinitionKey::NODE_TIMESTAMP;
+        static const char * const DPCK_TIMESTAMP                       = "dpck_ats";//chaos::NodeDefinitionKey::NODE_TIMESTAMP;
         
         //!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) int32_t]
         static const char * const DPCK_DATASET_TYPE                    = "dpck_ds_type";
@@ -737,6 +778,7 @@ namespace chaos {
     /** @} */ // end of DataPackSystemKey
     
     
+    
     /** @defgroup DatasetDefinitionkey Dataset definition key
      *  This is the collection of the key for the device dataset
      *  @{
@@ -789,6 +831,9 @@ namespace chaos {
             EC_ATTRIBUTE_BAD_DIR ,
             //!dataset attribute not supported
             EC_ATTRIBUTE_TYPE_NOT_SUPPORTED ,
+            //! has been called a not supported method
+            //! to be used for instance in driver methods that not are supported in a particular Abstraction
+            EC_NODE_OPERATION_NOT_SUPPORTED=-10000,
             
             //!unit server registration is gone well
             EC_MDS_NODE_REGISTRATION_OK = 500,
@@ -957,5 +1002,10 @@ namespace chaos {
         }
         /** @} */ // end of EventConfiguration
     }
+    
+    /*
+     * separator to be used in node naming 
+     */
+    static const char PATH_SEPARATOR                                                ='/';
 }
 #endif

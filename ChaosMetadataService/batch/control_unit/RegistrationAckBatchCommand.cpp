@@ -20,6 +20,8 @@
 
 #include "RegistrationAckBatchCommand.h"
 
+#include "../control_unit/IDSTControlUnitBatchCommand.h"
+
 using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::metadata_service::batch::control_unit;
@@ -36,15 +38,8 @@ static const char * const RegistrationAckBatchCommand_NO_RPC_DOM = "No rpc domai
 static const char * const RegistrationAckBatchCommand_NO_RESULT_FOUND = "No ack result found";
 
 RegistrationAckBatchCommand::RegistrationAckBatchCommand():
-MDSBatchCommand(){
-    //set default scheduler delay 1 second
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
-    //set the timeout to 10 seconds
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
-    
-}
-RegistrationAckBatchCommand::~RegistrationAckBatchCommand() {
-}
+MDSBatchCommand(){}
+RegistrationAckBatchCommand::~RegistrationAckBatchCommand() {}
 
 // inherited method
 void RegistrationAckBatchCommand::setHandler(CDataWrapper *data) {
@@ -73,8 +68,9 @@ void RegistrationAckBatchCommand::acquireHandler() {
             CDataWrapper message;
             message.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, cu_id);
             message.addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT, reg_result);
-            sendRequest(*request,
+            sendMessage(*request,
                         &message);
+            BC_END_RUNNIG_PROPERTY
         }
         default:
             break;

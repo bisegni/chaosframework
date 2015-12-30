@@ -47,11 +47,17 @@ queue_active_slot(100),
 queue_new_quantum_slot_consumer(100),
 set_slots_index_quantum(boost::multi_index::get<ss_current_quantum>(set_slots)),
 set_slots_index_key_slot(boost::multi_index::get<ss_quantum_slot_key>(set_slots)) {
-    
+    //launch asio thread
+    //stop asio thread
+    QSS_INFO<< "Put ASIO infrastructure into thread";
+    ios_thread.reset(new boost::thread(boost::bind(&boost::asio::io_service::run, &ios)));
 }
 
 QuantumSlotScheduler::~QuantumSlotScheduler() {
-    
+    //stop asio thread
+    QSS_INFO<< "Stop forwarded ASIO infrastructure";
+    ios.stop();
+    QSS_INFO<< "ASIO Stopped";
 }
 
 
@@ -59,14 +65,12 @@ void QuantumSlotScheduler::init(void *init_data) throw (chaos::CException) {
     CHAOS_LASSERT_EXCEPTION(network_broker, QSS_ERR, -1, "No network broker instance found")
     data_driver_impl = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL);
     CHAOS_LASSERT_EXCEPTION((data_driver_impl.compare("IODirect") == 0), QSS_ERR, -2, "Only IODirect implementation is supported")
+    
 }
 
 void QuantumSlotScheduler::start() throw (chaos::CException) {
     work_on_scan = true;
     work_on_fetch = true;
-    
-    //launch asio thread
-    ios_thread.reset(new boost::thread(boost::bind(&boost::asio::io_service::run, &ios)));
     
     //add scanner thread
     scanner_threads.add_thread(new boost::thread(bind(&QuantumSlotScheduler::scanSlot, this)));
@@ -90,32 +94,26 @@ void QuantumSlotScheduler::stop() throw (chaos::CException) {
     condition_fetch.notify_all();
     fetcher_threads.join_all();
     QSS_INFO<< "Fetcher thread stopped";
-    
-    //stop asio thread
-    QSS_INFO<< "Stop forwarded ASIO infrastructure";
-    ios.stop();
-    QSS_INFO<< "ASIO Stopped";
+}
+
+void QuantumSlotScheduler::deinit() throw (chaos::CException) {
     
     QSS_INFO<< "Clean unmanaged slot consumer add and remove request";
     SlotConsumerInfo *ci = NULL;
     while(queue_new_quantum_slot_consumer.pop(ci)){
-        if(!ci) continue;
+        std::auto_ptr<SlotConsumerInfo> auto_ci(ci);
         try {
             if(ci->operation) {
                 //we need to add it
                 QSS_INFO << boost::str(boost::format("The key consumer [%1%-%2%-%3%] can't be added we are stopping all")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);
             } else {
-                _removeKeyConsumer(ci);
+                _removeKeyConsumer(auto_ci.get());
             }
         } catch(...){
             
         }
-        delete(ci);
+        //delete(ci);
     }
-}
-
-void QuantumSlotScheduler::deinit() throw (chaos::CException) {
-    
 }
 
 //! set a new lits of server to use for fetch values
@@ -126,15 +124,8 @@ void QuantumSlotScheduler::setDataDriverEndpoints(const std::vector<std::string>
     QSS_INFO<< "New servers has been configured";
     if(fetcher_threads.size() == 0) return; //no thread are active so never has been started
     
-    work_on_fetch = false;
-    condition_scan.notify_all();
-    fetcher_threads.join_all();
-    QSS_INFO<< "Stoppped all current fetcher thread";
-    
-    work_on_fetch = true;
-    condition_fetch.notify_all();
-    addNewfetcherThread();
-    QSS_INFO<< "New fetcher thread created";
+    stop();
+    start();
 }
 
 void QuantumSlotScheduler::scanSlot() {
@@ -209,16 +200,17 @@ bool QuantumSlotScheduler::_checkRemoveAndAddNewConsumer() {
     //! try to get new one
     if(!(something_has_been_processed = queue_new_quantum_slot_consumer.pop(new_consumer_info))) return something_has_been_processed;
     try {
-        if(new_consumer_info->operation) {
+        std::auto_ptr<SlotConsumerInfo> auto_ci(new_consumer_info);
+        if(auto_ci->operation) {
             //we need to add it
-            _addKeyConsumer(new_consumer_info);
+            _addKeyConsumer(auto_ci.get());
         } else {
-            _removeKeyConsumer(new_consumer_info);
-        }  
+            _removeKeyConsumer(auto_ci.get());
+        }
     } catch(...){
         
     }
-    delete(new_consumer_info);
+    //delete(new_consumer_info);
     return something_has_been_processed;
 }
 
@@ -268,12 +260,15 @@ void QuantumSlotScheduler::dispath_new_value_async(const boost::system::error_co
 void QuantumSlotScheduler::fetchValue(boost::shared_ptr<IODataDriver> data_driver) {
     QuantumSlot *cur_slot = NULL;
     QSS_INFO << "Entering fetcher thread:" << boost::this_thread::get_id();
+    boost::unique_lock<boost::mutex> lock_on_fetch(mutex_fetch_value, boost::defer_lock);
     boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_fetch);
     while(work_on_fetch) {
         if(queue_active_slot.pop(cur_slot)) {
             //we have slot available
             size_t          data_found_size;
+            lock_on_fetch.lock();
             const char * data_found = data_driver->retriveRawData(cur_slot->key, &data_found_size);
+            lock_on_fetch.unlock();
             async_timer.async_wait(boost::bind(&QuantumSlotScheduler::dispath_new_value_async,
                                                this,
                                                boost::asio::placeholders::error,
@@ -303,11 +298,13 @@ void QuantumSlotScheduler::addKeyConsumer(const std::string& key_to_monitor,
         QSS_ERR << boost::str(boost::format("Key consumer alredy registere [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
         return;
     }
-    QSS_INFO << boost::str(boost::format("Add new key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
-
+    
     //increment the index to indicate that has passed scheduler publi layer
     consumer->free_of_work = false;
     consumer->usage_counter++;
+    
+    QSS_INFO << boost::str(boost::format("Add new key consumer [%1%-%2%-%3%(%4%)]")%key_to_monitor%quantum_multiplier%consumer%consumer->usage_counter);
+
     
     //push into lock free queue for add the consumer
     queue_new_quantum_slot_consumer.push(new SlotConsumerInfo(true,
@@ -323,7 +320,7 @@ void QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
                                              QuantumSlotConsumer *consumer) {
     CHAOS_ASSERT(consumer)
     QSS_INFO << boost::str(boost::format("Start removing key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
-
+    
     //prepare key
     std::string quantum_consumer_key = CHAOS_QSS_COMPOSE_QUANTUM_CONSUMER_KEY(key_to_monitor,
                                                                               quantum_multiplier,
@@ -338,7 +335,7 @@ void QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
                                                               quantum_multiplier,
                                                               consumer,
                                                               0));
-    
+    QSS_INFO << boost::str(boost::format("Wait for remove of key consumer [%1%-%2%-%3%(%4%)]")%key_to_monitor%quantum_multiplier%consumer%consumer->usage_counter);
     //waith for completiotion on consumer
     consumer->waitForCompletition();
     QSS_INFO << boost::str(boost::format("Cleanly removed key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
@@ -371,11 +368,11 @@ void QuantumSlotScheduler::_addKeyConsumer(SlotConsumerInfo *ci) {
 void QuantumSlotScheduler::_removeKeyConsumer(SlotConsumerInfo *ci) {
     CHAOS_ASSERT(ci)
     DEBUG_CODE(QSS_DBG << boost::str(boost::format("Start removing key consumer [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
-
+    
     //prepare key
     std::string quantum_slot_key = CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(ci->key_to_monitor,
                                                                       ci->quantum_multiplier);
-
+    
     
     SSSlotTypeQuantumSlotKeyIndexIterator it = set_slots_index_key_slot.find(quantum_slot_key);
     if(it == set_slots_index_key_slot.end()) return;
@@ -390,4 +387,16 @@ void QuantumSlotScheduler::_removeKeyConsumer(SlotConsumerInfo *ci) {
     } else {
         DEBUG_CODE(QSS_DBG << boost::str(boost::format("The key consumer has been removed directly by the slot [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
     }
+}
+
+std::auto_ptr<CDataWrapper> QuantumSlotScheduler::getLastDataset(const std::string& dataset_key) {
+    size_t data_found_size;
+    std::auto_ptr<CDataWrapper> result;
+    boost::unique_lock<boost::mutex>  lock_on_fetch(mutex_fetch_value);
+    const char *data_found = data_driver->retriveRawData(dataset_key, &data_found_size);
+    if(data_found) {
+        result.reset(new CDataWrapper(data_found));
+        delete(data_found);
+    }
+    return result;
 }

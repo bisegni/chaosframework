@@ -20,6 +20,7 @@
 
 #ifndef CHAOSFramework_monitor_system_h
 #define CHAOSFramework_monitor_system_h
+#include <ChaosMetadataServiceClient/monitor_system/monitor_system_types.h>
 
 #include <ChaosMetadataServiceClient/monitor_system/QuantumSlot.h>
 #include <ChaosMetadataServiceClient/monitor_system/MonitorManager.h>

@@ -46,10 +46,11 @@ set_urls_rb_pos_index(boost::multi_index::get<rb_pos_index>(set_urls_online)){
 URLServiceFeeder::~URLServiceFeeder() {
 	clear();
     for(int idx = 0; idx < (list_size/sizeof(URLServiceFeeder::URLService)); idx++) {
-		//allocate space for new url service
+		//element with the list ar object and are allocated with with new
         delete (service_list[idx]);
     }
-	delete(service_list);
+    //all list was allocated with malloc
+	free(service_list);
 }
 
 URLServiceFeeder::URLService *URLServiceFeeder::getNextFromSetByRoundRobin() {
@@ -82,7 +83,7 @@ URLServiceFeeder::URLService *URLServiceFeeder::getNextFromSetByPriority() {
 void URLServiceFeeder::removeFromOnlineQueue(uint32_t url_index) {
     SetUrlPositionIndexIterator it = set_urls_online.get<position_index>().find(url_index);
     if(it == set_urls_online.get<position_index>().end()) return;
-    URLServiceIndex serv_by_it = *it;
+    //URLServiceIndex serv_by_it = *it;
     set_urls_online.get<position_index>().erase(url_index);
 }
 /*!

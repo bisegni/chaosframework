@@ -21,6 +21,7 @@ ENDIF()
 
 message(STATUS "Using ${BUILD_PREFIX} as installation directory")
 
+SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 
 message(STATUS "Configure Common Layer")
 ADD_SUBDIRECTORY(chaos/common bin/bin_common)
@@ -39,6 +40,9 @@ ENDIF()
 message(STATUS "Configure Chaos Metadata Service Client Library")
 ADD_SUBDIRECTORY(ChaosMetadataServiceClient bin/bin_metadata_service_client)
 
+message(STATUS "Configure Chaos Metadata Service Client Library Test Application")
+ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest bin/ChaosMetadataServiceClientTest)
+
 message(STATUS "Configure Chaos WAN Proxy")
 ADD_SUBDIRECTORY(ChaosWANProxy bin/bin_wan_proxy)
 
@@ -52,7 +56,6 @@ ADD_SUBDIRECTORY(ChaosDataExport bin/chaos_cde)
 
 message(STATUS "Configure Chaos CLI")
 ADD_SUBDIRECTORY(example/ChaosCLI bin/chaos_cli)
-
 
 message(STATUS "Configure Chaos ChaosMDSCmd")
 ADD_SUBDIRECTORY(example/ChaosMDSCmd bin/ChaosMDSCmd)
@@ -68,6 +71,9 @@ ADD_SUBDIRECTORY(example/ChaosPerformanceTester bin/ChaosPerformanceTester)
 
 message(STATUS "Configure ChaosMemCacheTest test excutable")
 ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest bin/cache_test)
+
+message(STATUS "Configure ChaosArchitectureTests test excutable")
+ADD_SUBDIRECTORY(ArchitectureTests bin/architecture_test)
 
 # message(STATUS "Configure Chaos Snapshot Utility")
 # ADD_SUBDIRECTORY(ChaosSnapshotUtility/ChaosSnapshotUtility bin/chaos_snap_util)

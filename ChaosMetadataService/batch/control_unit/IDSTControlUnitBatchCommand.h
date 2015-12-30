@@ -44,7 +44,7 @@ namespace chaos {
                     uint32_t retry_number;
 
                     CNetworkAddress * control_unit_address;
-                    chaos::common::data::CDataWrapper *message;
+                    std::auto_ptr<chaos::common::data::CDataWrapper> message;
                     std::auto_ptr<RequestInfo> request;
 
                     std::string cu_id;

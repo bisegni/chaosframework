@@ -47,6 +47,7 @@ namespace chaos {
                 
                 uint32_t                    caching_worker_log_metric_update_interval;
                 
+                uint32_t                    caching_pool_min_instances_number;
 				//!number of cache worker
 				unsigned int				caching_worker_num;
 				

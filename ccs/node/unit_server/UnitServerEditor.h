@@ -2,6 +2,8 @@
 #define UNITSERVEREDITOR_H
 
 #include "../../presenter/PresenterWidget.h"
+#include "../../widget/CLedIndicatorHealt.h"
+#include "../../search/SearchNodeResult.h"
 
 #include <QItemSelection>
 #include <QStringListModel>
@@ -58,19 +60,27 @@ private slots:
     void cuInstanceStartSelected();
     void cuInstanceStopSelected();
 
+    void duplicateInstance();
+    void moveToUnitServer();
+    void copyToUnitServer();
+
     void on_pushButtonUpdateControlUnitType_clicked();
     void on_pushButtonAddNewCUType_clicked();
     void on_pushButtonRemoveCUType_clicked();
 
     void changedNodeOnlineStatus(const QString& node_uid,
-                                 bool new_online_status);
+                                 CLedIndicatorHealt::AliveState alive_state);
+    void on_tableView_doubleClicked(const QModelIndex &index);
+
 protected:
     void initUI();
-    bool canClose();
+    bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
-
+protected slots:
+        void selectedUnitServer(const QString& tag, const QVector<QPair<QString,QString> >& selected_item);
 private:
+    SearchNodeResult    *move_copy_search_instance;
     QStandardItemModel *table_model;
     Ui::UnitServerEditor *ui;
 };

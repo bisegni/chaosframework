@@ -31,13 +31,7 @@ using namespace chaos::metadata_service::batch::node;
 DEFINE_MDS_COMAMND_ALIAS(SubmitBatchCommand)
 
 SubmitBatchCommand::SubmitBatchCommand():
-MDSBatchCommand() {
-    //set default scheduler delay 1 second
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)1000000);
-    //set the timeout to 10 seconds
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
-    
-}
+MDSBatchCommand() {}
 
 SubmitBatchCommand::~SubmitBatchCommand() {}
 
@@ -56,7 +50,7 @@ void SubmitBatchCommand::setHandler(CDataWrapper *data) {
     
     const std::string node_uid = command_instance->getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     //fetch data for sending message to node id
-
+    
     if((err = getDataAccess<mds_data_access::NodeDataAccess>()->getNodeDescription(node_uid, &tmp_ptr))) {
         LOG_AND_TROW_FORMATTED(CU_SBC_ERR, err, "Error loading infomation for node '%1%'", %node_uid)
     } else if(!tmp_ptr) {
@@ -74,16 +68,29 @@ void SubmitBatchCommand::setHandler(CDataWrapper *data) {
 // inherited method
 void SubmitBatchCommand::acquireHandler() {
     MDSBatchCommand::acquireHandler();
+    switch(request->phase) {
+        case MESSAGE_PHASE_UNSENT: {
+            sendMessage(*request,
+                        command_instance.get());
+            BC_END_RUNNIG_PROPERTY
+            break;
+        }
+            
+        case MESSAGE_PHASE_SENT:
+        case MESSAGE_PHASE_COMPLETED:
+        case MESSAGE_PHASE_TIMEOUT:
+            break;
+        default:
+            break;
+    }
 }
 
 // inherited method
 void SubmitBatchCommand::ccHandler() {
     MDSBatchCommand::ccHandler();
     switch(request->phase) {
-        case MESSAGE_PHASE_UNSENT: {
-            sendRequest(*request,
-                        command_instance.get());
-        }
+        case MESSAGE_PHASE_UNSENT:
+            break;
             
         case MESSAGE_PHASE_SENT: {
             manageRequestPhase(*request);

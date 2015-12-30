@@ -45,7 +45,7 @@ int64_t CMultiTypeDataArrayWrapper::getint64ElementAtIndex(const int pos) {
 }
 
 CDataWrapper* CMultiTypeDataArrayWrapper::getCDataWrapperElementAtIndex(const int pos) {
-	return new CDataWrapper(elementsArray[pos].embeddedObject().objdata());
+    return new CDataWrapper(elementsArray[pos].embeddedObject().objdata());
 }
 vector<BSONElement>::size_type CMultiTypeDataArrayWrapper::size() const{
     return elementsArray.size();
@@ -55,7 +55,7 @@ CDataWrapper::CDataWrapper():bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilde
 }
 
 CDataWrapper::CDataWrapper(const char* serializationBuffer):bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
-	bsonBuilder->appendElements(BSONObj(serializationBuffer));
+    bsonBuilder->appendElements(BSONObj(serializationBuffer));
 }
 
 CDataWrapper::~CDataWrapper() {
@@ -75,11 +75,11 @@ void CDataWrapper::addCSDataValue(const std::string& key, CDataWrapper& csData) 
 
 //add a string value
 void CDataWrapper::addStringValue(const std::string& key, const string& strValue) {
-	try{
-		bsonBuilder->append(key, strValue);
-	}catch(bson::MsgAssertionException& ex) {
-		LERR_<< "[" <<__PRETTY_FUNCTION__<< "]" << ex.what();
-	}
+    try{
+        bsonBuilder->append(key, strValue);
+    }catch(bson::MsgAssertionException& ex) {
+        LERR_<< "[" <<__PRETTY_FUNCTION__<< "]" << ex.what();
+    }
 }
 
 //append a strin gto an open array
@@ -104,8 +104,8 @@ void CDataWrapper::appendInt64ToArray(int64_t int64ArrayElement) {
 
 //append a strin gto an open array
 void CDataWrapper::appendDoubleToArray(double doubleArrayElement) {
-  // TODO: all std int or NOT
-  bsonArrayBuilder->append(doubleArrayElement);
+    // TODO: all std int or NOT
+    bsonArrayBuilder->append(doubleArrayElement);
 }
 
 //appen a CDataWrapper to an open array
@@ -115,19 +115,23 @@ void CDataWrapper::appendCDataWrapperToArray(CDataWrapper& srcDataWrapper, bool 
 
 //finalize the array into a key for the current dataobject
 void CDataWrapper::finalizeArrayForKey(const std::string& key) {
-    bsonBuilder->appendArray(key, bsonArrayBuilder->done());
-    bsonArrayBuilder.reset(new BSONArrayBuilder());
+    try{
+        bsonBuilder->appendArray(key, bsonArrayBuilder->done());
+        bsonArrayBuilder.reset(new BSONArrayBuilder());
+    } catch(bson::MsgAssertionException& ass_except) {
+        throw CException(-1, ass_except.what(), __PRETTY_FUNCTION__);
+    }
 }
 
 //return a vectorvalue for a key
 CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const std::string& key) {
-	try {
-            if(bsonBuilder->asTempObj().hasElement(key))
-		return new CMultiTypeDataArrayWrapper(bsonBuilder->asTempObj().getField(key).Array());
-            
-	} catch (...) {
-	}
-	return NULL;
+    try {
+        if(bsonBuilder->asTempObj().hasElement(key))
+            return new CMultiTypeDataArrayWrapper(bsonBuilder->asTempObj().getField(key).Array());
+        
+    } catch (...) {
+    }
+    return NULL;
 }
 
 void CDataWrapper::addNullValue(const std::string& key) {
@@ -177,7 +181,7 @@ string  CDataWrapper::getStringValue(const std::string& key) {
 //get string value
 const char *  CDataWrapper::getCStringValue(const std::string& key) {
     //return bsonBuilder->asTempObj().getField(key).String().c_str();
-	return getRawValuePtr(key);
+    return getRawValuePtr(key);
 }
 
 //add a integer value
@@ -232,55 +236,55 @@ bool CDataWrapper::isVector(const std::string& key) {
 
 //return all key contained into the object
 void CDataWrapper::getAllKey(std::vector<std::string>& contained_key) {
-	BSONObjIterator obj_iterator(bsonBuilder->asTempObj());
-	while(obj_iterator.more()) {
-		//we have another key
-		BSONElement element = obj_iterator.next();
-		
-		//add key to vector
-		contained_key.push_back(element.fieldNameStringData().toString());
-	}
+    BSONObjIterator obj_iterator(bsonBuilder->asTempObj());
+    while(obj_iterator.more()) {
+        //we have another key
+        BSONElement element = obj_iterator.next();
+        
+        //add key to vector
+        contained_key.push_back(element.fieldNameStringData().toString());
+    }
 }
 
 //return all key contained into the object
 uint32_t CDataWrapper::getValueSize(const std::string& key) {
-	BSONElement ele  = bsonBuilder->asTempObj().getField(key);
-	int bsize = 0;
-	switch(ele.type()) {
-		case NumberLong:
-		case NumberInt:
-		case Bool:
-		case NumberDouble:
-			return ele.valuesize();
-		case String:
-			return ele.valuestrsize();
-		case BinData:
-			ele.binData(bsize);
-			return bsize;
-		default:
-			break;
-	}
-	return 0;
+    BSONElement ele  = bsonBuilder->asTempObj().getField(key);
+    int bsize = 0;
+    switch(ele.type()) {
+        case NumberLong:
+        case NumberInt:
+        case Bool:
+        case NumberDouble:
+            return ele.valuesize();
+        case String:
+            return ele.valuestrsize();
+        case BinData:
+            ele.binData(bsize);
+            return bsize;
+        default:
+            break;
+    }
+    return 0;
 }
 
 //! return the raw value ptr address
 const char * CDataWrapper::getRawValuePtr(const std::string& key) {
-	BSONElement ele  = bsonBuilder->asTempObj().getField(key);
-	int bsize = 0;
-	switch(ele.type()) {
-		case NumberLong:
-		case NumberInt:
-		case Bool:
-		case NumberDouble:
-			return ele.value();
-		case String:
-			return ele.valuestrsafe();
-		case BinData:
-			return ele.binDataClean(bsize);
-		default:
-			break;
-	}
-	return NULL;	
+    BSONElement ele  = bsonBuilder->asTempObj().getField(key);
+    int bsize = 0;
+    switch(ele.type()) {
+        case NumberLong:
+        case NumberInt:
+        case Bool:
+        case NumberDouble:
+            return ele.value();
+        case String:
+            return ele.valuestrsafe();
+        case BinData:
+            return ele.binDataClean(bsize);
+        default:
+            break;
+    }
+    return NULL;
 }
 
 //add a bool value
@@ -309,14 +313,14 @@ SerializationBuffer* CDataWrapper::getBSONData(){
  of the CDataWrapper
  */
 const char* CDataWrapper::getBSONRawData(int& size) {
-        //finalize the bson object
+    //finalize the bson object
     if( bsonBuilder->len()==0 ) return NULL;
-
-        //get the object
+    
+    //get the object
     BSONObj bsonObject = bsonBuilder->asTempObj();
-        //we have some data
+    //we have some data
     size = bsonObject.objsize();
-        //recreate bson builder for next fill
+    //recreate bson builder for next fill
     return bsonObject.objdata();
 }
 
@@ -383,7 +387,7 @@ void CDataWrapper::reset() {
 }
 
 string CDataWrapper::toHash() const{
-	return  bsonBuilder->asTempObj().md5();
+    return  bsonBuilder->asTempObj().md5();
 }
 
 //------------------------checking utility

@@ -1,11 +1,13 @@
 #ifndef COMMANDTEMPLATEINSTANCEEDITOR_H
 #define COMMANDTEMPLATEINSTANCEEDITOR_H
 
-#include "../../presenter/PresenterWidget.h"
 #include "../../data/CommandReader.h"
+#include "../../widget/CDSAttrQLineEdit.h"
+#include "../../presenter/PresenterWidget.h"
 
 #include <QMap>
-#include "../../widget/CDSAttrQLineEdit.h"
+#include <QEvent>
+
 namespace Ui {
 class CommandTemplateInstanceEditor;
 }
@@ -23,11 +25,12 @@ public slots:
     void submitInstance();
 protected:
     void initUI();
-    bool canClose();
+    bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
     boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::TemplateSubmission> getTempalteSubmissionTask();
 
+    bool eventFilter(QObject *object, QEvent *event);
 private:
     //create the user interface for set the requested parameter
     void configureForTemplate(QSharedPointer<chaos::common::data::CDataWrapper> template_description,
@@ -38,6 +41,7 @@ private:
 
     QMap<QString, CDSAttrQLineEdit*> map_attr_name_value_editor;
     Ui::CommandTemplateInstanceEditor *ui;
+    bool close_after_submition;
 };
 
 #endif // COMMANDTEMPLATEINSTANCEEDITOR_H

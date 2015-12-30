@@ -21,14 +21,18 @@
 #include "unit_server/unit_server_batch.h"
 #include "control_unit/control_unit_batch.h"
 #include "node/node_batch.h"
+#include "general/general_batch.h"
+#include "../ChaosMetadataService.h"
 
 using namespace chaos::metadata_service::batch;
 #define BCE_INFO INFO_LOG(BatchCommandExecutor)
-#define BCE_DBG  INFO_DBG(BatchCommandExecutor)
-#define BCE_ERR  INFO_ERR(BatchCommandExecutor)
+#define BCE_DBG  DBG_LOG(BatchCommandExecutor)
+#define BCE_ERR  ERR_LOG(BatchCommandExecutor)
 
 #define MDS_BATCH_COMMAND_INSTANCER(BatchCommandClass) new chaos::common::utility::NestedObjectInstancer<MDSBatchCommand, common::batch_command::BatchCommand>(\
 new chaos::common::utility::TypedObjectInstancer<BatchCommandClass, MDSBatchCommand>())
+
+#define MDS_DEFAULT_BATCH_SANDBOX_COUNT 1
 
 MDSBatchExecutor::MDSBatchExecutor(const std::string& executor_id,
                                    chaos::common::network::NetworkBroker *_network_broker):
@@ -36,19 +40,31 @@ BatchCommandExecutor(executor_id),
 network_broker(_network_broker),
 message_channel_for_job(NULL),
 multiaddress_message_channel_for_job(NULL),
-abstract_persistance_driver(NULL){
-        //node server command
+abstract_persistance_driver(NULL),
+last_used_sb_idx(3){
+    //node server command
     installCommand(node::UpdatePropertyCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::UpdatePropertyCommand));
     installCommand(node::SubmitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(node::SubmitBatchCommand));
     
-        //unit server command
+    //unit server command
     installCommand(unit_server::UnitServerAckCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::UnitServerAckCommand));
     installCommand(unit_server::LoadUnloadControlUnit::command_alias, MDS_BATCH_COMMAND_INSTANCER(unit_server::LoadUnloadControlUnit));
-
-        //control unit command
+    
+    //control unit command
     installCommand(control_unit::ApplyChangeSet::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::ApplyChangeSet));
+    installCommand(control_unit::RecoverError::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::RecoverError));
     installCommand(control_unit::RegistrationAckBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::RegistrationAckBatchCommand));
     installCommand(control_unit::IDSTControlUnitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::IDSTControlUnitBatchCommand));
+    
+    //!general batch command
+    installCommand(general::RestoreSnapshotBatch::command_alias, MDS_BATCH_COMMAND_INSTANCER(general::RestoreSnapshotBatch));
+   
+    //add all sandbox instances
+    if(ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_BATCH_SANDBOX_SIZE)) {
+        addSandboxInstance(ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_BATCH_SANDBOX_SIZE));
+    } else {
+        addSandboxInstance(MDS_DEFAULT_BATCH_SANDBOX_COUNT);
+    }
 }
 
 MDSBatchExecutor::~MDSBatchExecutor(){}
@@ -98,15 +114,28 @@ void MDSBatchExecutor::deinit() throw(chaos::CException) {
     BatchCommandExecutor::deinit();
 }
 
+//! return the number of the sandbox
+uint32_t MDSBatchExecutor::getNextSandboxToUse() {
+    boost::lock_guard<boost::mutex> l(mutex_sandbox_id);
+    last_used_sb_idx++;
+    return (last_used_sb_idx %= getNumberOfSandboxInstance());
+}
+
 //allocate a new command
-chaos::common::batch_command::BatchCommand *MDSBatchExecutor::instanceCommandInfo(const std::string& command_alias,
-                                                                                  CDataWrapper *command_info) {
+chaos::common::batch_command::BatchCommand * MDSBatchExecutor::instanceCommandInfo(const std::string& command_alias,
+                                                                                   uint32_t submission_rule,
+                                                                                   uint32_t submission_retry_delay,
+                                                                                   uint64_t scheduler_step_delay) {
     //install command into the batch command executor root class
     MDSBatchCommand *result = (MDSBatchCommand*) BatchCommandExecutor::instanceCommandInfo(command_alias,
-                                                                                           command_info);
+                                                                                           submission_rule,
+                                                                                           submission_retry_delay,
+                                                                                           scheduler_step_delay);
     
     //customize the newly create batch command
     if(result) {
+        //set this instance
+        result->executor_instance = this;
         //allocoate new message channel
         result->message_channel = message_channel_for_job;
         result->multiaddress_message_channel = multiaddress_message_channel_for_job;
@@ -120,7 +149,17 @@ void MDSBatchExecutor::handleCommandEvent(uint64_t command_seq,
                                           common::batch_command::BatchCommandEventType::BatchCommandEventType type,
                                           void* type_value_ptr,
                                           uint32_t type_value_size) {
-    
+    std::string type_string;
+    switch(type){
+        case common::batch_command::BatchCommandEventType::EVT_QUEUED: type_string = "Queued"; break;
+        case common::batch_command::BatchCommandEventType::EVT_WAITING: type_string = "Waiting to submit"; break;
+        case common::batch_command::BatchCommandEventType::EVT_RUNNING: type_string = "Command is set for run"; break;
+        case common::batch_command::BatchCommandEventType::EVT_PAUSED: type_string = "Command is set in pause"; break;
+        case common::batch_command::BatchCommandEventType::EVT_COMPLETED: type_string = "Command is completed"; break;
+        case common::batch_command::BatchCommandEventType::EVT_FAULT: type_string = "Command has fault"; break;
+        case common::batch_command::BatchCommandEventType::EVT_KILLED: type_string = "Command killed"; break;
+    }
+    BCE_INFO << "Command Event [command_seq:"<<command_seq << " BatchCommandEventType:" << type_string;
 }
 
 //! general sandbox event handler
@@ -128,5 +167,28 @@ void MDSBatchExecutor::handleSandboxEvent(const std::string& sandbox_id,
                                           common::batch_command::BatchSandboxEventType::BatchSandboxEventType type,
                                           void* type_value_ptr,
                                           uint32_t type_value_size) {
-    
+    //BCE_INFO << "Command Sandbox Event [sandbox_id:"<< sandbox_id << " BatchSandboxEventType:" << type;
+}
+
+uint64_t MDSBatchExecutor::submitCommand(const std::string& batch_command_alias,
+                                         chaos::common::data::CDataWrapper * command_data) {
+    uint64_t command_id;
+    BatchCommandExecutor::submitCommand(batch_command_alias,
+                                        command_data,
+                                        command_id,
+                                        getNextSandboxToUse());
+    return command_id;
+}
+
+uint64_t MDSBatchExecutor::submitCommand(const std::string& batch_command_alias,
+                                         chaos::common::data::CDataWrapper* command_data,
+                                         uint32_t sandbox_id,
+                                         uint32_t priority) {
+    uint64_t command_id;
+    BatchCommandExecutor::submitCommand(batch_command_alias,
+                                        command_data,
+                                        command_id,
+                                        sandbox_id,
+                                        priority);
+    return command_id;
 }

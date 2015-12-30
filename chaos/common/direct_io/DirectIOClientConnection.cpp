@@ -30,11 +30,10 @@
 using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 
-#define DIOVCC_LOG_HEAD "[DirectIOVirtualClientChannel: "<< server_description <<"] - "
 
-#define DIOVCCLAPP_ LAPP_ << DIOVCC_LOG_HEAD
-#define DIOVCCLDBG_ LDBG_ << DIOVCC_LOG_HEAD
-#define DIOVCCLERR_ LERR_ << DIOVCC_LOG_HEAD
+#define DIOVCCLAPP_ INFO_LOG(DirectIOClientConnection)
+#define DIOVCCLDBG_ DBG_LOG(DirectIOClientConnection)
+#define DIOVCCLERR_ ERR_LOG(DirectIOClientConnection)
 
 // current client ip in string form
 std::string DirectIOClientConnection::my_str_ip;
@@ -51,6 +50,7 @@ DirectIOClientConnection::DirectIOClientConnection(std::string _server_descripti
 												   uint16_t _endpoint):
 server_description(_server_description),
 endpoint(_endpoint),
+map_client_channels(this),
 event_handler(NULL) {
 	//set the default connection hash
     //generate random hash from uuid lite
@@ -119,7 +119,7 @@ channel::DirectIOVirtualClientChannel *DirectIOClientConnection::getNewChannelIn
     //sub class method for register the instance
     if(channel) {
 		channel->client_instance = this;
-		DICKeyObjectContainer::registerElement(channel->channel_route_index, channel);
+		map_client_channels.registerElement(channel->channel_route_index, channel);
     }
 	return channel;
 }
@@ -127,12 +127,12 @@ channel::DirectIOVirtualClientChannel *DirectIOClientConnection::getNewChannelIn
 // New channel allocation by name
 void DirectIOClientConnection::releaseChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) {
 	if(channel_instance) {
-        DICKeyObjectContainer::deregisterElementKey(channel_instance->channel_route_index);
+        map_client_channels.deregisterElementKey(channel_instance->channel_route_index);
 		channel_instance->client_instance = NULL;
         delete(channel_instance);
     }
 }
 
-void DirectIOClientConnection::freeObject(unsigned int hash, DirectIOClientConnection *connection) {
+void DirectIOClientConnection::freeObject(const DICKeyObjectContainer::TKOCElement& element) {
 	//releaseConnection(connection);
 }

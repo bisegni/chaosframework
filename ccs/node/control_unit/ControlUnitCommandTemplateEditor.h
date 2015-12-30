@@ -31,7 +31,7 @@ public slots:
 
 protected:
     void initUI();
-    bool canClose();
+    bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 signals:

@@ -58,6 +58,12 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CACHE_SERVER_LIST,
 																												 "The list of the cache server",
 																												 &ChaosDataService::getInstance()->setting.cache_driver_setting.startup_chache_servers);
+        
+        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_CACHE_DRIVER_POOL_MIN_INSTANCE,
+                                                                                                "The minimum number of cache driver instance sin the pool",
+                                                                                                 3,
+                                                                                                 &ChaosDataService::getInstance()->setting.cache_driver_setting.caching_pool_min_instances_number);
+        
         ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_DATA_WORKER_LOG_METRIC,
                                                                                              "Enable log metric for data worker",
                                                                                              false,

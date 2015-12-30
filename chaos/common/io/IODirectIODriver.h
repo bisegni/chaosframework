@@ -149,7 +149,12 @@ namespace chaos{
                                                    const std::string& key,
                                                    uint32_t dataset_type,
                                                    chaos_data::CDataWrapper **cdatawrapper_handler);
-
+                //! restore from a tag a dataset associated to a key
+                int createNewSnapshot(const std::string& snapshot_tag,
+                                      const std::vector<std::string>& node_list);
+                
+                int deleteSnapshot(const std::string& snapshot_tag);
+                
                 /*
                  * updateConfiguration
                  */
@@ -169,8 +174,7 @@ namespace chaos{
                     // overrid of the query result method for class DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler[run in another thread]
                 int consumeDataCloudQueryResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *header,
                                                 void *data_found,
-                                                uint32_t data_lenght,
-                                                chaos_direct_io::DirectIOSynchronousAnswerPtr synchronous_answer);
+                                                uint32_t data_lenght);
                 
                     // overrid the method method for class DirectIODeviceServerChannel::consumeDataCloudQueryEndResult[run in another thread]
                 int consumeDataCloudQueryEndResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult *header,

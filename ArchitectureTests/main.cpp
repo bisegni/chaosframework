@@ -27,7 +27,7 @@ public:
     DECLARE_CHAOS_PROPERTY(TestProp, int, CHAOS_PROPERTY_READ_WRITE, property_one)
 
     TestProp() {
-        REGISTER_CHAOS_PROPERTY("TestProp", property_one, &TestProp::setPeropertyOne, &TestProp::getPeropertyOne, "Ge the property one")
+        REGISTER_CHAOS_PROPERTY("TestProp", property_one, &TestProp::setPeropertyOne, &TestProp::getPeropertyOne, "Get the property one")
     }
 };
 

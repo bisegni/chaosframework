@@ -78,7 +78,7 @@ void DataServiceEditor::initUI() {
                     GET_CHAOS_API_PTR(data_service::GetAllDS)->execute());
 }
 
-bool DataServiceEditor::canClose() {
+bool DataServiceEditor::isClosing() {
     return true;
 }
 
@@ -283,6 +283,8 @@ void DataServiceEditor::onApiDone(const QString& tag,
         //we have a result for the lsit of the association to a data service
         fillDataServiceAssocaition(GETDS_FROM_TAG_FOR_LOAD_ASSOCIATION(tag), api_result);
     }
+    PresenterWidget::onApiDone(tag,
+                               api_result);
 }
 void DataServiceEditor::fillDataServiceAssocaition(const QString& data_service,
                                                    QSharedPointer<CDataWrapper> api_result) {

@@ -149,8 +149,98 @@ QVariant FixedOutputChannelDatasetTableModel::getCellData(int row, int column) c
     return result;
 }
 
+QString FixedOutputChannelDatasetTableModel::getSubTypeForCode(int subtype) const {
+    QString result = "...";
+    bool is_unsigned = ((subtype&chaos::DataType::SUB_TYPE_UNSIGNED) == chaos::DataType::SUB_TYPE_UNSIGNED);
+    int real_subtype = is_unsigned?(subtype^chaos::DataType::SUB_TYPE_UNSIGNED):subtype;
+    switch (real_subtype) {
+    case chaos::DataType::SUB_TYPE_BOOLEAN:
+        result = QString("boolean");
+        break;
+    case chaos::DataType::SUB_TYPE_INT8:
+        result = is_unsigned?QString("Int8"):QString("UInt8");
+        break;
+    case chaos::DataType::SUB_TYPE_INT16:
+        result = is_unsigned?QString("Int16"):QString("UInt16");
+        break;
+    case chaos::DataType::SUB_TYPE_INT32:
+        result = is_unsigned?QString("Int32"):QString("UInt32");
+        break;
+    case chaos::DataType::SUB_TYPE_INT64:
+        result = is_unsigned?QString("Int64"):QString("UInt64");
+        break;
+    case chaos::DataType::SUB_TYPE_CHAR:
+        result = QString("Char");
+        break;
+    case chaos::DataType::SUB_TYPE_DOUBLE:
+        result = QString("Double");
+        break;
+    case chaos::DataType::SUB_TYPE_MIME:
+        result = QString("MIME");
+        break;
+    case chaos::DataType::SUB_TYPE_STRING:
+        result = QString("String");
+        break;
+    case chaos::DataType::SUB_TYPE_NONE:
+        result = QString("MIME");
+        break;
+    default:
+        break;
+    }
+    return result;
+}
+
 QVariant FixedOutputChannelDatasetTableModel::getTooltipTextForData(int row, int column) const {
-    return getCellData(row, column);
+    QVariant result;
+    QSharedPointer<CDataWrapper> element = vector_doe[row];
+    switch(column) {
+    case 1:    //
+
+        if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
+            switch (element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE)) {
+            case chaos::DataType::TYPE_BYTEARRAY:
+                if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
+                    int32_t cardinality = 1;
+                    QString sub_type_desription;
+                    if(element->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY)) {
+                        cardinality = element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY);
+                    }
+
+                    //append cardinality
+                    sub_type_desription.append(QString("Cardinality:%1\n").arg(cardinality));
+
+                    //we have a definition of subtype
+                    if(element->isVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
+                        QString composed_subtype_desc;
+                        //we a structure
+                        QSharedPointer<chaos::common::data::CMultiTypeDataArrayWrapper> sub_type_list(element->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
+                        for(int idx = 0;
+                            idx < sub_type_list->size();
+                            idx++) {
+                            sub_type_desription.append(QString("- %1\n").arg(getSubTypeForCode(element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE))));
+                        }
+                    } else {
+                        //we have a single subtype
+                        sub_type_desription.append(QString("- %1\n").arg(getSubTypeForCode(element->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE))));
+                    }
+                    sub_type_desription.resize(sub_type_desription.size()-1);
+                    result = sub_type_desription;
+                } else {
+                    result = getCellData(row, column);
+                }
+                break;
+            default:
+                result = getCellData(row, column);
+                break;
+            }
+        }
+        break;
+
+   default:
+        result = getCellData(row, column);
+        break;
+    }
+    return result;
 }
 
 QVariant FixedOutputChannelDatasetTableModel::getTextAlignForData(int row, int column) const {

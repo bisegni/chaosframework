@@ -33,7 +33,7 @@ using namespace chaos::common::utility;
  */
 InizializableService::InizializableService() {
         //set the default value
-    serviceState = service_state_machine::InizializableServiceType::IS_DEINTIATED;
+    serviceState = CUStateKey::DEINIT;
 }
 
 /*!
@@ -67,29 +67,30 @@ bool InizializableService::deinitImplementation(InizializableService& impl, cons
  */
 bool InizializableService::initImplementation(InizializableService *impl, void *initData, const std::string & implName,  const std::string & domainString)  {
     bool result = true;
+    if(impl == NULL) throw CException(-1, "Implementation is null", domainString);
     try {
-        if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         IS_LAPP  << "Initializing " << implName;
-        if(impl->state_machine.process_event(service_state_machine::EventType::initialize()) == boost::msm::back::HANDLED_TRUE) {
+        if(impl->state_machine.process_event(service_state_machine::EventType::init()) == boost::msm::back::HANDLED_TRUE) {
 			try {
 				impl->init(initData);
 			}catch(CException& ex) {
-				impl->InizializableService::state_machine.process_event(service_state_machine::EventType::deinitialize());
+				impl->InizializableService::state_machine.process_event(service_state_machine::EventType::deinit());
 				throw ex;
 			}
             
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_INITIATED;
         } else {
-           throw CException(0, "Service cant be initialized", domainString);
+           throw CException(-2, "Service cant be initialized", domainString);
         }
         IS_LAPP  << implName << "Initialized";
     } catch (CException& ex) {
-        IS_LAPP  << "Error initializing " << implName;
-        impl->state_machine.process_event(service_state_machine::EventType::deinitialize());
+        IS_LERR  << "Error Initializing";
+        DECODE_CHAOS_EXCEPTION_ON_LOG(IS_LERR, ex);
+        impl->state_machine.process_event(service_state_machine::EventType::deinit());
         throw ex;
 	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
 		IS_LERR  << "Error Deinitializing " << ex.what();
-		throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
+		throw CException(-3, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
 	}
     return result;
 }
@@ -98,22 +99,23 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
  */
 bool InizializableService::deinitImplementation(InizializableService *impl, const std::string & implName,  const std::string & domainString) {
     bool result = true;
+    if(impl == NULL) throw CException(-1, "Implementation is null", domainString);
     try {
-        if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         IS_LAPP  << "Deinitializing " << implName;
-        if(impl->state_machine.process_event(service_state_machine::EventType::deinitialize()) == boost::msm::back::HANDLED_TRUE) {
+        if(impl->state_machine.process_event(service_state_machine::EventType::deinit()) == boost::msm::back::HANDLED_TRUE) {
             impl->deinit();
         } else {
-            throw CException(0, "Service cant be deinitialized", domainString);
+            throw CException(-2, "Service cant be deinitialized", domainString);
         }
         impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_DEINTIATED;
         IS_LAPP  << implName << "Deinitialized";
     } catch (CException& ex) {
-        IS_LAPP  << "Error Deinitializing " << implName;
+        IS_LERR  << "Error Deinitializing";
+        DECODE_CHAOS_EXCEPTION_ON_LOG(IS_LERR, ex);
         throw ex;
 	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
 		IS_LERR  << "Error Deinitializing " << ex.what();
-		throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
+		throw CException(-3, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
 	}
     return result;
 }

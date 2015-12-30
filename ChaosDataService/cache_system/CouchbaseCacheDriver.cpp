@@ -63,15 +63,14 @@ void CouchbaseCacheDriver::getCallback(lcb_t instance,
 									   lcb_error_t error,
 									   const lcb_get_resp_t *resp) {
 	(void)instance;
-	ResultValue *result = new ResultValue();
-	if(error == LCB_SUCCESS) {
-		result->value_len = (uint32_t)resp->v.v0.nbytes;
-		result->value = std::malloc(resp->v.v0.nbytes);
-		std::memcpy(result->value, resp->v.v0.bytes, resp->v.v0.nbytes);
+	if((((CouchbaseCacheDriver*)cookie)->get_result.err = error) == LCB_SUCCESS) {
+		((CouchbaseCacheDriver*)cookie)->get_result.value_len = (uint32_t)resp->v.v0.nbytes;
+		((CouchbaseCacheDriver*)cookie)->get_result.value = std::malloc(resp->v.v0.nbytes);
+		std::memcpy(((CouchbaseCacheDriver*)cookie)->get_result.value,
+                    resp->v.v0.bytes,
+                    resp->v.v0.nbytes);
 
 	}
-	result->err = error;
-	((CouchbaseCacheDriver*)cookie)->addAnswer(result);
 }
 
 void CouchbaseCacheDriver::setCallback(lcb_t instance,
@@ -84,7 +83,7 @@ void CouchbaseCacheDriver::setCallback(lcb_t instance,
 
 CouchbaseCacheDriver::CouchbaseCacheDriver(std::string alias):
 CacheDriver(alias),
-instance(NULL),result_queue(1) {
+instance(NULL) {
 	lcb_uint32_t ver;
 	const char *msg = lcb_get_version(&ver);
 	CCDLAPP_ << "Couchbase sdk version: " << msg;
@@ -119,7 +118,7 @@ void CouchbaseCacheDriver::deinit() throw (chaos::CException) {
 }
 
 int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  void *value, uint32_t value_len) {
-	CHAOS_ASSERT(getServiceState() == common::utility::service_state_machine::InizializableServiceType::IS_INITIATED)
+    CHAOS_ASSERT(getServiceState() == CUStateKey::INIT)
 	//boost::shared_lock<boost::shared_mutex> lock(mutex_server);
 	lcb_store_cmd_t cmd;
     const lcb_store_cmd_t * const commands[] = { &cmd };
@@ -132,22 +131,22 @@ int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  v
     cmd.v.v0.operation = LCB_SET;
     if ((last_err = lcb_store(instance, this, 1, commands)) != LCB_SUCCESS) {
 		CCDLERR_<< "Fail to set value -> "<< lcb_strerror(NULL, last_err);
-		return -1;
+		return last_err;
     }
 	lcb_wait(instance);
 	if(last_err != LCB_SUCCESS) {
 		CCDLERR_<< "Fail to set value with last_err "<< last_err << " with message " << last_err_str;
-		last_err = LCB_SUCCESS;
-		return -1;
+		return last_err;
 	}
 	return 0;
 }
 
 int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  void **value, uint32_t& value_len) {
 	//boost::shared_lock<boost::shared_mutex> lock(mutex_server);
-	CHAOS_ASSERT(getServiceState() == service_state_machine::InizializableServiceType::IS_INITIATED)
+	CHAOS_ASSERT(getServiceState() == CUStateKey::INIT)
+    CHAOS_ASSERT(value)
+    
 	lcb_get_cmd_t cmd;
-	lcb_error_t err = LCB_SUCCESS;
 	const lcb_get_cmd_t *commands[1];
 	
 	commands[0] = &cmd;
@@ -155,28 +154,22 @@ int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  v
 	cmd.v.v0.key = element_key;
 	cmd.v.v0.nkey = element_key_len;
 	
-	err = lcb_get(instance, (void*)this, 1, commands);
-	if (err != LCB_SUCCESS) {
-		CCDLERR_<< "Fail to get value -> "<< lcb_strerror(NULL, err);
-		return -1;
+	last_err = lcb_get(instance, (void*)this, 1, commands);
+	if (last_err != LCB_SUCCESS) {
+		CCDLERR_<< "Fail to get value -> "<< lcb_strerror(NULL, last_err);
+		return last_err;
 	}
 	lcb_wait(instance);
-	ResultValue *result = NULL;
-	if(result_queue.pop(result)){
-		*value = (void*)result->value;
-		value_len = result->value_len;
-		delete result;
+	if(get_result.err == LCB_SUCCESS){
+        //last_err = result->err;
+		*value = (void*)get_result.value;
+		value_len = get_result.value_len;
 	}
 	if(last_err != LCB_SUCCESS) {
-		CCDLERR_<< "Fail to set value with last_err "<< last_err << " with message " << last_err_str;
-		last_err = LCB_SUCCESS;
-		return -1;
+		CCDLERR_<< "Fail to get value with last_err "<< last_err << " with message " << last_err_str;
+		return last_err;
 	}
 	return 0;
-}
-
-void CouchbaseCacheDriver::addAnswer(ResultValue *got_value) {
-	result_queue.push(got_value);
 }
 
 bool CouchbaseCacheDriver::validateString(std::string& server_description) {
@@ -227,17 +220,10 @@ int CouchbaseCacheDriver::updateConfig() {
 	//clear the configuration
 	memset(&create_options, 0, sizeof(create_options));
 	
-	lcb_config_transport_t transports[] = {
-		LCB_CONFIG_TRANSPORT_CCCP,
-		LCB_CONFIG_TRANSPORT_LIST_END
-	};
-	
 	//create_options
 	create_options.version = 3;
-	//create_options.v.v3.transports = transports;
 	if(bucket_user.size()) create_options.v.v3.username = bucket_user.c_str();
 	if(bucket_pwd.size()) create_options.v.v3.passwd = bucket_pwd.c_str();
-	//if(bucket_name.size()) create_options.v.v3.bucket = bucket_name.c_str();
 	
 	all_server_str.assign("couchbase://");
 	for (ServerIterator iter = all_server_to_use.begin();

@@ -24,6 +24,7 @@ protected:
     virtual bool setCellData(const QModelIndex &index, const QVariant &value);
     virtual bool isCellEditable(const QModelIndex &index) const;
     virtual bool isCellCheckable(const QModelIndex &index) const;
+    virtual bool isCellSelectable(const QModelIndex &index) const;
 public:
     ChaosAbstractTableModel(QObject *parent=0);
     Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;

@@ -25,51 +25,50 @@
 #include <boost/noncopyable.hpp>
 #include <chaos/common/global.h>
 
-
 namespace chaos {
-	namespace common{
-		namespace utility {
+    namespace common {
+        namespace utility {
+
 #define SUBCLASS_AS_SINGLETON(ClassName) \
-public Singleton<ClassName>{\
-friend class Singleton<ClassName>;
-			
+        public Singleton<ClassName>{\
+        friend class Singleton<ClassName>;
+
 #define DEFINE_CLASS_AS_SINGLETON(ClassName) \
-class ClassName : public Singleton<ClassName>{\
-friend class Singleton<ClassName>;
-			
+        class ClassName : public Singleton<ClassName>{\
+        friend class Singleton<ClassName>;
+
 #define DEFINE_CLASS_AS_SINGLETON_WITH_OTHER_SUBCLASS(ClassName, Subclass) \
-class ClassName : public Subclass, public Singleton<ClassName>{\
-friend class Singleton<ClassName>;
-			/*
-			 * Utility class for singleton find here: http://www.boostcookbook.com/Recipe:/1235044
-			 */
-			template<class T>
-			class Singleton : private boost::noncopyable {
-			public:
-				static T* getInstance() {
-					//static T singletonInstance;
-					call_once(_singletonInit, flag);
-					return t;
-				}
-				
-				static void _singletonInit() {
-					if(!t){
-						t = new T();
-					}
-				}
-				
-			protected:
-				~Singleton() {}
-				Singleton() {}
-				
-			private:
-				static T *t;
-				static boost::once_flag flag;
-			};
-			//template<class T> mutex Singleton<T>::stMutext;
-			template<class T> T* Singleton<T>::t = 0L;
-			template<class T> boost::once_flag Singleton<T>::flag = BOOST_ONCE_INIT;
-		}
-	}
+        class ClassName : public Subclass, public Singleton<ClassName>{\
+        friend class Singleton<ClassName>;
+
+            /*
+             * Utility class for singleton find here: http://www.boostcookbook.com/Recipe:/1235044
+             */
+            template<class T>
+            class Singleton: private boost::noncopyable {
+            public:
+                static T *getInstance() {
+                    //static T singletonInstance;
+                    call_once(_singletonInit, flag);
+                    return t;
+                }
+
+                static void _singletonInit() {
+                    if(!t){
+                        t = new T();
+                    }
+                }
+
+            private:
+
+                static T                *t;
+                static boost::once_flag flag;
+            };
+
+            template<class T> T *Singleton<T>::t = 0L;
+
+            template<class T> boost::once_flag Singleton<T>::flag = BOOST_ONCE_INIT;
+        }
+    }
 }
 #endif

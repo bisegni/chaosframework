@@ -59,22 +59,15 @@ namespace chaos{
          */
         class ChaosDataService : public ChaosCommon<ChaosDataService> {
             friend class Singleton<ChaosDataService>;
-            
 			RunMode run_mode;
             static WaitSemaphore waitCloseSemaphore;
-			
-			
-			
+    
             ChaosDataService();
             ~ChaosDataService();
             static void signalHanlder(int);
 			
 			//root pointer of the index driver
 			db_system::DBDriver *db_driver_ptr;
-			
-			
-			//!chaos internal network router
-			common::utility::StartableServiceContainer<chaos::common::network::NetworkBroker> network_broker;
 			
 			//! CDS virtual file system manager
 			common::utility::InizializableServiceContainer<vfs::VFSManager> vfs_file_manager;

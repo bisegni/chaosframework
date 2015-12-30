@@ -15,25 +15,41 @@ using namespace chaos::metadata_service_client::api_proxy::node;
 SearchNodeResult::SearchNodeResult(bool _selection_mode,
                                    const QString &_tag) :
     PresenterWidget(NULL),
-    current_page(0),
-    current_page_length(30),
+    current_page_length(200),
     selection_mode(_selection_mode),
     tag(_tag),
-    ui(new Ui::SearchNodeResult)
-{
+    ui(new Ui::SearchNodeResult) {
+    ui->setupUi(this);
+
+}
+
+SearchNodeResult::SearchNodeResult(bool _selection_mode,
+                                   const QList<SearchNodeType>& _selectable_types,
+                                   const QString& _tag):
+    current_page_length(200),
+    selection_mode(_selection_mode),
+    tag(_tag),
+    selectable_types(_selectable_types) {
     ui->setupUi(this);
 }
 
-SearchNodeResult::~SearchNodeResult()
-{
+SearchNodeResult::~SearchNodeResult() {
     delete ui;
 }
 
-bool SearchNodeResult::canClose() {
+bool SearchNodeResult::isClosing() {
     return true;
 }
 
 void SearchNodeResult::initUI() {
+    setFocusPolicy(Qt::StrongFocus);
+    ui->lineEditSearchCriteria->setFocus();
+
+    search_timer.setSingleShot(true);
+    connect(&search_timer,
+            SIGNAL(timeout()),
+            SLOT(on_pushButtonStartSearch_clicked()));
+
     setTabTitle("Search Nodes");
 
     if(selection_mode){
@@ -42,11 +58,24 @@ void SearchNodeResult::initUI() {
         ui->pushButtonActionOnSelected->setText(tr("open editor"));
     }
 
-    //fetch the api porxy
-    ns_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<NodeSearch>();
-
     QStringList search_types;
-    search_types << "All types" << "Unit server" << "Control unit";
+    if(selectable_types.size() == 0) {
+        search_types << "All types" << "Unit server" << "Control unit";
+    } else {
+        foreach(SearchNodeType searchable_type , selectable_types) {
+            switch(searchable_type) {
+            case SNT_ALL_TYPE:
+                search_types << "All types";
+                break;
+            case SNT_UNIT_SERVER:
+                search_types << "Unit server";
+                break;
+            case SNT_CONTROL_UNIT:
+                search_types << "Control unit";
+                break;
+            }
+        }
+    }
     ui->comboBoxSearchType->addItems(search_types);
 
     // Create a new model
@@ -79,38 +108,36 @@ void SearchNodeResult::onApiDone(const QString& tag,
 
         //clear the model
         table_model->setRowCount(0);
-        if(!api_result.isNull() && api_result->hasKey("node_search_result_page")) {
+
+        if(!api_result.isNull() &&
+                api_result->hasKey("node_search_result_page") &&
+                api_result->isVectorValue("node_search_result_page")) {
             //we have result
-            CMultiTypeDataArrayWrapper *arr =  api_result->getVectorValue("node_search_result_page");
-            for(int i = 0;
-                i < arr->size();
-                i++) {
-                auto_ptr<CDataWrapper> found_node(arr->getCDataWrapperElementAtIndex(i));
+            std::auto_ptr<CMultiTypeDataArrayWrapper> arr(api_result->getVectorValue("node_search_result_page"));
 
-                QList<QStandardItem *> row_item;
-                QStandardItem *item = NULL;
-                row_item.append(item = new QStandardItem(QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID))));
-                item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+            if(arr->size()) {
+                //get first element seq
+                for(int i = 0;
+                    i < arr->size();
+                    i++) {
+                    auto_ptr<CDataWrapper> found_node(arr->getCDataWrapperElementAtIndex(i));
 
-                row_item.append(item = new QStandardItem(QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE))));
-                item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+                    QList<QStandardItem *> row_item;
+                    QStandardItem *item = NULL;
+                    row_item.append(item = new QStandardItem(QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID))));
+                    item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
-                table_model->appendRow(row_item);
+                    row_item.append(item = new QStandardItem(QString::fromStdString(found_node->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE))));
+                    item->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+
+                    table_model->appendRow(row_item);
+                }
             }
         }else{
             qDebug() << "No data found";
         }
     }
-}
-
-void SearchNodeResult::on_pushButtonNextPage_clicked()
-{
-    qDebug() << "Fetch next page";
-}
-
-void SearchNodeResult::on_pushButtonPrevPage_clicked()
-{
-    qDebug() << "Fetch prev";
+    PresenterWidget::onApiDone(tag, api_result);
 }
 
 void SearchNodeResult::on_tableViewResult_clicked(const QModelIndex &index)
@@ -122,13 +149,13 @@ void SearchNodeResult::on_tableViewResult_clicked(const QModelIndex &index)
 void SearchNodeResult::on_pushButtonStartSearch_clicked()
 {
     //submit api
-    submitApiResult(QString("search_result"),
-                    //start the query
-                    ns_proxy->execute(ui->lineEditSearchCriteria->text().toStdString(),
-                                      ui->comboBoxSearchType->currentIndex(),
-                                      current_page*current_page_length,
-                                      current_page_length)
-                    );
+    if(ui->lineEditSearchCriteria->text().size() >=3) {
+        submitApiResult("search_result",
+                        GET_CHAOS_API_PTR(node::NodeSearch)->execute(ui->lineEditSearchCriteria->text().toStdString(),
+                                                                     ui->comboBoxSearchType->currentIndex(),
+                                                                     0,
+                                                                     current_page_length));
+    }
 }
 
 void SearchNodeResult::on_pushButtonActionOnSelected_clicked() {
@@ -187,5 +214,17 @@ void SearchNodeResult::on_tableViewResult_doubleClicked(const QModelIndex &index
             qDebug() << "Open control unit editor for" << node_uid->text();
             addWidgetToPresenter(new ControlUnitEditor(node_uid->text()));
         }
+    }
+}
+
+void SearchNodeResult::on_lineEditSearchCriteria_textEdited(const QString &search_string) {
+    qDebug() << "on_lineEditSearchCriteria_textEdited:" << search_string;
+    if(search_string.size() >= 3) {
+        //restart timer
+        search_timer.start(500);
+    } else {
+        //if no string we not perform the search
+        search_timer.stop();
+        table_model->setRowCount(0);
     }
 }

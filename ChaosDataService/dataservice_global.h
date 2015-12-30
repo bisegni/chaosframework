@@ -27,11 +27,12 @@ namespace chaos{
 #define OPT_RUN_MODE				"run-mode"
 		
 		//cache configuration
-#define OPT_CACHE_LOG_METRIC        "cache-log-metric"
-#define OPT_CACHE_LOG_METRIC_UPDATE_INTERVAL "cache-log-metric-update-interval"
-#define OPT_CACHE_SERVER_LIST		"cache-servers"
-#define OPT_CACHE_DRIVER			"cache-driver"
-#define OPT_CACHE_DRIVER_KVP		"cache-driver-kvp"
+#define OPT_CACHE_LOG_METRIC                    "cache-log-metric"
+#define OPT_CACHE_LOG_METRIC_UPDATE_INTERVAL    "cache-log-metric-update-interval"
+#define OPT_CACHE_SERVER_LIST                   "cache-servers"
+#define OPT_CACHE_DRIVER                        "cache-driver"
+#define OPT_CACHE_DRIVER_KVP                    "cache-driver-kvp"
+#define OPT_CACHE_DRIVER_POOL_MIN_INSTANCE      "cache-driver-pool-min-instance"
         
 #define OPT_DATA_WORKER_LOG_METRIC                 "data-worker-log-metric"
 #define OPT_DATA_WORKER_LOG_METRIC_UPDATE_INTERVAL "data-worker-log-metric-update-interval"

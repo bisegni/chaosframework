@@ -1,8 +1,8 @@
-/*	
+/*
  *	LLDataApi.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,12 +34,11 @@ namespace chaos {
         class LLDataApi:
 		public common::utility::Singleton<LLDataApi>  {
             friend class ChaosUIToolkit;
-            IODataDriver *liveDriver;
-            
+
             LLDataApi();
             ~LLDataApi();
-            
-          public:          
+
+          public:
 
         };
     }

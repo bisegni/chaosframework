@@ -45,7 +45,7 @@ namespace chaos {
             EventHandler *rootEventHandler;
         protected:
                 //Default Server Constructor
-            EventServer(const string& alias);
+            EventServer(const std::string& alias);
             
             /*
              init the event adapter

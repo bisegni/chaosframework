@@ -1,11 +1,9 @@
 #ifndef HEALTPRESENTERWIDGET_H
 #define HEALTPRESENTERWIDGET_H
-
 #include "../handler/healt/healt.h"
-
+#include "../../presenter/CommandPresenter.h"
+#include "../../api_async_processor/ApiAsyncProcessor.h"
 #include <QFrame>
-
-#include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
 
 namespace Ui {
 class HealtPresenterWidget;
@@ -24,18 +22,34 @@ protected:
     //! called when there is a new value for the heartbeat
 
 public:
-    explicit HealtPresenterWidget(const QString& node_to_check,
+    explicit HealtPresenterWidget(CommandPresenter *_global_command_presenter,
+                                  const QString& node_to_check,
                                   QWidget *parent = 0);
     ~HealtPresenterWidget();
 public slots:
-    void updateAttributeValue(const QString& key,
-                              const QString& attribute_name,
-                              const QVariant& attribute_value);
+
+private slots:
+
+    //!Api has ben called successfully
+    void asyncApiResult(const QString& tag,
+                        QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+
+    //!Api has been give an error
+    void asyncApiError(const QString& tag,
+                       QSharedPointer<chaos::CException> api_exception);
+    void asyncApiTimeout(const QString& tag);
+    //!open node editor
+    void on_pushButtonOpenNodeEditor_clicked();
+
+    void statusChanged(const QString& node_uid,
+                       const chaos::metadata_service_client::monitor_system::KeyValue& healt_values);
+
+    void statusNoData(const QString& node_uid);
 private:
-    HealtStatusHandler      status_handler;
-    HealthHartbeatHandler   hb_handler;
-    QString         node_key;
-    qulonglong last_time_stamp;
+    QString type;
+    const QString node_uid;
+    ApiAsyncProcessor api_processor;
+    CommandPresenter *global_command_presenter;
     Ui::HealtPresenterWidget *ui;
 };
 

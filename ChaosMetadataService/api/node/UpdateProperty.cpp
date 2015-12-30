@@ -55,8 +55,7 @@ CDataWrapper *UpdateProperty::execute(CDataWrapper *api_data,
     update_property_batch_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, node_unique_id);
     api_data->copyKeyTo("update_property", *update_property_batch_pack);
     
-    getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::UpdatePropertyCommand),
-                                      update_property_batch_pack.release(),
-                                      command_id);
+    command_id = getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::node::UpdatePropertyCommand),
+                                                   update_property_batch_pack.release());
     return NULL;
 }

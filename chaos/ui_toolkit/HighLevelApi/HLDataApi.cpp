@@ -45,12 +45,14 @@ void HLDataApi::init() throw (CException) {
  Deinitialization of LL rpc api
  */
 void HLDataApi::deinit() throw (CException) {
+     LDBG_<<"["<<__PRETTY_FUNCTION__<<"] deleting device controllers";
+
     for (map<string, DeviceController*>::iterator controllerIterator = controllerMap.begin(); 
          controllerIterator != controllerMap.end(); 
          controllerIterator++) {
-        
+        LDBG_<<"["<<__PRETTY_FUNCTION__<<"] deleting device controller:"<<controllerIterator->first<<" ptr:"<<(uintptr_t)std::hex<<controllerIterator->second;
+
         DeviceController *ctrl = controllerIterator->second;
-        
         //dispose it
         delete(ctrl);
     }
@@ -59,10 +61,11 @@ void HLDataApi::deinit() throw (CException) {
 
 
 DeviceController *HLDataApi::getControllerForDeviceID(string deviceID, uint32_t controller_timeout) throw (CException) {
+    
     DeviceController *deviceController = new DeviceController(deviceID);
 	deviceController->setRequestTimeWaith(controller_timeout);
     deviceController->updateChannel();
-    
+      LDBG_<<"["<<__PRETTY_FUNCTION__<<"] inserting new device controller:"<<deviceID<<" ptr:"<<(uintptr_t)std::hex<<deviceController;
     controllerMap.insert(make_pair(deviceID, deviceController));
     
     return deviceController;

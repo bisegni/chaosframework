@@ -19,9 +19,9 @@
  */
 
 #include "DeviceController.h"
+#include <chaos/common/chaos_constants.h>
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
-#include <chaos/common/io/IOMemcachedIODriver.h>
-
 #include <boost/lexical_cast.hpp>
 
 using namespace std;
@@ -40,33 +40,44 @@ using namespace chaos::common::batch_command;
 DeviceController::DeviceController(string& _deviceID):
 device_id(_deviceID),
 datasetDB(true) {
+
+    const auto_ptr<chaos::common::data::CDataWrapper> d;
     mdsChannel = NULL;
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;
     millisecToWait = MSEC_WAIT_OPERATION;
-	
-	output_key	= device_id + DataPackPrefixID::OUTPUT_DATASE_PREFIX;
-	input_key	= device_id + DataPackPrefixID::INPUT_DATASE_PREFIX;
-	system_key	= device_id + DataPackPrefixID::SYSTEM_DATASE_PREFIX;
-	custom_key	= device_id + DataPackPrefixID::CUSTOM_DATASE_PREFIX;
+    channel_keys.push_back(device_id + DataPackPrefixID::OUTPUT_DATASE_PREFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::INPUT_DATASE_PREFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::CUSTOM_DATASE_PREFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::SYSTEM_DATASE_PREFIX);
+    channel_keys.push_back(device_id + DataPackPrefixID::HEALTH_DATASE_PREFIX);
+  //  current_dataset.push_back(d);
+    for(int cnt=0;cnt<channel_keys.size();cnt++)
+        current_dataset.push_back(new auto_ptr<chaos::common::data::CDataWrapper> ());
+
 }
 
 //---------------------------------------------------------------------------------------------------
 DeviceController::~DeviceController() {
+   LDBG_<<"["<<__PRETTY_FUNCTION__<<"] remove Device Controller:"<<device_id;
     stopTracking();
-    
+
     if(mdsChannel){
         LLRpcApi::getInstance()->deleteMessageChannel(mdsChannel);
     }
-    
-    
+
+
     if(deviceChannel){
         LLRpcApi::getInstance()->deleteMessageChannel(deviceChannel);
+
     }
-    
+
     if(ioLiveDataDriver){
         ioLiveDataDriver->deinit();
         delete(ioLiveDataDriver);
+    }
+    for(int cnt=0;cnt<channel_keys.size();cnt++){
+        delete current_dataset[cnt];
     }
 }
 
@@ -95,17 +106,17 @@ void DeviceController::updateChannel() throw(CException) {
         mdsChannel = LLRpcApi::getInstance()->getNewMetadataServerChannel();
         if(!mdsChannel) throw CException(-1, "No MDS Channel created", "DeviceController::init");
     }
-    
+
     err = mdsChannel->getLastDatasetForDevice(device_id, &tmp_data_handler, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !tmp_data_handler) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
-    
+
     auto_ptr<CDataWrapper> lastDeviceDefinition(tmp_data_handler);
-    
+
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
-    
+
     err = mdsChannel->getNetworkAddressForDevice(device_id, &devAddress, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !devAddress) throw CException(-3, "No Address found for device", "DeviceController::init");
-    
+
     //update live data driver
 	if(!ioLiveDataDriver) {
         ioLiveDataDriver = LLRpcApi::getInstance()->getDataProxyChannelNewInstance();
@@ -117,8 +128,8 @@ void DeviceController::updateChannel() throw(CException) {
             }
 		}
 	}
-    
-    
+
+
     //allocate device channel the memory of the CDeviceNetworkAddress * is managed by channel
     if(!deviceChannel){
         deviceChannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(devAddress);
@@ -170,23 +181,23 @@ int DeviceController::getAttributeStrValue(string attribute_name, string& attrib
 				case DataType::TYPE_INT64:
 					attribute_value = boost::lexical_cast<string>(dataWrapper->getInt64Value(attribute_name.c_str()));
 					break;
-					
+
 				case DataType::TYPE_INT32:
 					attribute_value = boost::lexical_cast<string>(dataWrapper->getInt64Value(attribute_name.c_str()));
 					break;
-					
+
 				case DataType::TYPE_DOUBLE:
 					attribute_value = boost::lexical_cast<string>(dataWrapper->getDoubleValue(attribute_name.c_str()));
 					break;
-					
+
 				case DataType::TYPE_STRING:
 					attribute_value = boost::lexical_cast<string>(dataWrapper->getStringValue(attribute_name.c_str()));
 					break;
-					
+
 				case DataType::TYPE_BOOLEAN:
 					attribute_value = boost::lexical_cast<string>(dataWrapper->getBoolValue(attribute_name.c_str()));
 					break;
-					
+
 				case DataType::TYPE_BYTEARRAY: {
 					const char *buffer = NULL;
 					int size;
@@ -194,21 +205,21 @@ int DeviceController::getAttributeStrValue(string attribute_name, string& attrib
 					if(buffer) attribute_value.assign(buffer, size);
 					break;
 				}
-					
+
 				default:
 					err = -1;
 					break;
 			}
 		}
-		
+
 	}
 	return err;
 }
 //---------------------------------------------------------------------------------------------------
-int DeviceController::getDeviceAttributeType(const string& attributesName, DataType::DataType& type) {
+int DeviceController::getDeviceAttributeType(const string& attr, DataType::DataType& type) {
 	int err = 0;
-	if(attributeTypeMap.count(attributesName)){
-		type = attributeTypeMap[attributesName];
+	if(attributeValueMap.count(attr)){
+		type = attributeValueMap[attr].valueType;
 	} else {
 		err = -1;
 	}
@@ -218,10 +229,18 @@ int DeviceController::getDeviceAttributeType(const string& attributesName, DataT
 //---------------------------------------------------------------------------------------------------
 int DeviceController::getType(std::string& control_unit_type) {
 	int err = 0;
-	if(!cu_type.size()) {
-		err = deviceChannel->getType(cu_type, millisecToWait);
-	}
+	if(cu_type.empty()) {
+		CDataWrapper*tmp=fetchCurrentDatatasetFromDomain(DatasetDomainSystem);
+                if(tmp && tmp->hasKey(DataPackSystemKey::DP_SYS_UNIT_TYPE)){
+                    std::string t=tmp->getCStringValue(DataPackSystemKey::DP_SYS_UNIT_TYPE);
+                    cu_type = t;
+                } else {
+                    return -1;
+                }
+
+        }
 	control_unit_type = cu_type;
+
 	return err;
 }
 
@@ -231,7 +250,7 @@ int DeviceController::initDevice() {
 	int err = 0;
 	CDataWrapper initConf;
 	datasetDB.fillDataWrapperWithDataSetDescription(initConf);
-	
+
 	//initialize the devica with the metadataserver data
 	err = deviceChannel->initDevice(&initConf, millisecToWait);
 	//configure the live data with the same server where the device write
@@ -264,11 +283,35 @@ int DeviceController::restoreDeviceToTag(const std::string& restore_tag) {
 }
 
 //---------------------------------------------------------------------------------------------------
-int DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
-	CHAOS_ASSERT(deviceChannel)
-	return deviceChannel->getState(deviceState, millisecToWait);
+uint64_t DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
+    uint64_t ret=0;
+    CDataWrapper*tmp=fetchCurrentDatatasetFromDomain(DatasetDomainHealth);
+    deviceState=CUStateKey::UNDEFINED;
+    if(tmp && tmp->hasKey(NodeHealtDefinitionKey::NODE_HEALT_STATUS)){
+        std::string state=tmp->getCStringValue(NodeHealtDefinitionKey::NODE_HEALT_STATUS);
+        if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_START) || (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_STARTING))
+            deviceState=CUStateKey::START;
+        else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP) || (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOPING))
+            deviceState= CUStateKey::STOP;
+        else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT) || (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_INITING))
+            deviceState= CUStateKey::INIT;
+        else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT) || (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINITING)|| (state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD))
+            deviceState= CUStateKey::DEINIT;
+        else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR))
+            deviceState= CUStateKey::RECOVERABLE_ERROR;
+        else if((state== NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR))
+            deviceState= CUStateKey::FATAL_ERROR;
+
+        if(tmp->hasKey(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP)){
+            ret = tmp->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP);
+        }
+    }
+    return ret;
 }
 
+int DeviceController::getChannelsNum(){
+    return channel_keys.size();
+}
 //---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(string& attributeName, int32_t attributeValue) {
 	return setAttributeValue(attributeName.c_str(), attributeValue);
@@ -298,11 +341,11 @@ int DeviceController::setAttributeToValue(const char *attributeName, const char 
 	int err = ErrorCode::EC_NO_ERROR;
 	CDataWrapper attributeValuePack;
 	cc_data::RangeValueInfo range_info;
-	
+
 	//get type for the value
 	if((err = datasetDB.getAttributeRangeValueInfo(attributeName, range_info)))
 		return err;
-	
+
 	switch (range_info.valueType) {
 		case DataType::TYPE_BOOLEAN: {
 			bool boolValuePtr = lexical_cast<bool>(attributeValue);
@@ -341,10 +384,10 @@ int DeviceController::setAttributeToValue(const char *attributeName, const char 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeToValue(const char *attributeName, void *attributeValue, bool noWait, int32_t bufferValuedDim) {
 	cc_data::RangeValueInfo range_info;
-	
+
 	//get type for the value
 	datasetDB.getAttributeRangeValueInfo(attributeName, range_info);
-	
+
 	//call default API
 	return setAttributeToValue(attributeName, range_info.valueType, attributeValue, noWait, bufferValuedDim);
 }
@@ -396,33 +439,38 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 											   uint64_t scheduler_steps_delay,
 											   uint32_t submission_checker_steps_delay,
 											   CDataWrapper *slow_command_data) {
-	CDataWrapper localCommandPack;
-	CDataWrapper *resultData = NULL;
+	CDataWrapper local_command_pack;
+	CDataWrapper *result_data = NULL;
 	int err = ErrorCode::EC_NO_ERROR;
-	
+
 	if(slow_command_data) {
-		localCommandPack.appendAllElement(*slow_command_data);
+		local_command_pack.appendAllElement(*slow_command_data);
 	}
-	
+
 	// set the default slow command information
-	localCommandPack.addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, commandAlias);
-	localCommandPack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
-	localCommandPack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32, (uint32_t) priority);
-	
-	if(execution_channel) localCommandPack.addInt32Value(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
-	if(scheduler_steps_delay) localCommandPack.addInt64Value(BatchCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, scheduler_steps_delay);
-	if(submission_checker_steps_delay) localCommandPack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, submission_checker_steps_delay);
-	
-	//err = deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
-	localCommandPack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_id);
-	err = deviceChannel->sendCustomRequest(ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET, &localCommandPack, &resultData, millisecToWait);
-	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
+	local_command_pack.addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, commandAlias);
+	local_command_pack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
+	local_command_pack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32, (uint32_t) priority);
+
+	if(execution_channel) local_command_pack.addInt32Value(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
+	if(scheduler_steps_delay) local_command_pack.addInt64Value(BatchCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, scheduler_steps_delay);
+	if(submission_checker_steps_delay) local_command_pack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, submission_checker_steps_delay);
+
+	//err = deviceChannel->setAttributeValue(local_command_pack, false, millisecToWait);
+	local_command_pack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_id);
+	err = deviceChannel->sendCustomRequest(ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET, &local_command_pack, &result_data, millisecToWait);
+	if(err == ErrorCode::EC_NO_ERROR &&
+       result_data &&
+       result_data->hasKey(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id
-		command_id = resultData->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
-		delete(resultData);
-	}
+		command_id = result_data->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
+	} else {
+            if(result_data)
+                LERR_<<"missing key:"<<BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64<<" :"<<result_data->getJSONString();
+        }
 	//forward the request
-	return err;
+    if(result_data) delete(result_data);
+     return err;
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -433,77 +481,83 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 											   uint64_t scheduler_steps_delay,
 											   uint32_t submission_checker_steps_delay,
 											   CDataWrapper *slow_command_data) {
-	CDataWrapper localCommandPack;
-	CDataWrapper *resultData = NULL;
+	CDataWrapper local_command_pack;
+	CDataWrapper *result_data = NULL;
 	int err = ErrorCode::EC_NO_ERROR;
-	
+
 	if(slow_command_data) {
-		localCommandPack.appendAllElement(*slow_command_data);
+		local_command_pack.appendAllElement(*slow_command_data);
 	}
 	// set the default slow command information
-	localCommandPack.addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, commandAlias);
-	localCommandPack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
-	
-	if(execution_channel) localCommandPack.addInt32Value(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
-	if(scheduler_steps_delay) localCommandPack.addInt64Value(BatchCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, scheduler_steps_delay);
-	if(submission_checker_steps_delay) localCommandPack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submission_checker_steps_delay);
-	
+	local_command_pack.addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, commandAlias);
+	local_command_pack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
+
+	if(execution_channel) local_command_pack.addInt32Value(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
+	if(scheduler_steps_delay) local_command_pack.addInt64Value(BatchCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, scheduler_steps_delay);
+	if(submission_checker_steps_delay) local_command_pack.addInt32Value(BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submission_checker_steps_delay);
+
 	//forward the request
-	localCommandPack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_id);
-    err = deviceChannel->sendCustomRequest(ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET, &localCommandPack, &resultData, millisecToWait);
-	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
+	local_command_pack.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, device_id);
+    err = deviceChannel->sendCustomRequest(ControlUnitNodeDomainAndActionRPC::CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET,
+                                           &local_command_pack,
+                                           &result_data,
+                                           millisecToWait);
+	if(err == ErrorCode::EC_NO_ERROR
+       && result_data
+       && result_data->hasKey(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id
-		command_id = resultData->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
-		delete(resultData);
+		command_id = result_data->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
 	}
-	//forward the request
+    //delete result data
+    if(result_data)delete(result_data);
 	return err;
 }
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::setSlowCommandFeatures(features::Features& features, bool lock_features, uint32_t execution_channel) {
-	CDataWrapper localCommandPack;
+	CDataWrapper local_command_pack;
 	if(features.featuresFlag & features::FeaturesFlagTypes::FF_LOCK_USER_MOD) {
-		localCommandPack.addBoolValue(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
+		local_command_pack.addBoolValue(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
 	}
-	
+
 	if(features.featuresFlag & features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY) {
-		localCommandPack.addInt64Value(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64, features.featureSchedulerStepsDelay);
+		local_command_pack.addInt64Value(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64, features.featureSchedulerStepsDelay);
 	}
-	
-	if(execution_channel) localCommandPack.addInt32Value(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
-	
-	return deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL, millisecToWait);
+
+	if(execution_channel) local_command_pack.addInt32Value(BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
+
+	return deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &local_command_pack, NULL, millisecToWait);
 }
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::setSlowCommandLockOnFeatures(bool lock_features) {
-	CDataWrapper localCommandPack;
-	localCommandPack.addBoolValue(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
-	return deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL, millisecToWait);
+	CDataWrapper local_command_pack;
+	local_command_pack.addBoolValue(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
+	return deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &local_command_pack, NULL, millisecToWait);
 }
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::getCommandState(CommandState& command_state) {
-	CDataWrapper localCommandPack;
-	CDataWrapper *resultData = NULL;
+	CDataWrapper local_command_pack;
+	CDataWrapper *result_data = NULL;
 	int err = ErrorCode::EC_NO_ERROR;
-	localCommandPack.addInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_state.command_id);
-	err = deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE, &localCommandPack, &resultData, millisecToWait);
-	if(err == ErrorCode::EC_NO_ERROR && resultData) {
+	local_command_pack.addInt64Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_state.command_id);
+	err = deviceChannel->sendCustomRequest(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE, &local_command_pack, &result_data, millisecToWait);
+	if(err == ErrorCode::EC_NO_ERROR &&
+       result_data) {
 		//fill the command state
-		command_state.last_event = static_cast<BatchCommandEventType::BatchCommandEventType>(resultData->getUInt32Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_LAST_EVENT_UI32));
+		command_state.last_event = static_cast<BatchCommandEventType::BatchCommandEventType>(result_data->getUInt32Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_LAST_EVENT_UI32));
 		if(command_state.last_event == BatchCommandEventType::EVT_FAULT) {
-			command_state.fault_description.code = resultData->getUInt32Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_CODE_UI32);
-			command_state.fault_description.description = resultData->getStringValue(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DESC_STR);
+			command_state.fault_description.code = result_data->getUInt32Value(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_CODE_UI32);
+			command_state.fault_description.description = result_data->getStringValue(BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DESC_STR);
 			command_state.fault_description.domain = BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DOMAIN_STR;
 		} else {
 			command_state.fault_description.code = 0;
 			command_state.fault_description.description.clear();
 			command_state.fault_description.domain.clear();
 		}
-		delete(resultData);
 	}
+    if(result_data) delete(result_data);
 	return err;
 }
 
@@ -544,34 +598,42 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
 	return setAttributeValue(attributeName, attributeValue,(uint32_t)strlen(attributeValue));
 }
 
+ std::vector<chaos::common::data::RangeValueInfo> DeviceController::getDeviceValuesInfo(){
+     std::vector<chaos::common::data::RangeValueInfo> ret;
+     for(std::map<std::string,chaos::common::data::RangeValueInfo>::iterator i= attributeValueMap.begin();i!=attributeValueMap.end();i++)
+         ret.push_back(i->second);
+     
+     return ret;
+ }
 //---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(string& attributeName, const char* attributeValue, uint32_t size) {
 	CDataWrapper attributeValuePack;
 	const char *attrname=attributeName.c_str();
 	
-	if(attributeTypeMap.find(attributeName) == attributeTypeMap.end() )
+	if(attributeValueMap.find(attributeName) == attributeValueMap.end() )
 		return ErrorCode::EC_ATTRIBUTE_NOT_FOUND;
 	
-	if(attributeDirectionMap[attributeName]==DataType::Output)
+	if(attributeValueMap[attributeName].dir==DataType::Output)
 		return ErrorCode::EC_ATTRIBUTE_BAD_DIR;
 	
-	switch (attributeTypeMap[attributeName]) {
+	switch (attributeValueMap[attributeName].valueType) {
+
 		case DataType::TYPE_INT64:
 			attributeValuePack.addInt64Value(attrname, boost::lexical_cast<int64_t>(attributeValue));
 			return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
-			
+
 		case DataType::TYPE_INT32:
 			attributeValuePack.addInt32Value(attrname, boost::lexical_cast<int32_t>(attributeValue));
 			return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
-			
+
 		case DataType::TYPE_DOUBLE:
 			attributeValuePack.addDoubleValue(attrname, boost::lexical_cast<double>(attributeValue));
 			return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
-			
+
 		case DataType::TYPE_BYTEARRAY:
 			attributeValuePack.addBinaryValue(attrname,attributeValue,size);
 			return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
-			
+
 		case DataType::TYPE_STRING:
 			attributeValuePack.addStringValue(attrname,attributeValue);
 			return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
@@ -583,59 +645,68 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
 
 //---------------------------------------------------------------------------------------------------
 void DeviceController::initializeAttributeIndexMap() {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
+//	boost::mutex::scoped_lock lock(trackMutext);
 	vector<string> attributeNames;
 	RangeValueInfo attributerangeInfo;
 	
-	attributeTypeMap.clear();
-	attributeDirectionMap.clear();
+	attributeValueMap.clear();
 	
+
 	//get all attribute name from db
 	datasetDB.getDatasetAttributesName(DataType::Input, attributeNames);
 	for (vector<string>::iterator iter = attributeNames.begin();
 		 iter != attributeNames.end();
 		 iter++) {
-		
-		datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo);
-		attributeDirectionMap.insert(make_pair(*iter, (DataType::DataSetAttributeIOAttribute)DataType::Input));
-		attributeTypeMap.insert(make_pair(*iter, (DataType::DataType)attributerangeInfo.valueType));
+
+		if(datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo)!=0){
+                    LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
+                }
+                LDBG_<<"IN attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
+		attributeValueMap.insert(make_pair(*iter, attributerangeInfo));
+
 	}
-	
+
 	attributeNames.clear();
 	datasetDB.getDatasetAttributesName(DataType::Output, attributeNames);
 	for (vector<string>::iterator iter = attributeNames.begin();
 		 iter != attributeNames.end();
 		 iter++) {
-		
-		datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo);
-		attributeDirectionMap.insert(make_pair(*iter, (DataType::DataSetAttributeIOAttribute)DataType::Output));
-		attributeTypeMap.insert(make_pair(*iter, (DataType::DataType)attributerangeInfo.valueType));
+
+
+		if(datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo)!=0){
+                    LERR_<<"CANNOT RETRIVE attr range info of:"<<*iter;
+
+                }
+		LDBG_<<"OUT attr:"<<attributerangeInfo.name<<" type:"<<attributerangeInfo.valueType<<" bin type:"<<attributerangeInfo.binType;
+                attributeValueMap.insert(make_pair(*iter, attributerangeInfo));
+
 	}
-	
+
 }
 
 //---------------------------------------------------------------------------------------------------
 void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attributeName,
 																DataType::DataSetAttributeIOAttribute attributeDirection,
 																DataType::DataType attrbiuteType) {
-	boost::recursive_mutex::scoped_lock  lock(trackMutext);
+	//boost::mutex::scoped_lock  lock(trackMutext);
 	if(attributeDirection == DataType::Output ||
 	   attributeDirection == DataType::Bidirectional ){
 		
-		switch (attributeTypeMap[attributeName]) {
+		switch (attributeValueMap[attributeName].valueType) {
 				
+
 			case DataType::TYPE_INT32:{
 				SingleBufferCircularBuffer<int32_t> *newBuffer = new SingleBufferCircularBuffer<int32_t>(30);
 				int32AttributeLiveBuffer.insert(make_pair(attributeName, newBuffer));
 			}
 				break;
-				
+
 			case DataType::TYPE_INT64:{
 				SingleBufferCircularBuffer<int64_t> *newBuffer = new SingleBufferCircularBuffer<int64_t>(30);
 				int64AttributeLiveBuffer.insert(make_pair(attributeName, newBuffer));
 			}
 				break;
-				
+
 			case DataType::TYPE_DOUBLE:{
 				SingleBufferCircularBuffer<double_t> *newBuffer = new SingleBufferCircularBuffer<double_t>(30);
 				doubleAttributeLiveBuffer.insert(make_pair(attributeName, newBuffer));
@@ -649,27 +720,29 @@ void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attribut
 		}
 	} else if(attributeDirection == DataType::Input ||
 			  attributeDirection == DataType::Bidirectional ){
-		
+
 	}
-	
+
 }
 
 //---------------------------------------------------------------------------------------------------
 DataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
+	boost::mutex::scoped_lock lock(trackMutext);
 	DataBuffer * result = NULL;
 	//allocate attribute traccking
-	if(attributeTypeMap.count(attributeName) == 0 || attributeDirectionMap.count(attributeName) == 0 ) return result;
+
+	if(attributeValueMap.count(attributeName) == 0  ) return result;
 	
-	switch (attributeTypeMap[attributeName]) {
+	switch (attributeValueMap[attributeName].valueType) {
+
 		case DataType::TYPE_INT32:
 			result = int32AttributeLiveBuffer[attributeName];
 			break;
-			
+
 		case DataType::TYPE_INT64:
 			result = int64AttributeLiveBuffer[attributeName];
 			break;
-			
+
 		case DataType::TYPE_DOUBLE:
 			result = doubleAttributeLiveBuffer[attributeName];
 			break;
@@ -679,12 +752,13 @@ DataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
 
 //---------------------------------------------------------------------------------------------------
 PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attributeName) {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
+	boost::mutex::scoped_lock lock(trackMutext);
 	PointerBuffer * result = NULL;
 	//allocate attribute traccking
-	if(attributeTypeMap.count(attributeName) == 0 || attributeDirectionMap.count(attributeName) == 0 ) return result;
+	if(attributeValueMap.count(attributeName) == 0  ) return result;
 	
-	switch (attributeTypeMap[attributeName]) {
+	switch (attributeValueMap[attributeName].valueType) {
+
 		case DataType::TYPE_BYTEARRAY:
 			result = pointerAttributeLiveBuffer[attributeName];
 			break;
@@ -701,7 +775,7 @@ DataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialDimensio
 
 //---------------------------------------------------------------------------------------------------
 void DeviceController::deinitializeAttributeIndexMap() {
-	//boost::recursive_mutex::scoped_lock lock(trackMutext);
+//	boost::mutex::scoped_lock lock(trackMutext);
 	//dispose circula buffer
 	for (std::map<string,  SingleBufferCircularBuffer<int32_t> *>::iterator iter = int32AttributeLiveBuffer.begin();
 		 iter != int32AttributeLiveBuffer.end();
@@ -709,21 +783,21 @@ void DeviceController::deinitializeAttributeIndexMap() {
 		delete(iter->second);
 	}
 	int32AttributeLiveBuffer.clear();
-	
+
 	for (std::map<string,  SingleBufferCircularBuffer<int64_t> *>::iterator iter = int64AttributeLiveBuffer.begin();
 		 iter != int64AttributeLiveBuffer.end();
 		 iter++) {
 		delete(iter->second);
 	}
 	int64AttributeLiveBuffer.clear();
-	
+
 	for (std::map<string,  SingleBufferCircularBuffer<double_t> *>::iterator iter = doubleAttributeLiveBuffer.begin();
 		 iter != doubleAttributeLiveBuffer.end();
 		 iter++) {
 		delete(iter->second);
 	}
 	doubleAttributeLiveBuffer.clear();
-	
+
 	for (std::map<string,  PointerBuffer*>::iterator iter = pointerAttributeLiveBuffer.begin();
 		 iter != pointerAttributeLiveBuffer.end();
 		 iter++) {
@@ -733,84 +807,55 @@ void DeviceController::deinitializeAttributeIndexMap() {
 }
 
 //---------------------------------------------------------------------------------------------------
-void DeviceController::addAttributeToTrack(string& attrbiuteName) {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
-	
+void DeviceController::addAttributeToTrack(string& attr) {
+	boost::mutex::scoped_lock lock(trackMutext);
+
 	//add attribute name to list of tracking attribute
-	trackingAttribute.push_back(attrbiuteName);
+	trackingAttribute.push_back(attr);
 	
 	//allocate attribute traccking
-	if(attributeTypeMap.count(attrbiuteName) == 0 || attributeDirectionMap.count(attrbiuteName) == 0 ) return;
-	
+	if(attributeValueMap.count(attr) == 0  ) return;
+
 	//allcoate the buffer for the new attribute to track
-	allocateNewLiveBufferForAttributeAndType(attrbiuteName, attributeDirectionMap[attrbiuteName], attributeTypeMap[attrbiuteName]);
+	allocateNewLiveBufferForAttributeAndType(attr, attributeValueMap[attr].dir, attributeValueMap[attr].valueType);
 }
 
 //---------------------------------------------------------------------------------------------------
 CDataWrapper * DeviceController::getLiveCDataWrapperPtr() {
-	return current_output_dataset.get();
+	return current_dataset[DatasetDomainOutput]->get();
 }
 
 
 //---------------------------------------------------------------------------------------------------
 CDataWrapper * DeviceController::getCurrentDatasetForDomain(DatasetDomain domain) {
-	CDataWrapper *result = NULL;
-	switch(domain) {
-		case DatasetDomainOutput:
-			result = current_output_dataset.get();
-			break;
-		case DatasetDomainInput:
-			result = current_input_dataset.get();
-			break;
-		case DatasetDomainCustom:
-			result = current_custom_dataset.get();
-			break;
-		case DatasetDomainSystem:
-			result = current_system_dataset.get();
-			break;
-	}
-	return result;
+        if(domain<current_dataset.size()){
+            return current_dataset[domain]->get();
+        }
+        return NULL;
 }
 
 //---------------------------------------------------------------------------------------------------
-void DeviceController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
+chaos::common::data::CDataWrapper *  DeviceController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
 	CHAOS_ASSERT(ioLiveDataDriver)
 	char *value = NULL;
 	unsigned long value_len = 0;
-	switch(domain) {
-		case DatasetDomainOutput:
-		  value = ioLiveDataDriver->retriveRawData(output_key, (size_t*)&value_len);
-			//check if some value has bee fetcher
-			if(!value) return;
-			current_output_dataset.reset(new CDataWrapper(value));
-			break;
-		case DatasetDomainInput:
-			value = ioLiveDataDriver->retriveRawData(input_key, (size_t*)&value_len);
-			//check if some value has bee fetcher
-			if(!value) return;
-			current_input_dataset.reset(new CDataWrapper(value));
-			break;
-		case DatasetDomainCustom:
-			value = ioLiveDataDriver->retriveRawData(custom_key, (size_t*)&value_len);
-			//check if some value has bee fetcher
-			if(!value) return;
-			current_custom_dataset.reset(new CDataWrapper(value));
-			break;
-		case DatasetDomainSystem:
-			value = ioLiveDataDriver->retriveRawData(system_key, (size_t*)&value_len);
-			//check if some value has bee fetcher
-			if(!value) return;
-			current_system_dataset.reset(new CDataWrapper(value));
-			break;
-		default:
-			return;
-	}
-	free(value);
+
+        if(domain<current_dataset.size()){
+            value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
+            if(value){
+                chaos::common::data::CDataWrapper *tmp = new CDataWrapper(value);
+                current_dataset[domain]->reset(tmp);
+                free(value);
+                return tmp;
+            }
+        }
+        return NULL;
 }
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::getTimeStamp(uint64_t& live){
-	CDataWrapper * d= current_output_dataset.get();
+	CDataWrapper * d= getLiveCDataWrapperPtr();
+        live =0;
 	if(d){
 		live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
 		return 0;
@@ -819,11 +864,11 @@ int DeviceController::getTimeStamp(uint64_t& live){
 }
 //---------------------------------------------------------------------------------------------------
 void DeviceController::setupTracking() {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
-	
+	boost::mutex::scoped_lock lock(trackMutext);
+
 	//init live buffer
 	initializeAttributeIndexMap();
-	
+
 	//initialize timestamp buffer
 	SingleBufferCircularBuffer<int64_t> *newBuffer = new SingleBufferCircularBuffer<int64_t>(10);
 	int64AttributeLiveBuffer.insert(make_pair(DataPackCommonKey::DPCK_TIMESTAMP, newBuffer));
@@ -831,26 +876,26 @@ void DeviceController::setupTracking() {
 
 //---------------------------------------------------------------------------------------------------
 void DeviceController::stopTracking() {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
+	boost::mutex::scoped_lock lock(trackMutext);
 	deinitializeAttributeIndexMap();
 }
 
 //---------------------------------------------------------------------------------------------------
 void DeviceController::fetchCurrentDeviceValue() {
-	boost::recursive_mutex::scoped_lock lock(trackMutext);
-	
+	boost::mutex::scoped_lock lock(trackMutext);
+
 	//! fetch the output odmain
 	fetchCurrentDatatasetFromDomain(DatasetDomainOutput);
-	
+
 	if(trackingAttribute.size() == 0) return;
-	CDataWrapper *tmpPtr = current_output_dataset.get();
-	
+	CDataWrapper *tmpPtr = current_dataset[DatasetDomainOutput]->get();
+
 	//add timestamp value
 	int64_t got_ts = tmpPtr->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
 	if(int64AttributeLiveBuffer[DataPackCommonKey::DPCK_TIMESTAMP]->getLastValue() == got_ts) return;
-	
+
 	int64AttributeLiveBuffer[DataPackCommonKey::DPCK_TIMESTAMP]->addValue(got_ts);
-	
+
 	//update buffer for tracked attribute
 	for (std::vector<string>::iterator iter = trackingAttribute.begin();
 		 iter != trackingAttribute.end();
@@ -858,19 +903,20 @@ void DeviceController::fetchCurrentDeviceValue() {
 		const char *key = (*iter).c_str();
 		if(!tmpPtr->hasKey(key)) continue;
 		
-		switch (attributeTypeMap[*iter]) {
+		switch (attributeValueMap[*iter].valueType) {
+
 			case DataType::TYPE_INT32:
 				int32AttributeLiveBuffer[*iter]->addValue(tmpPtr->getInt32Value(key));
 				break;
-				
+
 			case DataType::TYPE_INT64:
 				int64AttributeLiveBuffer[*iter]->addValue(tmpPtr->getInt64Value(key));
 				break;
-				
+
 			case DataType::TYPE_DOUBLE:
 				doubleAttributeLiveBuffer[*iter]->addValue(tmpPtr->getDoubleValue(key));
 				break;
-				
+
 			case DataType::TYPE_BYTEARRAY:
 				int32_t ptrLen = 0;
 				const char * tmpPtrAttribute = tmpPtr->getBinaryValue(key, ptrLen);
@@ -881,7 +927,7 @@ void DeviceController::fetchCurrentDeviceValue() {
 }
 
 CDataWrapper *DeviceController::getCurrentData(){
-	return current_output_dataset.get();
+	return current_dataset[DatasetDomainOutput]->get();
 }
 
 //! get datapack between time itervall

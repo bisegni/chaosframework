@@ -76,12 +76,12 @@ void ChaosMetadataServiceClient::init(int argc, char* argv[]) throw (CException)
 void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
     try {
         ChaosCommon<ChaosMetadataServiceClient>::init(init_data);
-        // network broker
-        network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
-        network_broker_service.init(NULL, __PRETTY_FUNCTION__);
         
-        api_proxy_manager.reset(new ApiProxyManager(network_broker_service.get(), &setting), "ApiProxyManager");
+        api_proxy_manager.reset(new ApiProxyManager(NetworkBroker::getInstance(), &setting), "ApiProxyManager");
         api_proxy_manager.init(NULL, __PRETTY_FUNCTION__);
+        
+        monitor_manager.reset(new MonitorManager(NetworkBroker::getInstance(), &setting), "MonitorManager");
+        monitor_manager.init(NULL, __PRETTY_FUNCTION__);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         throw ex;
@@ -93,12 +93,12 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
  */
 void ChaosMetadataServiceClient::start()  throw(CException) {
     try {
-        //start network brocker
-        network_broker_service.start(__PRETTY_FUNCTION__);
+        ChaosCommon<ChaosMetadataServiceClient>::start();
+        
         CMSC_LAPP << "-------------------------------------------------------------------------";
         CMSC_LAPP << "!CHAOS Metadata service client started";
-        CMSC_LAPP << "RPC Server address: "	<< network_broker_service->getRPCUrl();
-        CMSC_LAPP << "DirectIO Server address: " << network_broker_service->getDirectIOUrl();
+        CMSC_LAPP << "RPC Server address: "	<< NetworkBroker::getInstance()->getRPCUrl();
+        CMSC_LAPP << "DirectIO Server address: " << NetworkBroker::getInstance()->getDirectIOUrl();
         CMSC_LAPP << "-------------------------------------------------------------------------";
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -111,10 +111,10 @@ void ChaosMetadataServiceClient::start()  throw(CException) {
  */
 void ChaosMetadataServiceClient::stop()   throw(CException) {
     try {
-        //stop batch system
-        network_broker_service.stop(__PRETTY_FUNCTION__);
         //stop monitor manager
-        if(monitoringIsStarted()) {CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)}
+        CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
+        //stop batch system
+        CHAOS_NOT_THROW( ChaosCommon<ChaosMetadataServiceClient>::stop();)
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         throw ex;
@@ -127,19 +127,17 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
 void ChaosMetadataServiceClient::deinit()   throw(CException) {
     
     //deinit api system
-    try{
-        CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__);)
-        
-        CHAOS_NOT_THROW(network_broker_service.deinit(__PRETTY_FUNCTION__);)
-        
-        if(monitoringIsStarted()){CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)}
-            CMSC_LAPP << "-------------------------------------------------------------------------";
-        CMSC_LAPP << "Metadata service client has been stopped";
-        CMSC_LAPP << "-------------------------------------------------------------------------";
-    } catch (CException& ex) {
-        DECODE_CHAOS_EXCEPTION(ex)
-        throw ex;
-    }
+    CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
+    
+    CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__);)
+    
+    if(monitoringIsStarted()){CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)}
+    
+    CHAOS_NOT_THROW(ChaosCommon<ChaosMetadataServiceClient>::deinit();)
+    
+    CMSC_LAPP << "-------------------------------------------------------------------------";
+    CMSC_LAPP << "Metadata service client has been stopped";
+    CMSC_LAPP << "-------------------------------------------------------------------------";
 }
 
 void ChaosMetadataServiceClient::clearServerList() {
@@ -152,7 +150,19 @@ void ChaosMetadataServiceClient::addServerAddress(const std::string& server_addr
     api_proxy_manager->addServerAddress(server_address_and_port);
 }
 
-void ChaosMetadataServiceClient::enableMonitoring() throw(CException) {
+void ChaosMetadataServiceClient::enableMonitor() throw(CException) {
+    //configure data driver
+    reconfigureMonitor();
+    
+    //start the monitor manager
+    monitor_manager.start(__PRETTY_FUNCTION__);
+}
+
+void ChaosMetadataServiceClient::disableMonitor() throw(CException) {
+    CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
+}
+
+void ChaosMetadataServiceClient::reconfigureMonitor() throw(CException) {
     std::vector<std::string> endpoints_list;
     
     CMSC_LDBG << "Ask to metadata server for cds enpoint for monitoring";
@@ -192,24 +202,13 @@ void ChaosMetadataServiceClient::enableMonitoring() throw(CException) {
         CMSC_LDBG<< "Add " << server << " to server list";
         endpoints_list.push_back(server);
     }
-    monitor_manager.reset(new MonitorManager(network_broker_service.get(), &setting), "MonitorManager");
-    monitor_manager.init(NULL, __PRETTY_FUNCTION__);
+    
     monitor_manager->resetEndpointList(endpoints_list);
-    //start the monitor manager
-    monitor_manager.start(__PRETTY_FUNCTION__);
-}
-
-void ChaosMetadataServiceClient::disableMonitoring() throw(CException) {
-    if(monitor_manager.get()) {
-        CHAOS_NOT_THROW(monitor_manager.stop(__PRETTY_FUNCTION__);)
-        CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
-    }
-    monitor_manager.reset(NULL,"");
 }
 
 bool ChaosMetadataServiceClient::monitoringIsStarted() {
     return monitor_manager.get() &&
-    (monitor_manager->getServiceState() == common::utility::service_state_machine::StartableServiceType::SS_STARTED);
+    (monitor_manager->getServiceState() == CUStateKey::START);
 }
 
 //! add a new quantum slot for key
@@ -217,7 +216,7 @@ bool ChaosMetadataServiceClient::addKeyConsumer(const std::string& key_to_monito
                                                 int quantum_multiplier,
                                                 monitor_system::QuantumSlotConsumer *consumer,
                                                 int consumer_priority) {
-    if(monitor_manager.get() == NULL) return false;
+    CHAOS_ASSERT(monitor_manager.get());
     monitor_manager->addKeyConsumer(key_to_monitor,
                                     quantum_multiplier,
                                     consumer,
@@ -231,7 +230,7 @@ bool ChaosMetadataServiceClient::addKeyConsumerForHealt(const std::string& key_t
                                                         monitor_system::QuantumSlotConsumer *consumer,
                                                         int consumer_priority) {
     // compose healt key for node
-    std::string healt_key = getHealtKeyFromGeneralKey(key_to_monitor);
+    const std::string healt_key = getHealtKeyFromGeneralKey(key_to_monitor);
     // call api for register the conusmer
     return addKeyConsumer(healt_key,
                           quantum_multiplier,
@@ -243,7 +242,7 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandler(const std::string& key_t
                                                         int quantum_multiplier,
                                                         AbstractQuantumKeyAttributeHandler *attribute_handler,
                                                         unsigned int consumer_priority) {
-    if(monitor_manager.get() == NULL) return false;
+    CHAOS_ASSERT(monitor_manager.get());
     monitor_manager->addKeyAttributeHandler(key_to_monitor,
                                             quantum_multiplier,
                                             attribute_handler,
@@ -257,7 +256,7 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForHealt(const std::strin
                                                                 monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
                                                                 unsigned int consumer_priority) {
     // compose healt key for node
-    std::string healt_key = getHealtKeyFromGeneralKey(key_to_monitor);
+    const std::string healt_key = getHealtKeyFromGeneralKey(key_to_monitor);
     // call api for register the conusmer
     return addKeyAttributeHandler(healt_key,
                                   quantum_multiplier,
@@ -307,10 +306,10 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForDataset(const std::str
 bool ChaosMetadataServiceClient::removeKeyConsumer(const std::string& key_to_monitor,
                                                    int quantum_multiplier,
                                                    monitor_system::QuantumSlotConsumer *consumer) {
-    if(monitor_manager.get() == NULL) return false;
-    monitor_manager->addKeyConsumer(key_to_monitor,
-                                    quantum_multiplier,
-                                    consumer);
+    CHAOS_ASSERT(monitor_manager.get());
+    monitor_manager->removeKeyConsumer(key_to_monitor,
+                                       quantum_multiplier,
+                                       consumer);
     return true;
 }
 
@@ -362,28 +361,28 @@ bool ChaosMetadataServiceClient::removeKeyAttributeHandlerForDataset(const std::
                                      attribute_handler);
 }
 
-std::string ChaosMetadataServiceClient::getDatasetKeyFromGeneralKey(const std::string& key,
+std::string ChaosMetadataServiceClient::getDatasetKeyFromGeneralKey(const std::string& node_uid,
                                                                     const unsigned int dataset_type) {
     switch(dataset_type) {
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT:
             return boost::str(boost::format("%1%%2%")%
-                              key%
+                              node_uid%
                               DataPackPrefixID::OUTPUT_DATASE_PREFIX);
             break;
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT:
             return boost::str(boost::format("%1%%2%")%
-                              key%
+                              node_uid%
                               DataPackPrefixID::INPUT_DATASE_PREFIX);
             break;
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM:
             return boost::str(boost::format("%1%%2%")%
-                              key%
+                              node_uid%
                               DataPackPrefixID::CUSTOM_DATASE_PREFIX);
             break;
             
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM:
             return boost::str(boost::format("%1%%2%")%
-                              key%
+                              node_uid%
                               DataPackPrefixID::SYSTEM_DATASE_PREFIX);
             break;
         default:
@@ -391,8 +390,14 @@ std::string ChaosMetadataServiceClient::getDatasetKeyFromGeneralKey(const std::s
     }
 }
 
-std::string ChaosMetadataServiceClient::getHealtKeyFromGeneralKey(const std::string& key) {
+std::string ChaosMetadataServiceClient::getHealtKeyFromGeneralKey(const std::string& node_uid) {
     return boost::str(boost::format("%1%%2%")%
-                      key%
+                      node_uid%
                       NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
+}
+
+std::auto_ptr<chaos::common::data::CDataWrapper> ChaosMetadataServiceClient::getLastDataset(const std::string& unique_node_id,
+                                                                                            const unsigned int dataset_type) {
+    CHAOS_ASSERT(monitor_manager.get());
+    return monitor_manager->getLastDataset(getDatasetKeyFromGeneralKey(unique_node_id, dataset_type));
 }

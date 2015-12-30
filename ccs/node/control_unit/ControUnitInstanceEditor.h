@@ -21,6 +21,7 @@ class ControUnitInstanceEditor :
    // QString control_unit_uid;
 
     bool is_in_editing;
+    QStringList cu_type_list;
 
     //table model
     QStandardItemModel *table_model_driver_spec;
@@ -42,10 +43,9 @@ public:
     void fillUIFromInstanceInfo(QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 protected:
     void initUI();
-    bool canClose();
+    bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
-
 private slots:
     void on_pushButtonSaveInstance_clicked();
 
@@ -82,6 +82,8 @@ private slots:
                                     const QString& attribute_default_value,
                                     const QString& attribute_default_max_value,
                                     const QString& attribute_default_min_value);
+    void on_pushButtonChooseControlUnitType_clicked();
+
 private:
     Ui::ControUnitInstanceEditor *ui;
 };

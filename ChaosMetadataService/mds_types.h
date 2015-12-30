@@ -33,6 +33,8 @@ namespace chaos{
 	namespace metadata_service {
 		
 		struct setting {
+            //!identify the number of the sandbox to use in the batch system
+            unsigned int                        batch_sandbox_size;
 			std::string							persistence_implementation;
 			std::vector<std::string>			persistence_server_list;
 			std::map<std::string, std::string>	persistence_kv_param_map;
@@ -40,7 +42,7 @@ namespace chaos{
         
         struct ApiSubserviceAccessor {
             //! network broker for talk with others chaos node
-            common::utility::StartableServiceContainer<chaos::common::network::NetworkBroker> network_broker_service;
+            chaos::common::network::NetworkBroker *network_broker_service;
             
             //! batch executor engine
             common::utility::StartableServiceContainer<batch::MDSBatchExecutor> batch_executor;

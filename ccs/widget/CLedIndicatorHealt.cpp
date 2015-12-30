@@ -2,7 +2,7 @@
 #include <chaos/common/chaos_constants.h>
 
 #include <QDateTime>
-
+#include <QDebug>
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
@@ -11,8 +11,9 @@ CLedIndicatorHealt::CLedIndicatorHealt(QWidget *parent):
     no_ts(new QIcon(":/images/white_circle_indicator.png")),
     timeouted(new QIcon(":/images/red_circle_indicator.png")),
     alive(new QIcon(":/images/green_circle_indicator.png")),
+    alive_state(Stopped),
     last_recevied_ts(0),
-    alive_state(Stopped) {
+    zero_diff_count(0) {
     addState(0, no_ts);
     addState(1, timeouted);
     addState(2, alive);
@@ -66,21 +67,22 @@ void CLedIndicatorHealt::valueUpdated(const QString& node_uid,
                                       const QVariant& attribute_value) {
     if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP)==0) {
         uint64_t current_timestamp = attribute_value.toULongLong();
-        if(current_timestamp == 0) {
-            setState(0);
-            manageOnlineFlag(Indeterminated);
+        uint64_t time_diff = current_timestamp - last_recevied_ts;
+        if(time_diff > 0) {
+            //in time
+            setState(2);
+            manageOnlineFlag(Online);
+            zero_diff_count = 0;
         } else {
-            uint64_t time_diff = QDateTime::currentDateTimeUtc().currentMSecsSinceEpoch() - current_timestamp;
-            if(time_diff <= 5000) {
-                //in time
-                setState(2);
-                manageOnlineFlag(Online);
-            } else {
+            if(++zero_diff_count > 3) {
                 //timeouted
                 setState(1);
                 manageOnlineFlag(Offline);
+            } else {
+                //in this case we do nothing perhaps we can to fast to check
             }
         }
+        last_recevied_ts = current_timestamp;
     }
 }
 
@@ -88,4 +90,5 @@ void CLedIndicatorHealt::valueNotFound(const QString& node_uid,
                                        const QString& attribute_name) {
     setState(0);
     manageOnlineFlag(Indeterminated);
+    last_recevied_ts = zero_diff_count = 0;
 }

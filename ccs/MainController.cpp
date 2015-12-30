@@ -61,6 +61,7 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qRegisterMetaType<boost::shared_ptr<chaos::common::data::SerializationBuffer> >("boost::shared_ptr<chaos::common::data::SerializationBuffer>&");
     qRegisterMetaType<boost::shared_ptr<chaos::common::data::CDataWrapper> >("boost::shared_ptr<chaos::common::data::CDataWrapper>");
     qRegisterMetaType<boost::shared_ptr<chaos::CException> >("chaos::CException");
+    qRegisterMetaType<boost::shared_ptr<chaos::common::data::CDataWrapper> >("chaos::metadata_service_client::monitor_system::KeyValue");
 
     //set the dark fusion style
     a.setStyle(QStyleFactory::create("Fusion"));
@@ -126,6 +127,8 @@ void MainController::init(int argc, char **argv, QApplication& a) {
 }
 
 void MainController::deinit() {
+    //close all editors
+    w.disposeResource();
     //clear the qthread pool
     QThreadPool::globalInstance()->clear();
     QThreadPool::globalInstance()->waitForDone();

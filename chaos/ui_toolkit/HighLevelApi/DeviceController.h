@@ -43,7 +43,8 @@ namespace chaos {
 			DatasetDomainOutput = 0,
 			DatasetDomainInput,
 			DatasetDomainCustom,
-			DatasetDomainSystem
+			DatasetDomainSystem,
+                        DatasetDomainHealth
 		} DatasetDomain;
 		
             //! Controller for a single device instance
@@ -58,11 +59,10 @@ namespace chaos {
             uint32_t millisecToWait;
                 //! represent the device id controlled by this instance
             std::string device_id;
-            std::string output_key;
-            std::string input_key;
-            std::string system_key;
-            std::string custom_key;
-				//!cached cu type
+            
+            std::vector<std::string> channel_keys;
+            
+            			//!cached cu type
             std::string cu_type;
 			
                 //! Metadata Server channel for get device information
@@ -77,17 +77,14 @@ namespace chaos {
             //auto_ptr<CDataWrapper> lastDeviceDefinition;
             
                 //!point to the freashest live value for this device dataset
-            auto_ptr<chaos::common::data::CDataWrapper> current_output_dataset;
-			auto_ptr<chaos::common::data::CDataWrapper> current_input_dataset;
-			auto_ptr<chaos::common::data::CDataWrapper> current_custom_dataset;
-			auto_ptr<chaos::common::data::CDataWrapper> current_system_dataset;
+            std::vector<auto_ptr<chaos::common::data::CDataWrapper>* >current_dataset;
+            
 			
                 //mutext for multi threading track operation
-            boost::recursive_mutex trackMutext;
+            boost::mutex trackMutext;
             
                 //!store the type of the attribute for fast retrieve
-            std::map<std::string, DataType::DataSetAttributeIOAttribute> attributeDirectionMap;
-            std::map<std::string, DataType::DataType> attributeTypeMap;
+            std::map<std::string, common::data::RangeValueInfo> attributeValueMap;
             std::vector<std::string> trackingAttribute;
             
                 //!map for live data circular buffer
@@ -102,11 +99,6 @@ namespace chaos {
              */
             DeviceController(string& _deviceID);
  
-            //!Public destructor
-            /*!
-             All can destruct an isntance of the device controller
-             */
-            ~DeviceController();
             
                 //! update inromation for talking with device
             /*!
@@ -135,6 +127,18 @@ namespace chaos {
                 //! the fetcher thread method
             void executeOnThread(const std::string&) throw(CException);
         public:
+
+             //!Public destructor
+            /*!
+             All can destruct an isntance of the device controller
+             */
+            ~DeviceController();
+           
+            /**
+             * return the number of output channels
+             * @return return the nyumber of predefined output channels
+             */
+            int getChannelsNum();
 
             //!Return the deviceID of the device
             /*!
@@ -170,6 +174,8 @@ namespace chaos {
 
 			/*!
              Get time stamp of last packet
+                         * @param [out] live output timestamp, set 0 on error
+                         * @return 0 on success, negative otherwise
              */
 			int getTimeStamp(uint64_t& live);
             /*!
@@ -192,7 +198,12 @@ namespace chaos {
              Get the direction of the attribute
              */
             int getDeviceAttributeType(const std::string& attributesName, DataType::DataType& type);
-			
+	
+            /**
+             * 
+             * @return a vector with the information of the dataset
+             */
+            std::vector<chaos::common::data::RangeValueInfo> getDeviceValuesInfo();
 			//!
             int getAttributeStrValue(const std::string attributesName, std::string& attribute_value);
 			
@@ -260,6 +271,7 @@ namespace chaos {
                 \param submission_checker_steps_delay (optional) is the delay between two steps of the submission checker
                 \param slow_command_data (optional) is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
                         take palce. The memory of that parameter is not free
+             * @return 0 on success
              */
             int submitSlowControlCommand(string commandAlias,
                                          chaos::common::batch_command::SubmissionRuleType::SubmissionRule submissionRule,
@@ -283,6 +295,7 @@ namespace chaos {
 				\param submission_checker_steps_delay (optional) is the delay between two steps of the submission checker
 				\param slow_command_data (optional) is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
 						take palce. The memory of that parameter is not free
+             * @return 0 on success
              */
             int submitSlowControlCommand(string commandAlias,
 										 chaos::common::batch_command::SubmissionRuleType::SubmissionRule submissionRule,
@@ -338,8 +351,10 @@ namespace chaos {
                 //!Get device state
             /*!
              Return the current device state
+             * @param [out] deviceState returned state, if error UNDEFINED state set
+             * @return the timestamp of the hearthbeat, 0 if error
              */
-            int getState(CUStateKey::ControlUnitState& deviceState);
+            uint64_t getState(CUStateKey::ControlUnitState& deviceState);
             
             /*!
              Setup the structure to accelerate the tracking of the live data
@@ -369,8 +384,8 @@ namespace chaos {
 			//!return the last fetched dataset for the domain
 			chaos::common::data::CDataWrapper * getCurrentDatasetForDomain(DatasetDomain domain);
 			
-			//! fetch from the chaso central cache the dataset associated to the domain
-			void fetchCurrentDatatasetFromDomain(DatasetDomain domain);
+	     //! fetch from the chaso central cache the dataset associated to the domain
+            chaos::common::data::CDataWrapper *  fetchCurrentDatatasetFromDomain(DatasetDomain domain);
 			
             /*!
              Fetch the current live value form live storage

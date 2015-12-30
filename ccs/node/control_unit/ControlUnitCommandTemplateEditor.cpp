@@ -58,7 +58,7 @@ void ControlUnitCommandTemplateEditor::initUI() {
     }
 }
 
-bool ControlUnitCommandTemplateEditor::canClose() {
+bool ControlUnitCommandTemplateEditor::isClosing() {
     return true;
 }
 
@@ -86,6 +86,8 @@ void ControlUnitCommandTemplateEditor::onApiDone(const QString& tag,
         setCommandDescription(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("command_description")));
         setTemplateDescription(QSharedPointer<CDataWrapper>(api_result->getCSDataValue("template_description")));
     }
+    PresenterWidget::onApiDone(tag,
+                               api_result);
 }
 
 void ControlUnitCommandTemplateEditor::setCommandDescription(QSharedPointer<chaos::common::data::CDataWrapper> _command_description) {

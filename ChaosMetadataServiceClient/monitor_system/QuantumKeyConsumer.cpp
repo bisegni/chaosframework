@@ -72,7 +72,7 @@ void QuantumKeyConsumer::addAttributeHandler(AbstractQuantumKeyAttributeHandler 
     QKC_INFO << "Add new quantum handler for key:" << key << " and attribute:" << handler->getAttributeName();
     uintptr_t handler_key = reinterpret_cast<uintptr_t>(handler);
     if(map_attribute_handler.count(handler_key)) return;
-    map_attribute_handler.insert(make_pair(handler_key, handler));
+    map_attribute_handler.insert(std::make_pair(handler_key, handler));
 }
 
 void QuantumKeyConsumer::removeAttributeHandler(AbstractQuantumKeyAttributeHandler *handler) {

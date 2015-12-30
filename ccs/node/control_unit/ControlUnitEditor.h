@@ -28,7 +28,7 @@ public:
     ~ControlUnitEditor();
 protected:
     void initUI();
-    bool canClose();
+    bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
@@ -48,6 +48,8 @@ private slots:
                           const QString& value);
     void templateSaved(const QString& tempalte_name,
                        const QString& command_uid);
+    void controlUnitStatusChanged(const QString& control_unit_id,
+                                  const QString& status);
 
     void on_pushButtonLoadAction_clicked();
 
@@ -82,6 +84,10 @@ private slots:
     void on_pushButtonSetRunScheduleDelay_clicked();
 
     void on_pushButton_clicked();
+
+    void on_pushButtonRecoverError_clicked();
+
+    void on_pushButtonOpenInstanceEditor_clicked();
 
 private:
     QString getStatusString(int status);

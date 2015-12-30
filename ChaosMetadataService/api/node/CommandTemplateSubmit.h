@@ -38,8 +38,6 @@ namespace chaos {
                 
                 class CommandTemplateSubmit:
                 public AbstractApi {
-                    //list of command instance
-                    CommandInstanceList command_instance_list;
                     //cache the command description for reuse
                     std::map<std::string, boost::shared_ptr<CDataWrapper> > command_description_cache;
                     //cache the template description for reuse
@@ -52,7 +50,8 @@ namespace chaos {
                                                                                    const std::string& command_uid);
                     
                     void processSubmissionTask(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
-                                               boost::shared_ptr<chaos::common::data::CDataWrapper> submission_task);
+                                               boost::shared_ptr<chaos::common::data::CDataWrapper> submission_task,
+                                               CommandInstanceList& command_instance_list);
                 public:
                     CommandTemplateSubmit();
                     ~CommandTemplateSubmit();

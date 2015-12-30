@@ -131,6 +131,14 @@ namespace chaos {
 					return regex_match(host_port, ServerIPRegExp);
 				}
 				
+                static bool checkWellFormedHostNamePort(std::string host_port) {
+                    return regex_match(host_port, ServerHostNameRegExp);
+                }
+                
+                static bool checkWellFormedHostIpPort(std::string host_port) {
+                    return regex_match(host_port, ServerIPAndPortRegExp);
+                }
+                
 				static void queryDns(std::string hostname, std::vector<std::string>& resolved_endpoints) {
 					boost::asio::io_service io;
 					boost::asio::ip::tcp::resolver resolver(io);

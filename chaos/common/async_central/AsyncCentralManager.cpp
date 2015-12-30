@@ -44,13 +44,13 @@ AsyncCentralManager::~AsyncCentralManager() {
 
 // Initialize instance
 void AsyncCentralManager::init(void *init_data) throw(chaos::CException) {
-	ACM_LAPP_ << "Allocating event loop";
+    ACM_LAPP_ << "Allocating event loop";
     asio_thread_group.create_thread(boost::bind(&boost::asio::io_service::run, &asio_service));
 }
 
 // Deinit the implementation
 void AsyncCentralManager::deinit() throw(chaos::CException) {
-	ACM_LAPP_ << "Stop event loop";
+    ACM_LAPP_ << "Stop event loop";
     asio_service.stop();
     asio_thread_group.join_all();
 }
@@ -58,18 +58,33 @@ void AsyncCentralManager::deinit() throw(chaos::CException) {
 int AsyncCentralManager::addTimer(TimerHandler *timer_handler,
                                   uint64_t timeout,
                                   uint64_t repeat) {
-    boost::unique_lock<boost::mutex> l(mutex);
-	int err = 0;
-    if((timer_handler->timer = new  deadline_timer(asio_service)) == NULL) {
-        return -1;
+    int err = 0;
+    try{
+        boost::unique_lock<boost::mutex> l(mutex);
+        if((timer_handler->timer = new  deadline_timer(asio_service)) == NULL) {
+            err = -1;
+        } else {
+            timer_handler->delay = repeat;
+            timer_handler->wait(timeout);
+        }
+    } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::system::system_error> >& ex){
+        err = -2;
+    } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::lock_error> > & ex) {
+        err = -3;
     }
-    timer_handler->delay = repeat;
-    timer_handler->wait(timeout);
-	return err;
+    return err;
 }
 
 
-void AsyncCentralManager::removeTimer(TimerHandler *timer_handler) {
-    boost::unique_lock<boost::mutex> l(mutex);
-    timer_handler->removeTimer();
+int AsyncCentralManager::removeTimer(TimerHandler *timer_handler) {
+    int err = 0;
+    try{
+        boost::unique_lock<boost::mutex> l(mutex);
+        timer_handler->removeTimer();
+    } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::system::system_error> >& ex){
+        err = -2;
+    } catch(boost::exception_detail::clone_impl< boost::exception_detail::error_info_injector<boost::lock_error> > & ex) {
+        err = -3;
+    }
+    return err;
 }

@@ -27,7 +27,8 @@ using namespace chaos::common::metric;
 #define CONSOLE_MB_LNOTICE NOTICE_LOG(ConsoleMetricBackend)
 
 ConsoleMetricBackend::ConsoleMetricBackend(const std::string& _backend_identity):
-AbstractMetricBackend(_backend_identity){}
+AbstractMetricBackend(_backend_identity),
+first_metric(false){}
 
 ConsoleMetricBackend::~ConsoleMetricBackend() {}
 

@@ -35,6 +35,9 @@ using namespace chaos::common::utility;
 
 MessageChannel::MessageChannel(NetworkBroker *_broker):
 broker(_broker),
+last_error_code(0),
+last_error_message(),
+last_error_domain(),
 channel_reponse_domain(UUIDUtil::generateUUIDLite()),
 channel_request_id_counter(0){
     

@@ -20,6 +20,7 @@
 #ifndef ChaosFramework_DeclareAction_h
 #define ChaosFramework_DeclareAction_h
 
+#include <string>
 #include <vector>
 #include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/data/CDataWrapper.h>
@@ -54,10 +55,13 @@ namespace chaos {
         template<typename T>
         AbstActionDescShrPtr addActionDescritionInstance(T* actonObjectPointer,
                                                          typename ActionDescriptor<T>::ActionPointerDef actionHandler,
-                                                         const char*const actionDomainName,
-                                                         const char*const actionAliasName,
-                                                         const char*const actionDescription) {
-            AbstActionDescShrPtr newActionDesc(new ActionDescriptor<T>(actonObjectPointer, actionHandler, actionDomainName, actionAliasName));
+                                                         const std::string& actionDomainName,
+                                                         const std::string& actionAliasName,
+                                                         const std::string& actionDescription) {
+            AbstActionDescShrPtr newActionDesc(new ActionDescriptor<T>(actonObjectPointer,
+                                                                       actionHandler,
+                                                                       actionDomainName,
+                                                                       actionAliasName));
             newActionDesc->setTypeValue(ActionDescriptor<T>::ActionDescription, actionDescription);
             //add action description to vector
             actionDescriptionVector.push_back(newActionDesc);

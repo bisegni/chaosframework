@@ -103,7 +103,7 @@ namespace chaos {
                     /*!
                      perform a simple search on node filtering on type
                      \param result the handle for the reuslt data (is allcoated only if the search has been done with success)
-                     \param criteria the stirng that filter the node (susing * semantic)
+                     \param criteria the string that filter the node (susing * semantic)
                      \param search_type the type of the nodes where search
                      \param last_unique_id is the start of the search page to retrieve
                      */

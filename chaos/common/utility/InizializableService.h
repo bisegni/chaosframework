@@ -46,23 +46,23 @@ namespace chaos {
 				
 				//SM Event
 				namespace EventType {
-					struct initialize {};
-					struct deinitialize {};
+					struct init {};
+					struct deinit {};
 				}
 				
 				// The list of FSM states
-				struct Deinitilized : public boost::msm::front::state<>{};
+				struct Deinit : public boost::msm::front::state<>{};
 				
-				struct Initialized : public boost::msm::front::state<> {};
+				struct Init : public boost::msm::front::state<> {};
 				
 				// front-end: define the FSM structure
 				struct id_states_machine : public boost::msm::front::state_machine_def<id_states_machine> {
 					
 					// the initial state of the player SM. Must be defined
-					typedef Deinitilized initial_state;
+					typedef Deinit initial_state;
 					
-					typedef boost::msm::front::Row <  Deinitilized   ,  EventType::initialize  , Initialized, boost::msm::front::none , boost::msm::front::none > deinit_init_row;
-					typedef boost::msm::front::Row <  Initialized   ,  EventType::deinitialize  , Deinitilized, boost::msm::front::none , boost::msm::front::none > init_deinit_row;
+					typedef boost::msm::front::Row <  Deinit   ,  EventType::init    , Init, boost::msm::front::none   , boost::msm::front::none > deinit_init_row;
+					typedef boost::msm::front::Row <  Init     ,  EventType::deinit  , Deinit, boost::msm::front::none , boost::msm::front::none > init_deinit_row;
 					
 					// Transition table for initialization services
 					struct transition_table : boost::mpl::vector<
@@ -80,7 +80,7 @@ namespace chaos {
 			class InizializableService {
 				boost::msm::back::state_machine< service_state_machine::id_states_machine > state_machine;
 			protected:
-				uint8_t serviceState;
+				unsigned int serviceState;
 				
 				//! Initialize instance
 				virtual void init(void*) throw(chaos::CException);

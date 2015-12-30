@@ -1034,8 +1034,10 @@ int MongoDBDriver::snapshotCreateNewWithName(const std::string& snapshot_name,
 	//----- generate the random code ------ for this snapshot
 	working_job_unique_id = UUIDUtil::generateUUIDLite();
 	try{
+        uint64_t ts = TimingUtil::getTimeStamp();
 		new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_NAME << snapshot_name;
-		new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_TS << mongo::Date_t(TimingUtil::getTimeStamp());
+		new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_TS_DATE << mongo::Date_t(ts);
+        new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_TS << (long long)ts;
 		new_snapshot_start << MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << working_job_unique_id;
 		
 		mongo::BSONObj q = new_snapshot_start.obj();
@@ -1045,7 +1047,7 @@ int MongoDBDriver::snapshotCreateNewWithName(const std::string& snapshot_name,
 		
 		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q);
 		if(err == 11000) {
-			//already exis a snapshot with taht name so no error need to be throw
+			//already exis a snapshot with that name so no error need to be throw
 			err = 1;
 		}
 	} catch( const mongo::DBException &e ) {

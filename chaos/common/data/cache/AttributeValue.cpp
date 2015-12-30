@@ -21,7 +21,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValue.h>
-
+#include <assert.h>
 #include <boost/lexical_cast.hpp>
 
 #define AVLAPP_ LAPP_ << "[AttributeValue -" << "] - "
@@ -35,65 +35,86 @@ using namespace chaos::common::data::cache;
  
  ---------------------------------------------------------------------------------*/
 AttributeValue::AttributeValue(const std::string& _name,
-							   uint32_t _index,
-							   uint32_t _size,
-							   chaos::DataType::DataType _type):
+                               uint32_t _index,
+                               uint32_t _size,
+                               chaos::DataType::DataType _type):
 value_buffer(NULL),
 size(_size),
 name(_name),
 index(_index),
+buf_size(0),
 type(_type) {
-	if(size) {
-		value_buffer = std::calloc(size, 1);
-		if(!value_buffer) {
-			AVLERR_ << "error allcoating current_value memory";
-		}
-	}
+    
+    if(size) {
+        //elarge memory buffer and clear it
+        if(!setNewSize(size, true)) {
+            AVLERR_ << "error allocating current_value memory";
+            assert(0);
+        }
+    }
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
 AttributeValue::~AttributeValue() {
-	if(value_buffer) free(value_buffer);
+    if(value_buffer) {
+        buf_size =0;
+        size=0;
+        free(value_buffer);
+    }
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
 bool AttributeValue::setValue(const void* value_ptr,
-							uint32_t value_size,
-							bool tag_has_changed) {
-	if(value_size>size) {
-		value_size = size;
-	}
-	CHAOS_ASSERT(value_buffer)
-	
-	//copy the new value
-	std::memcpy(value_buffer, value_ptr, value_size);
-	
-	//set the relative field for set has changed
-	if(tag_has_changed) sharedBitmapChangedAttribute->set(index);
-	return true;
+                              uint32_t value_size,
+                              bool tag_has_changed) {
+   
+    if(size<value_size){
+        if(setNewSize(value_size,false)==false){
+            return false;
+        } 
+    }
+    if(value_size==0)
+        return true;
+    CHAOS_ASSERT(value_buffer)
+    
+    //copy the new value
+    std::memcpy(value_buffer, value_ptr, value_size);
+    
+    //set the relative field for set has changed
+    if(tag_has_changed) sharedBitmapChangedAttribute->set(index);
+    return true;
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-bool AttributeValue::setNewSize(uint32_t _new_size) {
-	bool result = true;
-	switch(type) {
-		case chaos::DataType::TYPE_BYTEARRAY:
-		case chaos::DataType::TYPE_STRING:
-			value_buffer = (double*)realloc(value_buffer, (size = _new_size)*2);
-			if((result = (value_buffer != NULL))) {
-				std::memset(value_buffer, 0, size);
-			}
-			break;
-		default:
-			break;
-	}
-	return result;
+bool AttributeValue::setNewSize(uint32_t _new_size,
+                                bool clear_mem) {
+    bool result = true;
+    if(_new_size<=buf_size){
+        size=_new_size;
+        return true;
+    }
+   // generate aligned memory allocations
+
+    buf_size = _new_size + ((_new_size%4)?(4 - (_new_size%4)):0);
+    
+    size = _new_size;
+    value_buffer = (void*)realloc(value_buffer, buf_size );
+    if((result = (value_buffer != NULL))) {
+        if(clear_mem) {
+            //in case of string we reset the intere memory space
+            std::memset(value_buffer, 0, buf_size);
+        }
+    } else {
+        AVLERR_ << "## cannot set size: "<<_new_size;
+        
+    }
+    return result;
 }
 
 
@@ -101,35 +122,35 @@ bool AttributeValue::setNewSize(uint32_t _new_size) {
  
  ---------------------------------------------------------------------------------*/
 void AttributeValue::markAsChanged() {
-	sharedBitmapChangedAttribute->set(index);
+    sharedBitmapChangedAttribute->set(index);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
 void AttributeValue::markAsUnchanged() {
-	sharedBitmapChangedAttribute->reset(index);
+    sharedBitmapChangedAttribute->reset(index);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
 bool AttributeValue::isGood() {
-	return value_buffer!= NULL;
+    return value_buffer!= NULL;
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
 CDataWrapper *AttributeValue::getValueAsCDatawrapperPtr(bool from_json) {
-	CDataWrapper *result = NULL;
-	if(!from_json) {
-		result = new CDataWrapper((const char *)value_buffer);
-	} else {
-		result = new CDataWrapper();
-		result->setSerializedJsonData((const char *)value_buffer);
-	}
-	return result;
+    CDataWrapper *result = NULL;
+    if(!from_json) {
+        result = new CDataWrapper((const char *)value_buffer);
+    } else {
+        result = new CDataWrapper();
+        result->setSerializedJsonData((const char *)value_buffer);
+    }
+    return result;
 }
 
 /*---------------------------------------------------------------------------------
@@ -145,22 +166,22 @@ void AttributeValue::writeToCDataWrapper(CDataWrapper& data_wrapper) {
             data_wrapper.addStringValue(name, std::string((const char *)value_buffer, size));
             break;
         }
-
+            
         case chaos::DataType::TYPE_BOOLEAN:{
             data_wrapper.addBoolValue(name, *getValuePtr<bool>());
             break;
         }
-
+            
         case chaos::DataType::TYPE_DOUBLE:{
             data_wrapper.addDoubleValue(name, *getValuePtr<double>());
             break;
         }
-
+            
         case chaos::DataType::TYPE_INT32:{
             data_wrapper.addInt32Value(name, *getValuePtr<int32_t>());
             break;
         }
-
+            
         case chaos::DataType::TYPE_INT64:{
             data_wrapper.addInt64Value(name, *getValuePtr<int64_t>());
             break;
@@ -196,7 +217,7 @@ std::string AttributeValue::toString() {
             return boost::lexical_cast<std::string>(*getValuePtr<int64_t>());
         }
             
-            default:
+        default:
             break;
     }
     return "bad type";

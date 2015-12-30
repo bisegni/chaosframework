@@ -41,6 +41,8 @@
 #define PSDLDBG_ LDBG_ << PosixStorageDriver_LOG_HEAD << __FUNCTION__ << " - "
 #define PSDLERR_ LERR_ << PosixStorageDriver_LOG_HEAD << __FUNCTION__ << " - "
 
+using namespace std;
+using namespace boost;
 using namespace chaos::common::utility;
 using namespace chaos::data_service::vfs::storage_system;
 namespace boost_fs = boost::filesystem;
@@ -68,7 +70,7 @@ void PosixStorageDriver::deinit() throw (chaos::CException) {
 }
 
 std::string PosixStorageDriver::getAbsolutePath(std::string vfs_path) {
-	return boost::str(boost::format("%1%/%2%") % fs_driver_domain_path % vfs_path);
+	return str(format("%1%/%2%") % fs_driver_domain_path % vfs_path);
 }
 
 void PosixStorageDriver::initDomain() throw (chaos::CException) {
@@ -86,11 +88,11 @@ void PosixStorageDriver::initDomain() throw (chaos::CException) {
 		//check for the presence of the domain folder
 		if(!boost_fs::exists(domain_folder)) {
 			if (!boost_fs::create_directory(domain_folder) && !boost_fs::exists(domain_folder)) {
-				throw chaos::CException(-1, boost::str(boost::format("Error creating %1% directory") % domain_folder.string()), __PRETTY_FUNCTION__);
+				throw chaos::CException(-1, str(format("Error creating %1% directory") % domain_folder.string()), __PRETTY_FUNCTION__);
 			}
 		} else {
 			if(boost_fs::is_regular_file(domain_folder)) {
-				throw chaos::CException(-1, boost::str(boost::format("%1% exist but is a file") % domain_folder.string()), __PRETTY_FUNCTION__);
+				throw chaos::CException(-1, str(format("%1% exist but is a file") % domain_folder.string()), __PRETTY_FUNCTION__);
 			}
 		}
 		
@@ -105,8 +107,8 @@ void PosixStorageDriver::initDomain() throw (chaos::CException) {
 		boost_fs::fstream domain_file_lock_stream(domain_file_lock, std::ios_base::out | std::ios_base::binary);
 		
 		//check if we have got the lock
-		boost::interprocess::file_lock flock(domain_file_lock.string().c_str());
-		boost::interprocess::scoped_lock<boost::interprocess::file_lock> e_lock(flock);
+		interprocess::file_lock flock(domain_file_lock.string().c_str());
+		interprocess::scoped_lock<interprocess::file_lock> e_lock(flock);
 		
 		//we've got the lock, so we can write or read the domain
 		uint32_t domain_file_size = 0;
@@ -117,7 +119,7 @@ void PosixStorageDriver::initDomain() throw (chaos::CException) {
 			read_already_initialized_domain =  domain_file_size > 0;
 		}
 		
-		domain_file_stream.open(domain_file, fstream::in | fstream::out | fstream::binary | fstream::app);
+        domain_file_stream.open(domain_file, std::fstream::in | std::fstream::out | std::fstream::binary | std::fstream::app);
 		
 		if(!read_already_initialized_domain) {
 			createDomain(domain_file_stream);
@@ -131,7 +133,7 @@ void PosixStorageDriver::initDomain() throw (chaos::CException) {
 	domain_file_stream.close();
 }
 
-void PosixStorageDriver::createDomain(boost::filesystem::fstream& domain_file_Stream) throw (chaos::CException) {
+void PosixStorageDriver::createDomain(filesystem::fstream& domain_file_Stream) throw (chaos::CException) {
 	chaos_data::CDataWrapper domain_data;
 	
 	//compose the pack with the given domain name and a generated unique key
@@ -146,18 +148,17 @@ void PosixStorageDriver::createDomain(boost::filesystem::fstream& domain_file_St
 	domain_file_Stream.flush();
 	
 	if (domain_file_Stream.fail()) {
-		PSDLERR_ << "domain_file_Stream is failed.." << endl;
-		PSDLERR_ << domain_file_Stream.rdstate() << endl;
+		PSDLERR_ << "domain_file_Stream is failed with state:" << domain_file_Stream.rdstate() << std::endl;
 	}
 }
 
-void PosixStorageDriver::readDomain(boost::filesystem::fstream& domain_file_Stream, uint32_t domain_file_size) throw (chaos::CException) {
+void PosixStorageDriver::readDomain(filesystem::fstream& domain_file_Stream, uint32_t domain_file_size) throw (chaos::CException) {
 	//get the stream size
 	char memblock[domain_file_size];
 	
 	//read all data
 	//rollback the file
-	domain_file_Stream.seekg(0, ios::beg);
+    domain_file_Stream.seekg(0, ios::beg);
 	domain_file_Stream.read(memblock, domain_file_size);
 	
 	//deserialize buffer
@@ -178,8 +179,8 @@ void PosixStorageDriver::readDomain(boost::filesystem::fstream& domain_file_Stre
 int  PosixStorageDriver::blockIsPresent(chaos_vfs::DataBlock *data_block, bool &presence) {
 	int err = 0;
 	boost_fs::path _path = getAbsolutePath(data_block->vfs_path);
-	if(boost::filesystem::exists(_path)) {
-		if(boost::filesystem::is_directory(_path)) {
+	if(filesystem::exists(_path)) {
+		if(filesystem::is_directory(_path)) {
 			err = -2;
 		}
 	} else {
@@ -442,7 +443,7 @@ int PosixStorageDriver::resize(chaos_vfs::DataBlock *data_block, uint64_t new_si
 	CHAOS_ASSERT(data_block)
 	CHAOS_ASSERT(data_block->driver_private_data)
 	try {
-		system::error_code ec;
+        system::error_code ec;
 		boost_fs::resize_file(getAbsolutePath(data_block->vfs_path), new_size, ec);
 		if(ec) {
 			return -1;
@@ -476,15 +477,15 @@ int PosixStorageDriver::flush(chaos_vfs::DataBlock *data_block) {
 int PosixStorageDriver::createDirectory(const std::string& vfs_path) {
 	//get absolute path
 	int err = 0;
-	boost::filesystem::path fs_path = getAbsolutePath(vfs_path);
+	filesystem::path fs_path = getAbsolutePath(vfs_path);
 	try {
-		if(boost::filesystem::exists(fs_path)) {
-			if(!boost::filesystem::is_directory(fs_path)) {
+		if(filesystem::exists(fs_path)) {
+			if(!filesystem::is_directory(fs_path)) {
 				err = -1;
 			}
 		} else {
 			//create a directory
-			if(!boost::filesystem::create_directory(fs_path)) {
+			if(!filesystem::create_directory(fs_path)) {
 				err = -2;
 			}
 		}
@@ -500,9 +501,9 @@ int PosixStorageDriver::createDirectory(const std::string& vfs_path) {
 int PosixStorageDriver::createPath(const std::string& vfs_path) {
 	int err = 0;
 	system::error_code error_code;
-	boost::filesystem::path fs_path = getAbsolutePath(vfs_path);
+	filesystem::path fs_path = getAbsolutePath(vfs_path);
 	try {
-		if(!boost::filesystem::create_directories(fs_path, error_code)) {
+		if(!filesystem::create_directories(fs_path, error_code)) {
 			PSDLDBG_ << "Path "<< vfs_path << " already present" << std::endl;
 		}
 		
@@ -517,15 +518,15 @@ int PosixStorageDriver::createPath(const std::string& vfs_path) {
 int PosixStorageDriver::deletePath(const std::string& vfs_path, bool all) {
 	int err = 0;
 	system::error_code error_code;
-	boost::filesystem::path fs_path = getAbsolutePath(vfs_path);
+	filesystem::path fs_path = getAbsolutePath(vfs_path);
 	try {
 		if(all) {
-			if(!boost::filesystem::remove_all(fs_path, error_code)) {
+			if(!filesystem::remove_all(fs_path, error_code)) {
 				PSDLERR_ << "Error deleting all from " << vfs_path << std::endl;
 				err = -1;
 			}
 		} else {
-			if(!boost::filesystem::remove(fs_path, error_code)) {
+			if(!filesystem::remove(fs_path, error_code)) {
 				PSDLERR_ << "Error deleting " << vfs_path << std::endl;
 				err = -22;
 			}

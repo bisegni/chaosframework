@@ -1,6 +1,6 @@
 #include "ControlUnitEditor.h"
 #include "ui_ControlUnitEditor.h"
-
+#include "ControUnitInstanceEditor.h"
 #include "CommandTemplateInstanceEditor.h"
 #include "../../widget/list/delegate/TwoLineInformationListItemDelegate.h"
 #include "../../plot/NodeAttributePlotting.h"
@@ -12,12 +12,15 @@
 #include <QObject>
 
 static const QString TAG_CU_INFO = QString("g_cu_i");
+static const QString TAG_CU_INFO_FOR_UPDATE = QString("g_cu_i_update");
 static const QString TAG_CU_DATASET = QString("g_cu_d");
+static const QString TAG_CU_DATASET_FOR_UPDATE = QString("g_cu_d_update");
 static const QString TAG_CU_INSTANCE = QString("g_cu_instance");
 static const QString TAG_CU_APPLY_CHANGESET = QString("g_cu_apply_changeset");
 static const QString TAG_CU_SEARCH_TEMPLATE = QString("g_cu_search_template");
 static const QString TAG_CU_DELETE_TEMPLATE = QString("g_cu_delete_template");
 static const QString TAG_CU_SET_THREAD_SCHEDULE_DELAY = QString("g_cu_thrd_sch_del");
+static const QString TAG_CU_RECOVER_ERROR = QString("g_cu_rec_err");
 
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
@@ -41,19 +44,20 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     connect(ui->ledIndicatorHealtTSUnitServer,
             SIGNAL(changedOnlineStatus(QString, CLedIndicatorHealt::AliveState)),
             SLOT(changedOnlineStatus(QString, CLedIndicatorHealt::AliveState)));
-
+    connect(ui->labelControlUnitStatus,
+            SIGNAL(valueChanged(QString,QString)),
+            SLOT(controlUnitStatusChanged(QString,QString)));
 }
 
 ControlUnitEditor::~ControlUnitEditor() {
     //shutdown monitoring of channel
-    dataset_input_table_model.setAttributeMonitoring(false);
-    dataset_output_table_model.setAttributeMonitoring(false);
-    //remove monitoring on cu and us
-    manageMonitoring(false);
     delete ui;
 }
 
 void ControlUnitEditor::initUI() {
+    setWindowTitle(QString("Control unit '%1' editor").arg(control_unit_unique_id));
+    ui->pushButtonRecoverError->setVisible(false);
+    ui->pushButtonEditInstance->setEnabled(false);
     //add model to table
     ui->tableViewOutputChannel->setModel(&dataset_output_table_model);
     ui->tableViewOutputChannel->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -65,7 +69,7 @@ void ControlUnitEditor::initUI() {
     //for load button
     logic_switch_aggregator.addNewLogicSwitch("cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("cu_can_operate", "us_alive","online");
-    logic_switch_aggregator.addKeyRefValue("cu_can_operate", "us_state","Load");
+    logic_switch_aggregator.addKeyRefValue("cu_can_operate", "us_state",chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
 
     logic_switch_aggregator.addNewLogicSwitch("load");
     logic_switch_aggregator.connectSwitch("load", "cu_can_operate");
@@ -76,38 +80,50 @@ void ControlUnitEditor::initUI() {
     logic_switch_aggregator.addNewLogicSwitch("unload");
     logic_switch_aggregator.connectSwitch("unload", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("unload", "cu_alive","online");
-    logic_switch_aggregator.addKeyRefValue("unload", "cu_state","Load");
-    logic_switch_aggregator.addKeyRefValue("unload", "cu_state","Deinit");
+    logic_switch_aggregator.addKeyRefValue("unload", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
+    logic_switch_aggregator.addKeyRefValue("unload", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT);
+    logic_switch_aggregator.addKeyRefValue("unload", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("unload", ui->pushButtonUnload, "enabled", true, false);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("unload", ui->pushButtonInitAction, "enabled", true, false);
 
     logic_switch_aggregator.addNewLogicSwitch("start");
     logic_switch_aggregator.connectSwitch("start", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("start", "cu_alive","online");
-    logic_switch_aggregator.addKeyRefValue("start", "cu_state","Init");
-    logic_switch_aggregator.addKeyRefValue("start", "cu_state","Stop");
+    logic_switch_aggregator.addKeyRefValue("start", "cu_state",chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT);
+    logic_switch_aggregator.addKeyRefValue("start", "cu_state",chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonStartAction, "enabled", true, false);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("start", ui->pushButtonDeinitAction, "enabled", true, false);
 
     logic_switch_aggregator.addNewLogicSwitch("stop");
     logic_switch_aggregator.connectSwitch("stop", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("stop", "cu_alive","online");
-    logic_switch_aggregator.addKeyRefValue("stop", "cu_state","Start");
+    logic_switch_aggregator.addKeyRefValue("stop", "cu_state",chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_START);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("stop", ui->pushButtonStopAction, "enabled", true, false);
-
 
     logic_switch_aggregator.addNewLogicSwitch("update_property");
     logic_switch_aggregator.connectSwitch("update_property", "cu_can_operate");
     logic_switch_aggregator.addKeyRefValue("update_property", "cu_alive","online");
-    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state","Init");
-    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state","Start");
-    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state","Stop");
+    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT);
+    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_START);
+    logic_switch_aggregator.addKeyRefValue("update_property", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("update_property", ui->pushButtonSetRunScheduleDelay, "enabled", true, false);
     logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("update_property", ui->lineEditRunScheduleDelay, "enabled", true, false);
+
+    logic_switch_aggregator.addNewLogicSwitch("recover_error");
+    logic_switch_aggregator.connectSwitch("recover_error", "cu_can_operate");
+    logic_switch_aggregator.addKeyRefValue("recover_error", "cu_alive","online");
+    logic_switch_aggregator.addKeyRefValue("recover_error", "cu_state", chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR);
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("recover_error", ui->pushButtonRecoverError, "enabled", true, false);
+    logic_switch_aggregator.attachObjectAttributeToSwitch<bool>("recover_error", ui->pushButtonRecoverError, "visible", true, false);
 
     //set the status on not_found for either the control unit and unit serve
     logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(0));
     logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(0));
+
+    //connect slot to logic switch signals
+    connect(&logic_switch_aggregator,
+            SIGNAL(stateChangedOnSwitch(QString,bool)),
+            SLOT(onLogicSwitchChangeState(QString,bool)));
 
     //set control unit uid label
     ui->labelUniqueIdentifier->setText(control_unit_unique_id);
@@ -155,13 +171,18 @@ void ControlUnitEditor::initUI() {
             SIGNAL(valueChanged(QString,QString)),
             SLOT(changedNodeState(QString,QString)));
 
-    //show the current thread schedule delay
+    //chaos label for the current thread schedule delay
     ui->labelRunScheduleDelaySet->setNodeUniqueID(control_unit_unique_id);
-    ui->labelRunScheduleDelaySet->setAttributeName(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY);
+    ui->labelRunScheduleDelaySet->setAttributeName(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY);
     ui->labelRunScheduleDelaySet->setAttributeType(chaos::DataType::TYPE_INT64);
     ui->labelRunScheduleDelaySet->setTrackStatus(true);
     ui->labelRunScheduleDelaySet->setDataset(ChaosDatasetLabel::DatasetSystem);
 
+    //chaos label for the current output dataset push rate
+    ui->chaosLabelDSOutputPushRate->setNodeUniqueID(control_unit_unique_id);
+    ui->chaosLabelDSOutputPushRate->setAttributeName(chaos::ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE);
+    ui->chaosLabelDSOutputPushRate->setAttributeType(chaos::DataType::TYPE_DOUBLE);
+    ui->chaosLabelDSOutputPushRate->setDoublePrintPrecision(2);
     //thread schedule update
     ui->lineEditRunScheduleDelay->setValidator(new QIntValidator(0,60000000));
     // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
@@ -204,6 +225,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         ui->labelControlUnitStatus->startMonitoring();
         ui->labelRunScheduleDelaySet->startMonitoring();
         ui->ledIndicatorHealtTSControlUnit->startMonitoring();
+        ui->chaosLabelDSOutputPushRate->startMonitoring();
     }else{
         if(unit_server_parent_unique_id.size()) {
             //remove old unit server for healt
@@ -213,6 +235,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         ui->labelControlUnitStatus->stopMonitoring();
         ui->labelRunScheduleDelaySet->stopMonitoring();
         ui->ledIndicatorHealtTSControlUnit->stopMonitoring();
+        ui->chaosLabelDSOutputPushRate->stopMonitoring();
     }
 }
 
@@ -220,10 +243,6 @@ void ControlUnitEditor::manageMonitoring(bool start) {
 void ControlUnitEditor::changedOnlineStatus(const QString& node_uid,
                                             CLedIndicatorHealt::AliveState node_alive_state) {
     if(node_uid.compare(control_unit_unique_id) == 0) {
-        if(node_alive_state == CLedIndicatorHealt::Online) {
-            //Control unit has becomed online so we need to reload all information
-            updateAllControlUnitInfomration();
-        }
         //state changed for control unit
         qDebug()<< "change cu online status for:" << node_uid << " as:" <<getStatusString(ui->ledIndicatorHealtTSControlUnit->getState());
         logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(ui->ledIndicatorHealtTSControlUnit->getState()));
@@ -231,6 +250,15 @@ void ControlUnitEditor::changedOnlineStatus(const QString& node_uid,
         //state changed for unit server
         qDebug()<< "change us online status for:" << node_uid << " as:" <<getStatusString(ui->ledIndicatorHealtTSUnitServer->getState());
         logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(ui->ledIndicatorHealtTSUnitServer->getState()));
+    }
+}
+
+void ControlUnitEditor::controlUnitStatusChanged(const QString& control_unit_id,
+                                                 const QString& status) {
+    qDebug()<< "changed status for:" << control_unit_id << " as:" <<status;
+    if(status.compare(tr(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT)) == 0) {
+        submitApiResult(QString(TAG_CU_DATASET),
+                        GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(control_unit_unique_id.toStdString()));
     }
 }
 
@@ -247,7 +275,11 @@ void ControlUnitEditor::changedNodeState(const QString& node_uid,
     }
 }
 
-bool ControlUnitEditor::canClose() {
+bool ControlUnitEditor::isClosing() {
+    dataset_input_table_model.setAttributeMonitoring(false);
+    dataset_output_table_model.setAttributeMonitoring(false);
+    //remove monitoring on cu and us
+    manageMonitoring(false);
     return true;
 }
 
@@ -275,7 +307,10 @@ void ControlUnitEditor::onApiDone(const QString& tag,
                         GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(control_unit_unique_id.toStdString()));
     } else if(tag.compare(TAG_CU_INSTANCE) == 0) {
         if(api_result.isNull()) return;
-        if(api_result->hasKey(chaos::NodeDefinitionKey::NODE_PARENT)){
+        //enable the button for editing instance
+        bool has_node_parent = api_result->hasKey(chaos::NodeDefinitionKey::NODE_PARENT);
+        ui->pushButtonEditInstance->setEnabled(has_node_parent);
+        if(has_node_parent){
             const QString new_u_s = QString::fromStdString(api_result->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT));
             if(unit_server_parent_unique_id.compare(new_u_s) != 0) {
                 //whe ahve unit server changed
@@ -305,19 +340,27 @@ void ControlUnitEditor::onApiDone(const QString& tag,
         //tempalte delete operaion
         updateTemplateSearch();
     }
+    PresenterWidget::onApiDone(tag,
+                               api_result);
 }
 
 void ControlUnitEditor::fillInfo(const QSharedPointer<chaos::common::data::CDataWrapper>& node_info) {
     if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_RPC_ADDR)) {
         ui->labelRemoteAddress->setText(QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_ADDR)));
     } else {
-        ui->labelRemoteAddress->setText(tr(""));
+        ui->labelRemoteAddress->setText(tr("---"));
     }
 
     if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)) {
         ui->labelRpcDomain->setText(QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_RPC_DOMAIN)));
     } else {
-        ui->labelRpcDomain->setText(tr(""));
+        ui->labelRpcDomain->setText(tr("---"));
+    }
+
+    if(node_info->hasKey(chaos::NodeDefinitionKey::NODE_TYPE)) {
+        ui->labelType->setText(QString::fromStdString(node_info->getStringValue(chaos::NodeDefinitionKey::NODE_TYPE)));
+    } else {
+        ui->labelType->setText(tr("---"));
     }
 }
 
@@ -376,7 +419,9 @@ void ControlUnitEditor::templateSaved(const QString& tempalte_name,
 
 void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
                                                  bool switch_activate) {
-
+    if(switch_name.compare("unload") == 0) {
+        updateAllControlUnitInfomration();
+    }
 }
 
 void ControlUnitEditor::handleSelectionChangedOnListWiew(const QItemSelection& selection,
@@ -509,7 +554,7 @@ void ControlUnitEditor::on_pushButtonCreateInstance_clicked() {
 
 void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
     chaos::metadata_service_client::api_proxy::node::NodePropertyGroupList property_list;
-    boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> thread_run_schedule(new chaos::common::data::CDataWrapperInt64KeyValueSetter(chaos::ControlUnitNodeDefinitionKey::THREAD_SCHEDULE_DELAY,
+    boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> thread_run_schedule(new chaos::common::data::CDataWrapperInt64KeyValueSetter(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY,
                                                                                                                                                     ui->lineEditRunScheduleDelay->text().toLongLong()));
     boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
     cu_property_group->group_name = "property_abstract_control_unit";
@@ -525,4 +570,19 @@ void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
 void ControlUnitEditor::on_pushButton_clicked() {
     NodeAttributePlotting *plot_viewer = new NodeAttributePlotting(control_unit_unique_id, NULL);
     plot_viewer->show();
+}
+
+void ControlUnitEditor::on_pushButtonRecoverError_clicked() {
+    //recover error api call
+    std::vector<std::string> uids;
+    uids.push_back(control_unit_unique_id.toStdString())            ;
+    submitApiResult(TAG_CU_RECOVER_ERROR,
+                    GET_CHAOS_API_PTR(control_unit::RecoverError)->execute(uids));
+}
+
+void ControlUnitEditor::on_pushButtonOpenInstanceEditor_clicked() {
+    qDebug() << "Open instance editor for control unit:"<< control_unit_unique_id << " and unit server:" << unit_server_parent_unique_id;
+    addWidgetToPresenter(new ControUnitInstanceEditor(unit_server_parent_unique_id,
+                                                      control_unit_unique_id,
+                                                      true));
 }

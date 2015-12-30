@@ -27,12 +27,15 @@
 #include "GetCurrentDataset.h"
 #include "GetFullDescription.h"
 #include "SetInputDatasetAttributeValues.h"
+#include "CopyInstance.h"
+#include "RecoverError.h"
+#include "Delete.h"
 using namespace chaos::metadata_service::api::control_unit;
 DEFINE_CLASS_FACTORY_NO_ALIAS(ControlUnitGroup, chaos::metadata_service::api::AbstractApiGroup);
 
 ControlUnitGroup::ControlUnitGroup():
 AbstractApiGroup("control_unit"){
-        //add api for UnitServer registration
+        //add api for control unit registration
     addApi<SetInstanceDescription>();
     addApi<SearchInstancesByUS>();
     addApi<GetInstance>();
@@ -42,6 +45,9 @@ AbstractApiGroup("control_unit"){
     addApi<GetCurrentDataset>();
     addApi<GetFullDescription>();
     addApi<SetInputDatasetAttributeValues>();
+    addApi<CopyInstance>();
+    addApi<RecoverError>();
+    addApi<Delete>();
 }
 
 ControlUnitGroup::~ControlUnitGroup() {

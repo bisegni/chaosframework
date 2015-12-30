@@ -25,6 +25,7 @@
 #include <chaos/common/event/evt_desc/CommandEventDescriptor.h>
 #include <chaos/common/event/evt_desc/CustomEventDescriptor.h>
 
+using namespace std;
 using namespace chaos;
 using namespace chaos::event;
 using namespace chaos::common::utility;

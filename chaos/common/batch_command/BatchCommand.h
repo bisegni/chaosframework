@@ -80,10 +80,10 @@ namespace chaos{
                 friend struct CommandInfoAndImplementation;
                 //!unique command id
                 uint64_t unique_id;
-				
-				//! the alias associated to the command
-				std::string command_alias;
-				
+                
+                //! the alias associated to the command
+                std::string command_alias;
+                
                 //! keep track whenever set handler has been called
                 bool already_setupped;
                 
@@ -137,157 +137,170 @@ namespace chaos{
                 
                 //! default destructor
                 virtual ~BatchCommand();
-				
-				virtual
-				AbstractSharedDomainCache * const getSharedCacheInterface() {
-					return sharedAttributeCachePtr;
-				}
-				
+                
+                virtual
+                AbstractSharedDomainCache * const getSharedCacheInterface() {
+                    return sharedAttributeCachePtr;
+                }
+                
             public:
                 //! return the unique id for the command instance
                 uint64_t getUID();
-                
+                /**
+                 * Return the alias of the command
+                 * @return the alis name of the command
+                 */
+                std::string getAlias(){return command_alias;}
                 //! return the identification of the device
                 std::string& getDeviceID();
-				
-				//! return the set handler time
-				uint64_t getSetTime();
-				
-				//! return the start step time of the sandbox
-				uint64_t getStartStepTime();
-				
-				//! return the last step time of the sandbox
-				uint64_t getLastStepTime();
-				
-				//! set the alias of the command
-				void setCommandAlias(const std::string& _command_alias);
-				
-				//! set the features with the uint32 value
-				/*!
-				 Feature rappresented by an uint32 can be setupped with this api. The value can be
-				 overloaded by submition feature flag and anyway the are keept in consideration onlyat installation time
-				 of the command.
-				 */
-				inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t features_value) {
-					//check if the features are locked for the user modifications
-					if(lockFeaturePropertyFlag.test(0) || lockFeaturePropertyFlag.test(2)) return;
-					
-					
-					switch (features) {
-							
-						case features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
-							commandFeatures.featuresFlag |= features;
-							commandFeatures.featureSubmissionRetryDelay = features_value;
-							break;
-							
-						default:
-							break;
-					}
-				}
-				
-				//! set the features with the uint32 value
-				/*!
-				 Feature rappresented by an uint32 can be setupped with this api. The value can be
-				 overloaded by submition feature flag and anyway the are keept in consideration onlyat installation time
-				 of the command.
-				 */
-				inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint64_t features_value) {
-					//check if the features are locked for the user modifications
-					if(lockFeaturePropertyFlag.test(0) || lockFeaturePropertyFlag.test(2)) return;
-					
-					
-					switch (features) {
-						case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
-							commandFeatures.featuresFlag |= features;
-							commandFeatures.featureSchedulerStepsDelay = features_value;
-							break;
-							
-						case features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT:
-							commandFeatures.featuresFlag |= features;
-							commandFeatures.featureCommandTimeout = (uint64_t)features_value;
-						default:
-							break;
-					}
-				}
-				
-				//! clear the features
-				/*!
-				 Turn off the features
-				 \param features is the features that need to be cleared
-				 */
-				inline void clearFeatures(features::FeaturesFlagTypes::FeatureFlag features) {
-					//check if the features are locked for the user modifications
-					if(lockFeaturePropertyFlag.test(0) || lockFeaturePropertyFlag.test(2)) return;
-					
-					commandFeatures.featuresFlag ^= features;
-					switch (features) {
-						case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
-							commandFeatures.featureSchedulerStepsDelay = 0;
-							break;
-							
-						case features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
-							commandFeatures.featureSubmissionRetryDelay = 0;
-							break;
-							
-						case features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT:
-							commandFeatures.featureCommandTimeout = 0;
-						default:
-							break;
-					}
-				}
-				
-				//! set the running property
-				inline
-				bool setRunningProperty(uint8_t property)  {
-					if(lockFeaturePropertyFlag.test(1)) return false;
-					runningProperty = property;
-					return true;
-				}
-				
-				//! return the current running property
-				inline
-				uint8_t getRunningProperty() {
-					return runningProperty;
-				}
-				
-				//! return the implemented handler
-				/*!
-				 The implementation need to give information about the handler
-				 that has been implemented. If all handler has been implemented
-				 the result will be "HT_Set | HT_Acq | HT_CrCm"
-				 */
-				virtual uint8_t implementedHandler() = 0;
-				
-				//! Start the command execution
-				/*!
-				 Set handler has the main purpose to initiate the command. All the operration need to avviate
-				 the command sequence need to made here.
-				 \param data CDatawrapper object taht containing a set of initial data for the command
-				 \return the mask for the runnign state
-				 */
-				virtual void setHandler(chaos_data::CDataWrapper *data);
-				
-				//! Aquire the necessary data for the command
-				/*!
-				 The acquire handler has the purpose to get all necessary data need the by CC handler.
-				 \return the mask for the runnign state
-				 */
-				virtual void acquireHandler();
-				
-				//! Correlation and commit phase
-				/*!
-				 The correlation and commit handlers has the purpose to check whenever the command has ended or for
-				 send further commands to the hardware, through the driver, to accomplish the command steps.
-				 \return the mask for the runnign state
-				 */
-				virtual void ccHandler();
-				
-				//! Handle the timeout
-				/*!
-				 Permit to the command implementation to handle the timeout, timeout continue to be called untile command quit after timeout is reached
-				 \return true if a fault error, for the timeout, need to be set.
-				 */
-				virtual bool timeoutHandler();
+                
+                //! return the set handler time
+                uint64_t getSetTime();
+                
+                //! return the start step time of the sandbox
+                uint64_t getStartStepTime();
+                
+                //! return the last step time of the sandbox
+                uint64_t getLastStepTime();
+                
+                //! set the alias of the command
+                void setCommandAlias(const std::string& _command_alias);
+                
+                //! set the features with the uint32 value
+                /*!
+                 Feature rappresented by an uint32 can be setupped with this api. The value can be
+                 overloaded by submition feature flag and anyway the are keept in consideration onlyat installation time
+                 of the command.
+                 */
+                inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t features_value) {
+                    //check if the features are locked for the user modifications
+                    if(lockFeaturePropertyFlag.test(0) || lockFeaturePropertyFlag.test(2)) return;
+                    
+                    
+                    switch (features) {
+                        case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
+                            commandFeatures.featuresFlag |= features;
+                            commandFeatures.featureSchedulerStepsDelay = features_value;
+                            break;
+                            
+                        case features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT:
+                            commandFeatures.featuresFlag |= features;
+                            commandFeatures.featureCommandTimeout = features_value;
+                            break;
+                            
+                        case features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
+                            commandFeatures.featuresFlag |= features;
+                            commandFeatures.featureSubmissionRetryDelay = features_value;
+                            break;
+                            
+                        default:
+                            break;
+                    }
+                }
+                
+                //! set the features with the uint32 value
+                /*!
+                 Feature rappresented by an uint32 can be setupped with this api. The value can be
+                 overloaded by submition feature flag and anyway the are keept in consideration onlyat installation time
+                 of the command.
+                 */
+                inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint64_t features_value) {
+                    //check if the features are locked for the user modifications
+                    if(lockFeaturePropertyFlag.test(0) || lockFeaturePropertyFlag.test(2)) return;
+                    
+                    
+                    switch (features) {
+                        case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
+                            commandFeatures.featuresFlag |= features;
+                            commandFeatures.featureSchedulerStepsDelay = features_value;
+                            break;
+                            
+                        case features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT:
+                            commandFeatures.featuresFlag |= features;
+                            commandFeatures.featureCommandTimeout = features_value;
+                        default:
+                            break;
+                    }
+                }
+                
+                //! clear the features
+                /*!
+                 Turn off the features
+                 \param features is the features that need to be cleared
+                 */
+                inline void clearFeatures(features::FeaturesFlagTypes::FeatureFlag features) {
+                    //check if the features are locked for the user modifications
+                    if(lockFeaturePropertyFlag.test(0) || lockFeaturePropertyFlag.test(2)) return;
+                    
+                    commandFeatures.featuresFlag ^= features;
+                    switch (features) {
+                        case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
+                            commandFeatures.featureSchedulerStepsDelay = 0;
+                            break;
+                            
+                        case features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
+                            commandFeatures.featureSubmissionRetryDelay = 0;
+                            break;
+                            
+                        case features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT:
+                            commandFeatures.featureCommandTimeout = 0;
+                        default:
+                            break;
+                    }
+                }
+                
+                //! set the running property
+                inline
+                bool setRunningProperty(uint8_t property)  {
+                    if(lockFeaturePropertyFlag.test(1)) return false;
+                    runningProperty = property;
+                    return true;
+                }
+                
+                //! return the current running property
+                inline
+                uint8_t getRunningProperty() {
+                    return runningProperty;
+                }
+                
+                //! return the implemented handler
+                /*!
+                 The implementation need to give information about the handler
+                 that has been implemented. If all handler has been implemented
+                 the result will be "HT_Set | HT_Acq | HT_CrCm"
+                 */
+                virtual uint8_t implementedHandler() = 0;
+                
+                //! Start the command execution
+                /*!
+                 Set handler has the main purpose to initiate the command. All the operration need to avviate
+                 the command sequence need to made here.
+                 \param data CDatawrapper object taht containing a set of initial data for the command
+                 \return the mask for the runnign state
+                 */
+                virtual void setHandler(chaos_data::CDataWrapper *data);
+                
+                //! Aquire the necessary data for the command
+                /*!
+                 The acquire handler has the purpose to get all necessary data need the by CC handler.
+                 \return the mask for the runnign state
+                 */
+                virtual void acquireHandler();
+                
+                //! Correlation and commit phase
+                /*!
+                 The correlation and commit handlers has the purpose to check whenever the command has ended or for
+                 send further commands to the hardware, through the driver, to accomplish the command steps.
+                 \return the mask for the runnign state
+                 */
+                virtual void ccHandler();
+                
+                //! Handle the timeout
+                /*!
+                 Permit to the command implementation to handle the timeout, timeout continue to be called untile command quit after timeout is reached
+                 \return true if a fault error, for the timeout, need to be set.
+                 */
+                virtual bool timeoutHandler();
             };
         }
     }

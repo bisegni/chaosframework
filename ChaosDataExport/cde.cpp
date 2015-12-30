@@ -181,6 +181,9 @@ int main(int argc, char* argv[])
     int rett=0;
     int retry = 0;
     uint32_t cicle_number = 0;
+    //clear buffer
+    memset(buf, 0, 255);
+    
     CDeviceNetworkAddress deviceNetworkAddress;
     try{
         std::cout << "\x1B[?25l";

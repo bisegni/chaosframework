@@ -52,16 +52,16 @@ namespace chaos {
                 
                 //! inherited method
                 int64_t sendPriorityData(DirectIODataPack *data_pack,
-                                         DirectIOClientDeallocationHandler *header_deallocation_handler,
-                                         DirectIOClientDeallocationHandler *data_deallocation_handler,
-                                         DirectIOSynchronousAnswer **asynchronous_answer = NULL);
+                                         DirectIODeallocationHandler *header_deallocation_handler,
+                                         DirectIODeallocationHandler *data_deallocation_handler,
+                                         DirectIODataPack **asynchronous_answer = NULL);
                 
                 
                 //! inherited method
                 int64_t sendServiceData(DirectIODataPack *data_pack,
-                                        DirectIOClientDeallocationHandler *header_deallocation_handler,
-                                        DirectIOClientDeallocationHandler *data_deallocation_handler,
-                                        DirectIOSynchronousAnswer **asynchronous_answer = NULL);
+                                        DirectIODeallocationHandler *header_deallocation_handler,
+                                        DirectIODeallocationHandler *data_deallocation_handler,
+                                        DirectIODataPack **asynchronous_answer = NULL);
             };
         }
     }
