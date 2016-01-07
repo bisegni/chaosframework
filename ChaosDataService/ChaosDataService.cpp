@@ -150,7 +150,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
                             getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_VFS_STORAGE_DRIVER_KVP));
         }
         
-        if(!setting.cache_only && getGlobalConfigurationInstance()->hasOption(OPT_DB_DRIVER_KVP)) {
+        if(getGlobalConfigurationInstance()->hasOption(OPT_DB_DRIVER_KVP)) {
             fillKVParameter(setting.db_driver_setting.key_value_custom_param,
                             getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_DB_DRIVER_KVP));
         }

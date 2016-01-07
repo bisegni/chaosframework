@@ -121,19 +121,19 @@ int MongoDBSnapshotDataAccess::getSnapshotWorkingState(const std::string& snapsh
                                             "find",
                                             DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                     q.jsonString()));)
-
+        
         
         if((err = connection->findOne(snapshot_info,
-                                     MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT),
-                                     q))) {
-             MDBDSDA_ERR << "Error getting snapsho description with code:" << err;
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SNAPSHOT),
+                                      q))) {
+            MDBDSDA_ERR << "Error getting snapsho description with code:" << err;
         } else if(snapshot_info.isEmpty()) {
             err = - 10000;
             MDBDSDA_ERR << "Snapshto description has not been found" << err;
         } else {
             //we have snapshot description
             if(snapshot_info.hasField("job_concurency")) {
-                 work_free  = snapshot_info.getIntField("job_concurency") == 0;
+                work_free  = snapshot_info.getIntField("job_concurency") == 0;
             } else {
                 work_free = false;
             }
@@ -171,9 +171,13 @@ int MongoDBSnapshotDataAccess::getAllSnapshot(chaos::metadata_service::persisten
                                                                               0,
                                                                               0,
                                                                               &prj);
-        while(query_result->more()) {
-            mongo::BSONObj n = query_result->next();
-            snapshot_desriptions.push_back(chaos::metadata_service::persistence::data_access::SnapshotElementPtr(new CDataWrapper(n.objdata())));
+        if(query_result.get()) {
+            while(query_result->more()) {
+                mongo::BSONObj n = query_result->next();
+                snapshot_desriptions.push_back(chaos::metadata_service::persistence::data_access::SnapshotElementPtr(new CDataWrapper(n.objdata())));
+            }
+        }else{
+            err = -10000;
         }
         
     } catch (const mongo::DBException &e) {
