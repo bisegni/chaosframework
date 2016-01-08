@@ -260,6 +260,10 @@ void SCAbstractControlUnit::submitBatchCommand(const std::string& batch_command_
                                          scheduler_step_delay);
 }
 
+std::auto_ptr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_t command_id) {
+    return slow_command_executor->getStateForCommandID(command_id);
+}
+
 /*
  Receive the event for set the dataset input element
  */
