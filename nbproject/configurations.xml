@@ -12255,7 +12255,7 @@
       <makefileType>
         <makeTool>
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
-          <buildCommand>${MAKE} -j 8 -f Makefile install</buildCommand>
+          <buildCommand>${MAKE} -j 5 -f Makefile install</buildCommand>
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
           <ccTool flags="3">
@@ -15024,7 +15024,12 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="8">
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="chaos/common/message/MDSMessageChannel.cpp"
@@ -15032,6 +15037,16 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/message/MessageChannel.cpp"
@@ -15039,6 +15054,16 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/message/MessageRequestFuture.cpp"
@@ -15046,6 +15071,16 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/message/MultiAddressMessageChannel.cpp"
@@ -15053,6 +15088,16 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/message/MultiAddressMessageRequestFuture.cpp"
@@ -15060,6 +15105,16 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/message/NodeMessageChannel.cpp"
@@ -15067,6 +15122,16 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/message/PerformanceNodeChannel.cpp"
@@ -15074,6 +15139,16 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/metric/AbstractMetricBackend.cpp"
@@ -15122,7 +15197,12 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="8">
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="chaos/common/network/PerformanceManagment.cpp"
@@ -15130,10 +15210,30 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/network/URL.cpp" ex="false" tool="1" flavor2="4">
         <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/network/URLServiceFeeder.cpp"
@@ -15141,8 +15241,16 @@
             tool="1"
             flavor2="4">
         <ccTool flags="6">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
+          </incDir>
           <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>DEBUG=1</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
       </item>
@@ -15415,9 +15523,14 @@
             flavor2="4">
         <ccTool flags="12">
           <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
             <pElem>bin/bin_uitoolkit</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
             <Elem>chaos_uitoolkit_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -15428,9 +15541,14 @@
             flavor2="4">
         <ccTool flags="12">
           <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
             <pElem>bin/bin_uitoolkit</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
             <Elem>chaos_uitoolkit_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
@@ -15439,10 +15557,12 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="10">
-          <preprocessorList>
-            <Elem>DEBUG=1</Elem>
-          </preprocessorList>
+        <ccTool flags="8">
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_uitoolkit</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="chaos/ui_toolkit/HighLevelApi/HLDataApi.cpp"
@@ -15450,6 +15570,16 @@
             tool="1"
             flavor2="4">
         <ccTool flags="12">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_uitoolkit</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/ui_toolkit/HighLevelApi/HLInfrastructureApi.cpp"
@@ -15457,6 +15587,16 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_uitoolkit</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/ui_toolkit/LowLevelApi/LLDataApi.cpp"
@@ -61169,17 +61309,11 @@
       <folder path="0/ChaosDataExport">
         <ccTool>
           <incDir>
-            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
-            <pElem>bin/bin_cutoolkit</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
-            <pElem>ChaosDataExport</pElem>
             <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>ChaosDataExport</pElem>
             <pElem>bin/chaos_cde</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
-            <Elem>chaos_cutoolkit_EXPORTS</Elem>
-          </preprocessorList>
         </ccTool>
       </folder>
       <folder path="0/ChaosDataService">
@@ -61774,16 +61908,8 @@
       </folder>
       <folder path="0/chaos/common/message">
         <ccTool>
-          <incDir>
-            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
-            <pElem>bin/bin_cutoolkit</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
-            <pElem>bin/bin_common</pElem>
-          </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>chaos_common_EXPORTS</Elem>
-            <Elem>chaos_cutoolkit_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
       </folder>
@@ -61804,16 +61930,8 @@
       </folder>
       <folder path="0/chaos/common/network">
         <ccTool>
-          <incDir>
-            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
-            <pElem>bin/bin_cutoolkit</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
-            <pElem>bin/bin_common</pElem>
-          </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>chaos_common_EXPORTS</Elem>
-            <Elem>chaos_cutoolkit_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
       </folder>
@@ -61919,7 +62037,29 @@
           </preprocessorList>
         </ccTool>
       </folder>
-      <folder path="0/chaos/ui_toolkit">
+      <folder path="0/chaos/ui_toolkit/HighLevelApi">
+        <ccTool>
+          <preprocessorList>
+            <Elem>chaos_uitoolkit_EXPORTS</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="0/chaos/ui_toolkit/LowLevelApi">
+        <ccTool>
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_uitoolkit</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+            <Elem>chaos_uitoolkit_EXPORTS</Elem>
+          </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="0/chaos/ui_toolkit/caching">
         <ccTool>
           <incDir>
             <pElem>../chaos-x86_64-dynamic-release/include</pElem>
@@ -61929,26 +62069,6 @@
           <preprocessorList>
             <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>chaos_cutoolkit_EXPORTS</Elem>
-          </preprocessorList>
-        </ccTool>
-      </folder>
-      <folder path="0/chaos/ui_toolkit/HighLevelApi">
-        <ccTool>
-          <incDir>
-            <pElem>bin/bin_uitoolkit</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>chaos_uitoolkit_EXPORTS</Elem>
-          </preprocessorList>
-        </ccTool>
-      </folder>
-      <folder path="0/chaos/ui_toolkit/LowLevelApi">
-        <ccTool>
-          <incDir>
-            <pElem>bin/bin_uitoolkit</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>chaos_uitoolkit_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
       </folder>
@@ -61997,16 +62117,12 @@
       <folder path="0/example/ChaosCLI">
         <ccTool>
           <incDir>
+            <pElem>..</pElem>
             <pElem>../chaos-x86_64-dynamic-release/include</pElem>
-            <pElem>bin/bin_cutoolkit</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
             <pElem>example/ChaosCLI</pElem>
+            <pElem>example</pElem>
             <pElem>bin/chaos_cli</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
-            <Elem>chaos_cutoolkit_EXPORTS</Elem>
-          </preprocessorList>
         </ccTool>
       </folder>
       <folder path="0/example/ChaosMDSCmd">
@@ -62023,16 +62139,12 @@
       <folder path="0/example/ChaosPerformanceTester">
         <ccTool>
           <incDir>
+            <pElem>..</pElem>
             <pElem>../chaos-x86_64-dynamic-release/include</pElem>
-            <pElem>bin/bin_cutoolkit</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
             <pElem>example/ChaosPerformanceTester</pElem>
+            <pElem>example</pElem>
             <pElem>bin/ChaosPerformanceTester</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
-            <Elem>chaos_cutoolkit_EXPORTS</Elem>
-          </preprocessorList>
         </ccTool>
       </folder>
       <folder path="0/example/UIToolkitTest">

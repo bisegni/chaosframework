@@ -73,6 +73,12 @@ namespace chaos {
 				 \millisecToWait the number of millisecond for waith the answer
 				 */
 				int stopDevice(uint32_t millisecToWait = 0);
+                                
+                                /*!
+                                    Recover from recoverable error
+                                 * \millisecToWait the number of millisecond for waith the answer
+				 */
+				int recoverDeviceFromError(uint32_t millisecToWait = 0);
 				//! Restore the device to a tag
 				/*!
 				 Perform the restore of the device state as was at tag

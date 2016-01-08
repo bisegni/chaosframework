@@ -238,9 +238,13 @@ namespace chaos {
              */
             int deinitDevice();
 			
-			//! resto the device to a saved tag
-			int restoreDeviceToTag(const std::string& restore_tag);
-			
+            /**
+             * recover the device from an error (recoverable)
+             * @return 0 on success
+             */
+            int recoverDeviceFromError();
+            //! restore the device to a saved tag
+            int restoreDeviceToTag(const std::string& restore_tag);
             int setAttributeValue(std::string& attributeName, int32_t attributeValue);
             int setAttributeValue(const char *attributeName, int32_t attributeValue);
             

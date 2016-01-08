@@ -36,6 +36,18 @@ void DeviceMessageChannel::setNewAddress(CDeviceNetworkAddress *_deviceAddress) 
     setNewAddress(_deviceAddress);
     deviceNetworkAddress = _deviceAddress;
 }
+
+int DeviceMessageChannel::recoverDeviceFromError(uint32_t millisecToWait){
+     CDataWrapper message_data;
+    message_data.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, deviceNetworkAddress->device_id);
+    auto_ptr<CDataWrapper> result(sendRequest(deviceNetworkAddress->node_id,
+                                              NodeDomainAndActionRPC::ACTION_NODE_RECOVER,
+                                              &message_data,
+                                              millisecToWait));
+    //CHECK_TIMEOUT_AND_RESULT_CODE(result, err)
+    return getLastErrorCode();
+}
+
 //------------------------------------
 int DeviceMessageChannel::initDevice(CDataWrapper *initData, uint32_t millisecToWait) {
     //int err = ErrorCode::EC_NO_ERROR;

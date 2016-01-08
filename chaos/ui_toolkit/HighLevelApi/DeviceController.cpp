@@ -281,7 +281,10 @@ int DeviceController::restoreDeviceToTag(const std::string& restore_tag) {
 	return deviceChannel->restoreDeviceToTag(restore_tag,
 											 millisecToWait);
 }
-
+int DeviceController::recoverDeviceFromError() {
+	CHAOS_ASSERT(deviceChannel)
+	return deviceChannel->recoverDeviceFromError(millisecToWait);
+}
 //---------------------------------------------------------------------------------------------------
 uint64_t DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
     uint64_t ret=0;
