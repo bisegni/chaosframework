@@ -241,6 +241,29 @@ void SCAbstractControlUnit::submitSlowCommand(const std::string command_alias,
                                          command_id);
 }
 
+void SCAbstractControlUnit::submitBatchCommand(const std::string& batch_command_alias,
+                                               chaos_data::CDataWrapper *command_data,
+                                               uint64_t& command_id,
+                                               uint32_t execution_channel,
+                                               uint32_t priority,
+                                               uint32_t submission_rule,
+                                               uint32_t submission_retry_delay,
+                                               uint64_t scheduler_step_delay)  throw (CException) {
+    CHAOS_ASSERT(slow_command_executor)
+    slow_command_executor->submitCommand(batch_command_alias,
+                                         command_data,
+                                         command_id,
+                                         execution_channel,
+                                         priority,
+                                         submission_rule,
+                                         submission_retry_delay,
+                                         scheduler_step_delay);
+}
+
+std::auto_ptr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_t command_id) {
+    return slow_command_executor->getStateForCommandID(command_id);
+}
+
 /*
  Receive the event for set the dataset input element
  */

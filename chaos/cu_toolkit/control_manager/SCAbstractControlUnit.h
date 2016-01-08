@@ -99,6 +99,32 @@ namespace chaos {
 				void submitSlowCommand(const std::string command_alias,
                                        CDataWrapper *slow_command_pack,
 									   uint64_t& command_id);
+                
+                //! Submit a batch command
+                /*!
+                 The information for the command are contained into the DataWrapper data serialization,
+                 they are put into the commandSubmittedQueue for to wait to be executed.
+                 \param batch_command_alias alias of the batch command to submit
+                 \param command_data the data of the command
+                 \param execution_channel is the index tha tidentify the sandbox where run the command
+                 \param is the priority respect to other waiting instances
+                 \param submission_rule, is the rule taht detarminate what appen to the current executing command,
+                 when this instance nede to be executed within the sandbox
+                 \param submission_retry_delay is the daly between a retry and another that the sandbox do for install command
+                 \param scheduler_step_delay is delay between a run step and the next
+                 \param command_id return the associated command id
+                 */
+                void submitBatchCommand(const std::string& batch_command_alias,
+                                        chaos_data::CDataWrapper *command_data,
+                                        uint64_t& command_id,
+                                        uint32_t execution_channel,
+                                        uint32_t priority = 50,
+                                        uint32_t submission_rule = SubmissionRuleType::SUBMIT_NORMAL,
+                                        uint32_t submission_retry_delay = 1000,
+                                        uint64_t scheduler_step_delay = 1000000)  throw (CException);
+                
+                //!return a command description for a determinate uid
+                std::auto_ptr<CommandState> getStateForCommandID(uint64_t command_id);
 			public:
 				
 				/*! default constructor

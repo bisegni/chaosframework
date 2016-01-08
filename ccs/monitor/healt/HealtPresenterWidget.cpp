@@ -99,7 +99,6 @@ void HealtPresenterWidget::asyncApiTimeout(const QString& tag) {
 void HealtPresenterWidget::statusChanged(const QString& node_uid,
                                          const chaos::metadata_service_client::monitor_system::KeyValue& healt_values) {
     if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME)){
-        qDebug()<< healt_values->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME);
         ui->labelUsrProc->setText(QString::number(healt_values->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME), 'f', 1 ));
     }
     if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME)){
@@ -112,6 +111,6 @@ void HealtPresenterWidget::statusChanged(const QString& node_uid,
 
 void HealtPresenterWidget::statusNoData(const QString& node_uid) {
     ui->labelUsrProc->setText(tr("---"));
-    ui->labelUsrProc->setText(tr("---"));
-    ui->labelUsrProc->setText(tr("---"));
+    ui->labelSysProc->setText(tr("---"));
+    ui->labelSwapProc->setText(tr("---"));
 }

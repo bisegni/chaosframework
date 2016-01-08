@@ -432,8 +432,8 @@ void ControlUnitEditor::handleSelectionChangedOnListWiew(const QItemSelection& s
     }else if(ui->listViewCommandInstance == sender){
         unsigned int selected_template_count = ui->listViewCommandInstance->selectionModel()->selectedRows().size();
         ui->pushButtonEditInstance->setEnabled(selected_template_count);
-        ui->pushButtonRemoveInstance->setEnabled(selected_template_count == 1);
-        ui->pushButtonCreateInstance->setEnabled(selected_template_count == 1);
+        ui->pushButtonRemoveInstance->setEnabled(selected_template_count);
+        ui->pushButtonCreateInstance->setEnabled(selected_template_count);
     }
 }
 

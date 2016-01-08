@@ -777,6 +777,9 @@
                <pointsize>11</pointsize>
               </font>
              </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::MultiSelection</enum>
+             </property>
             </widget>
            </item>
            <item>

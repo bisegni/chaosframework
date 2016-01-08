@@ -38,8 +38,8 @@ SET_NAMED_FAULT(l, cmdInstance, c , m , d)
 l << c << m << d; \
 n->setRunningProperty(RunningPropertyType::RP_Fault); \
 n->fault_description.code = c; \
-n->fault_description.description = d;
-
+n->fault_description.description = m; \
+n->fault_description.domain = d;
 //! Functor implementation
 
 void AcquireFunctor::operator()() {

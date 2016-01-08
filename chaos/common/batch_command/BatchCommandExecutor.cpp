@@ -223,7 +223,7 @@ void BatchCommandExecutor::start() throw(chaos::CException) {
 // Start the implementation
 void BatchCommandExecutor::stop() throw(chaos::CException) {
     ReadLock       lock(sandbox_map_mutex);
-
+    
     //!remove capper timer
     AsyncCentralManager::getInstance()->removeTimer(this);
     
@@ -368,8 +368,6 @@ void BatchCommandExecutor::capCommanaQueue() {
     }
     
     cmd_state_to_reinsert.clear();
-    
-    
 }
 
 void BatchCommandExecutor::timeout() {
@@ -382,6 +380,20 @@ boost::shared_ptr<CommandState> BatchCommandExecutor::getCommandState(uint64_t c
     boost::shared_ptr<CommandState> result;
     if(command_state_fast_access_map.count(command_sequence) > 0 ) {
         result = command_state_fast_access_map[command_sequence];
+    }
+    return result;
+}
+
+//! return the state of a command
+std::auto_ptr<CommandState> BatchCommandExecutor::getStateForCommandID(uint64_t command_id) {
+    // get upgradable access
+    std::auto_ptr<CommandState> result;
+    boost::upgrade_lock<boost::shared_mutex> lock(command_state_rwmutex);
+    boost::shared_ptr<CommandState> _internal_state = getCommandState(command_id);
+    if(_internal_state.get()) {
+        result.reset(new CommandState());
+        *result.get() = *_internal_state.get();
+        
     }
     return result;
 }
@@ -467,7 +479,7 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& comma
 
 //! Check if the waithing command can be installed
 BatchCommand *BatchCommandExecutor::instanceCommandInfo(const std::string& command_alias,
-                                                        uint32_t submission_rule,//SubmissionRuleType::SUBMIT_NORMAL
+                                                        uint32_t submission_rule,
                                                         uint32_t submission_retry_delay,
                                                         uint64_t scheduler_step_delay) {
     DEBUG_CODE(BCELDBG_ << "Instancing command " << command_alias;)
@@ -565,14 +577,14 @@ void BatchCommandExecutor::submitCommand(const std::string& batch_command_alias,
     WriteLock       lock(sandbox_map_mutex);
     
     boost::shared_ptr<BatchCommandSandbox> sandbox_ptr = sandbox_map[execution_channel];
-
+    
     BCELDBG_ << "Submit new command "<< batch_command_alias <<
-                "with execution_channel:" << execution_channel <<
-                " priority:"<<priority<<
-                " submission_rule:"<<submission_rule<<
-                " submission_retry_delay:"<<submission_retry_delay<<
-                " scheduler_step_delay:"<<scheduler_step_delay;
-
+    "with execution_channel:" << execution_channel <<
+    " priority:"<<priority<<
+    " submission_rule:"<<submission_rule<<
+    " submission_retry_delay:"<<submission_retry_delay<<
+    " scheduler_step_delay:"<<scheduler_step_delay;
+    
     //queue the command
     BatchCommand *cmd_instance = instanceCommandInfo(batch_command_alias,
                                                      submission_rule,
