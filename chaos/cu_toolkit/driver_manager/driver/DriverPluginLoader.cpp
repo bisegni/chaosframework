@@ -53,7 +53,7 @@ AbstractDriverPlugin* DriverPluginLoader::newDriverInstance(const char *pluginNa
     if(!loaded()) return NULL;
     
     //check if subclass is the rigrth one
-    if(!checkPluginInstantiableForSubclass(pluginName, "AbstractDriverPlugin")) return NULL;
+    if(!checkPluginInstantiableForSubclass(pluginName, "chaos::cu::driver_manager::driver::AbstractDriverPlugin")) return NULL;
 
     string allocatorName = string(pluginName) + SYM_ALLOC_POSTFIX;
     //try to get function allocator

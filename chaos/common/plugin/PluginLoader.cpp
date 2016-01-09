@@ -79,7 +79,7 @@ AbstractPlugin* PluginLoader::newInstance(const char *pluginName) {
     if(!loaded()) return NULL;
     
     //check if subclass is the rigrth one
-    if(!checkPluginInstantiableForSubclass(pluginName, "AbstractPlugin")) return NULL;
+    if(!checkPluginInstantiableForSubclass(pluginName, "chaos::common::plugin::AbstractPlugin")) return NULL;
     
     //we can instantiate the plugin
     string allocatorName = string(pluginName) + SYM_ALLOC_POSTFIX;

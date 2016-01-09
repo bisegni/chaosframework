@@ -17,14 +17,14 @@ int main(int argc, const char * argv[]) {
     std::cout << "----------------------------------Start general plugin test----------------------------------" << std::endl;
     PluginLoader loader("PluginTest.extension");
     if(loader.loaded()) {
-        auto_ptr<PluginDiscover> discover(loader.getDiscover());
+        std::auto_ptr<PluginDiscover> discover(loader.getDiscover());
         
         std::cout << "Registered plugin names: " << discover->getNamesSize() << std::endl;
         for (int idx = 0; idx < discover->getNamesSize() ; idx++) {
             
             const char * registeredName = discover->getNameForIndex(idx);
             
-            auto_ptr<PluginInspector> inspector(loader.getInspectorForName(registeredName));
+            std::auto_ptr<PluginInspector> inspector(loader.getInspectorForName(registeredName));
             
             size_t numberOfAttributes = inspector->getInputAttributeByNamesSize(registeredName);
             
@@ -50,7 +50,7 @@ int main(int argc, const char * argv[]) {
     std::cout << "----------------------------------Start driver plugin test----------------------------------" << std::endl;
     DriverPluginLoader driverLoader("PluginTest.extension");
     if(driverLoader.loaded()) {
-        auto_ptr<PluginInspector> inspector(driverLoader.getInspectorForName("DriverAlias"));
+        std::auto_ptr<PluginInspector> inspector(driverLoader.getInspectorForName("DriverAlias"));
         
         size_t numberOfAttributes = inspector->getInputAttributeByNamesSize("DriverAlias");
         
