@@ -44,33 +44,33 @@
 
 namespace chaos {
     namespace cu {
-        
+
         //forward declaration
         namespace dm {
             namespace driver {
                 class DriverAccessor;
             }
         }
-        
+
         namespace control_manager {
 			//forward declaration
 			class AbstractControlUnit;
 			class SCAbstractControlUnit;
 
             namespace slow_command {
-				
+
 				namespace boost_cont = boost::container;
 				namespace chaos_data = chaos::common::data;
 				namespace chaos_cache = chaos::common::data::cache;
 				namespace chaos_batch = chaos::common::batch_command;
-				
+
                 //forward declaration
                 class SlowCommand;
-                
+
 #define SLOWCOMMAND_INSTANCER(SlowCommandClass)\
 new chaos::common::utility::NestedObjectInstancer<chaos::cu::control_manager::slow_command::SlowCommand, chaos::common::batch_command::BatchCommand>(\
 new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::SlowCommand>())
-                
+
                 //! Slow command execution sand box
                 /*!
                     This class is the environment where the exeecution of the slow command handlers take place.
@@ -78,16 +78,16 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
                 class SlowCommandExecutor : private chaos_batch::BatchCommandExecutor {
 
                     friend class chaos::cu::control_manager::SCAbstractControlUnit;
-                    
+
                     //! the reference to the master device database
                     chaos_data::DatasetDB *dataset_attribute_db_ptr;
-                    
+
 					//! The driver erogator
 					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
-					
+
 					//! attribute cache wrapper
 					AttributeSharedCacheWrapper * attribute_cache;
-					
+
 					AbstractControlUnit *control_unit_instance;
 					//fast unit last id cache value
 					AttributeValue *last_ru_id_cache;
@@ -96,41 +96,43 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
 					AttributeValue *last_error_message;
 					AttributeValue *last_error_domain;
                 protected:
-                    
+
                     //! Private constructor
                     SlowCommandExecutor(const std::string& _executorID,
 										chaos_data::DatasetDB *_deviceSchemaDbPtr,
 										SCAbstractControlUnit *_control_unit_instance);
-                    
+
                     //! Private deconstructor
                     ~SlowCommandExecutor();
-                    
+
                     //allocate a new command
                     chaos_batch::BatchCommand *instanceCommandInfo(const std::string& command_alias,
-                                                                   chaos::common::data::CDataWrapper *command_info);
-					
+                                                                   uint32_t submission_rule,
+                                                                   uint32_t submission_retry_delay,
+                                                                   uint64_t scheduler_step_delay);
+
 					//overlodaed command event handler
 					void handleCommandEvent(uint64_t command_seq,
 											chaos_batch::BatchCommandEventType::BatchCommandEventType type,
 											void* type_value_ptr,
 											uint32_t type_value_size);
-					
+
 					//! general sandbox event handler
 					void handleSandboxEvent(const std::string& sandbox_id,
 											chaos_batch::BatchSandboxEventType::BatchSandboxEventType type,
 											void* type_value_ptr,
 											uint32_t type_value_size);
                 public:
-                    
+
                     // Initialize instance
                     void init(void*) throw(chaos::CException);
 
 					// Start the implementation
 					void start() throw(chaos::CException);
-					
+
 					// Start the implementation
 					void stop() throw(chaos::CException);
-					
+
 					// Deinit instance
 					void deinit() throw(chaos::CException);
 

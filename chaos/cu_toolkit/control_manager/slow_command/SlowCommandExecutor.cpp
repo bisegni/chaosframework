@@ -79,10 +79,10 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
 			std::string cmd_param = "none";
 			//add new size
 			attr_value->setNewSize((uint32_t)cmd_param.size());
-			
+
 			//set the value without notify because command value are managed internally only
 			attr_value->setValue(cmd_param.c_str(), (uint32_t)cmd_param.size(), false);
-			
+
 			//push input dataset change
 			control_unit_instance->pushInputDataset();
 		}
@@ -124,11 +124,16 @@ void SlowCommandExecutor::installCommand(boost::shared_ptr<BatchCommandDescripti
 }
 
 //! Check if the waithing command can be installed
-BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& command_alias, CDataWrapper *command_info) {
+BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& command_alias,
+                                                      	uint32_t submission_rule,
+                                                        uint32_t submission_retry_delay,
+                                                        uint64_t scheduler_step_delay) {
 	//install command into the batch command executor root class
 	SlowCommand *result = (SlowCommand*) BatchCommandExecutor::instanceCommandInfo(command_alias,
-                                                                                   command_info);
-	
+                                                                                 submission_rule,
+																																								 submission_retry_delay,
+																																								 scheduler_step_delay);
+
 	//cusotmize slow command sublcass
 	if(result) {
 		//forward the pointers of the needed data
@@ -148,7 +153,7 @@ void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
 											 type,
 											 type_value_ptr,
 											 type_value_size);
-	
+
 	switch(type) {
 		case BatchCommandEventType::EVT_QUEUED: {
 			break;
@@ -191,7 +196,7 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 											 uint32_t type_value_size) {
 	//let the base class handle the event
 	BatchCommandExecutor::handleSandboxEvent(sandbox_id, type, type_value_ptr, type_value_size);
-	
+
 	if(!last_ru_id_cache) {
 		last_ru_id_cache = getAttributeSharedCache()->getAttributeValue(DOMAIN_SYSTEM,
 																		DataPackSystemKey::DP_SYS_RUN_UNIT_ID);
@@ -200,23 +205,23 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 			return;
 		}
 	}
-	
+
 	//set the last system event sandbox id
 	last_ru_id_cache->setValue(sandbox_id.c_str(), (uint32_t)sandbox_id.size());
-	
+
 	switch(type) {
 		case BatchSandboxEventType::EVT_RUN_START: {
 			uint64_t *hb = static_cast<uint64_t*>(type_value_ptr);
             control_unit_instance->_updateAcquistionTimestamp(*hb);
 
 		}
-            
+
         case BatchSandboxEventType::EVT_RUN_END: {
             //push output dataset specifingthat the ts has been already updated in casche directly
             control_unit_instance->pushOutputDataset(true);
             break;
         }
-            
+
         case BatchSandboxEventType::EVT_UPDATE_RUN_DELAY:
             control_unit_instance->_updateRunScheduleDelay(*static_cast<uint64_t*>(type_value_ptr));
             control_unit_instance->pushSystemDataset();
