@@ -3,6 +3,7 @@
 #include <QIntValidator>
 #include <QDoubleValidator>
 #include <climits>
+#include <QDebug>
 
 CDSAttrQLineEdit::CDSAttrQLineEdit(QWidget *obj) :
     QLineEdit(obj) {
@@ -20,7 +21,6 @@ CDSAttrQLineEdit::CDSAttrQLineEdit(QSharedPointer<AttributeReader> attribute_rea
     connect(chaosAttributeValueSetter().data(),
             SIGNAL(valueTypeChange(int)),
             SLOT(chaosValueTypeChanged(int)));
-
     //setup with reader
     chaosAttributeValueSetter()->setupWithAttributeReader(attribute_reader);
 }
@@ -60,10 +60,11 @@ void CDSAttrQLineEdit::chaosValueTypeChanged(int new_type) {
         break;
     }
     case chaos::DataType::TYPE_DOUBLE:{
-        QDoubleValidator *validator = new QDoubleValidator(std::numeric_limits<double>::min(),
+        QDoubleValidator *validator = new QDoubleValidator(-1 * std::numeric_limits<double>::max(),
                                                            std::numeric_limits<double>::max(),
                                                            2,
                                                            this);
+        validator->setNotation(QDoubleValidator::StandardNotation);
         setValidator(validator);
         break;
     }

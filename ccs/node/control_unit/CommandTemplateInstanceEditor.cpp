@@ -119,12 +119,12 @@ boost::shared_ptr<node::TemplateSubmission> CommandTemplateInstanceEditor::getTe
     while(iter.hasNext()){
         iter.next();
         if(!iter.value()->chaosAttributeValueSetter()->isValid()) {
-            showInformation(tr("Submission"), tr("validation"), QString("The attribute %1% is not valid").arg(iter.key()));
+            showInformation(tr("Submission"), tr("validation"), QString("The attribute %1 is not valid").arg(iter.key()));
             return boost::shared_ptr<node::TemplateSubmission>();
         }
         boost::shared_ptr<CDataWrapperKeyValueSetter> setter = iter.value()->chaosAttributeValueSetter()->getCDataWrapperValueSetter(&ok);
         if(!ok) {
-            showInformation(tr("Submission"), tr("validation"), QString("The attribute %1% has an invalid value").arg(iter.key()));
+            showInformation(tr("Submission"), tr("validation"), QString("The attribute %1 has an invalid value").arg(iter.key()));
             return boost::shared_ptr<node::TemplateSubmission>();
         }
         submission_info->parametrized_attribute_value.push_back(setter);
