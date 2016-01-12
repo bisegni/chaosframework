@@ -115,25 +115,26 @@ key_data_storage(NULL){
         control_unit_drivers.push_back(_control_unit_drivers[idx]);
     }
     
+    //initialize check list
+    _initChecklist();
+}
+
+void AbstractControlUnit::_initDrivers() throw(CException) {
     ACULAPP_ << "Initializating Driver Accessors";
     //at this point and before the unit implementation init i need to get
     //the infromation about the needed drivers
     std::vector<DrvRequestInfo> unitNeededDrivers;
-    
+
     //got the needded driver definition
     unitDefineDriver(unitNeededDrivers);
-    
+
     accessorInstances.clear();
-    
     for (int idx = 0;
-         idx != unitNeededDrivers.size();
-         idx++) {
-        driver_manager::driver::DriverAccessor *accessorInstance = driver_manager::DriverManager::getInstance()->getNewAccessorForDriverInstance(unitNeededDrivers[idx]);
-        accessorInstances.push_back(accessorInstance);
+             idx != unitNeededDrivers.size();
+             idx++) {
+            driver_manager::driver::DriverAccessor *accessorInstance = driver_manager::DriverManager::getInstance()->getNewAccessorForDriverInstance(unitNeededDrivers[idx]);
+            accessorInstances.push_back(accessorInstance);
     }
-    
-    //initialize check list
-    _initChecklist();
 }
 
 void AbstractControlUnit::_initChecklist() {

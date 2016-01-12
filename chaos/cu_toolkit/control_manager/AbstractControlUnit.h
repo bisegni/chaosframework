@@ -190,7 +190,7 @@ namespace chaos{
                 
                 //! init configuration
                 std::auto_ptr<CDataWrapper> init_configuration;
-                
+                void _initDrivers() throw(CException);
                 void _initChecklist();
 				
                 void doInitRpCheckList() throw(CException);
