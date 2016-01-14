@@ -198,19 +198,7 @@ const string& AbstractControlUnit::getCUParam() {
  are defined the action for the input element of the dataset
  */
 void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
-    //add metric for data
-    HealtManager::getInstance()->addNodeMetric(control_unit_id,
-                                               ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
-                                               chaos::DataType::TYPE_DOUBLE);
-    HealtManager::getInstance()->addNodeMetric(control_unit_id,
-                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
-                                               chaos::DataType::TYPE_INT32);
-    HealtManager::getInstance()->addNodeMetric(control_unit_id,
-                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
-                                               chaos::DataType::TYPE_STRING);
-    HealtManager::getInstance()->addNodeMetric(control_unit_id,
-                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
-                                               chaos::DataType::TYPE_STRING);
+
     vector<std::string> tempStringVector;
     
     if(control_unit_id.size()) {

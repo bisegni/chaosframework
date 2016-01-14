@@ -485,7 +485,20 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     
     //add healt metric for newly create control unit instance
     HealtManager::getInstance()->addNewNode(work_unit_id);
-
+    //! add error code metric for control unit
+    HealtManager::getInstance()->addNodeMetric(work_unit_id,
+                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
+                                               chaos::DataType::TYPE_INT32);
+    HealtManager::getInstance()->addNodeMetric(work_unit_id,
+                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
+                                               chaos::DataType::TYPE_STRING);
+    HealtManager::getInstance()->addNodeMetric(work_unit_id,
+                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
+                                               chaos::DataType::TYPE_STRING);
+    //add push rate metric
+    HealtManager::getInstance()->addNodeMetric(work_unit_id,
+                                               ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
+                                               chaos::DataType::TYPE_DOUBLE);
     //tag control uinit for mds managed
     instance->control_key = "mds";
     

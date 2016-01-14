@@ -145,7 +145,8 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             active = true;
             HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
-                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOADING);
+                                                            NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOADING,
+                                                            true);
             //reset the delay for the forwarding of the registration datapack
             publishing_counter_delay = 0;
             WUMAPP_ << "Control unit is unpublished, need to be setup";
