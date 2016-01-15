@@ -30,7 +30,7 @@ int ChaosHealtLabel::startMonitoring() {
             SLOT(valueUpdated(QString,QString,QVariant)));
 
     if(!ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
-                                                                                  20,
+                                                                                  10,
                                                                                   handler_sptr->getQuantumAttributeHandler())){
         stopMonitoring();
         return -2;
@@ -46,7 +46,7 @@ int ChaosHealtLabel::stopMonitoring() {
     }
     //we can stop
     if(!ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
-                                                                                     20,
+                                                                                     10,
                                                                                      handler_sptr->getQuantumAttributeHandler())) {
         return -1;
     }

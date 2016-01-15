@@ -3,6 +3,9 @@
 
 #include <QDateTime>
 #include <QDebug>
+
+#define RETRY_TIME_FOR_OFFLINE 6
+
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
@@ -40,7 +43,7 @@ QString CLedIndicatorHealt::nodeUniqueID() {
 
 int CLedIndicatorHealt::startMonitoring() {
     if(!ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
-                                                                                  20,
+                                                                                  10,
                                                                                   &hb_health_handler)) {
         return -1;
     }
@@ -49,7 +52,7 @@ int CLedIndicatorHealt::startMonitoring() {
 
 int CLedIndicatorHealt::stopMonitoring() {
     if(!ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForHealt(nodeUniqueID().toStdString(),
-                                                                                     20,
+                                                                                     10,
                                                                                      &hb_health_handler)) {
         return -1;
     }
@@ -74,7 +77,7 @@ void CLedIndicatorHealt::valueUpdated(const QString& node_uid,
             manageOnlineFlag(Online);
             zero_diff_count = 0;
         } else {
-            if(++zero_diff_count > 3) {
+            if(++zero_diff_count > RETRY_TIME_FOR_OFFLINE) {
                 //timeouted
                 setState(1);
                 manageOnlineFlag(Offline);

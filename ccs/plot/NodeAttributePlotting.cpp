@@ -114,7 +114,7 @@ void NodeAttributePlotting::addTimedGraphFor(QSharedPointer<DatasetAttributeRead
         return;
     }
 
-    plot_info->quantum_multiplier = 5;
+    plot_info->quantum_multiplier = 10;
     plot_info->attribute_name = attribute_name;
     plot_info->direction = attribute_reader->getDirection();
     plot_info->graph = ui->qCustomPlotTimed->addGraph();

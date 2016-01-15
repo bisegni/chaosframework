@@ -21,7 +21,7 @@ ChaosAbstractDataSetTableModel::ChaosAbstractDataSetTableModel(const QString &_n
     monitoring_enabled(false),
     node_uid(_node_uid),
     dataset_type(_dataset_type),
-    quantum_multiplier(20){}
+    quantum_multiplier(10){}
 
 ChaosAbstractDataSetTableModel::~ChaosAbstractDataSetTableModel() {
 }

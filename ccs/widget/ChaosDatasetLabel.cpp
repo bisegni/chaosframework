@@ -71,7 +71,7 @@ int ChaosDatasetLabel::startMonitoring() {
 
     if(!ChaosMetadataServiceClient::getInstance()->addKeyAttributeHandlerForDataset(nodeUniqueID().toStdString(),
                                                                                     getChaosDataset(),
-                                                                                    20,
+                                                                                    10,
                                                                                     handler_sptr->getQuantumAttributeHandler())){
         stopMonitoring();
         return -7;
@@ -88,7 +88,7 @@ int ChaosDatasetLabel::stopMonitoring() {
     //we can stop
     if(!ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForDataset(nodeUniqueID().toStdString(),
                                                                                        getChaosDataset(),
-                                                                                       20,
+                                                                                       10,
                                                                                        handler_sptr->getQuantumAttributeHandler())) {
         return -5;
     }

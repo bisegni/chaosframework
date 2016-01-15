@@ -24,5 +24,5 @@ void AddNewDomain::on_pushButton_clicked() {
 }
 
 void AddNewDomain::on_pushButton_2_clicked() {
-    abort();
+    done(0);
 }

@@ -2,6 +2,8 @@
 
 #include <QDateTime>
 
+#define RETRY_TIME_FOR_OFFLINE 6
+
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::monitor_system;
 
@@ -116,7 +118,7 @@ int ChaosLabel::startMonitoring() {
     monitoring = true;
     if(trackStatus()) {
         if(!ChaosMetadataServiceClient::getInstance()->addKeyConsumer(ChaosMetadataServiceClient::getInstance()->getHealtKeyFromGeneralKey(nodeUniqueID().toStdString()),
-                                                                      20,
+                                                                      10,
                                                                       this)) {
             return -2;
         }
@@ -129,7 +131,7 @@ int ChaosLabel::stopMonitoring() {
     monitoring = false;
     if(trackStatus()) {
         if(!ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(ChaosMetadataServiceClient::getInstance()->getHealtKeyFromGeneralKey(nodeUniqueID().toStdString()),
-                                                                         20,
+                                                                         10,
                                                                          this)) {
             return -2;
         }
@@ -139,7 +141,7 @@ int ChaosLabel::stopMonitoring() {
 
 void ChaosLabel::_updateStatusColor() {
     if(!monitoring || !trackStatus()) return;
-    bool offline = (zero_diff_count > 3) || (last_recevied_ts == 0);
+    bool offline = (zero_diff_count > RETRY_TIME_FOR_OFFLINE) || (last_recevied_ts == 0);
     if(!offline) {
         //the target is online and working
         if(last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
@@ -210,7 +212,7 @@ void ChaosLabel::quantumSlotHasData(const std::string& key, const KeyValue& valu
         //setStyleSheet("QLabel { color : #4EB66B; }");
         zero_diff_count = 0;
     } else {
-        if(++zero_diff_count > 3) {
+        if(++zero_diff_count > RETRY_TIME_FOR_OFFLINE) {
             //timeouted
             //setStyleSheet("QLabel { color : #E65566; }");
         } else {
