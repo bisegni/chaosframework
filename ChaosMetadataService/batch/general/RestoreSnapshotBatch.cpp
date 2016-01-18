@@ -113,7 +113,7 @@ void RestoreSnapshotBatch::ccHandler() {
                 case MESSAGE_PHASE_UNSENT: {
                     sendMessage(*restore_request,
                                 restore_message.release());
-                    BC_END_RUNNIG_PROPERTY
+                    
                 }
                     
                 case MESSAGE_PHASE_SENT: {
@@ -138,6 +138,7 @@ void RestoreSnapshotBatch::ccHandler() {
         }
             
         case NO_MORE_NODE:{
+            BC_END_RUNNIG_PROPERTY
             break;
         }
     }
