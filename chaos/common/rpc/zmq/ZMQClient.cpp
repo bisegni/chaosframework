@@ -182,6 +182,7 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
         string url = "tcp://";
         url.append(pool_identification);
         if((err = zmq_connect(new_socket, url.c_str()))) {
+            ZMQC_LERR << "Error "<< err <<" connecting socket to " <<pool_identification;
         } else {
             DEBUG_CODE(ZMQC_LDBG << "New socket for "<<pool_identification;)
         }
