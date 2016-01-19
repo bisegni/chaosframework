@@ -164,12 +164,12 @@ void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
                 //TODO doing it in better solution
                 if(faul_desc->code &&
                    faul_desc->description.size() &&
-                   faul_desc->domain) {
+                   faul_desc->domain.size()) {
                     CException ex(faul_desc->code, faul_desc->description, faul_desc->domain);
                     //async go into recoverable error
                     boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();
                 } else {
-                    SCELERR_ << "COmmand id " << command_seq << " gone in fault without exception";
+                    SCELERR_ << "Command id " << command_seq << " gone in fault without exception";
                 }
             }
             break;
