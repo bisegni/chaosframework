@@ -270,7 +270,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
             }
         } else {
             ZMQC_LDBG << "Try to send message";
-            ZMQ_DO_AGAIN(zmq_sendmsg(socket_info->resource_pooled, &message, ZMQ_DONTWAIT);)
+            err = zmq_sendmsg(socket_info->resource_pooled, &message, ZMQ_DONTWAIT);
             if(err == -1) {
                 int32_t sent_error = zmq_errno();
                 std::string error_message =zmq_strerror(sent_error);

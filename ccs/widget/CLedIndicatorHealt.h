@@ -48,6 +48,7 @@ private:
     QSharedPointer<QIcon> alive;
     uint64_t last_recevied_ts;
     uint32_t zero_diff_count;
+    bool was_online;
     void manageOnlineFlag(AliveState current_alive_state);
 };
 

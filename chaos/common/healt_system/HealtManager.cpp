@@ -33,9 +33,9 @@ using namespace chaos::common::message;
 using namespace chaos::common::healt_system;
 using namespace chaos::common::async_central;
 
-#define HM_INFO INFO_LOG(HealtMetric)
-#define HM_DBG DBG_LOG(HealtMetric)
-#define HM_ERR ERR_LOG(HealtMetric)
+#define HM_INFO INFO_LOG(HealtManager)
+#define HM_DBG DBG_LOG(HealtManager)
+#define HM_ERR ERR_LOG(HealtManager)
 
 #define HEALT_NEED_NODE_NO_METRIC_PRESENCE(n,m)\
 if(map_node.count(n) == 0) return;\
