@@ -40,7 +40,9 @@ void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
     RPCC_LDBG << "ACK received:" <<submission_result->getJSONString();
     
     if(submission_result->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
-        if(submission_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
+        int err=submission_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
+        if(err) {
+            RPCC_LERR <<"HO CAPITO :"<<err;
             //set the request id
             submission_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, message_request_id);
             

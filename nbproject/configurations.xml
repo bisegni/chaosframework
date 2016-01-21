@@ -214,10 +214,6 @@
             <in>PluginLoader.cpp</in>
           </df>
           <df name="rpc">
-            <df name="msgpack">
-              <in>MsgPackClient.cpp</in>
-              <in>MsgPackServer.cpp</in>
-            </df>
             <df name="tcpuv">
               <in>TCPUVClient.cpp</in>
               <in>TCPUVServer.cpp</in>
@@ -15327,16 +15323,6 @@
             <Elem>chaos_common_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
-      </item>
-      <item path="chaos/common/rpc/msgpack/MsgPackClient.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
-      </item>
-      <item path="chaos/common/rpc/msgpack/MsgPackServer.cpp"
-            ex="false"
-            tool="1"
-            flavor2="4">
       </item>
       <item path="chaos/common/rpc/tcpuv/TCPUVClient.cpp"
             ex="false"
