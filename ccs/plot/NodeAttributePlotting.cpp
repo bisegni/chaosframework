@@ -58,6 +58,10 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
     ui->qCustomPlotTimed->axisRect()->setupFullAxesBox();
     ui->qCustomPlotTimed->legend->setVisible(true);
 
+    connect(ui->qCustomPlotTimed,
+            SIGNAL(mouseMove(QMouseEvent*)),
+            SLOT(onMouseMoveGraph(QMouseEvent*)));
+
     ui->listViewPlottableAttribute->setContextMenuPolicy(Qt::ActionsContextMenu);
     QAction *add_plot_action = new QAction("Add to plot", ui->listViewPlottableAttribute);
     connect(add_plot_action,
@@ -90,6 +94,33 @@ NodeAttributePlotting::~NodeAttributePlotting() {
         removedTimedGraphFor(key);
     }
     delete ui;
+}
+
+void NodeAttributePlotting::onMouseMoveGraph(QMouseEvent *event) {
+    int x = this->ui->qCustomPlotTimed->xAxis->pixelToCoord(event->pos().x());
+    int y = this->ui->qCustomPlotTimed->yAxis->pixelToCoord(event->pos().y());
+
+    if (ui->qCustomPlotTimed->selectedGraphs().count()>0) {
+        QCPGraph* graph = this->ui->qCustomPlotTimed->selectedGraphs().first();
+        QCPData data = graph->data()->lowerBound(x).value();
+
+        double dbottom = graph->valueAxis()->range().lower;        //Yaxis bottom value
+        double dtop = graph->valueAxis()->range().upper;           //Yaxis top value
+        long ptop = graph->valueAxis()->axisRect()->top();         //graph top margin
+        long pbottom = graph->valueAxis()->axisRect()->bottom();   //graph bottom position
+        // result for Y axis
+        double valueY = (event->pos().y() - ptop) / (double)(pbottom - ptop)*(double)(dbottom - dtop) + dtop;
+
+        //or shortly for X-axis
+        double valueX = (event->pos().x() - graph->keyAxis()->axisRect()->left());  //graph width in pixels
+        double ratio = (double)(graph->keyAxis()->axisRect()->right() - graph->keyAxis()->axisRect()->left()) / (double)(graph->keyAxis()->range().lower - graph->keyAxis()->range().upper);    //ratio px->graph width
+        //and result for X-axis
+        valueX=-valueX / ratio + graph->keyAxis()->range().lower;
+
+
+        qDebug()<<"calculated:"<<valueX<<valueY;
+        ui->qCustomPlotTimed->setToolTip(QString("%1 , %2").arg(valueX).arg(valueY));
+    }
 }
 
 void NodeAttributePlotting::addTimedGraphFor(QSharedPointer<DatasetAttributeReader>& attribute_reader) {
@@ -165,9 +196,9 @@ void NodeAttributePlotting::_addRemoveToPlot(QSharedPointer<PlotInfo> plot_info,
     } else {
         //remove plot from monitor
         ChaosMetadataServiceClient::getInstance()->removeKeyAttributeHandlerForDataset(node_uid.toStdString(),
-                                                                                        dataset_type,
-                                                                                        plot_info->quantum_multiplier,
-                                                                                        plot_info->monitor_handler.data()->getQuantumAttributeHandler());
+                                                                                       dataset_type,
+                                                                                       plot_info->quantum_multiplier,
+                                                                                       plot_info->monitor_handler.data()->getQuantumAttributeHandler());
 
         //we can remove the plot from graph and map
         ui->qCustomPlotTimed->removeGraph(plot_info->graph);

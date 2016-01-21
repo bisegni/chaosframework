@@ -64,6 +64,7 @@ private slots:
 
     void on_checkBoxLogScaleEnable_clicked();
 
+    void onMouseMoveGraph(QMouseEvent *event);
 private:
     const QString node_uid;
     const QString node_uid_output_dataset;

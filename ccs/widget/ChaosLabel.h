@@ -105,6 +105,7 @@ protected:
     bool monitoring;
     uint64_t last_recevied_ts;
     uint32_t zero_diff_count;
+    bool was_online;
     HealthHeartbeatHandler healt_heartbeat_handler;
     HealtStatusHandler healt_status_handler;
     //hide public default slot

@@ -12,7 +12,8 @@ ChaosLabel::ChaosLabel(QWidget * parent,
     QLabel(parent, f),
     monitoring(false),
     last_recevied_ts(0),
-    zero_diff_count(0),
+    zero_diff_count(RETRY_TIME_FOR_OFFLINE),
+    was_online(false),
     p_label_value_show_track_status(false),
     p_track_status(false),
     p_track_status_process_info(false),
@@ -141,7 +142,9 @@ int ChaosLabel::stopMonitoring() {
 
 void ChaosLabel::_updateStatusColor() {
     if(!monitoring || !trackStatus()) return;
-    bool offline = (zero_diff_count > RETRY_TIME_FOR_OFFLINE) || (last_recevied_ts == 0);
+    bool offline = (zero_diff_count > RETRY_TIME_FOR_OFFLINE)||
+            (last_recevied_ts == 0)||
+            (was_online == false);
     if(!offline) {
         //the target is online and working
         if(last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
@@ -193,57 +196,62 @@ void ChaosLabel::quantumSlotHasData(const std::string& key, const KeyValue& valu
             !value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS)) return;
     QString proc_status;
     uint64_t received_ts = value->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP);
-    uint64_t time_diff = last_recevied_ts - received_ts;
-    last_status = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
-    if(value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME) &&
-            value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME) &&
-            value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)) {
-        proc_status = QString("[usr:%1,sys:%2,swp:%3]").arg(QString::number(value->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME)),
-                                                            QString::number(value->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME)),
-                                                            QString::number(value->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)));
-    }
-    if(trackStatusProcessInfo() && (value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME) &&
-                                    value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME) &&
-                                    value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP))) {
-        last_status = QString("%1 - %2").arg(last_status,
-                                             proc_status);
-    }
-    if(time_diff > 0) {
-        //setStyleSheet("QLabel { color : #4EB66B; }");
-        zero_diff_count = 0;
+    if(last_recevied_ts == 0) {
+        last_recevied_ts = received_ts;
+
     } else {
-        if(++zero_diff_count > RETRY_TIME_FOR_OFFLINE) {
-            //timeouted
-            //setStyleSheet("QLabel { color : #E65566; }");
+        uint64_t time_diff = last_recevied_ts - received_ts;
+        last_status = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
+        if(value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME) &&
+                value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME) &&
+                value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)) {
+            proc_status = QString("[usr:%1,sys:%2,swp:%3]").arg(QString::number(value->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME)),
+                                                                QString::number(value->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME)),
+                                                                QString::number(value->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)));
+        }
+        if(trackStatusProcessInfo() && (value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME) &&
+                                        value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME) &&
+                                        value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP))) {
+            last_status = QString("%1 - %2").arg(last_status,
+                                                 proc_status);
+        }
+        if(time_diff > 0) {
+            was_online = true;
+            zero_diff_count = 0;
         } else {
-            //in this case we do nothing perhaps we can to fast to check
+            if(++zero_diff_count > RETRY_TIME_FOR_OFFLINE) {
+                //timeouted
+                //setStyleSheet("QLabel { color : #E65566; }");
+            } else {
+                //in this case we do nothing perhaps we can to fast to check
+            }
         }
-    }
 
-    //write the value
-    if(last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
-            last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
-        if(value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
-                value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
-                value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE)) {
-            //we need to show error
-            const QString err_num = QString::number(value->getInt32Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE));
-            const QString err_str = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE));
-            const QString err_dom = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN));
-            const QString error_tooltip = QString("Error Number: %1\nError Message:%2\nError Domain:%3").arg(err_num,err_str,err_dom);
-            setToolTip(error_tooltip);
-        }else {
-            setToolTip("No error description found");
+        //write the value
+        if(last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
+                last_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
+            if(value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
+                    value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
+                    value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE)) {
+                //we need to show error
+                const QString err_num = QString::number(value->getInt32Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE));
+                const QString err_str = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE));
+                const QString err_dom = QString::fromStdString(value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN));
+                const QString error_tooltip = QString("Error Number: %1\nError Message:%2\nError Domain:%3").arg(err_num,err_str,err_dom);
+                setToolTip(error_tooltip);
+            }else {
+                setToolTip("No error description found");
+            }
+        } else {
+            //show status also on label
+            setToolTip(QString("%1 - %2").arg(last_status,
+                                              proc_status));
         }
-    } else {
-        //show status also on label
-        setToolTip(QString("%1 - %2").arg(last_status,
-                                          proc_status));
-    }
 
-    //update color on main thread
-    QMetaObject::invokeMethod(this, "_updateStatusColor",  Qt::QueuedConnection);
-    last_recevied_ts = received_ts;
+        //update color on main thread
+        QMetaObject::invokeMethod(this, "_updateStatusColor",  Qt::QueuedConnection);
+        last_recevied_ts = received_ts;
+    }
 
     emit statusChanged(QString::fromStdString(key), value);
 }
