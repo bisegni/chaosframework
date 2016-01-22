@@ -1347,15 +1347,19 @@ DriverAccessor *AbstractControlUnit::getAccessoInstanceByIndex(int idx) {
 
 
 void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
+    ACULDBG_ << "enter pushOutputDataset";
     AttributeCache& output_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
+    ACULDBG_ << "lock DOMAIN_OUTPUT";
     boost::shared_ptr<SharedCacheLockDomain> r_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_OUTPUT, false);
     r_lock->lock();
-    
+    ACULDBG_ << "locked DOMAIN_OUTPUT";
     //check if something as changed
     if(!output_attribute_cache.hasChanged()) return;
-    
+    ACULDBG_ << "DOMAIN_OUTPUT attribute changed";
     CDataWrapper *output_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
     if(!output_attribute_dataset) return;
+    ACULDBG_ << "DOMAIN_OUTPUT output_attribute_dataset got";
+    
     //write acq ts for second
     //add push timestamp
     if(ts_already_set == false){
@@ -1367,7 +1371,8 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
             output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, *cached_value->getValuePtr<uint64_t>());
         }
     }
-    
+    ACULDBG_ << "DOMAIN_OUTPUT compose dataset";
+
     //add dataset type
     output_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT);
     //add all other output channel
@@ -1400,9 +1405,10 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
                 break;
         }
     }
-    
+    ACULDBG_ << "DOMAIN_OUTPUT pushing dataset";
     //now we nede to push the outputdataset
     key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, output_attribute_dataset);
+    ACULDBG_ << "DOMAIN_OUTPUT pushed dataset";
     
     //update counter
     push_dataset_counter++;
@@ -1493,7 +1499,6 @@ void AbstractControlUnit::fillCDatawrapperWithCachedValue(std::vector<AttributeV
                 dataset.addDoubleValue((*it)->name, *(*it)->getValuePtr<double>());
                 break;
             case DataType::TYPE_STRING:
-                DEBUG_CODE(ACULAPP_ << (*it)->name<<"-"<<(*it)->getValuePtr<const char>();)
                 dataset.addStringValue((*it)->name, (*it)->getValuePtr<const char>());
                 break;
             case DataType::TYPE_BYTEARRAY:
