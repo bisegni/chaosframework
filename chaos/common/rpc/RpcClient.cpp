@@ -40,7 +40,9 @@ void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
     RPCC_LDBG << "ACK received:" <<submission_result->getJSONString();
     
     if(submission_result->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
-        if(submission_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
+        int err=submission_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
+        if(err) {
+
             //set the request id
             submission_result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, message_request_id);
             
@@ -54,6 +56,8 @@ void RpcClient::forwadSubmissionResultError(const std::string& channel_node_id,
             //forward answer to channel
             auto_ptr<CDataWrapper> to_delete(server_handler->dispatchCommand(answer_to_send));
         }
+    } else{
+      RPCC_LERR <<"NO "<<RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE;
     }
     
     CHK_AND_DELETE_OBJ_POINTER(submission_result)

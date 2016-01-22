@@ -83,11 +83,11 @@ bool MultiAddressMessageRequestFuture::wait() {
                     //we have received from remote server somenthing
                 working = false;
             }
-        } else if((retry_on_same_server++ % 3) != 0) {
+        } else if(retry_on_same_server++ < 3) {
             MAMRF_INFO << "Retry to wait on same server";
             continue;
         } else {
-            MAMRF_INFO << "Whe have retryed " << retry_on_same_server << " times on "<<last_used_address;
+            MAMRF_INFO << "Whe have retryied " << retry_on_same_server << " times on "<<last_used_address;
         }
 
         if(working){

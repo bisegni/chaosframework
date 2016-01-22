@@ -31,9 +31,9 @@ MessageRequestFuture::MessageRequestFuture(chaos::common::utility::atomic_int_ty
 request_id(_request_id),
 future(_future),
 request_result(NULL),
-error_code(-1),
-error_message(""),
-error_domain(""),
+error_code(0),
+error_message("no data"),
+error_domain("no domain"),
 local_result(false) {
     
 }

@@ -284,7 +284,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
             }else{
                 ZMQC_LDBG << "Message sent now wait for ack";
                 //ok get the answer
-                ZMQ_DO_AGAIN(zmq_recvmsg(socket_info->resource_pooled, &reply, 0);)
+                err = zmq_recvmsg(socket_info->resource_pooled, &reply, 0);
                 if(err == -1) {
                     int32_t sent_error = zmq_errno();
                     std::string error_message = zmq_strerror(sent_error);
