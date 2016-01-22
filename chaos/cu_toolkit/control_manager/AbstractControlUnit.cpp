@@ -1070,11 +1070,11 @@ void AbstractControlUnit::initAttributeOnSharedAttributeCache(SharedCacheDomain 
                     attribute_setting.setValueForAttribute(idx, &val, sizeof(double));
                     break;}
                 case DataType::TYPE_INT32 : {
-                    int32_t val = boost::lexical_cast<int32_t>(attributeInfo.defaultValue);
+                    int32_t val = strtoul(attributeInfo.defaultValue.c_str(),0,0);//boost::lexical_cast<int32_t>(attributeInfo.defaultValue);
                     attribute_setting.setValueForAttribute(idx, &val, sizeof(int32_t));
                     break;}
                 case DataType::TYPE_INT64 : {
-                    int64_t val = boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
+                    int64_t val = strtoll(attributeInfo.defaultValue.c_str(),0,0);//boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
                     attribute_setting.setValueForAttribute(idx, &val, sizeof(int64_t));
                     break;}
                 case DataType::TYPE_STRING : {

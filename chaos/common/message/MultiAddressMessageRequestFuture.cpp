@@ -78,7 +78,7 @@ bool MultiAddressMessageRequestFuture::wait() {
           working) {
         MAMRF_DBG << "Waiting on server " << last_used_address;
             //! waith for future
-        if(current_future->wait(timeout_in_milliseconds)) {
+        if(current_future->wait(timeout_in_milliseconds*10)) {
             if(current_future->isRemoteMeaning()) {
                     //we have received from remote server somenthing
                 working = false;
