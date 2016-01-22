@@ -1368,7 +1368,6 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
             output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, *cached_value->getValuePtr<uint64_t>());
         }
     }
-    ACULDBG_ << "DOMAIN_OUTPUT compose dataset";
 
     //add dataset type
     output_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT);
