@@ -381,7 +381,7 @@ void UnitServerEditor::cuInstanceStopSelected() {
         QSharedPointer<CDataWrapper> inst = instance_list[element.row()];
         qDebug() << "Send unload message for " << QString::fromStdString(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
         //load the selected cu
-        submitApiResult(QString("cu_start"),
+        submitApiResult(QString("cu_stop"),
                         GET_CHAOS_API_PTR(control_unit::StartStop)->execute(inst->getStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID),
                                                                             false));
     }

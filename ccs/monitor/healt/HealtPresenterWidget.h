@@ -45,6 +45,8 @@ private slots:
                        const chaos::metadata_service_client::monitor_system::KeyValue& healt_values);
 
     void statusNoData(const QString& node_uid);
+
+    void cuContextualmenuTrigger();
 private:
     QString type;
     const QString node_uid;
