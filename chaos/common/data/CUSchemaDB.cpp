@@ -299,7 +299,7 @@ void CUSchemaDB::addBinaryAttributeAsSubtypeToDataSet(const std::string& node_ui
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE], (int64_t)DataType::TYPE_BYTEARRAY);
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE], (int64_t)subtype);
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY], (int64_t)cardinality);
-       // if(typeMaxDimension)addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE], (int64_t)typeMaxDimension);
+        if(cardinality>0){addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE], (int64_t)cardinality);}
 
         device->isChild(*element_dataset.get(), isChild);
         if(!isChild) device->addChild(*element_dataset);
@@ -332,7 +332,7 @@ void CUSchemaDB::addBinaryAttributeAsSubtypeToDataSet(const std::string& node_ui
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION], (int64_t)attribute_direction);
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE], (int64_t)DataType::TYPE_BYTEARRAY);
         addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE], (int64_t)-1);//-1 indicate that we have an wntity taht collect all subtype
-        addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY], (int64_t)cardinality);
+        if(cardinality>0){addUniqueAttributeProperty(element_dataset.get(), mapDatasetKeyForID[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY], (int64_t)cardinality);}
         device->isChild(*element_dataset.get(), isChild);
         if(!isChild) device->addChild(*element_dataset);
         
