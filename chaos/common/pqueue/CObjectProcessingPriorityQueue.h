@@ -28,6 +28,7 @@
 
 #include <chaos/common/pqueue/CObjectProcessingQueue.h>
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/utility/TimingUtil.h>
 
 #define COPPQUEUE_LAPP_ LAPP_ << "[CObjectProcessingPriorityQueue] - (" << uid << ") "
 #define COPPQUEUE_LDBG_ LDBG_ << "[CObjectProcessingPriorityQueue] - (" << uid << ") "
@@ -49,14 +50,24 @@ namespace chaos {
 		
 		bool disposeOnDestroy;
 	public:
+        uint64_t sequence_id;
 		int priority;
 		T *element;
 		PriorityQueuedElement(T *_element,
 							  int _priority = 50,
 							  bool _disposeOnDestroy = true):
 		disposeOnDestroy(_disposeOnDestroy),
+        sequence_id(chaos::common::utility::TimingUtil::getTimeStampInMicrosends()),
 		priority(_priority),
 		element(_element) {}
+        PriorityQueuedElement(T *_element,
+                              uint64_t _sequence_id,
+                              int _priority = 50,
+                              bool _disposeOnDestroy = true):
+        disposeOnDestroy(_disposeOnDestroy),
+        sequence_id(_sequence_id),
+        priority(_priority),
+        element(_element) {}
 		~PriorityQueuedElement(){
 			if (disposeOnDestroy && element) {
 				delete(element);

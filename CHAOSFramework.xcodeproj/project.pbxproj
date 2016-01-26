@@ -74,6 +74,7 @@
 		322085DD1AC5A0E200F1B71A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322085DC1AC5A0E200F1B71A /* main.cpp */; };
 		3220F98118A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3220F97F18A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp */; };
 		3220F98218A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3220F98018A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h */; };
+		3222EE591C56C55D002DE19D /* PriorityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3222EE571C56C55D002DE19D /* PriorityTest.cpp */; };
 		3223253D18EC157000ADBA4D /* PosixStorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3223253618EC157000ADBA4D /* PosixStorageDriver.cpp */; };
 		3223253E18EC157000ADBA4D /* StorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3223253918EC157000ADBA4D /* StorageDriver.cpp */; };
 		32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32234D3D176E045100525E0C /* SlowCommandExecutor.cpp */; };
@@ -1066,6 +1067,8 @@
 		322085DC1AC5A0E200F1B71A /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3220F97F18A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOVirtualChannel.cpp; sourceTree = "<group>"; };
 		3220F98018A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOVirtualChannel.h; sourceTree = "<group>"; };
+		3222EE571C56C55D002DE19D /* PriorityTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PriorityTest.cpp; sourceTree = "<group>"; };
+		3222EE581C56C55D002DE19D /* PriorityTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriorityTest.h; sourceTree = "<group>"; };
 		3223253618EC157000ADBA4D /* PosixStorageDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PosixStorageDriver.cpp; sourceTree = "<group>"; };
 		3223253718EC157000ADBA4D /* PosixStorageDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PosixStorageDriver.h; sourceTree = "<group>"; };
 		3223253818EC157000ADBA4D /* storage_system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = storage_system.h; sourceTree = "<group>"; };
@@ -2196,6 +2199,15 @@
 			path = ChaosMetadataServiceClientTest;
 			sourceTree = "<group>";
 		};
+		3222EE561C56C52F002DE19D /* queue */ = {
+			isa = PBXGroup;
+			children = (
+				3222EE571C56C55D002DE19D /* PriorityTest.cpp */,
+				3222EE581C56C55D002DE19D /* PriorityTest.h */,
+			);
+			path = queue;
+			sourceTree = "<group>";
+		};
 		3223253518EC157000ADBA4D /* storage_system */ = {
 			isa = PBXGroup;
 			children = (
@@ -2607,6 +2619,7 @@
 				3258AF021935EE4D00A66D44 /* main.cpp */,
 				3251B5101A768A0C00EF3F82 /* utility */,
 				32EE00CE19387E0B00621776 /* network */,
+				3222EE561C56C52F002DE19D /* queue */,
 				32ABC2671A73FB43008DB3A7 /* thread */,
 			);
 			name = ArchitectureTest;
@@ -4881,6 +4894,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				32E5D24D1A75664C0001E97F /* ObjectQueueTest.cpp in Sources */,
+				3222EE591C56C55D002DE19D /* PriorityTest.cpp in Sources */,
 				3251B5141A768A9E00EF3F82 /* HashMapTest.cpp in Sources */,
 				3258AF0C1935F46D00A66D44 /* FeederTest.cpp in Sources */,
 				32F1FC6B1A7652BE000C9B0C /* ObjectPriorityQueueTest.cpp in Sources */,

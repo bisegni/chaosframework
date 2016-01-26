@@ -10,9 +10,11 @@
 #include "network/FeederTest.h"
 #include "thread/ObjectQueueTest.h"
 #include "thread/ObjectPriorityQueueTest.h"
+#include "queue/PriorityTest.h"
 #include <cassert>
-
 #include <chaos/common/property/PropertyCollector.h>
+
+using namespace chaos;
 
 class TestProp:
 public chaos::common::property::PropertyCollector {
@@ -31,8 +33,8 @@ public:
     }
 };
 
-int main(int argc, const char * argv[])
-{
+int main(int argc, const char * argv[]) {
+    
     TestProp tp;
     tp.property_one = 34;
     int i = tp.property_one;
@@ -47,17 +49,21 @@ int main(int argc, const char * argv[])
     tp.property_one = "1500";
     i = tp.property_one;
     
+    chaos::common::pqueue::test::PriorityTest ptest;
+    if(!ptest.test(50, 1000)) return 1;
+    
     chaos::test::network::FeederTest fd;
-	fd.test(100000);
+    fd.test(100000);
     
     chaos::common::pqueue::test::ObjectQueueTest oqt;
-    assert((oqt.test(10, 100, 100, 0, true) == true));
+    if(!(oqt.test(10, 100, 100, 0, true) == true)) return 1;
 	
 	chaos::common::pqueue::test::ObjectPriorityQueueTest opqt;
-	assert((oqt.test(10, 100, 100, 0, true) == true));
+	if(!(oqt.test(10, 100, 100, 0, true) == true)) return 1;
 
 	chaos::common::utility::test::HashMapTest hmt;
-	assert(hmt.test(10, 10, 10));
+	if(!hmt.test(10, 10, 10)) return 1;
+    
     return 0;
 }
 

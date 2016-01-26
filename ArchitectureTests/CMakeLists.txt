@@ -11,7 +11,8 @@ SET(ArchitectureTestsSrc
 SET(ArchitectureTestsSrc
     ${ArchitectureTestsSrc}
     thread/ObjectQueueTest.cpp
-    thread/ObjectPriorityQueueTest.cpp)
+    thread/ObjectPriorityQueueTest.cpp
+    thread/PriorityTest.cpp)
 
 
 ADD_EXECUTABLE(ArchitectureTests ${ArchitectureTestsSrc})
