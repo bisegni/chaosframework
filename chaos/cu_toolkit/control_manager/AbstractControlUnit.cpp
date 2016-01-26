@@ -1401,10 +1401,8 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
                 break;
         }
     }
-    ACULDBG_ << "DOMAIN_OUTPUT pushing dataset";
     //now we nede to push the outputdataset
     key_data_storage->pushDataSet(data_manager::KeyDataStorageDomainOutput, output_attribute_dataset);
-    ACULDBG_ << "DOMAIN_OUTPUT pushed dataset";
     
     //update counter
     push_dataset_counter++;
