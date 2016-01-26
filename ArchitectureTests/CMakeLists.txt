@@ -12,7 +12,7 @@ SET(ArchitectureTestsSrc
     ${ArchitectureTestsSrc}
     thread/ObjectQueueTest.cpp
     thread/ObjectPriorityQueueTest.cpp
-    thread/PriorityTest.cpp)
+    queue/PriorityTest.cpp)
 
 
 ADD_EXECUTABLE(ArchitectureTests ${ArchitectureTestsSrc})
