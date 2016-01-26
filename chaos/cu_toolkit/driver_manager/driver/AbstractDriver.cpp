@@ -185,6 +185,7 @@ void AbstractDriver::scanForMessage() {
                 break;
         }
 
-    } while (current_message_ptr->opcode != OpcodeType::OP_DEINIT && !driverNeedtoDeinitialize);
-	ADLAPP_ << "scanForMessage thread terminated";
+    } while ((current_message_ptr->opcode != OpcodeType::OP_DEINIT) && (!driverNeedtoDeinitialize));
+	
+    ADLAPP_ << "scanForMessage thread terminated, opcode:"<< current_message_ptr->opcode<<", driver deinit:"<<driverNeedtoDeinitialize;
 }

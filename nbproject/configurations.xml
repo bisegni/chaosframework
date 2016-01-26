@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="97">
+<configurationDescriptor version="95">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
       <df name="chaos">
@@ -247,6 +247,21 @@
           </df>
         </df>
         <df name="cu_toolkit">
+          <df name="control_manager">
+            <df name="slow_command">
+              <df name="command">
+                <in>SCWaitCommand.cpp</in>
+              </df>
+              <in>SlowCommand.cpp</in>
+              <in>SlowCommandExecutor.cpp</in>
+            </df>
+            <in>AbstractControlUnit.cpp</in>
+            <in>ControlManager.cpp</in>
+            <in>IOCU.cpp</in>
+            <in>RTAbstractControlUnit.cpp</in>
+            <in>SCAbstractControlUnit.cpp</in>
+            <in>WorkUnitManagement.cpp</in>
+          </df>
           <df name="driver_manager">
             <df name="driver">
               <in>AbstractDriver.cpp</in>
@@ -12242,8 +12257,6 @@
         <element flagsID="13"
                  commonFlags="-fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -O3 -fPIC -O2 -O3 -O2"/>
         <element flagsID="14"
-                 commonFlags="-fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -O3 -O2 -O3 -O2"/>
-        <element flagsID="15"
                  commonFlags="-fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -O3 -fPIC -O2 -O3"/>
       </flagsDictionary>
       <codeAssistance>
@@ -12266,10 +12279,6 @@
             </preprocessorList>
           </ccTool>
         </makeTool>
-        <preBuild>
-          <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
-          <preBuildCommand></preBuildCommand>
-        </preBuild>
       </makefileType>
       <item path="CMakeFiles/2.8.11.2/CompilerIdC/CMakeCCompilerId.c"
             ex="false"
@@ -13205,19 +13214,13 @@
         </ccTool>
       </item>
       <item path="ChaosMetadataService/main.cpp" ex="false" tool="1" flavor2="4">
-        <ccTool flags="14">
+        <ccTool flags="11">
           <incDir>
-            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
-            <pElem>bin/bin_cutoolkit</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
-            <pElem>ChaosMetadataService</pElem>
             <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>ChaosMetadataService</pElem>
             <pElem>bin/bin_metadata_service</pElem>
           </incDir>
-          <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
-            <Elem>chaos_cutoolkit_EXPORTS</Elem>
-          </preprocessorList>
         </ccTool>
       </item>
       <item path="ChaosMetadataService/persistence/AbstractPersistenceDriver.cpp"
@@ -14625,7 +14628,7 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="15">
+        <ccTool flags="14">
           <incDir>
             <pElem>bin/bin_common</pElem>
           </incDir>
@@ -14989,7 +14992,7 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="15">
+        <ccTool flags="14">
           <preprocessorList>
             <Elem>DEBUG</Elem>
           </preprocessorList>
@@ -15284,12 +15287,6 @@
       </item>
       <item path="chaos/common/rpc/RpcClient.cpp" ex="false" tool="1" flavor2="4">
         <ccTool flags="3">
-          <incDir>
-            <pElem>bin/bin_common</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>chaos_common_EXPORTS</Elem>
-          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/rpc/RpcClientMetricCollector.cpp"
@@ -15297,22 +15294,10 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
-          <incDir>
-            <pElem>bin/bin_common</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>chaos_common_EXPORTS</Elem>
-          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/rpc/RpcServer.cpp" ex="false" tool="1" flavor2="4">
         <ccTool flags="3">
-          <incDir>
-            <pElem>bin/bin_common</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>chaos_common_EXPORTS</Elem>
-          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/rpc/RpcServerMetricCollector.cpp"
@@ -15320,12 +15305,6 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
-          <incDir>
-            <pElem>bin/bin_common</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>chaos_common_EXPORTS</Elem>
-          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/common/rpc/tcpuv/TCPUVClient.cpp"
@@ -15448,42 +15427,135 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="15">
+        <ccTool flags="12">
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="chaos/cu_toolkit/control_manager/AbstractControlUnit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+        <ccTool flags="12">
+        </ccTool>
+      </item>
+      <item path="chaos/cu_toolkit/control_manager/ControlManager.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+        <ccTool flags="12">
+        </ccTool>
+      </item>
+      <item path="chaos/cu_toolkit/control_manager/IOCU.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+        <ccTool flags="12">
+        </ccTool>
+      </item>
+      <item path="chaos/cu_toolkit/control_manager/RTAbstractControlUnit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+        <ccTool flags="12">
+        </ccTool>
+      </item>
+      <item path="chaos/cu_toolkit/control_manager/SCAbstractControlUnit.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+        <ccTool flags="12">
+        </ccTool>
+      </item>
+      <item path="chaos/cu_toolkit/control_manager/WorkUnitManagement.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+        <ccTool flags="12">
+        </ccTool>
+      </item>
+      <item path="chaos/cu_toolkit/control_manager/slow_command/SlowCommand.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+        <ccTool flags="12">
+        </ccTool>
+      </item>
+      <item path="chaos/cu_toolkit/control_manager/slow_command/SlowCommandExecutor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+        <ccTool flags="12">
+        </ccTool>
+      </item>
+      <item path="chaos/cu_toolkit/control_manager/slow_command/command/SCWaitCommand.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+        <ccTool flags="12">
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/driver_manager/DriverManager.cpp"
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="12">
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/driver_manager/driver/AbstractDriver.cpp"
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="12">
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.cpp"
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="12">
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/driver_manager/driver/BasicIODriver.cpp"
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="12">
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/driver_manager/driver/BasicIODriverInterface.cpp"
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="12">
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/driver_manager/driver/BasicODriverInterface.cpp"
@@ -15491,20 +15563,38 @@
             tool="1"
             flavor2="4">
         <ccTool flags="3">
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+          </preprocessorList>
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/driver_manager/driver/DriverAccessor.cpp"
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="12">
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/driver_manager/driver/DriverPluginLoader.cpp"
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="3">
+        <ccTool flags="12">
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+          </incDir>
         </ccTool>
       </item>
       <item path="chaos/ui_toolkit/ChaosUIToolkit.cpp"
@@ -61946,30 +62036,12 @@
             <pElem>../chaos-x86_64-dynamic-release/include</pElem>
             <pElem>bin/bin_cutoolkit</pElem>
             <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+            <pElem>bin/bin_common</pElem>
           </incDir>
           <preprocessorList>
             <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_common_EXPORTS</Elem>
             <Elem>chaos_cutoolkit_EXPORTS</Elem>
-          </preprocessorList>
-        </ccTool>
-      </folder>
-      <folder path="0/chaos/common/rpc/tcpuv">
-        <ccTool>
-          <incDir>
-            <pElem>bin/bin_common</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>chaos_common_EXPORTS</Elem>
-          </preprocessorList>
-        </ccTool>
-      </folder>
-      <folder path="0/chaos/common/rpc/zmq">
-        <ccTool>
-          <incDir>
-            <pElem>bin/bin_common</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>chaos_common_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
       </folder>
@@ -62016,15 +62088,18 @@
       </folder>
       <folder path="0/chaos/cu_toolkit">
         <ccTool>
-          <incDir>
-            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
-            <pElem>bin/bin_cutoolkit</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
-          </incDir>
           <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>chaos_cutoolkit_EXPORTS</Elem>
           </preprocessorList>
+        </ccTool>
+      </folder>
+      <folder path="0/chaos/cu_toolkit/control_manager">
+        <ccTool>
+          <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+          </incDir>
         </ccTool>
       </folder>
       <folder path="0/chaos/ui_toolkit/HighLevelApi">

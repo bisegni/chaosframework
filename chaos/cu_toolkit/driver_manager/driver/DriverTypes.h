@@ -48,8 +48,9 @@ namespace chaos{
 				namespace OpcodeType {
 					typedef enum {
 						OP_INIT = 0,
+                                                OP_DEINIT,
 						OP_USER = 100,
-						OP_DEINIT = UINT16_MAX
+                                                OP_UKNOWN= 0xDEADDEAD
 					} Opcode;
 				}
                 
