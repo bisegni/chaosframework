@@ -57,10 +57,14 @@ NodeAttributePlotting::NodeAttributePlotting(const QString& _node_uid,
 
     ui->qCustomPlotTimed->axisRect()->setupFullAxesBox();
     ui->qCustomPlotTimed->legend->setVisible(true);
-
+    ui->qCustomPlotTimed->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->qCustomPlotTimed,
             SIGNAL(mouseMove(QMouseEvent*)),
             SLOT(onMouseMoveGraph(QMouseEvent*)));
+
+    connect(ui->qCustomPlotTimed,
+            SIGNAL(customContextMenuRequested(QPoint)),
+            SLOT(contextMenuRequest(QPoint)));
 
     ui->listViewPlottableAttribute->setContextMenuPolicy(Qt::ActionsContextMenu);
     QAction *add_plot_action = new QAction("Add to plot", ui->listViewPlottableAttribute);
@@ -94,6 +98,40 @@ NodeAttributePlotting::~NodeAttributePlotting() {
         removedTimedGraphFor(key);
     }
     delete ui;
+}
+
+void NodeAttributePlotting::contextMenuRequest(const QPoint& point){
+
+    QMenu *menu = new QMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    // context menu on legend requested
+    if (ui->qCustomPlotTimed->legend->selectTest(point, false) >= 0)  {
+        menu->addAction("Move to top left", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignLeft));
+        menu->addAction("Move to top center", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignHCenter));
+        menu->addAction("Move to top right", this, SLOT(moveLegend()))->setData((int)(Qt::AlignTop|Qt::AlignRight));
+        menu->addAction("Move to bottom right", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom|Qt::AlignRight));
+        menu->addAction("Move to bottom left", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom|Qt::AlignLeft));
+        menu->addAction("Hide/Show", this, SLOT(moveLegend()))->setData(QString("show/hide"));
+    }
+
+    menu->popup(ui->qCustomPlotTimed->mapToGlobal(point));
+}
+
+void NodeAttributePlotting::moveLegend() {
+    if (QAction* contextAction = qobject_cast<QAction*>(sender())) {
+
+        bool ok;
+        int dataInt = contextAction->data().toInt(&ok);
+        if (ok)        {
+            ui->qCustomPlotTimed->axisRect()->insetLayout()->setInsetAlignment(0, (Qt::Alignment)dataInt);
+            ui->qCustomPlotTimed->replot();
+        }else {
+             QString action_string = contextAction->data().toString();
+             if(action_string.compare("show/hide") == 0){
+                 ui->qCustomPlotTimed->legend->setVisible(!ui->qCustomPlotTimed->legend->visible());
+             }
+        }
+    }
 }
 
 void NodeAttributePlotting::onMouseMoveGraph(QMouseEvent *event) {

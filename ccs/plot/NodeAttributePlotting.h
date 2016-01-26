@@ -65,6 +65,10 @@ private slots:
     void on_checkBoxLogScaleEnable_clicked();
 
     void onMouseMoveGraph(QMouseEvent *event);
+
+    void contextMenuRequest(const QPoint& point);
+
+    void moveLegend();
 private:
     const QString node_uid;
     const QString node_uid_output_dataset;
