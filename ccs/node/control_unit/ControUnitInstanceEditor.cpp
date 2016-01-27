@@ -422,7 +422,7 @@ void ControUnitInstanceEditor::tableDriverDescriptionSelectionChanged(const QIte
     (void)unselected;
     //enable the edit button only if is selected one element on table
     bool enable = false;
-    if(QObject::sender() == ui->tableViewDriverSpecification) {
+    if(QObject::sender() == ui->tableViewDriverSpecification->selectionModel()) {
         enable = ui->tableViewDriverSpecification->selectionModel()->selectedRows().size()==1;
         ui->pushButtonEditDriverDescription->setEnabled(enable);
     }else{

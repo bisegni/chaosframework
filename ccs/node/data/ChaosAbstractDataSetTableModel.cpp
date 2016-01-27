@@ -96,6 +96,8 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
                                                   const QVariant& value) {
     DoeMapAIIterator it = map_doe_attribute_name_index.find(attribute);
     if(it == map_doe_attribute_name_index.end()) return;
+    if(!value.isValid()) return;
+
     switch(it.value()->type) {
     case chaos::DataType::TYPE_BOOLEAN:
     case chaos::DataType::TYPE_INT32:

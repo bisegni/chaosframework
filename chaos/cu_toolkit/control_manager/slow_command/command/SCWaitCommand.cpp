@@ -48,6 +48,7 @@ uint8_t SCWaitCommand::implementedHandler() {
     return  HandlerType::HT_Set |
     HandlerType::HT_Acquisition |
     HandlerType::HT_Correlation;
+    
 }
 
 // Start the command execution
@@ -64,13 +65,14 @@ void SCWaitCommand::setHandler(CDataWrapper *data) {
     
     uint32_t delay = data->getUInt32Value(SCWaitCommand_DELAY_KEY);
     setFeatures(features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)delay);
+    BC_EXEC_RUNNIG_PROPERTY;
     DEBUG_CODE(SCWC_INFO << "timeout set to " << delay << " milliseconds";)
 }
 
 bool SCWaitCommand::timeoutHandler() {
     uint64_t timeDiff = getLastStepTime() - getSetTime();
     DEBUG_CODE(SCWC_INFO << "timeout after " << timeDiff << " milliseconds";)
+    BC_END_RUNNIG_PROPERTY;
     //move the state machine on fault
-    throw chaos::CException(1, "timeout reached", __FUNCTION__);
-    return true;
+    return false;
 }
