@@ -12258,6 +12258,8 @@
                  commonFlags="-fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -O3 -fPIC -O2 -O3 -O2"/>
         <element flagsID="14"
                  commonFlags="-fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -O3 -fPIC -O2 -O3"/>
+        <element flagsID="15"
+                 commonFlags="-fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -fPIC -O3 -fPIC -O2 -O3"/>
       </flagsDictionary>
       <codeAssistance>
       </codeAssistance>
@@ -13860,6 +13862,17 @@
             ex="false"
             tool="1"
             flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
+          </incDir>
+          <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
+          </preprocessorList>
+        </ccTool>
       </item>
       <item path="chaos/common/batch_command/BatchCommand.cpp"
             ex="false"
@@ -13867,10 +13880,15 @@
             flavor2="4">
         <ccTool flags="3">
           <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
             <pElem>bin/bin_common</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>chaos_common_EXPORTS</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
       </item>
@@ -13880,10 +13898,15 @@
             flavor2="4">
         <ccTool flags="3">
           <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
             <pElem>bin/bin_common</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>chaos_common_EXPORTS</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
       </item>
@@ -13893,10 +13916,15 @@
             flavor2="4">
         <ccTool flags="9">
           <incDir>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
+            <pElem>bin/bin_cutoolkit</pElem>
+            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
             <pElem>bin/bin_common</pElem>
           </incDir>
           <preprocessorList>
+            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>chaos_common_EXPORTS</Elem>
+            <Elem>chaos_cutoolkit_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>
       </item>
@@ -13904,8 +13932,10 @@
             ex="false"
             tool="1"
             flavor2="4">
-        <ccTool flags="9">
+        <ccTool flags="15">
           <incDir>
+            <pElem>..</pElem>
+            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
             <pElem>bin/bin_common</pElem>
           </incDir>
           <preprocessorList>
@@ -15438,63 +15468,63 @@
       <item path="chaos/cu_toolkit/control_manager/AbstractControlUnit.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="12">
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/control_manager/ControlManager.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="12">
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/control_manager/IOCU.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="12">
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/control_manager/RTAbstractControlUnit.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="12">
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/control_manager/SCAbstractControlUnit.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="12">
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/control_manager/WorkUnitManagement.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="12">
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/control_manager/slow_command/SlowCommand.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="12">
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/control_manager/slow_command/SlowCommandExecutor.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="12">
         </ccTool>
       </item>
       <item path="chaos/cu_toolkit/control_manager/slow_command/command/SCWaitCommand.cpp"
             ex="false"
             tool="1"
-            flavor2="0">
+            flavor2="4">
         <ccTool flags="12">
         </ccTool>
       </item>
@@ -61723,19 +61753,6 @@
           <preprocessorList>
             <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>chaos_common_EXPORTS</Elem>
-            <Elem>chaos_cutoolkit_EXPORTS</Elem>
-          </preprocessorList>
-        </ccTool>
-      </folder>
-      <folder path="0/chaos/common/batch_command">
-        <ccTool>
-          <incDir>
-            <pElem>../chaos-x86_64-dynamic-release/include</pElem>
-            <pElem>bin/bin_cutoolkit</pElem>
-            <pElem>../chaos-x86_64-dynamic-debug/include</pElem>
-          </incDir>
-          <preprocessorList>
-            <Elem>BOOST_ALL_DYN_LINK</Elem>
             <Elem>chaos_cutoolkit_EXPORTS</Elem>
           </preprocessorList>
         </ccTool>

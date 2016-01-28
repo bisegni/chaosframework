@@ -48,9 +48,9 @@ void AcquireFunctor::operator()() {
     } catch (chaos::CException& ex) {
         SET_FAULT(FUNCTORLERR_, ex.errorCode, ex.errorMessage, ex.errorDomain)
     } catch (std::exception& ex) {
-        SET_FAULT(FUNCTORLERR_, -1, ex.what(), "Acquisition Handler");
+        SET_FAULT(FUNCTORLERR_, -1, ex.what(), "Acquisition Handler:"+cmdInstance->getAlias());
     } catch (...) {
-        SET_FAULT(FUNCTORLERR_, -2, "Unmanaged exception", "Acquisition Handler");
+        SET_FAULT(FUNCTORLERR_, -2, "Unmanaged exception", "Acquisition Handler:"+cmdInstance->getAlias());
     }
 }
 
