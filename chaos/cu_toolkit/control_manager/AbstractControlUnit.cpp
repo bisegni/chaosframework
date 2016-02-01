@@ -779,9 +779,8 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
     //check
     if(!restoreParam || !restoreParam->hasKey(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG)) return NULL;
     
-    if(getServiceState() != CUStateKey::INIT &&
-       getServiceState() != CUStateKey::START ) {
-        throw CException(-1, "Control Unit is not initilized or started", __PRETTY_FUNCTION__);
+    if(getServiceState() != CUStateKey::START ) {
+        throw CException(-1, "Control Unit restore can appen only in start state", __PRETTY_FUNCTION__);
     }
     
     if(!key_data_storage.get()) throw CException(-2, "Key data storage driver not allocated", __PRETTY_FUNCTION__);
@@ -818,37 +817,9 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
         try {
             //unitRestoreToSnapshot
             if(unitRestoreToSnapshot(restore_cache.get())){
-                // the list of the key
-                std::vector<std::string> dataset_key;
-                //restore has been succesfull applyed so we need to valorize the input dataset
-                AttributeCache& input_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
-                //set input cache
-                dataset_at_tag = key_data_storage->getDatasetFromRestorePoint(restore_snapshot_tag,
-                                                                              KeyDataStorageDomainInput);
-                
-                // get all key name
-                dataset_at_tag->getAllKey(dataset_key);
-                
-                for(int idx = 0;
-                    idx < dataset_key.size();
-                    idx++) {
-                    AttributeValue *key_value = NULL;
-                    
-                    if(input_cache.hasName(dataset_key[idx])) {
-                        key_value = input_cache.getValueSettingForIndex(input_cache.getIndexForName(dataset_key[idx]));
-                    } else {
-                        continue;
-                    }
-                    uint32_t value_size = dataset_at_tag->getValueSize(dataset_key[idx]);
-                    
-                    // fetch raw data ptr address
-                    const char * raw_value_ptr = dataset_at_tag->getRawValuePtr(dataset_key[idx]);
-                    
-                    // set the new value with main cache
-                    key_value->setValue(raw_value_ptr, value_size);
-                }
-                //tag as changed
-                pushInputDataset();
+                ACULERR_ << "Restore has been run successfully";
+            } else {
+                ACULERR_ << "Restore has not been run successfully";
             }
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex);
@@ -1122,15 +1093,6 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
     //add unit type
     domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_UNIT_TYPE, (uint32_t)control_unit_type.size(), DataType::TYPE_STRING);
     domain_attribute_setting.setValueForAttribute(domain_attribute_setting.getNumberOfAttributes()-1, control_unit_type.c_str(),  (uint32_t)control_unit_type.size());
-    
-    //add error attribute
-    //domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR, 0, DataType::TYPE_INT32);
-    
-    //add error message attribute
-    //domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR_MESSAGE, 255, DataType::TYPE_STRING);
-    
-    //add error domain
-    //domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR_DOMAIN, 255, DataType::TYPE_STRING);
 }
 
 /*
