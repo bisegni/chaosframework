@@ -5,8 +5,9 @@
 #include "../../node/unit_server/UnitServerEditor.h"
 #include "../../plot/NodeAttributePlotting.h"
 
-#include <QDateTime>
+#include <QTime>
 #include <QDebug>
+#include <QDateTime>
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
@@ -88,7 +89,8 @@ void HealtPresenterWidget::asyncApiResult(const QString& api_tag,
                 ui->pushButtonOpenNodeEditor->setEnabled((type.compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) ||
                                                          (type.compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0));
                 //update string
-                ui->labelUID->setText(QString("%1-<font color=\"#4EB66B\">[%2]</font>").arg(node_uid, type));
+                ui->labelUID->setText(node_uid);
+                ui->labelNodeType->setText(type);
                 if(is_cu) {
                     QAction *action = new QAction("Load", this);
                     addAction(action);
@@ -216,10 +218,29 @@ void HealtPresenterWidget::statusChanged(const QString& node_uid,
     if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)){
         ui->labelSwapProc->setText(QString::number(healt_values->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)));
     }
+    if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME)){
+        ui->labelUptimeProc->setText(seconds_to_DHMS(healt_values->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME)));
+    }
 }
 
 void HealtPresenterWidget::statusNoData(const QString& node_uid) {
     ui->labelUsrProc->setText(tr("---"));
     ui->labelSysProc->setText(tr("---"));
     ui->labelSwapProc->setText(tr("---"));
+    ui->labelUptimeProc->setText(tr("---"));
+}
+
+QString HealtPresenterWidget::seconds_to_DHMS(uint64_t duration) {
+    QString res;
+    int seconds = (int) (duration % 60);
+    duration /= 60;
+    int minutes = (int) (duration % 60);
+    duration /= 60;
+    int hours = (int) (duration % 24);
+    int days = (int) (duration / 24);
+    if((hours == 0)&&(days == 0))
+        return res.sprintf("00:00:%02d:%02d", minutes, seconds);
+    if (days == 0)
+        return res.sprintf("00:%02d:%02d:%02d", hours, minutes, seconds);
+    return res.sprintf("%dd%02d:%02d:%02d", days, hours, minutes, seconds);
 }

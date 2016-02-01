@@ -22,6 +22,7 @@
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/utility/Singleton.h>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/StartableService.h>
@@ -43,12 +44,16 @@ namespace chaos {
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<HealtMetric>, HealtNodeElementMap)
             
             struct NodeHealtSet {
-                //notify when some metric has chagned
+                //!notify when some metric has chagned
                 bool    has_changed;
-                //the key to use for the node publishing operation
+                
+                //!save the time when the helat node has been created
+                uint64_t startup_time;
+                
+                //!the key to use for the node publishing operation
                 std::string   node_key;
                 
-                //is the metric node map
+                //!is the metric node map
                 HealtNodeElementMap map_metric;
                 
                 //!permit to lock the intere set
@@ -60,7 +65,8 @@ namespace chaos {
                 NodeHealtSet(const std::string& node_uid):
                 has_changed(false),
                 node_key(node_uid + chaos::NodeHealtDefinitionKey::HEALT_KEY_POSTFIX),
-                fire_slot(0){}
+                fire_slot(0),
+                startup_time(chaos::common::utility::TimingUtil::getTimeStamp()){}
                 
                 ~NodeHealtSet() {
                     //!clear all metric
@@ -107,12 +113,17 @@ namespace chaos {
                 std::auto_ptr<chaos::common::io::IODataDriver>      io_data_driver;
                 
                 //! private non locked push method for a healt set
-                inline void _publish(const boost::shared_ptr<NodeHealtSet>& heath_set);
+                inline void _publish(const boost::shared_ptr<NodeHealtSet>& heath_set,
+                                     uint64_t publish_ts);
                 
-                //!contain information about process resurces
-                struct rusage process_resurce_usage;
                 double user_time_computed;
                 double system_time_computed;
+                //last sampling resurce usage
+                double last_usr_time;
+                double last_sys_time;
+                double last_total_time;
+                int64_t last_process_swap;
+                uint64_t last_sampling_time;
                 //! update the information about process
                 inline void updateProcInfo();
             protected:
@@ -123,6 +134,7 @@ namespace chaos {
                 //! timer handler for check what slot needs to be fired
                 void timeout();
                 chaos::common::data::CDataWrapper* prepareNodeDataPack(HealtNodeElementMap& element_map,
+                                                                       uint64_t node_startup_ts,
                                                                        uint64_t push_timestamp);
                 
                 //!protected mehoto to talk with mds to receive the cds server where publish the data

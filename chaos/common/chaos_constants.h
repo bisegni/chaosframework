@@ -254,14 +254,16 @@ namespace chaos {
     //! every different node need to expose default key and custom
     namespace NodeHealtDefinitionKey {
         static const char * const HEALT_KEY_POSTFIX                     = "_healt";
-        //! define time stamp of the push (usefull for heart beating)
+        //! define time stamp of the push (usefull for heart beating) [uint64_t]
         static const char * const NODE_HEALT_TIMESTAMP                  = "nh_ts";
-        //! identify the time spent as user by the process and all his thread
+        //! identify the time spent as user by the process and all his thread[double]
         static const char * const NODE_HEALT_USER_TIME                  = "nh_ut";
-        //! identify the time spent for system call by the process and all his thread
-        static const char * const NODE_HEALT_SYSTEM_TIME                  = "nh_st";
-        //! identify the swap memory used by process
+        //! identify the time spent for system call by the process and all his thread[double]
+        static const char * const NODE_HEALT_SYSTEM_TIME                = "nh_st";
+        //! identify the swap memory used by process[int64_t]
         static const char * const NODE_HEALT_PROCESS_SWAP               = "nh_sw";
+        //! identify the uptime of the node[uint64_t]
+        static const char * const NODE_HEALT_PROCESS_UPTIME             = "nh_upt";
         //! define time stamp of the collection of the last insert metric
         static const char * const NODE_HEALT_TIMESTAMP_LAST_METRIC      = "nh_ts_lst_metric";
         //! define the status of a node (loaded, initilized, deinitialized, started, stopped, unloaded)

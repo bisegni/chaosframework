@@ -167,7 +167,6 @@ void MDSBatchExecutor::handleSandboxEvent(const std::string& sandbox_id,
                                           common::batch_command::BatchSandboxEventType::BatchSandboxEventType type,
                                           void* type_value_ptr,
                                           uint32_t type_value_size) {
-    //BCE_INFO << "Command Sandbox Event [sandbox_id:"<< sandbox_id << " BatchSandboxEventType:" << type;
 }
 
 uint64_t MDSBatchExecutor::submitCommand(const std::string& batch_command_alias,

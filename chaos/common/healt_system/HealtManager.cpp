@@ -21,7 +21,6 @@
 #include <chaos/common/io/IODirectIODriver.h>
 #include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-#include <chaos/common/utility/TimingUtil.h>
 
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
@@ -61,7 +60,14 @@ HealtManager::HealtManager():
 network_broker_ptr(NULL),
 mds_message_channel(NULL),
 last_fire_counter_set(0),
-current_fire_slot(0){}
+current_fire_slot(0),
+user_time_computed(0),
+system_time_computed(0),
+last_usr_time(0),
+last_sys_time(0),
+last_total_time(0),
+last_process_swap(0),
+last_sampling_time(0){}
 
 HealtManager::~HealtManager() {
     //clear node map
@@ -69,9 +75,31 @@ HealtManager::~HealtManager() {
 }
 
 void HealtManager::updateProcInfo() {
-    getrusage(RUSAGE_SELF, &process_resurce_usage);
-    user_time_computed = (double)process_resurce_usage.ru_utime.tv_sec + ((double)process_resurce_usage.ru_utime.tv_usec / 1000000.0);
-    system_time_computed = (double)process_resurce_usage.ru_stime.tv_sec + ((double)process_resurce_usage.ru_stime.tv_usec / 1000000.0);
+    //used to compute the resource occupaiton between sampling time
+    struct rusage local_process_resurce_usage;
+    double local_usr_time = 0;
+    double local_sys_time = 0;
+    //samplig time in seconds
+    uint64_t sampling_time = TimingUtil::getTimeStamp()/1000;
+    getrusage(RUSAGE_SELF, &local_process_resurce_usage);
+    local_usr_time = (double)local_process_resurce_usage.ru_utime.tv_sec + ((double)local_process_resurce_usage.ru_utime.tv_usec / 1000000.0);
+    local_sys_time = (double)local_process_resurce_usage.ru_stime.tv_sec + ((double)local_process_resurce_usage.ru_stime.tv_usec / 1000000.0);
+    if(last_usr_time &&
+       last_sys_time &&
+       last_sampling_time) {
+        uint64_t temp_ts = (sampling_time-last_sampling_time);
+        if(temp_ts > 0) {
+            user_time_computed = 100*(local_usr_time-last_usr_time)/(double)temp_ts;
+            system_time_computed = 100*(local_sys_time-last_sys_time)/(double)temp_ts;
+        }else {
+            user_time_computed = system_time_computed = 0;
+        }
+        
+    }
+    last_usr_time = local_usr_time;
+    last_sys_time = local_sys_time;
+    last_sampling_time = sampling_time;
+    last_process_swap = local_process_resurce_usage.ru_nswap;
 }
 
 void HealtManager::setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker) {
@@ -213,6 +241,8 @@ void HealtManager::addNewNode(const std::string& node_uid) {
                                               boost::shared_ptr<HealtMetric>(new DoubleHealtMetric(NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME))));
     healt_metric->map_metric.insert(make_pair(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP,
                                               boost::shared_ptr<HealtMetric>(new Int64HealtMetric(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP))));
+    healt_metric->map_metric.insert(make_pair(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME,
+                                              boost::shared_ptr<HealtMetric>(new Int64HealtMetric(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME))));
     //reset the counter for publishing pushses
     healt_metric->fire_slot = (last_fire_counter_set++ % HEALT_FIRE_SLOTS);
     
@@ -390,17 +420,20 @@ void HealtManager::addNodeMetricValue(const std::string& node_uid,
 }
 
 CDataWrapper*  HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_map,
+                                                 uint64_t node_startup_ts,
                                                  uint64_t push_timestamp) {
     CDataWrapper *node_data_pack = new CDataWrapper();
     if(node_data_pack) {
         //set the push timestamp
         static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
         
-        static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP].get())->value = process_resurce_usage.ru_nswap;
+        static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP].get())->value = last_process_swap;
 
         static_cast<DoubleHealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_USER_TIME].get())->value = user_time_computed;
 
         static_cast<DoubleHealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME].get())->value = system_time_computed;
+        //get the uptime in seconds
+        static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME].get())->value = (push_timestamp - node_startup_ts)/1000;
         
         //scan all metrics
         BOOST_FOREACH(HealtNodeElementMap::value_type map_metric_element, element_map) {
@@ -419,10 +452,11 @@ void HealtManager::publishNodeHealt(const std::string& node_uid) {
     std::auto_ptr<CDataWrapper> data_pack(new CDataWrapper());
     
     // get metric ptr
-    _publish(map_node[node_uid]);
+    _publish(map_node[node_uid], TimingUtil::getTimeStamp());
 }
 
 void HealtManager::timeout() {
+    uint64_t cur_time = TimingUtil::getTimeStamp();
     //publish all registered metric
     boost::shared_lock<boost::shared_mutex> rl(map_node_mutex);
     for(HealtNodeMapIterator it = map_node.begin();
@@ -430,25 +464,24 @@ void HealtManager::timeout() {
         it++) {
         if(it->second->fire_slot == current_fire_slot) {
             // get metric ptr
-            _publish(it->second);
+            _publish(it->second, cur_time);
         }
     }
     //go to next slot
     ++current_fire_slot %= HEALT_FIRE_SLOTS;
 }
 
-void HealtManager::_publish(const boost::shared_ptr<NodeHealtSet>& heath_set) {
+void HealtManager::_publish(const boost::shared_ptr<NodeHealtSet>& heath_set,
+                            uint64_t publish_ts) {
     //lock the driver for bublishing
     boost::unique_lock<boost::mutex> wl_io(mutex_publishing);
     //update infromation abour process
     updateProcInfo();
     
-    //get current timestamp
-    uint64_t publishing_ts = TimingUtil::getTimeStamp();
-    
     //send datapack
     CDataWrapper *data_pack = prepareNodeDataPack(heath_set->map_metric,
-                                                  publishing_ts);
+                                                  heath_set->startup_time,
+                                                  publish_ts);
     if(data_pack) {
         io_data_driver->storeData(heath_set->node_key,
                                   data_pack);

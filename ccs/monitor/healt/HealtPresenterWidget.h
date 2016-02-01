@@ -53,6 +53,8 @@ private:
     ApiAsyncProcessor api_processor;
     CommandPresenter *global_command_presenter;
     Ui::HealtPresenterWidget *ui;
+
+    QString seconds_to_DHMS(uint64_t duration);
 };
 
 #endif // HEALTPRESENTERWIDGET_H
