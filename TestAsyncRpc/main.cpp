@@ -21,19 +21,25 @@ int main(int argc, char* argv[] ) {
     //! [UIToolkit Init]
     chaos::ui::ChaosUIToolkit::getInstance()->init(argc, argv);
     //! [UIToolkit Init]
-    chaos::ui::DeviceController *controller = chaos::ui::HLDataApi::getInstance()->getControllerForDeviceID(std::string("sc_dev_a"), 10000);
+    chaos::ui::DeviceController *controller = chaos::ui::HLDataApi::getInstance()->getControllerForDeviceID(std::string("rt_sin_a"), 10000);
     if(!controller) throw chaos::CException(4, "Error allcoating decive controller", "device controller creation");
 
     //simulate bad init call
-    std::auto_ptr<MessageRequestFuture> result = controller->sendCustomRequestWithFuture(chaos::NodeDomainAndActionRPC::ACTION_NODE_INIT, NULL);
-    if(result->wait(1000)) {
-        std::cout << "Error code:" << result->getError() << std::endl;
-        std::cout << "Error message:" << result->getErrorMessage() << std::endl;
-        std::cout << "Error domain:" << result->getErrorDomain() << std::endl;
-        if(result->getResult()) {
-            std::cout << "Result:" << result->getResult()->getJSONString() << std::endl;
+    chaos::common::data::CDataWrapper *tmp_data_ptr = NULL;
+    if(controller->checkRPCInformation(&tmp_data_ptr) == 0){
+        if(tmp_data_ptr) {
+            std::cout << tmp_data_ptr->getJSONString() << std::endl;
+            delete(tmp_data_ptr);
         }
-
+    }
+    
+    chaos::common::data::CDataWrapper echo_data;
+    echo_data.addStringValue("echo_key", "echo_value");
+    if(controller->echoTest(&echo_data, &tmp_data_ptr) == 0){
+        if(tmp_data_ptr) {
+            std::cout << tmp_data_ptr->getJSONString() << std::endl;
+            delete(tmp_data_ptr);
+        }
     }
     chaos::ui::ChaosUIToolkit::getInstance()->deinit();
     return 0;

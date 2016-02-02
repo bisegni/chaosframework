@@ -34,20 +34,53 @@ using namespace std;
 EchoRpcAction::EchoRpcAction() {
     //register the action for the response
     DeclareAction::addActionDescritionInstance<EchoRpcAction>(this,
-                                                               &EchoRpcAction::echoAction,
-                                                               "test",
-                                                               "echo",
-                                                               "Echo rpc action");
+                                                              &EchoRpcAction::echoAction,
+                                                              NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                              NodeDomainAndActionRPC::ACTION_ECHO_TEST,
+                                                              "Echo rpc action");
 }
+//!echo function return the data sent as parameter
 CDataWrapper *EchoRpcAction::echoAction(CDataWrapper *action_data, bool& detach) {
-    if(action_data == NULL) throw CException(0, "echoAction need some data", __PRETTY_FUNCTION__);
     detach = true;
     return action_data;
 }
-
 //-----------------------------------------------------------------
 
-AbstractCommandDispatcher::AbstractCommandDispatcher(string alias):NamedService(alias){
+CheckDomainRpcAction::CheckDomainRpcAction(AbstractCommandDispatcher *_dispatcher):
+dispatcher(_dispatcher) {
+    //register the action for the response
+    AbstActionDescShrPtr
+    actionDescription = DeclareAction::addActionDescritionInstance<CheckDomainRpcAction>(this,
+                                                                     &CheckDomainRpcAction::checkDomain,
+                                                                     NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                     NodeDomainAndActionRPC::ACTION_CHECK_DOMAIN,
+                                                                     "Return information about rpc domain");
+    actionDescription->addParam("domain_name",
+                                DataType::TYPE_STRING,
+                                "Is the name of the rpc domain to ckeck");
+}
+//!echo function return the data sent as parameter
+CDataWrapper *CheckDomainRpcAction::checkDomain(CDataWrapper *action_data, bool& detach) {
+    CHAOS_ASSERT(dispatcher);
+    CHECK_CDW_THROW_AND_LOG(action_data, ACDLERR_, -1, "Input parameter as mandatory");
+    CHECK_KEY_THROW_AND_LOG(action_data, "domain_name", ACDLERR_, -2, "domain_name key, representing the domain to ckeck, is mandatory!");
+    CHECK_ASSERTION_THROW_AND_LOG(action_data->isStringValue("domain_name"), ACDLERR_, -3, "domain_name key need to be a string");
+    
+    const std::string domain_name = action_data->getStringValue("domain_name");
+    
+    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+    bool alive = dispatcher->hasDomain(domain_name);
+    uint32_t queued_action_in_domain = dispatcher->domainRPCActionQueued(domain_name);
+    //create the result data pack
+    result->addBoolValue("alive", alive);
+    result->addInt32Value("queued_actions", queued_action_in_domain);
+    return result.release();
+}
+//-----------------------------------------------------------------
+
+AbstractCommandDispatcher::AbstractCommandDispatcher(string alias):
+NamedService(alias),
+checkDomainAction(this){
 }
 
 AbstractCommandDispatcher::~AbstractCommandDispatcher() {
@@ -62,11 +95,13 @@ void AbstractCommandDispatcher::init(void *initConfiguration) throw(CException) 
 
 //-----------------------
 void AbstractCommandDispatcher::start() throw(CException) {
-    registerAction(&echoTestClass);
+    registerAction(&echoActionClass);
+    registerAction(&checkDomainAction);
 }
 
 void AbstractCommandDispatcher::stop() throw(CException) {
-    deregisterAction(&echoTestClass);
+    deregisterAction(&checkDomainAction);
+    deregisterAction(&echoActionClass);
 }
 
 /*
@@ -80,17 +115,15 @@ void AbstractCommandDispatcher::deinit() throw(CException) {
  but if the name is not present initialized it and add it to map
  */
 boost::shared_ptr<DomainActions> AbstractCommandDispatcher::getDomainActionsFromName(const string& domain_name) {
-	//check if is not preset, so we can allocate it
+    //check if is not preset, so we can allocate it
     if(!actionDomainExecutorMap.count(domain_name)){
         boost::shared_ptr<DomainActions>  result(new DomainActions(domain_name));
         if(result){;
             actionDomainExecutorMap.insert(make_pair(domain_name, result));
-#if DEBUG
-            ACDLDBG_ << "Allocated new  DomainActions:" << domain_name;
-#endif
+            DEBUG_CODE(ACDLDBG_ << "Allocated new  DomainActions:" << domain_name;);
         }
     }
-	//return the domain executor for name
+    //return the domain executor for name
     return actionDomainExecutorMap[domain_name];
 }
 
@@ -112,14 +145,14 @@ void AbstractCommandDispatcher::registerAction(DeclareAction* declareActionClass
     
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
     for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
-		//get the domain executor for this action descriptor
+        //get the domain executor for this action descriptor
         boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
         
-		//if the domain executor has been returned, add this action to it
+        //if the domain executor has been returned, add this action to it
         if(domainExecutor) {
             domainExecutor->addActionDescriptor(*actDescIter);
-            ACDLDBG_	<< "Registered action [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName)
-						<< "] for domain [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain) << "]";
+            DEBUG_CODE(ACDLDBG_	<< "Registered action [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName)
+                       << "] for domain [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain) << "]";);
         }
     }
 }
@@ -131,20 +164,20 @@ void AbstractCommandDispatcher::deregisterAction(DeclareAction* declareActionCla
     if(!declareActionClass) return;
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
     for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
-		//get the domain executor for this action descriptor
+        //get the domain executor for this action descriptor
         boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
-
-		//if the domain executor has been returned, add this action to it
+        
+        //if the domain executor has been returned, add this action to it
         if(domainExecutor) {
             domainExecutor->removeActionDescriptor(*actDescIter);
-            ACDLDBG_	<< "Deregistered action [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName)
-						<< "] for domain [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain) << "]";
-			
-			if(!domainExecutor->registeredActions()) {
-				std::string domain_name = domainExecutor->getDomainName();
-				ACDLDBG_ << "No more action in domain " << domain_name << " so it will be destroyed";
-				actionDomainExecutorMap.erase(domain_name);
-			}
+            DEBUG_CODE(ACDLDBG_	<< "Deregistered action [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName)
+                       << "] for domain [" << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain) << "]";);
+            
+            if(!domainExecutor->registeredActions()) {
+                std::string domain_name = domainExecutor->getDomainName();
+                DEBUG_CODE(ACDLDBG_ << "No more action in domain " << domain_name << " so it will be destroyed";);
+                actionDomainExecutorMap.erase(domain_name);
+            }
         }
     }
 }
@@ -175,4 +208,12 @@ chaos::common::data::CDataWrapper* AbstractCommandDispatcher::updateConfiguratio
  */
 void AbstractCommandDispatcher::setRpcForwarder(RpcMessageForwarder *newRpcForwarderPtr){
     rpcForwarderPtr = newRpcForwarderPtr;
+}
+
+bool AbstractCommandDispatcher::hasDomain(const std::string& domain_name) {
+    return actionDomainExecutorMap.count(domain_name);
+}
+
+uint32_t AbstractCommandDispatcher::domainRPCActionQueued(const std::string& domain_name) {
+    return 0;
 }

@@ -23,7 +23,7 @@
 
 #include <map>
 #include <string>
-    //#include <boost/thread.hpp>
+//#include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <chaos/common/rpc/RpcMessageForwarder.h>
@@ -46,12 +46,15 @@ using namespace boost;
  Base class for the command implementation
  */
 namespace chaos{
-	namespace common {
-		namespace network {
-			class NetworkBroker;
-		}
-	}
-
+    namespace common {
+        namespace network {
+            class NetworkBroker;
+        }
+    }
+    
+    //forward decalration
+    class AbstractCommandDispatcher;
+    
     //! class for the echo test
     class EchoRpcAction:
     public DeclareAction {
@@ -62,51 +65,64 @@ namespace chaos{
                                                       bool& detach);
     };
     
-        //! Base class for the Chaos Action Dispatcher
+    //! class for the check if an RPC domain is alive
+    class CheckDomainRpcAction:
+    public DeclareAction {
+        AbstractCommandDispatcher *dispatcher;
+    public:
+        CheckDomainRpcAction(AbstractCommandDispatcher *_dispatcher);
+    protected:
+        chaos::common::data::CDataWrapper *checkDomain(chaos::common::data::CDataWrapper *action_data,
+                                                      bool& detach);
+    };
+    
+    //! Base class for the Chaos Action Dispatcher
     /*!
      The base class implement all the default needs for the dispatcher. The sublcass need only
      to manage the priority execution all the registration of the domain and action are managed
      by this base class
      */
     class AbstractCommandDispatcher :
-	public RpcServerHandler,
-	public Configurable,
-	public common::utility::StartableService,
-	public common::utility::NamedService {
+    public RpcServerHandler,
+    public Configurable,
+    public common::utility::StartableService,
+    public common::utility::NamedService {
         friend class chaos::common::network::NetworkBroker;
         
-            //! Rpc Client for action result
+        //! Rpc Client for action result
         /*!Pointer to the associated rpc client, used to send the result of an action*/
         RpcMessageForwarder *rpcForwarderPtr;
         
     protected:
         //! echo test class
-        EchoRpcAction echoTestClass;
+        EchoRpcAction echoActionClass;
+        //! check domain class
+        CheckDomainRpcAction checkDomainAction;
         
-		//! Domain name <-> Action name association map
+        //! Domain name <-> Action name association map
         /*!Contains the association between the domain name and all action for this domain*/
         map<string, boost::shared_ptr<DomainActions> >  actionDomainExecutorMap;
-		
-            //! Dispatch initialization with default value
+        
+        //! Dispatch initialization with default value
         virtual void init(void*) throw(CException);
         
-            //-----------------------
+        //-----------------------
         virtual void start() throw(CException);
         
         //-----------------------
         virtual void stop() throw(CException);
         
-            //! Dispatch deinitialization with default value
+        //! Dispatch deinitialization with default value
         virtual void deinit() throw(CException);
         
-            //! Accessor to the object that manage the action for a domain
+        //! Accessor to the object that manage the action for a domain
         /*!
          \return the instance of DomainActions pointer in relation to name
          but if the name is not present initialized it and add it to map
          */
         boost::shared_ptr<DomainActions> getDomainActionsFromName(const string & domain_name);
         
-            //! Remove the infromation about a domain
+        //! Remove the infromation about a domain
         /*!
          \return an isntance of DomainActions pointer and remove
          it form the map
@@ -114,7 +130,7 @@ namespace chaos{
         void  removeDomainActionsFromName(string&);
         
     public:
-            //! Constructor
+        //! Constructor
         AbstractCommandDispatcher(string alias);
         
         ~AbstractCommandDispatcher();
@@ -124,7 +140,7 @@ namespace chaos{
          */
         virtual chaos::common::data::CDataWrapper* updateConfiguration(chaos::common::data::CDataWrapper*)  throw(CException);
         
-            //! Send a message via RPC with the associated client
+        //! Send a message via RPC with the associated client
         /*! Send the message via rpc to a determinated node by ip and port.  If the message is a request, the pack need to
          contain the folowing key:\n
          \n
@@ -142,7 +158,7 @@ namespace chaos{
                            chaos::common::data::CDataWrapper* message,
                            bool onThisThread = false) throw(CException);
         
-            //! Action registration
+        //! Action registration
         /*
          This method provide the registration of the domain and action exposed by DeclareAction subclass. This method can be
          overrided by subclass for make some thing befor or after the registration
@@ -150,13 +166,17 @@ namespace chaos{
          */
         virtual void registerAction(DeclareAction *declareActionClass)  throw(CException) ;
         
-            //! Action deregistration
+        //! Action deregistration
         /*
          This method provide the deregistration of the domain and action exposed by DeclareAction subclass. This method can be
          overrided by subclass for make some thing befor or after the registration
          \param declareActionClass The object that expose the domain and action name
          */
         virtual void deregisterAction(DeclareAction *declareActionClass)  throw(CException) ;
+        
+        virtual bool hasDomain(const std::string& domain_name);
+        
+        virtual uint32_t domainRPCActionQueued(const std::string& domain_name);
         
         /*!
          Set the rpc forwarder implementation

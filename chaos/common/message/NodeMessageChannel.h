@@ -99,6 +99,18 @@ namespace chaos {
                                                                           const std::string& action_name,
                                                                           chaos::common::data::CDataWrapper *request_pack);
                 
+                //!Send a request for receive RPC information
+                /*!
+                 RPC information contains the alive state of the node within rpc dispacher on the backend size
+                 and the size of the queued actions
+                 */
+                std::auto_ptr<MessageRequestFuture> checkRPCInformation(const std::string& node_id,
+                                                                        bool on_this_thread = false);
+                
+                //!Send a request for an echo test
+                std::auto_ptr<MessageRequestFuture> echoTest(chaos::common::data::CDataWrapper *echo_data,
+                                                             bool on_this_thread = false);
+                
                 //! return last sendxxx error code
                 int32_t getLastErrorCode();
                 

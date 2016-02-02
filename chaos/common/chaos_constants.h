@@ -328,14 +328,15 @@ namespace chaos {
     /** @defgroup NodeDomainAndActionRPC !CHAOS node rpc key description
      *  @{
      */
-    //! Name space for grupping the key for action published by the node
+    //! Name space for grupping the key for action published by the node. Most of the funtion are node related so belong
+    //! to a different rpc domains, but the default domain(used for action of general usage is identified by RPC_DOMAIN key)
     namespace NodeDomainAndActionRPC {
-        //! The domain for the rpc action for every nodes (and sublcass)
-        static const char * const RPC_DOMAIN                    = "system";
+        //! The domain for the rpc action for every nodes (and sublcass used for general use)
+        static const char * const RPC_DOMAIN                                        = "system";
         //! Action that needs to answer with the status of the node(specialized for  every node)
-        static const char * const ACTION_NODE_STATUS            = "ndk_rpc_request_status";
+        static const char * const ACTION_NODE_STATUS                                = "ndk_rpc_request_status";
         //! Action that is called to inform the node of the registration status
-        static const char * const ACTION_REGISTRATION_ACK        = "ndk_rpc_reg_ack";
+        static const char * const ACTION_REGISTRATION_ACK                           = "ndk_rpc_reg_ack";
         
         //! Start the control unit intialization, the action need the default value
         //! of the input attribute for a determinate device
@@ -368,6 +369,12 @@ namespace chaos {
         
         //! update the node property
         static const char * const ACTION_UPDATE_PROPERTY                            = "updateProperty";
+        
+        //! perform an echo test, return as is the input datapach as output
+        static const char * const ACTION_ECHO_TEST                                  = "echoTest";
+        
+        //! perform an echo test. Return as is the input datapach as output
+        static const char * const ACTION_CHECK_DOMAIN                               = "checkDomain";
         
     }
     /** @} */ // end of NodeDomainAndActionRPC

@@ -82,6 +82,8 @@ namespace chaos{
         chaos::common::data::CDataWrapper* executeCommandSync(const std::string& domain,
                                                               const std::string& action,
                                                               chaos::common::data::CDataWrapper * message_data);
+        //inherited method
+        uint32_t domainRPCActionQueued(const std::string& domain_name);
     };
 }
 #endif

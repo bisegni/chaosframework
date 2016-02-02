@@ -79,6 +79,10 @@ void DomainActionsScheduler::setDispatcher(AbstractCommandDispatcher *newDispatc
 	dispatcher = newDispatcher;
 }
 
+uint32_t DomainActionsScheduler::getQueuedActionSize() {
+    return CObjectProcessingQueue<CDataWrapper>::queueSize();
+}
+
 void DomainActionsScheduler::synchronousCall(const std::string& action,
                                              chaos_data::CDataWrapper *message,
                                              chaos_data::CDataWrapper *result) {
