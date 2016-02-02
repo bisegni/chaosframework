@@ -25,7 +25,7 @@ int main(int argc, char* argv[] ) {
     if(!controller) throw chaos::CException(4, "Error allcoating decive controller", "device controller creation");
 
     //simulate bad init call
-    CDataWrapper *tmp_data_ptr = NULL;
+    chaos::common::data::CDataWrapper *tmp_data_ptr = NULL;
     if(controller->checkRPCInformation(&tmp_data_ptr) == 0){
         if(tmp_data_ptr) {
             std::cout << tmp_data_ptr->getJSONString() << std::endl;
@@ -33,6 +33,14 @@ int main(int argc, char* argv[] ) {
         }
     }
     
+    chaos::common::data::CDataWrapper echo_data;
+    echo_data.addStringValue("echo_key", "echo_value");
+    if(controller->echoTest(&echo_data, &tmp_data_ptr) == 0){
+        if(tmp_data_ptr) {
+            std::cout << tmp_data_ptr->getJSONString() << std::endl;
+            delete(tmp_data_ptr);
+        }
+    }
     chaos::ui::ChaosUIToolkit::getInstance()->deinit();
     return 0;
 }
