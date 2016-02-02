@@ -273,3 +273,11 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
     DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Send the message ack:-------------------------END";)
     return resultPack;
 }
+
+uint32_t DefaultCommandDispatcher::domainRPCActionQueued(const std::string& domain_name) {
+    chaos::common::thread::UpgradeableLock ur_lock(das_map_mutex);
+    //check if we are started
+    if(getServiceState() != 2) return -1;
+    //return the size of the action queue
+    return das_map[domain_name]->getQueuedActionSize();
+}

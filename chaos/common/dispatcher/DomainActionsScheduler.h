@@ -39,7 +39,8 @@ namespace chaos {
     /*!
      This class define an environment where an aciotn can be executed
      */
-    class DomainActionsScheduler: private CObjectProcessingQueue<chaos_data::CDataWrapper> {
+    class DomainActionsScheduler:
+    private CObjectProcessingQueue<chaos_data::CDataWrapper> {
         friend class CommandDispatcher;
             //! indicate the armed stato of this scheduler
         bool armed;
@@ -90,6 +91,9 @@ namespace chaos {
          Set the current dispatcher
          */
         void setDispatcher(AbstractCommandDispatcher*);
+        
+        //! return the number of queued action
+        uint32_t getQueuedActionSize();
     };
 }
 #endif

@@ -73,11 +73,11 @@ void NodeMessageChannel::sendMessage(const std::string& node_id,
  \return the answer of the request, a null value mean that the wait time is expired
  */
 CDataWrapper* NodeMessageChannel::sendRequest(const std::string& node_id,
-                                                            const std::string& action_name,
-                                                            CDataWrapper *request_pack,
-                                                            int32_t millisec_to_wait,
-                                                            bool async,
-                                                            bool on_this_thread) {
+                                              const std::string& action_name,
+                                              CDataWrapper *request_pack,
+                                              int32_t millisec_to_wait,
+                                              bool async,
+                                              bool on_this_thread) {
     return MessageChannel::sendRequest(nodeAddress->ip_port,
                                        node_id,
                                        action_name,
@@ -95,6 +95,22 @@ std::auto_ptr<MessageRequestFuture> NodeMessageChannel::sendRequestWithFuture(co
                                                  node_id,
                                                  action_name,
                                                  request_pack);
+}
+
+//! Send a request for receive RPC information
+std::auto_ptr<MessageRequestFuture> NodeMessageChannel::checkRPCInformation(const std::string& node_id,
+                                                                            bool on_this_thread) {
+    return MessageChannel::checkRPCInformation(nodeAddress->ip_port,
+                                               node_id,
+                                               on_this_thread);
+}
+
+//! Send a request for an echo test
+std::auto_ptr<MessageRequestFuture> NodeMessageChannel::echoTest(chaos::common::data::CDataWrapper *echo_data,
+                                                                 bool on_this_thread) {
+    return MessageChannel::echoTest(nodeAddress->ip_port,
+                                    echo_data,
+                                    on_this_thread);
 }
 
 //! return last sendxxx error code

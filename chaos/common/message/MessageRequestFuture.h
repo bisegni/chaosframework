@@ -60,7 +60,7 @@ namespace chaos {
 
                     //! the result for the request
                 std::auto_ptr<chaos::common::data::CDataWrapper> request_result;
-
+                
                     //!error code
                 int32_t error_code;
 

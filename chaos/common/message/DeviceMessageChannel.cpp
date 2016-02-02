@@ -213,3 +213,13 @@ std::auto_ptr<MessageRequestFuture>  DeviceMessageChannel::sendCustomRequestWith
                                  action_name,
                                  request_data);
 }
+
+//! Send a request for receive RPC information
+std::auto_ptr<MessageRequestFuture> DeviceMessageChannel::checkRPCInformation() {
+    return NodeMessageChannel::checkRPCInformation(deviceNetworkAddress->node_id);
+}
+
+//! Send a request for an echo test
+std::auto_ptr<MessageRequestFuture> DeviceMessageChannel::echoTest(chaos::common::data::CDataWrapper *echo_data) {
+    return NodeMessageChannel::echoTest(echo_data);
+}

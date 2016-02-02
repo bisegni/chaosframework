@@ -51,7 +51,7 @@ MessageChannel::~MessageChannel() {
  Initialization phase
  */
 void MessageChannel::init() throw(CException) {
-
+    
     //register the action for the response
     DeclareAction::addActionDescritionInstance<MessageChannel>(this,
                                                                &MessageChannel::response,
@@ -80,7 +80,7 @@ CDataWrapper *MessageChannel::response(CDataWrapper *response_data, bool& detach
     uint32_t request_id = response_data->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
     try {
         //lock the map
-         boost::lock_guard<boost::mutex> lock(mutext_answer_managment);
+        boost::lock_guard<boost::mutex> lock(mutext_answer_managment);
         
         DEBUG_CODE(MCDBG_ << "Received answer with id:" << request_id;)
         
@@ -89,8 +89,7 @@ CDataWrapper *MessageChannel::response(CDataWrapper *response_data, bool& detach
         
         if((detach = (p_iter != map_request_id_promises.end()))) {
             DEBUG_CODE(MCDBG_ << "We have promises for id:" << request_id);
-            
-            //set the valu ein promises
+            //set the value in promises
             p_iter->second->set_value(FuturePromiseData(response_data));
             
             //delete the promises after have been set the data
@@ -167,7 +166,7 @@ CDataWrapper* MessageChannel::sendRequest(const std::string& remote_host,
     } else {
         return NULL;
     }
-   
+    
 }
 
 //!send an rpc request to a remote node
@@ -223,4 +222,26 @@ std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const 
 //! get the rpc published host and port
 void MessageChannel::getRpcPublishedHostAndPort(std::string& rpc_published_host_port) {
     return broker->getPublishedHostAndPort(rpc_published_host_port);
+}
+
+std::auto_ptr<MessageRequestFuture> MessageChannel::checkRPCInformation(const std::string& remote_host,
+                                                                        const std::string& node_id,
+                                                                        bool on_this_thread) {
+    CDataWrapper data_pack;
+    data_pack.addStringValue("domain_name", node_id);
+    return sendRequestWithFuture(remote_host,
+                                 NodeDomainAndActionRPC::RPC_DOMAIN,
+                                 NodeDomainAndActionRPC::ACTION_CHECK_DOMAIN,
+                                 &data_pack,
+                                 on_this_thread);
+}
+
+std::auto_ptr<MessageRequestFuture> MessageChannel::echoTest(const std::string& remote_host,
+                                                             CDataWrapper *echo_data,
+                                                             bool on_this_thread) {
+    return sendRequestWithFuture(remote_host,
+                                 NodeDomainAndActionRPC::RPC_DOMAIN,
+                                 NodeDomainAndActionRPC::ACTION_ECHO_TEST,
+                                 echo_data,
+                                 on_this_thread);
 }
