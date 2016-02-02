@@ -95,11 +95,11 @@ void MainController::init(int argc, char **argv, QApplication& a) {
 
     a.setPalette(darkPalette);
 
-#ifdef Q_OS_LINUX
+#ifdef defined(Q_OS_LINUX)
     a.setStyleSheet("QWidget {font-family: Monospace; font-size: 9pt;}"
                     "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
-#elif Q_OS_DARWIN
-    a.setStyleSheet("QWidget {font-size: 11pt;}"
+#elif defined(Q_OS_DARWIN)
+    a.setStyleSheet("QWidget {font-size: 12pt;}"
                     "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 #endif
 
