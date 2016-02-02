@@ -87,6 +87,8 @@ namespace chaos {
         static const char * const   OPT_EVENT_DISABLE                   = "event-disable";
         //! Specify the metadata address for the metadataserver
         static const char * const   OPT_METADATASERVER_ADDRESS          = "metadata-server";
+        //! Specify the metadata address list for multiple metadataserver
+        static const char * const   OPT_METADATASERVER_ADDRESS_LIST     = "metadata-server-list";
         //! Specify the ip where publish the framework
         static const char * const   OPT_PUBLISHING_IP                   = "publishing-ip";
         //! use the interface name to determinate the ip where publish itself

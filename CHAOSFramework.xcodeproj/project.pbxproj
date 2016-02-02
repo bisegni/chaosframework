@@ -701,6 +701,8 @@
 		32D72CAB197D196D00512B89 /* WorkUnitManagement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D72CA9197D196D00512B89 /* WorkUnitManagement.h */; };
 		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
 		32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */; };
+		32DD7F711C60F97C003032DE /* MetadataLoggingManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD7F6F1C60F97C003032DE /* MetadataLoggingManager.cpp */; };
+		32DD7F721C60F97C003032DE /* MetadataLoggingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD7F701C60F97C003032DE /* MetadataLoggingManager.h */; };
 		32DD884F15E2663B000AF740 /* DefaultEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */; };
 		32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD885115E2681F000AF740 /* EventHandler.cpp */; };
 		32DD885415E2681F000AF740 /* EventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD885215E2681F000AF740 /* EventHandler.h */; };
@@ -1875,6 +1877,8 @@
 		32DC4AE51A51B5D80093ABA0 /* ChaosSyncRpc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChaosSyncRpc.h; sourceTree = "<group>"; };
 		32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSStageReadableFile.cpp; sourceTree = "<group>"; };
 		32DCC36E192517DA00E14256 /* VFSStageReadableFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSStageReadableFile.h; sourceTree = "<group>"; };
+		32DD7F6F1C60F97C003032DE /* MetadataLoggingManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetadataLoggingManager.cpp; sourceTree = "<group>"; };
+		32DD7F701C60F97C003032DE /* MetadataLoggingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetadataLoggingManager.h; sourceTree = "<group>"; };
 		32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultEventDispatcher.h; sourceTree = "<group>"; };
 		32DD885115E2681F000AF740 /* EventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventHandler.cpp; sourceTree = "<group>"; };
 		32DD885215E2681F000AF740 /* EventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventHandler.h; sourceTree = "<group>"; };
@@ -2906,6 +2910,7 @@
 				322884421ADBB50300CA1F4B /* property */,
 				32875F951776317F00E33D6F /* plugin */,
 				32BE864415A0CDC200818C39 /* log */,
+				32DD7F6E1C60F8DA003032DE /* metadata_logging */,
 				329FFFCE1707128600D69CDE /* memory */,
 				32EBDEF31B4E586000278C42 /* metric */,
 				326DB40214B38BC00018A8D0 /* io */,
@@ -3968,6 +3973,15 @@
 			path = cache;
 			sourceTree = "<group>";
 		};
+		32DD7F6E1C60F8DA003032DE /* metadata_logging */ = {
+			isa = PBXGroup;
+			children = (
+				32DD7F6F1C60F97C003032DE /* MetadataLoggingManager.cpp */,
+				32DD7F701C60F97C003032DE /* MetadataLoggingManager.h */,
+			);
+			path = metadata_logging;
+			sourceTree = "<group>";
+		};
 		32DF602B15E14B1900312C94 /* evt_desc */ = {
 			isa = PBXGroup;
 			children = (
@@ -4117,6 +4131,7 @@
 				324A4B78191A428500975394 /* json.h in Headers */,
 				324A4B56191A41EF00975394 /* strtoll.h in Headers */,
 				326DB47B14B38BC00018A8D0 /* ChaosProcessingQueue.h in Headers */,
+				32DD7F721C60F97C003032DE /* MetadataLoggingManager.h in Headers */,
 				324A4B7E191A428500975394 /* safe_num-inl.h in Headers */,
 				326DB47C14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h in Headers */,
 				326DB47D14B38BC00018A8D0 /* CObjectProcessingQueue.h in Headers */,
@@ -4970,6 +4985,7 @@
 				32C4C86D193491F2002DA741 /* URLServiceFeeder.cpp in Sources */,
 				325013BC15E9258C00DCB13E /* EventClient.cpp in Sources */,
 				32995C461BB2D1F700F68148 /* SWEService.cpp in Sources */,
+				32DD7F711C60F97C003032DE /* MetadataLoggingManager.cpp in Sources */,
 				324A4B2D191A405700975394 /* document.cpp in Sources */,
 				32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */,
 				324A4B96191A557700975394 /* time_support.cpp in Sources */,

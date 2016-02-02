@@ -27,6 +27,7 @@
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/InetUtility.h>
 
+#include <set>
 #include <string>
 #include <istream>
 #include <map>
@@ -43,8 +44,6 @@ namespace chaos_data = chaos::common::data;
 namespace chaos {
     
     using namespace std;
-
-
 	
 #define CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(t,x,y,z)\
 t x;\
@@ -234,6 +233,9 @@ x = hasOption(y);
          */
         void addMetadataServerAddress(const string& mdsAddress) throw (CException);
         
+        //!close the metadata server list array
+        void finalizeMetadataServerAddress();
+        
         /**
          *Add the metadataserver address
          */
@@ -246,6 +248,11 @@ x = hasOption(y);
          return the address of metadataserver
          */
         string getMetadataServerAddress();
+        
+        /*
+         return the address list of multiple configured metadataserver
+         */
+        std::set<std::string> getMetadataServerAddressList();
         
         /*
          return the address of metadataserver

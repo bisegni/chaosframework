@@ -57,6 +57,8 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_LOG_METRIC_ON_CONSOLE, po::value< bool >()->default_value(true), "Enable the logging metric on console");
         addOption(InitOption::OPT_LOG_METRIC_ON_FILE, po::value< bool >()->default_value(false), "Enable the logging metric on file");
         addOption(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, po::value< string >()->default_value("./"), "Specify the path of metric logs");
+        addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< string >()->default_value("localhost:5000"), "Metadataserver server:port address");
+        addOption(InitOption::OPT_METADATASERVER_ADDRESS_LIST, po::value< std::vector< std::string > >(), "Metadataserver list of tuple server:port");
         addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirect"), "Specify the data io implementation");
         addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
         addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
@@ -75,7 +77,6 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"RPC server thread number");
         addOption(InitOption::OPT_RPC_IMPL_KV_PARAM, po::value<string>(),"RPC implementation key value parameter[k|v-k1|v1]");
         addOption(InitOption::OPT_EVENT_DISABLE, po::value< bool >()->default_value(false), "Disable the event system [by default it is enable]");
-        addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< string >()->default_value("localhost:5000"), "Metadataserver server:port address");
         addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
         addOption(InitOption::OPT_PUBLISHING_INTERFACE, po::value< string >(), "Specify the interface where to publish the framework rpc system");
     }catch (po::error &e) {
@@ -299,11 +300,18 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     
     configuration.addStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
     
-    //configure metadataserver
+    //configure metadataserver as single or list
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, InitOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")
     if (metadataServerAddress.size()>0) {
         addMetadataServerAddress(metadataServerAddress);
     }
+    CHECK_AND_DEFINE_OPTION(std::vector<std::string>, metadataServerAddressList, InitOption::OPT_METADATASERVER_ADDRESS_LIST)
+    for(std::vector<std::string>::iterator it = metadataServerAddressList.begin();
+        it != metadataServerAddressList.end();
+        it++) {
+        addMetadataServerAddress(metadataServerAddress);
+    }
+    finalizeMetadataServerAddress();
 }
 
 
@@ -382,7 +390,11 @@ void GlobalConfiguration::addMetadataServerAddress(const string& mdsAddress) thr
         throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
     
     //address can be added
-    configuration.addStringValue(InitOption::OPT_METADATASERVER_ADDRESS, mdsAddress);
+    configuration.appendStringToArray(mdsAddress);
+}
+
+void GlobalConfiguration::finalizeMetadataServerAddress() {
+    configuration.finalizeArrayForKey(InitOption::OPT_METADATASERVER_ADDRESS);
 }
 
 /**
@@ -408,7 +420,20 @@ void GlobalConfiguration::addLocalServerBasePort(int32_t localDefaultPort) throw
  return the address of metadataserver
  */
 string GlobalConfiguration::getMetadataServerAddress() {
-    return configuration.getStringValue(InitOption::OPT_METADATASERVER_ADDRESS);
+    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration.getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
+    CHAOS_ASSERT(server_array->size());
+    return server_array->getStringElementAtIndex(0);
+}
+
+std::set<std::string> GlobalConfiguration::getMetadataServerAddressList() {
+    std::set<std::string> result;
+    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration.getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
+    for(int idx = 0;
+        idx < server_array->size();
+        idx++) {
+        result.insert(server_array->getStringElementAtIndex(idx));
+    }
+    return result;
 }
 
 /*
