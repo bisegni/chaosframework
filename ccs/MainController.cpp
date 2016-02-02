@@ -63,9 +63,6 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qRegisterMetaType<boost::shared_ptr<chaos::CException> >("chaos::CException");
     qRegisterMetaType<boost::shared_ptr<chaos::common::data::CDataWrapper> >("chaos::metadata_service_client::monitor_system::KeyValue");
 
-    //set the dark fusion style
-    a.setStyle(QStyleFactory::create("Fusion"));
-
     QPixmap pixmap(":splash/main_splash.png");
     QApplication::setApplicationName("chaos_control_studio");
     QApplication::setApplicationVersion("0.0.1-alpha");
@@ -73,7 +70,7 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     QApplication::setOrganizationDomain("chaos.infn.it");
 
     a.setStyle(QStyleFactory::create("Fusion"));
-     QColor dark_main(95,95,95);
+    QColor dark_main(95,95,95);
     QColor dark_main_desktop(43,43,43);
     QColor default_text(220,220,220);
     QColor disable_color(155,155,155);
@@ -97,10 +94,15 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     darkPalette.setColor(QPalette::Disabled, QPalette::Text, disable_color);
 
     a.setPalette(darkPalette);
-    a.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }"
-                    "QHeaderView {font-size: 11pt;}"
-                    "QComboBox {font-size: 11pt;}"
-                    "QLineEditor {font-size: 11pt;}");
+
+#ifdef Q_OS_LINUX
+    a.setStyleSheet("QWidget {font-family: Monospace; font-size: 9pt;}"
+                    "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+#elif Q_OS_DARWIN
+    a.setStyleSheet("QWidget {font-size: 11pt;}"
+                    "QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+#endif
+
 
     //show main window
     splash.reset(new QSplashScreen(pixmap));

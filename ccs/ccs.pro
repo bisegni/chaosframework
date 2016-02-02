@@ -21,7 +21,8 @@ LIBS += -L$$PWD/../usr/local/lib
 
 LIBS +=     -lchaos_common\
             -lchaos_metadata_service_client\
-            -ljsoncpp
+            -ljsoncpp\
+            -lzmq
 
 SOURCES += main.cpp\
     search/SearchNodeResult.cpp \
