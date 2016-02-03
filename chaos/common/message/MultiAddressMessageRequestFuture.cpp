@@ -78,47 +78,47 @@ bool MultiAddressMessageRequestFuture::wait() {
           working) {
         MAMRF_DBG << "Waiting on server " << last_used_address;
             //! waith for future
-        if(current_future->wait(timeout_in_milliseconds*10)) {
+        if(current_future->wait(timeout_in_milliseconds)) {
             if(current_future->isRemoteMeaning()) {
                     //we have received from remote server somenthing
                 working = false;
             }
-        } else if(retry_on_same_server++ < 3) {
-            MAMRF_INFO << "Retry to wait on same server";
-            continue;
-        } else {
-            MAMRF_INFO << "Whe have retryied " << retry_on_same_server << " times on "<<last_used_address;
-        }
-
-        if(working){
-            MAMRF_ERR << "Error "<< ERROR_MESS_DOMAIN_IN_STR(current_future->getError(),
-                                                             current_future->getErrorMessage(),
-                                                             current_future->getErrorDomain())<<" during forward on " << last_used_address;
-                //set index offline
-            parent_mn_message_channel->setAddressOffline(last_used_address);
-            MAMRF_INFO << "Server " << last_used_address << " put offline";
-
-                //retrasmission of the datapack
-            current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
-                                                                               action_name,
-                                                                               message_pack.get(),
-                                                                               last_used_address);
-            if(current_future.get()) {
-                MAMRF_INFO << "Retransmission on " << last_used_address;
-            } else if(force_to_reuse) {
-                MAMRF_INFO << "No more server for retrasmission, I can't force anymore";
+        } else{
+            if(retry_on_same_server++ < 3) {
+                MAMRF_INFO << "Retry to wait on same server";
+                continue;
             } else {
-                MAMRF_INFO << "No more server for retrasmission, Retry using all offline server for one time";
-                force_to_reuse = true;
-                    //reuse all server
-                parent_mn_message_channel->retryOfflineServer(true);
-                    //retrasmission of the datapack
+                MAMRF_INFO << "Whe have retryied " << retry_on_same_server << " times on "<<last_used_address;
+                
+                //set index offline
+                parent_mn_message_channel->setAddressOffline(last_used_address);
+                MAMRF_INFO << "Server " << last_used_address << " put offline";
+                
+                //retrasmission of the datapack
                 current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                                    action_name,
                                                                                    message_pack.get(),
                                                                                    last_used_address);
+                if(current_future.get()) {
+                    MAMRF_INFO << "Retransmission on " << last_used_address;
+                } else if(force_to_reuse) {
+                    MAMRF_INFO << "No more server for retrasmission, I can't force anymore";
+                } else {
+                    MAMRF_INFO << "No more server for retrasmission, Retry using all offline server for one time";
+                    force_to_reuse = true;
+                    //reuse all server
+                    parent_mn_message_channel->retryOfflineServer(true);
+                    //retrasmission of the datapack
+                    current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
+                                                                                       action_name,
+                                                                                       message_pack.get(),
+                                                                                       last_used_address);
+                }
+
             }
+
         }
+
     }
         //retry logic
     parent_mn_message_channel->retryOfflineServer();

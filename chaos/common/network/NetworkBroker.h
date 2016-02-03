@@ -75,7 +75,6 @@ namespace chaos {
 			typedef enum {
 				RAW = 0,            /*!< Identify a raw channel used to send data pack to remote server */
                 RAW_MULTI_ADDRESS,	/*!< Identify a multinode raw channel used to send data pack to one or more remote server */
-				MDS,                /*!< Identify a mds specific channel used to send data pack to the metadataserver */
 				DEVICE,             /*!< Identify a device specific channel used to send data pack to the target control unit */
 				PERFORMANCE         /*!< Identify a performance specific channel used to send and receive various performance information and test between two chaos node using directio system */
 			} EntityType;

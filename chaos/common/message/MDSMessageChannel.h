@@ -21,8 +21,9 @@
 #ifndef CHAOSFramework_MDSMessageChannel_h
 #define CHAOSFramework_MDSMessageChannel_h
 
-#include <chaos/common/message/NodeMessageChannel.h>
+#include <chaos/common/message/MultiAddressMessageChannel.h>
 
+#include <set>
 #include <vector>
 
 namespace chaos {
@@ -36,7 +37,7 @@ namespace chaos {
 			 This class represent a message chanel for comunication with the Metadata Server
 			 */
 			class MDSMessageChannel:
-            public NodeMessageChannel {
+            public MultiAddressMessageChannel {
 				friend class chaos::common::network::NetworkBroker;
 			protected:
 				//! base constructor
@@ -44,7 +45,8 @@ namespace chaos {
 				 The base constructor prepare the base class constructor call to be adapted for metadataserver comunication. For the MDS the node address is
 				 "system"(ip:port:system)
 				 */
-				MDSMessageChannel(NetworkBroker *msgBroker, CNodeNetworkAddress *mdsNodeAddress):NodeMessageChannel(msgBroker, mdsNodeAddress){}
+                MDSMessageChannel(NetworkBroker *network_broker,
+                                  const std::vector<CNetworkAddress>& mds_node_address);
 				
 			public:
 				
@@ -54,69 +56,80 @@ namespace chaos {
 				 The method return has fast as possible, no aswer is wait
 				 \param identificationID identification id of a device or a client
 				 */
-				void sendHeartBeatForDeviceID(string& identificationID);
+				void sendHeartBeatForDeviceID(const std::string& identification_id);
 				
 				//! Send Unit server registration to MDS
 				/*!
 				 Perform the registration of the unit server
 				 \param node_description the description of the unit server to publish
 				 \param requestCheck flasg the message has request if it is true
-				 \param millisecToWait delay after wich the wait is interrupt
+				 \param millisec_to_wait delay after wich the wait is interrupt
 				 */
-				int sendNodeRegistration(CDataWrapper& node_description, bool requestCheck = false, uint32_t millisecToWait = 0);
+				int sendNodeRegistration(CDataWrapper& node_description,
+                                         bool requestCheck = false,
+                                         uint32_t millisec_to_wait = 5000);
 				
                 //! Send node load completion to MDS
                 /*!
                  Inform mds that node load phase has completed
                  \param node_information infromation for completion phase
                  \param requestCheck flasg the message has request if it is true
-                 \param millisecToWait delay after wich the wait is interrupt
+                 \param millisec_to_wait delay after wich the wait is interrupt
                  */
-                int sendNodeLoadCompletion(CDataWrapper& node_information, bool requestCheck = false, uint32_t millisecToWait = 0);
+                int sendNodeLoadCompletion(CDataWrapper& node_information,
+                                           bool requestCheck = false,
+                                           uint32_t millisec_to_wait = 5000);
                 
                 //! Send Unit server CU states to MDS
 				/*!
 				 Perform the registration of the unit server
 				 \param unitServerDescription the description of the unit server to publish
 				 \param requestCheck flasg the message has request if it is true
-				 \param millisecToWait delay after wich the wait is interrupt
+				 \param millisec_to_wait delay after wich the wait is interrupt
 				 */
 
-                int sendUnitServerCUStates(CDataWrapper& deviceDataset, bool requestCheck= false, uint32_t millisecToWait=0);
+                int sendUnitServerCUStates(CDataWrapper& deviceDataset,
+                                           bool requestCheck = false,
+                                           uint32_t millisec_to_wait=5000);
 				
 				//! Get all active device id
 				/*!
 				 Return a list of all device id that are active
 				 \param deviceIDVec an array to contain the returned device id
-				 \param millisecToWait delay after wich the wait is interrupt
+				 \param millisec_to_wait delay after wich the wait is interrupt
 				 */
-				int getAllDeviceID(vector<string>& deviceIDVec, uint32_t millisecToWait=0);
+				int getAllDeviceID(vector<string>& deviceIDVec,
+                                   uint32_t millisec_to_wait=5000);
 				
 				//! Get node address for identification id
 				/*!
 				 Return the node address for an identification id
 				 \param identificationID id for wich we need to get the network address information
 				 \param deviceNetworkAddress the hadnle to the pointer representing the node address structure to be filled with identification id network info
-				 \param millisecToWait delay after wich the wait is interrupt
+				 \param millisec_to_wait delay after wich the wait is interrupt
 				 \return error code
 				 */
-				int getNetworkAddressForDevice(string& identificationID, CDeviceNetworkAddress** deviceNetworkAddress, uint32_t millisecToWait=0);
+                int getNetworkAddressForDevice(const std::string& identificationID,
+                                               CDeviceNetworkAddress** deviceNetworkAddress,
+                                               uint32_t millisec_to_wait=5000);
 				
 				//! Get curent dataset for device
 				/*!
 				 Return the node address for an identification id
 				 \param identificationID id for wich we need to get the network address information
 				 \param deviceDefinition this is the handle to the pointer representig the dataset desprition is returned
-				 \param millisecToWait delay after wich the wait is interrupt
+				 \param millisec_to_wait delay after wich the wait is interrupt
 				 \return error code
 				 */
-				int getLastDatasetForDevice(string& identificationID,  CDataWrapper** deviceDefinition, uint32_t millisecToWait=0);
+                int getLastDatasetForDevice(const std::string& identificationID,
+                                            CDataWrapper** deviceDefinition,
+                                            uint32_t millisec_to_wait=5000);
                 
                 //! return the configuration for the data driver
                 /*!
                  Return the besta available data service at the monent within the configuraiton for data driver
                  */
-                int getDataDriverBestConfiguration(CDataWrapper** deviceDefinition, uint32_t millisecToWait=0);
+                int getDataDriverBestConfiguration(CDataWrapper** deviceDefinition, uint32_t millisec_to_wait=5000);
 			};
 		}
 	}

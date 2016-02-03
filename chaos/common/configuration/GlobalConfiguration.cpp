@@ -31,7 +31,9 @@
 #include "GlobalConfiguration.h"
 
 using namespace chaos;
+using namespace chaos::common::network;
 using namespace chaos::common::utility;
+
 using namespace boost;
 namespace po = boost::program_options;
 
@@ -57,8 +59,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_LOG_METRIC_ON_CONSOLE, po::value< bool >()->default_value(true), "Enable the logging metric on console");
         addOption(InitOption::OPT_LOG_METRIC_ON_FILE, po::value< bool >()->default_value(false), "Enable the logging metric on file");
         addOption(InitOption::OPT_LOG_METRIC_ON_FILE_PATH, po::value< string >()->default_value("./"), "Specify the path of metric logs");
-        addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< string >()->default_value("localhost:5000"), "Metadataserver server:port address");
-        addOption(InitOption::OPT_METADATASERVER_ADDRESS_LIST, po::value< std::vector< std::string > >(), "Metadataserver list of tuple server:port");
+        addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< std::vector< std::string > >(), "Metadataserver server:port address");
         addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirect"), "Specify the data io implementation");
         addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
         addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
@@ -301,15 +302,15 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     configuration.addStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
     
     //configure metadataserver as single or list
-    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, InitOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")
-    if (metadataServerAddress.size()>0) {
-        addMetadataServerAddress(metadataServerAddress);
-    }
-    CHECK_AND_DEFINE_OPTION(std::vector<std::string>, metadataServerAddressList, InitOption::OPT_METADATASERVER_ADDRESS_LIST)
-    for(std::vector<std::string>::iterator it = metadataServerAddressList.begin();
-        it != metadataServerAddressList.end();
-        it++) {
-        addMetadataServerAddress(metadataServerAddress);
+    CHECK_AND_DEFINE_OPTION(std::vector<std::string>, metadata_server_address_list, InitOption::OPT_METADATASERVER_ADDRESS)
+    if(metadata_server_address_list.size()) {
+        for(std::vector<std::string>::iterator it = metadata_server_address_list.begin();
+            it != metadata_server_address_list.end();
+            it++) {
+            addMetadataServerAddress(*it);
+        }
+    } else {
+        addMetadataServerAddress("localhost:5000");
     }
     finalizeMetadataServerAddress();
 }
@@ -425,13 +426,13 @@ string GlobalConfiguration::getMetadataServerAddress() {
     return server_array->getStringElementAtIndex(0);
 }
 
-std::set<std::string> GlobalConfiguration::getMetadataServerAddressList() {
-    std::set<std::string> result;
+std::vector<CNetworkAddress> GlobalConfiguration::getMetadataServerAddressList() {
+    std::vector<CNetworkAddress> result;
     std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> server_array(configuration.getVectorValue(InitOption::OPT_METADATASERVER_ADDRESS));
     for(int idx = 0;
         idx < server_array->size();
         idx++) {
-        result.insert(server_array->getStringElementAtIndex(idx));
+        result.push_back(CNetworkAddress(server_array->getStringElementAtIndex(idx)));
     }
     return result;
 }

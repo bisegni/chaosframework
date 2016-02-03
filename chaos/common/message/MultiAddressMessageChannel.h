@@ -68,7 +68,7 @@ namespace chaos {
              is used to mantains the node_id with the url.
              */
             class MultiAddressMessageChannel:
-            private MessageChannel,
+            public MessageChannel,
             private chaos::common::network::URLServiceFeederHandler {
                 friend class chaos::common::network::NetworkBroker;
                 friend class chaos::common::message::MultiAddressMessageRequestFuture;
@@ -87,28 +87,6 @@ namespace chaos {
                 //! url manager
                 chaos::common::network::URLServiceFeeder service_feeder;
 
-                    //! default constructor
-                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker);
-
-                //!Base constructor
-                /*!
-                 Perform the multinode node network construction
-                 \param message_broker the broker used by this channel
-                 \param node_address a list of node that the channel used for the data forwarding
-                 */
-                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker,
-                                        chaos::common::network::CNetworkAddress& node_address);
-                //!Base constructor
-                /*!
-                 Perform the multinode node network construction
-                 \param message_broker the broker used by this channel
-                 \param node_address a list of node that the channel used for the data forwarding
-                 */
-                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker,
-                                        const std::vector<chaos::common::network::CNetworkAddress>& node_address);
-                
-                ~MultiAddressMessageChannel();
-
                     //!internal send request method
                 /*!
                  send an rpc request with url feeder rule for servec choice and return the future.
@@ -123,6 +101,30 @@ namespace chaos {
                                                                            chaos::common::data::CDataWrapper *request_pack,
                                                                            std::string& used_remote_address);
             protected:
+                
+                //! default constructor
+                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker);
+                
+                //!Base constructor
+                /*!
+                 Perform the multinode node network construction
+                 \param message_broker the broker used by this channel
+                 \param node_address a list of node that the channel used for the data forwarding
+                 */
+                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker,
+                                           chaos::common::network::CNetworkAddress& node_address);
+                //!Base constructor
+                /*!
+                 Perform the multinode node network construction
+                 \param message_broker the broker used by this channel
+                 \param node_address a list of node that the channel used for the data forwarding
+                 */
+                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker,
+                                           const std::vector<chaos::common::network::CNetworkAddress>& node_address);
+                
+                
+                ~MultiAddressMessageChannel();
+                
                 //! the map link the url with the ndoe id
                 std::map<std::string, CNetworkAddressInfo> map_url_node_id;
                 

@@ -579,11 +579,6 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
             CHAOS_ASSERT(!node_network_address)
             channel = new MultiAddressMessageChannel(this);
             break;
-        case MDS:
-            if(!node_network_address) return NULL;
-            channel = new MDSMessageChannel(this, static_cast<CNodeNetworkAddress*>(node_network_address));
-            break;
-            
         case DEVICE:
             if(!node_network_address) return NULL;
             channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(node_network_address));
@@ -609,10 +604,13 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
  Performe the creation of metadata server
  */
 MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel() {
-    CNodeNetworkAddress *mdsNodeAddr = new CNodeNetworkAddress();
-    mdsNodeAddr->ip_port = GlobalConfiguration::getInstance()->getMetadataServerAddress();
-    mdsNodeAddr->node_id = chaos::NodeDomainAndActionRPC::RPC_DOMAIN;
-    return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(mdsNodeAddr, MDS));
+    MDSMessageChannel *channel = new MDSMessageChannel(this, GlobalConfiguration::getInstance()->getMetadataServerAddressList());
+    if(channel){
+        channel->init();
+        boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
+        active_rpc_channel.insert(make_pair(channel->channel_reponse_domain, channel));
+    }
+    return channel;
 }
 
 //!Metadata server channel creation

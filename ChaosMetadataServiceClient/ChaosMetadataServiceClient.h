@@ -52,9 +52,6 @@ namespace chaos {
             
             //! default destructor
             ~ChaosMetadataServiceClient();
-            
-            //! set the custom client init parameter
-            void setClientInitParameter();
         public:
             //! the client setting
             ClientSetting setting;

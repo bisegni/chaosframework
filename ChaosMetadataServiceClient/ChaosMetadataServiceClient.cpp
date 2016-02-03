@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 #include <ChaosMetadataServiceClient/metadata_service_client_constants.h>
 
@@ -46,21 +47,10 @@ using boost::shared_ptr;
 #define CMSC_LERR ERR_LOG(ChaosMetadataServiceClient)
 
 //!default constructor
-ChaosMetadataServiceClient::ChaosMetadataServiceClient() {
-    setClientInitParameter();
-}
+ChaosMetadataServiceClient::ChaosMetadataServiceClient() {}
 
 //! default destructor
-ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {
-    
-}
-
-//! set the custom client init parameter
-void ChaosMetadataServiceClient::setClientInitParameter() {
-    getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_MDS_ADDRESS,
-                                                                            OPT_MDS_ADDRESS_DESCRIPTION,
-                                                                            &setting.mds_backend_servers);
-}
+ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {}
 
 //! C and C++ attribute parser
 /*!
@@ -82,6 +72,14 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
         
         monitor_manager.reset(new MonitorManager(NetworkBroker::getInstance(), &setting), "MonitorManager");
         monitor_manager.init(NULL, __PRETTY_FUNCTION__);
+        
+        //configure metadata server got from command line
+        std::vector<chaos::common::network::CNetworkAddress> mds_address_list = GlobalConfiguration::getInstance()->getMetadataServerAddressList();
+        for(std::vector<chaos::common::network::CNetworkAddress>::iterator it = mds_address_list.begin();
+            it != mds_address_list.end();
+            it++) {
+            addServerAddress(it->ip_port);
+        }
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         throw ex;

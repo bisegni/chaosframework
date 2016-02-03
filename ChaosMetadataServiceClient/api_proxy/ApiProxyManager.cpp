@@ -50,7 +50,7 @@ void ApiProxyManager::init(void *init_data) throw (chaos::CException) {
     for(BackendServerListIterator it = setting->mds_backend_servers.begin();
         it != setting->mds_backend_servers.end();
         it++) {
-        APM_LAPP << "Add " << *it;
+        APM_LAPP << "Add " << *it << " metadaa server";
         CNetworkAddress cna(*it);
         mn_message_channel->addNode(cna);
     }

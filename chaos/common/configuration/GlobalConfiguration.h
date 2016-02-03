@@ -21,16 +21,17 @@
 #define ChaosFramework_GlobalConfiguration_h
 
 #include <chaos/common/global.h>
-#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/chaos_constants.h>
-#include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/Singleton.h>
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/InetUtility.h>
+#include <chaos/common/exception/CException.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
 
+#include <map>
 #include <set>
 #include <string>
 #include <istream>
-#include <map>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/program_options/option.hpp>
@@ -252,7 +253,7 @@ x = hasOption(y);
         /*
          return the address list of multiple configured metadataserver
          */
-        std::set<std::string> getMetadataServerAddressList();
+        std::vector<chaos::common::network::CNetworkAddress> getMetadataServerAddressList();
         
         /*
          return the address of metadataserver
