@@ -5395,6 +5395,7 @@
 				OTHER_LDFLAGS = (
 					"-lchaos_metadata_service_client",
 					"-lchaos_common",
+					"-lboost_timer",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -5440,6 +5441,7 @@
 				OTHER_LDFLAGS = (
 					"-lchaos_metadata_service_client",
 					"-lchaos_common",
+					"-lboost_timer",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

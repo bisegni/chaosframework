@@ -24,6 +24,8 @@
 
 #include <iostream>
 
+#include <boost/timer/timer.hpp>
+
 #include "NodeMonitor.h"
 #include "NodeSearchTest.h"
 
@@ -85,9 +87,12 @@ int main(int argc, char *argv[]){
                 //if(!ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->hasOption("device-id")){LOG_AND_TROW(MSCT_ERR, -3, "Device id is usede in search, as search string")}
                 //create search node utility class
                 NodeSearchTest ns(5);
+                {
+                    boost::timer::auto_cpu_timer t;
+                    //try search and waith the termination
+                    ns.testSearch(device_id.size()?device_id:"");
+                }
                 
-                //try search and waith the termination
-                ns.testSearch(device_id.size()?device_id:"");
             }
         }
         
