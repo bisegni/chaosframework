@@ -37,7 +37,7 @@ namespace chaos {
 			 This class represent a message chanel for comunication with the Metadata Server
 			 */
 			class MDSMessageChannel:
-            public MultiAddressMessageChannel {
+            protected MultiAddressMessageChannel {
 				friend class chaos::common::network::NetworkBroker;
 			protected:
 				//! base constructor
@@ -49,7 +49,14 @@ namespace chaos {
                                   const std::vector<CNetworkAddress>& mds_node_address);
 				
 			public:
-				
+                //! return last sendxxx error code
+                int32_t getLastErrorCode();
+                
+                //! return last sendxxx error message
+                const std::string& getLastErrorMessage();
+                
+                //! return last sendxxx error domain
+                const std::string& getLastErrorDomain();
 				//! Send heartbeat
 				/*!
 				 Send the heartbeat for an identification ID. This can be an id for a device or an uitoolkit instance.

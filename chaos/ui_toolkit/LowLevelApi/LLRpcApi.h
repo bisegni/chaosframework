@@ -41,105 +41,110 @@
 #include <boost/atomic.hpp>
 
 namespace chaos {
-	namespace ui{
-
-		class LLRpcApi;
-
-		struct DIOConn {
-			friend class LLRpcApi;
-		private:
-			static uint32_t garbage_counter;
+    namespace ui{
+        
+        class LLRpcApi;
+        
+        struct DIOConn {
+            friend class LLRpcApi;
+        private:
+            static uint32_t garbage_counter;
             chaos::common::direct_io::DirectIOClientConnection *connection;
-			DIOConn(chaos::common::direct_io::DirectIOClientConnection *_connection):connection(_connection){};
-			~DIOConn(){};
-		};
-
-		struct SystemApiChannel {
-			friend class LLRpcApi;
-			chaos::common::direct_io::channel::DirectIOSystemAPIClientChannel *system_api_channel;
-		private:
-			DIOConn *connection;
-			SystemApiChannel(DIOConn *_connection,
-							 chaos::common::direct_io::channel::DirectIOSystemAPIClientChannel *_system_api_channel):
-			connection(_connection),
-			system_api_channel(_system_api_channel){};
-			~SystemApiChannel(){};
-		};
-
-		/*
-		 LLRpcApi Class api for rpc system
-		 */
-		class LLRpcApi:
-		public common::utility::Singleton<LLRpcApi> {
-			friend class ChaosUIToolkit;
-			friend class common::utility::Singleton<LLRpcApi>;
-			//!chaos network router
-			chaos::common::network::NetworkBroker *network_broker;
-
-			//! root direct io client
-			chaos::common::direct_io::DirectIOClient *direct_io_client;
-
-			//! hasmap for direct io address and connection struct
-			boost::mutex				mutex_map_dio_addr_conn;
+            DIOConn(chaos::common::direct_io::DirectIOClientConnection *_connection):connection(_connection){};
+            ~DIOConn(){};
+        };
+        
+        struct SystemApiChannel {
+            friend class LLRpcApi;
+            chaos::common::direct_io::channel::DirectIOSystemAPIClientChannel *system_api_channel;
+        private:
+            DIOConn *connection;
+            SystemApiChannel(DIOConn *_connection,
+                             chaos::common::direct_io::channel::DirectIOSystemAPIClientChannel *_system_api_channel):
+            connection(_connection),
+            system_api_channel(_system_api_channel){};
+            ~SystemApiChannel(){};
+        };
+        
+        /*
+         LLRpcApi Class api for rpc system
+         */
+        class LLRpcApi:
+        public common::utility::Singleton<LLRpcApi> {
+            friend class ChaosUIToolkit;
+            friend class common::utility::Singleton<LLRpcApi>;
+            //!chaos network router
+            chaos::common::network::NetworkBroker *network_broker;
+            
+            //! root direct io client
+            chaos::common::direct_io::DirectIOClient *direct_io_client;
+            
+            //! hasmap for direct io address and connection struct
+            boost::mutex				mutex_map_dio_addr_conn;
             std::map<std::string, DIOConn*>	map_dio_addr_conn;
-
-
-
-			/*
-			 */
-			LLRpcApi();
-
-			/*
-			 */
-			~LLRpcApi();
-
-		public:
-
-                    /*
-			 LL Rpc Api static initialization it should be called once for application
-			 */
-			void init() throw (CException);
-
-                        /*
-                         * use a specified network broker
-                         */
-                        void init(chaos::common::network::NetworkBroker *network_broker);
-			/*
-			 Deinitialization of LL rpc api
-			 */
-			void deinit() throw (CException);
-			chaos::common::io::IODataDriver *getDataProxyChannelNewInstance() throw(CException);
-
-			/*!
-			 Return a new channel for talk with metadata server
-			 */
+            
+            
+            
+            /*
+             */
+            LLRpcApi();
+            
+            /*
+             */
+            ~LLRpcApi();
+            
+        public:
+            
+            /*
+             LL Rpc Api static initialization it should be called once for application
+             */
+            void init() throw (CException);
+            
+            /*
+             * use a specified network broker
+             */
+            void init(chaos::common::network::NetworkBroker *network_broker);
+            /*
+             Deinitialization of LL rpc api
+             */
+            void deinit() throw (CException);
+            chaos::common::io::IODataDriver *getDataProxyChannelNewInstance() throw(CException);
+            
+            /*!
+             Return a new channel for talk with metadata server
+             */
             chaos::common::message::MDSMessageChannel *getNewMetadataServerChannel();
-
-			/*!
-			 Return a new device channel
-			 */
+            
+            /*!
+             Return a new device channel
+             */
             chaos::common::message::DeviceMessageChannel *getNewDeviceMessageChannel(chaos::common::network::CDeviceNetworkAddress *device_network_address);
-
+            
             chaos::common::message::PerformanceNodeChannel *getNewPerformanceChannel(chaos::common::network::CNetworkAddress *note_network_address);
-
-			/*!
-			 Delete a previously instantiatedchannel
-			 */
+            
+            /*!
+             Delete a previously instantiatedchannel
+             */
             void deleteMessageChannel(chaos::common::message::MessageChannel*);
-
-			/*!
-			 Delete a previously instantiatedchannel
-			 */
+            
+            /*!
+             Delete a previously instantiatedchannel
+             */
             void deleteMessageChannel(chaos::common::message::NodeMessageChannel*);
-
+            
+            /*!
+             Delete a previously instantiatedchannel
+             */
+            void deleteMessageChannel(chaos::common::message::MDSMessageChannel*);
+            
             chaos::event::channel::AlertEventChannel *getNewAlertEventChannel() throw (CException);
             chaos::event::channel::InstrumentEventChannel *getNewInstrumentEventChannel() throw (CException);
             void disposeEventChannel(chaos::event::channel::EventChannel *) throw (CException);
-
+            
             SystemApiChannel *getSystemApiClientChannel(const std::string& direct_io_address);
-			void releaseSystemApyChannel(SystemApiChannel *system_api_channel);
-
-		};
-	}
+            void releaseSystemApyChannel(SystemApiChannel *system_api_channel);
+            
+        };
+    }
 }
 #endif

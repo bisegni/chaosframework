@@ -366,6 +366,12 @@ namespace chaos {
                  */
                 void disposeMessageChannel(chaos::common::message::MultiAddressMessageChannel *messageChannelToDispose);
 
+                //!Rpc Channel deallocation
+                /*!
+                 Perform the node message channel deallocation
+                 */
+                void disposeMessageChannel(chaos::common::message::MDSMessageChannel *messageChannelToDispose);
+                
 				//!Allocate a new endpoint in the direct io server
 				/*!
 				 Allcoate a new endpoint into the server act to receive directio data pack.

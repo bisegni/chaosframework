@@ -119,6 +119,10 @@ void LLRpcApi::deleteMessageChannel(NodeMessageChannel *channelToDispose) {
 	NetworkBroker::getInstance()->disposeMessageChannel(channelToDispose);
 }
 
+void LLRpcApi::deleteMessageChannel(chaos::common::message::MDSMessageChannel *channelToDispose) {
+    NetworkBroker::getInstance()->disposeMessageChannel(channelToDispose);
+}
+
 event::channel::AlertEventChannel *LLRpcApi::getNewAlertEventChannel() throw (CException) {
     return NetworkBroker::getInstance()->getNewAlertEventChannel();
 }

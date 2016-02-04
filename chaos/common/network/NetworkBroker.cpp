@@ -608,7 +608,7 @@ MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel() {
     if(channel){
         channel->init();
         boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
-        active_rpc_channel.insert(make_pair(channel->channel_reponse_domain, channel));
+        active_rpc_channel.insert(make_pair(channel->channel_reponse_domain, static_cast<MessageChannel*>(channel)));
     }
     return channel;
 }
@@ -679,6 +679,12 @@ void NetworkBroker::disposeMessageChannel(NodeMessageChannel *messageChannelToDi
 void NetworkBroker::disposeMessageChannel(chaos::common::message::MultiAddressMessageChannel *messageChannelToDispose) {
     NetworkBroker::disposeMessageChannel((MessageChannel*)messageChannelToDispose);
 }
+
+//!Rpc Channel deallocation
+void NetworkBroker::disposeMessageChannel(chaos::common::message::MDSMessageChannel *messageChannelToDispose) {
+    NetworkBroker::disposeMessageChannel(static_cast<MessageChannel*>(messageChannelToDispose));
+}
+
 
 //Allocate a new endpoint in the direct io server
 chaos_direct_io::DirectIOServerEndpoint *NetworkBroker::getDirectIOServerEndpoint() {

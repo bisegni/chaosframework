@@ -27,10 +27,35 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::message;
 
+#define DECODE_ERROR(x) \
+if((last_error_code = x->getError())){\
+    last_error_message = x->getErrorMessage();\
+    last_error_domain = x->getErrorDomain();\
+} else {\
+    last_error_message = "No Error";\
+    last_error_domain = "No Domain";\
+}
+
 MDSMessageChannel::MDSMessageChannel(NetworkBroker *network_broker,
                                      const std::vector<CNetworkAddress>& mds_node_address):
 MultiAddressMessageChannel(network_broker,
                            mds_node_address){}
+
+//! return last sendxxx error code
+int32_t MDSMessageChannel::getLastErrorCode() {
+    return MultiAddressMessageChannel::getLastErrorCode();
+}
+
+//! return last sendxxx error message
+const std::string& MDSMessageChannel::getLastErrorMessage() {
+    return MultiAddressMessageChannel::getLastErrorMessage();
+}
+
+//! return last sendxxx error domain
+const std::string& MDSMessageChannel::getLastErrorDomain() {
+    return MultiAddressMessageChannel::getLastErrorDomain();
+}
+
 
 //! Send heartbeat
 /*!
@@ -50,7 +75,6 @@ void MDSMessageChannel::sendHeartBeatForDeviceID(const std::string& identificati
 int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset,
                                               bool requestCheck,
                                               uint32_t millisec_to_wait) {
-    int err = 0;
     int size_bson = 0;
     string currentBrokerIpPort;
     getRpcPublishedHostAndPort(currentBrokerIpPort);
@@ -63,22 +87,21 @@ int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset,
                                                                                                data);
         request_future->setTimeout(millisec_to_wait);
         if(request_future->wait()) {
-            err = request_future->getError();
+            DECODE_ERROR(request_future)
         } else {
-            err = -1;
+            last_error_code = -1;
         }
     } else {
         sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                     ChaosSystemDomainAndActionLabel::UNIT_SERVER_STATES_ANSWER,
                     data);
     }
-    return err;
+    return last_error_code;
 }
 
 
 //! Send unit server description to MDS
 int MDSMessageChannel::sendNodeRegistration(CDataWrapper& node_description, bool requestCheck, uint32_t millisec_to_wait) {
-    int err = 0;
     int size_bson = 0;
     std::string currentBrokerIpPort;
     CDataWrapper *data = new CDataWrapper(node_description.getBSONRawData(size_bson));
@@ -96,22 +119,21 @@ int MDSMessageChannel::sendNodeRegistration(CDataWrapper& node_description, bool
                                                                                                data);
         request_future->setTimeout(millisec_to_wait);
         if(request_future->wait()) {
-            err = request_future->getError();
+            DECODE_ERROR(request_future)
         } else {
-            err = -1;
+            last_error_code = -1;
         }
     } else {
         sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                     MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE,
                     data);
     }
-    return err;
+    return last_error_code;
 }
 
 int MDSMessageChannel::sendNodeLoadCompletion(CDataWrapper& node_information,
                                               bool requestCheck,
                                               uint32_t millisec_to_wait) {
-    int err = 0;
     int size_bson = 0;
     std::string currentBrokerIpPort;
     CDataWrapper *data = new CDataWrapper(node_information.getBSONRawData(size_bson));
@@ -129,37 +151,17 @@ int MDSMessageChannel::sendNodeLoadCompletion(CDataWrapper& node_information,
                                                                                                data);
         request_future->setTimeout(millisec_to_wait);
         if(request_future->wait()) {
-            err = request_future->getError();
+            DECODE_ERROR(request_future)
         } else {
-            err = -1;
+            last_error_code = -1;
         }
     } else {
         sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                     MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION,
                     data);
     }
-    return err;
+    return last_error_code;
 }
-
-//! Get all active device id
-//int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t millisec_to_wait) {
-//    //send request and wait the response
-//    auto_ptr<CDataWrapper> resultAnswer(sendRequest(nodeAddress->node_id,
-//                                                    ChaosSystemDomainAndActionLabel::MDS_GET_ALL_DEVICE,
-//                                                    NULL,
-//                                                    millisec_to_wait));
-//    if(getLastErrorCode() == ErrorCode::EC_NO_ERROR){
-//        if(resultAnswer.get() &&
-//           resultAnswer->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
-//            //there is a result
-//            auto_ptr<CMultiTypeDataArrayWrapper> allDeviceInfoVec(resultAnswer->getVectorValue(NodeDefinitionKey::NODE_UNIQUE_ID));
-//            for (int idx = 0; idx < allDeviceInfoVec->size(); idx++) {
-//                deviceIDVec.push_back(allDeviceInfoVec->getStringElementAtIndex(idx));
-//            }
-//        }
-//    }
-//    return getLastErrorCode();
-//}
 
 //! Get node address for identification id
 /*!
@@ -170,7 +172,6 @@ int MDSMessageChannel::getNetworkAddressForDevice(const std::string& identificat
                                                   CDeviceNetworkAddress** deviceNetworkAddress,
                                                   uint32_t millisec_to_wait) {
     if(!deviceNetworkAddress) return -1;
-    int err = ErrorCode::EC_NO_ERROR;
     auto_ptr<CDataWrapper> data(new CDataWrapper());
     data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identification_id);
     
@@ -179,7 +180,8 @@ int MDSMessageChannel::getNetworkAddressForDevice(const std::string& identificat
                                                                                            data.release());
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
-        if(((err = request_future->getError()) == 0)&&
+        DECODE_ERROR(request_future)
+        if(last_error_code &&
            request_future->getResult() &&
            request_future->getResult()->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) &&
            request_future->getResult()->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)) {
@@ -190,9 +192,9 @@ int MDSMessageChannel::getNetworkAddressForDevice(const std::string& identificat
             (*deviceNetworkAddress)->device_id = identification_id;
         }
     } else {
-        err = -1;
+        last_error_code = -1;
     }
-    return err;
+    return last_error_code;
 }
 
 
@@ -207,7 +209,6 @@ int MDSMessageChannel::getLastDatasetForDevice(const std::string& identification
                                                CDataWrapper** deviceDefinition,
                                                uint32_t millisec_to_wait) {
     if(!deviceDefinition) return -1000;
-    int err = ErrorCode::EC_NO_ERROR;
     auto_ptr<CDataWrapper> data(new CDataWrapper());
     data->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identification_id);
     
@@ -216,14 +217,15 @@ int MDSMessageChannel::getLastDatasetForDevice(const std::string& identification
                                                                                            data.release());
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
-        if(((err = request_future->getError()) == 0)&&
+        DECODE_ERROR(request_future)
+        if(last_error_code &&
            request_future->getResult()) {
             *deviceDefinition = request_future->detachResult();
         }
     } else {
-        err = -1;
+        last_error_code = -1;
     }
-    return err;
+    return last_error_code;
 }
 
 //! return the configuration for the data driver
