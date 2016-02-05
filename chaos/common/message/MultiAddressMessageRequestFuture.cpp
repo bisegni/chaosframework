@@ -31,7 +31,7 @@ boost::str(boost::format("%1%-%2%(%3%)") % e % m % d)
 #define MAMRF_ERR ERR_LOG(MultiAddressMessageRequestFuture)
 
 using namespace chaos::common::message;
-    //!private destructor
+//!private destructor
 MultiAddressMessageRequestFuture::MultiAddressMessageRequestFuture(chaos::common::message::MultiAddressMessageChannel *_parent_mn_message_channel,
                                                                    const std::string& _action_domain,
                                                                    const std::string& _action_name,
@@ -43,16 +43,16 @@ action_domain(_action_domain),
 action_name(_action_name),
 message_pack(_message_pack){
     CHAOS_ASSERT(parent_mn_message_channel);
-        //send data
+    //send data
     current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                        action_name,
                                                                        message_pack.get(),
                                                                        last_used_address);
 }
 
-    //!public destructor
+//!public destructor
 MultiAddressMessageRequestFuture::~MultiAddressMessageRequestFuture() {
-
+    
 }
 
 void MultiAddressMessageRequestFuture::resetErrorResult() {
@@ -65,23 +65,52 @@ void MultiAddressMessageRequestFuture::setTimeout(int32_t _timeout_in_millisecon
     timeout_in_milliseconds = _timeout_in_milliseconds;
 }
 
-    //! wait until data is received
+void MultiAddressMessageRequestFuture::switchOnOtherServer() {
+    //set index offline
+    parent_mn_message_channel->setAddressOffline(last_used_address);
+    MAMRF_INFO << "Server " << last_used_address << " put offline";
+
+    //retrasmission of the datapack
+    current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
+                                                                       action_name,
+                                                                       message_pack.get(),
+                                                                       last_used_address);
+    if(current_future.get()) {
+        MAMRF_INFO << "Retransmission on " << last_used_address;
+    } else {
+        MAMRF_ERR << "No more server for retrasmission, Retry using all offline server for one time";
+        //reuse all server
+        parent_mn_message_channel->retryOfflineServer(true);
+        //retrasmission of the datapack
+        current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
+                                                                           action_name,
+                                                                           message_pack.get(),
+                                                                           last_used_address);
+    }
+}
+
+//! wait until data is received
 bool MultiAddressMessageRequestFuture::wait() {
     CHAOS_ASSERT(parent_mn_message_channel)
     int retry_on_same_server = 0;
     bool working = true;
-    bool force_to_reuse = false;
-        //reset error
+    //reset error
     resetErrorResult();
-        //unitle we have valid future and don't have have answer
+    //unitle we have valid future and don't have have answer
     while(current_future.get() &&
           working) {
         MAMRF_DBG << "Waiting on server " << last_used_address;
-            //! waith for future
+        //! waith for future
         if(current_future->wait(timeout_in_milliseconds)) {
             if(current_future->isRemoteMeaning()) {
-                    //we have received from remote server somenthing
+                //we have received from remote server somenthing
                 working = false;
+            } else {
+                //we can have submission error
+                if(current_future->getError()) {
+                    MAMRF_ERR << "Whe have submisison error:" << current_future->getError() << " message:"<<current_future->getErrorMessage() << " domain:" << current_future->getErrorDomain();
+                    switchOnOtherServer();
+                }
             }
         } else{
             if(retry_on_same_server++ < 3) {
@@ -89,44 +118,18 @@ bool MultiAddressMessageRequestFuture::wait() {
                 continue;
             } else {
                 MAMRF_INFO << "Whe have retryied " << retry_on_same_server << " times on "<<last_used_address;
-                
-                //set index offline
-                parent_mn_message_channel->setAddressOffline(last_used_address);
-                MAMRF_INFO << "Server " << last_used_address << " put offline";
-                
-                //retrasmission of the datapack
-                current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
-                                                                                   action_name,
-                                                                                   message_pack.get(),
-                                                                                   last_used_address);
-                if(current_future.get()) {
-                    MAMRF_INFO << "Retransmission on " << last_used_address;
-                } else if(force_to_reuse) {
-                    MAMRF_INFO << "No more server for retrasmission, I can't force anymore";
-                } else {
-                    MAMRF_INFO << "No more server for retrasmission, Retry using all offline server for one time";
-                    force_to_reuse = true;
-                    //reuse all server
-                    parent_mn_message_channel->retryOfflineServer(true);
-                    //retrasmission of the datapack
-                    current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
-                                                                                       action_name,
-                                                                                       message_pack.get(),
-                                                                                       last_used_address);
-                }
-
+                switchOnOtherServer();
             }
-
         }
-
     }
-        //retry logic
+    
+    //retry logic
     parent_mn_message_channel->retryOfflineServer();
     
     return working == false;
 }
 
-    //! try to get the result waiting for a determinate period of time
+//! try to get the result waiting for a determinate period of time
 chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::getResult() {
     CHAOS_ASSERT(current_future.get())
     return current_future->getResult();

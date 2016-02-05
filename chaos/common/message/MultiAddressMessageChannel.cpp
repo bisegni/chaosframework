@@ -72,13 +72,13 @@ void MultiAddressMessageChannel::retryOfflineServer(bool force) {
     uint64_t now = TimingUtil::getTimeStamp();
     if(force||
        ((now - last_retry) > RETRY_DELAY)) {
-        MAMC_DBG << "Retry on all server";
+        MAMC_INFO << "Retry on all server";
         last_retry = now;
         std::set<uint32_t>::iterator it = set_off_line_servers.begin();
         while(it != set_off_line_servers.end()) {
             service_feeder.setURLOnline(*it);
             set_off_line_servers.erase(it++);
-            MAMC_DBG << *it << " index in online";
+            MAMC_INFO << *it << " index in online";
         }
     }
 }
@@ -92,7 +92,7 @@ void MultiAddressMessageChannel::setAddressOffline(const std::string& remote_add
     if(it == set_off_line_servers.end()) {
         set_off_line_servers.insert(index);
     }
-    MAMC_DBG << remote_address << " in offline";
+    MAMC_INFO << remote_address << " in offline";
 }
 
 void MultiAddressMessageChannel::setAddressOnline(const std::string& remote_address) {
@@ -104,7 +104,7 @@ void MultiAddressMessageChannel::setAddressOnline(const std::string& remote_addr
     if(it != set_off_line_servers.end()) {
         set_off_line_servers.erase(it);
     }
-    MAMC_DBG << remote_address << " in online";
+    MAMC_INFO << remote_address << " in online";
 }
 
 const CNetworkAddressInfo& MultiAddressMessageChannel::getRemoteAddressInfo(const std::string& remote_address) {
