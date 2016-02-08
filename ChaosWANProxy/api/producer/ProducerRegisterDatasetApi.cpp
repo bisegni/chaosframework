@@ -80,15 +80,13 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 	  }
 	}
 
-	 
-
 	//we can proceed
 	//const std::string& producer_name = api_tokens[0];
 	PRA_LDBG << "Start producer registration with id " << producer_name;
 	
 	CDataWrapper mds_registration_pack;
 	CDataWrapper dataset_pack;
-	
+
 	const Json::Value& dataset_timestamp = input_data[chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP];
 	if(dataset_timestamp.isNull()) {
 		err_msg = "The timestamp is mandatory";
@@ -101,7 +99,7 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 		PRODUCER_REGISTER_ERR(output_data, -4, err_msg);
 		return err;
 	}
-	mds_registration_pack.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,
+	dataset_pack.addInt64Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP,
                                         (int64_t)dataset_timestamp.asUInt64());
 	
 	//scan the description of the dataset
@@ -125,12 +123,14 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 			return err;
 		} else {
 			// add parametere representation object to main action representation
-			mds_registration_pack.appendCDataWrapperToArray(*element.get());
+			dataset_pack.appendCDataWrapperToArray(*element.get());
 		}
 	}
 	
 	//close array for all device description
-	mds_registration_pack.finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+	dataset_pack.finalizeArrayForKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+    
+    mds_registration_pack.addCSDataValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, dataset_pack);
     mds_registration_pack.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
 	DEBUG_CODE(PRA_LDBG << mds_registration_pack.getJSONString());
 	
