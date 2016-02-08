@@ -72,7 +72,8 @@ void ControlManager::init(void *initParameter) throw(CException) {
     
     AbstActionDescShrPtr actionDescription;
     use_unit_server =	GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ENABLE) &&
-    GlobalConfiguration::getInstance()->getOption<bool>(CONTROL_MANAGER_UNIT_SERVER_ENABLE);
+                        GlobalConfiguration::getInstance()->getOption<bool>(CONTROL_MANAGER_UNIT_SERVER_ENABLE) &&
+                        GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
     
     LCMAPP_ << "Get the Metadataserver channel";
     mds_channel = CommandManager::getInstance()->getMetadataserverChannel();
@@ -142,13 +143,14 @@ void ControlManager::init(void *initParameter) throw(CException) {
                                                                                        UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                        UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_REG_ACK,
                                                                                        "Unit server registration ack message");
+        
+        
+        actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
+                                                                                       &ControlManager::unitServerStatus,
+                                                                                       NodeDomainAndActionRPC::RPC_DOMAIN,
+                                                                                       NodeDomainAndActionRPC::ACTION_NODE_STATUS,
+                                                                                       "Unit server states");
     }
-    
-    actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
-                                                                                   &ControlManager::unitServerStatus,
-                                                                                   NodeDomainAndActionRPC::RPC_DOMAIN,
-                                                                                   NodeDomainAndActionRPC::ACTION_NODE_STATUS,
-                                                                                   "Unit server states");
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
                                                                                    &ControlManager::updateConfiguration,
@@ -296,8 +298,27 @@ void ControlManager::deinit() throw(CException) {
  Submit a new Control unit for operation
  */
 void ControlManager::submitControlUnit(AbstractControlUnit *data) throw(CException) {
+    CHAOS_ASSERT(data)
     //lock the hastable of cu instance and managmer
     boost::unique_lock<boost::shared_mutex> lock(mutex_queue_submitted_cu);
+    
+    //add healt metric for newly create control unit instance
+    HealtManager::getInstance()->addNewNode(data->getCUID());
+    //! add error code metric for control unit
+    HealtManager::getInstance()->addNodeMetric(data->getCUID(),
+                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
+                                               chaos::DataType::TYPE_INT32);
+    HealtManager::getInstance()->addNodeMetric(data->getCUID(),
+                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
+                                               chaos::DataType::TYPE_STRING);
+    HealtManager::getInstance()->addNodeMetric(data->getCUID(),
+                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
+                                               chaos::DataType::TYPE_STRING);
+    //add push rate metric
+    HealtManager::getInstance()->addNodeMetric(data->getCUID(),
+                                               ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
+                                               chaos::DataType::TYPE_DOUBLE);
+
     queue_submitted_cu.push(data);
     
     //unlock thread

@@ -31,7 +31,9 @@ using namespace chaos::metadata_service::batch::general;
 DEFINE_MDS_COMAMND_ALIAS(RestoreSnapshotBatch)
 
 RestoreSnapshotBatch::RestoreSnapshotBatch():
-MDSBatchCommand() {}
+MDSBatchCommand(),
+node_index(0),
+restore_phase(NEW_RESTORE_REQUEST){}
 
 RestoreSnapshotBatch::~RestoreSnapshotBatch() {}
 
@@ -51,9 +53,6 @@ void RestoreSnapshotBatch::setHandler(CDataWrapper *data) {
     } else if(list_node_in_snapshot.size() == 0) {
         LOG_AND_TROW_FORMATTED(G_RS_ERR, -1, "No node found for snapshot '%1%'", %snapshot_name)
     }
-    
-    node_index = 0;
-    restore_phase = NEW_RESTORE_REQUEST;
 }
 
 // inherited method

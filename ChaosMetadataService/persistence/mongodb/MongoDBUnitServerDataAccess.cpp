@@ -262,3 +262,30 @@ int MongoDBUnitServerDataAccess::getDescription(const std::string& unit_server_u
     }
     return err;
 }
+
+int MongoDBUnitServerDataAccess::getUnitserverForControlUnitID(const std::string& control_unit_id,
+                                                               std::string& unit_server_host) {
+    int err = 0;
+    mongo::BSONObj r;
+    
+    const std::string key_to_search = boost::str(boost::format("instance_description.%1%")%chaos::NodeDefinitionKey::NODE_PARENT);
+    //query for check if there is a control unit that is hosted by an unit server
+    mongo::BSONObj q =  BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id <<
+                             key_to_search << BSON("$exists"<<true));
+    mongo::BSONObj p =  BSON(key_to_search << 1);
+    DEBUG_CODE(MDBUSDA_DBG<<log_message("getUnitserverForControlUnitID",
+                                        "findOne",
+                                        DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                "Projection",
+                                                                q.jsonString(),
+                                                                p.jsonString()));)
+    if((err = connection->findOne(r,
+                                  MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                  q,
+                                  &p))){
+        MDBUSDA_ERR << "Error searching the contorl unit id which as a parent with code:" << err;
+    }else if(!r.isEmpty()) {
+        unit_server_host = r.getFieldDotted(key_to_search).String();
+    }
+    return err;
+}

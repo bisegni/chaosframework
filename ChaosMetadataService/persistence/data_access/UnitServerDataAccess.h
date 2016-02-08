@@ -34,7 +34,7 @@ namespace chaos {
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
                 public:
                     DECLARE_DA_NAME
-
+                    
                     //! default constructor
                     UnitServerDataAccess();
                     
@@ -62,7 +62,7 @@ namespace chaos {
                     
                     //! permit to remove the cu type for the unit server
                     /*!
-                     This api permit remove a control unit type from an unit server and automatically 
+                     This api permit remove a control unit type from an unit server and automatically
                      remove all the control uni instance associated the the type and unit server in object
                      \param unit_server_description unit server key,value description
                      \param cu_type the type target of the operation
@@ -78,7 +78,7 @@ namespace chaos {
                     //! Update the unit server information
                     /*!
                      Perform the update operation on the unit server description, the DA frist need to call the update of the node data
-                     access to update node information next needs to update the unit server custom property from the namespace 
+                     access to update node information next needs to update the unit server custom property from the namespace
                      chaos::UnitServerNodeDefinitionKey.
                      UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS(mandatory)
                      
@@ -88,10 +88,19 @@ namespace chaos {
                     
                     //! delete a unit server
                     virtual int deleteUS(const std::string& unit_server_unique_id) = 0;
-
-                        //! return the full unit server description
+                    
+                    //! return the full unit server description
                     virtual int getDescription(const std::string& unit_server_uid,
                                                chaos::common::data::CDataWrapper **unit_server_description) = 0;
+                    
+                    //! return the unit server that host the control unit id
+                    /*!
+                     If no unit server hosts the control unit, an empty string will be returned
+                     @param control_unit_id the unique id of th econtrol unit
+                     @param the variable that host the result unit server. Empt string if no unit server has found
+                     */
+                    virtual int getUnitserverForControlUnitID(const std::string& control_unit_id,
+                                                              std::string& unit_server_host) = 0;
                 };
                 
                 

@@ -155,15 +155,17 @@ chaos::common::data::CDataWrapper *NodeRegister::controlUnitRegistration(chaos::
                                                                          bool& detach_data) throw(chaos::CException) {
     int         err = 0;
     uint64_t    command_id;
+    std::string us_host;
     bool        is_present = false;
-    
+    bool        loaded_from_unit_server = false;
+    bool        has_an_unit_server = false;
     CHECK_KEY_THROW_AND_LOG(api_data, NodeDefinitionKey::NODE_RPC_DOMAIN, USRA_ERR, -1, "The rpc domain key is mandatory")
     CHECK_KEY_THROW_AND_LOG(api_data, ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, USRA_ERR, -2, "The cudk_ds_desc key is mandatory")
     
     //fetch the unit server data access
     GET_DATA_ACCESS(ControlUnitDataAccess, cu_da, -3)
     GET_DATA_ACCESS(NodeDataAccess, n_da, -4)
-    
+    GET_DATA_ACCESS(UnitServerDataAccess, us_da, -5)
     
     //allocate datapack for batch command
     std::auto_ptr<CDataWrapper> ack_command(new CDataWrapper());
@@ -182,26 +184,69 @@ chaos::common::data::CDataWrapper *NodeRegister::controlUnitRegistration(chaos::
                                 api_data->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN));
     
     try {
-        //check if the node is rpresent
+        //check if the cu has bene loaded from unit server
+        if(api_data->hasKey("mds_control_key")) {
+            const std::string mds_ctrl_key = api_data->getStringValue("mds_control_key");
+            loaded_from_unit_server = (mds_ctrl_key.compare("mds") == 0);
+        }
+        
+        //check if the cu has a parent
+        //we need to check if the control unit is assocaite to an unit server
+        if((err = us_da->getUnitserverForControlUnitID(cu_uid,
+                                                       us_host))){
+            LOG_AND_TROW_FORMATTED(USRA_ERR, -6, "Error searchin unit server for control unit %1% with code %2%",%cu_uid%err);
+        }
+        has_an_unit_server = (us_host.size()>0);
+        
+        if(has_an_unit_server) {
+            if(loaded_from_unit_server == false) {LOG_AND_TROW_FORMATTED(USRA_ERR, -7, "The control unit %1% need to be loaded form the unit server %2%",%cu_uid%us_host);}
+        }
+        
+        //check if the node is present
         if((err = cu_da->checkPresence(cu_uid, is_present))) {
-            LOG_AND_TROW(USRA_ERR, -5, "error checking the control unit presence")
+            LOG_AND_TROW(USRA_ERR, -8, "error checking the control unit presence");
         } if (is_present) {
             if((err = n_da->updateNode(*api_data))) {
-                LOG_AND_TROW(USRA_ERR, err, "Error updating default node field")
+                LOG_AND_TROW(USRA_ERR, err, "Error updating default node field");
             }
             
             if((err = cu_da->setDataset(cu_uid,
                                         *api_data))){
-                LOG_AND_TROW(USRA_ERR, err, "error setting the dataset of the control unit")
+                LOG_AND_TROW(USRA_ERR, err, "error setting the dataset of the control unit");
             }
             //ok->registered
             ack_command->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
                                        ErrorCode::EC_MDS_NODE_REGISTRATION_OK);
         } else {
-            USRA_ERR << "The control unit "<< cu_uid <<" is not present so we can't register it";
-            //actiually only the control unit hosted by unit server can be registered
-            ack_command->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
-                                       ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+
+            USRA_INFO << "Control unit " << cu_uid << " not present, check if it is hosted by an unit server";
+            //we need to check if the control unit is assocaite to an unit server
+            if((err = us_da->getUnitserverForControlUnitID(cu_uid,
+                                                           us_host) == 0)){
+                if(us_host.size() == 0) {
+                    USRA_INFO << "Control unit " << cu_uid << " doesn't belong to any unit server so can ste forwardar";
+                    
+                    if((err = cu_da->insertNewControlUnit(*api_data))) {
+                        LOG_AND_TROW_FORMATTED(USRA_ERR, err, "Error creating new control unit %1%",%cu_uid);
+                    }
+                    
+                    if((err = cu_da->setDataset(cu_uid,
+                                                *api_data))){
+                        LOG_AND_TROW_FORMATTED(USRA_ERR, err, "error setting the dataset for the control unit %1%",%cu_uid);
+                    }
+                }else {
+                    if(loaded_from_unit_server == false) {
+                        //need to be stoped becaus the cu need be loaded form unit server
+                        USRA_ERR << "The control unit "<< cu_uid <<" need to be stoped because the cu need be loaded form unit server";
+                        //actiually only the control unit hosted by unit server can be registered
+                        ack_command->addInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT,
+                                                   ErrorCode::EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS);
+                    }
+                }
+            } else {
+                LOG_AND_TROW_FORMATTED(USRA_ERR, -9, "Error searchin unit server for control unit %1% with code %2%",%cu_uid%err);
+            }
+            
         }
         
         //set the code to inform cu that all is gone well

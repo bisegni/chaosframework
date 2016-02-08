@@ -78,7 +78,8 @@ namespace chaos{
                 //ValueType (ClassOwner::*get)();
 
             public:
-                Property(){}
+                Property():
+                class_owner_instance(NULL){}
                 ~Property(){}
 
 

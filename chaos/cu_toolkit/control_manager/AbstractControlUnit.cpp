@@ -209,7 +209,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     //for let the CU have the same instance at every run
     setup_configuration.addStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN, control_unit_instance);
     
-    //undocumented field
+    //if we have a control key we attach it
     setup_configuration.addStringValue("mds_control_key", control_key);
     
     //add the control unit type with semantonc type::subtype
