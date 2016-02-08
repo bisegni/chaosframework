@@ -29,13 +29,18 @@
 #include <chaos/common/network/URL.h>
 #include <chaos/common/utility/NamedService.h>
 
-#include <boost/multi_index_container.hpp>
+#include <boost/bimap.hpp>
 #include <boost/multi_index/member.hpp>
+#include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
+
 namespace chaos {
     namespace common {
         namespace network {
 
+            //!bidirectional map for url and index
+            typedef boost::bimap<std::string, uint32_t> URLIndexBimap;
+            
             class URLServiceFeeder;
 
             class URLServiceFeederHandler {
@@ -79,10 +84,7 @@ namespace chaos {
                 virtual ~URLServiceFeeder();
 
                     //!Add a new URL Object and return the associated index
-                uint32_t addURL(const URL& new_url, uint32_t priority = 0);
-
-                    //!get the service with the relative index
-                void* getService(uint32_t idx);
+                virtual uint32_t addURL(const URL& new_url, uint32_t priority = 0);
 
                     //!Remove an url with the index
                 /*!
@@ -91,12 +93,18 @@ namespace chaos {
                  \param idx index of the service
                  \param deallocate_service if true perform the service deallocation
                  */
-                void removeURL(uint32_t idx, bool deallocate_service = false);
+                virtual void removeURL(uint32_t idx, bool dispose_service = false);
 
+                //!return the url string from index
+                std::string getURLForIndex(uint32_t idx);
+                
+                //!return the index from the url
+                uint32_t getIndexFromURL(const std::string& url);
+                
                 /*!
                  Remove all url and service
                  */
-                void clear(bool dispose_service = true);
+                virtual void clear(bool dispose_service = true);
 
                 /*!
                  Set the url as offline
@@ -107,9 +115,12 @@ namespace chaos {
                  Set the url as online
                  */
                 void setURLOnline(uint32_t idx);
-
+ 
+                //! get the service to use according to the feeder node
+                virtual void* getService(uint32_t idx);
+                
                     //! get the service to use according to the feeder node
-                void* getService();
+                virtual void* getService();
 
                     //! set the feed mode
                 void setFeedMode(URLServiceFeedMode new_feed_mode);
@@ -211,7 +222,10 @@ namespace chaos {
 
                     //contains all the service
                 URLService **service_list;
-
+                
+                //map to correlate url stirng to index
+                URLIndexBimap mapping_url_index;
+                
                     //multi-index structure for managment of online service
                 SetUrlServiceType   set_urls_online;
                 SetUrlPositionIndex&    set_urls_pos_index;
