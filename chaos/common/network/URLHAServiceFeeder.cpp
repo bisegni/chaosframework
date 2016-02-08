@@ -67,6 +67,13 @@ void URLHAServiceFeeder::clear(bool dispose_service) {
 }
 
 void* URLHAServiceFeeder::getService() {
+    //!befor return renable respauned services
+    boost::unique_lock<boost::mutex> wr(mutex_queue);
+    while (respawned_queue.size()) {
+        URLServiceFeeder::setURLOnline(respawned_queue.front());
+        respawned_queue.pop();
+    }
+    wr.unlock();
     return URLServiceFeeder::getService();
 }
 
@@ -75,6 +82,8 @@ void URLHAServiceFeeder::setURLAsOffline(const std::string& remote_address) {
     ServiceRetryInformation sri(getIndexFromURL(remote_address),
                                 remote_address);
     sri.retry_timeout = TimingUtil::getTimeStamp()+min_retry_time;
+    
+    boost::unique_lock<boost::mutex> wr(mutex_queue);
     retry_queue.push(sri);
 }
 
@@ -83,6 +92,7 @@ void URLHAServiceFeeder::setIndexAsOffline(const uint32_t remote_index) {
     ServiceRetryInformation sri(remote_index,
                                 getURLForIndex(remote_index));
     sri.retry_timeout = TimingUtil::getTimeStamp()+min_retry_time;
+    boost::unique_lock<boost::mutex> wr(mutex_queue);
     retry_queue.push(sri);
 }
 
@@ -96,12 +106,14 @@ void URLHAServiceFeeder::checkForAliveService() {
             if(service_checker_handler->serviceOnlineCheck(URLServiceFeeder::getService(sri.offline_index))){
                 //!service returned online
                 URLHASF_INFO << "Service " << sri.offline_url << " returned online";
+                boost::unique_lock<boost::mutex> wr(mutex_queue);
+                respawned_queue.push(sri.offline_index);
             } else {
                 //service still in offline
                 sri.retry_timeout = (sri.retry_timeout + 1000)%10000;
                 
                 URLHASF_INFO << "Service " << sri.offline_url << " still offline wait for " << sri.retry_timeout-current_ts << " milliseocnds";
-                
+                boost::unique_lock<boost::mutex> wr(mutex_queue);
                 retry_queue.push(sri);
             }
         }

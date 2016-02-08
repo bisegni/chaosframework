@@ -22,8 +22,11 @@
 #ifndef __CHAOSFramework__URLHAServiceFeeder_h
 #define __CHAOSFramework__URLHAServiceFeeder_h
 
-#include <queue>
 #include <chaos/common/network/URLServiceFeeder.h>
+
+#include <queue>
+
+#include <boost/thread.hpp>
 
 namespace chaos {
     namespace common {
@@ -66,7 +69,10 @@ namespace chaos {
                 uint32_t min_retry_time;
                 uint32_t max_retry_time;
                 URLHAServiceCheckerFeederHandler *service_checker_handler;
+                
+                boost::mutex mutex_queue;
                 std::queue<ServiceRetryInformation> retry_queue;
+                std::queue<uint32_t> respawned_queue;
             public:
                 URLHAServiceFeeder(std::string alias,
                                    URLServiceFeederHandler *_service_feeder_handler,
@@ -102,6 +108,12 @@ namespace chaos {
                 //! set url has offline
                 void setIndexAsOffline(const uint32_t remote_index);
                 
+                //!check if a service has been respawned
+                /*!
+                 this method is thread safe and it must be called from another tread because it trye to see
+                 if the service is respawn and handler could be try to comunicate with it.
+                 So the handler work mode will determinate if this method can be called, or couldn't, in a separate thread.
+                 */
                 void checkForAliveService();
             };
             
