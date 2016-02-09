@@ -23,7 +23,7 @@
 #define __CHAOSFramework__MetadataLoggingManager_h
 
 #include <chaos/common/utility/Singleton.h>
-
+#include <chaos/common/utility/StartableService.h>
 namespace chaos {
     namespace common {
         namespace metadata_logging {
@@ -34,8 +34,17 @@ namespace chaos {
              They can be, error, command or other thing that nodes need to be store on MDS.
              */
             class MetadataLoggingManager:
+            protected chaos::common::utility::StartableService,
             public chaos::common::utility::Singleton<MetadataLoggingManager> {
                 friend class chaos::common::utility::Singleton<MetadataLoggingManager>;
+                
+                MetadataLoggingManager();
+                ~MetadataLoggingManager();
+            protected:
+                void init(void *init_data) throw(chaos::CException);
+                void start() throw(chaos::CException);
+                void stop() throw(chaos::CException);
+                void deinit() throw(chaos::CException);
             };
             
         }

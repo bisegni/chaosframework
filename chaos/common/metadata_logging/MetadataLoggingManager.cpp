@@ -20,3 +20,29 @@
  */
 
 #include "MetadataLoggingManager.h"
+
+using namespace chaos::common::metadata_logging;
+
+MetadataLoggingManager::MetadataLoggingManager() {
+    
+}
+
+MetadataLoggingManager::~MetadataLoggingManager() {
+    
+}
+
+void MetadataLoggingManager::init(void *init_data) throw(chaos::CException) {
+    
+}
+
+void MetadataLoggingManager::start() throw(chaos::CException){
+    
+}
+
+void MetadataLoggingManager::stop() throw(chaos::CException){
+    
+}
+
+void MetadataLoggingManager::deinit() throw(chaos::CException){
+    
+}
