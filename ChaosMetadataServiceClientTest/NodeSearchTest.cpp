@@ -41,14 +41,16 @@ void NodeSearchTest::testSearch(const std::string& search_string){
     uint64_t last_sequence_id = 0;
     
     //get the api proxy
-    NodeSearch *node_search_api_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<NodeSearch>(2000);
+    NodeSearch *node_search_api_proxy = ChaosMetadataServiceClient::getInstance()->getApiProxy<NodeSearch>(500);
     
     while (!end){
+        
         search_result = node_search_api_proxy->execute(search_string,
                                                        0,
                                                        (uint32_t)last_sequence_id,
                                                        page_length);
         if(search_result->wait()) {
+            usleep(500000);
             //something as been received
             if(search_result->getError()) {
                 end = true;
@@ -82,7 +84,7 @@ void NodeSearchTest::testSearch(const std::string& search_string){
             }
         } else {
             //print the error
-            std::cerr << "No data has been received during search paging" << std::endl;;
+            std::cerr << "No data has been received during search paging" << std::endl;
             end = true;
         }
     }

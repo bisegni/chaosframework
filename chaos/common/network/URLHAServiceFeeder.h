@@ -41,7 +41,7 @@ namespace chaos {
             //!contains the infromation for retry logic
             struct ServiceRetryInformation {
                 const uint32_t offline_index;
-                const std::string& offline_url;
+                const std::string offline_url;
                 uint32_t retry_times;
                 uint64_t retry_timeout;
                 
@@ -71,7 +71,7 @@ namespace chaos {
                 URLHAServiceCheckerFeederHandler *service_checker_handler;
                 
                 boost::mutex mutex_queue;
-                std::queue<ServiceRetryInformation> retry_queue;
+                std::queue< boost::shared_ptr<ServiceRetryInformation> > retry_queue;
                 std::queue<uint32_t> respawned_queue;
             public:
                 URLHAServiceFeeder(std::string alias,
@@ -89,10 +89,11 @@ namespace chaos {
                 /*!
                  The remove operation can be perfored with
                  the deallocation of the service
-                 \param idx index of the service
+                 \param idx url_to_remove of the service
                  \param deallocate_service if true perform the service deallocation
                  */
-                void removeURL(uint32_t idx, bool dispose_service = false);
+                void removeURL(const URL& url_to_remove,
+                               bool dispose_service = false);
                 
                 /*!
                  Remove all url and service
@@ -115,6 +116,8 @@ namespace chaos {
                  So the handler work mode will determinate if this method can be called, or couldn't, in a separate thread.
                  */
                 void checkForAliveService();
+                
+                size_t getOfflineSize();
             };
             
         }

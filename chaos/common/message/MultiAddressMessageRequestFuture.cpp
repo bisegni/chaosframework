@@ -67,7 +67,7 @@ void MultiAddressMessageRequestFuture::setTimeout(int32_t _timeout_in_millisecon
 
 void MultiAddressMessageRequestFuture::switchOnOtherServer() {
     //set index offline
-    parent_mn_message_channel->setAddressOffline(last_used_address);
+    parent_mn_message_channel->setURLAsOffline(last_used_address);
     MAMRF_INFO << "Server " << last_used_address << " put offline";
 
     //retrasmission of the datapack
@@ -80,7 +80,7 @@ void MultiAddressMessageRequestFuture::switchOnOtherServer() {
     } else {
         MAMRF_ERR << "No more server for retrasmission, Retry using all offline server for one time";
         //reuse all server
-        parent_mn_message_channel->retryOfflineServer(true);
+        //parent_mn_message_channel->checkForAliveService();
         //retrasmission of the datapack
         current_future = parent_mn_message_channel->_sendRequestWithFuture(action_domain,
                                                                            action_name,
@@ -124,7 +124,7 @@ bool MultiAddressMessageRequestFuture::wait() {
     }
     
     //retry logic
-    parent_mn_message_channel->retryOfflineServer();
+    //parent_mn_message_channel->service_feeder.checkForAliveService();
     
     return working == false;
 }

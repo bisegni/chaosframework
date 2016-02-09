@@ -273,7 +273,7 @@ x = hasOption(y);
         bool isMEtadataServerConfigured();
         
         //! return the rpc implementation kevy value map
-        const std::map<std::string, std::string>& getRpcImplKVParam() const;
+        std::map<std::string, std::string>& getRpcImplKVParam();
     };  
 }
 #endif

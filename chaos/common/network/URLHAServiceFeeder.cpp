@@ -55,9 +55,9 @@ uint32_t URLHAServiceFeeder::addURL(const URL& new_url,
                                     priority);
 }
 
-void URLHAServiceFeeder::removeURL(uint32_t idx,
+void URLHAServiceFeeder::removeURL(const URL& url_to_remove,
                                    bool dispose_service) {
-    URLServiceFeeder::removeURL(idx,
+    URLServiceFeeder::removeURL(URLServiceFeeder::getIndexFromURL(url_to_remove.getURL()),
                                 dispose_service);
 }
 
@@ -79,43 +79,63 @@ void* URLHAServiceFeeder::getService() {
 
 //! set url has offline
 void URLHAServiceFeeder::setURLAsOffline(const std::string& remote_address) {
-    ServiceRetryInformation sri(getIndexFromURL(remote_address),
-                                remote_address);
-    sri.retry_timeout = TimingUtil::getTimeStamp()+min_retry_time;
-    
     boost::unique_lock<boost::mutex> wr(mutex_queue);
+    uint32_t url_index = getIndexFromURL(remote_address);
+    URLServiceFeeder::setURLOffline(url_index);
+    boost::shared_ptr<ServiceRetryInformation> sri(new ServiceRetryInformation(url_index,
+                                                                               remote_address));
+    sri->retry_timeout = TimingUtil::getTimeStamp()+min_retry_time;
+    
     retry_queue.push(sri);
+    
+    URLHASF_INFO << "Service for  " << sri->offline_url << " gone offline check after " <<sri->retry_timeout;
 }
 
 //! set url has offline
 void URLHAServiceFeeder::setIndexAsOffline(const uint32_t remote_index) {
-    ServiceRetryInformation sri(remote_index,
-                                getURLForIndex(remote_index));
-    sri.retry_timeout = TimingUtil::getTimeStamp()+min_retry_time;
     boost::unique_lock<boost::mutex> wr(mutex_queue);
+    URLServiceFeeder::setURLOffline(remote_index);
+    boost::shared_ptr<ServiceRetryInformation> sri(new ServiceRetryInformation(remote_index,
+                                                                               getURLForIndex(remote_index)));
+    sri->retry_timeout = TimingUtil::getTimeStamp()+min_retry_time;
     retry_queue.push(sri);
+    URLHASF_INFO << "Service for  " << sri->offline_url << " gone offline check after " <<sri->retry_timeout;
 }
 
 void URLHAServiceFeeder::checkForAliveService() {
-    uint64_t current_ts = TimingUtil::getTimeStamp();
     
-    while (retry_queue.size()) {
-        ServiceRetryInformation sri = retry_queue.front();retry_queue.pop();
-        sri.retry_times++;
-        if(current_ts>= sri.retry_timeout) {
-            if(service_checker_handler->serviceOnlineCheck(URLServiceFeeder::getService(sri.offline_index))){
+    uint64_t current_ts = TimingUtil::getTimeStamp();
+    boost::unique_lock<boost::mutex> wr(mutex_queue);
+    size_t max_element = retry_queue.size();
+    
+    while (retry_queue.size() &&
+           max_element-- > 0) {
+        boost::shared_ptr<ServiceRetryInformation> sri = retry_queue.front();retry_queue.pop();
+        wr.unlock();
+        if(current_ts>= sri->retry_timeout) {
+            sri->retry_times++;
+            URLHASF_INFO << "Check if service " << sri->offline_url << " has respawn";
+            if(service_checker_handler->serviceOnlineCheck(URLServiceFeeder::getService(sri->offline_index))){
                 //!service returned online
-                URLHASF_INFO << "Service " << sri.offline_url << " returned online";
-                boost::unique_lock<boost::mutex> wr(mutex_queue);
-                respawned_queue.push(sri.offline_index);
+                URLHASF_INFO << "Service " << sri->offline_url << " returned online";
+                wr.lock();
+                respawned_queue.push(sri->offline_index);
             } else {
                 //service still in offline
-                sri.retry_timeout = (sri.retry_timeout + 1000)%10000;
+                sri->retry_timeout = TimingUtil::getTimeStamp() + ((sri->retry_times * 1000)%10000);
                 
-                URLHASF_INFO << "Service " << sri.offline_url << " still offline wait for " << sri.retry_timeout-current_ts << " milliseocnds";
-                boost::unique_lock<boost::mutex> wr(mutex_queue);
+                URLHASF_INFO << "Service " << sri->offline_url << " still offline wait for " << sri->retry_timeout-current_ts << " milliseocnds";
+                wr.lock();
                 retry_queue.push(sri);
             }
+        }else{
+            wr.lock();
+            retry_queue.push(sri);
         }
     }
+}
+
+size_t URLHAServiceFeeder::getOfflineSize() {
+    boost::unique_lock<boost::mutex> wr(mutex_queue);
+    return retry_queue.size();
 }

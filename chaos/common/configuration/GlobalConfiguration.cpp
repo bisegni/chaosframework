@@ -466,6 +466,6 @@ bool GlobalConfiguration::isMEtadataServerConfigured() {
     return configuration.hasKey(InitOption::OPT_METADATASERVER_ADDRESS);
 }
 
-const std::map<std::string, std::string>& GlobalConfiguration::getRpcImplKVParam() const {
+std::map<std::string, std::string>& GlobalConfiguration::getRpcImplKVParam() {
     return map_kv_param_rpc_impl;
 }

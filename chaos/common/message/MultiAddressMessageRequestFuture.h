@@ -63,7 +63,7 @@ namespace chaos{
                                                  const std::string &_action_domain,
                                                  const std::string &_action_name,
                                                  chaos::common::data::CDataWrapper *_message_pack,
-                                                 int32_t _timeout_in_milliseconds);
+                                                 int32_t _timeout_in_milliseconds = 1000);
                 inline void resetErrorResult();
                 inline void retryOfflineServer();
                 inline void switchOnOtherServer();
