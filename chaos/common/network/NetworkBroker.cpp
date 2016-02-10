@@ -649,6 +649,14 @@ MultiAddressMessageChannel *NetworkBroker::getRawMultiAddressMessageChannel() {
    	return static_cast<MultiAddressMessageChannel*>(getNewMessageChannelForRemoteHost(NULL, RAW_MULTI_ADDRESS));
 }
 
+//! Return a raw multinode message channel
+/*!
+ Performe the creation of a raw multinode message channel
+ */
+chaos::common::message::MultiAddressMessageChannel *NetworkBroker::getRawMultiAddressMessageChannel(const std::vector<chaos::common::network::CNetworkAddress>& node_address) {
+    return new MultiAddressMessageChannel(this, node_address);
+}
+
 //!Channel deallocation
 /*!
  Perform the message channel deallocation

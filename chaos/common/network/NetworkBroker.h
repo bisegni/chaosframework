@@ -338,6 +338,12 @@ namespace chaos {
                  */
                 chaos::common::message::MultiAddressMessageChannel *getRawMultiAddressMessageChannel();
 
+                //! Return a raw multinode message channel
+                /*!
+                 Performe the creation of a raw multinode message channel
+                 */
+                chaos::common::message::MultiAddressMessageChannel *getRawMultiAddressMessageChannel(const std::vector<chaos::common::network::CNetworkAddress>& node_address);
+                
                     //!return a multi node channel for all metadata service
                 chaos::common::message::MultiAddressMessageChannel *getMultiMetadataServiceRawMessageChannel();
 

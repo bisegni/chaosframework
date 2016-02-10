@@ -631,6 +631,10 @@
 		32B57209168E02D10002A198 /* ordering.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B57206168E02D10002A198 /* ordering.h */; };
 		32B5C9501C68E2420021159C /* URLHAServiceFeeder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B5C94E1C68E2420021159C /* URLHAServiceFeeder.cpp */; };
 		32B5C9511C68E2420021159C /* URLHAServiceFeeder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5C94F1C68E2420021159C /* URLHAServiceFeeder.h */; };
+		32B5C9541C6B8FDC0021159C /* AbstractMetadataLogChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B5C9521C6B8FDC0021159C /* AbstractMetadataLogChannel.cpp */; };
+		32B5C9551C6B8FDC0021159C /* AbstractMetadataLogChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5C9531C6B8FDC0021159C /* AbstractMetadataLogChannel.h */; };
+		32B5C9581C6B97590021159C /* ErrorLoggingChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B5C9561C6B97590021159C /* ErrorLoggingChannel.cpp */; };
+		32B5C9591C6B97590021159C /* ErrorLoggingChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5C9571C6B97590021159C /* ErrorLoggingChannel.h */; };
 		32B73E9618D9A74600F0B187 /* DirectIOPerformanceClientChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B73E9418D9A74600F0B187 /* DirectIOPerformanceClientChannel.cpp */; };
 		32B73E9718D9A74600F0B187 /* DirectIOPerformanceClientChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B73E9518D9A74600F0B187 /* DirectIOPerformanceClientChannel.h */; };
 		32B73E9A18D9A8FF00F0B187 /* DirectIOPerformanceServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B73E9818D9A8FF00F0B187 /* DirectIOPerformanceServerChannel.cpp */; };
@@ -1781,6 +1785,10 @@
 		32B57206168E02D10002A198 /* ordering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ordering.h; sourceTree = "<group>"; };
 		32B5C94E1C68E2420021159C /* URLHAServiceFeeder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLHAServiceFeeder.cpp; sourceTree = "<group>"; };
 		32B5C94F1C68E2420021159C /* URLHAServiceFeeder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLHAServiceFeeder.h; sourceTree = "<group>"; };
+		32B5C9521C6B8FDC0021159C /* AbstractMetadataLogChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractMetadataLogChannel.cpp; sourceTree = "<group>"; };
+		32B5C9531C6B8FDC0021159C /* AbstractMetadataLogChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractMetadataLogChannel.h; sourceTree = "<group>"; };
+		32B5C9561C6B97590021159C /* ErrorLoggingChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorLoggingChannel.cpp; sourceTree = "<group>"; };
+		32B5C9571C6B97590021159C /* ErrorLoggingChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorLoggingChannel.h; sourceTree = "<group>"; };
 		32B73E9418D9A74600F0B187 /* DirectIOPerformanceClientChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOPerformanceClientChannel.cpp; sourceTree = "<group>"; };
 		32B73E9518D9A74600F0B187 /* DirectIOPerformanceClientChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOPerformanceClientChannel.h; sourceTree = "<group>"; };
 		32B73E9818D9A8FF00F0B187 /* DirectIOPerformanceServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOPerformanceServerChannel.cpp; sourceTree = "<group>"; };
@@ -3984,6 +3992,10 @@
 			children = (
 				32DD7F6F1C60F97C003032DE /* MetadataLoggingManager.cpp */,
 				32DD7F701C60F97C003032DE /* MetadataLoggingManager.h */,
+				32B5C9521C6B8FDC0021159C /* AbstractMetadataLogChannel.cpp */,
+				32B5C9531C6B8FDC0021159C /* AbstractMetadataLogChannel.h */,
+				32B5C9561C6B97590021159C /* ErrorLoggingChannel.cpp */,
+				32B5C9571C6B97590021159C /* ErrorLoggingChannel.h */,
 			);
 			path = metadata_logging;
 			sourceTree = "<group>";
@@ -4172,6 +4184,7 @@
 				32AAD78A14CD772F005A097C /* MessageChannel.h in Headers */,
 				32C353F31788015B009ED581 /* PluginDiscover.h in Headers */,
 				32AAD78E14CD95FD005A097C /* Atomic.h in Headers */,
+				32B5C9551C6B8FDC0021159C /* AbstractMetadataLogChannel.h in Headers */,
 				324A4B53191A41EF00975394 /* process_id.h in Headers */,
 				32EFCD6718BDE3A400B5EB77 /* IODirectIODriver.h in Headers */,
 				32BFF90F176C842E00D27A04 /* InizializableService.h in Headers */,
@@ -4274,6 +4287,7 @@
 				324A4B74191A428500975394 /* builder.h in Headers */,
 				324A4B13191A3F6A00975394 /* status.h in Headers */,
 				32F7FEAB18A5066600FC03AB /* FastDelegate.h in Headers */,
+				32B5C9591C6B97590021159C /* ErrorLoggingChannel.h in Headers */,
 				3235110A17B3EAE500E39E14 /* TemplatedConcurrentQueue.h in Headers */,
 				328556A517F2E36000A64ED2 /* DirectIOServer.h in Headers */,
 				329C1F021B5540F900A84D55 /* MetricCollectorIO.h in Headers */,
@@ -4940,6 +4954,7 @@
 				32995C4A1BB2FF2600F68148 /* CheckList.cpp in Sources */,
 				329C1F011B5540F900A84D55 /* MetricCollectorIO.cpp in Sources */,
 				326DB45C14B38BC00018A8D0 /* CDataWrapper.cpp in Sources */,
+				32B5C9581C6B97590021159C /* ErrorLoggingChannel.cpp in Sources */,
 				326DB45E14B38BC00018A8D0 /* CUSchemaDB.cpp in Sources */,
 				32543B1A1AFA6D28008D58EC /* HealtMetric.cpp in Sources */,
 				326DB46714B38BC00018A8D0 /* AbstractCommandDispatcher.cpp in Sources */,
@@ -4951,6 +4966,7 @@
 				323386BA1AD3D78E008863DC /* MultiAddressMessageRequestFuture.cpp in Sources */,
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,
 				32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */,
+				32B5C9541C6B8FDC0021159C /* AbstractMetadataLogChannel.cpp in Sources */,
 				32B73E9618D9A74600F0B187 /* DirectIOPerformanceClientChannel.cpp in Sources */,
 				3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */,
 				320C218C151B556E00BD0F41 /* EventServer.cpp in Sources */,
