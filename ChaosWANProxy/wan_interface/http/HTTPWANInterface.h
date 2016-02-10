@@ -70,7 +70,8 @@ namespace chaos {
                     
                     //!poll the http server in a thread
                     void pollHttpServer(struct mg_server *http_server);
-                    
+                    bool checkForContentType(struct mg_connection *connection,
+                                             const std::string& type);
                 public:
                     int process(struct mg_connection *connection);
                     bool handle(struct mg_connection *connection);

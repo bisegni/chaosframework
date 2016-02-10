@@ -185,6 +185,24 @@ void HTTPWANInterface::pollHttpServer(struct mg_server *http_server) {
 	
 }
 
+bool HTTPWANInterface::checkForContentType(struct mg_connection *connection,
+                                           const std::string& type) {
+    bool result = false;
+    for(int idx = 0;
+        idx < 30;
+        idx++) {
+        if(connection->http_headers[idx].name &&
+           (std::strcmp(connection->http_headers[idx].name, "Content-Type") == 0)) {
+            //we have content type
+            result = (connection->http_headers[idx].value &&
+                       (type.compare(connection->http_headers[idx].value) == 0));
+            break;
+        }
+        
+    }
+    return result;
+}
+
 int HTTPWANInterface::process(struct mg_connection *connection) {
 	CHAOS_ASSERT(handler)
 	int								err = 0;
@@ -200,8 +218,8 @@ int HTTPWANInterface::process(struct mg_connection *connection) {
 	const std::string method  = connection->request_method;
 	const std::string url     = connection->uri;
 	const std::string api_uri = url.substr(strlen(API_PREFIX_V1)+1);
-	const std::string content = mg_get_header(connection, "Content-Type");
-	const bool        json    = content.compare("application/json") == 0;
+	const bool        json    = checkForContentType(connection,
+                                                    "application/json");
 	
 	//remove the prefix and tokenize the url
 	std::vector<std::string> api_token_list;

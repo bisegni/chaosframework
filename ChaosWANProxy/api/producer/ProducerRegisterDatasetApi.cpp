@@ -63,13 +63,7 @@ int ProducerRegisterDatasetApi::execute(std::vector<std::string>& api_tokens,
 		PRA_LERR << err_msg;
 		PRODUCER_REGISTER_ERR(output_data, -1, err_msg);
 		return err;
-	} /*else if(api_tokens.size() > 1) {
-		err_msg = "too many param in the uri";
-		PRA_LERR << api_tokens.size()<<" producer:"<<api_tokens[0]<<" other:"<<api_tokens[1]<<err_msg;
-		
-		PRODUCER_REGISTER_ERR(output_data, -2, err_msg);
-		return err;
-		}*/
+	} 
 
 	for(cnt = 0;cnt<api_tokens.size();cnt++){
 	  
@@ -202,22 +196,22 @@ int ProducerRegisterDatasetApi::scanDatasetElement(const Json::Value& dataset_js
 	std::transform(type.begin(), type.end(), type.begin(), ::tolower);
 	
 	if(type.compare("int32") == 0) {
-		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
 							   chaos::DataType::TYPE_INT32);
 	}else if(type.compare("int64") == 0) {
-		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
 							   chaos::DataType::TYPE_INT64);
 	}else if(type.compare("double") == 0) {
-		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
 							   chaos::DataType::TYPE_DOUBLE);
 	}else if(type.compare("string") == 0) {
-		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
 							   chaos::DataType::TYPE_STRING);
 	}else if(type.compare("binary") == 0) {
-		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
 							   chaos::DataType::TYPE_BYTEARRAY);
 	}else if(type.compare("boolean") == 0) {
-		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION,
+		element->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE,
 							   chaos::DataType::TYPE_BOOLEAN);
 	}else{
 		err_msg = "Bad attribute type";
