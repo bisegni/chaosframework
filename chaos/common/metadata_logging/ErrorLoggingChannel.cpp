@@ -33,16 +33,19 @@ ErrorLoggingChannel::~ErrorLoggingChannel() {
     
 }
 
-int ErrorLoggingChannel::logError(const chaos::CException& chaos_exception) {
-    return logError(chaos_exception.errorCode,
+int ErrorLoggingChannel::logError(const std::string& node_uid,
+                                  const chaos::CException& chaos_exception) {
+    return logError(node_uid,
+                    chaos_exception.errorCode,
                     chaos_exception.errorDomain,
                     chaos_exception.errorMessage);
 }
 
-int ErrorLoggingChannel::logError(int32_t error_code,
+int ErrorLoggingChannel::logError(const std::string& node_uid,
+                                  int32_t error_code,
                                   const std::string& error_message,
                                   const std::string& error_domain) {
-    CDataWrapper *log_entry = getNewLogEntry("error");
+    CDataWrapper *log_entry = getNewLogEntry(node_uid, "error");
     return sendLog(log_entry,
                     true);
 }

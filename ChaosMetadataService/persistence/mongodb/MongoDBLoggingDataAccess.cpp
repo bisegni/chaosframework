@@ -28,6 +28,13 @@
 #define MDBLDA_DBG  DBG_LOG(MongoDBLoggingDataAccess)
 #define MDBLDA_ERR  ERR_LOG(MongoDBLoggingDataAccess)
 
+#define WRITE_MAP_ON_BUILDER(b, miter, map)\
+for(miter it = log_entry.map.begin();\
+it != log_entry.map.end();\
+it++) {\
+    b << it->first << it->second;\
+}
+
 using namespace chaos::common::data;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
@@ -38,6 +45,44 @@ LoggingDataAccess(){}
 
 MongoDBLoggingDataAccess::~MongoDBLoggingDataAccess() {}
 
-int MongoDBLoggingDataAccess::insertNewEntry(const data_access::LogEntry& log_entry) {
-    return 0;
+int MongoDBLoggingDataAccess::insertNewEntry(data_access::LogEntry& log_entry) {
+    int err = 0;
+    mongo::BSONObjBuilder builder;
+    CHAOS_ASSERT(utility_data_access)
+    try {
+        if(!log_entry.node_uid.size()) return -1;
+        
+        if(utility_data_access->getNextSequenceValue("logging", log_entry.log_sequence)) {
+            MDBLDA_ERR << "Error getting new sequence for log";
+            return err;
+        }
+        
+        //add default log entry attribute
+        builder << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << log_entry.node_uid;
+        builder << chaos::MetadataServerNodeDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP << (long long)log_entry.log_ts;
+        builder << chaos::MetadataServerNodeDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << log_entry.log_domain;
+        
+        //add custom attribute in log entry
+        WRITE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueStringMapIterator, map_string_value);
+        WRITE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueInt64MapIterator, map_int64_value);
+        WRITE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueInt32MapIterator, map_int32_value);
+        WRITE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueDoubleMapIterator, map_double_value);
+        WRITE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueBoolMapIterator, map_bool_value);
+        
+        mongo::BSONObj q = builder.obj();
+        
+        DEBUG_CODE(MDBLDA_DBG<<log_message("insertNewEntry",
+                                           "insert",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   q));)
+        
+        if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_LOGGING),
+                                     q))) {
+            MDBLDA_ERR << "Error creating new entry in log";
+        }
+    } catch (const mongo::DBException &e) {
+        MDBLDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
 }

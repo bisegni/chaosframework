@@ -23,6 +23,7 @@
 #define __CHAOSFramework__MongoDBLoggingDataAccess_h
 
 #include "../data_access/LoggingDataAccess.h"
+#include "MongoDBUtilityDataAccess.h"
 
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
@@ -41,13 +42,15 @@ namespace chaos {
                 public data_access::LoggingDataAccess,
                 protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
+                    
+                    MongoDBUtilityDataAccess *utility_data_access = NULL;
                 protected:
                     MongoDBLoggingDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBLoggingDataAccess();
 
                 public:
                     //! Inherited method
-                    int insertNewEntry(const data_access::LogEntry& log_entry);
+                    int insertNewEntry(data_access::LogEntry& log_entry);
                 };
             }
         }

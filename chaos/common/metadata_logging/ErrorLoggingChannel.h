@@ -40,12 +40,14 @@ METADATA_LOGGING_CHANNEL_INSTANCER(ErrorLoggingChannel)
                 ~ErrorLoggingChannel();
                 
                 //!log a detailed error on metadata server
-                int logError(int32_t error_code,
+                int logError(const std::string& node_uid,
+                             int32_t error_code,
                              const std::string& error_message,
                              const std::string& error_domain);
                 
                 //!log a chaos exception on metadata server
-                int logError(const chaos::CException& chaos_exception);
+                int logError(const std::string& node_uid,
+                             const chaos::CException& chaos_exception);
             };
             
         }

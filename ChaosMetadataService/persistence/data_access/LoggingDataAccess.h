@@ -41,7 +41,9 @@ namespace chaos {
                 //! define and entry of the log
                 struct LogEntry {
                     uint64_t                    log_sequence;
+                    uint64_t                    log_ts;
                     std::string                 log_domain;
+                    std::string                 node_uid;
                     LoggingKeyValueStringMap    map_string_value;
                     LoggingKeyValueInt64Map     map_int64_value;
                     LoggingKeyValueInt32Map     map_int32_value;
@@ -51,7 +53,6 @@ namespace chaos {
                 
                 class LoggingDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
-                protected:
 
                 public:
                     DECLARE_DA_NAME
@@ -66,7 +67,7 @@ namespace chaos {
                     /*!
                      \param structure that describe the log entry
                      */
-                    virtual int insertNewEntry(const LogEntry& log_entry) = 0;
+                    virtual int insertNewEntry(LogEntry& log_entry) = 0;
 
                 };
             }

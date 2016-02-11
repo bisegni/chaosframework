@@ -68,6 +68,8 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
     
     //make needde connection
     getDataAccess<MongoDBNodeDataAccess>()->utility_data_access = getDataAccess<MongoDBUtilityDataAccess>();
+    getDataAccess<MongoDBLoggingDataAccess>()->utility_data_access = getDataAccess<MongoDBUtilityDataAccess>();
+    
     getDataAccess<MongoDBUnitServerDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
     getDataAccess<MongoDBControlUnitDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
     getDataAccess<MongoDBDataServiceDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
