@@ -79,6 +79,9 @@ int32_t attr=(what)->getInt32Value(# attr);
 #define GET_CONFIG_BOOL(what,attr) \
 bool attr=(what)->getBoolValue( # attr);
 
+#define GET_CONFIG_DEFAULT_BOOL(what,attr,def) \
+bool attr=def;\
+if((what)->hasKey( # attr)){attr=(what)->getBoolValue( # attr);}
 
 int initialize_from_old_mds(std::string conf){
     std::stringstream stringa;
@@ -93,6 +96,7 @@ int initialize_from_old_mds(std::string conf){
     //BSONObj bson(strdup(stringa.str().c_str()));
     //std::cout<<"BJSON:"<<bson.jsonString();
     CDataWrapper mdsconf;
+    
     mdsconf.setSerializedJsonData(stringa.str().c_str());
 
     //! rest ALL
@@ -139,9 +143,14 @@ int initialize_from_old_mds(std::string conf){
                  GET_CONFIG_STRING(cuw,cu_id);
                  GET_CONFIG_STRING(cuw,cu_type);
                  GET_CONFIG_STRING(cuw,cu_param);
-                 GET_CONFIG_BOOL(cuw,auto_load);
+                 GET_CONFIG_DEFAULT_BOOL(cuw,auto_load,true);
+                 GET_CONFIG_DEFAULT_BOOL(cuw,auto_init,true);
+                 GET_CONFIG_DEFAULT_BOOL(cuw,auto_start,true);
+
                  std::cout<<"\t"<<cu_id<<","<<cu_type<<std::endl;
                  cud.auto_load=auto_load;
+                 cud.auto_init=auto_init;
+                 cud.auto_start=auto_start;
                  cud.load_parameter = cu_param;
                  cud.control_unit_uid=cu_id;
                  cud.unit_server_uid=unit_server_alias;
