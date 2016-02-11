@@ -1,6 +1,11 @@
 SET(common_lib_src log/LogManager.cpp)
 
 SET(common_lib_src ${common_lib_src}
+        metadata_logging/MetadataLoggingManager.cpp
+        metadata_logging/AbstractMetadataLogChannel.cpp
+        metadata_logging/ErrorLoggingChannel.cpp)
+
+SET(common_lib_src ${common_lib_src}
         async_central/AsyncCentralManager.cpp
         async_central/TimerHandler.cpp)
 

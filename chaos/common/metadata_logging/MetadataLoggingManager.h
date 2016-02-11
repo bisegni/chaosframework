@@ -49,7 +49,7 @@ namespace chaos {
              They can be, error, command or other thing that nodes need to be store on MDS.
              */
             class MetadataLoggingManager:
-            protected chaos::common::utility::InizializableService,
+            public chaos::common::utility::InizializableService,
             public chaos::common::utility::Singleton<MetadataLoggingManager>,
             protected chaos::common::pqueue::CObjectProcessingPriorityQueue<chaos::common::data::CDataWrapper> {
                                 friend class AbstractMetadataLogChannel;

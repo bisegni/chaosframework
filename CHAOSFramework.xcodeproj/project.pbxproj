@@ -386,6 +386,10 @@
 		326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */; };
 		326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4E414B3B0070018A8D0 /* LLRpcApi.h */; };
 		326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */; };
+		3270E06D1C6CBB7200105726 /* LoggingApiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3270E06B1C6CBB7200105726 /* LoggingApiGroup.cpp */; };
+		3270E0701C6CBBE600105726 /* SubmitEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3270E06E1C6CBBE600105726 /* SubmitEntry.cpp */; };
+		3270E0731C6CBFDE00105726 /* LoggingDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3270E0711C6CBFDE00105726 /* LoggingDataAccess.cpp */; };
+		3270E0761C6CC05100105726 /* MongoDBLoggingDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3270E0741C6CC05100105726 /* MongoDBLoggingDataAccess.cpp */; };
 		3271063519A6157800946A8B /* VFSDataFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063319A6157800946A8B /* VFSDataFile.cpp */; };
 		3271063819A6188000946A8B /* VFSDataWriteableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */; };
 		3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3272152218B006BC005AC8FD /* CacheDriver.cpp */; };
@@ -1449,6 +1453,14 @@
 		326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = LLRpcApi.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4E414B3B0070018A8D0 /* LLRpcApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = LLRpcApi.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiKeyObjectWaitSemaphore.h; sourceTree = "<group>"; };
+		3270E06B1C6CBB7200105726 /* LoggingApiGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoggingApiGroup.cpp; sourceTree = "<group>"; };
+		3270E06C1C6CBB7200105726 /* LoggingApiGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingApiGroup.h; sourceTree = "<group>"; };
+		3270E06E1C6CBBE600105726 /* SubmitEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubmitEntry.cpp; sourceTree = "<group>"; };
+		3270E06F1C6CBBE600105726 /* SubmitEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubmitEntry.h; sourceTree = "<group>"; };
+		3270E0711C6CBFDE00105726 /* LoggingDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoggingDataAccess.cpp; sourceTree = "<group>"; };
+		3270E0721C6CBFDE00105726 /* LoggingDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingDataAccess.h; sourceTree = "<group>"; };
+		3270E0741C6CC05100105726 /* MongoDBLoggingDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBLoggingDataAccess.cpp; sourceTree = "<group>"; };
+		3270E0751C6CC05100105726 /* MongoDBLoggingDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBLoggingDataAccess.h; sourceTree = "<group>"; };
 		3271063319A6157800946A8B /* VFSDataFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSDataFile.cpp; sourceTree = "<group>"; };
 		3271063419A6157800946A8B /* VFSDataFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSDataFile.h; sourceTree = "<group>"; };
 		3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSDataWriteableFile.cpp; sourceTree = "<group>"; };
@@ -2369,6 +2381,8 @@
 				32E09CEF1C0DC7100069752F /* MongoDBSnapshotDataAccess.h */,
 				32A13EBD1C2019080010F3FC /* MongoDBTreeGroupDataAccess.cpp */,
 				32A13EBE1C2019080010F3FC /* MongoDBTreeGroupDataAccess.h */,
+				3270E0741C6CC05100105726 /* MongoDBLoggingDataAccess.cpp */,
+				3270E0751C6CC05100105726 /* MongoDBLoggingDataAccess.h */,
 				32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */,
 			);
 			path = mongodb;
@@ -2391,6 +2405,8 @@
 				32E09CEC1C0DB2800069752F /* SnapshotDataAccess.h */,
 				32401CBB1C1AD7AA00E62866 /* TreeGroupDataAccess.cpp */,
 				32401CBC1C1AD7AA00E62866 /* TreeGroupDataAccess.h */,
+				3270E0711C6CBFDE00105726 /* LoggingDataAccess.cpp */,
+				3270E0721C6CBFDE00105726 /* LoggingDataAccess.h */,
 				32D24FAF1A7AAD15002D65CE /* DataAccess.h */,
 			);
 			path = data_access;
@@ -3270,6 +3286,17 @@
 			path = LowLevelApi;
 			sourceTree = "<group>";
 		};
+		3270E06A1C6CBA7D00105726 /* logging */ = {
+			isa = PBXGroup;
+			children = (
+				3270E06B1C6CBB7200105726 /* LoggingApiGroup.cpp */,
+				3270E06C1C6CBB7200105726 /* LoggingApiGroup.h */,
+				3270E06E1C6CBBE600105726 /* SubmitEntry.cpp */,
+				3270E06F1C6CBBE600105726 /* SubmitEntry.h */,
+			);
+			path = logging;
+			sourceTree = "<group>";
+		};
 		3272152118B00650005AC8FD /* cache_system */ = {
 			isa = PBXGroup;
 			children = (
@@ -3904,6 +3931,7 @@
 				32FC7EE21A701D8E0029C2A2 /* AbstractApiGroup.h */,
 				32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */,
 				32FC7EE41A70FDB70029C2A2 /* ApiManagment.h */,
+				3270E06A1C6CBA7D00105726 /* logging */,
 				32864FCA1C294A4600DA9B70 /* groups */,
 				327791DF1B67726200FEDD52 /* service */,
 				325D2FD91AFB65DE00B2A706 /* healt */,
@@ -4796,9 +4824,11 @@
 				32092B401BFA353F006A4D06 /* NodeLoadCompletion.cpp in Sources */,
 				324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */,
 				327F39A01AEA47980000C845 /* GetAssociationByDS.cpp in Sources */,
+				3270E0701C6CBBE600105726 /* SubmitEntry.cpp in Sources */,
 				328E77FF1A7A94140008C070 /* NodeGroup.cpp in Sources */,
 				320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */,
 				32B1E8191B2FFCE500221E49 /* CommandCommonUtility.cpp in Sources */,
+				3270E0761C6CC05100105726 /* MongoDBLoggingDataAccess.cpp in Sources */,
 				3235FDCA1A6FF45600EC83A9 /* GetDescription.cpp in Sources */,
 				325FC8611AF7C8B200DB9D66 /* GetCurrentDataset.cpp in Sources */,
 				32B299A41BE25ABE000D3716 /* RecoverError.cpp in Sources */,
@@ -4854,6 +4884,7 @@
 				328C872F1ADFC2D60047C79B /* GetInstance.cpp in Sources */,
 				328D0FF11A8A034E001A2001 /* NodeSearch.cpp in Sources */,
 				32E09CFE1C0E05E60069752F /* DeleteSnapshot.cpp in Sources */,
+				3270E06D1C6CBB7200105726 /* LoggingApiGroup.cpp in Sources */,
 				32362C1A1ADC0FD2000CA079 /* SetInstanceDescription.cpp in Sources */,
 				32B9F3F71AC4186300380FE9 /* NodeCreateUnitServer.cpp in Sources */,
 				32401CB61C18330000E62866 /* GetNodesForSnapshot.cpp in Sources */,
@@ -4867,6 +4898,7 @@
 				32A13EBC1C2016C60010F3FC /* Delete.cpp in Sources */,
 				328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */,
 				32B4193B1B17715700C3CA7D /* ApplyChangeSet.cpp in Sources */,
+				3270E0731C6CBFDE00105726 /* LoggingDataAccess.cpp in Sources */,
 				32761A3C1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */,
 				32568C8B1B3D54650006988C /* UpdatePropertyCommand.cpp in Sources */,
 				32B1E8161B2EDB4700221E49 /* CommandInstanceSubmit.cpp in Sources */,

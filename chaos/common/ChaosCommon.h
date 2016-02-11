@@ -191,13 +191,13 @@ namespace chaos {
                 common::utility::StartableService::initImplementation(chaos::common::network::NetworkBroker::getInstance(), init_data, "NetworkBroker", __PRETTY_FUNCTION__);
                 common::utility::StartableService::startImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__);
                 //force first allocation
-                common::utility::StartableService::initImplementation(chaos::common::metadata_logging::MetadataLoggingManager::getInstance(), NULL, "MetadataLoggingManager", __PRETTY_FUNCTION__);
+                common::utility::InizializableService::initImplementation(chaos::common::metadata_logging::MetadataLoggingManager::getInstance(), NULL, "MetadataLoggingManager", __PRETTY_FUNCTION__);
                 }
                 
                 void deinit() throw (CException) {
                     //dellocate all
                     chaos::common::network::NetworkBroker::getInstance()->disposeMessageChannel(chaos::common::metadata_logging::MetadataLoggingManager::getInstance()->getMessageChannelInstance());
-                    common::utility::StartableService::deinitImplementation(chaos::common::metadata_logging::MetadataLoggingManager::getInstance(), "MetadataLoggingManager", __PRETTY_FUNCTION__);
+                    common::utility::InizializableService::deinitImplementation(chaos::common::metadata_logging::MetadataLoggingManager::getInstance(), "MetadataLoggingManager", __PRETTY_FUNCTION__);
                     CHAOS_NOT_THROW(common::utility::StartableService::stopImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
                     CHAOS_NOT_THROW(common::utility::StartableService::deinitImplementation(chaos::common::network::NetworkBroker::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__););
                     CHAOS_NOT_THROW(common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__););

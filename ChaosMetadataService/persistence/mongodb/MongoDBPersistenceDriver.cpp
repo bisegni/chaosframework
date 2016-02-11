@@ -25,6 +25,7 @@
 #include "MongoDBDataServiceDataAccess.h"
 #include "MongoDBSnapshotDataAccess.h"
 #include "MongoDBTreeGroupDataAccess.h"
+#include "MongoDBLoggingDataAccess.h"
 
 #include "../../mds_types.h"
 
@@ -63,18 +64,19 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
     registerDataAccess<data_access::DataServiceDataAccess>(new MongoDBDataServiceDataAccess(connection));
     registerDataAccess<data_access::SnapshotDataAccess>(new MongoDBSnapshotDataAccess(connection, getDataAccess<data_access::DataServiceDataAccess>()));
     registerDataAccess<data_access::TreeGroupDataAccess>(new MongoDBTreeGroupDataAccess(connection));
+    registerDataAccess<data_access::LoggingDataAccess>(new MongoDBLoggingDataAccess(connection));
     
-    //connec usda with nda
+    //make needde connection
     getDataAccess<MongoDBNodeDataAccess>()->utility_data_access = getDataAccess<MongoDBUtilityDataAccess>();
     getDataAccess<MongoDBUnitServerDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
     getDataAccess<MongoDBControlUnitDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
     getDataAccess<MongoDBDataServiceDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
 }
+
 void MongoDBPersistenceDriver::deinit() throw (chaos::CException) {
 	connection.reset();
     //call sublcass
     AbstractPersistenceDriver::deinit();
-
 }
 
 void MongoDBPersistenceDriver::deleteDataAccess(void *instance) {

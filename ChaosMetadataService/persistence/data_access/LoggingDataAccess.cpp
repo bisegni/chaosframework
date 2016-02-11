@@ -1,9 +1,10 @@
 /*
- *	DataAccess.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ *	LoggingDataAccess.cpp
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *	!CHAOS [CHAOSFramework]
+ *	Created by Claudio Bisegni.
+ *
+ *    	Copyright 11/02/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,14 +18,17 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_DataAccess_h
-#define CHAOSFramework_DataAccess_h
-#include "NodeDataAccess.h"
-#include "UtilityDataAccess.h"
-#include "UnitServerDataAccess.h"
-#include "ControlUnitDataAccess.h"
-#include "DataServiceDataAccess.h"
-#include "SnapshotDataAccess.h"
-#include "TreeGroupDataAccess.h"
+
 #include "LoggingDataAccess.h"
-#endif
+
+using namespace chaos::metadata_service::persistence::data_access;
+
+DEFINE_DA_NAME(LoggingDataAccess)
+
+
+//! default constructor
+LoggingDataAccess::LoggingDataAccess():
+AbstractDataAccess("LoggingDataAccess"){}
+
+//!default destructor
+LoggingDataAccess::~LoggingDataAccess(){}
