@@ -42,7 +42,8 @@ namespace chaos {
     /*!
      This class define an environment where an action for an event can be executed
      */
-    class EventTypeScheduler: private CObjectProcessingPriorityQueue<event::EventDescriptor> {
+    class EventTypeScheduler:
+    private chaos::common::pqueue::CObjectProcessingPriorityQueue<event::EventDescriptor> {
         friend class DefaultEventDispatcher;
             //! indicate the armed stato of this scheduler
         bool armed;

@@ -28,10 +28,6 @@
 
 namespace chaos {
     namespace common {
-        namespace message {
-            //! forward declaration
-            class MultiAddressMessageChannel;
-        }
         
 #define METADATA_LOGGING_CHANNEL_INSTANCER(_DriverClass_) \
 new chaos::common::utility::TypedObjectInstancer< _DriverClass_, chaos::common::metadata_logging::AbstractMetadataLogChannel >()
@@ -47,18 +43,18 @@ new chaos::common::utility::TypedObjectInstancer< _DriverClass_, chaos::common::
                 //instance identifier
                 const std::string instance_uuid;
                 
-                chaos::common::message::MultiAddressMessageChannel *mds_channel;
+                //! reference to loggin manager parent
+                MetadataLoggingManager *logging_manager;
             protected:
                 AbstractMetadataLogChannel();
                 virtual ~AbstractMetadataLogChannel();
                 
                 //!set the mds message channel for this log channel
-                void setMessageChannel(chaos::common::message::MultiAddressMessageChannel *_mds_channel);
+                void setLoggingManager(MetadataLoggingManager *_mds_channel);
                 
                 //! send the log to mds server
                 int sendLog(chaos::common::data::CDataWrapper *log_message,
-                              bool wait_for_ack = false,
-                              uint32_t timeout = 1000);
+                              int32_t priority = 0);
                 
                 //!create a new empty log entry for a determinate domiain
                 chaos::common::data::CDataWrapper *getNewLogEntry(const std::string& log_domain);

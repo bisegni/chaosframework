@@ -19,11 +19,12 @@
  *    	limitations under the License.
  */
 
-#include <chaos/common/message/MultiAddressMessageChannel.h>
-#include <chaos/common/metadata_logging/AbstractMetadataLogChannel.h>
-
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/utility/TimingUtil.h>
+#include <chaos/common/message/MultiAddressMessageChannel.h>
+#include <chaos/common/metadata_logging/MetadataLoggingManager.h>
+#include <chaos/common/metadata_logging/AbstractMetadataLogChannel.h>
 
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
@@ -31,12 +32,13 @@ using namespace chaos::common::message;
 using namespace chaos::common::metadata_logging;
 
 AbstractMetadataLogChannel::AbstractMetadataLogChannel():
-instance_uuid(UUIDUtil::generateUUID()){}
+instance_uuid(UUIDUtil::generateUUID()),
+logging_manager(NULL){}
 
 AbstractMetadataLogChannel::~AbstractMetadataLogChannel() {}
 
-void AbstractMetadataLogChannel::setMessageChannel(MultiAddressMessageChannel *_mds_channel) {
-    mds_channel = _mds_channel;
+void AbstractMetadataLogChannel::setLoggingManager(MetadataLoggingManager *_logging_manager) {
+    logging_manager = _logging_manager;
 }
 
 const std::string& AbstractMetadataLogChannel::getInstanceUUID() {
@@ -45,27 +47,16 @@ const std::string& AbstractMetadataLogChannel::getInstanceUUID() {
 
 CDataWrapper *AbstractMetadataLogChannel::getNewLogEntry(const std::string& log_domain) {
     CDataWrapper *log_entry = new CDataWrapper();
-    log_entry->addStringValue("domain", log_domain);
+    log_entry->addInt64Value(MetadataServerNodeDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP,
+                             TimingUtil::getTimeStamp());
+    log_entry->addStringValue(MetadataServerNodeDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN,
+                              log_domain);
     return log_entry;
 }
 
 int AbstractMetadataLogChannel::sendLog(chaos::common::data::CDataWrapper *log_message,
-                                        bool wait_for_ack,
-                                        uint32_t timeout) {
-    CHAOS_ASSERT(mds_channel);
-    int err = 0;
-    const std::string metadata_logging_domain = "metadata_logging";
-    const std::string metadata_logging_action = "submit_log";
-    
-    if(wait_for_ack) {
-        std::auto_ptr<MultiAddressMessageRequestFuture> result = mds_channel->sendRequestWithFuture(metadata_logging_domain,
-                                                                                                    metadata_logging_action,
-                                                                                                    log_message);
-    } else {
-        mds_channel->sendMessage(metadata_logging_domain,
-                                 metadata_logging_action,
-                                 log_message);
-        CHK_AND_DELETE_OBJ_POINTER(log_message);
-    }
-    return err;
+                                        int32_t priority) {
+    CHAOS_ASSERT(logging_manager);
+    return logging_manager->pushLogEntry(log_message,
+                                         priority);
 }

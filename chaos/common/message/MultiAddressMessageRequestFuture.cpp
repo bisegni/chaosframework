@@ -108,7 +108,11 @@ bool MultiAddressMessageRequestFuture::wait() {
             } else {
                 //we can have submission error
                 if(current_future->getError()) {
-                    MAMRF_ERR << "Whe have submisison error:" << current_future->getError() << " message:"<<current_future->getErrorMessage() << " domain:" << current_future->getErrorDomain();
+                    MAMRF_ERR << "Whe have submisison error:" << current_future->getError() <<
+                    " message:"<<current_future->getErrorMessage() << " domain:" <<
+                    current_future->getErrorDomain();
+                    
+                    //switch to another server
                     switchOnOtherServer();
                 }
             }
@@ -154,4 +158,8 @@ const std::string& MultiAddressMessageRequestFuture::getErrorDomain() const {
 const std::string& MultiAddressMessageRequestFuture::getErrorMessage() const {
     CHAOS_ASSERT(current_future.get())
     return current_future->getErrorMessage();
+}
+
+chaos::common::data::CDataWrapper *MultiAddressMessageRequestFuture::detachMessageData() {
+    return message_pack.release();
 }

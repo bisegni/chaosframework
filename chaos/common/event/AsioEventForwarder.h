@@ -36,7 +36,8 @@ namespace chaos {
         using namespace boost;
         class AsioImplEventClient;
         
-        class AsioEventForwarder : public CObjectProcessingPriorityQueue<EventDescriptor> {
+        class AsioEventForwarder :
+        public chaos::common::pqueue::CObjectProcessingPriorityQueue<EventDescriptor> {
             friend class AsioImplEventClient;
             std::string hanlderID;
             

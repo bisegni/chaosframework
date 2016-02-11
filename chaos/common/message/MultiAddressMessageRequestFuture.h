@@ -59,6 +59,10 @@ namespace chaos{
                 auto_ptr<MessageRequestFuture> current_future;
                 
                 //!private constructor
+                /*!
+                 the ownership of the message pack to forward is kept by this class. To get the ownership detachResult)
+                 methdo need to be called
+                 */
                 MultiAddressMessageRequestFuture(chaos::common::message::MultiAddressMessageChannel *_parent_mn_message_channel,
                                                  const std::string &_action_domain,
                                                  const std::string &_action_name,
@@ -95,6 +99,9 @@ namespace chaos{
                 const std::string &getErrorDomain() const;
                 
                 const std::string &getErrorMessage() const;
+                
+                //!return the ownership of the message to the caller
+                chaos::common::data::CDataWrapper *detachMessageData();
             };
             
         }

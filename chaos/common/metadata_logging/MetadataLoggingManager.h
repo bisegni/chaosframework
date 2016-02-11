@@ -24,9 +24,11 @@
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/Singleton.h>
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/message/MultiAddressMessageChannel.h>
+#include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 #include <chaos/common/metadata_logging/AbstractMetadataLogChannel.h>
 
 #include <boost/thread.hpp>
@@ -48,8 +50,13 @@ namespace chaos {
              */
             class MetadataLoggingManager:
             protected chaos::common::utility::InizializableService,
-            public chaos::common::utility::Singleton<MetadataLoggingManager> {
+            public chaos::common::utility::Singleton<MetadataLoggingManager>,
+            protected chaos::common::pqueue::CObjectProcessingPriorityQueue<chaos::common::data::CDataWrapper> {
+                                friend class AbstractMetadataLogChannel;
                 friend class chaos::common::utility::Singleton<MetadataLoggingManager>;
+                
+                const std::string metadata_logging_domain;
+                const std::string metadata_logging_action;
                 
                 boost::mutex mutext_maps;
             
@@ -63,6 +70,15 @@ namespace chaos {
                 MetadataLoggingManager();
                 ~MetadataLoggingManager();
                 
+                //!internal function to permit the forwarding of th elog entry to the mds
+                int sendLogEntry(chaos::common::data::CDataWrapper *log_entry);
+                
+                void processBufferElement(chaos::common::data::CDataWrapper *log_entry,
+                                          ElementManagingPolicy& element_policy) throw(CException);
+            protected:
+                //!submit the log entry in the logging queue
+                int pushLogEntry(chaos::common::data::CDataWrapper *log_entry,
+                                 int32_t priority = 0);
             public:
                 void init(void *init_data) throw(chaos::CException);
                 void deinit() throw(chaos::CException);

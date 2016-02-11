@@ -700,6 +700,19 @@ namespace chaos {
         
         //! the key for the control unit load completion registration
         static const char * const ACTION_NODE_LOAD_COMPLETION  = "mdsndk_rpc_a_load_completion_node";
+        
+        //! the key for the domain used by the mds for publish logging api
+        static const char * const ACTION_NODE_LOGGING_RPC_DOMAIN  = "mdsndk_nl_rpc_dom";
+        
+        //! loggin action for the submittion of the log entry
+        static const char * const ACTION_NODE_LOGGING_SUBMIT_ENTRY  = "mdsndk_nl_sub_entry";
+        
+        //! the key represent the log timestamp [uint64_t]
+        static const char * const PARAM_NODE_LOGGING_LOG_TIMESTAMP     = "mdsndk_nl_lts";
+        
+        //! the key represent the log domain of the log entry [string]
+        static const char * const PARAM_NODE_LOGGING_LOG_DOMAIN     = "mdsndk_nl_ld";
+
     }
     /** @} */ // end of NodeDomainAndActionRPC
     

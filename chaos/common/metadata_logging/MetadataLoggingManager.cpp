@@ -25,8 +25,14 @@
 #include <chaos/common/metadata_logging/ErrorLoggingChannel.h>
 
 using namespace chaos;
+using namespace chaos::common::data;
+using namespace chaos::common::pqueue;
 using namespace chaos::common::message;
 using namespace chaos::common::metadata_logging;
+
+#define MLM_INFO    INFO_LOG(MetadataLoggingManager)
+#define MLM_DBG     DBG_LOG(MetadataLoggingManager)
+#define MLM_ERR     ERR_LOG(MetadataLoggingManager)
 
 MetadataLoggingManager::MetadataLoggingManager() {
     message_channel = chaos::common::network::NetworkBroker::getInstance()->getRawMultiAddressMessageChannel(GlobalConfiguration::getInstance()->getMetadataServerAddressList());
@@ -40,18 +46,24 @@ MetadataLoggingManager::MetadataLoggingManager() {
 MetadataLoggingManager::~MetadataLoggingManager() {}
 
 void MetadataLoggingManager::init(void *init_data) throw(chaos::CException) {
-    
+    CObjectProcessingPriorityQueue<CDataWrapper>::init(1);
 }
 
 void MetadataLoggingManager::deinit() throw(chaos::CException) {
+    MLM_INFO << "Wait for queue will empty";
+    CObjectProcessingPriorityQueue<CDataWrapper>::deinit(true);
+    MLM_INFO << "Queue is empty";
+    
     boost::unique_lock<boost::mutex> wl(mutext_maps);
     for(MetadataLoggingInstancesMapIterator it = map_instance.begin();
         it != map_instance.end();
         it++) {
+        MLM_INFO << "Remove channel instance:"<< it->first;
         if(it->second != NULL) {
             delete(it->second);
         }
     }
+    MLM_INFO << "All channel has been removed";
     map_instance.clear();
     map_instancer.clear();
 }
@@ -71,8 +83,10 @@ AbstractMetadataLogChannel *MetadataLoggingManager::getChannel(const std::string
     if(map_instancer.count(channel_alias) == 0) return NULL;
     
     AbstractMetadataLogChannel *result = map_instancer[channel_alias]->getInstance();
-    result->setMessageChannel(message_channel);
+    result->setLoggingManager(this);
     map_instance.insert(make_pair(result->getInstanceUUID(), result));
+    
+    MLM_INFO << "Creted new channel instance " << result->getInstanceUUID() << " for " << channel_alias;
     return result;
 }
 
@@ -81,7 +95,56 @@ void MetadataLoggingManager::releaseChannel(AbstractMetadataLogChannel *channel_
     if(channel_instance == NULL) return;
     if(map_instance.count(channel_instance->getInstanceUUID()) == 0) return;
     //we can delete the instance
-  
+    
     map_instance.erase(channel_instance->getInstanceUUID());
+    MLM_INFO << "Release channel instance " << channel_instance->getInstanceUUID();
     delete(channel_instance);
+
+}
+
+void MetadataLoggingManager::processBufferElement(CDataWrapper *log_entry,
+                                                  ElementManagingPolicy& element_policy) throw(CException) {
+    int err = 0;
+    DEBUG_CODE(MLM_DBG << "forwarding log entry " << log_entry->getJSONString());
+    if((err = sendLogEntry(log_entry))) {
+        MLM_ERR << "Error forwarding log entry with code:" << err;
+        //log entry need to be resubmitted or stored on disk (in future version)
+        delete(log_entry);
+    } else {
+        //log entry has been submitted
+    }
+}
+
+int MetadataLoggingManager::sendLogEntry(chaos::common::data::CDataWrapper *log_entry) {
+    int err = 0;
+    //send message to mds and wait for ack
+    std::auto_ptr<MultiAddressMessageRequestFuture> log_future = message_channel->sendRequestWithFuture(MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
+                                                                                                        MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOGGING_SUBMIT_ENTRY,
+                                                                                                        log_entry,
+                                                                                                        2000);
+    //wait for ack
+    if(log_future->wait()) {
+        //we have got semthing
+        DEBUG_CODE(MLM_DBG << "Submition log entry has received ack with error\n " << log_future->getError() <<
+                   "\n" << log_future->getErrorMessage() << "\n" <<
+                   log_future->getErrorDomain(););
+        if((err = log_future->getError())) {
+            MLM_ERR << "Error forwarding log entry with code:" << err;
+        } else {
+            //log has been successfully forwarded
+            DEBUG_CODE(MLM_DBG << "Log has been successfully forwarded");
+        }
+    } else {
+        //we can't be able to send log to any mds server so detach it
+        log_future->detachMessageData();
+        err = -10000;
+    }
+    return err;
+}
+
+int MetadataLoggingManager::pushLogEntry(chaos::common::data::CDataWrapper *log_entry,
+                                         int32_t priority) {
+    return CObjectProcessingPriorityQueue<CDataWrapper>::push(log_entry,
+                                                              priority,
+                                                              false);
 }
