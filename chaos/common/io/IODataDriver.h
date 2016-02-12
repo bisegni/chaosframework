@@ -23,7 +23,7 @@
 #include <map>
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/utility/ArrayPointer.h>

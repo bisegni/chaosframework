@@ -21,7 +21,7 @@
 #ifndef CHAOSFramework_BatchCommandException_h
 #define CHAOSFramework_BatchCommandException_h
 
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 
 namespace chaos {
     namespace common {

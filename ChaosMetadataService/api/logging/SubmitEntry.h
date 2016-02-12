@@ -35,10 +35,15 @@ namespace chaos {
                  */
                 class SubmitEntry:
                 public AbstractApi {
+                    
+                    //!complete the log entry for the error logging domain
+                    void completeErrorLogEntry(chaos::common::data::CDataWrapper *api_data,
+                                               persistence::data_access::LogEntry& new_log_entry);
                 public:
                     SubmitEntry();
                     ~SubmitEntry();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
+                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
+                                                               bool& detach_data);
                 };
             }
         }

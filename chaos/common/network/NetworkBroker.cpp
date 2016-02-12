@@ -622,6 +622,11 @@ MultiAddressMessageChannel *NetworkBroker::getMultiMetadataServiceRawMessageChan
     if(mc){
         mc->addNode(GlobalConfiguration::getInstance()->getMetadataServerAddress());
     }
+    if(mc){
+        mc->init();
+        boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
+        active_rpc_channel.insert(make_pair(mc->channel_reponse_domain, mc));
+    }
     return mc;
 }
 
@@ -654,7 +659,13 @@ MultiAddressMessageChannel *NetworkBroker::getRawMultiAddressMessageChannel() {
  Performe the creation of a raw multinode message channel
  */
 chaos::common::message::MultiAddressMessageChannel *NetworkBroker::getRawMultiAddressMessageChannel(const std::vector<chaos::common::network::CNetworkAddress>& node_address) {
-    return new MultiAddressMessageChannel(this, node_address);
+    MultiAddressMessageChannel *mc = new MultiAddressMessageChannel(this, node_address);
+    if(mc){
+        mc->init();
+        boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
+        active_rpc_channel.insert(make_pair(mc->channel_reponse_domain, mc));
+    }
+    return mc;
 }
 
 //!Channel deallocation

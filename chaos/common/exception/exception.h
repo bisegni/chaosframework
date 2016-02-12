@@ -1,10 +1,10 @@
 /*
- *	LoggingApiGroup.cpp
+ *	exception.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by Claudio Bisegni.
  *
- *    	Copyright 11/02/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 12/02/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,16 +19,10 @@
  *    	limitations under the License.
  */
 
-#include "LoggingApiGroup.h"
-#include "SubmitEntry.h"
-using namespace chaos::metadata_service::api::logging;
+#ifndef __CHAOSFramework__exception_h
+#define __CHAOSFramework__exception_h
 
-DEFINE_CLASS_FACTORY_NO_ALIAS(LoggingApiGroup,
-                              chaos::metadata_service::api::AbstractApiGroup);
+#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/MetadataLoggingCException.h>
 
-LoggingApiGroup::LoggingApiGroup():
-AbstractApiGroup(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN){
-    addApi<SubmitEntry>();
-}
-
-LoggingApiGroup::~LoggingApiGroup() {}
+#endif /* __CHAOSFramework__exception_h */

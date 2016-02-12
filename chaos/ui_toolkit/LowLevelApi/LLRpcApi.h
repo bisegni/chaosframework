@@ -25,7 +25,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <chaos/common/utility/Singleton.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/DeviceMessageChannel.h>

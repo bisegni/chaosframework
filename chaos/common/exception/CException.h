@@ -52,15 +52,15 @@ namespace chaos{
         std::string errorDomain;
 
         
-        explicit CException(int eCode, const char * eMessage,  const char * eDomain):errorCode(eCode),
+        explicit CException(int eCode, const char * eMessage,  const char * eDomain) throw():errorCode(eCode),
         errorMessage( eMessage, strlen( eMessage )),
         errorDomain( eDomain, strlen( eDomain )) {composeMsg();};
         
-        explicit CException(int eCode, std::string eMessage,  std::string eDomain):errorCode(eCode),
+        explicit CException(int eCode, std::string eMessage,  std::string eDomain) throw():errorCode(eCode),
         errorMessage(eMessage),
         errorDomain(eDomain) {composeMsg();};
         
-        CException(const CException& _exception):errorCode(_exception.errorCode),
+        CException(const CException& _exception) throw() :errorCode(_exception.errorCode),
         errorMessage(_exception.errorMessage),
         errorDomain(_exception.errorDomain) {composeMsg();};
         

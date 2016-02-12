@@ -40,10 +40,10 @@ namespace chaos {
                 
                 //! define and entry of the log
                 struct LogEntry {
-                    uint64_t                    log_sequence;
-                    uint64_t                    log_ts;
-                    std::string                 log_domain;
-                    std::string                 node_uid;
+                    uint64_t                    sequence;
+                    uint64_t                    ts;
+                    std::string                 domain;
+                    std::string                 source_identifier;
                     LoggingKeyValueStringMap    map_string_value;
                     LoggingKeyValueInt64Map     map_int64_value;
                     LoggingKeyValueInt32Map     map_int32_value;

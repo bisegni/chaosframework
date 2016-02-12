@@ -23,7 +23,7 @@
 
 #include <stdint.h>
 #include <cstddef>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 namespace chaos {
     namespace event {
             //!event pack struct bit length

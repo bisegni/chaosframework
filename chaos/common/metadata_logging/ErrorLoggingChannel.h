@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework__ErrorLoggingChannel_h
 #define __CHAOSFramework__ErrorLoggingChannel_h
 
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/metadata_logging/AbstractMetadataLogChannel.h>
 
 namespace chaos {

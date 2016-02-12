@@ -22,7 +22,7 @@
 
 #include <string>
 #include <chaos/common/thread/SpinLock.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/direct_io/DirectIOHandler.h>
 #include <chaos/common/direct_io/DirectIOServerPublicInterface.h>

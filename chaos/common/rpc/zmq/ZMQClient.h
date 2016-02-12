@@ -14,7 +14,7 @@
 #include <chaos/common/rpc/RpcClient.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/async_central/async_central.h>

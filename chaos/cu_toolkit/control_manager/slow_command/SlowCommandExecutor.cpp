@@ -42,6 +42,7 @@ using namespace chaos::common::batch_command;
 #define SCELERR_ LERR_ << LOG_HEAD_SBE
 using namespace chaos::common::data::cache;
 using namespace chaos::common::batch_command;
+using namespace chaos::common::metadata_logging;
 
 SlowCommandExecutor::SlowCommandExecutor(const std::string& _executorID,
                                          DatasetDB *_dataset_attribute_db_ptr,
@@ -54,7 +55,8 @@ last_ru_id_cache(NULL),
 last_error_code(NULL),
 last_error_message(NULL),
 last_error_domain(NULL),
-driverAccessorsErogator(NULL){}
+driverAccessorsErogator(NULL),
+error_logging_channel(NULL){}
 
 SlowCommandExecutor::~SlowCommandExecutor(){
     //delete the wrapper
@@ -67,6 +69,9 @@ SlowCommandExecutor::~SlowCommandExecutor(){
 void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     //initialize superclass
     BatchCommandExecutor::init(initData);
+    
+    error_logging_channel = (ErrorLoggingChannel*)MetadataLoggingManager::getInstance()->getChannel("ErrorLoggingChannel");
+    if(error_logging_channel == NULL) {throw CException(-1, "No metadata logging error channel found", __PRETTY_FUNCTION__);}
 }
 
 // Start the implementation
@@ -101,6 +106,10 @@ void SlowCommandExecutor::stop() throw(chaos::CException) {
 
 // Deinit instance
 void SlowCommandExecutor::deinit() throw(chaos::CException) {
+    if(error_logging_channel != NULL) {
+        MetadataLoggingManager::getInstance()->releaseChannel(error_logging_channel);
+        error_logging_channel = NULL;
+    }
     LDBG_ << "No implementation on deinit";
     //initialize superclass
     BatchCommandExecutor::deinit();
@@ -165,6 +174,11 @@ void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
                 if(faul_desc->code &&
                    faul_desc->description.size() &&
                    faul_desc->domain.size()) {
+                    //log error on metadata server
+                    error_logging_channel->logError(control_unit_instance->getCUID(),
+                                                    faul_desc->code,
+                                                    faul_desc->description,
+                                                    faul_desc->domain);
                     CException ex(faul_desc->code, faul_desc->description, faul_desc->domain);
                     //async go into recoverable error
                     boost::thread(boost::bind(&AbstractControlUnit::_goInRecoverableError, control_unit_instance, ex)).detach();

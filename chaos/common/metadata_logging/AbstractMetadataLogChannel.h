@@ -24,6 +24,7 @@
 
 #include <string>
 
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
 
 namespace chaos {

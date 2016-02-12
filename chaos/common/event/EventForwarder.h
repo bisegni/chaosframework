@@ -20,7 +20,7 @@
 #ifndef CHAOSFramework_EventForwarder_h
 #define CHAOSFramework_EventForwarder_h
 
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 
 namespace chaos {

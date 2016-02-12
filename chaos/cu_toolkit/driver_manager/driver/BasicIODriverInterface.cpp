@@ -8,7 +8,7 @@
 #include <chaos/cu_toolkit/driver_manager/driver/BasicIODriverInterface.h>
 
 
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 
 
 using namespace chaos::cu::driver_manager::driver;

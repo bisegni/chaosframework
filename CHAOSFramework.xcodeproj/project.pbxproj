@@ -390,6 +390,10 @@
 		3270E0701C6CBBE600105726 /* SubmitEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3270E06E1C6CBBE600105726 /* SubmitEntry.cpp */; };
 		3270E0731C6CBFDE00105726 /* LoggingDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3270E0711C6CBFDE00105726 /* LoggingDataAccess.cpp */; };
 		3270E0761C6CC05100105726 /* MongoDBLoggingDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3270E0741C6CC05100105726 /* MongoDBLoggingDataAccess.cpp */; };
+		3270E0791C6DECA000105726 /* MetadataLoggingCException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3270E0771C6DECA000105726 /* MetadataLoggingCException.cpp */; };
+		3270E07A1C6DECA000105726 /* MetadataLoggingCException.h in Headers */ = {isa = PBXBuildFile; fileRef = 3270E0781C6DECA000105726 /* MetadataLoggingCException.h */; };
+		3270E07E1C6DF19D00105726 /* metadata_logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 3270E07C1C6DF19D00105726 /* metadata_logging.h */; };
+		3270E0821C6DF44F00105726 /* exception.h in Headers */ = {isa = PBXBuildFile; fileRef = 3270E0801C6DF44F00105726 /* exception.h */; };
 		3271063519A6157800946A8B /* VFSDataFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063319A6157800946A8B /* VFSDataFile.cpp */; };
 		3271063819A6188000946A8B /* VFSDataWriteableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */; };
 		3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3272152218B006BC005AC8FD /* CacheDriver.cpp */; };
@@ -1461,6 +1465,10 @@
 		3270E0721C6CBFDE00105726 /* LoggingDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingDataAccess.h; sourceTree = "<group>"; };
 		3270E0741C6CC05100105726 /* MongoDBLoggingDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBLoggingDataAccess.cpp; sourceTree = "<group>"; };
 		3270E0751C6CC05100105726 /* MongoDBLoggingDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBLoggingDataAccess.h; sourceTree = "<group>"; };
+		3270E0771C6DECA000105726 /* MetadataLoggingCException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetadataLoggingCException.cpp; sourceTree = "<group>"; };
+		3270E0781C6DECA000105726 /* MetadataLoggingCException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetadataLoggingCException.h; sourceTree = "<group>"; };
+		3270E07C1C6DF19D00105726 /* metadata_logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metadata_logging.h; sourceTree = "<group>"; };
+		3270E0801C6DF44F00105726 /* exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exception.h; sourceTree = "<group>"; };
 		3271063319A6157800946A8B /* VFSDataFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSDataFile.cpp; sourceTree = "<group>"; };
 		3271063419A6157800946A8B /* VFSDataFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSDataFile.h; sourceTree = "<group>"; };
 		3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSDataWriteableFile.cpp; sourceTree = "<group>"; };
@@ -3055,6 +3063,9 @@
 			isa = PBXGroup;
 			children = (
 				326DB3FD14B38BC00018A8D0 /* CException.h */,
+				3270E0771C6DECA000105726 /* MetadataLoggingCException.cpp */,
+				3270E0781C6DECA000105726 /* MetadataLoggingCException.h */,
+				3270E0801C6DF44F00105726 /* exception.h */,
 			);
 			path = exception;
 			sourceTree = "<group>";
@@ -4024,6 +4035,7 @@
 				32B5C9531C6B8FDC0021159C /* AbstractMetadataLogChannel.h */,
 				32B5C9561C6B97590021159C /* ErrorLoggingChannel.cpp */,
 				32B5C9571C6B97590021159C /* ErrorLoggingChannel.h */,
+				3270E07C1C6DF19D00105726 /* metadata_logging.h */,
 			);
 			path = metadata_logging;
 			sourceTree = "<group>";
@@ -4202,6 +4214,7 @@
 				326DB49214B38BC00018A8D0 /* ObjectFactoryRegister.h in Headers */,
 				326DB49314B38BC00018A8D0 /* Singleton.h in Headers */,
 				324A4B4C191A41EF00975394 /* bits.h in Headers */,
+				3270E0821C6DF44F00105726 /* exception.h in Headers */,
 				326DB49514B38BC00018A8D0 /* TimingUtil.h in Headers */,
 				326DB49614B38BC00018A8D0 /* UUIDUtil.h in Headers */,
 				32D72CAB197D196D00512B89 /* WorkUnitManagement.h in Headers */,
@@ -4249,6 +4262,7 @@
 				328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */,
 				327967D615E029C70003C6DA /* AsioImplEventServer.h in Headers */,
 				327967DA15E030C40003C6DA /* AsioEventHandler.h in Headers */,
+				3270E07E1C6DF19D00105726 /* metadata_logging.h in Headers */,
 				324A4B7A191A428500975394 /* checksum.h in Headers */,
 				3272FE1715E1053100B096FB /* EventForwarder.h in Headers */,
 				32DF603815E14C7700312C94 /* NamedService.h in Headers */,
@@ -4259,6 +4273,7 @@
 				324A4B2B191A405700975394 /* damage_vector.h in Headers */,
 				32B1378F189BEC4100B17CA4 /* ZMQDirectIOServer.h in Headers */,
 				32DF604815E1505F00312C94 /* CustomEventDescriptor.h in Headers */,
+				3270E07A1C6DECA000105726 /* MetadataLoggingCException.h in Headers */,
 				32DD884F15E2663B000AF740 /* DefaultEventDispatcher.h in Headers */,
 				32DD885415E2681F000AF740 /* EventHandler.h in Headers */,
 				32963A221AC08F7200FA72FA /* MultiAddressMessageChannel.h in Headers */,
@@ -5104,6 +5119,7 @@
 				32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */,
 				329603221876B45000CDCADA /* BatchCommand.cpp in Sources */,
 				32A91FCA1A49AF0700DCF364 /* RpcSyncServer.cpp in Sources */,
+				3270E0791C6DECA000105726 /* MetadataLoggingCException.cpp in Sources */,
 				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
 				3251B5131A768A9E00EF3F82 /* HashMapTest.cpp in Sources */,
 				32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */,

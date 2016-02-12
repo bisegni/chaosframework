@@ -25,7 +25,7 @@
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/InetUtility.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
 
 #include <map>

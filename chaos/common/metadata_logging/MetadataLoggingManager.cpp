@@ -21,8 +21,8 @@
 
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-#include <chaos/common/metadata_logging/MetadataLoggingManager.h>
 #include <chaos/common/metadata_logging/ErrorLoggingChannel.h>
+#include <chaos/common/metadata_logging/MetadataLoggingManager.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -34,9 +34,8 @@ using namespace chaos::common::metadata_logging;
 #define MLM_DBG     DBG_LOG(MetadataLoggingManager)
 #define MLM_ERR     ERR_LOG(MetadataLoggingManager)
 
-MetadataLoggingManager::MetadataLoggingManager() {
-    message_channel = chaos::common::network::NetworkBroker::getInstance()->getRawMultiAddressMessageChannel(GlobalConfiguration::getInstance()->getMetadataServerAddressList());
-    CHAOS_ASSERT(message_channel);
+MetadataLoggingManager::MetadataLoggingManager():
+message_channel(NULL){
     
     //add default channels
     registerChannel("ErrorLoggingChannel",
@@ -46,6 +45,14 @@ MetadataLoggingManager::MetadataLoggingManager() {
 MetadataLoggingManager::~MetadataLoggingManager() {}
 
 void MetadataLoggingManager::init(void *init_data) throw(chaos::CException) {
+    if(GlobalConfiguration::getInstance()->getMetadataServerAddressList().size() > 0) {
+        message_channel = chaos::common::network::NetworkBroker::getInstance()->getRawMultiAddressMessageChannel(GlobalConfiguration::getInstance()->getMetadataServerAddressList());
+        if(message_channel) {
+            MLM_INFO << "We have got a message channel so we can forward the log";
+        } else {
+            MLM_ERR << "We have had error opening a message channel so all log will be stored locally[in future release]";
+        }
+    }
     CObjectProcessingPriorityQueue<CDataWrapper>::init(1);
 }
 
@@ -66,10 +73,8 @@ void MetadataLoggingManager::deinit() throw(chaos::CException) {
     MLM_INFO << "All channel has been removed";
     map_instance.clear();
     map_instancer.clear();
-}
-
-MultiAddressMessageChannel *MetadataLoggingManager::getMessageChannelInstance() {
-    return message_channel;
+    
+    if(message_channel == NULL){chaos::common::network::NetworkBroker::getInstance()->disposeMessageChannel(message_channel);}
 }
 
 void MetadataLoggingManager::registerChannel(const std::string& channel_alias,
@@ -99,27 +104,37 @@ void MetadataLoggingManager::releaseChannel(AbstractMetadataLogChannel *channel_
     map_instance.erase(channel_instance->getInstanceUUID());
     MLM_INFO << "Release channel instance " << channel_instance->getInstanceUUID();
     delete(channel_instance);
-
 }
 
 void MetadataLoggingManager::processBufferElement(CDataWrapper *log_entry,
                                                   ElementManagingPolicy& element_policy) throw(CException) {
     int err = 0;
     DEBUG_CODE(MLM_DBG << "forwarding log entry " << log_entry->getJSONString());
-    if((err = sendLogEntry(log_entry))) {
-        MLM_ERR << "Error forwarding log entry with code:" << err;
-        //log entry need to be resubmitted or stored on disk (in future version)
-        delete(log_entry);
+    
+    //detach the entry from the queue
+    element_policy.elementHasBeenDetached = true;
+    
+    if(message_channel) {
+        if((err = sendLogEntry(log_entry))) {
+            MLM_ERR << "Error forwarding log entry with code:" << err;
+            //log entry need to be resubmitted or stored on disk (in future version)
+            delete(log_entry);
+        } else {
+            //log entry has been submitted
+            MLM_DBG << "Successfully submited log entry";
+        }
     } else {
-        //log entry has been submitted
+        //no message channel available so we need to store the log
+        MLM_DBG << "No channel for submitting log entry";
+        delete(log_entry);
     }
 }
 
 int MetadataLoggingManager::sendLogEntry(chaos::common::data::CDataWrapper *log_entry) {
     int err = 0;
     //send message to mds and wait for ack
-    std::auto_ptr<MultiAddressMessageRequestFuture> log_future = message_channel->sendRequestWithFuture(MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
-                                                                                                        MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOGGING_SUBMIT_ENTRY,
+    std::auto_ptr<MultiAddressMessageRequestFuture> log_future = message_channel->sendRequestWithFuture(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
+                                                                                                        MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_SUBMIT_ENTRY,
                                                                                                         log_entry,
                                                                                                         2000);
     //wait for ack

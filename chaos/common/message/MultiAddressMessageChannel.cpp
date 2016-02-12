@@ -109,12 +109,16 @@ void* MultiAddressMessageChannel::serviceForURL(const URL& url,
 
 bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
     bool result = false;
+    int retry = 3;
     MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);
     std::auto_ptr<MessageRequestFuture> request = MessageChannel::echoTest(service->ip_port,
                                                                            NULL,
                                                                            true);
-    if(request->wait(500)) {
-        result = (request->getError() == 0);
+    while(--retry>0) {
+        if(request->wait(500)) {
+            retry = 0;
+            result = (request->getError() == 0);
+        }
     }
     return result;
 }

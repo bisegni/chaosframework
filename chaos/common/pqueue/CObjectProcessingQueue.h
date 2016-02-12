@@ -21,7 +21,7 @@
 #define CObjectProcessingQueue_H
 
 #include <chaos/common/pqueue/CObjectProcessingQueueListener.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
 

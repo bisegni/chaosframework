@@ -29,6 +29,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::exception;
 using namespace chaos::common::data::cache;
 
 using namespace chaos::cu;
@@ -176,7 +177,7 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
 		if(startAction) {
 			if(scheduler_thread.get() && scheduler_run){
 				RTCULAPP_ << "thread already running";
-				throw CException(-5, "Thread for device already running", "RTAbstractControlUnit::threadStartStopManagment");
+				throw MetadataLoggingCException(getCUID(), -5, "Thread for device already running", "RTAbstractControlUnit::threadStartStopManagment");
 			}
 			scheduler_run = true;
 			scheduler_thread.reset(new boost::thread(boost::bind(&RTAbstractControlUnit::executeOnThread, this)));
@@ -203,7 +204,7 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
 		} else {
 			if(!scheduler_run){
 				RTCULAPP_ << "thread already runnign";
-				throw CException(-5, "Thread for device already running", "RTAbstractControlUnit::threadStartStopManagment");
+				throw MetadataLoggingCException(getCUID(), -5, "Thread for device already running", "RTAbstractControlUnit::threadStartStopManagment");
 			}
 			RTCULAPP_ << "Stopping and joining scheduling thread";
 			scheduler_run = false;
@@ -212,7 +213,7 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
 		}
 	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::thread_resource_error> >& exc) {
 		RTCULERR_ << exc.what();
-		throw CException(-1, exc.what(), std::string(__PRETTY_FUNCTION__));
+		throw MetadataLoggingCException(getCUID(), -1, exc.what(), std::string(__PRETTY_FUNCTION__));
 	}
 }
 

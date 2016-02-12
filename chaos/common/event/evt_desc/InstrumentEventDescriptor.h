@@ -26,7 +26,7 @@
 #define __CHAOSFramework__InstrumentEventDescriptor__
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 
 #define EVT_INSTRUMENT_DEFAULT_PRIORITY    31
 

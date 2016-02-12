@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__EventClient__
 #define __CHAOSFramework__EventClient__
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/event/EventForwarder.h>

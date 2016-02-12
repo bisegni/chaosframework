@@ -117,9 +117,6 @@ boost::shared_ptr<CDataWrapper> CommandTemplateSubmit::getCommandDescription(Nod
     bool presence = false;
     CDataWrapper *tmp_d_ptr = NULL;
     boost::shared_ptr<CDataWrapper> result;
-    if(command_description_cache.count(command_unique_id)) {
-        return command_description_cache[command_unique_id];
-    }
     
     //we need to load the command
     if((err = n_da->checkCommandPresence(command_unique_id,
@@ -134,7 +131,7 @@ boost::shared_ptr<CDataWrapper> CommandTemplateSubmit::getCommandDescription(Nod
        (tmp_d_ptr == NULL)) {
         LOG_AND_TROW_FORMATTED(N_CTS_ERR, err, "Error loading the command '%1%'", %command_unique_id)
     }
-    command_description_cache.insert(make_pair(command_unique_id, result = boost::shared_ptr<CDataWrapper>(tmp_d_ptr)));
+    result.reset(tmp_d_ptr);
     return result;
 }
 
@@ -145,12 +142,6 @@ boost::shared_ptr<CDataWrapper> CommandTemplateSubmit::getCommandTemaplateDescri
     bool presence = false;
     CDataWrapper *tmp_d_ptr = NULL;
     boost::shared_ptr<CDataWrapper> result;
-    TemplateKey template_key(template_name,
-                             command_unique_id);
-    
-    if(template_description_cache.count(template_key)) {
-        return template_description_cache[template_key];
-    }
     
     //we need to load the template
     if((err = n_da->checkCommandTemplatePresence(template_name,
@@ -167,6 +158,6 @@ boost::shared_ptr<CDataWrapper> CommandTemplateSubmit::getCommandTemaplateDescri
        (tmp_d_ptr == NULL)){
         LOG_AND_TROW_FORMATTED(N_CTS_ERR, err, "Error loading the command template %1%(%2%)", %template_name%command_unique_id)
     }
-    template_description_cache.insert(make_pair(template_key, result = boost::shared_ptr<CDataWrapper>(tmp_d_ptr)));
+    result.reset(tmp_d_ptr);
     return result;
 }

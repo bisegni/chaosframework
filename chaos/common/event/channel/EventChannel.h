@@ -24,7 +24,7 @@
 #include <string>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 #include <chaos/common/action/EventAction.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 
 namespace chaos {
 

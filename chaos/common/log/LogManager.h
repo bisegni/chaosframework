@@ -22,7 +22,7 @@
 #define __CHAOSFramework__LogManager__
 
 #include <iostream>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 namespace chaos {
     template<class T>
     class ChaosCommon;

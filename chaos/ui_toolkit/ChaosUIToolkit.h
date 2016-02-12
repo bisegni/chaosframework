@@ -21,7 +21,7 @@
 #define ChaosFramework_ChaosUIToolkit_h
 
 #include <chaos/common/global.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/ChaosCommon.h>

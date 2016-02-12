@@ -26,7 +26,7 @@
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/Singleton.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/StartableService.h>
 
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>

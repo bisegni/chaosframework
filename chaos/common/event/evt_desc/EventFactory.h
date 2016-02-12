@@ -22,7 +22,7 @@
 #define __CHAOSFramework__EventFactory__
 
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 
 namespace chaos {
     namespace event{

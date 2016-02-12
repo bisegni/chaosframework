@@ -21,6 +21,7 @@
 
 #include "ErrorLoggingChannel.h"
 
+using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::metadata_logging;
 
@@ -46,6 +47,9 @@ int ErrorLoggingChannel::logError(const std::string& node_uid,
                                   const std::string& error_message,
                                   const std::string& error_domain) {
     CDataWrapper *log_entry = getNewLogEntry(node_uid, "error");
+    log_entry->addInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE, error_code);
+    log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE, error_message);
+    log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN, error_domain);
     return sendLog(log_entry,
                     true);
 }

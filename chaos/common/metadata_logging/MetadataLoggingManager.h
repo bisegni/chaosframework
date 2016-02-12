@@ -83,8 +83,6 @@ namespace chaos {
                 void init(void *init_data) throw(chaos::CException);
                 void deinit() throw(chaos::CException);
                 
-                chaos::common::message::MultiAddressMessageChannel *getMessageChannelInstance();
-                
                 void registerChannel(const std::string& channel_alias,
                                      chaos::common::utility::ObjectInstancer<AbstractMetadataLogChannel> *instancer);
                 
