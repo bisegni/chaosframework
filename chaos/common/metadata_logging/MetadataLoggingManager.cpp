@@ -27,6 +27,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::pqueue;
+using namespace chaos::common::network;
 using namespace chaos::common::message;
 using namespace chaos::common::metadata_logging;
 
@@ -35,8 +36,7 @@ using namespace chaos::common::metadata_logging;
 #define MLM_ERR     ERR_LOG(MetadataLoggingManager)
 
 MetadataLoggingManager::MetadataLoggingManager():
-message_channel(NULL){
-    
+message_channel(NULL) {
     //add default channels
     registerChannel("ErrorLoggingChannel",
                     METADATA_LOGGING_ERROR_LOGGING_CHANNEL_INSTANCER);
@@ -46,13 +46,14 @@ MetadataLoggingManager::~MetadataLoggingManager() {}
 
 void MetadataLoggingManager::init(void *init_data) throw(chaos::CException) {
     if(GlobalConfiguration::getInstance()->getMetadataServerAddressList().size() > 0) {
-        message_channel = chaos::common::network::NetworkBroker::getInstance()->getRawMultiAddressMessageChannel(GlobalConfiguration::getInstance()->getMetadataServerAddressList());
+        message_channel = NetworkBroker::getInstance()->getRawMultiAddressMessageChannel(GlobalConfiguration::getInstance()->getMetadataServerAddressList());
         if(message_channel) {
             MLM_INFO << "We have got a message channel so we can forward the log";
         } else {
             MLM_ERR << "We have had error opening a message channel so all log will be stored locally[in future release]";
         }
     }
+
     CObjectProcessingPriorityQueue<CDataWrapper>::init(1);
 }
 
@@ -74,7 +75,7 @@ void MetadataLoggingManager::deinit() throw(chaos::CException) {
     map_instance.clear();
     map_instancer.clear();
     
-    if(message_channel == NULL){chaos::common::network::NetworkBroker::getInstance()->disposeMessageChannel(message_channel);}
+    if(message_channel != NULL){NetworkBroker::getInstance()->disposeMessageChannel(message_channel); message_channel = NULL;}
 }
 
 void MetadataLoggingManager::registerChannel(const std::string& channel_alias,

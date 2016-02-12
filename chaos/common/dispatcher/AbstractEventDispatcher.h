@@ -27,7 +27,7 @@
 #include <chaos/common/action/EventAction.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 
-using namespace chaos::event;
+using namespace chaos::common::event;
 using namespace chaos::common::utility;
 
 namespace chaos {
@@ -47,7 +47,7 @@ namespace chaos {
     class AbstractEventDispatcher:
 	public common::utility::StartableService,
 	public common::utility::NamedService,
-	public event::EventHandler {
+    public common::event::EventHandler {
         friend class chaos::common::network::NetworkBroker;
 
     public:

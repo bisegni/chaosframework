@@ -23,7 +23,7 @@
 #include <chaos/common/dispatcher/EventTypeScheduler.h>
 
 using namespace chaos;
-using namespace chaos::event;
+using namespace chaos::common::event;
 
 #define EVTDISPAPP_ LAPP_ << "[DefaultEventDispatcher] - "
 DEFINE_CLASS_FACTORY(DefaultEventDispatcher, AbstractEventDispatcher);
@@ -83,11 +83,11 @@ void DefaultEventDispatcher::registerEventAction(EventAction *eventAction, Event
     if(!eventAction) throw new CException(0, "The action pointer is null", "DefaultEventDispatcher::registerEventActionForEventType");
     
     switch (eventType) {
-        case event::EventTypeAlert:
+        case common::event::EventTypeAlert:
             alertEventScheduler->installEventAction(eventAction);
             break;
             
-        case event::EventTypeInstrument:
+        case common::event::EventTypeInstrument:
             instrumentEventScheduler->installEventAction(eventAction);
             break;
         default:

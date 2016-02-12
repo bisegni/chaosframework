@@ -24,7 +24,7 @@
 
 using namespace chaos;
 using namespace boost;
-
+using namespace chaos::common::event;
 EventTypeScheduler::EventTypeScheduler():armed(false){
 }
 
@@ -38,7 +38,7 @@ EventTypeScheduler::~EventTypeScheduler() {
 void EventTypeScheduler::init(int threadNumber) throw(CException) {
     DESLAPP_ << "Initializing";
     boost::mutex::scoped_lock lockAction(eventSchedulerMutext);
-    CObjectProcessingPriorityQueue<event::EventDescriptor>::init(threadNumber);
+    CObjectProcessingPriorityQueue<EventDescriptor>::init(threadNumber);
     armed = true;
 }
 
@@ -50,18 +50,18 @@ void EventTypeScheduler::deinit() throw(CException) {
     boost::mutex::scoped_lock lockAction(eventSchedulerMutext);
     armed = false;
     lockAction.unlock();
-    CObjectProcessingPriorityQueue<event::EventDescriptor>::clear();
-    CObjectProcessingPriorityQueue<event::EventDescriptor>::deinit();
+    CObjectProcessingPriorityQueue<EventDescriptor>::clear();
+    CObjectProcessingPriorityQueue<EventDescriptor>::deinit();
 
 }
 
 /*
  override the push method for ObjectProcessingQueue<CDataWrapper> superclass
  */
-bool EventTypeScheduler::push(event::EventDescriptor *event) throw(CException) {
+bool EventTypeScheduler::push(EventDescriptor *event) throw(CException) {
     boost::mutex::scoped_lock lockAction(eventSchedulerMutext);
     if(!armed) throw CException(0, "Event can't be processed, scheduler is not armed", "EventTypeScheduler::push");
-    return CObjectProcessingPriorityQueue<event::EventDescriptor>::push(event, event->getEventPriority());
+    return CObjectProcessingPriorityQueue<EventDescriptor>::push(event, event->getEventPriority());
 }
 
 void EventTypeScheduler::installEventAction(EventAction *eventAction) {
@@ -88,7 +88,7 @@ void EventTypeScheduler::removeEventAction(EventAction *eventAction) {
 /*
  process the element action to be executed
  */
-void EventTypeScheduler::processBufferElement(event::EventDescriptor *eventDescription, ElementManagingPolicy& elementPolicy) throw(CException) {
+void EventTypeScheduler::processBufferElement(EventDescriptor *eventDescription, ElementManagingPolicy& elementPolicy) throw(CException) {
     boost::mutex::scoped_lock lockAction(eventSchedulerMutext);
     for ( map<string, EventAction*>::iterator iter =  eventActionList.begin();
          iter != eventActionList.end();

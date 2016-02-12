@@ -22,8 +22,9 @@
 #include <chaos/common/event/channel/AlertEventChannel.h>
 
 using namespace chaos;
-using namespace chaos::event;
-using namespace chaos::event::channel;
+using namespace chaos::common::event;
+using namespace chaos::common::network;
+using namespace chaos::common::event::channel;
 
     //-----------------------------------------------------
 AlertEventChannel::AlertEventChannel(NetworkBroker *rootBroker):EventChannel(rootBroker) {
@@ -35,7 +36,7 @@ AlertEventChannel::~AlertEventChannel() {
     
 }
 
-void AlertEventChannel::handleEvent(const event::EventDescriptor * const event) {
+void AlertEventChannel::handleEvent(const EventDescriptor * const event) {
     LAPP_ << "AlertEventChannel::handleEvent";
 }
 
@@ -45,8 +46,18 @@ void AlertEventChannel::activateChannelEventReception() {
     EventChannel::activateChannelEventReception(EventTypeAlert);
 }
     //-----------------------------------------------------
-int AlertEventChannel::sendEvent(const char * const identificationString, uint16_t subCode, uint16_t priority, EventDataType typeOfData, const void *valuePtr, uint16_t valueSize) {
+int AlertEventChannel::sendEvent(const std::string& identification,
+                                 uint16_t sub_code,
+                                 uint16_t priority,
+                                 EventDataType type_of_data,
+                                 const void *value_ptr,
+                                 uint16_t value_size) {
     alert::AlertEventDescriptor *aed = new alert::AlertEventDescriptor();
-    aed->setAlert(identificationString, std::strlen(identificationString), subCode, priority, typeOfData, valuePtr, valueSize);
+    aed->setAlert(identification,
+                  sub_code,
+                  priority,
+                  type_of_data,
+                  value_ptr,
+                  value_size);
     return EventChannel::sendRawEvent(aed);
 }

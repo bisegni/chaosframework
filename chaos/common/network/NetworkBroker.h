@@ -31,8 +31,7 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/action/EventAction.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
-#include <chaos/common/event/channel/EventChannel.h>
-#include <chaos/common/event/evt_desc/EventDescriptor.h>
+#include <chaos/common/event/event.h>
 #include <chaos/common/network/NetworkForwardInfo.h>
 #include <chaos/common/network/PerformanceManagment.h>
 #include <chaos/common/utility/StartableService.h>
@@ -45,18 +44,17 @@ namespace chaos {
 	//forward declaration
 	class AbstractCommandDispatcher;
 	class AbstractEventDispatcher;
-	
-	namespace event {
-		namespace channel {
-			class AlertEventChannel;
-			class InstrumentEventChannel;
-		}
-		class EventServer;
-		class EventClient;
-	}
 
 	namespace common {
-
+        namespace event {
+            namespace channel {
+                class AlertEventChannel;
+                class InstrumentEventChannel;
+            }
+            class EventServer;
+            class EventClient;
+        }
+        
 		namespace message {
 			class MessageChannel;
 			class NodeMessageChannel;
@@ -113,10 +111,10 @@ namespace chaos {
                 chaos::common::direct_io::DirectIOClient *direct_io_client;
                 
 				//!Event Client for event forwarding
-				chaos::event::EventClient *event_client;
+				event::EventClient *event_client;
 				
 				//!Event server for event handlind
-                chaos::event::EventServer *event_server;
+                chaos::common::event::EventServer *event_server;
 				
 				//! Rpc client for message forwarding
                 chaos::RpcClient *rpc_client;
@@ -139,7 +137,7 @@ namespace chaos {
 				boost::mutex mutex_map_rpc_channel_acces;
 				
 				//!keep track of active channel
-                map<std::string, chaos::event::channel::EventChannel*> active_event_channel;
+                map<std::string, chaos::common::event::channel::EventChannel*> active_event_channel;
 				
 				//!Mutex for event channel managment
 				boost::mutex muext_map_event_channel_access;
@@ -225,7 +223,7 @@ namespace chaos {
 				 \param eventType a type for the event for which the user want to register
 				 */
                 void registerEventAction(EventAction *eventAction,
-                                         chaos::event::EventType eventType,
+                                         chaos::common::event::EventType eventType,
                                          const char * const identification = NULL);
 				
 				//!Event Action deregistration
@@ -240,19 +238,19 @@ namespace chaos {
 				 \param eventType is one of the value listent in EventType enum that specify the
 				 type of the eventfor wich we want a channel
 				 */
-				chaos::event::channel::EventChannel *getNewEventChannelFromType(chaos::event::EventType  eventType);
+				chaos::common::event::channel::EventChannel *getNewEventChannelFromType(chaos::common::event::EventType  eventType);
 				
 				//! Alert Event Creation
-				chaos::event::channel::AlertEventChannel *getNewAlertEventChannel();
+				chaos::common::event::channel::AlertEventChannel *getNewAlertEventChannel();
 				
 				//! Instrument Event Creation
-				chaos::event::channel::InstrumentEventChannel *getNewInstrumentEventChannel();
+				chaos::common::event::channel::InstrumentEventChannel *getNewInstrumentEventChannel();
 				
 				//!Event channel deallocation
 				/*!
 				 Perform the event channel deallocation
 				 */
-				void disposeEventChannel(chaos::event::channel::EventChannel *eventChannelToDispose);
+				void disposeEventChannel(chaos::common::event::channel::EventChannel *eventChannelToDispose);
 				
 				
 				//! event submission
@@ -260,7 +258,7 @@ namespace chaos {
 				 Submit an event
 				 \param event the new evento to submit
 				 */
-				bool submitEvent(chaos::event::EventDescriptor *event);
+				bool submitEvent(chaos::common::event::EventDescriptor *event);
 				
 				//! Action registration for the current isntance of NetworkBroker
 				/*!

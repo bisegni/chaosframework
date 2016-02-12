@@ -32,53 +32,55 @@
 #include <boost/shared_ptr.hpp>
 
 namespace chaos {
-    namespace event{
-        using namespace std;
-        using namespace boost;
-        
-        class AsioEventForwarder;
-        
-        DECLARE_CLASS_FACTORY(AsioImplEventClient, EventClient) {
-        protected:
-            /*
-             init the event adapter
-             */
-            void init(void*) throw(CException);
+    namespace common {
+        namespace event{
+            using namespace std;
+            using namespace boost;
             
-            /*
-             start the event adapter
-             */
-            void start() throw(CException);
+            class AsioEventForwarder;
             
-            //-----------------------
-            void stop() throw(CException);
-            
-            /*
-             deinit the event adapter
-             */
-            void deinit() throw(CException);
-
-        public:
-            AsioImplEventClient(string alias);
-            ~AsioImplEventClient();
-            bool submitEvent(EventDescriptor *event)  throw(CException);
-        private:
+            DECLARE_CLASS_FACTORY(AsioImplEventClient, EventClient) {
+            protected:
+                /*
+                 init the event adapter
+                 */
+                void init(void*) throw(CException);
+                
+                /*
+                 start the event adapter
+                 */
+                void start() throw(CException);
+                
+                //-----------------------
+                void stop() throw(CException);
+                
+                /*
+                 deinit the event adapter
+                 */
+                void deinit() throw(CException);
+                
+            public:
+                AsioImplEventClient(string alias);
+                ~AsioImplEventClient();
+                bool submitEvent(EventDescriptor *event)  throw(CException);
+            private:
                 //! Allert forwarder
-            AsioEventForwarder *alertForwarder;
-           
-            //! Instrument forwarder
-            AsioEventForwarder *instrumentForwarder;
-            
-            //! Command forwarder
-            AsioEventForwarder *commandForwarder;
-            
-            //! Custom forwarder
-            AsioEventForwarder *customForwarder;
-            
-            boost::asio::io_service io_service;
-			boost::thread_group	service_thread_group;
-            //vector< boost::shared_ptr<boost::thread> > serviceThread;
-        };
+                AsioEventForwarder *alertForwarder;
+                
+                //! Instrument forwarder
+                AsioEventForwarder *instrumentForwarder;
+                
+                //! Command forwarder
+                AsioEventForwarder *commandForwarder;
+                
+                //! Custom forwarder
+                AsioEventForwarder *customForwarder;
+                
+                boost::asio::io_service io_service;
+                boost::thread_group	service_thread_group;
+                //vector< boost::shared_ptr<boost::thread> > serviceThread;
+            };
+        }
     }
 }
 

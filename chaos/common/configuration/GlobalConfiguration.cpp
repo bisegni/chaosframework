@@ -299,7 +299,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(event_disable, InitOption::OPT_EVENT_DISABLE)
     configuration.addBoolValue(InitOption::OPT_EVENT_DISABLE, event_disable);
     
-    configuration.addStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
+    configuration.addStringValue(chaos::common::event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
     
     //configure metadataserver as single or list
     CHECK_AND_DEFINE_OPTION(std::vector<std::string>, metadata_server_address_list, InitOption::OPT_METADATASERVER_ADDRESS)

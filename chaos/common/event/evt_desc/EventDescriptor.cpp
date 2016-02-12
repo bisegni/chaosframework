@@ -22,7 +22,7 @@
 #include <chaos/common/utility/endianess.h>
 
 using namespace chaos;
-using namespace chaos::event;
+using namespace chaos::common::event;
 using namespace chaos::common::utility;
 
 #define EVENT_CURRENT_VERSION 0
@@ -153,24 +153,28 @@ uint8_t EventDescriptor::getIdentificationlength() {
     return *((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET));
 }
 
-uint16_t EventDescriptor::setSenderIdentification(const char * const identification, uint8_t identificationLength) {
-    *((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET)) = identificationLength;
-    if(identificationLength > 0 && identification){
+uint16_t EventDescriptor::setSenderIdentification(const std::string& identification) {
+    *((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET)) = identification.size();
+    if(identification.size() > 0){
             //write the identifier
-        memcpy((void*)(eventData + EVT_IDENTIFICATION_VALUE_INFO_OFFSET), identification, identificationLength);
+        memcpy((void*)(eventData + EVT_IDENTIFICATION_VALUE_INFO_OFFSET),
+               identification.c_str(),
+               identification.size());
     }
-    return identificationLength;
+    return identification.size();
 }
 
 
-const char * const EventDescriptor::getIdentification() {
-    if(!*((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET))) return NULL;
-    return (const char *)(eventData + EVT_IDENTIFICATION_VALUE_INFO_OFFSET);
+std::string EventDescriptor::getIdentification() {
+    if(!*((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET))) return std::string();
+    return std::string((const char *)(eventData + EVT_IDENTIFICATION_VALUE_INFO_OFFSET));
 }
 
-void EventDescriptor::setIdentificationAndValueWithType(const char * identification, uint8_t identificationLength, EventDataType valueType, const void *valuePtr, uint16_t valueSize) {
+void EventDescriptor::setIdentificationAndValueWithType(const std::string& identification,
+                                                        EventDataType valueType,
+                                                        const void *valuePtr, uint16_t valueSize) {
     uint16_t dataDim = 0;
-    uint16_t indetificationSize = setSenderIdentification(identification, identificationLength);
+    uint16_t indetificationSize = setSenderIdentification(identification);
 
     
     *((uint8_t*)(eventData + EVT_IDENTIFICATION_VALUE_INFO_OFFSET + indetificationSize)) = (uint8_t)valueType;

@@ -25,8 +25,8 @@
 using namespace std;
 using namespace chaos;
 using namespace chaos::common::utility;
-using namespace chaos::event;
-using namespace chaos::event::channel;
+using namespace chaos::common::event;
+using namespace chaos::common::event::channel;
 
 EventChannel::EventChannel(NetworkBroker *rootBroker) {
     channelID = UUIDUtil::generateUUIDLite();

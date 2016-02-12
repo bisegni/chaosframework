@@ -17,22 +17,19 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/global.h>
 #include <boost/lexical_cast.hpp>
-#include <chaos/common/utility/ObjectFactoryRegister.h>
-#include <chaos/common/message/DeviceMessageChannel.h>
-#include <chaos/common/message/MDSMessageChannel.h>
-#include <chaos/common/message/MessageChannel.h>
-#include <chaos/common/message/MultiAddressMessageChannel.h>
-#include <chaos/common/message/PerformanceNodeChannel.h>
-#include <chaos/common/event/EventServer.h>
-#include <chaos/common/event/EventClient.h>
-#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
-#include <chaos/common/dispatcher/AbstractEventDispatcher.h>
-#include <chaos/common/event/channel/AlertEventChannel.h>
-#include <chaos/common/event/channel/InstrumentEventChannel.h>
+#include <chaos/common/event/event.h>
 #include <chaos/common/utility/InetUtility.h>
+#include <chaos/common/network/NetworkBroker.h>
+#include <chaos/common/message/MessageChannel.h>
+#include <chaos/common/message/MDSMessageChannel.h>
+#include <chaos/common/message/DeviceMessageChannel.h>
+#include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/message/PerformanceNodeChannel.h>
+#include <chaos/common/dispatcher/AbstractEventDispatcher.h>
+#include <chaos/common/message/MultiAddressMessageChannel.h>
+#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 //-----------for metric collection---------
 #include <chaos/common/rpc/RpcClientMetricCollector.h>
 #include <chaos/common/rpc/RpcServerMetricCollector.h>
@@ -43,7 +40,8 @@
 #define INIT_STEP   0
 #define DEINIT_STEP 1
 using namespace chaos;
-using namespace chaos::event;
+using namespace chaos::common::event;
+using namespace chaos::common::event::channel;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::network;
@@ -416,7 +414,7 @@ void NetworkBroker::deregisterEventAction(EventAction *eventAction) {
  \param eventType is one of the value listent in EventType enum that specify the
  type of the eventfor wich we want a channel
  */
-event::channel::EventChannel *NetworkBroker::getNewEventChannelFromType(event::EventType  event_type) {
+channel::EventChannel *NetworkBroker::getNewEventChannelFromType(event::EventType  event_type) {
     CHAOS_ASSERT(!GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
     event::channel::EventChannel *new_event_channel = NULL;
     switch (event_type) {
@@ -443,7 +441,7 @@ event::channel::EventChannel *NetworkBroker::getNewEventChannelFromType(event::E
  Performe the creation of device channel
  \param deviceNetworkAddress device node address
  */
-event::channel::AlertEventChannel *NetworkBroker::getNewAlertEventChannel() {
+AlertEventChannel *NetworkBroker::getNewAlertEventChannel() {
     CHAOS_ASSERT(!GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
     return static_cast<event::channel::AlertEventChannel*>(NetworkBroker::getNewEventChannelFromType(event::EventTypeAlert));
 }
@@ -453,7 +451,7 @@ event::channel::AlertEventChannel *NetworkBroker::getNewAlertEventChannel() {
  Performe the creation of device channel
  \param deviceNetworkAddress device node address
  */
-event::channel::InstrumentEventChannel *NetworkBroker::getNewInstrumentEventChannel() {
+InstrumentEventChannel *NetworkBroker::getNewInstrumentEventChannel() {
     CHAOS_ASSERT(!GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
     return static_cast<event::channel::InstrumentEventChannel*>(NetworkBroker::getNewEventChannelFromType(event::EventTypeInstrument));
 }

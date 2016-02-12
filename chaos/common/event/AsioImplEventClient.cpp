@@ -23,7 +23,7 @@
 #include <chaos/common/chaos_constants.h>
 
 using namespace chaos;
-using namespace chaos::event;
+using namespace chaos::common::event;
 
 DEFINE_CLASS_FACTORY(AsioImplEventClient, EventClient);
 AsioImplEventClient::AsioImplEventClient(string alias):EventClient(alias) {

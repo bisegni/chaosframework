@@ -137,9 +137,9 @@ namespace chaos {
              */
             void deleteMessageChannel(chaos::common::message::MDSMessageChannel*);
             
-            chaos::event::channel::AlertEventChannel *getNewAlertEventChannel() throw (CException);
-            chaos::event::channel::InstrumentEventChannel *getNewInstrumentEventChannel() throw (CException);
-            void disposeEventChannel(chaos::event::channel::EventChannel *) throw (CException);
+            chaos::common::event::channel::AlertEventChannel *getNewAlertEventChannel() throw (CException);
+            chaos::common::event::channel::InstrumentEventChannel *getNewInstrumentEventChannel() throw (CException);
+            void disposeEventChannel(chaos::common::event::channel::EventChannel *) throw (CException);
             
             SystemApiChannel *getSystemApiClientChannel(const std::string& direct_io_address);
             void releaseSystemApyChannel(SystemApiChannel *system_api_channel);

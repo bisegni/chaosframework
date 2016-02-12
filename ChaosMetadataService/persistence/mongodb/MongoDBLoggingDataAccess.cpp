@@ -58,6 +58,7 @@ int MongoDBLoggingDataAccess::insertNewEntry(data_access::LogEntry& log_entry) {
         }
         
         //add default log entry attribute
+        builder << "seq" << (long long)log_entry.sequence;
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << log_entry.source_identifier;
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP << (long long)log_entry.ts;
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << log_entry.domain;

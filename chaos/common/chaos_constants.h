@@ -320,7 +320,7 @@ namespace chaos {
     namespace ControlUnitHealtDefinitionValue {
         //!define the key that contains the rate of the output dataset pushes per second[double]
         static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_RATE  = "cuh_dso_prate";
-
+        
     }
     /** @} */ // end of NodeHealtDefinitionValue
     
@@ -648,7 +648,7 @@ namespace chaos {
             Output=1,
             //!define an attribute with two directions
             Bidirectional=2,
-                    
+            
             Undefined
         } DataSetAttributeIOAttribute;
     }
@@ -1022,32 +1022,33 @@ namespace chaos {
     }
     /** @} */ // end of PerformanceSystemRpcKey
     
-    
-    namespace event {
-        /** @defgroup EventConfiguration Chaos event constant for server
-         and cleint configuration
-         @{
-         */
-        //! Name space for grupping option used for commandline or in config file
-        namespace EventConfiguration {
-            //!  for choice the implementation
-            static const char * const   OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION     = "evt_adpt_impl";
-            //! @Configuraiton for alert event multicast ip
-            static const char * const   CONF_EVENT_ALERT_MADDRESS                   = "239.255.0.1";
-            //! @Configuraiton for instruments event multicast ip
-            static const char * const   CONF_EVENT_INSTRUMENT_MADDRESS              = "239.255.0.2";
-            //! @Configuraiton for command event multicast ip
-            static const char * const   CONF_EVENT_COMMAND_MADDRESS                 = "239.255.0.3";
-            //! @Configuraiton for custom event multicast ip
-            static const char * const   CONF_EVENT_CUSTOM_MADDRESS                  = "239.255.0.4";
-            //! @Configuraiton for event multicast ip port
-            static const unsigned short CONF_EVENT_PORT                             = 5000;
+    namespace common {
+        namespace event {
+            /** @defgroup EventConfiguration Chaos event constant for server
+             and cleint configuration
+             @{
+             */
+            //! Name space for grupping option used for commandline or in config file
+            namespace EventConfiguration {
+                //!  for choice the implementation
+                static const char * const   OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION     = "evt_adpt_impl";
+                //! @Configuraiton for alert event multicast ip
+                static const char * const   CONF_EVENT_ALERT_MADDRESS                   = "239.255.0.1";
+                //! @Configuraiton for instruments event multicast ip
+                static const char * const   CONF_EVENT_INSTRUMENT_MADDRESS              = "239.255.0.2";
+                //! @Configuraiton for command event multicast ip
+                static const char * const   CONF_EVENT_COMMAND_MADDRESS                 = "239.255.0.3";
+                //! @Configuraiton for custom event multicast ip
+                static const char * const   CONF_EVENT_CUSTOM_MADDRESS                  = "239.255.0.4";
+                //! @Configuraiton for event multicast ip port
+                static const unsigned short CONF_EVENT_PORT                             = 5000;
+            }
+            /** @} */ // end of EventConfiguration
         }
-        /** @} */ // end of EventConfiguration
     }
     
     /*
-     * separator to be used in node naming 
+     * separator to be used in node naming
      */
     static const char PATH_SEPARATOR                                                ='/';
 }

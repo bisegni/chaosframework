@@ -26,11 +26,11 @@
 #include <chaos/common/event/evt_desc/CustomEventDescriptor.h>
 
 using namespace chaos;
-using namespace chaos::event;
-using namespace chaos::event::alert;
-using namespace chaos::event::instrument;
-using namespace chaos::event::command;
-using namespace chaos::event::custom;
+using namespace chaos::common::event;
+using namespace chaos::common::event::alert;
+using namespace chaos::common::event::instrument;
+using namespace chaos::common::event::command;
+using namespace chaos::common::event::custom;
 using namespace chaos::common::utility;
 
 EventDescriptor *EventFactory::getEventInstance(const unsigned char * serializedEvent,  uint16_t length)  throw (CException) {

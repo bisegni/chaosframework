@@ -24,25 +24,25 @@
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 
 namespace chaos {
-    namespace event{
+    namespace common {
+        namespace event{
             //!Handle the rpc pack forwarding event
-        /*!
-         Abstract handler class for standard comunication between rpc client and server and other classes
-         */
-        class EventForwarder {
-        public:
-                //! method called when the rpc server receive a new data
             /*!
-             This method will be called by the implementation of RPCServer when a new data apck
-             will be received
-             @param newPack the new CDatawrapper instance pointer received by rpc server
-             @return a true value if the submitions to output queue has been done
+             Abstract handler class for standard comunication between rpc client and server and other classes
              */
+            class EventForwarder {
+            public:
+                //! method called when the rpc server receive a new data
+                /*!
+                 This method will be called by the implementation of RPCServer when a new data apck
+                 will be received
+                 @param newPack the new CDatawrapper instance pointer received by rpc server
+                 @return a true value if the submitions to output queue has been done
+                 */
                 //virtual CDataWrapper * newRpcPackHasArrived(CDataWrapper& newPack) throw(CException) = 0;
-            virtual bool submitEvent(EventDescriptor *event)  throw(CException) = 0;
-        };
+                virtual bool submitEvent(EventDescriptor *event)  throw(CException) = 0;
+            };
+        }
     }
 }
-
-
 #endif

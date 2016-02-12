@@ -38,7 +38,6 @@
 
 namespace chaos {
     //! forward decalration
-    
     namespace common {
         namespace metadata_logging {
             

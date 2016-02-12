@@ -267,7 +267,6 @@
 		325D2FE21AFB9C2100B2A706 /* ProcessBye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325D2FE01AFB9C2100B2A706 /* ProcessBye.cpp */; };
 		325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325DE9EF15EC031E00D6F34E /* EventChannel.cpp */; };
 		325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 325DE9F015EC031E00D6F34E /* EventChannel.h */; };
-		325DE9F615EC03F800D6F34E /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325DE9F415EC03F800D6F34E /* EventAction.h */; };
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
 		325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */; };
 		325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F8B501763AF2300EFE616 /* SlowCommand.h */; };
@@ -394,6 +393,7 @@
 		3270E07A1C6DECA000105726 /* MetadataLoggingCException.h in Headers */ = {isa = PBXBuildFile; fileRef = 3270E0781C6DECA000105726 /* MetadataLoggingCException.h */; };
 		3270E07E1C6DF19D00105726 /* metadata_logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 3270E07C1C6DF19D00105726 /* metadata_logging.h */; };
 		3270E0821C6DF44F00105726 /* exception.h in Headers */ = {isa = PBXBuildFile; fileRef = 3270E0801C6DF44F00105726 /* exception.h */; };
+		3270E0861C6E37A900105726 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 3270E0841C6E37A900105726 /* event.h */; };
 		3271063519A6157800946A8B /* VFSDataFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063319A6157800946A8B /* VFSDataFile.cpp */; };
 		3271063819A6188000946A8B /* VFSDataWriteableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */; };
 		3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3272152218B006BC005AC8FD /* CacheDriver.cpp */; };
@@ -1325,7 +1325,6 @@
 		325D2FE11AFB9C2100B2A706 /* ProcessBye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessBye.h; sourceTree = "<group>"; };
 		325DE9EF15EC031E00D6F34E /* EventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventChannel.cpp; sourceTree = "<group>"; };
 		325DE9F015EC031E00D6F34E /* EventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventChannel.h; sourceTree = "<group>"; };
-		325DE9F415EC03F800D6F34E /* EventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAction.h; sourceTree = "<group>"; };
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
 		325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlowCommand.cpp; sourceTree = "<group>"; };
 		325F8B501763AF2300EFE616 /* SlowCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SlowCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1469,6 +1468,7 @@
 		3270E0781C6DECA000105726 /* MetadataLoggingCException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetadataLoggingCException.h; sourceTree = "<group>"; };
 		3270E07C1C6DF19D00105726 /* metadata_logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metadata_logging.h; sourceTree = "<group>"; };
 		3270E0801C6DF44F00105726 /* exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exception.h; sourceTree = "<group>"; };
+		3270E0841C6E37A900105726 /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
 		3271063319A6157800946A8B /* VFSDataFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSDataFile.cpp; sourceTree = "<group>"; };
 		3271063419A6157800946A8B /* VFSDataFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSDataFile.h; sourceTree = "<group>"; };
 		3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSDataWriteableFile.cpp; sourceTree = "<group>"; };
@@ -2181,6 +2181,7 @@
 				3272FE1615E1053100B096FB /* EventForwarder.h */,
 				32DD885115E2681F000AF740 /* EventHandler.cpp */,
 				32DD885215E2681F000AF740 /* EventHandler.h */,
+				3270E0841C6E37A900105726 /* event.h */,
 			);
 			path = event;
 			sourceTree = "<group>";
@@ -2699,7 +2700,6 @@
 				32B89CA015F3D1E100B17AAA /* InstrumentEventChannel.h */,
 				325DE9EF15EC031E00D6F34E /* EventChannel.cpp */,
 				325DE9F015EC031E00D6F34E /* EventChannel.h */,
-				325DE9F415EC03F800D6F34E /* EventAction.h */,
 			);
 			path = channel;
 			sourceTree = "<group>";
@@ -4229,6 +4229,7 @@
 				324A4B53191A41EF00975394 /* process_id.h in Headers */,
 				32EFCD6718BDE3A400B5EB77 /* IODirectIODriver.h in Headers */,
 				32BFF90F176C842E00D27A04 /* InizializableService.h in Headers */,
+				3270E0861C6E37A900105726 /* event.h in Headers */,
 				324A4B6F191A428500975394 /* assert_util.h in Headers */,
 				3296032B1876B45000CDCADA /* BatchCommandTypes.h in Headers */,
 				326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */,
@@ -4293,7 +4294,6 @@
 				3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */,
 				32661C761AA867E100F1A721 /* MessageRequestFuture.h in Headers */,
 				325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */,
-				325DE9F615EC03F800D6F34E /* EventAction.h in Headers */,
 				32995C4B1BB2FF2600F68148 /* CheckList.h in Headers */,
 				3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */,
 				324A4B59191A41EF00975394 /* windows_basic.h in Headers */,

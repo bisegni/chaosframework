@@ -31,69 +31,71 @@
 #include <boost/shared_ptr.hpp>
 
 namespace chaos {
-    namespace event{
-        using namespace std;
-        using namespace boost;
-        
-        const short multicast_port = 30001;
-        class AsioEventHandler;
-        
-        //! Asio impleentation for the !CHAOS event server
-        /*!
-         
-         */
-        DECLARE_CLASS_FACTORY(AsioImplEventServer, EventServer) {
-            friend class AsioEventHandler;
+    namespace common {
+        namespace event{
+            using namespace std;
+            using namespace boost;
             
-            //! alert socket
-            AsioEventHandler *alertHandler;
+            const short multicast_port = 30001;
+            class AsioEventHandler;
             
-            //! istrument socket
-            AsioEventHandler *instrumentHandler;
-            
-            //! command socket
-            AsioEventHandler *commandHandler;
-            
-            //! custom socket
-            AsioEventHandler *customHandler;
-            
-        protected:
-            /*
-             init the event adapter
+            //! Asio impleentation for the !CHAOS event server
+            /*!
+             
              */
-            void init(void*) throw(CException);
-            
-            /*
-             start the event adapter
-             */
-            void start() throw(CException);
-            
-            /*
-             stop the event adapter
-             */
-            void stop() throw(CException);
-            
-            /*
-             register or deregister for a kynd of event
-             */
-            virtual void listeForEventType(event::EventType type,  bool listen) throw(CException);
-            
-            /*
-             deinit the event adapter
-             */
-            void deinit() throw(CException);
-            
-            void sendEventDataToRootHandler(unsigned char * buff, uint16_t length);
-        public:
-            AsioImplEventServer(const string& alias);
-            
-        private:
-            boost::asio::io_service io_service;
-			boost::thread_group serviceThreads;
-            //vector< shared_ptr<boost::thread> > serviceThread;
-            uint8_t threadNumber;
-            
-        };
+            DECLARE_CLASS_FACTORY(AsioImplEventServer, EventServer) {
+                friend class AsioEventHandler;
+                
+                //! alert socket
+                AsioEventHandler *alertHandler;
+                
+                //! istrument socket
+                AsioEventHandler *instrumentHandler;
+                
+                //! command socket
+                AsioEventHandler *commandHandler;
+                
+                //! custom socket
+                AsioEventHandler *customHandler;
+                
+            protected:
+                /*
+                 init the event adapter
+                 */
+                void init(void*) throw(CException);
+                
+                /*
+                 start the event adapter
+                 */
+                void start() throw(CException);
+                
+                /*
+                 stop the event adapter
+                 */
+                void stop() throw(CException);
+                
+                /*
+                 register or deregister for a kynd of event
+                 */
+                virtual void listeForEventType(event::EventType type,  bool listen) throw(CException);
+                
+                /*
+                 deinit the event adapter
+                 */
+                void deinit() throw(CException);
+                
+                void sendEventDataToRootHandler(unsigned char * buff, uint16_t length);
+            public:
+                AsioImplEventServer(const string& alias);
+                
+            private:
+                boost::asio::io_service io_service;
+                boost::thread_group serviceThreads;
+                //vector< shared_ptr<boost::thread> > serviceThread;
+                uint8_t threadNumber;
+                
+            };
+        }
     }
 }
 #endif /* defined(__CHAOSFramework__AsioImplEventServer__) */

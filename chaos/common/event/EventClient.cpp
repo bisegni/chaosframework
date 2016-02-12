@@ -22,7 +22,7 @@
 
 using namespace std;
 using namespace chaos;
-using namespace chaos::event;
+using namespace chaos::common::event;
 
 EventClient::EventClient(string alias): NamedService(alias) {
 }

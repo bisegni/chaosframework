@@ -31,54 +31,61 @@
 #define EVT_INSTRUMENT_DEFAULT_PRIORITY    31
 
 namespace chaos {
-    namespace event{
-        namespace instrument {
-            
+    namespace common {
+        namespace event{
+            namespace instrument {
+                
                 //!Instrument event type code
-            /*!
-             These represent the code for event type definition used
-             to define what happen into an instrument
-             */
-            typedef enum {
-                    //!The initialization pahse has been successfully done
-                EventInstrumentInitialized = 0,
-                    //!The deinitialization pahse has been successfully done
-                EventInstrumentDeinitialized,
-                    //!The instrument has been successfully started
-                EventInstrumentStarted,
-                    //!The instrument has been successfully stopped
-                EventInstrumentStopped,
-                    //! the intervall between run method call has been successfully changed
-                EventInstrumentNewScheduleDelay,
-                    //!notify the change of some input attribute of the dataset
-                EventInstrumentInputDatasetAttributeChanged,
-                    //!notify the heartbeat of insturment
-                EventInstrumentHeartbeat,
-                    //! last entry
-                EventAlertLastCodeNumber = EventInstrumentHeartbeat
-            } EventInstrumentCode;
-            
-            /*!
-             This class represent the definition for the instrumens event
-             */
-            class InstrumentEventDescriptor : public EventDescriptor {
-            public:
-                InstrumentEventDescriptor();
-                    //! Define the event for the update scehdule time notification
-                void setNewScheduleDelay(const char * const instrumentID, uint64_t newValue);
-                    //! Define the event for the input attribute dataset change scehdule time notification
-                void setDatasetInputAttributeChanged(const char * const instrumentID, uint16_t errorCode);
-                    //! Define the event for the heartbeat of the instrument
-                void setEartbeat(const char * const instrumentID);
                 /*!
-                 Set the Value for the type
-                 \param valueType the enumeration that descrive the type of the value with EventDataType constant
-                 \param valuePtr a pointer to the value
-                 \param valueSizethe size of the value
+                 These represent the code for event type definition used
+                 to define what happen into an instrument
                  */
-                void setInstrument(const char * const indetifier, uint8_t identifierLength, uint16_t alertCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize = 0) throw (CException);
-            };
-
+                typedef enum {
+                    //!The initialization pahse has been successfully done
+                    EventInstrumentInitialized = 0,
+                    //!The deinitialization pahse has been successfully done
+                    EventInstrumentDeinitialized,
+                    //!The instrument has been successfully started
+                    EventInstrumentStarted,
+                    //!The instrument has been successfully stopped
+                    EventInstrumentStopped,
+                    //! the intervall between run method call has been successfully changed
+                    EventInstrumentNewScheduleDelay,
+                    //!notify the change of some input attribute of the dataset
+                    EventInstrumentInputDatasetAttributeChanged,
+                    //!notify the heartbeat of insturment
+                    EventInstrumentHeartbeat,
+                    //! last entry
+                    EventAlertLastCodeNumber = EventInstrumentHeartbeat
+                } EventInstrumentCode;
+                
+                /*!
+                 This class represent the definition for the instrumens event
+                 */
+                class InstrumentEventDescriptor : public EventDescriptor {
+                public:
+                    InstrumentEventDescriptor();
+                    //! Define the event for the update scehdule time notification
+                    void setNewScheduleDelay(const std::string&  instrumentID, uint64_t newValue);
+                    //! Define the event for the input attribute dataset change scehdule time notification
+                    void setDatasetInputAttributeChanged(const std::string&  instrumentID, uint16_t errorCode);
+                    //! Define the event for the heartbeat of the instrument
+                    void setEartbeat(const std::string&  instrumentID);
+                    /*!
+                     Set the Value for the type
+                     \param valueType the enumeration that descrive the type of the value with EventDataType constant
+                     \param valuePtr a pointer to the value
+                     \param valueSizethe size of the value
+                     */
+                    void setInstrument(const std::string& indetifier,
+                                       uint16_t alert_code,
+                                       uint16_t priority,
+                                       EventDataType value_type,
+                                       const void *value_ptr,
+                                       uint16_t value_size = 0) throw (CException);
+                };
+                
+            }
         }
     }
     

@@ -27,7 +27,7 @@
 #include <boost/thread.hpp>
 
 namespace chaos {
-    using namespace event;
+    using namespace common::event;
     using namespace std;
     
     class EventTypeScheduler;

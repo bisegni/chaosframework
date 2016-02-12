@@ -22,8 +22,8 @@
 #include <chaos/common/event/evt_desc/AlertEventDescriptor.h>
 
 using namespace chaos;
-using namespace chaos::event;
-using namespace chaos::event::alert;
+using namespace chaos::common::event;
+using namespace chaos::common::event::alert;
 
 
 AlertEventDescriptor::AlertEventDescriptor():EventDescriptor(EventTypeAlert, EVT_ALERT_DEFAULT_PRIORITY)  {
@@ -72,13 +72,18 @@ uint16_t AlertEventDescriptor::getAlertCustomCode(){
  \param valuePtr a pointer to the value
  \param valueSizethe size of the value
  */
-void AlertEventDescriptor::setAlert(const char * const indetifier, uint8_t identifierLength, uint16_t alertCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize) {
+void AlertEventDescriptor::setAlert(const std::string& indetifier,
+                                    uint16_t alertCode,
+                                    uint16_t priority,
+                                    EventDataType valueType,
+                                    const void *valuePtr,
+                                    uint16_t valueSize) {
         //2 byte
     setAlertCode((EventAlertCode)alertCode);
         //2 byte
     setSubCodePriority(priority);
         //set the dimension, 10 is the fixed size of all information for alert pack
-    EventDescriptor::setIdentificationAndValueWithType(indetifier, identifierLength, valueType, valuePtr, valueSize);
+    EventDescriptor::setIdentificationAndValueWithType(indetifier, valueType, valuePtr, valueSize);
 }
 
 /*!
@@ -87,11 +92,16 @@ void AlertEventDescriptor::setAlert(const char * const indetifier, uint8_t ident
  \param valuePtr a pointer to the value
  \param valueSizethe size of the value
  */
-void AlertEventDescriptor::setCustomAlert(const char * const indetifier, uint8_t identifierLength, uint16_t alertCustomCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize) {
+void AlertEventDescriptor::setCustomAlert(const std::string& indetifier,
+                                          uint16_t alertCustomCode,
+                                          uint16_t priority,
+                                          EventDataType valueType,
+                                          const void *valuePtr,
+                                          uint16_t valueSize) {
         //2 byte
     setAlertCustomCode(alertCustomCode);
         //2 byte
     setSubCodePriority(priority);
         //set the dimension, 10 is the fixed size of all information for alert pack
-    EventDescriptor::setIdentificationAndValueWithType(indetifier, identifierLength, valueType, valuePtr, valueSize);
+    EventDescriptor::setIdentificationAndValueWithType(indetifier, valueType, valuePtr, valueSize);
 }

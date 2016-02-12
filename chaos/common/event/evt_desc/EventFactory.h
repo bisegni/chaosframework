@@ -25,12 +25,13 @@
 #include <chaos/common/exception/exception.h>
 
 namespace chaos {
-    namespace event{
-        class EventFactory {
-        public:
-            static EventDescriptor *getEventInstance(const unsigned char * serializedEvent, uint16_t length) throw (CException);
-        };
-
+    namespace common {
+        namespace event{
+            class EventFactory {
+            public:
+                static EventDescriptor *getEventInstance(const unsigned char * serializedEvent, uint16_t length) throw (CException);
+            };
+        }
     }
 }
 
