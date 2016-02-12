@@ -21,6 +21,7 @@
 
 #include "SubmitEntry.h"
 
+#include <chaos/common/network/NetworkBroker.h>
 
 using namespace chaos::metadata_service::api::logging;
 
@@ -29,16 +30,18 @@ using namespace chaos::metadata_service::api::logging;
 #define L_SE_ERR  ERR_LOG(SubmitEntry)
 
 using namespace chaos::common::data;
+using namespace chaos::common::network;
+using namespace chaos::common::event::channel;
 using namespace chaos::metadata_service::api::logging;
 using namespace chaos::metadata_service::persistence::data_access;
 
 SubmitEntry::SubmitEntry():
 AbstractApi(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_SUBMIT_ENTRY){
-    
+    alert_event_channel = NetworkBroker::getInstance()->getNewAlertEventChannel();
 }
 
 SubmitEntry::~SubmitEntry() {
-    
+    if(alert_event_channel) {NetworkBroker::getInstance()->disposeEventChannel(alert_event_channel);}
 }
 
 chaos::common::data::CDataWrapper *SubmitEntry::execute(CDataWrapper *api_data, bool& detach_data) {
