@@ -28,12 +28,12 @@ using namespace chaos::common::event;
 using namespace chaos::common::event::channel;
 using namespace chaos::common::event::instrument;
 
-    //-----------------------------------------------------
+//-----------------------------------------------------
 InstrumentEventChannel::InstrumentEventChannel(NetworkBroker *rootBroker):EventChannel(rootBroker) {
     
 }
 
-    //-----------------------------------------------------
+//-----------------------------------------------------
 InstrumentEventChannel::~InstrumentEventChannel() {
     
 }
@@ -42,13 +42,14 @@ void InstrumentEventChannel::handleEvent(const event::EventDescriptor * const ev
     LAPP_ << "InstrumentEventChannel::handleEvent";
 }
 
-    //--------------------inherited-----------------
-void InstrumentEventChannel::activateChannelEventReception() {
-        //activate the reception for the event type alert
-    EventChannel::activateChannelEventReception(EventTypeAlert);
+//--------------------inherited-----------------
+void InstrumentEventChannel::activateChannelEventReception(EventAction *event_action) {
+    //activate the reception for the event type alert
+    EventChannel::_activateChannelEventReception(event_action,
+                                                 EventTypeAlert);
 }
 
-    //-----------------------------------------------------
+//-----------------------------------------------------
 int InstrumentEventChannel::sendEvent(const std::string& identification,
                                       uint16_t sub_code,
                                       uint16_t priority,
@@ -65,7 +66,7 @@ int InstrumentEventChannel::sendEvent(const std::string& identification,
     return EventChannel::sendRawEvent(ied);
 }
 
-    //-----------------------------------------------------
+//-----------------------------------------------------
 int InstrumentEventChannel::notifyForScheduleUpdateWithNewValue(const char * insturmentID, uint64_t newScheduleUpdateTime) {
     instrument::InstrumentEventDescriptor *ied = new instrument::InstrumentEventDescriptor();
     ied->setNewScheduleDelay(insturmentID, newScheduleUpdateTime);

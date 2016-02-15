@@ -5547,14 +5547,19 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
+					/usr/local/include,
 				);
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-levent",
 					"-lchaos_common",
 					"-lmongoclient",
+					"-ljemalloc",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -5582,13 +5587,18 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
+					/usr/local/include,
 				);
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-levent",
 					"-lchaos_common",
 					"-lmongoclient",
+					"-ljemalloc",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

@@ -42,8 +42,7 @@ namespace chaos {
                  The Event Channel permit the forward of a general event descriptor. Every channel
                  can be registerd for receive event from other node.
                  */
-                class EventChannel:
-                public EventAction {
+                class EventChannel {
                     
                     // make the broker friendly of this class to access private and protected memeber
                     friend class chaos::common::network::NetworkBroker;
@@ -53,7 +52,6 @@ namespace chaos {
                     
                     //broker for event forwarding
                     chaos::common::network::NetworkBroker *messageBroker;
-                    
                 protected:
                     
                     EventChannel(chaos::common::network::NetworkBroker *rootBroker);
@@ -76,17 +74,15 @@ namespace chaos {
                                           const void *valuePtr,
                                           uint16_t valueSize= 0) = 0;
                     
-                    //-------------------inherited--------------------
-                    virtual void handleEvent(const event::EventDescriptor * const event) = 0;
                     
-                    
-                    void activateChannelEventReception(EventType eventType);
+                    void _activateChannelEventReception(EventAction *event_action,
+                                                       EventType eventType);
                     
                 public:
                     
-                    virtual void activateChannelEventReception() = 0;
+                    virtual void activateChannelEventReception(EventAction *event_action) = 0;
                     
-                    void deactivateChannelEventReception();
+                    void deactivateChannelEventReception(EventAction *event_action);
                     
                     //!
                     /*!

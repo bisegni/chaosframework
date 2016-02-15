@@ -23,6 +23,9 @@
 
 #include <chaos/common/event/channel/EventChannel.h>
 #include <chaos/common/event/evt_desc/AlertEventDescriptor.h>
+
+#include <string>
+
 namespace chaos {
     //! forward declarataion
     namespace common {
@@ -57,7 +60,10 @@ namespace chaos {
                 public:
                     
                     //--------------------inherited-----------------
-                    void activateChannelEventReception();
+                    void activateChannelEventReception(EventAction *event_action);
+                    
+                    int sendLogAlert(const std::string& node_uid,
+                                     const std::string& log_domain);
                 };
                 
             }

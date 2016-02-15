@@ -25,13 +25,28 @@
 using namespace chaos;
 using namespace chaos::common::event;
 
+#define CREATE_EVENT_SOCKET(s, addr, port, err, msg)\
+s = new boost::asio::ip::udp::socket(io_service);\
+if(s == NULL) {\
+throw CException(err, msg, __PRETTY_FUNCTION__);\
+} else {\
+socket_alert->connect(boost::asio::ip::udp::endpoint(addr,port));\
+}\
+
+#define DELETE_EVENT_SOCKET(s)\
+if(s){s->close(); delete(s);}
+
+#define SEND_EVENT_DATA(s, e)\
+s->send(boost::asio::buffer(e->getEventData(), e->getEventDataLength()));
+
 DEFINE_CLASS_FACTORY(AsioImplEventClient, EventClient);
-AsioImplEventClient::AsioImplEventClient(string alias):EventClient(alias) {
+AsioImplEventClient::AsioImplEventClient(string alias):
+EventClient(alias),
+socket_alert(NULL),
+socket_instrument(NULL),
+socket_command(NULL),
+socket_custom(NULL) {
     threadNumber = 0;
-    alertForwarder = NULL;
-    instrumentForwarder = NULL;
-    commandForwarder = NULL;
-    customForwarder = NULL;
 }
 
 AsioImplEventClient::~AsioImplEventClient() {
@@ -42,27 +57,31 @@ AsioImplEventClient::~AsioImplEventClient() {
  init the event adapter
  */
 void AsioImplEventClient::init(void* initParameter) throw(CException) {
-    threadNumber = 4;
-        //alertForwrder
-    alertForwarder = new AsioEventForwarder(asio::ip::address::from_string(event::EventConfiguration::CONF_EVENT_ALERT_MADDRESS),
-                                            event::EventConfiguration::CONF_EVENT_PORT,
-                                            io_service);
-    alertForwarder->init();
+    threadNumber = 1;
+    //alertForwrder
+    CREATE_EVENT_SOCKET(socket_alert,
+                        asio::ip::address::from_string(event::EventConfiguration::CONF_EVENT_ALERT_MADDRESS),
+                        event::EventConfiguration::CONF_EVENT_PORT,
+                        -1,
+                        "Error on creating alert socket");
     
-    instrumentForwarder = new AsioEventForwarder(asio::ip::address::from_string(event::EventConfiguration::CONF_EVENT_INSTRUMENT_MADDRESS),
-                                            event::EventConfiguration::CONF_EVENT_PORT,
-                                            io_service);
-    instrumentForwarder->init();
+    CREATE_EVENT_SOCKET(socket_instrument,
+                        asio::ip::address::from_string(event::EventConfiguration::CONF_EVENT_INSTRUMENT_MADDRESS),
+                        event::EventConfiguration::CONF_EVENT_PORT,
+                        -2,
+                        "Error on creating instrument socket");
+    CREATE_EVENT_SOCKET(socket_command,
+                        asio::ip::address::from_string(event::EventConfiguration::CONF_EVENT_COMMAND_MADDRESS),
+                        event::EventConfiguration::CONF_EVENT_PORT,
+                        -3,
+                        "Error on creating command socket");
+    CREATE_EVENT_SOCKET(socket_custom,
+                        asio::ip::address::from_string(event::EventConfiguration::CONF_EVENT_CUSTOM_MADDRESS),
+                        event::EventConfiguration::CONF_EVENT_PORT,
+                        -4,
+                        "Error on creating custom socket");
     
-    commandForwarder = new AsioEventForwarder(asio::ip::address::from_string(event::EventConfiguration::CONF_EVENT_COMMAND_MADDRESS),
-                                            event::EventConfiguration::CONF_EVENT_PORT,
-                                            io_service);
-    commandForwarder->init();
-    
-    customForwarder = new AsioEventForwarder(asio::ip::address::from_string(event::EventConfiguration::CONF_EVENT_CUSTOM_MADDRESS),
-                                            event::EventConfiguration::CONF_EVENT_PORT,
-                                            io_service);
-    customForwarder->init();
+    CObjectProcessingPriorityQueue<EventDescriptor>::init(1);
 }
 
 /*
@@ -70,12 +89,13 @@ void AsioImplEventClient::init(void* initParameter) throw(CException) {
  */
 void AsioImplEventClient::start() throw(CException) {
     
-        //register forall event
-        //create the services
+    
+    //register forall event
+    //create the services
     
     for (int idx = 0; idx < threadNumber; idx++) {
-            //create the handler
-       // boost::shared_ptr<thread> thread();
+        //create the handler
+        // boost::shared_ptr<thread> thread();
         service_thread_group.add_thread(new boost::thread(bind(&asio::io_service::run, &io_service)));
     }
 }
@@ -89,60 +109,41 @@ void AsioImplEventClient::stop() throw(CException) {
  deinit the event adapter
  */
 void AsioImplEventClient::deinit() throw(CException) {
-    try{
-        if(alertForwarder) {
-           alertForwarder->deinit();
-            delete (alertForwarder);
-        }
-    }catch(...){
-        
-    }
-    try{
-        if(instrumentForwarder) {
-            instrumentForwarder->deinit();
-            delete(instrumentForwarder);
-        }
-    }catch(...){
-        
-    }
-    try{
-        if(commandForwarder) {
-            commandForwarder->deinit();
-            delete(commandForwarder);
-        }
-    }catch(...){
-        
-    }
-    try{
-        if(customForwarder) {
-            customForwarder->deinit();
-            delete(customForwarder);
-        }
-    }catch(...){
-        
-    }
+    DELETE_EVENT_SOCKET(socket_alert);
+    DELETE_EVENT_SOCKET(socket_instrument);
+    DELETE_EVENT_SOCKET(socket_command);
+    DELETE_EVENT_SOCKET(socket_custom);
+    
+    CObjectProcessingPriorityQueue<EventDescriptor>::clear();
+    CObjectProcessingPriorityQueue<EventDescriptor>::deinit();
     
     io_service.stop();
-	
-        // Wait for all threads in the pool to exit.
+    
+    // Wait for all threads in the pool to exit.
     service_thread_group.join_all();
 }
-    //! abstract queue action method implementation
+
+void AsioImplEventClient::processBufferElement(EventDescriptor *event,
+                                               ElementManagingPolicy& policy) throw(CException) {
+        switch (event->getEventType()) {
+            case event::EventTypeAlert:
+                SEND_EVENT_DATA(socket_alert, event);
+                break;
+            case event::EventTypeInstrument:
+                SEND_EVENT_DATA(socket_instrument, event);
+                break;
+            case event::EventTypeCommand:
+                SEND_EVENT_DATA(socket_command, event);
+                break;
+            case event::EventTypeCustom:
+                SEND_EVENT_DATA(socket_custom, event);
+                break;
+        }
+    
+}
+
+//! abstract queue action method implementation
 bool AsioImplEventClient::submitEvent(EventDescriptor *event)  throw(CException) {
-    bool result = true;
-    switch (event->getEventType()) {
-        case event::EventTypeAlert:
-            result = alertForwarder->submitEventAsync(event);
-            break;
-        case event::EventTypeInstrument:
-            result = instrumentForwarder->submitEventAsync(event);
-            break;
-        case event::EventTypeCommand:
-            result = commandForwarder->submitEventAsync(event);
-            break;
-        case event::EventTypeCustom:
-            result = customForwarder->submitEventAsync(event);
-            break;
-    }
-    return result;
+    return CObjectProcessingPriorityQueue<EventDescriptor>::push(event,
+                                                                 event->getEventPriority());
 }

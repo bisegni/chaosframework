@@ -54,7 +54,7 @@ namespace chaos {
                 public:
                     
                     //--------------------inherited-----------------
-                    void activateChannelEventReception();
+                    void activateChannelEventReception(EventAction *event_action);
                     
                     //! Send an event for the scehdule update setting
                     /*!

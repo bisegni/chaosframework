@@ -17,6 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 #include <ChaosMetadataServiceClient/metadata_service_client_constants.h>
@@ -34,6 +36,8 @@ static const boost::regex KVParamRegex("[a-zA-Z0-9/_-]+:[a-zA-Z0-9/_-]+");
 using namespace std;
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::event;
+using namespace chaos::common::network;
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service_client;
 using namespace chaos::DataServiceNodeDefinitionKey;
@@ -47,7 +51,8 @@ using boost::shared_ptr;
 #define CMSC_LERR ERR_LOG(ChaosMetadataServiceClient)
 
 //!default constructor
-ChaosMetadataServiceClient::ChaosMetadataServiceClient() {}
+ChaosMetadataServiceClient::ChaosMetadataServiceClient():
+alert_event_channel(NULL){}
 
 //! default destructor
 ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {}
@@ -80,6 +85,10 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
             it++) {
             addServerAddress(it->ip_port);
         }
+        
+        //allcoate the event channel
+        alert_event_channel = NetworkBroker::getInstance()->getNewAlertEventChannel();
+        alert_event_channel->activateChannelEventReception(this);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         throw ex;
@@ -123,7 +132,10 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
  Deiniti all the manager
  */
 void ChaosMetadataServiceClient::deinit()   throw(CException) {
-    
+    if(alert_event_channel) {
+        alert_event_channel->deactivateChannelEventReception(this);
+        NetworkBroker::getInstance()->disposeEventChannel(alert_event_channel);
+    }
     //deinit api system
     CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
     
@@ -136,6 +148,27 @@ void ChaosMetadataServiceClient::deinit()   throw(CException) {
     CMSC_LAPP << "-------------------------------------------------------------------------";
     CMSC_LAPP << "Metadata service client has been stopped";
     CMSC_LAPP << "-------------------------------------------------------------------------";
+}
+
+void ChaosMetadataServiceClient::handleEvent(const EventDescriptor * const event) {
+    
+    CMSC_LAPP << "----event received---";
+    switch(event->getSubCode()){
+        case common::event::alert::EventAlertLogSubmitted: {
+            std::string node_uid;
+            std::string log_domian;
+            ((common::event::alert::AlertEventDescriptor*)event)->getLogAlert(node_uid,
+                                                        log_domian);
+            CMSC_LAPP << "NodeUID:" << node_uid;
+            CMSC_LAPP << "Log Domain:" << log_domian;
+            break;
+        }
+            
+        default:
+            break;
+            
+    }
+    CMSC_LAPP << "----event received---";
 }
 
 void ChaosMetadataServiceClient::clearServerList() {

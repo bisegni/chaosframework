@@ -113,8 +113,8 @@ namespace chaos {
              */
             class EventDescriptor {
                 friend class EventFactory;
-                uint8_t     tmp8;
-                uint32_t    tmp32;
+                mutable uint8_t     tmp8;
+                mutable uint32_t    tmp32;
             protected:
                 EventType instanceType;
                 uint8_t instancePriority;
@@ -190,19 +190,19 @@ namespace chaos {
                 /*
                  Return the version of the protocol wrapped on pack
                  */
-                uint16_t getEventHeaderVersion();
+                uint16_t getEventHeaderVersion() const;
                 
                 //!Return the data length of the event
                 /*
                  Return the data length of the event contextually to the event type
                  */
-                uint16_t getEventDataLength();
+                uint16_t getEventDataLength() const;
                 
                 //!Return the data  of the event
                 /*
                  Return the data of the event
                  */
-                const unsigned char * const getEventData();
+                const unsigned char * const getEventData() const;
                 
                 
                 //!Create a new event from serialized data
@@ -219,17 +219,17 @@ namespace chaos {
                 /*
                  Return the data of the event
                  */
-                uint8_t getEventType();
+                uint8_t getEventType() const;
                 
                 //!Return the priority  of the event
                 /*
                  Return the data of the event
                  */
-                uint8_t getEventPriority();
+                uint8_t getEventPriority() const;
                 
-                std::string getIdentification();
+                const char * getIdentification() const;
                 
-                uint8_t getIdentificationlength();
+                uint8_t getIdentificationlength() const;
                 
                 
                 //!Return the custom code of this alert
@@ -237,7 +237,7 @@ namespace chaos {
                  Return the alert custom code identified by this event
                  \return the custom code of the alert
                  */
-                uint16_t getSubCode();
+                uint16_t getSubCode() const;
                 
                 
                 //!Return the code of this alert
@@ -245,14 +245,15 @@ namespace chaos {
                  Return the alert code identified bythis event
                  \return the code of the alert
                  */
-                uint16_t getSubCodePriority();
+                uint16_t getSubCodePriority() const;
                 
-                EventDataType getEventValueType();
+                EventDataType getEventValueType() const;
                 
-                uint16_t getEventValueSize();
+                uint16_t getEventValueSize() const;
                 
-                void getEventValue(void *valuePtr, uint16_t *size);
+                void getEventValue(void *valuePtr, uint16_t *size) const;
                 
+                const char * const getEventValue() const;
                 
             };
         }

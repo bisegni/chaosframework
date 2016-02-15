@@ -88,22 +88,33 @@ namespace chaos {
                 }
             };
             
-            template<typename Type, typename Compare = std::less<Type> >
-            struct pless : public std::binary_function<Type *, Type *, bool> {
-                bool operator()(const Type *x, const Type *y) const {
-                    return Compare()(*x, *y);
+#define PRIORITY_ELEMENT(e) chaos::common::pqueue::PriorityQueuedElement< e >
+            
+            // pulic class used into the sandbox for use the priority set into the lement that are pointer and not rela reference
+            template<typename T>
+            struct PriorityElementCompare {
+                bool operator() (const PRIORITY_ELEMENT(T)* lhs, const PRIORITY_ELEMENT(T)* rhs) const {
+                    if(lhs->priority < rhs->priority) {
+                        return true;
+                    } else if(lhs->priority == rhs->priority) {
+                        return  lhs->sequence_id >= rhs->sequence_id;
+                    } else {
+                        return false;
+                    }
                 }
             };
-            
-#define PRIORITY_ELEMENT(e) chaos::common::pqueue::PriorityQueuedElement< e >
             
             /*!
              Processing queue implemented with a priority_queue
              */
             template<typename T>
             class CObjectProcessingPriorityQueue {
+                typedef std::priority_queue< PRIORITY_ELEMENT(T)*,
+                        std::vector< PRIORITY_ELEMENT(T)* >,
+                        PriorityElementCompare<T> > ChaosPriorityQueue;
+                
                 std::string uid;
-                std::priority_queue< PRIORITY_ELEMENT(T)*, std::vector< PRIORITY_ELEMENT(T)* >, pless< PRIORITY_ELEMENT(T) > > bufferQueue;
+                ChaosPriorityQueue bufferQueue;
                 bool in_deinit;
                 boost::mutex qMutex;
                 boost::condition_variable liveThreadConditionLock;

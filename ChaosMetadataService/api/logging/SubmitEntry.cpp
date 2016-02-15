@@ -23,6 +23,8 @@
 
 #include <chaos/common/network/NetworkBroker.h>
 
+#include <jemalloc/jemalloc.h>
+
 using namespace chaos::metadata_service::api::logging;
 
 #define L_SE_INFO INFO_LOG(SubmitEntry)
@@ -37,10 +39,12 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 SubmitEntry::SubmitEntry():
 AbstractApi(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_SUBMIT_ENTRY){
+    //allocate event channel for broadcast the logging event
     alert_event_channel = NetworkBroker::getInstance()->getNewAlertEventChannel();
 }
 
 SubmitEntry::~SubmitEntry() {
+    //deallocae the event channel
     if(alert_event_channel) {NetworkBroker::getInstance()->disposeEventChannel(alert_event_channel);}
 }
 
@@ -70,6 +74,15 @@ chaos::common::data::CDataWrapper *SubmitEntry::execute(CDataWrapper *api_data, 
     if((err = l_da->insertNewEntry(new_log_entry))){
         LOG_AND_TROW(L_SE_ERR, -9, "Error creaating new log entry");
     }
+    
+    //we can send the event
+    if(alert_event_channel){
+        //send broadcast event
+        alert_event_channel->sendLogAlert(new_log_entry.source_identifier,
+                                          new_log_entry.domain);
+    }
+    
+    malloc_stats_print(NULL, NULL, NULL);
     return NULL;
 }
 

@@ -96,6 +96,8 @@ int main(int argc, char *argv[]){
             }
         }
         
+        sleep(1000000);
+        
         ChaosMetadataServiceClient::getInstance()->disableMonitor();
         ChaosMetadataServiceClient::getInstance()->stop();
         ChaosMetadataServiceClient::getInstance()->deinit();

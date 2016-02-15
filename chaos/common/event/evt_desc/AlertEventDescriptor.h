@@ -77,6 +77,11 @@ namespace chaos {
                      */
                     uint16_t getAlertCustomCode();
                     
+                    void setLogAlert(const std::string&  indetifier,
+                                     const std::string&  log_domain);
+                    
+                    void getLogAlert(std::string&  indetifier,
+                                     std::string&  log_domain);
                     /*!
                      Set the Value for the type
                      \param valueType the enumeration that descrive the type of the value with EventDataType constant

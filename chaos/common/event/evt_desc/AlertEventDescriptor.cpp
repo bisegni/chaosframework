@@ -27,10 +27,10 @@ using namespace chaos::common::event::alert;
 
 
 AlertEventDescriptor::AlertEventDescriptor():EventDescriptor(EventTypeAlert, EVT_ALERT_DEFAULT_PRIORITY)  {
-
+    
 }
 
-    //!Set the code of the alert
+//!Set the code of the alert
 /*
  Set the allert code for this event
  \param alertCode thecode of the alert
@@ -39,7 +39,7 @@ void AlertEventDescriptor::setAlertCode(EventAlertCode alertCode) {
     setSubCode(alertCode);
 }
 
-    //!Return the code of this alert
+//!Return the code of this alert
 /*
  Return the alert code identified bythis event
  \return the code of the alert
@@ -48,7 +48,7 @@ EventAlertCode AlertEventDescriptor::getAlertCode(){
     return (EventAlertCode)getSubCode();
 }
 
-    //!Set the code of the alert
+//!Set the code of the alert
 /*
  Set the allert code for this event
  \param alertCode thecode of the alert
@@ -57,7 +57,7 @@ void AlertEventDescriptor::setAlertCustomCode(uint16_t alertCustomCode) {
     setSubCode(alertCustomCode + EventAlertLastCodeNumber);
 }
 
-    //!Return the code of this alert
+//!Return the code of this alert
 /*
  Return the alert code identified bythis event
  \return the code of the alert
@@ -66,6 +66,32 @@ uint16_t AlertEventDescriptor::getAlertCustomCode(){
     return (getSubCode() - EventAlertLastCodeNumber);
 }
 
+//! Define the event for the heartbeat of the instrument
+void AlertEventDescriptor::setLogAlert(const std::string&  indetifier,
+                                       const std::string&  log_domain) {
+    //2 byte
+    setSubCode(EventAlertLogSubmitted);
+    //2 byte
+    setSubCodePriority(10);
+    //set the dimension, 10 is the fixed size of all information for alert pack
+    EventDescriptor::setIdentificationAndValueWithType(indetifier,
+                                                       EventDataCString,
+                                                       log_domain.c_str(),
+                                                       log_domain.size());
+}
+
+
+void AlertEventDescriptor::getLogAlert(std::string&  indetifier,
+                                       std::string&  log_domain) {
+    if(getAlertCode() != EventAlertLogSubmitted) return;
+    
+    if(getEventValueType() != EventDataCString) return;
+    
+    indetifier.assign(getIdentification(),
+                      getIdentificationlength());
+    log_domain.assign(getEventValue(),
+                      getEventValueSize());
+}
 /*!
  Set the Value for the type
  \param valueType the enumeration that descrive the type of the value
@@ -78,11 +104,11 @@ void AlertEventDescriptor::setAlert(const std::string& indetifier,
                                     EventDataType valueType,
                                     const void *valuePtr,
                                     uint16_t valueSize) {
-        //2 byte
+    //2 byte
     setAlertCode((EventAlertCode)alertCode);
-        //2 byte
+    //2 byte
     setSubCodePriority(priority);
-        //set the dimension, 10 is the fixed size of all information for alert pack
+    //set the dimension, 10 is the fixed size of all information for alert pack
     EventDescriptor::setIdentificationAndValueWithType(indetifier, valueType, valuePtr, valueSize);
 }
 
@@ -98,10 +124,10 @@ void AlertEventDescriptor::setCustomAlert(const std::string& indetifier,
                                           EventDataType valueType,
                                           const void *valuePtr,
                                           uint16_t valueSize) {
-        //2 byte
+    //2 byte
     setAlertCustomCode(alertCustomCode);
-        //2 byte
+    //2 byte
     setSubCodePriority(priority);
-        //set the dimension, 10 is the fixed size of all information for alert pack
+    //set the dimension, 10 is the fixed size of all information for alert pack
     EventDescriptor::setIdentificationAndValueWithType(indetifier, valueType, valuePtr, valueSize);
 }

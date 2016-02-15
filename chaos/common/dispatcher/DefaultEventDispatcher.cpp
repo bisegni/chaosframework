@@ -25,11 +25,16 @@
 using namespace chaos;
 using namespace chaos::common::event;
 
-#define EVTDISPAPP_ LAPP_ << "[DefaultEventDispatcher] - "
+#define EVTDISPAPP_ INFO_LOG(DefaultEventDispatcher)
+#define EVTDISPDBG_ DBG_LOG(DefaultEventDispatcher)
+#define EVTDISPERR_ ERR_LOG(DefaultEventDispatcher)
+
 DEFINE_CLASS_FACTORY(DefaultEventDispatcher, AbstractEventDispatcher);
 
     //! Basic Constructor
-DefaultEventDispatcher::DefaultEventDispatcher(string alias):AbstractEventDispatcher(alias) {
+DefaultEventDispatcher::DefaultEventDispatcher(string alias):
+AbstractEventDispatcher(alias),
+eventScheduler(NULL){
     
 }
 
@@ -39,19 +44,13 @@ DefaultEventDispatcher::~DefaultEventDispatcher() {
 }
 
 void DefaultEventDispatcher::init(void* initData) throw(CException) {
-    EVTDISPAPP_ << "Init";
-    alertEventScheduler = new EventTypeScheduler();
-    if(!alertEventScheduler) throw CException(0, "Error allocating Alert Event Scheduler", "DefaultEventDispatcher::init");
-    alertEventScheduler->init();
-    
-    
-    instrumentEventScheduler = new EventTypeScheduler();
-    if(!instrumentEventScheduler) throw CException(0, "Error allocating Instrument Event Scheduler", "DefaultEventDispatcher::init");
-    instrumentEventScheduler->init();
+    eventScheduler = new EventTypeScheduler();
+    if(!eventScheduler) throw CException(0, "Error allocating Alert Event Scheduler", "DefaultEventDispatcher::init");
+    eventScheduler->init();
+
 }
 
 void DefaultEventDispatcher::start() throw(CException) {
-    EVTDISPAPP_ << "start"; 
 }
 
     //!DefaultEventDispatcher deinitialization
@@ -59,17 +58,10 @@ void DefaultEventDispatcher::start() throw(CException) {
  * All rpc adapter and command dispatcher are deinitilized. All instantiated channel are disposed
  */
 void DefaultEventDispatcher::deinit() throw(CException) {
-    EVTDISPAPP_ << "Deinit";
-    if(alertEventScheduler) {
-        alertEventScheduler->deinit();
-        delete(alertEventScheduler);
+    if(eventScheduler) {
+        eventScheduler->deinit();
+        DELETE_OBJ_POINTER(eventScheduler);
     }
-    
-    if(instrumentEventScheduler) {
-        instrumentEventScheduler->deinit();
-        delete(instrumentEventScheduler);
-    }
-
 }
 
     //! Event handler registration
@@ -82,17 +74,7 @@ void DefaultEventDispatcher::registerEventAction(EventAction *eventAction, Event
     EVTDISPAPP_ << "registerEventActionForEventType";
     if(!eventAction) throw new CException(0, "The action pointer is null", "DefaultEventDispatcher::registerEventActionForEventType");
     
-    switch (eventType) {
-        case common::event::EventTypeAlert:
-            alertEventScheduler->installEventAction(eventAction);
-            break;
-            
-        case common::event::EventTypeInstrument:
-            instrumentEventScheduler->installEventAction(eventAction);
-            break;
-        default:
-            break;
-    }
+    eventScheduler->installEventAction(eventAction);
 }
 
     //! Event handler deregistration
@@ -102,9 +84,7 @@ void DefaultEventDispatcher::registerEventAction(EventAction *eventAction, Event
 void DefaultEventDispatcher::deregisterEventAction(EventAction *eventAction)  throw(CException) {
     EVTDISPAPP_ << "deregisterEventAction";
         //try to remove from all scheduler, becaus eone action can be mapped to all event type
-    if(alertEventScheduler) alertEventScheduler->removeEventAction(eventAction);
-    
-    if(instrumentEventScheduler) instrumentEventScheduler->removeEventAction(eventAction);
+    if(eventScheduler) {eventScheduler->removeEventAction(eventAction);}
 }
 
 /*!
@@ -112,7 +92,7 @@ void DefaultEventDispatcher::deregisterEventAction(EventAction *eventAction)  th
  by dispatcher
  */
 void DefaultEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException) {
-    alertEventScheduler->push(eventDescription);
+    eventScheduler->push(eventDescription);
 }
 
     //!Handler execution method
@@ -121,7 +101,7 @@ void DefaultEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *ev
  by dispatcher
  */
 void DefaultEventDispatcher::executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  throw(CException) {
-    alertEventScheduler->push(eventDescription);
+    eventScheduler->push(eventDescription);
 }
 
     //!Handler execution method

@@ -22,8 +22,10 @@
 #define __CHAOSFramework__AsioImplEventClient__
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
-#include <chaos/common/event/AsioEventHandler.h>
 #include <chaos/common/event/EventClient.h>
+#include <chaos/common/event/AsioEventHandler.h>
+#include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
+
 #include <string>
 #include <vector>
 #include <boost/asio.hpp>
@@ -39,7 +41,8 @@ namespace chaos {
             
             class AsioEventForwarder;
             
-            DECLARE_CLASS_FACTORY(AsioImplEventClient, EventClient) {
+            DECLARE_CLASS_FACTORY(AsioImplEventClient, EventClient),
+            public chaos::common::pqueue::CObjectProcessingPriorityQueue<EventDescriptor>{
             protected:
                 /*
                  init the event adapter
@@ -59,22 +62,19 @@ namespace chaos {
                  */
                 void deinit() throw(CException);
                 
+                //! abstract queue action method implementation
+                void processBufferElement(EventDescriptor *priorityElement,
+                                          ElementManagingPolicy& policy) throw(CException);
+                
             public:
                 AsioImplEventClient(string alias);
                 ~AsioImplEventClient();
                 bool submitEvent(EventDescriptor *event)  throw(CException);
             private:
-                //! Allert forwarder
-                AsioEventForwarder *alertForwarder;
-                
-                //! Instrument forwarder
-                AsioEventForwarder *instrumentForwarder;
-                
-                //! Command forwarder
-                AsioEventForwarder *commandForwarder;
-                
-                //! Custom forwarder
-                AsioEventForwarder *customForwarder;
+                boost::asio::ip::udp::socket *socket_alert;
+                boost::asio::ip::udp::socket *socket_instrument;
+                boost::asio::ip::udp::socket *socket_command;
+                boost::asio::ip::udp::socket *socket_custom;
                 
                 boost::asio::io_service io_service;
                 boost::thread_group	service_thread_group;

@@ -28,9 +28,9 @@ using namespace chaos::common::utility;
 using namespace chaos::common::event;
 using namespace chaos::common::event::channel;
 
-EventChannel::EventChannel(NetworkBroker *rootBroker) {
-    channelID = UUIDUtil::generateUUIDLite();
-    messageBroker = rootBroker;
+EventChannel::EventChannel(NetworkBroker *_messageBroker):
+messageBroker(_messageBroker),
+channelID(UUIDUtil::generateUUIDLite()) {
 }
 
 EventChannel::~EventChannel() {
@@ -42,20 +42,18 @@ void EventChannel::init() throw (CException) {
 }
 
 void EventChannel::deinit() throw (CException) {
-    
-        //deactivate channel in case it hase been ttaccehd to some event
-    deactivateChannelEventReception();
 }
 
-void EventChannel::activateChannelEventReception(EventType eventType) {
-    CHAOS_ASSERT(messageBroker)
-    messageBroker->registerEventAction(this, eventType);
+void EventChannel::_activateChannelEventReception(EventAction *event_action,
+                                                 EventType eventType) {
+    CHAOS_ASSERT(messageBroker && event_action)
+    messageBroker->registerEventAction(event_action, eventType);
     
 }
 
-void EventChannel::deactivateChannelEventReception() {
-    CHAOS_ASSERT(messageBroker)
-    messageBroker->deregisterEventAction(this);
+void EventChannel::deactivateChannelEventReception(EventAction *event_action) {
+    CHAOS_ASSERT(messageBroker && event_action)
+    messageBroker->deregisterEventAction(event_action);
 }
 
 int EventChannel::sendRawEvent(EventDescriptor *newEvent) {

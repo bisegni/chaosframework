@@ -26,12 +26,12 @@ using namespace chaos::common::event;
 using namespace chaos::common::network;
 using namespace chaos::common::event::channel;
 
-    //-----------------------------------------------------
+//-----------------------------------------------------
 AlertEventChannel::AlertEventChannel(NetworkBroker *rootBroker):EventChannel(rootBroker) {
     
 }
 
-    //-----------------------------------------------------
+//-----------------------------------------------------
 AlertEventChannel::~AlertEventChannel() {
     
 }
@@ -40,12 +40,13 @@ void AlertEventChannel::handleEvent(const EventDescriptor * const event) {
     LAPP_ << "AlertEventChannel::handleEvent";
 }
 
-    //--------------------inherited-----------------
-void AlertEventChannel::activateChannelEventReception() {
-        //activate the reception for the event type alert
-    EventChannel::activateChannelEventReception(EventTypeAlert);
+//--------------------inherited-----------------
+void AlertEventChannel::activateChannelEventReception(EventAction *event_action) {
+    //activate the reception for the event type alert
+    EventChannel::_activateChannelEventReception(event_action,
+                                                 EventTypeAlert);
 }
-    //-----------------------------------------------------
+//-----------------------------------------------------
 int AlertEventChannel::sendEvent(const std::string& identification,
                                  uint16_t sub_code,
                                  uint16_t priority,
@@ -59,5 +60,13 @@ int AlertEventChannel::sendEvent(const std::string& identification,
                   type_of_data,
                   value_ptr,
                   value_size);
+    return EventChannel::sendRawEvent(aed);
+}
+
+int AlertEventChannel::sendLogAlert(const std::string& node_uid,
+                                     const std::string& log_domain) {
+    alert::AlertEventDescriptor *aed = new alert::AlertEventDescriptor();
+    aed->setLogAlert(node_uid,
+                     log_domain);
     return EventChannel::sendRawEvent(aed);
 }

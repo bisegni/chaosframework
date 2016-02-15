@@ -31,6 +31,8 @@
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/StartableService.h>
 
+#include <chaos/common/event/event.h>
+
 namespace chaos {
     namespace metadata_service_client {
         //! Chaos Node Directory base class
@@ -39,7 +41,8 @@ namespace chaos {
          */
         class ChaosMetadataServiceClient :
         public ChaosCommon<ChaosMetadataServiceClient>,
-        public ServerDelegator {
+        public ServerDelegator,
+        protected chaos::EventAction {
             friend class common::utility::Singleton<ChaosMetadataServiceClient>;
             //!api proxy service
             common::utility::InizializableServiceContainer<chaos::metadata_service_client::api_proxy::ApiProxyManager> api_proxy_manager;
@@ -47,11 +50,18 @@ namespace chaos {
             //!monitor manager
             common::utility::StartableServiceContainer<chaos::metadata_service_client::monitor_system::MonitorManager> monitor_manager;
             
+            //alert event channel
+            common::event::channel::AlertEventChannel *alert_event_channel;
+            
             //!default constructor
             ChaosMetadataServiceClient();
             
             //! default destructor
             ~ChaosMetadataServiceClient();
+            
+        protected:
+            void handleEvent(const chaos::common::event::EventDescriptor * const event);
+            
         public:
             //! the client setting
             ClientSetting setting;
