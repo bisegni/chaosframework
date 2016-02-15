@@ -32,7 +32,19 @@ namespace chaos {
 		namespace data {
 			using namespace std;
 			using namespace bson;
-
+            
+            typedef enum CDataWrapperType {
+                CDataWrapperTypeNoType,
+                CDataWrapperTypeNULL,
+                CDataWrapperTypeBool,
+                CDataWrapperTypeInt32,
+                CDataWrapperTypeInt64,
+                CDataWrapperTypeDouble,
+                CDataWrapperTypeString,
+                CDataWrapperTypeBinary,
+                CDataWrapperTypeObject,
+                CDataWrapperTypeVector
+            } CDataWrapperType;
 			
 			class CDataWrapper;
 			/*!
@@ -239,6 +251,8 @@ namespace chaos {
                 bool isCDataWrapperValue(const std::string& key);
                 
                 bool isVectorValue(const std::string& key);
+                
+                CDataWrapperType getValueType(const std::string& key);
 			};
 			
 			//! MutableCDataWrapper for field update

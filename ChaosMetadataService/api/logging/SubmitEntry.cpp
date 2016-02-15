@@ -23,8 +23,6 @@
 
 #include <chaos/common/network/NetworkBroker.h>
 
-#include <jemalloc/jemalloc.h>
-
 using namespace chaos::metadata_service::api::logging;
 
 #define L_SE_INFO INFO_LOG(SubmitEntry)
@@ -81,8 +79,6 @@ chaos::common::data::CDataWrapper *SubmitEntry::execute(CDataWrapper *api_data, 
         alert_event_channel->sendLogAlert(new_log_entry.source_identifier,
                                           new_log_entry.domain);
     }
-    
-    malloc_stats_print(NULL, NULL, NULL);
     return NULL;
 }
 

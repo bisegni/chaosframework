@@ -713,6 +713,8 @@
 		32D6C8981815293200E9689B /* DirectIOHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8971815293200E9689B /* DirectIOHandler.h */; };
 		32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8991815294700E9689B /* DirectIOForwarder.h */; };
 		32D72CAB197D196D00512B89 /* WorkUnitManagement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D72CA9197D196D00512B89 /* WorkUnitManagement.h */; };
+		32D745EC1C723BDD00F4D719 /* GetLogForSourceUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D745EA1C723BDD00F4D719 /* GetLogForSourceUID.cpp */; };
+		32D745ED1C723BDD00F4D719 /* GetLogForSourceUID.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D745EB1C723BDD00F4D719 /* GetLogForSourceUID.h */; };
 		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
 		32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */; };
 		32DD7F711C60F97C003032DE /* MetadataLoggingManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD7F6F1C60F97C003032DE /* MetadataLoggingManager.cpp */; };
@@ -765,6 +767,7 @@
 		32EBDF0B1B538F4B00278C42 /* ManageCUType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDF091B538F4B00278C42 /* ManageCUType.cpp */; };
 		32EBDF0E1B53A32600278C42 /* ManageCUType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EBDF0C1B53A32600278C42 /* ManageCUType.cpp */; };
 		32EBDF0F1B53A32600278C42 /* ManageCUType.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EBDF0D1B53A32600278C42 /* ManageCUType.h */; };
+		32ED0DDA1C72152700B9581A /* GetLogForSourceUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32ED0DD81C72152700B9581A /* GetLogForSourceUID.cpp */; };
 		32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */; };
 		32EE8978191A5AB000DE2F29 /* status_with.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EE8977191A5AB000DE2F29 /* status_with.h */; };
 		32EE897A191A6CD400DE2F29 /* hash_namespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EE8979191A6CD400DE2F29 /* hash_namespace.h */; };
@@ -1903,6 +1906,8 @@
 		32D6C8991815294700E9689B /* DirectIOForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOForwarder.h; sourceTree = "<group>"; };
 		32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkUnitManagement.cpp; sourceTree = "<group>"; };
 		32D72CA9197D196D00512B89 /* WorkUnitManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkUnitManagement.h; sourceTree = "<group>"; };
+		32D745EA1C723BDD00F4D719 /* GetLogForSourceUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetLogForSourceUID.cpp; sourceTree = "<group>"; };
+		32D745EB1C723BDD00F4D719 /* GetLogForSourceUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetLogForSourceUID.h; sourceTree = "<group>"; };
 		32DA666F1700DBB6004FC02B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
 		32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CouchbaseCacheDriver.cpp; sourceTree = "<group>"; };
 		32DBF9D018E1845E0095B289 /* CouchbaseCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouchbaseCacheDriver.h; sourceTree = "<group>"; };
@@ -1978,6 +1983,8 @@
 		32EBDF0A1B538F4B00278C42 /* ManageCUType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageCUType.h; sourceTree = "<group>"; };
 		32EBDF0C1B53A32600278C42 /* ManageCUType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageCUType.cpp; sourceTree = "<group>"; };
 		32EBDF0D1B53A32600278C42 /* ManageCUType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageCUType.h; sourceTree = "<group>"; };
+		32ED0DD81C72152700B9581A /* GetLogForSourceUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetLogForSourceUID.cpp; sourceTree = "<group>"; };
+		32ED0DD91C72152700B9581A /* GetLogForSourceUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetLogForSourceUID.h; sourceTree = "<group>"; };
 		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
 		32EE8977191A5AB000DE2F29 /* status_with.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = status_with.h; sourceTree = "<group>"; };
 		32EE8979191A6CD400DE2F29 /* hash_namespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hash_namespace.h; sourceTree = "<group>"; };
@@ -3304,6 +3311,8 @@
 				3270E06C1C6CBB7200105726 /* LoggingApiGroup.h */,
 				3270E06E1C6CBBE600105726 /* SubmitEntry.cpp */,
 				3270E06F1C6CBBE600105726 /* SubmitEntry.h */,
+				32ED0DD81C72152700B9581A /* GetLogForSourceUID.cpp */,
+				32ED0DD91C72152700B9581A /* GetLogForSourceUID.h */,
 			);
 			path = logging;
 			sourceTree = "<group>";
@@ -3336,6 +3345,7 @@
 				3208AAB81AC56A51000860D9 /* ApiProxy.h */,
 				32CFD5DD1B2704FF0060AED5 /* api_types.h */,
 				322E26721AC6E437002E5DA4 /* api.h */,
+				32D745E91C723B8E00F4D719 /* logging */,
 				3252F3551C298701004436A8 /* groups */,
 				32AE8BA01B678BCA00FAC528 /* service */,
 				327F39A41AEAA1EB0000C845 /* data_service */,
@@ -4026,6 +4036,15 @@
 			path = cache;
 			sourceTree = "<group>";
 		};
+		32D745E91C723B8E00F4D719 /* logging */ = {
+			isa = PBXGroup;
+			children = (
+				32D745EA1C723BDD00F4D719 /* GetLogForSourceUID.cpp */,
+				32D745EB1C723BDD00F4D719 /* GetLogForSourceUID.h */,
+			);
+			path = logging;
+			sourceTree = "<group>";
+		};
 		32DD7F6E1C60F8DA003032DE /* metadata_logging */ = {
 			isa = PBXGroup;
 			children = (
@@ -4498,6 +4517,7 @@
 				327F39A81AEAA2290000C845 /* NewDS.h in Headers */,
 				320CA9551C29D71A00894AAA /* DeleteUS.h in Headers */,
 				32EBDF0F1B53A32600278C42 /* ManageCUType.h in Headers */,
+				32D745ED1C723BDD00F4D719 /* GetLogForSourceUID.h in Headers */,
 				327F39C31AEFABB00000C845 /* InitDeinit.h in Headers */,
 				32568C931B42C1690006988C /* QuantumTSTaggedAttributeHandler.h in Headers */,
 				328C87371ADFDD410047C79B /* GetInstance.h in Headers */,
@@ -4904,6 +4924,7 @@
 				32B9F3F71AC4186300380FE9 /* NodeCreateUnitServer.cpp in Sources */,
 				32401CB61C18330000E62866 /* GetNodesForSnapshot.cpp in Sources */,
 				328E78061A7A9FE40008C070 /* AbstractApi.cpp in Sources */,
+				32ED0DDA1C72152700B9581A /* GetLogForSourceUID.cpp in Sources */,
 				325D2FE21AFB9C2100B2A706 /* ProcessBye.cpp in Sources */,
 				32B9F3F31AC3E74C00380FE9 /* AbstractDataAccess.cpp in Sources */,
 				32B1E8031B2E9D1B00221E49 /* CommandTemplateDelete.cpp in Sources */,
@@ -5196,6 +5217,7 @@
 				32B1E7E91B297C7F00221E49 /* CommandTemplateSet.cpp in Sources */,
 				325FC8641AF7CEE900DB9D66 /* GetCurrentDataset.cpp in Sources */,
 				327F39AF1AEAA2500000C845 /* AssociationControlUnit.cpp in Sources */,
+				32D745EC1C723BDD00F4D719 /* GetLogForSourceUID.cpp in Sources */,
 				32761A321B30565A006C8719 /* CommandInstanceSubmit.cpp in Sources */,
 				3234BE7A1B034AFC00AE6B08 /* AbstractQuantumKeyAttributeHandler.cpp in Sources */,
 				327F39BE1AEAB6260000C845 /* GetAllDS.cpp in Sources */,
@@ -5547,19 +5569,14 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
-					/usr/local/include,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/usr/local/lib",
-					/usr/local/lib,
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-levent",
 					"-lchaos_common",
 					"-lmongoclient",
-					"-ljemalloc",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -5587,18 +5604,13 @@
 				HEADER_SEARCH_PATHS = (
 					.,
 					usr/local/include,
-					/usr/local/include,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/usr/local/lib",
-					/usr/local/lib,
-				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-levent",
 					"-lchaos_common",
 					"-lmongoclient",
-					"-ljemalloc",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 #include <chaos/common/global.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/bson/util/json.h>
 #include <chaos/common/bson/bsontypes.h>
@@ -426,4 +427,41 @@ bool CDataWrapper::isCDataWrapperValue(const std::string& key){
 
 bool CDataWrapper::isVectorValue(const std::string& key){
     return bsonBuilder->asTempObj().getField(key).type()==Array;
+}
+
+CDataWrapperType CDataWrapper::getValueType(const std::string& key) {
+    CDataWrapperType result = CDataWrapperTypeNoType;
+    switch(bsonBuilder->asTempObj().getField(key).type()) {
+        case Array:
+            result = CDataWrapperTypeVector;
+            break;
+        case Object:
+            result = CDataWrapperTypeObject;
+            break;
+        case BinData:
+            result = CDataWrapperTypeBinary;
+            break;
+        case String:
+            result = CDataWrapperTypeString;
+            break;
+        case NumberDouble:
+            result = CDataWrapperTypeDouble;
+            break;
+        case NumberInt:
+            result = CDataWrapperTypeInt32;
+            break;
+        case NumberLong:
+            result = CDataWrapperTypeInt64;
+            break;
+        case Bool:
+            result = CDataWrapperTypeBool;
+            break;
+        case jstNULL:
+            result = CDataWrapperTypeNULL;
+            break;
+        default:
+            break;
+            
+    }
+    return result;
 }

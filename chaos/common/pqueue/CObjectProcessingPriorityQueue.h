@@ -243,7 +243,6 @@ namespace chaos {
                      get the last insert data
                      */
                     PRIORITY_ELEMENT(T)* waitAndPop() {
-                        DEBUG_CODE(COPPQUEUE_LDBG_<< "Entering in waitAndPop";)
                         boost::unique_lock<boost::mutex> lock(qMutex);
                         //output result poitner
                         PriorityQueuedElement<T> *prioritizedElement = NULL;
@@ -262,7 +261,6 @@ namespace chaos {
                         
                         //remove the element
                         bufferQueue.pop();
-                        DEBUG_CODE(COPPQUEUE_LDBG_<< "Leaving in waitAndPop";)
                         return prioritizedElement;
                     }
                     

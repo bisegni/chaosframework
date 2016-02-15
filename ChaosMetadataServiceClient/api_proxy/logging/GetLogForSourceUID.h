@@ -1,10 +1,10 @@
 /*
- *	LoggingDataAccess.h
+ *	GetLogForSourceUID.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by Claudio Bisegni.
  *
- *    	Copyright 11/02/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 15/02/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__LoggingDataAccess_h
-#define __CHAOSFramework__LoggingDataAccess_h
+#ifndef __CHAOSFramework__GetLogForSourceUID_h
+#define __CHAOSFramework__GetLogForSourceUID_h
 
+#include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
-#include "../persistence.h"
-
-#include <chaos/common/chaos_types.h>
+#include <chaos/common//chaos_types.h>
 
 namespace chaos {
-    namespace metadata_service {
-        namespace persistence {
-            namespace data_access {
+    namespace metadata_service_client {
+        namespace api_proxy {
+            namespace logging {
+
                 
                 CHAOS_DEFINE_MAP_FOR_TYPE(std::string, std::string, LoggingKeyValueStringMap)
                 CHAOS_DEFINE_MAP_FOR_TYPE(std::string, int64_t,     LoggingKeyValueInt64Map)
@@ -53,40 +53,39 @@ namespace chaos {
                 
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<LogEntry>, LogEntryList);
                 
-                class LoggingDataAccess:
-                public chaos::service_common::persistence::data_access::AbstractDataAccess {
-                    
+                class GetLogForSourceUIDHelper {
+                    LogEntryList log_entry_list;
                 public:
-                    DECLARE_DA_NAME
-                    
-                    //! default constructor
-                    LoggingDataAccess();
-                    
-                    //!default destructor
-                    ~LoggingDataAccess();
-                    
-                    //! Insert a new entry in the log
+                    GetLogForSourceUIDHelper(chaos::common::data::CDataWrapper *api_result);
+                    ~GetLogForSourceUIDHelper();
+                    size_t getLogEntryListSize();
+                    const LogEntryList& getLogEntryList();
+                };
+                
+                //! get log entries for a source
+                class GetLogForSourceUID:
+                public chaos::metadata_service_client::api_proxy::ApiProxy {
+                    API_PROXY_CLASS(GetLogForSourceUID)
+                protected:
+                    API_PROXY_CD_DECLARATION(GetLogForSourceUID)
+                public:
+                    //! Add a new node in the domain
                     /*!
-                     \param structure that describe the log entry
+                     If the node_parent_path is an empty string(the default value) the ndoe became a root in the domain
+                     \param source node that has emitted the log entries
+                     \param domain if is not and empty string it will be used to filter domain in log entries
+                     \param last_sequence_id is the id of the last returned entries in the past query
                      */
-                    virtual int insertNewEntry(LogEntry& log_entry) = 0;
+                    ApiProxyResult execute(const std::string& source,
+                                           const uint64_t last_sequence_id = 0,
+                                           const std::string& domain = std::string(),
+                                           const uint32_t page_length = 30);
                     
-                    //!Perform a search on log entries
-                    /*!
-                     perform a simple search on node filtering on type
-                     \param entry_list tge list of the current page of the entries found
-                     \param source_uid is the source that has created the entries
-                     \param last_sequence is identified the sequence after qich we need to search
-                     \param page_length is the maximum number of the element to return
-                     */
-                    virtual int searchEntryForSource(LogEntryList& entry_list,
-                                                     const std::string& source_uid,
-                                                     uint64_t last_sequence,
-                                                     uint32_t page_length = 100) = 0;
+                    static std::auto_ptr<GetLogForSourceUIDHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };
             }
         }
     }
 }
 
-#endif /* __CHAOSFramework__LoggingDataAccess_h */
+#endif /* __CHAOSFramework__GetLogForSourceUID_h */

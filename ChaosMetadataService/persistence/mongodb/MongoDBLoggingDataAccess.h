@@ -47,10 +47,16 @@ namespace chaos {
                 protected:
                     MongoDBLoggingDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBLoggingDataAccess();
-
+                    
                 public:
                     //! Inherited method
                     int insertNewEntry(data_access::LogEntry& log_entry);
+                    
+                    //! Inherited method
+                    int searchEntryForSource(data_access::LogEntryList& entry_list,
+                                             const std::string& source_uid,
+                                             uint64_t last_sequence,
+                                             uint32_t page_length = 100);
                 };
             }
         }

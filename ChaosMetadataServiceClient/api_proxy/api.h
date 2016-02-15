@@ -24,6 +24,10 @@
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 
 //---include all api header
+
+//----------------------------logging----------------------------------------
+#include <ChaosMetadataServiceClient/api_proxy/logging/GetLogForSourceUID.h>
+
 //----------------------------groups----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/groups/AddNode.h>
 #include <ChaosMetadataServiceClient/api_proxy/groups/DeleteNode.h>

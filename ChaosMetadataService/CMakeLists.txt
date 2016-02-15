@@ -17,7 +17,8 @@ SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
                         api/AbstractApiGroup.cpp)
 
 SET(cnd_src  ${cnd_src}	api/logging/LoggingApiGroup.cpp
-                        api/logging/SubmitEntry.cpp)
+                        api/logging/SubmitEntry.cpp
+                        api/logging/GetLogForSourceUID.cpp)
 
 SET(cnd_src  ${cnd_src}	api/groups/GroupsApiGroup.cpp
                         api/groups/AddNode.cpp

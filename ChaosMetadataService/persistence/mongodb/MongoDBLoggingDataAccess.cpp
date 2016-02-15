@@ -32,8 +32,10 @@
 for(miter it = log_entry.map.begin();\
 it != log_entry.map.end();\
 it++) {\
-    b << it->first << it->second;\
+b << it->first << it->second;\
 }
+
+#define READ_STRING_LOG_ATTRIBUTE_MAP_ON_ELELEMT(e, m)
 
 using namespace chaos::common::data;
 using namespace chaos::service_common::persistence::mongodb;
@@ -60,7 +62,7 @@ int MongoDBLoggingDataAccess::insertNewEntry(data_access::LogEntry& log_entry) {
         //add default log entry attribute
         builder << "seq" << (long long)log_entry.sequence;
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << log_entry.source_identifier;
-        builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP << (long long)log_entry.ts;
+        builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP << mongo::Date_t(log_entry.ts);
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << log_entry.domain;
         
         //add custom attribute in log entry
@@ -84,6 +86,86 @@ int MongoDBLoggingDataAccess::insertNewEntry(data_access::LogEntry& log_entry) {
     } catch (const mongo::DBException &e) {
         MDBLDA_ERR << e.what();
         err = e.getCode();
+    }
+    return err;
+}
+
+int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& entry_list,
+                                                   const std::string& source_uid,
+                                                   uint64_t last_sequence,
+                                                   uint32_t page_length) {
+    int err = 0;
+    SearchResult            paged_result;
+    //filter on sequence
+    mongo::Query q = BSON("seq" << BSON("$gt"<<(long long)last_sequence) <<
+                          MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << source_uid);
+    q = q.sort(BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP<<(int)-1));
+    DEBUG_CODE(MDBLDA_DBG<<log_message("searchEntryForSource",
+                                       "performPagedQuery",
+                                       DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                               q.toString()));)
+    
+    //perform the search for the query page
+    if((err = performPagedQuery(paged_result,
+                                MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                q,
+                                NULL,
+                                NULL,
+                                page_length))) {
+        MDBLDA_ERR << "Error calling performPagedQuery with error" << err;
+    } else {
+        DEBUG_CODE(MDBLDA_DBG << "The query '"<< q.toString() <<"' has found " << paged_result.size() << " result";)
+        if(paged_result.size()) {
+            for (SearchResultIterator it = paged_result.begin();
+                 it != paged_result.end();
+                 it++) {
+                
+                std::vector<mongo::BSONElement> all_element;
+                boost::shared_ptr<data_access::LogEntry> log_entry(new data_access::LogEntry());
+                
+                it->elems(all_element);
+                for(std::vector<mongo::BSONElement>::iterator it_ele = all_element.begin();
+                    it_ele != all_element.end();
+                    it_ele++) {
+                    const std::string field_name = it_ele->fieldName();
+                    if(field_name.compare("seq") == 0) {
+                        log_entry->sequence = (uint64_t)it_ele->Long();
+                    } else if(field_name.compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP) == 0) {
+                        log_entry->ts = (uint64_t)it_ele->Date().asInt64();
+                    } else if(field_name.compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER) == 0) {
+                        log_entry->source_identifier = it_ele->String();
+                    } else if(field_name.compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN) == 0) {
+                        log_entry->domain = it_ele->String();
+                    } else {
+                        //custom log key
+                        switch(it_ele->type()) {
+                            case NumberInt:
+                                log_entry->map_int64_value.insert(make_pair(field_name, it_ele->numberInt()));
+                                break;
+                            case NumberLong:
+                                log_entry->map_int64_value.insert(make_pair(field_name, it_ele->numberLong()));
+                                break;
+                            case NumberDouble:
+                                log_entry->map_double_value.insert(make_pair(field_name, it_ele->numberDouble()));
+                                break;
+                            case String:
+                                log_entry->map_string_value.insert(make_pair(field_name, it_ele->String()));
+                                break;
+                            case Bool:
+                                log_entry->map_bool_value.insert(make_pair(field_name, it_ele->boolean()));
+                                break;
+                                
+                            default:
+                                break;
+                                
+                        }
+                    }
+                    
+                    //add entry in the result list
+                    entry_list.push_back(log_entry);
+                }
+            }
+        }
     }
     return err;
 }
