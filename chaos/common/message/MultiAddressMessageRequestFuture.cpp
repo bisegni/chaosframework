@@ -55,12 +55,6 @@ MultiAddressMessageRequestFuture::~MultiAddressMessageRequestFuture() {
     
 }
 
-void MultiAddressMessageRequestFuture::resetErrorResult() {
-    current_error = 0;
-    current_error_message.clear();
-    current_error_domain.clear();
-}
-
 void MultiAddressMessageRequestFuture::setTimeout(int32_t _timeout_in_milliseconds) {
     timeout_in_milliseconds = _timeout_in_milliseconds;
 }
@@ -94,8 +88,6 @@ bool MultiAddressMessageRequestFuture::wait() {
     CHAOS_ASSERT(parent_mn_message_channel)
     int retry_on_same_server = 0;
     bool working = true;
-    //reset error
-    resetErrorResult();
     //unitle we have valid future and don't have have answer
     while(current_future.get() &&
           working) {

@@ -49,14 +49,4 @@ void AbstractApiGroup::init(void *init_data) throw (chaos::CException) {
 }
 
 void AbstractApiGroup::deinit()  throw (chaos::CException) {
-    //the deinit phase is called into destructor of api class
-//    for(ApiListIterator it = api_instance.begin();
-//        it != api_instance.end();
-//        it++) {
-//        boost::shared_ptr<AbstractApi> api = *it;
-//        InizializableService::deinitImplementation(api.get(),
-//                                                   api->getName(),
-//                                                   __PRETTY_FUNCTION__);
-//    }
-
 }

@@ -28,7 +28,7 @@ using namespace chaos::metadata_service_client::api_proxy::logging;
 
 API_PROXY_CD_DEFINITION(GetLogForSourceUID,
                         MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
-                        "getLogsForNodeUID")
+                        "getLogForNodeUID")
 /*!
  
  */

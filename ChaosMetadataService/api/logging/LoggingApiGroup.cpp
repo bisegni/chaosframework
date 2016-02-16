@@ -21,6 +21,8 @@
 
 #include "LoggingApiGroup.h"
 #include "SubmitEntry.h"
+#include "GetLogForSourceUID.h"
+
 using namespace chaos::metadata_service::api::logging;
 
 DEFINE_CLASS_FACTORY_NO_ALIAS(LoggingApiGroup,
@@ -29,6 +31,7 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(LoggingApiGroup,
 LoggingApiGroup::LoggingApiGroup():
 AbstractApiGroup(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN){
     addApi<SubmitEntry>();
+    addApi<GetLogForSourceUID>();
 }
 
 LoggingApiGroup::~LoggingApiGroup() {}

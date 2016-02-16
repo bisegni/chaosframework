@@ -107,7 +107,7 @@ int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& en
     
     //perform the search for the query page
     if((err = performPagedQuery(paged_result,
-                                MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_LOGGING),
                                 q,
                                 NULL,
                                 NULL,
@@ -160,10 +160,10 @@ int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& en
                                 
                         }
                     }
-                    
-                    //add entry in the result list
-                    entry_list.push_back(log_entry);
                 }
+                
+                //add entry in the result list
+                entry_list.push_back(log_entry);
             }
         }
     }

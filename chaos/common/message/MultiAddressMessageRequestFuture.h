@@ -50,11 +50,6 @@ namespace chaos{
                 std::string action_name;
                 auto_ptr<chaos::common::data::CDataWrapper> message_pack;
                 
-                //! error information for the request
-                int current_error;
-                std::string current_error_message;
-                std::string current_error_domain;
-                
                 //! point to the current future
                 auto_ptr<MessageRequestFuture> current_future;
                 
@@ -68,7 +63,6 @@ namespace chaos{
                                                  const std::string &_action_name,
                                                  chaos::common::data::CDataWrapper *_message_pack,
                                                  int32_t _timeout_in_milliseconds = 1000);
-                inline void resetErrorResult();
                 inline void retryOfflineServer();
                 inline void switchOnOtherServer();
             public:

@@ -37,7 +37,7 @@ using namespace chaos::metadata_service::api::logging;
 using namespace chaos::metadata_service::persistence::data_access;
 
 GetLogForSourceUID::GetLogForSourceUID():
-AbstractApi("getLogsForNodeUID"){
+AbstractApi("getLogForNodeUID"){
 }
 
 GetLogForSourceUID::~GetLogForSourceUID() {
@@ -45,6 +45,7 @@ GetLogForSourceUID::~GetLogForSourceUID() {
 
 chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api_data, bool& detach_data) {
     int err = 0;
+    CDataWrapper *result = NULL;
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, L_GLFNI_ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, L_GLFNI_ERR, -2, "The log timestamp key is mandatory");
@@ -66,14 +67,17 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
                                          page_length))) {
         LOG_AND_TROW_FORMATTED(L_GLFNI_ERR, err, "Error searching for source %1%", %source);
     }
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
-    for(LogEntryListIterator it = entry_list.begin();
-        it != entry_list.end();
-        it++){
-        result->appendCDataWrapperToArray(*converEntry(*(*it).get()));
+    if(entry_list.size()) {
+        std::auto_ptr<CDataWrapper> tmp_result(new CDataWrapper());
+        for(LogEntryListIterator it = entry_list.begin();
+            it != entry_list.end();
+            it++){
+            tmp_result->appendCDataWrapperToArray(*converEntry(*(*it).get()));
+        }
+        tmp_result->finalizeArrayForKey("result_list");
+        result = tmp_result.release();
     }
-    result->finalizeArrayForKey("result_list");
-    return result.release();
+    return result;
 }
 
 #define WRITE_LOG_ATTRIBUTE_MAP_ON_OBJECT(o, m, miter, map)\

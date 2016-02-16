@@ -32,7 +32,7 @@
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::monitor_system;
-using namespace chaos::metadata_service_client::api_proxy::node;
+using namespace chaos::metadata_service_client::api_proxy;
 
 #define MSCT_INFO   INFO_LOG(MetadataServiceClientTest)
 #define MSCT_DBG    INFO_LOG(MetadataServiceClientTest)
@@ -95,8 +95,6 @@ int main(int argc, char *argv[]){
                 
             }
         }
-        
-        sleep(1000000);
         
         ChaosMetadataServiceClient::getInstance()->disableMonitor();
         ChaosMetadataServiceClient::getInstance()->stop();
