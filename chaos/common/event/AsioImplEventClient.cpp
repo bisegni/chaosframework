@@ -30,7 +30,7 @@ s = new boost::asio::ip::udp::socket(io_service);\
 if(s == NULL) {\
 throw CException(err, msg, __PRETTY_FUNCTION__);\
 } else {\
-socket_alert->connect(boost::asio::ip::udp::endpoint(addr,port));\
+s->connect(boost::asio::ip::udp::endpoint(addr,port));\
 }\
 
 #define DELETE_EVENT_SOCKET(s)\

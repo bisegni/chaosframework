@@ -127,18 +127,6 @@ void CommandManager::deleteMDSChannel(MDSMessageChannel *mds_channel) {
 }
 
 /*
- Get Device event channel
- */
-event::channel::InstrumentEventChannel *CommandManager::getInstrumentEventChannel() {
-    return static_cast<event::channel::InstrumentEventChannel*>(broker->getNewEventChannelFromType(event::EventTypeInstrument));
-}
-
-    //
-void CommandManager::deleteInstrumentEventChannel(event::channel::InstrumentEventChannel *eventChannel) {
-    broker->disposeEventChannel(eventChannel);
-}
-
-/*
  Register actions defined by AbstractActionDescriptor instance contained in the array
  */
 void CommandManager::registerAction(DeclareAction* declareActionClass) {

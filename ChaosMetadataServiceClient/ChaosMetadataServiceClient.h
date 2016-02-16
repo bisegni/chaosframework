@@ -20,6 +20,7 @@
 #ifndef __CHAOSFramework__MetadataServiceClient__
 #define __CHAOSFramework__MetadataServiceClient__
 
+#include <ChaosMetadataServiceClient/event/event.h>
 #include <ChaosMetadataServiceClient/api_proxy/api.h>
 #include <ChaosMetadataServiceClient/metadata_service_client_types.h>
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
@@ -31,7 +32,6 @@
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/StartableService.h>
 
-#include <chaos/common/event/event.h>
 
 namespace chaos {
     namespace metadata_service_client {
@@ -41,26 +41,22 @@ namespace chaos {
          */
         class ChaosMetadataServiceClient :
         public ChaosCommon<ChaosMetadataServiceClient>,
-        public ServerDelegator,
-        protected chaos::EventAction {
+        public ServerDelegator{
             friend class common::utility::Singleton<ChaosMetadataServiceClient>;
             //!api proxy service
             common::utility::InizializableServiceContainer<chaos::metadata_service_client::api_proxy::ApiProxyManager> api_proxy_manager;
             
+            //!event dispatch service
+            common::utility::InizializableServiceContainer<chaos::metadata_service_client::event::EventDispatchManager> event_dispatch_manager;
+            
             //!monitor manager
             common::utility::StartableServiceContainer<chaos::metadata_service_client::monitor_system::MonitorManager> monitor_manager;
-            
-            //alert event channel
-            common::event::channel::AlertEventChannel *alert_event_channel;
             
             //!default constructor
             ChaosMetadataServiceClient();
             
             //! default destructor
             ~ChaosMetadataServiceClient();
-            
-        protected:
-            void handleEvent(const chaos::common::event::EventDescriptor * const event);
             
         public:
             //! the client setting
@@ -163,9 +159,15 @@ namespace chaos {
             //! get the corresponding healt key for node uid
             std::string getHealtKeyFromGeneralKey(const std::string& node_uid);
             
-            //!get dataset ina synchornous way
+            //!get dataset ina synchronous way
             std::auto_ptr<chaos::common::data::CDataWrapper> getLastDataset(const std::string& unique_node_id,
                                                                             const unsigned int dataset_type);
+            
+            //!register an event handler
+            void registerEventHandler(chaos::metadata_service_client::event::AbstractEventHandler *handler);
+            
+            //!deregister an event handler
+            void deregisterEventHandler(chaos::metadata_service_client::event::AbstractEventHandler *handler);
         };
     }
 }

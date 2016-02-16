@@ -63,6 +63,7 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
     
     if((err = l_da->searchEntryForSource(entry_list,
                                          source,
+                                         domain,
                                          sequence,
                                          page_length))) {
         LOG_AND_TROW_FORMATTED(L_GLFNI_ERR, err, "Error searching for source %1%", %source);

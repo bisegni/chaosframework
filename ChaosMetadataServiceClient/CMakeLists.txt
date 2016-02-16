@@ -7,8 +7,17 @@ SET(mcl_src ChaosMetadataServiceClient.cpp)
 SET(mcl_src ${mcl_src}      api_proxy/ApiProxyManager.cpp
                             api_proxy/ApiProxy.cpp)
 
+SET(mcl_src ${mcl_src}	    event/EventDispatchManager.cpp
+                            event/AsbtarctEventHandler.cpp)
+
+SET(mcl_src ${mcl_src}	    event/alert/AlertEventHandler.cpp
+                            event/alert/AlertLogEventHandler.cpp)
+
+SET(mcl_src ${mcl_src}	    api_proxy/logging/GetLogForSuurceUID.cpp)
+
+
 SET(mcl_src ${mcl_src}	    api_proxy/groups/AddNode.cpp
-    												api_proxy/groups/DeleteNode.cpp
+                            api_proxy/groups/DeleteNode.cpp
                             api_proxy/groups/GetDomains.cpp
                             api_proxy/groups/GetNodeChilds.cpp)
 

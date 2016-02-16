@@ -81,7 +81,8 @@ namespace chaos {
                      */
                     virtual int searchEntryForSource(LogEntryList& entry_list,
                                                      const std::string& source_uid,
-                                                     uint64_t last_sequence,
+                                                     const std::string& domain = std::string(),
+                                                     uint64_t last_sequence = 0,
                                                      uint32_t page_length = 100) = 0;
                 };
             }

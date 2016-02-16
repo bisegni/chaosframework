@@ -715,6 +715,15 @@
 		32D72CAB197D196D00512B89 /* WorkUnitManagement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D72CA9197D196D00512B89 /* WorkUnitManagement.h */; };
 		32D745EC1C723BDD00F4D719 /* GetLogForSourceUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D745EA1C723BDD00F4D719 /* GetLogForSourceUID.cpp */; };
 		32D745ED1C723BDD00F4D719 /* GetLogForSourceUID.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D745EB1C723BDD00F4D719 /* GetLogForSourceUID.h */; };
+		32D745F21C7332FC00F4D719 /* EventDispatchManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D745F01C7332FC00F4D719 /* EventDispatchManager.h */; };
+		32D745F41C73357900F4D719 /* EventDispatchManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D745F31C73357900F4D719 /* EventDispatchManager.cpp */; };
+		32D745F81C73388900F4D719 /* AlertEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D745F61C73388900F4D719 /* AlertEventHandler.cpp */; };
+		32D745F91C73388900F4D719 /* AlertEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D745F71C73388900F4D719 /* AlertEventHandler.h */; };
+		32D745FC1C7338D100F4D719 /* AlertLogEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D745FA1C7338D100F4D719 /* AlertLogEventHandler.cpp */; };
+		32D745FD1C7338D100F4D719 /* AlertLogEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D745FB1C7338D100F4D719 /* AlertLogEventHandler.h */; };
+		32D746001C73399900F4D719 /* AbstractEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D745FE1C73399900F4D719 /* AbstractEventHandler.cpp */; };
+		32D746011C73399900F4D719 /* AbstractEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D745FF1C73399900F4D719 /* AbstractEventHandler.h */; };
+		32D746051C7367A200F4D719 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D746031C7367A200F4D719 /* event.h */; };
 		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
 		32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */; };
 		32DD7F711C60F97C003032DE /* MetadataLoggingManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD7F6F1C60F97C003032DE /* MetadataLoggingManager.cpp */; };
@@ -1908,6 +1917,15 @@
 		32D72CA9197D196D00512B89 /* WorkUnitManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkUnitManagement.h; sourceTree = "<group>"; };
 		32D745EA1C723BDD00F4D719 /* GetLogForSourceUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetLogForSourceUID.cpp; sourceTree = "<group>"; };
 		32D745EB1C723BDD00F4D719 /* GetLogForSourceUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetLogForSourceUID.h; sourceTree = "<group>"; };
+		32D745F01C7332FC00F4D719 /* EventDispatchManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatchManager.h; sourceTree = "<group>"; };
+		32D745F31C73357900F4D719 /* EventDispatchManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDispatchManager.cpp; sourceTree = "<group>"; };
+		32D745F61C73388900F4D719 /* AlertEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventHandler.cpp; sourceTree = "<group>"; };
+		32D745F71C73388900F4D719 /* AlertEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventHandler.h; sourceTree = "<group>"; };
+		32D745FA1C7338D100F4D719 /* AlertLogEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertLogEventHandler.cpp; sourceTree = "<group>"; };
+		32D745FB1C7338D100F4D719 /* AlertLogEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertLogEventHandler.h; sourceTree = "<group>"; };
+		32D745FE1C73399900F4D719 /* AbstractEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEventHandler.cpp; sourceTree = "<group>"; };
+		32D745FF1C73399900F4D719 /* AbstractEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEventHandler.h; sourceTree = "<group>"; };
+		32D746031C7367A200F4D719 /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
 		32DA666F1700DBB6004FC02B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
 		32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CouchbaseCacheDriver.cpp; sourceTree = "<group>"; };
 		32DBF9D018E1845E0095B289 /* CouchbaseCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouchbaseCacheDriver.h; sourceTree = "<group>"; };
@@ -2889,6 +2907,7 @@
 				32661C6C1AA741D000F1A721 /* ChaosMetadataServiceClient.h */,
 				3274A9061AC2EE76000C6A4D /* metadata_service_client_constants.h */,
 				3274A9071AC2EF70000C6A4D /* metadata_service_client_types.h */,
+				32D745EE1C7332D500F4D719 /* event */,
 				3274A9081AC2F18E000C6A4D /* api_proxy */,
 				3274A9091AC2F1CD000C6A4D /* monitor_system */,
 			);
@@ -4045,6 +4064,30 @@
 			path = logging;
 			sourceTree = "<group>";
 		};
+		32D745EE1C7332D500F4D719 /* event */ = {
+			isa = PBXGroup;
+			children = (
+				32D745F31C73357900F4D719 /* EventDispatchManager.cpp */,
+				32D745F01C7332FC00F4D719 /* EventDispatchManager.h */,
+				32D745FE1C73399900F4D719 /* AbstractEventHandler.cpp */,
+				32D745FF1C73399900F4D719 /* AbstractEventHandler.h */,
+				32D746031C7367A200F4D719 /* event.h */,
+				32D745F51C73385E00F4D719 /* alert */,
+			);
+			path = event;
+			sourceTree = "<group>";
+		};
+		32D745F51C73385E00F4D719 /* alert */ = {
+			isa = PBXGroup;
+			children = (
+				32D745F61C73388900F4D719 /* AlertEventHandler.cpp */,
+				32D745F71C73388900F4D719 /* AlertEventHandler.h */,
+				32D745FA1C7338D100F4D719 /* AlertLogEventHandler.cpp */,
+				32D745FB1C7338D100F4D719 /* AlertLogEventHandler.h */,
+			);
+			path = alert;
+			sourceTree = "<group>";
+		};
 		32DD7F6E1C60F8DA003032DE /* metadata_logging */ = {
 			isa = PBXGroup;
 			children = (
@@ -4510,6 +4553,7 @@
 				32B1E7F71B2AD1CC00221E49 /* CommandTemplateGet.h in Headers */,
 				327F39BF1AEAB6260000C845 /* GetAllDS.h in Headers */,
 				327F39B81AEAA2850000C845 /* DeleteDS.h in Headers */,
+				32D746051C7367A200F4D719 /* event.h in Headers */,
 				32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */,
 				3252F35D1C298755004436A8 /* GetNodeChilds.h in Headers */,
 				3239EF531C0EFEB20052BE61 /* DeleteSnapshot.h in Headers */,
@@ -4525,9 +4569,11 @@
 				3252F3591C298743004436A8 /* AddNode.h in Headers */,
 				3208AABE1AC56C1C000860D9 /* GetNodeDescription.h in Headers */,
 				32B2999D1BD92B18000D3716 /* CopyInstance.h in Headers */,
+				32D745FD1C7338D100F4D719 /* AlertLogEventHandler.h in Headers */,
 				3239EF4B1C0EFE910052BE61 /* RestoreSnapshot.h in Headers */,
 				32610F8D1AE6560A00779B84 /* GetDescription.h in Headers */,
 				3211CCDE1B03402800F9B80E /* QuantumKeyConsumer.h in Headers */,
+				32D745F91C73388900F4D719 /* AlertEventHandler.h in Headers */,
 				32AE8BA41B678C1500FAC528 /* ResetAll.h in Headers */,
 				32761A391B314697006C8719 /* GetCommandAndTemplateDescription.h in Headers */,
 				327F39B41AEAA2680000C845 /* GetAssociationByDS.h in Headers */,
@@ -4540,12 +4586,14 @@
 				32B1E8071B2EA07200221E49 /* CommandTemplateDelete.h in Headers */,
 				328C87331ADFDB9A0047C79B /* SearchInstancesByUS.h in Headers */,
 				3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */,
+				32D745F21C7332FC00F4D719 /* EventDispatchManager.h in Headers */,
 				3239EF4F1C0EFEA60052BE61 /* CreateNewSnapshot.h in Headers */,
 				32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */,
 				32B419381B16236300C3CA7D /* SetInputDatasetAttributeValues.h in Headers */,
 				327F39AC1AEAA2390000C845 /* UpdateDS.h in Headers */,
 				32362C221ADD0C45000CA079 /* SetInstanceDescription.h in Headers */,
 				323386B21ACD731E008863DC /* NodeSearch.h in Headers */,
+				32D746011C73399900F4D719 /* AbstractEventHandler.h in Headers */,
 				325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */,
 				32B1E7F31B298D2600221E49 /* CommandTemplateSearch.h in Headers */,
 				324FD0821B00ACEF003800BA /* MonitorManager.h in Headers */,
@@ -5254,11 +5302,15 @@
 				32B299AA1BE27945000D3716 /* RecoverError.cpp in Sources */,
 				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
+				32D746001C73399900F4D719 /* AbstractEventHandler.cpp in Sources */,
 				3239EF591C0F26D90052BE61 /* GetAllSnapshot.cpp in Sources */,
+				32D745F81C73388900F4D719 /* AlertEventHandler.cpp in Sources */,
 				32E2B1B41C32A60D00FCFB42 /* DeleteNode.cpp in Sources */,
+				32D745F41C73357900F4D719 /* EventDispatchManager.cpp in Sources */,
 				32AE8BA31B678C1500FAC528 /* ResetAll.cpp in Sources */,
 				3239EF4A1C0EFE910052BE61 /* RestoreSnapshot.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
+				32D745FC1C7338D100F4D719 /* AlertLogEventHandler.cpp in Sources */,
 				327F39AB1AEAA2390000C845 /* UpdateDS.cpp in Sources */,
 				32B4192C1B0DE55E00C3CA7D /* ChangeNodeState.cpp in Sources */,
 				328C87321ADFDB9A0047C79B /* SearchInstancesByUS.cpp in Sources */,

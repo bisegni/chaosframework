@@ -41,6 +41,7 @@ using namespace chaos::common::network;
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service_client;
 using namespace chaos::DataServiceNodeDefinitionKey;
+using namespace chaos::metadata_service_client::event;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::monitor_system;
 
@@ -51,8 +52,7 @@ using boost::shared_ptr;
 #define CMSC_LERR ERR_LOG(ChaosMetadataServiceClient)
 
 //!default constructor
-ChaosMetadataServiceClient::ChaosMetadataServiceClient():
-alert_event_channel(NULL){}
+ChaosMetadataServiceClient::ChaosMetadataServiceClient(){}
 
 //! default destructor
 ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {}
@@ -75,6 +75,9 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
         api_proxy_manager.reset(new ApiProxyManager(NetworkBroker::getInstance(), &setting), "ApiProxyManager");
         api_proxy_manager.init(NULL, __PRETTY_FUNCTION__);
         
+        event_dispatch_manager.reset(new EventDispatchManager(&setting), "EventDispatchManager");
+        event_dispatch_manager.init(NULL, __PRETTY_FUNCTION__);
+        
         monitor_manager.reset(new MonitorManager(NetworkBroker::getInstance(), &setting), "MonitorManager");
         monitor_manager.init(NULL, __PRETTY_FUNCTION__);
         
@@ -85,10 +88,6 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
             it++) {
             addServerAddress(it->ip_port);
         }
-        
-        //allcoate the event channel
-        alert_event_channel = NetworkBroker::getInstance()->getNewAlertEventChannel();
-        alert_event_channel->activateChannelEventReception(this);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         throw ex;
@@ -132,13 +131,9 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
  Deiniti all the manager
  */
 void ChaosMetadataServiceClient::deinit()   throw(CException) {
-    if(alert_event_channel) {
-        alert_event_channel->deactivateChannelEventReception(this);
-        NetworkBroker::getInstance()->disposeEventChannel(alert_event_channel);
-    }
     //deinit api system
     CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
-    
+    CHAOS_NOT_THROW(event_dispatch_manager.deinit(__PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__);)
     
     if(monitoringIsStarted()){CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)}
@@ -148,27 +143,6 @@ void ChaosMetadataServiceClient::deinit()   throw(CException) {
     CMSC_LAPP << "-------------------------------------------------------------------------";
     CMSC_LAPP << "Metadata service client has been stopped";
     CMSC_LAPP << "-------------------------------------------------------------------------";
-}
-
-void ChaosMetadataServiceClient::handleEvent(const EventDescriptor * const event) {
-    
-    CMSC_LAPP << "----event received---";
-    switch(event->getSubCode()){
-        case common::event::alert::EventAlertLogSubmitted: {
-            std::string node_uid;
-            std::string log_domian;
-            ((common::event::alert::AlertEventDescriptor*)event)->getLogAlert(node_uid,
-                                                        log_domian);
-            CMSC_LAPP << "NodeUID:" << node_uid;
-            CMSC_LAPP << "Log Domain:" << log_domian;
-            break;
-        }
-            
-        default:
-            break;
-            
-    }
-    CMSC_LAPP << "----event received---";
 }
 
 void ChaosMetadataServiceClient::clearServerList() {
@@ -431,4 +405,15 @@ std::auto_ptr<chaos::common::data::CDataWrapper> ChaosMetadataServiceClient::get
                                                                                             const unsigned int dataset_type) {
     CHAOS_ASSERT(monitor_manager.get());
     return monitor_manager->getLastDataset(getDatasetKeyFromGeneralKey(unique_node_id, dataset_type));
+}
+
+//!register an event handler
+void ChaosMetadataServiceClient::registerEventHandler(AbstractEventHandler *handler) {
+    CHAOS_ASSERT(event_dispatch_manager.get());
+    event_dispatch_manager->registerEventHandler(handler);
+}
+
+//!deregister an event handler
+void ChaosMetadataServiceClient::deregisterEventHandler(AbstractEventHandler *handler) {
+    event_dispatch_manager->deregisterEventHandler(handler);
 }

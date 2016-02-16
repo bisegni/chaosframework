@@ -122,16 +122,6 @@ namespace chaos{
 				void deleteMDSChannel(chaos::common::message::MDSMessageChannel *mds_channel);
 				
 				/*
-				 Get Device event channel
-				 */
-				event::channel::InstrumentEventChannel *getInstrumentEventChannel();
-				
-				/*!
-				 Delete an event channel allocated with command manager
-				 */
-				void deleteInstrumentEventChannel(event::channel::InstrumentEventChannel *eventChannel);
-				
-				/*
 				 Register actions defined by AbstractActionDescriptor instance contained in the array
 				 */
 				void registerAction(DeclareAction*);

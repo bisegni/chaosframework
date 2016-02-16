@@ -92,13 +92,19 @@ int MongoDBLoggingDataAccess::insertNewEntry(data_access::LogEntry& log_entry) {
 
 int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& entry_list,
                                                    const std::string& source_uid,
+                                                   const std::string& domain,
                                                    uint64_t last_sequence,
                                                    uint32_t page_length) {
     int err = 0;
     SearchResult            paged_result;
     //filter on sequence
-    mongo::Query q = BSON("seq" << BSON("$gt"<<(long long)last_sequence) <<
-                          MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << source_uid);
+    mongo::BSONObjBuilder build_query;
+    build_query <<"seq" << BSON("$gt"<<(long long)last_sequence);
+    build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << source_uid;
+    if(domain.size()) {
+        build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << domain;
+    }
+    mongo::Query q = build_query.obj();
     q = q.sort(BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP<<(int)-1));
     DEBUG_CODE(MDBLDA_DBG<<log_message("searchEntryForSource",
                                        "performPagedQuery",

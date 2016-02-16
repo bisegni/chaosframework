@@ -1041,7 +1041,7 @@ namespace chaos {
                 //! @Configuraiton for custom event multicast ip
                 static const char * const   CONF_EVENT_CUSTOM_MADDRESS                  = "239.255.0.4";
                 //! @Configuraiton for event multicast ip port
-                static const unsigned short CONF_EVENT_PORT                             = 5000;
+                static const unsigned short CONF_EVENT_PORT                             = 50000;
             }
             /** @} */ // end of EventConfiguration
         }
