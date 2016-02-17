@@ -453,13 +453,16 @@ int MongoDBHAConnectionManager::remove( const std::string &ns , mongo::Query q ,
 }
 
 mongo::BSONObj MongoDBHAConnectionManager::distinct(const std::string &ns,
-                                                    const std::string &field) {
+                                                    const std::string &field,
+                                                    const mongo::Query& query) {
     int err = 0;
     mongo::BSONObj result;
     MongoDBHAConnection conn = NULL;
     while (getConnection(&conn)) {
         try {
-            result = conn->conn().distinct(ns, field);
+            result = conn->conn().distinct(ns,
+                                           field,
+                                           query);
             MONGO_DB_GET_ERROR(conn, err);
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();

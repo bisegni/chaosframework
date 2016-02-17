@@ -24,7 +24,7 @@
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
 
-#include <chaos/common//chaos_types.h>
+#include <chaos/common/chaos_types.h>
 
 namespace chaos {
     namespace metadata_service_client {
@@ -77,8 +77,20 @@ namespace chaos {
                      \param last_sequence_id is the id of the last returned entries in the past query
                      */
                     ApiProxyResult execute(const std::string& source,
-                                           const uint64_t last_sequence_id = 0,
                                            const std::string& domain = std::string(),
+                                           const uint64_t last_sequence_id = 0,
+                                           const uint32_t page_length = 30);
+                    
+                    //! Add a new node in the domain
+                    /*!
+                     If the node_parent_path is an empty string(the default value) the ndoe became a root in the domain
+                     \param source node that has emitted the log entries
+                     \param domain a list of stirng, taht if is not and empty string it will be used to filter domain in log entries
+                     \param last_sequence_id is the id of the last returned entries in the past query
+                     */
+                    ApiProxyResult execute(const std::string& source,
+                                           const std::vector<std::string>& domain_list,
+                                           const uint64_t last_sequence_id,
                                            const uint32_t page_length = 30);
                     
                     static std::auto_ptr<GetLogForSourceUIDHelper> getHelper(chaos::common::data::CDataWrapper *api_result);

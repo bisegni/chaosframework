@@ -51,7 +51,7 @@ MOVE_STRING_VALUE(k, src, dst)\
 if(src->hasKey(k)) {\
 dst->addInt32Value(k, src->getInt32Value(k));\
 }
-
+            
             class AbstractApiGroup;
             
 			//! Api abstraction

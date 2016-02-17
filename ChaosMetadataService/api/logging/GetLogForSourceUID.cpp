@@ -21,7 +21,6 @@
 
 #include "GetLogForSourceUID.h"
 
-
 #include <chaos/common/network/NetworkBroker.h>
 
 using namespace chaos::metadata_service::api::logging;
@@ -55,15 +54,31 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
     
     //entry list
     LogEntryList entry_list;
+    std::vector<std::string> domain_to_include;
     
-    uint32_t page_length = (api_data->hasKey("page_length")?api_data->getUInt32Value("page_length"):100);
-    uint64_t sequence = (api_data->hasKey("seq")?api_data->getUInt64Value("seq"):0);
-    const std::string domain = (api_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)?api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN):"");
-    const std::string source = api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER);
+    uint32_t page_length =  (uint32_t)api_data->getValueWithDefault<int32_t>("page_length",100);
+    uint64_t sequence = (uint64_t)api_data->getValueWithDefault<int64_t>("seq", 0);
+    if(api_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
+        //we have domain
+        if(api_data->isStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
+            domain_to_include.push_back(api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN));
+        } else if(api_data->isVectorValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
+            std::auto_ptr<CMultiTypeDataArrayWrapper> domain_vec(api_data->getVectorValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN));
+            for(int idx = 0;
+                idx < domain_vec->size();
+                idx++){
+                domain_to_include.push_back(domain_vec->getStringElementAtIndex(idx));
+            }
+        } else {
+            LOG_AND_TROW_FORMATTED(L_GLFNI_ERR, -5, "Domain key '%1% 'need to be string or array of string",%MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);
+        }
+        
+    }
+    const std::string source = api_data->getValueWithDefault<std::string>(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, "");
     
     if((err = l_da->searchEntryForSource(entry_list,
                                          source,
-                                         domain,
+                                         domain_to_include,
                                          sequence,
                                          page_length))) {
         LOG_AND_TROW_FORMATTED(L_GLFNI_ERR, err, "Error searching for source %1%", %source);

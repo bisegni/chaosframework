@@ -53,6 +53,8 @@ namespace chaos {
                 
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<LogEntry>, LogEntryList);
                 
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, LogDomainList);
+                
                 class LoggingDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
                     
@@ -81,9 +83,17 @@ namespace chaos {
                      */
                     virtual int searchEntryForSource(LogEntryList& entry_list,
                                                      const std::string& source_uid,
-                                                     const std::string& domain = std::string(),
+                                                     const std::vector<std::string>& domain = std::vector<std::string>(),
                                                      uint64_t last_sequence = 0,
                                                      uint32_t page_length = 100) = 0;
+                    
+                    //!Return all log domain found for a determinated source
+                    /*!
+                     \param entry_list the list that will contains the found log domains
+                     \param source_uid is the source uid for wich we need to found the log domains
+                     */
+                    virtual int getLogDomainsForSource(LogDomainList& entry_list,
+                                                       const std::string& source_uid) = 0;
                 };
             }
         }

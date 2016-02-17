@@ -33,8 +33,8 @@ API_PROXY_CD_DEFINITION(GetLogForSourceUID,
  
  */
 ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
-                                           const uint64_t last_sequence_id,
                                            const std::string& domain,
+                                           const uint64_t last_sequence_id,
                                            const uint32_t page_length) {
     std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, source);
@@ -44,6 +44,24 @@ ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
     return callApi(pack.release());
 }
 
+ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
+                                           const std::vector<std::string>& domain_list,
+                                           const uint64_t last_sequence_id,
+                                           const uint32_t page_length) {
+    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
+    pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, source);
+    if(last_sequence_id ) {pack->addInt64Value(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN, last_sequence_id);}
+    if(domain_list.size()) {
+        for(std::vector<std::string>::const_iterator it= domain_list.begin();
+            it!= domain_list.end();
+            it++) {
+            pack->appendStringToArray(*it);
+        }
+        pack->finalizeArrayForKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);
+    }
+    pack->addInt32Value("page_length", page_length);
+    return callApi(pack.release());
+}
 
 std::auto_ptr<GetLogForSourceUIDHelper> GetLogForSourceUID::getHelper(CDataWrapper *api_result) {
     return std::auto_ptr<GetLogForSourceUIDHelper>(new GetLogForSourceUIDHelper(api_result));

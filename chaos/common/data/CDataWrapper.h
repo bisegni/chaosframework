@@ -182,6 +182,25 @@ namespace chaos {
 				//get a bool value
 				bool getBoolValue(const std::string&);
 				
+                template<typename T>
+                T getValue(const std::string& key) {
+                    T v;
+                    bsonBuilder->asTempObj().getField(key).Val(v);
+                    return v;
+                }
+                
+                template<typename T>
+                T getValueWithDefault(const std::string& key, T default_value) {
+                    T v;
+                    BSONObj o = bsonBuilder->asTempObj();
+                    if(o.hasElement(key)) {
+                        o.getField(key).Val(v);
+                    } else {
+                        v = default_value;
+                    }
+                    return v;
+                }
+                
 				//return the binary data value
 				const char* getBinaryValue(const std::string&, int&);
 				
@@ -254,7 +273,7 @@ namespace chaos {
                 
                 CDataWrapperType getValueType(const std::string& key);
 			};
-			
+            
 			//! MutableCDataWrapper for field update
 			/*! \class MutableCDataWrapper
 			 This implementation permit to modify the existent field value

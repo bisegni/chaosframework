@@ -13,7 +13,8 @@ SET(mcl_src ${mcl_src}	    event/EventDispatchManager.cpp
 SET(mcl_src ${mcl_src}	    event/alert/AlertEventHandler.cpp
                             event/alert/AlertLogEventHandler.cpp)
 
-SET(mcl_src ${mcl_src}	    api_proxy/logging/GetLogForSuurceUID.cpp)
+SET(mcl_src ${mcl_src}	    api_proxy/logging/GetLogForSourceUID.cpp
+                            api_proxy/logging/GetLogDomainForSourceUID.cpp)
 
 
 SET(mcl_src ${mcl_src}	    api_proxy/groups/AddNode.cpp

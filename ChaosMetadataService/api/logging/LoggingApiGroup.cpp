@@ -22,6 +22,7 @@
 #include "LoggingApiGroup.h"
 #include "SubmitEntry.h"
 #include "GetLogForSourceUID.h"
+#include "GetLogDomainForSourceUID.h"
 
 using namespace chaos::metadata_service::api::logging;
 
@@ -32,6 +33,7 @@ LoggingApiGroup::LoggingApiGroup():
 AbstractApiGroup(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN){
     addApi<SubmitEntry>();
     addApi<GetLogForSourceUID>();
+    addApi<GetLogDomainForSourceUID>();
 }
 
 LoggingApiGroup::~LoggingApiGroup() {}

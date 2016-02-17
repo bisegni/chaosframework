@@ -55,9 +55,12 @@ namespace chaos {
                     //! Inherited method
                     int searchEntryForSource(data_access::LogEntryList& entry_list,
                                              const std::string& source_uid,
-                                             const std::string& domain = std::string(),
+                                             const std::vector<std::string>& domain = std::vector<std::string>(),
                                              uint64_t last_sequence = 0,
                                              uint32_t page_length = 100);
+                    //! Inherited method
+                    int getLogDomainsForSource(data_access::LogDomainList& entry_list,
+                                               const std::string& source_uid);
                 };
             }
         }

@@ -92,7 +92,7 @@ int MongoDBLoggingDataAccess::insertNewEntry(data_access::LogEntry& log_entry) {
 
 int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& entry_list,
                                                    const std::string& source_uid,
-                                                   const std::string& domain,
+                                                   const std::vector<std::string>& domain,
                                                    uint64_t last_sequence,
                                                    uint32_t page_length) {
     int err = 0;
@@ -102,7 +102,15 @@ int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& en
     build_query <<"seq" << BSON("$gt"<<(long long)last_sequence);
     build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << source_uid;
     if(domain.size()) {
-        build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << domain;
+        mongo::BSONArrayBuilder or_builder;
+        //add all domain into array
+        for(std::vector<std::string>::const_iterator it = domain.begin();
+            it != domain.end();
+            it++) {
+            or_builder.append(*it);
+        }
+        
+        build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << BSON("$in" << or_builder.arr());
     }
     mongo::Query q = build_query.obj();
     q = q.sort(BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP<<(int)-1));
@@ -172,6 +180,34 @@ int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& en
                 entry_list.push_back(log_entry);
             }
         }
+    }
+    return err;
+}
+
+int MongoDBLoggingDataAccess::getLogDomainsForSource(data_access::LogDomainList& entry_list,
+                                                     const std::string& source_uid) {
+    int err = 0;
+    std::vector<std::string> distinct_values;
+    mongo::BSONObj distinct_result;
+    try {
+        mongo::Query q = BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << source_uid);
+        DEBUG_CODE(MDBLDA_DBG<<log_message("getLogDomainsForSource",
+                                            "query",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    "no query"));)
+        
+        distinct_result = connection->distinct(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_LOGGING), MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);
+        
+        if(!distinct_result.isEmpty() &&
+           distinct_result.couldBeArray()){
+            distinct_result.Vals<std::string>(entry_list);
+        }
+    } catch (const mongo::DBException &e) {
+        MDBLDA_ERR << e.what();
+        err = -1;
+    } catch (const chaos::CException &e) {
+        MDBLDA_ERR << e.what();
+        err = e.errorCode;
     }
     return err;
 }

@@ -413,6 +413,9 @@
 		327967D615E029C70003C6DA /* AsioImplEventServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 327967D415E029C70003C6DA /* AsioImplEventServer.h */; };
 		327967D915E030C40003C6DA /* AsioEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967D715E030C30003C6DA /* AsioEventHandler.cpp */; };
 		327967DA15E030C40003C6DA /* AsioEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 327967D815E030C30003C6DA /* AsioEventHandler.h */; };
+		327C6A251C747E4A002DA5A6 /* GetLogDomainForSourceUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327C6A231C747E4A002DA5A6 /* GetLogDomainForSourceUID.cpp */; };
+		327C6A281C74E255002DA5A6 /* GetLogDomainForSourceUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327C6A261C74E255002DA5A6 /* GetLogDomainForSourceUID.cpp */; };
+		327C6A291C74E255002DA5A6 /* GetLogDomainForSourceUID.h in Headers */ = {isa = PBXBuildFile; fileRef = 327C6A271C74E255002DA5A6 /* GetLogDomainForSourceUID.h */; };
 		327CFF091708C4EB0069497B /* FastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327CFF071708C4EA0069497B /* FastHash.cpp */; };
 		327CFF0A1708C4EB0069497B /* FastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF081708C4EB0069497B /* FastHash.h */; };
 		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
@@ -1507,6 +1510,10 @@
 		327967D415E029C70003C6DA /* AsioImplEventServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioImplEventServer.h; sourceTree = "<group>"; };
 		327967D715E030C30003C6DA /* AsioEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioEventHandler.cpp; sourceTree = "<group>"; };
 		327967D815E030C30003C6DA /* AsioEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioEventHandler.h; sourceTree = "<group>"; };
+		327C6A231C747E4A002DA5A6 /* GetLogDomainForSourceUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetLogDomainForSourceUID.cpp; sourceTree = "<group>"; };
+		327C6A241C747E4A002DA5A6 /* GetLogDomainForSourceUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetLogDomainForSourceUID.h; sourceTree = "<group>"; };
+		327C6A261C74E255002DA5A6 /* GetLogDomainForSourceUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetLogDomainForSourceUID.cpp; sourceTree = "<group>"; };
+		327C6A271C74E255002DA5A6 /* GetLogDomainForSourceUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetLogDomainForSourceUID.h; sourceTree = "<group>"; };
 		327CB2D8167E44D700AED2C6 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		327CFF071708C4EA0069497B /* FastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastHash.cpp; sourceTree = "<group>"; };
 		327CFF081708C4EB0069497B /* FastHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastHash.h; sourceTree = "<group>"; };
@@ -3332,6 +3339,8 @@
 				3270E06F1C6CBBE600105726 /* SubmitEntry.h */,
 				32ED0DD81C72152700B9581A /* GetLogForSourceUID.cpp */,
 				32ED0DD91C72152700B9581A /* GetLogForSourceUID.h */,
+				327C6A231C747E4A002DA5A6 /* GetLogDomainForSourceUID.cpp */,
+				327C6A241C747E4A002DA5A6 /* GetLogDomainForSourceUID.h */,
 			);
 			path = logging;
 			sourceTree = "<group>";
@@ -4060,6 +4069,8 @@
 			children = (
 				32D745EA1C723BDD00F4D719 /* GetLogForSourceUID.cpp */,
 				32D745EB1C723BDD00F4D719 /* GetLogForSourceUID.h */,
+				327C6A261C74E255002DA5A6 /* GetLogDomainForSourceUID.cpp */,
+				327C6A271C74E255002DA5A6 /* GetLogDomainForSourceUID.h */,
 			);
 			path = logging;
 			sourceTree = "<group>";
@@ -4556,6 +4567,7 @@
 				32D746051C7367A200F4D719 /* event.h in Headers */,
 				32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */,
 				3252F35D1C298755004436A8 /* GetNodeChilds.h in Headers */,
+				327C6A291C74E255002DA5A6 /* GetLogDomainForSourceUID.h in Headers */,
 				3239EF531C0EFEB20052BE61 /* DeleteSnapshot.h in Headers */,
 				32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */,
 				327F39A81AEAA2290000C845 /* NewDS.h in Headers */,
@@ -4918,6 +4930,7 @@
 				3235FDD91A6FFA6600EC83A9 /* MongoDBPersistenceDriver.cpp in Sources */,
 				327F39A31AEA49C00000C845 /* DeleteDS.cpp in Sources */,
 				32610F931AE671A300779B84 /* InitDeinit.cpp in Sources */,
+				327C6A251C747E4A002DA5A6 /* GetLogDomainForSourceUID.cpp in Sources */,
 				32809C7F1A9C847400C02C12 /* ControlUnitDataAccess.cpp in Sources */,
 				32362C1D1ADC0FDF000CA079 /* ControlUnitGroup.cpp in Sources */,
 				32610F961AE671AF00779B84 /* StartStop.cpp in Sources */,
@@ -5283,6 +5296,7 @@
 				328C873E1AE01A590047C79B /* DeleteInstance.cpp in Sources */,
 				32362C211ADD0C45000CA079 /* SetInstanceDescription.cpp in Sources */,
 				3239EF521C0EFEB20052BE61 /* DeleteSnapshot.cpp in Sources */,
+				327C6A281C74E255002DA5A6 /* GetLogDomainForSourceUID.cpp in Sources */,
 				32EBDF0E1B53A32600278C42 /* ManageCUType.cpp in Sources */,
 				32B1E8061B2EA07200221E49 /* CommandTemplateDelete.cpp in Sources */,
 				327F39C21AEFABB00000C845 /* InitDeinit.cpp in Sources */,

@@ -39,25 +39,16 @@ SOURCES += main.cpp\
     node/data_service/DataServiceEditor.cpp \
     node/data_service/CreateEditDataService.cpp \
     preference/PreferenceDialog.cpp \
-    node/data/FixedOutputChannelDatasetTableModel.cpp \
     MainWindow.cpp \
     monitor/healt/HealtMonitorWidget.cpp \
     monitor/healt/HealtPresenterWidget.cpp \
     monitor/healt/HealtWidgetsListPresenteWidget.cpp \
     widget/LedIndicatorWidget.cpp \
-    node/data/ChaosAbstractTableModel.cpp \
     node/control_unit/ControlUnitEditor.cpp \
-    node/data/FixedInputChannelDatasetTableModel.cpp \
     logic/property_switch/MultiPropertyLogicSwitch.cpp \
     logic/property_switch/SwitchAggregator.cpp \
-    node/data/ChaosAbstractDataSetTableModel.cpp \
-    node/data/ChaosAbstractListModel.cpp \
-    node/data/CommandListModel.cpp \
     widget/list/delegate/TwoLineInformationListItemDelegate.cpp \
     widget/list/delegate/TwoLineInformationItem.cpp \
-    node/data/CommandParameterTableModel.cpp \
-    node/data/AttributeValueChangeSet.cpp \
-    node/data/CommandTemplateListModel.cpp \
     node/control_unit/ControlUnitCommandTemplateEditor.cpp \
     node/control_unit/CommandTemplateInstanceEditor.cpp \
     data/CommandReader.cpp \
@@ -70,7 +61,6 @@ SOURCES += main.cpp\
     widget/ChaosDatasetLabel.cpp \
     data/ChaosByteArray.cpp \
     plot/NodeAttributePlotting.cpp \
-    node/data/DatasetAttributeListModel.cpp \
     data/DatasetReader.cpp \
     data/DatasetAttributeReader.cpp \
     widget/CLedIndicatorHealt.cpp \
@@ -87,7 +77,17 @@ SOURCES += main.cpp\
     tree_group/GroupTreeItem.cpp \
     tree_group/GroupTreeModel.cpp \
     tree_group/AddNewDomain.cpp \
-    widget/CNodeLogWidget.cpp
+    widget/CNodeLogWidget.cpp \
+    data/AttributeValueChangeSet.cpp \
+    data/ChaosAbstractDataSetTableModel.cpp \
+    data/ChaosAbstractListModel.cpp \
+    data/ChaosAbstractTableModel.cpp \
+    data/CommandListModel.cpp \
+    data/CommandParameterTableModel.cpp \
+    data/CommandTemplateListModel.cpp \
+    data/DatasetAttributeListModel.cpp \
+    data/FixedInputChannelDatasetTableModel.cpp \
+    data/FixedOutputChannelDatasetTableModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -104,25 +104,16 @@ HEADERS  += \
     node/data_service/DataServiceEditor.h \
     node/data_service/CreateEditDataService.h \
     preference/PreferenceDialog.h \
-    node/data/FixedOutputChannelDatasetTableModel.h \
     MainWindow.h \
     monitor/healt/HealtMonitorWidget.h \
     monitor/healt/HealtPresenterWidget.h \
     monitor/healt/HealtWidgetsListPresenteWidget.h \
     widget/LedIndicatorWidget.h \
-    node/data/ChaosAbstractTableModel.h \
     node/control_unit/ControlUnitEditor.h \
-    node/data/FixedInputChannelDatasetTableModel.h \
     logic/property_switch/MultiPropertyLogicSwitch.h \
     logic/property_switch/SwitchAggregator.h \
-    node/data/ChaosAbstractDataSetTableModel.h \
-    node/data/ChaosAbstractListModel.h \
-    node/data/CommandListModel.h \
     widget/list/delegate/TwoLineInformationItem.h \
     widget/list/delegate/TwoLineInformationListItemDelegate.h \
-    node/data/CommandParameterTableModel.h \
-    node/data/AttributeValueChangeSet.h \
-    node/data/CommandTemplateListModel.h \
     node/control_unit/ControlUnitCommandTemplateEditor.h \
     node/control_unit/CommandTemplateInstanceEditor.h \
     data/CommandReader.h \
@@ -155,7 +146,6 @@ HEADERS  += \
     monitor/handler/MonitorTSTaggedStringAttributeHandler.h \
     data/ChaosByteArray.h \
     plot/NodeAttributePlotting.h \
-    node/data/DatasetAttributeListModel.h \
     data/DatasetReader.h \
     data/DatasetAttributeReader.h \
     data/data.h \
@@ -174,7 +164,17 @@ HEADERS  += \
     tree_group/GroupTreeItem.h \
     tree_group/GroupTreeModel.h \
     tree_group/AddNewDomain.h \
-    widget/CNodeLogWidget.h
+    widget/CNodeLogWidget.h \
+    data/AttributeValueChangeSet.h \
+    data/ChaosAbstractDataSetTableModel.h \
+    data/ChaosAbstractListModel.h \
+    data/ChaosAbstractTableModel.h \
+    data/CommandListModel.h \
+    data/CommandParameterTableModel.h \
+    data/CommandTemplateListModel.h \
+    data/DatasetAttributeListModel.h \
+    data/FixedInputChannelDatasetTableModel.h \
+    data/FixedOutputChannelDatasetTableModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

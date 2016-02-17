@@ -81,7 +81,7 @@ int main(int argc, char *argv[]){
         
         //register log allert event
         ChaosMetadataServiceClient::getInstance()->registerEventHandler(&alert_log_handler);
-        
+
         switch (operation){
             case 0:{
                 
@@ -106,7 +106,7 @@ int main(int argc, char *argv[]){
                 
             }
         }
-        sleep(3600);
+        sleep(60000);
         //register log allert event
         ChaosMetadataServiceClient::getInstance()->deregisterEventHandler(&alert_log_handler);
         
