@@ -106,7 +106,7 @@ int main(int argc, char *argv[]){
                 
             }
         }
-        sleep(60000);
+        sleep(3600);
         //register log allert event
         ChaosMetadataServiceClient::getInstance()->deregisterEventHandler(&alert_log_handler);
         
