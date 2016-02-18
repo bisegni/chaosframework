@@ -2,7 +2,7 @@
 #define PRESENTERWIDGET_H
 
 #include "../monitor/monitor.h"
-#include "../api_async_processor/ApiAsyncProcessor.h"
+#include "../api_async_processor/ApiSubmitter.h"
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
@@ -23,13 +23,16 @@
 class CommandPresenter;
 
 class PresenterWidget:
-        public QWidget {
+        public QWidget,
+        protected ApiHandler {
     Q_OBJECT
     friend class CommandPresenter;
 
     QMdiSubWindow *editor_subwindow;
     CommandPresenter *presenter_instance;
+
     unsigned int submitted_api;
+    ApiSubmitter api_submitter;
 public:
     explicit PresenterWidget(QWidget *parent = NULL);
     ~PresenterWidget();
@@ -54,15 +57,6 @@ private:
     void setSubWindow(QMdiSubWindow *_editor_subwindow);
     void addDefaultNodeAction(QWidget *contextual_menu_parent);
 private slots:
-
-    void asyncApiResult(const QString& tag,
-                        QSharedPointer<chaos::common::data::CDataWrapper> api_result);
-
-    void asyncApiError(const QString& tag,
-                       QSharedPointer<chaos::CException> api_exception);
-
-    void asyncApiTimeout(const QString& tag);
-
     void generalContextualMenuActionTrigger();
 protected slots:
     virtual void startHealtMonitorAction();
@@ -154,10 +148,10 @@ protected:
 
     //! api has gone in timeout
     virtual void onApiTimeout(const QString& tag);
-signals:
 
-    void onStartWaitApi(const QString& api_tag);
-    void onEndWaitApi(const QString& api_tag);
+    virtual void apiHasStarted(const QString& api_tag);
+
+    virtual void apiHasEnded(const QString& api_tag);
 };
 
 #endif // PRESENTERWIDGET_H

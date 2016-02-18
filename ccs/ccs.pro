@@ -87,7 +87,8 @@ SOURCES += main.cpp\
     data/FixedInputChannelDatasetTableModel.cpp \
     data/FixedOutputChannelDatasetTableModel.cpp \
     data/delegate/TwoLineInformationItem.cpp \
-    data/delegate/TwoLineInformationListItemDelegate.cpp
+    data/delegate/TwoLineInformationListItemDelegate.cpp \
+    api_async_processor/ApiSubmitter.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -174,7 +175,9 @@ HEADERS  += \
     data/FixedInputChannelDatasetTableModel.h \
     data/FixedOutputChannelDatasetTableModel.h \
     data/delegate/TwoLineInformationItem.h \
-    data/delegate/TwoLineInformationListItemDelegate.h
+    data/delegate/TwoLineInformationListItemDelegate.h \
+    api_async_processor/ApiSubmitter.h \
+    api_async_processor/ApiHandler.h
 
 FORMS    += \
     search/searchnoderesult.ui \

@@ -90,6 +90,9 @@ INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient)
 FILE(GLOB files "api_proxy/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy)
 
+FILE(GLOB files "api_proxy/logging/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/logging)
+
 FILE(GLOB files "api_proxy/control_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/control_unit)
 

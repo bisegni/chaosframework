@@ -27,6 +27,7 @@
 
 //----------------------------logging----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/logging/GetLogForSourceUID.h>
+#include <ChaosMetadataServiceClient/api_proxy/logging/GetLogDomainForSourceUID.h>
 
 //----------------------------groups----------------------------------------
 #include <ChaosMetadataServiceClient/api_proxy/groups/AddNode.h>
