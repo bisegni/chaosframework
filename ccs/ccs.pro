@@ -47,8 +47,6 @@ SOURCES += main.cpp\
     node/control_unit/ControlUnitEditor.cpp \
     logic/property_switch/MultiPropertyLogicSwitch.cpp \
     logic/property_switch/SwitchAggregator.cpp \
-    widget/list/delegate/TwoLineInformationListItemDelegate.cpp \
-    widget/list/delegate/TwoLineInformationItem.cpp \
     node/control_unit/ControlUnitCommandTemplateEditor.cpp \
     node/control_unit/CommandTemplateInstanceEditor.cpp \
     data/CommandReader.cpp \
@@ -87,7 +85,9 @@ SOURCES += main.cpp\
     data/CommandTemplateListModel.cpp \
     data/DatasetAttributeListModel.cpp \
     data/FixedInputChannelDatasetTableModel.cpp \
-    data/FixedOutputChannelDatasetTableModel.cpp
+    data/FixedOutputChannelDatasetTableModel.cpp \
+    data/delegate/TwoLineInformationItem.cpp \
+    data/delegate/TwoLineInformationListItemDelegate.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -112,8 +112,6 @@ HEADERS  += \
     node/control_unit/ControlUnitEditor.h \
     logic/property_switch/MultiPropertyLogicSwitch.h \
     logic/property_switch/SwitchAggregator.h \
-    widget/list/delegate/TwoLineInformationItem.h \
-    widget/list/delegate/TwoLineInformationListItemDelegate.h \
     node/control_unit/ControlUnitCommandTemplateEditor.h \
     node/control_unit/CommandTemplateInstanceEditor.h \
     data/CommandReader.h \
@@ -174,7 +172,9 @@ HEADERS  += \
     data/CommandTemplateListModel.h \
     data/DatasetAttributeListModel.h \
     data/FixedInputChannelDatasetTableModel.h \
-    data/FixedOutputChannelDatasetTableModel.h
+    data/FixedOutputChannelDatasetTableModel.h \
+    data/delegate/TwoLineInformationItem.h \
+    data/delegate/TwoLineInformationListItemDelegate.h
 
 FORMS    += \
     search/searchnoderesult.ui \

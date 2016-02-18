@@ -2,7 +2,7 @@
 #include "ui_ControlUnitEditor.h"
 #include "ControUnitInstanceEditor.h"
 #include "CommandTemplateInstanceEditor.h"
-#include "../../widget/list/delegate/TwoLineInformationListItemDelegate.h"
+#include "../../data/delegate/TwoLineInformationListItemDelegate.h"
 #include "../../plot/NodeAttributePlotting.h"
 
 #include <QDebug>

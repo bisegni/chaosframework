@@ -1,6 +1,6 @@
 #include "MainController.h"
 #include "data/data.h"
-#include "widget/list/delegate/TwoLineInformationItem.h"
+#include "data/delegate/TwoLineInformationItem.h"
 #include "data/ChaosByteArray.h"
 #include <QStyleFactory>
 #include <QThreadPool>
@@ -18,16 +18,16 @@ Q_DECLARE_METATYPE (std::string)
 Q_DECLARE_METATYPE(int32_t)
 Q_DECLARE_METATYPE(int64_t)
 Q_DECLARE_METATYPE(uint64_t)
-Q_DECLARE_METATYPE(QSharedPointer<ChaosByteArray>);
-Q_DECLARE_METATYPE(QSharedPointer<CommandReader>);
-Q_DECLARE_METATYPE(QSharedPointer<CommandParameterReader>);
-Q_DECLARE_METATYPE(QSharedPointer<DatasetReader>);
-Q_DECLARE_METATYPE(QSharedPointer<DatasetAttributeReader>);
-Q_DECLARE_METATYPE(QSharedPointer<chaos::CException>);
-Q_DECLARE_METATYPE(QSharedPointer<chaos::common::data::CDataWrapper>);
-Q_DECLARE_METATYPE(QSharedPointer<TwoLineInformationItem>);
-Q_DECLARE_METATYPE(QSharedPointer<chaos::metadata_service_client::api_proxy::node::CommandTemplate>);
-Q_DECLARE_METATYPE(boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate>);
+Q_DECLARE_METATYPE(QSharedPointer<ChaosByteArray>)
+Q_DECLARE_METATYPE(QSharedPointer<CommandReader>)
+Q_DECLARE_METATYPE(QSharedPointer<CommandParameterReader>)
+Q_DECLARE_METATYPE(QSharedPointer<DatasetReader>)
+Q_DECLARE_METATYPE(QSharedPointer<DatasetAttributeReader>)
+Q_DECLARE_METATYPE(QSharedPointer<chaos::CException>)
+Q_DECLARE_METATYPE(QSharedPointer<chaos::common::data::CDataWrapper>)
+Q_DECLARE_METATYPE(QSharedPointer<TwoLineInformationItem>)
+Q_DECLARE_METATYPE(QSharedPointer<chaos::metadata_service_client::api_proxy::node::CommandTemplate>)
+Q_DECLARE_METATYPE(boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::CommandTemplate>)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::SerializationBuffer>)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::CException>)

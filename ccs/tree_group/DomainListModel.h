@@ -1,7 +1,7 @@
 #ifndef DOMAINLISTMODEL_H
 #define DOMAINLISTMODEL_H
 
-#include "../node/data/ChaosAbstractListModel.h"
+#include "../data/ChaosAbstractListModel.h"
 
 #include <QVector>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>

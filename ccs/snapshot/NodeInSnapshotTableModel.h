@@ -1,7 +1,7 @@
 #ifndef NODEINSNAPSHOTTABLEMODEL_H
 #define NODEINSNAPSHOTTABLEMODEL_H
 
-#include "../node/data/ChaosAbstractListModel.h"
+#include "../data/ChaosAbstractListModel.h"
 #include <ChaosMetadataServiceClient/api_proxy/api.h>
 
 #include <QSharedPointer>

@@ -1,5 +1,5 @@
 #include "ChaosAbstractDataSetTableModel.h"
-#include "../../monitor/handler/healt/healt.h"
+#include "../monitor/handler/healt/healt.h"
 
 #include <boost/lexical_cast.hpp>
 #include <QDebug>

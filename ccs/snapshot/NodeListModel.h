@@ -1,7 +1,7 @@
 #ifndef NODELISTMODEL_H
 #define NODELISTMODEL_H
 
-#include "../node/data/ChaosAbstractListModel.h"
+#include "../data/ChaosAbstractListModel.h"
 
 #include <QVector>
 

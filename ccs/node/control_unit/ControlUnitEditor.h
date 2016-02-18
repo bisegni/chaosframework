@@ -2,10 +2,10 @@
 #define CONTROLUNITEDITOR_H
 #include "ControlUnitCommandTemplateEditor.h"
 
-#include "../data/CommandListModel.h"
-#include "../data/CommandTemplateListModel.h"
-#include "../data/FixedInputChannelDatasetTableModel.h"
-#include "../data/FixedOutputChannelDatasetTableModel.h"
+#include "../../data/CommandListModel.h"
+#include "../../data/CommandTemplateListModel.h"
+#include "../../data/FixedInputChannelDatasetTableModel.h"
+#include "../../data/FixedOutputChannelDatasetTableModel.h"
 
 #include "../../monitor/monitor.h"
 #include "../../presenter/PresenterWidget.h"
