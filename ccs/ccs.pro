@@ -88,7 +88,9 @@ SOURCES += main.cpp\
     data/FixedOutputChannelDatasetTableModel.cpp \
     data/delegate/TwoLineInformationItem.cpp \
     data/delegate/TwoLineInformationListItemDelegate.cpp \
-    api_async_processor/ApiSubmitter.cpp
+    api_async_processor/ApiSubmitter.cpp \
+    widget/ChaosWidgetCompanion.cpp \
+    data/LogDomainListModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -177,7 +179,9 @@ HEADERS  += \
     data/delegate/TwoLineInformationItem.h \
     data/delegate/TwoLineInformationListItemDelegate.h \
     api_async_processor/ApiSubmitter.h \
-    api_async_processor/ApiHandler.h
+    api_async_processor/ApiHandler.h \
+    widget/ChaosWidgetCompanion.h \
+    data/LogDomainListModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

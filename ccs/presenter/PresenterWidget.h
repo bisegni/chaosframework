@@ -139,19 +139,19 @@ protected:
                          chaos::metadata_service_client::api_proxy::ApiProxyResult api_result);
 
     //!Api has ben called successfully
-    virtual void onApiDone(const QString& tag,
-                           QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+    void onApiDone(const QString& tag,
+                   QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
     //!Api has been give an error
-    virtual void onApiError(const QString& tag,
-                            QSharedPointer<chaos::CException> api_exception);
+    void onApiError(const QString& tag,
+                    QSharedPointer<chaos::CException> api_exception);
 
     //! api has gone in timeout
-    virtual void onApiTimeout(const QString& tag);
+    void onApiTimeout(const QString& tag);
 
-    virtual void apiHasStarted(const QString& api_tag);
+    void apiHasStarted(const QString& api_tag);
 
-    virtual void apiHasEnded(const QString& api_tag);
+    void apiHasEnded(const QString& api_tag);
 };
 
 #endif // PRESENTERWIDGET_H

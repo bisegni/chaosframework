@@ -887,6 +887,7 @@
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
+         <widget class="CNodeLogWidget" name="widgetChaosNodeLog" native="true"/>
         </widget>
        </item>
       </layout>
@@ -1147,6 +1148,12 @@
    <class>ChaosHealtLabel</class>
    <extends>QLabel</extends>
    <header>widget/ChaosHealtLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CNodeLogWidget</class>
+   <extends>QWidget</extends>
+   <header>widget/CNodeLogWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

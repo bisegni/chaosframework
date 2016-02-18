@@ -89,6 +89,8 @@ private slots:
 
     void on_pushButtonOpenInstanceEditor_clicked();
 
+    void tabIndexChanged(int new_index);
+
 private:
     QString getStatusString(int status);
 
