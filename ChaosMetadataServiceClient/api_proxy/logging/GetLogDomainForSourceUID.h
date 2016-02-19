@@ -23,6 +23,7 @@
 #define __CHAOSFramework__GetLogDomainForSourceUID_h
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
+#include <ChaosMetadataServiceClient/api_proxy/logging/logging_types.h>
 
 #include <chaos/common/chaos_types.h>
 
@@ -30,9 +31,6 @@ namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
             namespace logging {
-                
-                //list of the log type
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, LogDomainList);
                 
                 //helper of the api
                 class GetLogDomainForSourceUIDHelper {

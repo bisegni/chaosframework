@@ -30,6 +30,10 @@ QVariant ChaosAbstractTableModel::getCellData(int row, int column) const {
     return QVariant();
 }
 
+QVariant ChaosAbstractTableModel::getCellUserData(int row, int column) const {
+    return QVariant();
+}
+
 QVariant ChaosAbstractTableModel::getCheckeable(int row, int column) const {
     return QVariant();
 }
@@ -73,6 +77,9 @@ QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const
     case Qt::DisplayRole:
         result = getCellData(row, col);
         break;
+    case Qt::UserRole:
+        result = getCellUserData(row, col);
+        break;
     case Qt::CheckStateRole:
         result = getCheckeable(row, col);
         break;
@@ -90,6 +97,7 @@ QVariant ChaosAbstractTableModel::data(const QModelIndex& index, int role) const
         break;
     case Qt::ToolTipRole:
         result = getTooltipTextForData(row, col);
+        break;
     default:
         break;
     }

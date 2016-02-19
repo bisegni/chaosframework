@@ -13,8 +13,10 @@ protected:
     virtual QVariant getUserData(int row) const = 0;
     virtual Qt::CheckState getCheckableState(int row)const;
     virtual bool isRowCheckable(int row) const;
+    virtual bool isRowEditable(int row) const;
     virtual QVariant getTooltipTextForData(int row) const;
-    bool setRowData(const int row, const QVariant& value);
+    virtual bool setRowData(const int row, const QVariant& value);
+    virtual bool setRowCheckState(const int row, const QVariant& value);
 public:
     ChaosAbstractListModel( QObject *parent = 0);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;

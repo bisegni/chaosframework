@@ -90,7 +90,8 @@ SOURCES += main.cpp\
     data/delegate/TwoLineInformationListItemDelegate.cpp \
     api_async_processor/ApiSubmitter.cpp \
     widget/ChaosWidgetCompanion.cpp \
-    data/LogDomainListModel.cpp
+    data/LogDomainListModel.cpp \
+    data/LogEntryTableModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -181,7 +182,8 @@ HEADERS  += \
     api_async_processor/ApiSubmitter.h \
     api_async_processor/ApiHandler.h \
     widget/ChaosWidgetCompanion.h \
-    data/LogDomainListModel.h
+    data/LogDomainListModel.h \
+    data/LogEntryTableModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

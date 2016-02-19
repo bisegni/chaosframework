@@ -23,6 +23,7 @@
 #define __CHAOSFramework__GetLogForSourceUID_h
 
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
+#include <ChaosMetadataServiceClient/api_proxy/logging/logging_types.h>
 
 #include <chaos/common/chaos_types.h>
 
@@ -30,28 +31,6 @@ namespace chaos {
     namespace metadata_service_client {
         namespace api_proxy {
             namespace logging {
-
-                
-                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, std::string, LoggingKeyValueStringMap)
-                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, int64_t,     LoggingKeyValueInt64Map)
-                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, int32_t,     LoggingKeyValueInt32Map)
-                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, double,      LoggingKeyValueDoubleMap)
-                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, bool,        LoggingKeyValueBoolMap)
-                
-                //! define and entry of the log
-                struct LogEntry {
-                    uint64_t                    sequence;
-                    uint64_t                    ts;
-                    std::string                 domain;
-                    std::string                 source_identifier;
-                    LoggingKeyValueStringMap    map_string_value;
-                    LoggingKeyValueInt64Map     map_int64_value;
-                    LoggingKeyValueInt32Map     map_int32_value;
-                    LoggingKeyValueDoubleMap    map_double_value;
-                    LoggingKeyValueBoolMap      map_bool_value;
-                };
-                
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<LogEntry>, LogEntryList);
                 
                 class GetLogForSourceUIDHelper {
                     LogEntryList log_entry_list;
@@ -89,7 +68,7 @@ namespace chaos {
                      \param last_sequence_id is the id of the last returned entries in the past query
                      */
                     ApiProxyResult execute(const std::string& source,
-                                           const std::vector<std::string>& domain_list,
+                                           const LogDomainList& domain_list,
                                            const uint64_t last_sequence_id,
                                            const uint32_t page_length = 30);
                     

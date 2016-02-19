@@ -1,0 +1,40 @@
+#ifndef LOGENTRYTABLEMODEL_H
+#define LOGENTRYTABLEMODEL_H
+
+#include "ChaosAbstractTableModel.h"
+#include "../api_async_processor/ApiSubmitter.h"
+
+#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+
+class LogEntryTableModel:
+public ChaosAbstractTableModel,
+public ApiHandler {
+public:
+    LogEntryTableModel(QObject *parent = 0);
+    ~LogEntryTableModel();
+
+    //!update log entries for node uid as emitter and log domain list to inclue
+    void updateEntries(const QString& node_uid,
+                       const chaos::metadata_service_client::api_proxy::logging::LogDomainList& domain_list);
+    void clear();
+    void nextPage();
+    void previousPage();
+protected:
+    int getRowCount() const;
+    int getColumnCount() const;
+    QString getHeaderForColumn(int column) const;
+    QVariant getCellData(int row, int column) const;
+    QVariant getCellUserData(int row, int column) const;
+    QVariant getTooltipTextForData(int row, int column) const;
+    QVariant getTextAlignForData(int row, int column) const;
+
+    void onApiDone(const QString& tag,
+                   QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+private:
+    ApiSubmitter api_submitter;
+    uint64_t page_lenght;
+    uint64_t last_received_sequence_id;
+    std::auto_ptr<chaos::metadata_service_client::api_proxy::logging::GetLogForSourceUIDHelper> helper;
+};
+
+#endif // LOGENTRYTABLEMODEL_H

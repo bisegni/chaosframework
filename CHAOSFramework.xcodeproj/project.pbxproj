@@ -573,6 +573,7 @@
 		32AE8BA71B67B4A100FAC528 /* ResetAll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AE8BA51B67B4A100FAC528 /* ResetAll.cpp */; };
 		32AF7D4018DAEAF300537DE6 /* PerformanceNodeChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AF7D3E18DAEAF300537DE6 /* PerformanceNodeChannel.cpp */; };
 		32AF7D4118DAEAF300537DE6 /* PerformanceNodeChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AF7D3F18DAEAF300537DE6 /* PerformanceNodeChannel.h */; };
+		32AFA9D81C77224F00640BFA /* logging_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AFA9D61C77224F00640BFA /* logging_types.h */; };
 		32AFEB3919BDDACF00AF49F4 /* QueryEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AFEB3719BDDACF00AF49F4 /* QueryEngine.cpp */; };
 		32B10910188C1D6200969D3D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1090F188C1D6200969D3D /* main.cpp */; };
 		32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B13788189BEC3300B17CA4 /* ZMQDirectIOClient.cpp */; };
@@ -831,27 +832,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 326026E814B301F600C906CE;
 			remoteInfo = chaos_common;
-		};
-		3211C6631C14621E003B38BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 326026E814B301F600C906CE;
-			remoteInfo = chaos_common;
-		};
-		3211C6651C146223003B38BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 326026E814B301F600C906CE;
-			remoteInfo = chaos_common;
-		};
-		3211C6671C146229003B38BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 32661C651AA73D5B00F1A721;
-			remoteInfo = chaos_metadata_service_client;
 		};
 		3211C6691C14622C003B38BF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1724,6 +1704,7 @@
 		32AE8BA61B67B4A100FAC528 /* ResetAll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResetAll.h; sourceTree = "<group>"; };
 		32AF7D3E18DAEAF300537DE6 /* PerformanceNodeChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceNodeChannel.cpp; sourceTree = "<group>"; };
 		32AF7D3F18DAEAF300537DE6 /* PerformanceNodeChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceNodeChannel.h; sourceTree = "<group>"; };
+		32AFA9D61C77224F00640BFA /* logging_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logging_types.h; sourceTree = "<group>"; };
 		32AFEB3719BDDACF00AF49F4 /* QueryEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryEngine.cpp; sourceTree = "<group>"; };
 		32AFEB3819BDDACF00AF49F4 /* QueryEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryEngine.h; sourceTree = "<group>"; };
 		32B1090D188C1D6200969D3D /* TestAsyncRpc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestAsyncRpc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4071,6 +4052,7 @@
 				32D745EB1C723BDD00F4D719 /* GetLogForSourceUID.h */,
 				327C6A261C74E255002DA5A6 /* GetLogDomainForSourceUID.cpp */,
 				327C6A271C74E255002DA5A6 /* GetLogDomainForSourceUID.h */,
+				32AFA9D61C77224F00640BFA /* logging_types.h */,
 			);
 			path = logging;
 			sourceTree = "<group>";
@@ -4561,6 +4543,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32AFA9D81C77224F00640BFA /* logging_types.h in Headers */,
 				32B1E7F71B2AD1CC00221E49 /* CommandTemplateGet.h in Headers */,
 				327F39BF1AEAB6260000C845 /* GetAllDS.h in Headers */,
 				327F39B81AEAA2850000C845 /* DeleteDS.h in Headers */,
@@ -4633,7 +4616,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				3211C6681C146229003B38BF /* PBXTargetDependency */,
 			);
 			name = ChaosMetadataServiceClientTest;
 			productName = ChaosMetadataServiceClientTest;
@@ -4650,7 +4632,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				3211C6641C14621E003B38BF /* PBXTargetDependency */,
 			);
 			name = ChaosMetadataService;
 			productName = ChaosNodeDirectory;
@@ -4758,7 +4739,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				3211C6661C146223003B38BF /* PBXTargetDependency */,
 			);
 			name = chaos_metadata_service_client;
 			productName = ChaosMetadataServiceClient;
@@ -5388,21 +5368,6 @@
 			isa = PBXTargetDependency;
 			target = 326026E814B301F600C906CE /* chaos_common */;
 			targetProxy = 3211C6611C146217003B38BF /* PBXContainerItemProxy */;
-		};
-		3211C6641C14621E003B38BF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 326026E814B301F600C906CE /* chaos_common */;
-			targetProxy = 3211C6631C14621E003B38BF /* PBXContainerItemProxy */;
-		};
-		3211C6661C146223003B38BF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 326026E814B301F600C906CE /* chaos_common */;
-			targetProxy = 3211C6651C146223003B38BF /* PBXContainerItemProxy */;
-		};
-		3211C6681C146229003B38BF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 32661C651AA73D5B00F1A721 /* chaos_metadata_service_client */;
-			targetProxy = 3211C6671C146229003B38BF /* PBXContainerItemProxy */;
 		};
 		3211C66A1C14622C003B38BF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
