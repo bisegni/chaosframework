@@ -25,6 +25,11 @@ else
     fi;
 fi;
 echo "Selected compilation concurrent level is: $NPROC"
+PROF=""
+if [ "$CHAOS_DEVELOPMENT" == "profile" ];then
+    PROF="-pg"
+    echo "*** ENABLE PROFILING"
+fi
 
 if [ -n "$CHAOS_BOOST_VERSION" ]; then
     BOOST_VERSION="1_"$CHAOS_BOOST_VERSION"_0"
@@ -75,27 +80,41 @@ fi
 
 do_make() {
     # make clean
-
+    opt=""
+    if [ -n "$3" ];then
+	opt="$3"
+    fi
     if [ ! -z "$2" ]; then
 	echo "* make clean"
 	make clean
     fi
-    echo "* make $1 with "$NPROC" processors"
+    echo "* make $1 with "$NPROC" processors,opt:\"$opt\""
     if [ -n "$CHAOS_DEVELOPMENT" ]; then
-	if !(make -j$NPROC VERBOSE=1); then
+	if !(make -j$NPROC VERBOSE=1 $opt); then
 	    echo "## error compiling $1 in VERBOSE"
-	    exit 1
+	    if [ "$opt" != "-k" ];then
+		echo " exiting"
+		exit 1
+	    fi
 	fi
     else
-	if !(make -j$NPROC ); then
+	if !(make -j$NPROC $opt); then
 	    echo "## error compiling $1"
-	    exit 1
+	    if [ "$opt" != "-k" ];then
+		echo " exiting"
+		exit 1
+	    fi
+
 	fi
     fi
 
      if !(make install); then
      	echo "## error installing $1"
-     	exit 1
+	if [ "$opt" != "-k" ];then
+	    echo " exiting"
+	    exit 1
+	fi
+
      fi
      ((nmake++))
 }
@@ -180,8 +199,37 @@ fi
 #     fi
 # fi
 
+if [ -z "$CHAOS_NO_MEMCACHE" ];then
+echo "Setup LIBMEMCACHED"
+if [ ! -d "$PREFIX/include/libmemcached" ]; then
+    echo "* need memcached"
+
+    if [ ! -d "$BASE_EXTERNAL/libmemcached-$LMEM_VERSION" ]; then
+	if !(wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz); then
+	    echo "## cannot wget  https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz"
+	    exit 1
+	fi
+	tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
+    fi
+    cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
+
+    if !(./configure $CHAOS_LIBMEMCACHED_CONFIGURE ); then
+	echo "Memcached configuration failed"
+	exit 1
+    fi
+    ## use standard types instead cinttypes that generates troubles in ARM annd clang
+    echo "patching memcached.h to use the correct cinttypes"
+    sed -i .bak -e "s/include <cinttypes>/include <tr1\/cinttypes>/" libmemcached-1.0/memcached.h
+
+    do_make "LIBMEMCACHED" 1 -k
+fi
+echo "Libmemcached done"
+else
+echo "skipping libmemcached"
+fi
 
 
+export CXXFLAGS="$CXXFLAGS $PROF"
 if [ ! -f "$PREFIX/include/zlib.h" ] || [ ! -f "$PREFIX/lib/libz.a" ]; then
     echo "* need zlib"
     if [ ! -d "$BASE_EXTERNAL/zlib-$ZLIB_VERSION" ]; then
@@ -446,34 +494,6 @@ else
 echo "skipping MONGO"
 fi
 
-if [ -z "$CHAOS_NO_MEMCACHE" ];then
-echo "Setup LIBMEMCACHED"
-if [ ! -d "$PREFIX/include/libmemcached" ]; then
-    echo "* need memcached"
-
-    if [ ! -d "$BASE_EXTERNAL/libmemcached-$LMEM_VERSION" ]; then
-	if !(wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz); then
-	    echo "## cannot wget  https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz"
-	    exit 1
-	fi
-	tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
-    fi
-    cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
-
-    if !(./configure $CHAOS_LIBMEMCACHED_CONFIGURE ); then
-	echo "Memcached configuration failed"
-	exit 1
-    fi
-    ## use standard types instead cinttypes that generates troubles in ARM annd clang
-    echo "patching memcached.h to use the correct cinttypes"
-    sed -i .bak -e "s/include <cinttypes>/include <tr1\/cinttypes>/" libmemcached-1.0/memcached.h
-
-    do_make "LIBMEMCACHED" 1
-fi
-echo "Libmemcached done"
-else
-echo "skipping libmemcached"
-fi
 
 if [ -z "$CHAOS_NO_ZMQ" ]; then
     echo "Setup ZMQ $CHAOS_ZMQ_CONFIGURE"
