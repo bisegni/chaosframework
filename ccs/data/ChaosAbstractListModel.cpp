@@ -74,12 +74,10 @@ bool ChaosAbstractListModel::setData(const QModelIndex &index, const QVariant &v
     switch(role) {
     case Qt::EditRole:
         result = setRowData(index.row(), value);
-        qDebug()<< "ChaosAbstractListModel::flags-setRowData-value:" <<value << " result:"<<result;
         break;
 
     case Qt::CheckStateRole:
         result = setRowCheckState(index.row(), value);
-        qDebug()<< "ChaosAbstractListModel::flags-setRowCheckState-value:" <<value << " result:"<<result;
         break;
     default:
         break;
@@ -95,7 +93,6 @@ Qt::ItemFlags ChaosAbstractListModel::flags(const QModelIndex &index) const {
     Qt::ItemFlags flags = Qt::ItemIsEnabled;
     if (!index.isValid()) return flags;
     if(isRowCheckable(index.row())) {
-        qDebug()<< "ChaosAbstractListModel::flags-isRowCheckable";
         flags |= Qt::ItemIsUserCheckable;
     }
     if(isRowEditable(index.row())) {

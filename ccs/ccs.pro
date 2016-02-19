@@ -91,7 +91,9 @@ SOURCES += main.cpp\
     api_async_processor/ApiSubmitter.cpp \
     widget/ChaosWidgetCompanion.cpp \
     data/LogDomainListModel.cpp \
-    data/LogEntryTableModel.cpp
+    data/LogEntryTableModel.cpp \
+    api_async_processor/ApiHandler.cpp \
+    data/LogDataTableModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -183,7 +185,8 @@ HEADERS  += \
     api_async_processor/ApiHandler.h \
     widget/ChaosWidgetCompanion.h \
     data/LogDomainListModel.h \
-    data/LogEntryTableModel.h
+    data/LogEntryTableModel.h \
+    data/LogDataTableModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

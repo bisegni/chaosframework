@@ -48,10 +48,13 @@ void LogDomainListModel::onApiDone(const QString& tag,
     checked_index.fill(true);
 
     endResetModel();
+
+    //emit signal that model has changed
+    emit(dataChanged(LogDomainListModel::index(0,0), LogDomainListModel::index(helper->getLogDomainListSize(),1)));
 }
 
 void LogDomainListModel::updateDomainListForUID(const QString &node_uid) {
-    api_submitter.submitApiResult("load_domain_list",
+    api_submitter.submitApiResult("LogDomainListModel::load_domain_list",
                                   GET_CHAOS_API_PTR(logging::GetLogDomainForSourceUID)->execute(node_uid.toStdString()));
 }
 

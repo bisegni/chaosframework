@@ -14,7 +14,7 @@
 using namespace chaos::metadata_service_client;
 
 //declare metatype used in chaos
-Q_DECLARE_METATYPE (std::string)
+Q_DECLARE_METATYPE(std::string)
 Q_DECLARE_METATYPE(int32_t)
 Q_DECLARE_METATYPE(int64_t)
 Q_DECLARE_METATYPE(uint64_t)

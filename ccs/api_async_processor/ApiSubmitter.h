@@ -9,7 +9,7 @@
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 class ApiSubmitter:
-        public QObject{
+        public QObject {
     Q_OBJECT
 public:
     ApiSubmitter(ApiHandler *_api_handler,
@@ -19,7 +19,6 @@ public:
     //!submit api result for async wait termination
     void submitApiResult(const QString& api_tag,
                          chaos::metadata_service_client::api_proxy::ApiProxyResult api_result);
-
 private slots:
 
     void asyncApiResult(const QString& tag,

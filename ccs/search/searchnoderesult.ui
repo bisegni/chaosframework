@@ -132,6 +132,9 @@
        <attribute name="verticalHeaderHighlightSections">
         <bool>false</bool>
        </attribute>
+       <attribute name="verticalHeaderMinimumSectionSize">
+        <number>20</number>
+       </attribute>
       </widget>
      </item>
      <item>

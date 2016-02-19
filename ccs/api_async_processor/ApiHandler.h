@@ -12,29 +12,19 @@ public:
 
     //!Api has ben called successfully
     virtual void onApiDone(const QString& tag,
-                           QSharedPointer<chaos::common::data::CDataWrapper> api_result){
-        qDebug()<< "ChaosWidgetCompanion-"<<tag<<"-onApiDone-"<< QString::fromStdString(api_result->getJSONString());
-    }
+                           QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
 
     //!Api has been give an error
     virtual void onApiError(const QString& tag,
-                            QSharedPointer<chaos::CException> api_exception) {
-        qDebug()<< "ChaosWidgetCompanion-"<<tag<<"-onApiError-"<< api_exception->what();
-    }
+                            QSharedPointer<chaos::CException> api_exception);
 
     //! api has gone in timeout
-    virtual void onApiTimeout(const QString& tag) {
-        qDebug()<< "ChaosWidgetCompanion-"<<tag<<"-onApiTimeout";
-    }
+    virtual void onApiTimeout(const QString& tag);
 
-    virtual void apiHasStarted(const QString& tag) {
-        qDebug()<< "ChaosWidgetCompanion-"<<tag<<"-apiHasStarted";
-    }
+    virtual void apiHasStarted(const QString& tag);
 
-    virtual void apiHasEnded(const QString& tag) {
-        qDebug()<< "ChaosWidgetCompanion-"<<tag<<"-apiHasEnded";
-    }
+    virtual void apiHasEnded(const QString& tag);
 };
 
 #endif // APIHANDLER_H

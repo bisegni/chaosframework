@@ -106,6 +106,7 @@ o->m(it->first, it->second);\
 std::auto_ptr<CDataWrapper> GetLogForSourceUID::converEntry(LogEntry& log_entry) {
     std::auto_ptr<CDataWrapper> result(new CDataWrapper());
     result->addInt64Value("seq", log_entry.sequence);
+    result->addInt64Value(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP, log_entry.ts);
     result->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, log_entry.source_identifier);
     result->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN, log_entry.domain);
     
