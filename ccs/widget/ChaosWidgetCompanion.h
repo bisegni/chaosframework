@@ -5,6 +5,9 @@
 
 class ChaosWidgetCompanion:
 protected ApiHandler {
+    QString p_node_uid;
+    Q_PROPERTY(QString node_uid READ nodeUniqueID WRITE setNodeUniqueID)
+
 public:
     ChaosWidgetCompanion();
 
@@ -12,8 +15,8 @@ public:
     virtual void deinitChaosContent();
     virtual void updateChaosContent();
 
-    void setNodeUID(const QString& new_node_uid);
-    const QString& getNodeUID();
+    void setNodeUID(const QString& node_uid);
+    const QString& nodeUID();
 protected:
     //!submit api result for async wait termination
     void submitApiResult(const QString& api_tag,
@@ -35,7 +38,6 @@ protected:
     void apiHasEnded(const QString& api_tag);
 
 private:
-    QString node_uid_target;
     ApiSubmitter api_submitter;
 };
 

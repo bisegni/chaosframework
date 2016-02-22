@@ -35,22 +35,25 @@ API_PROXY_CD_DEFINITION(GetLogForSourceUID,
 ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
                                            const std::string& domain,
                                            const uint64_t last_sequence_id,
-                                           const uint32_t page_length) {
+                                           const uint32_t page_length,
+                                           const bool page_direction) {
     std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, source);
-    if(last_sequence_id ) {pack->addInt64Value(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN, last_sequence_id);}
+    if(last_sequence_id) {pack->addInt64Value("seq", last_sequence_id);}
     if(domain.size()) {pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN, domain);}
     pack->addInt32Value("page_length", page_length);
+    pack->addBoolValue("page_direction", page_direction);
     return callApi(pack.release());
 }
 
 ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
                                            const LogDomainList& domain_list,
                                            const uint64_t last_sequence_id,
-                                           const uint32_t page_length) {
+                                           const uint32_t page_length,
+                                           const bool page_direction) {
     std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, source);
-    if(last_sequence_id ) {pack->addInt64Value(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN, last_sequence_id);}
+    if(last_sequence_id ) {pack->addInt64Value("seq", last_sequence_id);}
     if(domain_list.size()) {
         for(LogDomainListConstIterator it= domain_list.begin();
             it!= domain_list.end();
@@ -60,6 +63,7 @@ ApiProxyResult GetLogForSourceUID::execute(const std::string& source,
         pack->finalizeArrayForKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);
     }
     pack->addInt32Value("page_length", page_length);
+    pack->addBoolValue("page_direction", page_direction);
     return callApi(pack.release());
 }
 

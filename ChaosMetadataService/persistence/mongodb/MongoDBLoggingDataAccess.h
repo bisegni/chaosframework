@@ -44,6 +44,14 @@ namespace chaos {
                     friend class MongoDBPersistenceDriver;
                     
                     MongoDBUtilityDataAccess *utility_data_access = NULL;
+                    //return the query for a page
+                    mongo::Query getNextPagedQuery(uint64_t last_sequence_before_this_page,
+                                                   const std::string& source_uid,
+                                                   const std::vector<std::string>& domain);
+                    //return query to get next page element
+                    mongo::Query getPreviousPage(uint64_t last_sequence,
+                                                 const std::string& source_uid,
+                                                 const std::vector<std::string>& domain);
                 protected:
                     MongoDBLoggingDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBLoggingDataAccess();
@@ -55,9 +63,10 @@ namespace chaos {
                     //! Inherited method
                     int searchEntryForSource(data_access::LogEntryList& entry_list,
                                              const std::string& source_uid,
-                                             const std::vector<std::string>& domain = std::vector<std::string>(),
-                                             uint64_t last_sequence = 0,
-                                             uint32_t page_length = 100);
+                                             const std::vector<std::string>& domain,
+                                             uint64_t start_sequence_id,
+                                             uint32_t page_length,
+                                             bool search_direction);
                     //! Inherited method
                     int getLogDomainsForSource(data_access::LogDomainList& entry_list,
                                                const std::string& source_uid);

@@ -44,7 +44,9 @@ GetLogForSourceUID::~GetLogForSourceUID() {
 
 chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api_data, bool& detach_data) {
     int err = 0;
+    
     CDataWrapper *result = NULL;
+
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, L_GLFNI_ERR, -1, "No parameter found");
     CHECK_KEY_THROW_AND_LOG(api_data, MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, L_GLFNI_ERR, -2, "The log timestamp key is mandatory");
@@ -56,6 +58,7 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
     LogEntryList entry_list;
     std::vector<std::string> domain_to_include;
     
+    bool page_direction = api_data->getValueWithDefault<bool>("page_direction",true);
     uint32_t page_length =  (uint32_t)api_data->getValueWithDefault<int32_t>("page_length",100);
     uint64_t sequence = (uint64_t)api_data->getValueWithDefault<int64_t>("seq", 0);
     if(api_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
@@ -80,7 +83,8 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
                                          source,
                                          domain_to_include,
                                          sequence,
-                                         page_length))) {
+                                         page_length,
+                                         page_direction))) {
         LOG_AND_TROW_FORMATTED(L_GLFNI_ERR, err, "Error searching for source %1%", %source);
     }
     if(entry_list.size()) {

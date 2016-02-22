@@ -25,6 +25,8 @@ public:
     void updateDomainListForUID(const QString& node_uid);
     //!return all checked domain
     void getActiveDomains(chaos::metadata_service_client::api_proxy::logging::LogDomainList &checked_domain);
+    //! check if a domain is selected
+    bool isDomainChecked(const QString& domain_name);
 private:
     QBitArray checked_index;
     ApiSubmitter api_submitter;

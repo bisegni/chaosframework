@@ -41,6 +41,7 @@ void LogDomainListModel::onApiDone(const QString& tag,
     //data received
     beginResetModel();
     helper = logging::GetLogDomainForSourceUID::getHelper(api_result.data());
+
     //resize the bit array for checked indexing
     checked_index.resize(helper->getLogDomainListSize());
 
@@ -67,4 +68,16 @@ void LogDomainListModel::getActiveDomains(logging::LogDomainList& checked_domain
             checked_domain.push_back(helper->getLogDomainList()[idx]);
         }
     }
+}
+
+bool LogDomainListModel::isDomainChecked(const QString& domain_name) {
+    for(int idx = 0;
+        idx < helper->getLogDomainListSize();
+        idx++) {
+        if(helper->getLogDomainList()[idx].compare(domain_name.toStdString()) == 0) {
+            //found it
+            return checked_index.testBit(idx);
+        }
+    }
+    return false;
 }

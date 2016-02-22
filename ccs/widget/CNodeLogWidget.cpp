@@ -3,6 +3,7 @@
 
 #include <QDebug>
 
+using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
 CNodeLogWidget::CNodeLogWidget(QWidget *parent):
@@ -43,15 +44,43 @@ void CNodeLogWidget::initChaosContent() {
     ui->tableViewLogData->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableViewLogData->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableViewLogData->setSelectionMode(QAbstractItemView::MultiSelection);
+
+    setPageLength(4);
+
+    //register for log
+    ChaosMetadataServiceClient::getInstance()->registerEventHandler(this);
 }
 
 void CNodeLogWidget::deinitChaosContent() {
-
+    //remove log handler
+    ChaosMetadataServiceClient::getInstance()->deregisterEventHandler(this);
 }
 
 void CNodeLogWidget::updateChaosContent() {
-    domain_list_model.updateDomainListForUID(getNodeUID());
+    domain_list_model.updateDomainListForUID(nodeUID());
+}
 
+void CNodeLogWidget::setPageLength(qint32 page_length) {
+    entry_table_model.setPageLength(p_page_length = page_length);
+}
+
+qint32 CNodeLogWidget::pageLength() {
+    return p_page_length;
+}
+
+void CNodeLogWidget::handleLogEvent(const std::string source,
+                                    const std::string domain) {
+    //if widget i snot visible we do nothing
+    if(isVisible()) return;
+
+    if(source.compare(nodeUID().toStdString()) == 0) {
+        //the event if for my node
+        if(domain_list_model.isDomainChecked(QString::fromStdString(domain))) {
+            qDebug()<< "Update event for log";
+            //we need to update the log
+            domain_list_model.updateDomainListForUID(nodeUID());
+        }
+    }
 }
 
 void CNodeLogWidget::logTypesDataChanged(const QModelIndex& top_left,
@@ -60,13 +89,12 @@ void CNodeLogWidget::logTypesDataChanged(const QModelIndex& top_left,
     //some domain has been checked or unchecked
     logging::LogDomainList domain_list;
     domain_list_model.getActiveDomains(domain_list);
-    entry_table_model.updateEntries(getNodeUID(),
+    entry_table_model.updateEntries(nodeUID(),
                                     domain_list);
 }
 
 void CNodeLogWidget::logEntriesTableSelectionChanged(const QModelIndex& current_selection,
                                                      const QModelIndex& previous_selection) {
-    qDebug()<< "CNodeLogWidget::logEntriesTableSelectionChanged";
     if(current_selection.isValid()) {
         data_table_model.setLogEntry(entry_table_model.getLogEntryForRow(current_selection.row()));
     } else {
@@ -74,4 +102,16 @@ void CNodeLogWidget::logEntriesTableSelectionChanged(const QModelIndex& current_
     }
 
 
+}
+
+void CNodeLogWidget::on_pushButtonUpdateLogTypes_clicked() {
+    domain_list_model.updateDomainListForUID(nodeUID());
+}
+
+void CNodeLogWidget::on_pushButtonLogEntriesNextPage_clicked() {
+    entry_table_model.nextPage();
+}
+
+void CNodeLogWidget::on_pushButtonLogEntriesPreviousPage_clicked() {
+    entry_table_model.previousPage();
 }

@@ -90,16 +90,12 @@ int MongoDBLoggingDataAccess::insertNewEntry(data_access::LogEntry& log_entry) {
     return err;
 }
 
-int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& entry_list,
-                                                   const std::string& source_uid,
-                                                   const std::vector<std::string>& domain,
-                                                   uint64_t last_sequence,
-                                                   uint32_t page_length) {
-    int err = 0;
-    SearchResult            paged_result;
-    //filter on sequence
+mongo::Query MongoDBLoggingDataAccess::getNextPagedQuery(uint64_t last_sequence,
+                                                         const std::string& source_uid,
+                                                         const std::vector<std::string>& domain) {
+    mongo::Query q;
     mongo::BSONObjBuilder build_query;
-    build_query <<"seq" << BSON("$gt"<<(long long)last_sequence);
+    if(last_sequence){build_query <<"seq" << BSON("$lt"<<(long long)last_sequence);}
     build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << source_uid;
     if(domain.size()) {
         mongo::BSONArrayBuilder or_builder;
@@ -112,8 +108,47 @@ int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& en
         
         build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << BSON("$in" << or_builder.arr());
     }
-    mongo::Query q = build_query.obj();
-    q = q.sort(BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP<<(int)-1));
+    q = build_query.obj();
+    return q.sort(BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP<<(int)-1));
+}
+
+mongo::Query MongoDBLoggingDataAccess::getPreviousPage(uint64_t last_sequence_before_this_page,
+                                                       const std::string& source_uid,
+                                                       const std::vector<std::string>& domain) {
+    mongo::Query q;
+    mongo::BSONObjBuilder build_query;
+    if(last_sequence_before_this_page){build_query <<"seq" << BSON("$lte"<<(long long)last_sequence_before_this_page);}
+    build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << source_uid;
+    if(domain.size()) {
+        mongo::BSONArrayBuilder or_builder;
+        //add all domain into array
+        for(std::vector<std::string>::const_iterator it = domain.begin();
+            it != domain.end();
+            it++) {
+            or_builder.append(*it);
+        }
+        
+        build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << BSON("$in" << or_builder.arr());
+    }
+    q = build_query.obj();
+    return q.sort(BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP<<(int)-1));
+}
+
+int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& entry_list,
+                                                   const std::string& source_uid,
+                                                   const std::vector<std::string>& domain,
+                                                   uint64_t start_sequence_id,
+                                                   uint32_t page_length,
+                                                   bool search_direction) {
+    int err = 0;
+    SearchResult paged_result;
+    uint64_t last_found_sequence;
+    
+    mongo::Query q = (search_direction?getNextPagedQuery(start_sequence_id,
+                                                         source_uid,
+                                                         domain):getPreviousPage(start_sequence_id,
+                                                                                 source_uid,
+                                                                                 domain));
     DEBUG_CODE(MDBLDA_DBG<<log_message("searchEntryForSource",
                                        "performPagedQuery",
                                        DATA_ACCESS_LOG_1_ENTRY("Query",
@@ -143,7 +178,7 @@ int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& en
                     it_ele++) {
                     const std::string field_name = it_ele->fieldName();
                     if(field_name.compare("seq") == 0) {
-                        log_entry->sequence = (uint64_t)it_ele->Long();
+                        last_found_sequence = log_entry->sequence = (uint64_t)it_ele->Long();
                     } else if(field_name.compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP) == 0) {
                         log_entry->ts = (uint64_t)it_ele->Date().asInt64();
                     } else if(field_name.compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER) == 0) {
@@ -192,9 +227,9 @@ int MongoDBLoggingDataAccess::getLogDomainsForSource(data_access::LogDomainList&
     try {
         mongo::Query q = BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << source_uid);
         DEBUG_CODE(MDBLDA_DBG<<log_message("getLogDomainsForSource",
-                                            "query",
-                                            DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                                    "no query"));)
+                                           "query",
+                                           DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                   "no query"));)
         
         distinct_result = connection->distinct(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_LOGGING), MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);
         

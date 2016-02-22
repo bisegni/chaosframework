@@ -78,14 +78,15 @@ namespace chaos {
                      perform a simple search on node filtering on type
                      \param entry_list tge list of the current page of the entries found
                      \param source_uid is the source that has created the entries
-                     \param last_sequence is identified the sequence after qich we need to search
+                     \param start_sequence_id is identified the sequence after wich we need to search
                      \param page_length is the maximum number of the element to return
                      */
                     virtual int searchEntryForSource(LogEntryList& entry_list,
                                                      const std::string& source_uid,
-                                                     const std::vector<std::string>& domain = std::vector<std::string>(),
-                                                     uint64_t last_sequence = 0,
-                                                     uint32_t page_length = 100) = 0;
+                                                     const std::vector<std::string>& domain,
+                                                     uint64_t start_sequence_id,
+                                                     uint32_t page_length,
+                                                     bool search_direction) = 0;
                     
                     //!Return all log domain found for a determinated source
                     /*!

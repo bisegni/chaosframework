@@ -32,6 +32,9 @@ bool ChaosAbstractListModel::isRowEditable(int row) const {
     return false;
 }
 
+bool ChaosAbstractListModel::isRowSelectable(int row) const {
+    return true;
+}
 QVariant  ChaosAbstractListModel::data(const QModelIndex &index, int role) const {
     int row = index.row();
     QVariant result;
@@ -52,7 +55,9 @@ QVariant  ChaosAbstractListModel::data(const QModelIndex &index, int role) const
         result = getUserData(row);
         break;
     case Qt::CheckStateRole:
-        result = getCheckableState(row);
+        if(isRowCheckable(row)){
+            result = getCheckableState(row);
+        }
         break;
     default:
         break;
@@ -77,7 +82,9 @@ bool ChaosAbstractListModel::setData(const QModelIndex &index, const QVariant &v
         break;
 
     case Qt::CheckStateRole:
-        result = setRowCheckState(index.row(), value);
+        if(isRowCheckable(index.row())){
+            result = setRowCheckState(index.row(), value);
+        }
         break;
     default:
         break;
@@ -97,6 +104,9 @@ Qt::ItemFlags ChaosAbstractListModel::flags(const QModelIndex &index) const {
     }
     if(isRowEditable(index.row())) {
         flags |= Qt::ItemIsEditable;
+    }
+    if(isRowSelectable(index.row())) {
+        flags |= Qt::ItemIsSelectable;
     }
     return flags;
 }

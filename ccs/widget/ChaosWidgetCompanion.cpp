@@ -19,12 +19,12 @@ void ChaosWidgetCompanion::updateChaosContent() {
 
 }
 
-void ChaosWidgetCompanion::setNodeUID(const QString& new_node_uid) {
-    node_uid_target = new_node_uid;
+void ChaosWidgetCompanion::setNodeUID(const QString& node_uid) {
+    p_node_uid = node_uid;
 }
 
-const QString& ChaosWidgetCompanion::getNodeUID() {
-    return node_uid_target;
+const QString& ChaosWidgetCompanion::nodeUID() {
+    return p_node_uid;
 }
 
 //!submit api result for async wait termination

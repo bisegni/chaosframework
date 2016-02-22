@@ -19,6 +19,7 @@ public:
     void clear();
     void nextPage();
     void previousPage();
+    void setPageLength(uint32_t _page_length);
 protected:
     int getRowCount() const;
     int getColumnCount() const;
@@ -33,7 +34,10 @@ protected:
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 private:
     ApiSubmitter api_submitter;
-    uint64_t page_lenght;
+    uint32_t page_lenght;
+    QString node_uid;
+    chaos::metadata_service_client::api_proxy::logging::LogDomainList domain_list;
+    uint64_t current_page_sequence;
     uint64_t last_received_sequence_id;
     std::auto_ptr<chaos::metadata_service_client::api_proxy::logging::GetLogForSourceUIDHelper> helper;
 };

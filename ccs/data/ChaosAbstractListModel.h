@@ -14,6 +14,7 @@ protected:
     virtual Qt::CheckState getCheckableState(int row)const;
     virtual bool isRowCheckable(int row) const;
     virtual bool isRowEditable(int row) const;
+    virtual bool isRowSelectable(int row) const;
     virtual QVariant getTooltipTextForData(int row) const;
     virtual bool setRowData(const int row, const QVariant& value);
     virtual bool setRowCheckState(const int row, const QVariant& value);
