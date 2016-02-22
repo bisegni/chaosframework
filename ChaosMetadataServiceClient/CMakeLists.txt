@@ -8,7 +8,7 @@ SET(mcl_src ${mcl_src}      api_proxy/ApiProxyManager.cpp
                             api_proxy/ApiProxy.cpp)
 
 SET(mcl_src ${mcl_src}	    event/EventDispatchManager.cpp
-                            event/AsbtarctEventHandler.cpp)
+                            event/AbstractEventHandler.cpp)
 
 SET(mcl_src ${mcl_src}	    event/alert/AlertEventHandler.cpp
                             event/alert/AlertLogEventHandler.cpp)
