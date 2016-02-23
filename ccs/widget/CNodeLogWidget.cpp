@@ -76,12 +76,14 @@ void CNodeLogWidget::handleLogEvent(const std::string source,
     if(isVisible()) return;
 
     if(source.compare(nodeUID().toStdString()) == 0) {
+        qDebug()<< "Received event for this node" << nodeUID();
         //the event if for my node
         if(domain_list_model.isDomainChecked(QString::fromStdString(domain))) {
             qDebug()<< "Update event for log";
             //we need to update the log
             domain_list_model.updateDomainListForUID(nodeUID());
         } else if(domain_list_model.isDomainPresent(QString::fromStdString(domain)) == false) {
+            qDebug()<< "Update event for log - update domain list";
             //we need to reload all to get new domain
             domain_list_model.updateDomainListForUID(nodeUID());
         }
