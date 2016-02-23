@@ -20,9 +20,10 @@ class CNodeLogWidget :
         protected chaos::metadata_service_client::event::alert::AlertLogEventHandler {
     Q_OBJECT
 
-    qint32 p_page_length;
-    Q_PROPERTY(qint32 page_length READ pageLength WRITE setPageLength)
+    qint32 p_max_result_item;
+    Q_PROPERTY(qint32 page_length READ maxResultItem WRITE setMaxResultItem)
 
+    void updateEntryList();
 public:
     explicit CNodeLogWidget(QWidget *parent = 0);
     ~CNodeLogWidget();
@@ -30,8 +31,8 @@ public:
     void deinitChaosContent();
     void updateChaosContent();
 
-    void setPageLength(qint32 page_length);
-    qint32 pageLength();
+    void setMaxResultItem(qint32 max_result_item);
+    qint32 maxResultItem();
 protected:
     void handleLogEvent(const std::string source,
                         const std::string domain);
@@ -44,9 +45,7 @@ private slots:
                                          const QModelIndex& previous_selection);
     void on_pushButtonUpdateLogTypes_clicked();
 
-    void on_pushButtonLogEntriesNextPage_clicked();
-
-    void on_pushButtonLogEntriesPreviousPage_clicked();
+    void on_lineEditMaxNumberOfResult_returnPressed();
 
 private:
     Ui::CNodeLogWidget *ui;

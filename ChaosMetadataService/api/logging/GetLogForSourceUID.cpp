@@ -57,8 +57,7 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
     //entry list
     LogEntryList entry_list;
     std::vector<std::string> domain_to_include;
-    
-    bool page_direction = api_data->getValueWithDefault<bool>("page_direction",true);
+
     uint32_t page_length =  (uint32_t)api_data->getValueWithDefault<int32_t>("page_length",100);
     uint64_t sequence = (uint64_t)api_data->getValueWithDefault<int64_t>("seq", 0);
     if(api_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
@@ -83,8 +82,7 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
                                          source,
                                          domain_to_include,
                                          sequence,
-                                         page_length,
-                                         page_direction))) {
+                                         page_length))) {
         LOG_AND_TROW_FORMATTED(L_GLFNI_ERR, err, "Error searching for source %1%", %source);
     }
     if(entry_list.size()) {

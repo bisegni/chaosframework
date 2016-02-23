@@ -54,13 +54,11 @@ namespace chaos {
                      \param source node that has emitted the log entries
                      \param domain if is not and empty string it will be used to filter domain in log entries
                      \param last_sequence_id is the id of the last returned entries in the past query
-                     \param page_direction is the direction of the query to search forward(true) or backward(false)
                      */
                     ApiProxyResult execute(const std::string& source,
                                            const std::string& domain = std::string(),
                                            const uint64_t last_sequence_id = 0,
-                                           const uint32_t page_length = 30,
-                                           const bool page_direction = true);
+                                           const uint32_t page_length = 30);
                     
                     //! Add a new node in the domain
                     /*!
@@ -68,13 +66,11 @@ namespace chaos {
                      \param source node that has emitted the log entries
                      \param domain a list of stirng, taht if is not and empty string it will be used to filter domain in log entries
                      \param last_sequence_id is the id of the last returned entries in the past query
-                     \param page_direction is the direction of the query to search forward(true) or backward(false)
                      */
                     ApiProxyResult execute(const std::string& source,
                                            const LogDomainList& domain_list,
                                            const uint64_t last_sequence_id,
-                                           const uint32_t page_length = 30,
-                                           const bool page_direction = true);
+                                           const uint32_t page_length = 30);
                     
                     static std::auto_ptr<GetLogForSourceUIDHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };

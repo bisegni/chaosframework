@@ -186,7 +186,8 @@ HEADERS  += \
     widget/ChaosWidgetCompanion.h \
     data/LogDomainListModel.h \
     data/LogEntryTableModel.h \
-    data/LogDataTableModel.h
+    data/LogDataTableModel.h \
+    data/SearchPager.h
 
 FORMS    += \
     search/searchnoderesult.ui \

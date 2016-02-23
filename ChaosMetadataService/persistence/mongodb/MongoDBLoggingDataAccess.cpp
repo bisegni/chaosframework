@@ -112,43 +112,18 @@ mongo::Query MongoDBLoggingDataAccess::getNextPagedQuery(uint64_t last_sequence,
     return q.sort(BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP<<(int)-1));
 }
 
-mongo::Query MongoDBLoggingDataAccess::getPreviousPage(uint64_t last_sequence_before_this_page,
-                                                       const std::string& source_uid,
-                                                       const std::vector<std::string>& domain) {
-    mongo::Query q;
-    mongo::BSONObjBuilder build_query;
-    if(last_sequence_before_this_page){build_query <<"seq" << BSON("$lte"<<(long long)last_sequence_before_this_page);}
-    build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << source_uid;
-    if(domain.size()) {
-        mongo::BSONArrayBuilder or_builder;
-        //add all domain into array
-        for(std::vector<std::string>::const_iterator it = domain.begin();
-            it != domain.end();
-            it++) {
-            or_builder.append(*it);
-        }
-        
-        build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << BSON("$in" << or_builder.arr());
-    }
-    q = build_query.obj();
-    return q.sort(BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP<<(int)-1));
-}
-
 int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& entry_list,
                                                    const std::string& source_uid,
                                                    const std::vector<std::string>& domain,
                                                    uint64_t start_sequence_id,
-                                                   uint32_t page_length,
-                                                   bool search_direction) {
+                                                   uint32_t page_length) {
     int err = 0;
     SearchResult paged_result;
     uint64_t last_found_sequence;
     
-    mongo::Query q = (search_direction?getNextPagedQuery(start_sequence_id,
-                                                         source_uid,
-                                                         domain):getPreviousPage(start_sequence_id,
-                                                                                 source_uid,
-                                                                                 domain));
+    mongo::Query q = getNextPagedQuery(start_sequence_id,
+                                       source_uid,
+                                       domain);
     DEBUG_CODE(MDBLDA_DBG<<log_message("searchEntryForSource",
                                        "performPagedQuery",
                                        DATA_ACCESS_LOG_1_ENTRY("Query",

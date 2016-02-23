@@ -2,6 +2,7 @@
 #include "ui_CNodeLogWidget.h"
 
 #include <QDebug>
+#include <QIntValidator>
 
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -22,6 +23,9 @@ CNodeLogWidget::~CNodeLogWidget() {
 
 void CNodeLogWidget::initChaosContent() {
     //add the list model to log domain list
+    ui->lineEditMaxNumberOfResult->setValidator(new QIntValidator(1, 1000, this));
+    setMaxResultItem(ui->lineEditMaxNumberOfResult->text().toUInt());
+
     ui->listViewLogTypes->setModel(&domain_list_model);
     //connect for signal when user check or uncheck the log domains
     connect(&domain_list_model,
@@ -45,8 +49,6 @@ void CNodeLogWidget::initChaosContent() {
     ui->tableViewLogData->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableViewLogData->setSelectionMode(QAbstractItemView::MultiSelection);
 
-    setPageLength(4);
-
     //register for log
     ChaosMetadataServiceClient::getInstance()->registerEventHandler(this);
 }
@@ -60,12 +62,12 @@ void CNodeLogWidget::updateChaosContent() {
     domain_list_model.updateDomainListForUID(nodeUID());
 }
 
-void CNodeLogWidget::setPageLength(qint32 page_length) {
-    entry_table_model.setPageLength(p_page_length = page_length);
+void CNodeLogWidget::setMaxResultItem(qint32 max_result_item) {
+    entry_table_model.setMaxResultItem(p_max_result_item = max_result_item);
 }
 
-qint32 CNodeLogWidget::pageLength() {
-    return p_page_length;
+qint32 CNodeLogWidget::maxResultItem() {
+    return p_max_result_item;
 }
 
 void CNodeLogWidget::handleLogEvent(const std::string source,
@@ -83,14 +85,18 @@ void CNodeLogWidget::handleLogEvent(const std::string source,
     }
 }
 
+void CNodeLogWidget::updateEntryList() {
+    logging::LogDomainList domain_list;
+    domain_list_model.getActiveDomains(domain_list);
+    entry_table_model.updateEntriesList(nodeUID(),
+                                         domain_list);
+}
+
 void CNodeLogWidget::logTypesDataChanged(const QModelIndex& top_left,
                                          const QModelIndex& bottom_right,
                                          const QVector<int>& roles) {
     //some domain has been checked or unchecked
-    logging::LogDomainList domain_list;
-    domain_list_model.getActiveDomains(domain_list);
-    entry_table_model.updateEntries(nodeUID(),
-                                    domain_list);
+    updateEntryList();
 }
 
 void CNodeLogWidget::logEntriesTableSelectionChanged(const QModelIndex& current_selection,
@@ -108,10 +114,9 @@ void CNodeLogWidget::on_pushButtonUpdateLogTypes_clicked() {
     domain_list_model.updateDomainListForUID(nodeUID());
 }
 
-void CNodeLogWidget::on_pushButtonLogEntriesNextPage_clicked() {
-    entry_table_model.nextPage();
-}
-
-void CNodeLogWidget::on_pushButtonLogEntriesPreviousPage_clicked() {
-    entry_table_model.previousPage();
+void CNodeLogWidget::on_lineEditMaxNumberOfResult_returnPressed() {
+    setMaxResultItem(ui->lineEditMaxNumberOfResult->text().toUInt());
+    if(isVisible()){
+        updateEntryList();
+    }
 }

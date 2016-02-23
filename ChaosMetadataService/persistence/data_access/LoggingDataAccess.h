@@ -85,8 +85,7 @@ namespace chaos {
                                                      const std::string& source_uid,
                                                      const std::vector<std::string>& domain,
                                                      uint64_t start_sequence_id,
-                                                     uint32_t page_length,
-                                                     bool search_direction) = 0;
+                                                     uint32_t page_length) = 0;
                     
                     //!Return all log domain found for a determinated source
                     /*!

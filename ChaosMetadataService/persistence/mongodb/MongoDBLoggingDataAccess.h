@@ -48,10 +48,6 @@ namespace chaos {
                     mongo::Query getNextPagedQuery(uint64_t last_sequence_before_this_page,
                                                    const std::string& source_uid,
                                                    const std::vector<std::string>& domain);
-                    //return query to get next page element
-                    mongo::Query getPreviousPage(uint64_t last_sequence,
-                                                 const std::string& source_uid,
-                                                 const std::vector<std::string>& domain);
                 protected:
                     MongoDBLoggingDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBLoggingDataAccess();
@@ -65,8 +61,7 @@ namespace chaos {
                                              const std::string& source_uid,
                                              const std::vector<std::string>& domain,
                                              uint64_t start_sequence_id,
-                                             uint32_t page_length,
-                                             bool search_direction);
+                                             uint32_t page_length);
                     //! Inherited method
                     int getLogDomainsForSource(data_access::LogDomainList& entry_list,
                                                const std::string& source_uid);
