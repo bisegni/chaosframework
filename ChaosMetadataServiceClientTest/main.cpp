@@ -98,12 +98,8 @@ int main(int argc, char *argv[]){
             case 1:{
                 //create search node utility class
                 NodeSearchTest ns(5);
-                {
-                    boost::timer::auto_cpu_timer t;
-                    //try search and waith the termination
-                    ns.testSearch(device_id.size()?device_id:"");
-                }
-                
+                //try search and waith the termination
+                ns.testSearch(device_id.size()?device_id:"");
             }
         }
         sleep(60000);
