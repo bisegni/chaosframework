@@ -28,11 +28,11 @@
 #define MDBLDA_DBG  DBG_LOG(MongoDBLoggingDataAccess)
 #define MDBLDA_ERR  ERR_LOG(MongoDBLoggingDataAccess)
 
-#define WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(b, miter, map)\
+#define WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(b, miter, map, c)\
 for(miter it = log_entry.map.begin();\
 it != log_entry.map.end();\
 it++) {\
-b << it->first << it->second;\
+b << it->first << c(it->second);\
 }
 
 #define READ_STRING_LOG_ATTRIBUTE_MAP_ON_ELELEMT(e, m)
@@ -66,11 +66,11 @@ int MongoDBLoggingDataAccess::insertNewEntry(data_access::LogEntry& log_entry) {
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << log_entry.domain;
         
         //add custom attribute in log entry
-        WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueStringMapIterator, map_string_value);
-        WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueInt64MapIterator, map_int64_value);
-        WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueInt32MapIterator, map_int32_value);
-        WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueDoubleMapIterator, map_double_value);
-        WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueBoolMapIterator, map_bool_value);
+        WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueStringMapIterator, map_string_value, );
+        WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueInt64MapIterator, map_int64_value, (long long));
+        WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueInt32MapIterator, map_int32_value, (int));
+        WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueDoubleMapIterator, map_double_value, );
+        WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueBoolMapIterator, map_bool_value, );
         
         mongo::BSONObj q = builder.obj();
         
