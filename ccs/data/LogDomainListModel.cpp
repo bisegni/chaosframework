@@ -81,3 +81,15 @@ bool LogDomainListModel::isDomainChecked(const QString& domain_name) {
     }
     return false;
 }
+
+bool LogDomainListModel::isDomainPresent(const QString& domain_name) {
+    for(int idx = 0;
+        idx < helper->getLogDomainListSize();
+        idx++) {
+        if(helper->getLogDomainList()[idx].compare(domain_name.toStdString()) == 0) {
+            //found it
+            return true;
+        }
+    }
+    return false;
+}

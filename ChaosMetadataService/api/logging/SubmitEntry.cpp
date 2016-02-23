@@ -65,10 +65,12 @@ chaos::common::data::CDataWrapper *SubmitEntry::execute(CDataWrapper *api_data, 
     new_log_entry.source_identifier = api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER);
     new_log_entry.ts = api_data->getUInt64Value(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP);
     new_log_entry.domain = api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);
-    if(new_log_entry.domain.compare("error") == 0) {
-        completeErrorLogEntry(api_data,
-                              new_log_entry);
-    }
+    
+    //compelte log antry with log channel custom key
+    completeLogEntry(api_data,
+                     new_log_entry);
+    
+    //insert the log entry
     if((err = l_da->insertNewEntry(new_log_entry))){
         LOG_AND_TROW(L_SE_ERR, -9, "Error creaating new log entry");
     }
@@ -82,19 +84,29 @@ chaos::common::data::CDataWrapper *SubmitEntry::execute(CDataWrapper *api_data, 
     return NULL;
 }
 
-void SubmitEntry::completeErrorLogEntry(CDataWrapper *api_data,
-                                       LogEntry& new_log_entry) {
-    CHECK_KEY_THROW_AND_LOG(api_data, MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE, L_SE_ERR, -1, "The log error code key is mandatory");
-    CHAOS_LASSERT_EXCEPTION(api_data->isInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE), L_SE_ERR, -2, "The error code  key needs to be an int32 value");
-    CHECK_KEY_THROW_AND_LOG(api_data, MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE, L_SE_ERR, -3, "The error message key is mandatory");
-    CHAOS_LASSERT_EXCEPTION(api_data->isStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE), L_SE_ERR, -4, "The error message key needs to be a string value");
-    CHECK_KEY_THROW_AND_LOG(api_data, MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN, L_SE_ERR, -5, "The log domain key is mandatory");
-    CHAOS_LASSERT_EXCEPTION(api_data->isStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN), L_SE_ERR, -6, "The log domain needs to be a string");
+void SubmitEntry::completeLogEntry(CDataWrapper *api_data,
+                                   LogEntry& new_log_entry) {
     
-    new_log_entry.map_string_value.insert(make_pair(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE,
-                                                    api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE)));
-    new_log_entry.map_string_value.insert(make_pair(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN,
-                                                    api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN)));
-    new_log_entry.map_int32_value.insert(make_pair(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE,
-                                                    api_data->getInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE)));
+    //compose entry
+    std::vector<std::string> all_keys_in_pack;
+    api_data->getAllKey(all_keys_in_pack);
+    for(std::vector<std::string>::iterator it = all_keys_in_pack.begin();
+        it != all_keys_in_pack.end();
+        it++) {
+        if(it->compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER) == 0 ||
+           it->compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP) == 0 ||
+           it->compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN) == 0 ) continue;
+        
+        if(api_data->isBoolValue(*it)) {
+            new_log_entry.map_bool_value.insert(make_pair(*it,api_data->getBoolValue(*it)));
+        } else if(api_data->isInt32Value(*it)) {
+            new_log_entry.map_int32_value.insert(make_pair(*it,api_data->getInt32Value(*it)));
+        } else if(api_data->isInt64Value(*it)) {
+            new_log_entry.map_int64_value.insert(make_pair(*it,api_data->getInt64Value(*it)));
+        } else if(api_data->isDoubleValue(*it)) {
+            new_log_entry.map_double_value.insert(make_pair(*it,api_data->getDoubleValue(*it)));
+        } else if(api_data->isStringValue(*it)) {
+            new_log_entry.map_string_value.insert(make_pair(*it,api_data->getStringValue(*it)));
+        }
+    }
 }

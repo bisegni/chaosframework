@@ -39,8 +39,8 @@ namespace chaos {
                 public AbstractApi {
                     chaos::common::event::channel::AlertEventChannel *alert_event_channel;
                     //!complete the log entry for the error logging domain
-                    void completeErrorLogEntry(chaos::common::data::CDataWrapper *api_data,
-                                               persistence::data_access::LogEntry& new_log_entry);
+                    void completeLogEntry(chaos::common::data::CDataWrapper *api_data,
+                                          persistence::data_access::LogEntry& new_log_entry);
                 public:
                     SubmitEntry();
                     ~SubmitEntry();

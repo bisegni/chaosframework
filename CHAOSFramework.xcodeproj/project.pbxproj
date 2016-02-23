@@ -254,6 +254,9 @@
 		32568C8F1B3D7FED0006988C /* UpdateProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 32568C8D1B3D7FED0006988C /* UpdateProperty.h */; };
 		32568C921B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32568C901B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp */; };
 		32568C931B42C1690006988C /* QuantumTSTaggedAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32568C911B42C1690006988C /* QuantumTSTaggedAttributeHandler.h */; };
+		32571D9C1C7C901A0001D884 /* BatchCommandLoggingChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32571D9A1C7C901A0001D884 /* BatchCommandLoggingChannel.cpp */; };
+		32571D9D1C7C901A0001D884 /* BatchCommandLoggingChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32571D9B1C7C901A0001D884 /* BatchCommandLoggingChannel.h */; };
+		32571DA11C7C91090001D884 /* batch_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 32571D9F1C7C91090001D884 /* batch_command.h */; };
 		3258AEEA1935C34000A66D44 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AEE81935C34000A66D44 /* URL.cpp */; };
 		3258AEEB1935C34000A66D44 /* URL.h in Headers */ = {isa = PBXBuildFile; fileRef = 3258AEE91935C34000A66D44 /* URL.h */; };
 		3258AF031935EE4D00A66D44 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AF021935EE4D00A66D44 /* main.cpp */; };
@@ -1301,6 +1304,9 @@
 		32568C8D1B3D7FED0006988C /* UpdateProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateProperty.h; sourceTree = "<group>"; };
 		32568C901B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumTSTaggedAttributeHandler.cpp; sourceTree = "<group>"; };
 		32568C911B42C1690006988C /* QuantumTSTaggedAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumTSTaggedAttributeHandler.h; sourceTree = "<group>"; };
+		32571D9A1C7C901A0001D884 /* BatchCommandLoggingChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BatchCommandLoggingChannel.cpp; sourceTree = "<group>"; };
+		32571D9B1C7C901A0001D884 /* BatchCommandLoggingChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchCommandLoggingChannel.h; sourceTree = "<group>"; };
+		32571D9F1C7C91090001D884 /* batch_command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = batch_command.h; sourceTree = "<group>"; };
 		3258AEE81935C34000A66D44 /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
 		3258AEE91935C34000A66D44 /* URL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URL.h; sourceTree = "<group>"; };
 		3258AF001935EE4D00A66D44 /* EchitectureTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EchitectureTests; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3609,6 +3615,7 @@
 				3296031D1876B45000CDCADA /* BatchCommandTypes.h */,
 				329603161876B45000CDCADA /* BatchCommandConstants.h */,
 				329603171876B45000CDCADA /* BatchCommandException.h */,
+				32571D9F1C7C91090001D884 /* batch_command.h */,
 			);
 			path = batch_command;
 			sourceTree = "<group>";
@@ -4090,6 +4097,8 @@
 				32B5C9531C6B8FDC0021159C /* AbstractMetadataLogChannel.h */,
 				32B5C9561C6B97590021159C /* ErrorLoggingChannel.cpp */,
 				32B5C9571C6B97590021159C /* ErrorLoggingChannel.h */,
+				32571D9A1C7C901A0001D884 /* BatchCommandLoggingChannel.cpp */,
+				32571D9B1C7C901A0001D884 /* BatchCommandLoggingChannel.h */,
 				3270E07C1C6DF19D00105726 /* metadata_logging.h */,
 			);
 			path = metadata_logging;
@@ -4315,6 +4324,7 @@
 				320C218A151B555A00BD0F41 /* EventServer.h in Headers */,
 				32F158681B7C9D8400B6A5DF /* ResourcePool.h in Headers */,
 				32BE864815A0CEAF00818C39 /* LogManager.h in Headers */,
+				32571DA11C7C91090001D884 /* batch_command.h in Headers */,
 				328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */,
 				327967D615E029C70003C6DA /* AsioImplEventServer.h in Headers */,
 				327967DA15E030C40003C6DA /* AsioEventHandler.h in Headers */,
@@ -4344,6 +4354,7 @@
 				325013D815E980C800DCB13E /* AsioImplEventClient.h in Headers */,
 				32EBDF071B4FCA6F00278C42 /* ConsoleMetricBackend.h in Headers */,
 				32FB20211A3F2E7300307A86 /* AbstractSharedDomainCache.h in Headers */,
+				32571D9D1C7C901A0001D884 /* BatchCommandLoggingChannel.h in Headers */,
 				325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */,
 				324A4B7B191A428500975394 /* hash.h in Headers */,
 				3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */,
@@ -5199,6 +5210,7 @@
 				324A4B7F191A428500975394 /* safe_num.cpp in Sources */,
 				32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */,
 				32963A211AC08F7200FA72FA /* MultiAddressMessageChannel.cpp in Sources */,
+				32571D9C1C7C901A0001D884 /* BatchCommandLoggingChannel.cpp in Sources */,
 				324A4B0E191A3F6A00975394 /* error_codes.cpp in Sources */,
 				3298487D1736814700C158DF /* ChannelValueAccessor.cpp in Sources */,
 			);

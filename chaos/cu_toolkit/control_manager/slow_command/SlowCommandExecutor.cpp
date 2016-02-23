@@ -67,11 +67,13 @@ SlowCommandExecutor::~SlowCommandExecutor(){
 
 // Initialize instance
 void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
-    //initialize superclass
-    BatchCommandExecutor::init(initData);
-    
     error_logging_channel = (ErrorLoggingChannel*)MetadataLoggingManager::getInstance()->getChannel("ErrorLoggingChannel");
     if(error_logging_channel == NULL) {throw CException(-1, "No metadata logging error channel found", __PRETTY_FUNCTION__);}
+    
+    command_logging_channel = (BatchCommandLoggingChannel*)MetadataLoggingManager::getInstance()->getChannel("BatchCommandLoggingChannel");
+    if(command_logging_channel == NULL) {throw CException(-2, "No metadata logging batch command channel found", __PRETTY_FUNCTION__);}
+    //initialize superclass
+    BatchCommandExecutor::init(initData);
 }
 
 // Start the implementation
@@ -106,13 +108,20 @@ void SlowCommandExecutor::stop() throw(chaos::CException) {
 
 // Deinit instance
 void SlowCommandExecutor::deinit() throw(chaos::CException) {
+    //initialize superclass
+    BatchCommandExecutor::deinit();
+    
     if(error_logging_channel != NULL) {
         MetadataLoggingManager::getInstance()->releaseChannel(error_logging_channel);
         error_logging_channel = NULL;
     }
+    
+    if(command_logging_channel != NULL) {
+        MetadataLoggingManager::getInstance()->releaseChannel(command_logging_channel);
+        command_logging_channel = NULL;
+    }
     LDBG_ << "No implementation on deinit";
-    //initialize superclass
-    BatchCommandExecutor::deinit();
+
     last_ru_id_cache = NULL;
     last_error_code = NULL;
     last_error_message = NULL;
@@ -191,6 +200,11 @@ void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
         default:
             break;
     }
+    
+    //log command event
+    command_logging_channel->logCommandState(control_unit_instance->getCUID(),
+                                             command_seq,
+                                             type);
 }
 
 //! general sandbox event handler

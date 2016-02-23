@@ -23,6 +23,7 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/metadata_logging/ErrorLoggingChannel.h>
 #include <chaos/common/metadata_logging/MetadataLoggingManager.h>
+#include <chaos/common/metadata_logging/BatchCommandLoggingChannel.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -40,6 +41,8 @@ message_channel(NULL) {
     //add default channels
     registerChannel("ErrorLoggingChannel",
                     METADATA_LOGGING_ERROR_LOGGING_CHANNEL_INSTANCER);
+    registerChannel("BatchCommandLoggingChannel",
+                    METADATA_LOGGING_COMMAND_LOGGING_CHANNEL_INSTANCER);
 }
 
 MetadataLoggingManager::~MetadataLoggingManager() {}

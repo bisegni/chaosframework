@@ -22,8 +22,9 @@
 #ifndef __CHAOSFramework__metadata_logging_h
 #define __CHAOSFramework__metadata_logging_h
 
+#include <chaos/common/metadata_logging/ErrorLoggingChannel.h>
 #include <chaos/common/metadata_logging/MetadataLoggingManager.h>
 #include <chaos/common/metadata_logging/AbstractMetadataLogChannel.h>
-#include <chaos/common/metadata_logging/ErrorLoggingChannel.h>
+#include <chaos/common/metadata_logging/BatchCommandLoggingChannel.h>
 
 #endif /* __CHAOSFramework__metadata_logging_h */

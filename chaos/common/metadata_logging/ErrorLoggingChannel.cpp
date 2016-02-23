@@ -19,7 +19,7 @@
  *    	limitations under the License.
  */
 
-#include "ErrorLoggingChannel.h"
+#include <chaos/common/metadata_logging/ErrorLoggingChannel.h>
 
 using namespace chaos;
 using namespace chaos::common::data;

@@ -735,6 +735,13 @@ namespace chaos {
             static const char * const PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN   = "mdsndk_nl_e_ed";
         }
         
+        namespace CommandLogging {
+            //! the key represent the error code [uint64_t]
+            static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_ID     = "mdsndk_nl_c_id";
+            
+            //! the key represent the error message [int32_t]
+            static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_STATE = "mdsndk_nl_c_state";
+        }
     }
     /** @} */ // end of MetadataServerLoggingDefinitionKeyRPC
     

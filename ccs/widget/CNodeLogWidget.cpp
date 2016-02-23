@@ -81,6 +81,9 @@ void CNodeLogWidget::handleLogEvent(const std::string source,
             qDebug()<< "Update event for log";
             //we need to update the log
             domain_list_model.updateDomainListForUID(nodeUID());
+        } else if(domain_list_model.isDomainPresent(QString::fromStdString(domain)) == false) {
+            //we need to reload all to get new domain
+            domain_list_model.updateDomainListForUID(nodeUID());
         }
     }
 }
