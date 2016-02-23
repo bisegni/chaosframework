@@ -73,7 +73,7 @@ qint32 CNodeLogWidget::maxResultItem() {
 void CNodeLogWidget::handleLogEvent(const std::string source,
                                     const std::string domain) {
     //if widget i snot visible we do nothing
-    if(isVisible()) return;
+    if(isVisible() == false) return;
 
     if(source.compare(nodeUID().toStdString()) == 0) {
         qDebug()<< "Received event for this node" << nodeUID();
