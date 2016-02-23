@@ -25,6 +25,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::metadata_logging;
+using namespace chaos::common::batch_command::BatchCommandEventType;
 
 BatchCommandLoggingChannel::BatchCommandLoggingChannel():
 AbstractMetadataLogChannel(){
@@ -37,10 +38,31 @@ BatchCommandLoggingChannel::~BatchCommandLoggingChannel() {
 
 int BatchCommandLoggingChannel::logCommandState(const std::string& node_uid,
                                                 const uint64_t command_id,
-                                                chaos::common::batch_command::BatchCommandEventType::BatchCommandEventType command_event) {
+                                                BatchCommandEventType command_event) {
     CDataWrapper *log_entry = getNewLogEntry(node_uid, "command");
     log_entry->addInt64Value(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_ID, command_id);
     log_entry->addInt32Value(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE, command_event);
+    switch(command_event) {
+        case EVT_QUEUED:
+            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Queued");
+            break;
+        case EVT_WAITING:
+            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Waiting");
+            break;
+        case EVT_RUNNING:
+            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Running");
+            break;
+        case EVT_PAUSED:
+            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Paused");
+            break;
+        case EVT_COMPLETED:
+            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Complete");
+            break;
+        case EVT_KILLED:
+            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Killed");
+            break;
+    }
+
     return sendLog(log_entry,
                    true);
 }

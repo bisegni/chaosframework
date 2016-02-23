@@ -151,6 +151,7 @@ SET(common_lib_src ${common_lib_src}
         network/NetworkBroker.cpp
         network/PerformanceManagment.cpp
         network/URLServiceFeeder.cpp
+        network/URLHAServiceFeeder.cpp
         network/URL.cpp)
 
 SET(common_lib_src ${common_lib_src}

@@ -736,11 +736,14 @@ namespace chaos {
         }
         
         namespace CommandLogging {
-            //! the key represent the error code [uint64_t]
+            //! the key represent the unique execution id of the command [uint64_t]
             static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_ID     = "mdsndk_nl_c_id";
             
-            //! the key represent the error message [int32_t]
-            static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_STATE = "mdsndk_nl_c_state";
+            //! the key represent the state of the command [int32_t]
+            static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_STATE = "mdsndk_nl_c_s";
+            
+            //! the key represent descirption of the state [string]
+            static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION = "mdsndk_nl_c_s_desc";
         }
     }
     /** @} */ // end of MetadataServerLoggingDefinitionKeyRPC
