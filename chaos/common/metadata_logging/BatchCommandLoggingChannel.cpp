@@ -58,6 +58,9 @@ int BatchCommandLoggingChannel::logCommandState(const std::string& node_uid,
         case EVT_COMPLETED:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Complete");
             break;
+        case EVT_FAULT:
+            log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Fault");
+            break;
         case EVT_KILLED:
             log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION, "Killed");
             break;
