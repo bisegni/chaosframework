@@ -58,8 +58,8 @@ chaos::common::data::CDataWrapper *GetLogForSourceUID::execute(CDataWrapper *api
     LogEntryList entry_list;
     std::vector<std::string> domain_to_include;
 
-    uint32_t page_length =  (uint32_t)CDW_GET_INT32_WITH_DEFAULT(api_data, "page_length", 100)
-    uint64_t sequence = (uint64_t)CDW_GET_INT32_WITH_DEFAULT(api_data, "seq", 0);
+    uint32_t page_length =  (uint32_t)CDW_GET_INT32_WITH_DEFAULT(api_data, "page_length", 100);
+    uint64_t sequence = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(api_data, "seq", 0);
     if(api_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
         //we have domain
         if(api_data->isStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN)) {
