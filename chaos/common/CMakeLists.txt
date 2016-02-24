@@ -92,6 +92,9 @@ SET(common_lib_src ${common_lib_src}
         dispatcher/DomainActionsScheduler.cpp)
 
 SET(common_lib_src ${common_lib_src}
+        exception/MetadataLoggingCException.cpp)
+
+SET(common_lib_src ${common_lib_src}
         event/EventClient.cpp
         event/AsioImplEventClient
         event/AsioEventForwarder.cpp
