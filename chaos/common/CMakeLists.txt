@@ -210,6 +210,8 @@ TARGET_LINK_LIBRARIES(chaos_common ${common_lib_library})
 
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common)
+FILE(GLOB files "metadata_logging/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/metadata_logging)
 FILE(GLOB files "async_central/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/async_central)
 FILE(GLOB files "batch_command/*.h")
