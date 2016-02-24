@@ -27,9 +27,10 @@
 #include <queue>
 
 #include <chaos/common/network/URL.h>
+#include <chaos/common/utility/Bimap.h>
 #include <chaos/common/utility/NamedService.h>
 
-#include <boost/bimap.hpp>
+#include <boost/thread.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
@@ -39,7 +40,7 @@ namespace chaos {
         namespace network {
 
             //!bidirectional map for url and index
-            typedef boost::bimap<std::string, uint32_t> URLIndexBimap;
+            typedef chaos::common::utility::Bimap<std::string, uint32_t> URLIndexBimap;
             
             class URLServiceFeeder;
 
@@ -125,6 +126,7 @@ namespace chaos {
                     //! set the feed mode
                 void setFeedMode(URLServiceFeedMode new_feed_mode);
             protected:
+                boost::mutex mutex_internal;
                     //! contain the service index rule information
                 struct URLService {
                     uint32_t index;

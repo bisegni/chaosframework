@@ -181,7 +181,7 @@ int MDSMessageChannel::getNetworkAddressForDevice(const std::string& identificat
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         DECODE_ERROR(request_future)
-        if(last_error_code &&
+        if((last_error_code  == ErrorCode::EC_NO_ERROR) &&
            request_future->getResult() &&
            request_future->getResult()->hasKey(NodeDefinitionKey::NODE_RPC_ADDR) &&
            request_future->getResult()->hasKey(NodeDefinitionKey::NODE_RPC_DOMAIN)) {
@@ -191,8 +191,6 @@ int MDSMessageChannel::getNetworkAddressForDevice(const std::string& identificat
             (*deviceNetworkAddress)->node_id = request_future->getResult()->getStringValue(NodeDefinitionKey::NODE_RPC_DOMAIN);
             (*deviceNetworkAddress)->device_id = identification_id;
         }
-    } else {
-        last_error_code = -1;
     }
     return last_error_code;
 }
@@ -218,12 +216,10 @@ int MDSMessageChannel::getLastDatasetForDevice(const std::string& identification
     request_future->setTimeout(millisec_to_wait);
     if(request_future->wait()) {
         DECODE_ERROR(request_future)
-        if(last_error_code &&
+        if((last_error_code == ErrorCode::EC_NO_ERROR) &&
            request_future->getResult()) {
             *deviceDefinition = request_future->detachResult();
         }
-    } else {
-        last_error_code = -1;
     }
     return last_error_code;
 }

@@ -127,6 +127,7 @@ void URLServiceFeeder::grow() {
 
 uint32_t URLServiceFeeder::addURL(const URL& new_url,
                                   uint32_t priority) {
+    boost::unique_lock<boost::mutex> wl(mutex_internal);
 	//lock the queue
 	uint32_t service_index = 0;
         //expand memory for contain new service description
@@ -150,17 +151,19 @@ uint32_t URLServiceFeeder::addURL(const URL& new_url,
     available_url.erase(new_index);
     
     //insert index url association
-    mapping_url_index.insert(URLIndexBimap::value_type(new_url.getURL(), service_index));
+    mapping_url_index.insert(new_url.getURL(), service_index);
     
         //return new index
 	return service_index;
 }
 
 void* URLServiceFeeder::getService(uint32_t idx) {
+    boost::unique_lock<boost::mutex> wl(mutex_internal);
     return service_list[idx]->service;
 }
 
 void* URLServiceFeeder::getService() {
+    boost::unique_lock<boost::mutex> wl(mutex_internal);
     switch (feed_mode) {
         case URLServiceFeeder::URLServiceFeedModeRoundRobin:
             current_service = getNextFromSetByRoundRobin();
@@ -175,6 +178,7 @@ void* URLServiceFeeder::getService() {
 }
 
 void URLServiceFeeder::setURLOffline(uint32_t idx) {
+    boost::unique_lock<boost::mutex> wl(mutex_internal);
 	if(idx > (list_size/sizeof(URLServiceFeeder::URLService))) {
 		URLServiceFeeder_LERR << "Index out of range";
 		return;
@@ -196,6 +200,7 @@ void URLServiceFeeder::setURLOffline(uint32_t idx) {
 }
 
 void URLServiceFeeder::setURLOnline(uint32_t idx) {
+    boost::unique_lock<boost::mutex> wl(mutex_internal);
 	if(idx > (list_size/sizeof(URLServiceFeeder::URLService))) {
 		URLServiceFeeder_LERR << "Index out of range";
 		return;
@@ -216,6 +221,7 @@ void URLServiceFeeder::setURLOnline(uint32_t idx) {
 }
 
 void URLServiceFeeder::removeURL(uint32_t idx, bool dispose_service) {
+    boost::unique_lock<boost::mutex> wl(mutex_internal);
 	if(idx > (list_size/sizeof(URLServiceFeeder::URLService))) {
 		URLServiceFeeder_LERR << "Index out of range";
 		return;
@@ -224,20 +230,27 @@ void URLServiceFeeder::removeURL(uint32_t idx, bool dispose_service) {
     if(dispose_service) {handler->disposeService(service_list[idx]->service);}
 	removeFromOnlineQueue(idx);
 	available_url.insert(idx);
-    //insert index url association
-    URLIndexBimap::right_iterator riter = mapping_url_index.right.find(idx);
-    mapping_url_index.right.erase(riter);
+    //remove index url association
+    mapping_url_index.removebyRightKey(idx);
 }
 
 //!return the url string from index
 std::string URLServiceFeeder::getURLForIndex(uint32_t idx) {
-    URLIndexBimap::right_const_iterator riter = mapping_url_index.right.find(idx);
-    return riter->second;
+    boost::unique_lock<boost::mutex> wl(mutex_internal);
+    if(mapping_url_index.hasRightKey(idx)) {
+        return mapping_url_index.findByRightKey(idx);
+    } else {
+        throw CException(-1, "Key not found", __PRETTY_FUNCTION__);
+    }
 }
 
 uint32_t URLServiceFeeder::getIndexFromURL(const std::string& url) {
-    URLIndexBimap::left_const_iterator liter = mapping_url_index.left.find(url);
-    return liter->second;
+    boost::unique_lock<boost::mutex> wl(mutex_internal);
+    if(mapping_url_index.hasLeftKey(url)) {
+        return mapping_url_index.findByLeftKey(url);
+    } else {
+        throw CException(-1, "Key not found", __PRETTY_FUNCTION__);
+    }
 }
 
 void URLServiceFeeder::setFeedMode(URLServiceFeedMode new_feed_mode) {

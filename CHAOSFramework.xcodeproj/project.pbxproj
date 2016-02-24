@@ -454,6 +454,7 @@
 		32809C7C1A9C7DDD00C02C12 /* MongoDBUtilityDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32809C7A1A9C7DDD00C02C12 /* MongoDBUtilityDataAccess.cpp */; };
 		32809C7F1A9C847400C02C12 /* ControlUnitDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32809C7D1A9C847400C02C12 /* ControlUnitDataAccess.cpp */; };
 		32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32809C801A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp */; };
+		3283B88A1C7E0CCE0019255B /* Bimap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3283B8881C7E0CCE0019255B /* Bimap.h */; };
 		328556A017F2E33A00A64ED2 /* DirectIOClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */; };
 		328556A117F2E33A00A64ED2 /* DirectIOClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3285569F17F2E33A00A64ED2 /* DirectIOClient.h */; };
 		328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328556A217F2E36000A64ED2 /* DirectIOServer.cpp */; };
@@ -1505,6 +1506,7 @@
 		32809C811A9C84F900C02C12 /* MongoDBControlUnitDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBControlUnitDataAccess.h; sourceTree = "<group>"; };
 		3281514619B7628000C26694 /* mongo_db_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mongo_db_types.h; sourceTree = "<group>"; };
 		3281D35A18A68532005A0828 /* DirectIOChannelGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOChannelGlobal.h; sourceTree = "<group>"; };
+		3283B8881C7E0CCE0019255B /* Bimap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bimap.h; sourceTree = "<group>"; };
 		3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClient.cpp; sourceTree = "<group>"; };
 		3285569F17F2E33A00A64ED2 /* DirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClient.h; sourceTree = "<group>"; };
 		328556A217F2E36000A64ED2 /* DirectIOServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOServer.cpp; sourceTree = "<group>"; };
@@ -3167,6 +3169,7 @@
 				32A391C218FE923E001C5A73 /* TemplatedKeyValueHashMap.h */,
 				32502C841924FC7E0073E4AB /* Delegate.h */,
 				32C7EADF1A5E868C0008DFE8 /* UrlAccessibleService.h */,
+				3283B8881C7E0CCE0019255B /* Bimap.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -4191,6 +4194,7 @@
 				324A4B50191A41EF00975394 /* cstdint.h in Headers */,
 				324A4B4A191A41EF00975394 /* atomic_word.h in Headers */,
 				326DB46814B38BC00018A8D0 /* AbstractCommandDispatcher.h in Headers */,
+				3283B88A1C7E0CCE0019255B /* Bimap.h in Headers */,
 				32A91FCF1A49B37300DCF364 /* HTTPRpcSyncServer.h in Headers */,
 				329603251876B45000CDCADA /* BatchCommandException.h in Headers */,
 				326DB46C14B38BC00018A8D0 /* DefaultCommandDispatcher.h in Headers */,

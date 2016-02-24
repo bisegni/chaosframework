@@ -102,7 +102,7 @@ int main(int argc, char *argv[]){
                 ns.testSearch(device_id.size()?device_id:"");
             }
         }
-        sleep(60000);
+
         //register log allert event
         ChaosMetadataServiceClient::getInstance()->deregisterEventHandler(&alert_log_handler);
         
