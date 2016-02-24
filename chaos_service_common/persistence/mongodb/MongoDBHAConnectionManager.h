@@ -135,7 +135,8 @@ namespace chaos {
                                const mongo::WriteConcern* wc=NULL );
                     
                     mongo::BSONObj distinct(const std::string &ns,
-                                            const std::string &field);
+                                            const std::string &field,
+                                            const mongo::Query& query = mongo::Query());
                     
                     int ensureIndex(const std::string &database,
                                     const std::string &collection,

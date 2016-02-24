@@ -20,7 +20,7 @@
 #ifndef CHAOSFramework_Property_h
 #define CHAOSFramework_Property_h
 
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 
 #include <boost/lexical_cast.hpp>
 

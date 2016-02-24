@@ -30,7 +30,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/general/Configurable.h>

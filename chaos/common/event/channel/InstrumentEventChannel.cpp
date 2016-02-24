@@ -24,16 +24,16 @@
 
 using namespace chaos;
 using namespace chaos::common::network;
-using namespace chaos::event;
-using namespace chaos::event::channel;
-using namespace chaos::event::instrument;
+using namespace chaos::common::event;
+using namespace chaos::common::event::channel;
+using namespace chaos::common::event::instrument;
 
-    //-----------------------------------------------------
+//-----------------------------------------------------
 InstrumentEventChannel::InstrumentEventChannel(NetworkBroker *rootBroker):EventChannel(rootBroker) {
     
 }
 
-    //-----------------------------------------------------
+//-----------------------------------------------------
 InstrumentEventChannel::~InstrumentEventChannel() {
     
 }
@@ -42,20 +42,31 @@ void InstrumentEventChannel::handleEvent(const event::EventDescriptor * const ev
     LAPP_ << "InstrumentEventChannel::handleEvent";
 }
 
-    //--------------------inherited-----------------
-void InstrumentEventChannel::activateChannelEventReception() {
-        //activate the reception for the event type alert
-    EventChannel::activateChannelEventReception(EventTypeAlert);
+//--------------------inherited-----------------
+void InstrumentEventChannel::activateChannelEventReception(EventAction *event_action) {
+    //activate the reception for the event type alert
+    EventChannel::_activateChannelEventReception(event_action,
+                                                 EventTypeAlert);
 }
 
-    //-----------------------------------------------------
-int InstrumentEventChannel::sendEvent(const char * const identificationString, uint16_t subCode, uint16_t priority, EventDataType typeOfData, const void *valuePtr, uint16_t valueSize) {
+//-----------------------------------------------------
+int InstrumentEventChannel::sendEvent(const std::string& identification,
+                                      uint16_t sub_code,
+                                      uint16_t priority,
+                                      EventDataType type_of_data,
+                                      const void *value_ptr,
+                                      uint16_t value_size) {
     instrument::InstrumentEventDescriptor *ied = new instrument::InstrumentEventDescriptor();
-    ied->setInstrument(identificationString, strlen(identificationString), subCode, priority, typeOfData, valuePtr, valueSize);
+    ied->setInstrument(identification,
+                       sub_code,
+                       priority,
+                       type_of_data,
+                       value_ptr,
+                       value_size);
     return EventChannel::sendRawEvent(ied);
 }
 
-    //-----------------------------------------------------
+//-----------------------------------------------------
 int InstrumentEventChannel::notifyForScheduleUpdateWithNewValue(const char * insturmentID, uint64_t newScheduleUpdateTime) {
     instrument::InstrumentEventDescriptor *ied = new instrument::InstrumentEventDescriptor();
     ied->setNewScheduleDelay(insturmentID, newScheduleUpdateTime);

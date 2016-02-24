@@ -43,7 +43,7 @@ namespace chaos {
     protected:
         
             //--------------------------------
-        virtual void handleEvent(const event::EventDescriptor * const event) = 0;
+        virtual void handleEvent(const common::event::EventDescriptor * const event) = 0;
 
     public:
         EventAction();

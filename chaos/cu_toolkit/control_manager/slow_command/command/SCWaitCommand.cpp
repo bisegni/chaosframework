@@ -23,6 +23,7 @@
 #include <chaos/cu_toolkit/control_manager/slow_command/command/SCWaitCommand.h>
 
 using namespace chaos::common::data;
+using namespace chaos::common::exception;
 using namespace chaos::common::batch_command;
 using namespace chaos::cu::control_manager::slow_command;
 using namespace chaos::cu::control_manager::slow_command::command;
@@ -56,11 +57,17 @@ void SCWaitCommand::setHandler(CDataWrapper *data) {
     if(!data) return;
     
     if(!data->hasKey(SCWaitCommand_DELAY_KEY)) {
-        throw CException(1, "No delay key found!", __FUNCTION__);
+        throw MetadataLoggingCException(getDeviceID(),
+                                        -1,
+                                        "No delay key found!",
+                                        __FUNCTION__);
     }
     
     if(!data->isInt32Value(SCWaitCommand_DELAY_KEY)) {
-        throw CException(1, "delay key is not of int32 type", __FUNCTION__);
+        throw MetadataLoggingCException(getDeviceID(),
+                                        -2,
+                                        "delay key is not of int32 type",
+                                        __FUNCTION__);
     }
     
     uint32_t delay = data->getUInt32Value(SCWaitCommand_DELAY_KEY);

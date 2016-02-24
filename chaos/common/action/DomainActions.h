@@ -25,7 +25,7 @@
 
 #include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 
 namespace chaos {
     using namespace std;

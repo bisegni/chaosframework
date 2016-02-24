@@ -1,7 +1,7 @@
 #ifndef NODEATTRIBUTEPLOTTING_H
 #define NODEATTRIBUTEPLOTTING_H
 
-#include "../node/data/DatasetAttributeListModel.h"
+#include "../data/DatasetAttributeListModel.h"
 #include "../external_lib/qcustomplot.h"
 #include "../api_async_processor/ApiAsyncProcessor.h"
 #include "../monitor/monitor.h"

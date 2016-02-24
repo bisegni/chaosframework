@@ -21,7 +21,7 @@
 #define CObjectProcessingQueue_H
 
 #include <chaos/common/pqueue/CObjectProcessingQueueListener.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
 
@@ -188,7 +188,6 @@ namespace chaos {
 			 get the last insert data
 			 */
 			T* waitAndPop() {
-				DEBUG_CODE(COPQUEUE_LDBG_<< "Entering in waitAndPop";)
 				boost::unique_lock<boost::mutex> lock(qMutex);
 				//output result poitner
 				T *oldestElement = NULL;
@@ -207,7 +206,6 @@ namespace chaos {
 				
 				//remove the oldest data
 				bufferQueue.pop();
-				DEBUG_CODE(COPQUEUE_LDBG_<< "Leaving in waitAndPop";)
 				return oldestElement;
 			}
 			

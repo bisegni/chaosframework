@@ -20,5 +20,5 @@
 
 #include "CommandEventDescriptor.h"
 using namespace chaos;
-using namespace chaos::event;
-using namespace chaos::event::command;
+using namespace chaos::common::event;
+using namespace chaos::common::event::command;

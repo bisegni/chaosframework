@@ -33,7 +33,7 @@
 #include <boost/msm/front/euml/operator.hpp>
 
 #include <chaos/common/chaos_constants.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 
 
 

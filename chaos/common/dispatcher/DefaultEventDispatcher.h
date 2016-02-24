@@ -27,7 +27,7 @@
 #include <boost/thread.hpp>
 
 namespace chaos {
-    using namespace event;
+    using namespace common::event;
     using namespace std;
     
     class EventTypeScheduler;
@@ -35,10 +35,7 @@ namespace chaos {
     DECLARE_CLASS_FACTORY(DefaultEventDispatcher, AbstractEventDispatcher) {
         
             //! Alert scheduler
-        EventTypeScheduler *alertEventScheduler;
-
-            //! Alert scheduler
-        EventTypeScheduler *instrumentEventScheduler;
+        EventTypeScheduler *eventScheduler;
         
         boost::shared_mutex handlerVEctorMutext;
     protected:

@@ -22,7 +22,7 @@
 #include <chaos/common/utility/endianess.h>
 
 using namespace chaos;
-using namespace chaos::event;
+using namespace chaos::common::event;
 using namespace chaos::common::utility;
 
 #define EVENT_CURRENT_VERSION 0
@@ -63,7 +63,7 @@ EventDescriptor::~EventDescriptor() {
 }
 
     //--------------------------------------------------------------
-uint16_t EventDescriptor::getEventHeaderVersion() {
+uint16_t EventDescriptor::getEventHeaderVersion()  const{
     tmp32 = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)eventData));
     return static_cast<uint16_t>(((EventHeader*)&tmp32)->version);
 }
@@ -77,13 +77,13 @@ void EventDescriptor::setEventDataLength(uint8_t newSize) {
 }
 
     //--------------------------------------------------------------
-uint16_t EventDescriptor::getEventDataLength() {
+uint16_t EventDescriptor::getEventDataLength() const {
     tmp32 = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)eventData));
     return static_cast<uint16_t>(((EventHeader*)&tmp32)->length);
 }
 
     //--------------------------------------------------------------
-const unsigned char * const EventDescriptor::getEventData() {
+const unsigned char * const EventDescriptor::getEventData()  const{
     return eventData;
 }
 
@@ -99,13 +99,13 @@ void EventDescriptor::setEventData(const unsigned char *serializedEvent, uint16_
 }
 
     //--------------------------------------------------------------
-uint8_t EventDescriptor::getEventType() {
+uint8_t EventDescriptor::getEventType() const {
     tmp8 = byte_swap<little_endian, host_endian, uint8_t>(*((uint8_t*)(eventData+EVT_HEADER_BYTE_LENGTH)));
     return ((EventTypeAndPriority*)&tmp8)->type;
 }
 
     //--------------------------------------------------------------
-uint8_t EventDescriptor::getEventPriority() {
+uint8_t EventDescriptor::getEventPriority()  const{
     tmp8 = byte_swap<little_endian, host_endian, uint8_t>(*((uint8_t*)(eventData+EVT_HEADER_BYTE_LENGTH)));
     return ((EventTypeAndPriority*)&tmp8)->priority;
 }
@@ -125,7 +125,7 @@ void EventDescriptor::setSubCode(uint16_t subCode) {
  Return the alert code identified bythis event
  \return the code of the alert
  */
-uint16_t EventDescriptor::getSubCode(){
+uint16_t EventDescriptor::getSubCode() const{
     return static_cast<uint16_t>(byte_swap<little_endian, host_endian, uint16_t>( *((uint16_t*)(eventData+EVT_SUB_CODE_OFFSET))));
 }
 
@@ -143,34 +143,38 @@ void EventDescriptor::setSubCodePriority(uint16_t subCodePriority){
  Return the alert code identified bythis event
  \return the code of the alert
  */
-uint16_t EventDescriptor::getSubCodePriority() {
+uint16_t EventDescriptor::getSubCodePriority()  const{
     return byte_swap<little_endian, host_endian, uint16_t>( *((uint16_t*)(eventData + EVT_SUB_CODE_PRIORITY_OFFSET)));
     
 }
 
 
-uint8_t EventDescriptor::getIdentificationlength() {
+uint8_t EventDescriptor::getIdentificationlength() const {
     return *((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET));
 }
 
-uint16_t EventDescriptor::setSenderIdentification(const char * const identification, uint8_t identificationLength) {
-    *((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET)) = identificationLength;
-    if(identificationLength > 0 && identification){
+uint16_t EventDescriptor::setSenderIdentification(const std::string& identification) {
+    *((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET)) = identification.size();
+    if(identification.size() > 0){
             //write the identifier
-        memcpy((void*)(eventData + EVT_IDENTIFICATION_VALUE_INFO_OFFSET), identification, identificationLength);
+        memcpy((void*)(eventData + EVT_IDENTIFICATION_VALUE_INFO_OFFSET),
+               identification.c_str(),
+               identification.size());
     }
-    return identificationLength;
+    return identification.size();
 }
 
 
-const char * const EventDescriptor::getIdentification() {
-    if(!*((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET))) return NULL;
+const char * EventDescriptor::getIdentification()  const{
     return (const char *)(eventData + EVT_IDENTIFICATION_VALUE_INFO_OFFSET);
 }
 
-void EventDescriptor::setIdentificationAndValueWithType(const char * identification, uint8_t identificationLength, EventDataType valueType, const void *valuePtr, uint16_t valueSize) {
+void EventDescriptor::setIdentificationAndValueWithType(const std::string& identification,
+                                                        EventDataType valueType,
+                                                        const void *valuePtr,
+                                                        uint16_t valueSize) {
     uint16_t dataDim = 0;
-    uint16_t indetificationSize = setSenderIdentification(identification, identificationLength);
+    uint16_t indetificationSize = setSenderIdentification(identification);
 
     
     *((uint8_t*)(eventData + EVT_IDENTIFICATION_VALUE_INFO_OFFSET + indetificationSize)) = (uint8_t)valueType;
@@ -208,20 +212,20 @@ void EventDescriptor::setIdentificationAndValueWithType(const char * identificat
     return ;
 }
 
-EventDataType EventDescriptor::getEventValueType() {
+EventDataType EventDescriptor::getEventValueType()  const{
     uint8_t idLen = *((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET));
     int type = *((uint8_t*)(eventData + EVT_IDENTIFICATION_VALUE_INFO_OFFSET + idLen));
     return (EventDataType)type;
 }
 
 
-uint16_t EventDescriptor::getEventValueSize() {
+uint16_t EventDescriptor::getEventValueSize()  const{
     uint8_t idLen = *((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET));
     uint16_t packDimension = getEventDataLength();
     return packDimension - (EVT_IDENTIFICATION_LENGTH_INFO_OFFSET + idLen + 2);
 }
 
-void EventDescriptor::getEventValue(void *valuePtr, uint16_t *size) {
+void EventDescriptor::getEventValue(void *valuePtr, uint16_t *size) const {
     if(valuePtr != NULL && !size) return;
 
     uint8_t idLen = *((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET));
@@ -231,3 +235,7 @@ void EventDescriptor::getEventValue(void *valuePtr, uint16_t *size) {
     memcpy(valuePtr, (eventData + EVT_IDENTIFICATION_VALUE_INFO_OFFSET+idLen+1), *size);
 }
 
+const char * const EventDescriptor::getEventValue() const {
+    uint8_t idLen = *((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET));
+    return (const char *)(eventData + EVT_IDENTIFICATION_VALUE_INFO_OFFSET+idLen+1);
+}

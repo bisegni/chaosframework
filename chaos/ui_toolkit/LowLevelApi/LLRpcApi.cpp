@@ -27,6 +27,7 @@ using namespace boost;
 using namespace chaos;
 using namespace chaos::ui;
 using namespace chaos::common::io;
+using namespace chaos::common::event;
 using namespace chaos::common::message;
 using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
@@ -119,15 +120,19 @@ void LLRpcApi::deleteMessageChannel(NodeMessageChannel *channelToDispose) {
 	NetworkBroker::getInstance()->disposeMessageChannel(channelToDispose);
 }
 
-event::channel::AlertEventChannel *LLRpcApi::getNewAlertEventChannel() throw (CException) {
+void LLRpcApi::deleteMessageChannel(chaos::common::message::MDSMessageChannel *channelToDispose) {
+    NetworkBroker::getInstance()->disposeMessageChannel(channelToDispose);
+}
+
+chaos::common::event::channel::AlertEventChannel *LLRpcApi::getNewAlertEventChannel() throw (CException) {
     return NetworkBroker::getInstance()->getNewAlertEventChannel();
 }
 
-event::channel::InstrumentEventChannel *LLRpcApi::getNewInstrumentEventChannel() throw (CException) {
+chaos::common::event::channel::InstrumentEventChannel *LLRpcApi::getNewInstrumentEventChannel() throw (CException) {
     return NetworkBroker::getInstance()->getNewInstrumentEventChannel();
 }
 
-void LLRpcApi::disposeEventChannel(event::channel::EventChannel *eventChannel) throw (CException) {
+void LLRpcApi::disposeEventChannel(chaos::common::event::channel::EventChannel *eventChannel) throw (CException) {
     NetworkBroker::getInstance()->disposeEventChannel(eventChannel);
 }
 
@@ -140,7 +145,7 @@ SystemApiChannel *LLRpcApi::getSystemApiClientChannel(const std::string& direct_
 		conn = new DIOConn(direct_io_client->getNewConnection(direct_io_address));
 	}
 	conn->garbage_counter++;
-	return new SystemApiChannel(conn, (channel::DirectIOSystemAPIClientChannel*)conn->connection->getNewChannelInstance("DirectIOSystemAPIClientChannel"));
+	return new SystemApiChannel(conn, (chaos::common::direct_io::channel::DirectIOSystemAPIClientChannel*)conn->connection->getNewChannelInstance("DirectIOSystemAPIClientChannel"));
 }
 
 void LLRpcApi::releaseSystemApyChannel(SystemApiChannel *system_api_channel) {

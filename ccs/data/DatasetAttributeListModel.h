@@ -2,7 +2,7 @@
 #define DATASETATTRIBUTELISTMODEL_H
 
 #include "ChaosAbstractListModel.h"
-#include "../../data/DatasetReader.h"
+#include "DatasetReader.h"
 #include <QVector>
 #include <QSharedPointer>
 

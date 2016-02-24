@@ -24,17 +24,28 @@
 
 #include <iostream>
 
+#include <boost/timer/timer.hpp>
+
 #include "NodeMonitor.h"
 #include "NodeSearchTest.h"
 
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::monitor_system;
-using namespace chaos::metadata_service_client::api_proxy::node;
+using namespace chaos::metadata_service_client::api_proxy;
 
 #define MSCT_INFO   INFO_LOG(MetadataServiceClientTest)
 #define MSCT_DBG    INFO_LOG(MetadataServiceClientTest)
 #define MSCT_ERR    INFO_LOG(MetadataServiceClientTest)
+
+class AlertLogHandlerImpl:
+public chaos::metadata_service_client::event::alert::AlertLogEventHandler {
+public:
+    void handleLogEvent(const std::string source,
+                                const std::string domain) {
+        MSCT_INFO << source << "-" << domain;
+    }
+};
 
 int main(int argc, char *argv[]){
     boost::thread_group tg;
@@ -42,7 +53,7 @@ int main(int argc, char *argv[]){
     uint32_t wait_seconds;
     uint32_t operation;
     std::string device_id;
-    
+    AlertLogHandlerImpl alert_log_handler;
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>("op",
                                                                                                      "Specify the operation to do[0-monitor a device id, 1-search node id]",
                                                                                                      &operation);
@@ -68,6 +79,9 @@ int main(int argc, char *argv[]){
         
         ChaosMetadataServiceClient::getInstance()->enableMonitor();
         
+        //register log allert event
+        ChaosMetadataServiceClient::getInstance()->registerEventHandler(&alert_log_handler);
+
         switch (operation){
             case 0:{
                 
@@ -82,14 +96,15 @@ int main(int argc, char *argv[]){
                 break;
             }
             case 1:{
-                if(!ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->hasOption("device-id")){LOG_AND_TROW(MSCT_ERR, -3, "Device id is usede, in search, as search string")}
                 //create search node utility class
                 NodeSearchTest ns(5);
-                
                 //try search and waith the termination
-                ns.testSearch(device_id);
+                ns.testSearch(device_id.size()?device_id:"");
             }
         }
+        sleep(60000);
+        //register log allert event
+        ChaosMetadataServiceClient::getInstance()->deregisterEventHandler(&alert_log_handler);
         
         ChaosMetadataServiceClient::getInstance()->disableMonitor();
         ChaosMetadataServiceClient::getInstance()->stop();

@@ -29,7 +29,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 
 namespace chaos {
     using namespace std;

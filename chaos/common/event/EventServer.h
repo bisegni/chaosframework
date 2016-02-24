@@ -21,7 +21,7 @@
 #ifndef CHAOSFramework_EventServer_h
 #define CHAOSFramework_EventServer_h
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/event/EventHandler.h>
@@ -29,53 +29,53 @@
 
 
 namespace chaos {
-	namespace common {
-		namespace network {
-			class NetworkBroker;
-		}
-	}
-	
-    namespace event{
+    namespace common {
+        namespace network {
+            class NetworkBroker;
+        }
         
-        class EventServer:
-		public common::utility::NamedService,
-		public chaos::common::utility::StartableService {
-            friend class chaos::common::network::NetworkBroker;
+        namespace event{
+            
+            class EventServer:
+            public common::utility::NamedService,
+            public chaos::common::utility::StartableService {
+                friend class chaos::common::network::NetworkBroker;
                 //! handler that can manage the event reception
-            EventHandler *rootEventHandler;
-        protected:
+                EventHandler *rootEventHandler;
+            protected:
                 //Default Server Constructor
-            EventServer(const std::string& alias);
-            
-            /*
-             init the event adapter
-             */
-            virtual void init(void*) throw(CException) = 0;
-            
-            /*
-             start the event adapter
-             */
-            virtual void start() throw(CException) = 0;
-            
-            virtual void stop() throw(CException) = 0;
-            
-            /*
-             start the event adapter
-             */
-            virtual void listeForEventType(event::EventType type,  bool listen) throw(CException) = 0;
-
-            
-            /*
-             deinit the event adapter
-             */
-            virtual void deinit() throw(CException) = 0;
-            
-            void dispatchEventToHandler(const unsigned char * const serializedEvent, uint16_t length) throw (CException);
-
-        public:
-            
-            void setEventHanlder(EventHandler *eventHanlder);
-        };
+                EventServer(const std::string& alias);
+                
+                /*
+                 init the event adapter
+                 */
+                virtual void init(void*) throw(CException) = 0;
+                
+                /*
+                 start the event adapter
+                 */
+                virtual void start() throw(CException) = 0;
+                
+                virtual void stop() throw(CException) = 0;
+                
+                /*
+                 start the event adapter
+                 */
+                virtual void listeForEventType(event::EventType type,  bool listen) throw(CException) = 0;
+                
+                
+                /*
+                 deinit the event adapter
+                 */
+                virtual void deinit() throw(CException) = 0;
+                
+                void dispatchEventToHandler(const unsigned char * const serializedEvent, uint16_t length) throw (CException);
+                
+            public:
+                
+                void setEventHanlder(EventHandler *eventHanlder);
+            };
+        }
     }
 }
 

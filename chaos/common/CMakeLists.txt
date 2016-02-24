@@ -1,6 +1,12 @@
 SET(common_lib_src log/LogManager.cpp)
 
 SET(common_lib_src ${common_lib_src}
+                    metadata_logging/ErrorLoggingChannel.cpp
+                    metadata_logging/MetadataLoggingManager.cpp
+                    metadata_logging/AbstractMetadataLogChannel.cpp
+                    metadata_logging/BatchCommandLoggingChannel.cpp)
+
+SET(common_lib_src ${common_lib_src}
         async_central/AsyncCentralManager.cpp
         async_central/TimerHandler.cpp)
 
@@ -145,6 +151,7 @@ SET(common_lib_src ${common_lib_src}
         network/NetworkBroker.cpp
         network/PerformanceManagment.cpp
         network/URLServiceFeeder.cpp
+        network/URLHAServiceFeeder.cpp
         network/URL.cpp)
 
 SET(common_lib_src ${common_lib_src}
@@ -203,6 +210,8 @@ TARGET_LINK_LIBRARIES(chaos_common ${common_lib_library})
 
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common)
+FILE(GLOB files "metadata_logging/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/metadata_logging)
 FILE(GLOB files "async_central/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/async_central)
 FILE(GLOB files "batch_command/*.h")

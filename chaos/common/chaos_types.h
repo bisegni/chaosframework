@@ -25,10 +25,16 @@
 
 #include <boost/ptr_container/ptr_container.hpp>
 
+#include <set>
 #include <map>
 #include <queue>
 #include <deque>
 #include <vector>
+
+#define  CHAOS_DEFINE_SET_FOR_TYPE(t1, n)\
+typedef std::set< t1 >                   n;\
+typedef std::set< t1 >::iterator         n ## Iterator;\
+typedef std::set< t1 >::const_iterator   n ## ConstIterator;
 
 #define  CHAOS_DEFINE_VECTOR_FOR_TYPE(t, n)\
 typedef std::vector< t >                   n;\

@@ -128,5 +128,4 @@ namespace chaos {
     }
 }
 
-
 #endif /* MongoDBTreeGroupDataAccess_hpp */

@@ -25,13 +25,15 @@
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 
 namespace chaos {
-    namespace event{
-        namespace custom{
+    namespace common {
+        namespace event{
+            namespace custom{
                 //REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(CustomEventDescriptor, EventDescriptor ) {
-            class CustomEventDescriptor : public EventDescriptor {
-            public:
-            };
-            
+                class CustomEventDescriptor : public EventDescriptor {
+                public:
+                };
+                
+            }
         }
     }
 }

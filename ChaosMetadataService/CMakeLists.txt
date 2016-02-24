@@ -16,14 +16,19 @@ SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
                         api/AbstractApi.cpp
                         api/AbstractApiGroup.cpp)
 
+SET(cnd_src  ${cnd_src}	api/logging/LoggingApiGroup.cpp
+                        api/logging/SubmitEntry.cpp
+                        api/logging/GetLogForSourceUID.cpp
+                        api/logging/GetLogDomainForSourceUID.cpp)
+
 SET(cnd_src  ${cnd_src}	api/groups/GroupsApiGroup.cpp
-												api/groups/AddNode.cpp
-												api/groups/DeleteNode.cpp
+                        api/groups/AddNode.cpp
+                        api/groups/DeleteNode.cpp
                         api/groups/GetDomains.cpp
                         api/groups/GetNodeChilds.cpp)
 
 SET(cnd_src  ${cnd_src}	api/service/ServiceApiGroup.cpp
-												api/service/ResetAll.cpp
+						api/service/ResetAll.cpp
                         api/service/GetAllSnapshot.cpp
                         api/service/RestoreSnapshot.cpp
                         api/service/CreateNewSnapshot.cpp
@@ -56,7 +61,7 @@ SET(cnd_src  ${cnd_src}	api/control_unit/SetInputDatasetAttributeValues.cpp
                         api/control_unit/SearchInstancesByUS.cpp
                         api/control_unit/GetInstance.cpp
                         api/control_unit/DeleteInstance.cpp
-			api/control_unit/Delete.cpp
+                        api/control_unit/Delete.cpp
                         api/control_unit/InitDeinit.cpp
                         api/control_unit/StartStop.cpp
                         api/control_unit/CopyInstance.cpp
@@ -88,7 +93,8 @@ SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
                         persistence/data_access/DataServiceDataAccess.cpp
                         persistence/data_access/SnapshotDataAccess.cpp
-												persistence/data_access/TreeGroupDataAccess.cpp)
+						persistence/data_access/TreeGroupDataAccess.cpp
+                        persistence/data_access/LoggingDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBUnitServerDataAccess.cpp
@@ -97,7 +103,8 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBControlUnitDataAccess.cpp
                         persistence/mongodb/MongoDBDataServiceDataAccess.cpp
                         persistence/mongodb/MongoDBSnapshotDataAccess.cpp
-												persistence/mongodb/MongoDBTreeGroupDataAccess.cpp)
+                        persistence/mongodb/MongoDBTreeGroupDataAccess.cpp
+                        persistence/mongodb/MongoDBLoggingDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)

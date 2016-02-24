@@ -320,7 +320,7 @@ namespace chaos {
     namespace ControlUnitHealtDefinitionValue {
         //!define the key that contains the rate of the output dataset pushes per second[double]
         static const char * const CU_HEALT_OUTPUT_DATASET_PUSH_RATE  = "cuh_dso_prate";
-
+        
     }
     /** @} */ // end of NodeHealtDefinitionValue
     
@@ -648,7 +648,7 @@ namespace chaos {
             Output=1,
             //!define an attribute with two directions
             Bidirectional=2,
-                    
+            
             Undefined
         } DataSetAttributeIOAttribute;
     }
@@ -703,6 +703,50 @@ namespace chaos {
     }
     /** @} */ // end of NodeDomainAndActionRPC
     
+    
+    /** @defgroup MetadataServerLoggingDefinitionKeyRPC List of mds node log rpc action
+     *  @{
+     */
+    //! Name space for grupping the key used for mds logging
+    namespace MetadataServerLoggingDefinitionKeyRPC {
+        //! the key for the domain used by the mds for publish logging api
+        static const char * const ACTION_NODE_LOGGING_RPC_DOMAIN            = "mdsndk_nl_rpc_dom";
+        
+        //! loggin action for the submittion of the log entry
+        static const char * const ACTION_NODE_LOGGING_SUBMIT_ENTRY          = "mdsndk_nl_sub_entry";
+        
+        //! the key represent the log source identifier [string]
+        static const char * const PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER  = "mdsndk_nl_sid";
+        
+        //! the key represent the log timestamp [uint64_t]
+        static const char * const PARAM_NODE_LOGGING_LOG_TIMESTAMP          = "mdsndk_nl_lts";
+        
+        //! the key represent the log domain of the log entry [string]
+        static const char * const PARAM_NODE_LOGGING_LOG_DOMAIN             = "mdsndk_nl_ld";
+        
+        namespace ErrorLogging {
+            //! the key represent the error code [int32_t]
+            static const char * const PARAM_NODE_LOGGING_LOG_ERROR_CODE     = "mdsndk_nl_e_ec";
+            
+            //! the key represent the error message [string]
+            static const char * const PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE  = "mdsndk_nl_e_em";
+            
+            //! the key represent the error domain [string]
+            static const char * const PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN   = "mdsndk_nl_e_ed";
+        }
+        
+        namespace CommandLogging {
+            //! the key represent the unique execution id of the command [uint64_t]
+            static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_ID     = "mdsndk_nl_c_id";
+            
+            //! the key represent the state of the command [int32_t]
+            static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_STATE = "mdsndk_nl_c_s";
+            
+            //! the key represent descirption of the state [string]
+            static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION = "mdsndk_nl_c_s_desc";
+        }
+    }
+    /** @} */ // end of MetadataServerLoggingDefinitionKeyRPC
     
     /** @defgroup DataPackPrefixID Chaos Data Prefix
      This collection is a set for the prefix used for identify the domain
@@ -988,32 +1032,33 @@ namespace chaos {
     }
     /** @} */ // end of PerformanceSystemRpcKey
     
-    
-    namespace event {
-        /** @defgroup EventConfiguration Chaos event constant for server
-         and cleint configuration
-         @{
-         */
-        //! Name space for grupping option used for commandline or in config file
-        namespace EventConfiguration {
-            //!  for choice the implementation
-            static const char * const   OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION     = "evt_adpt_impl";
-            //! @Configuraiton for alert event multicast ip
-            static const char * const   CONF_EVENT_ALERT_MADDRESS                   = "239.255.0.1";
-            //! @Configuraiton for instruments event multicast ip
-            static const char * const   CONF_EVENT_INSTRUMENT_MADDRESS              = "239.255.0.2";
-            //! @Configuraiton for command event multicast ip
-            static const char * const   CONF_EVENT_COMMAND_MADDRESS                 = "239.255.0.3";
-            //! @Configuraiton for custom event multicast ip
-            static const char * const   CONF_EVENT_CUSTOM_MADDRESS                  = "239.255.0.4";
-            //! @Configuraiton for event multicast ip port
-            static const unsigned short CONF_EVENT_PORT                             = 5000;
+    namespace common {
+        namespace event {
+            /** @defgroup EventConfiguration Chaos event constant for server
+             and cleint configuration
+             @{
+             */
+            //! Name space for grupping option used for commandline or in config file
+            namespace EventConfiguration {
+                //!  for choice the implementation
+                static const char * const   OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION     = "evt_adpt_impl";
+                //! @Configuraiton for alert event multicast ip
+                static const char * const   CONF_EVENT_ALERT_MADDRESS                   = "239.255.0.1";
+                //! @Configuraiton for instruments event multicast ip
+                static const char * const   CONF_EVENT_INSTRUMENT_MADDRESS              = "239.255.0.2";
+                //! @Configuraiton for command event multicast ip
+                static const char * const   CONF_EVENT_COMMAND_MADDRESS                 = "239.255.0.3";
+                //! @Configuraiton for custom event multicast ip
+                static const char * const   CONF_EVENT_CUSTOM_MADDRESS                  = "239.255.0.4";
+                //! @Configuraiton for event multicast ip port
+                static const unsigned short CONF_EVENT_PORT                             = 50000;
+            }
+            /** @} */ // end of EventConfiguration
         }
-        /** @} */ // end of EventConfiguration
     }
     
     /*
-     * separator to be used in node naming 
+     * separator to be used in node naming
      */
     static const char PATH_SEPARATOR                                                ='/';
 }

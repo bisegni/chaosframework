@@ -29,7 +29,7 @@
 
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/action/DeclareAction.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/utility/StartableService.h>

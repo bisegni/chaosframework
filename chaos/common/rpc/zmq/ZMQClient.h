@@ -14,7 +14,7 @@
 #include <chaos/common/rpc/RpcClient.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/async_central/async_central.h>
@@ -37,7 +37,10 @@ namespace chaos {
     CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr< chaos::common::pool::ResourcePool<void*> >, SocketMap)
     
     /*
-     Class that manage the MessagePack message send.
+     Class that implemnt !CHAOS RPC messaggin gusing ZMQ
+     
+     driver parameter:
+        key:zmq_timeout value is a stirng that represent the integer used as timeout
      */
     DECLARE_CLASS_FACTORY(ZMQClient, RpcClient),
     public chaos::common::pool::ResourcePool<void*>::ResourcePoolHelper,
@@ -46,7 +49,7 @@ namespace chaos {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQClient)
         ZMQClient(const string& alias);
         virtual ~ZMQClient();
-        
+        uint32_t zmq_timeout;
         boost::shared_mutex map_socket_mutex;
         SocketMap map_socket;
     protected:
@@ -54,6 +57,7 @@ namespace chaos {
         virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
         inline chaos::common::pool::ResourcePool<void*>::ResourceSlot *getSocketForNFI(NetworkForwardInfo *nfi);
         inline void releaseSocket(chaos::common::pool::ResourcePool<void*>::ResourceSlot *socket_slot_to_release);
+        inline void deleteSocket(chaos::common::pool::ResourcePool<void*>::ResourceSlot *socket_slot_to_release);
         
         //resource pool handler
         void* allocateResource(const std::string& pool_identification, uint32_t& alive_for_ms);

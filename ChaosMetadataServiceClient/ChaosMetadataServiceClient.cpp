@@ -17,6 +17,9 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
+#include <chaos/common/network/NetworkBroker.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 #include <ChaosMetadataServiceClient/metadata_service_client_constants.h>
 
@@ -33,9 +36,12 @@ static const boost::regex KVParamRegex("[a-zA-Z0-9/_-]+:[a-zA-Z0-9/_-]+");
 using namespace std;
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::event;
+using namespace chaos::common::network;
 using namespace chaos::common::utility;
 using namespace chaos::metadata_service_client;
 using namespace chaos::DataServiceNodeDefinitionKey;
+using namespace chaos::metadata_service_client::event;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::monitor_system;
 
@@ -46,21 +52,10 @@ using boost::shared_ptr;
 #define CMSC_LERR ERR_LOG(ChaosMetadataServiceClient)
 
 //!default constructor
-ChaosMetadataServiceClient::ChaosMetadataServiceClient() {
-    setClientInitParameter();
-}
+ChaosMetadataServiceClient::ChaosMetadataServiceClient(){}
 
 //! default destructor
-ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {
-    
-}
-
-//! set the custom client init parameter
-void ChaosMetadataServiceClient::setClientInitParameter() {
-    getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_MDS_ADDRESS,
-                                                                            OPT_MDS_ADDRESS_DESCRIPTION,
-                                                                            &setting.mds_backend_servers);
-}
+ChaosMetadataServiceClient::~ChaosMetadataServiceClient() {}
 
 //! C and C++ attribute parser
 /*!
@@ -80,8 +75,19 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
         api_proxy_manager.reset(new ApiProxyManager(NetworkBroker::getInstance(), &setting), "ApiProxyManager");
         api_proxy_manager.init(NULL, __PRETTY_FUNCTION__);
         
+        event_dispatch_manager.reset(new EventDispatchManager(&setting), "EventDispatchManager");
+        event_dispatch_manager.init(NULL, __PRETTY_FUNCTION__);
+        
         monitor_manager.reset(new MonitorManager(NetworkBroker::getInstance(), &setting), "MonitorManager");
         monitor_manager.init(NULL, __PRETTY_FUNCTION__);
+        
+        //configure metadata server got from command line
+        std::vector<chaos::common::network::CNetworkAddress> mds_address_list = GlobalConfiguration::getInstance()->getMetadataServerAddressList();
+        for(std::vector<chaos::common::network::CNetworkAddress>::iterator it = mds_address_list.begin();
+            it != mds_address_list.end();
+            it++) {
+            addServerAddress(it->ip_port);
+        }
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         throw ex;
@@ -125,10 +131,9 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
  Deiniti all the manager
  */
 void ChaosMetadataServiceClient::deinit()   throw(CException) {
-    
     //deinit api system
     CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
-    
+    CHAOS_NOT_THROW(event_dispatch_manager.deinit(__PRETTY_FUNCTION__);)
     CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__);)
     
     if(monitoringIsStarted()){CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)}
@@ -400,4 +405,15 @@ std::auto_ptr<chaos::common::data::CDataWrapper> ChaosMetadataServiceClient::get
                                                                                             const unsigned int dataset_type) {
     CHAOS_ASSERT(monitor_manager.get());
     return monitor_manager->getLastDataset(getDatasetKeyFromGeneralKey(unique_node_id, dataset_type));
+}
+
+//!register an event handler
+void ChaosMetadataServiceClient::registerEventHandler(AbstractEventHandler *handler) {
+    CHAOS_ASSERT(event_dispatch_manager.get());
+    event_dispatch_manager->registerEventHandler(handler);
+}
+
+//!deregister an event handler
+void ChaosMetadataServiceClient::deregisterEventHandler(AbstractEventHandler *handler) {
+    event_dispatch_manager->deregisterEventHandler(handler);
 }

@@ -24,52 +24,67 @@
 #include "InstrumentEventDescriptor.h"
 
 using namespace chaos;
-using namespace chaos::event;
-using namespace chaos::event::instrument;
+using namespace chaos::common::event;
+using namespace chaos::common::event::instrument;
 
 InstrumentEventDescriptor::InstrumentEventDescriptor():EventDescriptor(EventTypeInstrument, EVT_INSTRUMENT_DEFAULT_PRIORITY) {
     
 }
 
     //---------
-void InstrumentEventDescriptor::setNewScheduleDelay(const char * const instrumentID, uint64_t newValue) {
+void InstrumentEventDescriptor::setNewScheduleDelay(const std::string& instrumentID, uint64_t newValue) {
         //2 byte
     setSubCode(EventInstrumentNewScheduleDelay);
         //2 byte
     setSubCodePriority(0);
         //set the dimension, 10 is the fixed size of all information for alert pack
-    EventDescriptor::setIdentificationAndValueWithType(instrumentID, strlen(instrumentID), EventDataInt64, &newValue);
+    EventDescriptor::setIdentificationAndValueWithType(instrumentID,
+                                                       EventDataInt64,
+                                                       &newValue);
 }
 
 
 
-void InstrumentEventDescriptor::setDatasetInputAttributeChanged(const char * const instrumentID, uint16_t errorCode) {
+void InstrumentEventDescriptor::setDatasetInputAttributeChanged(const std::string&  instrumentID,
+                                                                uint16_t errorCode) {
     //2 byte
     setSubCode(EventInstrumentInputDatasetAttributeChanged);
     //2 byte
     setSubCodePriority(0);
     //set the dimension, 10 is the fixed size of all information for alert pack
-    EventDescriptor::setIdentificationAndValueWithType(instrumentID, strlen(instrumentID), EventDataInt16, &errorCode);
+    EventDescriptor::setIdentificationAndValueWithType(instrumentID,
+                                                       EventDataInt16,
+                                                       &errorCode);
   
 }
 
 //! Define the event for the heartbeat of the instrument
-void InstrumentEventDescriptor::setEartbeat(const char * const instrumentID) {
+void InstrumentEventDescriptor::setEartbeat(const std::string&  instrumentID) {
     uint8_t state = 0;
     //2 byte
     setSubCode(EventInstrumentHeartbeat);
     //2 byte
     setSubCodePriority(0);
     //set the dimension, 10 is the fixed size of all information for alert pack
-    EventDescriptor::setIdentificationAndValueWithType(instrumentID, strlen(instrumentID), EventDataInt8, &state);
+    EventDescriptor::setIdentificationAndValueWithType(instrumentID,
+                                                       EventDataInt8,
+                                                       &state);
 }
 
-void InstrumentEventDescriptor::setInstrument(const char * const indetifier, uint8_t identifierLength, uint16_t alertCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize)  throw (CException) {
-    if(alertCode <= EventAlertLastCodeNumber) throw CException(0, "Invalid custom sub code for the event", "InstrumentEventDescriptor::setInstrument");
+void InstrumentEventDescriptor::setInstrument(const std::string& indetifier,
+                                              uint16_t alert_code,
+                                              uint16_t priority,
+                                              EventDataType value_type,
+                                              const void *value_ptr,
+                                              uint16_t value_size)  throw (CException) {
+    if(alert_code <= EventAlertLastCodeNumber) throw CException(0, "Invalid custom sub code for the event", "InstrumentEventDescriptor::setInstrument");
         //2 byte
-    setSubCode(alertCode);
+    setSubCode(alert_code);
         //2 byte
     setSubCodePriority(priority);
         //set the dimension, 10 is the fixed size of all information for alert pack
-    EventDescriptor::setIdentificationAndValueWithType(indetifier, identifierLength, valueType, valuePtr, valueSize);
+    EventDescriptor::setIdentificationAndValueWithType(indetifier,
+                                                       value_type,
+                                                       value_ptr,
+                                                       value_size);
 }

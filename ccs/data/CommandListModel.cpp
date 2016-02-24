@@ -1,5 +1,5 @@
 #include "CommandListModel.h"
-#include "../../widget/list/delegate/TwoLineInformationItem.h"
+#include "../data/delegate/TwoLineInformationItem.h"
 
 #include <chaos/common/chaos_constants.h>
 using namespace chaos::common::data;

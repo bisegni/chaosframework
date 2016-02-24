@@ -2,7 +2,7 @@
 #include "ui_ControlUnitEditor.h"
 #include "ControUnitInstanceEditor.h"
 #include "CommandTemplateInstanceEditor.h"
-#include "../../widget/list/delegate/TwoLineInformationListItemDelegate.h"
+#include "../../data/delegate/TwoLineInformationListItemDelegate.h"
 #include "../../plot/NodeAttributePlotting.h"
 
 #include <QDebug>
@@ -56,6 +56,12 @@ ControlUnitEditor::~ControlUnitEditor() {
 
 void ControlUnitEditor::initUI() {
     setWindowTitle(QString("Control unit '%1' editor").arg(control_unit_unique_id));
+
+    //init tab signal
+    connect(ui->tabWidget,
+            SIGNAL(currentChanged(int)),
+            SLOT(tabIndexChanged(int)));
+
     ui->pushButtonRecoverError->setVisible(false);
     ui->pushButtonEditInstance->setEnabled(false);
     //add model to table
@@ -192,6 +198,10 @@ void ControlUnitEditor::initUI() {
 
     //launch api for control unit information
     updateAllControlUnitInfomration();
+
+    //enable log widget
+    ui->widgetChaosNodeLog->setNodeUID(control_unit_unique_id);
+    ui->widgetChaosNodeLog->initChaosContent();
 }
 
 void ControlUnitEditor::updateTemplateSearch() {
@@ -276,6 +286,9 @@ void ControlUnitEditor::changedNodeState(const QString& node_uid,
 }
 
 bool ControlUnitEditor::isClosing() {
+    //disable log widget
+    ui->widgetChaosNodeLog->deinitChaosContent();
+
     dataset_input_table_model.setAttributeMonitoring(false);
     dataset_output_table_model.setAttributeMonitoring(false);
     //remove monitoring on cu and us
@@ -585,4 +598,14 @@ void ControlUnitEditor::on_pushButtonOpenInstanceEditor_clicked() {
     addWidgetToPresenter(new ControUnitInstanceEditor(unit_server_parent_unique_id,
                                                       control_unit_unique_id,
                                                       true));
+}
+
+void ControlUnitEditor::tabIndexChanged(int new_index) {
+    switch(new_index){
+    case 2:
+        ui->widgetChaosNodeLog->updateChaosContent();
+        break;
+    default:
+        break;
+    }
 }

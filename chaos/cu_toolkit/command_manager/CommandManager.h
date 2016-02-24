@@ -30,7 +30,7 @@
 #include <chaos/common/rpc/RpcServer.h>
 #include <chaos/common/rpc/RpcClient.h>
 #include <chaos/common/utility/Singleton.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/general/Configurable.h>
@@ -120,16 +120,6 @@ namespace chaos{
 				
 				//! delete an mds message channel
 				void deleteMDSChannel(chaos::common::message::MDSMessageChannel *mds_channel);
-				
-				/*
-				 Get Device event channel
-				 */
-				event::channel::InstrumentEventChannel *getInstrumentEventChannel();
-				
-				/*!
-				 Delete an event channel allocated with command manager
-				 */
-				void deleteInstrumentEventChannel(event::channel::InstrumentEventChannel *eventChannel);
 				
 				/*
 				 Register actions defined by AbstractActionDescriptor instance contained in the array

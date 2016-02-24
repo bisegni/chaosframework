@@ -32,48 +32,51 @@
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 
 namespace chaos {
-    namespace event{
-        using namespace boost;
-        class AsioImplEventClient;
-        
-        class AsioEventForwarder : public CObjectProcessingPriorityQueue<EventDescriptor> {
-            friend class AsioImplEventClient;
-            std::string hanlderID;
+    namespace common {
+        namespace event{
+            using namespace boost;
+            class AsioImplEventClient;
             
-        protected:
-            /*!
-             init the asio event forwarder
-             */
-            void init() throw(CException);
-            
-            /*!
-             deinit the asio event forwarder
-             */
-            void deinit() throw(CException);
-
-            
-        public:
+            class AsioEventForwarder :
+            public chaos::common::pqueue::CObjectProcessingPriorityQueue<EventDescriptor> {
+                friend class AsioImplEventClient;
+                std::string hanlderID;
+                
+            protected:
+                /*!
+                 init the asio event forwarder
+                 */
+                void init() throw(CException);
+                
+                /*!
+                 deinit the asio event forwarder
+                 */
+                void deinit() throw(CException);
+                
+                
+            public:
                 //! default constructor
-            AsioEventForwarder(const boost::asio::ip::address& multicast_address,
-                               unsigned short mPort,
-                               boost::asio::io_service& io_service);
-            
-            virtual ~AsioEventForwarder();
-            
+                AsioEventForwarder(const boost::asio::ip::address& multicast_address,
+                                   unsigned short mPort,
+                                   boost::asio::io_service& io_service);
+                
+                virtual ~AsioEventForwarder();
+                
                 //! submit the event
-            bool submitEventAsync(EventDescriptor *event);
-            
+                bool submitEventAsync(EventDescriptor *event);
+                
                 //! abstract queue action method implementation
-            void processBufferElement(EventDescriptor *priorityElement, ElementManagingPolicy& policy) throw(CException);
-        private:
-            bool sent;
+                void processBufferElement(EventDescriptor *priorityElement, ElementManagingPolicy& policy) throw(CException);
+            private:
+                bool sent;
                 //! mutext used for unlock and wait esclusive access
-            boost::mutex wait_answer_mutex;
+                boost::mutex wait_answer_mutex;
                 //! condition variable for wait the answer
-            boost::condition_variable wait_answer_condition;
-            boost::asio::ip::udp::socket _socket;
-            boost::asio::ip::udp::endpoint _endpoint;
-        };
+                boost::condition_variable wait_answer_condition;
+                boost::asio::ip::udp::socket _socket;
+                boost::asio::ip::udp::endpoint _endpoint;
+            };
+        }
     }
 }
 

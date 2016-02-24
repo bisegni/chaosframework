@@ -39,9 +39,9 @@
 #include <boost/format.hpp>
 
 using namespace boost::uuids;
-
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
+using namespace chaos::common::exception;
 using namespace chaos::common::data::cache;
 using namespace chaos::common::healt_system;
 
@@ -63,10 +63,10 @@ try{ \
 code \
 }catch(chaos::CException& ex){ \
 ACULAPP_ <<"CHAOS Exception on "<< DatasetDB::getDeviceID()<< ":\n"<<ex.what(); \
-if(flag) throw ex;\
+if(flag) throw chaos::common::exception::MetadataLoggingCException(getCUID(), ex.errorCode, ex.errorMessage, ex.errorDomain);\
 }catch(...){\
 ACULAPP_ <<"Unknown exception on"<< DatasetDB::getDeviceID(); \
-if(flag) throw chaos::CException(-1000, S__LINE__, __PRETTY_FUNCTION__); \
+if(flag) throw chaos::common::exception::MetadataLoggingCException(getCUID(), -1000, S__LINE__, __PRETTY_FUNCTION__); \
 }
 
 
@@ -571,7 +571,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
         return NULL;
     }
     //if(getServiceState() != CUStateKey::DEINIT) throw CException(-1, DatasetDB::getDeviceID()+" need to be in deinit", __PRETTY_FUNCTION__);
-    if(!attribute_value_shared_cache) throw CException(-1, "No Shared cache implementation found for:"+DatasetDB::getDeviceID(), __PRETTY_FUNCTION__);
+    if(!attribute_value_shared_cache) throw MetadataLoggingCException(getCUID(), -1, "No Shared cache implementation found for:"+DatasetDB::getDeviceID(), __PRETTY_FUNCTION__);
     if(!SWEService::initImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
         LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be initilized [state mismatch]!", %DatasetDB::getDeviceID());
     }
@@ -704,7 +704,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
  */
 CDataWrapper* AbstractControlUnit::_recover(CDataWrapper *deinitParam,
                                             bool& detachParam) throw(CException) {
-    if(getServiceState() != CUStateKey::RECOVERABLE_ERROR) throw CException(-1, DatasetDB::getDeviceID()+" need to be recoverable errore in the way to be recoverable!", __PRETTY_FUNCTION__);
+    if(getServiceState() != CUStateKey::RECOVERABLE_ERROR) throw MetadataLoggingCException(getCUID(), -1, DatasetDB::getDeviceID()+" need to be recoverable errore in the way to be recoverable!", __PRETTY_FUNCTION__);
     
     //first we start the deinitializaiton of the implementation unit
     try {
@@ -780,13 +780,13 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
     if(!restoreParam || !restoreParam->hasKey(NodeDomainAndActionRPC::ACTION_NODE_RESTORE_PARAM_TAG)) return NULL;
     
     if(getServiceState() != CUStateKey::START ) {
-        throw CException(-1, "Control Unit restore can appen only in start state", __PRETTY_FUNCTION__);
+        throw MetadataLoggingCException(getCUID(), -1, "Control Unit restore can appen only in start state", __PRETTY_FUNCTION__);
     }
     
-    if(!key_data_storage.get()) throw CException(-2, "Key data storage driver not allocated", __PRETTY_FUNCTION__);
+    if(!key_data_storage.get()) throw MetadataLoggingCException(getCUID(), -2, "Key data storage driver not allocated", __PRETTY_FUNCTION__);
     
      boost::shared_ptr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
-    if(!restore_cache.get()) throw CException(-3, "failed to allocate restore cache", __PRETTY_FUNCTION__);
+    if(!restore_cache.get()) throw MetadataLoggingCException(getCUID(), -3, "failed to allocate restore cache", __PRETTY_FUNCTION__);
     
     boost::shared_ptr<CDataWrapper> dataset_at_tag;
     //get tag alias
@@ -797,7 +797,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
     //load snapshot to restore
     if((err = key_data_storage->loadRestorePoint(restore_snapshot_tag))) {
         ACULERR_ << "Error loading dataset form snapshot tag: " << restore_snapshot_tag;
-        throw CException(err, "Error loading dataset form snapshot", __PRETTY_FUNCTION__);
+        throw MetadataLoggingCException(getCUID(), err, "Error loading dataset form snapshot", __PRETTY_FUNCTION__);
     } else {
         
         restore_cache->init(NULL);
@@ -848,11 +848,11 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *dataset_at
     CDataWrapper *result = NULL;
     try {
         if(!dataset_attribute_values) {
-            throw CException(-1, "No Input parameter", __PRETTY_FUNCTION__);
+            throw MetadataLoggingCException(getCUID(), -1, "No Input parameter", __PRETTY_FUNCTION__);
         }
         
         if(SWEService::getServiceState() == CUStateKey::DEINIT) {
-            throw CException(-3, "The Control Unit is in deinit state", __PRETTY_FUNCTION__);
+            throw MetadataLoggingCException(getCUID(), -3, "The Control Unit is in deinit state", __PRETTY_FUNCTION__);
         }
         //send dataset attribute change pack to control unit implementation
         result = setDatasetAttribute(dataset_attribute_values, detachParam);
@@ -1183,11 +1183,11 @@ void AbstractControlUnit::unitInputAttributeChangedHandler() throw(CException) {
 #define CHECK_FOR_RANGE_VALUE(t, v, attr_name)\
 t max = attributeInfo.maxRange.size()?boost::lexical_cast<t>(attributeInfo.maxRange):std::numeric_limits<t>::max();\
 t min = attributeInfo.maxRange.size()?boost::lexical_cast<t>(attributeInfo.minRange):std::numeric_limits<t>::min();\
-if(v < min || v > max) throw CException(-1,  boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
+if(v < min || v > max) throw MetadataLoggingCException(getCUID(), -1,  boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
 
 #define CHECK_FOR_STRING_RANGE_VALUE(v, attr_name)\
-if(attributeInfo.minRange.size() && v < attributeInfo.minRange ) throw CException(-1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
-if(attributeInfo.maxRange.size() && v > attributeInfo.maxRange ) throw CException(-1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name %attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
+if(attributeInfo.minRange.size() && v < attributeInfo.minRange ) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
+if(attributeInfo.maxRange.size() && v > attributeInfo.maxRange ) throw MetadataLoggingCException(getCUID(), -1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name %attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
 
 CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
     CHAOS_ASSERT(dataset_attribute_values)
@@ -1288,7 +1288,7 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     if(SWEService::getServiceState() != chaos::CUStateKey::INIT &&
        SWEService::getServiceState() != chaos::CUStateKey::START) {
         ACULAPP_ << "device:" << DatasetDB::getDeviceID() << " not initialized";
-        throw CException(-3, "Device Not Initilized", __PRETTY_FUNCTION__);
+        throw MetadataLoggingCException(getCUID(), -3, "Device Not Initilized", __PRETTY_FUNCTION__);
     }
     
     //forward property change pack to the data driver

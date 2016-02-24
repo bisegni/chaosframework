@@ -15,12 +15,12 @@ using namespace chaos::metadata_service_client::api_proxy;
 PresenterWidget::PresenterWidget(QWidget *parent) :
     QWidget(parent),
     editor_subwindow(NULL),
-    submitted_api(0) {
+    submitted_api(0),
+    api_submitter(this){
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
-PresenterWidget::~PresenterWidget()
-{
+PresenterWidget::~PresenterWidget() {
 
 }
 
@@ -176,70 +176,39 @@ void PresenterWidget::monitorHandlerUpdateAttributeValue(const QString& key,
 
 void PresenterWidget::submitApiResult(const QString& api_tag,
                                       ApiProxyResult api_result) {
-    if(!submitted_api) {
-        this->setCursor(Qt::WaitCursor);
-    }
-    submitted_api++;
-    api_processor.submitApiResult(api_tag,
-                                  api_result,
-                                  this,
-                                  SLOT(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
-                                  SLOT(asyncApiError(QString, QSharedPointer<chaos::CException>)),
-                                  SLOT(asyncApiTimeout(QString)));
-    //emit signal that we are starting the wait
-    emit onStartWaitApi(api_tag);
-}
 
-void PresenterWidget::asyncApiResult(const QString& tag,
-                                     QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
-    onApiDone(tag,
-              api_result);
-    //emit signal that we are finisched the wait on api result
-    emit onEndWaitApi(tag);
-}
-
-void PresenterWidget::asyncApiError(const QString& tag,
-                                    QSharedPointer<chaos::CException> api_exception) {
-    onApiError(tag,
-               api_exception);
-    //emit signal that we are finisched the wait on api result
-    emit onEndWaitApi(tag);
-}
-
-void PresenterWidget::asyncApiTimeout(const QString& tag) {
-    onApiTimeout(tag);
-    emit onEndWaitApi(tag);
+    api_submitter.submitApiResult(api_tag,
+                                  api_result);
 }
 
 //-------slot for api-------
 void PresenterWidget::onApiDone(const QString& tag,
                                 QSharedPointer<CDataWrapper> api_result) {
-    if(!(--submitted_api)) {
-        qDebug() << "reset cursor:" << submitted_api;
-        setCursor(Qt::ArrowCursor);
-    }else {
-        qDebug() << "submitted_api:" << submitted_api;
-    }
-    //showInformation(tr("Api Error"),
-    //               tag,
-    //              "Success");
 }
 
 void PresenterWidget::onApiError(const QString& tag,
                                  QSharedPointer<CException> api_exception) {
-    if(!(--submitted_api)) {setCursor(Qt::ArrowCursor);}
-    qDebug() << "onApiError event of tag:" << tag << " of error:" << api_exception->what();
     showInformation(tr("Api Error"),
                     tag,
                     api_exception->what());
 }
 
 void PresenterWidget::onApiTimeout(const QString& tag) {
-    if(!(--submitted_api)) {setCursor(Qt::ArrowCursor);}
-    qDebug() << "onApiTimeout event of tag:" << tag;
     showInformation(tr("Api Error"),
                     tag,
                     tr("Timeout reached (Possible no server available)!"));
+}
+
+
+void PresenterWidget::apiHasStarted(const QString& api_tag) {
+    if(submitted_api == 0) {
+        this->setCursor(Qt::WaitCursor);
+    }
+    submitted_api++;
+}
+
+void PresenterWidget::apiHasEnded(const QString& api_tag) {
+     if((--submitted_api) == 0) {setCursor(Qt::ArrowCursor);}
 }
 
 void PresenterWidget::showInformation(const QString& title,

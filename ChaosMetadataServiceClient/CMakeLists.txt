@@ -7,8 +7,18 @@ SET(mcl_src ChaosMetadataServiceClient.cpp)
 SET(mcl_src ${mcl_src}      api_proxy/ApiProxyManager.cpp
                             api_proxy/ApiProxy.cpp)
 
+SET(mcl_src ${mcl_src}	    event/EventDispatchManager.cpp
+                            event/AbstractEventHandler.cpp)
+
+SET(mcl_src ${mcl_src}	    event/alert/AlertEventHandler.cpp
+                            event/alert/AlertLogEventHandler.cpp)
+
+SET(mcl_src ${mcl_src}	    api_proxy/logging/GetLogForSourceUID.cpp
+                            api_proxy/logging/GetLogDomainForSourceUID.cpp)
+
+
 SET(mcl_src ${mcl_src}	    api_proxy/groups/AddNode.cpp
-    												api_proxy/groups/DeleteNode.cpp
+                            api_proxy/groups/DeleteNode.cpp
                             api_proxy/groups/GetDomains.cpp
                             api_proxy/groups/GetNodeChilds.cpp)
 
@@ -79,6 +89,9 @@ INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient)
 
 FILE(GLOB files "api_proxy/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy)
+
+FILE(GLOB files "api_proxy/logging/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/logging)
 
 FILE(GLOB files "api_proxy/control_unit/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/control_unit)

@@ -21,7 +21,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQServer.h>
 #include <chaos/common/chaos_constants.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 
 #define ZMQS_LAPP INFO_LOG(ZMQServer)
 #define ZMQS_LDBG DBG_LOG(ZMQServer)

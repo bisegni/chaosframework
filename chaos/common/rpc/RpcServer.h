@@ -26,7 +26,7 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/rpc/RpcServerHandler.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/event/EventHandler.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/NamedService.h>

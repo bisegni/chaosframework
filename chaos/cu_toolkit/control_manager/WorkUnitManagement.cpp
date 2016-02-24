@@ -33,11 +33,15 @@
 
 #define SWITCH_SM_TO(e)\
 if(wu_instance_sm.process_event(e) != boost::msm::back::HANDLED_TRUE){\
-throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for failure event", __PRETTY_FUNCTION__);\
+throw MetadataLoggingCException(work_unit_instance->getCUID(),\
+ErrorCode::EC_MDS_NODE_BAD_SM_STATE,\
+"Bad state of the sm for failure event",\
+__PRETTY_FUNCTION__);\
 }
 
 using namespace chaos::common::data;
 using namespace chaos::common::network;
+using namespace chaos::common::exception;
 using namespace chaos::common::healt_system;
 
 using namespace chaos::cu::command_manager;
@@ -108,7 +112,10 @@ void WorkUnitManagement::turnOn() throw (CException) {
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublish()) == boost::msm::back::HANDLED_TRUE){
         //we are switched state
     } else {
-        throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for UnitEventTypePublish event", __PRETTY_FUNCTION__);
+        throw MetadataLoggingCException(work_unit_instance->getCUID(),
+                                        ErrorCode::EC_MDS_NODE_BAD_SM_STATE,
+                                        "Bad state of the sm for UnitEventTypePublish event",
+                                        __PRETTY_FUNCTION__);
     }
 }
 
@@ -120,7 +127,10 @@ void WorkUnitManagement::turnOFF() throw (CException) {
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublish()) == boost::msm::back::HANDLED_TRUE){
         //we are switched state
     } else {
-        throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for UnitEventTypeUnpublish event", __PRETTY_FUNCTION__);
+        throw MetadataLoggingCException(work_unit_instance->getCUID(),
+                                        ErrorCode::EC_MDS_NODE_BAD_SM_STATE,
+                                        "Bad state of the sm for UnitEventTypeUnpublish event",
+                                        __PRETTY_FUNCTION__);
     }
     
 }
@@ -355,11 +365,17 @@ bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
     WUMAPP_ << "Work unit registration ack message received";
     
     if(!ack_pack.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID))
-        throw CException(-1, "No device id found", __PRETTY_FUNCTION__);
+        throw MetadataLoggingCException(work_unit_instance->getCUID(),
+                                        -1,
+                                        "No device id found",
+                                        __PRETTY_FUNCTION__);
     
     string device_id = ack_pack.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     if(device_id.compare(work_unit_instance->getCUID()) != 0) {
-        throw CException(-2, "received id :"+std::string(work_unit_instance->getCUID())+ std::string(" not equal to work unit instance id:")+device_id, __PRETTY_FUNCTION__);
+        throw MetadataLoggingCException(work_unit_instance->getCUID(),
+                                        -2,
+                                        "received id :"+std::string(work_unit_instance->getCUID())+ std::string(" not equal to work unit instance id:")+device_id,
+                                        __PRETTY_FUNCTION__);
     }
     if(ack_pack.hasKey(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)) {
         //registration has been ended
@@ -384,7 +400,10 @@ bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
         }
     } else {
         WUMERR_ << "No result received";
-        throw CException(-3, "No result received", __PRETTY_FUNCTION__);
+        throw MetadataLoggingCException(work_unit_instance->getCUID(),
+                                        -3,
+                                        "No result received",
+                                        __PRETTY_FUNCTION__);
     }
     return result;
 }

@@ -14,6 +14,7 @@ protected:
     virtual int getColumnCount() const = 0;
     virtual QString getHeaderForColumn(int column) const = 0;
     virtual QVariant getCellData(int row, int column) const;
+    virtual QVariant getCellUserData(int row, int column) const;
     virtual QVariant getCheckeable(int row, int column) const;
     virtual QVariant getFontForData(int row, int column) const;
     virtual QVariant getBackgroundForData(int row, int column) const;

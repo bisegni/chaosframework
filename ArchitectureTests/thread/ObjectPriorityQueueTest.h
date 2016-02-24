@@ -37,7 +37,7 @@ namespace chaos {
 				
 				//! thest for the chaos::common::pqueue::CObjectProcessingQueue
 				class ObjectPriorityQueueTest:
-				protected  chaos::CObjectProcessingPriorityQueue<TestJobPriorityStruct> {
+				protected  CObjectProcessingPriorityQueue<TestJobPriorityStruct> {
 					int number_of_consumer;
 					int number_of_producer;
 					int number_of_production;

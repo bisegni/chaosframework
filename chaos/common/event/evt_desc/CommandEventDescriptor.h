@@ -24,14 +24,16 @@
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 
 namespace chaos {
-    namespace event{
-        namespace command {
+    namespace common {
+        namespace event{
+            namespace command {
                 //REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(CommandEventDescriptor, EventDescriptor ) {
-            class CommandEventDescriptor : public EventDescriptor {
-            public:
+                class CommandEventDescriptor : public EventDescriptor {
+                public:
+                    
+                };
                 
-            };
-            
+            }
         }
     }
 }

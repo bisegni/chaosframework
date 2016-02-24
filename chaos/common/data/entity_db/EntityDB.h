@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/utility/Atomic.h>
 #include <boost/ptr_container/ptr_vector.hpp>

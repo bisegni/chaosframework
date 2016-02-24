@@ -136,10 +136,20 @@ delete(x);
                     return resource_slot_ptr;
                 }
                 
-                //! return a resurce to the socket
-                void releaseResource(ResourceSlot *resource_slot) {
+                //! return a resurce to the socket or force it to purge
+                /*!
+                 This methdo perit to retur a resource to his slot  and in 
+                 ]addition it can be deallocate, so it never retur to user
+                 */
+                void releaseResource(ResourceSlot *resource_slot,
+                                     bool purge = false) {
                     boost::unique_lock<boost::mutex> l(mutex_r_pool);
-                    r_pool.push_front(resource_slot);
+                    if(purge) {
+                        //check and delete resource and slot
+                        CHAOS_RESOURCE_POOL_DELETE_SLOT(resource_slot)
+                    } else {
+                        r_pool.push_front(resource_slot);
+                    }
                 }
                 
                 size_t getSize() {

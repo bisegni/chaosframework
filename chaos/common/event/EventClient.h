@@ -21,59 +21,58 @@
 #ifndef __CHAOSFramework__EventClient__
 #define __CHAOSFramework__EventClient__
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/event/EventForwarder.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 #include <chaos/common/utility/StartableService.h>
 namespace chaos {
-	namespace common {
-		namespace network {
-			class NetworkBroker;			
-		}
-	}
-	
-    namespace event {
+    namespace common {
+        namespace network {
+            class NetworkBroker;
+        }
         
+        namespace event {
+            
             //!Event client base class
-        /*!
-         
-         */
-        class EventClient:
-		public common::utility::NamedService,
-		public EventForwarder,
-		public chaos::common::utility::StartableService {
-            friend class chaos::common::network::NetworkBroker;
-            
-        protected:
-            uint8_t threadNumber;            
+            /*!
+             
+             */
+            class EventClient:
+            public common::utility::NamedService,
+            public EventForwarder,
+            public chaos::common::utility::StartableService {
+                friend class chaos::common::network::NetworkBroker;
+                
+            protected:
+                uint8_t threadNumber;
                 //Default Server Constructor
-            EventClient(std::string alias);
-            
-            /*
-             init the event adapter
-             */
-            virtual void init(void*) throw(CException);
-            
-            /*
-             start the event adapter
-             */
-            virtual void start() throw(CException);
-            
-            //-----------------------
-            virtual void stop() throw(CException){};
-            
-            /*
-             deinit the event adapter
-             */
-            virtual void deinit() throw(CException);
-            
-        public:
-            void setThreadNumber(unsigned int newThreadNumber);
-            unsigned int getThreadNumber();
-        };
-
+                EventClient(std::string alias);
+                
+                /*
+                 init the event adapter
+                 */
+                virtual void init(void*) throw(CException);
+                
+                /*
+                 start the event adapter
+                 */
+                virtual void start() throw(CException);
+                
+                //-----------------------
+                virtual void stop() throw(CException){};
+                
+                /*
+                 deinit the event adapter
+                 */
+                virtual void deinit() throw(CException);
+                
+            public:
+                void setThreadNumber(unsigned int newThreadNumber);
+                unsigned int getThreadNumber();
+            };
+        }
     }
 }
 

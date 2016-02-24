@@ -22,8 +22,10 @@
 #define __CHAOSFramework__AsioImplEventClient__
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
-#include <chaos/common/event/AsioEventHandler.h>
 #include <chaos/common/event/EventClient.h>
+#include <chaos/common/event/AsioEventHandler.h>
+#include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
+
 #include <string>
 #include <vector>
 #include <boost/asio.hpp>
@@ -32,53 +34,53 @@
 #include <boost/shared_ptr.hpp>
 
 namespace chaos {
-    namespace event{
-        using namespace std;
-        using namespace boost;
-        
-        class AsioEventForwarder;
-        
-        DECLARE_CLASS_FACTORY(AsioImplEventClient, EventClient) {
-        protected:
-            /*
-             init the event adapter
-             */
-            void init(void*) throw(CException);
+    namespace common {
+        namespace event{
+            using namespace std;
+            using namespace boost;
             
-            /*
-             start the event adapter
-             */
-            void start() throw(CException);
+            class AsioEventForwarder;
             
-            //-----------------------
-            void stop() throw(CException);
-            
-            /*
-             deinit the event adapter
-             */
-            void deinit() throw(CException);
-
-        public:
-            AsioImplEventClient(string alias);
-            ~AsioImplEventClient();
-            bool submitEvent(EventDescriptor *event)  throw(CException);
-        private:
-                //! Allert forwarder
-            AsioEventForwarder *alertForwarder;
-           
-            //! Instrument forwarder
-            AsioEventForwarder *instrumentForwarder;
-            
-            //! Command forwarder
-            AsioEventForwarder *commandForwarder;
-            
-            //! Custom forwarder
-            AsioEventForwarder *customForwarder;
-            
-            boost::asio::io_service io_service;
-			boost::thread_group	service_thread_group;
-            //vector< boost::shared_ptr<boost::thread> > serviceThread;
-        };
+            DECLARE_CLASS_FACTORY(AsioImplEventClient, EventClient),
+            public chaos::common::pqueue::CObjectProcessingPriorityQueue<EventDescriptor>{
+            protected:
+                /*
+                 init the event adapter
+                 */
+                void init(void*) throw(CException);
+                
+                /*
+                 start the event adapter
+                 */
+                void start() throw(CException);
+                
+                //-----------------------
+                void stop() throw(CException);
+                
+                /*
+                 deinit the event adapter
+                 */
+                void deinit() throw(CException);
+                
+                //! abstract queue action method implementation
+                void processBufferElement(EventDescriptor *priorityElement,
+                                          ElementManagingPolicy& policy) throw(CException);
+                
+            public:
+                AsioImplEventClient(string alias);
+                ~AsioImplEventClient();
+                bool submitEvent(EventDescriptor *event)  throw(CException);
+            private:
+                boost::asio::ip::udp::socket *socket_alert;
+                boost::asio::ip::udp::socket *socket_instrument;
+                boost::asio::ip::udp::socket *socket_command;
+                boost::asio::ip::udp::socket *socket_custom;
+                
+                boost::asio::io_service io_service;
+                boost::thread_group	service_thread_group;
+                //vector< boost::shared_ptr<boost::thread> > serviceThread;
+            };
+        }
     }
 }
 

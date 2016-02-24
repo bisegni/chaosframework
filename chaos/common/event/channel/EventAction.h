@@ -22,24 +22,25 @@
 #define __CHAOSFramework__EventAction__
 
 namespace chaos {
-    
-    namespace event{
-    
-        namespace channel {
+    namespace common {
+        namespace event{
             
+            namespace channel {
+                
                 //! An action attaccehd to an event
-            /*!
-                The class event action define the structure of an action
-                that can be attacched to a specified event.
-             */
-            class EventAction {
-             
-            protected:
-                
-                void handleEvent() = 0;
-                
-            public:
-                virtual ~EventAction() {};
+                /*!
+                 The class event action define the structure of an action
+                 that can be attacched to a specified event.
+                 */
+                class EventAction {
+                    
+                protected:
+                    
+                    void handleEvent() = 0;
+                    
+                public:
+                    virtual ~EventAction() {};
+                }
             }
         }
     }

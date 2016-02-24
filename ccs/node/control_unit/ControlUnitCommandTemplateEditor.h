@@ -1,7 +1,7 @@
 #ifndef ControlUnitCommandTemplateEditor_H
 #define ControlUnitCommandTemplateEditor_H
 
-#include "../data/CommandParameterTableModel.h"
+#include "../../data/CommandParameterTableModel.h"
 #include "../../presenter/PresenterWidget.h"
 
 #include <QDialog>

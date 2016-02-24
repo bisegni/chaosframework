@@ -2,10 +2,10 @@
 #define CONTROLUNITEDITOR_H
 #include "ControlUnitCommandTemplateEditor.h"
 
-#include "../data/CommandListModel.h"
-#include "../data/CommandTemplateListModel.h"
-#include "../data/FixedInputChannelDatasetTableModel.h"
-#include "../data/FixedOutputChannelDatasetTableModel.h"
+#include "../../data/CommandListModel.h"
+#include "../../data/CommandTemplateListModel.h"
+#include "../../data/FixedInputChannelDatasetTableModel.h"
+#include "../../data/FixedOutputChannelDatasetTableModel.h"
 
 #include "../../monitor/monitor.h"
 #include "../../presenter/PresenterWidget.h"
@@ -88,6 +88,8 @@ private slots:
     void on_pushButtonRecoverError_clicked();
 
     void on_pushButtonOpenInstanceEditor_clicked();
+
+    void tabIndexChanged(int new_index);
 
 private:
     QString getStatusString(int status);

@@ -17,22 +17,19 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/global.h>
 #include <boost/lexical_cast.hpp>
-#include <chaos/common/utility/ObjectFactoryRegister.h>
-#include <chaos/common/message/DeviceMessageChannel.h>
-#include <chaos/common/message/MDSMessageChannel.h>
-#include <chaos/common/message/MessageChannel.h>
-#include <chaos/common/message/MultiAddressMessageChannel.h>
-#include <chaos/common/message/PerformanceNodeChannel.h>
-#include <chaos/common/event/EventServer.h>
-#include <chaos/common/event/EventClient.h>
-#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
-#include <chaos/common/dispatcher/AbstractEventDispatcher.h>
-#include <chaos/common/event/channel/AlertEventChannel.h>
-#include <chaos/common/event/channel/InstrumentEventChannel.h>
+#include <chaos/common/event/event.h>
 #include <chaos/common/utility/InetUtility.h>
+#include <chaos/common/network/NetworkBroker.h>
+#include <chaos/common/message/MessageChannel.h>
+#include <chaos/common/message/MDSMessageChannel.h>
+#include <chaos/common/message/DeviceMessageChannel.h>
+#include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/message/PerformanceNodeChannel.h>
+#include <chaos/common/dispatcher/AbstractEventDispatcher.h>
+#include <chaos/common/message/MultiAddressMessageChannel.h>
+#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 //-----------for metric collection---------
 #include <chaos/common/rpc/RpcClientMetricCollector.h>
 #include <chaos/common/rpc/RpcServerMetricCollector.h>
@@ -43,7 +40,8 @@
 #define INIT_STEP   0
 #define DEINIT_STEP 1
 using namespace chaos;
-using namespace chaos::event;
+using namespace chaos::common::event;
+using namespace chaos::common::event::channel;
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::network;
@@ -416,7 +414,7 @@ void NetworkBroker::deregisterEventAction(EventAction *eventAction) {
  \param eventType is one of the value listent in EventType enum that specify the
  type of the eventfor wich we want a channel
  */
-event::channel::EventChannel *NetworkBroker::getNewEventChannelFromType(event::EventType  event_type) {
+channel::EventChannel *NetworkBroker::getNewEventChannelFromType(event::EventType  event_type) {
     CHAOS_ASSERT(!GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
     event::channel::EventChannel *new_event_channel = NULL;
     switch (event_type) {
@@ -443,7 +441,7 @@ event::channel::EventChannel *NetworkBroker::getNewEventChannelFromType(event::E
  Performe the creation of device channel
  \param deviceNetworkAddress device node address
  */
-event::channel::AlertEventChannel *NetworkBroker::getNewAlertEventChannel() {
+AlertEventChannel *NetworkBroker::getNewAlertEventChannel() {
     CHAOS_ASSERT(!GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
     return static_cast<event::channel::AlertEventChannel*>(NetworkBroker::getNewEventChannelFromType(event::EventTypeAlert));
 }
@@ -453,7 +451,7 @@ event::channel::AlertEventChannel *NetworkBroker::getNewAlertEventChannel() {
  Performe the creation of device channel
  \param deviceNetworkAddress device node address
  */
-event::channel::InstrumentEventChannel *NetworkBroker::getNewInstrumentEventChannel() {
+InstrumentEventChannel *NetworkBroker::getNewInstrumentEventChannel() {
     CHAOS_ASSERT(!GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
     return static_cast<event::channel::InstrumentEventChannel*>(NetworkBroker::getNewEventChannelFromType(event::EventTypeInstrument));
 }
@@ -579,11 +577,6 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
             CHAOS_ASSERT(!node_network_address)
             channel = new MultiAddressMessageChannel(this);
             break;
-        case MDS:
-            if(!node_network_address) return NULL;
-            channel = new MDSMessageChannel(this, static_cast<CNodeNetworkAddress*>(node_network_address));
-            break;
-            
         case DEVICE:
             if(!node_network_address) return NULL;
             channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(node_network_address));
@@ -609,10 +602,13 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
  Performe the creation of metadata server
  */
 MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel() {
-    CNodeNetworkAddress *mdsNodeAddr = new CNodeNetworkAddress();
-    mdsNodeAddr->ip_port = GlobalConfiguration::getInstance()->getMetadataServerAddress();
-    mdsNodeAddr->node_id = chaos::NodeDomainAndActionRPC::RPC_DOMAIN;
-    return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(mdsNodeAddr, MDS));
+    MDSMessageChannel *channel = new MDSMessageChannel(this, GlobalConfiguration::getInstance()->getMetadataServerAddressList());
+    if(channel){
+        channel->init();
+        boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
+        active_rpc_channel.insert(make_pair(channel->channel_reponse_domain, static_cast<MessageChannel*>(channel)));
+    }
+    return channel;
 }
 
 //!Metadata server channel creation
@@ -623,6 +619,11 @@ MultiAddressMessageChannel *NetworkBroker::getMultiMetadataServiceRawMessageChan
     MultiAddressMessageChannel *mc = getRawMultiAddressMessageChannel();
     if(mc){
         mc->addNode(GlobalConfiguration::getInstance()->getMetadataServerAddress());
+    }
+    if(mc){
+        mc->init();
+        boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
+        active_rpc_channel.insert(make_pair(mc->channel_reponse_domain, mc));
     }
     return mc;
 }
@@ -649,6 +650,20 @@ MessageChannel *NetworkBroker::getRawMessageChannel() {
 //! Return a raw multinode message channel
 MultiAddressMessageChannel *NetworkBroker::getRawMultiAddressMessageChannel() {
    	return static_cast<MultiAddressMessageChannel*>(getNewMessageChannelForRemoteHost(NULL, RAW_MULTI_ADDRESS));
+}
+
+//! Return a raw multinode message channel
+/*!
+ Performe the creation of a raw multinode message channel
+ */
+chaos::common::message::MultiAddressMessageChannel *NetworkBroker::getRawMultiAddressMessageChannel(const std::vector<chaos::common::network::CNetworkAddress>& node_address) {
+    MultiAddressMessageChannel *mc = new MultiAddressMessageChannel(this, node_address);
+    if(mc){
+        mc->init();
+        boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
+        active_rpc_channel.insert(make_pair(mc->channel_reponse_domain, mc));
+    }
+    return mc;
 }
 
 //!Channel deallocation
@@ -681,6 +696,12 @@ void NetworkBroker::disposeMessageChannel(NodeMessageChannel *messageChannelToDi
 void NetworkBroker::disposeMessageChannel(chaos::common::message::MultiAddressMessageChannel *messageChannelToDispose) {
     NetworkBroker::disposeMessageChannel((MessageChannel*)messageChannelToDispose);
 }
+
+//!Rpc Channel deallocation
+void NetworkBroker::disposeMessageChannel(chaos::common::message::MDSMessageChannel *messageChannelToDispose) {
+    NetworkBroker::disposeMessageChannel(static_cast<MessageChannel*>(messageChannelToDispose));
+}
+
 
 //Allocate a new endpoint in the direct io server
 chaos_direct_io::DirectIOServerEndpoint *NetworkBroker::getDirectIOServerEndpoint() {

@@ -21,7 +21,7 @@
 #ifndef DataManagerException_H
 #define DataManagerException_H
 
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 
 namespace chaos{
     namespace cu {

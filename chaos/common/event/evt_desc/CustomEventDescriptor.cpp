@@ -20,5 +20,5 @@
 
 #include "CustomEventDescriptor.h"
 using namespace chaos;
-using namespace chaos::event;
-using namespace chaos::event::custom;
+using namespace chaos::common::event;
+using namespace chaos::common::event::custom;

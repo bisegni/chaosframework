@@ -33,14 +33,14 @@
 #include <boost/atomic.hpp>
 
 #include <chaos/common/data/DatasetDB.h>
+#include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/data/cache/AttributeCache.h>
 #include <chaos/common/batch_command/BatchCommand.h>
+#include <chaos/common/metadata_logging/metadata_logging.h>
 #include <chaos/common/batch_command/BatchCommandExecutor.h>
-#include <chaos/common/utility/ObjectInstancer.h>
 
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
-
 
 namespace chaos {
     namespace cu {
@@ -95,6 +95,10 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
 					AttributeValue *last_error_code;
 					AttributeValue *last_error_message;
 					AttributeValue *last_error_domain;
+                    
+                    //------mds logging---------
+                    chaos::common::metadata_logging::ErrorLoggingChannel        *error_logging_channel;
+                    chaos::common::metadata_logging::BatchCommandLoggingChannel *command_logging_channel;
                 protected:
 
                     //! Private constructor

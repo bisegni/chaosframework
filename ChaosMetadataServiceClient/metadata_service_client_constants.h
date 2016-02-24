@@ -22,11 +22,6 @@
 
 namespace chaos {
     namespace metadata_service_client {
-
-            //! Description for the control unit dirvers [vector[string, string, string]*]
-        static const char * const OPT_MDS_ADDRESS                = "mds-address";
-        static const char * const OPT_MDS_ADDRESS_DESCRIPTION    = "The list of the metadata servers address(ip:port) to use as backend";
-
     }
 }
 #endif

@@ -125,7 +125,8 @@ void URLServiceFeeder::grow() {
 	}
 }
 
-uint32_t URLServiceFeeder::addURL(const URL& new_url, uint32_t priority) {
+uint32_t URLServiceFeeder::addURL(const URL& new_url,
+                                  uint32_t priority) {
 	//lock the queue
 	uint32_t service_index = 0;
         //expand memory for contain new service description
@@ -147,8 +148,16 @@ uint32_t URLServiceFeeder::addURL(const URL& new_url, uint32_t priority) {
 
         //this index is not anymore available
     available_url.erase(new_index);
+    
+    //insert index url association
+    mapping_url_index.insert(URLIndexBimap::value_type(new_url.getURL(), service_index));
+    
         //return new index
 	return service_index;
+}
+
+void* URLServiceFeeder::getService(uint32_t idx) {
+    return service_list[idx]->service;
 }
 
 void* URLServiceFeeder::getService() {
@@ -206,17 +215,30 @@ void URLServiceFeeder::setURLOnline(uint32_t idx) {
                                            service_list[idx]));
 }
 
-void URLServiceFeeder::removeURL(uint32_t idx, bool deallocate_service) {
+void URLServiceFeeder::removeURL(uint32_t idx, bool dispose_service) {
 	if(idx > (list_size/sizeof(URLServiceFeeder::URLService))) {
 		URLServiceFeeder_LERR << "Index out of range";
 		return;
 	}
 	//delete service instance
-	if(deallocate_service) handler->disposeService(service_list[idx]->service);
+    if(dispose_service) {handler->disposeService(service_list[idx]->service);}
 	removeFromOnlineQueue(idx);
 	available_url.insert(idx);
+    //insert index url association
+    URLIndexBimap::right_iterator riter = mapping_url_index.right.find(idx);
+    mapping_url_index.right.erase(riter);
 }
 
+//!return the url string from index
+std::string URLServiceFeeder::getURLForIndex(uint32_t idx) {
+    URLIndexBimap::right_const_iterator riter = mapping_url_index.right.find(idx);
+    return riter->second;
+}
+
+uint32_t URLServiceFeeder::getIndexFromURL(const std::string& url) {
+    URLIndexBimap::left_const_iterator liter = mapping_url_index.left.find(url);
+    return liter->second;
+}
 
 void URLServiceFeeder::setFeedMode(URLServiceFeedMode new_feed_mode) {
 	feed_mode = new_feed_mode;

@@ -34,14 +34,8 @@ namespace chaos {
                 
                 CHAOS_DEFINE_PTR_VECTOR_FOR_TYPE(chaos::common::data::CDataWrapper, CommandInstanceList)
                 
-                typedef pair<std::string, std::string> TemplateKey;
-                
                 class CommandTemplateSubmit:
                 public AbstractApi {
-                    //cache the command description for reuse
-                    std::map<std::string, boost::shared_ptr<CDataWrapper> > command_description_cache;
-                    //cache the template description for reuse
-                    std::map<TemplateKey, boost::shared_ptr<CDataWrapper> > template_description_cache;
                     
                     boost::shared_ptr<CDataWrapper> getCommandDescription(chaos::metadata_service::persistence::data_access::NodeDataAccess *n_da,
                                                                           const std::string& command_uid);

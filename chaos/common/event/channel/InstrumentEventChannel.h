@@ -24,59 +24,61 @@
 #include <chaos/common/event/channel/EventChannel.h>
 #include <chaos/common/event/evt_desc/AlertEventDescriptor.h>
 namespace chaos {
-	
-	namespace common {
-		namespace network {
-			class NetworkBroker;
-		}
-	}
-
-    namespace event {
-        namespace channel {
-            
+    namespace common {
+        namespace network {
+            class NetworkBroker;
+        }
+        namespace event {
+            namespace channel {
+                
                 //! Channel for manage the alert event type
-            /*!
-             This channel simplify the alert event forwarding and recivement
-             */
-            class InstrumentEventChannel : public EventChannel {
-				friend class chaos::common::network::NetworkBroker;
-            protected:
-                
-                InstrumentEventChannel(chaos::common::network::NetworkBroker *rootBroker);
-                
-                ~InstrumentEventChannel();
-                
-                void handleEvent(const event::EventDescriptor * const event);
-                
-                int sendEvent(const char * const identificationString, uint16_t subCode, uint16_t priority, EventDataType typeOfData, const void *valuePtr, uint16_t valueSize = 0);
-            public:
-                
+                /*!
+                 This channel simplify the alert event forwarding and recivement
+                 */
+                class InstrumentEventChannel : public EventChannel {
+                    friend class chaos::common::network::NetworkBroker;
+                protected:
+                    
+                    InstrumentEventChannel(chaos::common::network::NetworkBroker *rootBroker);
+                    
+                    ~InstrumentEventChannel();
+                    
+                    void handleEvent(const event::EventDescriptor * const event);
+                    
+                    int sendEvent(const std::string& identification,
+                                  uint16_t sub_code,
+                                  uint16_t priority,
+                                  EventDataType type_of_data,
+                                  const void *value_ptr,
+                                  uint16_t value_size = 0);
+                public:
+                    
                     //--------------------inherited-----------------
-                void activateChannelEventReception();
-                
+                    void activateChannelEventReception(EventAction *event_action);
+                    
                     //! Send an event for the scehdule update setting
-                /*!
-                 Take care to construct and send an instrument event forn the schedule update
-                 \param insturmentID the identificatin Of the instrument
-                 \param newScheduleUpdateTime new run scehdule delay value
-                 */
-                int notifyForScheduleUpdateWithNewValue(const char * insturmentID, uint64_t newScheduleUpdateTime);
-                
-                //! Send an event for the dataset attribute setting
-                /*!
-                 Notify that the setting of some input attribute of the dataset hase been done
-                 \param insturmentID the indetificaiton of instrument
-                 \param error gived settin the param
-                 */
-                int notifyForAttributeSetting(const char * insturmentID, uint16_t error);
-                
-                //! Send an event for the heartbeat
-                /*!
-                 \param insturmentID the indetificaiton of instrument
-                 */
-                int notifyHeartbeat(const char * insturmentID);
-            };
-            
+                    /*!
+                     Take care to construct and send an instrument event forn the schedule update
+                     \param insturmentID the identificatin Of the instrument
+                     \param newScheduleUpdateTime new run scehdule delay value
+                     */
+                    int notifyForScheduleUpdateWithNewValue(const char * insturmentID, uint64_t newScheduleUpdateTime);
+                    
+                    //! Send an event for the dataset attribute setting
+                    /*!
+                     Notify that the setting of some input attribute of the dataset hase been done
+                     \param insturmentID the indetificaiton of instrument
+                     \param error gived settin the param
+                     */
+                    int notifyForAttributeSetting(const char * insturmentID, uint16_t error);
+                    
+                    //! Send an event for the heartbeat
+                    /*!
+                     \param insturmentID the indetificaiton of instrument
+                     */
+                    int notifyHeartbeat(const char * insturmentID);
+                };
+            }
         }
     }
 }

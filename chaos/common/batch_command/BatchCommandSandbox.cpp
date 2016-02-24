@@ -16,6 +16,7 @@
 #include <chaos/common/batch_command/BatchCommandConstants.h>
 
 using namespace chaos::common::data;
+using namespace chaos::common::pqueue;
 using namespace chaos::common::utility;
 using namespace chaos::common::batch_command;
 

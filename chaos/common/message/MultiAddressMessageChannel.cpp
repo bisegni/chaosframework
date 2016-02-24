@@ -26,34 +26,39 @@ using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::common::message;
 using namespace chaos::common::network;
+using namespace chaos::common::async_central;
 
 #define MAMC_INFO INFO_LOG(MultiAddressMessageChannel)
 #define MAMC_DBG DBG_LOG(MultiAddressMessageChannel)
 #define MAMC_ERR ERR_LOG(MultiAddressMessageChannel)
 
 #define RETRY_DELAY 30000
-    //! default constructor
+//! default constructor
 MultiAddressMessageChannel::MultiAddressMessageChannel(NetworkBroker *message_broker):
 MessageChannel(message_broker),
-service_feeder("MultiAddressMessageChannel", this),
-last_retry(0){
+service_feeder("MultiAddressMessageChannel",
+               this,
+               this),
+last_retry(0){}
 
-}
-
-    //!Base constructor
+//!Base constructor
 MultiAddressMessageChannel::MultiAddressMessageChannel(NetworkBroker *message_broker,
                                                        CNetworkAddress& node_address):
 MessageChannel(message_broker),
-service_feeder("MultiAddressMessageChannel", this),
+service_feeder("MultiAddressMessageChannel",
+               this,
+               this),
 last_retry(0){
     addNode(node_address);
 }
 
-    //!Base constructor
+//!Base constructor
 MultiAddressMessageChannel::MultiAddressMessageChannel(NetworkBroker *message_broker,
                                                        const std::vector<CNetworkAddress>& node_address):
 MessageChannel(message_broker),
-service_feeder("MultiAddressMessageChannel", this),
+service_feeder("MultiAddressMessageChannel",
+               this,
+               this),
 last_retry(0){
     for(std::vector<CNetworkAddress>::const_iterator it = node_address.begin();
         it != node_address.end();
@@ -62,104 +67,75 @@ last_retry(0){
     }
 }
 
-    //
+//
 MultiAddressMessageChannel::~MultiAddressMessageChannel() {
     service_feeder.clear();
 }
 
-void MultiAddressMessageChannel::retryOfflineServer(bool force) {
-    boost::lock_guard<boost::mutex> l(mutex_server_usage);
-    uint64_t now = TimingUtil::getTimeStamp();
-    if(force||
-       ((now - last_retry) > RETRY_DELAY)) {
-        MAMC_DBG << "Retry on all server";
-        last_retry = now;
-        std::set<uint32_t>::iterator it = set_off_line_servers.begin();
-        while(it != set_off_line_servers.end()) {
-            service_feeder.setURLOnline(*it);
-            set_off_line_servers.erase(it++);
-            MAMC_DBG << *it << " index in online";
-        }
-    }
-}
 
-void MultiAddressMessageChannel::setAddressOffline(const std::string& remote_address) {
-    if(!map_url_node_id.count(remote_address)) return;
-        //get the server index
-    uint32_t index = map_url_node_id[remote_address].feeder_index;
-    service_feeder.setURLOffline(index);
-    std::set<uint32_t>::iterator it = set_off_line_servers.find(index);
-    if(it == set_off_line_servers.end()) {
-        set_off_line_servers.insert(index);
-    }
-    MAMC_DBG << remote_address << " in offline";
+void MultiAddressMessageChannel::setURLAsOffline(const std::string& offline_url) {
+    service_feeder.setURLAsOffline(offline_url);
+    AsyncCentralManager::getInstance()->addTimer(this,
+                                                 1000,
+                                                 1000);
 }
-
-void MultiAddressMessageChannel::setAddressOnline(const std::string& remote_address) {
-    if(!map_url_node_id.count(remote_address)) return;
-        //get the server index
-    uint32_t index = map_url_node_id[remote_address].feeder_index;
-    service_feeder.setURLOnline(index);
-    std::set<uint32_t>::iterator it = set_off_line_servers.find(index);
-    if(it != set_off_line_servers.end()) {
-        set_off_line_servers.erase(it);
-    }
-    MAMC_DBG << remote_address << " in online";
-}
-
-const CNetworkAddressInfo& MultiAddressMessageChannel::getRemoteAddressInfo(const std::string& remote_address) {
-    return map_url_node_id[remote_address];
-}
-
-    //
+//
 void MultiAddressMessageChannel::addNode(const CNetworkAddress& node_address) {
-    if(map_url_node_id.count(node_address.ip_port) > 0) {
-            //node already present
-        return;
-    }
-        //! add address to the feeder
-    uint32_t feeder_index = service_feeder.addURL(chaos::common::network::URL(node_address.ip_port));
-        //!! add node address info to the map that associate the feeder index to the network node address
-    map_url_node_id.insert(make_pair(node_address.ip_port, CNetworkAddressInfo(feeder_index,
-                                                                               node_address)));
+    service_feeder.addURL(chaos::common::network::URL(node_address.ip_port));
 }
 
-    //
+//
 void MultiAddressMessageChannel::removeNode(const CNetworkAddress& node_address) {
-    if(map_url_node_id.count(node_address.ip_port) == 0) {
-            //node not present
-        return;
-    }
-    const CNetworkAddressInfo& addr_info = map_url_node_id[node_address.ip_port];
-    service_feeder.removeURL(addr_info.feeder_index);
-    map_url_node_id.erase(node_address.ip_port);
+    service_feeder.removeURL(node_address.ip_port);
 }
 
-    //! remove all configured node
+//! remove all configured node
 void MultiAddressMessageChannel::removeAllNode() {
     service_feeder.clear(true);
 }
 
-    //
+//
 void  MultiAddressMessageChannel::disposeService(void *service_ptr) {
     MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);
-    map_url_node_id.erase(service->ip_port);
     if(service) delete(service);
 }
 
-    //
+//
 void* MultiAddressMessageChannel::serviceForURL(const URL& url,
                                                 uint32_t service_index) {
     MMCFeederService *service = new MMCFeederService(url.getURL());
     return static_cast<void*>(service);
 }
 
-    //! get the rpc published host and port
+bool MultiAddressMessageChannel::serviceOnlineCheck(void *service_ptr) {
+    bool result = false;
+    int retry = 3;
+    MMCFeederService *service = static_cast<MMCFeederService*>(service_ptr);
+    std::auto_ptr<MessageRequestFuture> request = MessageChannel::echoTest(service->ip_port,
+                                                                           NULL,
+                                                                           true);
+    while(--retry>0) {
+        if(request->wait(500)) {
+            retry = 0;
+            result = (request->getError() == 0);
+        }
+    }
+    return result;
+}
+
+void MultiAddressMessageChannel::timeout() {
+    service_feeder.checkForAliveService();
+    if(service_feeder.getOfflineSize() == 0) {
+        AsyncCentralManager::getInstance()->removeTimer(this);
+    }
+}
+
+//! get the rpc published host and port
 void MultiAddressMessageChannel::getRpcPublishedHostAndPort(std::string& rpc_published_host_port) {
     MessageChannel::getRpcPublishedHostAndPort(rpc_published_host_port);
 }
 
-    //! send a message
+//! send a message
 void MultiAddressMessageChannel::sendMessage(const std::string& action_domain,
                                              const std::string& action_name,
                                              CDataWrapper *message_pack,
@@ -173,10 +149,10 @@ void MultiAddressMessageChannel::sendMessage(const std::string& action_domain,
                                     on_this_thread);
         DEBUG_CODE(MAMC_DBG << "Sent message to:" << service->ip_port;)
     }
-
+    
 }
 
-    //!send an rpc request to a remote node
+//!send an rpc request to a remote node
 std::auto_ptr<MessageRequestFuture> MultiAddressMessageChannel::_sendRequestWithFuture(const std::string& action_domain,
                                                                                        const std::string& action_name,
                                                                                        CDataWrapper *request_pack,
@@ -196,12 +172,11 @@ std::auto_ptr<MessageRequestFuture> MultiAddressMessageChannel::_sendRequestWith
     return result;
 }
 
-    //!send an rpc request to a remote node
+//!send an rpc request to a remote node
 std::auto_ptr<MultiAddressMessageRequestFuture> MultiAddressMessageChannel::sendRequestWithFuture(const std::string& action_domain,
                                                                                                   const std::string& action_name,
                                                                                                   CDataWrapper *request_pack,
                                                                                                   int32_t request_timeout) {
-    retryOfflineServer(true);
     return std::auto_ptr<MultiAddressMessageRequestFuture>(new MultiAddressMessageRequestFuture(this,
                                                                                                 action_domain,
                                                                                                 action_name,

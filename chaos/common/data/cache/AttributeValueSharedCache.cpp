@@ -21,7 +21,7 @@
 #include <string>
 
 #include <chaos/common/global.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
 
 #define AVSC_LAPP_ LAPP_ << "[AttributeSetting-" << "] "

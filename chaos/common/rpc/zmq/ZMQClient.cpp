@@ -20,7 +20,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQClient.h>
 #include <chaos/common/chaos_constants.h>
-
+#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
@@ -28,6 +28,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::pool;
+
 using namespace std;
 using namespace boost;
 using namespace boost::algorithm;
@@ -46,11 +47,11 @@ static void my_free (void *data, void *hint) {
 }
 
 
-ZMQClient::ZMQClient(const string& alias):RpcClient(alias){
-};
+ZMQClient::ZMQClient(const string& alias):
+RpcClient(alias),
+zmq_timeout(1000){}
 
-ZMQClient::~ZMQClient(){
-};
+ZMQClient::~ZMQClient(){}
 
 /*
  Initialization method for output buffer
@@ -69,6 +70,11 @@ void ZMQClient::init(void *init_data) throw(CException) {
     
     //et the thread number
     zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, threadNumber);
+    
+    if(GlobalConfiguration::getInstance()->getRpcImplKVParam().count("zmq_timeout")) {
+        CHAOS_NOT_THROW(zmq_timeout = boost::lexical_cast<int>(GlobalConfiguration::getInstance()->getRpcImplKVParam()["zmq_timeout"]););
+        
+    }
     
     ZMQC_LAPP << "ConnectionPool initialized";
 }
@@ -159,12 +165,17 @@ void ZMQClient::releaseSocket(ResourcePool<void*>::ResourceSlot *socket_slot_to_
     map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release);
 }
 
+void ZMQClient::deleteSocket(ResourcePool<void*>::ResourceSlot *socket_slot_to_release) {
+    boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
+    map_socket[socket_slot_to_release->pool_identification]->releaseResource(socket_slot_to_release,
+                                                                             true);
+}
+
 //----resource pool handler-----
 void* ZMQClient::allocateResource(const std::string& pool_identification, uint32_t& alive_for_ms) {
     int err = 0;
     int linger = 0;
-    int water_mark = 1;
-    int timeout = 5000;
+    int water_mark = 5;
     
     //set the alive time to one minute
     alive_for_ms = 1000*60;
@@ -176,8 +187,8 @@ void* ZMQClient::allocateResource(const std::string& pool_identification, uint32
     } else if ((err = zmq_setsockopt(new_socket, ZMQ_LINGER, &linger, sizeof(int)))) {
     } else if ((err = zmq_setsockopt(new_socket, ZMQ_RCVHWM, &water_mark, sizeof(int)))) {
     } else if ((err = zmq_setsockopt(new_socket, ZMQ_SNDHWM, &water_mark, sizeof(int)))) {
-    } else if ((err = zmq_setsockopt(new_socket, ZMQ_SNDTIMEO, &timeout, sizeof(int)))) {
-    } else if ((err = zmq_setsockopt(new_socket, ZMQ_RCVTIMEO, &timeout, sizeof(int)))) {
+    } else if ((err = zmq_setsockopt(new_socket, ZMQ_SNDTIMEO, &zmq_timeout, sizeof(int)))) {
+    } else if ((err = zmq_setsockopt(new_socket, ZMQ_RCVTIMEO, &zmq_timeout, sizeof(int)))) {
     } else {
         string url = "tcp://";
         url.append(pool_identification);
@@ -233,7 +244,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     
     //get remote ip
     //serialize the call packet
-    ResourcePool<void*>::ResourceSlot *socket_info;
+    ResourcePool<void*>::ResourceSlot *socket_info = NULL;
     auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
     try{
         socket_info = getSocketForNFI(messageInfo);
@@ -268,6 +279,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                                             "Error initializiend rcp message",
                                             __PRETTY_FUNCTION__);
             }
+            err = 0;
         } else {
             ZMQC_LDBG << "Try to send message";
             err = zmq_sendmsg(socket_info->resource_pooled, &message, ZMQ_DONTWAIT);
@@ -281,6 +293,9 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                                                 error_message,
                                                 __PRETTY_FUNCTION__);
                 }
+                //delete socket
+                deleteSocket(socket_info);
+                socket_info = NULL;
             }else{
                 ZMQC_LDBG << "Message sent now wait for ack";
                 //ok get the answer
@@ -295,6 +310,9 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                                                     error_message,
                                                     __PRETTY_FUNCTION__);
                     }
+                    //delete socket
+                    deleteSocket(socket_info);
+                    socket_info = NULL;
                 } else {
                     //decode result of the posting message operation
                     if(messageInfo->is_request) {
@@ -317,12 +335,13 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                 }
             }
         }
+        //return socket to the pool
+        if(socket_info) {releaseSocket(socket_info);}
     }catch (std::exception& e) {
         ZMQC_LERR << "Error during message forwarding:"<< e.what();
     } catch (...) {
         ZMQC_LERR << "General error during message forwarding:";
     }
-    releaseSocket(socket_info);
     zmq_msg_close (&message);
     zmq_msg_close (&reply);
 }

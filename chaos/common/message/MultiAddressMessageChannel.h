@@ -21,8 +21,8 @@
 #define __CHAOSFramework__MultiAddressMessageChannel__
 #include <chaos/common/message/MessageChannel.h>
 #include <chaos/common/message/MultiAddressMessageRequestFuture.h>
-#include <chaos/common/network/URLServiceFeeder.h>
-
+#include <chaos/common/network/URLHAServiceFeeder.h>
+#include <chaos/common/async_central/async_central.h>
 #include <boost/thread.hpp>
 
 #include <map>
@@ -68,8 +68,10 @@ namespace chaos {
              is used to mantains the node_id with the url.
              */
             class MultiAddressMessageChannel:
-            private MessageChannel,
-            private chaos::common::network::URLServiceFeederHandler {
+            public MessageChannel,
+            protected chaos::common::async_central::TimerHandler,
+            private chaos::common::network::URLServiceFeederHandler,
+            private chaos::common::network::URLHAServiceCheckerFeederHandler {
                 friend class chaos::common::network::NetworkBroker;
                 friend class chaos::common::message::MultiAddressMessageRequestFuture;
                     //!mutex for the managment of rescheduling server
@@ -85,29 +87,7 @@ namespace chaos {
                 std::set<uint32_t> set_off_line_servers;
 
                 //! url manager
-                chaos::common::network::URLServiceFeeder service_feeder;
-
-                    //! default constructor
-                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker);
-
-                //!Base constructor
-                /*!
-                 Perform the multinode node network construction
-                 \param message_broker the broker used by this channel
-                 \param node_address a list of node that the channel used for the data forwarding
-                 */
-                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker,
-                                        chaos::common::network::CNetworkAddress& node_address);
-                //!Base constructor
-                /*!
-                 Perform the multinode node network construction
-                 \param message_broker the broker used by this channel
-                 \param node_address a list of node that the channel used for the data forwarding
-                 */
-                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker,
-                                        const std::vector<chaos::common::network::CNetworkAddress>& node_address);
-                
-                ~MultiAddressMessageChannel();
+                chaos::common::network::URLHAServiceFeeder service_feeder;
 
                     //!internal send request method
                 /*!
@@ -123,16 +103,37 @@ namespace chaos {
                                                                            chaos::common::data::CDataWrapper *request_pack,
                                                                            std::string& used_remote_address);
             protected:
-                //! the map link the url with the ndoe id
-                std::map<std::string, CNetworkAddressInfo> map_url_node_id;
+                
+                //! default constructor
+                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker);
+                
+                //!Base constructor
+                /*!
+                 Perform the multinode node network construction
+                 \param message_broker the broker used by this channel
+                 \param node_address a list of node that the channel used for the data forwarding
+                 */
+                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker,
+                                           chaos::common::network::CNetworkAddress& node_address);
+                //!Base constructor
+                /*!
+                 Perform the multinode node network construction
+                 \param message_broker the broker used by this channel
+                 \param node_address a list of node that the channel used for the data forwarding
+                 */
+                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker,
+                                           const std::vector<chaos::common::network::CNetworkAddress>& node_address);
+                
+                
+                ~MultiAddressMessageChannel();
                 
                 void  disposeService(void *service_ptr);
                 void* serviceForURL(const chaos::common::network::URL& url,
                                     uint32_t service_index);
-
-                void retryOfflineServer(bool force = false);
+                bool serviceOnlineCheck(void *service_ptr);
+                void timeout();
+                void setURLAsOffline(const std::string& offline_url);
             public:
-                const CNetworkAddressInfo& getRemoteAddressInfo(const std::string& remote_address);
                 //! add a new node to the channel
                 void addNode(const chaos::common::network::CNetworkAddress& node_address);
                 //! remove a node from the channel
@@ -165,9 +166,6 @@ namespace chaos {
                                                                                       const std::string& action_name,
                                                                                       chaos::common::data::CDataWrapper *request_pack,
                                                                                       int32_t request_timeout = 1000);
-
-                void setAddressOffline(const std::string& remote_address);
-                void setAddressOnline(const std::string& remote_address);
             };
         }
     }

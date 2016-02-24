@@ -27,7 +27,7 @@
 
 using namespace std;
 using namespace chaos;
-using namespace chaos::event;
+using namespace chaos::common::event;
 using namespace chaos::common::utility;
 
 EventServer::EventServer(const string& alias):

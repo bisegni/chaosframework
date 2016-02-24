@@ -26,4 +26,5 @@
 #include "DataServiceDataAccess.h"
 #include "SnapshotDataAccess.h"
 #include "TreeGroupDataAccess.h"
+#include "LoggingDataAccess.h"
 #endif

@@ -29,7 +29,7 @@
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/thread/MultiKeyObjectWaitSemaphore.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/network/NetworkBroker.h>
@@ -139,13 +139,13 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 
             public:
                 //! return last sendxxx error code
-                int32_t getLastErrorCode();
+                virtual int32_t getLastErrorCode();
                 
                 //! return last sendxxx error message
-                const std::string& getLastErrorMessage();
+                virtual const std::string& getLastErrorMessage();
                 
                 //! return last sendxxx error domain
-                const std::string& getLastErrorDomain();
+                virtual const std::string& getLastErrorDomain();
                 
                 //! Sena an rpc message to a remote node
                 /*!

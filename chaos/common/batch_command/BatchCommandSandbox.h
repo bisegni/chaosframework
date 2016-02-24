@@ -17,7 +17,7 @@
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
 //#include <boost/heap/priority_queue.hpp>
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/exception/exception.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValueSharedCache.h>
 #include <chaos/common/utility/StartableService.h>

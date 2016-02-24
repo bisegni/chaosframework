@@ -32,7 +32,19 @@ namespace chaos {
 		namespace data {
 			using namespace std;
 			using namespace bson;
-
+            
+            typedef enum CDataWrapperType {
+                CDataWrapperTypeNoType,
+                CDataWrapperTypeNULL,
+                CDataWrapperTypeBool,
+                CDataWrapperTypeInt32,
+                CDataWrapperTypeInt64,
+                CDataWrapperTypeDouble,
+                CDataWrapperTypeString,
+                CDataWrapperTypeBinary,
+                CDataWrapperTypeObject,
+                CDataWrapperTypeVector
+            } CDataWrapperType;
 			
 			class CDataWrapper;
 			/*!
@@ -170,6 +182,25 @@ namespace chaos {
 				//get a bool value
 				bool getBoolValue(const std::string&);
 				
+                template<typename T>
+                T getValue(const std::string& key) {
+                    T v;
+                    bsonBuilder->asTempObj().getField(key).Val(v);
+                    return v;
+                }
+                
+                template<typename T>
+                T getValueWithDefault(const std::string& key, T default_value) {
+                    T v;
+                    BSONObj o = bsonBuilder->asTempObj();
+                    if(o.hasElement(key)) {
+                        o.getField(key).Val(v);
+                    } else {
+                        v = default_value;
+                    }
+                    return v;
+                }
+                
 				//return the binary data value
 				const char* getBinaryValue(const std::string&, int&);
 				
@@ -239,8 +270,10 @@ namespace chaos {
                 bool isCDataWrapperValue(const std::string& key);
                 
                 bool isVectorValue(const std::string& key);
+                
+                CDataWrapperType getValueType(const std::string& key);
 			};
-			
+            
 			//! MutableCDataWrapper for field update
 			/*! \class MutableCDataWrapper
 			 This implementation permit to modify the existent field value
@@ -270,6 +303,12 @@ namespace chaos {
 					*reinterpret_cast< double* >( (char*)element.value() ) = newvalue;
 				}
 			};
+            
+            #define CDW_GET_SRT_WITH_DEFAULT(c, k, d) (c->hasKey(k)?c->getStringValue(k):d)
+            #define CDW_GET_BOOL_WITH_DEFAULT(c, k, d) (c->hasKey(k)?c->getBoolValue(k):d)
+            #define CDW_GET_INT32_WITH_DEFAULT(c, k, d) (c->hasKey(k)?c->getInt64Value(k):d)
+            #define CDW_GET_INT64_WITH_DEFAULT(c, k, d) (c->hasKey(k)?c->getInt32Value(k):d)
+            #define CDW_GET_DOUBLE_WITH_DEFAULT(c, k, d) (c->hasKey(k)?c->getDoubleValue(k):d)
 		}
 	}
 }

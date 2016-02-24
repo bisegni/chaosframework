@@ -24,7 +24,7 @@
 using namespace std;
 using namespace boost;
 using namespace chaos;
-using namespace chaos::event;
+using namespace chaos::common::event;
 
 AsioEventForwarder::AsioEventForwarder(const boost::asio::ip::address& multicast_address,
                                        unsigned short mPort,
