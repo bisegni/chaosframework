@@ -114,7 +114,7 @@ QVariant LogEntryTableModel::getCellUserData(int row, int column) const {
         result = tr("Domain");
         break;
     case 3:
-        result = tr("Domain");
+        result = tr("Subject");
         break;
     default:
         break;
