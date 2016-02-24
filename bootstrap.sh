@@ -318,7 +318,7 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     echo "* need boost"
     if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
         echo "Download boost $BOOST_VERSION source"
-        if !( wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://tcpdiag.dl.sourceforge.net/project/boost/boost/$BOOST_VERSION_IN_PATH/boost_$BOOST_VERSION.tar.gz" ); then
+        if !( wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://download.sourceforge.net/project/boost/boost/$BOOST_VERSION_IN_PATH/boost_$BOOST_VERSION.tar.gz" ); then
 	    echo "## cannot download boost_$BOOST_VERSION.tar.gz"
 	    exit 1
 	fi
