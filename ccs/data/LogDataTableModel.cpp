@@ -18,7 +18,7 @@ void LogDataTableModel::setLogEntry(boost::shared_ptr<LogEntry> _log_entry_ptr) 
     int counter = 0;
     FILL_BY_MAP(counter, LoggingKeyValueBoolMapIterator, _log_entry_ptr->map_bool_value, QVariant);
     FILL_BY_MAP(counter, LoggingKeyValueInt32MapIterator, _log_entry_ptr->map_int32_value, QVariant);
-    FILL_BY_MAP(counter, LoggingKeyValueInt64MapIterator, _log_entry_ptr->map_int64_value, QVariant);
+    FILL_BY_MAP(counter, LoggingKeyValueInt64MapIterator, _log_entry_ptr->map_int64_value, QVariant::fromValue<int64_t>);
     FILL_BY_MAP(counter, LoggingKeyValueDoubleMapIterator, _log_entry_ptr->map_double_value, QVariant);
     FILL_BY_MAP(counter, LoggingKeyValueStringMapIterator, _log_entry_ptr->map_string_value, QString::fromStdString);
     endResetModel();
