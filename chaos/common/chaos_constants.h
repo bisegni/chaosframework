@@ -724,6 +724,9 @@ namespace chaos {
         //! the key represent the log domain of the log entry [string]
         static const char * const PARAM_NODE_LOGGING_LOG_DOMAIN             = "mdsndk_nl_ld";
         
+        //! the key represent the log subject of the entry [string]
+        static const char * const PARAM_NODE_LOGGING_LOG_SUBJECT            = "mdsndk_nl_lsubj";
+        
         namespace ErrorLogging {
             //! the key represent the error code [int32_t]
             static const char * const PARAM_NODE_LOGGING_LOG_ERROR_CODE     = "mdsndk_nl_e_ec";

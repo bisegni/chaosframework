@@ -111,6 +111,7 @@ std::auto_ptr<CDataWrapper> GetLogForSourceUID::converEntry(LogEntry& log_entry)
     result->addInt64Value(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP, log_entry.ts);
     result->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, log_entry.source_identifier);
     result->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN, log_entry.domain);
+    result->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SUBJECT, log_entry.subject);
     
     WRITE_LOG_ATTRIBUTE_MAP_ON_OBJECT(result, addStringValue, LoggingKeyValueStringMapIterator, log_entry.map_string_value);
     WRITE_LOG_ATTRIBUTE_MAP_ON_OBJECT(result, addInt64Value, LoggingKeyValueInt64MapIterator, log_entry.map_int64_value);

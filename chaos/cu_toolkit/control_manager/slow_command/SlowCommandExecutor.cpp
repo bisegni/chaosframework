@@ -162,7 +162,8 @@ BatchCommand *SlowCommandExecutor::instanceCommandInfo(const std::string& comman
     return result;
 }
 //overlodaed command event handler
-void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
+void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
+                                             uint64_t command_seq,
                                              BatchCommandEventType::BatchCommandEventType type,
                                              void* type_value_ptr,
                                              uint32_t type_value_size) {
@@ -185,6 +186,7 @@ void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
                    faul_desc->domain.size()) {
                     //log error on metadata server
                     error_logging_channel->logError(control_unit_instance->getCUID(),
+                                                    command_alias,
                                                     faul_desc->code,
                                                     faul_desc->description,
                                                     faul_desc->domain);
@@ -203,6 +205,7 @@ void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
     
     //log command event
     command_logging_channel->logCommandState(control_unit_instance->getCUID(),
+                                             command_alias,
                                              command_seq,
                                              type);
 }

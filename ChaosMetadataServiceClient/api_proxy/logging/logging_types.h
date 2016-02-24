@@ -38,6 +38,7 @@ namespace chaos {
                     uint64_t                    sequence;
                     uint64_t                    ts;
                     std::string                 domain;
+                    std::string                 subject;
                     std::string                 source_identifier;
                     LoggingKeyValueStringMap    map_string_value;
                     LoggingKeyValueInt64Map     map_int64_value;

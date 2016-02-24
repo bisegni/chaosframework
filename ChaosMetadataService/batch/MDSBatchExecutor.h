@@ -64,7 +64,8 @@ namespace chaos{
                                                                            uint64_t scheduler_step_delay = 1000000);
                 
                 //overlodaed command event handler
-                void handleCommandEvent(uint64_t command_seq,
+                void handleCommandEvent(const std::string& command_alias,
+                                        uint64_t command_seq,
                                         common::batch_command::BatchCommandEventType::BatchCommandEventType type,
                                         void* type_value_ptr,
                                         uint32_t type_value_size);

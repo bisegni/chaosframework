@@ -58,7 +58,8 @@ new chaos::common::utility::TypedObjectInstancer< _DriverClass_, chaos::common::
                               int32_t priority = 0);
                 
                 //!create a new empty log entry for a determinate domiain
-                chaos::common::data::CDataWrapper *getNewLogEntry(const std::string& node_uid,
+                chaos::common::data::CDataWrapper *getNewLogEntry(const std::string& log_emitter,
+                                                                  const std::string& log_subject,
                                                                   const std::string& log_domain);
             public:
                 const std::string & getInstanceUUID();

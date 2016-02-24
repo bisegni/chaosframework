@@ -40,6 +40,7 @@ CException(error_code,
     if(log_chnl) {
         //log the error on mds
         log_chnl->logError(log_source,
+                           "MetadataLoggingCException",
                            error_code,
                            error_message,
                            error_domain);
@@ -49,9 +50,7 @@ CException(error_code,
 }
 
 MetadataLoggingCException::MetadataLoggingCException(const MetadataLoggingCException& _exception) throw():
-CException(_exception){
-    
-}
+CException(_exception){}
 
 MetadataLoggingCException::~MetadataLoggingCException() throw() {
     

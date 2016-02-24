@@ -35,18 +35,23 @@ ErrorLoggingChannel::~ErrorLoggingChannel() {
 }
 
 int ErrorLoggingChannel::logError(const std::string& node_uid,
+                                  const std::string& log_subject,
                                   const chaos::CException& chaos_exception) {
     return logError(node_uid,
+                    log_subject,
                     chaos_exception.errorCode,
                     chaos_exception.errorDomain,
                     chaos_exception.errorMessage);
 }
 
 int ErrorLoggingChannel::logError(const std::string& node_uid,
+                                  const std::string& log_subject,
                                   int32_t error_code,
                                   const std::string& error_message,
                                   const std::string& error_domain) {
-    CDataWrapper *log_entry = getNewLogEntry(node_uid, "error");
+    CDataWrapper *log_entry = getNewLogEntry(node_uid,
+                                             log_subject,
+                                             "error");
     log_entry->addInt32Value(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_CODE, error_code);
     log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE, error_message);
     log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN, error_domain);

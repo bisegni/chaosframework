@@ -64,6 +64,7 @@ int MongoDBLoggingDataAccess::insertNewEntry(data_access::LogEntry& log_entry) {
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << log_entry.source_identifier;
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP << mongo::Date_t(log_entry.ts);
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << log_entry.domain;
+        builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SUBJECT << log_entry.subject;
         
         //add custom attribute in log entry
         WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, data_access::LoggingKeyValueStringMapIterator, map_string_value, );
@@ -160,6 +161,8 @@ int MongoDBLoggingDataAccess::searchEntryForSource(data_access::LogEntryList& en
                         log_entry->source_identifier = it_ele->String();
                     } else if(field_name.compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN) == 0) {
                         log_entry->domain = it_ele->String();
+                    } else if(field_name.compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SUBJECT) == 0) {
+                        log_entry->subject = it_ele->String();
                     } else {
                         //custom log key
                         switch(it_ele->type()) {

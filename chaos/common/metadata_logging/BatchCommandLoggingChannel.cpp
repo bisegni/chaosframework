@@ -36,10 +36,13 @@ BatchCommandLoggingChannel::~BatchCommandLoggingChannel() {
     
 }
 
-int BatchCommandLoggingChannel::logCommandState(const std::string& node_uid,
+int BatchCommandLoggingChannel::logCommandState(const std::string& log_emitter,
+                                                const std::string& log_subject,
                                                 const uint64_t command_id,
                                                 BatchCommandEventType command_event) {
-    CDataWrapper *log_entry = getNewLogEntry(node_uid, "command");
+    CDataWrapper *log_entry = getNewLogEntry(log_emitter,
+                                             log_subject,
+                                             "command");
     log_entry->addInt64Value(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_ID, command_id);
     log_entry->addInt32Value(MetadataServerLoggingDefinitionKeyRPC::CommandLogging::PARAM_NODE_LOGGING_LOG_COMMAND_STATE, command_event);
     switch(command_event) {

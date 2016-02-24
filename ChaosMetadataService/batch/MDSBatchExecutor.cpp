@@ -145,7 +145,8 @@ chaos::common::batch_command::BatchCommand * MDSBatchExecutor::instanceCommandIn
 }
 
 //overlodaed command event handler
-void MDSBatchExecutor::handleCommandEvent(uint64_t command_seq,
+void MDSBatchExecutor::handleCommandEvent(const std::string& command_alias,
+                                          uint64_t command_seq,
                                           common::batch_command::BatchCommandEventType::BatchCommandEventType type,
                                           void* type_value_ptr,
                                           uint32_t type_value_size) {

@@ -40,7 +40,8 @@ METADATA_LOGGING_CHANNEL_INSTANCER(ErrorLoggingChannel)
                 ~BatchCommandLoggingChannel();
                 
                 //!log a detailed error on metadata server
-                int logCommandState(const std::string& node_uid,
+                int logCommandState(const std::string& log_emitter,
+                                    const std::string& log_subject,
                                     const uint64_t command_id,
                                     chaos::common::batch_command::BatchCommandEventType::BatchCommandEventType command_event);
 

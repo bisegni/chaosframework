@@ -45,15 +45,18 @@ const std::string& AbstractMetadataLogChannel::getInstanceUUID() {
     return instance_uuid;
 }
 
-CDataWrapper *AbstractMetadataLogChannel::getNewLogEntry(const std::string& node_uid,
+CDataWrapper *AbstractMetadataLogChannel::getNewLogEntry(const std::string& log_emitter,
+                                                         const std::string& log_subject,
                                                          const std::string& log_domain) {
     CDataWrapper *log_entry = new CDataWrapper();
     log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER,
-                              node_uid);
+                              log_emitter);
     log_entry->addInt64Value(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP,
                              TimingUtil::getTimeStamp());
     log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN,
                               log_domain);
+    log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SUBJECT,
+                              log_subject);
     return log_entry;
 }
 

@@ -56,7 +56,7 @@ int LogEntryTableModel::getRowCount() const {
 }
 
 int LogEntryTableModel::getColumnCount() const {
-    return 3;
+    return 4;
 }
 
 QString LogEntryTableModel::getHeaderForColumn(int column) const {
@@ -70,6 +70,9 @@ QString LogEntryTableModel::getHeaderForColumn(int column) const {
         break;
     case 2:
         result = tr("Domain");
+        break;
+    case 3:
+        result = tr("Subject");
         break;
     default:
         break;
@@ -89,6 +92,9 @@ QVariant LogEntryTableModel::getCellData(int row, int column) const {
     case 2:
         result = QString::fromStdString(helper->getLogEntryList()[row]->domain);
         break;
+    case 3:
+        result = QString::fromStdString(helper->getLogEntryList()[row]->subject);
+        break;
     default:
         break;
     }
@@ -105,6 +111,9 @@ QVariant LogEntryTableModel::getCellUserData(int row, int column) const {
         result = tr("Emitter");
         break;
     case 2:
+        result = tr("Domain");
+        break;
+    case 3:
         result = tr("Domain");
         break;
     default:

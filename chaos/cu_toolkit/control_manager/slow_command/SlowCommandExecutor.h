@@ -116,7 +116,8 @@ new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::co
                                                                    uint64_t scheduler_step_delay);
 
 					//overlodaed command event handler
-					void handleCommandEvent(uint64_t command_seq,
+					void handleCommandEvent(const std::string& command_alias,
+                                            uint64_t command_seq,
 											chaos_batch::BatchCommandEventType::BatchCommandEventType type,
 											void* type_value_ptr,
 											uint32_t type_value_size);
