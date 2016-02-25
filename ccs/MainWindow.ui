@@ -92,7 +92,7 @@
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
-     <string>Tools</string>
+     <string>Configurations</string>
     </property>
     <addaction name="actionPreferences"/>
    </widget>
@@ -111,6 +111,7 @@
     </property>
     <addaction name="actionSnapshot_Manager"/>
     <addaction name="actionGroup_Manager"/>
+    <addaction name="actionLog_Browser"/>
    </widget>
    <addaction name="menuNode"/>
    <addaction name="menuData"/>
@@ -229,6 +230,11 @@
   <action name="actionGroup_Manager">
    <property name="text">
     <string>Group Manager</string>
+   </property>
+  </action>
+  <action name="actionLog_Browser">
+   <property name="text">
+    <string>Log Browser</string>
    </property>
   </action>
  </widget>

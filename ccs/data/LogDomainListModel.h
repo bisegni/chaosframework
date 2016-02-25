@@ -21,8 +21,10 @@ protected:
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 public:
     LogDomainListModel(QObject *parent=0);
-    //update the list with all the domain emitted by the uid
+    //update the list with all the domain emitted by source uid
     void updateDomainListForUID(const QString& node_uid);
+    //update the list with all the domain emitted by all sources
+    void updateDomainListForUID();
     //!return all checked domain
     void getActiveDomains(chaos::metadata_service_client::api_proxy::logging::LogDomainList &checked_domain);
     //! check if a domain is selected

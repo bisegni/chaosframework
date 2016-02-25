@@ -96,7 +96,8 @@ void SubmitEntry::completeLogEntry(CDataWrapper *api_data,
         it++) {
         if(it->compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER) == 0 ||
            it->compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP) == 0 ||
-           it->compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN) == 0 ) continue;
+           it->compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN) == 0 ||
+           it->compare(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SUBJECT) == 0) continue;
         
         if(api_data->isBoolValue(*it)) {
             new_log_entry.map_bool_value.insert(make_pair(*it,api_data->getBoolValue(*it)));

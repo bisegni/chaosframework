@@ -93,7 +93,9 @@ SOURCES += main.cpp\
     data/LogDomainListModel.cpp \
     data/LogEntryTableModel.cpp \
     api_async_processor/ApiHandler.cpp \
-    data/LogDataTableModel.cpp
+    data/LogDataTableModel.cpp \
+    log_browser/LogBrowser.cpp \
+    data/LogEntryAdvancedSearchTableModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -187,7 +189,9 @@ HEADERS  += \
     data/LogDomainListModel.h \
     data/LogEntryTableModel.h \
     data/LogDataTableModel.h \
-    data/SearchPager.h
+    data/SearchPager.h\
+    log_browser/LogBrowser.h \
+    data/LogEntryAdvancedSearchTableModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -210,7 +214,8 @@ FORMS    += \
     snapshot/NewSnapshot.ui \
     tree_group/TreeGroupManager.ui \
     tree_group/AddNewDomain.ui \
-    widget/CNodeLogWidget.ui
+    widget/CNodeLogWidget.ui \
+    log_browser/LogBrowser.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

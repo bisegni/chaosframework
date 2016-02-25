@@ -21,6 +21,7 @@
 
 #include "LoggingApiGroup.h"
 #include "SubmitEntry.h"
+#include "SearchLogEntry.h"
 #include "GetLogForSourceUID.h"
 #include "GetLogDomainForSourceUID.h"
 
@@ -32,6 +33,7 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(LoggingApiGroup,
 LoggingApiGroup::LoggingApiGroup():
 AbstractApiGroup(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN){
     addApi<SubmitEntry>();
+    addApi<SearchLogEntry>();
     addApi<GetLogForSourceUID>();
     addApi<GetLogDomainForSourceUID>();
 }

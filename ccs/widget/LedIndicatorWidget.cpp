@@ -19,10 +19,12 @@ void LedIndicatorWidget::paintEvent(QPaintEvent *)
     QMutexLocker l(&map_mutex);
     if(map_state_info.contains(current_state) &&
             (blink_counter%2) == 0) {
-        QSize aSize = map_state_info[current_state]->icon->actualSize(size());
-        painter.drawPixmap(QRect(0,0,width(),height()),
-                           map_state_info[current_state]->icon->pixmap(aSize),
-                           QRect(0,0,aSize.width(),aSize.height()));
+        if(map_state_info[current_state]->icon.isNull() == false) {
+            QSize aSize = map_state_info[current_state]->icon->actualSize(size());
+            painter.drawPixmap(QRect(0,0,width(),height()),
+                               map_state_info[current_state]->icon->pixmap(aSize),
+                               QRect(0,0,aSize.width(),aSize.height()));
+        }
     } else {
         //no state
     }

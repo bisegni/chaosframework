@@ -7,6 +7,7 @@
 #include "preference/PreferenceDialog.h"
 #include "snapshot/SnapshotManager.h"
 #include "tree_group/TreeGroupManager.h"
+#include "log_browser/LogBrowser.h"
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
@@ -182,4 +183,8 @@ void MainWindow::on_actionSnapshot_Manager_triggered() {
 
 void MainWindow::on_actionGroup_Manager_triggered() {
     command_presenter->showCommandPresenter(new TreeGroupManager());
+}
+
+void MainWindow::on_actionLog_Browser_triggered() {
+    command_presenter->showCommandPresenter(new LogBrowser());
 }

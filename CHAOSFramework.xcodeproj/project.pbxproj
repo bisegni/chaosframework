@@ -455,6 +455,11 @@
 		32809C7F1A9C847400C02C12 /* ControlUnitDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32809C7D1A9C847400C02C12 /* ControlUnitDataAccess.cpp */; };
 		32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32809C801A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp */; };
 		3283B88A1C7E0CCE0019255B /* Bimap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3283B8881C7E0CCE0019255B /* Bimap.h */; };
+		3283B88E1C7F31D20019255B /* SearchLogEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3283B88B1C7F31D20019255B /* SearchLogEntry.cpp */; };
+		3283B88F1C7F31D20019255B /* SearchLogEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 3283B88C1C7F31D20019255B /* SearchLogEntry.h */; };
+		3283B8901C7F31D20019255B /* SearchLogEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 3283B88C1C7F31D20019255B /* SearchLogEntry.h */; };
+		3283B8931C7F35C30019255B /* SearchLogEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3283B8911C7F35C30019255B /* SearchLogEntry.cpp */; };
+		3283B8961C7F37550019255B /* LogUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3283B8941C7F37550019255B /* LogUtility.cpp */; };
 		328556A017F2E33A00A64ED2 /* DirectIOClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */; };
 		328556A117F2E33A00A64ED2 /* DirectIOClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3285569F17F2E33A00A64ED2 /* DirectIOClient.h */; };
 		328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328556A217F2E36000A64ED2 /* DirectIOServer.cpp */; };
@@ -1507,6 +1512,12 @@
 		3281514619B7628000C26694 /* mongo_db_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mongo_db_types.h; sourceTree = "<group>"; };
 		3281D35A18A68532005A0828 /* DirectIOChannelGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOChannelGlobal.h; sourceTree = "<group>"; };
 		3283B8881C7E0CCE0019255B /* Bimap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bimap.h; sourceTree = "<group>"; };
+		3283B88B1C7F31D20019255B /* SearchLogEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchLogEntry.cpp; sourceTree = "<group>"; };
+		3283B88C1C7F31D20019255B /* SearchLogEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchLogEntry.h; sourceTree = "<group>"; };
+		3283B8911C7F35C30019255B /* SearchLogEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchLogEntry.cpp; sourceTree = "<group>"; };
+		3283B8921C7F35C30019255B /* SearchLogEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchLogEntry.h; sourceTree = "<group>"; };
+		3283B8941C7F37550019255B /* LogUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogUtility.cpp; sourceTree = "<group>"; };
+		3283B8951C7F37550019255B /* LogUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogUtility.h; sourceTree = "<group>"; };
 		3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClient.cpp; sourceTree = "<group>"; };
 		3285569F17F2E33A00A64ED2 /* DirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClient.h; sourceTree = "<group>"; };
 		328556A217F2E36000A64ED2 /* DirectIOServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOServer.cpp; sourceTree = "<group>"; };
@@ -3280,6 +3291,8 @@
 				3270E06F1C6CBBE600105726 /* SubmitEntry.h */,
 				32ED0DD81C72152700B9581A /* GetLogForSourceUID.cpp */,
 				32ED0DD91C72152700B9581A /* GetLogForSourceUID.h */,
+				3283B8911C7F35C30019255B /* SearchLogEntry.cpp */,
+				3283B8921C7F35C30019255B /* SearchLogEntry.h */,
 				327C6A231C747E4A002DA5A6 /* GetLogDomainForSourceUID.cpp */,
 				327C6A241C747E4A002DA5A6 /* GetLogDomainForSourceUID.h */,
 			);
@@ -3745,6 +3758,8 @@
 			children = (
 				32B2999F1BDA7CAA000D3716 /* CUCommonUtility.cpp */,
 				32B299A01BDA7CAA000D3716 /* CUCommonUtility.h */,
+				3283B8941C7F37550019255B /* LogUtility.cpp */,
+				3283B8951C7F37550019255B /* LogUtility.h */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -4011,6 +4026,8 @@
 			children = (
 				32D745EA1C723BDD00F4D719 /* GetLogForSourceUID.cpp */,
 				32D745EB1C723BDD00F4D719 /* GetLogForSourceUID.h */,
+				3283B88B1C7F31D20019255B /* SearchLogEntry.cpp */,
+				3283B88C1C7F31D20019255B /* SearchLogEntry.h */,
 				327C6A261C74E255002DA5A6 /* GetLogDomainForSourceUID.cpp */,
 				327C6A271C74E255002DA5A6 /* GetLogDomainForSourceUID.h */,
 				32AFA9D61C77224F00640BFA /* logging_types.h */,
@@ -4354,6 +4371,7 @@
 				32B5C9591C6B97590021159C /* ErrorLoggingChannel.h in Headers */,
 				3235110A17B3EAE500E39E14 /* TemplatedConcurrentQueue.h in Headers */,
 				328556A517F2E36000A64ED2 /* DirectIOServer.h in Headers */,
+				3283B88F1C7F31D20019255B /* SearchLogEntry.h in Headers */,
 				329C1F021B5540F900A84D55 /* MetricCollectorIO.h in Headers */,
 				3296032A1876B45000CDCADA /* BatchCommandSandboxEventHandler.h in Headers */,
 				328E36ED1786C00D00C1564D /* PluginDefinition.h in Headers */,
@@ -4515,6 +4533,7 @@
 				327F39B81AEAA2850000C845 /* DeleteDS.h in Headers */,
 				32D746051C7367A200F4D719 /* event.h in Headers */,
 				32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */,
+				3283B8901C7F31D20019255B /* SearchLogEntry.h in Headers */,
 				3252F35D1C298755004436A8 /* GetNodeChilds.h in Headers */,
 				327C6A291C74E255002DA5A6 /* GetLogDomainForSourceUID.h in Headers */,
 				3239EF531C0EFEB20052BE61 /* DeleteSnapshot.h in Headers */,
@@ -4903,6 +4922,7 @@
 				320530DA1AE92D770064275B /* DataServiceDataAccess.cpp in Sources */,
 				32B299A11BDA7CAA000D3716 /* CUCommonUtility.cpp in Sources */,
 				32A40D471A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp in Sources */,
+				3283B8931C7F35C30019255B /* SearchLogEntry.cpp in Sources */,
 				32CE2DA81C328E99004AC2A3 /* DeleteNode.cpp in Sources */,
 				32B419341B16148A00C3CA7D /* SetInputDatasetAttributeValues.cpp in Sources */,
 				32CAC9E11AE6988200DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
@@ -4936,6 +4956,7 @@
 				32B4193B1B17715700C3CA7D /* ApplyChangeSet.cpp in Sources */,
 				3270E0731C6CBFDE00105726 /* LoggingDataAccess.cpp in Sources */,
 				32761A3C1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */,
+				3283B8961C7F37550019255B /* LogUtility.cpp in Sources */,
 				32568C8B1B3D54650006988C /* UpdatePropertyCommand.cpp in Sources */,
 				32B1E8161B2EDB4700221E49 /* CommandInstanceSubmit.cpp in Sources */,
 				32E09CFB1C0E002F0069752F /* CreateNewSnapshot.cpp in Sources */,
@@ -5257,6 +5278,7 @@
 				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				32D746001C73399900F4D719 /* AbstractEventHandler.cpp in Sources */,
+				3283B88E1C7F31D20019255B /* SearchLogEntry.cpp in Sources */,
 				3239EF591C0F26D90052BE61 /* GetAllSnapshot.cpp in Sources */,
 				32D745F81C73388900F4D719 /* AlertEventHandler.cpp in Sources */,
 				32E2B1B41C32A60D00FCFB42 /* DeleteNode.cpp in Sources */,

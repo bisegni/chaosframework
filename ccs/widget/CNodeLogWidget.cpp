@@ -2,6 +2,7 @@
 #include "ui_CNodeLogWidget.h"
 
 #include <QDebug>
+#include <QMessageBox>
 #include <QIntValidator>
 
 using namespace chaos::metadata_service_client;
@@ -49,6 +50,15 @@ void CNodeLogWidget::initChaosContent() {
     ui->tableViewLogData->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableViewLogData->setSelectionMode(QAbstractItemView::MultiSelection);
 
+    //setup refresh delay
+    ui->lineEditRefreshUpdate->setValidator(new QIntValidator(10, 60, this));
+    refresh_timer.setTimerType(Qt::VeryCoarseTimer);
+    refresh_timer.setInterval(ui->lineEditRefreshUpdate->text().toInt()*1000);
+    connect(&refresh_timer,
+            SIGNAL(timeout()),
+            SLOT(timeoutUpdateTimer()));
+    refresh_timer.start();
+
     //register for log
     ChaosMetadataServiceClient::getInstance()->registerEventHandler(this);
 }
@@ -56,6 +66,9 @@ void CNodeLogWidget::initChaosContent() {
 void CNodeLogWidget::deinitChaosContent() {
     //remove log handler
     ChaosMetadataServiceClient::getInstance()->deregisterEventHandler(this);
+
+    //stop timer
+    refresh_timer.start();
 }
 
 void CNodeLogWidget::updateChaosContent() {
@@ -91,10 +104,11 @@ void CNodeLogWidget::handleLogEvent(const std::string source,
 }
 
 void CNodeLogWidget::updateEntryList() {
+    if(!isVisible()) return;
     logging::LogDomainList domain_list;
     domain_list_model.getActiveDomains(domain_list);
     entry_table_model.updateEntriesList(nodeUID(),
-                                         domain_list);
+                                        domain_list);
 }
 
 void CNodeLogWidget::logTypesDataChanged(const QModelIndex& top_left,
@@ -111,8 +125,6 @@ void CNodeLogWidget::logEntriesTableSelectionChanged(const QModelIndex& current_
     } else {
         data_table_model.clear();
     }
-
-
 }
 
 void CNodeLogWidget::on_pushButtonUpdateLogTypes_clicked() {
@@ -121,7 +133,15 @@ void CNodeLogWidget::on_pushButtonUpdateLogTypes_clicked() {
 
 void CNodeLogWidget::on_lineEditMaxNumberOfResult_returnPressed() {
     setMaxResultItem(ui->lineEditMaxNumberOfResult->text().toUInt());
-    if(isVisible()){
-        updateEntryList();
-    }
+    updateEntryList();
+}
+
+void CNodeLogWidget::on_lineEditRefreshUpdate_editingFinished() {
+    //update delay
+    refresh_timer.setInterval(ui->lineEditRefreshUpdate->text().toInt()*1000);
+}
+
+void CNodeLogWidget::timeoutUpdateTimer() {
+    updateEntryList();
+    qDebug() << "Timer timout";
 }

@@ -59,6 +59,11 @@ void LogDomainListModel::updateDomainListForUID(const QString &node_uid) {
                                   GET_CHAOS_API_PTR(logging::GetLogDomainForSourceUID)->execute(node_uid.toStdString()));
 }
 
+void LogDomainListModel::updateDomainListForUID() {
+    api_submitter.submitApiResult("LogDomainListModel::load_domain_list",
+                                  GET_CHAOS_API_PTR(logging::GetLogDomainForSourceUID)->execute());
+}
+
 void LogDomainListModel::getActiveDomains(logging::LogDomainList& checked_domain) {
     for(int idx = 0;
         idx < checked_index.size();

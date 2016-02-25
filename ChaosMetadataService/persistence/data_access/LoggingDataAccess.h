@@ -56,6 +56,8 @@ namespace chaos {
                 
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, LogDomainList);
                 
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, LogSourceList);
+                
                 class LoggingDataAccess:
                 public chaos::service_common::persistence::data_access::AbstractDataAccess {
                     
@@ -88,13 +90,32 @@ namespace chaos {
                                                      uint64_t start_sequence_id,
                                                      uint32_t page_length) = 0;
                     
+                    //! perform and advanced search on log entries
+                    /*!
+                     perform a simple search on node filtering on type
+                     \param entry_list tge list of the current page of the entries found
+                     \param search_string is the tetxt serached in all key of all entries
+                     \param domain filter for specific domain
+                     \param start_timestamp if > 0 will be used the timestamp after wich we consider the entries
+                     \param end_timestamp if > 0 will be used the timestamp before wich we consider the entries
+                     \param start_sequence_id is identified the sequence after wich we need to search
+                     \param page_length is the maximum number of the element to return
+                     */
+                    virtual int searchEntryAdvanced(LogEntryList& entry_list,
+                                                    const std::string& search_string,
+                                                    const std::vector<std::string>& domain,
+                                                    uint64_t start_timestamp,
+                                                    uint64_t end_timestamp,
+                                                    uint64_t start_sequence_id,
+                                                    uint32_t page_length) = 0;
+                    
                     //!Return all log domain found for a determinated source
                     /*!
                      \param entry_list the list that will contains the found log domains
                      \param source_uid is the source uid for wich we need to found the log domains
                      */
                     virtual int getLogDomainsForSource(LogDomainList& entry_list,
-                                                       const std::string& source_uid) = 0;
+                                                       const LogSourceList& source_uids) = 0;
                 };
             }
         }

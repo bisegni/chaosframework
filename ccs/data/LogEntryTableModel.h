@@ -6,6 +6,9 @@
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
+#include <string>
+#include <vector>
+
 class LogEntryTableModel:
         public ChaosAbstractTableModel,
         public ApiHandler {
@@ -16,7 +19,7 @@ public:
     void updateEntriesList(const QString& node_uid,
                             const chaos::metadata_service_client::api_proxy::logging::LogDomainList& domain_list);
     boost::shared_ptr<chaos::metadata_service_client::api_proxy::logging::LogEntry> getLogEntryForRow(unsigned int row);
-    void clear();
+    virtual void clear();
     void setMaxResultItem(uint32_t _number_of_max_result);
 protected:
     int getRowCount() const;
@@ -30,8 +33,8 @@ protected:
 
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
-private:
-    QString node_uid;
+protected:
+    bool show_source_column;
     uint32_t number_of_max_result;
     ApiSubmitter api_submitter;
     chaos::metadata_service_client::api_proxy::logging::LogDomainList domain_list;

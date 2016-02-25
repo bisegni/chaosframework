@@ -6,20 +6,21 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::logging;
 
+#define TS_TO_STR(ts) QDateTime::fromMSecsSinceEpoch(ts, Qt::LocalTime).toString("dd-MM-yy hh.mm.ss.zzz")
+
 LogEntryTableModel::LogEntryTableModel(QObject *parent):
     ChaosAbstractTableModel(parent),
     ApiHandler(),
     api_submitter(this),
-    number_of_max_result(0){}
+    number_of_max_result(0),
+    show_source_column(false){}
 
 //!update log entries for node uid as emitter and log domain list to inclue
 void LogEntryTableModel::updateEntriesList(const QString& _node_uid,
                                            const LogDomainList& _domain_list) {
-    node_uid = _node_uid;
-    domain_list = _domain_list;
     api_submitter.submitApiResult("LogEntryTableModel::load_entry_list",
-                                  GET_CHAOS_API_PTR(logging::GetLogForSourceUID)->execute(node_uid.toStdString(),
-                                                                                          domain_list,
+                                  GET_CHAOS_API_PTR(logging::GetLogForSourceUID)->execute(_node_uid.toStdString(),
+                                                                                          _domain_list,
                                                                                           0,
                                                                                           number_of_max_result));
 }
@@ -56,86 +57,153 @@ int LogEntryTableModel::getRowCount() const {
 }
 
 int LogEntryTableModel::getColumnCount() const {
-    return 4;
+    return show_source_column?4:3;
 }
 
 QString LogEntryTableModel::getHeaderForColumn(int column) const {
     QString result;
-    switch (column) {
-    case 0:
-        result = tr("Timestamp");
-        break;
-    case 1:
-        result = tr("Emitter");
-        break;
-    case 2:
-        result = tr("Domain");
-        break;
-    case 3:
-        result = tr("Subject");
-        break;
-    default:
-        break;
+    if(show_source_column) {
+        switch (column) {
+        case 0:
+            result = tr("Timestamp");
+            break;
+        case 1:
+            result = tr("Emitter");
+            break;
+        case 2:
+            result = tr("Domain");
+            break;
+        case 3:
+            result = tr("Subject");
+            break;
+        default:
+            break;
+        }
+    }else {
+        switch (column) {
+        case 0:
+            result = tr("Timestamp");
+            break;
+        case 1:
+            result = tr("Domain");
+            break;
+        case 2:
+            result = tr("Subject");
+            break;
+        default:
+            break;
+        }
     }
     return result;
 }
 
 QVariant LogEntryTableModel::getCellData(int row, int column) const {
     QString result;
-    switch (column) {
-    case 0:
-        result = QDateTime::fromMSecsSinceEpoch(helper->getLogEntryList()[row]->ts, Qt::LocalTime).toString();
-        break;
-    case 1:
-        result = QString::fromStdString(helper->getLogEntryList()[row]->source_identifier);
-        break;
-    case 2:
-        result = QString::fromStdString(helper->getLogEntryList()[row]->domain);
-        break;
-    case 3:
-        result = QString::fromStdString(helper->getLogEntryList()[row]->subject);
-        break;
-    default:
-        break;
+    if(show_source_column) {
+        switch (column) {
+        case 0:
+            result = TS_TO_STR(helper->getLogEntryList()[row]->ts);
+            break;
+        case 1:
+            result = QString::fromStdString(helper->getLogEntryList()[row]->source_identifier);
+            break;
+        case 2:
+            result = QString::fromStdString(helper->getLogEntryList()[row]->domain);
+            break;
+        case 3:
+            result = QString::fromStdString(helper->getLogEntryList()[row]->subject);
+            break;
+        default:
+            break;
+        }
+    }else {
+        switch (column) {
+        case 0:
+            result = TS_TO_STR(helper->getLogEntryList()[row]->ts);
+            break;
+        case 1:
+            result = QString::fromStdString(helper->getLogEntryList()[row]->domain);
+            break;
+        case 2:
+            result = QString::fromStdString(helper->getLogEntryList()[row]->subject);
+            break;
+        default:
+            break;
+        }
     }
     return result;
 }
 
 QVariant LogEntryTableModel::getCellUserData(int row, int column) const {
     QString result;
-    switch (column) {
-    case 0:
-        result = tr("Timestamp");
-        break;
-    case 1:
-        result = tr("Emitter");
-        break;
-    case 2:
-        result = tr("Domain");
-        break;
-    case 3:
-        result = tr("Subject");
-        break;
-    default:
-        break;
+    if(show_source_column) {
+        switch (column) {
+        case 0:
+            result = tr("Timestamp");
+            break;
+        case 1:
+            result = tr("Emitter");
+            break;
+        case 2:
+            result = tr("Domain");
+            break;
+        case 3:
+            result = tr("Subject");
+            break;
+        default:
+            break;
+        }
+    }else {
+        switch (column) {
+        case 0:
+            result = tr("Timestamp");
+            break;
+        case 1:
+            result = tr("Domain");
+            break;
+        case 2:
+            result = tr("Subject");
+            break;
+        default:
+            break;
+        }
     }
     return result;
 }
 
 QVariant LogEntryTableModel::getTooltipTextForData(int row, int column) const {
     QString result;
-    switch (column) {
-    case 0:
-        result = tr("The timestamp when was emitted the entry");
-        break;
-    case 1:
-        result = tr("The source of the entry");
-        break;
-    case 2:
-        result = tr("The log domain of the entry");
-        break;
-    default:
-        break;
+    if(show_source_column) {
+        switch (column) {
+        case 0:
+            result = QString("The timestamp when was emitted the entry[%1]").arg(TS_TO_STR(helper->getLogEntryList()[row]->ts));
+            break;
+        case 1:
+            result = tr("The source of the entry");
+            break;
+        case 2:
+            result = tr("The log domain of the entry");
+            break;
+        case 3:
+            result = tr("The subject that has generate the log entry");
+            break;
+        default:
+            break;
+        }
+    }else {
+        switch (column) {
+        case 0:
+            result = QString("The timestamp when was emitted the entry[%1]").arg(TS_TO_STR(helper->getLogEntryList()[row]->ts));
+            break;
+        case 1:
+            result = tr("The log domain of the entry");
+            break;
+        case 2:
+            result = tr("The subject that has generate the log entry");
+            break;
+        default:
+            break;
+        }
     }
     return result;
 }

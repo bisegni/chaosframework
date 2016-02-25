@@ -10,7 +10,8 @@ SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/mongodb/MongoDBHACon
 SET(cnd_src  ${cnd_src} ../chaos_service_common/persistence/data_access/AbstractDataAccess.cpp
 						../chaos_service_common/persistence/data_access/AbstractPersistenceDriver.cpp)
 
-SET(cnd_src  ${cnd_src}	common/CUCommonUtility.cpp)
+SET(cnd_src  ${cnd_src}	common/CUCommonUtility.cpp
+                        common/LogUtility.cpp)
 
 SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
                         api/AbstractApi.cpp
@@ -18,6 +19,7 @@ SET(cnd_src  ${cnd_src}	api/ApiManagment.cpp
 
 SET(cnd_src  ${cnd_src}	api/logging/LoggingApiGroup.cpp
                         api/logging/SubmitEntry.cpp
+                        api/logging/SearchLogEntry.cpp
                         api/logging/GetLogForSourceUID.cpp
                         api/logging/GetLogDomainForSourceUID.cpp)
 

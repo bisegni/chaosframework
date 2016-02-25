@@ -26,6 +26,7 @@
 //---include all api header
 
 //----------------------------logging----------------------------------------
+#include <ChaosMetadataServiceClient/api_proxy/logging/SearchLogEntry.h>
 #include <ChaosMetadataServiceClient/api_proxy/logging/GetLogForSourceUID.h>
 #include <ChaosMetadataServiceClient/api_proxy/logging/GetLogDomainForSourceUID.h>
 

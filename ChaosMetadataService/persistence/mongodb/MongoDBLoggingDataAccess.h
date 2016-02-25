@@ -48,6 +48,8 @@ namespace chaos {
                     mongo::Query getNextPagedQuery(uint64_t last_sequence_before_this_page,
                                                    const std::string& source_uid,
                                                    const std::vector<std::string>& domain);
+                    
+                    boost::shared_ptr<data_access::LogEntry> getEntryByBSON(const mongo::BSONObj& entry_bson);
                 protected:
                     MongoDBLoggingDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBLoggingDataAccess();
@@ -63,8 +65,16 @@ namespace chaos {
                                              uint64_t start_sequence_id,
                                              uint32_t page_length);
                     //! Inherited method
+                    int searchEntryAdvanced(data_access::LogEntryList& entry_list,
+                                            const std::string& search_string,
+                                            const std::vector<std::string>& domain,
+                                            uint64_t start_timestamp,
+                                            uint64_t end_timestamp,
+                                            uint64_t start_sequence_id,
+                                            uint32_t page_length);
+                    //! Inherited method
                     int getLogDomainsForSource(data_access::LogDomainList& entry_list,
-                                               const std::string& source_uid);
+                                               const data_access::LogSourceList& source_uids);
                 };
             }
         }

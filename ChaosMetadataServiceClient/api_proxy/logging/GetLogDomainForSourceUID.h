@@ -49,13 +49,25 @@ namespace chaos {
                 protected:
                     API_PROXY_CD_DECLARATION(GetLogDomainForSourceUID)
                 public:
-                    //! Get all log types
+                    //! Get all log types for all source
+                    /*!
+                     return all emitted logs types by aall sources
+                     */
+                    ApiProxyResult execute();
+                    
+                    //! Get all log types for a single source
                     /*!
                      return all emitted logs types by a source uid
                      \param source node that has emitted the log types
                      */
                     ApiProxyResult execute(const std::string& source);
                     
+                    //! Get all log types for multiple source
+                    /*!
+                     return all emitted logs types by multiple source uid
+                     \param source nodes that has emitted the log types
+                     */
+                    ApiProxyResult execute(const std::vector<std::string>& source);
                     
                     static std::auto_ptr<GetLogDomainForSourceUIDHelper> getHelper(chaos::common::data::CDataWrapper *api_result);
                 };

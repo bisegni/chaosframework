@@ -30,9 +30,26 @@ API_PROXY_CD_DEFINITION(GetLogDomainForSourceUID,
                         MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
                         "getLogDomainForSourceUID");
 
+ApiProxyResult GetLogDomainForSourceUID::execute() {
+    return callApi();
+}
+
 ApiProxyResult GetLogDomainForSourceUID::execute(const std::string& source) {
     std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
     pack->addStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, source);
+    return callApi(pack.release());
+}
+
+ApiProxyResult GetLogDomainForSourceUID::execute(const std::vector<std::string>& source) {
+    std::auto_ptr<CDataWrapper> pack(new CDataWrapper());
+    if(source.size()) {
+        for(std::vector<std::string>::const_iterator it= source.begin();
+            it!= source.end();
+            it++) {
+            pack->appendStringToArray(*it);
+        }
+        pack->finalizeArrayForKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER);
+    }
     return callApi(pack.release());
 }
 

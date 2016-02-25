@@ -44,18 +44,31 @@ chaos::common::data::CDataWrapper *GetLogDomainForSourceUID::execute(CDataWrappe
     int err = 0;
     CDataWrapper *result = NULL;
     LogDomainList domain_list;
-    //check for mandatory attributes
-    CHECK_CDW_THROW_AND_LOG(api_data, L_GLTFS_ERR, -1, "No parameter found");
-    CHECK_KEY_THROW_AND_LOG(api_data, MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, L_GLTFS_ERR, -2, "The log timestamp key is mandatory");
-    CHAOS_LASSERT_EXCEPTION(api_data->isStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER), L_GLTFS_ERR, -3, "The log timestamp key needs to be a string value");
     
     GET_DATA_ACCESS(LoggingDataAccess, l_da, -4);
     
-    const std::string source  = api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER);
+    std::vector<std::string> source_id_to_include;
+    if(api_data &&
+       api_data->hasKey(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER)) {
+        //we have domain
+        if(api_data->isStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER)) {
+            source_id_to_include.push_back(api_data->getStringValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER));
+        } else if(api_data->isVectorValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER)) {
+            std::auto_ptr<CMultiTypeDataArrayWrapper> domain_vec(api_data->getVectorValue(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER));
+            for(int idx = 0;
+                idx < domain_vec->size();
+                idx++){
+                source_id_to_include.push_back(domain_vec->getStringElementAtIndex(idx));
+            }
+        } else {
+            LOG_AND_TROW_FORMATTED(L_GLTFS_ERR, -5, "Source identifier key '%1%' need to be string or array of string",%MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER);
+        }
+        
+    }
     
     if((err = l_da->getLogDomainsForSource(domain_list,
-                                           source))) {
-        LOG_AND_TROW_FORMATTED(L_GLTFS_ERR, err, "Error searching log types for %1%", %source);
+                                           source_id_to_include))) {
+        LOG_AND_TROW(L_GLTFS_ERR, err, "Error searching log types");
     }
     if(domain_list.size()) {
         std::auto_ptr<CDataWrapper> tmp_result(new CDataWrapper());

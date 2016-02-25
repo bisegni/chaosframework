@@ -6,6 +6,7 @@
 #include "../data/LogEntryTableModel.h"
 #include "../data/LogDataTableModel.h"
 
+#include <QTimer>
 #include <QWidget>
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
@@ -37,6 +38,7 @@ protected:
     void handleLogEvent(const std::string source,
                         const std::string domain);
 private slots:
+    void timeoutUpdateTimer();
     void logTypesDataChanged(const QModelIndex& top_left,
                              const QModelIndex& bottom_right,
                              const QVector<int>& roles);
@@ -47,7 +49,10 @@ private slots:
 
     void on_lineEditMaxNumberOfResult_returnPressed();
 
+    void on_lineEditRefreshUpdate_editingFinished();
+
 private:
+    QTimer              refresh_timer;
     Ui::CNodeLogWidget *ui;
     LogDomainListModel  domain_list_model;
     LogEntryTableModel  entry_table_model;
