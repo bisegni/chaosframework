@@ -264,6 +264,7 @@ int MongoDBLoggingDataAccess::searchEntryAdvanced(LogEntryList& entry_list,
     
     if(query_arr.isEmpty() == false) {
         q = BSON("$and" << query_arr);
+        q = q.sort(BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP<<(int)-1));
     }
     
     //remove search field from result
