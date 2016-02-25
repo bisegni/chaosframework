@@ -76,10 +76,11 @@ void LogBrowser::on_pushButtonStartSearch_clicked() {
     uint64_t start_ts = 0;
     uint64_t end_ts = 0;
 
-     if(ui->checkBoxSearchDate->isChecked()) {
-         start_ts = ui->dateTimeEditStartDate->dateTime().toUTC().currentMSecsSinceEpoch();
-         end_ts = ui->dateTimeEditEndDate->dateTime().toUTC().currentMSecsSinceEpoch();
-     }
+    if(ui->checkBoxSearchDate->isChecked()) {
+        start_ts = ui->dateTimeEditStartDate->dateTime().toUTC().toMSecsSinceEpoch();
+        end_ts = ui->dateTimeEditEndDate->dateTime().toUTC().toMSecsSinceEpoch();
+    }
+    qDebug() << "start_ts:" << start_ts << " end_ts:" << end_ts;
     log_domain_list_model.getActiveDomains(domain_list);
     log_entry_table_model.updateEntriesList(ui->lineEditSearchText->text(),
                                             domain_list,
