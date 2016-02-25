@@ -73,8 +73,9 @@ int MongoDBLoggingDataAccess::insertNewEntry(LogEntry& log_entry) {
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << log_entry.domain;
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SUBJECT << log_entry.subject;
         
-        //ppend subject to the search string
-        search_field.append(log_entry.subject);search_field.append("|");
+        //append source and subject to the search string
+        search_field.append(log_entry.source_identifier); search_field.append("|");
+        search_field.append(log_entry.subject); search_field.append("|");
         
         //add custom attribute in log entry
         WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, LoggingKeyValueStringMapIterator, map_string_value, , search_field);
@@ -264,9 +265,9 @@ int MongoDBLoggingDataAccess::searchEntryAdvanced(LogEntryList& entry_list,
     
     if(query_arr.isEmpty() == false) {
         q = BSON("$and" << query_arr);
-        q = q.sort(BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP<<(int)-1));
     }
-    
+    q = q.sort(BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP<<(int)-1));
+
     //remove search field from result
     mongo::BSONObj p = BSON("advanced_search"<< 0);
     DEBUG_CODE(MDBLDA_DBG<<log_message("searchEntryForSource",
