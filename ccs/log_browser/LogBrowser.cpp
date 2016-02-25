@@ -10,6 +10,9 @@ LogBrowser::LogBrowser() :
     PresenterWidget(NULL),
     ui(new Ui::LogBrowser) {
     ui->setupUi(this);
+    QList<int> sizes;
+    sizes << (size().width()*1/5) << (size().width()*4/5);
+    ui->splitterResults->setSizes(sizes);
 }
 
 LogBrowser::~LogBrowser() {
@@ -20,6 +23,9 @@ void LogBrowser::initUI() {
     setTabTitle("Log Browser");
     //configure domain list
     ui->listViewAllLogDomain->setModel(&log_domain_list_model);
+    connect(&log_domain_list_model,
+            SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),
+            SLOT(logTypesDataChanged(QModelIndex,QModelIndex,QVector<int>)));
 
     //configure result tables entries
     log_entry_table_model.setMaxResultItem(ui->lineEditMaxResult->text().toInt());
@@ -41,17 +47,32 @@ void LogBrowser::initUI() {
     //configure max result line edit
     ui->lineEditMaxResult->setValidator(new QIntValidator(1, 1000, this));
 
+    //configure the autorefresh
+    ui->lineEditAutorefreshDelay->setValidator(new QIntValidator(1, 60, this));
+    autorefresh_timer.setInterval(ui->lineEditAutorefreshDelay->text().toInt() * 1000);
+    connect(&autorefresh_timer,
+            SIGNAL(timeout()),
+            SLOT(on_pushButtonStartSearch_clicked()));
+    autorefresh_timer.start();
     //update all view
     updateAll();
 }
 
 bool LogBrowser::isClosing() {
+    autorefresh_timer.stop();
     return true;
 }
 
 void LogBrowser::updateAll() {
     //update all domain in all log entry
     log_domain_list_model.updateDomainListForUID();
+}
+
+void LogBrowser::logTypesDataChanged(const QModelIndex& top_left,
+                                     const QModelIndex& bottom_right,
+                                     const QVector<int>& roles) {
+    //some domain has been checked or unchecked
+    on_pushButtonStartSearch_clicked();
 }
 
 void LogBrowser::on_lineEditSearchText_editingFinished() {
@@ -95,4 +116,12 @@ void LogBrowser::logEntriesTableSelectionChanged(const QModelIndex& current_sele
     } else {
         log_data_table_model.clear();
     }
+}
+
+void LogBrowser::on_lineEditAutorefreshDelay_editingFinished() {
+    autorefresh_timer.setInterval(ui->lineEditAutorefreshDelay->text().toInt() * 1000);
+}
+
+void LogBrowser::on_pushButton_clicked() {
+    updateAll();
 }

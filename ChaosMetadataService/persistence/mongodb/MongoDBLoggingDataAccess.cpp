@@ -224,7 +224,6 @@ int MongoDBLoggingDataAccess::searchEntryAdvanced(LogEntryList& entry_list,
                                                   uint64_t start_sequence_id,
                                                   uint32_t page_length) {
     int err = 0;
-    
     SearchResult paged_result;
     std::string token_for_mongo;
     std::vector<std::string> criteria_token;
@@ -233,19 +232,23 @@ int MongoDBLoggingDataAccess::searchEntryAdvanced(LogEntryList& entry_list,
     mongo::BSONArrayBuilder bson_find_token_or;
     mongo::BSONObjBuilder bson_query_builder;
     
-    boost::split(criteria_token,
-                 search_string,
-                 boost::is_any_of(" "),
-                 boost::token_compress_on);
-    for (std::vector<std::string>::iterator it = criteria_token.begin();
-         it != criteria_token.end();
-         it++) {
-        token_for_mongo = ".*"+*it+".*";
-        bson_find_token_or <<  MONGODB_REGEX_ON_FILED("advanced_search", token_for_mongo);
+    if(search_string.size()) {
+        boost::split(criteria_token,
+                     search_string,
+                     boost::is_any_of(" "),
+                     boost::token_compress_on);
+        if(criteria_token.size()) {
+            for (std::vector<std::string>::iterator it = criteria_token.begin();
+                 it != criteria_token.end();
+                 it++) {
+                token_for_mongo = ".*"+*it+".*";
+                bson_find_token_or <<  MONGODB_REGEX_ON_FILED("advanced_search", token_for_mongo);
+            }
+            
+            //add query on single token
+            bson_find_and << BSON("$or" << bson_find_token_or.arr());
+        }
     }
-    
-    //add query on single token
-    bson_find_and << BSON("$or" << bson_find_token_or.arr());
     
     //add query for timestamp if ar > 0
     if(start_timestamp) {
@@ -255,8 +258,13 @@ int MongoDBLoggingDataAccess::searchEntryAdvanced(LogEntryList& entry_list,
     if(end_timestamp) {
         bson_find_and << BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP << BSON("$lte" << mongo::Date_t(end_timestamp)));
     }
-
-    mongo::Query q = BSON("$and" << bson_find_and.arr());
+    
+    mongo::Query q;
+    mongo::BSONArray query_arr = bson_find_and.arr();
+    
+    if(query_arr.isEmpty() == false) {
+        q = BSON("$and" << query_arr);
+    }
     
     //remove search field from result
     mongo::BSONObj p = BSON("advanced_search"<< 0);
