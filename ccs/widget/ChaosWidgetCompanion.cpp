@@ -3,9 +3,9 @@
 #include <QDebug>
 
 ChaosWidgetCompanion::ChaosWidgetCompanion():
-    api_submitter(this){
+    api_submitter(this){}
 
-}
+ChaosWidgetCompanion::~ChaosWidgetCompanion() {}
 
 void ChaosWidgetCompanion::initChaosContent() {
 

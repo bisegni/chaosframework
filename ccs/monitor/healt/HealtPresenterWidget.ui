@@ -33,13 +33,13 @@
     <number>2</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>1</number>
    </property>
    <property name="rightMargin">
     <number>2</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>1</number>
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0,0,0">

@@ -9,8 +9,6 @@
 #include <QTimer>
 #include <QWidget>
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
-
 namespace Ui {
 class CNodeLogWidget;
 }

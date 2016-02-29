@@ -95,7 +95,9 @@ SOURCES += main.cpp\
     api_async_processor/ApiHandler.cpp \
     data/LogDataTableModel.cpp \
     log_browser/LogBrowser.cpp \
-    data/LogEntryAdvancedSearchTableModel.cpp
+    data/LogEntryAdvancedSearchTableModel.cpp \
+    widget/CNodeResourceWidget.cpp \
+    widget/ChaosReadDatasetWidgetCompanion.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -191,7 +193,9 @@ HEADERS  += \
     data/LogDataTableModel.h \
     data/SearchPager.h\
     log_browser/LogBrowser.h \
-    data/LogEntryAdvancedSearchTableModel.h
+    data/LogEntryAdvancedSearchTableModel.h \
+    widget/CNodeResourceWidget.h \
+    widget/ChaosReadDatasetWidgetCompanion.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -215,7 +219,8 @@ FORMS    += \
     tree_group/TreeGroupManager.ui \
     tree_group/AddNewDomain.ui \
     widget/CNodeLogWidget.ui \
-    log_browser/LogBrowser.ui
+    log_browser/LogBrowser.ui \
+    widget/CNodeResourceWidget.ui
 
 DISTFILES += \
     dark_orange.stylesheet \
