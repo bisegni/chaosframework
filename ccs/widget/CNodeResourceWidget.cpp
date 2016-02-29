@@ -9,7 +9,7 @@ CNodeResourceWidget::CNodeResourceWidget(QWidget *parent) :
     ui(new Ui::CNodeResourceWidget) {
     ui->setupUi(this);
     //set the target dataset for resource information
-    ChaosReadDatasetWidgetCompanion::setDataset(Dataset::HelathDataset);
+    ChaosReadDatasetWidgetCompanion::setDataset(ChaosReadDatasetWidgetCompanion::HelathDataset);
 }
 
 CNodeResourceWidget::~CNodeResourceWidget() {
