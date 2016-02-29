@@ -41,11 +41,6 @@ private slots:
     //!open node editor
     void on_pushButtonOpenNodeEditor_clicked();
 
-    void statusChanged(const QString& node_uid,
-                       const chaos::metadata_service_client::monitor_system::KeyValue& healt_values);
-
-    void statusNoData(const QString& node_uid);
-
     void cuContextualmenuTrigger();
 private:
     QString type;

@@ -36,12 +36,6 @@ HealtPresenterWidget::HealtPresenterWidget(CommandPresenter *_global_command_pre
     ui->labelStatus->setTrackStatus(true);
     ui->labelStatus->setLabelValueShowTrackStatus(true);
     ui->labelStatus->startMonitoring();
-    connect(ui->labelStatus,
-            SIGNAL(statusChanged(QString,chaos::metadata_service_client::monitor_system::KeyValue)),
-            SLOT(statusChanged(QString,chaos::metadata_service_client::monitor_system::KeyValue)));
-    connect(ui->labelStatus,
-            SIGNAL(statusNoData(QString)),
-            SLOT(statusNoData(QString)));
 
     ui->pushButtonOpenNodeEditor->setEnabled(false);
 
@@ -56,10 +50,13 @@ HealtPresenterWidget::HealtPresenterWidget(CommandPresenter *_global_command_pre
                                   SLOT(asyncApiResult(QString, QSharedPointer<chaos::common::data::CDataWrapper>)),
                                   SLOT(asyncApiError(QString, QSharedPointer<chaos::CException>)),
                                   SLOT(asyncApiTimeout(QString)));
-
+    ui->nodeResourceWidget->setNodeUID(node_uid);
+    ui->nodeResourceWidget->initChaosContent();
+    ui->nodeResourceWidget->updateChaosContent();
 }
 
 HealtPresenterWidget::~HealtPresenterWidget() {
+    ui->nodeResourceWidget->deinitChaosContent();
     ui->ledIndicatorHealt->stopMonitoring();
     ui->labelStatus->stopMonitoring();
     delete ui;
@@ -205,42 +202,4 @@ void HealtPresenterWidget::asyncApiError(const QString& tag,
 
 void HealtPresenterWidget::asyncApiTimeout(const QString& tag) {
 
-}
-
-void HealtPresenterWidget::statusChanged(const QString& node_uid,
-                                         const chaos::metadata_service_client::monitor_system::KeyValue& healt_values) {
-    if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME)){
-        ui->labelUsrProc->setText(QString::number(healt_values->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME), 'f', 1 ));
-    }
-    if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME)){
-        ui->labelSysProc->setText(QString::number(healt_values->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME), 'f', 1 ));
-    }
-    if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)){
-        ui->labelSwapProc->setText(QString::number(healt_values->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)));
-    }
-    if(healt_values->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME)){
-        ui->labelUptimeProc->setText(seconds_to_DHMS(healt_values->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME)));
-    }
-}
-
-void HealtPresenterWidget::statusNoData(const QString& node_uid) {
-    ui->labelUsrProc->setText(tr("---"));
-    ui->labelSysProc->setText(tr("---"));
-    ui->labelSwapProc->setText(tr("---"));
-    ui->labelUptimeProc->setText(tr("---"));
-}
-
-QString HealtPresenterWidget::seconds_to_DHMS(uint64_t duration) {
-    QString res;
-    int seconds = (int) (duration % 60);
-    duration /= 60;
-    int minutes = (int) (duration % 60);
-    duration /= 60;
-    int hours = (int) (duration % 24);
-    int days = (int) (duration / 24);
-    if((hours == 0)&&(days == 0))
-        return res.sprintf("00:00:%02d:%02d", minutes, seconds);
-    if (days == 0)
-        return res.sprintf("00:%02d:%02d:%02d", hours, minutes, seconds);
-    return res.sprintf("%dd%02d:%02d:%02d", days, hours, minutes, seconds);
 }
