@@ -172,40 +172,7 @@ QVariant LogEntryTableModel::getCellUserData(int row, int column) const {
 }
 
 QVariant LogEntryTableModel::getTooltipTextForData(int row, int column) const {
-    QString result;
-    if(show_source_column) {
-        switch (column) {
-        case 0:
-            result = QString("The timestamp when was emitted the entry[%1]").arg(TS_TO_STR(helper->getLogEntryList()[row]->ts));
-            break;
-        case 1:
-            result = tr("The source of the entry");
-            break;
-        case 2:
-            result = tr("The log domain of the entry");
-            break;
-        case 3:
-            result = tr("The subject that has generate the log entry");
-            break;
-        default:
-            break;
-        }
-    }else {
-        switch (column) {
-        case 0:
-            result = QString("The timestamp when was emitted the entry[%1]").arg(TS_TO_STR(helper->getLogEntryList()[row]->ts));
-            break;
-        case 1:
-            result = tr("The log domain of the entry");
-            break;
-        case 2:
-            result = tr("The subject that has generate the log entry");
-            break;
-        default:
-            break;
-        }
-    }
-    return result;
+    return getCellData(row, column);
 }
 
 QVariant LogEntryTableModel::getTextAlignForData(int row, int column) const {

@@ -26,7 +26,6 @@ protected:
     bool isClosing();
     void updateAll();
 private slots:
-    void on_lineEditSearchText_editingFinished();
 
     void on_checkBoxSearchDate_clicked();
 
@@ -42,9 +41,14 @@ private slots:
     void logTypesDataChanged(const QModelIndex& top_left,
                              const QModelIndex& bottom_right,
                              const QVector<int>& roles);
+
+    void on_lineEditMaxResult_editingFinished();
+
+    void on_checkBoxAutoUpdate_clicked();
+
 private:
     Ui::LogBrowser *ui;
-    QTimer autorefresh_timer;
+    QTimer autoupdate_timer;
     LogDataTableModel log_data_table_model;
     LogDomainListModel log_domain_list_model;
     LogEntryAdvancedSearchTableModel log_entry_table_model;

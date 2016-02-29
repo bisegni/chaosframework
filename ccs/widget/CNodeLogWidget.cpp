@@ -57,8 +57,6 @@ void CNodeLogWidget::initChaosContent() {
     connect(&refresh_timer,
             SIGNAL(timeout()),
             SLOT(timeoutUpdateTimer()));
-    refresh_timer.start();
-
     //register for log
     ChaosMetadataServiceClient::getInstance()->registerEventHandler(this);
 }
@@ -144,4 +142,9 @@ void CNodeLogWidget::on_lineEditRefreshUpdate_editingFinished() {
 void CNodeLogWidget::timeoutUpdateTimer() {
     updateEntryList();
     qDebug() << "Timer timout";
+}
+
+void CNodeLogWidget::on_checkBoxAutoUpdate_clicked() {
+    bool enable = ui->checkBoxAutoUpdate->isChecked();
+    if(enable){refresh_timer.start();} else {refresh_timer.stop();}
 }

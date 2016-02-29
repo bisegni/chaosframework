@@ -51,6 +51,8 @@ private slots:
 
     void on_lineEditRefreshUpdate_editingFinished();
 
+    void on_checkBoxAutoUpdate_clicked();
+
 private:
     QTimer              refresh_timer;
     Ui::CNodeLogWidget *ui;

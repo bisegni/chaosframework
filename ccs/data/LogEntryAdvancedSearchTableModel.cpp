@@ -1,5 +1,7 @@
 #include "LogEntryAdvancedSearchTableModel.h"
 
+#include <QDebug>
+
 using namespace chaos::metadata_service_client::api_proxy::logging;
 
 LogEntryAdvancedSearchTableModel::LogEntryAdvancedSearchTableModel(QObject *parent):

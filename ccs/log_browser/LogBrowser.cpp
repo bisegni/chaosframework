@@ -49,17 +49,16 @@ void LogBrowser::initUI() {
 
     //configure the autorefresh
     ui->lineEditAutorefreshDelay->setValidator(new QIntValidator(1, 60, this));
-    autorefresh_timer.setInterval(ui->lineEditAutorefreshDelay->text().toInt() * 1000);
-    connect(&autorefresh_timer,
+    autoupdate_timer.setInterval(ui->lineEditAutorefreshDelay->text().toInt() * 1000);
+    connect(&autoupdate_timer,
             SIGNAL(timeout()),
             SLOT(on_pushButtonStartSearch_clicked()));
-    autorefresh_timer.start();
     //update all view
     updateAll();
 }
 
 bool LogBrowser::isClosing() {
-    autorefresh_timer.stop();
+    autoupdate_timer.stop();
     return true;
 }
 
@@ -73,10 +72,6 @@ void LogBrowser::logTypesDataChanged(const QModelIndex& top_left,
                                      const QVector<int>& roles) {
     //some domain has been checked or unchecked
     on_pushButtonStartSearch_clicked();
-}
-
-void LogBrowser::on_lineEditSearchText_editingFinished() {
-
 }
 
 void LogBrowser::on_checkBoxSearchDate_clicked() {
@@ -101,7 +96,6 @@ void LogBrowser::on_pushButtonStartSearch_clicked() {
         start_ts = ui->dateTimeEditStartDate->dateTime().toUTC().toMSecsSinceEpoch();
         end_ts = ui->dateTimeEditEndDate->dateTime().toUTC().toMSecsSinceEpoch();
     }
-    qDebug() << "start_ts:" << start_ts << " end_ts:" << end_ts;
     log_domain_list_model.getActiveDomains(domain_list);
     log_entry_table_model.updateEntriesList(ui->lineEditSearchText->text(),
                                             domain_list,
@@ -119,9 +113,22 @@ void LogBrowser::logEntriesTableSelectionChanged(const QModelIndex& current_sele
 }
 
 void LogBrowser::on_lineEditAutorefreshDelay_editingFinished() {
-    autorefresh_timer.setInterval(ui->lineEditAutorefreshDelay->text().toInt() * 1000);
+    autoupdate_timer.setInterval(ui->lineEditAutorefreshDelay->text().toInt() * 1000);
 }
 
 void LogBrowser::on_pushButton_clicked() {
     updateAll();
+}
+
+void LogBrowser::on_lineEditMaxResult_editingFinished() {
+    log_entry_table_model.setMaxResultItem(ui->lineEditMaxResult->text().toUInt());
+}
+
+void LogBrowser::on_checkBoxAutoUpdate_clicked() {
+    bool enable = ui->checkBoxAutoUpdate->isChecked();
+    if(enable){
+        autoupdate_timer.start();
+    } else {
+        autoupdate_timer.stop();
+    }
 }

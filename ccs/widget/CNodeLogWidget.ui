@@ -93,17 +93,17 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,1,0">
           <property name="spacing">
-           <number>4</number>
+           <number>0</number>
           </property>
           <item>
-           <widget class="QLabel" name="label_4">
+           <widget class="QCheckBox" name="checkBoxAutoUpdate">
             <property name="font">
              <font>
               <pointsize>11</pointsize>
              </font>
             </property>
             <property name="text">
-             <string>Refresh Delay:</string>
+             <string>Auto update:</string>
             </property>
            </widget>
           </item>
