@@ -46,7 +46,7 @@ void LogDomainListModel::onApiDone(const QString& tag,
     checked_index.resize(helper->getLogDomainListSize());
 
     //fill all bit as enable
-    checked_index.fill(true);
+    checked_index.fill(false);
 
     endResetModel();
 

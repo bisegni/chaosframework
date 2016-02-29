@@ -230,10 +230,10 @@ int MongoDBLoggingDataAccess::searchEntryAdvanced(LogEntryList& entry_list,
     std::vector<std::string> criteria_token;
     
     mongo::BSONArrayBuilder bson_find_and;
-    mongo::BSONArrayBuilder bson_find_token_or;
     mongo::BSONObjBuilder bson_query_builder;
     
     if(search_string.size()) {
+        mongo::BSONArrayBuilder bson_find_token_or;
         boost::split(criteria_token,
                      search_string,
                      boost::is_any_of(" "),
@@ -250,6 +250,19 @@ int MongoDBLoggingDataAccess::searchEntryAdvanced(LogEntryList& entry_list,
             bson_find_and << BSON("$or" << bson_find_token_or.arr());
         }
     }
+    
+    if(domain.size()) {
+        mongo::BSONArrayBuilder or_builder;
+        //add all domain into array
+        for(std::vector<std::string>::const_iterator it = domain.begin();
+            it != domain.end();
+            it++) {
+            or_builder.append(*it);
+        }
+        
+        bson_find_and << BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << BSON("$in" << or_builder.arr()));
+    }
+
     
     //add query for timestamp if ar > 0
     if(start_timestamp) {
