@@ -202,6 +202,10 @@ void ControlUnitEditor::initUI() {
     //enable log widget
     ui->widgetChaosNodeLog->setNodeUID(control_unit_unique_id);
     ui->widgetChaosNodeLog->initChaosContent();
+
+    //enable
+    ui->widgetNodeResource->setNodeUID(control_unit_unique_id);
+    ui->widgetNodeResource->initChaosContent();
 }
 
 void ControlUnitEditor::updateTemplateSearch() {
@@ -286,6 +290,8 @@ void ControlUnitEditor::changedNodeState(const QString& node_uid,
 }
 
 bool ControlUnitEditor::isClosing() {
+    //disable resource widget
+    ui->widgetNodeResource->deinitChaosContent();
     //disable log widget
     ui->widgetChaosNodeLog->deinitChaosContent();
 

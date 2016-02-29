@@ -168,7 +168,7 @@
       </layout>
      </item>
      <item row="2" column="2">
-      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,1,0,0,0,1">
+      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0,0,0,0,0,1,0">
        <property name="leftMargin">
         <number>2</number>
        </property>
@@ -184,15 +184,27 @@
        <property name="spacing">
         <number>4</number>
        </property>
-       <item row="0" column="7">
-        <widget class="ChaosLabel" name="labelUnitServerStatus">
+       <item row="0" column="3">
+        <widget class="ChaosLabel" name="labelControlUnitStatus">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>50</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="font">
           <font>
            <pointsize>11</pointsize>
           </font>
          </property>
          <property name="statusTip">
-          <string>The last state relevated of the unit server</string>
+          <string>The last internal state relevated of the control unit</string>
          </property>
          <property name="text">
           <string/>
@@ -211,37 +223,46 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="CLedIndicatorHealt" name="ledIndicatorHealtTSControlUnit" native="true">
+       <item row="0" column="7">
+        <widget class="ChaosLabel" name="labelUnitServerStatus">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
-           <width>16</width>
-           <height>16</height>
+           <width>50</width>
+           <height>0</height>
           </size>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
-         <property name="statusTip">
-          <string>The alive status of the control unit</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="ChaosLabel" name="labelControlUnitStatus">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
           </font>
          </property>
          <property name="statusTip">
-          <string>The last internal state relevated of the control unit</string>
+          <string>The last state relevated of the unit server</string>
          </property>
          <property name="text">
           <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="9">
+        <widget class="CNodeResourceWidget" name="widgetNodeResource" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -264,21 +285,22 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="6">
-        <widget class="QLabel" name="label_6">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+       <item row="0" column="0">
+        <widget class="CLedIndicatorHealt" name="ledIndicatorHealtTSControlUnit" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
          </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
+         <property name="maximumSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
          </property>
-         <property name="text">
-          <string>US Status:</string>
+         <property name="statusTip">
+          <string>The alive status of the control unit</string>
          </property>
         </widget>
        </item>
@@ -320,6 +342,37 @@
           <string>R</string>
          </property>
         </widget>
+       </item>
+       <item row="0" column="6">
+        <widget class="QLabel" name="label_6">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>US Status:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="8">
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -1153,6 +1206,12 @@
    <class>CNodeLogWidget</class>
    <extends>QWidget</extends>
    <header>widget/CNodeLogWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CNodeResourceWidget</class>
+   <extends>QWidget</extends>
+   <header>widget/CNodeResourceWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
