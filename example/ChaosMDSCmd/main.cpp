@@ -204,10 +204,11 @@ int main (int argc, char* argv[] )
     ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_RESET_CONFIG, po::value<bool>(&reset_config)->default_value(false),"reset MDS configuration");
     ChaosMetadataServiceClient::getInstance()->init(argc, argv);
 
-
-
-    mds  = ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->getConfiguration()->getStringValue("metadata-server");
-    if (mds.empty()){
+    chaos::common::data::CDataWrapper *conf=ChaosMetadataServiceClient::getInstance()->getGlobalConfigurationInstance()->getConfiguration();
+    std::cout<<conf->getJSONString()<<std::endl;
+    if(conf->hasKey("metadata-server")){
+    	mds  = conf->getVectorValue("metadata-server")->getStringElementAtIndex(0);
+    } else {
         std::cerr<< "# you must define a valid MDS server 'metadata-server'"<<std::endl;
         return -4;
     }
