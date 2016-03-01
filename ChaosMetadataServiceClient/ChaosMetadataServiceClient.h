@@ -127,12 +127,14 @@ namespace chaos {
             //! remove a consumer by key and quantum
             bool removeKeyConsumer(const std::string& key_to_monitor,
                                    int quantum_multiplier,
-                                   monitor_system::QuantumSlotConsumer *consumer);
+                                   monitor_system::QuantumSlotConsumer *consumer,
+                                   bool wait_completion = true);
             
             //! remove a consumer for the healt data associated to a key
             bool removeKeyConsumerForHealt(const std::string& key_to_monitor,
                                            int quantum_multiplier,
-                                           monitor_system::QuantumSlotConsumer *consumer);
+                                           monitor_system::QuantumSlotConsumer *consumer,
+                                           bool wait_completion = true);
             
             //! remove an handler associated to ans attirbute of a key
             bool removeKeyAttributeHandler(const std::string& key_to_monitor,

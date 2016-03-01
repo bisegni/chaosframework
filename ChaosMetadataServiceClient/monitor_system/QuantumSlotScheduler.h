@@ -49,9 +49,6 @@ namespace chaos {
             
             //define a map for string and quantum slot
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, QuantumSlotConsumer*, QuantumSlotConsumerMap)
-
-#define CHAOS_QSS_COMPOSE_QUANTUM_CONSUMER_KEY(k,q,p) boost::str(boost::format("%1%_%2%_%3%")% k % q % reinterpret_cast<uintptr_t>(p))
-#define CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(k,q) boost::str(boost::format("%1%_%2%")% k % q)
             
             typedef boost::lockfree::queue<QuantumSlot*, boost::lockfree::fixed_sized<false> >  LFQuantumSlotQueue;
             
@@ -180,16 +177,12 @@ namespace chaos {
                 std::vector<std::string>                data_driver_endpoint;
                 chaos::common::network::NetworkBroker   *network_broker;
                 std::string                             data_driver_impl;
-                chaos::common::io::IODataDriver         *data_driver;
                 
                 boost::mutex                            mutex_condition_fetch;
                 boost::condition_variable               condition_fetch;
                 
                 boost::mutex                            mutex_condition_scan;
                 boost::condition_variable               condition_scan;
-                
-                //mutex for use the data driver for fetching data
-                boost::mutex                            mutex_fetch_value;
                 
                 //!groups for thread that make the scanner
                 bool                                    work_on_scan;
@@ -251,7 +244,8 @@ namespace chaos {
                 void _removeKeyConsumer(SlotConsumerInfo *ci);
                 
                 //!check the internal queue if there are new consumer to add
-                inline bool _checkRemoveAndAddNewConsumer();
+                inline uint64_t _checkRemoveAndAddNewConsumer(uint64_t start_time_in_milliseconds,
+                                                              uint64_t millisecond_for_work);
             public:
                 
                 void init(void *init_data) throw (chaos::CException);
@@ -271,7 +265,8 @@ namespace chaos {
                 //! remove a consumer by key and quantum
                 void removeKeyConsumer(const std::string& key_to_monitor,
                                        unsigned int quantum_multiplier,
-                                       QuantumSlotConsumer *consumer);
+                                       QuantumSlotConsumer *consumer,
+                                       bool wait_completion = true);
                 
                 //! return the current dataset for a determinate dataset key in a synchornous way
                 std::auto_ptr<chaos::common::data::CDataWrapper> getLastDataset(const std::string& dataset_key);

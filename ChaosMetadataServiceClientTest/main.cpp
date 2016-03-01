@@ -91,8 +91,22 @@ int main(int argc, char *argv[]){
                 NodeMonitor nm(device_id,
                                wait_seconds,
                                quantum_multiplier);
-                //start and wait for monitor termination
-                nm.monitor_node();
+                
+                boost::shared_ptr<NodeMonitor> arr[10];
+                for(int idx= 0; idx < 10; idx++) {
+                    arr[idx].reset(new NodeMonitor(device_id,
+                                              wait_seconds,
+                                              quantum_multiplier));
+                    arr[idx]->registerConsumer();
+                }
+                sleep(5);
+                for(int idx= 0; idx < 10; idx++) {
+                    arr[idx]->deregisterConsumer();
+                }
+                for(int idx= 0; idx < 10; idx++) {
+                    arr[idx]->waitForPurge();
+                }
+                //nm.waitForPurge();
                 break;
             }
             case 1:{

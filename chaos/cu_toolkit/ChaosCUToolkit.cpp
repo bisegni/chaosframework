@@ -160,6 +160,9 @@ void ChaosCUToolkit::start() throw(CException){
  Stop the toolkit execution
  */
 void ChaosCUToolkit::stop() throw(CException) {
+    //stop command manager, this manager must be the last to startup
+    StartableService::stopImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop");
+    
 	//stop control manager
 	StartableService::stopImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::stop");
 
@@ -168,9 +171,6 @@ void ChaosCUToolkit::stop() throw(CException) {
     
 	//stop driver manager
 	StartableService::stopImplementation(DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::stop");
-    
-    //stop command manager, this manager must be the last to startup
-    StartableService::stopImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop");
 
     ChaosCommon<ChaosCUToolkit>::stop();
 }
@@ -180,6 +180,10 @@ void ChaosCUToolkit::stop() throw(CException) {
  */
 void ChaosCUToolkit::deinit() throw(CException) {
     LAPP_ << "Stopping !CHAOS Control Unit System";
+    
+    //start command manager, this manager must be the last to startup
+    StartableService::deinitImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::deinit");
+    
         //start Control Manager
     StartableService::deinitImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::deinit");
     
@@ -187,9 +191,6 @@ void ChaosCUToolkit::deinit() throw(CException) {
 	StartableService::deinitImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::deinit");
     
 	StartableService::deinitImplementation(DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::deinit");
-    
-    //start command manager, this manager must be the last to startup
-    StartableService::deinitImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::deinit");
 
     LAPP_ << "!CHAOS Control Unit System Stopped";
 	

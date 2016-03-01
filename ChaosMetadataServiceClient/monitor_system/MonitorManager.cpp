@@ -20,6 +20,7 @@
 
 #include <ChaosMetadataServiceClient/monitor_system/MonitorManager.h>
 
+using namespace chaos::common::async_central;
 using namespace chaos::metadata_service_client::monitor_system;
 
 #define MM_INFO   INFO_LOG(MonitorManager)
@@ -29,13 +30,10 @@ using namespace chaos::metadata_service_client::monitor_system;
 MonitorManager::MonitorManager(chaos::common::network::NetworkBroker *_network_broker,
                                ClientSetting *_setting):
 setting(_setting),
-network_broker(_network_broker){
-    
-}
+network_broker(_network_broker),
+queue_to_purge(0){}
 
-MonitorManager::~MonitorManager() {
-    
-}
+MonitorManager::~MonitorManager() {}
 
 void MonitorManager::init(void *init_data) throw (chaos::CException) {
     CHAOS_LASSERT_EXCEPTION(network_broker, MM_ERR, -1, "No network broker instance found")
@@ -48,9 +46,19 @@ void MonitorManager::init(void *init_data) throw (chaos::CException) {
 
 void MonitorManager::start() throw (chaos::CException) {
     StartableService::startImplementation(slot_scheduler, "QuantumSlotScheduler", __PRETTY_FUNCTION__);
+    
+    //add timer for purge operation
+    AsyncCentralManager::getInstance()->addTimer(this,
+                                                 5000,
+                                                 5000);
 }
 
 void MonitorManager::stop() throw (chaos::CException) {
+    //remove time for purge oepration
+    AsyncCentralManager::getInstance()->removeTimer(this);
+    
+    //remove all append consumer
+    purgeKeyConsumer(true);
     StartableService::stopImplementation(slot_scheduler, "QuantumSlotScheduler", __PRETTY_FUNCTION__);
 }
 
@@ -94,6 +102,8 @@ void MonitorManager::addKeyAttributeHandler(const std::string& key_to_monitor,
         //we need to allocate the key consumer
         map_quantum_key_consumer.insert(make_pair(unique_slot_key, (consumer = new QuantumKeyConsumer(key_to_monitor))));
         
+        MM_INFO << boost::str(boost::format("Created new consumer slot for %1% with pointer %2%")%unique_slot_key%consumer);
+        
         //add consuemr to the scheduler
         addKeyConsumer(key_to_monitor,
                        quantum_multiplier,
@@ -105,10 +115,12 @@ void MonitorManager::addKeyAttributeHandler(const std::string& key_to_monitor,
 
 void MonitorManager::removeKeyConsumer(const std::string& key_to_monitor,
                                        int quantum_multiplier,
-                                       QuantumSlotConsumer *consumer) {
+                                       QuantumSlotConsumer *consumer,
+                                       bool wait_completion) {
     slot_scheduler->removeKeyConsumer(key_to_monitor,
                                       quantum_multiplier,
-                                      consumer);
+                                      consumer,
+                                      wait_completion);
 }
 
 //! remove an handler associated to ans attirbute of a key
@@ -130,19 +142,43 @@ void MonitorManager::removeKeyAttributeHandler(const std::string& key_to_monitor
     
     //check if the attribute is the last, in this case we eed to remove all the consumer
     if(it->second->size() == 0) {
-        //add consuemr to the scheduler
+        //remove consumer from the scheduler without wait the completion
         removeKeyConsumer(key_to_monitor,
                           quantum_multiplier,
-                          it->second);
- 
+                          it->second,
+                          false);
         
+        //add key consumer to the queue of to purge
+        queue_to_purge.push(it->second);
+        
+        //remove elemento form the map of used key consumer
         map_quantum_key_consumer.erase(it);
-        //remove the consumer
-        delete(it->second);
     }
 }
 
 //! return the current dataset for a determinate dataset key in a synchornous way
 std::auto_ptr<chaos::common::data::CDataWrapper> MonitorManager::getLastDataset(const std::string& dataset_key) {
     return slot_scheduler->getLastDataset(dataset_key);
+}
+
+void MonitorManager::timeout() {
+    purgeKeyConsumer(false);
+}
+
+void MonitorManager::purgeKeyConsumer(bool all) {
+    
+    bool end_purge_operation = false;
+    int max_to_purge = 3;
+    QuantumKeyConsumer *consumer = NULL;
+    
+    while(queue_to_purge.pop(consumer) ||
+          end_purge_operation ) {
+        consumer->waitForCompletition();
+        delete(consumer);
+        MM_INFO << boost::str(boost::format("Auto purged key handler consumer slot for pointer %1%")%consumer);
+        if(!all){
+            //end when we have processed max number of element
+            end_purge_operation = (--max_to_purge>=0);
+        }
+    }
 }

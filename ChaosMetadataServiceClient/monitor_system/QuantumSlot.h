@@ -103,9 +103,6 @@ namespace chaos {
                 //! identify a purgeable slot
                 bool                purgeable;
                 
-                //! gthe lock for the consumers managment
-                boost::shared_mutex mutex_consumers;
-                
                 //multi-index structure for managment of consumer
                 boost::shared_mutex              consumer_mutex;
                 SetConsumerType                  consumers;

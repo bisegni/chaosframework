@@ -79,7 +79,6 @@ void QuantumKeyConsumer::removeAttributeHandler(AbstractQuantumKeyAttributeHandl
     //aquire write lock to work on map
     boost::unique_lock<boost::mutex> wl(map_mutex);
     if(handler == NULL) return;
-
     QKC_INFO << "remove quantum handler for key:" << key << " and attribute:" << handler->getAttributeName();
     uintptr_t handler_key = reinterpret_cast<uintptr_t>(handler);
     if(!map_attribute_handler.count(handler_key)) return;

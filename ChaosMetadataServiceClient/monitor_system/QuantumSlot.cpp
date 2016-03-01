@@ -56,6 +56,7 @@ void QuantumSlot::addNewConsumer(QuantumSlotConsumer *_consumer,
                                  unsigned int priotiy) {
     if(_consumer == NULL) return;
     boost::unique_lock<boost::shared_mutex> wl(consumer_mutex);
+    
     consumers.insert(ConsumerType(_consumer, priority));
 }
 
@@ -88,11 +89,11 @@ void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
         curr_qsc = reinterpret_cast<QuantumSlotConsumer*>(it->consumer_pointer);
          //check if we need to remove it
         if(curr_qsc->usage_counter == 0) {
-            DEBUG_CODE(QS_DBG << "The consumer pointer"<<it->consumer_pointer<<" need to removed";)
+            DEBUG_CODE(QS_INFO << boost::str(boost::format("The consumer pointer %1% need to be removed")%curr_qsc);)
             //remove from the index and return the next
             it = consumers_priority_index.erase(it);
             //unlock who are waiting the quantum slot free for for work
-            DEBUG_CODE(QS_DBG << "The consumer pointer"<<it->consumer_pointer<<" can be set fre of work";)
+            DEBUG_CODE(QS_INFO << boost::str(boost::format("The consumer pointer %1% can be set fre of work")%curr_qsc);)
             curr_qsc->setFreeOfWork();
         } else {
             //signal the consumer
@@ -127,12 +128,12 @@ void QuantumSlot::sendNoValueToConsumer() {
         curr_qsc = reinterpret_cast<QuantumSlotConsumer*>(it->consumer_pointer);
         //check if we need to remove it
         if(curr_qsc->usage_counter == 0) {
-            DEBUG_CODE(QS_DBG << "The consumer pointer"<<it->consumer_pointer<<" need to removed";)
+            DEBUG_CODE(QS_DBG << boost::str(boost::format("The consumer pointer %1% need to be removed")%curr_qsc);)
             //remove from the index and return the next
             it = consumers_priority_index.erase(it);
             //unlock who are waiting the quantum slot free for for work
+            DEBUG_CODE(QS_INFO << boost::str(boost::format("The consumer pointer %1% can be set fre of work")%curr_qsc);)
             curr_qsc->setFreeOfWork();
-            DEBUG_CODE(QS_DBG << "The consumer pointer"<<it->consumer_pointer<<" can be set fre of work";)
         } else {
             //signal the consumer
             curr_qsc->quantumSlotHasNoData(key);

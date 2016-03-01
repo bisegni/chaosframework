@@ -310,25 +310,29 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForDataset(const std::str
 //! remove a consumer by key and quantum
 bool ChaosMetadataServiceClient::removeKeyConsumer(const std::string& key_to_monitor,
                                                    int quantum_multiplier,
-                                                   monitor_system::QuantumSlotConsumer *consumer) {
+                                                   monitor_system::QuantumSlotConsumer *consumer,
+                                                   bool wait_completion) {
     CHAOS_ASSERT(monitor_manager.get());
     monitor_manager->removeKeyConsumer(key_to_monitor,
                                        quantum_multiplier,
-                                       consumer);
+                                       consumer,
+                                       wait_completion);
     return true;
 }
 
 //! remove a consumer for the healt data associated to a key
 bool ChaosMetadataServiceClient::removeKeyConsumerForHealt(const std::string& key_to_monitor,
                                                            int quantum_multiplier,
-                                                           monitor_system::QuantumSlotConsumer *consumer) {
+                                                           monitor_system::QuantumSlotConsumer *consumer,
+                                                           bool wait_completion) {
     // compose healt key for node
     std::string healt_key = boost::str(boost::format("%1%%2%")%
                                        key_to_monitor%
                                        NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
     return removeKeyConsumer(healt_key,
                              quantum_multiplier,
-                             consumer);
+                             consumer,
+                             wait_completion);
 }
 
 //! remove an handler associated to ans attirbute of a key
