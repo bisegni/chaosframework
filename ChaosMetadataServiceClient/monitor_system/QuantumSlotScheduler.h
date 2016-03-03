@@ -50,6 +50,9 @@ namespace chaos {
             //define a map for string and quantum slot
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, QuantumSlotConsumer*, QuantumSlotConsumerMap)
             
+#define LOCK_QUEUE(queue_name)\
+boost::unique_lock<boost::mutex> wl(mutex_ ## queue_name);
+            
             typedef boost::lockfree::queue<QuantumSlot*, boost::lockfree::fixed_sized<false> >  LFQuantumSlotQueue;
             
             //! structure used to submit new consumer to itnernal layer
@@ -87,7 +90,7 @@ namespace chaos {
                 
             };
             
-            typedef boost::lockfree::queue<SlotConsumerInfo*, boost::lockfree::fixed_sized<false> >  LFQueueSlotConsumerInfo;
+            typedef std::queue<SlotConsumerInfo*>  QueueSlotConsumerInfo;
             
             //! strucutre that contain the slot
             struct ScheduleSlot {
@@ -206,13 +209,8 @@ namespace chaos {
                 //------------structure for comunication between public and internal layers-------------------------------------------
                 //! queue that conenct the public and internal layers of scheduler add and remove handler push quantum slot
                 //! withing this queue and scan slot funciton retrive new one added and increment the multiindex set
-                LFQueueSlotConsumerInfo                 queue_new_quantum_slot_consumer;
-                
-                //------------structure for interface public api and internal engine--------------------------------------------------
-                //! map to handle the inspection of the quantum slot consumer that is managed into internal async layer of scheduler
-                //! this structure is managed only by add and remove ahdler function.
-                QuantumSlotConsumerMap                  map_quantum_slot_consumer;
-
+                boost::mutex                          mutex_queue_new_quantum_slot_consumer;
+                QueueSlotConsumerInfo                 queue_new_quantum_slot_consumer;
                 
                 //!mute for work on map that of slot consumer managed by add and remove function
                 boost::mutex                            mutex_map_quantum_slot_consumer;
@@ -241,7 +239,7 @@ namespace chaos {
                 //! manage the registration in internal layer for new consumer
                 void _addKeyConsumer(SlotConsumerInfo *ci);
                 //!manage in the internal layer the request for remove the consumer
-                void _removeKeyConsumer(SlotConsumerInfo *ci);
+                bool _removeKeyConsumer(SlotConsumerInfo *ci);
                 
                 //!check the internal queue if there are new consumer to add
                 inline uint64_t _checkRemoveAndAddNewConsumer(uint64_t start_time_in_milliseconds,
@@ -263,7 +261,7 @@ namespace chaos {
                                     unsigned int consumer_priority = 500);
                 
                 //! remove a consumer by key and quantum
-                void removeKeyConsumer(const std::string& key_to_monitor,
+                bool removeKeyConsumer(const std::string& key_to_monitor,
                                        unsigned int quantum_multiplier,
                                        QuantumSlotConsumer *consumer,
                                        bool wait_completion = true);

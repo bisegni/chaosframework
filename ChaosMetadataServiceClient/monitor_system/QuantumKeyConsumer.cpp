@@ -69,10 +69,13 @@ void QuantumKeyConsumer::addAttributeHandler(AbstractQuantumKeyAttributeHandler 
     boost::unique_lock<boost::mutex> rl(map_mutex);
     if(handler == NULL) return;
     
-    QKC_INFO << "Add new quantum handler for key:" << key << " and attribute:" << handler->getAttributeName();
     uintptr_t handler_key = reinterpret_cast<uintptr_t>(handler);
-    if(map_attribute_handler.count(handler_key)) return;
+    if(map_attribute_handler.count(handler_key)) {
+        QKC_INFO << "Quantum handler alredy present for key:" << key << " and attribute:" << handler->getAttributeName();
+        return;
+    }
     map_attribute_handler.insert(std::make_pair(handler_key, handler));
+    QKC_INFO << "Added new quantum handler for key:" << key << " and attribute:" << handler->getAttributeName();
 }
 
 void QuantumKeyConsumer::removeAttributeHandler(AbstractQuantumKeyAttributeHandler *handler) {

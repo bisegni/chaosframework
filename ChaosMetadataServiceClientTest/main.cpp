@@ -27,6 +27,7 @@
 #include <boost/timer/timer.hpp>
 
 #include "NodeMonitor.h"
+#include "HandlerMonitor.h"
 #include "NodeSearchTest.h"
 
 using namespace chaos::metadata_service_client;
@@ -42,10 +43,12 @@ class AlertLogHandlerImpl:
 public chaos::metadata_service_client::event::alert::AlertLogEventHandler {
 public:
     void handleLogEvent(const std::string source,
-                                const std::string domain) {
+                        const std::string domain) {
         MSCT_INFO << source << "-" << domain;
     }
 };
+
+#define NUMBER_OF_TEST_ELEMENT 255
 
 int main(int argc, char *argv[]){
     boost::thread_group tg;
@@ -81,7 +84,7 @@ int main(int argc, char *argv[]){
         
         //register log allert event
         ChaosMetadataServiceClient::getInstance()->registerEventHandler(&alert_log_handler);
-
+        
         switch (operation){
             case 0:{
                 
@@ -92,18 +95,34 @@ int main(int argc, char *argv[]){
                                wait_seconds,
                                quantum_multiplier);
                 
-                boost::shared_ptr<NodeMonitor> arr[10];
-                for(int idx= 0; idx < 10; idx++) {
+                boost::shared_ptr<NodeMonitor> arr[NUMBER_OF_TEST_ELEMENT];
+                boost::shared_ptr<HandlerMonitor> arr_handler[NUMBER_OF_TEST_ELEMENT];
+                
+                
+                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
                     arr[idx].reset(new NodeMonitor(device_id,
-                                              wait_seconds,
-                                              quantum_multiplier));
+                                                   wait_seconds,
+                                                   quantum_multiplier));
                     arr[idx]->registerConsumer();
                 }
+                
+                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
+                    arr_handler[idx].reset(new HandlerMonitor("BTF/DHSTB001_healt",
+                                                              "nh_status"));
+                    arr_handler[idx]->init();
+                }
+                
                 sleep(5);
-                for(int idx= 0; idx < 10; idx++) {
+                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
                     arr[idx]->deregisterConsumer();
                 }
-                for(int idx= 0; idx < 10; idx++) {
+                
+                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
+                    arr_handler[idx]->deinit();
+                    arr_handler[idx].reset();
+                }
+                
+                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
                     arr[idx]->waitForPurge();
                 }
                 //nm.waitForPurge();
@@ -116,7 +135,7 @@ int main(int argc, char *argv[]){
                 ns.testSearch(device_id.size()?device_id:"");
             }
         }
-
+        
         //register log allert event
         ChaosMetadataServiceClient::getInstance()->deregisterEventHandler(&alert_log_handler);
         

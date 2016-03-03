@@ -43,7 +43,6 @@ async_timer(ios, boost::posix_time::seconds(0)),
 async_work(ios),
 network_broker(_network_broker),
 queue_active_slot(100),
-queue_new_quantum_slot_consumer(100),
 set_slots_index_quantum(boost::multi_index::get<ss_current_quantum>(set_slots)),
 set_slots_index_key_slot(boost::multi_index::get<ss_quantum_slot_key>(set_slots)) {
     //launch asio thread
@@ -99,7 +98,10 @@ void QuantumSlotScheduler::deinit() throw (chaos::CException) {
     
     QSS_INFO<< "Clean unmanaged slot consumer add and remove request";
     SlotConsumerInfo *ci = NULL;
-    while(queue_new_quantum_slot_consumer.pop(ci)){
+    LOCK_QUEUE(queue_new_quantum_slot_consumer)
+    
+    while(queue_new_quantum_slot_consumer.size()){
+        ci = queue_new_quantum_slot_consumer.front(); queue_new_quantum_slot_consumer.pop();
         std::auto_ptr<SlotConsumerInfo> auto_ci(ci);
         try {
             if(ci->operation) {
@@ -211,19 +213,21 @@ uint64_t QuantumSlotScheduler::_checkRemoveAndAddNewConsumer(uint64_t start_time
     int64_t single_processing_time = 0;
     
     //scan element for the maximum milliseocnds we can
-    while(queue_new_quantum_slot_consumer.pop(new_consumer_info) &&
+    LOCK_QUEUE(queue_new_quantum_slot_consumer)
+    while(queue_new_quantum_slot_consumer.size() &&
           can_process_other){
+        new_consumer_info = queue_new_quantum_slot_consumer.front(); queue_new_quantum_slot_consumer.pop();
         has_worked = true;
         try {
             std::auto_ptr<SlotConsumerInfo> auto_ci(new_consumer_info);
             if(auto_ci->operation) {
                 //we need to add it
+                DEBUG_CODE(QSS_INFO << boost::str(boost::format("Asynchronously add key consumer [%1%-%2%-%3%]")%auto_ci->key_to_monitor%auto_ci->quantum_multiplier%auto_ci->consumer);)
                 _addKeyConsumer(auto_ci.get());
-                
-                DEBUG_CODE(QSS_DBG << "Asynchronously added consumer [" << new_consumer_info->key_to_monitor <<"-" << new_consumer_info->quantum_multiplier << "]";)
             } else {
-                _removeKeyConsumer(auto_ci.get());
-                DEBUG_CODE(QSS_DBG << "Asynchronously removed consumer [" << new_consumer_info->key_to_monitor <<"-" << new_consumer_info->quantum_multiplier << "]";)
+                DEBUG_CODE(QSS_INFO << boost::str(boost::format("Asynchronously remove key consumer [%1%-%2%-%3%]")%auto_ci->key_to_monitor%auto_ci->quantum_multiplier%auto_ci->consumer);)
+                DEBUG_CODE(QSS_DBG<< "Asynchronously removed consumer [" << new_consumer_info->key_to_monitor <<"-" << new_consumer_info->quantum_multiplier << "]";)
+               _removeKeyConsumer(auto_ci.get());
             }
         } catch(...){
             
@@ -315,34 +319,26 @@ void QuantumSlotScheduler::addKeyConsumer(const std::string& key_to_monitor,
     std::string quantum_consumer_key = CHAOS_QSS_COMPOSE_QUANTUM_CONSUMER_KEY(key_to_monitor,
                                                                               quantum_multiplier,
                                                                               consumer);
-    if(map_quantum_slot_consumer.count(quantum_consumer_key)) {
-        QSS_ERR << boost::str(boost::format("Key consumer alredy registere [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
-        return;
-    }
-    
-    //increment the index to indicate that has passed scheduler publi layer
-    consumer->free_of_work = false;
+    //increment the index to indicate that has passed scheduler public layer
     consumer->usage_counter++;
     
-    QSS_INFO << boost::str(boost::format("Submit creation for new key consumer [%1%-%2%-%3%(%4%)]")%key_to_monitor%quantum_multiplier%consumer%consumer->usage_counter);
-    
-    
+    LOCK_QUEUE(queue_new_quantum_slot_consumer)
     //push into lock free queue for add the consumer
     queue_new_quantum_slot_consumer.push(new SlotConsumerInfo(true,
                                                               key_to_monitor,
                                                               quantum_multiplier,
                                                               consumer,
                                                               consumer_priority));
+    QSS_INFO << boost::str(boost::format("Submitted creation for new key consumer [%1%-%2%-%3%(%4%)]")%key_to_monitor%quantum_multiplier%consumer%consumer->usage_counter);
 }
 
 
-void QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
+bool QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
                                              unsigned int quantum_multiplier,
                                              QuantumSlotConsumer *consumer,
                                              bool wait_completion) {
     CHAOS_ASSERT(consumer)
-    QSS_INFO << boost::str(boost::format("Submit remove operation for key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
-    
+    bool result = true;
     //prepare key
     std::string quantum_consumer_key = CHAOS_QSS_COMPOSE_QUANTUM_CONSUMER_KEY(key_to_monitor,
                                                                               quantum_multiplier,
@@ -351,37 +347,45 @@ void QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
     //decrement the index to indicate that it has been remove from public layer
     consumer->usage_counter--;
     
+    std::auto_ptr<SlotConsumerInfo> remove_command(new SlotConsumerInfo(false,
+                                         key_to_monitor,
+                                         quantum_multiplier,
+                                         consumer,
+                                         0));
     //push into lock free queue to remove the consumer
-    queue_new_quantum_slot_consumer.push(new SlotConsumerInfo(false,
-                                                              key_to_monitor,
-                                                              quantum_multiplier,
-                                                              consumer,
-                                                              0));
-    //waith for completiotion on consumer
+    LOCK_QUEUE(queue_new_quantum_slot_consumer)
+    queue_new_quantum_slot_consumer.push(remove_command.release());
+    QSS_INFO << boost::str(boost::format("Submited remove operation for key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
     if(wait_completion) {
+        //now waith for termination
         QSS_INFO << boost::str(boost::format("Wait for remove of key consumer [%1%-%2%-%3%(%4%)]")%key_to_monitor%quantum_multiplier%consumer%consumer->usage_counter);
         consumer->waitForCompletition();
         QSS_INFO << boost::str(boost::format("Cleanly removed key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
+
     }
+    return result;
 }
 
 //---------called by the scheduler thread----------
 void QuantumSlotScheduler::_addKeyConsumer(SlotConsumerInfo *ci) {
     CHAOS_ASSERT(ci)
     //lock the set
-    
+    DEBUG_CODE(QSS_INFO << boost::str(boost::format("Start adding key consumer [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
+
     boost::shared_ptr<QuantumSlot> quantum_slot;
     
     std::string quantum_slot_key = CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(ci->key_to_monitor, ci->quantum_multiplier);
     boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_scan);
     SSSlotTypeQuantumSlotKeyIndexIterator it = set_slots_index_key_slot.find(quantum_slot_key);
     if(it == set_slots_index_key_slot.end()) {
+        DEBUG_CODE(QSS_INFO << boost::str(boost::format("We need to create a new quantum slot for key consumer [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
         //we need to create a new  slot
         quantum_slot.reset(new QuantumSlot(ci->key_to_monitor, ci->quantum_multiplier));
         
         //insert new slot
         set_slots.insert(ScheduleSlot(quantum_slot));
     } else {
+        DEBUG_CODE(QSS_INFO << boost::str(boost::format("We already have the slot for key consumer [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
         // we already have the slot
         quantum_slot = it->quantum_slot;
     }
@@ -391,7 +395,7 @@ void QuantumSlotScheduler::_addKeyConsumer(SlotConsumerInfo *ci) {
     DEBUG_CODE(QSS_INFO << boost::str(boost::format("Added key consumer [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
 }
 
-void QuantumSlotScheduler::_removeKeyConsumer(SlotConsumerInfo *ci) {
+bool QuantumSlotScheduler::_removeKeyConsumer(SlotConsumerInfo *ci) {
     CHAOS_ASSERT(ci)
     //lock the set
     DEBUG_CODE(QSS_INFO << boost::str(boost::format("Start removing key consumer [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
@@ -401,8 +405,9 @@ void QuantumSlotScheduler::_removeKeyConsumer(SlotConsumerInfo *ci) {
                                                                       ci->quantum_multiplier);
     
     boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_scan);
+    
     SSSlotTypeQuantumSlotKeyIndexIterator it = set_slots_index_key_slot.find(quantum_slot_key);
-    if(it == set_slots_index_key_slot.end()) return;
+    if(it == set_slots_index_key_slot.end()) return true;
     // we already have the slot
     boost::shared_ptr<QuantumSlot> quantum_slot = it->quantum_slot;
     //try to remove the consumer, if we dont have success, it mean that the consumer has been removed directly from quantum sot object
@@ -412,8 +417,9 @@ void QuantumSlotScheduler::_removeKeyConsumer(SlotConsumerInfo *ci) {
         ci->consumer->setFreeOfWork();
         DEBUG_CODE(QSS_INFO << boost::str(boost::format("we have signaled key consumer that it is free of work [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
     } else {
-        DEBUG_CODE(QSS_INFO << boost::str(boost::format("The key consumer has been removed directly by the slot [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
+        DEBUG_CODE(QSS_INFO << boost::str(boost::format("The key consumer has not been found in the slot [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
     }
+    return true;
 }
 
 std::auto_ptr<CDataWrapper> QuantumSlotScheduler::getLastDataset(const std::string& dataset_key) {

@@ -113,14 +113,14 @@ void MonitorManager::addKeyAttributeHandler(const std::string& key_to_monitor,
     consumer->addAttributeHandler(attribute_handler);
 }
 
-void MonitorManager::removeKeyConsumer(const std::string& key_to_monitor,
+bool MonitorManager::removeKeyConsumer(const std::string& key_to_monitor,
                                        int quantum_multiplier,
                                        QuantumSlotConsumer *consumer,
                                        bool wait_completion) {
-    slot_scheduler->removeKeyConsumer(key_to_monitor,
-                                      quantum_multiplier,
-                                      consumer,
-                                      wait_completion);
+    return slot_scheduler->removeKeyConsumer(key_to_monitor,
+                                             quantum_multiplier,
+                                             consumer,
+                                             wait_completion);
 }
 
 //! remove an handler associated to ans attirbute of a key

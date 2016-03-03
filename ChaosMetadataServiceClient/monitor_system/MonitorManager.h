@@ -101,10 +101,10 @@ namespace chaos {
                                             unsigned int consumer_priority = 500);
                 
                 //! remove a consumer by key and quantum
-                void removeKeyConsumer(const std::string& key_to_monitor,
-                                       int quantum_multiplier,
-                                       QuantumSlotConsumer *consumer,
-                                       bool wait_completion = true);
+                bool removeKeyConsumer(const std::string& key_to_monitor,
+                                         int quantum_multiplier,
+                                         QuantumSlotConsumer *consumer,
+                                         bool wait_completion = true);
                 
                 //! remove an handler associated to ans attirbute of a key
                 void removeKeyAttributeHandler(const std::string& key_to_monitor,

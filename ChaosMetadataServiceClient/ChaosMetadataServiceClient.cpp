@@ -313,11 +313,10 @@ bool ChaosMetadataServiceClient::removeKeyConsumer(const std::string& key_to_mon
                                                    monitor_system::QuantumSlotConsumer *consumer,
                                                    bool wait_completion) {
     CHAOS_ASSERT(monitor_manager.get());
-    monitor_manager->removeKeyConsumer(key_to_monitor,
-                                       quantum_multiplier,
-                                       consumer,
-                                       wait_completion);
-    return true;
+    return monitor_manager->removeKeyConsumer(key_to_monitor,
+                                              quantum_multiplier,
+                                              consumer,
+                                              wait_completion);
 }
 
 //! remove a consumer for the healt data associated to a key
