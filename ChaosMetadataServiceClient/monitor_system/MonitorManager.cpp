@@ -48,8 +48,8 @@ void MonitorManager::start() throw (chaos::CException) {
     
     //add timer for purge operation
     AsyncCentralManager::getInstance()->addTimer(this,
-                                                 5000,
-                                                 5000);
+                                                 1000,
+                                                 1000);
 }
 
 void MonitorManager::stop() throw (chaos::CException) {
@@ -174,10 +174,10 @@ void MonitorManager::purgeKeyConsumer(bool all) {
     int max_to_purge = 3;
     QuantumKeyConsumer *consumer = NULL;
     boost::unique_lock<boost::mutex> wl(mutex_queue_to_purge);
-    while(queue_to_purge.size() ||
-          end_purge_operation ) {
+    while(queue_to_purge.size() &&
+          !end_purge_operation ) {
         consumer = queue_to_purge.front(); queue_to_purge.pop();
-        MM_INFO << boost::str(boost::format("Auto purged key handler consumer slot for pointer %1%")%consumer);
+        MM_INFO << boost::str(boost::format("Auto purged key handler consumer slot for pointer %1% queue left size %2%")%consumer%queue_to_purge.size());
         consumer->waitForCompletition();
         delete(consumer);
         if(!all){

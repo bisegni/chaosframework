@@ -297,15 +297,15 @@ void QuantumSlotScheduler::fetchValue(boost::shared_ptr<IODataDriver> data_drive
             const char * data_found = data_driver->retriveRawData(cur_slot->key, &data_found_size);
             
             //dispatch data
-            dispath_new_value_async(error,
-                                    cur_slot,
-                                    data_found);
+            //            dispath_new_value_async(error,
+            //                                    cur_slot,
+            //                                    data_found);
             
-            //            async_timer.async_wait(boost::bind(&QuantumSlotScheduler::dispath_new_value_async,
-            //                                               this,
-            //                                               boost::asio::placeholders::error,
-            //                                               cur_slot,
-            //                                               data_found));
+            async_timer.async_wait(boost::bind(&QuantumSlotScheduler::dispath_new_value_async,
+                                               this,
+                                               boost::asio::placeholders::error,
+                                               cur_slot,
+                                               data_found));
         } else {
             //we need to sleep untile someone wakeup us
             QSS_DBG << "No more data slot to fetch so i'm going to sleep";
@@ -360,11 +360,18 @@ bool QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
                                                                         consumer,
                                                                         0));
     //push into lock free queue to remove the consumer
-    LOCK_QUEUE(queue_new_quantum_slot_consumer);
-    queue_new_quantum_slot_consumer.push(remove_command.release());
-    UNLOCK_QUEUE(queue_new_quantum_slot_consumer);
     QSS_INFO << boost::str(boost::format("Submited remove operation for key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
-    if(wait_completion) {
+    if(wait_completion == false) {
+        if((result = _removeKeyConsumer(remove_command.get()))== false) {
+            //we can have success to remove so demand the operation asynchronously
+            LOCK_QUEUE(queue_new_quantum_slot_consumer);
+            queue_new_quantum_slot_consumer.push(remove_command.release());
+            UNLOCK_QUEUE(queue_new_quantum_slot_consumer);
+        }
+    } else {
+        LOCK_QUEUE(queue_new_quantum_slot_consumer);
+        queue_new_quantum_slot_consumer.push(remove_command.release());
+        UNLOCK_QUEUE(queue_new_quantum_slot_consumer);
         //now waith for termination
         QSS_INFO << boost::str(boost::format("Wait for remove of key consumer [%1%-%2%-%3%(%4%)]")%key_to_monitor%quantum_multiplier%consumer%consumer->usage_counter);
         consumer->waitForCompletition();

@@ -48,7 +48,7 @@ public:
     
     void registerConsumer();
     
-    void deregisterConsumer();
+    bool deregisterConsumer();
     
     void waitForPurge();
     

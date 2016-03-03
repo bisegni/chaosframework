@@ -42,11 +42,12 @@ void NodeMonitor::registerConsumer() {
 
 }
 
-void NodeMonitor::deregisterConsumer() {
+bool NodeMonitor::deregisterConsumer() {
     //remove this class as handler from the monitor system
-    ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(node_id,
+    return ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(node_id,
                                                                  monitor_quantum_slot,
-                                                                 this);
+                                                                 this,
+                                                                 false);
 
 }
 

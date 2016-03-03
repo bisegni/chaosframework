@@ -50,6 +50,16 @@ public:
 
 #define NUMBER_OF_TEST_ELEMENT 10
 
+boost::thread_group thread_group_test;
+
+void executeHandlerTest(){
+    HandlerMonitor hm("BTF/DHSTB001_healt",
+                      "nh_status");
+    hm.init();
+    usleep(2000000);
+    hm.deinit();
+}
+
 int main(int argc, char *argv[]){
     boost::thread_group tg;
     uint32_t quantum_multiplier;
@@ -114,12 +124,18 @@ int main(int argc, char *argv[]){
                 
                 sleep(5);
                 for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
-                    arr[idx]->deregisterConsumer();
+                    if(arr[idx]->deregisterConsumer()){
+                        arr[idx].reset();
+                    }
                 }
                 
                 for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
                     arr_handler[idx]->deinit();
                     arr_handler[idx].reset();
+                }
+                
+                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
+                    if(arr[idx].get())arr[idx]->waitForPurge();
                 }
                 
                 //nm.waitForPurge();
@@ -131,12 +147,22 @@ int main(int argc, char *argv[]){
                 //try search and waith the termination
                 ns.testSearch(device_id.size()?device_id:"");
             }
+                
+                
+            case 2:{
+                for(int idx = 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
+                    thread_group_test.add_thread(new boost::thread(boost:: bind(executeHandlerTest)));
+                }
+                sleep(2);
+                thread_group_test.join_all();
+            }
+                
         }
         
         //register log allert event
         ChaosMetadataServiceClient::getInstance()->deregisterEventHandler(&alert_log_handler);
         
-        ChaosMetadataServiceClient::getInstance()->disableMonitor();
+        //ChaosMetadataServiceClient::getInstance()->disableMonitor();
         ChaosMetadataServiceClient::getInstance()->stop();
         ChaosMetadataServiceClient::getInstance()->deinit();
     }
