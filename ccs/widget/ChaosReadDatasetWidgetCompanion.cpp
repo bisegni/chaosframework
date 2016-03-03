@@ -81,8 +81,9 @@ bool ChaosReadDatasetWidgetCompanion::untrackDataset(quint32 _scheduler_slot) {
     }
     qDebug()<< "remove consumer for "<< node_key;
     if(ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(node_key.toStdString(),
-                                                                           _scheduler_slot,
-                                                                           this) == false){
+                                                                    _scheduler_slot,
+                                                                    this,
+                                                                    false) == false){
         qDebug()<< "need do wait for consumer " <<node_key;
         QuantumSlotConsumer::waitForCompletition();
     }
