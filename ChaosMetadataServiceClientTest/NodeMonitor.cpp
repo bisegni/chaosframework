@@ -46,8 +46,7 @@ void NodeMonitor::deregisterConsumer() {
     //remove this class as handler from the monitor system
     ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(node_id,
                                                                  monitor_quantum_slot,
-                                                                 this,
-                                                                 false);
+                                                                 this);
 
 }
 

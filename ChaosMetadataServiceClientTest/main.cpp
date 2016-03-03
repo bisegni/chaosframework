@@ -48,7 +48,7 @@ public:
     }
 };
 
-#define NUMBER_OF_TEST_ELEMENT 255
+#define NUMBER_OF_TEST_ELEMENT 10
 
 int main(int argc, char *argv[]){
     boost::thread_group tg;
@@ -122,9 +122,6 @@ int main(int argc, char *argv[]){
                     arr_handler[idx].reset();
                 }
                 
-                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
-                    arr[idx]->waitForPurge();
-                }
                 //nm.waitForPurge();
                 break;
             }

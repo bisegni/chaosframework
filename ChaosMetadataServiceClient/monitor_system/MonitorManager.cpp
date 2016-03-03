@@ -30,8 +30,7 @@ using namespace chaos::metadata_service_client::monitor_system;
 MonitorManager::MonitorManager(chaos::common::network::NetworkBroker *_network_broker,
                                ClientSetting *_setting):
 setting(_setting),
-network_broker(_network_broker),
-queue_to_purge(0){}
+network_broker(_network_broker){}
 
 MonitorManager::~MonitorManager() {}
 
@@ -59,6 +58,8 @@ void MonitorManager::stop() throw (chaos::CException) {
     
     //remove all append consumer
     purgeKeyConsumer(true);
+    
+    
     StartableService::stopImplementation(slot_scheduler, "QuantumSlotScheduler", __PRETTY_FUNCTION__);
 }
 
@@ -149,6 +150,8 @@ void MonitorManager::removeKeyAttributeHandler(const std::string& key_to_monitor
                           false);
         
         //add key consumer to the queue of to purge
+        //delete(it->second);
+        boost::unique_lock<boost::mutex> wl(mutex_queue_to_purge);
         queue_to_purge.push(it->second);
         
         //remove elemento form the map of used key consumer
@@ -170,12 +173,13 @@ void MonitorManager::purgeKeyConsumer(bool all) {
     bool end_purge_operation = false;
     int max_to_purge = 3;
     QuantumKeyConsumer *consumer = NULL;
-    
-    while(queue_to_purge.pop(consumer) ||
+    boost::unique_lock<boost::mutex> wl(mutex_queue_to_purge);
+    while(queue_to_purge.size() ||
           end_purge_operation ) {
+        consumer = queue_to_purge.front(); queue_to_purge.pop();
+        MM_INFO << boost::str(boost::format("Auto purged key handler consumer slot for pointer %1%")%consumer);
         consumer->waitForCompletition();
         delete(consumer);
-        MM_INFO << boost::str(boost::format("Auto purged key handler consumer slot for pointer %1%")%consumer);
         if(!all){
             //end when we have processed max number of element
             end_purge_operation = (--max_to_purge>=0);

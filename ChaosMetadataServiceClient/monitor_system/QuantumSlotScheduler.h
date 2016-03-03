@@ -52,8 +52,9 @@ namespace chaos {
             
 #define LOCK_QUEUE(queue_name)\
 boost::unique_lock<boost::mutex> wl(mutex_ ## queue_name);
-            
-            typedef boost::lockfree::queue<QuantumSlot*, boost::lockfree::fixed_sized<false> >  LFQuantumSlotQueue;
+    
+#define UNLOCK_QUEUE(queue_name)\
+mutex_ ## queue_name.unlock();
             
             //! structure used to submit new consumer to itnernal layer
             struct SlotConsumerInfo {
@@ -89,8 +90,6 @@ boost::unique_lock<boost::mutex> wl(mutex_ ## queue_name);
                 consumer_priority(_info.consumer_priority){}
                 
             };
-            
-            typedef std::queue<SlotConsumerInfo*>  QueueSlotConsumerInfo;
             
             //! strucutre that contain the slot
             struct ScheduleSlot {
@@ -159,6 +158,9 @@ boost::unique_lock<boost::mutex> wl(mutex_ ## queue_name);
                 }
             };
             
+            typedef std::queue<SlotConsumerInfo*>  QueueSlotConsumerInfo;
+            typedef boost::lockfree::queue<QuantumSlot*, boost::lockfree::fixed_sized<false> >  LFQuantumSlotQueue;
+            
             //! class that manage the scan of the slot ad the fetch of the slot vlaue
             /*!
              This scheduler consists into two job, the scanner and the fetcher.
@@ -205,7 +207,7 @@ boost::unique_lock<boost::mutex> wl(mutex_ ## queue_name);
                 
                 //! manage the lock on the slot multi-index
                 boost::shared_mutex                     set_slots_mutex;
-
+                
                 //------------structure for comunication between public and internal layers-------------------------------------------
                 //! queue that conenct the public and internal layers of scheduler add and remove handler push quantum slot
                 //! withing this queue and scan slot funciton retrive new one added and increment the multiindex set
@@ -215,7 +217,7 @@ boost::unique_lock<boost::mutex> wl(mutex_ ## queue_name);
                 //!mute for work on map that of slot consumer managed by add and remove function
                 boost::mutex                            mutex_map_quantum_slot_consumer;
                 
-
+                
                 //! default constructor
                 QuantumSlotScheduler(chaos::common::network::NetworkBroker *_network_broker);
                 ~QuantumSlotScheduler();
