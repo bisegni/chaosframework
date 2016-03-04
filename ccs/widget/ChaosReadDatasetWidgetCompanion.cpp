@@ -1,5 +1,6 @@
 #include "ChaosReadDatasetWidgetCompanion.h"
 
+#include <QDebug>
 using namespace chaos::metadata_service_client;
 
 ChaosReadDatasetWidgetCompanion::ChaosReadDatasetWidgetCompanion():
@@ -77,9 +78,13 @@ bool ChaosReadDatasetWidgetCompanion::untrackDataset(quint32 _scheduler_slot) {
         break;
 
     }
-    return ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(node_key.toStdString(),
-                                                                        _scheduler_slot,
-                                                                        this);
+    if(ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(node_key.toStdString(),
+                                                                    _scheduler_slot,
+                                                                    this,
+                                                                    false) == false){
+        QuantumSlotConsumer::waitForCompletion();
+    }
+    return true;
 }
 
 bool ChaosReadDatasetWidgetCompanion::changeKeyConsumerQuantumSlot(int old_quantum_multiplier,

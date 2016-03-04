@@ -26,28 +26,34 @@
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 class NodeMonitor :
-        public chaos::metadata_service_client::monitor_system::QuantumSlotConsumer {
+public chaos::metadata_service_client::monitor_system::QuantumSlotConsumer {
     const std::string node_id;
     const uint32_t monitor_duration;
     const uint32_t monitor_quantum_slot;
-
-
+    
+    
     void quantumSlotHasData(const std::string &key,
                             const chaos::metadata_service_client::monitor_system::KeyValue &value);
-
+    
     void quantumSlotHasNoData(const std::string &key);
-
+    
 public:
-
+    
     NodeMonitor(const std::string &node_id,
                 const uint32_t monitor_duration,
                 const uint32_t monitor_quantum_slot);
-
-
+    
+    
     virtual ~NodeMonitor();
-
+    
+    void registerConsumer();
+    
+    bool deregisterConsumer();
+    
+    void waitForPurge();
+    
     void monitor_node();
-
+    
 };
 
 

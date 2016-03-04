@@ -56,7 +56,9 @@ void QuantumSlot::addNewConsumer(QuantumSlotConsumer *_consumer,
                                  unsigned int priotiy) {
     if(_consumer == NULL) return;
     boost::unique_lock<boost::shared_mutex> wl(consumer_mutex);
+    
     consumers.insert(ConsumerType(_consumer, priority));
+    QS_INFO << boost::str(boost::format("Added %1% into the slot set")%_consumer);
 }
 
 bool QuantumSlot::removeConsumer(QuantumSlotConsumer *_consumer) {
@@ -71,14 +73,18 @@ bool QuantumSlot::removeConsumer(QuantumSlotConsumer *_consumer) {
     SetConsumerTypePointerIndexIterator iter = consumers_pointer_index.find(pointer_int);
     
     //if we have it return true and remove it
-    if ((result = (iter != consumers_pointer_index.end()))) {
+    result = (iter != consumers_pointer_index.end());
+    if (result) {
         consumers_pointer_index.erase(pointer_int);
+        QS_INFO << boost::str(boost::format("Removed %1% from slot index")%_consumer);
+    } else {
+        QS_ERR << boost::str(boost::format("Slot consumer %1% not found")%_consumer);
     }
     return result;
 }
 
 void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
-    boost::shared_lock<boost::shared_mutex> rl(consumer_mutex);
+    boost::unique_lock<boost::shared_mutex> rl(consumer_mutex);
     uint64_t start_forwardint_time = TimingUtil::getTimeStampInMicrosends();
     //temporary quantum slot pointer
     QuantumSlotConsumer *curr_qsc = NULL;
@@ -86,20 +92,10 @@ void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
     SetConsumerTypePriorityIndexIterator it = consumers_priority_index.begin();
     while (it != consumers_priority_index.end()) {
         curr_qsc = reinterpret_cast<QuantumSlotConsumer*>(it->consumer_pointer);
-         //check if we need to remove it
-        if(curr_qsc->usage_counter == 0) {
-            DEBUG_CODE(QS_DBG << "The consumer pointer"<<it->consumer_pointer<<" need to removed";)
-            //remove from the index and return the next
-            it = consumers_priority_index.erase(it);
-            //unlock who are waiting the quantum slot free for for work
-            DEBUG_CODE(QS_DBG << "The consumer pointer"<<it->consumer_pointer<<" can be set fre of work";)
-            curr_qsc->setFreeOfWork();
-        } else {
-            //signal the consumer
-            curr_qsc->quantumSlotHasData(key, value);
-            //increment
-            ++it;
-        }
+        //signal the consumer
+        curr_qsc->quantumSlotHasData(key, value);
+        //increment
+        ++it;
     }
     
     //calc time
@@ -117,7 +113,7 @@ void QuantumSlot::sendNewValueConsumer(const KeyValue& value) {
 }
 
 void QuantumSlot::sendNoValueToConsumer() {
-    boost::shared_lock<boost::shared_mutex> rl(consumer_mutex);
+    boost::unique_lock<boost::shared_mutex> rl(consumer_mutex);
     uint64_t start_forwardint_time = TimingUtil::getTimeStampInMicrosends();
     //temporary quantum slot pointer
     QuantumSlotConsumer *curr_qsc = NULL;
@@ -125,20 +121,10 @@ void QuantumSlot::sendNoValueToConsumer() {
     SetConsumerTypePriorityIndexIterator it = consumers_priority_index.begin();
     while (it != consumers_priority_index.end()) {
         curr_qsc = reinterpret_cast<QuantumSlotConsumer*>(it->consumer_pointer);
-        //check if we need to remove it
-        if(curr_qsc->usage_counter == 0) {
-            DEBUG_CODE(QS_DBG << "The consumer pointer"<<it->consumer_pointer<<" need to removed";)
-            //remove from the index and return the next
-            it = consumers_priority_index.erase(it);
-            //unlock who are waiting the quantum slot free for for work
-            curr_qsc->setFreeOfWork();
-            DEBUG_CODE(QS_DBG << "The consumer pointer"<<it->consumer_pointer<<" can be set fre of work";)
-        } else {
-            //signal the consumer
-            curr_qsc->quantumSlotHasNoData(key);
-            //increment
-            ++it;
-        }
+        //signal the consumer
+        curr_qsc->quantumSlotHasNoData(key);
+        //increment
+        ++it;
     }
     
     //calc time

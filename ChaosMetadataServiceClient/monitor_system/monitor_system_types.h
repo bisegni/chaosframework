@@ -36,7 +36,8 @@ namespace chaos {
             
             //!is the minimal monitoring delay
 #define MONITOR_QUANTUM_LENGTH  100//milli-seconds
-            
+#define CHAOS_QSS_COMPOSE_QUANTUM_CONSUMER_KEY(k,q,p) boost::str(boost::format("%1%_%2%_%3%")% k % q % reinterpret_cast<uintptr_t>(p))
+#define CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(k,q) boost::str(boost::format("%1%_%2%")% k % q)
             
             typedef boost::shared_ptr<chaos::common::data::CDataWrapper> KeyValue;
             
@@ -53,13 +54,16 @@ namespace chaos {
                 boost::atomic<unsigned int> usage_counter;
                 //!relase any lock on conditional interal variable
                 void setFreeOfWork() {
-                    boost::mutex::scoped_lock lock_on_condition(mutex_condition_free);
-                    free_of_work = true;
-                    condition_free.notify_one();
+                    try{
+                        boost::mutex::scoped_lock lock_on_condition(mutex_condition_free);
+                        free_of_work = true;
+                        condition_free.notify_one();
+                    }catch(...){}
                 }
             public:
                 QuantumSlotConsumer():
-                usage_counter(0){}
+                usage_counter(0),
+                free_of_work(false){}
                 
                 virtual ~QuantumSlotConsumer() {}
                 
@@ -68,11 +72,14 @@ namespace chaos {
                 //! callend every time that data can't be retrieved from data service
                 virtual void quantumSlotHasNoData(const std::string& key) = 0;
                 //! waith on conditional interval variable that is fired when the consumer can be released
-                void waitForCompletition() {
-                    boost::mutex::scoped_lock lock_on_condition(mutex_condition_free);
-                    while(!free_of_work) {
-                        condition_free.wait(lock_on_condition);
-                    }
+                void waitForCompletion() {
+                    try{
+                        boost::mutex::scoped_lock lock_on_condition(mutex_condition_free);
+                        while(!free_of_work) {
+                            condition_free.wait(lock_on_condition);
+                        }
+                        free_of_work = false;
+                    }catch(...){}
                 }
             };
         }

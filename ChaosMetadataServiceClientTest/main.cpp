@@ -27,6 +27,7 @@
 #include <boost/timer/timer.hpp>
 
 #include "NodeMonitor.h"
+#include "HandlerMonitor.h"
 #include "NodeSearchTest.h"
 
 using namespace chaos::metadata_service_client;
@@ -42,10 +43,22 @@ class AlertLogHandlerImpl:
 public chaos::metadata_service_client::event::alert::AlertLogEventHandler {
 public:
     void handleLogEvent(const std::string source,
-                                const std::string domain) {
+                        const std::string domain) {
         MSCT_INFO << source << "-" << domain;
     }
 };
+
+#define NUMBER_OF_TEST_ELEMENT 10
+
+boost::thread_group thread_group_test;
+
+void executeHandlerTest(){
+    HandlerMonitor hm("BTF/DHSTB001_healt",
+                      "nh_status");
+    hm.init();
+    usleep(2000000);
+    hm.deinit();
+}
 
 int main(int argc, char *argv[]){
     boost::thread_group tg;
@@ -81,7 +94,7 @@ int main(int argc, char *argv[]){
         
         //register log allert event
         ChaosMetadataServiceClient::getInstance()->registerEventHandler(&alert_log_handler);
-
+        
         switch (operation){
             case 0:{
                 
@@ -91,8 +104,41 @@ int main(int argc, char *argv[]){
                 NodeMonitor nm(device_id,
                                wait_seconds,
                                quantum_multiplier);
-                //start and wait for monitor termination
-                nm.monitor_node();
+                
+                boost::shared_ptr<NodeMonitor> arr[NUMBER_OF_TEST_ELEMENT];
+                boost::shared_ptr<HandlerMonitor> arr_handler[NUMBER_OF_TEST_ELEMENT];
+                
+                
+                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
+                    arr[idx].reset(new NodeMonitor(device_id,
+                                                   wait_seconds,
+                                                   quantum_multiplier));
+                    arr[idx]->registerConsumer();
+                }
+                
+                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
+                    arr_handler[idx].reset(new HandlerMonitor("BTF/DHSTB001_healt",
+                                                              "nh_status"));
+                    arr_handler[idx]->init();
+                }
+                
+                sleep(5);
+                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
+                    if(arr[idx]->deregisterConsumer()){
+                        arr[idx].reset();
+                    }
+                }
+                
+                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
+                    arr_handler[idx]->deinit();
+                    arr_handler[idx].reset();
+                }
+                
+                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
+                    if(arr[idx].get())arr[idx]->waitForPurge();
+                }
+                
+                //nm.waitForPurge();
                 break;
             }
             case 1:{
@@ -101,12 +147,22 @@ int main(int argc, char *argv[]){
                 //try search and waith the termination
                 ns.testSearch(device_id.size()?device_id:"");
             }
+                
+                
+            case 2:{
+                for(int idx = 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
+                    thread_group_test.add_thread(new boost::thread(boost:: bind(executeHandlerTest)));
+                }
+                sleep(2);
+                thread_group_test.join_all();
+            }
+                
         }
-
+        
         //register log allert event
         ChaosMetadataServiceClient::getInstance()->deregisterEventHandler(&alert_log_handler);
         
-        ChaosMetadataServiceClient::getInstance()->disableMonitor();
+        //ChaosMetadataServiceClient::getInstance()->disableMonitor();
         ChaosMetadataServiceClient::getInstance()->stop();
         ChaosMetadataServiceClient::getInstance()->deinit();
     }

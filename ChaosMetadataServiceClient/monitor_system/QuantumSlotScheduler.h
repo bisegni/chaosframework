@@ -49,11 +49,12 @@ namespace chaos {
             
             //define a map for string and quantum slot
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, QuantumSlotConsumer*, QuantumSlotConsumerMap)
-
-#define CHAOS_QSS_COMPOSE_QUANTUM_CONSUMER_KEY(k,q,p) boost::str(boost::format("%1%_%2%_%3%")% k % q % reinterpret_cast<uintptr_t>(p))
-#define CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(k,q) boost::str(boost::format("%1%_%2%")% k % q)
             
-            typedef boost::lockfree::queue<QuantumSlot*, boost::lockfree::fixed_sized<false> >  LFQuantumSlotQueue;
+#define LOCK_QUEUE(queue_name)\
+boost::unique_lock<boost::mutex> wl(mutex_ ## queue_name);
+    
+#define UNLOCK_QUEUE(queue_name)\
+mutex_ ## queue_name.unlock();
             
             //! structure used to submit new consumer to itnernal layer
             struct SlotConsumerInfo {
@@ -89,8 +90,6 @@ namespace chaos {
                 consumer_priority(_info.consumer_priority){}
                 
             };
-            
-            typedef boost::lockfree::queue<SlotConsumerInfo*, boost::lockfree::fixed_sized<false> >  LFQueueSlotConsumerInfo;
             
             //! strucutre that contain the slot
             struct ScheduleSlot {
@@ -159,6 +158,9 @@ namespace chaos {
                 }
             };
             
+            typedef boost::lockfree::queue<SlotConsumerInfo*, boost::lockfree::fixed_sized<false> >  QueueSlotConsumerInfo;
+            typedef boost::lockfree::queue<QuantumSlot*, boost::lockfree::fixed_sized<false> >  LFQuantumSlotQueue;
+            
             //! class that manage the scan of the slot ad the fetch of the slot vlaue
             /*!
              This scheduler consists into two job, the scanner and the fetcher.
@@ -180,16 +182,12 @@ namespace chaos {
                 std::vector<std::string>                data_driver_endpoint;
                 chaos::common::network::NetworkBroker   *network_broker;
                 std::string                             data_driver_impl;
-                chaos::common::io::IODataDriver         *data_driver;
                 
                 boost::mutex                            mutex_condition_fetch;
                 boost::condition_variable               condition_fetch;
                 
                 boost::mutex                            mutex_condition_scan;
                 boost::condition_variable               condition_scan;
-                
-                //mutex for use the data driver for fetching data
-                boost::mutex                            mutex_fetch_value;
                 
                 //!groups for thread that make the scanner
                 bool                                    work_on_scan;
@@ -209,22 +207,16 @@ namespace chaos {
                 
                 //! manage the lock on the slot multi-index
                 boost::shared_mutex                     set_slots_mutex;
-
+                
                 //------------structure for comunication between public and internal layers-------------------------------------------
                 //! queue that conenct the public and internal layers of scheduler add and remove handler push quantum slot
                 //! withing this queue and scan slot funciton retrive new one added and increment the multiindex set
-                LFQueueSlotConsumerInfo                 queue_new_quantum_slot_consumer;
-                
-                //------------structure for interface public api and internal engine--------------------------------------------------
-                //! map to handle the inspection of the quantum slot consumer that is managed into internal async layer of scheduler
-                //! this structure is managed only by add and remove ahdler function.
-                QuantumSlotConsumerMap                  map_quantum_slot_consumer;
-
+                QueueSlotConsumerInfo                   queue_new_quantum_slot_consumer;
                 
                 //!mute for work on map that of slot consumer managed by add and remove function
                 boost::mutex                            mutex_map_quantum_slot_consumer;
                 
-
+                
                 //! default constructor
                 QuantumSlotScheduler(chaos::common::network::NetworkBroker *_network_broker);
                 ~QuantumSlotScheduler();
@@ -248,10 +240,11 @@ namespace chaos {
                 //! manage the registration in internal layer for new consumer
                 void _addKeyConsumer(SlotConsumerInfo *ci);
                 //!manage in the internal layer the request for remove the consumer
-                void _removeKeyConsumer(SlotConsumerInfo *ci);
+                bool _removeKeyConsumer(SlotConsumerInfo *ci);
                 
                 //!check the internal queue if there are new consumer to add
-                inline bool _checkRemoveAndAddNewConsumer();
+                inline uint64_t _checkRemoveAndAddNewConsumer(uint64_t start_time_in_milliseconds,
+                                                              uint64_t millisecond_for_work);
             public:
                 
                 void init(void *init_data) throw (chaos::CException);
@@ -259,22 +252,35 @@ namespace chaos {
                 void stop() throw (chaos::CException);
                 void deinit() throw (chaos::CException);
                 
-                //! set a new lits of server to use for fetch values
+                //! Set a new lits of server to use for fetch values
                 void setDataDriverEndpoints(const std::vector<std::string>& _data_driver_endpoint);
                 
-                //! add a new quantum slot for key
+                //! Add a new quantum slot for key
                 void addKeyConsumer(const std::string& key_to_monitor,
                                     unsigned int quantum_multiplier,
                                     QuantumSlotConsumer *consumer,
                                     unsigned int consumer_priority = 500);
                 
-                //! remove a consumer by key and quantum
-                void removeKeyConsumer(const std::string& key_to_monitor,
+                //! Remove a consumer by key and quantum
+                /*!
+                 The remove operation can be also executed specifind false on
+                 wait_completion parameter. In this case The scheduler try to
+                 remove the consumer but if it is in use, the remove operation
+                 will be submitted to the asynchronous layer, so the caller 
+                 neet to call the waitForCompletion of the consumer to
+                 waith that the remove operationhas been terminated
+                 \param key_to_monitor the key to monitor
+                 \param quantum_multiplier is the quantum multipier that will determinate
+                        the delay form a data request and nother
+                 \param consumer the pointer of the consumer that need to be notified
+                 \param wait_completion detarminate if the called whant to wait the completion
+                        of the operation or whant check by itself
+                 \return true if the consumer has been removed
+                 */
+                bool removeKeyConsumer(const std::string& key_to_monitor,
                                        unsigned int quantum_multiplier,
-                                       QuantumSlotConsumer *consumer);
-                
-                //! return the current dataset for a determinate dataset key in a synchornous way
-                std::auto_ptr<chaos::common::data::CDataWrapper> getLastDataset(const std::string& dataset_key);
+                                       QuantumSlotConsumer *consumer,
+                                       bool wait_completion = true);
             };
             
         }

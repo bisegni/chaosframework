@@ -260,6 +260,7 @@ void ControlUnitEditor::changedOnlineStatus(const QString& node_uid,
         //state changed for control unit
         qDebug()<< "change cu online status for:" << node_uid << " as:" <<getStatusString(ui->ledIndicatorHealtTSControlUnit->getState());
         logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(ui->ledIndicatorHealtTSControlUnit->getState()));
+        updateAllControlUnitInfomration();
     } else if(node_uid.compare(unit_server_parent_unique_id) == 0) {
         //state changed for unit server
         qDebug()<< "change us online status for:" << node_uid << " as:" <<getStatusString(ui->ledIndicatorHealtTSUnitServer->getState());
@@ -438,9 +439,9 @@ void ControlUnitEditor::templateSaved(const QString& tempalte_name,
 
 void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
                                                  bool switch_activate) {
-    if(switch_name.compare("unload") == 0) {
-        updateAllControlUnitInfomration();
-    }
+//    if(switch_name.compare("unload") == 0) {
+//        updateAllControlUnitInfomration();
+//    }
 }
 
 void ControlUnitEditor::handleSelectionChangedOnListWiew(const QItemSelection& selection,

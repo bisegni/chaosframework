@@ -27,32 +27,48 @@ NodeMonitor::NodeMonitor(const std::string &node_id,
 						 const uint32_t monitor_quantum_slot):
 	node_id(node_id),
 	monitor_duration(monitor_duration),
-	monitor_quantum_slot(monitor_quantum_slot){}
+	monitor_quantum_slot(monitor_quantum_slot){
+    }
 
 
-NodeMonitor::~NodeMonitor(){}
+NodeMonitor::~NodeMonitor(){
+    }
+
+void NodeMonitor::registerConsumer() {
+    //register this class with monitor system has handler
+    ChaosMetadataServiceClient::getInstance()->addKeyConsumer(node_id,
+                                                              monitor_quantum_slot,
+                                                              this);
+
+}
+
+bool NodeMonitor::deregisterConsumer() {
+    //remove this class as handler from the monitor system
+    return ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(node_id,
+                                                                 monitor_quantum_slot,
+                                                                 this,
+                                                                 false);
+
+}
+
+void NodeMonitor::waitForPurge() {
+    QuantumSlotConsumer::waitForCompletion();
+}
 
 void NodeMonitor::monitor_node(){
-  //register this class with monitor system has handler
-  ChaosMetadataServiceClient::getInstance()->addKeyConsumer(node_id,
-															monitor_quantum_slot,
-															this);
+
 
   //wait the desiderate amount tof time
   sleep(monitor_duration);
 
-  //remove this class as handler from the monitor system
-  ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(node_id,
-															   monitor_quantum_slot,
-															   this);
 }
 
 void NodeMonitor::quantumSlotHasNoData(const std::string &key){
-  std::cout << key << " - " << "No Data" << std::endl;
+  //std::cout << key << " - " << "No Data" << std::endl;
 }
 
 
 void NodeMonitor::quantumSlotHasData(const std::string &key,
 									 const KeyValue &value){
-  std::cout << key << " - " << value->getJSONString() << "\n" << std::flush;
+  //std::cout << key << " - " << value->getJSONString() << "\n" << std::flush;
 }

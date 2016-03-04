@@ -86,7 +86,7 @@ bool StartableService::initImplementation(StartableService *impl, void *initData
         SS_LAPP  << "Error initializing " << implName;
         throw ex;
 	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
-		SS_LERR  << "Error Deinitializing " << ex.what();
+		SS_LERR  << "Error initializing " << ex.what();
 		throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
 	}
     return result;
@@ -140,7 +140,7 @@ bool StartableService::startImplementation(StartableService *impl, const string 
       SS_LAPP  << "Error Starting " << implName<<": "<<ex.what();
         throw ex;
 	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
-		SS_LERR  << "Error Deinitializing " << implName<<": "<<ex.what();
+		SS_LERR  << "Error Starting " << implName<<": "<<ex.what();
 		throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
 	}
     return result;
@@ -167,10 +167,10 @@ bool StartableService::stopImplementation(StartableService *impl, const string &
         }
         SS_LDBG  << implName << " Stopped";
     } catch (CException& ex) {
-        SS_LAPP  << "Error Starting " << implName;
+        SS_LAPP  << "Error Stopping " << implName;
         throw ex;
 	} catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
-		SS_LERR  << "Error Deinitializing " << ex.what();
+		SS_LERR  << "Error Stopping " << ex.what();
 		throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
 	}
     return result;

@@ -261,6 +261,7 @@
 		3258AEEB1935C34000A66D44 /* URL.h in Headers */ = {isa = PBXBuildFile; fileRef = 3258AEE91935C34000A66D44 /* URL.h */; };
 		3258AF031935EE4D00A66D44 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AF021935EE4D00A66D44 /* main.cpp */; };
 		3258AF0C1935F46D00A66D44 /* FeederTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AF0A1935F46D00A66D44 /* FeederTest.cpp */; };
+		325B421E1C8854820038E0C2 /* HandlerMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */; };
 		325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325CA6B915EE10B3007FCC12 /* EventAction.cpp */; };
 		325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325CA6BA15EE10B3007FCC12 /* EventAction.h */; };
 		325D2FCD1AFA19E500B2A706 /* HealtManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325D2FCB1AFA19E500B2A706 /* HealtManager.cpp */; };
@@ -1271,6 +1272,8 @@
 		3258AF091935EE9700A66D44 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3258AF0A1935F46D00A66D44 /* FeederTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FeederTest.cpp; sourceTree = "<group>"; };
 		3258AF0B1935F46D00A66D44 /* FeederTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeederTest.h; sourceTree = "<group>"; };
+		325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandlerMonitor.cpp; sourceTree = "<group>"; };
+		325B421D1C8854820038E0C2 /* HandlerMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandlerMonitor.h; sourceTree = "<group>"; };
 		325CA6B915EE10B3007FCC12 /* EventAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventAction.cpp; sourceTree = "<group>"; };
 		325CA6BA15EE10B3007FCC12 /* EventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAction.h; sourceTree = "<group>"; };
 		325D2FCB1AFA19E500B2A706 /* HealtManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HealtManager.cpp; sourceTree = "<group>"; };
@@ -2212,6 +2215,8 @@
 				32F158621B7B459100B6A5DF /* CMakeLists.txt */,
 				32B222DD1BA71566009BBA9E /* NodeMonitor.cpp */,
 				32B222DE1BA71566009BBA9E /* NodeMonitor.h */,
+				325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */,
+				325B421D1C8854820038E0C2 /* HandlerMonitor.h */,
 				328EFD5F1BA724A8009A832D /* NodeSearchTest.cpp */,
 				328EFD601BA724A8009A832D /* NodeSearchTest.h */,
 				322085DC1AC5A0E200F1B71A /* main.cpp */,
@@ -4854,6 +4859,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				32B222E11BA71566009BBA9E /* NodeMonitor.cpp in Sources */,
+				325B421E1C8854820038E0C2 /* HandlerMonitor.cpp in Sources */,
 				322085DD1AC5A0E200F1B71A /* main.cpp in Sources */,
 				328EFD611BA724A8009A832D /* NodeSearchTest.cpp in Sources */,
 			);

@@ -310,25 +310,28 @@ bool ChaosMetadataServiceClient::addKeyAttributeHandlerForDataset(const std::str
 //! remove a consumer by key and quantum
 bool ChaosMetadataServiceClient::removeKeyConsumer(const std::string& key_to_monitor,
                                                    int quantum_multiplier,
-                                                   monitor_system::QuantumSlotConsumer *consumer) {
+                                                   monitor_system::QuantumSlotConsumer *consumer,
+                                                   bool wait_completion) {
     CHAOS_ASSERT(monitor_manager.get());
-    monitor_manager->removeKeyConsumer(key_to_monitor,
-                                       quantum_multiplier,
-                                       consumer);
-    return true;
+    return monitor_manager->removeKeyConsumer(key_to_monitor,
+                                              quantum_multiplier,
+                                              consumer,
+                                              wait_completion);
 }
 
 //! remove a consumer for the healt data associated to a key
 bool ChaosMetadataServiceClient::removeKeyConsumerForHealt(const std::string& key_to_monitor,
                                                            int quantum_multiplier,
-                                                           monitor_system::QuantumSlotConsumer *consumer) {
+                                                           monitor_system::QuantumSlotConsumer *consumer,
+                                                           bool wait_completion) {
     // compose healt key for node
     std::string healt_key = boost::str(boost::format("%1%%2%")%
                                        key_to_monitor%
                                        NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
     return removeKeyConsumer(healt_key,
                              quantum_multiplier,
-                             consumer);
+                             consumer,
+                             wait_completion);
 }
 
 //! remove an handler associated to ans attirbute of a key
@@ -399,12 +402,6 @@ std::string ChaosMetadataServiceClient::getHealtKeyFromGeneralKey(const std::str
     return boost::str(boost::format("%1%%2%")%
                       node_uid%
                       NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
-}
-
-std::auto_ptr<chaos::common::data::CDataWrapper> ChaosMetadataServiceClient::getLastDataset(const std::string& unique_node_id,
-                                                                                            const unsigned int dataset_type) {
-    CHAOS_ASSERT(monitor_manager.get());
-    return monitor_manager->getLastDataset(getDatasetKeyFromGeneralKey(unique_node_id, dataset_type));
 }
 
 //!register an event handler
