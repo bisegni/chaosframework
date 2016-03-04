@@ -166,7 +166,7 @@ void SearchNodeResult::on_pushButtonActionOnSelected_clicked() {
 }
 
 void SearchNodeResult::startHealtMonitorAction() {
-    this->setCursor(Qt::WaitCursor);
+    ui->tableViewResult->setCursor(Qt::WaitCursor);
     QModelIndexList indexes = ui->tableViewResult->selectionModel()->selectedRows();
     foreach (QModelIndex selected_index, indexes) {
         QStandardItem *node_uid = table_model->item(selected_index.row(), 0);
@@ -177,11 +177,11 @@ void SearchNodeResult::startHealtMonitorAction() {
             addNodeToHealtMonitor(node_uid->text());
         }
     }
-    this->setCursor(Qt::ArrowCursor);
+    ui->tableViewResult->setCursor(Qt::ArrowCursor);
 }
 
 void SearchNodeResult::stopHealtMonitorAction() {
-    this->setCursor(Qt::WaitCursor);
+    ui->tableViewResult->setCursor(Qt::WaitCursor);
     QModelIndexList indexes = ui->tableViewResult->selectionModel()->selectedRows();
     foreach (QModelIndex selected_index, indexes) {
         QStandardItem *node_uid = table_model->item(selected_index.row(), 0);
@@ -192,7 +192,7 @@ void SearchNodeResult::stopHealtMonitorAction() {
             removeNodeToHealtMonitor(node_uid->text());
         }
     }
-    this->setCursor(Qt::ArrowCursor);
+    ui->tableViewResult->setCursor(Qt::ArrowCursor);
 }
 
 void SearchNodeResult::on_tableViewResult_doubleClicked(const QModelIndex &index) {
