@@ -101,7 +101,22 @@ namespace chaos {
                                             AbstractQuantumKeyAttributeHandler *attribute_handler,
                                             unsigned int consumer_priority = 500);
                 
-                //! remove a consumer by key and quantum
+                //! Remove a consumer by key and quantum
+                /*!
+                 The remove operation can be also executed specifind false on
+                 wait_completion parameter. In this case The scheduler try to
+                 remove the consumer but if it is in use, the remove operation
+                 will be submitted to the asynchronous layer, so the caller
+                 neet to call the waitForCompletion of the consumer to
+                 waith that the remove operationhas been terminated
+                 \param key_to_monitor the key to monitor
+                 \param quantum_multiplier is the quantum multipier that will determinate
+                 the delay form a data request and nother
+                 \param consumer the pointer of the consumer that need to be notified
+                 \param wait_completion detarminate if the called whant to wait the completion
+                 of the operation or whant check by itself
+                 \return true if the consumer has been removed
+                 */
                 bool removeKeyConsumer(const std::string& key_to_monitor,
                                          int quantum_multiplier,
                                          QuantumSlotConsumer *consumer,
@@ -111,9 +126,6 @@ namespace chaos {
                 void removeKeyAttributeHandler(const std::string& key_to_monitor,
                                                int quantum_multiplier,
                                                AbstractQuantumKeyAttributeHandler *attribute_handler);
-                
-                //! return the current dataset for a determinate dataset key in a synchornous way
-                std::auto_ptr<chaos::common::data::CDataWrapper> getLastDataset(const std::string& dataset_key);
                 
             protected:
                 //! timer slot

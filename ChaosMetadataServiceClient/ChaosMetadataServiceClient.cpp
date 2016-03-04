@@ -404,12 +404,6 @@ std::string ChaosMetadataServiceClient::getHealtKeyFromGeneralKey(const std::str
                       NodeHealtDefinitionKey::HEALT_KEY_POSTFIX);
 }
 
-std::auto_ptr<chaos::common::data::CDataWrapper> ChaosMetadataServiceClient::getLastDataset(const std::string& unique_node_id,
-                                                                                            const unsigned int dataset_type) {
-    CHAOS_ASSERT(monitor_manager.get());
-    return monitor_manager->getLastDataset(getDatasetKeyFromGeneralKey(unique_node_id, dataset_type));
-}
-
 //!register an event handler
 void ChaosMetadataServiceClient::registerEventHandler(AbstractEventHandler *handler) {
     CHAOS_ASSERT(event_dispatch_manager.get());

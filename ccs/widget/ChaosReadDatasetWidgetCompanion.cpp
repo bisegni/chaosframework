@@ -59,7 +59,6 @@ bool ChaosReadDatasetWidgetCompanion::trackDataset(quint32 _scheduler_slot) {
 }
 
 bool ChaosReadDatasetWidgetCompanion::untrackDataset(quint32 _scheduler_slot) {
-    bool result = false;
     QString node_key = nodeUID();
     switch(dataset()) {
     case DatasetOutput:
@@ -79,15 +78,13 @@ bool ChaosReadDatasetWidgetCompanion::untrackDataset(quint32 _scheduler_slot) {
         break;
 
     }
-    qDebug()<< "remove consumer for "<< node_key;
     if(ChaosMetadataServiceClient::getInstance()->removeKeyConsumer(node_key.toStdString(),
                                                                     _scheduler_slot,
                                                                     this,
                                                                     false) == false){
-        qDebug()<< "need do wait for consumer " <<node_key;
-        QuantumSlotConsumer::waitForCompletition();
+        QuantumSlotConsumer::waitForCompletion();
     }
-    return result;
+    return true;
 }
 
 bool ChaosReadDatasetWidgetCompanion::changeKeyConsumerQuantumSlot(int old_quantum_multiplier,

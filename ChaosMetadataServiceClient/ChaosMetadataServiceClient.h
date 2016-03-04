@@ -124,13 +124,43 @@ namespace chaos {
                                                   monitor_system::AbstractQuantumKeyAttributeHandler *attribute_handler,
                                                   unsigned int consumer_priority = 500);
             
-            //! remove a consumer by key and quantum
+            //! Remove a consumer by key and quantum
+            /*!
+             The remove operation can be also executed specifind false on
+             wait_completion parameter. In this case The scheduler try to
+             remove the consumer but if it is in use, the remove operation
+             will be submitted to the asynchronous layer, so the caller
+             neet to call the waitForCompletion of the consumer to
+             waith that the remove operationhas been terminated
+             \param key_to_monitor the key to monitor
+             \param quantum_multiplier is the quantum multipier that will determinate
+             the delay form a data request and nother
+             \param consumer the pointer of the consumer that need to be notified
+             \param wait_completion detarminate if the called whant to wait the completion
+             of the operation or whant check by itself
+             \return true if the consumer has been removed
+             */
             bool removeKeyConsumer(const std::string& key_to_monitor,
                                    int quantum_multiplier,
                                    monitor_system::QuantumSlotConsumer *consumer,
                                    bool wait_completion = true);
             
-            //! remove a consumer for the healt data associated to a key
+            //! Remove a consumer for healt dataset by key and quantum
+            /*!
+             The remove operation can be also executed specifind false on
+             wait_completion parameter. In this case The scheduler try to
+             remove the consumer but if it is in use, the remove operation
+             will be submitted to the asynchronous layer, so the caller
+             neet to call the waitForCompletion of the consumer to
+             waith that the remove operationhas been terminated
+             \param key_to_monitor the key to monitor
+             \param quantum_multiplier is the quantum multipier that will determinate
+             the delay form a data request and nother
+             \param consumer the pointer of the consumer that need to be notified
+             \param wait_completion detarminate if the called whant to wait the completion
+             of the operation or whant check by itself
+             \return true if the consumer has been removed
+             */
             bool removeKeyConsumerForHealt(const std::string& key_to_monitor,
                                            int quantum_multiplier,
                                            monitor_system::QuantumSlotConsumer *consumer,
@@ -160,10 +190,6 @@ namespace chaos {
             
             //! get the corresponding healt key for node uid
             std::string getHealtKeyFromGeneralKey(const std::string& node_uid);
-            
-            //!get dataset ina synchronous way
-            std::auto_ptr<chaos::common::data::CDataWrapper> getLastDataset(const std::string& unique_node_id,
-                                                                            const unsigned int dataset_type);
             
             //!register an event handler
             void registerEventHandler(chaos::metadata_service_client::event::AbstractEventHandler *handler);

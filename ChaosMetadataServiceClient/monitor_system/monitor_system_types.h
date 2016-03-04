@@ -72,7 +72,7 @@ namespace chaos {
                 //! callend every time that data can't be retrieved from data service
                 virtual void quantumSlotHasNoData(const std::string& key) = 0;
                 //! waith on conditional interval variable that is fired when the consumer can be released
-                void waitForCompletition() {
+                void waitForCompletion() {
                     try{
                         boost::mutex::scoped_lock lock_on_condition(mutex_condition_free);
                         while(!free_of_work) {

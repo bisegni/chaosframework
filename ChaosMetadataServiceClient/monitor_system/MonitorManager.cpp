@@ -159,11 +159,6 @@ void MonitorManager::removeKeyAttributeHandler(const std::string& key_to_monitor
     }
 }
 
-//! return the current dataset for a determinate dataset key in a synchornous way
-std::auto_ptr<chaos::common::data::CDataWrapper> MonitorManager::getLastDataset(const std::string& dataset_key) {
-    return slot_scheduler->getLastDataset(dataset_key);
-}
-
 void MonitorManager::timeout() {
     purgeKeyConsumer(false);
 }
@@ -178,7 +173,7 @@ void MonitorManager::purgeKeyConsumer(bool all) {
           !end_purge_operation ) {
         consumer = queue_to_purge.front(); queue_to_purge.pop();
         MM_INFO << boost::str(boost::format("Auto purged key handler consumer slot for pointer %1% queue left size %2%")%consumer%queue_to_purge.size());
-        consumer->waitForCompletition();
+        consumer->waitForCompletion();
         delete(consumer);
         if(!all){
             //end when we have processed max number of element

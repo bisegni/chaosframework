@@ -376,7 +376,7 @@ bool QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
         UNLOCK_QUEUE(queue_new_quantum_slot_consumer);
         //now waith for termination
         QSS_INFO << boost::str(boost::format("Wait for remove of key consumer [%1%-%2%-%3%(%4%)]")%key_to_monitor%quantum_multiplier%consumer%consumer->usage_counter);
-        consumer->waitForCompletition();
+        consumer->waitForCompletion();
         QSS_INFO << boost::str(boost::format("Cleanly removed key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
         
     }
@@ -437,16 +437,4 @@ bool QuantumSlotScheduler::_removeKeyConsumer(SlotConsumerInfo *ci) {
         DEBUG_CODE(QSS_INFO << boost::str(boost::format("The key consumer has not been found in the slot [%1%-%2%-%3%]")%ci->key_to_monitor%ci->quantum_multiplier%ci->consumer);)
     }
     return true;
-}
-
-std::auto_ptr<CDataWrapper> QuantumSlotScheduler::getLastDataset(const std::string& dataset_key) {
-    size_t data_found_size;
-    std::auto_ptr<CDataWrapper> result;
-    //    boost::unique_lock<boost::mutex>  lock_on_fetch(mutex_fetch_value);
-    //    const char *data_found = data_driver->retriveRawData(dataset_key, &data_found_size);
-    //    if(data_found) {
-    //        result.reset(new CDataWrapper(data_found));
-    //        delete(data_found);
-    //    }
-    return result;
 }
