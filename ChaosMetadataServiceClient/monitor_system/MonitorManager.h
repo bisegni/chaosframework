@@ -48,7 +48,7 @@ namespace chaos {
                                       QuantumKeyConsumer*,
                                       QuantuKeyConsumerMap);
             
-            typedef std::queue< QuantumKeyConsumer* >  QuantuKeyConsumerToEraseQueue;
+            typedef boost::lockfree::queue<QuantumKeyConsumer*, boost::lockfree::fixed_sized<false> > QuantuKeyConsumerToEraseQueue;
             
             /*!
              class that manage the monitoring of node healt and
@@ -67,7 +67,6 @@ namespace chaos {
                 chaos::common::network::NetworkBroker *network_broker;
                 
                 //! queue and mutex used for key consumer to be purged
-                boost::mutex                    mutex_queue_to_purge;
                 QuantuKeyConsumerToEraseQueue   queue_to_purge;
                 
                 //!quantum slot scheduler

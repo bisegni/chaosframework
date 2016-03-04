@@ -158,7 +158,7 @@ mutex_ ## queue_name.unlock();
                 }
             };
             
-            typedef std::queue<SlotConsumerInfo*>  QueueSlotConsumerInfo;
+            typedef boost::lockfree::queue<SlotConsumerInfo*, boost::lockfree::fixed_sized<false> >  QueueSlotConsumerInfo;
             typedef boost::lockfree::queue<QuantumSlot*, boost::lockfree::fixed_sized<false> >  LFQuantumSlotQueue;
             
             //! class that manage the scan of the slot ad the fetch of the slot vlaue
@@ -211,8 +211,7 @@ mutex_ ## queue_name.unlock();
                 //------------structure for comunication between public and internal layers-------------------------------------------
                 //! queue that conenct the public and internal layers of scheduler add and remove handler push quantum slot
                 //! withing this queue and scan slot funciton retrive new one added and increment the multiindex set
-                boost::mutex                          mutex_queue_new_quantum_slot_consumer;
-                QueueSlotConsumerInfo                 queue_new_quantum_slot_consumer;
+                QueueSlotConsumerInfo                   queue_new_quantum_slot_consumer;
                 
                 //!mute for work on map that of slot consumer managed by add and remove function
                 boost::mutex                            mutex_map_quantum_slot_consumer;
