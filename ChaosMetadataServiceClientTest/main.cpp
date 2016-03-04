@@ -48,7 +48,7 @@ public:
     }
 };
 
-#define NUMBER_OF_TEST_ELEMENT 10
+#define NUMBER_OF_TEST_ELEMENT 2
 
 boost::thread_group thread_group_test;
 
@@ -56,8 +56,19 @@ void executeHandlerTest(){
     HandlerMonitor hm("BTF/DHSTB001_healt",
                       "nh_status");
     hm.init();
-    usleep(2000000);
+    //usleep(2000000);
     hm.deinit();
+}
+
+void executeConsumerTest(){
+    NodeMonitor nm("BTF/DHSTB001_healt",
+                   1,
+                   1);
+    nm.registerConsumer();
+    //usleep(2000000);
+    if(!nm.deregisterConsumer()){
+            nm.waitForPurge();
+    }
 }
 
 int main(int argc, char *argv[]){
@@ -150,13 +161,34 @@ int main(int argc, char *argv[]){
                 
                 
             case 2:{
-                for(int idx = 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
-                    thread_group_test.add_thread(new boost::thread(boost:: bind(executeHandlerTest)));
+                std::cout << "Start multithreading tests" << std::endl;
+                for(int idx = 0;
+                    idx < 100;
+                    idx++) {
+                    std::cout << "Start test:" << idx << std::endl;
+                    for(int idx = 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
+                        thread_group_test.add_thread(new boost::thread(boost:: bind(executeHandlerTest)));
+                    }
+                    std::cout << "Join threads for test:" << idx << std::endl;
+                    thread_group_test.join_all();
                 }
-                sleep(2);
-                thread_group_test.join_all();
+                std::cout << "End multithreading tests" << std::endl;
             }
-                
+              
+            case 3:{
+                std::cout << "Start multithreading tests" << std::endl;
+                for(int idx = 0;
+                    idx < 100;
+                    idx++) {
+                    std::cout << "Start test:" << idx << std::endl;
+                    for(int idx = 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
+                        thread_group_test.add_thread(new boost::thread(boost:: bind(executeConsumerTest)));
+                    }
+                    std::cout << "Join threads for test:" << idx << std::endl;
+                    thread_group_test.join_all();
+                }
+                std::cout << "End multithreading tests" << std::endl;
+            }
         }
         
         //register log allert event
