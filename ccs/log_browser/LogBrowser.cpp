@@ -83,8 +83,6 @@ void LogBrowser::on_checkBoxSearchDate_clicked() {
         ui->dateTimeEditStartDate->clear();
         ui->dateTimeEditEndDate->clear();
     }
-    ui->dateTimeEditStartDate->setEnabled(ui->checkBoxSearchDate->isChecked());
-    ui->dateTimeEditEndDate->setEnabled(ui->checkBoxSearchDate->isChecked());
 }
 
 void LogBrowser::on_pushButtonStartSearch_clicked() {
