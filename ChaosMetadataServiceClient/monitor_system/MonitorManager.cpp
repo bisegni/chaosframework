@@ -48,8 +48,8 @@ void MonitorManager::start() throw (chaos::CException) {
     
     //add timer for purge operation
     AsyncCentralManager::getInstance()->addTimer(this,
-                                                 1000,
-                                                 1000);
+                                                 5000,
+                                                 5000);
 }
 
 void MonitorManager::stop() throw (chaos::CException) {
