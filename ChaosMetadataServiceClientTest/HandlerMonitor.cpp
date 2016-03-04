@@ -50,10 +50,10 @@ void HandlerMonitor::deinit() {
 void HandlerMonitor::consumeValue(const std::string& key,
                                   const std::string& attribute,
                                   const std::string& value) {
-    std::cout << "key:" << key << " attribute:" << attribute << " value:" << value << std::endl;
+    //std::cout << "key:" << key << " attribute:" << attribute << " value:" << value << std::endl;
 }
 
 void HandlerMonitor::consumeValueNotFound(const std::string& key,
                                           const std::string& attribute) {
-    std::cout << "No data found for key:" << key << " attribute:" << attribute << std::endl;
+    //std::cout << "No data found for key:" << key << " attribute:" << attribute << std::endl;
 }

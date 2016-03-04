@@ -52,7 +52,7 @@ bool NodeMonitor::deregisterConsumer() {
 }
 
 void NodeMonitor::waitForPurge() {
-    QuantumSlotConsumer::waitForCompletition();
+    QuantumSlotConsumer::waitForCompletion();
 }
 
 void NodeMonitor::monitor_node(){
@@ -64,11 +64,11 @@ void NodeMonitor::monitor_node(){
 }
 
 void NodeMonitor::quantumSlotHasNoData(const std::string &key){
-  std::cout << key << " - " << "No Data" << std::endl;
+  //std::cout << key << " - " << "No Data" << std::endl;
 }
 
 
 void NodeMonitor::quantumSlotHasData(const std::string &key,
 									 const KeyValue &value){
-  std::cout << key << " - " << value->getJSONString() << "\n" << std::flush;
+  //std::cout << key << " - " << value->getJSONString() << "\n" << std::flush;
 }
