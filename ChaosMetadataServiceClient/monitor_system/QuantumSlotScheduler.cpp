@@ -360,15 +360,17 @@ bool QuantumSlotScheduler::removeKeyConsumer(const std::string& key_to_monitor,
                                                                         consumer,
                                                                         0));
     //push into lock free queue to remove the consumer
-    QSS_INFO << boost::str(boost::format("Submited remove operation for key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
     if(wait_completion == false) {
+        QSS_INFO << boost::str(boost::format("Try to remove directly the key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
         if((result = _removeKeyConsumer(remove_command.get()))== false) {
+            QSS_INFO << boost::str(boost::format("Consumer is in use so we submit the remove operation for it [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
             //we can have success to remove so demand the operation asynchronously
             LOCK_QUEUE(queue_new_quantum_slot_consumer);
             queue_new_quantum_slot_consumer.push(remove_command.release());
             UNLOCK_QUEUE(queue_new_quantum_slot_consumer);
         }
     } else {
+        QSS_INFO << boost::str(boost::format("Submited remove operation for key consumer [%1%-%2%-%3%]")%key_to_monitor%quantum_multiplier%consumer);
         LOCK_QUEUE(queue_new_quantum_slot_consumer);
         queue_new_quantum_slot_consumer.push(remove_command.release());
         UNLOCK_QUEUE(queue_new_quantum_slot_consumer);
