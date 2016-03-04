@@ -21,10 +21,16 @@ public:
     void deinitChaosContent();
     void updateChaosContent();
 protected:
-    void quantumSlotHasData(const std::string& key, const chaos::metadata_service_client::monitor_system::KeyValue& value);
+    void quantumSlotHasData(const std::string& key,
+                            const chaos::metadata_service_client::monitor_system::KeyValue& value);
     void quantumSlotHasNoData(const std::string& key);
     Dataset dataset();
     void setDataset(Dataset dataset);
+
+protected slots:
+    void updateUIWithData(const chaos::metadata_service_client::monitor_system::KeyValue value);
+    void updateUIWithNoData();
+
 private:
     Ui::CNodeResourceWidget *ui;
     QString secondsToDHMS(uint64_t duration);

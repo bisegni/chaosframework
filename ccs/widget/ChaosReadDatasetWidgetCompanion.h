@@ -26,6 +26,7 @@ protected:
     void quantumSlotHasData(const std::string& key,
                             const chaos::metadata_service_client::monitor_system::KeyValue& value);
     void quantumSlotHasNoData(const std::string& key);
+
 private:
 
     bool changeKeyConsumerQuantumSlot(int old_quantum_multiplier,

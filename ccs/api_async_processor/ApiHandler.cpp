@@ -1,6 +1,5 @@
 #include "ApiHandler.h"
 
-
 //!Api has ben called successfully
 void ApiHandler::onApiDone(const QString& tag,
                            QSharedPointer<chaos::common::data::CDataWrapper> api_result){

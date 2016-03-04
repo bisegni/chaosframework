@@ -95,10 +95,6 @@ bool ChaosReadDatasetWidgetCompanion::changeKeyConsumerQuantumSlot(int old_quant
 }
 
 void ChaosReadDatasetWidgetCompanion::quantumSlotHasData(const std::string& key,
-                                                         const monitor_system::KeyValue& value) {
+                                                         const monitor_system::KeyValue& value) {}
 
-}
-
-void ChaosReadDatasetWidgetCompanion::quantumSlotHasNoData(const std::string& key) {
-
-}
+void ChaosReadDatasetWidgetCompanion::quantumSlotHasNoData(const std::string& key) {}

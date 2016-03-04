@@ -37,7 +37,20 @@ void CNodeResourceWidget::setDataset(CNodeResourceWidget::Dataset dataset) {
 }
 
 void CNodeResourceWidget::quantumSlotHasData(const std::string& key,
-                                             const KeyValue& value) {
+                                             const chaos::metadata_service_client::monitor_system::KeyValue& value) {
+    QMetaObject::invokeMethod(this,
+                              "updateUIWithData",
+                              Qt::QueuedConnection,
+                              Q_ARG(chaos::metadata_service_client::monitor_system::KeyValue, value));
+}
+
+void CNodeResourceWidget::quantumSlotHasNoData(const std::string& key) {
+    QMetaObject::invokeMethod(this,
+                              "updateUIWithNoData",
+                              Qt::QueuedConnection);
+}
+
+void CNodeResourceWidget::updateUIWithData(const chaos::metadata_service_client::monitor_system::KeyValue value) {
     if(value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME)){
         ui->labelUsrProc->setText(QString::number(value->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME), 'f', 1 ));
     } else {
@@ -60,7 +73,7 @@ void CNodeResourceWidget::quantumSlotHasData(const std::string& key,
     }
 }
 
-void CNodeResourceWidget::quantumSlotHasNoData(const std::string& key) {
+void CNodeResourceWidget::updateUIWithNoData() {
     ui->labelUsrProc->setText(tr("---"));
     ui->labelSysProc->setText(tr("---"));
     ui->labelSwapProc->setText(tr("---"));
