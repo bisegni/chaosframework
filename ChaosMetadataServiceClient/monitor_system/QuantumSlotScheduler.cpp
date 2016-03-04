@@ -297,15 +297,15 @@ void QuantumSlotScheduler::fetchValue(boost::shared_ptr<IODataDriver> data_drive
             const char * data_found = data_driver->retriveRawData(cur_slot->key, &data_found_size);
             
             //dispatch data
-            //            dispath_new_value_async(error,
-            //                                    cur_slot,
-            //                                    data_found);
+            dispath_new_value_async(error,
+                                    cur_slot,
+                                    data_found);
             
-            async_timer.async_wait(boost::bind(&QuantumSlotScheduler::dispath_new_value_async,
-                                               this,
-                                               boost::asio::placeholders::error,
-                                               cur_slot,
-                                               data_found));
+            //            async_timer.async_wait(boost::bind(&QuantumSlotScheduler::dispath_new_value_async,
+            //                                               this,
+            //                                               boost::asio::placeholders::error,
+            //                                               cur_slot,
+            //                                               data_found));
         } else {
             //we need to sleep untile someone wakeup us
             QSS_DBG << "No more data slot to fetch so i'm going to sleep";
