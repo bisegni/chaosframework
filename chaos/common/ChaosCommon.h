@@ -35,7 +35,6 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-#include <chaos/common/metadata_logging/MetadataLoggingManager.h>
 
 #ifdef __CHAOS_DEBUG_MEMORY__
 #include <unistd.h>
@@ -190,16 +189,10 @@ namespace chaos {
                 common::utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), init_data, "AsyncCentralManager", __PRETTY_FUNCTION__);
                 common::utility::StartableService::initImplementation(chaos::common::network::NetworkBroker::getInstance(), init_data, "NetworkBroker", __PRETTY_FUNCTION__);
                 common::utility::StartableService::startImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__);
-                //force first allocation
-                if(GlobalConfiguration::getInstance()->getMetadataServerAddressList().size()) {
-                    //we can initilize the logging manager
-                    common::utility::InizializableService::initImplementation(chaos::common::metadata_logging::MetadataLoggingManager::getInstance(), NULL, "MetadataLoggingManager", __PRETTY_FUNCTION__);
-                }
                 }
                 
                 void deinit() throw (CException) {
                     //dellocate all
-                    common::utility::InizializableService::deinitImplementation(chaos::common::metadata_logging::MetadataLoggingManager::getInstance(), "MetadataLoggingManager", __PRETTY_FUNCTION__);
                     CHAOS_NOT_THROW(common::utility::StartableService::stopImplementation(chaos::common::network::NetworkBroker::getInstance(),  "NetworkBroker", __PRETTY_FUNCTION__););
                     CHAOS_NOT_THROW(common::utility::StartableService::deinitImplementation(chaos::common::network::NetworkBroker::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__););
                     CHAOS_NOT_THROW(common::utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__););

@@ -92,6 +92,7 @@ SET(common_lib_src ${common_lib_src}
         dispatcher/DomainActionsScheduler.cpp)
 
 SET(common_lib_src ${common_lib_src}
+        exception/CException.cpp
         exception/MetadataLoggingCException.cpp)
 
 SET(common_lib_src ${common_lib_src}

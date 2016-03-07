@@ -51,7 +51,7 @@ namespace chaos {
             public chaos::common::utility::InizializableService,
             public chaos::common::utility::Singleton<MetadataLoggingManager>,
             protected chaos::common::pqueue::CObjectProcessingPriorityQueue<chaos::common::data::CDataWrapper> {
-                                friend class AbstractMetadataLogChannel;
+                friend class AbstractMetadataLogChannel;
                 friend class chaos::common::utility::Singleton<MetadataLoggingManager>;
                 
                 const std::string metadata_logging_domain;

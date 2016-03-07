@@ -177,7 +177,7 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
 		if(startAction) {
 			if(scheduler_thread.get() && scheduler_run){
 				RTCULAPP_ << "thread already running";
-				throw MetadataLoggingCException(getCUID(), -5, "Thread for device already running", "RTAbstractControlUnit::threadStartStopManagment");
+                return;
 			}
 			scheduler_run = true;
 			scheduler_thread.reset(new boost::thread(boost::bind(&RTAbstractControlUnit::executeOnThread, this)));
@@ -203,8 +203,7 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
 #endif
 		} else {
 			if(!scheduler_run){
-				RTCULAPP_ << "thread already runnign";
-				throw MetadataLoggingCException(getCUID(), -5, "Thread for device already running", "RTAbstractControlUnit::threadStartStopManagment");
+				RTCULAPP_ << "thread already stopped";
 			}
 			RTCULAPP_ << "Stopping and joining scheduling thread";
 			scheduler_run = false;

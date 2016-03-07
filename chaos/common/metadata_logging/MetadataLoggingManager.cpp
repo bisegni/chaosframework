@@ -87,6 +87,8 @@ void MetadataLoggingManager::registerChannel(const std::string& channel_alias,
 }
 
 AbstractMetadataLogChannel *MetadataLoggingManager::getChannel(const std::string channel_alias) {
+    //chec if we are initilized
+    if(getServiceState() != 1) return NULL;
     boost::unique_lock<boost::mutex> wl(mutext_maps);
     //check if we have the channel
     if(map_instancer.count(channel_alias) == 0) return NULL;
@@ -100,6 +102,7 @@ AbstractMetadataLogChannel *MetadataLoggingManager::getChannel(const std::string
 }
 
 void MetadataLoggingManager::releaseChannel(AbstractMetadataLogChannel *channel_instance) {
+    //chec if we are initilized
     boost::unique_lock<boost::mutex> wl(mutext_maps);
     if(channel_instance == NULL) return;
     if(map_instance.count(channel_instance->getInstanceUUID()) == 0) return;
@@ -112,6 +115,7 @@ void MetadataLoggingManager::releaseChannel(AbstractMetadataLogChannel *channel_
 
 void MetadataLoggingManager::processBufferElement(CDataWrapper *log_entry,
                                                   ElementManagingPolicy& element_policy) throw(CException) {
+    CHAOS_ASSERT(getServiceState() == 1);
     int err = 0;
     DEBUG_CODE(MLM_DBG << "forwarding log entry " << log_entry->getJSONString());
     
@@ -135,6 +139,8 @@ void MetadataLoggingManager::processBufferElement(CDataWrapper *log_entry,
 }
 
 int MetadataLoggingManager::sendLogEntry(chaos::common::data::CDataWrapper *log_entry) {
+    CHAOS_ASSERT(getServiceState() == 1);
+
     int err = 0;
     //send message to mds and wait for ack
     std::auto_ptr<MultiAddressMessageRequestFuture> log_future = message_channel->sendRequestWithFuture(MetadataServerLoggingDefinitionKeyRPC::ACTION_NODE_LOGGING_RPC_DOMAIN,
@@ -163,6 +169,8 @@ int MetadataLoggingManager::sendLogEntry(chaos::common::data::CDataWrapper *log_
 
 int MetadataLoggingManager::pushLogEntry(chaos::common::data::CDataWrapper *log_entry,
                                          int32_t priority) {
+    CHAOS_ASSERT(getServiceState() == 1);
+    if(log_entry == NULL) return -10000;
     return CObjectProcessingPriorityQueue<CDataWrapper>::push(log_entry,
                                                               priority,
                                                               false);

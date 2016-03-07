@@ -21,6 +21,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/healt_system/HealtManager.h>
+#include <chaos/common/metadata_logging/metadata_logging.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
@@ -44,6 +45,7 @@ using namespace chaos::common::utility;
 using namespace chaos::common::exception;
 using namespace chaos::common::data::cache;
 using namespace chaos::common::healt_system;
+using namespace chaos::common::metadata_logging;
 
 using namespace chaos::cu::data_manager;
 using namespace chaos::cu::control_manager;
@@ -124,16 +126,16 @@ void AbstractControlUnit::_initDrivers() throw(CException) {
     //at this point and before the unit implementation init i need to get
     //the infromation about the needed drivers
     std::vector<DrvRequestInfo> unitNeededDrivers;
-
+    
     //got the needded driver definition
     unitDefineDriver(unitNeededDrivers);
-
+    
     accessorInstances.clear();
     for (int idx = 0;
-             idx != unitNeededDrivers.size();
-             idx++) {
-            driver_manager::driver::DriverAccessor *accessorInstance = driver_manager::DriverManager::getInstance()->getNewAccessorForDriverInstance(unitNeededDrivers[idx]);
-            accessorInstances.push_back(accessorInstance);
+         idx != unitNeededDrivers.size();
+         idx++) {
+        driver_manager::driver::DriverAccessor *accessorInstance = driver_manager::DriverManager::getInstance()->getNewAccessorForDriverInstance(unitNeededDrivers[idx]);
+        accessorInstances.push_back(accessorInstance);
     }
 }
 
@@ -198,7 +200,7 @@ const string& AbstractControlUnit::getCUParam() {
  are defined the action for the input element of the dataset
  */
 void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
-
+    
     vector<std::string> tempStringVector;
     
     if(control_unit_id.size()) {
@@ -570,11 +572,28 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
     if(getServiceState() == CUStateKey::INIT) {
         return NULL;
     }
-    //if(getServiceState() != CUStateKey::DEINIT) throw CException(-1, DatasetDB::getDeviceID()+" need to be in deinit", __PRETTY_FUNCTION__);
-    if(!attribute_value_shared_cache) throw MetadataLoggingCException(getCUID(), -1, "No Shared cache implementation found for:"+DatasetDB::getDeviceID(), __PRETTY_FUNCTION__);
-    if(!SWEService::initImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
-        LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be initilized [state mismatch]!", %DatasetDB::getDeviceID());
+    
+    try {
+        if(getServiceState() == CUStateKey::RECOVERABLE_ERROR) {
+            LOG_AND_TROW_FORMATTED(ACULERR_, -2, "Recoverable error state need to be recovered for %1%", %__PRETTY_FUNCTION__)
+        }
+        
+        //if(getServiceState() != CUStateKey::DEINIT) throw CException(-1, DatasetDB::getDeviceID()+" need to be in deinit", __PRETTY_FUNCTION__);
+        if(!attribute_value_shared_cache) {LOG_AND_TROW_FORMATTED(ACULERR_, -3, "No Shared cache implementation found for %1%[%2%]", %DatasetDB::getDeviceID()%__PRETTY_FUNCTION__);}
+        
+        if(!SWEService::initImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
+            LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be initilized [state mismatch]!", %DatasetDB::getDeviceID());
+        }
+        
+    } catch (MetadataLoggingCException& ex) {
+        throw ex;
+    } catch (CException& ex) {
+        throw MetadataLoggingCException(getCUID(),
+                                        ex.errorCode,
+                                        ex.errorMessage,
+                                        ex.errorDomain);
     }
+    
     try {
         
         //update configuraiton and own it
@@ -592,10 +611,23 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT,
                                                         true);
-    }catch(CException& ex) {
-        //go in falta error
-        SWEService::goInFatalError(this, ex, "AbstractControlUnit", __PRETTY_FUNCTION__);
+    } catch (MetadataLoggingCException& ex) {
+        SWEService::goInFatalError(this,
+                                   ex,
+                                   "AbstractControlUnit",
+                                   __PRETTY_FUNCTION__);
         throw ex;
+    } catch(CException& ex) {
+        MetadataLoggingCException loggable_exception(getCUID(),
+                                                     ex.errorCode,
+                                                     ex.errorMessage,
+                                                     ex.errorDomain);
+        //go in falta error
+        SWEService::goInFatalError(this,
+                                   loggable_exception,
+                                   "AbstractControlUnit",
+                                   __PRETTY_FUNCTION__);
+        throw loggable_exception;
     }
     return NULL;
 }
@@ -605,9 +637,26 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *init_configuration,
  */
 CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
                                           bool& detachParam) throw(CException) {
-    //call start method of the startable interface
-    if(!SWEService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
-        LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be started [state mismatch]!", %DatasetDB::getDeviceID());
+    if(getServiceState() == CUStateKey::START) {
+        return NULL;
+    }
+    try {
+        
+        if(getServiceState() == CUStateKey::RECOVERABLE_ERROR) {
+            LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Recoverable error state need to be recovered for %1%", %__PRETTY_FUNCTION__)
+        }
+        //call start method of the startable interface
+        if(!SWEService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
+            LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be started [state mismatch]!", %DatasetDB::getDeviceID());
+        }
+        
+    }  catch (MetadataLoggingCException& ex) {
+        throw ex;
+    } catch (CException& ex) {
+        throw MetadataLoggingCException(getCUID(),
+                                        ex.errorCode,
+                                        ex.errorMessage,
+                                        ex.errorDomain);
     }
     
     try {
@@ -624,10 +673,20 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_START,
                                                         true);
-    }catch(CException& ex) {
-        //go in falta error
-        SWEService::goInFatalError(this, ex, "AbstractControlUnit", __PRETTY_FUNCTION__);
+    } catch (MetadataLoggingCException& ex) {
+        SWEService::goInFatalError(this,
+                                   ex,
+                                   "AbstractControlUnit",
+                                   __PRETTY_FUNCTION__);
         throw ex;
+    } catch(CException& ex) {
+        MetadataLoggingCException loggable_exception(getCUID(),
+                                                     ex.errorCode,
+                                                     ex.errorMessage,
+                                                     ex.errorDomain);
+        //go in falta error
+        SWEService::goInFatalError(this, loggable_exception, "AbstractControlUnit", __PRETTY_FUNCTION__);
+        throw loggable_exception;
     }
     return NULL;
 }
@@ -637,12 +696,33 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
  */
 CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
                                          bool& detachParam) throw(CException) {
-    //first we start the deinitializaiton of the implementation unit
-    if(!SWEService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
-        LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be stoped [state mismatch]!", %DatasetDB::getDeviceID());
+    if(getServiceState() == CUStateKey::STOP) {
+        return NULL;
+    }
+    try {
+        if(getServiceState() == CUStateKey::RECOVERABLE_ERROR) {
+            LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Recoverable error state need to be recovered for %1%", %__PRETTY_FUNCTION__)
+        }
+        
+        //first we start the deinitializaiton of the implementation unit
+        if(!SWEService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
+            LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be stoped [state mismatch]!", %DatasetDB::getDeviceID());
+        }
+    }  catch (MetadataLoggingCException& ex) {
+        SWEService::goInFatalError(this,
+                                   ex,
+                                   "AbstractControlUnit",
+                                   __PRETTY_FUNCTION__);
+        throw ex;
+    } catch (CException& ex) {
+        throw MetadataLoggingCException(getCUID(),
+                                        ex.errorCode,
+                                        ex.errorMessage,
+                                        ex.errorDomain);
     }
     
     try {
+        
         //set healt to start
         HealtManager::getInstance()->addNodeMetricValue(control_unit_id,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
@@ -654,10 +734,20 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_STOP,
                                                         true);
-    } catch (CException& ex) {
-        //go in falta error
-        SWEService::goInFatalError(this, ex, "AbstractControlUnit", __PRETTY_FUNCTION__);
+    }  catch (MetadataLoggingCException& ex) {
+        SWEService::goInFatalError(this,
+                                   ex,
+                                   "AbstractControlUnit",
+                                   __PRETTY_FUNCTION__);
         throw ex;
+    } catch (CException& ex) {
+        MetadataLoggingCException loggable_exception(getCUID(),
+                                                     ex.errorCode,
+                                                     ex.errorMessage,
+                                                     ex.errorDomain);
+        //go in falta error
+        SWEService::goInFatalError(this, loggable_exception, "AbstractControlUnit", __PRETTY_FUNCTION__);
+        throw loggable_exception;
     }
     
     return NULL;
@@ -669,11 +759,24 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
  */
 CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
                                            bool& detachParam) throw(CException) {
-    /*if(getServiceState() == CUStateKey::DEINIT){
-     return NULL;
-     }*/
-    if(!SWEService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
-        LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be deinitilized [state mismatch]!", %DatasetDB::getDeviceID());
+    if(getServiceState() == CUStateKey::DEINIT) {
+        return NULL;
+    }
+    try {
+        if(getServiceState() == CUStateKey::RECOVERABLE_ERROR) {
+            LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Recoverable error state need to be recovered for %1%", %__PRETTY_FUNCTION__)
+        }
+        
+        if(!SWEService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__)) {
+            LOG_AND_TROW_FORMATTED(ACULERR_, -1, "Control Unit %1% can't be deinitilized [state mismatch]!", %DatasetDB::getDeviceID());
+        }
+    }  catch (MetadataLoggingCException& ex) {
+        throw ex;
+    }  catch (CException& ex) {
+        throw MetadataLoggingCException(getCUID(),
+                                        ex.errorCode,
+                                        ex.errorMessage,
+                                        ex.errorDomain);
     }
     
     //first we start the deinitializaiton of the implementation unit
@@ -690,10 +793,21 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
                                                         NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                         NodeHealtDefinitionValue::NODE_HEALT_STATUS_DEINIT,
                                                         true);
-    } catch (CException& ex) {
-        //go in falta error
-        SWEService::goInFatalError(this, ex, "AbstractControlUnit", __PRETTY_FUNCTION__);
+    }  catch (MetadataLoggingCException& ex) {
+        SWEService::goInFatalError(this,
+                                   ex,
+                                   "AbstractControlUnit",
+                                   __PRETTY_FUNCTION__);
         throw ex;
+    } catch (CException& ex) {
+        MetadataLoggingCException loggable_exception(getCUID(),
+                                                     ex.errorCode,
+                                                     ex.errorMessage,
+                                                     ex.errorDomain);
+        
+        //go in falta error
+        SWEService::goInFatalError(this, loggable_exception, "AbstractControlUnit", __PRETTY_FUNCTION__);
+        throw loggable_exception;
     }
     
     return NULL;
@@ -713,10 +827,20 @@ CDataWrapper* AbstractControlUnit::_recover(CDataWrapper *deinitParam,
         } else {
             
         }
-    } catch (CException& ex) {
-        //go in falta error
-        SWEService::goInFatalError(this, ex, "AbstractControlUnit", __PRETTY_FUNCTION__);
+    } catch (MetadataLoggingCException& ex) {
+        SWEService::goInFatalError(this,
+                                   ex,
+                                   "AbstractControlUnit",
+                                   __PRETTY_FUNCTION__);
         throw ex;
+    }  catch (CException& ex) {
+        MetadataLoggingCException loggable_exception(getCUID(),
+                                                     ex.errorCode,
+                                                     ex.errorMessage,
+                                                     ex.errorDomain);
+        //go in falta error
+        SWEService::goInFatalError(this, loggable_exception, "AbstractControlUnit", __PRETTY_FUNCTION__);
+        throw loggable_exception;
     }
     
     return NULL;
@@ -785,7 +909,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
     
     if(!key_data_storage.get()) throw MetadataLoggingCException(getCUID(), -2, "Key data storage driver not allocated", __PRETTY_FUNCTION__);
     
-     boost::shared_ptr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
+    boost::shared_ptr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
     if(!restore_cache.get()) throw MetadataLoggingCException(getCUID(), -3, "failed to allocate restore cache", __PRETTY_FUNCTION__);
     
     boost::shared_ptr<CDataWrapper> dataset_at_tag;
@@ -821,15 +945,28 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
             } else {
                 ACULERR_ << "Restore has not been run successfully";
             }
-        } catch (CException& ex) {
-            DECODE_CHAOS_EXCEPTION(ex);
+        } catch (MetadataLoggingCException& ex) {
+            throw ex;
+        }  catch (CException& ex) {
+            MetadataLoggingCException loggable_exception(getCUID(),
+                                                         ex.errorCode,
+                                                         ex.errorMessage,
+                                                         ex.errorDomain);
+            
+            DECODE_CHAOS_EXCEPTION(loggable_exception);
         }
         
         //end
         try {
             restore_cache->deinit();
+        }  catch (MetadataLoggingCException& ex) {
+            throw ex;
         } catch (CException& ex) {
-            DECODE_CHAOS_EXCEPTION(ex);
+            MetadataLoggingCException loggable_exception(getCUID(),
+                                                         ex.errorCode,
+                                                         ex.errorMessage,
+                                                         ex.errorDomain);
+            DECODE_CHAOS_EXCEPTION(loggable_exception);
         }catch (...) {
             ACULERR_ << "General error on deinit restore cache";
         }
@@ -1312,13 +1449,13 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
     AttributeCache& output_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
     boost::shared_ptr<SharedCacheLockDomain> r_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_OUTPUT, false);
     r_lock->lock();
-
+    
     //check if something as changed
     if(!output_attribute_cache.hasChanged()) return;
-
+    
     CDataWrapper *output_attribute_dataset = key_data_storage->getNewOutputAttributeDataWrapper();
     if(!output_attribute_dataset) return;
-
+    
     //write acq ts for second
     //add push timestamp
     if(ts_already_set == false){
@@ -1330,7 +1467,7 @@ void AbstractControlUnit::pushOutputDataset(bool ts_already_set) {
             output_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, *cached_value->getValuePtr<uint64_t>());
         }
     }
-
+    
     //add dataset type
     output_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT);
     //add all other output channel

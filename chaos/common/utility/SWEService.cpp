@@ -66,19 +66,18 @@ bool SWEService::recoverError(SWEService& impl, const std::string & impl_name,  
 bool SWEService::initImplementation(SWEService *impl,
                                     const string & impl_name,
                                     const string & domain_string)  {
-    bool result = true;
+    bool result = false;
     try {
-        if(impl == NULL) {LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Implementation of %1% is null", %domain_string)}
-        if(impl->serviceState == CUStateKey::RECOVERABLE_ERROR) {LOG_AND_TROW_FORMATTED(SWE_LDBG, -2, "Recoverable error state need to be recovered for %1%", %domain_string)}
+        if(impl == NULL) {return false;}
         
         SWE_LDBG  << "Initializing " << impl_name;
-        if((result = impl->SWEService::state_machine.process_event(service_state_machine::EventType::init()) == boost::msm::back::HANDLED_TRUE)) {
+        if((result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::init()) == boost::msm::back::HANDLED_TRUE))) {
             impl->serviceState = impl->state_machine.current_state()[0];
+            SWE_LDBG  << impl_name << "Initialized";
+            result = true;
         }
-        SWE_LDBG  << impl_name << "Initialized";
     } catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
         SWE_LERR  << "Error Deinitializing " << ex.what();
-        throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
     }
     return result;
 }
@@ -88,19 +87,18 @@ bool SWEService::initImplementation(SWEService *impl,
 bool SWEService::deinitImplementation(SWEService *impl,
                                       const string & impl_name,
                                       const string & domain_string) {
-    bool result = true;
+    bool result = false;
     try {
-        if(impl == NULL) throw CException(-1, "Implementation is null", domain_string);
-        if(impl->serviceState == CUStateKey::RECOVERABLE_ERROR) {LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Recoverable error state need to be recovered for %1%", %domain_string)}
+        if(impl == NULL) return false;
         
         SWE_LDBG  << "Deinitializing " << impl_name;
-        if((result = impl->SWEService::state_machine.process_event(service_state_machine::EventType::deinit()) == boost::msm::back::HANDLED_TRUE)) {
+        if((result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::deinit()) == boost::msm::back::HANDLED_TRUE))) {
             impl->serviceState = impl->state_machine.current_state()[0];
+            SWE_LDBG  << impl_name << "Deinitialized";
         }
-        SWE_LDBG  << impl_name << "Deinitialized";
+       
     } catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
         SWE_LERR  << "Error Deinitializing " << ex.what();
-        throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
     }
     return result;
 }
@@ -109,19 +107,18 @@ bool SWEService::deinitImplementation(SWEService *impl,
 bool SWEService::startImplementation(SWEService *impl,
                                      const string & impl_name,
                                      const string & domain_string) {
-    bool result = true;
+    bool result = false;
     try {
-        if(impl == NULL) {LOG_AND_TROW_FORMATTED(SWE_LDBG, -1, "Implementation of %1% is null", %domain_string)}
-        if(impl->serviceState == CUStateKey::RECOVERABLE_ERROR) {LOG_AND_TROW_FORMATTED(SWE_LDBG, -2, "Recoverable error state need to be recovered for %1%", %domain_string)}
+        if(impl == NULL) {return false;}
         
         SWE_LDBG  << "Starting " << impl_name;
-        if((result = impl->SWEService::state_machine.process_event(service_state_machine::EventType::start()) == boost::msm::back::HANDLED_TRUE)) {
+        if((result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::start()) == boost::msm::back::HANDLED_TRUE))) {
             impl->serviceState = impl->state_machine.current_state()[0];
+            SWE_LDBG  << impl_name << " Started";
         }
-        SWE_LDBG  << impl_name << " Started";
+
     } catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
         SWE_LERR  << "Error Deinitializing " << impl_name<<": "<<ex.what();
-        throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
     }
     return result;
 }
@@ -129,42 +126,40 @@ bool SWEService::startImplementation(SWEService *impl,
 /*!
  */
 bool SWEService::stopImplementation(SWEService *impl, const string & impl_name,  const string & domain_string) {
-    bool result = true;
+    bool result = false;
     try {
-        if(impl == NULL) throw CException(-1, "Implementation is null", domain_string);
-        if(impl->serviceState == CUStateKey::RECOVERABLE_ERROR) {LOG_AND_TROW_FORMATTED(SWE_LDBG, -2, "Recoverable error state need to be recovered for %1%", %domain_string)}
+        if(impl == NULL) return false;
         
         SWE_LDBG  << "Stopping " << impl_name;
-        if((result = impl->SWEService::state_machine.process_event(service_state_machine::EventType::stop())  == boost::msm::back::HANDLED_TRUE)) {
+        if((result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::stop())  == boost::msm::back::HANDLED_TRUE))) {
             impl->serviceState = impl->state_machine.current_state()[0];
+            SWE_LDBG  << impl_name << " Stopped";
         }
-        SWE_LDBG  << impl_name << " Stopped";
     } catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
         SWE_LERR  << "Error Deinitializing " << ex.what();
-        throw CException(-1, std::string(ex.what()), std::string(__PRETTY_FUNCTION__));
     }
     return result;
 }
 
 
 bool SWEService::goInFatalError(SWEService *impl,  chaos::CException& ex, const std::string & impl_name,  const std::string & domain_string) {
-    bool result = true;
+    bool result = false;
     
     try {
-        if(impl == NULL) throw CException(0, "Implementation is null", domain_string);
+        if(impl == NULL) return false;
         if(impl->serviceState != CUStateKey::RECOVERABLE_ERROR &&
            impl->serviceState != CUStateKey::FATAL_ERROR ) {
             //keep track of last state
             impl->last_state = impl->state_machine.current_state()[0];
         }
         SWE_LDBG  << "Going into fatal error state for " << impl_name;
-        if((result = impl->SWEService::state_machine.process_event(service_state_machine::EventType::fatal_error())  == boost::msm::back::HANDLED_TRUE)) {
+        if((result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::fatal_error())  == boost::msm::back::HANDLED_TRUE))) {
             //keep track of current state
             impl->serviceState = impl->state_machine.current_state()[0];
             //call fatal error handler
             impl->fatalErrorFromState(impl->last_state, ex);
+            SWE_LDBG  << impl_name << " into fatal error";
         }
-        SWE_LDBG  << impl_name << " into fatal error";
     } catch (CException& ex) {
         SWE_LAPP  << "Error going into fatal error for " << impl_name << " with "<< ex.what();
     } catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
@@ -176,9 +171,9 @@ bool SWEService::goInFatalError(SWEService *impl,  chaos::CException& ex, const 
 }
 
 bool SWEService::goInRecoverableError(SWEService *impl, chaos::CException& ex, const std::string & impl_name,  const std::string & domain_string) {
-    bool result = true;
+    bool result = false;
     try {
-        if(impl == NULL) throw CException(0, "Implementation is null", domain_string);
+        if(impl == NULL) return false;
         if(impl->serviceState != CUStateKey::RECOVERABLE_ERROR &&
            impl->serviceState != CUStateKey::FATAL_ERROR ) {
             //keep track of last state
@@ -186,11 +181,11 @@ bool SWEService::goInRecoverableError(SWEService *impl, chaos::CException& ex, c
         }
         
         DEBUG_CODE(SWE_LDBG  << "Going into recoverable state for " << impl_name;)
-        if((result = impl->SWEService::state_machine.process_event(service_state_machine::EventType::recoverable_error())  == boost::msm::back::HANDLED_TRUE)) {
+        if((result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::recoverable_error())  == boost::msm::back::HANDLED_TRUE))) {
             impl->serviceState = impl->state_machine.current_state()[0];
             impl->recoverableErrorFromState(impl->last_state, ex);
+            SWE_LDBG  << impl_name << " into recoverable state";
         }
-        SWE_LDBG  << impl_name << " into recoverable state";
     } catch (CException& ex) {
         SWE_LAPP  << "Error going into recoverable error for " << impl_name << " with "<< ex.what();
     } catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::bad_function_call> >& ex){
@@ -202,32 +197,32 @@ bool SWEService::goInRecoverableError(SWEService *impl, chaos::CException& ex, c
 }
 
 bool SWEService::recoverError(SWEService *impl, const std::string & impl_name,  const std::string & domain_string) {
-    bool result = true;
+    bool result = false;
     bool change_state_result = false;
     try {
-        if(impl == NULL) throw CException(0, "Implementation is null", domain_string);
+        if(impl == NULL) return false;
         DEBUG_CODE(SWE_LDBG  << "Try to recover error " << impl_name;)
         //call handler for infor the we are going to the last state
         if((result = impl->beforeRecoverErrorFromState(impl->last_state))) {
             //we can go to the last error
             switch (impl->last_state) {
                 case CUStateKey::INIT : {
-                    change_state_result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::init())  == boost::msm::back::HANDLED_TRUE);
+                    change_state_result = ((impl->SWEService::state_machine.process_event(service_state_machine::EventType::init())  == boost::msm::back::HANDLED_TRUE));
                     break;
                 }
                     
                 case CUStateKey::START:{
-                    change_state_result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::start())  == boost::msm::back::HANDLED_TRUE);
+                    change_state_result = ((impl->SWEService::state_machine.process_event(service_state_machine::EventType::start())  == boost::msm::back::HANDLED_TRUE));
                     break;
                 }
                     
                 case CUStateKey::STOP:{
-                    change_state_result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::stop())  == boost::msm::back::HANDLED_TRUE);
+                    change_state_result = ((impl->SWEService::state_machine.process_event(service_state_machine::EventType::stop())  == boost::msm::back::HANDLED_TRUE));
                     break;
                 }
                     
                 case CUStateKey::DEINIT:{
-                    change_state_result = (impl->SWEService::state_machine.process_event(service_state_machine::EventType::deinit())  == boost::msm::back::HANDLED_TRUE);
+                    change_state_result = ((impl->SWEService::state_machine.process_event(service_state_machine::EventType::deinit())  == boost::msm::back::HANDLED_TRUE));
                     break;
                 }
                 default:

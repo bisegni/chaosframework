@@ -20,6 +20,7 @@
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
+#include <chaos/common/metadata_logging/MetadataLoggingManager.h>
 
 #include <csignal>
 
@@ -31,8 +32,8 @@ using namespace chaos::cu;
 using namespace chaos::cu::data_manager;
 using namespace chaos::cu::command_manager;
 using namespace chaos::cu::control_manager;
-
 using namespace chaos::cu::driver_manager;
+using namespace chaos::common::metadata_logging;
 
 //boost::mutex ChaosCUToolkit::monitor;
 //boost::condition ChaosCUToolkit::endWaithCondition;
@@ -100,6 +101,12 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
 			LERR_ << "SIGTERM Signal handler registraiton error";
 		}
 
+        //force first allocation of metadata logging
+        if(GlobalConfiguration::getInstance()->getMetadataServerAddressList().size()) {
+            //we can initilize the logging manager
+            InizializableService::initImplementation(chaos::common::metadata_logging::MetadataLoggingManager::getInstance(), NULL, "MetadataLoggingManager", __PRETTY_FUNCTION__);
+        }
+        
         StartableService::initImplementation(CommandManager::getInstance(), NULL, "CommandManager", "ChaosCUToolkit::init");
         CommandManager::getInstance()->server_handler=this;
         
@@ -166,7 +173,7 @@ void ChaosCUToolkit::stop() throw(CException) {
 	//stop control manager
 	StartableService::stopImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::stop");
 
-	//start command manager, this manager must be the last to startup
+	//stop command manager, this manager must be the last to startup
 	StartableService::stopImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::stop");
     
 	//stop driver manager
@@ -181,17 +188,19 @@ void ChaosCUToolkit::stop() throw(CException) {
 void ChaosCUToolkit::deinit() throw(CException) {
     LAPP_ << "Stopping !CHAOS Control Unit System";
     
-    //start command manager, this manager must be the last to startup
+    //deinit command manager, this manager must be the last to startup
     StartableService::deinitImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::deinit");
     
-        //start Control Manager
+        //deinit Control Manager
     StartableService::deinitImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::deinit");
     
-        //start data manager
+        //deinit data manager
 	StartableService::deinitImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::deinit");
     
+    //deinit metadata logging manager
 	StartableService::deinitImplementation(DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::deinit");
 
+    InizializableService::deinitImplementation(MetadataLoggingManager::getInstance(), "MetadataLoggingManager", __PRETTY_FUNCTION__);
     LAPP_ << "!CHAOS Control Unit System Stopped";
 	
 	//forward the deinitialization to the common sublayer

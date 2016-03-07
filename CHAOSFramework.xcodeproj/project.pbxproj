@@ -695,6 +695,7 @@
 		32C3546317885A37009ED581 /* shared_library.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C3544B17885A37009ED581 /* shared_library.hpp */; };
 		32C35467178860E5009ED581 /* extension.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C35465178860E5009ED581 /* extension.hpp */; };
 		32C3546A178860EB009ED581 /* decl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C35469178860EB009ED581 /* decl.hpp */; };
+		32C4C2AD1C8D9A8600D74E0F /* CException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4C2AC1C8D9A8600D74E0F /* CException.cpp */; };
 		32C4C86D193491F2002DA741 /* URLServiceFeeder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4C86B193491F2002DA741 /* URLServiceFeeder.cpp */; };
 		32C4C86E193491F2002DA741 /* URLServiceFeeder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4C86C193491F2002DA741 /* URLServiceFeeder.h */; };
 		32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C5A42518D9959800C0435C /* DirectIOPerformanceSession.cpp */; };
@@ -1828,6 +1829,7 @@
 		32C3544B17885A37009ED581 /* shared_library.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = shared_library.hpp; sourceTree = "<group>"; };
 		32C35465178860E5009ED581 /* extension.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = extension.hpp; sourceTree = "<group>"; };
 		32C35469178860EB009ED581 /* decl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = decl.hpp; sourceTree = "<group>"; };
+		32C4C2AC1C8D9A8600D74E0F /* CException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CException.cpp; sourceTree = "<group>"; };
 		32C4C86B193491F2002DA741 /* URLServiceFeeder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLServiceFeeder.cpp; sourceTree = "<group>"; };
 		32C4C86C193491F2002DA741 /* URLServiceFeeder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLServiceFeeder.h; sourceTree = "<group>"; };
 		32C5A42518D9959800C0435C /* DirectIOPerformanceSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOPerformanceSession.cpp; sourceTree = "<group>"; };
@@ -3051,6 +3053,7 @@
 		326DB3FC14B38BC00018A8D0 /* exception */ = {
 			isa = PBXGroup;
 			children = (
+				32C4C2AC1C8D9A8600D74E0F /* CException.cpp */,
 				326DB3FD14B38BC00018A8D0 /* CException.h */,
 				3270E0771C6DECA000105726 /* MetadataLoggingCException.cpp */,
 				3270E0781C6DECA000105726 /* MetadataLoggingCException.h */,
@@ -5158,6 +5161,7 @@
 				32A91FCE1A49B37300DCF364 /* HTTPRpcSyncServer.cpp in Sources */,
 				32B159CD18AE08720096B58B /* ZMQSocketFeeder.cpp in Sources */,
 				32460520179C55FC00B075DA /* sqlite3.c in Sources */,
+				32C4C2AD1C8D9A8600D74E0F /* CException.cpp in Sources */,
 				324A4B54191A41EF00975394 /* random.cpp in Sources */,
 				32FB20201A3F2E7300307A86 /* AbstractSharedDomainCache.cpp in Sources */,
 				3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */,

@@ -19,6 +19,7 @@
  */
 #ifndef ControlException_H
 #define ControlException_H
+
 #include <string>
 #include <cstring>
 #include <exception>
@@ -34,41 +35,22 @@ namespace chaos{
         //! string stream for compose the "what" message
         std::string msg;
         
-        void composeMsg() {
-            std::stringstream ss;
-            ss << "-----------Exception------------"<<std::endl;
-            ss << "Domain:" << errorDomain<<std::endl;
-            ss << "Message:" << errorMessage<<std::endl;
-            ss << "Error Code;" << errorCode<<std::endl;
-            ss << "-----------Exception------------"<<std::endl;
-            msg = ss.str();
-        }
+        void composeMsg();
     public:
         //! identify the number for the error
-        int errorCode;
+        const int errorCode;
         //! describe the error that occour
-        std::string errorMessage;
+        const std::string errorMessage;
         //! identify the domain(ControlUnit, DataManager, ....)
-        std::string errorDomain;
-
+        const std::string errorDomain;
         
-        explicit CException(int eCode, const char * eMessage,  const char * eDomain) throw():errorCode(eCode),
-        errorMessage( eMessage, strlen( eMessage )),
-        errorDomain( eDomain, strlen( eDomain )) {composeMsg();};
+        CException(int eCode, std::string eMessage,  std::string eDomain) throw();
         
-        explicit CException(int eCode, std::string eMessage,  std::string eDomain) throw():errorCode(eCode),
-        errorMessage(eMessage),
-        errorDomain(eDomain) {composeMsg();};
+        CException(const CException& _exception) throw();
         
-        CException(const CException& _exception) throw() :errorCode(_exception.errorCode),
-        errorMessage(_exception.errorMessage),
-        errorDomain(_exception.errorDomain) {composeMsg();};
+        virtual ~CException() throw();
         
-        virtual ~CException() throw() {};
-        
-        virtual const char* what() const throw() {
-            return msg.c_str();
-        }
+        virtual const char* what() const throw();
     };
 }
 #endif

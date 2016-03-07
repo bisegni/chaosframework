@@ -174,9 +174,6 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              type_value_size);
     
     switch(type) {
-        case BatchCommandEventType::EVT_QUEUED: {
-            break;
-        }
         case BatchCommandEventType::EVT_FAULT: {
             if(type_value_size == sizeof(FaultDescription)) {
                 FaultDescription *faul_desc = static_cast<FaultDescription*>(type_value_ptr);
