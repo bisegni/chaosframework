@@ -31,6 +31,7 @@ namespace chaos {
         namespace control_manager {
             namespace handler {
                 
+                //! base dataset attribute class
                 class AbstractHandlerDescription {
                     const std::string& attribute_name;
                 public:
@@ -39,16 +40,17 @@ namespace chaos {
                     virtual bool executeHandler(chaos::common::data::CDataWrapper *attribute_changes_set) = 0;
                 };
                 
-                template<typename O>
-                class DatasetInt32AttributeHandlerDescription:
+                //!int32 attribute handler
+                template<typename O, typename T>
+                class DatasetAttributeHandlerDescription:
                 public AbstractHandlerDescription {
                 public:
                     typedef bool (O::*HandlerDescriptionActionPtr)(const std::string& attribute_name,
-                                                                   const int32_t attribute_value);
+                                                                   const T attribute_value);
                 protected:
-                    DatasetInt32AttributeHandlerDescription(O* _object_reference,
-                                                            HandlerDescriptionActionPtr _handler_pointer,
-                                                            const std::string& _attribute_name):
+                    DatasetAttributeHandlerDescription(O* _object_reference,
+                                                       HandlerDescriptionActionPtr _handler_pointer,
+                                                       const std::string& _attribute_name):
                     AbstractHandlerDescription(_attribute_name),
                     object_reference(_object_reference),
                     handler_pointer(_handler_pointer){}
@@ -58,9 +60,9 @@ namespace chaos {
                            attribute_changes_set->hasKey(attribute_name) == false) return false;
                         
                         //broadcast the attribute value
-
+                        
                         if(attribute_changes_set->isBoolValue(attribute_name) == false) return false;
-                        return ((*object_reference).*handler_pointer)(attribute_name, attribute_changes_set->getInt32Value(attribute_name));
+                        return ((*object_reference).*handler_pointer)(attribute_name, attribute_changes_set->getValue<T>(attribute_name));
                     }
                     
                 private:
@@ -69,10 +71,13 @@ namespace chaos {
                     const std::string attribute_name;
                 };
                 
+                //!
                 typedef boost::shared_ptr<AbstractHandlerDescription> HandlerPointer;
                 
+                //!
                 CHAOS_DEFINE_MAP_FOR_TYPE(std::string, HandlerPointer, MapAttributeHandler);
                 
+                //!
                 class DatasetAttributeAttributeHandler:
                 public AbstractAttributeHandler {
                     MapAttributeHandler map_handlers_for_attribute;
@@ -84,10 +89,13 @@ namespace chaos {
                     
                     template<typename O, typename T>
                     bool addHandlerOnAttributeName(const std::string& attribute_name,
-                                                   AbstractHandlerDescription* handler_pointer) {
+                                                   O *object_reference,
+                                                   typename DatasetAttributeHandlerDescription<O,T>::HandlerDescriptionActionPtr handler_action) {
                         if(map_handlers_for_attribute.count(attribute_name) == 0 ||
-                           handler_pointer == NULL) return false;
-                        map_handlers_for_attribute.insert(make_pair(attribute_name, HandlerPointer(handler_pointer)));
+                           handler_action == NULL) return false;
+                        map_handlers_for_attribute.insert(make_pair(attribute_name, HandlerPointer(new DatasetAttributeHandlerDescription<O,T>(object_reference,
+                                                                                                                                               handler_action,
+                                                                                                                                               attribute_name))));
                     }
                     bool removeHandlerOnAttributeName(const std::string& attribute_name);
                     
