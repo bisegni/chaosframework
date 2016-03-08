@@ -834,13 +834,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		3211C65F1C14620E003B38BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 326026E814B301F600C906CE;
-			remoteInfo = chaos_common;
-		};
 		3211C6611C146217003B38BF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
@@ -4715,7 +4708,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				3211C6601C14620E003B38BF /* PBXTargetDependency */,
 			);
 			name = chaos_cutoolkit;
 			productName = chaos_cutoolkit;
@@ -5375,11 +5367,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3211C6601C14620E003B38BF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 326026E814B301F600C906CE /* chaos_common */;
-			targetProxy = 3211C65F1C14620E003B38BF /* PBXContainerItemProxy */;
-		};
 		3211C6621C146217003B38BF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 326026E814B301F600C906CE /* chaos_common */;

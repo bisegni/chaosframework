@@ -48,9 +48,9 @@ namespace chaos {
                     typedef bool (O::*HandlerDescriptionActionPtr)(const std::string& attribute_name,
                                                                    const T attribute_value);
                 protected:
-                    DatasetAttributeHandlerDescription(O* _object_reference,
-                                                       HandlerDescriptionActionPtr _handler_pointer,
-                                                       const std::string& _attribute_name):
+                    DatasetAttributeHandlerDescription(const std::string& _attribute_name,
+                                                       O* _object_reference,
+                                                       HandlerDescriptionActionPtr _handler_pointer):
                     AbstractHandlerDescription(_attribute_name),
                     object_reference(_object_reference),
                     handler_pointer(_handler_pointer){}
@@ -69,6 +69,24 @@ namespace chaos {
                     O* object_reference;
                     HandlerDescriptionActionPtr handler_pointer;
                     const std::string attribute_name;
+                };
+                
+                template<typename O>
+                class DatasetInt32AttributeHandlerDescription:
+                public DatasetAttributeHandlerDescription<O, int32_t> {
+                public:
+                    DatasetInt32AttributeHandlerDescription(const std::string& _attribute_name,
+                                                            O* _object_reference,
+                                                            typename DatasetAttributeHandlerDescription<O, int32_t>::HandlerDescriptionActionPtr _handler_pointer){}
+                };
+
+                template<typename O>
+                class DatasetInt64AttributeHandlerDescription:
+                public DatasetAttributeHandlerDescription<O, int64_t> {
+                public:
+                    DatasetInt64AttributeHandlerDescription(const std::string& _attribute_name,
+                                                            O* _object_reference,
+                                                            typename DatasetAttributeHandlerDescription<O, int64_t>::HandlerDescriptionActionPtr _handler_pointer){}
                 };
                 
                 //!
@@ -93,9 +111,9 @@ namespace chaos {
                                                    typename DatasetAttributeHandlerDescription<O,T>::HandlerDescriptionActionPtr handler_action) {
                         if(map_handlers_for_attribute.count(attribute_name) == 0 ||
                            handler_action == NULL) return false;
-                        map_handlers_for_attribute.insert(make_pair(attribute_name, HandlerPointer(new DatasetAttributeHandlerDescription<O,T>(object_reference,
-                                                                                                                                               handler_action,
-                                                                                                                                               attribute_name))));
+                        map_handlers_for_attribute.insert(make_pair(attribute_name, HandlerPointer(new DatasetAttributeHandlerDescription<O,T>(attribute_name,
+                                                                                                                                               object_reference,
+                                                                                                                                               handler_action))));
                     }
                     bool removeHandlerOnAttributeName(const std::string& attribute_name);
                     
