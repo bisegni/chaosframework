@@ -24,8 +24,8 @@ SET(cu_lib_src  ${cu_lib_src}
     control_manager/RTAbstractControlUnit.cpp
     control_manager/WorkUnitManagement.cpp
     control_manager/IOCU.cpp
-    control_manager/slow_command/handler/AbstractAttributeHandler.cpp
-    control_manager/slow_command/handler/DatasetAttributeHandler.cpp
+    control_manager/handler/AbstractAttributeHandler.cpp
+    control_manager/handler/DatasetAttributeHandler.cpp
     control_manager/slow_command/SlowCommandExecutor.cpp
     control_manager/slow_command/SlowCommand.cpp
     control_manager/slow_command/command/SCWaitCommand.cpp
