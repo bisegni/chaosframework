@@ -32,6 +32,7 @@ void AbstractAttributeHandler::setHandlerResult(const std::string& attribute_nam
 }
 
 bool AbstractAttributeHandler::getHandlerResult(const std::string& attirbute_name) {
-    if(map_handler_result.count(attirbute_name) == 0) return false;
+    //if we have no registered handle for that attribute return true(the handler can acept or no the change on the attribute)
+    if(map_handler_result.count(attirbute_name) == 0) return true;
     return map_handler_result[attirbute_name];
 }

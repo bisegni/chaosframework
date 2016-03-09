@@ -228,8 +228,9 @@
 		3251B5151A768A9E00EF3F82 /* HashMapTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 3251B5121A768A9E00EF3F82 /* HashMapTest.h */; };
 		3252A30F1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252A30D1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp */; };
 		3252A3101C8ED2A800900FF2 /* AbstractAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3252A30E1C8ED2A800900FF2 /* AbstractAttributeHandler.h */; };
-		3252A3141C8ED6BD00900FF2 /* DatasetAttributeAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3252A3121C8ED6BD00900FF2 /* DatasetAttributeAttributeHandler.h */; };
-		3252A3181C8EE28E00900FF2 /* DatasetAttributeAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252A3171C8EE28E00900FF2 /* DatasetAttributeAttributeHandler.cpp */; };
+		3252A3141C8ED6BD00900FF2 /* DatasetAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3252A3121C8ED6BD00900FF2 /* DatasetAttributeHandler.h */; };
+		3252A3181C8EE28E00900FF2 /* DatasetAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252A3171C8EE28E00900FF2 /* DatasetAttributeHandler.cpp */; };
+		3252A31C1C9021DE00900FF2 /* handler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3252A31A1C9021DE00900FF2 /* handler.h */; };
 		3252F3541C29847E004436A8 /* GetDomains.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252F3521C29847E004436A8 /* GetDomains.cpp */; };
 		3252F3581C298743004436A8 /* AddNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252F3561C298743004436A8 /* AddNode.cpp */; };
 		3252F3591C298743004436A8 /* AddNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3252F3571C298743004436A8 /* AddNode.h */; };
@@ -1227,8 +1228,9 @@
 		3251B5121A768A9E00EF3F82 /* HashMapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashMapTest.h; sourceTree = "<group>"; };
 		3252A30D1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractAttributeHandler.cpp; sourceTree = "<group>"; };
 		3252A30E1C8ED2A800900FF2 /* AbstractAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractAttributeHandler.h; sourceTree = "<group>"; };
-		3252A3121C8ED6BD00900FF2 /* DatasetAttributeAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetAttributeAttributeHandler.h; sourceTree = "<group>"; };
-		3252A3171C8EE28E00900FF2 /* DatasetAttributeAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetAttributeAttributeHandler.cpp; sourceTree = "<group>"; };
+		3252A3121C8ED6BD00900FF2 /* DatasetAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetAttributeHandler.h; sourceTree = "<group>"; };
+		3252A3171C8EE28E00900FF2 /* DatasetAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetAttributeHandler.cpp; sourceTree = "<group>"; };
+		3252A31A1C9021DE00900FF2 /* handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = handler.h; sourceTree = "<group>"; };
 		3252F3521C29847E004436A8 /* GetDomains.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetDomains.cpp; sourceTree = "<group>"; };
 		3252F3531C29847E004436A8 /* GetDomains.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetDomains.h; sourceTree = "<group>"; };
 		3252F3561C298743004436A8 /* AddNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddNode.cpp; sourceTree = "<group>"; };
@@ -2596,8 +2598,9 @@
 			children = (
 				3252A30D1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp */,
 				3252A30E1C8ED2A800900FF2 /* AbstractAttributeHandler.h */,
-				3252A3171C8EE28E00900FF2 /* DatasetAttributeAttributeHandler.cpp */,
-				3252A3121C8ED6BD00900FF2 /* DatasetAttributeAttributeHandler.h */,
+				3252A3171C8EE28E00900FF2 /* DatasetAttributeHandler.cpp */,
+				3252A3121C8ED6BD00900FF2 /* DatasetAttributeHandler.h */,
+				3252A31A1C9021DE00900FF2 /* handler.h */,
 			);
 			path = handler;
 			sourceTree = "<group>";
@@ -4519,8 +4522,9 @@
 				3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */,
 				326DB4C914B3A3E50018A8D0 /* DataManager.h in Headers */,
 				326DB4CA14B3A3E50018A8D0 /* DataManagerException.h in Headers */,
-				3252A3141C8ED6BD00900FF2 /* DatasetAttributeAttributeHandler.h in Headers */,
+				3252A3141C8ED6BD00900FF2 /* DatasetAttributeHandler.h in Headers */,
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
+				3252A31C1C9021DE00900FF2 /* handler.h in Headers */,
 				3287F7E717B27621009DD6ED /* DriverManager.h in Headers */,
 				325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */,
 				328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */,
@@ -5229,7 +5233,7 @@
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
 				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
 				32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */,
-				3252A3181C8EE28E00900FF2 /* DatasetAttributeAttributeHandler.cpp in Sources */,
+				3252A3181C8EE28E00900FF2 /* DatasetAttributeHandler.cpp in Sources */,
 				3250105F19E2DB4A00809415 /* AttributeSharedCacheWrapper.cpp in Sources */,
 				32CFC5CA1AF5601300E2A0B6 /* BasicIODriver.cpp in Sources */,
 				32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */,

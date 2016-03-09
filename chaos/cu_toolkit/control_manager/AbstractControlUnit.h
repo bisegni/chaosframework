@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #ifndef ControlUnit_H
 #define ControlUnit_H
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
@@ -43,9 +44,11 @@
 #include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/chaos_types.h>
 
-#include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
 #include <chaos/cu_toolkit/data_manager/KeyDataStorage.h>
+#include <chaos/cu_toolkit/control_manager/handler/handler.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
+#include <chaos/cu_toolkit/control_manager/AttributeSharedCacheWrapper.h>
+
 
 #ifdef __CHAOS_DEBUG_MEMORY_CU__
 #include <chaos/common/debug/tracey.hpp>
@@ -65,13 +68,14 @@ static const char * const PublishName;\
 private:\
 //class impl : public subclass
 
+using namespace chaos::common::data;
+using namespace chaos::common::data::cache;
+using namespace chaos::cu::driver_manager;
+using namespace chaos::cu::driver_manager::driver;
+
 namespace chaos{
     namespace cu {
         namespace control_manager {
-            using namespace chaos::common::data;
-            using namespace chaos::common::data::cache;
-            using namespace chaos::cu::driver_manager;
-            using namespace chaos::cu::driver_manager::driver;
             
             //forward declaration
             class ControlManager;
@@ -187,6 +191,9 @@ namespace chaos{
                 
                 //! check list of services for initialization and start state
                 chaos::common::utility::AggregatedCheckList check_list_sub_service;
+                
+                //! dataset handler managment
+                handler::DatasetAttributeHandler dataset_attribute_manager;
                 
                 //! init configuration
                 std::auto_ptr<CDataWrapper> init_configuration;
@@ -505,18 +512,18 @@ namespace chaos{
                     return DeclareAction::addActionDescritionInstance(objectReference, actionHandler, control_unit_instance.c_str(), actionAliasName, actionDescription);
                 }
                 
-//                template<typename O>
-//                void addAttributeHander(const std::string& attribute_name) {
-//                    chaos::common::data::RangeValueInfo attribute_info;
-//                    if(getAttributeRangeValueInfo(attribute_name,
-//                                                  attribute_info) == 0) {
-//                        switch(attribute_info.valueType) {
-//                            case chaos::DataType::TYPE_INT32:
-//                                
-//                                break;
-//                        }
-//                    }
-//                }
+                template<typename O, typename T>
+                bool addHandlerOnInputAttributeName(O* object_reference,
+                                                    typename handler::DatasetAttributeHandlerDescription<O,T>::HandlerDescriptionActionPtr handler_ptr,
+                                                    const std::string& attribute_name) {
+                    return dataset_attribute_manager.addHandlerOnAttributeName<O, T>(object_reference,
+                                                                                     attribute_name,
+                                                                                     handler_ptr);
+                }
+                
+                bool removeHandlerOnAttributeName(const std::string& attribute_name) {
+                    return dataset_attribute_manager.removeHandlerOnAttributeName(attribute_name);
+                }
                 
                 //! Return the contro unit instance
                 const char * getCUInstance();

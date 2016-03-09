@@ -1337,6 +1337,9 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
         //call pre handler
         unitInputAttributePreChangeHandler();
         
+        //first call attribute handler
+        dataset_attribute_manager.executeHandlers(dataset_attribute_values);
+        
         //get all input attribute name
         getDatasetAttributesName(DataType::Input , in_attribute_name);
         
@@ -1353,10 +1356,14 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                 //check if the attribute name is present
                 if(dataset_attribute_values->hasKey(attr_name)) {
                     
+                    //check if attribute has been accepted
+                    if(dataset_attribute_manager.getHandlerResult(*iter) == false) return false;
+                    
                     AttributeValue * attribute_cache_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT, iter->c_str());
                     
                     //get attribute info
                     getAttributeRangeValueInfo(*iter, attributeInfo);
+                    
                     //call handler
                     switch (attribute_cache_value->type) {
                         case DataType::TYPE_BOOLEAN: {
@@ -1394,6 +1401,8 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                             attribute_cache_value->setValue(binv, bin_size);
                             break;
                         }
+                        default:
+                            break;
                     }
                 }
             }

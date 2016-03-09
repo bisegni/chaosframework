@@ -1,5 +1,5 @@
 /*
- *	DatasetAttributeAttributeHandler.cpp
+ *	DatasetAttributeHandler.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by Claudio Bisegni.
@@ -19,24 +19,25 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/control_manager/handler/DatasetAttributeAttributeHandler.h>
+#include <chaos/cu_toolkit/control_manager/handler/DatasetAttributeHandler.h>
 
 using namespace chaos::cu::control_manager::handler;
 
-DatasetAttributeAttributeHandler::DatasetAttributeAttributeHandler() {
+DatasetAttributeHandler::DatasetAttributeHandler() {
     
 }
 
-DatasetAttributeAttributeHandler::~DatasetAttributeAttributeHandler() {
-    
+DatasetAttributeHandler::~DatasetAttributeHandler() {
+    clearAllAttributeHandler();
 }
 
-bool DatasetAttributeAttributeHandler::removeHandlerOnAttributeName(const std::string& attribute_name) {
+bool DatasetAttributeHandler::removeHandlerOnAttributeName(const std::string& attribute_name) {
     if(map_handlers_for_attribute.count(attribute_name) == false) return false;
     map_handlers_for_attribute.erase(attribute_name);
+    return true;
 }
 
-void DatasetAttributeAttributeHandler::executeHandlers(chaos::common::data::CDataWrapper *attribute_changes_set) {
+void DatasetAttributeHandler::executeHandlers(chaos::common::data::CDataWrapper *attribute_changes_set) {
     //reset the map fo rthe result by attribute name
     map_handler_result.clear();
     
@@ -46,4 +47,8 @@ void DatasetAttributeAttributeHandler::executeHandlers(chaos::common::data::CDat
         it++) {
         setHandlerResult(it->first, it->second->executeHandler(attribute_changes_set));
     }
+}
+
+void DatasetAttributeHandler::clearAllAttributeHandler() {
+    map_handlers_for_attribute.clear();
 }
