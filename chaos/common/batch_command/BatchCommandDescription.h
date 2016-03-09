@@ -122,6 +122,12 @@ namespace chaos {
                                   chaos::DataType::DataType type,
                                   int32_t flag);
                 
+                void getParameters(std::vector<std::string>& parameter_list);
+                
+                boost::shared_ptr<chaos::common::data::CDataWrapper>
+                getParameterDescription(const std::string& parameter_name);
+                
+                
                 boost::shared_ptr<chaos::common::data::CDataWrapper>
                 getFullDescription();
             };

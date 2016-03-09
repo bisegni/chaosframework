@@ -112,6 +112,23 @@ void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configur
         setup_configuration.finalizeArrayForKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION);
     }
 }
+CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, CommandParameterList);
+CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<BatchCommandDescription>, CommandDescriptionList);
+void SCAbstractControlUnit::_completeDatasetAttribute() {
+    CommandParameterList parameter_list;
+    CommandDescriptionList command_descriptions;
+    slow_command_executor->getCommandsDescriptions(command_descriptions);
+    
+    for(CommandDescriptionListIterator it = command_descriptions.begin();
+        it != command_descriptions.end();
+        it++) {
+        boost::shared_ptr<BatchCommandDescription> current_description = *it;
+        
+        parameter_list.clear();
+        current_description->getParameters(parameter_list);
+
+    }
+}
 
 AbstractSharedDomainCache *SCAbstractControlUnit::_getAttributeCache() {
     return AbstractControlUnit::_getAttributeCache();
