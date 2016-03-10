@@ -65,7 +65,7 @@ BatchCommandDescription::getFullDescription() {
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_ALIAS, alias);
     description_obj->addStringValue(BatchCommandAndParameterDescriptionkey::BC_DESCRIPTION, description);
     if(map_parameter.size()) {
-        for(MapParamterIterator it = map_parameter.begin();
+        for(BatchCommandMapParamterIterator it = map_parameter.begin();
             it != map_parameter.end();
             it++) {
             description_obj->appendCDataWrapperToArray(*it->second);
@@ -76,11 +76,37 @@ BatchCommandDescription::getFullDescription() {
 }
 
 void BatchCommandDescription::getParameters(std::vector<std::string>& parameter_list) {
-    for(MapParamterIterator it = map_parameter.begin();
+    for(BatchCommandMapParamterIterator it = map_parameter.begin();
         it != map_parameter.end();
         it++) {
         parameter_list.push_back(it->first);
     }
+}
+
+bool BatchCommandDescription::getParameterType(const std::string& parameter_name,
+                                               chaos::DataType::DataType& type) {
+    boost::shared_ptr<CDataWrapper> desc(getParameterDescription(parameter_name));
+    if(desc.get() == NULL) return false;
+    type = (chaos::DataType::DataType)desc->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_TYPE);
+    return true;
+}
+
+
+bool BatchCommandDescription::getParameterFlag(const std::string& parameter_name,
+                                               int32_t& flag) {
+    boost::shared_ptr<CDataWrapper> desc(getParameterDescription(parameter_name));
+    if(desc.get() == NULL) return false;
+    flag = desc->getInt32Value(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_FLAG);
+    return true;
+}
+
+
+bool BatchCommandDescription::getParameterDescription(const std::string& parameter_name,
+                                                      std::string& parameter_description) {
+    boost::shared_ptr<CDataWrapper> desc(getParameterDescription(parameter_name));
+    if(desc.get() == NULL) return false;
+    parameter_description = desc->getStringValue(BatchCommandAndParameterDescriptionkey::BC_PARAMETER_DESCRIPTION);
+    return true;
 }
 
 boost::shared_ptr<CDataWrapper>

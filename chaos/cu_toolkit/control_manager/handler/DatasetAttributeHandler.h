@@ -100,6 +100,12 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                 CHAOS_DEFINE_MAP_FOR_TYPE(std::string,
                                           boost::shared_ptr<AbstractHandlerDescription>,
                                           MapAttributeHandler);
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string,
+                                             HandlerAssociatedAttributeList);
+                
+                struct HandlerSetElement {
+                    HandlerDescriptionPtr handler_ptr;
+                };
                 
                 //!
                 class DatasetAttributeHandler:
@@ -113,6 +119,9 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                     bool addHandlerOnAttributeName(O *object_reference,
                                                    const std::string& attribute_name,
                                                    typename DatasetAttributeHandlerDescription<O,T>::HandlerDescriptionActionPtr handler_ptr) {
+                        
+                        //const std::string unique_handler_key = boost::str(boost::fromat("%1%_%2%")%object_reference%handler_ptr);
+                        
                         if(map_handlers_for_attribute.count(attribute_name) != 0 ||
                            handler_ptr == NULL) return false;
                         

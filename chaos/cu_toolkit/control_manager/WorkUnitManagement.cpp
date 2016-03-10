@@ -166,16 +166,23 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             try{
                 //initialize drivers
                 work_unit_instance->_initDrivers();
-
+                
                 //define the contrl unit action and dataset
                 work_unit_instance->_defineActionAndDataset(mds_registration_message);
             }catch(chaos::CException& ex) {
-                chaos::common::utility::SWEService::goInFatalError(work_unit_instance.get(), ex, "Setup phase", __PRETTY_FUNCTION__);
+                MetadataLoggingCException logged_exception(work_unit_instance->getCUID(),
+                                                           ex.errorCode,
+                                                           ex.errorMessage,
+                                                           ex.errorDomain);
+                chaos::common::utility::SWEService::goInFatalError(work_unit_instance.get(), logged_exception, "Setup phase", __PRETTY_FUNCTION__);
                 DECODE_CHAOS_EXCEPTION(ex)
                 SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
             }catch(...) {
-                chaos::CException c(-10000, "Undefined error", __PRETTY_FUNCTION__);
-                chaos::common::utility::SWEService::goInFatalError(work_unit_instance.get(), c, "Setup phase", __PRETTY_FUNCTION__);
+                MetadataLoggingCException logged_exception(work_unit_instance->getCUID(),
+                                                           -10000,
+                                                           "Undefined error",
+                                                           __PRETTY_FUNCTION__);
+                chaos::common::utility::SWEService::goInFatalError(work_unit_instance.get(), logged_exception, "Setup phase", __PRETTY_FUNCTION__);
                 WUMERR_ << "Unexpected error during control unit definition";
                 SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
             }
@@ -224,7 +231,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 }
                 //we need to add the domain of the new created control unit to the messages
                 rpc_message->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, work_unit_instance->getCUInstance());
-
+                
                 //submit startup command
                 std::auto_ptr<CDataWrapper> submittion_result(NetworkBroker::getInstance()->submitInterProcessMessage(rpc_message.release()));
                 

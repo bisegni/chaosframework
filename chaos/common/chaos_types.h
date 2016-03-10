@@ -61,6 +61,11 @@ typedef std::map< t1, t2 >                   n;\
 typedef std::map< t1, t2 >::iterator         n ## Iterator;\
 typedef std::map< t1, t2 >::const_iterator   n ## ConstIterator;
 
+#define  CHAOS_DEFINE_MMAP_FOR_TYPE(t1, t2, n)\
+typedef std::multimap< t1, t2 >                   n;\
+typedef std::multimap< t1, t2 >::iterator         n ## Iterator;\
+typedef std::multimap< t1, t2 >::const_iterator   n ## ConstIterator;
+
 #define  CHAOS_DEFINE_PTR_MAP_FOR_TYPE(t1, t2, n)\
 typedef boost::ptr_map< t1, t2 >                   n;\
 typedef boost::ptr_map< t1, t2 >::iterator         n ## Iterator;\
