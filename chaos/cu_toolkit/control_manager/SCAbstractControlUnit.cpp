@@ -361,42 +361,14 @@ void SCAbstractControlUnit::_forwardCommandInstanceByInputAttribute(CDataWrapper
             
             iattr_constructed = command_alias+"/"+*it_param;
             
-            //get cached value for input attribute
-            AttributeValue *attr_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT, iattr_constructed);
-            if(attr_value){
+            //check if user has forwarded the attribute for taht command
+            if(dataset_attribute_values->hasKey(iattr_constructed)){
                 //at least on input parameter for command as been found so we can forward it
                 can_submit_command = true;
+                dataset_attribute_values->copyKeyToNewKey(iattr_constructed,
+                                                          *it_param,
+                                                          *command_datapack);
                 SCACU_LAPP_ << " Compose parameter:"<< *it_param << " for command:" << command_alias;
-                //we have the values so
-                switch (attr_value->type) {
-                    case chaos::DataType::TYPE_BOOLEAN:
-                        command_datapack->addBoolValue(*it_param,
-                                                       *attr_value->getValuePtr<bool>());
-                        break;
-                    case chaos::DataType::TYPE_INT32:
-                        command_datapack->addInt32Value(*it_param,
-                                                        *attr_value->getValuePtr<int32_t>());
-                        break;
-                    case chaos::DataType::TYPE_INT64:
-                        command_datapack->addInt64Value(*it_param,
-                                                        *attr_value->getValuePtr<int64_t>());
-                        break;
-                    case chaos::DataType::TYPE_DOUBLE:
-                        command_datapack->addDoubleValue(*it_param,
-                                                         *attr_value->getValuePtr<double>());
-                        break;
-                    case chaos::DataType::TYPE_STRING:
-                        command_datapack->addStringValue(*it_param,
-                                                         attr_value->toString());
-                        break;
-                    case chaos::DataType::TYPE_BYTEARRAY:
-                        command_datapack->addBinaryValue(*it_param,
-                                                         attr_value->getValuePtr<const char>(),
-                                                         attr_value->size);
-                        break;
-                    default:
-                        break;
-                }
             }
         }
         if(can_submit_command) {

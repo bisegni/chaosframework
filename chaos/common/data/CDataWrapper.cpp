@@ -372,6 +372,18 @@ bool CDataWrapper::copyKeyTo(const std::string& key_to_copy,
     return result;
 }
 
+//!copy a key(with value) from this instance to another CDataWrapper witha new key
+bool CDataWrapper::copyKeyToNewKey(const std::string& key_to_copy,
+                                   const std::string& new_key,
+                                   CDataWrapper& destination) {
+    bool result = false;
+    if((result = bsonBuilder->asTempObj().hasElement(key_to_copy))){
+        //we can copy
+        destination.bsonBuilder->appendAs(bsonBuilder->asTempObj().getField(key_to_copy), new_key);
+    }
+    return result;
+}
+
 void CDataWrapper::copyAllTo(CDataWrapper& destination) {
     std::vector<BSONElement> all_element;
     bsonBuilder->asTempObj().elems(all_element);

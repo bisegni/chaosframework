@@ -245,6 +245,11 @@ namespace chaos {
                 bool copyKeyTo(const std::string& key_to_copy,
                                CDataWrapper& destination);
                 
+                //!copy a key(with value) from this instance to another CDataWrapper witha new key
+                bool copyKeyToNewKey(const std::string& key_to_copy,
+                                     const std::string& new_key,
+                                     CDataWrapper& destination);
+                
                 //!copy all key(with value) from this instance to another CDataWrapper one
                 void copyAllTo(CDataWrapper& destination);
                 
