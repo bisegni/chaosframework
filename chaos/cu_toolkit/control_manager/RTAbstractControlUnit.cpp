@@ -255,13 +255,19 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* update_pa
  */
 void RTAbstractControlUnit::executeOnThread() {
     uint64_t start_execution = 0;
-    uint64_t processing_time = 0;
     int64_t time_to_sleep = 0;
-    uint64_t start_execution_stat = 0;
-    uint64_t counter = 0;
+    uint64_t next_predicted_run = 0;
+    int64_t next_prediction_error = 0;
 	while(scheduler_run) {
-        counter++;
-        start_execution_stat += (start_execution = TimingUtil::getTimeStampInMicrosends());
+        start_execution = TimingUtil::getTimeStampInMicrosends();
+        
+        if(next_predicted_run) {
+            //are onthe second
+            if((next_prediction_error = start_execution - next_predicted_run) < 0){
+                next_prediction_error = 0;
+            }
+        }
+        
         //udpate output dataset timestamp tag
         _updateAcquistionTimestamp((uint64_t)(start_execution/1000));
         try{
@@ -281,9 +287,14 @@ void RTAbstractControlUnit::executeOnThread() {
 		// check if the output dataset need to be pushed
 		pushOutputDataset(true);
         //calculate the number of microsencods to wait
-        time_to_sleep = schedule_dalay - ((processing_time = TimingUtil::getTimeStampInMicrosends()) - start_execution);
-        if(time_to_sleep<0)continue;
-		//check if we are in sequential or in threaded mode
-        boost::this_thread::sleep_for(boost::chrono::microseconds(time_to_sleep));
+        time_to_sleep = schedule_dalay - ((TimingUtil::getTimeStampInMicrosends() - start_execution)+next_prediction_error);
+        if(time_to_sleep>0){
+            //check if we are in sequential or in threaded mode
+            next_predicted_run = TimingUtil::getTimeStampInMicrosends() + time_to_sleep;
+            boost::this_thread::sleep_for(boost::chrono::microseconds(time_to_sleep));
+        } else {
+            next_predicted_run = 0;
+            next_prediction_error = 0;
+        }
 	}
 }

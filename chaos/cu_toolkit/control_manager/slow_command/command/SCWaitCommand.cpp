@@ -77,7 +77,7 @@ void SCWaitCommand::setHandler(CDataWrapper *data) {
 }
 
 bool SCWaitCommand::timeoutHandler() {
-    uint64_t timeDiff = getLastStepTime() - getSetTime();
+    uint64_t timeDiff = getStartStepTime() - getSetTime();
     DEBUG_CODE(SCWC_INFO << "timeout after " << timeDiff << " milliseconds";)
     BC_END_RUNNIG_PROPERTY;
     //move the state machine on fault

@@ -580,18 +580,32 @@ void BatchCommandSandbox::checkNextCommand() {
 
 void BatchCommandSandbox::runCommand() {
     bool canWork = scheduleWorkFlag;
+    uint64_t next_predicted_run = 0;
+    int64_t next_prediction_error = 0;
     BatchCommand *curr_executing_impl = NULL;
     //check if the current command has ended or need to be substitute
     boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
     do {
         if (currentExecutingCommand) {
             curr_executing_impl = currentExecutingCommand->element->cmdImpl;
-            stat.lastCmdStepStart = TimingUtil::getTimeStamp();
+            
+            // count the time we have started a run step
+            curr_executing_impl->timing_stats.command_step_counter++;
+            
+            stat.last_cmd_step_start_usec = TimingUtil::getTimeStampInMicrosends();
+            if(next_predicted_run) {
+                //are onthe second
+                if((next_prediction_error = stat.last_cmd_step_start_usec - next_predicted_run) < 0){
+                    next_prediction_error = 0;
+                }
+            }
+           
+            
             if (event_handler) {
                 //signal the step of the run
                 event_handler->handleSandboxEvent(identification,
                                                   BatchSandboxEventType::EVT_RUN_START,
-                                                  &stat.lastCmdStepStart, sizeof (uint64_t));
+                                                  &stat.last_cmd_step_start_usec, sizeof (uint64_t));
             }
             // call the acquire phase
             acquireHandlerFunctor();
@@ -599,14 +613,14 @@ void BatchCommandSandbox::runCommand() {
             //call the correlation and commit phase();
             correlationHandlerFunctor();
             
-            //compute step duration
-            stat.lastCmdStepTime = TimingUtil::getTimeStamp() - stat.lastCmdStepStart;
             if (event_handler) {
                 //signal the step of the run
                 event_handler->handleSandboxEvent(identification,
-                                                  BatchSandboxEventType::EVT_RUN_END,
-                                                  &stat.lastCmdStepTime, sizeof (uint64_t));
+                                                  BatchSandboxEventType::EVT_RUN_END);
             }
+            
+            //compute step duration
+            stat.last_cmd_step_duration_usec = TimingUtil::getTimeStampInMicrosends() - stat.last_cmd_step_start_usec;
             
             //fire post command step
             curr_executing_impl->commandPost();
@@ -622,12 +636,15 @@ void BatchCommandSandbox::runCommand() {
                     case RunningPropertyType::RP_Exsc:
                     case RunningPropertyType::RP_Normal:
                     {
-                        int64_t timeToWaith = curr_executing_impl->commandFeatures.featureSchedulerStepsDelay - (stat.lastCmdStepTime * 1000);
-                        DEBUG_CODE(SCSLDBG_ << "[runCommand] - wait the delay needed by current command " << timeToWaith << "us "<< " exec time "<<stat.lastCmdStepTime<<"ms";)
+                        int64_t timeToWaith = (curr_executing_impl->commandFeatures.featureSchedulerStepsDelay) - (stat.last_cmd_step_duration_usec + next_prediction_error);
+                        DEBUG_CODE(SCSLDBG_ << "[runCommand] - wait the delay needed by current command " << timeToWaith << "us "<< " exec time "<<stat.last_cmd_step_duration_usec<<"us";)
                         //adjust a little bit the jitter
                         if (timeToWaith > 0) {
-                            
+                            next_predicted_run = TimingUtil::getTimeStampInMicrosends() + timeToWaith;
                             threadSchedulerPauseCondition.waitUSec(timeToWaith);
+                        } else {
+                            next_predicted_run = 0;
+                            next_prediction_error = 0;
                         }
                         break;
                     }

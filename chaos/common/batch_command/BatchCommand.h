@@ -63,6 +63,9 @@ namespace chaos{
             typedef struct CommandTimingStats {
                 //! command start microsecond (sandbox time)
                 uint64_t command_set_time_usec;
+                
+                //! count the step phases
+                uint64_t command_step_counter;
             } CommandTimingStats;
             
             //! Base cass for the slow command implementation
@@ -154,14 +157,16 @@ namespace chaos{
                 //! return the identification of the device
                 std::string& getDeviceID();
                 
-                //! return the set handler time
+                //! return the set handler time in milliseocnds
                 uint64_t getSetTime();
                 
-                //! return the start step time of the sandbox
+                //! return the start step time of the sandbox in milliseocnds
                 uint64_t getStartStepTime();
                 
-                //! return the last step time of the sandbox
-                uint64_t getLastStepTime();
+                uint64_t getStepCounter();
+                
+                //! return the last step duration of the sandbox in microseconds
+                uint64_t getLastStepDuration();
                 
                 //! set the alias of the command
                 void setCommandAlias(const std::string& _command_alias);

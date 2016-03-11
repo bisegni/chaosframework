@@ -85,7 +85,7 @@ bool BatchCommand::timeoutHandler() {return true;}
 
 //! called befor the command start the execution
 void BatchCommand::commandPre() {
-	timing_stats.command_set_time_usec = TimingUtil::getTimeStamp();
+	timing_stats.command_set_time_usec = TimingUtil::getTimeStampInMicrosends();
 }
 
 #define SET_FAULT(c, m, d) \
@@ -97,9 +97,10 @@ fault_description.domain = d;
 //! called after the command step excecution
 void BatchCommand::commandPost() {
 	if(commandFeatures.featuresFlag & features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT) {
-            //timing_stats.command_running_time_usec += shared_stat->lastCmdStepTime;
+            //timing_stats.command_running_time_usec += shared_stat->last_cmd_step_duration;
 		//check timeout
-		if((shared_stat->lastCmdStepStart - timing_stats.command_set_time_usec)  >= commandFeatures.featureCommandTimeout) {
+        int64_t time_offset = shared_stat->last_cmd_step_start_usec - timing_stats.command_set_time_usec;
+		if(time_offset  >= commandFeatures.featureCommandTimeout) {
 			//call the timeout handler
 			try {
 				if(timeoutHandler()) {
@@ -118,14 +119,19 @@ void BatchCommand::commandPost() {
 
 // return the set handler time
 uint64_t BatchCommand::getSetTime() {
-    return timing_stats.command_set_time_usec;
+    return (timing_stats.command_set_time_usec/1000);
 }
+
+uint64_t BatchCommand::getStepCounter() {
+    return timing_stats.command_step_counter;
+}
+
 //! return the start step time of the sandbox
 uint64_t BatchCommand::getStartStepTime() {
-    return shared_stat->lastCmdStepStart;
+    return (shared_stat->last_cmd_step_start_usec / 1000);
 }
 
 //! return the last step time of the sandbox
-uint64_t BatchCommand::getLastStepTime() {
-    return shared_stat->lastCmdStepStart;
+uint64_t BatchCommand::getLastStepDuration() {
+    return (shared_stat->last_cmd_step_duration_usec);
 }
