@@ -1613,6 +1613,8 @@ void AbstractControlUnit::fillCDatawrapperWithCachedValue(std::vector<AttributeV
             case DataType::TYPE_BYTEARRAY:
                 dataset.addBinaryValue((*it)->name, (*it)->getValuePtr<char>(), (*it)->size);
                 break;
+            default:
+                break;
         }
     }
 }
@@ -1621,4 +1623,8 @@ void AbstractControlUnit::fillCDatawrapperWithCachedValue(std::vector<AttributeV
 void AbstractControlUnit::timeout() {
     //update push metric
     _updatePushRateMetric();
+}
+
+bool AbstractControlUnit::isInputAttributeChangeAuthorizedByHandler(const std::string& attr_name){
+    return dataset_attribute_manager.getHandlerResult(attr_name);
 }

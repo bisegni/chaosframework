@@ -476,6 +476,8 @@ namespace chaos{
                 
                 //!timer for update push metric
                 void timeout();
+                
+                bool isInputAttributeChangeAuthorizedByHandler(const std::string& attr_name);
             public:
                 
                 //! Default Contructor

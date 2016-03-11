@@ -363,13 +363,18 @@ void SCAbstractControlUnit::_forwardCommandInstanceByInputAttribute(CDataWrapper
             
             //check if user has forwarded the attribute for taht command
             if(dataset_attribute_values->hasKey(iattr_constructed)){
-                //at least on input parameter for command as been found so we can forward it
-                can_submit_command = true;
-                dataset_attribute_values->copyKeyToNewKey(iattr_constructed,
-                                                          *it_param,
-                                                          *command_datapack);
-                SCACU_LAPP_ << " Compose parameter:"<< *it_param << " for command:" << command_alias;
+                if(isInputAttributeChangeAuthorizedByHandler(iattr_constructed)){
+                    //at least on input parameter for command as been found so we can forward it
+                    can_submit_command = true;
+                    dataset_attribute_values->copyKeyToNewKey(iattr_constructed,
+                                                              *it_param,
+                                                              *command_datapack);
+                    SCACU_LAPP_ << " Compose parameter:"<< *it_param << " for command:" << command_alias;
+                } else {
+                    SCACU_LERR_ << " Attribute"<< iattr_constructed << " for command:" << command_alias << " not autorized by handler";
+                }
             }
+            
         }
         if(can_submit_command) {
             submitBatchCommand(command_alias,
