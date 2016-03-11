@@ -93,11 +93,12 @@ void  SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const Declare
 
 //! called whr the infrastructure need to know how is composed the control unit
 void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configuration)  throw(CException) {
-    //call superclass method
-    AbstractControlUnit::_defineActionAndDataset(setup_configuration);
     //add the batch command description to the configuration
     SCACU_LAPP_ << "Install default slow commands for node id:" << DatasetDB::getDeviceID();
     installCommand(BATCH_COMMAND_GET_DESCRIPTION(SCWaitCommand), false);
+    
+    //call superclass method
+    AbstractControlUnit::_defineActionAndDataset(setup_configuration);
     
     std::vector< boost::shared_ptr<BatchCommandDescription> > batch_command_description;
     slow_command_executor->getCommandsDescriptions(batch_command_description);
@@ -110,6 +111,43 @@ void SCAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configur
             setup_configuration.appendCDataWrapperToArray(*full_description);
         }
         setup_configuration.finalizeArrayForKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_COMMAND_DESCRIPTION);
+    }
+}
+
+void SCAbstractControlUnit::_completeDatasetAttribute() {
+    std::string command_alias;
+    std::string iattr_constructed;
+    std::string parameter_description;
+    chaos::DataType::DataType parameter_type;
+    BatchCommandParameterNameList parameter_name_list;
+    BatchCommandDescriptionList command_descriptions;
+    slow_command_executor->getCommandsDescriptions(command_descriptions);
+    
+    for(BatchCommandDescriptionListIterator it = command_descriptions.begin();
+        it != command_descriptions.end();
+        it++) {
+        boost::shared_ptr<BatchCommandDescription> current_description = *it;
+        
+        command_alias = current_description->getAlias();
+        
+        parameter_name_list.clear();
+        current_description->getParameters(parameter_name_list);
+        for(BatchCommandParameterNameListIterator it_param = parameter_name_list.begin();
+            it_param != parameter_name_list.end();
+            it_param++) {
+            current_description->getParameterType(*it_param, parameter_type);
+            current_description->getParameterDescription(*it_param, parameter_description);
+            
+            iattr_constructed = command_alias+"/"+*it_param;
+            
+            //add input dataset
+            addAttributeToDataSet(iattr_constructed,
+                                  parameter_description,
+                                  parameter_type,
+                                  DataType::Input,
+                                  1);
+        }
+
     }
 }
 
@@ -218,18 +256,7 @@ void SCAbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
 }
 
 void SCAbstractControlUnit::completeInputAttribute() {
-    SCACU_LAPP_ << "Complete the shared cache input attribute";
-    AttributeCache& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
-    
-    std::vector<std::string> command_alias;
-    slow_command_executor->getAllCommandAlias(command_alias);
-    
-    for(std::vector<std::string>::iterator it = command_alias.begin();
-        it != command_alias.end();
-        it++) {
-        SCACU_LAPP_ << "Add input attribute for slow command:" << *it;
-        domain_attribute_setting.addAttribute(*it, 255, DataType::TYPE_STRING);
-    }
+
 }
 
 void SCAbstractControlUnit::submitSlowCommand(const std::string command_alias,
@@ -267,38 +294,27 @@ std::auto_ptr<CommandState> SCAbstractControlUnit::getStateForCommandID(uint64_t
 /*
  Receive the event for set the dataset input element
  */
-CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
+CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
     uint64_t command_id =0;
     std::auto_ptr<CDataWrapper> result_for_command;
     
-    //cal first the superclass method because the datasetAttributeValues is not detached
-    CDataWrapper *result = AbstractControlUnit::setDatasetAttribute(datasetAttributeValues, detachParam);
+    //cal first the superclass method because the dataset_attribute_values is not detached
+    CDataWrapper *result = AbstractControlUnit::setDatasetAttribute(dataset_attribute_values, detachParam);
+    
+    //auto forward command instance using input attribute
+    _forwardCommandInstanceByInputAttribute(dataset_attribute_values);
     
     //check if we have a command
-    if(datasetAttributeValues->hasKey(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS)) {
+    if(dataset_attribute_values->hasKey(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS)) {
         CHAOS_ASSERT(slow_command_executor)
-        std::string command_alias = datasetAttributeValues->getStringValue(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS);
+        std::string command_alias = dataset_attribute_values->getStringValue(chaos_batch::BatchCommandAndParameterDescriptionkey::BC_ALIAS);
         // in slow control cu the CDataWrapper instance received from rpc is internally managed
         //so we need to detach it
         // submit the detacched command to slow controll subsystem
         slow_command_executor->submitCommand(command_alias,
-                                             datasetAttributeValues,
+                                             dataset_attribute_values,
                                              command_id);
         detachParam = true;
-        //in this event the value is the alias of the command
-        //publish command value
-        AttributeValue *attr_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT, command_alias);
-        if(attr_value) {
-            std::string cmd_param = datasetAttributeValues->getJSONString();
-            //add new size
-            attr_value->setNewSize((uint32_t)cmd_param.size()+1, true);
-            
-            //set the value without notify because command value are managed internally only
-            attr_value->setValue(cmd_param.c_str(), (uint32_t)cmd_param.size(), true);
-            
-            //push input dataset change
-            pushInputDataset();
-        }
         //construct the result if we don't already have it
         if(!result) {
             result = new CDataWrapper();
@@ -307,6 +323,93 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
         result->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
     }
     return result;
+}
+
+void SCAbstractControlUnit::_forwardCommandInstanceByInputAttribute(CDataWrapper *dataset_attribute_values) throw (CException) {
+    uint64_t command_id = 0;
+    bool can_submit_command = false;
+    std::string command_alias;
+    std::string iattr_constructed;
+    std::string parameter_description;
+    chaos::DataType::DataType parameter_type;
+    BatchCommandParameterNameList parameter_name_list;
+    BatchCommandDescriptionList command_descriptions;
+    slow_command_executor->getCommandsDescriptions(command_descriptions);
+    
+    for(BatchCommandDescriptionListIterator it = command_descriptions.begin();
+        it != command_descriptions.end();
+        it++) {
+        
+        can_submit_command = false;
+        boost::shared_ptr<BatchCommandDescription> current_description = *it;
+        
+        command_alias = current_description->getAlias();
+        SCACU_LAPP_ << " Compose command with alias:" << command_alias;
+        parameter_name_list.clear();
+        current_description->getParameters(parameter_name_list);
+        if(parameter_name_list.size() == 0) {
+            //command without paramete can be submited using input parameter
+            continue;
+        }
+
+        std::auto_ptr<CDataWrapper> command_datapack(new CDataWrapper());
+        for(BatchCommandParameterNameListIterator it_param = parameter_name_list.begin();
+            it_param != parameter_name_list.end();
+            it_param++) {
+            current_description->getParameterType(*it_param, parameter_type);
+            current_description->getParameterDescription(*it_param, parameter_description);
+            
+            iattr_constructed = command_alias+"/"+*it_param;
+            
+            //get cached value for input attribute
+            AttributeValue *attr_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT, iattr_constructed);
+            if(attr_value){
+                //at least on input parameter for command as been found so we can forward it
+                can_submit_command = true;
+                SCACU_LAPP_ << " Compose parameter:"<< *it_param << " for command:" << command_alias;
+                //we have the values so
+                switch (attr_value->type) {
+                    case chaos::DataType::TYPE_BOOLEAN:
+                        command_datapack->addBoolValue(*it_param,
+                                                       *attr_value->getValuePtr<bool>());
+                        break;
+                    case chaos::DataType::TYPE_INT32:
+                        command_datapack->addInt32Value(*it_param,
+                                                        *attr_value->getValuePtr<int32_t>());
+                        break;
+                    case chaos::DataType::TYPE_INT64:
+                        command_datapack->addInt64Value(*it_param,
+                                                        *attr_value->getValuePtr<int64_t>());
+                        break;
+                    case chaos::DataType::TYPE_DOUBLE:
+                        command_datapack->addDoubleValue(*it_param,
+                                                         *attr_value->getValuePtr<double>());
+                        break;
+                    case chaos::DataType::TYPE_STRING:
+                        command_datapack->addStringValue(*it_param,
+                                                         attr_value->toString());
+                        break;
+                    case chaos::DataType::TYPE_BYTEARRAY:
+                        command_datapack->addBinaryValue(*it_param,
+                                                         attr_value->getValuePtr<const char>(),
+                                                         attr_value->size);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        if(can_submit_command) {
+            submitBatchCommand(command_alias,
+                               command_datapack.release(),
+                               command_id,
+                               0,
+                               50,
+                               SubmissionRuleType::SUBMIT_AND_Stack);
+            
+            SCACU_LAPP_ << "Command "<< command_alias<<" submitted with id " << command_id;
+        }
+    }
 }
 
 /*

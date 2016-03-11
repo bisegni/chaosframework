@@ -225,6 +225,9 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     //usefull value
     unitDefineActionAndDataset();
     
+    //call method to dinamically add other things to the dataset
+    _completeDatasetAttribute();
+    
     //for now we need only to add custom action for expose to rpc
     //input element of the dataset
     AbstActionDescShrPtr
@@ -1296,6 +1299,10 @@ void AbstractControlUnit::_goInFatalError(chaos::CException recoverable_exceptio
     //change state machine
     if(SWEService::goInFatalError(this, recoverable_exception, "RTAbstractControlUnit", __PRETTY_FUNCTION__)) {
     }
+}
+
+void AbstractControlUnit::_completeDatasetAttribute() {
+    
 }
 
 //!handler calledfor restor a control unit to a determinate point

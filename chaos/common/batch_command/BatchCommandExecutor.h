@@ -60,11 +60,10 @@ namespace chaos {
             class BatchCommand;
             class BatchCommandSandbox;
 
-            //! Macro for helping the allocation of the isntancer of the class implementing the slow command
-            //#define BATCHCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::BatchCommand>()
 
-            typedef std::map<string,  boost::shared_ptr<BatchCommandDescription> >              MapCommandDescription;
-            typedef std::map<string,  boost::shared_ptr<BatchCommandDescription> >::iterator    MapCommandDescriptionIterator;
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<BatchCommandDescription>, BatchCommandDescriptionList);
+            CHAOS_DEFINE_MAP_FOR_TYPE(string,  boost::shared_ptr<BatchCommandDescription>, MapCommandDescription);
+            
             //! Slow command execution sand box
             /*!
              This class is the environment where the exeecution of the slow command handlers take place.
@@ -228,7 +227,7 @@ namespace chaos {
                  \ingroup API_Slow_Control
                  Fill the vector with all command description
                  */
-                void getCommandsDescriptions(std::vector< boost::shared_ptr<BatchCommandDescription> >& descriptions);
+                void getCommandsDescriptions(BatchCommandDescriptionList& descriptions);
 
                 //! Install a command associated with a type
                 /*!

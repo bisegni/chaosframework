@@ -78,22 +78,6 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
 
 // Start the implementation
 void SlowCommandExecutor::start() throw(chaos::CException) {
-    //the default command, if there is is launched here so we need to update the system dataaset
-    const std::string& command_alias = getDefaultCommand();
-    if(command_alias.size()) {
-        AttributeValue *attr_value = getAttributeSharedCache()->getAttributeValue(DOMAIN_INPUT, command_alias);
-        if(attr_value) {
-            std::string cmd_param = "none";
-            //add new size
-            attr_value->setNewSize((uint32_t)cmd_param.size());
-            
-            //set the value without notify because command value are managed internally only
-            attr_value->setValue(cmd_param.c_str(), (uint32_t)cmd_param.size(), false);
-            
-            //push input dataset change
-            control_unit_instance->pushInputDataset();
-        }
-    }
     //start superclass
     BatchCommandExecutor::start();
 }

@@ -20,7 +20,8 @@
 
 #ifndef __CHAOSFramework__SCAbstractControlUnit__
 #define __CHAOSFramework__SCAbstractControlUnit__
-#include <string>
+
+#include <chaos/common/chaos_types.h>
 
 #include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
 
@@ -34,7 +35,7 @@ namespace chaos {
 			using namespace chaos::cu::control_manager::slow_command;
 			
 			class ControManager;
-			
+            
 			//! Abstract class for Slow Control Unit
 			/*!
 			 This class is the base for the slow control unit. It manage the all
@@ -70,12 +71,18 @@ namespace chaos {
 				 Receive the event for set the dataset input element, this virtual method
 				 is empty because can be used by controlunit implementation
 				 */
-				CDataWrapper* setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
+				CDataWrapper* setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException);
 				
 				/*
 				 Event for update some CU configuration
 				 */
 				CDataWrapper* updateConfiguration(CDataWrapper *update_pack, bool& detach_param) throw (CException);
+                
+                //! add dinamically all command as input attribute
+                void _completeDatasetAttribute();
+                
+                //! send command instance using the input attribute
+                void _forwardCommandInstanceByInputAttribute(CDataWrapper *dataset_attribute_values) throw (CException);
 			protected:
 				//! Get all managem declare action instance
 				void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);

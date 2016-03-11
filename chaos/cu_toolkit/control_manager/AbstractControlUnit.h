@@ -369,6 +369,13 @@ namespace chaos{
                  */
                 void _goInFatalError(chaos::CException recoverable_exception);
                 
+                //! used by subclass to dinamically ad attribute to the dataset
+                /*!
+                 subclass need to keep private this methdo to 
+                 stop the access to the user
+                 */
+                virtual void _completeDatasetAttribute();
+                
                 //! Abstract Method that need to be used by the sublcass to define the dataset
                 /*!
                  Subclass, in this method can call the api to create the dataset, after this method
