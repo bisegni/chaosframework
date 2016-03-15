@@ -112,7 +112,6 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
         
         
         //init healt manager singleton
-        HealtManager::getInstance()->setNetworkBroker(NetworkBroker::getInstance());
         StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealtManager", __PRETTY_FUNCTION__);
         
         StartableService::initImplementation(CommandManager::getInstance(), NULL, "CommandManager", "ChaosCUToolkit::init");
@@ -202,7 +201,12 @@ void ChaosCUToolkit::stop() throw(CException) {
  */
 void ChaosCUToolkit::deinit() throw(CException) {
     LAPP_ << "Stopping !CHAOS Control Unit System";
+    //deinit command manager, this manager must be the last to startup
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop"););
     
+    //deinit control manager
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::stop"););
+
         //deinit data manager
     CHAOS_NOT_THROW(StartableService::deinitImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::deinit"););
     

@@ -214,6 +214,7 @@ void ControlManager::stop() throw(CException) {
  */
 void ControlManager::deinit() throw(CException) {
     bool detachFake = false;
+    std::string cu_identification_temp;
     std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
     vector<string> allCUDeviceIDToStop;
     LCMAPP_  << "Deinit the Control Manager";
@@ -233,7 +234,8 @@ void ControlManager::deinit() throw(CException) {
          cuIter++ ){
         shared_ptr<WorkUnitManagement> cu = (*cuIter).second;
         
-        LCMAPP_  << "Deregister RPC action for cu whith instance:" << WU_IDENTIFICATION(cu->work_unit_instance);
+        cu_identification_temp = WU_IDENTIFICATION(cu->work_unit_instance);
+        LCMAPP_  << "Start deregistration for control unit " << cu_identification_temp;
         cu->work_unit_instance->_getDeclareActionInstance(cuDeclareActionsInstance);
         for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
             CommandManager::getInstance()->deregisterAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
@@ -245,13 +247,11 @@ void ControlManager::deinit() throw(CException) {
         for (vector<string>::iterator iter =  allCUDeviceIDToStop.begin();
              iter != allCUDeviceIDToStop.end();
              iter++) {
-            
-            //stop all itnerna device
-            
+
             CDataWrapper fakeDWForDeinit;
             fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, *iter);
             try{
-                LCMAPP_  << "Stopping Control Unit: " << WU_IDENTIFICATION(cu->work_unit_instance);
+                LCMAPP_  << "Stopping Control Unit: " << cu_identification_temp;
                 cu->work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
             }catch (CException& ex) {
                 if(ex.errorCode != 1){
@@ -261,7 +261,7 @@ void ControlManager::deinit() throw(CException) {
             }
             
             try{
-                LCMAPP_  << "Deiniting Control Unit: " << WU_IDENTIFICATION(cu->work_unit_instance);
+                LCMAPP_  << "Deiniting Control Unit: " << cu_identification_temp;
                 cu->work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
             }catch (CException& ex) {
                 if(ex.errorCode != 1){
@@ -270,7 +270,7 @@ void ControlManager::deinit() throw(CException) {
                 }
             }
             try{
-                LCMAPP_  << "Undefine Action And Dataset for  Control Unit: " << WU_IDENTIFICATION(cu->work_unit_instance);
+                LCMAPP_  << "Undefine Action And Dataset for  Control Unit: " << cu_identification_temp;
                 cu->work_unit_instance->_undefineActionAndDataset();
             }  catch (CException& ex) {
                 if(ex.errorCode != 1){
@@ -279,9 +279,8 @@ void ControlManager::deinit() throw(CException) {
                 }
             }
         }
-        LCMAPP_  << "Dispose event channel for Control Unit Sanbox:" << WU_IDENTIFICATION(cu->work_unit_instance);
         cuDeclareActionsInstance.clear();
-        LCMAPP_  << "Unload" << cu->work_unit_instance->getCUInstance();
+        LCMAPP_  << "Unloaded " << cu_identification_temp;
     }
     map_cuid_registered_instance.clear();
     map_cuid_reg_unreg_instance.clear();

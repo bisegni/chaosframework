@@ -57,7 +57,6 @@ ts_tmp->value = TimingUtil::getTimeStamp();
 
 
 HealtManager::HealtManager():
-network_broker_ptr(NULL),
 mds_message_channel(NULL),
 last_fire_counter_set(0),
 current_fire_slot(0),
@@ -102,17 +101,14 @@ void HealtManager::updateProcInfo() {
     last_process_swap = local_process_resurce_usage.ru_nswap;
 }
 
-void HealtManager::setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker) {
-    network_broker_ptr = _network_broker;
-}
+
 void HealtManager::init(void *init_data) throw (chaos::CException) {
-    if(network_broker_ptr == NULL) throw CException(-1, "No NetworkBroker has been set", __PRETTY_FUNCTION__);
     
     std::string impl_name = boost::str(boost::format("%1%IODriver") %
                                        GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
     HM_INFO << "Allocating data driver " << impl_name;
     
-    mds_message_channel = network_broker_ptr->getMultiMetadataServiceRawMessageChannel();
+    mds_message_channel = NetworkBroker::getInstance()->getMultiMetadataServiceRawMessageChannel();
     if(mds_message_channel == NULL) throw CException(-2, "Unalbe to get metadata server channel", __PRETTY_FUNCTION__);
     
     io_data_driver.reset(common::utility::ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(impl_name));
@@ -122,7 +118,7 @@ void HealtManager::init(void *init_data) throw (chaos::CException) {
             IODirectIODriverInitParam init_param;
             std::memset(&init_param, 0, sizeof(IODirectIODriverInitParam));
             //get client and endpoint
-            init_param.network_broker = network_broker_ptr;
+            init_param.network_broker = NetworkBroker::getInstance();
             init_param.client_instance = NULL;
             init_param.endpoint_instance = NULL;
             ((IODirectIODriver*)io_data_driver.get())->setDirectIOParam(init_param);
@@ -215,7 +211,7 @@ void HealtManager::deinit() throw (chaos::CException) {
     }
     
     if(mds_message_channel) {
-        network_broker_ptr->disposeMessageChannel(mds_message_channel);
+        NetworkBroker::getInstance()->disposeMessageChannel(mds_message_channel);
         mds_message_channel = NULL;
     }
 }
