@@ -36,62 +36,62 @@ using namespace chaos::common::data::cache;
  
  ---------------------------------------------------------------------------------*/
 AttributeValueSharedCache::AttributeValueSharedCache() {
-	
+    
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
 AttributeValueSharedCache::~AttributeValueSharedCache() {
-	
+    
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
 void AttributeValueSharedCache::init(void *initData) throw(chaos::CException) {
-	//initialize the input channel setting
+    //initialize the input channel setting
     utility::InizializableService::initImplementation(input_set,
-													  initData,
-													  "AttributeValueSharedCache[Input set]",
-													  __PRETTY_FUNCTION__);
-	//initialize the output channel setting
+                                                      initData,
+                                                      "AttributeValueSharedCache[Input set]",
+                                                      __PRETTY_FUNCTION__);
+    //initialize the output channel setting
     utility::InizializableService::initImplementation(output_set,
-													  initData,
-													  "AttributeValueSharedCache[Output set]",
-													  __PRETTY_FUNCTION__);
-	//initialize the custom channel setting
-	utility::InizializableService::initImplementation(system_set,
-													  initData,
-													  "AttributeValueSharedCache[System set]",
-													  __PRETTY_FUNCTION__);
-	//initialize the custom channel setting
+                                                      initData,
+                                                      "AttributeValueSharedCache[Output set]",
+                                                      __PRETTY_FUNCTION__);
+    //initialize the custom channel setting
+    utility::InizializableService::initImplementation(system_set,
+                                                      initData,
+                                                      "AttributeValueSharedCache[System set]",
+                                                      __PRETTY_FUNCTION__);
+    //initialize the custom channel setting
     utility::InizializableService::initImplementation(custom_set,
-													  initData,
-													  "AttributeValueSharedCache[Custom set]",
-													  __PRETTY_FUNCTION__);
+                                                      initData,
+                                                      "AttributeValueSharedCache[Custom set]",
+                                                      __PRETTY_FUNCTION__);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
 void AttributeValueSharedCache::deinit() throw(chaos::CException) {
-	//initialize the input channel setting
+    //initialize the input channel setting
     utility::InizializableService::deinitImplementation(input_set,
-														"AttributeValueSharedCache[Input Set]",
-														__PRETTY_FUNCTION__);
-	//initialize the output channel setting
+                                                        "AttributeValueSharedCache[Input Set]",
+                                                        __PRETTY_FUNCTION__);
+    //initialize the output channel setting
     utility::InizializableService::deinitImplementation(output_set,
-														"AttributeValueSharedCache[Output Set]",
-														__PRETTY_FUNCTION__);
-	//initialize the output channel setting
-	utility::InizializableService::deinitImplementation(system_set,
-														"AttributeValueSharedCache[System Set]",
-														__PRETTY_FUNCTION__);
-	//initialize the custom channel setting
+                                                        "AttributeValueSharedCache[Output Set]",
+                                                        __PRETTY_FUNCTION__);
+    //initialize the output channel setting
+    utility::InizializableService::deinitImplementation(system_set,
+                                                        "AttributeValueSharedCache[System Set]",
+                                                        __PRETTY_FUNCTION__);
+    //initialize the custom channel setting
     utility::InizializableService::deinitImplementation(custom_set,
-														"AttributeValueSharedCache[Custom Set]",
-														__PRETTY_FUNCTION__);
+                                                        "AttributeValueSharedCache[Custom Set]",
+                                                        __PRETTY_FUNCTION__);
 }
 
 /*---------------------------------------------------------------------------------
@@ -106,11 +106,11 @@ AttributeCache& AttributeValueSharedCache::getSharedDomain(SharedCacheDomain dom
         case DOMAIN_OUTPUT:
             return output_set;
             break;
-			
-		case DOMAIN_SYSTEM:
-			return system_set;
-			break;
-			
+            
+        case DOMAIN_SYSTEM:
+            return system_set;
+            break;
+            
         case DOMAIN_CUSTOM:
             return custom_set;
             break;
@@ -121,7 +121,7 @@ AttributeCache& AttributeValueSharedCache::getSharedDomain(SharedCacheDomain dom
  
  ---------------------------------------------------------------------------------*/
 void AttributeValueSharedCache::getChangedAttributeIndex(SharedCacheDomain domain,
-														std::vector<VariableIndexType>& changed_index) {
+                                                         std::vector<VariableIndexType>& changed_index) {
     return getSharedDomain(domain).getChangedIndex(changed_index);
 }
 
@@ -129,7 +129,7 @@ void AttributeValueSharedCache::getChangedAttributeIndex(SharedCacheDomain domai
  
  ---------------------------------------------------------------------------------*/
 AttributeValue *AttributeValueSharedCache::getAttributeValue(SharedCacheDomain domain,
-														  VariableIndexType variable_index) {
+                                                             VariableIndexType variable_index) {
     return getSharedDomain(domain).getValueSettingForIndex(variable_index);
 }
 
@@ -137,8 +137,8 @@ AttributeValue *AttributeValueSharedCache::getAttributeValue(SharedCacheDomain d
  
  ---------------------------------------------------------------------------------*/
 AttributeValue *AttributeValueSharedCache::getAttributeValue(SharedCacheDomain domain,
-															const string& attribute_name) {
-	AttributeCache& attribute_setting = getSharedDomain(domain);
+                                                             const string& attribute_name) {
+    AttributeCache& attribute_setting = getSharedDomain(domain);
     VariableIndexType index = attribute_setting.getIndexForName(attribute_name);
     return attribute_setting.getValueSettingForIndex(index);
 }
@@ -147,9 +147,9 @@ AttributeValue *AttributeValueSharedCache::getAttributeValue(SharedCacheDomain d
  
  ---------------------------------------------------------------------------------*/
 void AttributeValueSharedCache::setAttributeValue(SharedCacheDomain domain,
-												 const string& attribute_name,
-												 void * value,
-												 uint32_t size) {
+                                                  const string& attribute_name,
+                                                  void * value,
+                                                  uint32_t size) {
     VariableIndexType index = getSharedDomain(domain).getIndexForName(attribute_name);
     getSharedDomain(domain).setValueForAttribute(index, value, size);
 }
@@ -158,17 +158,17 @@ void AttributeValueSharedCache::setAttributeValue(SharedCacheDomain domain,
  
  ---------------------------------------------------------------------------------*/
 void AttributeValueSharedCache::setAttributeValue(SharedCacheDomain domain,
-												 VariableIndexType attribute_index,
-												 void * value,
-												 uint32_t size) {
-	 getSharedDomain(domain).setValueForAttribute(attribute_index, value, size);
+                                                  VariableIndexType attribute_index,
+                                                  void * value,
+                                                  uint32_t size) {
+    getSharedDomain(domain).setValueForAttribute(attribute_index, value, size);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
 void AttributeValueSharedCache::getAttributeNames(SharedCacheDomain domain,
-												std::vector<std::string>& names) {
+                                                  std::vector<std::string>& names) {
     getSharedDomain(domain).getAttributeNames(names);
 }
 
@@ -176,22 +176,27 @@ void AttributeValueSharedCache::getAttributeNames(SharedCacheDomain domain,
  
  ---------------------------------------------------------------------------------*/
 void AttributeValueSharedCache::addAttribute(SharedCacheDomain domain,
-											const string&  name,
-											uint32_t max_size,
-											chaos::DataType::DataType type) {
+                                             const string&  name,
+                                             uint32_t max_size,
+                                             chaos::DataType::DataType type) {
     getSharedDomain(domain).addAttribute(name, max_size, type);
+}
+
+bool AttributeValueSharedCache::hasAttribute(SharedCacheDomain domain,
+                                             const std::string&  name) {
+    return getSharedDomain(domain).hasAttribute(name);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
 boost::shared_ptr<SharedCacheLockDomain> AttributeValueSharedCache::getLockOnDomain(SharedCacheDomain domain,
-																					bool write_lock) {
-	boost::shared_ptr<SharedCacheLockDomain> result;
-	if(write_lock) {
-		result.reset(new WriteSharedCacheLockDomain(getSharedDomain(domain).mutex));
-	} else {
-		result.reset(new ReadSharedCacheLockDomain(getSharedDomain(domain).mutex));
-	}
-	return result;
+                                                                                    bool write_lock) {
+    boost::shared_ptr<SharedCacheLockDomain> result;
+    if(write_lock) {
+        result.reset(new WriteSharedCacheLockDomain(getSharedDomain(domain).mutex));
+    } else {
+        result.reset(new ReadSharedCacheLockDomain(getSharedDomain(domain).mutex));
+    }
+    return result;
 }

@@ -119,6 +119,9 @@ namespace chaos{
 											 uint32_t max_size,
 											 chaos::DataType::DataType type) = 0;
 					
+                    virtual bool hasAttribute(SharedCacheDomain domain,
+                                              const std::string&  name) = 0;
+                    
 					//! Get a specified type of shared domain
 					/*!
 					 Return a specified type of shared domain , identified by input parameter
