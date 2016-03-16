@@ -24,6 +24,7 @@
 #include <ChaosMetadataServiceClient/api_proxy/api.h>
 #include <ChaosMetadataServiceClient/metadata_service_client_types.h>
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
+#include <ChaosMetadataServiceClient/node_monitor/node_monitor.h>
 #include <boost/thread/condition.hpp>
 
 #include <chaos/common/global.h>
@@ -51,6 +52,9 @@ namespace chaos {
             
             //!monitor manager
             common::utility::StartableServiceContainer<chaos::metadata_service_client::monitor_system::MonitorManager> monitor_manager;
+            
+            //!api proxy service
+            common::utility::InizializableServiceContainer<chaos::metadata_service_client::node_monitor::NodeMonitor> node_monitor;
             
             //!default constructor
             ChaosMetadataServiceClient();

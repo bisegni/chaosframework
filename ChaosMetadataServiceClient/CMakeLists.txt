@@ -7,6 +7,10 @@ SET(mcl_src ChaosMetadataServiceClient.cpp)
 SET(mcl_src ${mcl_src}      api_proxy/ApiProxyManager.cpp
                             api_proxy/ApiProxy.cpp)
 
+SET(mcl_src ${mcl_src}	    node_monitor/NodeMonitor.cpp
+                            node_monitor/NodeController.cpp
+                            node_monitor/ControlUnitController.cpp)
+
 SET(mcl_src ${mcl_src}	    event/EventDispatchManager.cpp
                             event/AbstractEventHandler.cpp)
 
