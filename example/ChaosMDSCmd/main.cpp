@@ -133,9 +133,12 @@ int initialize_from_old_mds(std::string conf){
             GET_CONFIG_STRING(usw,unit_server_alias);
             std::cout<<"* found us["<<cnt<<"]:"<<unit_server_alias<<std::endl;
             //GET_CHAOS_API_PTR(api_proxy::unit_server::NewUS)->execute(usname.c_str());
-             EXECUTE_CHAOS_API(api_proxy::unit_server::DeleteUS,3000,unit_server_alias);
+           //  EXECUTE_CHAOS_API(api_proxy::unit_server::DeleteUS,3000,unit_server_alias);
+            try {
              EXECUTE_CHAOS_API(api_proxy::unit_server::NewUS,3000,unit_server_alias);
-
+            } catch(CException e){
+            	std::cout<<" warning:"<<" cannot create a new US:"<<unit_server_alias<<std::endl;
+            }
              CMultiTypeDataArrayWrapper* cu_l=usw->getVectorValue("cu_desc");
              for(int cui=0;(cu_l !=NULL) && (cui<cu_l->size());cui++){
                  api_proxy::control_unit::SetInstanceDescriptionHelper cud;

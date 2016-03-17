@@ -203,14 +203,15 @@ int main (int argc, char* argv[] )
         if(err == ErrorCode::EC_TIMEOUT) {
             control_unit_type="unknown";
         }
+      //  std::cout << "type:"<<control_unit_type<<std::endl;
         if((control_unit_type =="rtcu") || (control_unit_type =="sccu")){
             err = controller->getState(deviceState);
             if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");
             //std::cout << control_unit_type<<" device, state:";
             //print_state(deviceState);
         } else {
-            std::cout << "State-less device"<<std::endl;
-            deviceState = CUStateKey::START;
+            std::cout << "State-less device, type:"<<control_unit_type<<std::endl;
+           // deviceState = CUStateKey::START;
         }
         
         if(printState) {
@@ -252,11 +253,11 @@ int main (int argc, char* argv[] )
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(6, "Time out on connection", "Set device to init state");
                 
                 
-                if((deviceState == CUStateKey::START)||(deviceState == CUStateKey::STOP)) {
+              /*  if((deviceState == CUStateKey::START)||(deviceState == CUStateKey::STOP)) {
                     print_state(deviceState);
                     throw CException(deviceState, "%% The device is in start or stop state.", "Setting device to init state");
                     
-                }
+                }*/
                 break;
             case 2:
                 /*
@@ -265,10 +266,10 @@ int main (int argc, char* argv[] )
                 
                 err = controller->startDevice();
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to start state");
-                if(deviceState == CUStateKey::DEINIT ) {
+                /*if(deviceState == CUStateKey::DEINIT ) {
                     print_state(deviceState);
                     throw CException(deviceState, "%% The device is in deinit state, cannot change state", "Set device to start state");
-                }
+                }*/
                 break;
             case 3:
                 /*
@@ -278,10 +279,10 @@ int main (int argc, char* argv[] )
                 
                 err = controller->stopDevice();
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to stop state");
-                if((deviceState == CUStateKey::INIT)||(deviceState == CUStateKey::DEINIT)) {
+               /* if((deviceState == CUStateKey::INIT)||(deviceState == CUStateKey::DEINIT)) {
                     print_state(deviceState);
                     throw CException(deviceState, "%% The device is not in the start/stop", "Set device to stop state");
-                }
+                }*/
                 break;
             case 4:
                 /*
@@ -292,10 +293,10 @@ int main (int argc, char* argv[] )
                 if(err == ErrorCode::EC_TIMEOUT){
                     throw CException(2, "Time out on connection", "Set device to deinit state");
                 }
-                if(deviceState == CUStateKey::START){
+               /* if(deviceState == CUStateKey::START){
                     print_state(deviceState);
                     throw CException(deviceState, "%% Device is in start cannot change state", "Set device to deinit");
-                }
+                }*/
                 
                 break;
             case 5:
@@ -305,10 +306,10 @@ int main (int argc, char* argv[] )
                 
                 err = controller->setScheduleDelay(scheduleTime);
                 if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
-                if(deviceState == CUStateKey::DEINIT) {
+               /* if(deviceState == CUStateKey::DEINIT) {
                     print_state(deviceState);
                     throw CException(29, "%% Device can't be in deinit state", "Set device schedule time");
-                }
+                }*/
                 break;
             case 6: {
                 //check sc
