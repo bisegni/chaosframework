@@ -347,15 +347,18 @@ void BatchCommandSandbox::checkNextCommand() {
                     lock_next_command_queue.unlock();
                     if (event_handler) {
                         if (next_available_command->element->cmdImpl->runningProperty == RunningPropertyType::RP_Fault) {
-                            event_handler->handleCommandEvent(currentExecutingCommand->element->cmdImpl->command_alias,
+                            event_handler->handleCommandEvent(next_available_command->element->cmdImpl->command_alias,
                                                               next_available_command->element->cmdImpl->unique_id,
                                                               BatchCommandEventType::EVT_FAULT,
                                                               static_cast<FaultDescription*> (&next_available_command->element->cmdImpl->fault_description),
                                                               sizeof (FaultDescription));
                         } else {
-                            event_handler->handleCommandEvent(currentExecutingCommand->element->cmdImpl->command_alias,
+                            //in case we have complete successfully the commadn we attacch also the pointer
+                            //! of the command data.
+                            event_handler->handleCommandEvent(next_available_command->element->cmdImpl->command_alias,
                                                               next_available_command->element->cmdImpl->unique_id,
-                                                              BatchCommandEventType::EVT_COMPLETED, NULL);
+                                                              BatchCommandEventType::EVT_COMPLETED,
+                                                              static_cast<void*>(next_available_command->element->cmdInfo));
                         }
                     }
                     
@@ -467,7 +470,7 @@ void BatchCommandSandbox::checkNextCommand() {
                         if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                                   command_to_delete->element->cmdImpl->unique_id,
                                                                                                   BatchCommandEventType::EVT_COMPLETED,
-                                                                                                  NULL);
+                                                                                                  static_cast<void*>(command_to_delete->element->cmdInfo));
                         break;
                         
                     case RSR_CURRENT_CMD_HAS_FAULTED:
@@ -522,7 +525,7 @@ void BatchCommandSandbox::checkNextCommand() {
                             if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                  command_to_delete->element->cmdImpl->unique_id,
                                                                                  BatchCommandEventType::EVT_COMPLETED,
-                                                                                 NULL);
+                                                                                 static_cast<void*>(command_to_delete->element->cmdInfo));
                             break;
                         case RunningPropertyType::RP_Fault:
                             if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
@@ -544,7 +547,7 @@ void BatchCommandSandbox::checkNextCommand() {
                             if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
                                                                                  command_to_delete->element->cmdImpl->unique_id,
                                                                                  BatchCommandEventType::EVT_COMPLETED,
-                                                                                 NULL);
+                                                                                 static_cast<void*>(command_to_delete->element->cmdInfo));
                             break;
                         case RunningPropertyType::RP_Fault:
                             if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,

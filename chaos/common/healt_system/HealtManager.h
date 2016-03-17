@@ -103,7 +103,6 @@ namespace chaos {
                 boost::shared_mutex                                 map_node_mutex;
                 
                 //! network broker and channel for comunicate with mds
-                chaos::common::network::NetworkBroker               *network_broker_ptr;
                 chaos::common::message::MultiAddressMessageChannel  *mds_message_channel;
                 
                 //! permit to lock the access to publishing direct io channel
@@ -151,9 +150,6 @@ namespace chaos {
                 
                 //! inherited method
                 void deinit() throw (chaos::CException);
-                
-                //!comodity method
-                void setNetworkBroker(chaos::common::network::NetworkBroker *_network_broker);
                 
                 //!add a new node to the healt system
                 void addNewNode(const std::string& node_uid);

@@ -311,6 +311,12 @@ QVariant FixedInputChannelDatasetTableModel::getTextColorForData(int row, int co
     r=true;\
     }catch(...){r=false;}
 
+#define CHECKTYPE_NUMBER(r, string, func, flag)\
+    if(string.startsWith("0x")){\
+    r = string.func(&flag, 16);\
+    } else {\
+    r = string.func(&flag);\
+    }
 
 #define CHECK_MAX_MIN_NUMERIC_TYPED_VALUE(t, tv)\
     if(dataset_attribute_configuration.contains(index.row()) &&\
@@ -346,22 +352,74 @@ bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, c
         break;
     }
     case chaos::DataType::TYPE_INT32:{
-        CHECKTYPE(result, int32_t, value)
-                if(!result) {
+        int32_t typed_value;
+        CHECKTYPE_NUMBER(typed_value, value.toString(), toInt, result);
+        if(!result) {
             error_message = tr("The value is not convertible to int32");
             break;
         }
-        CHECK_MAX_MIN_NUMERIC_TYPED_VALUE(int32_t, typed_value)
+        if(dataset_attribute_configuration.contains(index.row()) &&
+                dataset_attribute_configuration[index.row()]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {
+            int32_t min;
+            CHECKTYPE_NUMBER(min, QString::fromStdString(dataset_attribute_configuration[index.row()]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)), toInt, result);
+            if(result ||
+                    (typed_value < min)) {
+                error_message = QString::fromStdString(boost::str(boost::format("The value %1% is minor of %2%") % typed_value % min));
+                result = false;
                 break;
+            }
+        }
+        if(dataset_attribute_configuration.contains(index.row()) &&
+                dataset_attribute_configuration[index.row()]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {
+            int32_t max;
+            CHECKTYPE_NUMBER(max, QString::fromStdString(dataset_attribute_configuration[index.row()]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)), toInt, result);
+            if(result ||
+                    (typed_value > max)) {
+                error_message = QString::fromStdString(boost::str(boost::format("The value %1% is major of %2%") % typed_value % max));
+                result = false;
+                break;
+            }
+        }
+        break;
     }
     case chaos::DataType::TYPE_INT64:{
-        CHECKTYPE(result, int64_t, value)
-                if(!result) {
+        int64_t typed_value;
+        CHECKTYPE_NUMBER(typed_value, value.toString(), toLongLong, result);
+
+        qDebug() << "FixedInputChannelDatasetTableModel::setCellData str "<<value.toString() << " value:" <<typed_value;
+
+        if(!result) {
             error_message = tr("The value is not convertible to int64_t");
             break;
         }
-        CHECK_MAX_MIN_NUMERIC_TYPED_VALUE(int64_t, typed_value)
-                break;
+        if(dataset_attribute_configuration.contains(index.row())) {
+            if(dataset_attribute_configuration[index.row()]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {
+                int64_t min;
+                QString min_value_string = QString::fromStdString(dataset_attribute_configuration[index.row()]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE));
+                CHECKTYPE_NUMBER(min, min_value_string, toLongLong, result);
+                qDebug() << "FixedInputChannelDatasetTableModel::setCellData min str" << min_value_string << " value:" <<min;
+                if(result &&
+                        (typed_value < min)) {
+                    error_message = QString::fromStdString(boost::str(boost::format("The value %1% is minor of %2%") % typed_value % min));\
+                    result = false;
+                    break;
+                }
+            }
+
+            if(dataset_attribute_configuration[index.row()]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {
+                int64_t max;
+                QString max_value_string = QString::fromStdString(dataset_attribute_configuration[index.row()]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE));
+                CHECKTYPE_NUMBER(max, max_value_string, toLongLong, result);
+                qDebug() << "FixedInputChannelDatasetTableModel::setCellData max str" << max_value_string << " value:" <<max;
+                if(result &&
+                        (typed_value > max)) {
+                    error_message = QString::fromStdString(boost::str(boost::format("The value %1% is major of %2%") % typed_value % max));
+                    result = false;
+                    break;
+                }
+            }
+        }
+        break;
     }
     case chaos::DataType::TYPE_DOUBLE:{
         CHECKTYPE(result, double, value)

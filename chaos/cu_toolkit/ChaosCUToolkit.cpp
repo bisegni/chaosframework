@@ -20,6 +20,8 @@
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
 #include <chaos/cu_toolkit/data_manager/DataManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
+
+#include <chaos/common/healt_system/HealtManager.h>
 #include <chaos/common/metadata_logging/MetadataLoggingManager.h>
 
 #include <csignal>
@@ -29,6 +31,7 @@ using namespace std;
 using namespace chaos::common::utility;
 
 using namespace chaos::cu;
+using namespace chaos::common::healt_system;
 using namespace chaos::cu::data_manager;
 using namespace chaos::cu::command_manager;
 using namespace chaos::cu::control_manager;
@@ -107,6 +110,10 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
             InizializableService::initImplementation(chaos::common::metadata_logging::MetadataLoggingManager::getInstance(), NULL, "MetadataLoggingManager", __PRETTY_FUNCTION__);
         }
         
+        
+        //init healt manager singleton
+        StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealtManager", __PRETTY_FUNCTION__);
+        
         StartableService::initImplementation(CommandManager::getInstance(), NULL, "CommandManager", "ChaosCUToolkit::init");
         CommandManager::getInstance()->server_handler=this;
         
@@ -133,8 +140,12 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
 void ChaosCUToolkit::start() throw(CException){
     try {
         ChaosCommon<ChaosCUToolkit>::start();
-
+        
         LAPP_ << "Starting !CHAOS Control Unit System";
+        
+        //init healt manager singleton
+        StartableService::startImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
+        
         //start command manager, this manager must be the last to startup
         StartableService::startImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::start");
 
@@ -168,17 +179,20 @@ void ChaosCUToolkit::start() throw(CException){
  */
 void ChaosCUToolkit::stop() throw(CException) {
     //stop command manager, this manager must be the last to startup
-    StartableService::stopImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop");
+    CHAOS_NOT_THROW(StartableService::stopImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop"););
     
 	//stop control manager
-	StartableService::stopImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::stop");
+    CHAOS_NOT_THROW(StartableService::stopImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::stop"););
 
 	//stop command manager, this manager must be the last to startup
-	StartableService::stopImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::stop");
+    CHAOS_NOT_THROW(StartableService::stopImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::stop"););
     
 	//stop driver manager
-	StartableService::stopImplementation(DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::stop");
+    CHAOS_NOT_THROW(StartableService::stopImplementation(DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::stop"););
 
+    //init healt manager singleton
+    CHAOS_NOT_THROW(StartableService::stopImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
+    
     ChaosCommon<ChaosCUToolkit>::stop();
 }
 
@@ -187,22 +201,25 @@ void ChaosCUToolkit::stop() throw(CException) {
  */
 void ChaosCUToolkit::deinit() throw(CException) {
     LAPP_ << "Stopping !CHAOS Control Unit System";
-    
     //deinit command manager, this manager must be the last to startup
-    StartableService::deinitImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::deinit");
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop"););
     
-        //deinit Control Manager
-    StartableService::deinitImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::deinit");
-    
+    //deinit control manager
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::stop"););
+
         //deinit data manager
-	StartableService::deinitImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::deinit");
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::deinit"););
     
     //deinit metadata logging manager
-	StartableService::deinitImplementation(DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::deinit");
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::deinit"););
 
-    InizializableService::deinitImplementation(MetadataLoggingManager::getInstance(), "MetadataLoggingManager", __PRETTY_FUNCTION__);
+    CHAOS_NOT_THROW(InizializableService::deinitImplementation(MetadataLoggingManager::getInstance(), "MetadataLoggingManager", __PRETTY_FUNCTION__););
     LAPP_ << "!CHAOS Control Unit System Stopped";
 	
+    //deinit healt manager singleton
+    CHAOS_NOT_THROW(StartableService::deinitImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__););
+
+    
 	//forward the deinitialization to the common sublayer
 	ChaosCommon<ChaosCUToolkit>::deinit();
 	

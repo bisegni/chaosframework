@@ -26,7 +26,6 @@
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
-#include <chaos/common/healt_system/HealtManager.h>
 
 using namespace std;
 using namespace boost;
@@ -34,7 +33,6 @@ using namespace chaos;
 
 using namespace chaos::common::data;
 using namespace chaos::common::message;
-using namespace chaos::common::healt_system;
 
 using namespace chaos::cu::command_manager;
 
@@ -68,20 +66,12 @@ void CommandManager::init(void *initParam) throw(CException) {
     
         //registering the comman manager action
     broker->registerAction(this);
-
-        //set the network broker within the  healt manager
-    HealtManager::getInstance()->setNetworkBroker(broker);
-
-        //init healt manager singleton
-    StartableService::initImplementation(HealtManager::getInstance(), NULL, "HealtManager", __PRETTY_FUNCTION__);
 }
 
 /*
  * Deinitzialize the command manager
  */
 void CommandManager::deinit() throw(CException) {
-        //deinit healt manager singleton
-    StartableService::deinitImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
 
         //deregistering the action
     broker->deregisterAction(this);
@@ -90,16 +80,10 @@ void CommandManager::deinit() throw(CException) {
 /*
  * Start all sub process
  */
-void CommandManager::start() throw(CException) {
-        //start healt manager singleton
-    StartableService::startImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
-}
+void CommandManager::start() throw(CException) {}
 
 //-----------------------
-void CommandManager::stop() throw(CException) {
-         //stop healt manager singleton
-    StartableService::stopImplementation(HealtManager::getInstance(), "HealtManager", __PRETTY_FUNCTION__);
-}
+void CommandManager::stop() throw(CException) {}
 
 /*
  Configure the sandbox and all subtree of the CU

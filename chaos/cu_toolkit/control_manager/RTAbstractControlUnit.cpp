@@ -161,7 +161,7 @@ void RTAbstractControlUnit::deinit() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::deinit();
 	
-	RTCULAPP_ << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
+	RTCULAPP_ << "Deinitializing shared attribute cache " << DatasetDB::getDeviceID();
 	InizializableService::deinitImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
 	
 	

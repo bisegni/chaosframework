@@ -35,6 +35,8 @@ using namespace chaos::cu::control_manager::slow_command;
 using namespace chaos::common::batch_command;
 
 
+CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, CDataWrapperKeyList);
+
 #define LOG_HEAD_SBE "[SlowCommandExecutor-" << dataset_attribute_db_ptr->getDeviceID() << "] "
 
 #define SCELAPP_ LAPP_ << LOG_HEAD_SBE
@@ -158,6 +160,43 @@ void SlowCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              type_value_size);
     
     switch(type) {
+        case BatchCommandEventType::EVT_COMPLETED:{
+            std::string cached_parameter_name;
+            CDataWrapperKeyList all_input_parameter;
+            //command has been successfully completed
+            CDataWrapper *command_data = static_cast<CDataWrapper*>(type_value_ptr);
+            
+            //in this case we need to set the attribute into the dataset for the state reached
+            //(for now we update the inptu dataset only)
+            
+            //lock the input domain cache
+            boost::shared_ptr<SharedCacheLockDomain> w_lock = getAttributeSharedCache()->getLockOnDomain(DOMAIN_INPUT, true);
+            w_lock->lock();
+            
+            //get all parameter in command data
+            command_data->getAllKey(all_input_parameter);
+            
+            //iterate all elemento found
+            for(CDataWrapperKeyListIterator it = all_input_parameter.begin(), end = all_input_parameter.end();
+                it!=end;
+                it++) {
+                cached_parameter_name = command_alias + "/" +*it;
+                
+                //chec if the parameter is present in cache
+                if(getAttributeSharedCache()->hasAttribute(DOMAIN_INPUT,
+                                                           cached_parameter_name) == false) continue;
+                
+                //get the cached element
+                AttributeValue *cached_element = getAttributeSharedCache()->getAttributeValue(DOMAIN_INPUT, cached_parameter_name);
+                
+                //update cached value with the input parameter of the command
+                cached_element->setValue(command_data->getRawValuePtr(*it), command_data->getValueSize(*it));
+            }
+            //in case we have changed something, the dataset will be pushed
+            control_unit_instance->pushInputDataset();
+        }
+            
+            
         case BatchCommandEventType::EVT_FAULT: {
             if(type_value_size == sizeof(FaultDescription)) {
                 FaultDescription *faul_desc = static_cast<FaultDescription*>(type_value_ptr);
