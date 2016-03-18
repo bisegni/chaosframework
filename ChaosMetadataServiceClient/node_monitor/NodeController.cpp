@@ -72,7 +72,7 @@ void NodeController::quantumSlotHasData(const std::string& key,
             zero_diff_count_on_ts = 0;
             _setOnlineStatus(OnlineStatusON);
         } else {
-            if(!(++zero_diff_count_on_ts > RETRY_TIME_FOR_OFFLINE)||
+            if(((++zero_diff_count_on_ts > RETRY_TIME_FOR_OFFLINE) == true) ||
                (last_recevied_ts == 0)||
                (was_online == false)) {
                 //offline
@@ -84,6 +84,7 @@ void NodeController::quantumSlotHasData(const std::string& key,
                 } else {
                     //online
                     _setOnlineStatus(OnlineStatusON);
+                    zero_diff_count_on_ts = 0;
                 }
             }
         }
