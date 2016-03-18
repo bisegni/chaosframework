@@ -29,6 +29,7 @@
 #include "NodeMonitor.h"
 #include "HandlerMonitor.h"
 #include "NodeSearchTest.h"
+#include "NodeMonitorHandlerTest.h"
 
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -111,7 +112,10 @@ int main(int argc, char *argv[]){
                 
             case 2:{
                 std::cout << "Start node monitor library test" << std::endl;
-                
+                {
+                    NodeMonitorHandlerTest nmt(device_id);
+                    sleep(wait_seconds);
+                }
                 std::cout << "End node monitor library test" << std::endl;
             }
         }

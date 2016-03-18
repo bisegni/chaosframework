@@ -31,7 +31,6 @@ node_uid(_node_uid),
 node_health_uid(node_uid+chaos::DataPackPrefixID::HEALTH_DATASE_PREFIX) {
     //add common node dataset
     monitor_key_list.push_back(node_health_uid);
-    
 }
 
 NodeController::~NodeController() {}
@@ -65,7 +64,7 @@ void NodeController::quantumSlotHasData(const std::string& key,
     if(last_recevied_ts == 0) {
         last_recevied_ts = received_ts;
         //unknown
-        health_info.online_status = OnlineStatusUnknown;
+        _setOnlineStatus(OnlineStatusUnknown);
     } else {
         if((last_recevied_ts - received_ts) > 0) {
             //online
@@ -88,7 +87,7 @@ void NodeController::quantumSlotHasData(const std::string& key,
                 }
             }
         }
-        
+        last_recevied_ts = received_ts;
         last_received_status = value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS);
         
         if(last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||

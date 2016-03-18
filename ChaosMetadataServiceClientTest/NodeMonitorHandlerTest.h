@@ -13,6 +13,8 @@
 
 class NodeMonitorHandlerTest:
 public chaos::metadata_service_client::node_monitor::NodeMonitorHandler {
+    const std::string node_uid;
+protected:
     //! called when an online state has changed
     void nodeChangedOnlineStatus(const std::string& node_uid,
                                  chaos::metadata_service_client::node_monitor::OnlineStatus old_status,
@@ -25,6 +27,10 @@ public chaos::metadata_service_client::node_monitor::NodeMonitorHandler {
     void nodeChangedErrorInformation(const std::string& node_uid,
                                      const chaos::metadata_service_client::node_monitor::ErrorInformation& old_status,
                                      const chaos::metadata_service_client::node_monitor::ErrorInformation& new_status);
+    
+public:
+    NodeMonitorHandlerTest(const std::string& _node_uid);
+    ~NodeMonitorHandlerTest();
 };
 
 #endif /* NodeMonitorHandlerTest_hpp */
