@@ -744,6 +744,7 @@
 		32D746001C73399900F4D719 /* AbstractEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D745FE1C73399900F4D719 /* AbstractEventHandler.cpp */; };
 		32D746011C73399900F4D719 /* AbstractEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D745FF1C73399900F4D719 /* AbstractEventHandler.h */; };
 		32D746051C7367A200F4D719 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D746031C7367A200F4D719 /* event.h */; };
+		32DBAFCB1C9C1745003E2769 /* NodeMonitorHandlerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBAFC91C9C1745003E2769 /* NodeMonitorHandlerTest.cpp */; };
 		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
 		32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */; };
 		32DD7F711C60F97C003032DE /* MetadataLoggingManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD7F6F1C60F97C003032DE /* MetadataLoggingManager.cpp */; };
@@ -1901,6 +1902,8 @@
 		32D745FF1C73399900F4D719 /* AbstractEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEventHandler.h; sourceTree = "<group>"; };
 		32D746031C7367A200F4D719 /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
 		32DA666F1700DBB6004FC02B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
+		32DBAFC91C9C1745003E2769 /* NodeMonitorHandlerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeMonitorHandlerTest.cpp; sourceTree = "<group>"; };
+		32DBAFCA1C9C1745003E2769 /* NodeMonitorHandlerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeMonitorHandlerTest.h; sourceTree = "<group>"; };
 		32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CouchbaseCacheDriver.cpp; sourceTree = "<group>"; };
 		32DBF9D018E1845E0095B289 /* CouchbaseCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouchbaseCacheDriver.h; sourceTree = "<group>"; };
 		32DC4AE51A51B5D80093ABA0 /* ChaosSyncRpc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChaosSyncRpc.h; sourceTree = "<group>"; };
@@ -2240,6 +2243,8 @@
 				325B421D1C8854820038E0C2 /* HandlerMonitor.h */,
 				328EFD5F1BA724A8009A832D /* NodeSearchTest.cpp */,
 				328EFD601BA724A8009A832D /* NodeSearchTest.h */,
+				32DBAFC91C9C1745003E2769 /* NodeMonitorHandlerTest.cpp */,
+				32DBAFCA1C9C1745003E2769 /* NodeMonitorHandlerTest.h */,
 				322085DC1AC5A0E200F1B71A /* main.cpp */,
 			);
 			path = ChaosMetadataServiceClientTest;
@@ -4920,6 +4925,7 @@
 				325B421E1C8854820038E0C2 /* HandlerMonitor.cpp in Sources */,
 				322085DD1AC5A0E200F1B71A /* main.cpp in Sources */,
 				328EFD611BA724A8009A832D /* NodeSearchTest.cpp in Sources */,
+				32DBAFCB1C9C1745003E2769 /* NodeMonitorHandlerTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

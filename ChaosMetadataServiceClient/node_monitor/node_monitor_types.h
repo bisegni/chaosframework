@@ -98,7 +98,8 @@ namespace chaos {
                 DatasetTypeSystem = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM
             } DatasetType;
             
-            class ControlUnitMonitorHandler {
+            class ControlUnitMonitorHandler:
+            public NodeMonitorHandler {
             public:
                 
                 void datasetHasBeenUpdated(const std::string& node_uid);

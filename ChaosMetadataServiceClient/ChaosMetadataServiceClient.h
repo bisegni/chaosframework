@@ -98,6 +98,12 @@ namespace chaos {
             
             bool monitoringIsStarted();
             
+            bool addHandlerToNodeMonitor(const std::string& node_uid,
+                                         node_monitor::NodeMonitorHandler *handler_to_add);
+            
+            bool removeHandlerToNodeMonitor(const std::string& node_uid,
+                                            node_monitor::NodeMonitorHandler *handler_to_remove);
+            
             //! add a new quantum slot for key
             bool addKeyConsumer(const std::string& key_to_monitor,
                                 int quantum_multiplier,

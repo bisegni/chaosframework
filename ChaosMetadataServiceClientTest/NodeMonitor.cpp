@@ -57,10 +57,12 @@ void NodeMonitor::waitForPurge() {
 
 void NodeMonitor::monitor_node(){
 
-
-  //wait the desiderate amount tof time
-  sleep(monitor_duration);
-
+    registerConsumer();
+    //wait the desiderate amount tof time
+    sleep(monitor_duration);
+    if(!deregisterConsumer()){
+        waitForPurge();
+    }
 }
 
 void NodeMonitor::quantumSlotHasNoData(const std::string &key){

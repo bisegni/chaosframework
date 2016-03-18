@@ -220,6 +220,20 @@ bool ChaosMetadataServiceClient::monitoringIsStarted() {
     (monitor_manager->getServiceState() == CUStateKey::START);
 }
 
+
+bool ChaosMetadataServiceClient::addHandlerToNodeMonitor(const std::string& node_uid,
+                                                         node_monitor::NodeMonitorHandler *handler_to_add) {
+    return node_monitor->addHandlerToNodeMonitor(node_uid,
+                                                 handler_to_add);
+}
+
+bool ChaosMetadataServiceClient::removeHandlerToNodeMonitor(const std::string& node_uid,
+                                                            node_monitor::NodeMonitorHandler *handler_to_remove) {
+    return node_monitor->removeHandlerToNodeMonitor(node_uid,
+                                                    handler_to_remove);
+    
+}
+
 //! add a new quantum slot for key
 bool ChaosMetadataServiceClient::addKeyConsumer(const std::string& key_to_monitor,
                                                 int quantum_multiplier,

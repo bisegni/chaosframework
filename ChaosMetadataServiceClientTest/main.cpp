@@ -52,25 +52,6 @@ public:
 
 boost::thread_group thread_group_test;
 
-void executeHandlerTest(){
-    HandlerMonitor hm("BTF/DHSTB001_healt",
-                      "nh_status");
-    hm.init();
-    //usleep(2000000);
-    hm.deinit();
-}
-
-void executeConsumerTest(){
-    NodeMonitor nm("BTF/DHSTB001_healt",
-                   1,
-                   1);
-    nm.registerConsumer();
-    //usleep(2000000);
-    if(!nm.deregisterConsumer()){
-            nm.waitForPurge();
-    }
-}
-
 int main(int argc, char *argv[]){
     boost::thread_group tg;
     uint32_t quantum_multiplier;
@@ -116,39 +97,7 @@ int main(int argc, char *argv[]){
                                wait_seconds,
                                quantum_multiplier);
                 
-                boost::shared_ptr<NodeMonitor> arr[NUMBER_OF_TEST_ELEMENT];
-                boost::shared_ptr<HandlerMonitor> arr_handler[NUMBER_OF_TEST_ELEMENT];
-                
-                
-                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
-                    arr[idx].reset(new NodeMonitor(device_id,
-                                                   wait_seconds,
-                                                   quantum_multiplier));
-                    arr[idx]->registerConsumer();
-                }
-                
-                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
-                    arr_handler[idx].reset(new HandlerMonitor("BTF/DHSTB001_healt",
-                                                              "nh_status"));
-                    arr_handler[idx]->init();
-                }
-                
-                sleep(5);
-                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
-                    if(arr[idx]->deregisterConsumer()){
-                        arr[idx].reset();
-                    }
-                }
-                
-                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
-                    arr_handler[idx]->deinit();
-                    arr_handler[idx].reset();
-                }
-                
-                for(int idx= 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
-                    if(arr[idx].get())arr[idx]->waitForPurge();
-                }
-                
+                nm.monitor_node();
                 //nm.waitForPurge();
                 break;
             }
@@ -161,33 +110,9 @@ int main(int argc, char *argv[]){
                 
                 
             case 2:{
-                std::cout << "Start multithreading tests" << std::endl;
-                for(int idx = 0;
-                    idx < 100;
-                    idx++) {
-                    std::cout << "Start test:" << idx << std::endl;
-                    for(int idx = 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
-                        thread_group_test.add_thread(new boost::thread(boost:: bind(executeHandlerTest)));
-                    }
-                    std::cout << "Join threads for test:" << idx << std::endl;
-                    thread_group_test.join_all();
-                }
-                std::cout << "End multithreading tests" << std::endl;
-            }
-              
-            case 3:{
-                std::cout << "Start multithreading tests" << std::endl;
-                for(int idx = 0;
-                    idx < 100;
-                    idx++) {
-                    std::cout << "Start test:" << idx << std::endl;
-                    for(int idx = 0; idx < NUMBER_OF_TEST_ELEMENT; idx++) {
-                        thread_group_test.add_thread(new boost::thread(boost:: bind(executeConsumerTest)));
-                    }
-                    std::cout << "Join threads for test:" << idx << std::endl;
-                    thread_group_test.join_all();
-                }
-                std::cout << "End multithreading tests" << std::endl;
+                std::cout << "Start node monitor library test" << std::endl;
+                
+                std::cout << "End node monitor library test" << std::endl;
             }
         }
         

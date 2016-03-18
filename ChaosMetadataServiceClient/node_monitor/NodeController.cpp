@@ -44,6 +44,10 @@ const MonitorKeyList& NodeController::getMonitorKeyList() const {
     return monitor_key_list;
 }
 
+const MonitoHandlerList& NodeController::getMonitorHandlerList() const {
+    return list_handler;
+}
+
 const HealthInformation& NodeController::getHealthInformation() const {
     return health_info;
 }

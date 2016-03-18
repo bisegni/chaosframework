@@ -83,6 +83,8 @@ namespace chaos {
                 
                 const MonitorKeyList& getMonitorKeyList() const;
                 
+                const MonitoHandlerList& getMonitorHandlerList() const;
+                
                 const HealthInformation& getHealthInformation() const;
                 
                 bool addHandler(NodeMonitorHandler *handler_to_add);

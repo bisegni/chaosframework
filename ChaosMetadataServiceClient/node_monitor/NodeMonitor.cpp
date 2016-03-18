@@ -44,9 +44,6 @@ void NodeMonitor::deinit() throw (chaos::CException) {
 }
 
 void NodeMonitor::startNodeMonitor(const std::string& node_uid) {
-    CHAOS_ASSERT(monitor_manager);
-    boost::unique_lock<boost::mutex> wl(map_monitor_controller_mutex);
-    
     //check if we already have the controller installed
     if(map_monitor_controller.count(node_uid)) return;
     boost::shared_ptr<NodeController> new_controller(new ControlUnitController(node_uid));
@@ -63,9 +60,6 @@ void NodeMonitor::startNodeMonitor(const std::string& node_uid) {
 }
 
 void NodeMonitor::stopNodeMonitor(const std::string& node_uid) {
-    CHAOS_ASSERT(monitor_manager);
-    boost::unique_lock<boost::mutex> wl(map_monitor_controller_mutex);
-    
     //check if we have the controller installed
     if(map_monitor_controller.count(node_uid) == 0) return;
     
@@ -86,15 +80,26 @@ bool NodeMonitor::addHandlerToNodeMonitor(const std::string& node_uid,
     CHAOS_ASSERT(monitor_manager);
     boost::unique_lock<boost::mutex> wl(map_monitor_controller_mutex);
     //check if we have the controller installed
-    if(map_monitor_controller.count(node_uid) == 0) return false;
+    if(map_monitor_controller.count(node_uid) == 0) {
+        startNodeMonitor(node_uid);
+    }
     return map_monitor_controller[node_uid]->addHandler(handler_to_add);
 }
 
 bool NodeMonitor::removeHandlerToNodeMonitor(const std::string& node_uid,
                                              NodeMonitorHandler *handler_to_remove) {
     CHAOS_ASSERT(monitor_manager);
+    bool result = true;
     boost::unique_lock<boost::mutex> wl(map_monitor_controller_mutex);
     //check if we have the controller installed
     if(map_monitor_controller.count(node_uid) == 0) return false;
-    return map_monitor_controller[node_uid]->removeHandler(handler_to_remove);
+    if((result = map_monitor_controller[node_uid]->removeHandler(handler_to_remove))) {
+        //check the seize of the handler list in controller and
+        //in case it is empty delete also the controller
+        if(map_monitor_controller[node_uid]->getMonitorHandlerList().size() == 0){
+            //delete the controller
+            stopNodeMonitor(node_uid);
+        }
+    }
+    return result;
 }
