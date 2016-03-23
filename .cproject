@@ -58,14 +58,13 @@
 		<project id="chaosframework.null.870928173" name="chaosframework"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Default">
+			<resource resourceType="PROJECT" workspacePath="/chaosframework"/>
+		</configuration>
+	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.2123366406;cdt.managedbuild.toolchain.gnu.cross.base.2123366406.926280595;cdt.managedbuild.tool.gnu.cross.cpp.compiler.120273189;cdt.managedbuild.tool.gnu.cpp.compiler.input.512607082">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.2123366406;cdt.managedbuild.toolchain.gnu.cross.base.2123366406.926280595;cdt.managedbuild.tool.gnu.cross.c.compiler.61839967;cdt.managedbuild.tool.gnu.c.compiler.input.1073130099">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.556091869;cdt.managedbuild.toolchain.gnu.cross.base.556091869.1205450479;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1001824374;cdt.managedbuild.tool.gnu.cpp.compiler.input.981042762">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
@@ -81,10 +80,5 @@
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1768318354;cdt.managedbuild.toolchain.gnu.cross.base.1768318354.320317379;cdt.managedbuild.tool.gnu.cross.c.compiler.708509342;cdt.managedbuild.tool.gnu.c.compiler.input.1037951457">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-	</storageModule>
-	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/chaosframework"/>
-		</configuration>
 	</storageModule>
 </cproject>

@@ -179,7 +179,7 @@ CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * messag
         
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(!das_map.count(action_domain)) {
-            MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -4, "Action Domain not registered", __PRETTY_FUNCTION__)
+            MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -4, "Action Domain \""+action_domain+"\" not registered (action \""+action_name+"\")", __PRETTY_FUNCTION__)
             CHK_AND_DELETE_OBJ_POINTER(message_data)
 			return result;
         }
@@ -206,7 +206,7 @@ CDataWrapper* DefaultCommandDispatcher::executeCommandSync(const std::string& do
     try{
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(!das_map.count(domain)) {
-            MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -1, "Action Domain not registered", __PRETTY_FUNCTION__)
+            MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -1, "Action Domain \""+domain+"\" not registered (action \""+action+"\")", __PRETTY_FUNCTION__)
 			CHK_AND_DELETE_OBJ_POINTER(message_data)
             return result;
         }
@@ -241,11 +241,10 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         
         if(!commandPack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))
             throw CException(1, "Action Call with no action name", __PRETTY_FUNCTION__);
-        
         string actionDomain = commandPack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
         
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
-        if(!das_map.count(actionDomain)) throw CException(3, "Action Domain not registered", __PRETTY_FUNCTION__);
+        if(!das_map.count(actionDomain)) throw CException(3, "Action Domain \""+actionDomain+"\" not registered (action \""+commandPack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)+"\")", __PRETTY_FUNCTION__);
         
         DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Received the message content:-----------------------START";)
         DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << commandPack->getJSONString();)
