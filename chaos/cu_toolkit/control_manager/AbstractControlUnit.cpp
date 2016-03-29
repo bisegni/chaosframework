@@ -337,11 +337,13 @@ void AbstractControlUnit::doInitRpCheckList() throw(CException) {
             
             ACULAPP_ << "Populating shared attribute cache for input attribute";
             DatasetDB::getDatasetAttributesName(DataType::Input, attribute_names);
+            DatasetDB::getDatasetAttributesName(DataType::Bidirectional, attribute_names);
             initAttributeOnSharedAttributeCache(DOMAIN_INPUT, attribute_names);
             
             ACULAPP_ << "Populating shared attribute cache for output attribute";
             attribute_names.clear();
             DatasetDB::getDatasetAttributesName(DataType::Output, attribute_names);
+            DatasetDB::getDatasetAttributesName(DataType::Bidirectional, attribute_names);
             initAttributeOnSharedAttributeCache(DOMAIN_OUTPUT, attribute_names);
             break;
         }
@@ -1347,8 +1349,9 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
         //first call attribute handler
         dataset_attribute_manager.executeHandlers(dataset_attribute_values);
         
-        //get all input attribute name
+        //get all input attribute name for input and bidirectional directions
         getDatasetAttributesName(DataType::Input , in_attribute_name);
+        getDatasetAttributesName(DataType::Bidirectional , in_attribute_name);
         
         if(dataset_attribute_values->hasKey(NodeDefinitionKey::NODE_UNIQUE_ID)) {
             //get the contrl unit id
