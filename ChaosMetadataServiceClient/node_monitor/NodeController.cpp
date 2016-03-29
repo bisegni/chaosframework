@@ -23,6 +23,10 @@
 
 #define RETRY_TIME_FOR_OFFLINE 6
 
+#define NC_LINFO INFO_LOG(NodeController)
+#define NC_LDBG DBG_LOG(NodeController)
+#define NC_LERR ERR_LOG(NodeController)
+
 using namespace chaos::metadata_service_client::node_monitor;
 using namespace chaos::metadata_service_client::monitor_system;
 
@@ -31,6 +35,8 @@ node_uid(_node_uid),
 node_health_uid(node_uid+chaos::DataPackPrefixID::HEALTH_DATASE_PREFIX) {
     //add common node dataset
     monitor_key_list.push_back(node_health_uid);
+    
+    _resetHealth();
 }
 
 NodeController::~NodeController() {}
@@ -66,7 +72,7 @@ void NodeController::quantumSlotHasData(const std::string& key,
         //unknown
         _setOnlineStatus(OnlineStatusUnknown);
     } else {
-        if((last_recevied_ts - received_ts) > 0) {
+        if((received_ts - last_recevied_ts) > 0) {
             //online
             was_online = true;
             zero_diff_count_on_ts = 0;
@@ -81,10 +87,6 @@ void NodeController::quantumSlotHasData(const std::string& key,
                 if(last_recevied_ts == 0) {
                     //unknown
                     _setOnlineStatus(OnlineStatusUnknown);
-                } else {
-                    //online
-                    _setOnlineStatus(OnlineStatusON);
-                    zero_diff_count_on_ts = 0;
                 }
             }
         }
