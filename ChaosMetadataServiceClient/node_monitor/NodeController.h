@@ -25,7 +25,7 @@
 #include <chaos/common/chaos_types.h>
 
 #include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
-#include <ChaosMetadataServiceClient/node_monitor/node_monitor_types.h>
+#include <ChaosMetadataServiceClient/node_monitor/NodeMonitorHandler.h>
 
 #include <boost/thread.hpp>
 

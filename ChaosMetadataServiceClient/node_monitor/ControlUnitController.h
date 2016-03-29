@@ -33,6 +33,9 @@ namespace chaos {
             class ControlUnitController:
             public NodeController {
                 friend class NodeMonitor;
+                std::string cu_output_ds_key;
+                std::string cu_input_ds_key;
+                std::string cu_system_ds_key;
             protected:
                 ControlUnitController(const std::string& _node_uid);
                 

@@ -24,13 +24,16 @@
 using namespace chaos::metadata_service_client::node_monitor;
 
 ControlUnitController::ControlUnitController(const std::string& _node_uid):
-NodeController(_node_uid){
+NodeController(_node_uid),
+cu_output_ds_key(getNodeUID()+chaos::DataPackPrefixID::OUTPUT_DATASE_PREFIX),
+cu_input_ds_key(getNodeUID()+chaos::DataPackPrefixID::INPUT_DATASE_PREFIX),
+cu_system_ds_key(getNodeUID()+chaos::DataPackPrefixID::SYSTEM_DATASE_PREFIX) {
     //add common node dataset
-    monitor_key_list.push_back(getNodeUID()+chaos::DataPackPrefixID::OUTPUT_DATASE_PREFIX);
+    monitor_key_list.push_back(cu_output_ds_key);
     //add common node dataset
-    monitor_key_list.push_back(getNodeUID()+chaos::DataPackPrefixID::INPUT_DATASE_PREFIX);
+    monitor_key_list.push_back(cu_input_ds_key);
     //add common node dataset
-    monitor_key_list.push_back(getNodeUID()+chaos::DataPackPrefixID::SYSTEM_DATASE_PREFIX);
+    monitor_key_list.push_back(cu_system_ds_key);
 }
 
 ControlUnitController::~ControlUnitController() {}
@@ -39,6 +42,14 @@ void ControlUnitController::quantumSlotHasData(const std::string& key,
                                                const monitor_system::KeyValue& value) {
     NodeController::quantumSlotHasData(key,
                                        value);
+    
+    if(key.compare(cu_output_ds_key) == 0) {
+        
+    } else if(key.compare(cu_output_ds_key) == 0) {
+        
+    } else if(key.compare(cu_output_ds_key) == 0) {
+        
+    }
 }
 
 void ControlUnitController::quantumSlotHasNoData(const std::string& key) {

@@ -53,55 +53,12 @@ namespace chaos {
                 ErrorInformation    error_information;
             };
             
-            struct NodeMonitorHandlerComparator;
-            
-            //! node monitor handler
-            class NodeMonitorHandler {
-                friend class NodeMonitorHandlerComparator;
-                const std::string handler_uuid;
-            public:
-                NodeMonitorHandler():
-                handler_uuid(chaos::common::utility::UUIDUtil::generateUUIDLite()){
-                    
-                }
-                
-                virtual ~NodeMonitorHandler() {
-                    
-                }
-                
-                //! called when an online state has changed
-                virtual void nodeChangedOnlineStatus(const std::string& node_uid,
-                                                     OnlineStatus old_status,
-                                                     OnlineStatus new_status) = 0;
-                
-                virtual void nodeChangedProcessResource(const std::string& node_uid,
-                                                        const ProcessResource& old_proc_res,
-                                                        const ProcessResource& new_proc_res) = 0;
-                
-                virtual void nodeChangedErrorInformation(const std::string& node_uid,
-                                                         const ErrorInformation& old_status,
-                                                         const ErrorInformation& new_status) = 0;
-            };
-            
-            struct NodeMonitorHandlerComparator {
-                bool operator() (NodeMonitorHandler* h1, NodeMonitorHandler* h2) const {
-                    return h1->handler_uuid.compare(h2->handler_uuid) < 0;
-                }
-            };
-            
             typedef enum {
                 DatasetTypeOutput = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
                 DatasetTypeInput = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT,
                 DatasetTypeCustom = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM,
                 DatasetTypeSystem = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM
             } DatasetType;
-            
-            class ControlUnitMonitorHandler:
-            public NodeMonitorHandler {
-            public:
-                
-                void datasetHasBeenUpdated(const std::string& node_uid);
-            };
         }
     }
 }

@@ -1,10 +1,10 @@
 /*
- *	node_monitor.h
+ *	ControlUnitMonitorHandler.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by Claudio Bisegni.
  *
- *    	Copyright 16/03/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 29/03/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,15 +19,24 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__node_monitor_h
-#define __CHAOSFramework__node_monitor_h
-
-#include <ChaosMetadataServiceClient/node_monitor/NodeMonitor.h>
-#include <ChaosMetadataServiceClient/node_monitor/NodeController.h>
-#include <ChaosMetadataServiceClient/node_monitor/ControlUnitController.h>
+#ifndef __CHAOSFramework__ControlUnitMonitorHandler_h
+#define __CHAOSFramework__ControlUnitMonitorHandler_h
 
 #include <ChaosMetadataServiceClient/node_monitor/NodeMonitorHandler.h>
-#include <ChaosMetadataServiceClient/node_monitor/ControlUnitMonitorHandler.h>
 
-#include <ChaosMetadataServiceClient/node_monitor/node_monitor_types.h>
-#endif /* __CHAOSFramework__node_monitor_h */
+namespace chaos {
+    namespace metadata_service_client {
+        namespace node_monitor {
+            
+            class ControlUnitMonitorHandler:
+            public NodeMonitorHandler {
+            public:
+                
+                void datasetHasBeenUpdated(const std::string& node_uid);
+            };
+            
+        }
+    }
+}
+
+#endif /* __CHAOSFramework__ControlUnitMonitorHandler_h */
