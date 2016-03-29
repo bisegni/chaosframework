@@ -1364,7 +1364,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
                 if(dataset_attribute_values->hasKey(attr_name)) {
                     
                     //check if attribute has been accepted
-                    if(dataset_attribute_manager.getHandlerResult(*iter) == false) return false;
+                    if(dataset_attribute_manager.getHandlerResult(*iter) == false) continue;
                     
                     AttributeValue * attribute_cache_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT, iter->c_str());
                     
