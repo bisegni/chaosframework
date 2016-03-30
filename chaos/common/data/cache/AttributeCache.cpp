@@ -125,7 +125,7 @@ CHAOS_ASSERT(mapAttributeIndex[n].get());
  ---------------------------------------------------------------------------------*/
 VariableIndexType AttributeCache::getIndexForName(const std::string& name ) {
 	if(!mapAttributeNameIndex.count(name)) {
-        throw chaos::CException(-1, boost::str(boost::format("No %1% name present in Attribute setting")%name), __PRETTY_FUNCTION__);
+        throw chaos::CException(-1, boost::str(boost::format("No \"%1%\" name present in Attribute setting") %name), __PRETTY_FUNCTION__);
 	}
 	return mapAttributeNameIndex[name];
 }
@@ -139,7 +139,7 @@ bool AttributeCache::hasName(const std::string& name) {
  ---------------------------------------------------------------------------------*/
 AttributeValue *AttributeCache::getValueSettingForIndex(VariableIndexType index) {
 	if(!mapAttributeIndex.count(index)) {
-		throw chaos::CException(-1, boost::str(boost::format("No %1% index present in Attribute setting")%index), __PRETTY_FUNCTION__);
+		throw chaos::CException(-1, boost::str(boost::format("No \"%1%\" index present in Attribute setting") %index), __PRETTY_FUNCTION__);
 	}
 	return mapAttributeIndex[index].get();
 }
