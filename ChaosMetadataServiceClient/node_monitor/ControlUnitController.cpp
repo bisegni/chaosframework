@@ -87,7 +87,7 @@ void ControlUnitController::quantumSlotHasNoData(const std::string& key) {
 
 
 void ControlUnitController::_updateDatsetKeyMapValue(chaos::metadata_service_client::monitor_system::KeyValue dataset,
-                                                     MapDatasetKeyValues map) {
+                                                     MapDatasetKeyValues& map) {
     int value_type = 0;
     std::vector<std::string> key_names;
     dataset->getAllKey(key_names);

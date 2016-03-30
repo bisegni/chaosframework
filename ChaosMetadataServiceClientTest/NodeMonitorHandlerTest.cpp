@@ -8,6 +8,7 @@
 
 #include "NodeMonitorHandlerTest.h"
 
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
 
 std::string getStatusDesc(chaos::metadata_service_client::node_monitor::OnlineStatus status){
@@ -84,4 +85,14 @@ void NodeMonitorHandlerTest::updatedDS(const std::string& control_unit_uid,
                                        int dataset_type,
                                        MapDatasetKeyValues& dataset_key_values) {
     LAPP_ << boost::str(boost::format("updatedDS: dataset type %1%")%getDatasetDesc(dataset_type));
+    switch (dataset_type) {
+        case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT: {
+            CDataVariant variant = dataset_key_values[chaos::DataPackCommonKey::DPCK_TIMESTAMP];
+            LAPP_ << variant.asInt64();
+            break;
+        }
+            
+        default:
+            break;
+    }
 }

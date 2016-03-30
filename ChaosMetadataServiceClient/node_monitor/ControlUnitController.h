@@ -49,7 +49,7 @@ namespace chaos {
                 MapDatasetKeyValues                                       map_ds_sys;
                 
                 void _updateDatsetKeyMapValue(chaos::metadata_service_client::monitor_system::KeyValue dataset,
-                                              MapDatasetKeyValues map);
+                                              MapDatasetKeyValues& map);
                 
                 void _fireUpdateDSOnHandler(int dataset_type,
                                             MapDatasetKeyValues& map);
