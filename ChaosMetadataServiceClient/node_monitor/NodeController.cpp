@@ -37,6 +37,7 @@ node_health_uid(node_uid+chaos::DataPackPrefixID::HEALTH_DATASE_PREFIX) {
     monitor_key_list.push_back(node_health_uid);
     
     _resetHealth();
+    
 }
 
 NodeController::~NodeController() {}
@@ -57,16 +58,12 @@ const HealthInformation& NodeController::getHealthInformation() const {
     return health_info;
 }
 
-void NodeController::quantumSlotHasData(const std::string& key,
-                                        const monitor_system::KeyValue& value) {
-    //check for monitored key
-    if(key.compare(node_health_uid) != 0) return;
-    
+void NodeController::updateData() {
     //check for mandatory key
-    if(!value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) ||
-       !value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS)) return;
+    if(!last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) ||
+       !last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS)) return;
     
-    uint64_t received_ts = value->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP);
+    uint64_t received_ts = last_ds_healt->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP);
     if(last_recevied_ts == 0) {
         last_recevied_ts = received_ts;
         //unknown
@@ -91,18 +88,18 @@ void NodeController::quantumSlotHasData(const std::string& key,
             }
         }
         last_recevied_ts = received_ts;
-        last_received_status = value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS);
+        last_received_status = last_ds_healt->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS);
         
         if(last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
            last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
-            if(value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
-               value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
-               value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE)) {
+            if(last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
+               last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
+               last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE)) {
                 //we need to show error
                 ErrorInformation new_err_inf;
-                new_err_inf.error_code = value->getInt32Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE);
-                new_err_inf.error_message = value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE);
-                new_err_inf.error_domain = value->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN);
+                new_err_inf.error_code = last_ds_healt->getInt32Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE);
+                new_err_inf.error_message = last_ds_healt->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE);
+                new_err_inf.error_domain = last_ds_healt->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN);
                 _setError(new_err_inf);
             }else{
                 _setError(ErrorInformation());
@@ -111,18 +108,26 @@ void NodeController::quantumSlotHasData(const std::string& key,
             _setError(ErrorInformation());
         }
         
-        if(value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME) &&
-           value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME) &&
-           value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)) {
+        if(last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME) &&
+           last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME) &&
+           last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)) {
             ProcessResource proc_res;
-            proc_res.usr_res = value->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME);
-            proc_res.sys_res = value->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME);
-            proc_res.swp_res = value->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP);
+            proc_res.usr_res = last_ds_healt->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME);
+            proc_res.sys_res = last_ds_healt->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME);
+            proc_res.swp_res = last_ds_healt->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP);
             _setProcessResource(proc_res);
         } else {
             _setProcessResource(ProcessResource());
         }
     }
+}
+
+void NodeController::quantumSlotHasData(const std::string& key,
+                                        const monitor_system::KeyValue& value) {
+    //check for monitored key
+    if(key.compare(node_health_uid) != 0) return;
+    last_ds_healt = value;
+    updateData();
 }
 
 void NodeController::quantumSlotHasNoData(const std::string& key) {

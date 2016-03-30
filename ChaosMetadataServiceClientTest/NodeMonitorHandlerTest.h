@@ -12,7 +12,7 @@
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 class NodeMonitorHandlerTest:
-public chaos::metadata_service_client::node_monitor::NodeMonitorHandler {
+public chaos::metadata_service_client::node_monitor::ControlUnitMonitorHandler {
     const std::string node_uid;
 protected:
     //! called when an online state has changed
@@ -28,6 +28,9 @@ protected:
                                      const chaos::metadata_service_client::node_monitor::ErrorInformation& old_status,
                                      const chaos::metadata_service_client::node_monitor::ErrorInformation& new_status);
     
+    void updatedDS(const std::string& control_unit_uid,
+                   int dataset_type,
+                   chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values);
 public:
     NodeMonitorHandlerTest(const std::string& _node_uid);
     ~NodeMonitorHandlerTest();

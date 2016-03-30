@@ -21,7 +21,7 @@
 #define CDataWrapper_H
 
 #include <chaos/common/bson/bson.h>
-
+#include <chaos/common/data/CDataBuffer.h>
 #include <boost/scoped_ptr.hpp>
 
 #include <string>
@@ -204,6 +204,8 @@ namespace chaos {
 				//return the binary data value
 				const char* getBinaryValue(const std::string&, int&);
 				
+                CDataBuffer getBinaryValueAsCDataBuffer(const std::string& key);
+                
 				//return the bson data
 				SerializationBuffer* getBSONData();
 

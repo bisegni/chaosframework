@@ -48,21 +48,24 @@ namespace chaos {
                 const std::string node_uid;
                 const std::string node_health_uid;
                 
-                //the list of all registered handlers
-                boost::mutex        list_handler_mutex;
-                MonitoHandlerList   list_handler;
-                
                 //count the time we have got the same timestamp
                 bool was_online;
                 unsigned int zero_diff_count_on_ts;
                 uint64_t last_recevied_ts;
                 std::string last_received_status;
+               
+                //!last dataset received for helth data
+                chaos::metadata_service_client::monitor_system::KeyValue last_ds_healt;
                 
                 inline void _resetHealth();
                 inline void _setOnlineStatus(const OnlineStatus new_online_status);
                 inline void _setError(const ErrorInformation& new_error_information);
-                inline void _setProcessResource(const ProcessResource& new_process_resource);
+                inline void _setProcessResource(const ProcessResource& new_process_resource);\
+                void updateData();
             protected:
+                //the list of all registered handlers
+                boost::mutex        list_handler_mutex;
+                MonitoHandlerList   list_handler;
                 
                 HealthInformation health_info;
                 

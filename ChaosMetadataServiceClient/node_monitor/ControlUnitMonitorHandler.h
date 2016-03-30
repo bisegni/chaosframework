@@ -30,9 +30,13 @@ namespace chaos {
             
             class ControlUnitMonitorHandler:
             public NodeMonitorHandler {
-            public:
                 
-                void datasetHasBeenUpdated(const std::string& node_uid);
+            public:
+                ControlUnitMonitorHandler();
+                virtual ~ControlUnitMonitorHandler();
+                virtual void updatedDS(const std::string& control_unit_uid,
+                                       int dataset_type,
+                                       MapDatasetKeyValues& dataset_key_values) = 0;
             };
             
         }

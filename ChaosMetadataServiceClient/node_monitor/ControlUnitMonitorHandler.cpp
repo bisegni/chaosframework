@@ -24,6 +24,10 @@
 
 using namespace chaos::metadata_service_client::node_monitor;
 
-void ControlUnitMonitorHandler::datasetHasBeenUpdated(const std::string& node_uid) {
+ControlUnitMonitorHandler::ControlUnitMonitorHandler() {
+    
+}
+
+ControlUnitMonitorHandler::~ControlUnitMonitorHandler() {
     
 }

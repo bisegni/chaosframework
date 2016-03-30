@@ -23,7 +23,9 @@
 #define __CHAOSFramework__node_monitor_types_h
 
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/data/CDataVariant.h>
 
 namespace chaos {
     namespace metadata_service_client {
@@ -59,6 +61,8 @@ namespace chaos {
                 DatasetTypeCustom = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM,
                 DatasetTypeSystem = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM
             } DatasetType;
+            
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, common::data::CDataVariant, MapDatasetKeyValues);
         }
     }
 }

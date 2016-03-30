@@ -606,8 +606,8 @@ namespace chaos {
             TYPE_BOOLEAN,
             TYPE_CLUSTER,
             //!modifier to be ored to normal data types
-            TYPE_ACCESS_ARRAY=0x100
-            
+            TYPE_ACCESS_ARRAY=0x100,
+            TYPE_UNDEFINED
         } DataType;
         
         typedef enum BinarySubtype {

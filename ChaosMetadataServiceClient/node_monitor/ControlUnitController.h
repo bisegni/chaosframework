@@ -34,8 +34,25 @@ namespace chaos {
             public NodeController {
                 friend class NodeMonitor;
                 std::string cu_output_ds_key;
+                //!last dataset received for helth data
+                chaos::metadata_service_client::monitor_system::KeyValue last_ds_output;
+                MapDatasetKeyValues                                       map_ds_out;
+                
                 std::string cu_input_ds_key;
+                //!last dataset received for helth data
+                chaos::metadata_service_client::monitor_system::KeyValue last_ds_input;
+                MapDatasetKeyValues                                       map_ds_in;
+                
                 std::string cu_system_ds_key;
+                //!last dataset received for helth data
+                chaos::metadata_service_client::monitor_system::KeyValue last_ds_system;
+                MapDatasetKeyValues                                       map_ds_sys;
+                
+                void _updateDatsetKeyMapValue(chaos::metadata_service_client::monitor_system::KeyValue dataset,
+                                              MapDatasetKeyValues map);
+                
+                void _fireUpdateDSOnHandler(int dataset_type,
+                                            MapDatasetKeyValues& map);
             protected:
                 ControlUnitController(const std::string& _node_uid);
                 
