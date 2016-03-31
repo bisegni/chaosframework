@@ -31,6 +31,9 @@ protected:
     void updatedDS(const std::string& control_unit_uid,
                    int dataset_type,
                    chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values);
+    
+    void noDSDataFound(const std::string& control_unit_uid,
+                       int dataset_type);
 public:
     NodeMonitorHandlerTest(const std::string& _node_uid);
     ~NodeMonitorHandlerTest();

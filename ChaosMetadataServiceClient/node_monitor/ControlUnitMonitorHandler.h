@@ -37,6 +37,8 @@ namespace chaos {
                 virtual void updatedDS(const std::string& control_unit_uid,
                                        int dataset_type,
                                        MapDatasetKeyValues& dataset_key_values) = 0;
+                virtual void noDSDataFound(const std::string& control_unit_uid,
+                                           int dataset_type) = 0;
             };
             
         }

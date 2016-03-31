@@ -82,7 +82,13 @@ void ControlUnitController::quantumSlotHasData(const std::string& key,
 }
 
 void ControlUnitController::quantumSlotHasNoData(const std::string& key) {
-    NodeController::quantumSlotHasNoData(key);
+    if(key.compare(cu_output_ds_key) == 0 ||
+       key.compare(cu_input_ds_key) == 0 ||
+       key.compare(cu_system_ds_key) == 0) {
+        
+    } else {
+        NodeController::quantumSlotHasNoData(key);
+    }
 }
 
 
@@ -133,5 +139,18 @@ void ControlUnitController::_fireUpdateDSOnHandler(int dataset_type,
         hndlr->updatedDS(getNodeUID(),
                          dataset_type,
                          map);
+    }
+}
+
+void ControlUnitController::_fireNoDSDataFoundOnHandler(int dataset_type) {
+    boost::unique_lock<boost::mutex> wl(list_handler_mutex);
+    for(MonitoHandlerListIterator it = list_handler.begin(),
+        it_end = list_handler.end();
+        it != it_end;
+        it++) {
+        ControlUnitMonitorHandler *hndlr = (ControlUnitMonitorHandler*)*it;
+        //notify listers that online status has been changed
+        hndlr->noDSDataFound(getNodeUID(),
+                             dataset_type);
     }
 }

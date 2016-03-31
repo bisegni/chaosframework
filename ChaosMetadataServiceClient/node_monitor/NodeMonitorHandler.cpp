@@ -33,4 +33,3 @@ handler_uuid(chaos::common::utility::UUIDUtil::generateUUIDLite()){
 NodeMonitorHandler::~NodeMonitorHandler() {
     
 }
-

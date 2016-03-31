@@ -32,12 +32,14 @@ namespace chaos {
         namespace node_monitor {
             
             typedef enum {
+                OnlineStatusNotFound,
                 OnlineStatusUnknown,
                 OnlineStatusON,
                 OnlineStatusOFF
             } OnlineStatus;
             
             typedef struct {
+                uint64_t            uptime;
                 double              usr_res;
                 double              sys_res;
                 uint64_t            swp_res;

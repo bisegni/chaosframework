@@ -50,8 +50,6 @@ namespace chaos {
                 virtual void nodeChangedErrorInformation(const std::string& node_uid,
                                                          const ErrorInformation& old_status,
                                                          const ErrorInformation& new_status) = 0;
-                
-                void datasetHasBeenUpdated(const std::string& node_uid);
             };
             
             struct NodeMonitorHandlerComparator {

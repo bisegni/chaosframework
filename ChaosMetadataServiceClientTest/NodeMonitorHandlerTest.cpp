@@ -24,6 +24,10 @@ std::string getStatusDesc(chaos::metadata_service_client::node_monitor::OnlineSt
         case chaos::metadata_service_client::node_monitor::OnlineStatusOFF:
             return "Status OFF";
             break;
+            
+        case chaos::metadata_service_client::node_monitor::OnlineStatusNotFound:
+            return "No status data found";
+            break;
     }
 }
 
@@ -95,4 +99,9 @@ void NodeMonitorHandlerTest::updatedDS(const std::string& control_unit_uid,
         default:
             break;
     }
+}
+
+void NodeMonitorHandlerTest::noDSDataFound(const std::string& control_unit_uid,
+                                           int dataset_type) {
+    
 }

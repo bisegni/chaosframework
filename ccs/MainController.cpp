@@ -31,7 +31,6 @@ Q_DECLARE_METATYPE(boost::shared_ptr<chaos::metadata_service_client::api_proxy::
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::SerializationBuffer>)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::CException>)
-
 MainController::MainController() {
 }
 

@@ -107,7 +107,7 @@ SOURCES += main.cpp\
     log_browser/LogBrowser.cpp \
     data/LogEntryAdvancedSearchTableModel.cpp \
     widget/CNodeResourceWidget.cpp \
-    widget/ChaosReadDatasetWidgetCompanion.cpp
+    widget/ChaosMonitorWidgetCompanion.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -205,7 +205,7 @@ HEADERS  += \
     log_browser/LogBrowser.h \
     data/LogEntryAdvancedSearchTableModel.h \
     widget/CNodeResourceWidget.h \
-    widget/ChaosReadDatasetWidgetCompanion.h
+    widget/ChaosMonitorWidgetCompanion.h
 
 FORMS    += \
     search/searchnoderesult.ui \
