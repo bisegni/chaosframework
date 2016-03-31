@@ -57,6 +57,8 @@ SET(common_lib_src ${common_lib_src}
 
 SET(common_lib_src ${common_lib_src}
         data/CDataWrapper.cpp
+        data/CDataBuffer.cpp
+        data/CDataVariant.cpp
         data/CUSchemaDB.cpp
         data/DatasetDB.cpp
         data/entity_db/EntityDB.cpp

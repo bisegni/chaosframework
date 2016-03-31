@@ -81,6 +81,9 @@ void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
         monitor_manager.reset(new MonitorManager(NetworkBroker::getInstance(), &setting), "MonitorManager");
         monitor_manager.init(NULL, __PRETTY_FUNCTION__);
         
+        node_monitor.reset(new node_monitor::NodeMonitor(monitor_manager.get(), &setting), "NodeMonitor");
+        node_monitor.init(NULL, __PRETTY_FUNCTION__);
+        
         //configure metadata server got from command line
         std::vector<chaos::common::network::CNetworkAddress> mds_address_list = GlobalConfiguration::getInstance()->getMetadataServerAddressList();
         for(std::vector<chaos::common::network::CNetworkAddress>::iterator it = mds_address_list.begin();
@@ -132,13 +135,14 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
  */
 void ChaosMetadataServiceClient::deinit()   throw(CException) {
     //deinit api system
-    CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(event_dispatch_manager.deinit(__PRETTY_FUNCTION__);)
-    CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(node_monitor.deinit(__PRETTY_FUNCTION__););
+    CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__););
+    CHAOS_NOT_THROW(event_dispatch_manager.deinit(__PRETTY_FUNCTION__););
+    CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__););
     
-    if(monitoringIsStarted()){CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__);)}
+    if(monitoringIsStarted()){CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__););}
     
-    CHAOS_NOT_THROW(ChaosCommon<ChaosMetadataServiceClient>::deinit();)
+    CHAOS_NOT_THROW(ChaosCommon<ChaosMetadataServiceClient>::deinit(););
     
     CMSC_LAPP << "-------------------------------------------------------------------------";
     CMSC_LAPP << "Metadata service client has been stopped";
@@ -214,6 +218,20 @@ void ChaosMetadataServiceClient::reconfigureMonitor() throw(CException) {
 bool ChaosMetadataServiceClient::monitoringIsStarted() {
     return monitor_manager.get() &&
     (monitor_manager->getServiceState() == CUStateKey::START);
+}
+
+
+bool ChaosMetadataServiceClient::addHandlerToNodeMonitor(const std::string& node_uid,
+                                                         node_monitor::NodeMonitorHandler *handler_to_add) {
+    return node_monitor->addHandlerToNodeMonitor(node_uid,
+                                                 handler_to_add);
+}
+
+bool ChaosMetadataServiceClient::removeHandlerToNodeMonitor(const std::string& node_uid,
+                                                            node_monitor::NodeMonitorHandler *handler_to_remove) {
+    return node_monitor->removeHandlerToNodeMonitor(node_uid,
+                                                    handler_to_remove);
+    
 }
 
 //! add a new quantum slot for key

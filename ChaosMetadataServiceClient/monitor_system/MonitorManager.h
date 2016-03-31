@@ -29,7 +29,7 @@
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/async_central/async_central.h>
-#include <chaos/common/utility/InizializableService.h>
+#include <chaos/common/utility/StartableService.h>
 
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
@@ -60,7 +60,7 @@ namespace chaos {
                 friend class chaos::common::utility::StartableServiceContainer<MonitorManager>;
                 friend class chaos::metadata_service_client::ChaosMetadataServiceClient;
                 
-                //! Applciation settings
+                //! library settings
                 ClientSetting *setting;
                 
                 //! network broker service
@@ -80,12 +80,14 @@ namespace chaos {
                 MonitorManager(chaos::common::network::NetworkBroker *_network_broker,
                                ClientSetting *_setting);
                 ~MonitorManager();
-            public:
+                
                 
                 void init(void *init_data) throw (chaos::CException);
                 void start() throw (chaos::CException);
                 void stop() throw (chaos::CException);
                 void deinit() throw (chaos::CException);
+                
+            public:
                 
                 void resetEndpointList(std::vector<std::string> new_server_list);
                 
