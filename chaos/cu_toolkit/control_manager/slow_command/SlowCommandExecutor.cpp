@@ -253,7 +253,7 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
     switch(type) {
         case BatchSandboxEventType::EVT_RUN_START: {
             uint64_t *hb = static_cast<uint64_t*>(type_value_ptr);
-            control_unit_instance->_updateAcquistionTimestamp(*hb);
+            control_unit_instance->_updateAcquistionTimestamp((uint64_t)(*hb/1000));
             
         }
             
