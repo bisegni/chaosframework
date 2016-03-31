@@ -5,7 +5,7 @@ using namespace chaos::metadata_service_client::monitor_system;
 
 CNodeResourceWidget::CNodeResourceWidget(QWidget *parent) :
     QWidget(parent),
-    ChaosMonitorWidgetCompanion(this),
+    ChaosMonitorWidgetCompanion(chaos::metadata_service_client::node_monitor::ControllerTypeNode, this),
     ui(new Ui::CNodeResourceWidget) {
     ui->setupUi(this);
     //set the target dataset for resource information

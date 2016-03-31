@@ -222,14 +222,18 @@ bool ChaosMetadataServiceClient::monitoringIsStarted() {
 
 
 bool ChaosMetadataServiceClient::addHandlerToNodeMonitor(const std::string& node_uid,
+                                                         node_monitor::ControllerType controller_type,
                                                          node_monitor::NodeMonitorHandler *handler_to_add) {
     return node_monitor->addHandlerToNodeMonitor(node_uid,
+                                                 controller_type,
                                                  handler_to_add);
 }
 
 bool ChaosMetadataServiceClient::removeHandlerToNodeMonitor(const std::string& node_uid,
+                                                            node_monitor::ControllerType controller_type,
                                                             node_monitor::NodeMonitorHandler *handler_to_remove) {
     return node_monitor->removeHandlerToNodeMonitor(node_uid,
+                                                    controller_type,
                                                     handler_to_remove);
     
 }

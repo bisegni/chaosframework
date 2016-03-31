@@ -43,6 +43,11 @@ namespace chaos {
         //! node monitor funcitonality
         namespace node_monitor {
             
+            typedef enum {
+                ControllerTypeNode = 0,
+                ControllerTypeNodeControlUnit
+            } ControllerType;
+            
             class NodeMonitor:
             public chaos::common::utility::InizializableService {
                 //! library settings
@@ -61,15 +66,19 @@ namespace chaos {
                 void init(void *init_data) throw (chaos::CException);
                 void deinit() throw (chaos::CException);
                 
-                void startNodeMonitor(const std::string& node_uid);
+                void startNodeMonitor(const std::string& node_uid,
+                                      ControllerType controller_type);
                 
-                void stopNodeMonitor(const std::string& node_uid);
+                void stopNodeMonitor(const std::string& node_uid,
+                                     ControllerType controller_type);
             public:
 
                 bool addHandlerToNodeMonitor(const std::string& node_uid,
+                                             ControllerType controller_type,
                                              NodeMonitorHandler *handler_to_add);
                 
                 bool removeHandlerToNodeMonitor(const std::string& node_uid,
+                                                ControllerType controller_type,
                                                 NodeMonitorHandler *handler_to_remove);
             };
         }

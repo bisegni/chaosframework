@@ -35,9 +35,6 @@ protected:
                                      const chaos::metadata_service_client::node_monitor::ErrorInformation& old_error_information,
                                      const chaos::metadata_service_client::node_monitor::ErrorInformation& new_error_information);
 protected slots:
-    void updateUIWithData(const chaos::metadata_service_client::monitor_system::KeyValue value);
-    void updateUIWithNoData();
-
     void updateUIStatus();
     void updateUIResource();
     void updateUIErrorInformation();

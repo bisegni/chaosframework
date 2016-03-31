@@ -6,16 +6,10 @@
 class ChaosMonitorWidgetCompanion:
         public ChaosWidgetCompanion {
 public:
-    enum Dataset { DatasetOutput = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
-                   DatasetInput = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT,
-                   DatasetCustom = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM,
-                   DatasetSystem = chaos::DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM};
 
-    ChaosMonitorWidgetCompanion(chaos::metadata_service_client::node_monitor::NodeMonitorHandler *_monitor_handler);
+    ChaosMonitorWidgetCompanion(chaos::metadata_service_client::node_monitor::ControllerType _monitor_controller_type,
+                                chaos::metadata_service_client::node_monitor::NodeMonitorHandler *_monitor_handler);
     ~ChaosMonitorWidgetCompanion();
-
-    Dataset dataset();
-    void setDataset(Dataset dataset);
 
 protected:
     bool trackDataset();
@@ -28,9 +22,7 @@ private:
 
     chaos::metadata_service_client::node_monitor::NodeMonitorHandler *monitor_handler;
 
-    Dataset p_dataset;
-    Q_PROPERTY(Dataset dataset READ dataset WRITE setDataset)
-    Q_ENUMS(Dataset)
+    const chaos::metadata_service_client::node_monitor::ControllerType monitor_controller_type;
 
     bool isTracking;
 
