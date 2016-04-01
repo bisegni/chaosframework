@@ -118,7 +118,7 @@ bool NodeMonitor::addHandlerToNodeMonitor(const std::string& node_uid,
     if(map_monitor_controller.count(composed_key) == 0) {
         startNodeMonitor(node_uid, controller_type);
     }
-    return map_monitor_controller[node_uid]->addHandler(handler_to_add);
+    return map_monitor_controller[composed_key]->addHandler(handler_to_add);
 }
 
 bool NodeMonitor::removeHandlerToNodeMonitor(const std::string& node_uid,

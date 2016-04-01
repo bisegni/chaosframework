@@ -55,11 +55,13 @@ std::string getDatasetDesc(int dataset_type){
 NodeMonitorHandlerTest::NodeMonitorHandlerTest(const std::string& _node_uid):
 node_uid(_node_uid){
     ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(node_uid,
+                                                                       chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit,
                                                                        this);
 }
 
 NodeMonitorHandlerTest::~NodeMonitorHandlerTest() {
     ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(node_uid,
+                                                                          chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit,
                                                                           this);
 }
 
