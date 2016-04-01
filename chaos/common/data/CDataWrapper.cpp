@@ -35,7 +35,7 @@ string CMultiTypeDataArrayWrapper::getStringElementAtIndex(const int pos) {
     return elementsArray[pos].String();
 }
 
-double_t CMultiTypeDataArrayWrapper::getDoubleElementAtIndex(const int pos) {
+double CMultiTypeDataArrayWrapper::getDoubleElementAtIndex(const int pos) {
     return elementsArray[pos].Double();
 }
 int32_t CMultiTypeDataArrayWrapper::getInt32ElementAtIndex(const int pos) {
@@ -205,7 +205,7 @@ uint64_t CDataWrapper::getUInt64Value(const std::string& key) {
     return static_cast<uint64_t>(bsonBuilder->asTempObj().getField(key).numberLong());
 }
 //add a integer value
-double_t CDataWrapper::getDoubleValue(const std::string& key) {
+double CDataWrapper::getDoubleValue(const std::string& key) {
     
     return bsonBuilder->asTempObj().getField(key).Double();
 }

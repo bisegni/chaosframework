@@ -57,7 +57,7 @@ namespace chaos {
 				CMultiTypeDataArrayWrapper(vector< BSONElement > src);
 				
 				string getStringElementAtIndex(const int);
-				double_t getDoubleElementAtIndex(const int);
+				double getDoubleElementAtIndex(const int);
 				int32_t getInt32ElementAtIndex(const int);
 				int64_t getint64ElementAtIndex(const int);
 				CDataWrapper* getCDataWrapperElementAtIndex(const int);
@@ -177,7 +177,7 @@ namespace chaos {
 				uint64_t getUInt64Value(const std::string& key);
 				
 				//add a integer value
-				double_t getDoubleValue(const std::string& key);
+				double getDoubleValue(const std::string& key);
 				
 				//get a bool value
 				bool getBoolValue(const std::string&);
