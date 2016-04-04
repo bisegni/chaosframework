@@ -96,13 +96,13 @@ void UnitServerEditor::initUI() {
     ui->chaosLabelHealtStatus->setNodeUniqueID(node_unique_id);
     ui->chaosLabelHealtStatus->setTrackStatus(true);
     ui->chaosLabelHealtStatus->setLabelValueShowTrackStatus(true);
-    ui->chaosLedIndicatorHealt->setNodeUniqueID(node_unique_id);
+    ui->chaosLedIndicatorHealt->setNodeUID(node_unique_id);
     connect(ui->chaosLedIndicatorHealt,
             SIGNAL(changedOnlineStatus(QString,CLedIndicatorHealt::AliveState)),
             SLOT(changedNodeOnlineStatus(QString,CLedIndicatorHealt::AliveState)));
     //start monitor on chaos ui
     ui->chaosLabelHealtStatus->startMonitoring();
-    ui->chaosLedIndicatorHealt->startMonitoring();
+    ui->chaosLedIndicatorHealt->initChaosContent();
     //load info
     updateAll();
 }
@@ -110,7 +110,7 @@ void UnitServerEditor::initUI() {
 bool UnitServerEditor::isClosing() {
     //stop monitoring
     ui->chaosLabelHealtStatus->stopMonitoring();
-    ui->chaosLedIndicatorHealt->stopMonitoring();
+    ui->chaosLedIndicatorHealt->deinitChaosContent();
     if( move_copy_search_instance) {
         move_copy_search_instance->close();
         delete( move_copy_search_instance);
@@ -530,8 +530,8 @@ void UnitServerEditor::on_pushButtonRemoveCUType_clicked() {
 }
 
 void UnitServerEditor::changedNodeOnlineStatus(const QString& node_uid,
-                                               CLedIndicatorHealt::AliveState alive_state) {
-    if(alive_state == CLedIndicatorHealt::Online) {
+                                               node_monitor::OnlineStatus alive_state) {
+    if(alive_state == chaos::metadata_service_client::node_monitor::OnlineStatusON) {
         updateAll();
     }
 }

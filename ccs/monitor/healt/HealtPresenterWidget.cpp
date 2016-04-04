@@ -29,8 +29,8 @@ HealtPresenterWidget::HealtPresenterWidget(CommandPresenter *_global_command_pre
     ui->labelUID->setTextFormat(Qt::RichText);
     ui->labelUID->setText(node_uid);
 
-    ui->ledIndicatorHealt->setNodeUniqueID(node_uid);
-    ui->ledIndicatorHealt->startMonitoring();
+    ui->ledIndicatorHealt->setNodeUID(node_uid);
+    ui->ledIndicatorHealt->initChaosContent();
 
     ui->labelStatus->setNodeUniqueID(node_uid);
     ui->labelStatus->setTrackStatus(true);
@@ -57,7 +57,7 @@ HealtPresenterWidget::HealtPresenterWidget(CommandPresenter *_global_command_pre
 
 HealtPresenterWidget::~HealtPresenterWidget() {
     ui->nodeResourceWidget->deinitChaosContent();
-    ui->ledIndicatorHealt->stopMonitoring();
+    ui->ledIndicatorHealt->deinitChaosContent();
     ui->labelStatus->stopMonitoring();
     delete ui;
 }

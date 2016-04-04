@@ -12,13 +12,13 @@ ChaosMonitorWidgetCompanion::ChaosMonitorWidgetCompanion(chaos::metadata_service
 
 ChaosMonitorWidgetCompanion::~ChaosMonitorWidgetCompanion() {}
 
-bool ChaosMonitorWidgetCompanion::trackDataset() {
+bool ChaosMonitorWidgetCompanion::trackNode() {
     return ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(nodeUID().toStdString(),
                                                                               monitor_controller_type,
                                                                               monitor_handler);
 }
 
-bool ChaosMonitorWidgetCompanion::untrackDataset() {
+bool ChaosMonitorWidgetCompanion::untrackNode() {
     return ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(nodeUID().toStdString(),
                                                                                  monitor_controller_type,
                                                                                  monitor_handler);

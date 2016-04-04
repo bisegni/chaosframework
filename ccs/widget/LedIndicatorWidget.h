@@ -18,8 +18,7 @@ struct StateInfo {
 };
 
 class LedIndicatorWidget :
-        public QWidget
-{
+        public QWidget {
     Q_OBJECT
 
 public:

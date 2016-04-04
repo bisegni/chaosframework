@@ -69,7 +69,7 @@ private slots:
     void on_pushButtonRemoveCUType_clicked();
 
     void changedNodeOnlineStatus(const QString& node_uid,
-                                 CLedIndicatorHealt::AliveState alive_state);
+                                chaos::metadata_service_client::node_monitor::OnlineStatus alive_state);
     void on_tableView_doubleClicked(const QModelIndex &index);
 
 protected:

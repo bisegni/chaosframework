@@ -12,9 +12,9 @@ public:
     ~ChaosMonitorWidgetCompanion();
 
 protected:
-    bool trackDataset();
+    bool trackNode();
 
-    bool untrackDataset();
+    bool untrackNode();
 private:
 
     bool changeKeyConsumerQuantumSlot(int old_quantum_multiplier,

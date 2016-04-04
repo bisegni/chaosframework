@@ -16,11 +16,11 @@ CNodeResourceWidget::~CNodeResourceWidget() {
 }
 
 void CNodeResourceWidget::initChaosContent() {
-    trackDataset();
+    trackNode();
 }
 
 void CNodeResourceWidget::deinitChaosContent() {
-    untrackDataset();
+    untrackNode();
 }
 
 void CNodeResourceWidget::updateChaosContent() {

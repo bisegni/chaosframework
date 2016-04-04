@@ -43,7 +43,7 @@ private slots:
                                           const QItemSelection& previous_selected);
 
     void changedOnlineStatus(const QString& node_uid,
-                             CLedIndicatorHealt::AliveState node_alive_state);
+                             chaos::metadata_service_client::node_monitor::OnlineStatus node_alive_state);
     void changedNodeState(const QString& node_uid,
                           const QString& value);
     void templateSaved(const QString& tempalte_name,
