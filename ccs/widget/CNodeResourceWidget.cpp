@@ -1,6 +1,6 @@
 #include "CNodeResourceWidget.h"
 #include "ui_CNodeResourceWidget.h"
-
+#include <QDebug>
 using namespace chaos::metadata_service_client::monitor_system;
 
 CNodeResourceWidget::CNodeResourceWidget(QWidget *parent) :
@@ -28,6 +28,7 @@ void CNodeResourceWidget::updateChaosContent() {
 }
 
 void CNodeResourceWidget::updateUIStatus() {
+    qDebug()<< "updateUIStatus";
     switch(current_status) {
     case chaos::metadata_service_client::node_monitor::OnlineStatusNotFound: {
         ui->labelUsrProc->setText(tr("---"));
@@ -47,6 +48,7 @@ void CNodeResourceWidget::updateUIStatus() {
 }
 
 void CNodeResourceWidget::updateUIResource() {
+    qDebug()<< "updateUIResource";
     ui->labelUsrProc->setText(QString::number(current_resource.usr_res, 'f', 1 ));
     ui->labelSysProc->setText(QString::number(current_resource.sys_res, 'f', 1 ));
     ui->labelSwapProc->setText(QString::number(current_resource.swp_res));
@@ -87,16 +89,24 @@ void CNodeResourceWidget::nodeChangedProcessResource(const std::string& node_uid
                                                      const chaos::metadata_service_client::node_monitor::ProcessResource& old_proc_res,
                                                      const chaos::metadata_service_client::node_monitor::ProcessResource& new_proc_res) {
     current_resource = new_proc_res;
-//    QMetaObject::invokeMethod(this,
-//                              "updateUIResources",
-//                              Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this,
+                              "updateUIResource",
+                              Qt::QueuedConnection);
 }
 
 void CNodeResourceWidget::nodeChangedErrorInformation(const std::string& node_uid,
                                                       const chaos::metadata_service_client::node_monitor::ErrorInformation& old_error_information,
                                                       const chaos::metadata_service_client::node_monitor::ErrorInformation& new_error_information) {
-    current_error_information = new_error_information;
+}
+
+void CNodeResourceWidget::handlerHasBeenRegistered(const std::string& node_uid,
+                                                   const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_status) {
+    current_status = current_health_status.online_status;
     QMetaObject::invokeMethod(this,
-                              "updateUIErrorInformation",
+                              "updateUIStatus",
+                              Qt::QueuedConnection);
+    current_resource = current_health_status.process_resource;
+    QMetaObject::invokeMethod(this,
+                              "updateUIResource",
                               Qt::QueuedConnection);
 }

@@ -113,7 +113,7 @@ void NodeController::updateData() {
            last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME) &&
            last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)) {
             ProcessResource proc_res;
-            proc_res.uptime = last_ds_healt->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP);
+            proc_res.uptime = last_ds_healt->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME);
             proc_res.usr_res = last_ds_healt->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME);
             proc_res.sys_res = last_ds_healt->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME);
             proc_res.swp_res = last_ds_healt->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP);
@@ -212,6 +212,9 @@ bool NodeController::addHandler(NodeMonitorHandler *handler_to_add) {
     boost::unique_lock<boost::mutex> wl(list_handler_mutex);
     if(list_handler.find(handler_to_add) != list_handler.end()) return false;
     list_handler.insert(handler_to_add);
+    //fire current state to the handler
+    handler_to_add->handlerHasBeenRegistered(node_uid,
+                                             health_info);
     return true;
 }
 

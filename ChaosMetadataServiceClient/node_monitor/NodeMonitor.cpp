@@ -131,10 +131,10 @@ bool NodeMonitor::removeHandlerToNodeMonitor(const std::string& node_uid,
 
     //check if we have the controller installed
     if(map_monitor_controller.count(composed_key) == 0) return false;
-    if((result = map_monitor_controller[node_uid]->removeHandler(handler_to_remove))) {
+    if((result = map_monitor_controller[composed_key]->removeHandler(handler_to_remove))) {
         //check the seize of the handler list in controller and
         //in case it is empty delete also the controller
-        if(map_monitor_controller[node_uid]->getMonitorHandlerList().size() == 0){
+        if(map_monitor_controller[composed_key]->getMonitorHandlerList().size() == 0){
             //delete the controller
             stopNodeMonitor(node_uid, controller_type);
         }

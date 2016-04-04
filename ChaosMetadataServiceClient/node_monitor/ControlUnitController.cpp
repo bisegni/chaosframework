@@ -64,7 +64,7 @@ void ControlUnitController::quantumSlotHasData(const std::string& key,
                                      map_ds_in);
             //call handler
             _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_INPUT,
-                                   map_ds_out);
+                                   map_ds_in);
         }
     } else if(key.compare(cu_system_ds_key) == 0) {
         CHECK_DS_CHANGED(last_ds_system, value) {
@@ -73,7 +73,7 @@ void ControlUnitController::quantumSlotHasData(const std::string& key,
                                      map_ds_sys);
             //call handler
             _fireUpdateDSOnHandler(DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
-                                   map_ds_out);
+                                   map_ds_sys);
         }
     } else {
         NodeController::quantumSlotHasData(key,
@@ -153,4 +153,22 @@ void ControlUnitController::_fireNoDSDataFoundOnHandler(int dataset_type) {
         hndlr->noDSDataFound(getNodeUID(),
                              dataset_type);
     }
+}
+
+bool ControlUnitController::addHandler(NodeMonitorHandler *handler_to_add) {
+    ControlUnitMonitorHandler *cu_handler = dynamic_cast<ControlUnitMonitorHandler*>(handler_to_add);
+    if(cu_handler == NULL) return false;
+    bool result = NodeController::addHandler(handler_to_add);
+    if(result){
+        cu_handler->handlerHasBeenRegistered(getNodeUID(),
+                                             DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
+                                             map_ds_out);
+        cu_handler->handlerHasBeenRegistered(getNodeUID(),
+                                             DataPackCommonKey::DPCK_DATASET_TYPE_INPUT,
+                                             map_ds_in);
+        cu_handler->handlerHasBeenRegistered(getNodeUID(),
+                                             DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
+                                             map_ds_sys);
+    }
+    return result;
 }

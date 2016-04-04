@@ -64,6 +64,7 @@ namespace chaos {
                 void quantumSlotHasNoData(const std::string& key);
             public:
                 virtual ~ControlUnitController();
+                bool addHandler(NodeMonitorHandler *handler_to_add);
             };
         }
     }

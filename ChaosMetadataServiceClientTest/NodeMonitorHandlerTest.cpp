@@ -76,7 +76,7 @@ void NodeMonitorHandlerTest::nodeChangedOnlineStatus(const std::string& node_uid
 void NodeMonitorHandlerTest::nodeChangedProcessResource(const std::string& node_uid,
                                                         const ProcessResource& old_proc_res,
                                                         const ProcessResource& new_proc_res) {
-    LAPP_ << boost::str(boost::format("nodeChangedProcessResource: usr:%1% sys:%2% swp:%3%")%new_proc_res.usr_res%new_proc_res.sys_res%new_proc_res.swp_res);
+    LAPP_ << boost::str(boost::format("nodeChangedProcessResource: usr:%1% sys:%2% swp:%3% upt:%4%")%new_proc_res.usr_res%new_proc_res.sys_res%new_proc_res.swp_res%new_proc_res.uptime);
     
 }
 
@@ -105,5 +105,16 @@ void NodeMonitorHandlerTest::updatedDS(const std::string& control_unit_uid,
 
 void NodeMonitorHandlerTest::noDSDataFound(const std::string& control_unit_uid,
                                            int dataset_type) {
+    
+}
+
+void NodeMonitorHandlerTest::handlerHasBeenRegistered(const std::string& node_uid,
+                                                      const HealthInformation& current_health_status) {
+    
+}
+
+void NodeMonitorHandlerTest::handlerHasBeenRegistered(const std::string& control_unit_uid,
+                                                      int dataset_type,
+                                                      MapDatasetKeyValues& dataset_key_values) {
     
 }

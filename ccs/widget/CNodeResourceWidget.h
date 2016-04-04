@@ -34,6 +34,9 @@ protected:
     void nodeChangedErrorInformation(const std::string& node_uid,
                                      const chaos::metadata_service_client::node_monitor::ErrorInformation& old_error_information,
                                      const chaos::metadata_service_client::node_monitor::ErrorInformation& new_error_information);
+
+    void handlerHasBeenRegistered(const std::string& node_uid,
+                                  const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_status);
 protected slots:
     void updateUIStatus();
     void updateUIResource();

@@ -90,7 +90,7 @@ namespace chaos {
                 
                 const HealthInformation& getHealthInformation() const;
                 
-                bool addHandler(NodeMonitorHandler *handler_to_add);
+                virtual bool addHandler(NodeMonitorHandler *handler_to_add);
                 
                 bool removeHandler(NodeMonitorHandler *handler_to_remove);
             };

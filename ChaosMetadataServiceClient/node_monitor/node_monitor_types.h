@@ -38,23 +38,50 @@ namespace chaos {
                 OnlineStatusOFF
             } OnlineStatus;
             
-            typedef struct {
+            typedef struct ProcessResource{
                 uint64_t            uptime;
                 double              usr_res;
                 double              sys_res;
                 uint64_t            swp_res;
+                ProcessResource& operator=(const ProcessResource& other) {
+                    if (this == &other) return *this;
+                    
+                    uptime = other.uptime;
+                    usr_res = other.usr_res;
+                    sys_res = other.sys_res;
+                    swp_res = other.swp_res;
+                    return *this;
+                }
             } ProcessResource;
             
-            typedef struct {
+            typedef struct ErrorInformation{
                 int32_t         error_code;
                 std::string     error_message;
                 std::string     error_domain;
+                
+                ErrorInformation& operator=(const ErrorInformation& other) {
+                    if (this == &other) return *this;
+                    
+                    error_code = other.error_code;
+                    error_message = other.error_message;
+                    error_domain = other.error_domain;
+                    return *this;
+                }
             } ErrorInformation;
             
             struct HealthInformation {
                 OnlineStatus        online_status;
                 ProcessResource     process_resource;
                 ErrorInformation    error_information;
+                
+                HealthInformation& operator=(const HealthInformation& other) {
+                    if (this == &other) return *this;
+                    
+                    online_status = other.online_status;
+                    process_resource = other.process_resource;
+                    error_information = other.error_information;
+                    return *this;
+                }
             };
             
             typedef enum {
