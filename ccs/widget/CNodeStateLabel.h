@@ -4,7 +4,7 @@
 #include "ChaosMonitorWidgetCompanion.h"
 
 #include <QLabel>
-
+#include <QString>
 class CNodeStateLabel:
         public QLabel,
         public ChaosMonitorWidgetCompanion,
@@ -38,7 +38,13 @@ private slots:
     void updateStateUI();
     void updateErrorUI();
 private:
-    const QString internal_state;
+    void	clear();
+    void	setMovie(QMovie * movie);
+    void	setNum(int num);
+    void	setNum(double num);
+    void	setPicture(const QPicture & picture);
+    void	setPixmap(const QPixmap &pixmap);
+    QString internal_state;
     chaos::metadata_service_client::node_monitor::OnlineState online_state;
     chaos::metadata_service_client::node_monitor::ErrorInformation error_information;
 

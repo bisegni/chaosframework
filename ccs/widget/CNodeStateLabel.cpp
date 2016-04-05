@@ -1,4 +1,5 @@
 #include "CNodeStateLabel.h"
+
 using namespace chaos::metadata_service_client::node_monitor;
 
 CNodeStateLabel::CNodeStateLabel(QWidget *parent) :
@@ -23,7 +24,7 @@ void CNodeStateLabel::updateChaosContent() {
 void CNodeStateLabel::nodeChangedOnlineState(const std::string& node_uid,
                                              OnlineState old_state,
                                              OnlineState new_state) {
-    online_state = new_status;
+    online_state = new_state;
     QMetaObject::invokeMethod(this,
                               "updateStateUI",
                               Qt::QueuedConnection);
@@ -32,7 +33,7 @@ void CNodeStateLabel::nodeChangedOnlineState(const std::string& node_uid,
 void CNodeStateLabel::nodeChangedInternalState(const std::string& node_uid,
                                                const std::string& old_state,
                                                const std::string& new_state) {
-    internal_state = new_state;
+    internal_state = QString::fromStdString(new_state);
     QMetaObject::invokeMethod(this,
                               "updateStateUI",
                               Qt::QueuedConnection);
@@ -49,7 +50,15 @@ void CNodeStateLabel::nodeChangedErrorInformation(const std::string& node_uid,
 
 void CNodeStateLabel::handlerHasBeenRegistered(const std::string& node_uid,
                                                const HealthInformation& current_health_state) {
-
+    online_state = current_health_state.online_state;
+    internal_state = QString::fromStdString(current_health_state.internal_state);
+    error_information = current_health_state.error_information;
+    QMetaObject::invokeMethod(this,
+                              "updateStateUI",
+                              Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this,
+                              "updateErrorUI",
+                              Qt::QueuedConnection);
 }
 
 void CNodeStateLabel::updateStateUI() {
@@ -73,20 +82,26 @@ void CNodeStateLabel::updateStateUI() {
             break;
         }
     }
+
+    setText(internal_state);
 }
 
 void CNodeStateLabel::updateErrorUI() {
     bool in_error = internal_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
             internal_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0;
-    if(in_error)
-        if(value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
-                value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE) &&
-                value->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE)) {
-            //we need to show error
-            setToolTip(QString("Error Number: %1\nError Message:%2\nError Domain:%3").arg(error_information.error_code,
-                                                                                          error_information.error_message,
-                                                                                          error_information.error_domain));
-        }else {
-            setToolTip("");
-        }
+    if(in_error){
+        setToolTip(QString("Error Number: %1\nError Message:%2\nError Domain:%3").arg(QString::number(error_information.error_code),
+                                                                                      QString::fromStdString(error_information.error_message),
+                                                                                      QString::fromStdString(error_information.error_domain)));
+    } else {
+        setToolTip("");
+    }
 }
+
+//slots hiding
+void	CNodeStateLabel::clear(){QLabel::clear();}
+void	CNodeStateLabel::setMovie(QMovie * movie){QLabel::setMovie(movie);}
+void	CNodeStateLabel::setNum(int num){QLabel::setNum(num);}
+void	CNodeStateLabel::setNum(double num){QLabel::setNum(num);}
+void	CNodeStateLabel::setPicture(const QPicture & picture){QLabel::picture();}
+void	CNodeStateLabel::setPixmap(const QPixmap &pixmap){QLabel::setPixmap(pixmap);}

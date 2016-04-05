@@ -32,10 +32,8 @@ HealtPresenterWidget::HealtPresenterWidget(CommandPresenter *_global_command_pre
     ui->ledIndicatorHealt->setNodeUID(node_uid);
     ui->ledIndicatorHealt->initChaosContent();
 
-    ui->labelStatus->setNodeUniqueID(node_uid);
-    ui->labelStatus->setTrackStatus(true);
-    ui->labelStatus->setLabelValueShowTrackStatus(true);
-    ui->labelStatus->startMonitoring();
+    ui->labelStatus->setNodeUID(node_uid);
+    ui->labelStatus->initChaosContent();
 
     ui->pushButtonOpenNodeEditor->setEnabled(false);
 
@@ -58,7 +56,7 @@ HealtPresenterWidget::HealtPresenterWidget(CommandPresenter *_global_command_pre
 HealtPresenterWidget::~HealtPresenterWidget() {
     ui->nodeResourceWidget->deinitChaosContent();
     ui->ledIndicatorHealt->deinitChaosContent();
-    ui->labelStatus->stopMonitoring();
+    ui->labelStatus->deinitChaosContent();
     delete ui;
 }
 

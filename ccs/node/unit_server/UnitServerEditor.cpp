@@ -93,15 +93,13 @@ void UnitServerEditor::initUI() {
             SLOT(tableSelectionChanged(QItemSelection,QItemSelection)));
 
     //setup chaos ui
-    ui->chaosLabelHealtStatus->setNodeUniqueID(node_unique_id);
-    ui->chaosLabelHealtStatus->setTrackStatus(true);
-    ui->chaosLabelHealtStatus->setLabelValueShowTrackStatus(true);
+    ui->chaosLabelHealthState->setNodeUID(node_unique_id);
     ui->chaosLedIndicatorHealt->setNodeUID(node_unique_id);
     connect(ui->chaosLedIndicatorHealt,
             SIGNAL(changedOnlineStatus(QString,CLedIndicatorHealt::AliveState)),
             SLOT(changedNodeOnlineStatus(QString,CLedIndicatorHealt::AliveState)));
     //start monitor on chaos ui
-    ui->chaosLabelHealtStatus->startMonitoring();
+    ui->chaosLabelHealthState->initChaosContent();
     ui->chaosLedIndicatorHealt->initChaosContent();
     //load info
     updateAll();
@@ -109,7 +107,7 @@ void UnitServerEditor::initUI() {
 
 bool UnitServerEditor::isClosing() {
     //stop monitoring
-    ui->chaosLabelHealtStatus->stopMonitoring();
+    ui->chaosLabelHealthState->deinitChaosContent();
     ui->chaosLedIndicatorHealt->deinitChaosContent();
     if( move_copy_search_instance) {
         move_copy_search_instance->close();
