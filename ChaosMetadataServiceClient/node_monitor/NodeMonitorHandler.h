@@ -40,23 +40,23 @@ namespace chaos {
                 
                 //! called when an online state has changed
                 virtual void nodeChangedOnlineState(const std::string& node_uid,
-                                                    OnlineState old_status,
-                                                    OnlineState new_status);
+                                                    OnlineState old_state,
+                                                    OnlineState new_state);
                 
                 virtual void nodeChangedInternalState(const std::string& node_uid,
-                                                      const std::string& old_status,
-                                                      const std::string& new_status);
+                                                      const std::string& old_state,
+                                                      const std::string& new_state);
                 
                 virtual void nodeChangedProcessResource(const std::string& node_uid,
                                                         const ProcessResource& old_proc_res,
                                                         const ProcessResource& new_proc_res);
                 
                 virtual void nodeChangedErrorInformation(const std::string& node_uid,
-                                                         const ErrorInformation& old_status,
-                                                         const ErrorInformation& new_status);
+                                                         const ErrorInformation& old_error_information,
+                                                         const ErrorInformation& new_error_information);
                 
                 virtual void handlerHasBeenRegistered(const std::string& node_uid,
-                                                      const HealthInformation& current_health_status);
+                                                      const HealthInformation& current_health_state);
             };
             
             struct NodeMonitorHandlerComparator {

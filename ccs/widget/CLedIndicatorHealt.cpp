@@ -36,8 +36,6 @@ void CLedIndicatorHealt::updateChaosContent() {
 }
 
 void CLedIndicatorHealt::updateUIStatus() {
-    qDebug()<< "updateUIStatus";
-
     switch(alive_state) {
     case chaos::metadata_service_client::node_monitor::OnlineStateNotFound:
     case chaos::metadata_service_client::node_monitor::OnlineStateUnknown:
