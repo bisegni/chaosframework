@@ -20,7 +20,8 @@ class ControlUnitEditor;
 }
 
 class ControlUnitEditor :
-        public PresenterWidget {
+        public PresenterWidget,
+        chaos::metadata_service_client::node_monitor::NodeMonitorHandler {
     Q_OBJECT
 
 public:
@@ -32,24 +33,26 @@ protected:
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 
+    void nodeChangedOnlineState(const std::string& node_uid,
+                                chaos::metadata_service_client::node_monitor::OnlineState old_state,
+                                chaos::metadata_service_client::node_monitor::OnlineState new_state);
+
+    void nodeChangedInternalState(const std::string& node_uid,
+                                  const std::string& old_state,
+                                  const std::string& new_state);
+
+    void handlerHasBeenRegistered(const std::string& node_uid,
+                                  const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_state);
 private slots:
-    void monitorHandlerUpdateAttributeValue(const QString& key,
-                                            const QString& attribute_name,
-                                            const QVariant& attribute_value);
+
     void onLogicSwitchChangeState(const QString& switch_name,
                                   bool switch_activate);
 
     void handleSelectionChangedOnListWiew(const QItemSelection& selection,
                                           const QItemSelection& previous_selected);
 
-    void changedOnlineStatus(const QString& node_uid,
-                             chaos::metadata_service_client::node_monitor::OnlineState node_alive_state);
-    void changedNodeState(const QString& node_uid,
-                          const QString& value);
     void templateSaved(const QString& tempalte_name,
                        const QString& command_uid);
-    void controlUnitStatusChanged(const QString& control_unit_id,
-                                  const QString& status);
 
     void on_pushButtonLoadAction_clicked();
 
@@ -111,6 +114,7 @@ private:
 
     FixedOutputChannelDatasetTableModel dataset_output_table_model;
     FixedInputChannelDatasetTableModel  dataset_input_table_model;
+
     Ui::ControlUnitEditor *ui;
 };
 

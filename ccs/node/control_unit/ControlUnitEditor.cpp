@@ -26,6 +26,7 @@ using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
+using namespace chaos::metadata_service_client::node_monitor;
 
 ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     PresenterWidget(NULL),
@@ -37,16 +38,6 @@ ControlUnitEditor::ControlUnitEditor(const QString &_control_unit_unique_id) :
     dataset_input_table_model(control_unit_unique_id,
                               chaos::DataPackCommonKey::DPCK_DATASET_TYPE_INPUT) {
     ui->setupUi(this);
-    //handler connection
-    connect(ui->ledIndicatorHealtTSControlUnit,
-            SIGNAL(changedOnlineStatus(QString, chaos::metadata_service_client::node_monitor::OnlineStatus)),
-            SLOT(changedOnlineStatus(QString, chaos::metadata_service_client::node_monitor::OnlineStatus)));
-    connect(ui->ledIndicatorHealtTSUnitServer,
-            SIGNAL(changedOnlineStatus(QString, chaos::metadata_service_client::node_monitor::OnlineStatus)),
-            SLOT(changedOnlineStatus(QString, chaos::metadata_service_client::node_monitor::OnlineStatus)));
-    connect(ui->labelControlUnitStatus,
-            SIGNAL(valueChanged(QString,QString)),
-            SLOT(controlUnitStatusChanged(QString,QString)));
 }
 
 ControlUnitEditor::~ControlUnitEditor() {
@@ -163,19 +154,7 @@ void ControlUnitEditor::initUI() {
     ui->ledIndicatorHealtTSControlUnit->setNodeUID(control_unit_unique_id);
 
     //control unit status
-    ui->labelControlUnitStatus->setNodeUniqueID(control_unit_unique_id);
-    ui->labelControlUnitStatus->setTrackStatus(true);
-    ui->labelControlUnitStatus->setLabelValueShowTrackStatus(true);
-    connect(ui->labelControlUnitStatus,
-            SIGNAL(valueChanged(QString,QString)),
-            SLOT(changedNodeState(QString,QString)));
-
-    //unit server status
-    ui->labelUnitServerStatus->setTrackStatus(true);
-    ui->labelUnitServerStatus->setLabelValueShowTrackStatus(true);
-    connect(ui->labelUnitServerStatus,
-            SIGNAL(valueChanged(QString,QString)),
-            SLOT(changedNodeState(QString,QString)));
+    ui->labelControlUnitState->setNodeUID(control_unit_unique_id);
 
     //chaos label for the current thread schedule delay
     ui->labelRunScheduleDelaySet->setNodeUniqueID(control_unit_unique_id);
@@ -236,59 +215,32 @@ void ControlUnitEditor::updateAllControlUnitInfomration() {
 
 void ControlUnitEditor::manageMonitoring(bool start) {
     if(start){
-        ui->labelControlUnitStatus->startMonitoring();
+        ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(control_unit_unique_id.toStdString(),
+                                                                           node_monitor::ControllerTypeNode,
+                                                                           this);
+        ui->labelControlUnitState->initChaosContent();
         ui->labelRunScheduleDelaySet->startMonitoring();
         ui->ledIndicatorHealtTSControlUnit->initChaosContent();
         ui->chaosLabelDSOutputPushRate->startMonitoring();
     }else{
         if(unit_server_parent_unique_id.size()) {
             //remove old unit server for healt
-            ui->labelUnitServerStatus->stopMonitoring();
+            ui->labelUnitServerState->deinitChaosContent();
+            ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(unit_server_parent_unique_id.toStdString(),
+                                                                                  node_monitor::ControllerTypeNode,
+                                                                                  this);
             ui->ledIndicatorHealtTSUnitServer->deinitChaosContent();
         }
-        ui->labelControlUnitStatus->stopMonitoring();
+        ui->labelControlUnitState->deinitChaosContent();
+        ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(control_unit_unique_id.toStdString(),
+                                                                              node_monitor::ControllerTypeNode,
+                                                                              this);
         ui->labelRunScheduleDelaySet->stopMonitoring();
         ui->ledIndicatorHealtTSControlUnit->deinitChaosContent();
         ui->chaosLabelDSOutputPushRate->stopMonitoring();
     }
 }
 
-
-void ControlUnitEditor::changedOnlineStatus(const QString& node_uid,
-                                            node_monitor::OnlineState node_alive_state) {
-    if(node_uid.compare(control_unit_unique_id) == 0) {
-        //state changed for control unit
-        qDebug()<< "change cu online status for:" << node_uid << " as:" <<getStatusString(ui->ledIndicatorHealtTSControlUnit->getState());
-        logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(ui->ledIndicatorHealtTSControlUnit->getState()));
-        updateAllControlUnitInfomration();
-    } else if(node_uid.compare(unit_server_parent_unique_id) == 0) {
-        //state changed for unit server
-        qDebug()<< "change us online status for:" << node_uid << " as:" <<getStatusString(ui->ledIndicatorHealtTSUnitServer->getState());
-        logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(ui->ledIndicatorHealtTSUnitServer->getState()));
-    }
-}
-
-void ControlUnitEditor::controlUnitStatusChanged(const QString& control_unit_id,
-                                                 const QString& status) {
-    qDebug()<< "changed status for:" << control_unit_id << " as:" <<status;
-    if(status.compare(tr(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT)) == 0) {
-        submitApiResult(QString(TAG_CU_DATASET),
-                        GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(control_unit_unique_id.toStdString()));
-    }
-}
-
-void ControlUnitEditor::changedNodeState(const QString& node_uid,
-                                         const QString& value) {
-    if(node_uid.compare(control_unit_unique_id) == 0) {
-        //state changed for control unit
-        qDebug()<< "change cu state for:" << node_uid << " as:" <<value;
-        logic_switch_aggregator.broadcastCurrentValueForKey("cu_state", value);
-    } else if(node_uid.compare(unit_server_parent_unique_id) == 0) {
-        //state changed for unit server
-        qDebug()<< "change us state for:" << node_uid << " as:" <<value;
-        logic_switch_aggregator.broadcastCurrentValueForKey("us_state", value);
-    }
-}
 
 bool ControlUnitEditor::isClosing() {
     //disable resource widget
@@ -305,14 +257,14 @@ bool ControlUnitEditor::isClosing() {
 
 QString ControlUnitEditor::getStatusString(int status) {
     switch(status) {
-    case chaos::metadata_service_client::node_monitor::OnlineStateNotFound:
-    case chaos::metadata_service_client::node_monitor::OnlineStateUnknown:
+    case OnlineStateNotFound:
+    case OnlineStateUnknown:
         return QString("not_found");
         break;
-    case chaos::metadata_service_client::node_monitor::OnlineStateOFF:
+    case OnlineStateOFF:
         return QString("offline");
         break;
-    case chaos::metadata_service_client::node_monitor::OnlineStateON:
+    case OnlineStateON:
         return QString("online");
         break;
     }
@@ -337,13 +289,19 @@ void ControlUnitEditor::onApiDone(const QString& tag,
                 //whe ahve unit server changed
                 if(unit_server_parent_unique_id.size()) {
                     //remove old unit server for healt
-                    ui->labelUnitServerStatus->stopMonitoring();
+                    ui->labelUnitServerState->deinitChaosContent();
+                    ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(unit_server_parent_unique_id.toStdString(),
+                                                                                          node_monitor::ControllerTypeNode,
+                                                                                          this);
                     ui->ledIndicatorHealtTSUnitServer->deinitChaosContent();
                 }
                 unit_server_parent_unique_id = new_u_s;
 
-                ui->labelUnitServerStatus->setNodeUniqueID(unit_server_parent_unique_id);
-                ui->labelUnitServerStatus->startMonitoring();
+                ui->labelUnitServerState->setNodeUID(unit_server_parent_unique_id);
+                ui->labelUnitServerState->initChaosContent();
+                ChaosMetadataServiceClient::getInstance()->addHandlerToNodeMonitor(unit_server_parent_unique_id.toStdString(),
+                                                                                   node_monitor::ControllerTypeNode,
+                                                                                   this);
 
                 ui->ledIndicatorHealtTSUnitServer->setNodeUID(unit_server_parent_unique_id);
                 ui->ledIndicatorHealtTSUnitServer->initChaosContent();
@@ -385,53 +343,6 @@ void ControlUnitEditor::fillInfo(const QSharedPointer<chaos::common::data::CData
     }
 }
 
-void ControlUnitEditor::monitorHandlerUpdateAttributeValue(const QString& key,
-                                                           const QString& attribute_name,
-                                                           const QVariant& attribute_value) {
-    if(key.startsWith(getHealttKeyFromNodeKey(control_unit_unique_id))) {
-        if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
-            //print the status
-            if(attribute_value.isNull()) {
-                ui->labelControlUnitStatus->setText(tr(""));
-            }else{
-                ui->labelControlUnitStatus->setText(attribute_value.toString());
-            }
-            //broadcast cu status to switch
-            logic_switch_aggregator.broadcastCurrentValueForKey("cu_state", attribute_value.toString());
-            if( attribute_value.toString().compare(tr("Load"))==0){
-                bool current_relevated_online_status = ui->ledIndicatorHealtTSControlUnit->getState()==2;
-                if(current_relevated_online_status != last_online_state) {
-                    if(current_relevated_online_status) {
-                        //we need to reload all information
-                        updateAllControlUnitInfomration();
-                    }
-                    last_online_state = current_relevated_online_status;
-                }
-            }
-        } else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0){
-            //print the timestamp and update the red/green indicator
-            //ui->ledIndicatorHealtTSControlUnit->setNewTS(attribute_value.toULongLong());
-            ////broadcast cu status to switch
-            logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(ui->ledIndicatorHealtTSControlUnit->getState()));
-        }
-    } else if(key.startsWith(unit_server_parent_unique_id)) {
-        //show healt for unit server
-        if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS) == 0) {
-            //print the status
-            if(attribute_value.isNull()) {
-                ui->labelUnitServerStatus->setText(tr(""));
-            }else{
-                ui->labelUnitServerStatus->setText(attribute_value.toString());
-            }
-            logic_switch_aggregator.broadcastCurrentValueForKey("us_state", attribute_value.toString());
-        } else if(attribute_name.compare(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) == 0){
-            //print the timestamp and update the red/green indicator
-            // ui->ledIndicatorHealtTSUnitServer->setNewTS(attribute_value.toULongLong());
-            logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(ui->ledIndicatorHealtTSUnitServer->getState()));
-        }
-    }
-}
-
 void ControlUnitEditor::templateSaved(const QString& tempalte_name,
                                       const QString& command_uid) {
     //after temaplte has been saved update the search
@@ -440,9 +351,9 @@ void ControlUnitEditor::templateSaved(const QString& tempalte_name,
 
 void ControlUnitEditor::onLogicSwitchChangeState(const QString& switch_name,
                                                  bool switch_activate) {
-//    if(switch_name.compare("unload") == 0) {
-//        updateAllControlUnitInfomration();
-//    }
+    //    if(switch_name.compare("unload") == 0) {
+    //        updateAllControlUnitInfomration();
+    //    }
 }
 
 void ControlUnitEditor::handleSelectionChangedOnListWiew(const QItemSelection& selection,
@@ -602,7 +513,6 @@ void ControlUnitEditor::on_pushButtonRecoverError_clicked() {
 }
 
 void ControlUnitEditor::on_pushButtonOpenInstanceEditor_clicked() {
-    qDebug() << "Open instance editor for control unit:"<< control_unit_unique_id << " and unit server:" << unit_server_parent_unique_id;
     addWidgetToPresenter(new ControUnitInstanceEditor(unit_server_parent_unique_id,
                                                       control_unit_unique_id,
                                                       true));
@@ -616,4 +526,48 @@ void ControlUnitEditor::tabIndexChanged(int new_index) {
     default:
         break;
     }
+}
+
+//node monitor inherited method
+
+void ControlUnitEditor::nodeChangedOnlineState(const std::string& node_uid,
+                                               OnlineState old_state,
+                                               OnlineState new_state) {
+    if(node_uid.compare(control_unit_unique_id.toStdString()) == 0) {
+        //state changed for control unit
+        logic_switch_aggregator.broadcastCurrentValueForKey("cu_alive", getStatusString(new_state));
+
+        updateAllControlUnitInfomration();
+    } else if(node_uid.compare(unit_server_parent_unique_id.toStdString()) == 0) {
+        //state changed for unit server
+        logic_switch_aggregator.broadcastCurrentValueForKey("us_alive", getStatusString(new_state));
+    }
+
+
+}
+
+void ControlUnitEditor::nodeChangedInternalState(const std::string& node_uid,
+                                                 const std::string& old_state,
+                                                 const std::string& new_state) {
+    if(node_uid.compare(control_unit_unique_id.toStdString()) == 0) {
+        logic_switch_aggregator.broadcastCurrentValueForKey("cu_state",  QString::fromStdString(new_state));
+        if(new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT) == 0) {
+            //update
+            submitApiResult(QString(TAG_CU_DATASET),
+                            GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(control_unit_unique_id.toStdString()));
+        }
+
+        //broadcast cu status to switch
+    } else if(node_uid.compare(unit_server_parent_unique_id.toStdString()) == 0) {
+        //state changed for unit server
+        logic_switch_aggregator.broadcastCurrentValueForKey("us_state", QString::fromStdString(new_state));
+    }
+}
+
+
+
+void ControlUnitEditor::handlerHasBeenRegistered(const std::string& node_uid,
+                                                 const HealthInformation& current_health_state) {
+    nodeChangedOnlineState(node_uid, current_health_state.online_state, current_health_state.online_state);
+    nodeChangedInternalState(node_uid, current_health_state.internal_state, current_health_state.internal_state);
 }

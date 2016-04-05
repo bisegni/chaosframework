@@ -113,8 +113,18 @@ int main(int argc, char *argv[]){
             case 2:{
                 std::cout << "Start node monitor library test" << std::endl;
                 {
-                    NodeMonitorHandlerTest nmt(device_id);
+                    std::auto_ptr<NodeMonitorHandlerTest> nmt[255];
+                    for(int idx = 0;
+                        idx < 254;
+                        idx++) {
+                        nmt[idx].reset(new NodeMonitorHandlerTest(device_id));
+                    }
                     sleep(wait_seconds);
+                    for(int idx = 0;
+                        idx < 254;
+                        idx++) {
+                        nmt[idx].reset();
+                    }
                 }
                 std::cout << "End node monitor library test" << std::endl;
             }

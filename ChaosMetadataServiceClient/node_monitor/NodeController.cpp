@@ -143,6 +143,7 @@ void NodeController::quantumSlotHasNoData(const std::string& key) {
 
 void NodeController::_resetHealth() {
     health_info.online_state = OnlineStateUnknown;
+    health_info.internal_state = "Undefined";
     health_info.process_resource.uptime = 0;
     health_info.process_resource.usr_res = 0.0;
     health_info.process_resource.sys_res = 0.0;
@@ -169,12 +170,13 @@ void NodeController::_setOnlineState(const OnlineState new_online_state) {
                                           health_info.online_state,
                                           new_online_state);
         }
+        health_info.online_state = new_online_state;
     }
-    health_info.online_state = new_online_state;
 }
 
 
 void NodeController::_setNodeInternalState(const std::string& new_internal_state) {
+    boost::unique_lock<boost::mutex> wl(list_handler_mutex);
     if(health_info.internal_state != new_internal_state) {
         boost::unique_lock<boost::mutex> wl(list_handler_mutex);
         for(MonitoHandlerListIterator it = list_handler.begin(),
@@ -186,9 +188,8 @@ void NodeController::_setNodeInternalState(const std::string& new_internal_state
                                                             health_info.internal_state,
                                                             new_internal_state););
         }
+        health_info.internal_state = new_internal_state;
     }
-    health_info.internal_state = new_internal_state;
-    
 }
 
 void NodeController::_setError(const ErrorInformation& new_error_information) {
@@ -206,8 +207,8 @@ void NodeController::_setError(const ErrorInformation& new_error_information) {
                                                health_info.error_information,
                                                new_error_information);
         }
+        health_info.error_information = new_error_information;
     }
-    health_info.error_information = new_error_information;
 }
 
 void NodeController::_setProcessResource(const ProcessResource& new_process_resource) {
@@ -226,8 +227,8 @@ void NodeController::_setProcessResource(const ProcessResource& new_process_reso
                                               health_info.process_resource,
                                               new_process_resource);
         }
+        health_info.process_resource = new_process_resource;
     }
-    health_info.process_resource = new_process_resource;
 }
 
 bool NodeController::addHandler(NodeMonitorHandler *handler_to_add) {

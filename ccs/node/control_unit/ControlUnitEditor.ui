@@ -185,7 +185,7 @@
         <number>4</number>
        </property>
        <item row="0" column="3">
-        <widget class="ChaosLabel" name="labelControlUnitStatus">
+        <widget class="CNodeStateLabel" name="labelControlUnitState">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -224,7 +224,7 @@
         </widget>
        </item>
        <item row="0" column="7">
-        <widget class="ChaosLabel" name="labelUnitServerStatus">
+        <widget class="CNodeStateLabel" name="labelUnitServerState">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -1188,9 +1188,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ChaosLabel</class>
+   <class>CNodeResourceWidget</class>
+   <extends>QWidget</extends>
+   <header>widget/CNodeResourceWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CNodeStateLabel</class>
    <extends>QLabel</extends>
-   <header>widget/ChaosLabel.h</header>
+   <header>widget/CNodeStateLabel.h</header>
   </customwidget>
   <customwidget>
    <class>ChaosDatasetLabel</class>
@@ -1206,12 +1212,6 @@
    <class>CNodeLogWidget</class>
    <extends>QWidget</extends>
    <header>widget/CNodeLogWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CNodeResourceWidget</class>
-   <extends>QWidget</extends>
-   <header>widget/CNodeResourceWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
