@@ -67,28 +67,31 @@ void NodeController::updateData() {
     if(last_recevied_ts == 0) {
         last_recevied_ts = received_ts;
         //unknown
-        _setOnlineStatus(OnlineStatusUnknown);
+        _setOnlineState(OnlineStateUnknown);
     } else {
         if((received_ts - last_recevied_ts) > 0) {
             //online
             was_online = true;
             zero_diff_count_on_ts = 0;
-            _setOnlineStatus(OnlineStatusON);
+            _setOnlineState(OnlineStateON);
         } else {
             if(((++zero_diff_count_on_ts > RETRY_TIME_FOR_OFFLINE) == true) ||
                (last_recevied_ts == 0)||
                (was_online == false)) {
                 //offline
-                _setOnlineStatus(OnlineStatusOFF);
+                _setOnlineState(OnlineStateOFF);
             } else {
                 if(last_recevied_ts == 0) {
                     //unknown
-                    _setOnlineStatus(OnlineStatusUnknown);
+                    _setOnlineState(OnlineStateUnknown);
                 }
             }
         }
+        //keep track of current timestamp
         last_recevied_ts = received_ts;
-        last_received_status = last_ds_healt->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS);
+        
+        //update internal state
+        _setNodeInternalState(last_ds_healt->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
         
         if(last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
            last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
@@ -133,13 +136,14 @@ void NodeController::quantumSlotHasData(const std::string& key,
 }
 
 void NodeController::quantumSlotHasNoData(const std::string& key) {
-    _setOnlineStatus(OnlineStatusNotFound);
+    _setOnlineState(OnlineStateNotFound);
     //reset all states
     _resetHealth();
 }
 
 void NodeController::_resetHealth() {
-    health_info.online_status = OnlineStatusUnknown;
+    health_info.online_state = OnlineStateUnknown;
+    health_info.process_resource.uptime = 0;
     health_info.process_resource.usr_res = 0.0;
     health_info.process_resource.sys_res = 0.0;
     health_info.process_resource.swp_res = 0.0;
@@ -153,20 +157,38 @@ void NodeController::_resetHealth() {
     was_online = false;
 }
 
-void NodeController::_setOnlineStatus(const OnlineStatus new_online_status) {
-    if(health_info.online_status != new_online_status) {
+void NodeController::_setOnlineState(const OnlineState new_online_state) {
+    if(health_info.online_state != new_online_state) {
         boost::unique_lock<boost::mutex> wl(list_handler_mutex);
         for(MonitoHandlerListIterator it = list_handler.begin(),
             it_end = list_handler.end();
             it != it_end;
             it++) {
             //notify listers that online status has been changed
-            (*it)->nodeChangedOnlineStatus(node_uid,
-                                           health_info.online_status,
-                                           new_online_status);
+            (*it)->nodeChangedOnlineState(node_uid,
+                                          health_info.online_state,
+                                          new_online_state);
         }
     }
-    health_info.online_status = new_online_status;
+    health_info.online_state = new_online_state;
+}
+
+
+void NodeController::_setNodeInternalState(const std::string& new_internal_state) {
+    if(health_info.internal_state != new_internal_state) {
+        boost::unique_lock<boost::mutex> wl(list_handler_mutex);
+        for(MonitoHandlerListIterator it = list_handler.begin(),
+            it_end = list_handler.end();
+            it != it_end;
+            it++) {
+            //notify listers that online status has been changed
+            CHAOS_NOT_THROW((*it)->nodeChangedInternalState(node_uid,
+                                                            health_info.internal_state,
+                                                            new_internal_state););
+        }
+    }
+    health_info.internal_state = new_internal_state;
+    
 }
 
 void NodeController::_setError(const ErrorInformation& new_error_information) {

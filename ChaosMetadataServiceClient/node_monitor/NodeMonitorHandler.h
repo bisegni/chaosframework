@@ -39,20 +39,24 @@ namespace chaos {
                 virtual ~NodeMonitorHandler();
                 
                 //! called when an online state has changed
-                virtual void nodeChangedOnlineStatus(const std::string& node_uid,
-                                                     OnlineStatus old_status,
-                                                     OnlineStatus new_status) = 0;
+                virtual void nodeChangedOnlineState(const std::string& node_uid,
+                                                    OnlineState old_status,
+                                                    OnlineState new_status);
+                
+                virtual void nodeChangedInternalState(const std::string& node_uid,
+                                                      const std::string& old_status,
+                                                      const std::string& new_status);
                 
                 virtual void nodeChangedProcessResource(const std::string& node_uid,
                                                         const ProcessResource& old_proc_res,
-                                                        const ProcessResource& new_proc_res) = 0;
+                                                        const ProcessResource& new_proc_res);
                 
                 virtual void nodeChangedErrorInformation(const std::string& node_uid,
                                                          const ErrorInformation& old_status,
-                                                         const ErrorInformation& new_status) = 0;
+                                                         const ErrorInformation& new_status);
                 
                 virtual void handlerHasBeenRegistered(const std::string& node_uid,
-                                                      const HealthInformation& current_health_status) = 0;
+                                                      const HealthInformation& current_health_status);
             };
             
             struct NodeMonitorHandlerComparator {

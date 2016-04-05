@@ -58,9 +58,10 @@ namespace chaos {
                 chaos::metadata_service_client::monitor_system::KeyValue last_ds_healt;
                 
                 inline void _resetHealth();
-                inline void _setOnlineStatus(const OnlineStatus new_online_status);
+                inline void _setOnlineState(const OnlineState new_online_state);
+                inline void _setNodeInternalState(const std::string& new_internal_state);
                 inline void _setError(const ErrorInformation& new_error_information);
-                inline void _setProcessResource(const ProcessResource& new_process_resource);\
+                inline void _setProcessResource(const ProcessResource& new_process_resource);
                 void updateData();
             protected:
                 //the list of all registered handlers

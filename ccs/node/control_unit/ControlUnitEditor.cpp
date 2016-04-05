@@ -160,7 +160,7 @@ void ControlUnitEditor::initUI() {
 
     //setup chaos widget
     //cu helat indicator
-    ui->ledIndicatorHealtTSControlUnit->setNodeUniqueID(control_unit_unique_id);
+    ui->ledIndicatorHealtTSControlUnit->setNodeUID(control_unit_unique_id);
 
     //control unit status
     ui->labelControlUnitStatus->setNodeUniqueID(control_unit_unique_id);
@@ -238,7 +238,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
     if(start){
         ui->labelControlUnitStatus->startMonitoring();
         ui->labelRunScheduleDelaySet->startMonitoring();
-        ui->ledIndicatorHealtTSControlUnit->startMonitoring();
+        ui->ledIndicatorHealtTSControlUnit->initChaosContent();
         ui->chaosLabelDSOutputPushRate->startMonitoring();
     }else{
         if(unit_server_parent_unique_id.size()) {
@@ -248,14 +248,14 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         }
         ui->labelControlUnitStatus->stopMonitoring();
         ui->labelRunScheduleDelaySet->stopMonitoring();
-        ui->ledIndicatorHealtTSControlUnit->stopMonitoring();
+        ui->ledIndicatorHealtTSControlUnit->deinitChaosContent();
         ui->chaosLabelDSOutputPushRate->stopMonitoring();
     }
 }
 
 
 void ControlUnitEditor::changedOnlineStatus(const QString& node_uid,
-                                            node_monitor::OnlineStatus node_alive_state) {
+                                            node_monitor::OnlineState node_alive_state) {
     if(node_uid.compare(control_unit_unique_id) == 0) {
         //state changed for control unit
         qDebug()<< "change cu online status for:" << node_uid << " as:" <<getStatusString(ui->ledIndicatorHealtTSControlUnit->getState());
@@ -305,14 +305,14 @@ bool ControlUnitEditor::isClosing() {
 
 QString ControlUnitEditor::getStatusString(int status) {
     switch(status) {
-    case chaos::metadata_service_client::node_monitor::OnlineStatusNotFound:
-    case chaos::metadata_service_client::node_monitor::OnlineStatusUnknown:
+    case chaos::metadata_service_client::node_monitor::OnlineStateNotFound:
+    case chaos::metadata_service_client::node_monitor::OnlineStateUnknown:
         return QString("not_found");
         break;
-    case chaos::metadata_service_client::node_monitor::OnlineStatusOFF:
+    case chaos::metadata_service_client::node_monitor::OnlineStateOFF:
         return QString("offline");
         break;
-    case chaos::metadata_service_client::node_monitor::OnlineStatusON:
+    case chaos::metadata_service_client::node_monitor::OnlineStateON:
         return QString("online");
         break;
     }

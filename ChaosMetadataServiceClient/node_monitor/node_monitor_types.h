@@ -32,11 +32,11 @@ namespace chaos {
         namespace node_monitor {
             
             typedef enum {
-                OnlineStatusNotFound,
-                OnlineStatusUnknown,
-                OnlineStatusON,
-                OnlineStatusOFF
-            } OnlineStatus;
+                OnlineStateNotFound,
+                OnlineStateUnknown,
+                OnlineStateON,
+                OnlineStateOFF
+            } OnlineState;
             
             typedef struct ProcessResource{
                 uint64_t            uptime;
@@ -70,14 +70,16 @@ namespace chaos {
             } ErrorInformation;
             
             struct HealthInformation {
-                OnlineStatus        online_status;
+                OnlineState         online_state;
+                std::string         internal_state;
                 ProcessResource     process_resource;
                 ErrorInformation    error_information;
                 
                 HealthInformation& operator=(const HealthInformation& other) {
                     if (this == &other) return *this;
                     
-                    online_status = other.online_status;
+                    online_state = other.online_state;
+                    internal_state = other.internal_state;
                     process_resource = other.process_resource;
                     error_information = other.error_information;
                     return *this;

@@ -10,22 +10,23 @@
 
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
+using namespace chaos::metadata_service_client::node_monitor;
 
-std::string getStatusDesc(chaos::metadata_service_client::node_monitor::OnlineStatus status){
+std::string getStatusDesc(chaos::metadata_service_client::node_monitor::OnlineState status){
     switch(status){
-        case chaos::metadata_service_client::node_monitor::OnlineStatusUnknown:
+        case chaos::metadata_service_client::node_monitor::OnlineStateUnknown:
             return "Unknown";
             break;
             
-        case chaos::metadata_service_client::node_monitor::OnlineStatusON:
+        case chaos::metadata_service_client::node_monitor::OnlineStateON:
             return "Status ON";
             break;
             
-        case chaos::metadata_service_client::node_monitor::OnlineStatusOFF:
+        case chaos::metadata_service_client::node_monitor::OnlineStateOFF:
             return "Status OFF";
             break;
             
-        case chaos::metadata_service_client::node_monitor::OnlineStatusNotFound:
+        case chaos::metadata_service_client::node_monitor::OnlineStateNotFound:
             return "No status data found";
             break;
     }
@@ -65,12 +66,17 @@ NodeMonitorHandlerTest::~NodeMonitorHandlerTest() {
                                                                           this);
 }
 
-using namespace chaos::metadata_service_client::node_monitor;
+void NodeMonitorHandlerTest::nodeChangedOnlineState(const std::string& node_uid,
+                                                    OnlineState old_status,
+                                                    OnlineState new_status) {
+    LAPP_ << "nodeChangedOnlineState: " << getStatusDesc(new_status)<<"["<<getStatusDesc(old_status)<<"]";
+}
 
-void NodeMonitorHandlerTest::nodeChangedOnlineStatus(const std::string& node_uid,
-                                                     OnlineStatus old_status,
-                                                     OnlineStatus new_status) {
-    LAPP_ << "nodeChangedOnlineStatus: " << getStatusDesc(new_status)<<"["<<getStatusDesc(old_status)<<"]";
+
+void NodeMonitorHandlerTest::nodeChangedInternalState(const std::string& node_uid,
+                                                      const std::string& old_status,
+                                                      const std::string& new_status) {
+    LAPP_ << "nodeChangedInternalState: " << new_status<<"["<<old_status<<"]";
 }
 
 void NodeMonitorHandlerTest::nodeChangedProcessResource(const std::string& node_uid,

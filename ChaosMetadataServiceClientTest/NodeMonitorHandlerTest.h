@@ -16,9 +16,13 @@ public chaos::metadata_service_client::node_monitor::ControlUnitMonitorHandler {
     const std::string node_uid;
 protected:
     //! called when an online state has changed
-    void nodeChangedOnlineStatus(const std::string& node_uid,
-                                 chaos::metadata_service_client::node_monitor::OnlineStatus old_status,
-                                 chaos::metadata_service_client::node_monitor::OnlineStatus new_status);
+    void nodeChangedOnlineState(const std::string& node_uid,
+                                 chaos::metadata_service_client::node_monitor::OnlineState old_status,
+                                 chaos::metadata_service_client::node_monitor::OnlineState new_status);
+    
+    void nodeChangedInternalState(const std::string& node_uid,
+                                  const std::string& old_status,
+                                  const std::string& new_status);
     
     void nodeChangedProcessResource(const std::string& node_uid,
                                     const chaos::metadata_service_client::node_monitor::ProcessResource& old_proc_res,

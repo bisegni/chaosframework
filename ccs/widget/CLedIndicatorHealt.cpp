@@ -35,25 +35,27 @@ void CLedIndicatorHealt::updateChaosContent() {
 
 }
 
-void CLedIndicatorHealt::updateStatusInfo() {
+void CLedIndicatorHealt::updateUIStatus() {
+    qDebug()<< "updateUIStatus";
+
     switch(alive_state) {
-    case chaos::metadata_service_client::node_monitor::OnlineStatusNotFound:
-    case chaos::metadata_service_client::node_monitor::OnlineStatusUnknown:
+    case chaos::metadata_service_client::node_monitor::OnlineStateNotFound:
+    case chaos::metadata_service_client::node_monitor::OnlineStateUnknown:
         setState(0);
         break;
-    case chaos::metadata_service_client::node_monitor::OnlineStatusOFF:
+    case chaos::metadata_service_client::node_monitor::OnlineStateOFF:
         setState(1);
         break;
-    case chaos::metadata_service_client::node_monitor::OnlineStatusON:
+    case chaos::metadata_service_client::node_monitor::OnlineStateON:
         setState(2);
         break;
     }
 }
 
-void CLedIndicatorHealt::nodeChangedOnlineStatus(const std::string& node_uid,
-                                                 chaos::metadata_service_client::node_monitor::OnlineStatus old_status,
-                                                 chaos::metadata_service_client::node_monitor::OnlineStatus new_status) {
-    alive_state = new_status;
+void CLedIndicatorHealt::nodeChangedOnlineState(const std::string& node_uid,
+                                                 chaos::metadata_service_client::node_monitor::OnlineState old_state,
+                                                 chaos::metadata_service_client::node_monitor::OnlineState new_state) {
+    alive_state = new_state;
     QMetaObject::invokeMethod(this,
                               "updateUIStatus",
                               Qt::QueuedConnection);
@@ -61,21 +63,9 @@ void CLedIndicatorHealt::nodeChangedOnlineStatus(const std::string& node_uid,
                              alive_state);
 }
 
-void CLedIndicatorHealt::nodeChangedProcessResource(const std::string& node_uid,
-                                                    const chaos::metadata_service_client::node_monitor::ProcessResource& old_proc_res,
-                                                    const chaos::metadata_service_client::node_monitor::ProcessResource& new_proc_res) {
-
-}
-
-void CLedIndicatorHealt::nodeChangedErrorInformation(const std::string& node_uid,
-                                                     const chaos::metadata_service_client::node_monitor::ErrorInformation& old_error_information,
-                                                     const chaos::metadata_service_client::node_monitor::ErrorInformation& new_error_information) {
-
-}
-
 void CLedIndicatorHealt::handlerHasBeenRegistered(const std::string& node_uid,
                                                   const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_status) {
-    alive_state = current_health_status.online_status;
+    alive_state = current_health_status.online_state;
     QMetaObject::invokeMethod(this,
                               "updateUIStatus",
                               Qt::QueuedConnection);

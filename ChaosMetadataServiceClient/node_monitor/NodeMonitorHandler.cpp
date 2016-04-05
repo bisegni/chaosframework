@@ -26,10 +26,35 @@ using namespace chaos::metadata_service_client::node_monitor;
 
 
 NodeMonitorHandler::NodeMonitorHandler():
-handler_uuid(chaos::common::utility::UUIDUtil::generateUUIDLite()){
+handler_uuid(chaos::common::utility::UUIDUtil::generateUUIDLite()){}
+
+NodeMonitorHandler::~NodeMonitorHandler() {}
+
+void NodeMonitorHandler::nodeChangedOnlineState(const std::string& node_uid,
+                                                OnlineState old_status,
+                                                OnlineState new_status) {
     
 }
 
-NodeMonitorHandler::~NodeMonitorHandler() {
+void NodeMonitorHandler::nodeChangedInternalState(const std::string& node_uid,
+                                                  const std::string& old_status,
+                                                  const std::string& new_status) {
+    
+}
+
+void NodeMonitorHandler::nodeChangedProcessResource(const std::string& node_uid,
+                                                    const ProcessResource& old_proc_res,
+                                                    const ProcessResource& new_proc_res) {
+    
+}
+
+void NodeMonitorHandler::nodeChangedErrorInformation(const std::string& node_uid,
+                                                     const ErrorInformation& old_status,
+                                                     const ErrorInformation& new_status) {
+    
+}
+
+void NodeMonitorHandler::handlerHasBeenRegistered(const std::string& node_uid,
+                                                  const HealthInformation& current_health_status) {
     
 }

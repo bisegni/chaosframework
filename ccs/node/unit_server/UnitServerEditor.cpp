@@ -530,8 +530,8 @@ void UnitServerEditor::on_pushButtonRemoveCUType_clicked() {
 }
 
 void UnitServerEditor::changedNodeOnlineStatus(const QString& node_uid,
-                                               node_monitor::OnlineStatus alive_state) {
-    if(alive_state == chaos::metadata_service_client::node_monitor::OnlineStatusON) {
+                                               node_monitor::OnlineState alive_state) {
+    if(alive_state == chaos::metadata_service_client::node_monitor::OnlineStateON) {
         updateAll();
     }
 }

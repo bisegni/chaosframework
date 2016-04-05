@@ -23,26 +23,22 @@ public:
     void updateChaosContent();
 protected:
     //! called when an online state has changed
-    void nodeChangedOnlineStatus(const std::string& node_uid,
-                                 chaos::metadata_service_client::node_monitor::OnlineStatus old_status,
-                                 chaos::metadata_service_client::node_monitor::OnlineStatus new_status);
+    void nodeChangedOnlineState(const std::string& node_uid,
+                                chaos::metadata_service_client::node_monitor::OnlineState old_state,
+                                chaos::metadata_service_client::node_monitor::OnlineState new_state);
 
     void nodeChangedProcessResource(const std::string& node_uid,
                                     const chaos::metadata_service_client::node_monitor::ProcessResource& old_proc_res,
                                     const chaos::metadata_service_client::node_monitor::ProcessResource& new_proc_res);
 
-    void nodeChangedErrorInformation(const std::string& node_uid,
-                                     const chaos::metadata_service_client::node_monitor::ErrorInformation& old_error_information,
-                                     const chaos::metadata_service_client::node_monitor::ErrorInformation& new_error_information);
-
     void handlerHasBeenRegistered(const std::string& node_uid,
-                                  const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_status);
+                                  const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_state);
 protected slots:
-    void updateUIStatus();
+    void updateUIState();
     void updateUIResource();
     void updateUIErrorInformation();
 private:
-    chaos::metadata_service_client::node_monitor::OnlineStatus current_status;
+    chaos::metadata_service_client::node_monitor::OnlineState current_state;
     chaos::metadata_service_client::node_monitor::ProcessResource current_resource;
     chaos::metadata_service_client::node_monitor::ErrorInformation current_error_information;
     Ui::CNodeResourceWidget *ui;

@@ -27,10 +27,9 @@ void CNodeResourceWidget::updateChaosContent() {
 
 }
 
-void CNodeResourceWidget::updateUIStatus() {
-    qDebug()<< "updateUIStatus";
-    switch(current_status) {
-    case chaos::metadata_service_client::node_monitor::OnlineStatusNotFound: {
+void CNodeResourceWidget::updateUIState() {
+    switch(current_state) {
+    case chaos::metadata_service_client::node_monitor::OnlineStateNotFound: {
         ui->labelUsrProc->setText(tr("---"));
         ui->labelSysProc->setText(tr("---"));
         ui->labelSwapProc->setText(tr("---"));
@@ -38,9 +37,9 @@ void CNodeResourceWidget::updateUIStatus() {
         this->setEnabled(false);
         break;
     }
-    case chaos::metadata_service_client::node_monitor::OnlineStatusUnknown:
-    case chaos::metadata_service_client::node_monitor::OnlineStatusOFF:
-    case chaos::metadata_service_client::node_monitor::OnlineStatusON:{
+    case chaos::metadata_service_client::node_monitor::OnlineStateUnknown:
+    case chaos::metadata_service_client::node_monitor::OnlineStateOFF:
+    case chaos::metadata_service_client::node_monitor::OnlineStateON:{
         this->setEnabled(true);
         break;
     }
@@ -48,7 +47,6 @@ void CNodeResourceWidget::updateUIStatus() {
 }
 
 void CNodeResourceWidget::updateUIResource() {
-    qDebug()<< "updateUIResource";
     ui->labelUsrProc->setText(QString::number(current_resource.usr_res, 'f', 1 ));
     ui->labelSysProc->setText(QString::number(current_resource.sys_res, 'f', 1 ));
     ui->labelSwapProc->setText(QString::number(current_resource.swp_res));
@@ -75,12 +73,12 @@ QString CNodeResourceWidget::secondsToDHMS(uint64_t duration) {
 }
 
 //! called when an online state has changed
-void CNodeResourceWidget::nodeChangedOnlineStatus(const std::string& node_uid,
-                                                  chaos::metadata_service_client::node_monitor::OnlineStatus old_status,
-                                                  chaos::metadata_service_client::node_monitor::OnlineStatus new_status) {
-    current_status = new_status;
+void CNodeResourceWidget::nodeChangedOnlineState(const std::string& node_uid,
+                                                  chaos::metadata_service_client::node_monitor::OnlineState old_state,
+                                                  chaos::metadata_service_client::node_monitor::OnlineState new_state) {
+    current_state = new_state;
     QMetaObject::invokeMethod(this,
-                              "updateUIStatus",
+                              "updateUIState",
                               Qt::QueuedConnection);
 
 }
@@ -94,18 +92,13 @@ void CNodeResourceWidget::nodeChangedProcessResource(const std::string& node_uid
                               Qt::QueuedConnection);
 }
 
-void CNodeResourceWidget::nodeChangedErrorInformation(const std::string& node_uid,
-                                                      const chaos::metadata_service_client::node_monitor::ErrorInformation& old_error_information,
-                                                      const chaos::metadata_service_client::node_monitor::ErrorInformation& new_error_information) {
-}
-
 void CNodeResourceWidget::handlerHasBeenRegistered(const std::string& node_uid,
-                                                   const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_status) {
-    current_status = current_health_status.online_status;
+                                                   const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_state) {
+    current_state = current_health_state.online_state;
     QMetaObject::invokeMethod(this,
-                              "updateUIStatus",
+                              "updateUIState",
                               Qt::QueuedConnection);
-    current_resource = current_health_status.process_resource;
+    current_resource = current_health_state.process_resource;
     QMetaObject::invokeMethod(this,
                               "updateUIResource",
                               Qt::QueuedConnection);

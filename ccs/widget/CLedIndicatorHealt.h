@@ -19,29 +19,21 @@ public:
     void updateChaosContent();
 signals:
     void changedOnlineStatus(const QString& node_uid,
-                             chaos::metadata_service_client::node_monitor::OnlineStatus alive_state);
+                             chaos::metadata_service_client::node_monitor::OnlineState alive_state);
 
 protected:
-    void nodeChangedOnlineStatus(const std::string& node_uid,
-                                 chaos::metadata_service_client::node_monitor::OnlineStatus old_status,
-                                 chaos::metadata_service_client::node_monitor::OnlineStatus new_status);
-
-    void nodeChangedProcessResource(const std::string& node_uid,
-                                    const chaos::metadata_service_client::node_monitor::ProcessResource& old_proc_res,
-                                    const chaos::metadata_service_client::node_monitor::ProcessResource& new_proc_res);
-
-    void nodeChangedErrorInformation(const std::string& node_uid,
-                                     const chaos::metadata_service_client::node_monitor::ErrorInformation& old_error_information,
-                                     const chaos::metadata_service_client::node_monitor::ErrorInformation& new_error_information);
+    void nodeChangedOnlineState(const std::string& node_uid,
+                                 chaos::metadata_service_client::node_monitor::OnlineState old_status,
+                                 chaos::metadata_service_client::node_monitor::OnlineState new_status);
 
     void handlerHasBeenRegistered(const std::string& node_uid,
                                   const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_status);
 
 private slots:
-    void updateStatusInfo();
+    void updateUIStatus();
 
 private:
-    chaos::metadata_service_client::node_monitor::OnlineStatus alive_state;
+    chaos::metadata_service_client::node_monitor::OnlineState alive_state;
     QSharedPointer<QIcon> no_ts;
     QSharedPointer<QIcon> timeouted;
     QSharedPointer<QIcon> alive;
