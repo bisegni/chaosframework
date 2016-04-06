@@ -540,7 +540,7 @@
             </widget>
            </item>
            <item>
-            <widget class="ChaosHealtLabel" name="chaosLabelDSOutputPushRate">
+            <widget class="CNodeHealthLabel" name="chaosLabelDSOutputPushRate">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -1202,11 +1202,6 @@
    <class>ChaosDatasetLabel</class>
    <extends>QLabel</extends>
    <header>widget/ChaosDatasetLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ChaosHealtLabel</class>
-   <extends>QLabel</extends>
-   <header>widget/ChaosHealtLabel.h</header>
   </customwidget>
   <customwidget>
    <class>CNodeLogWidget</class>

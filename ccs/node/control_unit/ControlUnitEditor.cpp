@@ -168,10 +168,10 @@ void ControlUnitEditor::initUI() {
     ui->labelRunScheduleDelaySet->setDataset(ChaosDatasetLabel::DatasetSystem);
 
     //chaos label for the current output dataset push rate
-    ui->chaosLabelDSOutputPushRate->setNodeUniqueID(control_unit_unique_id);
-    ui->chaosLabelDSOutputPushRate->setAttributeName(chaos::ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE);
-    ui->chaosLabelDSOutputPushRate->setAttributeType(chaos::DataType::TYPE_DOUBLE);
-    ui->chaosLabelDSOutputPushRate->setDoublePrintPrecision(2);
+    ui->chaosLabelDSOutputPushRate->setNodeUID(control_unit_unique_id);
+    ui->chaosLabelDSOutputPushRate->setHealthAttribute(CNodeHealthLabel::HealthCustomAttribute);
+    ui->chaosLabelDSOutputPushRate->setCustomHealthAttribute(chaos::ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE);
+
     //thread schedule update
     ui->lineEditRunScheduleDelay->setValidator(new QIntValidator(0,60000000));
     // ui->listWidgetCommandList->setItemDelegate(new CommandItemDelegate(ui->listWidgetCommandList));
@@ -225,7 +225,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         ui->labelControlUnitState->initChaosContent();
         ui->labelRunScheduleDelaySet->startMonitoring();
         ui->ledIndicatorHealtTSControlUnit->initChaosContent();
-        ui->chaosLabelDSOutputPushRate->startMonitoring();
+        ui->chaosLabelDSOutputPushRate->initChaosContent();
     }else{
         if(unit_server_parent_unique_id.size()) {
             //remove old unit server for healt
@@ -241,7 +241,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
                                                                               this);
         ui->labelRunScheduleDelaySet->stopMonitoring();
         ui->ledIndicatorHealtTSControlUnit->deinitChaosContent();
-        ui->chaosLabelDSOutputPushRate->stopMonitoring();
+        ui->chaosLabelDSOutputPushRate->deinitChaosContent();
     }
 }
 
