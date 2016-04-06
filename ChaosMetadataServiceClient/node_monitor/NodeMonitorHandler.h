@@ -35,6 +35,7 @@ namespace chaos {
                 friend class NodeMonitorHandlerComparator;
                 const std::string handler_uuid;
             public:
+                static const char * const MAP_KEY_ONLINE_STATE;
                 NodeMonitorHandler();
                 virtual ~NodeMonitorHandler();
                 
@@ -55,8 +56,12 @@ namespace chaos {
                                                          const ErrorInformation& old_error_information,
                                                          const ErrorInformation& new_error_information);
                 
+                virtual void nodeChangedHealthDataset(const std::string& node_uid,
+                                                      MapDatasetKeyValues& map_health_dataset);
+                
                 virtual void handlerHasBeenRegistered(const std::string& node_uid,
-                                                      const HealthInformation& current_health_state);
+                                                      const HealthInformation& current_health_state,
+                                                      MapDatasetKeyValues& map_health_dataset);
             };
             
             struct NodeMonitorHandlerComparator {

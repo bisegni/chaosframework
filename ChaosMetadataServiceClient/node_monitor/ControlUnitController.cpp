@@ -26,10 +26,6 @@
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::node_monitor;
 
-#define CHECK_DS_CHANGED(x, v)\
-if((x.get() == NULL) || \
-((x.get() != NULL) && (x->toHash().compare(v->toHash()) != 0)))
-
 ControlUnitController::ControlUnitController(const std::string& _node_uid):
 NodeController(_node_uid),
 cu_output_ds_key(getNodeUID()+chaos::DataPackPrefixID::OUTPUT_DATASE_PREFIX),

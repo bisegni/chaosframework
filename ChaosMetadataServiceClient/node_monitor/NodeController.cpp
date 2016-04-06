@@ -27,6 +27,7 @@
 #define NC_LDBG DBG_LOG(NodeController)
 #define NC_LERR ERR_LOG(NodeController)
 
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::node_monitor;
 using namespace chaos::metadata_service_client::monitor_system;
 
@@ -62,6 +63,41 @@ void NodeController::updateData() {
     //check for mandatory key
     if(!last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) ||
        !last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS)) return;
+    
+    map_ds_health.clear();
+    
+    
+    int value_type = 0;
+    std::vector<std::string> key_names;
+    last_ds_healt->getAllKey(key_names);
+    for(std::vector<std::string>::iterator it = key_names.begin(),
+        end = key_names.end();
+        it != end;
+        it++) {
+        switch((value_type = last_ds_healt->getValueType(*it))) {
+            case CDataWrapperTypeBool:
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getBoolValue(*it));
+                break;
+            case CDataWrapperTypeInt32:
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getInt32Value(*it));
+                break;
+            case CDataWrapperTypeInt64:
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getInt64Value(*it));
+                break;
+            case CDataWrapperTypeDouble:
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getDoubleValue(*it));
+                break;
+            case CDataWrapperTypeString:
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getStringValue(*it));
+                break;
+            case CDataWrapperTypeBinary:
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getBinaryValueAsCDataBuffer(*it));
+                break;
+                
+            default:
+                break;
+        }
+    }
     
     uint64_t received_ts = last_ds_healt->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP);
     if(last_recevied_ts == 0) {
@@ -125,23 +161,27 @@ void NodeController::updateData() {
             _setProcessResource(ProcessResource());
         }
     }
+    
+    _fireHealthDatasetChanged();
 }
 
 void NodeController::quantumSlotHasData(const std::string& key,
                                         const monitor_system::KeyValue& value) {
     //check for monitored key
     if(key.compare(node_health_uid) != 0) return;
+    //update internal structure
     last_ds_healt = value;
+    //reset all states
     updateData();
+    
 }
 
 void NodeController::quantumSlotHasNoData(const std::string& key) {
     _setOnlineState(OnlineStateNotFound);
-    //reset all states
-    _resetHealth();
 }
 
 void NodeController::_resetHealth() {
+    map_ds_health.clear();
     health_info.online_state = OnlineStateUnknown;
     health_info.internal_state = "Undefined";
     health_info.process_resource.uptime = 0;
@@ -158,6 +198,18 @@ void NodeController::_resetHealth() {
     was_online = false;
 }
 
+void NodeController::_fireHealthDatasetChanged(){
+    boost::unique_lock<boost::mutex> wl(list_handler_mutex);
+    for(MonitoHandlerListIterator it = list_handler.begin(),
+        it_end = list_handler.end();
+        it != it_end;
+        it++) {
+        //notify listers that online status has been changed
+        CHAOS_NOT_THROW((*it)->nodeChangedHealthDataset(node_uid,
+                                                        map_ds_health););
+    }
+}
+
 void NodeController::_setOnlineState(const OnlineState new_online_state) {
     if(health_info.online_state != new_online_state) {
         boost::unique_lock<boost::mutex> wl(list_handler_mutex);
@@ -166,18 +218,19 @@ void NodeController::_setOnlineState(const OnlineState new_online_state) {
             it != it_end;
             it++) {
             //notify listers that online status has been changed
-            (*it)->nodeChangedOnlineState(node_uid,
-                                          health_info.online_state,
-                                          new_online_state);
+            CHAOS_NOT_THROW((*it)->nodeChangedOnlineState(node_uid,
+                                                          health_info.online_state,
+                                                          new_online_state););
         }
         health_info.online_state = new_online_state;
+        //add online state into map
+        map_ds_health[NodeMonitorHandler::MAP_KEY_ONLINE_STATE] = CDataVariant((int32_t)new_online_state);
     }
 }
 
 
 void NodeController::_setNodeInternalState(const std::string& new_internal_state) {
-    boost::unique_lock<boost::mutex> wl(list_handler_mutex);
-    if(health_info.internal_state != new_internal_state) {
+    if(health_info.internal_state.compare(new_internal_state) != 0) {
         boost::unique_lock<boost::mutex> wl(list_handler_mutex);
         for(MonitoHandlerListIterator it = list_handler.begin(),
             it_end = list_handler.end();
@@ -203,9 +256,9 @@ void NodeController::_setError(const ErrorInformation& new_error_information) {
             it != it_end;
             it++) {
             //notify listers that online status has been changed
-            (*it)->nodeChangedErrorInformation(node_uid,
-                                               health_info.error_information,
-                                               new_error_information);
+            CHAOS_NOT_THROW((*it)->nodeChangedErrorInformation(node_uid,
+                                                               health_info.error_information,
+                                                               new_error_information););
         }
         health_info.error_information = new_error_information;
     }
@@ -223,9 +276,9 @@ void NodeController::_setProcessResource(const ProcessResource& new_process_reso
             it != it_end;
             it++) {
             //notify listers that online status has been changed
-            (*it)->nodeChangedProcessResource(node_uid,
-                                              health_info.process_resource,
-                                              new_process_resource);
+            CHAOS_NOT_THROW((*it)->nodeChangedProcessResource(node_uid,
+                                                              health_info.process_resource,
+                                                              new_process_resource););
         }
         health_info.process_resource = new_process_resource;
     }
@@ -236,8 +289,9 @@ bool NodeController::addHandler(NodeMonitorHandler *handler_to_add) {
     if(list_handler.find(handler_to_add) != list_handler.end()) return false;
     list_handler.insert(handler_to_add);
     //fire current state to the handler
-    handler_to_add->handlerHasBeenRegistered(node_uid,
-                                             health_info);
+    CHAOS_NOT_THROW(handler_to_add->handlerHasBeenRegistered(node_uid,
+                                                             health_info,
+                                                             map_ds_health););
     return true;
 }
 

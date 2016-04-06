@@ -150,11 +150,15 @@ void ControlUnitEditor::initUI() {
     ui->ledIndicatorHealtTSUnitServer->setStateBlinkOnRepeatSet(2, true);
 
     //setup chaos widget
-    //cu helat indicator
+    //cu health indicator
     ui->ledIndicatorHealtTSControlUnit->setNodeUID(control_unit_unique_id);
 
     //control unit status
+    ui->labelControlUnitState->setHealthAttribute(CNodeHealthLabel::HealthOperationalState);
     ui->labelControlUnitState->setNodeUID(control_unit_unique_id);
+
+    //unit server state
+    ui->labelUnitServerState->setHealthAttribute(CNodeHealthLabel::HealthOperationalState);
 
     //chaos label for the current thread schedule delay
     ui->labelRunScheduleDelaySet->setNodeUniqueID(control_unit_unique_id);
@@ -567,7 +571,8 @@ void ControlUnitEditor::nodeChangedInternalState(const std::string& node_uid,
 
 
 void ControlUnitEditor::handlerHasBeenRegistered(const std::string& node_uid,
-                                                 const HealthInformation& current_health_state) {
+                                                 const HealthInformation& current_health_state,
+                                                 chaos::metadata_service_client::node_monitor::MapDatasetKeyValues &map_health_dataset) {
     nodeChangedOnlineState(node_uid, current_health_state.online_state, current_health_state.online_state);
     nodeChangedInternalState(node_uid, current_health_state.internal_state, current_health_state.internal_state);
 }

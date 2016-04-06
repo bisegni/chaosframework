@@ -32,6 +32,7 @@ HealtPresenterWidget::HealtPresenterWidget(CommandPresenter *_global_command_pre
     ui->ledIndicatorHealt->setNodeUID(node_uid);
     ui->ledIndicatorHealt->initChaosContent();
 
+    ui->labelStatus->setHealthAttribute(CNodeHealthLabel::HealthOperationalState);
     ui->labelStatus->setNodeUID(node_uid);
     ui->labelStatus->initChaosContent();
 

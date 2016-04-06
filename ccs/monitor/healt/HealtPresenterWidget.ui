@@ -98,7 +98,7 @@
       </widget>
      </item>
      <item>
-      <widget class="CNodeStateLabel" name="labelStatus">
+      <widget class="CNodeHealthLabel" name="labelStatus">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -243,15 +243,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>CNodeHealthLabel</class>
+   <extends>QLabel</extends>
+   <header>widget/CNodeHealthLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>CNodeResourceWidget</class>
    <extends>QWidget</extends>
    <header>widget/CNodeResourceWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CNodeStateLabel</class>
-   <extends>QLabel</extends>
-   <header>widget/CNodeStateLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

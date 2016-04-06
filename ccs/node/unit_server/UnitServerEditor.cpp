@@ -99,6 +99,7 @@ void UnitServerEditor::initUI() {
             SIGNAL(changedOnlineStatus(QString,CLedIndicatorHealt::AliveState)),
             SLOT(changedNodeOnlineStatus(QString,CLedIndicatorHealt::AliveState)));
     //start monitor on chaos ui
+    ui->chaosLabelHealthState->setHealthAttribute(CNodeHealthLabel::HealthOperationalState);
     ui->chaosLabelHealthState->initChaosContent();
     ui->chaosLedIndicatorHealt->initChaosContent();
     //load info

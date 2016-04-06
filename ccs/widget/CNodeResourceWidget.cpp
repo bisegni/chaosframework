@@ -93,7 +93,8 @@ void CNodeResourceWidget::nodeChangedProcessResource(const std::string& node_uid
 }
 
 void CNodeResourceWidget::handlerHasBeenRegistered(const std::string& node_uid,
-                                                   const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_state) {
+                                                   const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_state,
+                                                   chaos::metadata_service_client::node_monitor::MapDatasetKeyValues &map_health_dataset) {
     current_state = current_health_state.online_state;
     QMetaObject::invokeMethod(this,
                               "updateUIState",

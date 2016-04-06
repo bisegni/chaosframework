@@ -272,11 +272,15 @@ void QuantumSlotScheduler::addNewfetcherThread() {
 void QuantumSlotScheduler::dispath_new_value_async(const boost::system::error_code& error,
                                                    QuantumSlot *cur_slot,
                                                    const char *data_found) {
-    if(data_found) {
-        cur_slot->sendNewValueConsumer(KeyValue(new CDataWrapper(data_found)));
-        delete(data_found);
-    } else {
-        cur_slot->sendNoValueToConsumer();
+    try{
+        if(data_found) {
+            cur_slot->sendNewValueConsumer(KeyValue(new CDataWrapper(data_found)));
+            delete(data_found);
+        } else {
+            cur_slot->sendNoValueToConsumer();
+        }
+    }catch(...) {
+        QSS_ERR << "Exception during data forwarding";
     }
     //reset quantum
     boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_scan);

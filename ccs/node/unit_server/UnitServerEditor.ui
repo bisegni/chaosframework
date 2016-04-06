@@ -152,7 +152,7 @@
          </widget>
         </item>
         <item row="2" column="3">
-         <widget class="CNodeStateLabel" name="chaosLabelHealthState">
+         <widget class="CNodeHealthLabel" name="chaosLabelHealthState">
           <property name="text">
            <string>status</string>
           </property>
@@ -551,9 +551,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>CNodeStateLabel</class>
+   <class>CNodeHealthLabel</class>
    <extends>QLabel</extends>
-   <header>widget/CNodeStateLabel.h</header>
+   <header>widget/CNodeHealthLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

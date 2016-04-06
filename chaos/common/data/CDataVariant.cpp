@@ -64,25 +64,25 @@ type(DataType::TYPE_UNDEFINED),
 _internal_variant(){
 }
 
-DataType::DataType CDataVariant::getType() {
+DataType::DataType CDataVariant::getType() const{
     return type;
 }
 
-int32_t CDataVariant::asInt32() {
+int32_t CDataVariant::asInt32() const {
     return  boost::get<int32_t>(_internal_variant);
 }
-int64_t CDataVariant::asInt64() {
+int64_t CDataVariant::asInt64() const {
     return  boost::get<int64_t>(_internal_variant);
 }
-double CDataVariant::asDouble() {
+double CDataVariant::asDouble() const {
     return  boost::get<double>(_internal_variant);
 }
-bool CDataVariant::asBool() {
+bool CDataVariant::asBool() const {
     return  boost::get<bool>(_internal_variant);
 }
-const std::string& CDataVariant::asString() {
+const std::string& CDataVariant::asString() const {
     return  boost::get<std::string>(_internal_variant);
 }
-const CDataBuffer& CDataVariant::asCDataBuffer() {
+const CDataBuffer& CDataVariant::asCDataBuffer() const {
     return  boost::get<CDataBuffer>(_internal_variant);
 }

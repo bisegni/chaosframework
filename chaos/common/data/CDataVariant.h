@@ -43,14 +43,14 @@ namespace chaos {
                 explicit CDataVariant(const CDataBuffer& buffer_value);
                 CDataVariant(const CDataVariant& to_copy);
                 CDataVariant();
-                DataType::DataType getType();
+                DataType::DataType getType() const;
                 
-                int32_t asInt32();
-                int64_t asInt64();
-                double asDouble();
-                bool asBool();
-                const std::string& asString();
-                const CDataBuffer& asCDataBuffer();
+                int32_t asInt32() const;
+                int64_t asInt64() const;
+                double asDouble() const;
+                bool asBool() const;
+                const std::string& asString() const;
+                const CDataBuffer& asCDataBuffer() const;
             };
             
         }
