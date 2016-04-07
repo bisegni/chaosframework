@@ -26,10 +26,6 @@ protected:
                                  chaos::metadata_service_client::node_monitor::OnlineState old_status,
                                  chaos::metadata_service_client::node_monitor::OnlineState new_status);
 
-    void handlerHasBeenRegistered(const std::string& node_uid,
-                                  const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_status,
-                                  chaos::metadata_service_client::node_monitor::MapDatasetKeyValues &map_health_dataset);
-
 private slots:
     void updateUIStatus();
 

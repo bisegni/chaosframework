@@ -40,8 +40,6 @@ protected:
                        int dataset_type);
     
     //--------registration handler
-    void handlerHasBeenRegistered(const std::string& node_uid,
-                                  const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_status);
     void handlerHasBeenRegistered(const std::string& control_unit_uid,
                                   int dataset_type,
                                   chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values);

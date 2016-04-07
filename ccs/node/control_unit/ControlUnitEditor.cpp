@@ -567,12 +567,3 @@ void ControlUnitEditor::nodeChangedInternalState(const std::string& node_uid,
         logic_switch_aggregator.broadcastCurrentValueForKey("us_state", QString::fromStdString(new_state));
     }
 }
-
-
-
-void ControlUnitEditor::handlerHasBeenRegistered(const std::string& node_uid,
-                                                 const HealthInformation& current_health_state,
-                                                 chaos::metadata_service_client::node_monitor::MapDatasetKeyValues &map_health_dataset) {
-    nodeChangedOnlineState(node_uid, current_health_state.online_state, current_health_state.online_state);
-    nodeChangedInternalState(node_uid, current_health_state.internal_state, current_health_state.internal_state);
-}

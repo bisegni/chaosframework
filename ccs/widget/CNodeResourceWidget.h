@@ -30,10 +30,6 @@ protected:
     void nodeChangedProcessResource(const std::string& node_uid,
                                     const chaos::metadata_service_client::node_monitor::ProcessResource& old_proc_res,
                                     const chaos::metadata_service_client::node_monitor::ProcessResource& new_proc_res);
-
-    void handlerHasBeenRegistered(const std::string& node_uid,
-                                  const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_state,
-                                  chaos::metadata_service_client::node_monitor::MapDatasetKeyValues &map_health_dataset);
 protected slots:
     void updateUIState();
     void updateUIResource();

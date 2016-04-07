@@ -91,16 +91,3 @@ void CNodeResourceWidget::nodeChangedProcessResource(const std::string& node_uid
                               "updateUIResource",
                               Qt::QueuedConnection);
 }
-
-void CNodeResourceWidget::handlerHasBeenRegistered(const std::string& node_uid,
-                                                   const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_state,
-                                                   chaos::metadata_service_client::node_monitor::MapDatasetKeyValues &map_health_dataset) {
-    current_state = current_health_state.online_state;
-    QMetaObject::invokeMethod(this,
-                              "updateUIState",
-                              Qt::QueuedConnection);
-    current_resource = current_health_state.process_resource;
-    QMetaObject::invokeMethod(this,
-                              "updateUIResource",
-                              Qt::QueuedConnection);
-}

@@ -294,8 +294,19 @@ bool NodeController::addHandler(NodeMonitorHandler *handler_to_add) {
     if(list_handler.find(handler_to_add) != list_handler.end()) return false;
     list_handler.insert(handler_to_add);
     //fire current state to the handler
-    CHAOS_NOT_THROW(handler_to_add->handlerHasBeenRegistered(node_uid,
-                                                             health_info,
+    CHAOS_NOT_THROW(handler_to_add->nodeChangedOnlineState(node_uid,
+                                                           health_info.online_state,
+                                                           health_info.online_state););
+    CHAOS_NOT_THROW(handler_to_add->nodeChangedInternalState(node_uid,
+                                                             health_info.internal_state,
+                                                             health_info.internal_state););
+    CHAOS_NOT_THROW(handler_to_add->nodeChangedErrorInformation(node_uid,
+                                                                health_info.error_information,
+                                                                health_info.error_information););
+    CHAOS_NOT_THROW(handler_to_add->nodeChangedProcessResource(node_uid,
+                                                               health_info.process_resource,
+                                                               health_info.process_resource););
+    CHAOS_NOT_THROW(handler_to_add->nodeChangedHealthDataset(node_uid,
                                                              map_ds_health););
     return true;
 }

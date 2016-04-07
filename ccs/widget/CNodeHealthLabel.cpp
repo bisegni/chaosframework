@@ -150,22 +150,6 @@ void CNodeHealthLabel::nodeChangedHealthDataset(const std::string& node_uid,
                               Q_ARG(QString, text_to_show));
 }
 
-void CNodeHealthLabel::handlerHasBeenRegistered(const std::string& node_uid,
-                                                const HealthInformation& current_health_state,
-                                                MapDatasetKeyValues &map_health_dataset) {
-    online_state = current_health_state.online_state;
-    internal_state = QString::fromStdString(current_health_state.internal_state);
-    error_information = current_health_state.error_information;
-    QMetaObject::invokeMethod(this,
-                              "updateStateUI",
-                              Qt::QueuedConnection);
-    QMetaObject::invokeMethod(this,
-                              "updateErrorUI",
-                              Qt::QueuedConnection);
-    nodeChangedHealthDataset(node_uid,
-                             map_health_dataset);
-}
-
 void CNodeHealthLabel::updateStateUI() {
     bool in_error = internal_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
             internal_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0;

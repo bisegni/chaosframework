@@ -49,10 +49,6 @@ protected:
 
     void nodeChangedHealthDataset(const std::string& node_uid,
                                   chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& map_health_dataset);
-
-    void handlerHasBeenRegistered(const std::string& node_uid,
-                                  const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_state,
-                                  chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& map_health_dataset);
 signals:
 
 private slots:

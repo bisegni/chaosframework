@@ -60,12 +60,3 @@ void CLedIndicatorHealt::nodeChangedOnlineState(const std::string& node_uid,
     emit changedOnlineStatus(nodeUID(),
                              alive_state);
 }
-
-void CLedIndicatorHealt::handlerHasBeenRegistered(const std::string& node_uid,
-                                                  const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_status,
-                                                  chaos::metadata_service_client::node_monitor::MapDatasetKeyValues &map_health_dataset) {
-    alive_state = current_health_status.online_state;
-    QMetaObject::invokeMethod(this,
-                              "updateUIStatus",
-                              Qt::QueuedConnection);
-}

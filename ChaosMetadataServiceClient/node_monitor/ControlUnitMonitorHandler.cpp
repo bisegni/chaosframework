@@ -38,9 +38,3 @@ void ControlUnitMonitorHandler::noDSDataFound(const std::string& control_unit_ui
                                               int dataset_type) {
     
 }
-
-void ControlUnitMonitorHandler::handlerHasBeenRegistered(const std::string& control_unit_uid,
-                                                         int dataset_type,
-                                                         MapDatasetKeyValues& dataset_key_values) {
-    
-}

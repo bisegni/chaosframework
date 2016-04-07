@@ -58,9 +58,3 @@ void NodeMonitorHandler::nodeChangedHealthDataset(const std::string& node_uid,
                                                   MapDatasetKeyValues& map_health_dataset) {
     
 }
-
-void NodeMonitorHandler::handlerHasBeenRegistered(const std::string& node_uid,
-                                                  const HealthInformation& current_health_status,
-                                                  MapDatasetKeyValues& map_health_dataset) {
-    
-}

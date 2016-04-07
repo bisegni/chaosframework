@@ -158,15 +158,15 @@ bool ControlUnitController::addHandler(NodeMonitorHandler *handler_to_add) {
     if(cu_handler == NULL) return false;
     bool result = NodeController::addHandler(handler_to_add);
     if(result){
-        cu_handler->handlerHasBeenRegistered(getNodeUID(),
-                                             DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
-                                             map_ds_out);
-        cu_handler->handlerHasBeenRegistered(getNodeUID(),
-                                             DataPackCommonKey::DPCK_DATASET_TYPE_INPUT,
-                                             map_ds_in);
-        cu_handler->handlerHasBeenRegistered(getNodeUID(),
-                                             DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
-                                             map_ds_sys);
+        cu_handler->updatedDS(getNodeUID(),
+                              DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT,
+                              map_ds_out);
+        cu_handler->updatedDS(getNodeUID(),
+                              DataPackCommonKey::DPCK_DATASET_TYPE_INPUT,
+                              map_ds_in);
+        cu_handler->updatedDS(getNodeUID(),
+                              DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM,
+                              map_ds_sys);
     }
     return result;
 }

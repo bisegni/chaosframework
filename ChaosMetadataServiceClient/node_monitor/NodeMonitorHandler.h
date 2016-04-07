@@ -59,10 +59,6 @@ namespace chaos {
                 
                 virtual void nodeChangedHealthDataset(const std::string& node_uid,
                                                       MapDatasetKeyValues& map_health_dataset);
-                
-                virtual void handlerHasBeenRegistered(const std::string& node_uid,
-                                                      const HealthInformation& current_health_state,
-                                                      MapDatasetKeyValues& map_health_dataset);
             };
             
             struct NodeMonitorHandlerComparator {

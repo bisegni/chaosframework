@@ -41,10 +41,6 @@ namespace chaos {
                 
                 virtual void noDSDataFound(const std::string& control_unit_uid,
                                            int dataset_type);
-                
-                virtual void handlerHasBeenRegistered(const std::string& control_unit_uid,
-                                                      int dataset_type,
-                                                      MapDatasetKeyValues& dataset_key_values);
             };
             
         }

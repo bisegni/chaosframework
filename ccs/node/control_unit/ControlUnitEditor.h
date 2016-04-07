@@ -40,10 +40,6 @@ protected:
     void nodeChangedInternalState(const std::string& node_uid,
                                   const std::string& old_state,
                                   const std::string& new_state);
-
-    void handlerHasBeenRegistered(const std::string& node_uid,
-                                  const chaos::metadata_service_client::node_monitor::HealthInformation& current_health_state,
-                                  chaos::metadata_service_client::node_monitor::MapDatasetKeyValues &map_health_dataset);
 private slots:
 
     void onLogicSwitchChangeState(const QString& switch_name,
