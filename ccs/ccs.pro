@@ -73,7 +73,6 @@ SOURCES += main.cpp\
     data/DatasetAttributeReader.cpp \
     widget/CLedIndicatorHealt.cpp \
     preference/PreferenceMDSHostListModel.cpp \
-    widget/ChaosHealtLabel.cpp \
     snapshot/SnapshotManager.cpp \
     snapshot/SnapshotTableModel.cpp \
     snapshot/NewSnapshot.cpp \
@@ -171,7 +170,6 @@ HEADERS  += \
     widget/CLedIndicatorHealt.h \
     monitor/handler/MonitorBinaryAttributeHandler.h \
     preference/PreferenceMDSHostListModel.h \
-    widget/ChaosHealtLabel.h \
     snapshot/SnapshotManager.h \
     snapshot/SnapshotTableModel.h \
     snapshot/NewSnapshot.h \
