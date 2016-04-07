@@ -32,6 +32,8 @@ protected:
                                      const chaos::metadata_service_client::node_monitor::ErrorInformation& old_status,
                                      const chaos::metadata_service_client::node_monitor::ErrorInformation& new_status);
     
+    void nodeHasBeenRestarted(const std::string& node_uid);
+    
     void updatedDS(const std::string& control_unit_uid,
                    int dataset_type,
                    chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values);

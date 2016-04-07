@@ -270,16 +270,24 @@ void NodeController::_setError(const ErrorInformation& new_error_information) {
 }
 
 void NodeController::_setProcessResource(const ProcessResource& new_process_resource) {
-    bool changed = (health_info.process_resource.usr_res != new_process_resource.usr_res) ||
+    bool changed = (health_info.process_resource.uptime != new_process_resource.uptime)||
+    (health_info.process_resource.usr_res != new_process_resource.usr_res) ||
     (health_info.process_resource.sys_res != new_process_resource.sys_res) ||
     (health_info.process_resource.swp_res != new_process_resource.swp_res);
     
+    bool restarted = changed && health_info.process_resource.uptime > new_process_resource.uptime;
+    
     if(changed) {
+        
         boost::unique_lock<boost::mutex> wl(list_handler_mutex);
         for(MonitoHandlerListIterator it = list_handler.begin(),
             it_end = list_handler.end();
             it != it_end;
             it++) {
+            if(restarted) {
+                //notify listers that online status has been changed
+                CHAOS_NOT_THROW((*it)->nodeHasBeenRestarted(node_uid););
+            }
             //notify listers that online status has been changed
             CHAOS_NOT_THROW((*it)->nodeChangedProcessResource(node_uid,
                                                               health_info.process_resource,

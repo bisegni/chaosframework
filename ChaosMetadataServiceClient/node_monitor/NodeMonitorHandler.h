@@ -39,6 +39,8 @@ namespace chaos {
                 static const char * const MAP_KEY_ONLINE_STATE;
                 NodeMonitorHandler();
                 virtual ~NodeMonitorHandler();
+            
+                virtual void nodeHasBeenRestarted(const std::string& node_uid);
                 
                 //! called when an online state has changed
                 virtual void nodeChangedOnlineState(const std::string& node_uid,

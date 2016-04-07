@@ -30,6 +30,10 @@ handler_uuid(chaos::common::utility::UUIDUtil::generateUUIDLite()){}
 
 NodeMonitorHandler::~NodeMonitorHandler() {}
 
+void NodeMonitorHandler::nodeHasBeenRestarted(const std::string& node_uid) {
+    
+}
+
 void NodeMonitorHandler::nodeChangedOnlineState(const std::string& node_uid,
                                                 OnlineState old_status,
                                                 OnlineState new_status) {

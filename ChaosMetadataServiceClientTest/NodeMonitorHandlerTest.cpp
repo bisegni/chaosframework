@@ -93,14 +93,20 @@ void NodeMonitorHandlerTest::nodeChangedErrorInformation(const std::string& node
     
 }
 
+void NodeMonitorHandlerTest::nodeHasBeenRestarted(const std::string& node_uid) {
+    LAPP_<< "nodeHasBeenRestarted: " << node_uid;
+}
+
 void NodeMonitorHandlerTest::updatedDS(const std::string& control_unit_uid,
                                        int dataset_type,
                                        MapDatasetKeyValues& dataset_key_values) {
     LAPP_ << boost::str(boost::format("updatedDS: dataset type %1%")%getDatasetDesc(dataset_type));
     switch (dataset_type) {
         case chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT: {
-            CDataVariant variant = dataset_key_values[chaos::DataPackCommonKey::DPCK_TIMESTAMP];
-            LAPP_ << variant.asInt64();
+            if(dataset_key_values.count(chaos::DataPackCommonKey::DPCK_TIMESTAMP)) {
+                CDataVariant variant = dataset_key_values[chaos::DataPackCommonKey::DPCK_TIMESTAMP];
+                LAPP_ << variant.asInt64();
+            }
             break;
         }
             
@@ -111,16 +117,5 @@ void NodeMonitorHandlerTest::updatedDS(const std::string& control_unit_uid,
 
 void NodeMonitorHandlerTest::noDSDataFound(const std::string& control_unit_uid,
                                            int dataset_type) {
-    
-}
-
-void NodeMonitorHandlerTest::handlerHasBeenRegistered(const std::string& node_uid,
-                                                      const HealthInformation& current_health_status) {
-    
-}
-
-void NodeMonitorHandlerTest::handlerHasBeenRegistered(const std::string& control_unit_uid,
-                                                      int dataset_type,
-                                                      MapDatasetKeyValues& dataset_key_values) {
     
 }
