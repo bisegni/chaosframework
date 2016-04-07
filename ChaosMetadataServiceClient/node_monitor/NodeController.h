@@ -38,6 +38,7 @@ namespace chaos {
         namespace node_monitor {
             //! forward declaration
             class NodeMonitor;
+            class NodeFetcher;
             
             CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, MonitorKeyList)
             
@@ -45,10 +46,9 @@ namespace chaos {
             typedef std::set<NodeMonitorHandler*, NodeMonitorHandlerComparator>::iterator MonitoHandlerListIterator;
             typedef std::set<NodeMonitorHandler*, NodeMonitorHandlerComparator>::const_iterator MonitoHandlerListConstIterator;
             
-            class NodeController:
-            public chaos::metadata_service_client::monitor_system::QuantumSlotConsumer {
+            class NodeController {
                 friend class NodeMonitor;
-                
+                friend class NodeFetcher;
                 const std::string node_uid;
                 const std::string node_health_uid;
                 
@@ -90,6 +90,8 @@ namespace chaos {
                 virtual ~NodeController();
                 
                 const std::string& getNodeUID();
+                
+                const unsigned int getHandlerListSise();
                 
                 const MonitorKeyList& getMonitorKeyList() const;
                 

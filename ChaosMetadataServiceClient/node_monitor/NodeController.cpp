@@ -59,6 +59,11 @@ const HealthInformation& NodeController::getHealthInformation() const {
     return health_info;
 }
 
+const unsigned int NodeController::getHandlerListSise() {
+    boost::unique_lock<boost::mutex> wl(list_handler_mutex);
+    return list_handler.size();
+}
+
 void NodeController::updateData() {
     //check for mandatory key
     if(!last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) ||

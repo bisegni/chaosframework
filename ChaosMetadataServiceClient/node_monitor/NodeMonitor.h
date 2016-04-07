@@ -22,10 +22,12 @@
 #ifndef __CHAOSFramework__NodeMonitor_h
 #define __CHAOSFramework__NodeMonitor_h
 
-#include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
+#include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 #include <ChaosMetadataServiceClient/node_monitor/NodeController.h>
-#include <ChaosMetadataServiceClient/node_monitor/node_monitor_types.h>
+#include <ChaosMetadataServiceClient/monitor_system/monitor_system.h>
 #include <ChaosMetadataServiceClient/metadata_service_client_types.h>
+#include <ChaosMetadataServiceClient/node_monitor/node_monitor_types.h>
+#include <ChaosMetadataServiceClient/node_monitor/NodeFetcher.h>
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/InizializableService.h>
@@ -37,17 +39,12 @@ namespace chaos {
         //! forward declaration
         class ChaosMetadataServiceClient;
         
-        CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<node_monitor::NodeController>, NodeControllerMap)
         
         //! name space that enclose all utility for the centralize
         //! node monitor funcitonality
         namespace node_monitor {
-            
-            typedef enum {
-                ControllerTypeNode = 0,
-                ControllerTypeNodeControlUnit
-            } ControllerType;
-            
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<NodeFetcher>, NodeFetcherMap)
+
             class NodeMonitor:
             public chaos::common::utility::InizializableService {
                 //! library settings
@@ -55,12 +52,17 @@ namespace chaos {
                 friend class chaos::common::utility::InizializableServiceContainer<NodeMonitor>;
                 friend class chaos::metadata_service_client::ChaosMetadataServiceClient;
                 
+                chaos::metadata_service_client::api_proxy::ApiProxyManager *api_proxy_manager;
                 chaos::metadata_service_client::monitor_system::MonitorManager *monitor_manager;
                 
-                boost::mutex map_monitor_controller_mutex;
-                NodeControllerMap map_monitor_controller;
+                
+                boost::mutex map_fetcher_mutex;
+                NodeFetcherMap map_fetcher;
+                
+                
             protected:
                 NodeMonitor(chaos::metadata_service_client::monitor_system::MonitorManager *_monitor_manager,
+                            chaos::metadata_service_client::api_proxy::ApiProxyManager *_api_proxy_manager,
                             chaos::metadata_service_client::ClientSetting *_setting);
                 ~NodeMonitor();
                 void init(void *init_data) throw (chaos::CException);

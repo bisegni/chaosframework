@@ -130,7 +130,8 @@ void ControlUnitController::_fireUpdateDSOnHandler(int dataset_type,
         it_end = list_handler.end();
         it != it_end;
         it++) {
-        ControlUnitMonitorHandler *hndlr = (ControlUnitMonitorHandler*)*it;
+        ControlUnitMonitorHandler *hndlr = dynamic_cast<ControlUnitMonitorHandler*>(*it);
+        if(hndlr == NULL) continue;
         //notify listers that online status has been changed
         hndlr->updatedDS(getNodeUID(),
                          dataset_type,
@@ -144,7 +145,8 @@ void ControlUnitController::_fireNoDSDataFoundOnHandler(int dataset_type) {
         it_end = list_handler.end();
         it != it_end;
         it++) {
-        ControlUnitMonitorHandler *hndlr = (ControlUnitMonitorHandler*)*it;
+        ControlUnitMonitorHandler *hndlr = dynamic_cast<ControlUnitMonitorHandler*>(*it);
+        if(hndlr == NULL) continue;
         //notify listers that online status has been changed
         hndlr->noDSDataFound(getNodeUID(),
                              dataset_type);

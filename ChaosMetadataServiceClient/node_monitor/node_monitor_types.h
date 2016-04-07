@@ -94,6 +94,11 @@ namespace chaos {
             } DatasetType;
             
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, common::data::CDataVariant, MapDatasetKeyValues);
+            
+            typedef enum {
+                ControllerTypeNode = 0,
+                ControllerTypeNodeControlUnit
+            } ControllerType;
         }
     }
 }

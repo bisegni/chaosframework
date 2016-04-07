@@ -27,12 +27,13 @@
 namespace chaos {
     namespace metadata_service_client {
         namespace node_monitor {
-            
+            class NodeFetcher;
             struct NodeMonitorHandlerComparator;
             
             //! node monitor handler
             class NodeMonitorHandler {
                 friend class NodeMonitorHandlerComparator;
+                friend class NodeFetcher;
                 const std::string handler_uuid;
             public:
                 static const char * const MAP_KEY_ONLINE_STATE;

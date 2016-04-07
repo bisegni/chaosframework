@@ -263,6 +263,8 @@
 		32568C8F1B3D7FED0006988C /* UpdateProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 32568C8D1B3D7FED0006988C /* UpdateProperty.h */; };
 		32568C921B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32568C901B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp */; };
 		32568C931B42C1690006988C /* QuantumTSTaggedAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32568C911B42C1690006988C /* QuantumTSTaggedAttributeHandler.h */; };
+		3256C9B21CB649710019A108 /* NodeFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3256C9B01CB649710019A108 /* NodeFetcher.cpp */; };
+		3256C9B31CB649710019A108 /* NodeFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3256C9B11CB649710019A108 /* NodeFetcher.h */; };
 		32571D9C1C7C901A0001D884 /* BatchCommandLoggingChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32571D9A1C7C901A0001D884 /* BatchCommandLoggingChannel.cpp */; };
 		32571D9D1C7C901A0001D884 /* BatchCommandLoggingChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32571D9B1C7C901A0001D884 /* BatchCommandLoggingChannel.h */; };
 		32571DA11C7C91090001D884 /* batch_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 32571D9F1C7C91090001D884 /* batch_command.h */; };
@@ -1287,6 +1289,8 @@
 		32568C8D1B3D7FED0006988C /* UpdateProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateProperty.h; sourceTree = "<group>"; };
 		32568C901B42C1690006988C /* QuantumTSTaggedAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QuantumTSTaggedAttributeHandler.cpp; sourceTree = "<group>"; };
 		32568C911B42C1690006988C /* QuantumTSTaggedAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuantumTSTaggedAttributeHandler.h; sourceTree = "<group>"; };
+		3256C9B01CB649710019A108 /* NodeFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeFetcher.cpp; sourceTree = "<group>"; };
+		3256C9B11CB649710019A108 /* NodeFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeFetcher.h; sourceTree = "<group>"; };
 		32571D9A1C7C901A0001D884 /* BatchCommandLoggingChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BatchCommandLoggingChannel.cpp; sourceTree = "<group>"; };
 		32571D9B1C7C901A0001D884 /* BatchCommandLoggingChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchCommandLoggingChannel.h; sourceTree = "<group>"; };
 		32571D9F1C7C91090001D884 /* batch_command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = batch_command.h; sourceTree = "<group>"; };
@@ -4227,6 +4231,8 @@
 			children = (
 				32F7AB121C9960A700E18D3E /* NodeMonitor.cpp */,
 				32F7AB131C9960A700E18D3E /* NodeMonitor.h */,
+				3256C9B01CB649710019A108 /* NodeFetcher.cpp */,
+				3256C9B11CB649710019A108 /* NodeFetcher.h */,
 				32F7AB221C99916A00E18D3E /* NodeController.cpp */,
 				32F7AB231C99916A00E18D3E /* NodeController.h */,
 				32F7AB261C9991B000E18D3E /* ControlUnitController.cpp */,
@@ -4617,6 +4623,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3256C9B31CB649710019A108 /* NodeFetcher.h in Headers */,
 				32AFA9D81C77224F00640BFA /* logging_types.h in Headers */,
 				32B1E7F71B2AD1CC00221E49 /* CommandTemplateGet.h in Headers */,
 				327F39BF1AEAB6260000C845 /* GetAllDS.h in Headers */,
@@ -5381,6 +5388,7 @@
 				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
 				320CA9541C29D71A00894AAA /* DeleteUS.cpp in Sources */,
 				32B299AA1BE27945000D3716 /* RecoverError.cpp in Sources */,
+				3256C9B21CB649710019A108 /* NodeFetcher.cpp in Sources */,
 				3211CCDD1B03402800F9B80E /* QuantumKeyConsumer.cpp in Sources */,
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				32D746001C73399900F4D719 /* AbstractEventHandler.cpp in Sources */,
