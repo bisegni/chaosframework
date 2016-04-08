@@ -71,7 +71,6 @@ void NodeController::updateData() {
     
     map_ds_health.clear();
     
-    
     int value_type = 0;
     std::vector<std::string> key_names;
     last_ds_healt->getAllKey(key_names);

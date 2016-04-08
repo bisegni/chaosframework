@@ -107,7 +107,8 @@ SOURCES += main.cpp\
     data/LogEntryAdvancedSearchTableModel.cpp \
     widget/CNodeResourceWidget.cpp \
     widget/ChaosMonitorWidgetCompanion.cpp \
-    widget/CNodeHealthLabel.cpp
+    widget/CNodeHealthLabel.cpp \
+    widget/CControlUnitDatasetLabel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -205,7 +206,8 @@ HEADERS  += \
     data/LogEntryAdvancedSearchTableModel.h \
     widget/CNodeResourceWidget.h \
     widget/ChaosMonitorWidgetCompanion.h \
-    widget/CNodeHealthLabel.h
+    widget/CNodeHealthLabel.h \
+    widget/CControlUnitDatasetLabel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

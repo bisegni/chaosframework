@@ -11,8 +11,11 @@ public:
                                 chaos::metadata_service_client::node_monitor::NodeMonitorHandler *_monitor_handler);
     ~ChaosMonitorWidgetCompanion();
 
-protected:
-    bool trackNode();
+    QString datasetValueToLabel(const QString &attribute,
+                                chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& map_health_dataset,
+                                unsigned int double_precision = 2);
+    protected:
+        bool trackNode();
 
     bool untrackNode();
 private:

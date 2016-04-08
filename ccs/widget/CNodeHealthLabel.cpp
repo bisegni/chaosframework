@@ -6,7 +6,8 @@ using namespace chaos::metadata_service_client::node_monitor;
 CNodeHealthLabel::CNodeHealthLabel(QWidget *parent) :
     QLabel(parent),
     ChaosMonitorWidgetCompanion(ControllerTypeNode, this),
-    p_health_attribute(HealthTimestamp){}
+    p_health_attribute(HealthTimestamp),
+    p_double_print_precision(2){}
 
 CNodeHealthLabel::~CNodeHealthLabel() {
     deinitChaosContent();
@@ -21,6 +22,14 @@ void CNodeHealthLabel::deinitChaosContent() {
 
 void CNodeHealthLabel::updateChaosContent() {
 
+}
+
+void CNodeHealthLabel::setDoublePrintPrecision(double double_print_precision) {
+    p_double_print_precision = double_print_precision;
+}
+
+double CNodeHealthLabel::doublePrintPrecision() {
+    return p_double_print_precision;
 }
 
 void CNodeHealthLabel::setHealthAttribute(CNodeHealthLabel::HealthAttribute health_attribute) {
@@ -76,19 +85,19 @@ void CNodeHealthLabel::nodeChangedHealthDataset(const std::string& node_uid,
     QString text_to_show = "-----";
     switch (healthAttribute()) {
     case HealthTimestamp:
-        CHECK_HATTRIBUTE_AND_GET(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP, asInt64, number);
+        text_to_show = datasetValueToLabel(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP, map_health_dataset);
         break;
     case HealthUptime:
-        CHECK_HATTRIBUTE_AND_GET(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, asInt64, number);
+        text_to_show = datasetValueToLabel(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME, map_health_dataset);
         break;
     case HealthUserTime:
-        CHECK_HATTRIBUTE_AND_GET(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, asDouble, number);
+        text_to_show = datasetValueToLabel(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME, map_health_dataset,doublePrintPrecision());
         break;
     case HealthSystemTime:
-        CHECK_HATTRIBUTE_AND_GET(NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME, asDouble, number);
+        text_to_show = datasetValueToLabel(NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME, map_health_dataset, doublePrintPrecision());
         break;
     case HealthSwapTime:
-        CHECK_HATTRIBUTE_AND_GET(NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME, asInt64, number);
+        text_to_show = datasetValueToLabel(NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME, map_health_dataset);
         break;
     case HealthOnlineState:
         if(map_health_dataset.count(NodeMonitorHandler::MAP_KEY_ONLINE_STATE)) {
@@ -109,36 +118,12 @@ void CNodeHealthLabel::nodeChangedHealthDataset(const std::string& node_uid,
         }
         break;
     case HealthOperationalState:
-        CHECK_HATTRIBUTE_AND_GET(NodeHealtDefinitionKey::NODE_HEALT_STATUS, asString, fromStdString);
+        text_to_show = datasetValueToLabel(NodeHealtDefinitionKey::NODE_HEALT_STATUS, map_health_dataset);
         break;
     case HealthCustomAttribute:
-        if(map_health_dataset.count(customHealthAttribute().toStdString())) {
-            CDataVariant custom_attribute_variant = map_health_dataset[customHealthAttribute().toStdString()];
-            switch(custom_attribute_variant.getType()) {
-            case DataType::TYPE_BOOLEAN:
-                text_to_show = custom_attribute_variant.asBool()?"True":"False";
-                break;
-            case DataType::TYPE_INT32:
-                text_to_show = QString::number(custom_attribute_variant.asInt32());
-                break;
-            case DataType::TYPE_INT64:
-                text_to_show = QString::number(custom_attribute_variant.asInt64());
-                break;
-            case DataType::TYPE_DOUBLE:
-                text_to_show = QString::number(custom_attribute_variant.asDouble());
-                break;
-            case DataType::TYPE_STRING:
-                text_to_show = QString::fromStdString(custom_attribute_variant.asString());
-                break;
-            case DataType::TYPE_BYTEARRAY:
-                CDataBuffer data_buffer = custom_attribute_variant.asCDataBuffer();
-                QByteArray byte_array =  QByteArray::fromRawData(data_buffer.getBuffer(),data_buffer.getBufferSize());
-                text_to_show = byte_array.toBase64();
-                break;
-            }
-        } else {
-            text_to_show = tr("HAttribute Not Found!");
-        }
+        text_to_show = datasetValueToLabel(customHealthAttribute(),
+                                           map_health_dataset,
+                                           doublePrintPrecision());
         break;
     default:
         break;

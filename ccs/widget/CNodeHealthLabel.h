@@ -10,7 +10,6 @@ class CNodeHealthLabel:
         public ChaosMonitorWidgetCompanion,
         public chaos::metadata_service_client::node_monitor::NodeMonitorHandler {
     Q_OBJECT
-
 public:
 
     enum HealthAttribute { HealthTimestamp,
@@ -28,6 +27,9 @@ public:
     void initChaosContent();
     void deinitChaosContent();
     void updateChaosContent();
+
+    void setDoublePrintPrecision(double double_print_precision);
+    double doublePrintPrecision();
 
     void setHealthAttribute(CNodeHealthLabel::HealthAttribute health_attribute);
     CNodeHealthLabel::HealthAttribute healthAttribute();
@@ -49,8 +51,6 @@ protected:
 
     void nodeChangedHealthDataset(const std::string& node_uid,
                                   chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& map_health_dataset);
-signals:
-
 private slots:
     void updateStateUI();
     void updateErrorUI();
@@ -62,6 +62,9 @@ private:
     void	setNum(double num);
     void	setPicture(const QPicture & picture);
     void	setPixmap(const QPixmap &pixmap);
+
+    Q_PROPERTY(double double_print_precision READ doublePrintPrecision WRITE setDoublePrintPrecision)
+    double p_double_print_precision;
 
     Q_PROPERTY(QString custom_health_attribute READ customHealthAttribute WRITE setCustomHealthAttribute)
     QString p_custom_health_attribute;
