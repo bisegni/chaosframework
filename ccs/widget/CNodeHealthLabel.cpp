@@ -142,19 +142,7 @@ void CNodeHealthLabel::updateStateUI() {
     if(in_error) {
         setStyleSheet("QLabel { color : #FF7C00; }");
     } else {
-        switch (online_state) {
-        case OnlineStateNotFound:
-        case OnlineStateUnknown:
-            setStyleSheet("QLabel { color : gray; }");
-            break;
-        case OnlineStateON:
-            setStyleSheet("QLabel { color : #4EB66B; }");
-            break;
-        case OnlineStateOFF:
-            setStyleSheet("QLabel { color : #E65566; }");
-        default:
-            break;
-        }
+        setStyleSheetColorForOnlineState(online_state, this);
     }
 }
 

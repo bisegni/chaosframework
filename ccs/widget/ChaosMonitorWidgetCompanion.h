@@ -14,6 +14,9 @@ public:
     QString datasetValueToLabel(const QString &attribute,
                                 chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& map_health_dataset,
                                 unsigned int double_precision = 2);
+
+    void setStyleSheetColorForOnlineState(chaos::metadata_service_client::node_monitor::OnlineState online_state,
+                                          QWidget *widget);
     protected:
         bool trackNode();
 

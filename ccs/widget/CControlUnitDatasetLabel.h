@@ -23,6 +23,12 @@ public:
 
     void setDatasetType(DatasetType dataset_type);
     DatasetType datasetType();
+
+    void setDatasetAttributeName(const QString& datasetAttributeName);
+    QString datasetAttributeName();
+
+    void setDoublePrintPrecision(int doublePrintPrecision);
+    int doublePrintPrecision();
 protected:
     void nodeChangedOnlineState(const std::string& node_uid,
                                 chaos::metadata_service_client::node_monitor::OnlineState old_state,
@@ -34,10 +40,21 @@ protected:
     void noDSDataFound(const std::string& control_unit_uid,
                        int dataset_type);
 
+protected slots:
+    void updateUI(const QString& label_text);
+
 private:
+    chaos::metadata_service_client::node_monitor::OnlineState online_state;
+
     Q_ENUM(DatasetType)
     Q_PROPERTY(DatasetType dataset_type READ datasetType WRITE setDatasetType)
     DatasetType p_dataset_type;
+
+    Q_PROPERTY(QString dataset_attribute_name READ datasetAttributeName WRITE setDatasetAttributeName)
+    QString p_dataset_attribute_name;
+
+    Q_PROPERTY(int doublePrintPrecision READ doublePrintPrecision WRITE setDoublePrintPrecision)
+    int p_double_print_precision;
 };
 
 #endif // CCONTROLUNITDATASETLABEL_H

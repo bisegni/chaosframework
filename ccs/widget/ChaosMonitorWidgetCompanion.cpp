@@ -1,6 +1,7 @@
 #include "ChaosMonitorWidgetCompanion.h"
 
 #include <QDebug>
+#include <QWidget>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -59,4 +60,21 @@ QString ChaosMonitorWidgetCompanion::datasetValueToLabel(const QString& attribut
         }
     }
     return result;
+}
+
+void ChaosMonitorWidgetCompanion::setStyleSheetColorForOnlineState(OnlineState online_state,
+                                      QWidget *widget) {
+    switch (online_state) {
+    case OnlineStateNotFound:
+    case OnlineStateUnknown:
+        widget->setStyleSheet("QLabel { color : gray; }");
+        break;
+    case OnlineStateON:
+        widget->setStyleSheet("QLabel { color : #4EB66B; }");
+        break;
+    case OnlineStateOFF:
+        widget->setStyleSheet("QLabel { color : #E65566; }");
+    default:
+        break;
+    }
 }
