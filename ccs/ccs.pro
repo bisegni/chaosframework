@@ -19,10 +19,20 @@ INCLUDEPATH += $$PWD/../usr/local/include
 
 LIBS += -L$$PWD/../usr/local/lib
 
-LIBS +=     -lchaos_common\
-            -lchaos_metadata_service_client\
+LIBS +=     -lchaos_metadata_service_client\
+            -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive\
             -ljsoncpp\
-            -lzmq
+            -lzmq\
+            -lpthread\
+            -lboost_system\
+            -lboost_thread\
+            -lboost_program_options\
+            -lboost_regex\
+            -lboost_chrono\
+            -lboost_filesystem\
+            -lboost_log\
+            -lboost_log_setup\
+            -lmongoose
 
 SOURCES += main.cpp\
     search/SearchNodeResult.cpp \
