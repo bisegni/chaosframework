@@ -40,6 +40,8 @@ protected:
     void nodeChangedInternalState(const std::string& node_uid,
                                   const std::string& old_state,
                                   const std::string& new_state);
+
+    void nodeHasBeenRestarted(const std::string& node_uid);
 private slots:
 
     void onLogicSwitchChangeState(const QString& switch_name,
@@ -101,6 +103,7 @@ private:
     void fillDataset(const QSharedPointer<chaos::common::data::CDataWrapper>& dataset);
 
     //keep track of the last relevated online state
+    bool restarted;
     bool last_online_state;
     const QString           control_unit_unique_id;
     QString                 unit_server_parent_unique_id;
