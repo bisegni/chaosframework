@@ -66,7 +66,6 @@ SOURCES += main.cpp\
     external_lib/qcustomplot.cpp \
     data/AttributeReader.cpp \
     widget/ChaosLabel.cpp \
-    widget/ChaosDatasetLabel.cpp \
     data/ChaosByteArray.cpp \
     plot/NodeAttributePlotting.cpp \
     data/DatasetReader.cpp \
@@ -155,7 +154,6 @@ HEADERS  += \
     monitor/monitor.h \
     monitor/handler/system/system.h \
     widget/ChaosLabel.h \
-    widget/ChaosDatasetLabel.h \
     monitor/handler/MonitorTSTaggetBoolAttributeHandler.h \
     monitor/handler/AbstractTSTaggedAttributeHandler.h \
     monitor/handler/MonitorTSTaggedInt32AttributeHandler.h \

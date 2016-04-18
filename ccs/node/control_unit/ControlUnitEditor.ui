@@ -1023,7 +1023,7 @@
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="ChaosDatasetLabel" name="labelRunScheduleDelaySet">
+        <widget class="CControlUnitDatasetLabel" name="labelRunScheduleDelaySet">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -1199,15 +1199,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ChaosDatasetLabel</class>
-   <extends>QLabel</extends>
-   <header>widget/ChaosDatasetLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>CNodeLogWidget</class>
    <extends>QWidget</extends>
    <header>widget/CNodeLogWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CControlUnitDatasetLabel</class>
+   <extends>QLabel</extends>
+   <header>widget/CControlUnitDatasetLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

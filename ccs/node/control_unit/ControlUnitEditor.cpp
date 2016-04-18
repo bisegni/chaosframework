@@ -162,11 +162,9 @@ void ControlUnitEditor::initUI() {
     ui->labelUnitServerState->setHealthAttribute(CNodeHealthLabel::HealthOperationalState);
 
     //chaos label for the current thread schedule delay
-    ui->labelRunScheduleDelaySet->setNodeUniqueID(control_unit_unique_id);
-    ui->labelRunScheduleDelaySet->setAttributeName(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY);
-    ui->labelRunScheduleDelaySet->setAttributeType(chaos::DataType::TYPE_INT64);
-    ui->labelRunScheduleDelaySet->setTrackStatus(true);
-    ui->labelRunScheduleDelaySet->setDataset(ChaosDatasetLabel::DatasetSystem);
+    ui->labelRunScheduleDelaySet->setNodeUID(control_unit_unique_id);
+    ui->labelRunScheduleDelaySet->setDatasetAttributeName(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY);
+    ui->labelRunScheduleDelaySet->setDatasetType(CControlUnitDatasetLabel::DatasetTypeSystem);
 
     //chaos label for the current output dataset push rate
     ui->chaosLabelDSOutputPushRate->setNodeUID(control_unit_unique_id);
@@ -224,7 +222,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
                                                                            node_monitor::ControllerTypeNode,
                                                                            this);
         ui->labelControlUnitState->initChaosContent();
-        ui->labelRunScheduleDelaySet->startMonitoring();
+        ui->labelRunScheduleDelaySet->initChaosContent();
         ui->ledIndicatorHealtTSControlUnit->initChaosContent();
         ui->chaosLabelDSOutputPushRate->initChaosContent();
     }else{
@@ -240,7 +238,7 @@ void ControlUnitEditor::manageMonitoring(bool start) {
         ChaosMetadataServiceClient::getInstance()->removeHandlerToNodeMonitor(control_unit_unique_id.toStdString(),
                                                                               node_monitor::ControllerTypeNode,
                                                                               this);
-        ui->labelRunScheduleDelaySet->stopMonitoring();
+        ui->labelRunScheduleDelaySet->deinitChaosContent();
         ui->ledIndicatorHealtTSControlUnit->deinitChaosContent();
         ui->chaosLabelDSOutputPushRate->deinitChaosContent();
     }
