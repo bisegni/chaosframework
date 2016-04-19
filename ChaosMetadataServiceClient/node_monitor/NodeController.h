@@ -81,10 +81,10 @@ namespace chaos {
                 NodeController(const std::string& _node_uid);
 
                 //!inherited method
-                void quantumSlotHasData(const std::string& key,
+                virtual void quantumSlotHasData(const std::string& key,
                                         const chaos::metadata_service_client::monitor_system::KeyValue& value);
                 //!inherited method
-                void quantumSlotHasNoData(const std::string& key);
+                virtual void quantumSlotHasNoData(const std::string& key);
             public:
                 
                 virtual ~NodeController();

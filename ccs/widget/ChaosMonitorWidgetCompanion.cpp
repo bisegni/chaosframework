@@ -58,6 +58,8 @@ QString ChaosMonitorWidgetCompanion::datasetValueToLabel(const QString& attribut
             result = byte_array.toBase64();
             break;
         }
+    } else {
+        qDebug() << " Attribute " << attribute << " not found on dataset";
     }
     return result;
 }

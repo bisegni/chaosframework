@@ -10,6 +10,18 @@ CControlUnitDatasetLabel::~CControlUnitDatasetLabel() {
 
 }
 
+void CControlUnitDatasetLabel::initChaosContent() {
+    trackNode();
+}
+
+void CControlUnitDatasetLabel::deinitChaosContent() {
+    untrackNode();
+}
+
+void CControlUnitDatasetLabel::updateChaosContent() {
+
+}
+
 void CControlUnitDatasetLabel::setDatasetType(CControlUnitDatasetLabel::DatasetType dataset_type) {
     p_dataset_type = dataset_type;
 }
@@ -35,8 +47,8 @@ int CControlUnitDatasetLabel::doublePrintPrecision() {
 }
 
 void CControlUnitDatasetLabel::nodeChangedOnlineState(const std::string& node_uid,
-                            chaos::metadata_service_client::node_monitor::OnlineState old_state,
-                            chaos::metadata_service_client::node_monitor::OnlineState new_state) {
+                                                      chaos::metadata_service_client::node_monitor::OnlineState old_state,
+                                                      chaos::metadata_service_client::node_monitor::OnlineState new_state) {
     online_state = new_state;
     QMetaObject::invokeMethod(this,
                               "updateUI",
@@ -45,9 +57,11 @@ void CControlUnitDatasetLabel::nodeChangedOnlineState(const std::string& node_ui
 }
 
 void CControlUnitDatasetLabel::updatedDS(const std::string& control_unit_uid,
-               int dataset_type,
-               chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values) {
+                                         int dataset_type,
+                                         chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values) {
     if(dataset_type != datasetType()) return;
+
+    qDebug()<< "Dataset received!";
 
     //we can update the daset output variable
     QString text_to_show = datasetValueToLabel(datasetAttributeName(),
@@ -61,12 +75,12 @@ void CControlUnitDatasetLabel::updatedDS(const std::string& control_unit_uid,
 }
 
 void CControlUnitDatasetLabel::noDSDataFound(const std::string& control_unit_uid,
-                   int dataset_type) {
+                                             int dataset_type) {
 
 }
 
- void CControlUnitDatasetLabel::updateUI(const QString& label_text) {
+void CControlUnitDatasetLabel::updateUI(const QString& label_text) {
     setText(label_text);
     setEnabled(online_state == chaos::metadata_service_client::node_monitor::OnlineStateON);
     setStyleSheetColorForOnlineState(online_state, this);
- }
+}

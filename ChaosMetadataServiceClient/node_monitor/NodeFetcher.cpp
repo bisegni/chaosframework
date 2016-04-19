@@ -122,14 +122,25 @@ void NodeFetcher::managmentKeyToMonitor(const MonitorKeyList& key_to_listen,
         it_end = key_to_listen.end();
         it != it_end;
         it++) {
-        NF_INFO << "Deregister for monitor key:" << *it;
+        const std::string key = *it;
         if(monitor) {
-            monitor_manager->addKeyConsumer(*it, 10, this);
+            map_monitor_key_registered_times[key]++;
+            NF_INFO << "Add key <<" << key <<" to monitoring";
+            if(map_monitor_key_registered_times[key] == 1) {
+                monitor_manager->addKeyConsumer(key, 10, this);
+            } else {
+                NF_INFO << "Key <<" << key <<" already monitored with instance "<< map_monitor_key_registered_times[key];
+            }
         } else {
-            monitor_manager->removeKeyConsumer(*it, 10, this);
+            map_monitor_key_registered_times[key]--;
+            if(map_monitor_key_registered_times[key] == 0) {
+                NF_INFO << "Remove key <<" << key <<" from monitoring";
+                monitor_manager->removeKeyConsumer(key, 10, this);
+            } else {
+                 NF_INFO << "Key <<" << key <<" still needed by instance "<< map_monitor_key_registered_times[key];
+            }
         }
     }
-    
 }
 
 bool NodeFetcher::addHanlderForControllerType(ControllerType type,

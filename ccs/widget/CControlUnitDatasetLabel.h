@@ -21,6 +21,10 @@ public:
     explicit CControlUnitDatasetLabel(QWidget *parent = 0);
     ~CControlUnitDatasetLabel();
 
+    void initChaosContent();
+    void deinitChaosContent();
+    void updateChaosContent();
+
     void setDatasetType(DatasetType dataset_type);
     DatasetType datasetType();
 

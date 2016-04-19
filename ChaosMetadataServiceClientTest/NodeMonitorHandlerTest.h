@@ -14,6 +14,7 @@
 class NodeMonitorHandlerTest:
 public chaos::metadata_service_client::node_monitor::ControlUnitMonitorHandler {
     const std::string node_uid;
+    chaos::metadata_service_client::node_monitor::ControllerType controller_type;
 protected:
     //! called when an online state has changed
     void nodeChangedOnlineState(const std::string& node_uid,
@@ -47,7 +48,8 @@ protected:
                                   chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values);
     
 public:
-    NodeMonitorHandlerTest(const std::string& _node_uid);
+    NodeMonitorHandlerTest(const std::string& _node_uid,
+                           chaos::metadata_service_client::node_monitor::ControllerType _controller_type);
     ~NodeMonitorHandlerTest();
 };
 

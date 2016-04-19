@@ -28,6 +28,9 @@
 
 #include <boost/thread.hpp>
 
+#include <map>
+#include <string>
+
 namespace chaos {
     namespace metadata_service_client {
         
@@ -42,9 +45,11 @@ namespace chaos {
             public chaos::metadata_service_client::monitor_system::QuantumSlotConsumer {
                 friend class NodeMonitor;
                 
-                const std::string       node_uid;
-                boost::mutex            maps_mutex;
+                const std::string             node_uid;
+                //keep track of how many times a key is needed and rmeoved when no other instance arre needed
+                std::map<std::string, int>    map_monitor_key_registered_times;
                 
+                boost::mutex            maps_mutex;
                 NodeTypeControllerMap   map_type_controller;
                 
                 //reference to global monitor manager instance
