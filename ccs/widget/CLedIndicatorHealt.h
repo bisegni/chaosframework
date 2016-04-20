@@ -1,12 +1,12 @@
 #ifndef CLEDINDICATORHEALT_H
 #define CLEDINDICATORHEALT_H
 
-#include "LedIndicatorWidget.h"
+#include "StateImageIndicatorWidget.h"
 #include "../monitor/handler/handler.h"
 #include "ChaosMonitorWidgetCompanion.h"
 
 class CLedIndicatorHealt :
-        public LedIndicatorWidget,
+        public StateImageIndicatorWidget,
         public ChaosMonitorWidgetCompanion,
         public chaos::metadata_service_client::node_monitor::NodeMonitorHandler {
     Q_OBJECT

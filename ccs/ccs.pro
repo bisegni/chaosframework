@@ -20,7 +20,6 @@ INCLUDEPATH += $$PWD/../usr/local/include
 LIBS += -L$$PWD/../usr/local/lib
 
 LIBS +=     -lchaos_metadata_service_client\
-            -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive\
             -ljsoncpp\
             -lzmq\
             -lpthread\
@@ -33,6 +32,14 @@ LIBS +=     -lchaos_metadata_service_client\
             -lboost_log\
             -lboost_log_setup\
             -lmongoose
+
+unix:!macx {
+    LIBS +=  -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive
+}
+
+macx:{
+    LIBS +=  -lchaos_common
+}
 
 SOURCES += main.cpp\
     search/SearchNodeResult.cpp \
@@ -53,7 +60,6 @@ SOURCES += main.cpp\
     monitor/healt/HealtMonitorWidget.cpp \
     monitor/healt/HealtPresenterWidget.cpp \
     monitor/healt/HealtWidgetsListPresenteWidget.cpp \
-    widget/LedIndicatorWidget.cpp \
     node/control_unit/ControlUnitEditor.cpp \
     logic/property_switch/MultiPropertyLogicSwitch.cpp \
     logic/property_switch/SwitchAggregator.cpp \
@@ -107,7 +113,8 @@ SOURCES += main.cpp\
     widget/CNodeResourceWidget.cpp \
     widget/ChaosMonitorWidgetCompanion.cpp \
     widget/CNodeHealthLabel.cpp \
-    widget/CControlUnitDatasetLabel.cpp
+    widget/CControlUnitDatasetLabel.cpp \
+    widget/StateImageIndicatorWidget.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -128,7 +135,6 @@ HEADERS  += \
     monitor/healt/HealtMonitorWidget.h \
     monitor/healt/HealtPresenterWidget.h \
     monitor/healt/HealtWidgetsListPresenteWidget.h \
-    widget/LedIndicatorWidget.h \
     node/control_unit/ControlUnitEditor.h \
     logic/property_switch/MultiPropertyLogicSwitch.h \
     logic/property_switch/SwitchAggregator.h \
@@ -205,7 +211,8 @@ HEADERS  += \
     widget/CNodeResourceWidget.h \
     widget/ChaosMonitorWidgetCompanion.h \
     widget/CNodeHealthLabel.h \
-    widget/CControlUnitDatasetLabel.h
+    widget/CControlUnitDatasetLabel.h \
+    widget/StateImageIndicatorWidget.h
 
 FORMS    += \
     search/searchnoderesult.ui \

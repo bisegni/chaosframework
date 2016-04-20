@@ -1,5 +1,5 @@
-#ifndef LEDINDICATORWIDGET_H
-#define LEDINDICATORWIDGET_H
+#ifndef StateImageIndicatorWidget_H
+#define StateImageIndicatorWidget_H
 
 #include <QMap>
 #include <QIcon>
@@ -17,12 +17,12 @@ struct StateInfo {
     blink_on_repeat_set(_blink_on_repeat_set){}
 };
 
-class LedIndicatorWidget :
+class StateImageIndicatorWidget :
         public QWidget {
     Q_OBJECT
 
 public:
-    explicit LedIndicatorWidget(QWidget *parent = 0);
+    explicit StateImageIndicatorWidget(QWidget *parent = 0);
     void addState(int state_value,
                   QSharedPointer<QIcon> state_icon,
                   bool blonk_on_repeat_set = false);
@@ -51,4 +51,4 @@ private:
 
 };
 
-#endif // LEDINDICATORWIDGET_H
+#endif // StateImageIndicatorWidget_H

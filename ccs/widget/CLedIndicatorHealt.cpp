@@ -10,7 +10,7 @@ using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 
 CLedIndicatorHealt::CLedIndicatorHealt(QWidget *parent):
-    LedIndicatorWidget(parent),
+    StateImageIndicatorWidget(parent),
     ChaosMonitorWidgetCompanion(chaos::metadata_service_client::node_monitor::ControllerTypeNode, this),
     no_ts(new QIcon(":/images/white_circle_indicator.png")),
     timeouted(new QIcon(":/images/red_circle_indicator.png")),
