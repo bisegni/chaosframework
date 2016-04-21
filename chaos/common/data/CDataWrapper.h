@@ -203,8 +203,8 @@ namespace chaos {
                 
 				//return the binary data value
 				const char* getBinaryValue(const std::string&, int&);
-				
-                CDataBuffer getBinaryValueAsCDataBuffer(const std::string& key);
+
+			  std::auto_ptr<CDataBuffer> getBinaryValueAsCDataBuffer(const std::string &key);
                 
 				//return the bson data
 				SerializationBuffer* getBSONData();

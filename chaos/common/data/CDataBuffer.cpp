@@ -25,6 +25,10 @@
 #include <stdlib.h>
 
 using namespace chaos::common::data;
+CDataBuffer::CDataBuffer()
+    :
+    buffer_size(0),
+    buffer(NULL) { }
 
 CDataBuffer::CDataBuffer(const char *_buffer,
                          uint32_t _buffer_size,
@@ -54,3 +58,5 @@ const char *CDataBuffer::getBuffer() const {
 uint32_t CDataBuffer::getBufferSize() const {
     return buffer_size;
 }
+
+

@@ -95,7 +95,7 @@ void NodeController::updateData() {
                 map_ds_health[*it] = CDataVariant(last_ds_healt->getStringValue(*it));
                 break;
             case CDataWrapperTypeBinary:
-                map_ds_health[*it] = CDataVariant(last_ds_healt->getBinaryValueAsCDataBuffer(*it));
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getBinaryValueAsCDataBuffer(*it).release());
                 break;
                 
             default:

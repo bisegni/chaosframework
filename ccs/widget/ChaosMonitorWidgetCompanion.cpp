@@ -53,8 +53,8 @@ QString ChaosMonitorWidgetCompanion::datasetValueToLabel(const QString& attribut
             result = QString::fromStdString(custom_attribute_variant.asString());
             break;
         case DataType::TYPE_BYTEARRAY:
-            CDataBuffer data_buffer = custom_attribute_variant.asCDataBuffer();
-            QByteArray byte_array =  QByteArray::fromRawData(data_buffer.getBuffer(),data_buffer.getBufferSize());
+            const CDataBuffer *data_buffer = custom_attribute_variant.asCDataBuffer();
+            QByteArray byte_array = QByteArray::fromRawData(data_buffer->getBuffer(), data_buffer->getBufferSize());
             result = byte_array.toBase64();
             break;
         }
