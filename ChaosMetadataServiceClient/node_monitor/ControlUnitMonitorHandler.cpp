@@ -24,10 +24,17 @@
 
 using namespace chaos::metadata_service_client::node_monitor;
 
-ControlUnitMonitorHandler::ControlUnitMonitorHandler() {
+ControlUnitMonitorHandler::ControlUnitMonitorHandler() {}
+
+ControlUnitMonitorHandler::~ControlUnitMonitorHandler() {}
+
+void ControlUnitMonitorHandler::updatedDS(const std::string& control_unit_uid,
+                                          int dataset_type,
+                                          MapDatasetKeyValues& dataset_key_values) {
     
 }
 
-ControlUnitMonitorHandler::~ControlUnitMonitorHandler() {
+void ControlUnitMonitorHandler::noDSDataFound(const std::string& control_unit_uid,
+                                              int dataset_type) {
     
 }

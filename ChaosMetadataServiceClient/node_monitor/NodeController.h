@@ -29,11 +29,16 @@
 
 #include <boost/thread.hpp>
 
+#define CHECK_DS_CHANGED(x, v)\
+if((x.get() == NULL) || \
+((x.get() != NULL) && (x->toHash().compare(v->toHash()) != 0)))
+
 namespace chaos {
     namespace metadata_service_client {
         namespace node_monitor {
             //! forward declaration
             class NodeMonitor;
+            class NodeFetcher;
             
             CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, MonitorKeyList)
             
@@ -41,10 +46,9 @@ namespace chaos {
             typedef std::set<NodeMonitorHandler*, NodeMonitorHandlerComparator>::iterator MonitoHandlerListIterator;
             typedef std::set<NodeMonitorHandler*, NodeMonitorHandlerComparator>::const_iterator MonitoHandlerListConstIterator;
             
-            class NodeController:
-            public chaos::metadata_service_client::monitor_system::QuantumSlotConsumer {
+            class NodeController {
                 friend class NodeMonitor;
-                
+                friend class NodeFetcher;
                 const std::string node_uid;
                 const std::string node_health_uid;
                 
@@ -55,12 +59,15 @@ namespace chaos {
                 std::string last_received_status;
                
                 //!last dataset received for helth data
+                MapDatasetKeyValues map_ds_health;
                 chaos::metadata_service_client::monitor_system::KeyValue last_ds_healt;
                 
                 inline void _resetHealth();
-                inline void _setOnlineStatus(const OnlineStatus new_online_status);
+                inline void _setOnlineState(const OnlineState new_online_state);
+                inline void _setNodeInternalState(const std::string& new_internal_state);
                 inline void _setError(const ErrorInformation& new_error_information);
-                inline void _setProcessResource(const ProcessResource& new_process_resource);\
+                inline void _setProcessResource(const ProcessResource& new_process_resource);
+                inline void _fireHealthDatasetChanged();
                 void updateData();
             protected:
                 //the list of all registered handlers
@@ -74,15 +81,17 @@ namespace chaos {
                 NodeController(const std::string& _node_uid);
 
                 //!inherited method
-                void quantumSlotHasData(const std::string& key,
+                virtual void quantumSlotHasData(const std::string& key,
                                         const chaos::metadata_service_client::monitor_system::KeyValue& value);
                 //!inherited method
-                void quantumSlotHasNoData(const std::string& key);
+                virtual void quantumSlotHasNoData(const std::string& key);
             public:
                 
                 virtual ~NodeController();
                 
                 const std::string& getNodeUID();
+                
+                const unsigned int getHandlerListSise();
                 
                 const MonitorKeyList& getMonitorKeyList() const;
                 
@@ -90,9 +99,11 @@ namespace chaos {
                 
                 const HealthInformation& getHealthInformation() const;
                 
-                bool addHandler(NodeMonitorHandler *handler_to_add);
+                virtual bool addHandler(NodeMonitorHandler *handler_to_add);
                 
                 bool removeHandler(NodeMonitorHandler *handler_to_remove);
+                
+                MapDatasetKeyValues& getHealthDataset();
             };
         }
     }

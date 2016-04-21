@@ -1,7 +1,7 @@
-#include "LedIndicatorWidget.h"
+#include "StateImageIndicatorWidget.h"
 
 #include <QPainter>
-LedIndicatorWidget::LedIndicatorWidget(QWidget *parent):
+StateImageIndicatorWidget::StateImageIndicatorWidget(QWidget *parent):
     QWidget(parent),
     blink_counter(0),
     current_state(0),
@@ -12,7 +12,7 @@ LedIndicatorWidget::LedIndicatorWidget(QWidget *parent):
     blink_timer.setInterval(250);
 }
 
-void LedIndicatorWidget::paintEvent(QPaintEvent *)
+void StateImageIndicatorWidget::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
 
@@ -31,7 +31,7 @@ void LedIndicatorWidget::paintEvent(QPaintEvent *)
 
 }
 
-void LedIndicatorWidget::addState(int state,
+void StateImageIndicatorWidget::addState(int state,
                                   QSharedPointer<QIcon> state_icon,
                                   bool blonk_on_repeat_set) {
     QMutexLocker l(&map_mutex);
@@ -41,7 +41,7 @@ void LedIndicatorWidget::addState(int state,
 }
 
 
-void LedIndicatorWidget::setState(int new_sate) {
+void StateImageIndicatorWidget::setState(int new_sate) {
     QMutexLocker l(&map_mutex);
     if(new_sate==current_state) {
         if(map_state_info[current_state]->blink_on_repeat_set) blink();
@@ -51,22 +51,22 @@ void LedIndicatorWidget::setState(int new_sate) {
     repaint();
 }
 
-void LedIndicatorWidget::setStateBlinkOnRepeatSet(int state,
+void StateImageIndicatorWidget::setStateBlinkOnRepeatSet(int state,
                                                   bool blonk_on_repeat_set) {
     QMutexLocker l(&map_mutex);
     if(!map_state_info.contains(state)) return;
     map_state_info[state]->blink_on_repeat_set = blonk_on_repeat_set;
 }
 
-void LedIndicatorWidget::blink() {
+void StateImageIndicatorWidget::blink() {
     blink_timer.start();
 }
 
-int LedIndicatorWidget::getState() {
+int StateImageIndicatorWidget::getState() {
     return current_state;
 }
 
-void LedIndicatorWidget::tick() {
+void StateImageIndicatorWidget::tick() {
     if((++blink_counter%2) == 0){
         blink_timer.stop();
     }

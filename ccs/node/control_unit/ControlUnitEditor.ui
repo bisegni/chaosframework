@@ -185,7 +185,7 @@
         <number>4</number>
        </property>
        <item row="0" column="3">
-        <widget class="ChaosLabel" name="labelControlUnitStatus">
+        <widget class="CNodeHealthLabel" name="labelControlUnitState">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -224,7 +224,7 @@
         </widget>
        </item>
        <item row="0" column="7">
-        <widget class="ChaosLabel" name="labelUnitServerStatus">
+        <widget class="CNodeHealthLabel" name="labelUnitServerState">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -540,7 +540,7 @@
             </widget>
            </item>
            <item>
-            <widget class="ChaosHealtLabel" name="chaosLabelDSOutputPushRate">
+            <widget class="CNodeHealthLabel" name="chaosLabelDSOutputPushRate">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -1023,7 +1023,7 @@
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="ChaosDatasetLabel" name="labelRunScheduleDelaySet">
+        <widget class="CControlUnitDatasetLabel" name="labelRunScheduleDelaySet">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -1188,19 +1188,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ChaosLabel</class>
+   <class>CNodeHealthLabel</class>
    <extends>QLabel</extends>
-   <header>widget/ChaosLabel.h</header>
+   <header>widget/CNodeHealthLabel.h</header>
   </customwidget>
   <customwidget>
-   <class>ChaosDatasetLabel</class>
-   <extends>QLabel</extends>
-   <header>widget/ChaosDatasetLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ChaosHealtLabel</class>
-   <extends>QLabel</extends>
-   <header>widget/ChaosHealtLabel.h</header>
+   <class>CNodeResourceWidget</class>
+   <extends>QWidget</extends>
+   <header>widget/CNodeResourceWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>CNodeLogWidget</class>
@@ -1209,10 +1205,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>CNodeResourceWidget</class>
-   <extends>QWidget</extends>
-   <header>widget/CNodeResourceWidget.h</header>
-   <container>1</container>
+   <class>CControlUnitDatasetLabel</class>
+   <extends>QLabel</extends>
+   <header>widget/CControlUnitDatasetLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

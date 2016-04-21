@@ -26,33 +26,42 @@
 #include <chaos/common/data/CDataBuffer.h>
 
 #include <boost/variant.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace chaos {
     namespace common {
         namespace data {
-            
+
+          /*!
+           * Chaos variant implementation that host all dataset CHAOS data type
+           */
             class CDataVariant {
                 DataType::DataType type;
-                boost::variant< int32_t, int64_t, double, bool, std::string, CDataBuffer > _internal_variant;
+              boost::variant<int32_t,
+                             int64_t,
+                             double,
+                             bool,
+                             std::string,
+                             boost::shared_ptr<CDataBuffer> > _internal_variant;
             public:
                 explicit CDataVariant(int32_t int32_value);
                 explicit CDataVariant(int64_t int64_value);
                 explicit CDataVariant(double double_value);
                 explicit CDataVariant(bool boolvalue);
                 explicit CDataVariant(const std::string& string_value);
-                explicit CDataVariant(const CDataBuffer& buffer_value);
+              //! take the ownership of the object
+              explicit CDataVariant(CDataBuffer *buffer_value);
                 CDataVariant(const CDataVariant& to_copy);
                 CDataVariant();
-                DataType::DataType getType();
+                DataType::DataType getType() const;
                 
-                int32_t asInt32();
-                int64_t asInt64();
-                double asDouble();
-                bool asBool();
-                const std::string& asString();
-                const CDataBuffer& asCDataBuffer();
+                int32_t asInt32() const;
+                int64_t asInt64() const;
+                double asDouble() const;
+                bool asBool() const;
+                const std::string& asString() const;
+              const CDataBuffer *const asCDataBuffer() const;
             };
-            
         }
     }
 }

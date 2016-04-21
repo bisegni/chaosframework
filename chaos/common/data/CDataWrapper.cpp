@@ -226,10 +226,10 @@ const char* CDataWrapper::getBinaryValue(const std::string& key, int& bufLen)  {
     return bsonBuilder->asTempObj().getField(key).binData(bufLen);
 }
 
-CDataBuffer CDataWrapper::getBinaryValueAsCDataBuffer(const std::string& key) {
+auto_ptr<CDataBuffer> CDataWrapper::getBinaryValueAsCDataBuffer(const std::string &key) {
     int bufLen;
     const char* buffer = bsonBuilder->asTempObj().getField(key).binData(bufLen);
-    return CDataBuffer(buffer, bufLen, true);
+    return auto_ptr<CDataBuffer>(new CDataBuffer(buffer, bufLen, true));
 }
 
 //check if the key is present in data wrapper

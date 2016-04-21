@@ -71,17 +71,28 @@ void ChaosMetadataServiceClient::init(int argc, char* argv[]) throw (CException)
 void ChaosMetadataServiceClient::init(void *init_data)  throw(CException) {
     try {
         ChaosCommon<ChaosMetadataServiceClient>::init(init_data);
-        
-        api_proxy_manager.reset(new ApiProxyManager(NetworkBroker::getInstance(), &setting), "ApiProxyManager");
+        //--------------api proxy------------------------
+        api_proxy_manager.reset(new ApiProxyManager(NetworkBroker::getInstance(),
+                                                    &setting),
+                                "ApiProxyManager");
         api_proxy_manager.init(NULL, __PRETTY_FUNCTION__);
         
-        event_dispatch_manager.reset(new EventDispatchManager(&setting), "EventDispatchManager");
+        //--------------event dispatcher-----------------
+        event_dispatch_manager.reset(new EventDispatchManager(&setting),
+                                     "EventDispatchManager");
         event_dispatch_manager.init(NULL, __PRETTY_FUNCTION__);
         
-        monitor_manager.reset(new MonitorManager(NetworkBroker::getInstance(), &setting), "MonitorManager");
+        //--------------monitor manager------------------
+        monitor_manager.reset(new MonitorManager(NetworkBroker::getInstance(),
+                                                 &setting),
+                              "MonitorManager");
         monitor_manager.init(NULL, __PRETTY_FUNCTION__);
         
-        node_monitor.reset(new node_monitor::NodeMonitor(monitor_manager.get(), &setting), "NodeMonitor");
+        //--------------node monitor---------------------
+        node_monitor.reset(new node_monitor::NodeMonitor(monitor_manager.get(),
+                                                         api_proxy_manager.get(),
+                                                         &setting),
+                           "NodeMonitor");
         node_monitor.init(NULL, __PRETTY_FUNCTION__);
         
         //configure metadata server got from command line
@@ -136,8 +147,11 @@ void ChaosMetadataServiceClient::stop()   throw(CException) {
 void ChaosMetadataServiceClient::deinit()   throw(CException) {
     //deinit api system
     CHAOS_NOT_THROW(node_monitor.deinit(__PRETTY_FUNCTION__););
+    
     CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__););
+    
     CHAOS_NOT_THROW(event_dispatch_manager.deinit(__PRETTY_FUNCTION__););
+    
     CHAOS_NOT_THROW(api_proxy_manager.deinit(__PRETTY_FUNCTION__););
     
     if(monitoringIsStarted()){CHAOS_NOT_THROW(monitor_manager.deinit(__PRETTY_FUNCTION__););}
@@ -222,14 +236,18 @@ bool ChaosMetadataServiceClient::monitoringIsStarted() {
 
 
 bool ChaosMetadataServiceClient::addHandlerToNodeMonitor(const std::string& node_uid,
+                                                         node_monitor::ControllerType controller_type,
                                                          node_monitor::NodeMonitorHandler *handler_to_add) {
     return node_monitor->addHandlerToNodeMonitor(node_uid,
+                                                 controller_type,
                                                  handler_to_add);
 }
 
 bool ChaosMetadataServiceClient::removeHandlerToNodeMonitor(const std::string& node_uid,
+                                                            node_monitor::ControllerType controller_type,
                                                             node_monitor::NodeMonitorHandler *handler_to_remove) {
     return node_monitor->removeHandlerToNodeMonitor(node_uid,
+                                                    controller_type,
                                                     handler_to_remove);
     
 }

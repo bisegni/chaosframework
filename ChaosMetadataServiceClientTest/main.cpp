@@ -113,8 +113,14 @@ int main(int argc, char *argv[]){
             case 2:{
                 std::cout << "Start node monitor library test" << std::endl;
                 {
-                    NodeMonitorHandlerTest nmt(device_id);
+                    std::auto_ptr<NodeMonitorHandlerTest> nmt[2];
+
+                    nmt[0].reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNode));
+                    nmt[1].reset(new NodeMonitorHandlerTest(device_id, chaos::metadata_service_client::node_monitor::ControllerTypeNodeControlUnit));
                     sleep(wait_seconds);
+                    nmt[0].reset();
+                    nmt[1].reset();
+                    
                 }
                 std::cout << "End node monitor library test" << std::endl;
             }

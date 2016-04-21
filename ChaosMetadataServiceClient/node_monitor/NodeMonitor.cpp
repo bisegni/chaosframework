@@ -22,84 +22,61 @@
 #include <ChaosMetadataServiceClient/node_monitor/NodeMonitor.h>
 #include <ChaosMetadataServiceClient/node_monitor/ControlUnitController.h>
 
+#include <boost/format.hpp>
+
 using namespace chaos::metadata_service_client::node_monitor;
 
 NodeMonitor::NodeMonitor(chaos::metadata_service_client::monitor_system::MonitorManager *_monitor_manager,
+                         chaos::metadata_service_client::api_proxy::ApiProxyManager *_api_proxy_manager,
                          ClientSetting *_setting):
 monitor_manager(_monitor_manager),
+api_proxy_manager(_api_proxy_manager),
 setting(_setting) {}
 
-NodeMonitor::~NodeMonitor() {}
+NodeMonitor::~NodeMonitor() {
+    map_fetcher.clear();
+}
 
 void NodeMonitor::init(void *init_data) throw (chaos::CException) {
     
 }
 
 void NodeMonitor::deinit() throw (chaos::CException) {
-    for(NodeControllerMapIterator it = map_monitor_controller.begin(), it_end = map_monitor_controller.end();
-        it != it_end;
-        it++){
-        stopNodeMonitor(it->first);
-    }
-}
-
-void NodeMonitor::startNodeMonitor(const std::string& node_uid) {
-    //check if we already have the controller installed
-    if(map_monitor_controller.count(node_uid)) return;
-    boost::shared_ptr<NodeController> new_controller(new ControlUnitController(node_uid));
-    map_monitor_controller.insert(make_pair(node_uid,
-                                            new_controller));
-    const MonitorKeyList& key_to_register = new_controller->getMonitorKeyList();
-    
-    for(MonitorKeyListConstIterator it = key_to_register.begin(),
-        it_end = key_to_register.end();
-        it != it_end;
-        it++) {
-        monitor_manager->addKeyConsumer(*it, 10, new_controller.get());
-    }
-}
-
-void NodeMonitor::stopNodeMonitor(const std::string& node_uid) {
-    //check if we have the controller installed
-    if(map_monitor_controller.count(node_uid) == 0) return;
-    
-    boost::shared_ptr<NodeController> controller = map_monitor_controller[node_uid];
-    const MonitorKeyList& key_to_register = controller->getMonitorKeyList();
-    
-    for(MonitorKeyListConstIterator it = key_to_register.begin(),
-        it_end = key_to_register.end();
-        it != it_end;
-        it++) {
-        monitor_manager->removeKeyConsumer(*it, 10, controller.get());
-    }
-    map_monitor_controller.erase(node_uid);
 }
 
 bool NodeMonitor::addHandlerToNodeMonitor(const std::string& node_uid,
+                                          ControllerType controller_type,
                                           NodeMonitorHandler *handler_to_add) {
     CHAOS_ASSERT(monitor_manager);
-    boost::unique_lock<boost::mutex> wl(map_monitor_controller_mutex);
+    
+    boost::unique_lock<boost::mutex> wl(map_fetcher_mutex);
+    boost::shared_ptr<NodeFetcher> fetcher;
+
     //check if we have the controller installed
-    if(map_monitor_controller.count(node_uid) == 0) {
-        startNodeMonitor(node_uid);
+    if(map_fetcher.count(node_uid) == 0) {
+        //create new fetcher
+        fetcher.reset(new NodeFetcher(monitor_manager,
+                                      node_uid));
+        
+        //add fetcher to map
+        map_fetcher.insert(make_pair(node_uid,
+                                     fetcher));
+    } else {
+        fetcher = map_fetcher[node_uid];
     }
-    return map_monitor_controller[node_uid]->addHandler(handler_to_add);
+    return fetcher->addHanlderForControllerType(controller_type, handler_to_add);
 }
 
 bool NodeMonitor::removeHandlerToNodeMonitor(const std::string& node_uid,
+                                             ControllerType controller_type,
                                              NodeMonitorHandler *handler_to_remove) {
     CHAOS_ASSERT(monitor_manager);
-    bool result = true;
-    boost::unique_lock<boost::mutex> wl(map_monitor_controller_mutex);
+    boost::unique_lock<boost::mutex> wl(map_fetcher_mutex);
+
     //check if we have the controller installed
-    if(map_monitor_controller.count(node_uid) == 0) return false;
-    if((result = map_monitor_controller[node_uid]->removeHandler(handler_to_remove))) {
-        //check the seize of the handler list in controller and
-        //in case it is empty delete also the controller
-        if(map_monitor_controller[node_uid]->getMonitorHandlerList().size() == 0){
-            //delete the controller
-            stopNodeMonitor(node_uid);
-        }
-    }
-    return result;
+    if(map_fetcher.count(node_uid) == 0) return false;
+    
+    //remove handler from fetcher
+    return map_fetcher[node_uid]->removeHandler(controller_type,
+                                                handler_to_remove);
 }

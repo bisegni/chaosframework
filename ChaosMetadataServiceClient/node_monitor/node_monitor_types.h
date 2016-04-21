@@ -32,27 +32,58 @@ namespace chaos {
         namespace node_monitor {
             
             typedef enum {
-                OnlineStatusUnknown,
-                OnlineStatusON,
-                OnlineStatusOFF
-            } OnlineStatus;
+                OnlineStateNotFound,
+                OnlineStateUnknown,
+                OnlineStateON,
+                OnlineStateOFF
+            } OnlineState;
             
-            typedef struct {
+            typedef struct ProcessResource{
+                uint64_t            uptime;
                 double              usr_res;
                 double              sys_res;
                 uint64_t            swp_res;
+                ProcessResource& operator=(const ProcessResource& other) {
+                    if (this == &other) return *this;
+                    
+                    uptime = other.uptime;
+                    usr_res = other.usr_res;
+                    sys_res = other.sys_res;
+                    swp_res = other.swp_res;
+                    return *this;
+                }
             } ProcessResource;
             
-            typedef struct {
+            typedef struct ErrorInformation{
                 int32_t         error_code;
                 std::string     error_message;
                 std::string     error_domain;
+                
+                ErrorInformation& operator=(const ErrorInformation& other) {
+                    if (this == &other) return *this;
+                    
+                    error_code = other.error_code;
+                    error_message = other.error_message;
+                    error_domain = other.error_domain;
+                    return *this;
+                }
             } ErrorInformation;
             
             struct HealthInformation {
-                OnlineStatus        online_status;
+                OnlineState         online_state;
+                std::string         internal_state;
                 ProcessResource     process_resource;
                 ErrorInformation    error_information;
+                
+                HealthInformation& operator=(const HealthInformation& other) {
+                    if (this == &other) return *this;
+                    
+                    online_state = other.online_state;
+                    internal_state = other.internal_state;
+                    process_resource = other.process_resource;
+                    error_information = other.error_information;
+                    return *this;
+                }
             };
             
             typedef enum {
@@ -63,6 +94,11 @@ namespace chaos {
             } DatasetType;
             
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, common::data::CDataVariant, MapDatasetKeyValues);
+            
+            typedef enum {
+                ControllerTypeNode = 0,
+                ControllerTypeNodeControlUnit
+            } ControllerType;
         }
     }
 }

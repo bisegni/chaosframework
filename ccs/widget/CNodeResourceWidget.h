@@ -1,7 +1,7 @@
 #ifndef CNODERESOURCEWIDGET_H
 #define CNODERESOURCEWIDGET_H
 
-#include "ChaosReadDatasetWidgetCompanion.h"
+#include "ChaosMonitorWidgetCompanion.h"
 
 #include <QWidget>
 
@@ -11,7 +11,8 @@ class CNodeResourceWidget;
 
 class CNodeResourceWidget :
         public QWidget,
-        public ChaosReadDatasetWidgetCompanion {
+        public ChaosMonitorWidgetCompanion,
+        public chaos::metadata_service_client::node_monitor::NodeMonitorHandler {
     Q_OBJECT
 
 public:
@@ -21,17 +22,22 @@ public:
     void deinitChaosContent();
     void updateChaosContent();
 protected:
-    void quantumSlotHasData(const std::string& key,
-                            const chaos::metadata_service_client::monitor_system::KeyValue& value);
-    void quantumSlotHasNoData(const std::string& key);
-    Dataset dataset();
-    void setDataset(Dataset dataset);
+    //! called when an online state has changed
+    void nodeChangedOnlineState(const std::string& node_uid,
+                                chaos::metadata_service_client::node_monitor::OnlineState old_state,
+                                chaos::metadata_service_client::node_monitor::OnlineState new_state);
 
+    void nodeChangedProcessResource(const std::string& node_uid,
+                                    const chaos::metadata_service_client::node_monitor::ProcessResource& old_proc_res,
+                                    const chaos::metadata_service_client::node_monitor::ProcessResource& new_proc_res);
 protected slots:
-    void updateUIWithData(const chaos::metadata_service_client::monitor_system::KeyValue value);
-    void updateUIWithNoData();
-
+    void updateUIState();
+    void updateUIResource();
+    void updateUIErrorInformation();
 private:
+    chaos::metadata_service_client::node_monitor::OnlineState current_state;
+    chaos::metadata_service_client::node_monitor::ProcessResource current_resource;
+    chaos::metadata_service_client::node_monitor::ErrorInformation current_error_information;
     Ui::CNodeResourceWidget *ui;
     QString secondsToDHMS(uint64_t duration);
 };

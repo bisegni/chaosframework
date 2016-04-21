@@ -29,10 +29,13 @@ namespace chaos {
         namespace node_monitor {
             //! forward declaration
             class NodeMonitor;
+            class NodeFetcher;
             
             class ControlUnitController:
             public NodeController {
                 friend class NodeMonitor;
+                friend class NodeFetcher;
+                
                 std::string cu_output_ds_key;
                 //!last dataset received for helth data
                 chaos::metadata_service_client::monitor_system::KeyValue last_ds_output;
@@ -53,6 +56,7 @@ namespace chaos {
                 
                 void _fireUpdateDSOnHandler(int dataset_type,
                                             MapDatasetKeyValues& map);
+                void _fireNoDSDataFoundOnHandler(int dataset_type);
             protected:
                 ControlUnitController(const std::string& _node_uid);
                 
@@ -63,6 +67,7 @@ namespace chaos {
                 void quantumSlotHasNoData(const std::string& key);
             public:
                 virtual ~ControlUnitController();
+                bool addHandler(NodeMonitorHandler *handler_to_add);
             };
         }
     }

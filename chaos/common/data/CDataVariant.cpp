@@ -25,64 +25,56 @@ using namespace chaos;
 using namespace chaos::common::data;
 
 CDataVariant::CDataVariant(int32_t int32_value):
-type(DataType::TYPE_INT32){
-    _internal_variant = int32_value;
-}
+    type(DataType::TYPE_INT32),
+    _internal_variant(int32_value) { }
 
 CDataVariant::CDataVariant(int64_t int64_value):
-type(DataType::TYPE_INT64){
-    _internal_variant = int64_value;
-}
+    type(DataType::TYPE_INT64),
+    _internal_variant(int64_value) { }
 
 CDataVariant::CDataVariant(double double_value):
-type(DataType::TYPE_DOUBLE){
-   _internal_variant = double_value;
-}
+    type(DataType::TYPE_DOUBLE),
+    _internal_variant(double_value) { }
 
 CDataVariant::CDataVariant(bool bool_value):
-type(DataType::TYPE_BOOLEAN){
-    _internal_variant = bool_value;
-}
+    type(DataType::TYPE_BOOLEAN),
+    _internal_variant(bool_value) { }
 
 CDataVariant::CDataVariant(const std::string& string_value):
-type(DataType::TYPE_STRING) {
-   _internal_variant = string_value;
-}
+    type(DataType::TYPE_STRING),
+    _internal_variant(string_value) { }
 
-CDataVariant::CDataVariant(const CDataBuffer& buffer_value):
-type(DataType::TYPE_BYTEARRAY) {
-    _internal_variant = buffer_value;
-}
+CDataVariant::CDataVariant(CDataBuffer *buffer_value)
+    :
+    type(DataType::TYPE_BYTEARRAY),
+    _internal_variant(boost::shared_ptr<CDataBuffer>(buffer_value)) { }
 
 CDataVariant::CDataVariant(const CDataVariant& to_copy):
-type(to_copy.type),
-_internal_variant(to_copy._internal_variant){    
-}
+    type(to_copy.type),
+    _internal_variant(to_copy._internal_variant) { }
 
 CDataVariant::CDataVariant():
-type(DataType::TYPE_UNDEFINED),
-_internal_variant(){
-}
+    type(DataType::TYPE_UNDEFINED),
+    _internal_variant() { }
 
-DataType::DataType CDataVariant::getType() {
+DataType::DataType CDataVariant::getType() const{
     return type;
 }
-
-int32_t CDataVariant::asInt32() {
+int32_t CDataVariant::asInt32() const {
     return  boost::get<int32_t>(_internal_variant);
 }
-int64_t CDataVariant::asInt64() {
+int64_t CDataVariant::asInt64() const {
     return  boost::get<int64_t>(_internal_variant);
 }
-double CDataVariant::asDouble() {
+double CDataVariant::asDouble() const {
     return  boost::get<double>(_internal_variant);
 }
-bool CDataVariant::asBool() {
+bool CDataVariant::asBool() const {
     return  boost::get<bool>(_internal_variant);
 }
-const std::string& CDataVariant::asString() {
+const std::string& CDataVariant::asString() const {
     return  boost::get<std::string>(_internal_variant);
 }
-const CDataBuffer& CDataVariant::asCDataBuffer() {
-    return  boost::get<CDataBuffer>(_internal_variant);
+const CDataBuffer *const CDataVariant::asCDataBuffer() const {
+    return boost::get<boost::shared_ptr<CDataBuffer> >(_internal_variant).get();
 }

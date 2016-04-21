@@ -27,31 +27,40 @@
 namespace chaos {
     namespace metadata_service_client {
         namespace node_monitor {
-            
+            class NodeFetcher;
             struct NodeMonitorHandlerComparator;
             
             //! node monitor handler
             class NodeMonitorHandler {
                 friend class NodeMonitorHandlerComparator;
+                friend class NodeFetcher;
                 const std::string handler_uuid;
             public:
+                static const char * const MAP_KEY_ONLINE_STATE;
                 NodeMonitorHandler();
                 virtual ~NodeMonitorHandler();
+            
+                virtual void nodeHasBeenRestarted(const std::string& node_uid);
                 
                 //! called when an online state has changed
-                virtual void nodeChangedOnlineStatus(const std::string& node_uid,
-                                                     OnlineStatus old_status,
-                                                     OnlineStatus new_status) = 0;
+                virtual void nodeChangedOnlineState(const std::string& node_uid,
+                                                    OnlineState old_state,
+                                                    OnlineState new_state);
+                
+                virtual void nodeChangedInternalState(const std::string& node_uid,
+                                                      const std::string& old_state,
+                                                      const std::string& new_state);
                 
                 virtual void nodeChangedProcessResource(const std::string& node_uid,
                                                         const ProcessResource& old_proc_res,
-                                                        const ProcessResource& new_proc_res) = 0;
+                                                        const ProcessResource& new_proc_res);
                 
                 virtual void nodeChangedErrorInformation(const std::string& node_uid,
-                                                         const ErrorInformation& old_status,
-                                                         const ErrorInformation& new_status) = 0;
+                                                         const ErrorInformation& old_error_information,
+                                                         const ErrorInformation& new_error_information);
                 
-                void datasetHasBeenUpdated(const std::string& node_uid);
+                virtual void nodeChangedHealthDataset(const std::string& node_uid,
+                                                      MapDatasetKeyValues& map_health_dataset);
             };
             
             struct NodeMonitorHandlerComparator {

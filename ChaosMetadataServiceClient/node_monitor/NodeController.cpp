@@ -21,18 +21,21 @@
 
 #include <ChaosMetadataServiceClient/node_monitor/NodeController.h>
 
+#include <boost/format.hpp>
+
 #define RETRY_TIME_FOR_OFFLINE 6
 
 #define NC_LINFO INFO_LOG(NodeController)
 #define NC_LDBG DBG_LOG(NodeController)
 #define NC_LERR ERR_LOG(NodeController)
 
+using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::node_monitor;
 using namespace chaos::metadata_service_client::monitor_system;
 
 NodeController::NodeController(const std::string& _node_uid):
 node_uid(_node_uid),
-node_health_uid(node_uid+chaos::DataPackPrefixID::HEALTH_DATASE_PREFIX) {
+node_health_uid(boost::str(boost::format("%1%%2%")%node_uid%chaos::DataPackPrefixID::HEALTH_DATASE_PREFIX)) {
     //add common node dataset
     monitor_key_list.push_back(node_health_uid);
     
@@ -58,37 +61,79 @@ const HealthInformation& NodeController::getHealthInformation() const {
     return health_info;
 }
 
+const unsigned int NodeController::getHandlerListSise() {
+    boost::unique_lock<boost::mutex> wl(list_handler_mutex);
+    return list_handler.size();
+}
+
 void NodeController::updateData() {
     //check for mandatory key
     if(!last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP) ||
        !last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS)) return;
     
+    map_ds_health.clear();
+    
+    int value_type = 0;
+    std::vector<std::string> key_names;
+    last_ds_healt->getAllKey(key_names);
+    for(std::vector<std::string>::iterator it = key_names.begin(),
+        end = key_names.end();
+        it != end;
+        it++) {
+        switch((value_type = last_ds_healt->getValueType(*it))) {
+            case CDataWrapperTypeBool:
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getBoolValue(*it));
+                break;
+            case CDataWrapperTypeInt32:
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getInt32Value(*it));
+                break;
+            case CDataWrapperTypeInt64:
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getInt64Value(*it));
+                break;
+            case CDataWrapperTypeDouble:
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getDoubleValue(*it));
+                break;
+            case CDataWrapperTypeString:
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getStringValue(*it));
+                break;
+            case CDataWrapperTypeBinary:
+                map_ds_health[*it] = CDataVariant(last_ds_healt->getBinaryValueAsCDataBuffer(*it).release());
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
     uint64_t received_ts = last_ds_healt->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP);
     if(last_recevied_ts == 0) {
         last_recevied_ts = received_ts;
         //unknown
-        _setOnlineStatus(OnlineStatusUnknown);
+        _setOnlineState(OnlineStateUnknown);
     } else {
         if((received_ts - last_recevied_ts) > 0) {
             //online
             was_online = true;
             zero_diff_count_on_ts = 0;
-            _setOnlineStatus(OnlineStatusON);
+            _setOnlineState(OnlineStateON);
         } else {
             if(((++zero_diff_count_on_ts > RETRY_TIME_FOR_OFFLINE) == true) ||
                (last_recevied_ts == 0)||
                (was_online == false)) {
                 //offline
-                _setOnlineStatus(OnlineStatusOFF);
+                _setOnlineState(OnlineStateOFF);
             } else {
                 if(last_recevied_ts == 0) {
                     //unknown
-                    _setOnlineStatus(OnlineStatusUnknown);
+                    _setOnlineState(OnlineStateUnknown);
                 }
             }
         }
+        //keep track of current timestamp
         last_recevied_ts = received_ts;
-        last_received_status = last_ds_healt->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS);
+        
+        //update internal state
+        _setNodeInternalState(last_ds_healt->getStringValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_STATUS));
         
         if(last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_FERROR) == 0 ||
            last_received_status.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_RERROR) == 0) {
@@ -108,10 +153,12 @@ void NodeController::updateData() {
             _setError(ErrorInformation());
         }
         
-        if(last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME) &&
+        if(last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME) &&
+           last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME) &&
            last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME) &&
            last_ds_healt->hasKey(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP)) {
             ProcessResource proc_res;
+            proc_res.uptime = last_ds_healt->getUInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME);
             proc_res.usr_res = last_ds_healt->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_USER_TIME);
             proc_res.sys_res = last_ds_healt->getDoubleValue(chaos::NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME);
             proc_res.swp_res = last_ds_healt->getInt64Value(chaos::NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP);
@@ -120,23 +167,30 @@ void NodeController::updateData() {
             _setProcessResource(ProcessResource());
         }
     }
+    
+    _fireHealthDatasetChanged();
 }
 
 void NodeController::quantumSlotHasData(const std::string& key,
                                         const monitor_system::KeyValue& value) {
     //check for monitored key
     if(key.compare(node_health_uid) != 0) return;
+    //update internal structure
     last_ds_healt = value;
+    //reset all states
     updateData();
+    
 }
 
 void NodeController::quantumSlotHasNoData(const std::string& key) {
-    //reset all states
-    _resetHealth();
+    _setOnlineState(OnlineStateNotFound);
 }
 
 void NodeController::_resetHealth() {
-    health_info.online_status = OnlineStatusUnknown;
+    map_ds_health.clear();
+    health_info.online_state = OnlineStateUnknown;
+    health_info.internal_state = "Undefined";
+    health_info.process_resource.uptime = 0;
     health_info.process_resource.usr_res = 0.0;
     health_info.process_resource.sys_res = 0.0;
     health_info.process_resource.swp_res = 0.0;
@@ -150,20 +204,51 @@ void NodeController::_resetHealth() {
     was_online = false;
 }
 
-void NodeController::_setOnlineStatus(const OnlineStatus new_online_status) {
-    if(health_info.online_status != new_online_status) {
+void NodeController::_fireHealthDatasetChanged(){
+    boost::unique_lock<boost::mutex> wl(list_handler_mutex);
+    for(MonitoHandlerListIterator it = list_handler.begin(),
+        it_end = list_handler.end();
+        it != it_end;
+        it++) {
+        //notify listers that online status has been changed
+        CHAOS_NOT_THROW((*it)->nodeChangedHealthDataset(node_uid,
+                                                        map_ds_health););
+    }
+}
+
+void NodeController::_setOnlineState(const OnlineState new_online_state) {
+    if(health_info.online_state != new_online_state) {
         boost::unique_lock<boost::mutex> wl(list_handler_mutex);
         for(MonitoHandlerListIterator it = list_handler.begin(),
             it_end = list_handler.end();
             it != it_end;
             it++) {
             //notify listers that online status has been changed
-            (*it)->nodeChangedOnlineStatus(node_uid,
-                                           health_info.online_status,
-                                           new_online_status);
+            CHAOS_NOT_THROW((*it)->nodeChangedOnlineState(node_uid,
+                                                          health_info.online_state,
+                                                          new_online_state););
         }
+        health_info.online_state = new_online_state;
+        //add online state into map
+        map_ds_health[NodeMonitorHandler::MAP_KEY_ONLINE_STATE] = CDataVariant((int32_t)new_online_state);
     }
-    health_info.online_status = new_online_status;
+}
+
+
+void NodeController::_setNodeInternalState(const std::string& new_internal_state) {
+    if(health_info.internal_state.compare(new_internal_state) != 0) {
+        boost::unique_lock<boost::mutex> wl(list_handler_mutex);
+        for(MonitoHandlerListIterator it = list_handler.begin(),
+            it_end = list_handler.end();
+            it != it_end;
+            it++) {
+            //notify listers that online status has been changed
+            CHAOS_NOT_THROW((*it)->nodeChangedInternalState(node_uid,
+                                                            health_info.internal_state,
+                                                            new_internal_state););
+        }
+        health_info.internal_state = new_internal_state;
+    }
 }
 
 void NodeController::_setError(const ErrorInformation& new_error_information) {
@@ -177,38 +262,61 @@ void NodeController::_setError(const ErrorInformation& new_error_information) {
             it != it_end;
             it++) {
             //notify listers that online status has been changed
-            (*it)->nodeChangedErrorInformation(node_uid,
-                                               health_info.error_information,
-                                               new_error_information);
+            CHAOS_NOT_THROW((*it)->nodeChangedErrorInformation(node_uid,
+                                                               health_info.error_information,
+                                                               new_error_information););
         }
+        health_info.error_information = new_error_information;
     }
-    health_info.error_information = new_error_information;
 }
 
 void NodeController::_setProcessResource(const ProcessResource& new_process_resource) {
-    bool changed = (health_info.process_resource.usr_res != new_process_resource.usr_res) ||
+    bool changed = (health_info.process_resource.uptime != new_process_resource.uptime)||
+    (health_info.process_resource.usr_res != new_process_resource.usr_res) ||
     (health_info.process_resource.sys_res != new_process_resource.sys_res) ||
     (health_info.process_resource.swp_res != new_process_resource.swp_res);
     
+    bool restarted = changed && health_info.process_resource.uptime > new_process_resource.uptime;
+    
     if(changed) {
+        
         boost::unique_lock<boost::mutex> wl(list_handler_mutex);
         for(MonitoHandlerListIterator it = list_handler.begin(),
             it_end = list_handler.end();
             it != it_end;
             it++) {
+            if(restarted) {
+                //notify listers that online status has been changed
+                CHAOS_NOT_THROW((*it)->nodeHasBeenRestarted(node_uid););
+            }
             //notify listers that online status has been changed
-            (*it)->nodeChangedProcessResource(node_uid,
-                                              health_info.process_resource,
-                                              new_process_resource);
+            CHAOS_NOT_THROW((*it)->nodeChangedProcessResource(node_uid,
+                                                              health_info.process_resource,
+                                                              new_process_resource););
         }
+        health_info.process_resource = new_process_resource;
     }
-    health_info.process_resource = new_process_resource;
 }
 
 bool NodeController::addHandler(NodeMonitorHandler *handler_to_add) {
     boost::unique_lock<boost::mutex> wl(list_handler_mutex);
     if(list_handler.find(handler_to_add) != list_handler.end()) return false;
     list_handler.insert(handler_to_add);
+    //fire current state to the handler
+    CHAOS_NOT_THROW(handler_to_add->nodeChangedOnlineState(node_uid,
+                                                           health_info.online_state,
+                                                           health_info.online_state););
+    CHAOS_NOT_THROW(handler_to_add->nodeChangedInternalState(node_uid,
+                                                             health_info.internal_state,
+                                                             health_info.internal_state););
+    CHAOS_NOT_THROW(handler_to_add->nodeChangedErrorInformation(node_uid,
+                                                                health_info.error_information,
+                                                                health_info.error_information););
+    CHAOS_NOT_THROW(handler_to_add->nodeChangedProcessResource(node_uid,
+                                                               health_info.process_resource,
+                                                               health_info.process_resource););
+    CHAOS_NOT_THROW(handler_to_add->nodeChangedHealthDataset(node_uid,
+                                                             map_ds_health););
     return true;
 }
 

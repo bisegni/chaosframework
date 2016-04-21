@@ -31,6 +31,7 @@ Q_DECLARE_METATYPE(boost::shared_ptr<chaos::metadata_service_client::api_proxy::
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::SerializationBuffer>)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::CException>)
+Q_DECLARE_METATYPE(chaos::metadata_service_client::node_monitor::OnlineState)
 
 MainController::MainController() {
 }
@@ -62,6 +63,7 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qRegisterMetaType<boost::shared_ptr<chaos::common::data::CDataWrapper> >("boost::shared_ptr<chaos::common::data::CDataWrapper>");
     qRegisterMetaType<boost::shared_ptr<chaos::CException> >("chaos::CException");
     qRegisterMetaType<boost::shared_ptr<chaos::common::data::CDataWrapper> >("chaos::metadata_service_client::monitor_system::KeyValue");
+    qRegisterMetaType<chaos::metadata_service_client::node_monitor::OnlineState>("chaos::metadata_service_client::node_monitor::OnlineState");
 
     QPixmap pixmap(":splash/main_splash.png");
     QApplication::setApplicationName("chaos_control_studio");

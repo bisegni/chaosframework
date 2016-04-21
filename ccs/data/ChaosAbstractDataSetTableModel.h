@@ -24,7 +24,7 @@ typedef QMap< QString, QSharedPointer<AbstractAttributeHandler> > DoeMapHandler;
 typedef QMap< QString, QSharedPointer<AbstractAttributeHandler> >::iterator DoeMapHandlerIterator;
 
 class ChaosAbstractDataSetTableModel:
-        public ChaosAbstractTableModel {
+        public ChaosAbstractTableModel{
     Q_OBJECT
 
 public:
