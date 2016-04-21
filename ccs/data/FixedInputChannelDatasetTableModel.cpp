@@ -362,7 +362,7 @@ bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, c
                 dataset_attribute_configuration[index.row()]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)) {
             int32_t min;
             CHECKTYPE_NUMBER(min, QString::fromStdString(dataset_attribute_configuration[index.row()]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE)), toInt, result);
-            if(result ||
+            if(result &&
                     (typed_value < min)) {
                 error_message = QString::fromStdString(boost::str(boost::format("The value %1% is minor of %2%") % typed_value % min));
                 result = false;
@@ -373,7 +373,7 @@ bool FixedInputChannelDatasetTableModel::setCellData(const QModelIndex& index, c
                 dataset_attribute_configuration[index.row()]->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)) {
             int32_t max;
             CHECKTYPE_NUMBER(max, QString::fromStdString(dataset_attribute_configuration[index.row()]->getStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE)), toInt, result);
-            if(result ||
+            if(result &&
                     (typed_value > max)) {
                 error_message = QString::fromStdString(boost::str(boost::format("The value %1% is major of %2%") % typed_value % max));
                 result = false;
