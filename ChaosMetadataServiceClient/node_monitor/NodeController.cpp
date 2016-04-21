@@ -21,6 +21,8 @@
 
 #include <ChaosMetadataServiceClient/node_monitor/NodeController.h>
 
+#include <boost/format.hpp>
+
 #define RETRY_TIME_FOR_OFFLINE 6
 
 #define NC_LINFO INFO_LOG(NodeController)
@@ -33,7 +35,7 @@ using namespace chaos::metadata_service_client::monitor_system;
 
 NodeController::NodeController(const std::string& _node_uid):
 node_uid(_node_uid),
-node_health_uid(node_uid+chaos::DataPackPrefixID::HEALTH_DATASE_PREFIX) {
+node_health_uid(boost::str(boost::format("%1%%2%")%node_uid%chaos::DataPackPrefixID::HEALTH_DATASE_PREFIX)) {
     //add common node dataset
     monitor_key_list.push_back(node_health_uid);
     
