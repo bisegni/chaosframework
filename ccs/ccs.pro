@@ -19,8 +19,18 @@ INCLUDEPATH += $$PWD/../usr/local/include
 
 LIBS += -L$$PWD/../usr/local/lib
 
-LIBS +=     -lchaos_metadata_service_client\
-            -ljsoncpp\
+
+LIBS +=     -lchaos_metadata_service_client
+
+unix:!macx {
+    LIBS +=  -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive
+}
+
+macx:{
+    LIBS +=  -lchaos_common
+}
+
+LIBS +=     -ljsoncpp\
             -lzmq\
             -lpthread\
             -lboost_system\
@@ -32,14 +42,6 @@ LIBS +=     -lchaos_metadata_service_client\
             -lboost_log\
             -lboost_log_setup\
             -lmongoose
-
-unix:!macx {
-    LIBS +=  -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive
-}
-
-macx:{
-    LIBS +=  -lchaos_common
-}
 
 SOURCES += main.cpp\
     search/SearchNodeResult.cpp \
