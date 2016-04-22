@@ -75,11 +75,11 @@ return_code\
 #define LAPP_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLInfo)
 
 #define DEFINE_LOG_HEADER(x) "[" #x "] - "
-#define INFO_LOG(x) LAPP_ << DEFINE_LOG_HEADER(x)
-#define NOTICE_LOG(x) LNOTE_ << DEFINE_LOG_HEADER(x)
-#define WARNING_LOG(x) LWRN_ << DEFINE_LOG_HEADER(x)
-#define DBG_LOG(x)  LDBG_ << DEFINE_LOG_HEADER(x) << __FUNCTION__ << " - "
-#define ERR_LOG(x)  LERR_ << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
+#define INFO_LOG(x)     LAPP_   << DEFINE_LOG_HEADER(x)
+#define NOTICE_LOG(x)   LNOTE_  << DEFINE_LOG_HEADER(x)
+#define WARNING_LOG(x)  LWRN_   << DEFINE_LOG_HEADER(x)
+#define DBG_LOG(x)      LDBG_   << DEFINE_LOG_HEADER(x) << __FUNCTION__ << " - "
+#define ERR_LOG(x)      LERR_   << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
 
 #define LOG_AND_TROW(log, num, msg)\
 log << "("<<num<<") " << msg;\

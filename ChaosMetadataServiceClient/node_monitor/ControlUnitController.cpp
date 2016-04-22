@@ -28,8 +28,7 @@
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client::node_monitor;
 
-ControlUnitController::ControlUnitController(const std::string &_node_uid)
-:
+ControlUnitController::ControlUnitController(const std::string &_node_uid):
 NodeController(_node_uid),
 cu_output_ds_key(boost::str(boost::format("%1%%2%") % getNodeUID() % chaos::DataPackPrefixID::OUTPUT_DATASE_PREFIX)),
 cu_input_ds_key(boost::str(boost::format("%1%%2%") % getNodeUID() % chaos::DataPackPrefixID::INPUT_DATASE_PREFIX)),
@@ -84,7 +83,6 @@ void ControlUnitController::quantumSlotHasNoData(const std::string &key) {
     if (key.compare(cu_output_ds_key) == 0 ||
         key.compare(cu_input_ds_key) == 0 ||
         key.compare(cu_system_ds_key) == 0) {
-        
     } else {
         NodeController::quantumSlotHasNoData(key);
     }
