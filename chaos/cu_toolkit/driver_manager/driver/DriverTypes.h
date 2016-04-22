@@ -48,9 +48,9 @@ namespace chaos{
 				namespace OpcodeType {
 					typedef enum {
 						OP_INIT = 0,
-                                                OP_DEINIT,
+						OP_DEINIT,
 						OP_USER = 100,
-                                                OP_UKNOWN= 0xDEADDEAD
+						OP_UKNOWN= 0xDEADDEAD
 					} Opcode;
 				}
                 
@@ -58,10 +58,10 @@ namespace chaos{
 				namespace MsgManagmentResultType {
 					
 					/*!
-					 These enum collect all th epossibile error that can occours during the submition of the opcode to the driver
+					 These enum collect all the possible error that can occurs during the submission of the opcodes to the driver
 					 */
 					typedef enum {
-						MMR_EXECUTED = 0,		/**< The opcode has been successfull executed. */
+						MMR_EXECUTED = 0,		/**< The opcode has been successfully executed. */
 						MMR_THREAD_DISPATCHED,	/**< has been dispatched to the thread (async operation). */
 						MMR_ERROR				/**< Opcode operation ha given an error. */
 					} MsgManagmentResult;
@@ -103,8 +103,8 @@ namespace chaos{
                     void					*inputData;         /**< the pointer to the memory containing the data for and from the command */
 					uint32_t				resultDataLength;   /**< the length of the data (input/output) contained into the "data" field. */
                     void					*resultData;        /**< the pointer to the memory containing the data for and from the command */
-                    int32_t parm[2];/**< eventual call parameters es. addr and size, to avoid to encode in inputdata buffer*/
-                    int32_t ret;/**< eventual return code of the code */
+                    int32_t parm[2];                            /**< eventual call parameters es. addr and size, to avoid to encode in inputdata buffer*/
+                    int32_t ret;                                /**< eventual return code of the code */
                     
                 } *DrvMsgPtr;
             }
