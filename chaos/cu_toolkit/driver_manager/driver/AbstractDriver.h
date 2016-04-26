@@ -66,25 +66,25 @@ namespace chaos{
                     friend class DriverWrapperPlugin;
                     friend class chaos::cu::driver_manager::DriverManager;
 					
-					bool driverNeedtoDeinitialize;
+					bool driver_need_to_deinitialize;
 					
 					//! unique uuid for the instance
-                    std::string driverUUID;
+                    std::string driver_uuid;
 					
 					//! used by driver manager to identity the instance by the hashing
-					std::string identificationString;
+					std::string identification_string;
 					
-                    boost::atomic_uint accessorCount;
+                    boost::atomic_uint accessor_count;
                     
                     //! the list of all generated accessor
                     std::vector<DriverAccessor*> accessors;
                     
-                    boost::shared_mutex accessoListShrMux;
+                    boost::shared_mutex accesso_list_shr_mux;
                     
                     //! command queue used for receive DrvMsg pack
                     //boost::interprocess::message_queue *commandQueue;
-                    DriverQueueType *commandQueue;
-					std::auto_ptr<boost::thread> threadMessageReceiver;
+                    std::auto_ptr<DriverQueueType> command_queue;
+					std::auto_ptr<boost::thread> thread_message_receiver;
 					
 					
                     // Initialize instance

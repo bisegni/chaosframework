@@ -75,13 +75,13 @@ void DriverManager::deinit() throw(chaos::CException) {
 
     //deinitialize driver
     try {
-      DMLAPP_ << "Deinitializing device driver with uuid = " << it->second->driverUUID;
+      DMLAPP_ << "Deinitializing device driver with uuid = " << it->second->driver_uuid;
       InizializableService::deinitImplementation(it->second, "AbstractDriver", "DriverManager::deinit");
     } catch (...) {
-      DMLAPP_ << "Error deinitializing device driver with uuid = " << it->second->driverUUID;
+      DMLAPP_ << "Error deinitializing device driver with uuid = " << it->second->driver_uuid;
 
     }
-    DMLAPP_ << "Deleting device driver with uuid = " << it->second->driverUUID;
+    DMLAPP_ << "Deleting device driver with uuid = " << it->second->driver_uuid;
     delete (it->second);
   }
   mapDriverUUIDHashLiveInstance.clear();
@@ -170,21 +170,21 @@ DriverAccessor *DriverManager::getNewAccessorForDriverInstance(DrvRequestInfo &r
   // i can create the instance
   AbstractDriver *driverInstance = mapDriverAliasVersionInstancer[composedDriverName]->sp_instancer->getInstance();
   //associate the driver identification string
-  driverInstance->identificationString = stringForMap;
+  driverInstance->identification_string = stringForMap;
   //initialize the newly create instance
-  DMLAPP_ << "Initializing device driver " << driverInfo << ", initialization parameters:\"" << request_info.init_parameter << "\" with uuid = " << driverInstance->driverUUID;
+  DMLAPP_ << "Initializing device driver " << driverInfo << ", initialization parameters:\"" << request_info.init_parameter << "\" with uuid = " << driverInstance->driver_uuid;
   InizializableService::initImplementation(driverInstance,
                                            (void *) (request_info.init_parameter.c_str()),
                                            "AbstractDriver",
                                            "DriverManager::getNewAccessorForDriverInstance");
 
   //here the driver has been initialized and has been associated with the hash of the parameter
-  DMLAPP_ << "Add device driver with hash = " << driverInstance->identificationString;
+  DMLAPP_ << "Add device driver with hash = " << driverInstance->identification_string;
   mapParameterLiveInstance.insert(make_pair(stringForMap, driverInstance));
-  mapDriverUUIDHashLiveInstance.insert(make_pair(driverInstance->driverUUID, driverInstance));
+  mapDriverUUIDHashLiveInstance.insert(make_pair(driverInstance->driver_uuid, driverInstance));
   //now can get new accessor
   if (driverInstance->getNewAccessor(&accessor)) {
-    DMLAPP_ << "Got new driver accessor with index =\"" << accessor->accessor_index << "\" for driver:" << driverInfo << " driver with uuid =" << driverInstance->driverUUID;
+    DMLAPP_ << "Got new driver accessor with index =\"" << accessor->accessor_index << "\" for driver:" << driverInfo << " driver with uuid =" << driverInstance->driver_uuid;
   }
   return accessor;
 }
@@ -203,18 +203,18 @@ void DriverManager::releaseAccessor(DriverAccessor *accessor) {
     throw chaos::CException(1, "This errore never have to appen", "DriverManager::releaseAccessor");
   }
   if (!dInstance->accessors.size()) {
-    DMLAPP_ << "The driver with uuid =" << dInstance->driverUUID << " has no more accessor allocated so we can deinitialize it";
+    DMLAPP_ << "The driver with uuid =" << dInstance->driver_uuid << " has no more accessor allocated so we can deinitialize it";
     //deinitialize driver
     try {
-      DMLAPP_ << "Deinitializing device driver with uuid = " << dInstance->driverUUID << " (\"" << dInstance->identificationString + "\")";
+      DMLAPP_ << "Deinitializing device driver with uuid = " << dInstance->driver_uuid << " (\"" << dInstance->identification_string<<"\")";
       InizializableService::deinitImplementation(dInstance, "AbstractDriver", "DriverManager::deinit");
     } catch (...) {
-      DMLAPP_ << "Error deinitializing device driver with uuid = " << dInstance->driverUUID << " (\"" << dInstance->identificationString + "\")";
+      DMLAPP_ << "Error deinitializing device driver with uuid = " << dInstance->driver_uuid << " (\"" << dInstance->identification_string << "\")";
 
     }
-    DMLAPP_ << "Deleting device driver with uuid = " << dInstance->driverUUID;
-    mapParameterLiveInstance.erase(dInstance->identificationString);
-    mapDriverUUIDHashLiveInstance.erase(dInstance->driverUUID);
+    DMLAPP_ << "Deleting device driver with uuid = " << dInstance->driver_uuid;
+    mapParameterLiveInstance.erase(dInstance->identification_string);
+    mapDriverUUIDHashLiveInstance.erase(dInstance->driver_uuid);
     delete (dInstance);
   }
 }

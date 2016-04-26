@@ -1,8 +1,8 @@
-/*	
+/*
  *	global.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,16 +45,16 @@
 
 #include <cassert>
 
-//#include <chaos/common/debug/debug_new.h>
+    //#include <chaos/common/debug/debug_new.h>
 
 #include <stdlib.h>
 
 #if BOOST_VERSION > 105300
     //allocate the logger
-    BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
-#else 
-    BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
-#endif 
+BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
+#else
+BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
+#endif
 
 #define CHAOS_BOOST_LOCK_EXCEPTION_CACTH(exception_name, exception_code)\
 catch(boost::exception_detail::error_info_injector<boost::io::too_many_args>& exception_name){\
@@ -75,11 +75,22 @@ return_code\
 #define LAPP_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLInfo)
 
 #define DEFINE_LOG_HEADER(x) "[" #x "] - "
-#define INFO_LOG(x)     LAPP_   << DEFINE_LOG_HEADER(x)
-#define NOTICE_LOG(x)   LNOTE_  << DEFINE_LOG_HEADER(x)
-#define WARNING_LOG(x)  LWRN_   << DEFINE_LOG_HEADER(x)
-#define DBG_LOG(x)      LDBG_   << DEFINE_LOG_HEADER(x) << __FUNCTION__ << " - "
-#define ERR_LOG(x)      LERR_   << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
+#define DEFINE_LOG_HEADER_1_P(x,y) "[" #x "-" #y "] - "
+
+#define INFO_LOG(x)         LAPP_   << DEFINE_LOG_HEADER(x)
+#define INFO_LOG_1_P(x,y)   LAPP_   << DEFINE_LOG_HEADER_1_P(x,y)
+
+#define NOTICE_LOG(x)       LNOTE_  << DEFINE_LOG_HEADER(x)
+#define NOTICE_LOG_1_P(x,y) LNOTE_  << DEFINE_LOG_HEADER_1_P(x,y)
+
+#define WARNING_LOG(x)      LWRN_   << DEFINE_LOG_HEADER(x)
+#define WARNING_LOG_1_P(x,y)LWRN_   << DEFINE_LOG_HEADER_1_P(x,y)
+
+#define DBG_LOG(x)          LDBG_   << DEFINE_LOG_HEADER(x) << __FUNCTION__ << " - "
+#define DBG_LOG_1_P(x,y)    LDBG_   << DEFINE_LOG_HEADER_1_P(x,y) << __FUNCTION__ << " - "
+
+#define ERR_LOG(x)          LERR_   << DEFINE_LOG_HEADER(x) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
+#define ERR_LOG_1_P(x,y)    LERR_   << DEFINE_LOG_HEADER_1_P(x,y) << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
 
 #define LOG_AND_TROW(log, num, msg)\
 log << "("<<num<<") " << msg;\
@@ -120,21 +131,21 @@ if(assertion == false) {LOG_AND_TROW(log, num, msg)}
 #define CHAOS_ASSERT(x) \
 if (!(x)) \
 { \
-    std::cout << "ERROR!! Assert " << #x << " failed\n";	\
-    std::cout << " on line " << __LINE__  << "\n";	\
-    std::cout << " in file " << __FILE__ << "\n";	\
-    std::cout.flush();					\
+std::cout << "ERROR!! Assert " << #x << " failed\n";	\
+std::cout << " on line " << __LINE__  << "\n";	\
+std::cout << " in file " << __FILE__ << "\n";	\
+std::cout.flush();					\
 }\
 assert(x);
 #endif
 
 #define CHAOS_EXCEPTION(e,msg) \
-    {std::stringstream ss;\
-    ss<<__FILE__<<":"<<__LINE__<<":"<<__FUNCTION__;\
-    LDBG_<<"throwing exception in:"<<ss.str();\
-    LDBG_<<"message:"<<msg;\
-    throw chaos::CException(e,msg,ss.str());}
-    
+{std::stringstream ss;\
+ss<<__FILE__<<":"<<__LINE__<<":"<<__FUNCTION__;\
+LDBG_<<"throwing exception in:"<<ss.str();\
+LDBG_<<"message:"<<msg;\
+throw chaos::CException(e,msg,ss.str());}
+
 #define CHAOS_SET_PRECISION_TO_DOUBLE(number, factor)\
 ((double)((int)(number*factor))/factor)
 
@@ -157,10 +168,10 @@ LERR_ << "-----------Exception------------";
 
 #define DECODE_CHAOS_EXCEPTION_ON_LOG(l, x) \
 l << "-----------Exception------------\n"\
-    << "Domain:" << x.errorDomain << "\n"\
-    << "Message:" << x.errorMessage << "\n"\
-    << "Error Code;" << x.errorCode << "\n"\
-    << "-----------Exception------------";
+<< "Domain:" << x.errorDomain << "\n"\
+<< "Message:" << x.errorMessage << "\n"\
+<< "Error Code;" << x.errorCode << "\n"\
+<< "-----------Exception------------";
 
 #define DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(dw, ex)\
 dw->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ex.errorCode);\
@@ -178,7 +189,7 @@ delete(x); x=NULL;\
 
 #define CHK_AND_DELETE_OBJ_POINTER(x)\
 if (x){\
-    DELETE_OBJ_POINTER(x)\
+DELETE_OBJ_POINTER(x)\
 }
 
 #define PRINT_LIB_HEADER  \
@@ -197,18 +208,18 @@ DECODE_CHAOS_EXCEPTION(ex)\
 try{\
 l\
 }catch(...){\
-	x\
+x\
 }
 
 /*
  Abstraction for the server delegator
  */
 namespace chaos{
-class ServerDelegator {
-public:
-    virtual ~ServerDelegator(){};
-    virtual void stop() = 0;
-};
+    class ServerDelegator {
+    public:
+        virtual ~ServerDelegator(){};
+        virtual void stop() = 0;
+    };
 }
 
 #endif
