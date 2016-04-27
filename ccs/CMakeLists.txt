@@ -10,12 +10,14 @@ set(CMAKE_AUTORCC ON)
 
 INCLUDE_DIRECTORIES( ../usr/local/include )
 LINK_DIRECTORIES( ../usr/local/lib )
-
+SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+SET(CMAKE_EXE_LINKER_FLAGS "-static")
 # Find the QtWidgets library
 find_package(Qt5Widgets)
 find_package(Qt5Core)
 find_package(Qt5Gui)
 find_package(Qt5PrintSupport)
+
 
 QT5_WRAP_UI(UIS_HDRS
     search/searchnoderesult.ui
@@ -68,25 +70,25 @@ add_executable(ccs main.cpp
     node/data_service/DataServiceEditor.cpp
     node/data_service/CreateEditDataService.cpp
     preference/PreferenceDialog.cpp
-    node/data/FixedOutputChannelDatasetTableModel.cpp
+#    node/data/FixedOutputChannelDatasetTableModel.cpp
     MainWindow.cpp
     monitor/healt/HealtMonitorWidget.cpp
     monitor/healt/HealtPresenterWidget.cpp
     monitor/healt/HealtWidgetsListPresenteWidget.cpp
     widget/LedIndicatorWidget.cpp
-    node/data/ChaosAbstractTableModel.cpp
+#    node/data/ChaosAbstractTableModel.cpp
     node/control_unit/ControlUnitEditor.cpp
-    node/data/FixedInputChannelDatasetTableModel.cpp
+#    node/data/FixedInputChannelDatasetTableModel.cpp
     logic/property_switch/MultiPropertyLogicSwitch.cpp
     logic/property_switch/SwitchAggregator.cpp
-    node/data/ChaosAbstractDataSetTableModel.cpp
-    node/data/ChaosAbstractListModel.cpp
-    node/data/CommandListModel.cpp
-    widget/list/delegate/TwoLineInformationListItemDelegate.cpp
-    widget/list/delegate/TwoLineInformationItem.cpp
-    node/data/CommandParameterTableModel.cpp
-    node/data/AttributeValueChangeSet.cpp
-    node/data/CommandTemplateListModel.cpp
+#    node/data/ChaosAbstractDataSetTableModel.cpp
+#    node/data/ChaosAbstractListModel.cpp
+#    node/data/CommandListModel.cpp
+#    widget/list/delegate/TwoLineInformationListItemDelegate.cpp
+#    widget/list/delegate/TwoLineInformationItem.cpp
+#    node/data/CommandParameterTableModel.cpp
+#    node/data/AttributeValueChangeSet.cpp
+#    node/data/CommandTemplateListModel.cpp
     node/control_unit/ControlUnitCommandTemplateEditor.cpp
     node/control_unit/CommandTemplateInstanceEditor.cpp
     data/CommandReader.cpp
@@ -99,7 +101,7 @@ add_executable(ccs main.cpp
     widget/ChaosDatasetLabel.cpp
     data/ChaosByteArray.cpp
     plot/NodeAttributePlotting.cpp
-    node/data/DatasetAttributeListModel.cpp
+#    node/data/DatasetAttributeListModel.cpp
     data/DatasetReader.cpp
     data/DatasetAttributeReader.cpp
     widget/CLedIndicatorHealt.cpp

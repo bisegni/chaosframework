@@ -36,7 +36,7 @@ namespace chaos {
                     BasicIODriverOpcode_GET_DATASETSIZE,
                     BasicIODriverOpcode_INIT,
                     BasicIODriverOpcode_DEINIT,
-                    BasicIODriverOpcode_USER = cu_driver::OpcodeType::OP_USER,
+                    BasicIODriverOpcode_USER
 
                 } BasicIODriverOpcode;
 

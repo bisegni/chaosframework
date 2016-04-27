@@ -89,7 +89,7 @@ void AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
     ResponseMessageType id_to_read;
     AccessorQueueType result_queue;
     std::memset(&initMsg, 0, sizeof(DrvMsg));
-    initMsg.opcode = OpcodeType::OP_INIT;
+    initMsg.opcode = OpcodeType::OP_INIT_DRIVER;
     initMsg.id = 0;
     initMsg.inputData = initParamPtr;
     initMsg.drvResponseMQ = &result_queue;
@@ -103,7 +103,7 @@ void AbstractDriver::deinit() throw(chaos::CException) {
         // driverDeinit();
     DrvMsg deinitMsg;
     std::memset(&deinitMsg, 0, sizeof(DrvMsg));
-    deinitMsg.opcode = OpcodeType::OP_DEINIT;
+    deinitMsg.opcode = OpcodeType::OP_DEINIT_DRIVER;
 
         //send opcode to driver implemetation
     driver_need_to_deinitialize = true;
@@ -179,11 +179,11 @@ void AbstractDriver::scanForMessage() {
 
             //! check if we need to execute the private driver's opcode
         switch (current_message_ptr->opcode) {
-            case OpcodeType::OP_INIT:
+            case OpcodeType::OP_INIT_DRIVER:
                 driverInit(static_cast<const char *>(current_message_ptr->inputData));
                 break;
 
-            case OpcodeType::OP_DEINIT:
+            case OpcodeType::OP_DEINIT_DRIVER:
                 driverDeinit();
                 break;
 
@@ -207,6 +207,6 @@ void AbstractDriver::scanForMessage() {
             current_message_ptr->drvResponseMQ->push(current_message_ptr->id);
         }
 
-    } while ((current_message_ptr->opcode != OpcodeType::OP_DEINIT) && (!driver_need_to_deinitialize));
+    } while ((current_message_ptr->opcode != OpcodeType::OP_DEINIT_DRIVER) && (!driver_need_to_deinitialize));
     ADLAPP_ << "Scanner thread terminated for dirver["<<driver_uuid<<"]";
 }
