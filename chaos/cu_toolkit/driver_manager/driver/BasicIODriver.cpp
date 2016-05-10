@@ -45,8 +45,13 @@ BasicIODriver::~BasicIODriver() {
 }
 
 void BasicIODriver::driverInit(const char *initParameter) throw(chaos::CException) {
+  int ret;
   BasicIODriverLAPP_ << "Init driver:"<<initParameter;
-  initIO((void*)initParameter,(int)strlen(initParameter));
+  if ( (ret=initIO((void*)initParameter,(int)strlen(initParameter)))!=0){
+    std::stringstream ss;
+    ss<<"Cannot initialize driver,initialization string:\""<<initParameter<<"\"";
+    throw chaos::CException(ret, ss.str(), __FUNCTION__);
+  }
 	
 }
 

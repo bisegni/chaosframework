@@ -1,52 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
-		<cconfiguration id="cdt.managedbuild.toolchain.gnu.cross.base.466718478">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.cross.base.466718478" moduleId="org.eclipse.cdt.core.settings" name="Default">
+		<cconfiguration id="cdt.managedbuild.toolchain.gnu.cross.base.1362084187">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.cross.base.1362084187" moduleId="org.eclipse.cdt.core.settings" name="Default">
 				<externalSettings/>
 				<extensions>
-					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.cross.base.466718478" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
-					<folderInfo id="cdt.managedbuild.toolchain.gnu.cross.base.466718478.999909517" name="/" resourcePath="">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.1529352261" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base">
-							<option id="cdt.managedbuild.option.gnu.cross.prefix.1379159508" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix"/>
-							<option id="cdt.managedbuild.option.gnu.cross.path.2139278905" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path"/>
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.1324751049" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
-							<builder id="cdt.managedbuild.builder.gnu.cross.2002000765" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.2009157141" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
-								<option id="gnu.c.compiler.option.include.paths.1482822810" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${CHAOS_PREFIX}/include&quot;"/>
-								</option>
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.430025185" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1067557039" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
-								<option id="gnu.cpp.compiler.option.include.paths.340929637" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${CHAOS_PREFIX}/include&quot;"/>
-								</option>
-								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1296760471" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1985738198" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.485859414" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
-								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.303952983" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
-									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
-									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
-								</inputType>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1365949670" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
-							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.864001026" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
-								<option id="gnu.both.asm.option.include.paths.151218934" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${CHAOS_PREFIX}/include&quot;"/>
-								</option>
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.792461972" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-							</tool>
+				<configuration buildProperties="" id="cdt.managedbuild.toolchain.gnu.cross.base.1362084187" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
+					<folderInfo id="cdt.managedbuild.toolchain.gnu.cross.base.1362084187.914739095" name="/" resourcePath="">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.base.1832845311" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.base">
+							<option id="cdt.managedbuild.option.gnu.cross.prefix.986179496" name="Prefix" superClass="cdt.managedbuild.option.gnu.cross.prefix"/>
+							<option id="cdt.managedbuild.option.gnu.cross.path.432493464" name="Path" superClass="cdt.managedbuild.option.gnu.cross.path"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.2059275743" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
+							<builder id="cdt.managedbuild.builder.gnu.cross.663970880" managedBuildOn="false" name="Gnu Make Builder.Default" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.1013793862" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.858195572" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.144448812" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.122306266" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1451571690" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.243662656" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler"/>
 						</toolChain>
 					</folderInfo>
 				</configuration>
@@ -54,10 +34,6 @@
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 	</storageModule>
-	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="chaosframework.null.1465223235" name="chaosframework"/>
-	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.466718478;cdt.managedbuild.toolchain.gnu.cross.base.466718478.999909517;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1067557039;cdt.managedbuild.tool.gnu.cpp.compiler.input.1296760471">
@@ -82,4 +58,8 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="chaosframework.null.1065827086" name="chaosframework"/>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 </cproject>
