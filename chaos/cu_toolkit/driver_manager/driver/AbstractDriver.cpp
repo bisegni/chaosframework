@@ -85,16 +85,20 @@ void AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
 #endif
     ADLAPP_ << "Call custom driver initialization";
 
-    DrvMsg initMsg;
+    DrvMsg init_msg;
     ResponseMessageType id_to_read;
     AccessorQueueType result_queue;
-    std::memset(&initMsg, 0, sizeof(DrvMsg));
-    initMsg.opcode = OpcodeType::OP_INIT_DRIVER;
-    initMsg.id = 0;
-    initMsg.inputData = initParamPtr;
-    initMsg.drvResponseMQ = &result_queue;
-    command_queue->push(&initMsg);
+    std::memset(&init_msg, 0, sizeof(DrvMsg));
+    init_msg.opcode = OpcodeType::OP_INIT_DRIVER;
+    init_msg.id = 0;
+    init_msg.inputData = initParamPtr;
+    init_msg.drvResponseMQ = &result_queue;
+    command_queue->push(&init_msg);
     result_queue.wait_and_pop(id_to_read);
+    if(init_msg.ret){
+            //in case we have error throw the exception
+        throw CException(init_msg.ret, init_msg.err_msg, init_msg.err_dom);
+    }
 }
 
     // Deinit the implementation
@@ -168,7 +172,6 @@ bool AbstractDriver::releaseAccessor(DriverAccessor *accessor) {
 void AbstractDriver::scanForMessage() {
     ADLAPP_ << "Scanner thread started for dirver["<<driver_uuid<<"]";
     DrvMsgPtr current_message_ptr;
-    MsgManagmentResultType::MsgManagmentResult opcode_submission_result;
     do {
             //wait for the new command
         command_queue->wait_and_pop(current_message_ptr);
@@ -177,31 +180,56 @@ void AbstractDriver::scanForMessage() {
             continue;
         }
 
-            //! check if we need to execute the private driver's opcode
-        switch (current_message_ptr->opcode) {
-            case OpcodeType::OP_INIT_DRIVER:
-                driverInit(static_cast<const char *>(current_message_ptr->inputData));
-                break;
+        try{
+                //clean error message and domain
+            memset(current_message_ptr->err_msg, 0, DRVMSG_ERR_MSG_SIZE);
+            memset(current_message_ptr->err_dom, 0, DRVMSG_ERR_DOM_SIZE);
+                //! check if we need to execute the private driver's opcode
+            switch (current_message_ptr->opcode) {
+                case OpcodeType::OP_INIT_DRIVER:
+                    driverInit(static_cast<const char *>(current_message_ptr->inputData));
+                    break;
 
-            case OpcodeType::OP_DEINIT_DRIVER:
-                driverDeinit();
-                break;
+                case OpcodeType::OP_DEINIT_DRIVER:
+                    driverDeinit();
+                    break;
 
-            default: {
-                    //for custom opcode we call directly the driver implementation of execOpcode
-                opcode_submission_result = execOpcode(current_message_ptr);
-                switch (opcode_submission_result) {
-                    case MsgManagmentResultType::MMR_ERROR:
-                    case MsgManagmentResultType::MMR_EXECUTED:
-                        break;
+                default: {
+                        //for custom opcode we call directly the driver implementation of execOpcode
+                    current_message_ptr->ret = execOpcode(current_message_ptr);
+                    switch (current_message_ptr->ret) {
+                        case MsgManagmentResultType::MMR_ERROR:
+                        case MsgManagmentResultType::MMR_EXECUTED:
+                            break;
 
-                    default:
-                        break;
+                        default:
+                            break;
+                    }
+                    break;
                 }
-                break;
+                    
             }
-
+        } catch(CException& ex) {
+                //chaos exception
+	  ADLERR_ << "an error has been catched code: "<<ex.errorCode<<" msg:"<< ex.errorMessage.c_str()<<" dom:"<<ex.errorDomain.c_str();
+            current_message_ptr->ret = ex.errorCode;
+            strncpy(current_message_ptr->err_msg, ex.errorMessage.c_str(), DRVMSG_ERR_MSG_SIZE);
+            strncpy(current_message_ptr->err_dom, ex.errorDomain.c_str(), DRVMSG_ERR_DOM_SIZE);
+        } catch(std::exception e){
+	    ADLERR_ << "unexpected exception ";
+	  current_message_ptr->ret = MsgManagmentResultType::MMR_ERROR;
+	  std::stringstream ss;
+	  ss<<"Unexpected exception:"<<e.what();
+	  strncpy(current_message_ptr->err_msg, ss.str().c_str(), DRVMSG_ERR_MSG_SIZE);
+	  strncpy(current_message_ptr->err_dom, __PRETTY_FUNCTION__, DRVMSG_ERR_DOM_SIZE);
+	} catch(...) {
+                //unkonwn exception
+	  ADLERR_ << "an unknown exception ";
+	  current_message_ptr->ret = MsgManagmentResultType::MMR_ERROR;
+	  strncpy(current_message_ptr->err_msg, "Unexpected exception:", DRVMSG_ERR_MSG_SIZE);
+            strncpy(current_message_ptr->err_dom, __PRETTY_FUNCTION__, DRVMSG_ERR_DOM_SIZE);
         }
+
             //notify the caller
         if (current_message_ptr->drvResponseMQ) {
             current_message_ptr->drvResponseMQ->push(current_message_ptr->id);

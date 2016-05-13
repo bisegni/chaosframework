@@ -92,6 +92,10 @@ namespace chaos{
                 //typedef boost::interprocess::message_queue drvqueue_t;
                 typedef chaos_thread_ns::TemplatedConcurrentQueue<DrvMsg*> DriverQueueType;
                 typedef chaos_thread_ns::TemplatedConcurrentQueue<ResponseMessageType> AccessorQueueType;
+
+#define DRVMSG_ERR_MSG_SIZE 255
+#define DRVMSG_ERR_DOM_SIZE 255
+
                     //! Driver message information
                 /*!
                  * This structure represent the message that is sent to the driver to perform 
@@ -109,7 +113,8 @@ namespace chaos{
                     void					*resultData;        /**< the pointer to the memory containing the data for and from the command */
                     int32_t parm[2];                            /**< eventual call parameters es. addr and size, to avoid to encode in inputdata buffer*/
                     int32_t ret;                                /**< eventual return code of the code */
-                    
+                    char    err_msg[DRVMSG_ERR_MSG_SIZE];       /**< error message */
+                    char    err_dom[DRVMSG_ERR_DOM_SIZE];       /**< error domain */
                 } *DrvMsgPtr;
             }
         }
