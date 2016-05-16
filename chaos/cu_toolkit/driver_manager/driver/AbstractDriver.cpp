@@ -171,6 +171,8 @@ bool AbstractDriver::releaseAccessor(DriverAccessor *accessor) {
  ------------------------------------------------------*/
 void AbstractDriver::scanForMessage() {
     ADLAPP_ << "Scanner thread started for dirver["<<driver_uuid<<"]";
+    MsgManagmentResultType::MsgManagmentResult opcode_submission_result=MsgManagmentResultType::MMR_ERROR;
+
     DrvMsgPtr current_message_ptr;
     do {
             //wait for the new command
@@ -188,17 +190,23 @@ void AbstractDriver::scanForMessage() {
             switch (current_message_ptr->opcode) {
                 case OpcodeType::OP_INIT_DRIVER:
                     driverInit(static_cast<const char *>(current_message_ptr->inputData));
+                    opcode_submission_result = MsgManagmentResultType::MMR_EXECUTED;
                     break;
 
                 case OpcodeType::OP_DEINIT_DRIVER:
                     driverDeinit();
+                    opcode_submission_result = MsgManagmentResultType::MMR_EXECUTED;
+
                     break;
 
                 default: {
+
                         //for custom opcode we call directly the driver implementation of execOpcode
-                    current_message_ptr->ret = execOpcode(current_message_ptr);
-                    switch (current_message_ptr->ret) {
+                	opcode_submission_result = execOpcode(current_message_ptr);
+                    switch (opcode_submission_result) {
                         case MsgManagmentResultType::MMR_ERROR:
+                        	  ADLERR_ << "an error has been returned by execOcode"<<opcode_submission_result;
+
                         case MsgManagmentResultType::MMR_EXECUTED:
                             break;
 
@@ -217,7 +225,7 @@ void AbstractDriver::scanForMessage() {
             strncpy(current_message_ptr->err_dom, ex.errorDomain.c_str(), DRVMSG_ERR_DOM_SIZE);
         } catch(std::exception e){
 	    ADLERR_ << "unexpected exception ";
-	  current_message_ptr->ret = MsgManagmentResultType::MMR_ERROR;
+	    opcode_submission_result = MsgManagmentResultType::MMR_ERROR;
 	  std::stringstream ss;
 	  ss<<"Unexpected exception:"<<e.what();
 	  strncpy(current_message_ptr->err_msg, ss.str().c_str(), DRVMSG_ERR_MSG_SIZE);
@@ -225,7 +233,7 @@ void AbstractDriver::scanForMessage() {
 	} catch(...) {
                 //unkonwn exception
 	  ADLERR_ << "an unknown exception ";
-	  current_message_ptr->ret = MsgManagmentResultType::MMR_ERROR;
+	  opcode_submission_result = MsgManagmentResultType::MMR_ERROR;
 	  strncpy(current_message_ptr->err_msg, "Unexpected exception:", DRVMSG_ERR_MSG_SIZE);
             strncpy(current_message_ptr->err_dom, __PRETTY_FUNCTION__, DRVMSG_ERR_DOM_SIZE);
         }
@@ -236,5 +244,5 @@ void AbstractDriver::scanForMessage() {
         }
 
     } while ((current_message_ptr->opcode != OpcodeType::OP_DEINIT_DRIVER) && (!driver_need_to_deinitialize));
-    ADLAPP_ << "Scanner thread terminated for dirver["<<driver_uuid<<"]";
+    ADLAPP_ << "Scanner thread terminated for driver["<<driver_uuid<<"]";
 }
