@@ -83,7 +83,9 @@ void CouchbaseCacheDriver::setCallback(lcb_t instance,
 
 CouchbaseCacheDriver::CouchbaseCacheDriver(std::string alias):
 CacheDriver(alias),
-instance(NULL) {
+instance(NULL),
+last_err(),
+get_result() {
 	lcb_uint32_t ver;
 	const char *msg = lcb_get_version(&ver);
 	CCDLAPP_ << "Couchbase sdk version: " << msg;

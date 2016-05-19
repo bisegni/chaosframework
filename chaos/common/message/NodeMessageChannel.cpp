@@ -25,8 +25,10 @@ using namespace chaos::common::network;
 using namespace chaos::common::message;
 //!Base constructor
 NodeMessageChannel::NodeMessageChannel(NetworkBroker *msgBroker,
-                                       CNodeNetworkAddress *_nodeAddress):
-MessageChannel(msgBroker),
+                                       CNodeNetworkAddress *_nodeAddress,
+                                       MessageRequestDomainSHRDPtr _new_message_request_domain):
+MessageChannel(msgBroker,
+               _new_message_request_domain),
 nodeAddress(_nodeAddress){
     CHAOS_ASSERT(nodeAddress.get())
 }

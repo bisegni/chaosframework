@@ -44,7 +44,10 @@ AsioEventHandler::AsioEventHandler(const boost::asio::ip::address& listen_addres
     socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
     
     socket_.async_receive(boost::asio::buffer(data_, max_length),
-                          boost::bind(&AsioEventHandler::handle_receive_from, this,boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+                          boost::bind(&AsioEventHandler::handle_receive_from,
+                                      this,
+                                      boost::asio::placeholders::error,
+                                      boost::asio::placeholders::bytes_transferred));
 }
 
 AsioEventHandler::~AsioEventHandler() {
@@ -59,6 +62,7 @@ void AsioEventHandler::handle_receive_from(const boost::system::error_code& erro
         
             //waith for another event
         socket_.async_receive(boost::asio::buffer(data_, max_length),
-                              boost::bind(&AsioEventHandler::handle_receive_from, this, boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));
+                              boost::bind(&AsioEventHandler::handle_receive_from, this, boost::asio::placeholders::error,
+                                          boost::asio::placeholders::bytes_transferred));
     }
 }

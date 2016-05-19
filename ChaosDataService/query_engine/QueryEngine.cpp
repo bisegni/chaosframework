@@ -49,7 +49,8 @@ query_computed_unique_id(boost::str(boost::format("%1%_%2%") % query_id % answer
 query(_query),
 query_phase(DataCloudQueryPhaseNeedSearch),
 total_data_pack_sent(0),
-vfs_query(NULL){
+vfs_query(NULL),
+answer_connection_state(chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected){
 	//set teh dafault value on element to forward for server-> client paging
 	fetchedAndForwadInfo.number_of_element_to_forward = 0;
 };

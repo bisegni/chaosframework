@@ -51,14 +51,10 @@ DirectIOClientConnection::DirectIOClientConnection(std::string _server_descripti
 server_description(_server_description),
 endpoint(_endpoint),
 map_client_channels(this),
-event_handler(NULL) {
-	//set the default connection hash
-    //generate random hash from uuid lite
-    unique_uuid = UUIDUtil::generateUUIDLite();
-    
-	url = boost::str( boost::format("%1%|%2%") % server_description % endpoint);
-
-}
+event_handler(NULL),
+current_state(DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected),
+unique_uuid(UUIDUtil::generateUUIDLite()),
+url(boost::str( boost::format("%1%|%2%") % _server_description % _endpoint)){}
 
 DirectIOClientConnection::~DirectIOClientConnection() {
 	

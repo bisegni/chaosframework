@@ -32,7 +32,9 @@ namespace chaos_data = chaos::common::data;
 
 DEFINE_CLASS_FACTORY(MongoDBDriver, DBDriver);
 //!
-MongoDBDriver::MongoDBDriver(std::string alias):DBDriver(alias) {}
+MongoDBDriver::MongoDBDriver(std::string alias):
+DBDriver(alias),
+ha_connection_pool(NULL){}
 
 //!
 MongoDBDriver::~MongoDBDriver() {}
@@ -51,56 +53,12 @@ void MongoDBDriver::init(void *init_data) throw (chaos::CException) {
 	} else {
 		db_name = MONGO_DB_NAME;
 	}
-	//setup index
-	//db.vdomain.ensureIndex( { "vfs_domain":1, "vfs_unique_domain_code":1 } , { unique: true,  dropDups: true  } )
-	//db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true,  dropDups: true  } )
-	//db.runCommand( { shardCollection : "chaos_vfs.domains" , key : { domain_name: 1, domain_url:1 } , unique : true,  dropDups: true  } )
-	
-	/* commented out by rorru on 07/05/2015 (avoiding index creation by "chaos" user)
-	//domain index
-	mongo::BSONObj index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<
-										  MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE<<1);
-	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_VFS_DOMAINS, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(err, "Error creating domain collection index", __PRETTY_FUNCTION__);
-	
-	//domain url index
-	index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<
-						   MONGO_DB_FIELD_DOMAIN_URL<<1);
-	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_VFS_DOMAINS_URL, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(err, "Error creating domain urls collection index", __PRETTY_FUNCTION__);
-	
-	index_on_domain = BSON(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH<<1<<
-						   MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN<<1<<
-						   MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS<<1);
-	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_VFS_VBLOCK, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(err, "Error creating data block index", __PRETTY_FUNCTION__);
-	
-	index_on_domain = BSON(MONGO_DB_FIELD_IDX_DATA_PACK_DID<<1<<
-						   MONGO_DB_FIELD_IDX_DATA_PACK_TYPE<<1<<
-						   MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS<<1);
-	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_IDX_DATA_PACK, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(err, "Error creating data pack index collection index", __PRETTY_FUNCTION__);
-	
-    //index_on_domain = BSON(MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC<<1);
-    //err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_IDX_DATA_PACK, index_on_domain, true, "", true);
-    //if(err) throw chaos::CException(err, "Error creating data pack index collection index on numeric timestamp", __PRETTY_FUNCTION__);
-    
-	index_on_domain = BSON(MONGO_DB_FIELD_SNAPSHOT_NAME<< 1);
-	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_SNAPSHOT, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(err, "Error creating snapshot collection index", __PRETTY_FUNCTION__);
-	
-	index_on_domain = BSON(MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << 1 <<
-						   MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << 1 <<
-						   MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID << 1);
-	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA, index_on_domain, true, "", true);
-	if(err !=0 && err != 85) throw chaos::CException(err, "Error creating snapshot data collection index", __PRETTY_FUNCTION__);
-	*/
 }
 
 //!deinit
 void MongoDBDriver::deinit() throw (chaos::CException) {
 	DBDriver::deinit();
-	if(ha_connection_pool) delete(ha_connection_pool);
+    if(ha_connection_pool) {delete(ha_connection_pool);}
 }
 
 //! Register a new domain
@@ -167,7 +125,10 @@ int MongoDBDriver::vfsAddDomain(vfs::VFSDomain domain) {
 	} catch (const mongo::DBException &e) {
 		MDBID_LERR_ << e.what();
 		err = -5;
-	}
+    } catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::io::bad_format_string> >& e) {
+        MDBID_LERR_ << e.what();
+        err = -6;
+    }
 	return err;
 }
 

@@ -106,5 +106,5 @@ void EventTypeScheduler::processBufferElement(EventDescriptor *eventDescription,
         }
         (*iter).second->setFired(false);
     }
-    
+        //NOTE the eventDescription memory is managed directly by the queue because we don't modify the elementPolicy.elementHasBeenDetached property
 }

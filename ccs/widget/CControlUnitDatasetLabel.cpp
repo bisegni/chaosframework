@@ -61,8 +61,6 @@ void CControlUnitDatasetLabel::updatedDS(const std::string& control_unit_uid,
                                          chaos::metadata_service_client::node_monitor::MapDatasetKeyValues& dataset_key_values) {
     if(dataset_type != datasetType()) return;
 
-    qDebug()<< "Dataset received!";
-
     //we can update the daset output variable
     QString text_to_show = datasetValueToLabel(datasetAttributeName(),
                                                dataset_key_values,

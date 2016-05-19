@@ -91,17 +91,17 @@ namespace chaos{
         
         //! Rpc Client for action result
         /*!Pointer to the associated rpc client, used to send the result of an action*/
-        RpcMessageForwarder *rpcForwarderPtr;
+        RpcMessageForwarder *rpc_forwarder_ptr;
         
     protected:
         //! echo test class
-        EchoRpcAction echoActionClass;
+        EchoRpcAction echo_action_class;
         //! check domain class
-        CheckDomainRpcAction checkDomainAction;
+        CheckDomainRpcAction check_domain_action;
         
         //! Domain name <-> Action name association map
         /*!Contains the association between the domain name and all action for this domain*/
-        map<string, boost::shared_ptr<DomainActions> >  actionDomainExecutorMap;
+        map<string, boost::shared_ptr<DomainActions> >  action_domain_executor_map;
         
         //! Dispatch initialization with default value
         virtual void init(void*) throw(CException);

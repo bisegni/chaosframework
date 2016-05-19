@@ -34,8 +34,10 @@ using namespace chaos::common::async_central;
 
 #define RETRY_DELAY 30000
 //! default constructor
-MultiAddressMessageChannel::MultiAddressMessageChannel(NetworkBroker *message_broker):
-MessageChannel(message_broker),
+MultiAddressMessageChannel::MultiAddressMessageChannel(NetworkBroker *message_broker,
+                                                       MessageRequestDomainSHRDPtr _new_message_request_domain):
+MessageChannel(message_broker,
+               _new_message_request_domain),
 service_feeder("MultiAddressMessageChannel",
                this,
                this),
@@ -43,8 +45,10 @@ last_retry(0){}
 
 //!Base constructor
 MultiAddressMessageChannel::MultiAddressMessageChannel(NetworkBroker *message_broker,
-                                                       CNetworkAddress& node_address):
-MessageChannel(message_broker),
+                                                       CNetworkAddress& node_address,
+                                                       MessageRequestDomainSHRDPtr _new_message_request_domain):
+MessageChannel(message_broker,
+               _new_message_request_domain),
 service_feeder("MultiAddressMessageChannel",
                this,
                this),
@@ -54,8 +58,10 @@ last_retry(0){
 
 //!Base constructor
 MultiAddressMessageChannel::MultiAddressMessageChannel(NetworkBroker *message_broker,
-                                                       const std::vector<CNetworkAddress>& node_address):
-MessageChannel(message_broker),
+                                                       const std::vector<CNetworkAddress>& node_address,
+                                                       MessageRequestDomainSHRDPtr _new_message_request_domain):
+MessageChannel(message_broker,
+               _new_message_request_domain),
 service_feeder("MultiAddressMessageChannel",
                this,
                this),

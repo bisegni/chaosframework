@@ -23,13 +23,10 @@ using namespace chaos::wan_proxy::wan_interface;
 
 AbstractWANInterface::AbstractWANInterface(const std::string& alias):
 NamedService(alias),
-handler(NULL){
-	
-}
+service_port(0),
+handler(NULL){}
 
-AbstractWANInterface::~AbstractWANInterface() {
-	
-}
+AbstractWANInterface::~AbstractWANInterface() {}
 
 // inherited method
 void AbstractWANInterface::init(void *init_data) throw(chaos::CException) {

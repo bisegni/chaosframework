@@ -53,7 +53,8 @@ namespace chaos {
 				 \param mdsIpAddress the address of metdataserver
 				 */
                 NodeMessageChannel(chaos::common::network::NetworkBroker *msgBroker,
-                                   chaos::common::network::CNodeNetworkAddress *_nodeAddress);
+                                   chaos::common::network::CNodeNetworkAddress *_nodeAddress,
+                                   MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
 				
                 virtual ~NodeMessageChannel();
 				

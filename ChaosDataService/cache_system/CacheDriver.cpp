@@ -21,7 +21,9 @@
 
 using namespace chaos::data_service::cache_system;
 
-CacheDriver::CacheDriver(std::string alias) : NamedService(alias) {}
+CacheDriver::CacheDriver(std::string alias):
+NamedService(alias),
+cache_settings(NULL){}
 
 CacheDriver::~CacheDriver() {}
 
@@ -33,7 +35,7 @@ void CacheDriver::init(void *init_data) throw (chaos::CException) {
 	cache_settings = static_cast<CacheDriverSetting*>(init_data);
 }
 
-//!deinit
+//! deinit
 void CacheDriver::deinit() throw (chaos::CException) {
 	
 }

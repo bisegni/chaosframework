@@ -24,7 +24,11 @@ using namespace chaos::common::direct_io::channel;
 
 void dummy_vsf(chaos::common::direct_io::DirectIODataPack *data_pack) { /* has differing behaviour */ }
 
-DirectIOVirtualServerChannel::DirectIOVirtualServerChannel(std::string channel_name, uint8_t channel_route_index):DirectIOVirtualChannel(channel_name, channel_route_index) {
+DirectIOVirtualServerChannel::DirectIOVirtualServerChannel(std::string channel_name,
+                                                           uint8_t channel_route_index):
+DirectIOVirtualChannel(channel_name,
+                       channel_route_index),
+endpoint_route_index(0){
 	clearDelegate();
 }
 DirectIOVirtualServerChannel::~DirectIOVirtualServerChannel() {

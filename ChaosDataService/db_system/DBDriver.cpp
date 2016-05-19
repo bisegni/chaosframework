@@ -24,12 +24,11 @@
 using namespace chaos::data_service::db_system;
 using namespace chaos::data_service::vfs;
 
-DBDriver::DBDriver(std::string alias):NamedService(alias) {
-}
+DBDriver::DBDriver(std::string alias):
+NamedService(alias),
+setting(NULL){}
 
-DBDriver::~DBDriver() {
-	
-}
+DBDriver::~DBDriver() {}
 
 //! init
 void DBDriver::init(void *init_data) throw (chaos::CException) {

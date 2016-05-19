@@ -40,7 +40,10 @@ consumers_priority_index(boost::multi_index::get<priority_index>(consumers)),
 consumers_pointer_index(boost::multi_index::get<pointer_index>(consumers)),
 last_processed_time(0),
 last_send_data_duration(0),
-send_data_iteration(0){}
+send_data_iteration(0),
+priority(0),
+quantum_is_good(true),
+purgeable(false){}
 
 QuantumSlot::~QuantumSlot() {}
 

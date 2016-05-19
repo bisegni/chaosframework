@@ -41,6 +41,7 @@ namespace chaos_vfs = chaos::data_service::vfs;
 DeviceSharedDataWorker::DeviceSharedDataWorker(const std::string& _cache_impl_name,
 											   vfs::VFSManager *_vfs_manager_instance):
 cache_impl_name(_cache_impl_name),
+last_stage_file_hb(0),
 vfs_manager_instance(_vfs_manager_instance){}
 
 DeviceSharedDataWorker::~DeviceSharedDataWorker() {}

@@ -25,15 +25,15 @@
 #include <stdlib.h>
 
 using namespace chaos::common::data;
-CDataBuffer::CDataBuffer()
-    :
+CDataBuffer::CDataBuffer():
+    own_buffer(false),
     buffer_size(0),
     buffer(NULL) { }
 
 CDataBuffer::CDataBuffer(const char *_buffer,
                          uint32_t _buffer_size,
                          bool copy):
-own_buffer(copy){
+own_buffer(copy) {
     buffer_size = _buffer_size;
     if(copy) {
         buffer = (char*)malloc(_buffer_size);
@@ -44,6 +44,7 @@ own_buffer(copy){
 }
 
 CDataBuffer::CDataBuffer(const CDataBuffer& cdata_buffer):
+own_buffer(cdata_buffer.own_buffer),
 buffer(cdata_buffer.buffer),
 buffer_size(cdata_buffer.buffer_size){}
 

@@ -449,6 +449,7 @@ QueryFuture *IODirectIODriver::performQuery(const std::string& key,
  ---------------------------------------------------------------------------------*/
 void IODirectIODriver::releaseQuery(QueryFuture *query_future) {
     //acquire write lock
+    if(query_future == NULL) return;
     boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
     if(map_query_future.count(query_future->getQueryID())) {
         map_query_future.erase(query_future->getQueryID());

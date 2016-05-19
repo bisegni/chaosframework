@@ -34,7 +34,7 @@ namespace chaos {
                 uint32_t buffer_size;
                 
             public:
-              CDataBuffer();
+                CDataBuffer();
                 CDataBuffer(const char *buffer,
                             uint32_t buffer_size,
                             bool copy = false);

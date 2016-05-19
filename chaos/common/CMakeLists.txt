@@ -151,7 +151,9 @@ SET(common_lib_src ${common_lib_src}
         message/NodeMessageChannel.cpp
         message/MultiAddressMessageChannel.cpp
         message/MultiAddressMessageRequestFuture.cpp
-        message/PerformanceNodeChannel.cpp)
+        message/PerformanceNodeChannel.cpp
+        message/MessageRequestDomain.cpp
+        message/MessageRequestDomain.h)
 
 SET(common_lib_src ${common_lib_src}
         network/NetworkBroker.cpp
@@ -194,6 +196,12 @@ SET(common_lib_src ${common_lib_src}
 
 SET(common_lib_src ${common_lib_src}
         property/PropertyCollector.cpp)
+
+SET(common_lib_src ${common_lib_src}
+        script/ScriptManager.cpp
+        script/AbstractScriptVM.cpp
+        script/AbstractScriptableClass.cpp
+        script/lua/LuaScriptVM.cpp)
 
 IF (NOT DEFINED BUILD_FORCE_STATIC)
 

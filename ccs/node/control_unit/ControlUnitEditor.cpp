@@ -179,7 +179,7 @@ void ControlUnitEditor::initUI() {
     manageMonitoring(true);
 
     //launch api for control unit information
-    updateAllControlUnitInfomration();
+    //updateAllControlUnitInfomration();
 
     //enable log widget
     ui->widgetChaosNodeLog->setNodeUID(control_unit_unique_id);
@@ -554,12 +554,14 @@ void ControlUnitEditor::nodeChangedInternalState(const std::string& node_uid,
                                                  const std::string& new_state) {
     if(node_uid.compare(control_unit_unique_id.toStdString()) == 0) {
         logic_switch_aggregator.broadcastCurrentValueForKey("cu_state",  QString::fromStdString(new_state));
-        if(restarted && (new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT) == 0 ||
+        if(restarted && (new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD) == 0 ||
+                         new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT) == 0 ||
                          new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_START) == 0 )) {
              qDebug() << "Load dataset for Node" << QString::fromStdString(node_uid) << " that has been restarted";
             //update
-            submitApiResult(QString(TAG_CU_DATASET),
-                            GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(control_unit_unique_id.toStdString()));
+             updateAllControlUnitInfomration();
+//            submitApiResult(QString(TAG_CU_DATASET),
+//                            GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(control_unit_unique_id.toStdString()));
             restarted = false;
         }
 

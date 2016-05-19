@@ -37,11 +37,11 @@ namespace chaos {
      */
     DECLARE_CLASS_FACTORY(ZMQServer, RpcServer)  {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQServer)
-        int threadNumber;
-        void *zmqContext;
-        std::stringstream bindStr;
-        boost::thread_group threadGroup;
-        bool runServer;
+        int thread_number;
+        void *zmq_context;
+        std::stringstream bind_str;
+        boost::thread_group thread_group;
+        bool run_server;
         
         ZMQServer(const std::string& alias);
         virtual ~ZMQServer();

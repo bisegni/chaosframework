@@ -1,10 +1,10 @@
 /*
- *	node_monitor_types.cpp
+ *	EUScriptableWrapper.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by Claudio Bisegni.
  *
- *    	Copyright 16/03/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 13/05/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,4 +19,16 @@
  *    	limitations under the License.
  */
 
-#include "node_monitor_types.h"
+#include <chaos/cu_toolkit/control_manager/script/EUScriptableWrapper.h>
+
+using namespace chaos::cu::control_manager::script;
+
+EUScriptableWrapper::EUScriptableWrapper():
+TemplatedAbstractScriptableClass(this,
+                                 "eu"){
+
+}
+
+EUScriptableWrapper::~EUScriptableWrapper() {
+
+}

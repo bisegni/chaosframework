@@ -271,10 +271,10 @@ void QuantumSlotScheduler::addNewfetcherThread() {
 
 void QuantumSlotScheduler::dispath_new_value_async(const boost::system::error_code& error,
                                                    QuantumSlot *cur_slot,
-                                                   const char *data_found) {
+                                                   char *data_found) {
     std::string quantum_slot_key = CHAOS_QSS_COMPOSE_QUANTUM_SLOT_KEY(cur_slot->key, cur_slot->quantum_multiplier);
     boost::unique_lock<boost::mutex> lock_on_condition(mutex_condition_scan);
-    
+
     //check if the slot is empty
     if(cur_slot->size()) {
         //slot has handler so we need to broadcast data to it in this case we unlock to permit other handler to be inserted
@@ -282,7 +282,6 @@ void QuantumSlotScheduler::dispath_new_value_async(const boost::system::error_co
         try{
             if(data_found) {
                 cur_slot->sendNewValueConsumer(KeyValue(new CDataWrapper(data_found)));
-                delete(data_found);
             } else {
                 cur_slot->sendNoValueToConsumer();
             }
@@ -300,13 +299,13 @@ void QuantumSlotScheduler::dispath_new_value_async(const boost::system::error_co
         set_slots_index_key_slot.modify(it, ScheduleSlotResetQuantum());
     }else{
         QSS_INFO << "Slot for key:" << quantum_slot_key << " has no more handler so we can delete it";
-
         //we can delete the slot and already own the lock
         SSSlotTypeQuantumSlotKeyIndexIterator it = set_slots_index_key_slot.find(quantum_slot_key);
         
         //delete the slot
         set_slots_index_key_slot.erase(it);
     }
+    if(data_found) {free(data_found);}
 }
 
 void QuantumSlotScheduler::fetchValue(boost::shared_ptr<IODataDriver> data_driver) {
@@ -318,7 +317,7 @@ void QuantumSlotScheduler::fetchValue(boost::shared_ptr<IODataDriver> data_drive
         if(queue_active_slot.pop(cur_slot)) {
             //we have slot available
             size_t          data_found_size;
-            const char * data_found = data_driver->retriveRawData(cur_slot->key, &data_found_size);
+            char * data_found = data_driver->retriveRawData(cur_slot->key, &data_found_size);
             
             //dispatch data
             dispath_new_value_async(error,

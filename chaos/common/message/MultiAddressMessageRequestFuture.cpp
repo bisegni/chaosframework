@@ -51,9 +51,7 @@ message_pack(_message_pack){
 }
 
 //!public destructor
-MultiAddressMessageRequestFuture::~MultiAddressMessageRequestFuture() {
-    
-}
+MultiAddressMessageRequestFuture::~MultiAddressMessageRequestFuture() {}
 
 void MultiAddressMessageRequestFuture::setTimeout(int32_t _timeout_in_milliseconds) {
     timeout_in_milliseconds = _timeout_in_milliseconds;

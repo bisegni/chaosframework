@@ -51,9 +51,9 @@ namespace chaos {
 		friend class chaos::common::network::NetworkBroker;
     protected:
         //! port where server has been published
-        int portNumber;
+        int port_number;
         
-        RpcServerHandler *commandHandler;
+        RpcServerHandler *command_handler;
         
         /*
          init the rpc adapter
@@ -81,7 +81,7 @@ namespace chaos {
         /*
          set the command dispatcher associated to the instance of rpc adapter
          */
-        virtual void setCommandDispatcher(RpcServerHandler *newCommandHandler);
+        virtual void setCommandDispatcher(RpcServerHandler *new_command_handler);
         
         
         //! return the numebr of message that are waiting to be sent

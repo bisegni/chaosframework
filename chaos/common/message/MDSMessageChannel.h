@@ -46,7 +46,8 @@ namespace chaos {
 				 "system"(ip:port:system)
 				 */
                 MDSMessageChannel(NetworkBroker *network_broker,
-                                  const std::vector<CNetworkAddress>& mds_node_address);
+                                  const std::vector<CNetworkAddress>& mds_node_address,
+                                  MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
 				
 			public:
                 //! return last sendxxx error code

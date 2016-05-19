@@ -35,58 +35,61 @@
 namespace chaos {
     namespace data_service {
         namespace cache_system {
-            
-			
-			struct ResultValue {
-				void		*value;
-				uint32_t	value_len;
-				lcb_error_t err;
-			};
-			
-			//! Abstraction of the chache driver
+
+
+            struct ResultValue {
+                void		*value;
+                uint32_t	value_len;
+                lcb_error_t err;
+                ResultValue():
+                value(NULL),
+                value_len(0){}
+            };
+
+                //! Abstraction of the chache driver
             /*!
              This class represent the abstraction of the
              work to do on cache. Cache system is to be intended as global
              to all CacheDriver instance.
              */
-			DECLARE_CLASS_FACTORY(CouchbaseCacheDriver, CacheDriver) {
-				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(CouchbaseCacheDriver)
-				lcb_t					instance;
-				struct lcb_create_st	create_options;
-				lcb_error_t				last_err;
-				std::string				last_err_str;
-				
-				std::string				bucket_name;
-				std::string				bucket_user;
-				std::string				bucket_pwd;
-				
-				std::string all_server_str;
-				boost::shared_mutex	mutex_server;
-				std::vector<std::string> all_server_to_use;
-				typedef std::vector<std::string>::iterator ServerIterator;
+            DECLARE_CLASS_FACTORY(CouchbaseCacheDriver, CacheDriver) {
+                REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(CouchbaseCacheDriver)
+                lcb_t					instance;
+                struct lcb_create_st	create_options;
+                lcb_error_t				last_err;
+                std::string				last_err_str;
+
+                std::string				bucket_name;
+                std::string				bucket_user;
+                std::string				bucket_pwd;
+
+                std::string all_server_str;
+                boost::shared_mutex	mutex_server;
+                std::vector<std::string> all_server_to_use;
+                typedef std::vector<std::string>::iterator ServerIterator;
 
                 ResultValue get_result;
-				
-				CouchbaseCacheDriver(std::string alias);
 
-				
-				bool validateString(std::string& server_description);
-				
-				static void errorCallback(lcb_t instance,
-										   lcb_error_t err,
-										   const char *errinfo);
-				static void getCallback(lcb_t instance,
-										 const void *cookie,
-										 lcb_error_t error,
-										 const lcb_get_resp_t *resp);
-				static void setCallback(lcb_t instance,
-									   const void *cookie,
-									   lcb_storage_t operation,
-									   lcb_error_t error,
-									   const lcb_store_resp_t *resp);
+                CouchbaseCacheDriver(std::string alias);
+
+
+                bool validateString(std::string& server_description);
+
+                static void errorCallback(lcb_t instance,
+                                          lcb_error_t err,
+                                          const char *errinfo);
+                static void getCallback(lcb_t instance,
+                                        const void *cookie,
+                                        lcb_error_t error,
+                                        const lcb_get_resp_t *resp);
+                static void setCallback(lcb_t instance,
+                                        const void *cookie,
+                                        lcb_storage_t operation,
+                                        lcb_error_t error,
+                                        const lcb_store_resp_t *resp);
             public:
-				~CouchbaseCacheDriver();
-				
+                ~CouchbaseCacheDriver();
+                
                 int putData(void *element_key, uint8_t element_key_len, void *value, uint32_t value_len);
                 
                 int getData(void *element_key, uint8_t element_key_len, void **value, uint32_t& value_len);
@@ -94,14 +97,14 @@ namespace chaos {
                 int addServer(std::string server_desc);
                 
                 int removeServer(std::string server_desc);
-				
-				int updateConfig();
-				
-				//! init
-				void init(void *init_data) throw (chaos::CException);
-				
-				//!deinit
-				void deinit() throw (chaos::CException);
+                
+                int updateConfig();
+                
+                    //! init
+                void init(void *init_data) throw (chaos::CException);
+                
+                    //!deinit
+                void deinit() throw (chaos::CException);
             };
         }
     }

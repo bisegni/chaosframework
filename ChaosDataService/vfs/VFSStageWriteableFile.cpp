@@ -34,7 +34,8 @@ VFSStageWriteableFile::VFSStageWriteableFile(storage_system::StorageDriver *_sto
 VFSStageFile(_storage_driver_ptr,
              _db_driver_ptr,
              stage_vfs_relative_path,
-             VFSStageFileOpenModeWrite) {
+             VFSStageFileOpenModeWrite),
+check_validity_counter(0){
     
 }
 

@@ -44,13 +44,16 @@ namespace chaos {
                              std::string,
                              boost::shared_ptr<CDataBuffer> > _internal_variant;
             public:
+                explicit CDataVariant(DataType::DataType _type,
+                                      const void *_value_pointer,
+                                      uint32_t _value_size);
                 explicit CDataVariant(int32_t int32_value);
                 explicit CDataVariant(int64_t int64_value);
                 explicit CDataVariant(double double_value);
                 explicit CDataVariant(bool boolvalue);
                 explicit CDataVariant(const std::string& string_value);
-              //! take the ownership of the object
-              explicit CDataVariant(CDataBuffer *buffer_value);
+                    //! take the ownership of the object
+                explicit CDataVariant(CDataBuffer *buffer_value);
                 CDataVariant(const CDataVariant& to_copy);
                 CDataVariant();
                 DataType::DataType getType() const;

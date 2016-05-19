@@ -96,14 +96,23 @@ namespace chaos {
             
             //! forward decalration
             class DirectIOForwarder;
+            class DirectIOServer;
             
             //! handler for the theallocation of sent data
             class DirectIODeallocationHandler {
+                friend class DirectIOServer;
                 friend class DirectIOForwarder;
             protected:
                 //overriding ofr free object fuunction for the tempalted key object container superclass
                 virtual void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr) = 0;
             };
+            
+#define CLEAN_DIO_DATA_WITH_HANDLER(hndlr, part, opcode, data)\
+{\
+        DisposeSentMemoryInfo minfo(hndlr, part, opcode);\
+            hndlr->freeSentData(data, &minfo);\
+}
+            
 		}
 	}
 }

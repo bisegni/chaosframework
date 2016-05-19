@@ -227,7 +227,7 @@ const char* CDataWrapper::getBinaryValue(const std::string& key, int& bufLen)  {
 }
 
 auto_ptr<CDataBuffer> CDataWrapper::getBinaryValueAsCDataBuffer(const std::string &key) {
-    int bufLen;
+    int bufLen = 0;
     const char* buffer = bsonBuilder->asTempObj().getField(key).binData(bufLen);
     return auto_ptr<CDataBuffer>(new CDataBuffer(buffer, bufLen, true));
 }

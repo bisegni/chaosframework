@@ -85,6 +85,9 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                 DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderGetOpcodeResult))
                 DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->value_len)
                 result_header->value_len = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->value_len);
+            } else {
+                if(result_data) free(result_data);
+                if(result_header) free(result_header);
             }
             break;
         }

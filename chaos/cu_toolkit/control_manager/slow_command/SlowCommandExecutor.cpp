@@ -58,7 +58,8 @@ last_error_code(NULL),
 last_error_message(NULL),
 last_error_domain(NULL),
 driverAccessorsErogator(NULL),
-error_logging_channel(NULL){}
+error_logging_channel(NULL),
+command_logging_channel(NULL){}
 
 SlowCommandExecutor::~SlowCommandExecutor(){
     //delete the wrapper

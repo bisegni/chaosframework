@@ -128,7 +128,6 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 
 #define PS_STR(x) (x?"service":"priority")
 void ZMQDirectIOServer::worker(bool priority_service) {
-    char						header_buffer[DIRECT_IO_HEADER_SIZE];
     int							linger				= 0;
     int							water_mark			= 1000;
     int							timeout				= 5000;
@@ -193,7 +192,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
         ZMQDIO_SRV_LAPP_ << msg;
         return;
     }
-
+    
     ZMQDIO_SRV_LAPP_ << "Entering in the thread loop for " << PS_STR(priority_service) << " socket";
     while (run_server) {
         try {
@@ -202,38 +201,59 @@ void ZMQDirectIOServer::worker(bool priority_service) {
             answer_header_deallocation_handler  = NULL;
             answer_data_deallocation_handler    = NULL;
             if((err = reveiceDatapack(socket,
-                                     identity,
-                                     &data_pack))) {
+                                      identity,
+                                      &data_pack))) {
+                //we have some error
+                ZMQDIO_SRV_LERR_ << CHAOS_FORMAT("Error %1% receiving data", %err);
                 continue;
             } else {
-             //   DEBUG_CODE(ZMQDIO_SRV_LAPP_ << "Received pack in " << PS_STR(priority_service) << " by " << identity;)
                 //check if we need to sen an answer
                 if((send_synchronous_answer = (bool)data_pack->header.dispatcher_header.fields.synchronous_answer)) {
                     //associate to the pointer the stack allocated data
                     data_pack_answer = &data_pack_answer_stack_alloc;
                     memset(data_pack_answer, 0, sizeof(DirectIODataPack));
                 }
-
+                
                 //call handler
-                err = DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack,
-                                                                       data_pack_answer,
-                                                                       &answer_header_deallocation_handler,
-                                                                       &answer_data_deallocation_handler);
-                if(send_synchronous_answer) {
-                    if((err = sendDatapack(socket,
-                                       identity,
-                                       data_pack_answer,
-                                       answer_header_deallocation_handler,
-                                          answer_data_deallocation_handler))){
-                        ZMQDIO_SRV_LAPP_ << "Error sending answer with code:" << err;
+                if((err = DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack,
+                                                                           data_pack_answer,
+                                                                           &answer_header_deallocation_handler,
+                                                                           &answer_data_deallocation_handler))) {
+                    //we have some error
+                    ZMQDIO_SRV_LERR_ << CHAOS_FORMAT("Error %1% calling directio handler", %err);
+                    deleteDataWithHandler(answer_header_deallocation_handler,
+                                          DisposeSentMemoryInfo::SentPartHeader,
+                                          data_pack_answer->header.dispatcher_header.fields.channel_opcode,
+                                          data_pack_answer->channel_header_data);
+                    deleteDataWithHandler(answer_data_deallocation_handler,
+                                          DisposeSentMemoryInfo::SentPartData,
+                                          data_pack_answer->header.dispatcher_header.fields.channel_opcode,
+                                          data_pack_answer->channel_data);
+                } else {
+                    if(send_synchronous_answer) {
+                        if((err = sendDatapack(socket,
+                                               identity,
+                                               data_pack_answer,
+                                               answer_header_deallocation_handler,
+                                               answer_data_deallocation_handler))){
+                            ZMQDIO_SRV_LAPP_ << "Error sending answer with code:" << err;
+                        } else {
+                            //anser si sent well
+                        }
+                        //alocation is not needed because it is created into the stack
                     } else {
-                        //anser si sent well
+                        deleteDataWithHandler(answer_header_deallocation_handler,
+                                              DisposeSentMemoryInfo::SentPartHeader,
+                                              data_pack_answer->header.dispatcher_header.fields.channel_opcode,
+                                              data_pack_answer->channel_header_data);
+                        deleteDataWithHandler(answer_data_deallocation_handler,
+                                              DisposeSentMemoryInfo::SentPartData,
+                                              data_pack_answer->header.dispatcher_header.fields.channel_opcode,
+                                              data_pack_answer->channel_data);
                     }
-                    //alocation is not needed because it is created into the stack
-                    //free(data_pack_answer);
                 }
             }
-
+            
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
         }

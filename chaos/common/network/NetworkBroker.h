@@ -35,7 +35,7 @@
 #include <chaos/common/network/NetworkForwardInfo.h>
 #include <chaos/common/network/PerformanceManagment.h>
 #include <chaos/common/utility/StartableService.h>
-
+#include <chaos/common/message/MessageRequestDomain.h>
 #include <chaos/common/direct_io/DirectIO.h>
 
 
@@ -86,17 +86,12 @@ namespace chaos {
 			class NetworkBroker:
 			public chaos::common::utility::StartableService,
 			public chaos::common::utility::Singleton<NetworkBroker> {
-				friend class chaos::common::utility::Singleton<NetworkBroker> ;
+				friend class chaos::common::utility::Singleton<NetworkBroker>;
 				//! performance session managment
 				chaos::common::network::PerformanceManagment performance_session_managment;
 				
                 //! point to current host and port
                 std::string published_host_and_port;
-                
-                //! has the server address of mds for fast access
-                std::string metadata_server_address;
-                
-                bool can_use_metadata_server;
                 
                 //!name of direct io client implementation to use
                 std::string direct_io_client_impl;
@@ -141,8 +136,10 @@ namespace chaos {
 				
 				//!Mutex for event channel managment
 				boost::mutex muext_map_event_channel_access;
-				
-				
+
+                    //! global shared message request domain
+                chaos::common::message::MessageRequestDomainSHRDPtr global_request_domain;
+
 				//! private raw channel creation
 				/*!
 				 Get new message channel for comunicate with remote host
@@ -150,7 +147,8 @@ namespace chaos {
 				 \param type channel type to create
 				 */
                 chaos::common::message::MessageChannel *getNewMessageChannelForRemoteHost(chaos::common::network::CNetworkAddress *node_network_address,
-                                                                                          EntityType type);
+                                                                                          EntityType type,
+                                                                                          bool use_shared_request_domain = true);
                                 //! Basic Constructor
 				NetworkBroker();
 				
@@ -315,7 +313,8 @@ namespace chaos {
 				/*!
 				 Performe the creation of metadata server
 				 */
-                chaos::common::message::MDSMessageChannel *getMetadataserverMessageChannel();
+                chaos::common::message::MDSMessageChannel *getMetadataserverMessageChannel(chaos::common::message::MessageRequestDomainSHRDPtr shared_request_domain = chaos::common::message::MessageRequestDomainSHRDPtr());
+
 				
 				//!Device channel creation
 				/*!

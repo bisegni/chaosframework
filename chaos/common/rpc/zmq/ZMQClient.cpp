@@ -49,6 +49,7 @@ static void my_free (void *data, void *hint) {
 
 ZMQClient::ZMQClient(const string& alias):
 RpcClient(alias),
+zmq_context(NULL),
 zmq_timeout(1000){}
 
 ZMQClient::~ZMQClient(){}
@@ -251,7 +252,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
         if(socket_info == NULL){
             ZMQC_LERR << "GetSocketForNFI failed";
             forwadSubmissionResultError(messageInfo,
-                                        -1,
+                                        ErrorRpcCoce::EC_RPC_NO_SOCKET,
                                         "GetSocketForNFI failed",
                                         __PRETTY_FUNCTION__);
             return;
@@ -260,7 +261,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
         if(!socket_info->resource_pooled) {
             ZMQC_LERR << "Socket creation error";
             forwadSubmissionResultError(messageInfo,
-                                        -1,
+                                        ErrorRpcCoce::EC_RPC_NO_SOCKET,
                                         "Socket creation error",
                                         __PRETTY_FUNCTION__);
             releaseSocket(socket_info);
@@ -272,24 +273,24 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
         if((err = zmq_msg_init_data(&message, (void*)callSerialization->getBufferPtr(), callSerialization->getBufferLen(), my_free, NULL)) == -1) {
             int32_t sent_error = zmq_errno();
             std::string error_message =zmq_strerror(sent_error);
-            ZMQC_LERR << "Error allcoating zmq messagecode:" << sent_error << " message:" <<error_message;
+            ZMQC_LERR << "Error allocating zmq messagecode:" << sent_error << " message:" <<error_message;
             if(messageInfo->is_request) {
                 forwadSubmissionResultError(messageInfo,
-                                            -1,
+                                            (ErrorRpcCoce::EC_RPC_IMPL_ERR-1),
                                             "Error initializiend rcp message",
                                             __PRETTY_FUNCTION__);
             }
-            err = 0;
+            //err = 0;
         } else {
             ZMQC_LDBG << "Try to send message";
             err = zmq_sendmsg(socket_info->resource_pooled, &message, ZMQ_DONTWAIT);
             if(err == -1) {
                 int32_t sent_error = zmq_errno();
-                std::string error_message =zmq_strerror(sent_error);
+                std::string error_message = zmq_strerror(sent_error);
                 ZMQC_LERR << "Error sending message with code:" << sent_error << " message:" <<error_message;
                 if(messageInfo->is_request) {
                     forwadSubmissionResultError(messageInfo,
-                                                sent_error,
+                                                ErrorRpcCoce::EC_RPC_SENDING_DATA,
                                                 error_message,
                                                 __PRETTY_FUNCTION__);
                 }
@@ -306,8 +307,8 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                     ZMQC_LERR << "Error receiving ack for message message with code:" << sent_error << " message:" <<error_message;
                     if(messageInfo->is_request) {
                         forwadSubmissionResultError(messageInfo,
-                                                    sent_error,
-                                                    error_message,
+                                                    ErrorRpcCoce::EC_RPC_GETTING_ACK_DATA,
+                                                    CHAOS_FORMAT("%1%[%2%]",%error_message%sent_error),
                                                     __PRETTY_FUNCTION__);
                     }
                     //delete socket
@@ -325,7 +326,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
                         } else {
                             ZMQC_LDBG << "Bad ACK received";
                             forwadSubmissionResultError(messageInfo,
-                                                        -1,
+                                                        ErrorRpcCoce::EC_RPC_GETTING_ACK_DATA,
                                                         "bad ack received",
                                                         __PRETTY_FUNCTION__);
                         }

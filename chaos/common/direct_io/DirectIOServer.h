@@ -31,59 +31,63 @@
 #include <chaos/common/direct_io/DirectIODispatcher.h>
 #include <chaos/common/direct_io/DirectIOServerPublicInterface.h>
 namespace chaos {
-	namespace common {
-		namespace direct_io {
-			
-			//! Direct IO server base class
-			/*!
-				This class reppresents the base interface for the operation on direct io input channel,
-				The server layer will accept the client connection for the data reception. Server can accept connection
-				by different client
-				dio_client---> data message -->dio_server
-			 */
-			class DirectIOServer :
-			public utility::StartableService,
-			public utility::NamedService,
-			public DirectIOServerPublicInterface {
-				//! handler implementation for the server instance
+    namespace common {
+        namespace direct_io {
+            
+            //! Direct IO server base class
+            /*!
+             This class reppresents the base interface for the operation on direct io input channel,
+             The server layer will accept the client connection for the data reception. Server can accept connection
+             by different client
+             dio_client---> data message -->dio_server
+             */
+            class DirectIOServer :
+            public utility::StartableService,
+            public utility::NamedService,
+            public DirectIOServerPublicInterface {
+                //! handler implementation for the server instance
             protected:
                 int32_t priority_port;
                 int32_t service_port;
-				std::string service_url;
-				DirectIODispatcher *handler_impl;
-			public:
-				DirectIOServer(const std::string& alias);
-				
-				virtual ~DirectIOServer();
+                std::string service_url;
+                DirectIODispatcher *handler_impl;
+                void deleteDataWithHandler(DirectIODeallocationHandler *_data_deallocator,
+                                           DisposeSentMemoryInfo::SentPart _sent_part,
+                                           uint16_t _sent_opcode,
+                                           void *data);
+            public:
+                DirectIOServer(const std::string& alias);
                 
-				// Initialize instance
-				void init(void *init_data) throw(chaos::CException);
-				
-				// Start the implementation
-				void start() throw(chaos::CException);
-				
-				// Stop the implementation
-				void stop() throw(chaos::CException);
-				
-				// Deinit the implementation
-				void deinit() throw(chaos::CException);
-				
-				//! Send some data to the server
-				void setHandler(DirectIODispatcher *_handler_impl);
-				
-				//! Remove the handler pointer
-				void clearHandler();
+                virtual ~DirectIOServer();
+                
+                // Initialize instance
+                void init(void *init_data) throw(chaos::CException);
+                
+                // Start the implementation
+                void start() throw(chaos::CException);
+                
+                // Stop the implementation
+                void stop() throw(chaos::CException);
+                
+                // Deinit the implementation
+                void deinit() throw(chaos::CException);
+                
+                //! Send some data to the server
+                void setHandler(DirectIODispatcher *_handler_impl);
+                
+                //! Remove the handler pointer
+                void clearHandler();
                 
                 uint32_t getPriorityPort();
-
+                
                 uint32_t getServicePort();
-				
-				const std::string& getUrl();
-
-			};
-			
-		}
-	}
+                
+                const std::string& getUrl();
+                
+            };
+            
+        }
+    }
 }
 
 

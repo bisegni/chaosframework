@@ -75,7 +75,7 @@ return_code\
 #define LAPP_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLInfo)
 
 #define DEFINE_LOG_HEADER(x) "[" #x "] - "
-#define DEFINE_LOG_HEADER_1_P(x,y) "[" #x "-" #y "] - "
+#define DEFINE_LOG_HEADER_1_P(x,y) "[" #x "-" << y << "] - "
 
 #define INFO_LOG(x)         LAPP_   << DEFINE_LOG_HEADER(x)
 #define INFO_LOG_1_P(x,y)   LAPP_   << DEFINE_LOG_HEADER_1_P(x,y)
@@ -210,6 +210,9 @@ l\
 }catch(...){\
 x\
 }
+
+#define CHAOS_FORMAT(f,p)\
+boost::str(boost::format(f)p)
 
 /*
  Abstraction for the server delegator

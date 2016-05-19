@@ -24,7 +24,9 @@
 using namespace chaos::common::sync_rpc;
 
 RpcSyncServer::RpcSyncServer(const std::string& alias):
-NamedService(alias) {}
+NamedService(alias),
+service_port(0),
+command_handler(NULL){}
 
 RpcSyncServer::~RpcSyncServer(){}
 
@@ -42,8 +44,8 @@ const std::string& RpcSyncServer::getUrl() {
 /*
  set the command dispatcher associated to the instance of rpc adapter
  */
-void RpcSyncServer::setCommandDispatcher(chaos::RpcServerHandler *newCommandHandler) {
-	commandHandler = newCommandHandler;
+void RpcSyncServer::setCommandDispatcher(chaos::RpcServerHandler *new_command_handler) {
+	command_handler = new_command_handler;
 }
 
 /*

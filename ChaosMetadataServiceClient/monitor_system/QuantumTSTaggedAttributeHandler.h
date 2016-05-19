@@ -59,7 +59,6 @@ x(const std::string& _attribute, const std::string& _ts_attribute, bool _event_o
             //!bool time stamped tagged handler
             class QuantumTSTaggedBoolAttributeHandler:
             public AbstractQuantumTSTaggedAttributeHandler {
-                int last_value;
                 void _consumeValue(const std::string& key, const KeyValue& value);
             public:
                 AbstractQuantumTSTaggedAttributeHandlerDEF_CONST_DIST(QuantumTSTaggedBoolAttributeHandler)
@@ -72,7 +71,6 @@ x(const std::string& _attribute, const std::string& _ts_attribute, bool _event_o
             //!int32 time stamped tagged handler
             class QuantumTSTaggedInt32AttributeHandler:
             public AbstractQuantumTSTaggedAttributeHandler {
-                int last_value;
                 void _consumeValue(const std::string& key, const KeyValue& value);
             public:
                 AbstractQuantumTSTaggedAttributeHandlerDEF_CONST_DIST(QuantumTSTaggedInt32AttributeHandler)
@@ -85,7 +83,6 @@ x(const std::string& _attribute, const std::string& _ts_attribute, bool _event_o
             //!int64 time stamped tagged handler
             class QuantumTSTaggedInt64AttributeHandler:
             public AbstractQuantumTSTaggedAttributeHandler {
-                int last_value;
                 void _consumeValue(const std::string& key, const KeyValue& value);
             public:
                 AbstractQuantumTSTaggedAttributeHandlerDEF_CONST_DIST(QuantumTSTaggedInt64AttributeHandler)
@@ -98,7 +95,6 @@ x(const std::string& _attribute, const std::string& _ts_attribute, bool _event_o
             //!double time stamped tagged handler
             class QuantumTSTaggedDoubleAttributeHandler:
             public AbstractQuantumTSTaggedAttributeHandler {
-                int last_value;
                 void _consumeValue(const std::string& key, const KeyValue& value);
             public:
                 AbstractQuantumTSTaggedAttributeHandlerDEF_CONST_DIST(QuantumTSTaggedDoubleAttributeHandler)
@@ -111,7 +107,6 @@ x(const std::string& _attribute, const std::string& _ts_attribute, bool _event_o
             //!string time stamped tagged handler
             class QuantumTSTaggedStringAttributeHandler:
             public AbstractQuantumTSTaggedAttributeHandler {
-                int last_value;
                 void _consumeValue(const std::string& key, const KeyValue& value);
             public:
                 AbstractQuantumTSTaggedAttributeHandlerDEF_CONST_DIST(QuantumTSTaggedStringAttributeHandler)

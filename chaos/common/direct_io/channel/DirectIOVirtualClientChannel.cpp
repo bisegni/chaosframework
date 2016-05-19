@@ -27,7 +27,9 @@ using namespace chaos::common::direct_io::channel;
 DirectIOVirtualClientChannel::DirectIOVirtualClientChannel(std::string channel_name,
                                                            uint8_t channel_route_index):
 DirectIOVirtualChannel(channel_name, channel_route_index),
-header_deallocator(this) {}
+forward_handler(NULL),
+header_deallocator(this),
+client_instance(NULL){}
 
 DirectIOVirtualClientChannel::~DirectIOVirtualClientChannel() {}
 

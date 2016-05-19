@@ -43,16 +43,14 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN)) er
 namespace chaos {
     namespace common{
         namespace message {
-            class MessageChannel;
-
+            class MessageRequestDomain;
                 //! class that mange the fetch of the result for a request
             /*!
              When a request is forwarded, thi class can be requested to whait or poll whene a result
              for a request is arrived.
              */
             class MessageRequestFuture {
-                friend class MessageChannel;
-
+                friend class MessageRequestDomain;
                 chaos::common::utility::atomic_int_type request_id;
 
                     //shared future for the answer

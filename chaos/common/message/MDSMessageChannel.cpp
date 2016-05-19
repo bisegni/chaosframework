@@ -37,9 +37,11 @@ if((last_error_code = x->getError())){\
 }
 
 MDSMessageChannel::MDSMessageChannel(NetworkBroker *network_broker,
-                                     const std::vector<CNetworkAddress>& mds_node_address):
+                                     const std::vector<CNetworkAddress>& mds_node_address,
+                                     MessageRequestDomainSHRDPtr _new_message_request_domain):
 MultiAddressMessageChannel(network_broker,
-                           mds_node_address){}
+                           mds_node_address,
+                           _new_message_request_domain){}
 
 //! return last sendxxx error code
 int32_t MDSMessageChannel::getLastErrorCode() {
@@ -78,13 +80,13 @@ int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset,
     int size_bson = 0;
     string currentBrokerIpPort;
     getRpcPublishedHostAndPort(currentBrokerIpPort);
-    CDataWrapper *data = new CDataWrapper(deviceDataset.getBSONRawData(size_bson));
+    std::auto_ptr<CDataWrapper> data(new CDataWrapper(deviceDataset.getBSONRawData(size_bson)));
     data->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
     
     if(requestCheck){
         std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                ChaosSystemDomainAndActionLabel::UNIT_SERVER_STATES_ANSWER,
-                                                                                               data);
+                                                                                               data.release());
         request_future->setTimeout(millisec_to_wait);
         if(request_future->wait()) {
             DECODE_ERROR(request_future)
@@ -94,20 +96,20 @@ int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset,
     } else {
         sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                     ChaosSystemDomainAndActionLabel::UNIT_SERVER_STATES_ANSWER,
-                    data);
+                    data.get());
     }
     return last_error_code;
 }
 
 
 //! Send unit server description to MDS
-int MDSMessageChannel::sendNodeRegistration(CDataWrapper& node_description, bool requestCheck, uint32_t millisec_to_wait) {
+int MDSMessageChannel::sendNodeRegistration(CDataWrapper& node_description,
+                                            bool requestCheck,
+                                            uint32_t millisec_to_wait) {
     int size_bson = 0;
     std::string currentBrokerIpPort;
-    CDataWrapper *data = new CDataWrapper(node_description.getBSONRawData(size_bson));
-    
     getRpcPublishedHostAndPort(currentBrokerIpPort);
-    //set node address and port
+    std::auto_ptr<CDataWrapper> data(new CDataWrapper(node_description.getBSONRawData(size_bson)));
     data->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
     
     //set our timestamp
@@ -116,7 +118,7 @@ int MDSMessageChannel::sendNodeRegistration(CDataWrapper& node_description, bool
     if(requestCheck){
         std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE,
-                                                                                               data);
+                                                                                               data.release());
         request_future->setTimeout(millisec_to_wait);
         if(request_future->wait()) {
             DECODE_ERROR(request_future)
@@ -126,7 +128,7 @@ int MDSMessageChannel::sendNodeRegistration(CDataWrapper& node_description, bool
     } else {
         sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                     MetadataServerNodeDefinitionKeyRPC::ACTION_REGISTER_NODE,
-                    data);
+                    data.get());
     }
     return last_error_code;
 }
@@ -136,19 +138,19 @@ int MDSMessageChannel::sendNodeLoadCompletion(CDataWrapper& node_information,
                                               uint32_t millisec_to_wait) {
     int size_bson = 0;
     std::string currentBrokerIpPort;
-    CDataWrapper *data = new CDataWrapper(node_information.getBSONRawData(size_bson));
-    
+
     //get rpc receive port
     getRpcPublishedHostAndPort(currentBrokerIpPort);
+    std::auto_ptr<CDataWrapper> data(new CDataWrapper(node_information.getBSONRawData(size_bson)));
     data->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
-    
+
     //set our timestamp
     data->addInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP,
                         chaos::common::utility::TimingUtil::getTimeStamp());
     if(requestCheck){
         std::auto_ptr<MultiAddressMessageRequestFuture> request_future = sendRequestWithFuture(NodeDomainAndActionRPC::RPC_DOMAIN,
                                                                                                MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION,
-                                                                                               data);
+                                                                                               data.release());
         request_future->setTimeout(millisec_to_wait);
         if(request_future->wait()) {
             DECODE_ERROR(request_future)
@@ -158,7 +160,7 @@ int MDSMessageChannel::sendNodeLoadCompletion(CDataWrapper& node_information,
     } else {
         sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                     MetadataServerNodeDefinitionKeyRPC::ACTION_NODE_LOAD_COMPLETION,
-                    data);
+                    data.get());
     }
     return last_error_code;
 }

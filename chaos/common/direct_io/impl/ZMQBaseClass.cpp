@@ -45,7 +45,8 @@ return err;\
 DirectIOForwarder::freeSentData(mem,\
 new DisposeSentMemoryInfo(dealloc,\
 part,\
-opcode));
+opcode));\
+mem = NULL;
 
 #define PRINT_ZMQ_ERR(err)\
 boost::str(boost::format("zmq error %1% [%2%]")%err%zmq_strerror(err))
@@ -174,7 +175,7 @@ int ZMQBaseClass::moreMessageToRead(void * socket,
 //  is being terminated.
 int ZMQBaseClass::stringReceive(void *socket, std::string& received_string) {
     char buffer [256];
-    size_t readed_byte;
+    size_t readed_byte = 0;
     
     //read message and check the error
     int err = readMessage(socket, buffer, 255, readed_byte);

@@ -22,21 +22,22 @@
 using namespace chaos;
 
 RpcServer::RpcServer(const std::string& alias):
-NamedService(alias) {
-}
+NamedService(alias),
+port_number(0),
+command_handler(NULL){}
 
 /*!
  Return the published port
  */
 int RpcServer::getPublishedPort() {
-    return portNumber;
+    return port_number;
 }
 
 /*
  set the command dispatcher associated to the instance of rpc adapter
  */
-void RpcServer::setCommandDispatcher(RpcServerHandler *newCommandHandler) {
-    commandHandler = newCommandHandler;
+void RpcServer::setCommandDispatcher(RpcServerHandler *new_command_handler) {
+    command_handler = new_command_handler;
 }
 
 //! return the numebr of message that are waiting to be sent

@@ -85,6 +85,7 @@ static void flush_response(struct mg_connection *connection,
 DEFINE_CLASS_FACTORY(HTTPWANInterface, AbstractWANInterface);
 HTTPWANInterface::HTTPWANInterface(const string& alias):
 AbstractWANInterface(alias),
+run(false),
 thread_number(0) {}
 
 HTTPWANInterface::~HTTPWANInterface() {}

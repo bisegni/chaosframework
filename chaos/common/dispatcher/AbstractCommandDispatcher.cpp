@@ -80,7 +80,8 @@ CDataWrapper *CheckDomainRpcAction::checkDomain(CDataWrapper *action_data, bool&
 
 AbstractCommandDispatcher::AbstractCommandDispatcher(string alias):
 NamedService(alias),
-checkDomainAction(this){
+check_domain_action(this),
+rpc_forwarder_ptr(NULL){
 }
 
 AbstractCommandDispatcher::~AbstractCommandDispatcher() {
@@ -95,13 +96,13 @@ void AbstractCommandDispatcher::init(void *initConfiguration) throw(CException) 
 
 //-----------------------
 void AbstractCommandDispatcher::start() throw(CException) {
-    registerAction(&echoActionClass);
-    registerAction(&checkDomainAction);
+    registerAction(&echo_action_class);
+    registerAction(&check_domain_action);
 }
 
 void AbstractCommandDispatcher::stop() throw(CException) {
-    deregisterAction(&checkDomainAction);
-    deregisterAction(&echoActionClass);
+    deregisterAction(&check_domain_action);
+    deregisterAction(&echo_action_class);
 }
 
 /*
@@ -116,15 +117,15 @@ void AbstractCommandDispatcher::deinit() throw(CException) {
  */
 boost::shared_ptr<DomainActions> AbstractCommandDispatcher::getDomainActionsFromName(const string& domain_name) {
     //check if is not preset, so we can allocate it
-    if(!actionDomainExecutorMap.count(domain_name)){
+    if(!action_domain_executor_map.count(domain_name)){
         boost::shared_ptr<DomainActions>  result(new DomainActions(domain_name));
         if(result){;
-            actionDomainExecutorMap.insert(make_pair(domain_name, result));
+            action_domain_executor_map.insert(make_pair(domain_name, result));
             DEBUG_CODE(ACDLDBG_ << "Allocated new  DomainActions:" << domain_name;);
         }
     }
     //return the domain executor for name
-    return actionDomainExecutorMap[domain_name];
+    return action_domain_executor_map[domain_name];
 }
 
 /*
@@ -132,8 +133,8 @@ boost::shared_ptr<DomainActions> AbstractCommandDispatcher::getDomainActionsFrom
  it form the map
  */
 void AbstractCommandDispatcher::removeDomainActionsFromName(string& domainName) {
-    if(!actionDomainExecutorMap.count(domainName)){
-        actionDomainExecutorMap.erase(domainName);
+    if(!action_domain_executor_map.count(domainName)){
+        action_domain_executor_map.erase(domainName);
     }
 }
 
@@ -176,7 +177,7 @@ void AbstractCommandDispatcher::deregisterAction(DeclareAction* declareActionCla
             if(!domainExecutor->registeredActions()) {
                 std::string domain_name = domainExecutor->getDomainName();
                 DEBUG_CODE(ACDLDBG_ << "No more action in domain " << domain_name << " so it will be destroyed";);
-                actionDomainExecutorMap.erase(domain_name);
+                action_domain_executor_map.erase(domain_name);
             }
         }
     }
@@ -188,12 +189,12 @@ void AbstractCommandDispatcher::deregisterAction(DeclareAction* declareActionCla
 bool AbstractCommandDispatcher::submitMessage(string& server_port,
                                               chaos::common::data::CDataWrapper* message,
                                               bool onThisThread)  throw(CException) {
-    CHAOS_ASSERT(message && rpcForwarderPtr)
+    CHAOS_ASSERT(message && rpc_forwarder_ptr)
     if(!message && server_port.size()) return false;
     common::network::NetworkForwardInfo *nfi = new NetworkForwardInfo(false);
     nfi->destinationAddr = server_port;
     nfi->setMessage(message);
-    return rpcForwarderPtr->submitMessage(nfi, onThisThread);
+    return rpc_forwarder_ptr->submitMessage(nfi, onThisThread);
 }
 
 /*
@@ -207,11 +208,11 @@ chaos::common::data::CDataWrapper* AbstractCommandDispatcher::updateConfiguratio
  
  */
 void AbstractCommandDispatcher::setRpcForwarder(RpcMessageForwarder *newRpcForwarderPtr){
-    rpcForwarderPtr = newRpcForwarderPtr;
+    rpc_forwarder_ptr = newRpcForwarderPtr;
 }
 
 bool AbstractCommandDispatcher::hasDomain(const std::string& domain_name) {
-    return actionDomainExecutorMap.count(domain_name);
+    return action_domain_executor_map.count(domain_name);
 }
 
 uint32_t AbstractCommandDispatcher::domainRPCActionQueued(const std::string& domain_name) {

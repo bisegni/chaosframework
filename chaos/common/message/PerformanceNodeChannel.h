@@ -50,7 +50,8 @@ namespace chaos {
 				 */
 				PerformanceNodeChannel(NetworkBroker *msg_broker,
                                        CNetworkAddress *_node_network_address,
-                                       chaos_direct_io::DirectIOClient *_client_instance);
+                                       chaos_direct_io::DirectIOClient *_client_instance,
+                                       MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
 				~PerformanceNodeChannel();
 			public:
 				//Get the performance session for a chaos node

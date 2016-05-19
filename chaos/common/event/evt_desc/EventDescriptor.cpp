@@ -31,7 +31,9 @@ using namespace chaos::common::utility;
 EventDescriptor::EventDescriptor(EventType _instanceType,
 								 uint8_t _instancePriority):
 instanceType(_instanceType),
-instancePriority(_instancePriority) {
+instancePriority(_instancePriority),
+tmp8(0),
+tmp32(0){
         //initialize data
     initData();
 }
@@ -226,7 +228,7 @@ uint16_t EventDescriptor::getEventValueSize()  const{
 }
 
 void EventDescriptor::getEventValue(void *valuePtr, uint16_t *size) const {
-    if(valuePtr != NULL && !size) return;
+    if(valuePtr == NULL || size==NULL) return;
 
     uint8_t idLen = *((uint8_t*)(eventData + EVT_IDENTIFICATION_LENGTH_INFO_OFFSET));
     uint16_t packDimension = getEventDataLength();

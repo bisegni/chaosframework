@@ -30,9 +30,9 @@ using namespace chaos::common::utility;
     //namespace chaos_thread_ns = chaos::common::thread;
 using namespace chaos::cu::driver_manager::driver;
 
-#define ADLAPP_ INFO_LOG_1_P(AbstractDriver, driverUUID)
-#define ADLDBG_ DBG_LOG_1_P(AbstractDriver, driverUUID)
-#define ADLERR_ ERR_LOG_1_P(AbstractDriver, driverUUID)
+#define ADLAPP_ INFO_LOG_1_P(AbstractDriver, driver_uuid)
+#define ADLDBG_ DBG_LOG_1_P(AbstractDriver, driver_uuid)
+#define ADLERR_ ERR_LOG_1_P(AbstractDriver, driver_uuid)
 
 /*------------------------------------------------------
 

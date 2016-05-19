@@ -43,7 +43,8 @@ size(_size),
 name(_name),
 index(_index),
 buf_size(0),
-type(_type) {
+type(_type),
+sharedBitmapChangedAttribute(NULL){
     
     if(size) {
         //elarge memory buffer and clear it
@@ -186,6 +187,8 @@ void AttributeValue::writeToCDataWrapper(CDataWrapper& data_wrapper) {
             data_wrapper.addInt64Value(name, *getValuePtr<int64_t>());
             break;
         }
+        default:
+            break;
     }
 }
 
@@ -221,4 +224,11 @@ std::string AttributeValue::toString() {
             break;
     }
     return "bad type";
+}
+
+    //!return value as CDataVariant
+CDataVariant AttributeValue::getAsVariant() {
+    return CDataVariant(type,
+                        (const char *)value_buffer,
+                        size);
 }

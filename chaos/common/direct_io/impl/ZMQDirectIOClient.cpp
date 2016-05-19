@@ -126,13 +126,14 @@ void *ZMQDirectIOClient::socketMonitor (void *ctx, const char * address, Connect
 //------------------------------STATIC METHOD---------------------------------
 
 
-ZMQDirectIOClient::ZMQDirectIOClient(std::string alias):DirectIOClient(alias){
-    thread_run = false;
-    zmq_context = NULL;
-};
+ZMQDirectIOClient::ZMQDirectIOClient(std::string alias):
+DirectIOClient(alias),
+priority_port(0),
+service_port(0),
+thread_run(false),
+zmq_context(NULL){};
 
-ZMQDirectIOClient::~ZMQDirectIOClient(){
-};
+ZMQDirectIOClient::~ZMQDirectIOClient(){};
 
 //! Initialize instance
 void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
@@ -331,17 +332,10 @@ void ZMQDirectIOClient::_releaseConnectionImpl(DirectIOClientConnection *connect
     
     err = zmq_close(conn->socket_priority);
     if(err) ZMQDIOLERR_ << "Error disconnecting priority socket for " << conn->getServerDescription();
-    //seem that disconnection from somewhere can let the monitor will repsond to the disable action
-    
+
     ZMQDIOLAPP_ << "Close service socket for" << conn->getServerDescription();
     err = zmq_close(conn->socket_service);
     if(err) ZMQDIOLERR_ << "Error closing service socket for " << conn->getServerDescription();
-    
-    //stop the monitor
-    //	if(conn->monitor_info &&
-    //       conn->monitor_info->monitor_socket) {
-    
-    //	}
     
     map_connections.deregisterElementKey(conn->getUniqueUUID());
     delete(connection_to_release);

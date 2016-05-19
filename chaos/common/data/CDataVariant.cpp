@@ -57,6 +57,37 @@ CDataVariant::CDataVariant():
     type(DataType::TYPE_UNDEFINED),
     _internal_variant() { }
 
+CDataVariant::CDataVariant(DataType::DataType _type,
+                           const void *_value_pointer,
+                           uint32_t _value_size):
+type(_type){
+    switch (type) {
+        case DataType::TYPE_BOOLEAN:
+            _internal_variant = *static_cast<const bool*>(_value_pointer);
+            break;
+        case DataType::TYPE_INT32:
+            _internal_variant = *static_cast<const int32_t*>(_value_pointer);
+            break;
+        case DataType::TYPE_INT64:
+            _internal_variant = *static_cast<const int64_t*>(_value_pointer);
+            break;
+        case DataType::TYPE_DOUBLE:
+            _internal_variant = *static_cast<const double*>(_value_pointer);
+            break;
+        case DataType::TYPE_STRING:
+            _internal_variant = std::string(static_cast<const char*>(_value_pointer),
+                                            _value_size);
+            break;
+        case DataType::TYPE_BYTEARRAY:
+            _internal_variant = boost::shared_ptr<CDataBuffer>(new CDataBuffer(static_cast<const char*>(_value_pointer),
+                                                                               _value_size,
+                                                                               true));
+            break;
+        default:
+            break;
+    }
+}
+
 DataType::DataType CDataVariant::getType() const{
     return type;
 }

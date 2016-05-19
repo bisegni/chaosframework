@@ -41,6 +41,14 @@ fi
 
 BOOST_NUMBER_VERSION=$(echo $BOOST_VERSION_IN_PATH |sed "s/[^0-9]//g" )
 
+if [ ! -n "$OS" ]; then
+    OS=$(uname -s)
+fi;
+
+if [ ! -n "$LUA_VERSION" ]; then
+    LUA_VERSION=5.3.2
+fi;
+
 if [ ! -n "$ZLIB_VERSION" ]; then
     ZLIB_VERSION=1.2.8
 fi;
@@ -62,7 +70,6 @@ if [ ! -n "$CHAOS_LINK_LIBRARY" ]; then
     export CHAOS_LINK_LIBRARY="boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached zmq uv dl"
     echo $CHAOS_LINK_LIBRARY
 fi;
-
 
 if [ -n "$1" ]; then
     PREFIX=$1/usr/local
@@ -334,21 +341,20 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     
     #install old version of boost log
     if [ $BOOST_NUMBER_VERSION -le 1530 ] && [ ! -d "$BASE_EXTERNAL/boost_log" ]; then
-	
-	if !(git clone https://cvs.lnf.infn.it/boost_log $BASE_EXTERNAL/boost_log); then
-	    echo "## cannot git clone  https://cvs.lnf.infn.it/boost_log"
-	    exit 1
-	fi
-	
-	if [ ! -d "$BASE_EXTERNAL/boost/boost/log" ]; then
-	    echo "link $BASE_EXTERNAL/boost/boost/log -> $BASE_EXTERNAL/boost_log/boost/log"
-	    ln -s $BASE_EXTERNAL/boost_log/boost/log $BASE_EXTERNAL/boost/boost/log
-	fi
+        if !(git clone https://cvs.lnf.infn.it/boost_log $BASE_EXTERNAL/boost_log); then
+            echo "## cannot git clone  https://cvs.lnf.infn.it/boost_log"
+            exit 1
+        fi
+        
+        if [ ! -d "$BASE_EXTERNAL/boost/boost/log" ]; then
+            echo "link $BASE_EXTERNAL/boost/boost/log -> $BASE_EXTERNAL/boost_log/boost/log"
+            ln -s $BASE_EXTERNAL/boost_log/boost/log $BASE_EXTERNAL/boost/boost/log
+        fi
 
-	if [ ! -d "$BASE_EXTERNAL/boost/libs/log" ]; then
-	    echo "link $BASE_EXTERNAL/boost/libs/log -> $BASE_EXTERNAL/boost_log/libs/log"
-	    ln -s $BASE_EXTERNAL/boost_log/libs/log $BASE_EXTERNAL/boost/libs/log
-	fi
+        if [ ! -d "$BASE_EXTERNAL/boost/libs/log" ]; then
+            echo "link $BASE_EXTERNAL/boost/libs/log -> $BASE_EXTERNAL/boost_log/libs/log"
+            ln -s $BASE_EXTERNAL/boost_log/libs/log $BASE_EXTERNAL/boost/libs/log
+        fi
     fi
     
     
@@ -375,32 +381,72 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 else
     echo "Boost Already present"
 fi
-### install libmodbus
-# if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; then
-#     echo "* need libmodbus"
 
-#     if [ ! -d "$BASE_EXTERNAL/libmodbus" ]; then
-#         echo "Install libmodbus"
-#         git clone https://github.com/stephane/libmodbus.git $BASE_EXTERNAL/libmodbus
-#         cd $BASE_EXTERNAL/libmodbus
-# 	git checkout v3.0.5
-#     else
-#         echo "Update libmodbus"
-#         cd $BASE_EXTERNAL/libmodbus/
-#         git pull v3.05
-#     fi
+#install lua language
+if [ ! -f "$PREFIX/include/lua.h" ]; then
+    echo "* need lua"
+    if [ ! -e "$BASE_EXTERNAL/lua-$LUA_VERSION.tar.gz" ]; then
+        echo "Download lua source to $BASE_EXTERNAL/lua-$LUA_VERSION.tar.gz"
+        if !( curl -R -o $BASE_EXTERNAL/lua-$LUA_VERSION.tar.gz http://www.lua.org/ftp/lua-$LUA_VERSION.tar.gz ); then
+            echo "## cannot download lua-$LUA_VERSION.tar.gz"
+            exit 1
+        fi
 
-#     ./autogen.sh
-#     # if [ -n "$CHAOS_STATIC" ]; then
-#     # 	./configure --enable-static --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-#     # else
-#     # 	./configure --enable-shared --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-#     # fi
-#     ./configure --enable-static --prefix=${CMAKE_INSTALL_PREFIX} $CROSS_HOST_CONFIGURE
-#     do_make "MODBUS" 1
+    fi
 
-#     echo "libmodbus done"
-# fi
+    if [ ! -e $BASE_EXTERNAL/lua-$LUA_VERSION ]; then
+        tar zxvf $BASE_EXTERNAL/lua-$LUA_VERSION.tar.gz -C $BASE_EXTERNAL
+    fi
+
+
+    echo "Compiling lua"
+    cd $BASE_EXTERNAL/lua-$LUA_VERSION
+    if [ $OS = "Darwin" ]; then
+        LUA_PLAT="macosx"
+    elif [ $OS = "Linux" ]; then
+        LUA_PLAT="linux"
+    else
+        echo "Invalid lua platform detected"
+        exit 1
+    fi
+
+#do_make "lua" 0 "$LUA_PLAT local"
+    #compile lua according to detected platform
+    if !( make $LUA_PLAT local ); then
+        echo "## Error compiling lua"
+        exit 1
+    fi
+    echo "Installing lua"
+
+    if !( cp -Rf install/bin/* $PREFIX/bin ); then
+        echo "## Error installing lua into bin"
+        exit 1
+    fi
+
+    if !( cp -R -f install/include/* $PREFIX/include ); then
+        echo "## Error installing lua into include"
+        exit 1
+    fi
+
+    if !( cp -R -f install/lib/* $PREFIX/lib ); then
+        echo "## Error installing lua into lib"
+        exit 1
+    fi
+
+    if !( cp -R -f install/man/* $PREFIX/man ); then
+        echo "## Error installing lua into man"
+        exit 1
+    fi
+
+    if !( cp -R -f install/share/* $PREFIX/share ); then
+        echo "## Error installing lua into share"
+        exit 1
+    fi
+
+    echo "Lua installed"
+else
+    echo "Lua already installed"
+fi
 
 echo "Setup LIBEVENT  $CHAOS_LIBEVENT_CONFIGURE :$LIB_EVENT_VERSION"
 if [ ! -d "$PREFIX/include/event2" ]; then
@@ -421,28 +467,6 @@ if [ ! -d "$PREFIX/include/event2" ]; then
     do_make "LIBEVENT" 1
     echo "LIBEVENT done"
 fi
-#if [ -z "$CHAOS_NO_LIBUV" ]; thenl
-#    echo "Setup LIBUV"
-#if [ ! -f "$PREFIX/include/uv.h" ]; then
-#
-#    if [ ! -d "$BASE_EXTERNAL/libuv" ]; then
-#	echo "Installing LIBUV"
-#	if !(git clone https://github.com/joyent/libuv.git $BASE_EXTERNAL/libuv); then
-#	    echo "## cannot git clone https://github.com/joyent/libuv.git"
-#	    exit 1
-#	fi
-#	cd $BASE_EXTERNAL/libuv
-#	git checkout -b good_for_chaos 1552184
-#    else
-#	cd $BASE_EXTERNAL/libuv
-	#git pull
-#    fi
-#    ./autogen.sh
-#    ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-#    do_make "LIBUV"
-#    echo "LIBUV done"
-#fi
-#fi
 
 if [ -z "$CHAOS_NO_COUCHBASE" ]; then
 echo "Setup Couchbase sdk, $CHAOS_CB_CONFIGURE"

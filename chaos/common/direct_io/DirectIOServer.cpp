@@ -33,45 +33,45 @@ handler_impl(NULL){
 }
 
 DirectIOServer::~DirectIOServer() {
-	clearHandler();
+    clearHandler();
 }
 
 // Initialize instance
 void DirectIOServer::init(void *init_data) throw(chaos::CException) {
-	if(handler_impl == NULL) throw chaos::CException(-1, "handler has not been configured", __FUNCTION__);
-	StartableService::initImplementation(handler_impl, init_data, "DirectIOServer handler", __FUNCTION__);
-	//construct the direct io service url
-	service_url = boost::str( boost::format("%1%:%2%:%3%") % chaos::GlobalConfiguration::getInstance()->getLocalServerAddress() % priority_port % service_port);
+    if(handler_impl == NULL) throw chaos::CException(-1, "handler has not been configured", __FUNCTION__);
+    StartableService::initImplementation(handler_impl, init_data, "DirectIOServer handler", __FUNCTION__);
+    //construct the direct io service url
+    service_url = boost::str( boost::format("%1%:%2%:%3%") % chaos::GlobalConfiguration::getInstance()->getLocalServerAddress() % priority_port % service_port);
 }
 
 // Start the implementation
 void DirectIOServer::start() throw(chaos::CException) {
-	StartableService::startImplementation(handler_impl, "DirectIOServer handler", __FUNCTION__);
+    StartableService::startImplementation(handler_impl, "DirectIOServer handler", __FUNCTION__);
 }
 
 // Stop the implementation
 void DirectIOServer::stop() throw(chaos::CException) {
-	StartableService::stopImplementation(handler_impl, "DirectIOServer handler", __FUNCTION__);
+    StartableService::stopImplementation(handler_impl, "DirectIOServer handler", __FUNCTION__);
 }
 
 // Deinit the implementation
 void DirectIOServer::deinit() throw(chaos::CException) {
-	StartableService::deinitImplementation(handler_impl, "DirectIOServer handler", __FUNCTION__);
+    StartableService::deinitImplementation(handler_impl, "DirectIOServer handler", __FUNCTION__);
 }
 
 //! Send some data to the server
 void DirectIOServer::setHandler(DirectIODispatcher *_handler_impl) {
-	if(StartableService::getServiceState() != CUStateKey::DEINIT)
-		return;
-	handler_impl = _handler_impl;
+    if(StartableService::getServiceState() != CUStateKey::DEINIT)
+        return;
+    handler_impl = _handler_impl;
     handler_impl->server_public_interface = this;
 }
 
 //! Remove the handler pointer
 void DirectIOServer::clearHandler() {
-	if(StartableService::getServiceState() != CUStateKey::DEINIT)
-		return;
-	if(handler_impl) delete(handler_impl);
+    if(StartableService::getServiceState() != CUStateKey::DEINIT)
+        return;
+    if(handler_impl) delete(handler_impl);
 }
 uint32_t DirectIOServer::getPriorityPort() {
     return priority_port;
@@ -82,5 +82,18 @@ uint32_t DirectIOServer::getServicePort() {
 }
 
 const std::string& DirectIOServer::getUrl() {
-	return  service_url;
+    return  service_url;
+}
+
+void DirectIOServer::deleteDataWithHandler(DirectIODeallocationHandler *_data_deallocator,
+                                           DisposeSentMemoryInfo::SentPart _sent_part,
+                                           uint16_t _sent_opcode,
+                                           void *data) {
+    if(_data_deallocator && data) {
+        CLEAN_DIO_DATA_WITH_HANDLER(_data_deallocator,
+                                    _sent_part,
+                                    _sent_opcode,
+                                    data);
+        data = NULL;
+    }
 }

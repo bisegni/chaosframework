@@ -51,7 +51,7 @@ namespace chaos {
 				int service_port;
 				std::string service_url;
 				
-				RpcServerHandler *commandHandler;
+				RpcServerHandler *command_handler;
 				
 				/*
 				 init the rpc adapter
@@ -88,7 +88,7 @@ namespace chaos {
 				/*
 				 set the command dispatcher associated to the instance of rpc adapter
 				 */
-				void setCommandDispatcher(RpcServerHandler *newCommandHandler);
+				void setCommandDispatcher(RpcServerHandler *new_command_handler);
 			};
 		}
 	}

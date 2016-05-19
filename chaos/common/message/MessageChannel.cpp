@@ -33,15 +33,14 @@ using namespace chaos::common::utility;
 #define MCERR_ ERR_LOG(MessageChannel)
 
 
-MessageChannel::MessageChannel(NetworkBroker *_broker):
+MessageChannel::MessageChannel(NetworkBroker *_broker,
+                               boost::shared_ptr<MessageRequestDomain> _new_message_request_domain):
 broker(_broker),
 last_error_code(0),
 last_error_message(),
 last_error_domain(),
-channel_reponse_domain(UUIDUtil::generateUUIDLite()),
-channel_request_id_counter(0){
-    
-}
+message_request_domain(_new_message_request_domain),
+channel_uuid(UUIDUtil::generateUUIDLite()){}
 
 MessageChannel::~MessageChannel() {
     
@@ -51,58 +50,13 @@ MessageChannel::~MessageChannel() {
  Initialization phase
  */
 void MessageChannel::init() throw(CException) {
-    
-    //register the action for the response
-    DeclareAction::addActionDescritionInstance<MessageChannel>(this,
-                                                               &MessageChannel::response,
-                                                               channel_reponse_domain.c_str(),
-                                                               "response",
-                                                               "Receive the reponse for a request");
-    
-    broker->registerAction(this);
 }
 
 /*!
  Deinitialization phase
  */
 void MessageChannel::deinit() throw(CException) {
-    
-    //create a new channel id
-    broker->deregisterAction(this);
 }
-
-/*!
- called when a result of a message is received
- */
-CDataWrapper *MessageChannel::response(CDataWrapper *response_data, bool& detach) {
-    DEBUG_CODE(MCDBG_ << "Received answer:" << response_data->getJSONString();)
-    if(!response_data->hasKey(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID)) return NULL;
-    uint32_t request_id = response_data->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
-    try {
-        //lock the map
-        boost::lock_guard<boost::mutex> lock(mutext_answer_managment);
-        
-        DEBUG_CODE(MCDBG_ << "Received answer with id:" << request_id;)
-        
-        //check if the requester is waith the answer
-        MapPromisesIterator p_iter = map_request_id_promises.find(request_id);
-        
-        if((detach = (p_iter != map_request_id_promises.end()))) {
-            DEBUG_CODE(MCDBG_ << "We have promises for id:" << request_id);
-            //set the value in promises
-            p_iter->second->set_value(FuturePromiseData(response_data));
-            
-            //delete the promises after have been set the data
-            map_request_id_promises.erase(p_iter);
-        } else {
-            DEBUG_CODE(MCDBG_ << "No promises found for id:" << request_id;)
-        }
-    } catch (...) {
-        DEBUG_CODE(MCDBG_ << "An error occuring dispatching the response:" << request_id;)
-    }
-    return NULL;
-}
-
 
 /*!
  Return the broker for that channel
@@ -121,6 +75,14 @@ const std::string& MessageChannel::getLastErrorMessage() {
 
 const std::string& MessageChannel::getLastErrorDomain() {
     return last_error_domain;
+}
+
+const std::string& MessageChannel::getChannelUUID() {
+    return channel_uuid;
+}
+
+boost::shared_ptr<MessageRequestDomain> MessageChannel::getMessageRequestDomain() {
+    return message_request_domain;
 }
 
 /*!
@@ -156,7 +118,7 @@ CDataWrapper* MessageChannel::sendRequest(const std::string& remote_host,
     
     
     
-    //wait for some time or, if == 0, forever
+    //wait for some time or, if == -1, forever
     if(request_future->wait(millisec_to_wait)) {
         CDataWrapper *result = request_future->detachResult();
         last_error_code = request_future->getError();
@@ -185,36 +147,25 @@ std::auto_ptr<MessageRequestFuture> MessageChannel::sendRequestWithFuture(const 
                                                                           CDataWrapper *request_pack,
                                                                           bool on_this_thread) {
     CHAOS_ASSERT(broker)
+    uint32_t new_request_id = 0;
     auto_ptr<MessageRequestFuture> result;
     CDataWrapper *data_pack = new CDataWrapper();
     
     //lock lk(waith_asnwer_mutex);
     if(request_pack)data_pack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *request_pack);
-    uint32_t current_request_id = channel_request_id_counter++;
     
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, node_id);
     data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, action_name);
     
-    //add current server as
-    data_pack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID, current_request_id);
-    data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN, channel_reponse_domain);
-    data_pack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION, "response");
-    //prepare the promises and future
-    boost::shared_ptr<MessageFuturePromise> promise(new MessageFuturePromise());
-    
-    //lock the map
-    boost::lock_guard<boost::mutex> lock(mutext_answer_managment);
-    //insert into themap the promises
-    map_request_id_promises.insert(make_pair(current_request_id, promise));
-    //get the future
-    result.reset(new  MessageRequestFuture(current_request_id,
-                                           promise->get_future()));
+    //complete datapack for request and get the unique future
+    result = message_request_domain->getNewRequestMessageFuture(*data_pack, new_request_id);
+
     //if(async) return result;
     //submit the request
     broker->submiteRequest(remote_host,
                            data_pack,
-                           channel_reponse_domain,
-                           current_request_id,
+                           message_request_domain->getDomainID(),
+                           new_request_id,
                            on_this_thread);
     return result;
 }

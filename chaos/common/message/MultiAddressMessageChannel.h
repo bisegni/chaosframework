@@ -105,7 +105,8 @@ namespace chaos {
             protected:
                 
                 //! default constructor
-                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker);
+                MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker,
+                                           MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
                 
                 //!Base constructor
                 /*!
@@ -114,7 +115,8 @@ namespace chaos {
                  \param node_address a list of node that the channel used for the data forwarding
                  */
                 MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker,
-                                           chaos::common::network::CNetworkAddress& node_address);
+                                           chaos::common::network::CNetworkAddress& node_address,
+                                           MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
                 //!Base constructor
                 /*!
                  Perform the multinode node network construction
@@ -122,7 +124,8 @@ namespace chaos {
                  \param node_address a list of node that the channel used for the data forwarding
                  */
                 MultiAddressMessageChannel(chaos::common::network::NetworkBroker *message_broker,
-                                           const std::vector<chaos::common::network::CNetworkAddress>& node_address);
+                                           const std::vector<chaos::common::network::CNetworkAddress>& node_address,
+                                           MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
                 
                 
                 ~MultiAddressMessageChannel();

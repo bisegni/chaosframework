@@ -25,6 +25,7 @@
 #include <chaos/common/direct_io/channel/DirectIOVirtualChannel.h>
 
 #include <boost/function.hpp>
+
 namespace chaos {
 	namespace common {
 		namespace direct_io {
@@ -33,10 +34,11 @@ namespace chaos {
 			
             namespace channel {
 				
-				class DirectIOVirtualServerChannel : public DirectIOVirtualChannel {
+				class DirectIOVirtualServerChannel:
+                public DirectIOVirtualChannel {
 					friend class chaos::common::direct_io::DirectIOServerEndpoint;
 				public:
-					//typedef boost::function<void(DirectIODataPack*)> ServerChannelDelegate;
+
 					typedef DirectIOEndpointHandler* ServerChannelDelegate;
 					
 					void clearDelegate();

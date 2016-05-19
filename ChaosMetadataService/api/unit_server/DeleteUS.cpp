@@ -55,12 +55,9 @@ CDataWrapper *DeleteUS::execute(CDataWrapper *api_data,
     }
 
     if(presence) {
-        if(err = us_da->deleteUS(new_us_uid) ){
+        if((err = us_da->deleteUS(new_us_uid))){
             LOG_AND_TROW(US_NEW_ERR, -6, boost::str(boost::format("Error removing unit server of id:%1%") % new_us_uid));
         }   
     }
-
-  
-   
     return NULL;
 }

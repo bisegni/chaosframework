@@ -28,7 +28,8 @@ using namespace chaos::metadata_service::persistence;
 //! defaukt constructor with the alias of the api
 AbstractApi::AbstractApi(const std::string& name):
 NamedService(name),
-subservice(NULL){}
+subservice(NULL),
+parent_group(NULL){}
 
 //default destructor
 AbstractApi::~AbstractApi(){deinit();}

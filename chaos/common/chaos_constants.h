@@ -20,6 +20,7 @@
 #ifndef ChaosFramework_ConstrolSystemConstants_h
 #define ChaosFramework_ConstrolSystemConstants_h
 
+#include <chaos/common/chaos_errors.h>
 #include <chaos/common/batch_command/BatchCommandConstants.h>
 
 
@@ -561,7 +562,33 @@ namespace chaos {
         static const char * const CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET  = "cunrpc_ida_cs";
         
     }
-    
+
+    /** @defgroup ExecutionUnitNodeDefinitionKey List of execution unit node type attribute key
+     *  @{
+     */
+        //! Name space for grupping key for the execution unit node type
+    namespace ExecutionUnitNodeDefinitionKey {
+            //! array of object that describe the input variable [string]
+        static const char * const EXECUTION_UNIT_DESCRIPTION        = "eudk_description";
+            //! array of object that describe the input variable [array object]
+        static const char * const EXECUTION_UNIT_VARIABLE_LIST      = "eudk_var_list";
+            //! the alias associated to the variable [string]
+        static const char * const EXECUTION_UNIT_VAR_ALIAS          = "eudk_var_alias";
+            //! the description associated to the variable [string]
+        static const char * const EXECUTION_UNIT_VAR_DESCRIPTION    = "eudk_var_description";
+            //! the type associated to the variable [int32]
+        static const char * const EXECUTION_UNIT_VAR_TYPE           = "eudk_var_type";
+            //! the direction(in, out, bidirectional) associated to the variable [int32]
+        static const char * const EXECUTION_UNIT_VAR_DIRECTION      = "eudk_var_direction";
+            //! the mandatory option associated to the variable [boolean]
+        static const char * const EXECUTION_UNIT_VAR_MANDATORY      = "eudk_var_mandatory";
+            //! the dataset attribute associated to the variable[string]
+        static const char * const EXECUTION_UNIT_VAR_DATASET_ATTRIBUTE      = ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME;
+            //! the dataset attribute associated to the variable[string]
+        static const char * const EXECUTION_UNIT_VAR_NODE_UID       = NodeDefinitionKey::NODE_UNIQUE_ID;
+    }
+    /** @} */ // end of ExecutionUnitNodeDefinitionKey
+
     /** @defgroup Contorl unit system key
      *  This is the collection of the key representing the property that are exposed into system dataset
      *  @{
@@ -581,6 +608,7 @@ namespace chaos {
     namespace CUType {
         static const char * const RTCU	= "rtcu";
         static const char * const SCCU  = "sccu";
+        static const char * const EXUT  = "exut";
     }
     /** @} */ // end of CUType
     
@@ -867,45 +895,6 @@ namespace chaos {
         static const char * const MIN_RANGE                         = "ds_min_range";
     }
     /** @} */ // end of DatasetDefinitionkey
-    
-    
-    /** @defgroup ChaosErrorCode Chaos Error Code
-     *  This is the collection of the definition of the chaos error code
-     *  @{
-     */
-    //! Name space for grupping the definition of the chaos error code
-    namespace ErrorCode {
-        //!the list of principal chaos error code
-        typedef enum {
-            //!no error
-            EC_NO_ERROR = 0,
-            //! rpc timeout
-            EC_TIMEOUT = 100,
-            //! dataset attribute not found
-            EC_ATTRIBUTE_NOT_FOUND, // 101 ...
-            //! dataset attribute bad direction
-            EC_ATTRIBUTE_BAD_DIR ,
-            //!dataset attribute not supported
-            EC_ATTRIBUTE_TYPE_NOT_SUPPORTED ,
-            //! has been called a not supported method
-            //! to be used for instance in driver methods that not are supported in a particular Abstraction
-            EC_NODE_OPERATION_NOT_SUPPORTED=-10000,
-            
-            //!unit server registration is gone well
-            EC_MDS_NODE_REGISTRATION_OK = 500,
-            //!unit server registration has failed for invalid alias
-            EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS,
-            //!unit server registration for duplicated alias
-            EC_MDS_NODE_REGISTRATION_FAILURE_DUPLICATE_ALIAS,
-            //! node bad state machine state in response to mds ack event
-            EC_MDS_NODE_BAD_SM_STATE,
-            //!work unit is not self manageable and need to be loaded within an unit server
-            EC_MDS_NODE_ID_NOT_SELF_MANAGEABLE
-        } ErrorCode;
-    }
-    /** @} */ // end of ChaosDataType
-    
-    /** @} */ // end of ChaosDataType
     
     /** @defgroup RpcActionDefinitionKey Action Rpc Protocol key
      *  This is the collection of the key used for the intere rpc protocol

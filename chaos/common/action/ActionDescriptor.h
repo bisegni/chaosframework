@@ -49,8 +49,12 @@ namespace chaos {
         string paramDescription;
         DataType::DataType paramType;
         
-        ActionParamDescription(){}
-        ActionParamDescription(const std::string& _paramName):paramName(_paramName){}
+        ActionParamDescription():
+        paramType(DataType::TYPE_UNDEFINED){}
+
+        ActionParamDescription(const std::string& _paramName):
+        paramName(_paramName),
+        paramType(DataType::TYPE_UNDEFINED){}
     };
     
     /*!

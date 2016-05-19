@@ -198,7 +198,6 @@ bool SWEService::goInRecoverableError(SWEService *impl, chaos::CException& ex, c
 
 bool SWEService::recoverError(SWEService *impl, const std::string & impl_name,  const std::string & domain_string) {
     bool result = false;
-    bool change_state_result = false;
     try {
         if(impl == NULL) return false;
         DEBUG_CODE(SWE_LDBG  << "Try to recover error " << impl_name;)
@@ -207,33 +206,34 @@ bool SWEService::recoverError(SWEService *impl, const std::string & impl_name,  
             //we can go to the last error
             switch (impl->last_state) {
                 case CUStateKey::INIT : {
-                    change_state_result = ((impl->SWEService::state_machine.process_event(service_state_machine::EventType::init())  == boost::msm::back::HANDLED_TRUE));
+                    result = ((impl->SWEService::state_machine.process_event(service_state_machine::EventType::init())  == boost::msm::back::HANDLED_TRUE));
                     break;
                 }
                     
                 case CUStateKey::START:{
-                    change_state_result = ((impl->SWEService::state_machine.process_event(service_state_machine::EventType::start())  == boost::msm::back::HANDLED_TRUE));
+                    result = ((impl->SWEService::state_machine.process_event(service_state_machine::EventType::start())  == boost::msm::back::HANDLED_TRUE));
                     break;
                 }
                     
                 case CUStateKey::STOP:{
-                    change_state_result = ((impl->SWEService::state_machine.process_event(service_state_machine::EventType::stop())  == boost::msm::back::HANDLED_TRUE));
+                    result = ((impl->SWEService::state_machine.process_event(service_state_machine::EventType::stop())  == boost::msm::back::HANDLED_TRUE));
                     break;
                 }
                     
                 case CUStateKey::DEINIT:{
-                    change_state_result = ((impl->SWEService::state_machine.process_event(service_state_machine::EventType::deinit())  == boost::msm::back::HANDLED_TRUE));
+                    result = ((impl->SWEService::state_machine.process_event(service_state_machine::EventType::deinit())  == boost::msm::back::HANDLED_TRUE));
                     break;
                 }
                 default:
                     break;
             }
+            if(result) {
+                impl->serviceState = impl->state_machine.current_state()[0];
             
-            impl->serviceState = impl->state_machine.current_state()[0];
+                impl->recoveredToState(impl->last_state);
             
-            impl->recoveredToState(impl->last_state);
-            
-            impl->last_state = -1;
+                impl->last_state = -1;
+            }
         }
     } catch (CException& ex) {
         SWE_LAPP  << "Error recovering error for " << impl_name << " with "<< ex.what();

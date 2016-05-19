@@ -51,20 +51,18 @@ using namespace chaos::cu::control_manager;
 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, MessageKeyArray)
 
 /*---------------------------------------------------------------------------------
- 
+
  ---------------------------------------------------------------------------------*/
 WorkUnitManagement::WorkUnitManagement(AbstractControlUnit *_work_unit_instance):
 mds_channel(NULL),
 work_unit_instance(_work_unit_instance),
 active(true),
-publishing_counter_delay(0){
-}
+publishing_counter_delay(0){}
 
 /*---------------------------------------------------------------------------------
- 
+
  ---------------------------------------------------------------------------------*/
-WorkUnitManagement::~WorkUnitManagement(){
-}
+WorkUnitManagement::~WorkUnitManagement(){}
 
 /*---------------------------------------------------------------------------------
  return the state of the unit state machine
@@ -110,7 +108,7 @@ string WorkUnitManagement::getCurrentStateString() {
 void WorkUnitManagement::turnOn() throw (CException) {
     WUMDBG_ << "Turn ON";
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublish()) == boost::msm::back::HANDLED_TRUE){
-        //we are switched state
+            //we are switched state
     } else {
         throw MetadataLoggingCException(work_unit_instance->getCUID(),
                                         ErrorCode::EC_MDS_NODE_BAD_SM_STATE,
@@ -125,49 +123,49 @@ void WorkUnitManagement::turnOn() throw (CException) {
 void WorkUnitManagement::turnOFF() throw (CException) {
     WUMDBG_ << "Turn OFF";
     if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublish()) == boost::msm::back::HANDLED_TRUE){
-        //we are switched state
+            //we are switched state
     } else {
         throw MetadataLoggingCException(work_unit_instance->getCUID(),
                                         ErrorCode::EC_MDS_NODE_BAD_SM_STATE,
                                         "Bad state of the sm for UnitEventTypeUnpublish event",
                                         __PRETTY_FUNCTION__);
     }
-    
+
 }
 
 /*---------------------------------------------------------------------------------
- 
+
  ---------------------------------------------------------------------------------*/
 void WorkUnitManagement::scheduleSM() throw (CException) {
     WUMDBG_ << "Start state machine step";
     switch ((UnitState) wu_instance_sm.current_state()[0]) {
         case UnitStateUnpublished:{
             WUMAPP_ << "Work unit in unpublished";
-            
+
             HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                             NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
             active = false;
             break;
         }
-            
+
         case UnitStateStartPublishing: {
             active = true;
             HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                             NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOADING,
                                                             true);
-            //reset the delay for the forwarding of the registration datapack
+                //reset the delay for the forwarding of the registration datapack
             publishing_counter_delay = 0;
             WUMAPP_ << "Control unit is unpublished, need to be setup";
-            //associate the event channel to the control unit
-            
+                //associate the event channel to the control unit
+
             WUMAPP_ << "Setup Control Unit Sanbox for cu with instance";
             try{
-                //initialize drivers
+                    //initialize drivers
                 work_unit_instance->_initDrivers();
-                
-                //define the contrl unit action and dataset
+
+                    //define the contrl unit action and dataset
                 work_unit_instance->_defineActionAndDataset(mds_registration_message);
             }catch(chaos::CException& ex) {
                 MetadataLoggingCException logged_exception(work_unit_instance->getCUID(),
@@ -189,9 +187,9 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypePublishing())
             break;
         }
-            
+
         case UnitStatePublishing: {
-            // don't pollute, ask every 20s
+                // don't pollute, ask every 20s
             if((publishing_counter_delay%10) == 0){
                 WUMAPP_  << "send registration to mds with delay counter to:" << publishing_counter_delay;
                 if(sendConfPackToMDS(mds_registration_message)) {
@@ -201,7 +199,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             publishing_counter_delay++;
             break;
         }
-            
+
         case UnitStatePublished: {
             active = false;
             MessageKeyArray all_cmd_key;
@@ -212,15 +210,15 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
                 CommandManager::getInstance()->registerAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
             }
-            
-            //check if the control unit hase some startup command (every startup command is a boost shared point so we dont need to delete it
+
+                //check if the control unit hase some startup command (every startup command is a boost shared point so we dont need to delete it
             for(ACUStartupCommandListIterator it = work_unit_instance->list_startup_command.begin();
                 it != work_unit_instance->list_startup_command.end();
                 it++) {
                 std::auto_ptr<CDataWrapper> rpc_message(new CDataWrapper);
                 all_cmd_key.clear();
                 (*it)->getAllKey(all_cmd_key);
-                
+
                 for(MessageKeyArrayIterator kit = all_cmd_key.begin();
                     kit != all_cmd_key.end();
                     kit++) {
@@ -229,24 +227,24 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                     }
                     (*it)->copyKeyTo(*kit, *rpc_message);
                 }
-                //we need to add the domain of the new created control unit to the messages
+                    //we need to add the domain of the new created control unit to the messages
                 rpc_message->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, work_unit_instance->getCUInstance());
-                
-                //submit startup command
+
+                    //submit startup command
                 std::auto_ptr<CDataWrapper> submittion_result(NetworkBroker::getInstance()->submitInterProcessMessage(rpc_message.release()));
-                
+
                 if(submittion_result->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {
-                    //error submitting startup command
+                        //error submitting startup command
                     WUMERR_ << "Error submitting startup command:" << submittion_result->getJSONString();
                 }
             }
-            //remove all startup comamnd that will be deleted from the
+                //remove all startup comamnd that will be deleted from the
             work_unit_instance->list_startup_command.clear();
-            
-            //send load completion to the mds
+
+                //send load completion to the mds
             sendLoadCompletionToMDS(work_unit_instance->getCUID());
-            
-            //set healt to load
+
+                //set healt to load
             HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                             NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
@@ -254,7 +252,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
         }
         case UnitStateStartUnpublishing: {
             active = true;
-            //set healt to load
+                //set healt to load
             HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                             NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOADING);
@@ -268,7 +266,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublishing())
             break;
         }
-            
+
         case UnitStatePublishingFailure: {
             WUMAPP_  << "there was been error during control unit registration we end here";
             HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
@@ -286,17 +284,17 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
             }catch (CException& ex) {
                 if(ex.errorCode != 1){
-                    //these exception need to be logged
+                        //these exception need to be logged
                     DECODE_CHAOS_EXCEPTION(ex);
                 }
             }
-            
+
             try{
                 WUMAPP_  << "Deiniting Work Unit";
                 work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
             }catch (CException& ex) {
                 if(ex.errorCode != 1){
-                    //these exception need to be logged
+                        //these exception need to be logged
                     DECODE_CHAOS_EXCEPTION(ex);
                 }
             }
@@ -305,45 +303,45 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
                 work_unit_instance->_undefineActionAndDataset();
             }  catch (CException& ex) {
                 if(ex.errorCode != 1){
-                    //these exception need to be logged
+                        //these exception need to be logged
                     DECODE_CHAOS_EXCEPTION(ex);
                 }
             }
-            
+
             WUMAPP_  << "work unit is going to be unpublished";
             SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublished())
-            //set healt to unload
+                //set healt to unload
             HealtManager::getInstance()->addNodeMetricValue(work_unit_instance->getCUID(),
                                                             NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                             NodeHealtDefinitionValue::NODE_HEALT_STATUS_UNLOAD);
             break;
         }
     }
-    //publish if something has changed
+        //publish if something has changed
     HealtManager::getInstance()->publishNodeHealt(work_unit_instance->getCUID());
     WUMDBG_ << "End state machine step";
-    
+
 }
 bool WorkUnitManagement::smNeedToSchedule() {
     UnitState s = getCurrentState();
     return	active || ( s != UnitStatePublished &&
                        s != UnitStateUnpublished &&
                        s != UnitStatePublishingFailure);
-    
+
 }
 
 int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
-    // dataToSend can't be sent because it is porperty of the CU
-    //so we need to copy it
-    
+        // dataToSend can't be sent because it is porperty of the CU
+        //so we need to copy it
+
     auto_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
     CDataWrapper mdsPack(serBuf->getBufferPtr());
-    //add action for metadata server
-    //add local ip and port
-    
+        //add action for metadata server
+        //add local ip and port
+
     int err = 0;
-    
-    //register CU from mds
+
+        //register CU from mds
     if((err = mds_channel->sendNodeRegistration(mdsPack))) {
         WUMERR_ << "Error forwarding registration message with code " <<mds_channel->getLastErrorCode() << "\n"
         "message: " << mds_channel->getLastErrorMessage() <<"\n"<<
@@ -353,12 +351,12 @@ int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
 }
 
 int WorkUnitManagement::sendLoadCompletionToMDS(const std::string& control_unit_uid) {
-    
+
     int err = 0;
     CDataWrapper mdsPack;
     mdsPack.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, control_unit_uid);
     mdsPack.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
-    //register CU from mds
+        //register CU from mds
     if((err = mds_channel->sendNodeLoadCompletion(mdsPack))) {
         WUMERR_ << "Error forwarding load completion message with code " <<mds_channel->getLastErrorCode() << "\n"
         "message: " << mds_channel->getLastErrorMessage() <<"\n"<<
@@ -370,13 +368,13 @@ int WorkUnitManagement::sendLoadCompletionToMDS(const std::string& control_unit_
 bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
     bool result = false;
     WUMAPP_ << "Work unit registration ack message received";
-    
+
     if(!ack_pack.hasKey(NodeDefinitionKey::NODE_UNIQUE_ID))
         throw MetadataLoggingCException(work_unit_instance->getCUID(),
                                         -1,
                                         "No device id found",
                                         __PRETTY_FUNCTION__);
-    
+
     string device_id = ack_pack.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
     if(device_id.compare(work_unit_instance->getCUID()) != 0) {
         throw MetadataLoggingCException(work_unit_instance->getCUID(),
@@ -385,8 +383,8 @@ bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
                                         __PRETTY_FUNCTION__);
     }
     if(ack_pack.hasKey(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT)) {
-        //registration has been ended
-        
+            //registration has been ended
+
         int ack_val=ack_pack.getInt32Value(MetadataServerNodeDefinitionKeyRPC::PARAM_REGISTER_NODE_RESULT);
         switch(ack_val){
             case ErrorCode::EC_MDS_NODE_REGISTRATION_OK:
@@ -394,12 +392,12 @@ bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
                 WUMAPP_ << "work unit has been registered:"<<device_id;
                 result = true;
                 break;
-                
+
             case ErrorCode::EC_MDS_NODE_ID_NOT_SELF_MANAGEABLE:
                 WUMAPP_ << "id is not self manageable";
                 SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())
                 break;
-                
+
             default:
                 WUMERR_ << "work unit "<< device_id<<" failed to register, error ack:"<<ack_val;
                 SWITCH_SM_TO(work_unit_state_machine::UnitEventType::UnitEventTypeFailure())

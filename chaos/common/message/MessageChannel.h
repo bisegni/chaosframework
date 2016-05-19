@@ -28,17 +28,17 @@
 
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/exception/exception.h>
-#include <chaos/common/thread/MultiKeyObjectWaitSemaphore.h>
-#include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/network/NetworkBroker.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
+#include <chaos/common/message/MessageRequestDomain.h>
+#include <chaos/common/thread/MultiKeyObjectWaitSemaphore.h>
 
-#include <boost/smart_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/future.hpp>
 #include <boost/atomic.hpp>
+
 namespace chaos {
     namespace common {
         namespace message {
@@ -49,7 +49,7 @@ namespace chaos {
             /*! \{ */
             
             /*! Check for delay error or application error */
-#define CHECK_TIMEOUT_AND_RESULT_CODE(x,e) \
+#define CHECK_TIMEOUT_AND_RESULT_CODE(x, e) \
 e = getLastErrorCode()
             
 #define MC_PARSE_CDWPTR_RESULT(x) \
@@ -63,12 +63,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN)) la
             
 #define MC_GET_RESULT_DATA(x)\
 if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
-            
-            /*! \} */
-            typedef boost::shared_ptr<common::data::CDataWrapper>                                                       FuturePromiseData;
-            typedef boost::promise< FuturePromiseData >                                                             MessageFuturePromise;
-            typedef map<chaos::common::utility::atomic_int_type, boost::shared_ptr<MessageFuturePromise> >              MapPromises;
-            typedef map<chaos::common::utility::atomic_int_type, boost::shared_ptr<MessageFuturePromise> >::iterator    MapPromisesIterator;
+
             //! MessageChannel
             /*!
              This is the basic channel for comunicate with other chaos rpc server. It can be instantiated only by
@@ -78,20 +73,18 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
              1 - Async mode, an handler must be given on request call
              2 - Sync mode, wait until the answer is received, or can be set a number of milliseconds to wait for.
              */
-            class MessageChannel : public DeclareAction {
+            class MessageChannel {
                 friend class chaos::common::network::NetworkBroker;
                 
                 //! Message broker associated with the channel instance
                 NetworkBroker *broker;
                 
-                //! atomic int for request id
-                boost::atomic<uint32_t> channel_request_id_counter;
-                
-                //! Mutex for managing the maps manipulation
-                boost::mutex mutext_answer_managment;
-                
-                MapPromises map_request_id_promises;
-                
+                //! the use of shared pointer of MessageRequestDomain permit to share the same response domain to different messahe channel
+                boost::shared_ptr<MessageRequestDomain> message_request_domain;
+
+                    //! unique channel identifier
+                std::string channel_uuid;
+
                 /*!
                  Initialization phase of the channel
                  */
@@ -103,15 +96,6 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 virtual void deinit() throw(CException);
                 
             protected:
-                /*!
-                 Called when a response to a request is received, it will manage the search of
-                 the apprioriate handler for the request
-                 */
-                virtual chaos::common::data::CDataWrapper* response(common::data::CDataWrapper *reposnse_data,
-                                                                    bool& detach);
-                
-                //! the domain associate to this domain for get the answers
-                std::string channel_reponse_domain;
                 
                 //!last error domain
                 std::string last_error_domain;
@@ -125,7 +109,8 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 /*!
                  Private constructor called by NetworkBroker
                  */
-                MessageChannel(NetworkBroker *_broker);
+                MessageChannel(NetworkBroker *_broker,
+                               MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
                 
                 /*!
                  Private destructor called by NetworkBroker
@@ -135,7 +120,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 /*!
                  Return the broker for that channel
                  */
-                NetworkBroker * getBroker();
+                NetworkBroker *getBroker();
                 
             public:
                 //! return last sendxxx error code
@@ -146,6 +131,12 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                 
                 //! return last sendxxx error domain
                 virtual const std::string& getLastErrorDomain();
+
+                const std::string& getChannelUUID();
+
+                    //! return the channel request domain
+                boost::shared_ptr<MessageRequestDomain> getMessageRequestDomain();
+
                 
                 //! Sena an rpc message to a remote node
                 /*!
@@ -156,10 +147,8 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  \param message_pack the data to send, the pointer is not deallocated and i scopied into the pack
                  \param on_this_thread notify when the message need to be sent syncronously or in async  way
                  */
-                void sendMessage(const std::string& remote_host,
-                                 const std::string& node_id,
-                                 const std::string& action_name,
-                                 chaos::common::data::CDataWrapper * message_pack,
+                void sendMessage(const std::string &remote_host, const std::string &node_id,
+                                 const std::string &action_name, chaos::common::data::CDataWrapper *message_pack,
                                  bool on_this_thread = false);
                 
                 
@@ -175,11 +164,11 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  \param on_this_thread notify when the message need to be sent syncronously or in async  way
                  \return the answer of the request, a null value mean that the wait time is expired
                  */
-                common::data::CDataWrapper* sendRequest(const std::string& remote_host,
-                                                        const std::string& node_id,
-                                                        const std::string& action_name,
+                common::data::CDataWrapper *sendRequest(const std::string &remote_host,
+                                                        const std::string &node_id,
+                                                        const std::string &action_name,
                                                         chaos::common::data::CDataWrapper *request_pack,
-                                                        int32_t millisec_to_wait=-1,
+                                                        int32_t millisec_to_wait = -1,
                                                         bool async = false,
                                                         bool on_this_thread = false);
                 
@@ -193,9 +182,9 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  \param request_pack the data to send, the pointer is not deallocated and i scopied into the pack
                  \return the future object to inspec and whait the result
                  */
-                virtual std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string& remote_host,
-                                                                                  const std::string& node_id,
-                                                                                  const std::string& action_name,
+                virtual std::auto_ptr<MessageRequestFuture> sendRequestWithFuture(const std::string &remote_host,
+                                                                                  const std::string &node_id,
+                                                                                  const std::string &action_name,
                                                                                   chaos::common::data::CDataWrapper *request_pack = NULL,
                                                                                   bool on_this_thread = false);
                 
@@ -205,17 +194,16 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
                  RPC information contains the alive state of the node within rpc dispacher on the backend size
                  and the size of the queued actions
                  */
-                std::auto_ptr<MessageRequestFuture> checkRPCInformation(const std::string& remote_host,
-                                                                        const std::string& node_id,
-                                                                        bool on_this_thread = false);
+                std::auto_ptr<MessageRequestFuture> checkRPCInformation(const std::string &remote_host,
+                                                                        const std::string &node_id, bool on_this_thread = false);
                 
                 //!Send a request for an echo test
-                std::auto_ptr<MessageRequestFuture> echoTest(const std::string& remote_host,
+                std::auto_ptr<MessageRequestFuture> echoTest(const std::string &remote_host,
                                                              chaos::common::data::CDataWrapper *echo_data,
                                                              bool on_this_thread = false);
                 
                 //! get the rpc published host and port
-                void getRpcPublishedHostAndPort(std::string& rpc_published_host_port);
+                void getRpcPublishedHostAndPort(std::string &rpc_published_host_port);
             };
         }
     }

@@ -27,8 +27,10 @@ using namespace chaos::common::direct_io;
 //! base constructor
 PerformanceNodeChannel::PerformanceNodeChannel(NetworkBroker *msg_broker,
                                                CNetworkAddress *_node_network_address,
-                                               DirectIOClient *_client_instance):
-MessageChannel(msg_broker),
+                                               DirectIOClient *_client_instance,
+                                               MessageRequestDomainSHRDPtr _new_message_request_domain):
+MessageChannel(msg_broker,
+               _new_message_request_domain),
 node_network_address(_node_network_address),
 client_instance(_client_instance) {}
 

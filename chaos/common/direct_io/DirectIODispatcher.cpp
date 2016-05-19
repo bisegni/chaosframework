@@ -30,7 +30,7 @@ using namespace chaos::common::direct_io;
 #define DIOD_LERR_ LERR_ << DirectIODispatcher_LOG_HEAD
 
 #define MAX_ENDPOINT_NUMBER 256
-#define MAX_ENDPOINT_ARRAY_SIZE (sizeof(EndpointFastDelegation**) * MAX_ENDPOINT_NUMBER)
+#define MAX_ENDPOINT_ARRAY_SIZE (sizeof(EndpointFastDelegation*) * MAX_ENDPOINT_NUMBER)
 
 #define CLEAR_ENDPOINT_SLOT(i) \
 if(endpoint_slot_array[i]->endpoint) { \

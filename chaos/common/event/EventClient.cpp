@@ -24,8 +24,9 @@ using namespace std;
 using namespace chaos;
 using namespace chaos::common::event;
 
-EventClient::EventClient(string alias): NamedService(alias) {
-}
+EventClient::EventClient(string alias):
+NamedService(alias),
+threadNumber(0){}
 
 /*
  init the event adapter

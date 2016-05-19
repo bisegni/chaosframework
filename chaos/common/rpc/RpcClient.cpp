@@ -96,6 +96,7 @@ void RpcClient::forwadSubmissionResultError(NetworkForwardInfo *message_info,
     auto_ptr<CDataWrapper> to_delete(server_handler->dispatchCommand(answer));
 }
 
+
 void RpcClient::setServerHandler(RpcServerHandler *_server_handler) {
     server_handler = _server_handler;
 }
