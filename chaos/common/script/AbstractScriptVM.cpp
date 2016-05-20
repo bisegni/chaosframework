@@ -31,5 +31,5 @@ script_caller(NULL){}
 AbstractScriptVM::~AbstractScriptVM() {}
 
 void AbstractScriptVM::setCaller(ScriptApiCaller *_script_caller) {
-
+    script_caller = _script_caller;
 }

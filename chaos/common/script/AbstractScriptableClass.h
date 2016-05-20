@@ -86,14 +86,20 @@ namespace chaos {
                 TemplatedAbstractScriptableClass(T* _object_reference,
                                                  const std::string& api_class_name):
                 AbstractScriptableClass(api_class_name),
-                object_reference(_object_reference){}
-                ~TemplatedAbstractScriptableClass(){}
+                object_reference(_object_reference){                }
+                
+                ~TemplatedAbstractScriptableClass(){
+                    //clear all map entries
+                    map_api_ptr.clear();
+                }
 
+                //! register a method as api
                 void addApi(const std::string& api_name, ScriptableApi api_pointer) {
                     if(map_api_ptr.count(api_name) != 0) return;
                     map_api_ptr.insert(make_pair(api_name, api_pointer));
                 }
 
+                //! deregister an api
                 void removeApi(const std::string& api_name) {
                     if(map_api_ptr.count(api_name) == 0) return;
                     map_api_ptr.erase(api_name);

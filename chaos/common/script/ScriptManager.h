@@ -65,6 +65,7 @@ namespace chaos {
                 ~ScriptManager();
                 void registerApiClass(AbstractScriptableClass *api_class);
                 void deregisterApiClass(AbstractScriptableClass *api_class);
+                AbstractScriptVM *getVirtualMachine();
             };
         }
     }

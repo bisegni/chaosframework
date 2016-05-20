@@ -20,15 +20,28 @@
  */
 
 #include <chaos/cu_toolkit/control_manager/script/EUScriptableWrapper.h>
+#include <chaos/cu_toolkit/control_manager/script/ScriptableExecutionUnit.h>
 
+using namespace chaos::common::script;
 using namespace chaos::cu::control_manager::script;
 
-EUScriptableWrapper::EUScriptableWrapper():
-TemplatedAbstractScriptableClass(this,
-                                 "eu"){
+#define EUSW_LAPP    INFO_LOG(EUScriptableWrapper) << eu_instance->getCUID() << " - "
+#define EUSW_DBG     DBG_LOG(EUScriptableWrapper) << eu_instance->getCUID() << " - "
+#define EUSW_LERR    ERR_LOG(EUScriptableWrapper) << eu_instance->getCUID() << " - "
 
+
+EUScriptableWrapper::EUScriptableWrapper(ScriptableExecutionUnit *_eu_instance):
+TemplatedAbstractScriptableClass(this,
+                                 "eu"),
+eu_instance(_eu_instance){
+    //add all exposed api
+    addApi(EUSW_ADD_DATASET_ATTRIBUTE, &EUScriptableWrapper::addDatasetAttribute);
 }
 
-EUScriptableWrapper::~EUScriptableWrapper() {
+EUScriptableWrapper::~EUScriptableWrapper() {}
 
+int EUScriptableWrapper::addDatasetAttribute(const ScriptInParam& input_parameter,
+                                             ScriptOutParam& output_parameter) {
+    EUSW_LAPP<<"Call of addDatasetAttribute";
+    return 0;
 }

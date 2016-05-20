@@ -27,20 +27,23 @@ using namespace chaos::common::script;
 using namespace chaos::common::utility;
 
 #define SCRTMAN_INFO   INFO_LOG(ScriptManager)
-#define SCRPTMAN_IDBG   INFO_LOG(ScriptManager)
+#define SCRPTMAN_DBG   INFO_LOG(ScriptManager)
 #define SCRPTMAN_ERR    ERR_LOG(ScriptManager)
 
 ScriptManager::ScriptManager(const std::string& _script_language):
 vm_name(CHAOS_FORMAT("%1%ScriptVM", %_script_language)),
 script_language(_script_language){}
 
-ScriptManager::~ScriptManager() {}
+ScriptManager::~ScriptManager() {
+    map_api_class.clear();
+}
 
 void ScriptManager::registerApiClass(AbstractScriptableClass *api_class) {
         //write lock the map
     boost::unique_lock<boost::shared_mutex> rl(map_mutex);
     if(map_api_class.count(api_class->api_class_name)) return;
         //add api class
+    SCRPTMAN_DBG << CHAOS_FORMAT("Register api class for %1% class", %api_class->api_class_name);
     map_api_class.insert(make_pair(api_class->api_class_name, api_class));
 }
 
@@ -49,6 +52,7 @@ void ScriptManager::deregisterApiClass(AbstractScriptableClass *api_class) {
     boost::unique_lock<boost::shared_mutex> rl(map_mutex);
     if(map_api_class.count(api_class->api_class_name) == 0) return;
         //remove api class
+    SCRPTMAN_DBG << CHAOS_FORMAT("Deregister api class for %1% class", %api_class->api_class_name);
     map_api_class.erase(api_class->api_class_name);
 }
 
@@ -80,4 +84,8 @@ void ScriptManager::deinit() throw(chaos::CException) {
         delete(script_vm);
         script_vm = NULL;
     }
+}
+
+AbstractScriptVM *ScriptManager::getVirtualMachine() {
+    return script_vm;
 }

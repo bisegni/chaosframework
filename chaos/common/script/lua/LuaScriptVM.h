@@ -33,21 +33,21 @@ namespace chaos {
         namespace script {
             namespace lua {
                 class LuaScriptVM;
-
+                
                 class ChaosLuaWrapperInterface {
                     friend class LuaScriptVM;
                     ScriptApiCaller *script_caller;
                 public:
                     ChaosLuaWrapperInterface(lua_State *ls);
                     ~ChaosLuaWrapperInterface();
-
+                    
                     int callApi(lua_State *ls);
-
+                    
                     static const char className[];
                     static const Luna<ChaosLuaWrapperInterface>::RegType Register[];
                 };
-
-                    //!define the chaos script lua implementation
+                
+                //!define the chaos script lua implementation
                 DECLARE_CLASS_FACTORY(LuaScriptVM, AbstractScriptVM),
                 public LunaAllocationHandler<ChaosLuaWrapperInterface> {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(LuaScriptVM)
@@ -62,9 +62,12 @@ namespace chaos {
                     void deallocationOf(ChaosLuaWrapperInterface *deallocatedClass);
                 public:
                     int loadScript(const std::string& loadable_script);
+                    
                     int callFunction(const std::string& function_name,
-                                     uint32_t expected_results_len,
                                      const ScriptInParam& input_parameter,
+                                     ScriptOutParam& output_parameter);
+                    
+                    int callFunction(const std::string& function_name,
                                      ScriptOutParam& output_parameter);
                 };
             }

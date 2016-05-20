@@ -28,17 +28,28 @@ namespace chaos {
     namespace cu {
         namespace control_manager {
             namespace script {
-                    //! forward declaration
+                
+#define EUSW_ADD_DATASET_ATTRIBUTE "addDatasetAttrbiute"
+                
+                //! forward declaration
                 class ScriptableExecutionUnit;
-
-                    //! class taht permit to interact with execution unit and chaos cript framework
+                
+                //! class taht permit to interact with execution unit and chaos cript framework
                 class EUScriptableWrapper:
                 public chaos::common::script::TemplatedAbstractScriptableClass<EUScriptableWrapper> {
                     friend class ScriptableExecutionUnit;
+                    
+                    //execution unit instances
+                    ScriptableExecutionUnit *eu_instance;
                 protected:
-                    EUScriptableWrapper();
+                    EUScriptableWrapper(ScriptableExecutionUnit *_eu_instance);
                     ~EUScriptableWrapper();
-                public:
+                    
+                    /*!
+                        define a variable
+                     */
+                    int addDatasetAttribute(const common::script::ScriptInParam& input_parameter,
+                                            common::script::ScriptOutParam& output_parameter);
                 };
             }
         }

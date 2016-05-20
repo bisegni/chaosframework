@@ -176,16 +176,16 @@ namespace chaos{
                 void unitRun() throw(CException);
 
                     //! inherited method
-                virtual void unitInit() throw(CException);
+                void unitInit() throw(CException);
 
                     //! inherited method
-                virtual void unitStart() throw(CException);
+                void unitStart() throw(CException);
 
                     //! inherited method
-                virtual void unitStop() throw(CException);
+                void unitStop() throw(CException);
 
                     //! inherited method
-                virtual void unitDeinit() throw(CException);
+                void unitDeinit() throw(CException);
 
                     //! fetch all input variable values
                 /*!

@@ -45,8 +45,10 @@ namespace chaos {
                 virtual int loadScript(const std::string& loadable_script) = 0;
 
                 virtual int callFunction(const std::string& function_name,
-                                         uint32_t expected_results_len,
                                          const ScriptInParam& input_parameter,
+                                         ScriptOutParam& output_parameter) = 0;
+                
+                virtual int callFunction(const std::string& function_name,
                                          ScriptOutParam& output_parameter) = 0;
             };
 

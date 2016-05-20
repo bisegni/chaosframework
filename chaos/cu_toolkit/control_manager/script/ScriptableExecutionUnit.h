@@ -22,16 +22,43 @@
 #ifndef __CHAOSFramework__ScriptableExecutionUnit_h
 #define __CHAOSFramework__ScriptableExecutionUnit_h
 
+#include <chaos/common/script/ScriptManager.h>
+
+#include <chaos/cu_toolkit/control_manager/script/EUScriptableWrapper.h>
 #include <chaos/cu_toolkit/control_manager/AbstractExecutionUnit.h>
+
+#define SEU_SCRIPT_LANGUAGE     "script_language"
+#define SEU_SCRIPT_CONTENT      "script_content"
 
 namespace chaos {
     namespace cu {
         namespace control_manager {
             namespace script {
 
-                    //! this calss implementa an execution unit defined by a script
+#define SEU_DEFINE_DATASET  "defineDataset"
+#define SEU_ALGORITHM_STEP  "algorithmStep"
+                
+                    //! this class implementa an execution unit defined by a script
+                /*!
+                 the script and language is submitted at load time with a json ith the following template
+                 {
+                 "script_language":"lua",
+                 "script_content":"the text of the script"
+                 }
+                 */
                 class ScriptableExecutionUnit:
                 public AbstractExecutionUnit {
+                    //! the language to be used for the script
+                    std::string script_language;
+                    
+                    //! the content of the script
+                    std::string script_content;
+                    
+                    //!scrip manger instance initilizated at eu init time
+                    std::auto_ptr<common::script::ScriptManager> script_manager;
+                    
+                    //! class taht wrap the execution uni to script
+                    EUScriptableWrapper scriptable_wrapper;
                 public:
                     /*! default constructor
                      \param _execution_unit_param is a string that contains parameter to pass during the contorl unit creation
@@ -51,8 +78,29 @@ namespace chaos {
 
                         //!default destructor
                     ~ScriptableExecutionUnit();
+                    
+                protected:
+                    //! inherited method
+                    void unitDefineActionAndDataset() throw(CException);
+                    
+                    //! inherited method
+                    void unitInit() throw(CException);
+                    
+                    //! inherited method
+                    void unitStart() throw(CException);
+                    
+                    //! inherited method
+                    void unitRun() throw(CException);
+                    
+                    //! inherited method
+                    void unitStop() throw(CException);
+                    
+                    //! inherited method
+                    void unitDeinit() throw(CException);
+                    
+                    //! inherithed method
+                    void unitUndefineActionAndDataset() throw(CException);
                 };
-
             }
         }
     }

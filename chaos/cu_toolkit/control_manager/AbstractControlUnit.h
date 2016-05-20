@@ -384,7 +384,7 @@ namespace chaos{
                  Subclass, in this method can call the api to create the dataset, after this method
                  this class will collet all the information and send all to the MDS server.
                  */
-                virtual void unitDefineActionAndDataset() throw(CException) = 0;
+                virtual void unitDefineActionAndDataset() throw(CException);
 
                     //! Abstract method for the definition of the driver
                 /*!
@@ -429,6 +429,13 @@ namespace chaos{
                  */
                 virtual void unitDeinit() throw(CException) = 0;
 
+                    //! Abstract Method that need to be used by the sublcass to undefine ihis data
+                /*!
+                 Subclass, in this method canclear all infromation defined into the deined event. This because
+                 after this call can be called only a new define phase
+                 */
+                virtual void unitUndefineActionAndDataset() throw(CException);
+                
                     //!handler calledfor restor a control unit to a determinate point
                 /*!
                  On the call of this handler the cache restore part is filled with the dataset

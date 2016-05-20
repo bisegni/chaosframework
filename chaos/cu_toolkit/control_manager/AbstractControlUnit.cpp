@@ -289,6 +289,10 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     getActionDescrionsInDataWrapper(setup_configuration);
 }
 
+void AbstractControlUnit::unitDefineActionAndDataset() throw(CException) {
+    
+}
+
 void AbstractControlUnit::unitDefineDriver(std::vector<DrvRequestInfo>& neededDriver) {
     
     for(ControlUnitDriverListIterator iter = control_unit_drivers.begin();
@@ -303,14 +307,13 @@ void AbstractControlUnit::unitDefineCustomAttribute() {
     
 }
 
-/*
- Define the control unit DataSet and Action into
- a CDataWrapper
- */
+
 void AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
     ACULDBG_ << "Remove Action Description";
-    //register command manager action
-    //CommandManager::getInstance()->deregisterAction(this);
+    unitUndefineActionAndDataset();
+}
+
+void AbstractControlUnit::unitUndefineActionAndDataset() throw(CException) {
     
 }
 

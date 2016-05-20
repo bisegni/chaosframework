@@ -48,21 +48,21 @@ ChaosLuaWrapperInterface::~ChaosLuaWrapperInterface() {
 
 int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
     int err = 0;
-        //the minimum number of parameter are two (class and api name)
+    //the minimum number of parameter are two (class and api name)
     int nargs = lua_gettop(ls);
     if(nargs < 2) {
-            //return error
+        //return error
         lua_pushinteger(ls, -1);
         return 1;
     }
-
+    
     ScriptInParam   in_param;
     ScriptOutParam  out_param;
-        //get api class and function names
+    //get api class and function names
     const std::string class_api_name = lua_tostring(ls, 1);
     const std::string api_name = lua_tostring(ls, 2);
-
-        //scan all input parameter
+    
+    //scan all input parameter
     for (int i=3; i <= nargs; i++) {
         switch(lua_type(ls, 1)) {
             case LUA_TSTRING:
@@ -82,7 +82,7 @@ int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
                 break;
         }
     }
-
+    
     if((err = script_caller->callScriptApi(class_api_name,
                                            api_name,
                                            in_param,
@@ -90,7 +90,7 @@ int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
         LSVM_ERR << CHAOS_FORMAT("Error calling %1%[%2%] with code %3%", %api_name%api_name%class_api_name%err);
         luaL_argerror(ls, err, CHAOS_FORMAT("Error executing %1%[%2%]", %api_name%api_name).c_str());
     } else {
-            //we can send the return
+        //we can send the return
         for(ScriptOutParamIterator it = out_param.begin(),
             end = out_param.end();
             it != end;
@@ -155,7 +155,7 @@ static const struct luaL_Reg chaos_wrap [] = {
 LuaScriptVM::LuaScriptVM(const std::string& name):
 AbstractScriptVM(name),
 ls(NULL){
-
+    
 }
 
 LuaScriptVM::~LuaScriptVM() {
@@ -170,16 +170,16 @@ void LuaScriptVM::init(void *init_data) throw(chaos::CException) {
     luaopen_bit32(ls);
     luaopen_table(ls);
     luaopen_string(ls);
-
+    
     lua_getglobal(ls, "_G");
     luaL_setfuncs(ls, chaos_wrap, 0);
     lua_pop(ls, 1);
-
-        //set virtual machine as allocation handler
+    
+    //set virtual machine as allocation handler
     Luna<ChaosLuaWrapperInterface>::setHandler(this);
-        //register wrapper interface
+    //register wrapper interface
     Luna<ChaosLuaWrapperInterface>::Register(ls);
-
+    
 }
 
 void LuaScriptVM::deinit() throw(chaos::CException) {
@@ -187,12 +187,12 @@ void LuaScriptVM::deinit() throw(chaos::CException) {
 }
 
 void LuaScriptVM::allocationOf(ChaosLuaWrapperInterface *newAllocatedClass) {
-        //set the script caller with helper interface
+    //set the script caller with helper interface
     newAllocatedClass->script_caller = script_caller;
 }
 
 void LuaScriptVM::deallocationOf(ChaosLuaWrapperInterface *deallocatedClass) {
-
+    
 }
 
 int LuaScriptVM::loadScript(const std::string& loadable_script) {
@@ -206,13 +206,13 @@ int LuaScriptVM::loadScript(const std::string& loadable_script) {
 }
 
 int LuaScriptVM::callFunction(const std::string& function_name,
-                              uint32_t expected_results_len,
                               const ScriptInParam& input_parameter,
                               ScriptOutParam& output_parameter) {
     int err = 0;
-        // push functions and arguments
+    int result_element = 0;
+    // push functions and arguments
     lua_getglobal(ls, function_name.c_str());
-
+    
     for(ScriptInParamConstIterator it = input_parameter.begin(),
         end = input_parameter.end();
         it != end;
@@ -242,14 +242,18 @@ int LuaScriptVM::callFunction(const std::string& function_name,
                 break;
         }
     }
-
-        // do the call (2 arguments, 1 result)
-    if ((err = lua_pcall(ls, (int)input_parameter.size(), expected_results_len, 0) != 0)) {
+    
+    // do the call (2 arguments, 1 result)
+    if ((err = lua_pcall(ls,
+                         (int)input_parameter.size(),
+                         LUA_MULTRET,
+                         0) != 0)) {
         LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %lua_tostring(ls, -1)%function_name);
     } else {
-            //execution as gone well, we can get the expected result
+        result_element = lua_gettop(ls);
+        //execution as gone well, we can get the expected result
         for(int idx = 0;
-            idx < expected_results_len;
+            idx < result_element;
             idx++) {
             switch(lua_type(ls, -1)){
                 case LUA_TSTRING:
@@ -272,4 +276,12 @@ int LuaScriptVM::callFunction(const std::string& function_name,
         }
     }
     return err;
+}
+
+int LuaScriptVM::callFunction(const std::string& function_name,
+                              ScriptOutParam& output_parameter) {
+    ScriptInParam input_parameter;
+    return callFunction(function_name,
+                        input_parameter,
+                        output_parameter);
 }
