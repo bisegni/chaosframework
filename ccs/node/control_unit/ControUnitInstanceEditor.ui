@@ -292,7 +292,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="horizontalLayoutLoadParameter">
             <property name="sizeConstraint">
              <enum>QLayout::SetDefaultConstraint</enum>
             </property>
@@ -329,6 +329,13 @@
               </property>
               <property name="placeholderText">
                <string>Initialization parameter</string>
+              </property>
+             </widget>
+            </item>
+            <item alignment="Qt::AlignTop">
+             <widget class="QPushButton" name="pushButton">
+              <property name="text">
+               <string>Edit</string>
               </property>
              </widget>
             </item>

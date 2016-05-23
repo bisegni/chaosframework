@@ -49,6 +49,9 @@ public:
     virtual bool isClosing() = 0;
     virtual void initUI() = 0;
 
+signals:
+    void presenterWidgetClosed();
+
 public slots:
     void closeTab();
 

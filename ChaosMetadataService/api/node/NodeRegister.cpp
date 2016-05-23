@@ -81,8 +81,8 @@ chaos::common::data::CDataWrapper *NodeRegister::unitServerRegistration(chaos::c
     uint64_t    command_id;
     bool        is_present = false;
     uint64_t    nodes_seq = 0;
+    //data is used to send answer so we tag it to get ownership
     detach_data = true;
-    
    
     //fetch the unit server data access
     GET_DATA_ACCESS(UnitServerDataAccess, us_da, -1)

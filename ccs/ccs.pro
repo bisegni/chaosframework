@@ -116,7 +116,9 @@ SOURCES += main.cpp\
     widget/ChaosMonitorWidgetCompanion.cpp \
     widget/CNodeHealthLabel.cpp \
     widget/CControlUnitDatasetLabel.cpp \
-    widget/StateImageIndicatorWidget.cpp
+    widget/StateImageIndicatorWidget.cpp \
+    language_editor/LuaHighlighter.cpp \
+    language_editor/ScriptEditor.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -214,7 +216,9 @@ HEADERS  += \
     widget/ChaosMonitorWidgetCompanion.h \
     widget/CNodeHealthLabel.h \
     widget/CControlUnitDatasetLabel.h \
-    widget/StateImageIndicatorWidget.h
+    widget/StateImageIndicatorWidget.h \
+    language_editor/LuaHighlighter.h \
+    language_editor/ScriptEditor.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -239,7 +243,8 @@ FORMS    += \
     tree_group/AddNewDomain.ui \
     widget/CNodeLogWidget.ui \
     log_browser/LogBrowser.ui \
-    widget/CNodeResourceWidget.ui
+    widget/CNodeResourceWidget.ui \
+    language_editor/ScriptEditor.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

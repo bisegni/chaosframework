@@ -2,6 +2,7 @@
 #define CONTROUNITINSTANCEEDITOR_H
 
 #include "../../presenter/PresenterWidget.h"
+#include "../../language_editor/ScriptEditor.h"
 
 #include <QWidget>
 #include <QItemSelection>
@@ -13,12 +14,10 @@ class ControUnitInstanceEditor;
 }
 
 class ControUnitInstanceEditor :
-        public PresenterWidget
-{
+        public PresenterWidget {
     Q_OBJECT
-   // QString unit_server_uid;
-   // QString control_unit_type;
-   // QString control_unit_uid;
+   //Script editor
+    ScriptEditor *script_enditor;
 
     bool is_in_editing;
     QStringList cu_type_list;
@@ -83,6 +82,12 @@ private slots:
                                     const QString& attribute_default_max_value,
                                     const QString& attribute_default_min_value);
     void on_pushButtonChooseControlUnitType_clicked();
+
+    void on_pushButton_clicked();
+
+    void saveScriptEditing(ScriptEditor::Script& script_info);
+    void cancelScriptEditing();
+    void scriptEditorClosed();
 
 private:
     Ui::ControUnitInstanceEditor *ui;

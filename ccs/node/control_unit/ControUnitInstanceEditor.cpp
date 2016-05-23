@@ -16,6 +16,7 @@ using namespace chaos::metadata_service_client::api_proxy;
 ControUnitInstanceEditor::ControUnitInstanceEditor(const QString& unit_server_uid,
                                                    const QString& control_unit_type):
     PresenterWidget(NULL),
+    script_enditor(NULL),
     is_in_editing(false),
     ui(new Ui::ControUnitInstanceEditor) {
     ui->setupUi(this);
@@ -27,6 +28,7 @@ ControUnitInstanceEditor::ControUnitInstanceEditor(const QString& unit_server_ui
                                                    const QString& control_unit_uid,
                                                    bool edit_instance):
     PresenterWidget(NULL),
+    script_enditor(NULL),
     is_in_editing(edit_instance),
     ui(new Ui::ControUnitInstanceEditor) {
     ui->setupUi(this);
@@ -35,8 +37,7 @@ ControUnitInstanceEditor::ControUnitInstanceEditor(const QString& unit_server_ui
     ui->lineEditControlUnitUniqueID->setEnabled(false);
 }
 
-ControUnitInstanceEditor::~ControUnitInstanceEditor()
-{
+ControUnitInstanceEditor::~ControUnitInstanceEditor() {
     delete ui;
 }
 
@@ -156,7 +157,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
     table_model_driver_spec->setRowCount(0);
     table_model_dataset_attribute_setup->setRowCount(0);
 
-            CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_PARENT, ui->labelUnitServer)
+    CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_PARENT, ui->labelUnitServer)
             CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ui->lineEditControlUnitUniqueID)
             CHECK_AND_SET_LABEL("control_unit_implementation", ui->labelControlUnitType)
             CHECK_AND_SET_CHECK("auto_load", ui->checkBoxAutoLoad)
@@ -232,6 +233,8 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
 }
 
 bool ControUnitInstanceEditor::isClosing() {
+    //in case we have editor open we close it
+    cancelScriptEditing();
     return true;
 }
 
@@ -445,4 +448,34 @@ void ControUnitInstanceEditor::on_pushButtonChooseControlUnitType_clicked() {
     if(ok) {
         ui->labelControlUnitType->setText(type);
     }
+}
+
+void ControUnitInstanceEditor::on_pushButton_clicked() {
+    //edit load parameter in script editor
+    if(script_enditor == NULL) {
+        script_enditor = new ScriptEditor();
+        connect(script_enditor, SIGNAL(saveScript(ScriptEditor::Script&)), SLOT(saveScriptEditing(ScriptEditor::Script&)));
+        connect(script_enditor, SIGNAL(cancel()), SLOT(cancelScriptEditing()));
+        connect(script_enditor, SIGNAL(presenterWidgetClosed()), SLOT(scriptEditorClosed()));
+        addWidgetToPresenter(script_enditor);
+    }
+    ScriptEditor::Script script(ui->textEditLoadParameter->toPlainText());
+    script_enditor->setScript(script);
+}
+
+void ControUnitInstanceEditor::saveScriptEditing(ScriptEditor::Script& script_info) {
+    ui->textEditLoadParameter->setText(script_info.getJSONDescription());
+    script_enditor->closeTab();
+    script_enditor = NULL;
+}
+
+void ControUnitInstanceEditor::cancelScriptEditing() {
+    if(script_enditor) {
+        script_enditor->closeTab();
+        script_enditor = NULL;
+    }
+}
+
+void ControUnitInstanceEditor::scriptEditorClosed() {
+    script_enditor = NULL;
 }
