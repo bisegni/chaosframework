@@ -49,6 +49,8 @@ namespace chaos {
                 class ScriptableExecutionUnit:
                 public AbstractExecutionUnit {
                     friend class EUScriptableWrapper;
+                    PUBLISHABLE_CONTROL_UNIT_INTERFACE(AbstractExecutionUnit)
+                    
                     //! the language to be used for the script
                     std::string script_language;
                     

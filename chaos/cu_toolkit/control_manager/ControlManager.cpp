@@ -21,9 +21,11 @@
 #include <chaos/common/global.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/healt_system/HealtManager.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
+
 #include <chaos/cu_toolkit/control_manager/ControlManager.h>
 #include <chaos/cu_toolkit/command_manager/CommandManager.h>
-#include <chaos/common/configuration/GlobalConfiguration.h>
+#include <chaos/cu_toolkit/control_manager/script/ScriptableExecutionUnit.h>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -55,7 +57,10 @@ using namespace std;
  Constructor
  */
 ControlManager::ControlManager():
-publishing_counter_delay(0){}
+publishing_counter_delay(0){
+    //! register scriptable control unit
+    registerControlUnit<chaos::cu::control_manager::script::ScriptableExecutionUnit>();
+}
 
 /*
  Desctructor

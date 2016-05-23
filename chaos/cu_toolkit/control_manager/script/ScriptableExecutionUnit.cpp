@@ -30,6 +30,8 @@ using namespace chaos::cu::control_manager::script;
 #define SEU_DBG     DBG_LOG(ScriptableExecutionUnit) << getDeviceID() << " - "
 #define SEU_LERR    ERR_LOG(ScriptableExecutionUnit) << getDeviceID() << " - "
 
+PUBLISHABLE_CONTROL_UNIT_IMPLEMENTATION(ScriptableExecutionUnit)
+
 /*! default constructor
  \param _execution_unit_param is a string that contains parameter to pass during the contorl unit creation
  \param _execution_unit_drivers driver information
