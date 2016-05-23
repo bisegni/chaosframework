@@ -28,9 +28,17 @@ CDataVariant::CDataVariant(int32_t int32_value):
     type(DataType::TYPE_INT32),
     _internal_variant(int32_value) { }
 
+CDataVariant::CDataVariant(uint32_t int32_value):
+type(DataType::TYPE_INT32),
+_internal_variant(int32_value) { }
+
 CDataVariant::CDataVariant(int64_t int64_value):
     type(DataType::TYPE_INT64),
     _internal_variant(int64_value) { }
+
+CDataVariant::CDataVariant(uint64_t int64_value):
+type(DataType::TYPE_INT64),
+_internal_variant(int64_value) { }
 
 CDataVariant::CDataVariant(double double_value):
     type(DataType::TYPE_DOUBLE),

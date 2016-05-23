@@ -57,6 +57,27 @@ scriptable_wrapper(this){}
 //!default destructor
 ScriptableExecutionUnit::~ScriptableExecutionUnit() {}
 
+
+void ScriptableExecutionUnit::addAttributeToDataSet(const std::string& attribute_name,
+                                        const std::string& attribute_description,
+                                        DataType::DataType attribute_type,
+                                        DataType::DataSetAttributeIOAttribute attribute_direction,
+                                        uint32_t maxSize) {
+    RTAbstractControlUnit::addAttributeToDataSet(attribute_name,
+                                                 attribute_description,
+                                                 attribute_type,
+                                                 attribute_direction);
+}
+
+
+void ScriptableExecutionUnit::addExecutionUnitVariable(const std::string& alias,
+                              const std::string& description,
+                              chaos::DataType::DataType type,
+                              DataType::DataSetAttributeIOAttribute direction,
+                              bool mandatory) {
+    
+}
+
 void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     //scan load parameter
     CHAOS_LASSERT_EXCEPTION((getCUParam().size() > 0), SEU_LERR, -1, "NO JSON script information has been set at load time");
@@ -106,26 +127,20 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     }
 }
 
-void ScriptableExecutionUnit::unitInit() throw(CException) {
-    //at this time we can initialize the
+
+void ScriptableExecutionUnit::executeAlgorithmStep(uint64_t step_delay_time) throw (CException) {
+    ScriptInParam input_param;
+    ScriptOutParam output_param;
     
+    //add step delay time
+    input_param.push_back(CDataVariant(step_delay_time));
+    if(script_manager->getVirtualMachine()->callFunction(SEU_ALGORITHM_STEP,
+                                                         input_param,
+                                                         output_param)) {
+        LOG_AND_TROW_FORMATTED(SEU_LERR, -1, "Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_STEP);
+    }
 }
 
-void ScriptableExecutionUnit::unitStart() throw(CException) {
-    
-}
-
-void ScriptableExecutionUnit::unitStop() throw(CException) {
-    
-}
-
-void ScriptableExecutionUnit::unitDeinit() throw(CException) {
-    
-}
-
-void ScriptableExecutionUnit::unitRun() throw(CException) {
-    
-}
 
 void ScriptableExecutionUnit::unitUndefineActionAndDataset() throw(CException) {
     if(script_manager.get() != NULL) {

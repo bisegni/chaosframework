@@ -42,6 +42,27 @@ EUScriptableWrapper::~EUScriptableWrapper() {}
 
 int EUScriptableWrapper::addDatasetAttribute(const ScriptInParam& input_parameter,
                                              ScriptOutParam& output_parameter) {
-    EUSW_LAPP<<"Call of addDatasetAttribute";
+    if(input_parameter.size() == 4 ||
+       input_parameter.size() == 5) {
+        return -1;
+    }
+    const std::string attribute_name = input_parameter[0].asString();
+    const std::string attribute_description = input_parameter[1].asString();
+    DataType::DataType attribute_type = static_cast<DataType::DataType>(input_parameter[2].asInt32());
+    DataType::DataSetAttributeIOAttribute attribute_direction = static_cast<DataType::DataSetAttributeIOAttribute>(input_parameter[3].asInt32());
+    uint32_t maxSize = (uint32_t)(input_parameter.size() == 5 ?input_parameter[4].asInt32():0);
+    EUSW_LAPP<< CHAOS_FORMAT("Call of addDatasetAttribute with %1% %2% %3% %4%", %attribute_name%attribute_description%attribute_type%attribute_direction);
+
+    eu_instance->addAttributeToDataSet(attribute_name,
+                                       attribute_description,
+                                       attribute_type,
+                                       attribute_direction,
+                                       maxSize);
+    return 0;
+}
+
+int EUScriptableWrapper::addVariable(const ScriptInParam& input_parameter,
+                                     ScriptOutParam& output_parameter){
+    EUSW_LAPP<<"Call of addVariable";
     return 0;
 }

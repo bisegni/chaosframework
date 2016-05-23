@@ -34,11 +34,11 @@ namespace chaos {
     namespace cu {
         namespace control_manager {
             namespace script {
-
+                
 #define SEU_DEFINE_DATASET  "defineDataset"
 #define SEU_ALGORITHM_STEP  "algorithmStep"
                 
-                    //! this class implementa an execution unit defined by a script
+                //! this class implementa an execution unit defined by a script
                 /*!
                  the script and language is submitted at load time with a json ith the following template
                  {
@@ -48,6 +48,7 @@ namespace chaos {
                  */
                 class ScriptableExecutionUnit:
                 public AbstractExecutionUnit {
+                    friend class EUScriptableWrapper;
                     //! the language to be used for the script
                     std::string script_language;
                     
@@ -75,28 +76,35 @@ namespace chaos {
                     ScriptableExecutionUnit(const std::string& _execution_unit_id,
                                             const std::string& _execution_unit_param,
                                             const ControlUnitDriverList& _execution_unit_drivers);
-
-                        //!default destructor
+                    
+                    //!default destructor
                     ~ScriptableExecutionUnit();
                     
                 protected:
+                    //! add an attribute to the dataset fo the execution unit
+                    void addAttributeToDataSet(const std::string& attribute_name,
+                                               const std::string& attribute_description,
+                                               DataType::DataType attribute_type,
+                                               DataType::DataSetAttributeIOAttribute attribute_direction,
+                                               uint32_t maxSize = 0);
+                    
+                    /*!
+                     Add a new execution unit variable specifying the property
+                     \ingroup Execution_Unit_User_Api
+                     \param alias is the name of the alias use for reference by execution unit
+                     \param description
+                     */
+                    void addExecutionUnitVariable(const std::string& alias,
+                                                  const std::string& description,
+                                                  chaos::DataType::DataType type,
+                                                  DataType::DataSetAttributeIOAttribute direction,
+                                                  bool mandatory);
+                    
                     //! inherited method
                     void unitDefineActionAndDataset() throw(CException);
                     
-                    //! inherited method
-                    void unitInit() throw(CException);
-                    
-                    //! inherited method
-                    void unitStart() throw(CException);
-                    
-                    //! inherited method
-                    void unitRun() throw(CException);
-                    
-                    //! inherited method
-                    void unitStop() throw(CException);
-                    
-                    //! inherited method
-                    void unitDeinit() throw(CException);
+                    //! inherithed method
+                    void executeAlgorithmStep(uint64_t step_delay_time) throw (CException);
                     
                     //! inherithed method
                     void unitUndefineActionAndDataset() throw(CException);

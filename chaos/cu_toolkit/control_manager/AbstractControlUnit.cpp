@@ -237,50 +237,50 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
                                                                          "method for set the input element for the dataset");
     
     //expose updateConfiguration Methdo to rpc
-    addActionDescritionInstance<AbstractControlUnit>(this,
-                                                     &AbstractControlUnit::updateConfiguration,
-                                                     NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
-                                                     "Update control unit configuration");
+    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                         &AbstractControlUnit::updateConfiguration,
+                                                                         NodeDomainAndActionRPC::ACTION_UPDATE_PROPERTY,
+                                                                         "Update control unit configuration");
     
-    addActionDescritionInstance<AbstractControlUnit>(this,
-                                                     &AbstractControlUnit::_init,
-                                                     NodeDomainAndActionRPC::ACTION_NODE_INIT,
-                                                     "Perform the control unit initialization");
+    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                         &AbstractControlUnit::_init,
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_INIT,
+                                                                         "Perform the control unit initialization");
     
-    addActionDescritionInstance<AbstractControlUnit>(this,
-                                                     &AbstractControlUnit::_deinit,
-                                                     NodeDomainAndActionRPC::ACTION_NODE_DEINIT
-                                                     ,
-                                                     "Perform the control unit deinitialization");
-    addActionDescritionInstance<AbstractControlUnit>(this,
-                                                     &AbstractControlUnit::_start,
-                                                     NodeDomainAndActionRPC::ACTION_NODE_START,
-                                                     "Start the control unit scheduling");
+    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                         &AbstractControlUnit::_deinit,
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_DEINIT
+                                                                         ,
+                                                                         "Perform the control unit deinitialization");
+    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                         &AbstractControlUnit::_start,
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_START,
+                                                                         "Start the control unit scheduling");
     
-    addActionDescritionInstance<AbstractControlUnit>(this,
-                                                     &AbstractControlUnit::_stop,
-                                                     NodeDomainAndActionRPC::ACTION_NODE_STOP,
-                                                     "Stop the control unit scheduling");
+    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                         &AbstractControlUnit::_stop,
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_STOP,
+                                                                         "Stop the control unit scheduling");
     
-    addActionDescritionInstance<AbstractControlUnit>(this,
-                                                     &AbstractControlUnit::_recover,
-                                                     NodeDomainAndActionRPC::ACTION_NODE_RECOVER,
-                                                     "Recovery a recoverable state, going to the last state");
+    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                         &AbstractControlUnit::_recover,
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_RECOVER,
+                                                                         "Recovery a recoverable state, going to the last state");
     
-    addActionDescritionInstance<AbstractControlUnit>(this,
-                                                     &AbstractControlUnit::_unitRestoreToSnapshot,
-                                                     NodeDomainAndActionRPC::ACTION_NODE_RESTORE,
-                                                     "Restore contorl unit to a snapshot tag");
+    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                         &AbstractControlUnit::_unitRestoreToSnapshot,
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_RESTORE,
+                                                                         "Restore contorl unit to a snapshot tag");
     
-    addActionDescritionInstance<AbstractControlUnit>(this,
-                                                     &AbstractControlUnit::_getState,
-                                                     NodeDomainAndActionRPC::ACTION_NODE_GET_STATE,
-                                                     "Get the state of the running control unit");
+    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                         &AbstractControlUnit::_getState,
+                                                                         NodeDomainAndActionRPC::ACTION_NODE_GET_STATE,
+                                                                         "Get the state of the running control unit");
     
-    addActionDescritionInstance<AbstractControlUnit>(this,
-                                                     &AbstractControlUnit::_getInfo,
-                                                     NodeDomainAndActionRPC::ACTION_CU_GET_INFO,
-                                                     "Get the information about running control unit");
+    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                         &AbstractControlUnit::_getInfo,
+                                                                         NodeDomainAndActionRPC::ACTION_CU_GET_INFO,
+                                                                         "Get the information about running control unit");
     
     //grab dataset description
     DatasetDB::fillDataWrapperWithDataSetDescription(setup_configuration);
@@ -1330,7 +1330,7 @@ void AbstractControlUnit::unitInputAttributeChangedHandler() throw(CException) {
 
 
 #define CHECK_FOR_RANGE_VALUE(t, v, attr_name)\
-	t max,min;\
+t max,min;\
 if(attributeInfo.maxRange.compare(0,2,"0x")==0){max = strtoll(attributeInfo.maxRange.c_str(),0,0);}else{max = attributeInfo.maxRange.size()?boost::lexical_cast<t>(attributeInfo.maxRange):std::numeric_limits<t>::max();}\
 if(attributeInfo.minRange.compare(0,2,"0x")==0){min = strtoll(attributeInfo.minRange.c_str(),0,0);}else{min = attributeInfo.maxRange.size()?boost::lexical_cast<t>(attributeInfo.minRange):std::numeric_limits<t>::min();}\
 if(v < min || v > max) throw MetadataLoggingCException(getCUID(), -1,  boost::str(boost::format("Invalid value (%1%) [Min:%2% Max:%3%] for attribute %4%") % v % attributeInfo.minRange % attributeInfo.maxRange % attr_name ).c_str(), __PRETTY_FUNCTION__);\
@@ -1638,7 +1638,7 @@ bool AbstractControlUnit::isInputAttributeChangeAuthorizedByHandler(const std::s
 
 void AbstractControlUnit::copyInitConfiguraiton(CDataWrapper& copy) {
     if(init_configuration.get() == NULL) return;
-
-        //copy all key
+    
+    //copy all key
     init_configuration->copyAllTo(copy);
 }
