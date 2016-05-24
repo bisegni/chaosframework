@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework__SearchLogEntry_h
 #define __CHAOSFramework__SearchLogEntry_h
 
-#include "../AbstractApiGroup.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {

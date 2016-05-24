@@ -113,8 +113,15 @@
     <addaction name="actionGroup_Manager"/>
     <addaction name="actionLog_Browser"/>
    </widget>
+   <widget class="QMenu" name="menuAlgorithm">
+    <property name="title">
+     <string>Algorithm</string>
+    </property>
+    <addaction name="actionScript_Manager"/>
+   </widget>
    <addaction name="menuNode"/>
    <addaction name="menuData"/>
+   <addaction name="menuAlgorithm"/>
    <addaction name="menuTools"/>
    <addaction name="menuWindows"/>
    <addaction name="menuMonitor"/>
@@ -235,6 +242,11 @@
   <action name="actionLog_Browser">
    <property name="text">
     <string>Log Browser</string>
+   </property>
+  </action>
+  <action name="actionScript_Manager">
+   <property name="text">
+    <string>Script Manager</string>
    </property>
   </action>
  </widget>

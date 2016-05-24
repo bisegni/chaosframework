@@ -191,7 +191,6 @@ void UnitServerEditor::tableSelectionChanged(const QItemSelection& selected,
 
 void UnitServerEditor::onApiDone(const QString& tag,
                                  QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
-    qDebug() << "Received asyncApiResult event of tag:" << tag;
     if(tag.compare(TAG_GET_DESCRIPTION) == 0) {
         //uid
         ui->labelUnitServerUID->setText(node_unique_id);

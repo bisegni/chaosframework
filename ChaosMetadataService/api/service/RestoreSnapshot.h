@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__RestoreSnapshot_h
 #define __CHAOSFramework__RestoreSnapshot_h
 
-#include "ChaosMetadataService/api/AbstractApi.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {

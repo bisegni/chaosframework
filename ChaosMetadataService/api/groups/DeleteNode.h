@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework__DeleteNode_h
 #define __CHAOSFramework__DeleteNode_h
 
-#include "../AbstractApiGroup.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {

@@ -494,7 +494,7 @@ void AbstractExecutionUnit::unitDeinit() throw(CException) {
     //deallcoate all message channel
     deallcoateDMC();
     //dispose mds message channel
-    if(mds_msg_chnl){NetworkBroker::getInstance()->disposeMessageChannel(mds_msg_chnl);}
+    if(mds_msg_chnl){NetworkBroker::getInstance()->disposeMessageChannel(mds_msg_chnl);mds_msg_chnl=NULL;}
     
     CHAOS_NOT_THROW(common::utility::InizializableService::initImplementation(input_variable_cache.get(), NULL, "AttributeCache", __PRETTY_FUNCTION__););
     input_variable_cache.reset();

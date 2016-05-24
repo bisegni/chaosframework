@@ -102,8 +102,6 @@ void SearchNodeResult::initUI() {
 
 void SearchNodeResult::onApiDone(const QString& tag,
                                  QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
-    qDebug() << "Received asyncApiResult event of tag:" << tag;
-
     if(tag.compare(tr("search_result"))==0) {
 
         //clear the model
@@ -222,7 +220,6 @@ void SearchNodeResult::on_tableViewResult_doubleClicked(const QModelIndex &index
 }
 
 void SearchNodeResult::on_lineEditSearchCriteria_textEdited(const QString &search_string) {
-    qDebug() << "on_lineEditSearchCriteria_textEdited:" << search_string;
     if(search_string.size() >= 3) {
         //restart timer
         search_timer.start(500);

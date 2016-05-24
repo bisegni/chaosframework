@@ -20,7 +20,7 @@
 #ifndef __CHAOSFramework__CreateNewSnapshot_h
 #define __CHAOSFramework__CreateNewSnapshot_h
 
-#include "ChaosMetadataService/api/AbstractApi.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {

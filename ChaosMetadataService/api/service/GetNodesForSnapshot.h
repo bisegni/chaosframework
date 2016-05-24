@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__GetNodesForSnapshot_h
 #define __CHAOSFramework__GetNodesForSnapshot_h
 
-#include "ChaosMetadataService/api/AbstractApi.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {

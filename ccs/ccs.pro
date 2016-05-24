@@ -118,7 +118,10 @@ SOURCES += main.cpp\
     widget/CControlUnitDatasetLabel.cpp \
     widget/StateImageIndicatorWidget.cpp \
     language_editor/LuaHighlighter.cpp \
-    language_editor/ScriptEditor.cpp
+    language_editor/ScriptEditor.cpp \
+    script/ScriptManager.cpp \
+    script/ScriptDescriptionWidget.cpp \
+    data/ScriptListModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -218,7 +221,10 @@ HEADERS  += \
     widget/CControlUnitDatasetLabel.h \
     widget/StateImageIndicatorWidget.h \
     language_editor/LuaHighlighter.h \
-    language_editor/ScriptEditor.h
+    language_editor/ScriptEditor.h \
+    script/ScriptManager.h \
+    script/ScriptDescriptionWidget.h \
+    data/ScriptListModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -244,7 +250,9 @@ FORMS    += \
     widget/CNodeLogWidget.ui \
     log_browser/LogBrowser.ui \
     widget/CNodeResourceWidget.ui \
-    language_editor/ScriptEditor.ui
+    language_editor/ScriptEditor.ui \
+    script/ScriptManager.ui \
+    script/ScriptDescriptionWidget.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

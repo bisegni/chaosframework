@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework__SubmitEntry_h
 #define __CHAOSFramework__SubmitEntry_h
 
-#include "../AbstractApiGroup.h"
+#include "../AbstractApi.h"
 
 #include <chaos/common/event/event.h>
 

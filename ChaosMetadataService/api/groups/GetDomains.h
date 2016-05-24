@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__GetDomains_h
 #define __CHAOSFramework__GetDomains_h
 
-#include "../AbstractApiGroup.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {

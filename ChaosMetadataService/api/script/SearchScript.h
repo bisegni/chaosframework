@@ -1,10 +1,10 @@
 /*
- *	GetLogForSourceUID.h
+ *	SearchScript.h
  *
  *	!CHAOS [CHAOSFramework]
- *	Created by Claudio Bisegni.
+ *	Created by bisegni.
  *
- *    	Copyright 15/02/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 24/05/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,31 +19,30 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__GetLogForSourceUID_h
-#define __CHAOSFramework__GetLogForSourceUID_h
+#ifndef __CHAOSFramework__CEF0B33_9C71_421E_8464_9A78CD98356E_SearchScript_h
+#define __CHAOSFramework__CEF0B33_9C71_421E_8464_9A78CD98356E_SearchScript_h
 
 #include "../AbstractApi.h"
 
+#include <chaos_service_common/data/script/Script.h>
+
 namespace chaos {
     namespace metadata_service {
-        namespace persistence {
-            namespace data_access {
-                struct LogEntry;
-            }
-        }
         namespace api {
-            namespace logging {
-                
-                //! Return logging for a device uid
+            namespace script {
+                //! execute a search on all script
                 /*!
-                 The logging are paged so in query can be gave the last sequence id
+                 Search and return the scrip found according to search string
                  */
-                class GetLogForSourceUID:
+                class SearchScript:
                 public AbstractApi {
-                    inline std::auto_ptr<CDataWrapper> converEntry(persistence::data_access::LogEntry& log_entry);
+                    chaos::common::event::channel::AlertEventChannel *alert_event_channel;
+                    //!complete the log entry for the error logging domain
+                    void completeLogEntry(chaos::common::data::CDataWrapper *api_data,
+                                          persistence::data_access::LogEntry& new_log_entry);
                 public:
-                    GetLogForSourceUID();
-                    ~GetLogForSourceUID();
+                    SearchScript();
+                    ~SearchScript();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data);
                 };
@@ -52,4 +51,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework__GetLogForSourceUID_h */
+#endif /* __CHAOSFramework__CEF0B33_9C71_421E_8464_9A78CD98356E_SearchScript_h */

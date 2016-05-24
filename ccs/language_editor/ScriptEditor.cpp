@@ -2,15 +2,30 @@
 #include "ui_ScriptEditor.h"
 #include "LuaHighlighter.h"
 
+#include <QDebug>
 #include <QJsonObject>
 #include <QJsonDocument>
 
 ScriptEditor::Script::Script() {}
 
 ScriptEditor::Script::Script(const QString& script_json_description) {
-    QJsonObject json_result = QJsonDocument::fromVariant(script_json_description).object();
-    script_language = json_result["script_language"].toString();
-    script_content = json_result["script_content"].toString();
+    QJsonObject json_result;
+    QJsonDocument json_doc = QJsonDocument::fromJson(script_json_description.toUtf8());
+    if(!json_doc.isNull()) {
+        if(json_doc.isObject()) {
+            json_result = json_doc.object();
+        } else {
+            qDebug() << "Document is not an object" << endl;
+        }
+    } else {
+        qDebug() << "Invalid JSON...\n" << endl;
+    }
+    if(json_result.contains("script_language")) {
+        script_language = json_result["script_language"].toString();
+    }
+    if(json_result.contains("script_content")) {
+        script_content = json_result["script_content"].toString();
+    }
 }
 
 ScriptEditor::Script::Script(const QString& _script_content,
@@ -45,10 +60,11 @@ ScriptEditor::~ScriptEditor() {
 
 void ScriptEditor::initUI() {
     //initilize all
+    on_comboBoxLanguageType_currentIndexChanged(ui->comboBoxLanguageType->currentIndex());
 }
 
 bool ScriptEditor::isClosing() {
-    true;
+    return true;
 }
 
 void ScriptEditor::setScript(ScriptEditor::Script& script_info) {
@@ -57,6 +73,7 @@ void ScriptEditor::setScript(ScriptEditor::Script& script_info) {
     if(ui->comboBoxLanguageType->currentText().compare(current_script.script_language) != 0) {
         //set new language
         ui->comboBoxLanguageType->setCurrentIndex(ui->comboBoxLanguageType->findText(current_script.script_language));
+        on_comboBoxLanguageType_currentIndexChanged(ui->comboBoxLanguageType->currentIndex());
     }
 }
 
@@ -83,7 +100,7 @@ void ScriptEditor::on_comboBoxLanguageType_currentIndexChanged(int index) {
 
 void ScriptEditor::on_pushButtonResetScript_clicked() {
     switch(ui->comboBoxLanguageType->currentIndex()) {
-        case 0:
+    case 0:
         //lua
 
         break;

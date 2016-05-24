@@ -4,55 +4,135 @@
 
 LuaHighlighter::LuaHighlighter(QTextDocument *parent) :
     QSyntaxHighlighter(parent) {
-    endColor.setRgb(0x00, 0x00, 0xFF);
-    commentColor.setRgb(0x08, 0xA0, 0x80);
+    QStringList keywordPatterns;
+    HighlightingRule rule;
+
+    keywordFormat.setForeground(Qt::blue);
+    keywordFormat.setFontWeight(QFont::Bold);
+
+    keywordPatterns << "\\bfunction\\b"     << "\\bend\\b"          << "\\bwhile\\b"
+                    << "\\bfor\\b"          << "\\buntil\\b"        << "\\band\\b"
+                    << "\\bbreak\\b"        << "\\bdo\\b"           << "\\belse\\b"
+                    << "\\bbelseif\\b"      << "\\bfalse\\b"        << "\\bif\\b"
+                    << "\\bin\\b"           << "\\blocal\\b"        << "\\bnil\\b"
+                    << "\\bnot\\b"          << "\\bor\\b"           << "\\breturn\\b"
+                    << "\\brepeat\\b"       << "\\bthen\\b"         << "\\btrue\\b"
+                    << "\\btonumber\\b"     << "\\btostring\\b"     << "\\bprint\\b"
+                    << "\\berror\\b"        << "\\bipairs\\b"       << "\\bpairs\\b"
+                    << "\\bsetmetatable\\b" << "\\bgetmetatable\\b" << "\\btype\\b"
+                    << "\\bselect\\b"       << "\\bloadstring\\b"   << "\\bloadfile\\b"
+                    << "\\barg\\b"          << "\\bmath\\b"         << "\\bstring\\b"
+                    << "\\bos\\b"           << "\\bio\\b"           << "\\belseif\\b";
+    foreach (const QString &pattern, keywordPatterns)     {
+        rule.pattern = QRegExp(pattern);
+        rule.format = keywordFormat;
+        highlightingRules.append(rule);
+    }
+
+    clrUmlauts = Qt::red;
+    clrNumbers = Qt::magenta;
+    clrSingleComment = Qt::green;
+    clrMultiComment = Qt::green;
+    clrDoubleQuote = Qt::darkGreen;
+    clrSingeleQuote = Qt::darkGreen;
+    clrFunction = Qt::darkCyan;
+
+
+    //These characters aren't good in lua
+    umlaut.setFontWeight(QFont::Bold);
+    umlaut.setForeground(clrUmlauts);
+    rule.pattern = QRegExp("[ÃÃÃÃÃ¤Ã¶Ã¼]");
+    rule.format = umlaut;
+    highlightingRules.append(rule);
+
+
+    //0 1 2 3 4 5 6 7 8 9
+    numbers.setForeground(clrNumbers);
+    rule.pattern = QRegExp("[0-9]");
+    rule.format = numbers;
+    highlightingRules.append(rule);
+
+
+    // Single line comment -> --
+    singleLineCommentFormat.setForeground(clrSingleComment);
+    rule.pattern = QRegExp("--+[^[^\n]*");
+    rule.format = singleLineCommentFormat;
+    highlightingRules.append(rule);
+
+    multiLineCommentFormat.setForeground(clrMultiComment);
+
+
+    //"Quotation"
+    quotationFormat.setForeground(clrDoubleQuote);
+    rule.pattern = QRegExp("\".*\"");
+    rule.pattern = QRegExp( "(?:^|[^\\\\'])(\"(?:\\\\\"|\\\\(?!\")|[^\\\\\"^Ã¤^Ã¶^Ã¼])*\")" );
+    rule.pattern.setMinimal(true);
+    rule.format = quotationFormat;
+    highlightingRules.append(rule);
+
+
+    //'Quotation'
+    quotationFormat.setForeground(clrSingeleQuote);
+    rule.pattern = QRegExp("\'.*\'");
+    rule.pattern = QRegExp( "(?:^|[^\\\\\"])(\'(?:\\\\\'|\\\\(?!\')|[^\\\\\'])*\')" );
+    rule.pattern.setMinimal(true);
+    rule.format = quotationFormat;
+    highlightingRules.append(rule);
+
+
+
+    //function name()
+    functionFormat.setFontItalic(true);
+    functionFormat.setForeground(clrFunction);
+    rule.pattern = QRegExp("\\b[A-Za-z0-9_]+(?=\\()");
+    rule.format = functionFormat;
+    highlightingRules.append(rule);
+
+
+    //Multi Line Comment --[[ ]]
+    commentStartExpression = QRegExp("--\\[\\["); // --[[
+    commentEndExpression = QRegExp("\\]\\]"); // ]]
+
+    rule.pattern.setMinimal(false);
 }
 
-void LuaHighlighter::highlightBlock(const QString& text)
+
+void LuaHighlighter::highlightBlock(const QString &text)
 {
-    QFont bold;
-    bold.setBold(true);
-
-    for(int i = 0; i < text.length(); i++) {
-        if(text.at(i).isNumber()) {
-            setFormat(i, 1, QColor(0xFF, 0x80, 0x00));
+    foreach (const HighlightingRule &rule, highlightingRules)
+    {
+        QRegExp expression(rule.pattern);
+        int index = expression.indexIn(text);
+        while (index >= 0)
+        {
+            int length = expression.matchedLength();
+            setFormat(index, length, rule.format);
+            index = expression.indexIn(text, index + length);
         }
+    }
 
-        QString edited = text;
-        edited = edited.replace("\t", " ");
+    setCurrentBlockState(0);
 
-        QStringList list = edited.split(" ");
-        QString word;
 
-        for(int i = 0; i < list.size(); i++) {
-            word = list.at(i);
-            if(word == "end")
-                setFormat(text.indexOf(word), word.length(), endColor);
-            else if(word == "function")
-                setFormat(text.indexOf(word), word.length(), endColor);
-            else if(word == "if" || word == "else" || word == "then" || word == "elseif" || word == "nil" || word == "for" || word == "do")
-                setFormat(text.indexOf(word), word.length(), bold);
+    int startIndex = 0;
+    if (previousBlockState() != 1)
+        startIndex = commentStartExpression.indexIn(text);
+
+
+    while (startIndex >= 0)
+    {
+        int endIndex = commentEndExpression.indexIn(text, startIndex);
+        int commentLength;
+        if (endIndex == -1)
+        {
+            setCurrentBlockState(1);
+            commentLength = text.length() - startIndex;
         }
-
-        int idx;
-        // Comments
-        idx = text.indexOf("--");
-        int comment = idx;
-
-        if(idx != -1) {
-            setFormat(idx, text.length() - idx, commentColor);
+        else
+        {
+            commentLength = endIndex - startIndex + commentEndExpression.matchedLength();
         }
-
-        // Quotes
-        idx = text.indexOf("\"");
-
-        if(idx != -1 && (idx < comment || comment == -1)) {
-            int idx2 = text.indexOf("\"", idx + 1);
-
-            if(idx2 != -1) {
-                idx2++;
-                setFormat(idx, idx2 - idx, Qt::red);
-            }
-        }
+        setFormat(startIndex, commentLength, multiLineCommentFormat);
+        startIndex = commentStartExpression.indexIn(text, startIndex + commentLength);
     }
 }

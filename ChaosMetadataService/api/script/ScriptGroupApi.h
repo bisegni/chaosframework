@@ -1,9 +1,10 @@
 /*
- *	GetAllSnapshot.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ *	ScriptGroupApi.h
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *	!CHAOS [CHAOSFramework]
+ *	Created by bisegni.
+ *
+ *    	Copyright 24/05/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -18,26 +19,23 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__GetAllSnapshot_h
-#define __CHAOSFramework__GetAllSnapshot_h
+#ifndef __CHAOSFramework__683DBCD_04CB_4F6F_AF1E_CEC00C352204_ScriptGroupApi_h
+#define __CHAOSFramework__683DBCD_04CB_4F6F_AF1E_CEC00C352204_ScriptGroupApi_h
 
-#include "../AbstractApi.h"
+
+#include "../AbstractApiGroup.h"
 
 namespace chaos {
     namespace metadata_service {
         namespace api {
-            namespace service {
+            namespace script {
                 
-                //! Get the list of all snapshot
-                /*!
-                 
-                 */
-                class GetAllSnapshot:
-                public AbstractApi {
+                //! api group for the managment of the script manageent
+                DECLARE_CLASS_FACTORY(ScriptGroupApi, AbstractApiGroup) {
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ScriptGroupApi)
                 public:
-                    GetAllSnapshot();
-                    ~GetAllSnapshot();
-                    chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data, bool& detach_data);
+                    ScriptGroupApi();
+                    ~ScriptGroupApi();
                 };
                 
             }
@@ -45,4 +43,6 @@ namespace chaos {
     }
 }
 
-#endif /* GetAllSnapshot_hpp */
+
+
+#endif /* __CHAOSFramework__683DBCD_04CB_4F6F_AF1E_CEC00C352204_ScriptGroupApi_h */

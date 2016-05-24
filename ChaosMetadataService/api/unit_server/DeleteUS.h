@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__DeleteUS__
 #define __CHAOSFramework__DeleteUS__
 
-#include "ChaosMetadataService/api/AbstractApi.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {

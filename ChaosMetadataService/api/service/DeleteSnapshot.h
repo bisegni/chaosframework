@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__DeleteSnapshot_h
 #define __CHAOSFramework__DeleteSnapshot_h
 
-#include "ChaosMetadataService/api/AbstractApi.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {

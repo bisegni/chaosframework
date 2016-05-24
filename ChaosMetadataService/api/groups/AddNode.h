@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__AddNode_hpp
 #define __CHAOSFramework__AddNode_hpp
 
-#include "../AbstractApiGroup.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {

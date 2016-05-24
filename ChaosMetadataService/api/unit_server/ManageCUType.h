@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__ManageCUType__
 #define __CHAOSFramework__ManageCUType__
 
-#include "ChaosMetadataService/api/AbstractApi.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {

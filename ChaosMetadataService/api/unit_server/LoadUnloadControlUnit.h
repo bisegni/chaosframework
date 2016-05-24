@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__LoadUnloadContrlUnit__
 #define __CHAOSFramework__LoadUnloadContrlUnit__
 
-#include "ChaosMetadataService/api/AbstractApi.h"
+#include "../AbstractApi.h"
 
 namespace chaos {
     namespace metadata_service {
