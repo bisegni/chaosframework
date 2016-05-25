@@ -321,7 +321,9 @@ namespace chaos {
 				 Performe the creation of device channel
 				 \param deviceNetworkAddress device node address
 				 */
-				chaos::common::message::DeviceMessageChannel *getDeviceMessageChannelFromAddress(chaos::common::network::CDeviceNetworkAddress  *deviceNetworkAddress);
+				chaos::common::message::DeviceMessageChannel *getDeviceMessageChannelFromAddress(chaos::common::network::CDeviceNetworkAddress  *deviceNetworkAddress,
+                                                                                                 bool self_managed = false,
+                                                                                                 bool use_shared_request_domain = true);
     
                 //! Return a raw message channel
                 /*!

@@ -130,7 +130,7 @@ int main(int argc, char* argv[] ) {
             //! [UIToolkit Init]
         chaos::ui::ChaosUIToolkit::getInstance()->init(argc, argv);
 
-        DeviceMessageChannel *device_message_channel = NetworkBroker::getInstance()->getDeviceMessageChannelFromAddress(new CDeviceNetworkAddress(device_id));
+        DeviceMessageChannel *device_message_channel = NetworkBroker::getInstance()->getDeviceMessageChannelFromAddress(new CDeviceNetworkAddress(device_id),true);
         if(device_message_channel == NULL)  throw chaos::CException(5, "Error allocating device emssage channel", "device controller creation");
         device_message_channel->setAutoReconnection(true);
         while(current_run++ < test_run) {

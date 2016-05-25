@@ -64,13 +64,13 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
     if((err = cu_da->checkDatasetPresence(cu_uid, presence))) {
         LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Error fetching the presence of the dataset for the control unit uid:%1% with error %2%") % cu_uid % err));
     } else if(!presence) {
-        LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("No dataset found for control unit with uid id:%1%") % cu_uid));
+        LOG_AND_TROW(CU_GCD_ERR, -10000, boost::str(boost::format("No dataset found for control unit with uid id:%1%") % cu_uid));
     }
     if((err = cu_da->getDataset(cu_uid, &result))) {
         LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Error fetching the dataset for the control unit uid:%1% with error %2%") % cu_uid % err));
     }
     if(result == NULL) {
-        LOG_AND_TROW(CU_GCD_ERR, err, boost::str(boost::format("Dataset not found for control unit '%1%'") % cu_uid));
+        LOG_AND_TROW(CU_GCD_ERR, -10001, boost::str(boost::format("Dataset not found for control unit '%1%'") % cu_uid));
     }
     //we have data set and now we need to update the input attribute
     std::auto_ptr<CDataWrapper> dataset(result);

@@ -39,8 +39,12 @@ namespace chaos {
             public NodeMessageChannel,
             public chaos::common::async_central::TimerHandler {
 				friend class chaos::common::network::NetworkBroker;
+                
+                //!managment variable
                 bool online;
+                bool self_managed;
                 bool auto_reconnection;
+
                 MDSMessageChannel *local_mds_channel;
 				CDeviceNetworkAddress *device_network_address;
 
@@ -54,6 +58,7 @@ namespace chaos {
 				 */
 				DeviceMessageChannel(NetworkBroker *msgBroker,
                                      CDeviceNetworkAddress *_device_network_address,
+                                     bool _self_managed = false,
                                      MessageRequestDomainSHRDPtr _new_message_request_domain = MessageRequestDomainSHRDPtr(new MessageRequestDomain()));
 
                     //!inherited method
@@ -90,6 +95,17 @@ namespace chaos {
                  remote rpc domain f the device to check if it is online.
                  */
                 void setAutoReconnection(bool auto_reconnection);
+                
+                //! set the channel as auto managed
+                /*!
+                 Setting auto_managed property to true, channel create internally
+                 an new MDS Channel and share with it a request domain. At this point
+                 can be used the auto_reconnection feature. In this way DeviceMessageChannel can
+                 obtain address of the device id also if it change.
+                 this property need a reinitilization after it is changed.
+                 */
+                void setSelfManaged(bool _auto_managed);
+                
 				//!Initialization of the device
 				/*!
 				 Perform the hardware initialization
