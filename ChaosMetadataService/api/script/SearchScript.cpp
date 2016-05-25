@@ -31,11 +31,9 @@ using namespace chaos::common::event::channel;
 using namespace chaos::metadata_service::api::script;
 
 SearchScript::SearchScript():
-AbstractApi("searchScript"){
-}
+AbstractApi("searchScript"){}
 
-SearchScript::~SearchScript() {
-}
+SearchScript::~SearchScript() {}
 
 chaos::common::data::CDataWrapper *SearchScript::execute(CDataWrapper *api_data, bool& detach_data) {
     int err = 0;

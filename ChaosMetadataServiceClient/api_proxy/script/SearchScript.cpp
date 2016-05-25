@@ -1,5 +1,5 @@
 /*
- *	script.h
+ *	SearchScript.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,10 +19,17 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_F951FF55_A546_4753_8859_3E5E05C482CA_script_h
-#define __CHAOSFramework_F951FF55_A546_4753_8859_3E5E05C482CA_script_h
 
-#include <ChaosMetadataServiceClient/api_proxy/script/NewScript.h>
 #include <ChaosMetadataServiceClient/api_proxy/script/SearchScript.h>
 
-#endif /* __CHAOSFramework_F951FF55_A546_4753_8859_3E5E05C482CA_script_h */
+using namespace chaos::service_common::data::script;
+using namespace chaos::metadata_service_client::api_proxy;
+using namespace chaos::metadata_service_client::api_proxy::script;
+
+API_PROXY_CD_DEFINITION(SearchScript, "script", "searchScript")
+
+ApiProxyResult SearchScript::execute(const std::string& search_string,
+                                     const uint64_t start_sequence_id,
+                                     const uint32_t page_dimansion) {
+    return callApi();
+}

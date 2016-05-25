@@ -92,6 +92,8 @@
 		3221D7441CF5F368001BE971 /* service.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7421CF5F368001BE971 /* service.h */; };
 		3221D7481CF5F38E001BE971 /* groups.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7461CF5F38E001BE971 /* groups.h */; };
 		3221D74C1CF5F3AE001BE971 /* logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D74A1CF5F3AE001BE971 /* logging.h */; };
+		3221D74F1CF606BC001BE971 /* SearchScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3221D74D1CF606BC001BE971 /* SearchScript.cpp */; };
+		3221D7501CF606BC001BE971 /* SearchScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D74E1CF606BC001BE971 /* SearchScript.h */; };
 		3222EE591C56C55D002DE19D /* PriorityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3222EE571C56C55D002DE19D /* PriorityTest.cpp */; };
 		3223253D18EC157000ADBA4D /* PosixStorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3223253618EC157000ADBA4D /* PosixStorageDriver.cpp */; };
 		3223253E18EC157000ADBA4D /* StorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3223253918EC157000ADBA4D /* StorageDriver.cpp */; };
@@ -1115,6 +1117,8 @@
 		3221D7421CF5F368001BE971 /* service.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = service.h; sourceTree = "<group>"; };
 		3221D7461CF5F38E001BE971 /* groups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = groups.h; sourceTree = "<group>"; };
 		3221D74A1CF5F3AE001BE971 /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logging.h; sourceTree = "<group>"; };
+		3221D74D1CF606BC001BE971 /* SearchScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchScript.cpp; sourceTree = "<group>"; };
+		3221D74E1CF606BC001BE971 /* SearchScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchScript.h; sourceTree = "<group>"; };
 		3222EE571C56C55D002DE19D /* PriorityTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PriorityTest.cpp; sourceTree = "<group>"; };
 		3222EE581C56C55D002DE19D /* PriorityTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriorityTest.h; sourceTree = "<group>"; };
 		3223253618EC157000ADBA4D /* PosixStorageDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PosixStorageDriver.cpp; sourceTree = "<group>"; };
@@ -2357,6 +2361,8 @@
 			children = (
 				3221D7281CF5EB22001BE971 /* NewScript.cpp */,
 				3221D7291CF5EB22001BE971 /* NewScript.h */,
+				3221D74D1CF606BC001BE971 /* SearchScript.cpp */,
+				3221D74E1CF606BC001BE971 /* SearchScript.h */,
 				3221D72E1CF5F292001BE971 /* script.h */,
 			);
 			path = script;
@@ -4830,6 +4836,7 @@
 				32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */,
 				327F39A81AEAA2290000C845 /* NewDS.h in Headers */,
 				320CA9551C29D71A00894AAA /* DeleteUS.h in Headers */,
+				3221D7501CF606BC001BE971 /* SearchScript.h in Headers */,
 				32EBDF0F1B53A32600278C42 /* ManageCUType.h in Headers */,
 				32D745ED1C723BDD00F4D719 /* GetLogForSourceUID.h in Headers */,
 				32F7AB251C99916A00E18D3E /* NodeController.h in Headers */,
@@ -5610,6 +5617,7 @@
 				32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				32D746001C73399900F4D719 /* AbstractEventHandler.cpp in Sources */,
 				32F7AB281C9991B000E18D3E /* ControlUnitController.cpp in Sources */,
+				3221D74F1CF606BC001BE971 /* SearchScript.cpp in Sources */,
 				3283B88E1C7F31D20019255B /* SearchLogEntry.cpp in Sources */,
 				3239EF591C0F26D90052BE61 /* GetAllSnapshot.cpp in Sources */,
 				32D745F81C73388900F4D719 /* AlertEventHandler.cpp in Sources */,
