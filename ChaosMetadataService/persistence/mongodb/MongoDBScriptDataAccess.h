@@ -61,7 +61,7 @@ namespace chaos {
                                             const std::string script_content);
                     
                     //! Inherited Method
-                    int searchScript(chaos::service_common::data::script::ScriptList& script_list,
+                    int searchScript(chaos::service_common::data::script::ScriptBaseDescriptionList& script_list,
                                      const std::string& search_string,
                                      uint64_t start_sequence_id,
                                      uint32_t page_length);

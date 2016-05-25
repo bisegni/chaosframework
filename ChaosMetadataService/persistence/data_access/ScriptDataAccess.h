@@ -66,7 +66,7 @@ namespace chaos {
                      \param start_sequence_id is identified the sequence after wich we need to search
                      \param page_length is the maximum number of the element to return
                      */
-                    virtual int searchScript(chaos::service_common::data::script::ScriptList& script_list,
+                    virtual int searchScript(chaos::service_common::data::script::ScriptBaseDescriptionList& script_list,
                                              const std::string& search_string,
                                              uint64_t start_sequence_id,
                                              uint32_t page_length) = 0;

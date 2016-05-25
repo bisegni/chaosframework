@@ -47,6 +47,15 @@ namespace chaos {
                 T& container(){
                     return data_container;
                 }
+                
+                T& operator=(T const &rhs) {
+                    return (data_container = rhs);
+                }
+                
+                TemplatedDataContainer<T>& operator=(TemplatedDataContainer<T> const &rhs) {
+                    data_container = rhs.data_container;
+                    return *this;
+                }
             };
         }
     }

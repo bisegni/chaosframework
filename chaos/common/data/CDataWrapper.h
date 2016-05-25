@@ -316,6 +316,7 @@ namespace chaos {
             #define CDW_GET_INT32_WITH_DEFAULT(c, k, d) (c->hasKey(k)?c->getInt32Value(k):d)
             #define CDW_GET_INT64_WITH_DEFAULT(c, k, d) (c->hasKey(k)?c->getInt64Value(k):d)
             #define CDW_GET_DOUBLE_WITH_DEFAULT(c, k, d) (c->hasKey(k)?c->getDoubleValue(k):d)
+            #define CDW_GET_VALUE_WITH_DEFAULT(c, k, t, d) (c->hasKey(k)?c->t(k):d)
 		}
 	}
 }

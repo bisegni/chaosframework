@@ -39,12 +39,40 @@ SearchScript::~SearchScript() {
 
 chaos::common::data::CDataWrapper *SearchScript::execute(CDataWrapper *api_data, bool& detach_data) {
     int err = 0;
-    
     std::auto_ptr<CDataWrapper> result;
-    
+    ScriptBaseDescriptionList   found_page_element;
+   
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
+    const std::string search_string = CDW_GET_VALUE_WITH_DEFAULT(api_data, "search_string", getStringValue, "");
+    const uint64_t start_sequence_id = CDW_GET_VALUE_WITH_DEFAULT(api_data, "start_sequence_id", getUInt64Value, 0);
+    const uint32_t page_lenght = CDW_GET_VALUE_WITH_DEFAULT(api_data, "page_lenght", getUInt32Value, 30);
     
-  
+    //fetch dataaccess for the script managment
+    GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
+    
+    //call dataaccesso for insert new script and get the sequence value
+    if((err = s_da->searchScript(found_page_element,
+                                 search_string,
+                                 start_sequence_id,
+                                 page_lenght))) {
+        LOG_AND_TROW(ERR, err, "Error searching script");
+    }
+    
+    //we don't have had error so we can have found somethig
+    if(found_script_for_page.size()){
+        ScriptBaseDescriptionHelper sbdh;
+        result.reset(new CDataWrapper());
+        //serialize output
+        for(ScriptBaseDescriptionListIterator it = found_page_element.beging(),
+            end = found_page_element.end();
+            it != end;
+            it++) {
+            //set the container with new element
+            sbdh = *it;
+            //serialize the element into CDataWrapper and pappend it to the global serialization
+            result->appendCDataWrapperToArray(*sbdh.serialize());
+        }
+    }
     return result.release();
 }
