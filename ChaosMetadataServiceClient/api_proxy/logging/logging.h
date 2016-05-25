@@ -1,10 +1,10 @@
 /*
- *	ScriptGroupApi.cpp
+ *	logging.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 24/05/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 25/05/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,19 +19,11 @@
  *    	limitations under the License.
  */
 
-#include "ScriptGroupApi.h"
-#include "SearchScript.h"
-#include "NewScript.h"
+#ifndef __CHAOSFramework__DB96A43_83ED_4C1F_8BA5_9B41D053D5CA_logging_h
+#define __CHAOSFramework__DB96A43_83ED_4C1F_8BA5_9B41D053D5CA_logging_h
 
-using namespace chaos::metadata_service::api::script;
+#include <ChaosMetadataServiceClient/api_proxy/logging/SearchLogEntry.h>
+#include <ChaosMetadataServiceClient/api_proxy/logging/GetLogForSourceUID.h>
+#include <ChaosMetadataServiceClient/api_proxy/logging/GetLogDomainForSourceUID.h>
 
-DEFINE_CLASS_FACTORY_NO_ALIAS(ScriptGroupApi,
-                              chaos::metadata_service::api::AbstractApiGroup);
-
-ScriptGroupApi::ScriptGroupApi():
-AbstractApiGroup("script"){
-    addApi<NewScript>();
-    addApi<SearchScript>();
-}
-
-ScriptGroupApi::~ScriptGroupApi() {}
+#endif /* __CHAOSFramework__DB96A43_83ED_4C1F_8BA5_9B41D053D5CA_logging_h */

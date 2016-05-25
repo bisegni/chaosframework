@@ -76,6 +76,8 @@ SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
                             api_proxy/unit_server/LoadUnloadControlUnit.cpp
                             api_proxy/unit_server/ManageCUType.cpp)
 
+SET(mcl_src ${mcl_src}      api_proxy/script/NewSript.cpp)
+
 SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
                             monitor_system/QuantumSlot.cpp
                             monitor_system/QuantumKeyConsumer.cpp
@@ -118,6 +120,12 @@ INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/
 
 FILE(GLOB files "api_proxy/groups/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/groups)
+
+FILE(GLOB files "../chaos_service_common/data/script/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/script)
+
+FILE(GLOB files "api_proxy/script/*.h")
+INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/script)
 
 FILE(GLOB files "monitor_system/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/monitor_system)

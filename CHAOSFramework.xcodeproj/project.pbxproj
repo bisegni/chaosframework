@@ -78,6 +78,20 @@
 		322085DD1AC5A0E200F1B71A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322085DC1AC5A0E200F1B71A /* main.cpp */; };
 		3220F98118A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3220F97F18A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp */; };
 		3220F98218A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3220F98018A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h */; };
+		3221D7201CF5AD09001BE971 /* NewScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3221D71E1CF5AD09001BE971 /* NewScript.cpp */; };
+		3221D7231CF5ADC9001BE971 /* ScriptDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3221D7211CF5ADC9001BE971 /* ScriptDataAccess.cpp */; };
+		3221D7261CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3221D7241CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp */; };
+		3221D72A1CF5EB22001BE971 /* NewScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3221D7281CF5EB22001BE971 /* NewScript.cpp */; };
+		3221D72B1CF5EB22001BE971 /* NewScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7291CF5EB22001BE971 /* NewScript.h */; };
+		3221D72C1CF5EB2E001BE971 /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D90D5C1CF4AA8200996F09 /* Script.cpp */; };
+		3221D7301CF5F292001BE971 /* script.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D72E1CF5F292001BE971 /* script.h */; };
+		3221D7341CF5F2BA001BE971 /* node.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7321CF5F2BA001BE971 /* node.h */; };
+		3221D7381CF5F2F3001BE971 /* unit_server.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7361CF5F2F3001BE971 /* unit_server.h */; };
+		3221D73C1CF5F31F001BE971 /* control_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D73A1CF5F31F001BE971 /* control_unit.h */; };
+		3221D7401CF5F348001BE971 /* data_service.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D73E1CF5F348001BE971 /* data_service.h */; };
+		3221D7441CF5F368001BE971 /* service.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7421CF5F368001BE971 /* service.h */; };
+		3221D7481CF5F38E001BE971 /* groups.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7461CF5F38E001BE971 /* groups.h */; };
+		3221D74C1CF5F3AE001BE971 /* logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D74A1CF5F3AE001BE971 /* logging.h */; };
 		3222EE591C56C55D002DE19D /* PriorityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3222EE571C56C55D002DE19D /* PriorityTest.cpp */; };
 		3223253D18EC157000ADBA4D /* PosixStorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3223253618EC157000ADBA4D /* PosixStorageDriver.cpp */; };
 		3223253E18EC157000ADBA4D /* StorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3223253918EC157000ADBA4D /* StorageDriver.cpp */; };
@@ -1085,6 +1099,22 @@
 		322085DC1AC5A0E200F1B71A /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3220F97F18A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOVirtualChannel.cpp; sourceTree = "<group>"; };
 		3220F98018A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOVirtualChannel.h; sourceTree = "<group>"; };
+		3221D71E1CF5AD09001BE971 /* NewScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewScript.cpp; sourceTree = "<group>"; };
+		3221D71F1CF5AD09001BE971 /* NewScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewScript.h; sourceTree = "<group>"; };
+		3221D7211CF5ADC9001BE971 /* ScriptDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptDataAccess.cpp; sourceTree = "<group>"; };
+		3221D7221CF5ADC9001BE971 /* ScriptDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDataAccess.h; sourceTree = "<group>"; };
+		3221D7241CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBScriptDataAccess.cpp; sourceTree = "<group>"; };
+		3221D7251CF5AEDE001BE971 /* MongoDBScriptDataAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBScriptDataAccess.h; sourceTree = "<group>"; };
+		3221D7281CF5EB22001BE971 /* NewScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewScript.cpp; sourceTree = "<group>"; };
+		3221D7291CF5EB22001BE971 /* NewScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewScript.h; sourceTree = "<group>"; };
+		3221D72E1CF5F292001BE971 /* script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = script.h; sourceTree = "<group>"; };
+		3221D7321CF5F2BA001BE971 /* node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = node.h; sourceTree = "<group>"; };
+		3221D7361CF5F2F3001BE971 /* unit_server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unit_server.h; sourceTree = "<group>"; };
+		3221D73A1CF5F31F001BE971 /* control_unit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = control_unit.h; sourceTree = "<group>"; };
+		3221D73E1CF5F348001BE971 /* data_service.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = data_service.h; sourceTree = "<group>"; };
+		3221D7421CF5F368001BE971 /* service.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = service.h; sourceTree = "<group>"; };
+		3221D7461CF5F38E001BE971 /* groups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = groups.h; sourceTree = "<group>"; };
+		3221D74A1CF5F3AE001BE971 /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logging.h; sourceTree = "<group>"; };
 		3222EE571C56C55D002DE19D /* PriorityTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PriorityTest.cpp; sourceTree = "<group>"; };
 		3222EE581C56C55D002DE19D /* PriorityTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriorityTest.h; sourceTree = "<group>"; };
 		3223253618EC157000ADBA4D /* PosixStorageDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PosixStorageDriver.cpp; sourceTree = "<group>"; };
@@ -2238,6 +2268,7 @@
 				32B1E80F1B2EDAE900221E49 /* CommandInstanceSubmit.h */,
 				32761A361B314697006C8719 /* GetCommandAndTemplateDescription.cpp */,
 				32761A371B314697006C8719 /* GetCommandAndTemplateDescription.h */,
+				3221D7321CF5F2BA001BE971 /* node.h */,
 			);
 			path = node;
 			sourceTree = "<group>";
@@ -2319,6 +2350,16 @@
 				322085DC1AC5A0E200F1B71A /* main.cpp */,
 			);
 			path = ChaosMetadataServiceClientTest;
+			sourceTree = "<group>";
+		};
+		3221D7271CF5E8C5001BE971 /* script */ = {
+			isa = PBXGroup;
+			children = (
+				3221D7281CF5EB22001BE971 /* NewScript.cpp */,
+				3221D7291CF5EB22001BE971 /* NewScript.h */,
+				3221D72E1CF5F292001BE971 /* script.h */,
+			);
+			path = script;
 			sourceTree = "<group>";
 		};
 		3222EE561C56C52F002DE19D /* queue */ = {
@@ -2477,6 +2518,8 @@
 				32A13EBE1C2019080010F3FC /* MongoDBTreeGroupDataAccess.h */,
 				3270E0741C6CC05100105726 /* MongoDBLoggingDataAccess.cpp */,
 				3270E0751C6CC05100105726 /* MongoDBLoggingDataAccess.h */,
+				3221D7241CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp */,
+				3221D7251CF5AEDE001BE971 /* MongoDBScriptDataAccess.h */,
 				32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */,
 			);
 			path = mongodb;
@@ -2501,6 +2544,8 @@
 				32401CBC1C1AD7AA00E62866 /* TreeGroupDataAccess.h */,
 				3270E0711C6CBFDE00105726 /* LoggingDataAccess.cpp */,
 				3270E0721C6CBFDE00105726 /* LoggingDataAccess.h */,
+				3221D7211CF5ADC9001BE971 /* ScriptDataAccess.cpp */,
+				3221D7221CF5ADC9001BE971 /* ScriptDataAccess.h */,
 				32D24FAF1A7AAD15002D65CE /* DataAccess.h */,
 			);
 			path = data_access;
@@ -2564,6 +2609,7 @@
 				32B299A91BE27945000D3716 /* RecoverError.h */,
 				32A13EB61C2014170010F3FC /* Delete.cpp */,
 				32A13EB71C2014170010F3FC /* Delete.h */,
+				3221D73A1CF5F31F001BE971 /* control_unit.h */,
 			);
 			path = control_unit;
 			sourceTree = "<group>";
@@ -2708,6 +2754,7 @@
 				3252F35F1C298760004436A8 /* GetDomains.h */,
 				32E2B1B21C32A60D00FCFB42 /* DeleteNode.cpp */,
 				32E2B1B31C32A60D00FCFB42 /* DeleteNode.h */,
+				3221D7461CF5F38E001BE971 /* groups.h */,
 			);
 			path = groups;
 			sourceTree = "<group>";
@@ -2875,6 +2922,7 @@
 				320CA9531C29D71A00894AAA /* DeleteUS.h */,
 				32EBDF0C1B53A32600278C42 /* ManageCUType.cpp */,
 				32EBDF0D1B53A32600278C42 /* ManageCUType.h */,
+				3221D7361CF5F2F3001BE971 /* unit_server.h */,
 			);
 			path = unit_server;
 			sourceTree = "<group>";
@@ -3470,6 +3518,7 @@
 				32610F891AE655DA00779B84 /* unit_server */,
 				32362C1E1ADD0BFF000CA079 /* control_unit */,
 				3208AAB61AC55EA3000860D9 /* node */,
+				3221D7271CF5E8C5001BE971 /* script */,
 			);
 			path = api_proxy;
 			sourceTree = "<group>";
@@ -3546,6 +3595,7 @@
 				327F39BD1AEAB6260000C845 /* GetAllDS.h */,
 				3211CCD71B021B8D00F9B80E /* GetBestEndpoints.cpp */,
 				3211CCD81B021B8D00F9B80E /* GetBestEndpoints.h */,
+				3221D73E1CF5F348001BE971 /* data_service.h */,
 			);
 			path = data_service;
 			sourceTree = "<group>";
@@ -3857,6 +3907,7 @@
 				3239EF581C0F26D90052BE61 /* GetAllSnapshot.h */,
 				32401CB71C183E2600E62866 /* GetNodesForSnapshot.cpp */,
 				32401CB81C183E2600E62866 /* GetNodesForSnapshot.h */,
+				3221D7421CF5F368001BE971 /* service.h */,
 			);
 			path = service;
 			sourceTree = "<group>";
@@ -4182,6 +4233,7 @@
 				327C6A261C74E255002DA5A6 /* GetLogDomainForSourceUID.cpp */,
 				327C6A271C74E255002DA5A6 /* GetLogDomainForSourceUID.h */,
 				32AFA9D61C77224F00640BFA /* logging_types.h */,
+				3221D74A1CF5F3AE001BE971 /* logging.h */,
 			);
 			path = logging;
 			sourceTree = "<group>";
@@ -4280,6 +4332,8 @@
 				32D90D551CF4A4E500996F09 /* ScriptGroupApi.h */,
 				32D90D571CF4A6DC00996F09 /* SearchScript.cpp */,
 				32D90D581CF4A6DC00996F09 /* SearchScript.h */,
+				3221D71E1CF5AD09001BE971 /* NewScript.cpp */,
+				3221D71F1CF5AD09001BE971 /* NewScript.h */,
 			);
 			path = script;
 			sourceTree = "<group>";
@@ -4767,6 +4821,7 @@
 				327F39BF1AEAB6260000C845 /* GetAllDS.h in Headers */,
 				327F39B81AEAA2850000C845 /* DeleteDS.h in Headers */,
 				32D746051C7367A200F4D719 /* event.h in Headers */,
+				3221D7401CF5F348001BE971 /* data_service.h in Headers */,
 				32401CBA1C183E2600E62866 /* GetNodesForSnapshot.h in Headers */,
 				3283B8901C7F31D20019255B /* SearchLogEntry.h in Headers */,
 				3252F35D1C298755004436A8 /* GetNodeChilds.h in Headers */,
@@ -4785,7 +4840,9 @@
 				3239EF5A1C0F26D90052BE61 /* GetAllSnapshot.h in Headers */,
 				3252F3591C298743004436A8 /* AddNode.h in Headers */,
 				3208AABE1AC56C1C000860D9 /* GetNodeDescription.h in Headers */,
+				3221D7441CF5F368001BE971 /* service.h in Headers */,
 				32B2999D1BD92B18000D3716 /* CopyInstance.h in Headers */,
+				3221D7381CF5F2F3001BE971 /* unit_server.h in Headers */,
 				3261509A1CAAB5920003D0C2 /* ControlUnitMonitorHandler.h in Headers */,
 				32D745FD1C7338D100F4D719 /* AlertLogEventHandler.h in Headers */,
 				3239EF4B1C0EFE910052BE61 /* RestoreSnapshot.h in Headers */,
@@ -4794,12 +4851,14 @@
 				32D745F91C73388900F4D719 /* AlertEventHandler.h in Headers */,
 				32AE8BA41B678C1500FAC528 /* ResetAll.h in Headers */,
 				32761A391B314697006C8719 /* GetCommandAndTemplateDescription.h in Headers */,
+				3221D73C1CF5F31F001BE971 /* control_unit.h in Headers */,
 				32D90D601CF4AA8200996F09 /* Script.h in Headers */,
 				327F39B41AEAA2680000C845 /* GetAssociationByDS.h in Headers */,
 				327F39C71AEFABBB0000C845 /* StartStop.h in Headers */,
 				3252F3611C298760004436A8 /* GetDomains.h in Headers */,
 				325FC8651AF7CEE900DB9D66 /* GetCurrentDataset.h in Headers */,
 				32568C8F1B3D7FED0006988C /* UpdateProperty.h in Headers */,
+				3221D74C1CF5F3AE001BE971 /* logging.h in Headers */,
 				3274A90D1AC2F214000C6A4D /* ApiProxyManager.h in Headers */,
 				3234BE801B04CC9400AE6B08 /* HealtStatusAttributeHandler.h in Headers */,
 				32B1E8071B2EA07200221E49 /* CommandTemplateDelete.h in Headers */,
@@ -4807,11 +4866,13 @@
 				3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */,
 				32D745F21C7332FC00F4D719 /* EventDispatchManager.h in Headers */,
 				3239EF4F1C0EFEA60052BE61 /* CreateNewSnapshot.h in Headers */,
+				3221D7481CF5F38E001BE971 /* groups.h in Headers */,
 				32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */,
 				32B419381B16236300C3CA7D /* SetInputDatasetAttributeValues.h in Headers */,
 				327F39AC1AEAA2390000C845 /* UpdateDS.h in Headers */,
 				32362C221ADD0C45000CA079 /* SetInstanceDescription.h in Headers */,
 				323386B21ACD731E008863DC /* NodeSearch.h in Headers */,
+				3221D72B1CF5EB22001BE971 /* NewScript.h in Headers */,
 				32D746011C73399900F4D719 /* AbstractEventHandler.h in Headers */,
 				325FC85E1AF7910300DB9D66 /* NewUS.h in Headers */,
 				32B1E7F31B298D2600221E49 /* CommandTemplateSearch.h in Headers */,
@@ -4820,9 +4881,11 @@
 				327F39B01AEAA2500000C845 /* AssociationControlUnit.h in Headers */,
 				32F7AB291C9991B000E18D3E /* ControlUnitController.h in Headers */,
 				32E2B1B51C32A60D00FCFB42 /* DeleteNode.h in Headers */,
+				3221D7341CF5F2BA001BE971 /* node.h in Headers */,
 				32F7AB151C9960A700E18D3E /* NodeMonitor.h in Headers */,
 				32F7AB191C9964AE00E18D3E /* node_monitor.h in Headers */,
 				32F7AB1D1C998E2500E18D3E /* node_monitor_types.h in Headers */,
+				3221D7301CF5F292001BE971 /* script.h in Headers */,
 				3211CCDA1B021B8D00F9B80E /* GetBestEndpoints.h in Headers */,
 				32661C6E1AA741D000F1A721 /* ChaosMetadataServiceClient.h in Headers */,
 				32B299AB1BE27945000D3716 /* RecoverError.h in Headers */,
@@ -5112,6 +5175,7 @@
 				32B1E8131B2EDB2800221E49 /* CommandTemplateSubmit.cpp in Sources */,
 				328E78041A7A9F430008C070 /* AbstractApiGroup.cpp in Sources */,
 				32809C791A9C79DE00C02C12 /* UtilityDataAccess.cpp in Sources */,
+				3221D7201CF5AD09001BE971 /* NewScript.cpp in Sources */,
 				32761A401B37F202006C8719 /* SubmitBatchCommand.cpp in Sources */,
 				32D90D591CF4A6DC00996F09 /* SearchScript.cpp in Sources */,
 				3252F3541C29847E004436A8 /* GetDomains.cpp in Sources */,
@@ -5199,6 +5263,7 @@
 				32864FD31C29568D00DA9B70 /* GetNodeChilds.cpp in Sources */,
 				32A13EBC1C2016C60010F3FC /* Delete.cpp in Sources */,
 				328E780C1A7AAB640008C070 /* MongoDBNodeDataAccess.cpp in Sources */,
+				3221D7261CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp in Sources */,
 				32B4193B1B17715700C3CA7D /* ApplyChangeSet.cpp in Sources */,
 				3270E0731C6CBFDE00105726 /* LoggingDataAccess.cpp in Sources */,
 				32761A3C1B3157CA006C8719 /* GetCommandAndTemplateDescription.cpp in Sources */,
@@ -5213,6 +5278,7 @@
 				32B299A71BE26933000D3716 /* RecoverError.cpp in Sources */,
 				32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */,
+				3221D7231CF5ADC9001BE971 /* ScriptDataAccess.cpp in Sources */,
 				32D90D5E1CF4AA8200996F09 /* Script.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5533,6 +5599,7 @@
 				327F39C61AEFABBB0000C845 /* StartStop.cpp in Sources */,
 				326150991CAAB5920003D0C2 /* ControlUnitMonitorHandler.cpp in Sources */,
 				32B1E7FD1B2B06CE00221E49 /* CommandGet.cpp in Sources */,
+				3221D72A1CF5EB22001BE971 /* NewScript.cpp in Sources */,
 				327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */,
 				3239EF4E1C0EFEA60052BE61 /* CreateNewSnapshot.cpp in Sources */,
 				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
@@ -5546,6 +5613,7 @@
 				3283B88E1C7F31D20019255B /* SearchLogEntry.cpp in Sources */,
 				3239EF591C0F26D90052BE61 /* GetAllSnapshot.cpp in Sources */,
 				32D745F81C73388900F4D719 /* AlertEventHandler.cpp in Sources */,
+				3221D72C1CF5EB2E001BE971 /* Script.cpp in Sources */,
 				32E2B1B41C32A60D00FCFB42 /* DeleteNode.cpp in Sources */,
 				32D745F41C73357900F4D719 /* EventDispatchManager.cpp in Sources */,
 				32AE8BA31B678C1500FAC528 /* ResetAll.cpp in Sources */,

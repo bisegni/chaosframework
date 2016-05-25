@@ -1,10 +1,10 @@
 /*
- *	ScriptGroupApi.cpp
+ *	script.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 24/05/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 25/05/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,19 +19,9 @@
  *    	limitations under the License.
  */
 
-#include "ScriptGroupApi.h"
-#include "SearchScript.h"
-#include "NewScript.h"
+#ifndef __CHAOSFramework_F951FF55_A546_4753_8859_3E5E05C482CA_script_h
+#define __CHAOSFramework_F951FF55_A546_4753_8859_3E5E05C482CA_script_h
 
-using namespace chaos::metadata_service::api::script;
+#include <ChaosMetadataServiceClient/api_proxy/script/NewScript.h>
 
-DEFINE_CLASS_FACTORY_NO_ALIAS(ScriptGroupApi,
-                              chaos::metadata_service::api::AbstractApiGroup);
-
-ScriptGroupApi::ScriptGroupApi():
-AbstractApiGroup("script"){
-    addApi<NewScript>();
-    addApi<SearchScript>();
-}
-
-ScriptGroupApi::~ScriptGroupApi() {}
+#endif /* __CHAOSFramework_F951FF55_A546_4753_8859_3E5E05C482CA_script_h */

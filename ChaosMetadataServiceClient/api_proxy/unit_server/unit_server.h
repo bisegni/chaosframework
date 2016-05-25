@@ -1,10 +1,10 @@
 /*
- *	ScriptGroupApi.cpp
+ *	unit_server.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 24/05/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 25/05/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,19 +19,12 @@
  *    	limitations under the License.
  */
 
-#include "ScriptGroupApi.h"
-#include "SearchScript.h"
-#include "NewScript.h"
+#ifndef __CHAOSFramework__F5336BE_7277_4C86_A1EB_14BD07E559CC_unit_server_h
+#define __CHAOSFramework__F5336BE_7277_4C86_A1EB_14BD07E559CC_unit_server_h
 
-using namespace chaos::metadata_service::api::script;
+#include <ChaosMetadataServiceClient/api_proxy/unit_server/NewUS.h>
+#include <ChaosMetadataServiceClient/api_proxy/unit_server/ManageCUType.h>
+#include <ChaosMetadataServiceClient/api_proxy/unit_server/GetDescription.h>
+#include <ChaosMetadataServiceClient/api_proxy/unit_server/LoadUnloadControlUnit.h>
 
-DEFINE_CLASS_FACTORY_NO_ALIAS(ScriptGroupApi,
-                              chaos::metadata_service::api::AbstractApiGroup);
-
-ScriptGroupApi::ScriptGroupApi():
-AbstractApiGroup("script"){
-    addApi<NewScript>();
-    addApi<SearchScript>();
-}
-
-ScriptGroupApi::~ScriptGroupApi() {}
+#endif /* __CHAOSFramework__F5336BE_7277_4C86_A1EB_14BD07E559CC_unit_server_h */

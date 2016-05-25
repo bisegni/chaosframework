@@ -1,10 +1,10 @@
 /*
- *	ScriptGroupApi.cpp
+ *	ScriptDataAccess.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 24/05/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 25/05/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,19 +19,16 @@
  *    	limitations under the License.
  */
 
-#include "ScriptGroupApi.h"
-#include "SearchScript.h"
-#include "NewScript.h"
+#include "ScriptDataAccess.h"
 
-using namespace chaos::metadata_service::api::script;
+using namespace chaos::metadata_service::persistence::data_access;
 
-DEFINE_CLASS_FACTORY_NO_ALIAS(ScriptGroupApi,
-                              chaos::metadata_service::api::AbstractApiGroup);
+DEFINE_DA_NAME(ScriptDataAccess)
 
-ScriptGroupApi::ScriptGroupApi():
-AbstractApiGroup("script"){
-    addApi<NewScript>();
-    addApi<SearchScript>();
-}
 
-ScriptGroupApi::~ScriptGroupApi() {}
+//! default constructor
+ScriptDataAccess::ScriptDataAccess():
+AbstractDataAccess("ScriptDataAccess"){}
+
+//!default destructor
+ScriptDataAccess::~ScriptDataAccess(){}

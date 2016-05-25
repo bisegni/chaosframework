@@ -1,10 +1,10 @@
 /*
- *	SearchScript.h
+ *	NewScript.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 24/05/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 25/05/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__CEF0B33_9C71_421E_8464_9A78CD98356E_SearchScript_h
-#define __CHAOSFramework__CEF0B33_9C71_421E_8464_9A78CD98356E_SearchScript_h
+#ifndef __CHAOSFramework__F94F822_58ED_432B_8D65_FCF227A0B77A_NewScript_h
+#define __CHAOSFramework__F94F822_58ED_432B_8D65_FCF227A0B77A_NewScript_h
 
 #include "../AbstractApi.h"
 
@@ -30,15 +30,16 @@ namespace chaos {
     namespace metadata_service {
         namespace api {
             namespace script {
-                //! execute a search on all script
+                //! Create a new script element in persistent database
                 /*!
-                 Search and return the scrip found according to search string
+                 Perform the creation of new script with all data passed in input
                  */
-                class SearchScript:
+                class NewScript:
                 public AbstractApi {
+
                 public:
-                    SearchScript();
-                    ~SearchScript();
+                    NewScript();
+                    ~NewScript();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data);
                 };
@@ -47,4 +48,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework__CEF0B33_9C71_421E_8464_9A78CD98356E_SearchScript_h */
+#endif /* __CHAOSFramework__F94F822_58ED_432B_8D65_FCF227A0B77A_NewScript_h */

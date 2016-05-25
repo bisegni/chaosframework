@@ -49,6 +49,15 @@ ScriptBaseDescription& ScriptBaseDescription::operator=(ScriptBaseDescription co
 ScriptBaseDescriptionHelper::ScriptBaseDescriptionHelper():
 TemplatedDataContainer<ScriptBaseDescription>(){}
 
+ScriptBaseDescriptionHelper::ScriptBaseDescriptionHelper(const ScriptBaseDescription& copy_source):
+TemplatedDataContainer<ScriptBaseDescription>(copy_source){}
+
+ScriptBaseDescriptionHelper::ScriptBaseDescriptionHelper(CDataWrapper *serialized_data):
+TemplatedDataContainer<ScriptBaseDescription>(serialized_data){
+    deserialize(serialized_data);
+}
+
+
 void ScriptBaseDescriptionHelper::deserialize(CDataWrapper *serialized_data) {
     if(serialized_data == NULL) return;
     container().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, SBD_NAME, "");
@@ -85,6 +94,16 @@ ScriptHelper::ScriptHelper():
 TemplatedDataContainer<Script>(),
 sdh(){}
 
+ScriptHelper::ScriptHelper(const Script& copy_source):
+TemplatedDataContainer<Script>(copy_source),
+sdh(copy_source.script_description){}
+
+ScriptHelper::ScriptHelper(CDataWrapper *serialized_data):
+TemplatedDataContainer<Script>(serialized_data),
+sdh(serialized_data){
+    deserialize(serialized_data);
+}
+
 void ScriptHelper::deserialize(CDataWrapper *serialized_data) {
     if(serialized_data == NULL) return;
     sdh.deserialize(serialized_data);
@@ -93,8 +112,8 @@ void ScriptHelper::deserialize(CDataWrapper *serialized_data) {
     container().script_content = CDW_GET_SRT_WITH_DEFAULT(serialized_data, SBD_SCRIPT_CONTENT, "");
 }
 
-std::auto_ptr<CDataWrapper> ScriptHelper::serilize(const uint64_t sequence) {
-    std::auto_ptr<CDataWrapper> data_serialized(new CDataWrapper());
-
+std::auto_ptr<CDataWrapper> ScriptHelper::serialize(const uint64_t sequence) {
+    std::auto_ptr<CDataWrapper> data_serialized = sdh.serialize(sequence);
+    data_serialized->addStringValue(SBD_SCRIPT_CONTENT, container().script_content);
     return data_serialized;
 }

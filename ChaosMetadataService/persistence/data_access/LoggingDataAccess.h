@@ -22,10 +22,9 @@
 #ifndef __CHAOSFramework__LoggingDataAccess_h
 #define __CHAOSFramework__LoggingDataAccess_h
 
-
 #include "../persistence.h"
 
-#include <chaos/common/chaos_types.h>
+#include <chaos_service_common/data/script/Script.h>
 
 namespace chaos {
     namespace metadata_service {

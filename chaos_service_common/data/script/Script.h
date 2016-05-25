@@ -52,6 +52,8 @@ namespace chaos {
                 public TemplatedDataContainer<ScriptBaseDescription>{
                 public:
                     ScriptBaseDescriptionHelper();
+                    ScriptBaseDescriptionHelper(const ScriptBaseDescription& copy_source);
+                    ScriptBaseDescriptionHelper(chaos::common::data::CDataWrapper *serialized_data);
                     void deserialize(chaos::common::data::CDataWrapper *serialized_data);
                     std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0);
                 };
@@ -75,14 +77,19 @@ namespace chaos {
                     Script& operator=(Script const &rhs);
                 };
                 
+                //!a list of a script base information usefullt for search operation
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(Script, ScriptList)
+                
                 //!heper for script class
                 class ScriptHelper:
                 public TemplatedDataContainer<Script> {
-                    ScriptBaseDescriptionHelper sdh;
                 public:
+                    ScriptBaseDescriptionHelper sdh;
                     ScriptHelper();
+                    ScriptHelper(const Script& copy_source);
+                    ScriptHelper(chaos::common::data::CDataWrapper *serialized_data);
                     void deserialize(chaos::common::data::CDataWrapper *serialized_data);
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serilize(const uint64_t sequence = 0);
+                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0);
                 };
             }
         }

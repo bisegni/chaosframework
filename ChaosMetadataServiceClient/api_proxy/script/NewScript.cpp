@@ -1,10 +1,10 @@
 /*
- *	ScriptGroupApi.cpp
+ *	NewScript.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 24/05/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 25/05/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,19 +19,15 @@
  *    	limitations under the License.
  */
 
-#include "ScriptGroupApi.h"
-#include "SearchScript.h"
-#include "NewScript.h"
+#include <ChaosMetadataServiceClient/api_proxy/script/NewScript.h>
 
-using namespace chaos::metadata_service::api::script;
+using namespace chaos::service_common::data::script;
+using namespace chaos::metadata_service_client::api_proxy;
+using namespace chaos::metadata_service_client::api_proxy::script;
 
-DEFINE_CLASS_FACTORY_NO_ALIAS(ScriptGroupApi,
-                              chaos::metadata_service::api::AbstractApiGroup);
+API_PROXY_CD_DEFINITION(NewScript, "script", "newSript")
 
-ScriptGroupApi::ScriptGroupApi():
-AbstractApiGroup("script"){
-    addApi<NewScript>();
-    addApi<SearchScript>();
+ApiProxyResult NewScript::execute(const Script& script_to_insert) {
+    ScriptHelper sh(script_to_insert);
+    return callApi(sh.serialize().release());
 }
-
-ScriptGroupApi::~ScriptGroupApi() {}

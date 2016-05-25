@@ -35,7 +35,8 @@ namespace chaos {
             public:
                 //!constructor with the default container
                 TemplatedDataContainer(){}
-                
+                TemplatedDataContainer(const T& copy_src):data_container(copy_src){}
+                TemplatedDataContainer(chaos::common::data::CDataWrapper *serialized_data){}
                 //deserialize encoded data in container
                 virtual void deserialize(chaos::common::data::CDataWrapper *serialized_data) = 0;
                 
