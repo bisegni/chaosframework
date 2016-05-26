@@ -382,71 +382,71 @@ else
     echo "Boost Already present"
 fi
 
-#install lua language
-if [ ! -f "$PREFIX/include/lua.h" ]; then
-    echo "* need lua"
-    if [ ! -e "$BASE_EXTERNAL/lua-$LUA_VERSION.tar.gz" ]; then
-        echo "Download lua source to $BASE_EXTERNAL/lua-$LUA_VERSION.tar.gz"
-        if !( curl -R -o $BASE_EXTERNAL/lua-$LUA_VERSION.tar.gz http://www.lua.org/ftp/lua-$LUA_VERSION.tar.gz ); then
-            echo "## cannot download lua-$LUA_VERSION.tar.gz"
-            exit 1
-        fi
+# #install lua language
+# if [ ! -f "$PREFIX/include/lua.h" ]; then
+#     echo "* need lua"
+#     if [ ! -e "$BASE_EXTERNAL/lua-$LUA_VERSION.tar.gz" ]; then
+#         echo "Download lua source to $BASE_EXTERNAL/lua-$LUA_VERSION.tar.gz"
+#         if !( curl -R -o $BASE_EXTERNAL/lua-$LUA_VERSION.tar.gz http://www.lua.org/ftp/lua-$LUA_VERSION.tar.gz ); then
+#             echo "## cannot download lua-$LUA_VERSION.tar.gz"
+#             exit 1
+#         fi
 
-    fi
+#     fi
 
-    if [ ! -e $BASE_EXTERNAL/lua-$LUA_VERSION ]; then
-        tar zxvf $BASE_EXTERNAL/lua-$LUA_VERSION.tar.gz -C $BASE_EXTERNAL
-    fi
+#     if [ ! -e $BASE_EXTERNAL/lua-$LUA_VERSION ]; then
+#         tar zxvf $BASE_EXTERNAL/lua-$LUA_VERSION.tar.gz -C $BASE_EXTERNAL
+#     fi
 
 
-    echo "Compiling lua"
-    cd $BASE_EXTERNAL/lua-$LUA_VERSION
-    if [ $OS = "Darwin" ]; then
-        LUA_PLAT="macosx"
-    elif [ $OS = "Linux" ]; then
-        LUA_PLAT="linux"
-    else
-        echo "Invalid lua platform detected"
-        exit 1
-    fi
+#     echo "Compiling lua"
+#     cd $BASE_EXTERNAL/lua-$LUA_VERSION
+#     if [ $OS = "Darwin" ]; then
+#         LUA_PLAT="macosx"
+#     elif [ $OS = "Linux" ]; then
+#         LUA_PLAT="linux"
+#     else
+#         echo "Invalid lua platform detected"
+#         exit 1
+#     fi
 
-#do_make "lua" 0 "$LUA_PLAT local"
-    #compile lua according to detected platform
-    if !( make $LUA_PLAT local ); then
-        echo "## Error compiling lua"
-        exit 1
-    fi
-    echo "Installing lua"
+# #do_make "lua" 0 "$LUA_PLAT local"
+#     #compile lua according to detected platform
+#     if !( make $LUA_PLAT local ); then
+#         echo "## Error compiling lua"
+#         exit 1
+#     fi
+#     echo "Installing lua"
 
-    if !( cp -Rf install/bin/* $PREFIX/bin ); then
-        echo "## Error installing lua into bin"
-        exit 1
-    fi
+#     if !( cp -Rf install/bin/* $PREFIX/bin ); then
+#         echo "## Error installing lua into bin"
+#         exit 1
+#     fi
 
-    if !( cp -R -f install/include/* $PREFIX/include ); then
-        echo "## Error installing lua into include"
-        exit 1
-    fi
+#     if !( cp -R -f install/include/* $PREFIX/include ); then
+#         echo "## Error installing lua into include"
+#         exit 1
+#     fi
 
-    if !( cp -R -f install/lib/* $PREFIX/lib ); then
-        echo "## Error installing lua into lib"
-        exit 1
-    fi
+#     if !( cp -R -f install/lib/* $PREFIX/lib ); then
+#         echo "## Error installing lua into lib"
+#         exit 1
+#     fi
 
-    if !( cp -R -f install/man/* $PREFIX/man ); then
-        echo "## Error installing lua into man"
-        exit 1
-    fi
+#     if !( cp -R -f install/man/* $PREFIX/man ); then
+#         echo "## Error installing lua into man"
+#         exit 1
+#     fi
 
-    if !( cp -R -f install/share/* $PREFIX/share ); then
-        echo "## Error installing lua into share"
-        exit 1
-    fi
+#     if !( cp -R -f install/share/* $PREFIX/share ); then
+#         echo "## Error installing lua into share"
+#         exit 1
+#     fi
 
-    echo "Lua installed"
-else
-    echo "Lua already installed"
-fi
+#     echo "Lua installed"
+# else
+#     echo "Lua already installed"
+# fi
 
 echo "Setup LIBEVENT  $CHAOS_LIBEVENT_CONFIGURE :$LIB_EVENT_VERSION"
 if [ ! -d "$PREFIX/include/event2" ]; then

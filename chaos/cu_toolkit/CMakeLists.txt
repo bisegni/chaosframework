@@ -21,6 +21,8 @@ SET(cu_lib_src  ${cu_lib_src}
     control_manager/AbstractControlUnit.cpp
     control_manager/ControlManager.cpp
     control_manager/SCAbstractControlUnit.cpp
+    control_manager/script/ScriptableExecutionUnit.cpp
+    control_manager/script/EUScriptableWrapper.cpp
     control_manager/RTAbstractControlUnit.cpp
     control_manager/AbstractExecutionUnit.cpp
     control_manager/WorkUnitManagement.cpp

@@ -135,7 +135,6 @@ namespace chaos{
                 friend class AbstractExecutionUnit;
                 friend class SCAbstractControlUnit;
                 friend class RTAbstractControlUnit;
-                friend class AbstractExecutionUnit;
                 friend class slow_command::SlowCommandExecutor;
                     //enable trace for heap into control unit environment
 #ifdef __CHAOS_DEBUG_MEMORY_CU__
