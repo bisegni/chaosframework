@@ -45,15 +45,14 @@ chaos::common::data::CDataWrapper *NewScript::execute(CDataWrapper *api_data, bo
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     //get scrip description
-    ScriptHelper script_helper(api_data);
-    
+    CHAOS_DECLARE_SD_WRAPPER_VAR(Script, script_helper)(api_data);
     //fetch dataaccess for the script managment
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
 
     //call dataaccesso for insert new script and get the sequence value
-    if((err = s_da->insertNewScript(script_helper.container()))) {
+    if((err = s_da->insertNewScript(script_helper.dataWrapped()))) {
         LOG_AND_TROW(ERR, err, "Error creating new Script");
     }
     //return the script base description
-    return script_helper.sdh.serialize().release();
+    return script_helper.sd_sdw.serialize().release();
 }

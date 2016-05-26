@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include "../data/ScriptListModel.h"
 #include "../presenter/PresenterWidget.h"
 
 namespace Ui {
@@ -25,7 +26,10 @@ private slots:
 
     void on_pushButtonDeleteScript_clicked();
 
+    void on_pushButtonStartSearch_clicked();
+
 private:
+    ScriptListModel script_list_model;
     Ui::ScriptManager *ui;
 };
 

@@ -63,8 +63,8 @@ int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
             builder << "seq" << (long long)sequence_id;
         }
         
-        builder << SBD_NAME << script_entry.script_description.name
-        << SBD_DESCRIPTION << script_entry.script_description.name;
+        builder << CHAOS_SBD_NAME << script_entry.script_description.name
+        << CHAOS_SBD_DESCRIPTION << script_entry.script_description.name;
         
         mongo::BSONObj i = builder.obj();
         DEBUG_CODE(SDA_DBG<<log_message("insertNewScript",
@@ -97,11 +97,11 @@ int MongoDBScriptDataAccess::updateScriptContent(ScriptBaseDescription& script_i
     CHAOS_ASSERT(utility_data_access)
     try {
         
-        query_builder << SBD_NAME << script_identification.name
-        << SBD_DESCRIPTION << script_identification.name;
+        query_builder << CHAOS_SBD_NAME << script_identification.name
+        << CHAOS_SBD_DESCRIPTION << script_identification.name;
         
         mongo::BSONObj q = query_builder.obj();
-        mongo::BSONObj u = BSON(SBD_SCRIPT_CONTENT<<script_content);
+        mongo::BSONObj u = BSON(CHAOS_SBD_SCRIPT_CONTENT<<script_content);
         
         DEBUG_CODE(SDA_DBG<<log_message("updateScriptContent",
                                         "update",
@@ -125,31 +125,61 @@ int MongoDBScriptDataAccess::updateScriptContent(ScriptBaseDescription& script_i
 }
 
 //! Inherited Method
-int MongoDBScriptDataAccess::searchScript(chaos::service_common::data::script::ScriptList& script_list,
+int MongoDBScriptDataAccess::searchScript(ScriptBaseDescriptionListWrapper& script_list,
                                           const std::string& search_string,
-                                          uint64_t start_sequence_id,
+                                          uint64_t last_sequence_id,
                                           uint32_t page_length) {
-    return 0;
+    int err = 0;
+    SearchResult paged_result;
+    mongo::BSONObj p = BSON(CHAOS_SBD_NAME<< 1<<CHAOS_SBD_DESCRIPTION<<1);
+    CHAOS_ASSERT(utility_data_access)
+    try {
+        mongo::Query q = getNextPagedQuery(last_sequence_id,
+                                           search_string);
+        
+        DEBUG_CODE(SDA_DBG<<log_message("searchScript",
+                                        "search",
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                q));)
+        //inset on database new script description
+        if((err = performPagedQuery(paged_result,
+                                    MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                    q,
+                                    &p,
+                                    NULL,
+                                    page_length))) {
+            SDA_ERR << "Error calling performPagedQuery with error" << err;
+        } else {
+            DEBUG_CODE(SDA_DBG << "The query '"<< q.toString() <<"' has found " << paged_result.size() << " result";)
+            if(paged_result.size()) {
+                for (SearchResultIterator it = paged_result.begin();
+                     it != paged_result.end();
+                     it++) {
+                    CDataWrapper element_found(it->objdata());
+                    script_list.add(&element_found);
+                    
+                }
+            }
+        }
+        
+        //now all other part of the script are managed with update
+    } catch (const mongo::DBException &e) {
+        SDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
 }
 
 mongo::Query MongoDBScriptDataAccess::getNextPagedQuery(uint64_t last_sequence,
-                                                        const std::string& source_uid,
-                                                        const std::vector<std::string>& domain) {
+                                                        const std::string& search_string) {
     mongo::Query q;
-    mongo::BSONObjBuilder build_query;
-    if(last_sequence){build_query <<"seq" << BSON("$lt"<<(long long)last_sequence);}
-    build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << source_uid;
-    if(domain.size()) {
-        mongo::BSONArrayBuilder or_builder;
-        //add all domain into array
-        for(std::vector<std::string>::const_iterator it = domain.begin();
-            it != domain.end();
-            it++) {
-            or_builder.append(*it);
-        }
-        
-        build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << BSON("$in" << or_builder.arr());
-    }
-    q = build_query.obj();
-    return q.sort(BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP<<(int)-1));
+    mongo::BSONObjBuilder   bson_find;
+    mongo::BSONObjBuilder build_query_or;
+    mongo::BSONArrayBuilder bson_find_and;
+    
+    if(last_sequence){bson_find_and <<BSON("seq" << BSON("$lt"<<(long long)last_sequence));}
+    bson_find_and << BSON("$or" << getSearchTokenOnFiled(search_string, CHAOS_SBD_NAME));
+    bson_find.appendArray("$and", bson_find_and.obj());
+    q = bson_find.obj();
+    return q.sort(BSON("seq"<<(int)1));
 }

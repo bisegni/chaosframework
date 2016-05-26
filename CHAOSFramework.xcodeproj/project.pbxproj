@@ -2003,7 +2003,7 @@
 		32D90D581CF4A6DC00996F09 /* SearchScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchScript.h; sourceTree = "<group>"; };
 		32D90D5C1CF4AA8200996F09 /* Script.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Script.cpp; sourceTree = "<group>"; };
 		32D90D5D1CF4AA8200996F09 /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
-		32D90D621CF4B0A700996F09 /* TemplatedDataContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedDataContainer.h; sourceTree = "<group>"; };
+		32D90D621CF4B0A700996F09 /* TemplatedDataSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedDataSDWrapper.h; sourceTree = "<group>"; };
 		32DA666F1700DBB6004FC02B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
 		32DBAFC91C9C1745003E2769 /* NodeMonitorHandlerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeMonitorHandlerTest.cpp; sourceTree = "<group>"; };
 		32DBAFCA1C9C1745003E2769 /* NodeMonitorHandlerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeMonitorHandlerTest.h; sourceTree = "<group>"; };
@@ -4271,7 +4271,7 @@
 		32D90D5A1CF4AA3F00996F09 /* data */ = {
 			isa = PBXGroup;
 			children = (
-				32D90D621CF4B0A700996F09 /* TemplatedDataContainer.h */,
+				32D90D621CF4B0A700996F09 /* TemplatedDataSDWrapper.h */,
 				32D90D5B1CF4AA5B00996F09 /* script */,
 			);
 			path = data;

@@ -44,31 +44,32 @@ ScriptBaseDescription& ScriptBaseDescription::operator=(ScriptBaseDescription co
     return *this;
 };
 
-#pragma mark ScriptBaseDescriptionHelper
+#pragma mark ScriptBaseDescriptionSDWrapper
 
-ScriptBaseDescriptionHelper::ScriptBaseDescriptionHelper():
-TemplatedDataContainer<ScriptBaseDescription>(){}
+ScriptBaseDescriptionSDWrapper::ScriptBaseDescriptionSDWrapper():
+TemplatedDataSDWrapper<ScriptBaseDescription>(){}
 
-ScriptBaseDescriptionHelper::ScriptBaseDescriptionHelper(const ScriptBaseDescription& copy_source):
-TemplatedDataContainer<ScriptBaseDescription>(copy_source){}
+ScriptBaseDescriptionSDWrapper::ScriptBaseDescriptionSDWrapper(const ScriptBaseDescription& copy_source):
+TemplatedDataSDWrapper<ScriptBaseDescription>(copy_source){}
 
-ScriptBaseDescriptionHelper::ScriptBaseDescriptionHelper(CDataWrapper *serialized_data):
-TemplatedDataContainer<ScriptBaseDescription>(serialized_data){
+ScriptBaseDescriptionSDWrapper::ScriptBaseDescriptionSDWrapper(CDataWrapper *serialized_data):
+TemplatedDataSDWrapper<ScriptBaseDescription>(serialized_data){
     deserialize(serialized_data);
 }
 
 
-void ScriptBaseDescriptionHelper::deserialize(CDataWrapper *serialized_data) {
+void ScriptBaseDescriptionSDWrapper::deserialize(CDataWrapper *serialized_data) {
     if(serialized_data == NULL) return;
-    container().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, SBD_NAME, "");
-    container().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, SBD_DESCRIPTION, "");
+    dataWrapped().unique_id = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "seq", 0);
+    dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_NAME, "");
+    dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_DESCRIPTION, "");
 }
 
-std::auto_ptr<CDataWrapper> ScriptBaseDescriptionHelper::serialize(const uint64_t sequence) {
+std::auto_ptr<CDataWrapper> ScriptBaseDescriptionSDWrapper::serialize(const uint64_t sequence) {
     std::auto_ptr<CDataWrapper> data_serialized(new CDataWrapper());
-    data_serialized->addInt64Value("seq", (sequence?sequence:container().unique_id));
-    data_serialized->addStringValue(SBD_NAME, container().name);
-    data_serialized->addStringValue(SBD_DESCRIPTION, container().description);
+    data_serialized->addInt64Value("seq", (sequence?sequence:dataWrapped().unique_id));
+    data_serialized->addStringValue(CHAOS_SBD_NAME, dataWrapped().name);
+    data_serialized->addStringValue(CHAOS_SBD_DESCRIPTION, dataWrapped().description);
     return data_serialized;
 }
 
@@ -88,32 +89,32 @@ Script& Script::operator=(Script const &rhs) {
     return *this;
 };
 
-#pragma mark ScriptHelper
+#pragma mark ScriptSDWrapper
 
-ScriptHelper::ScriptHelper():
-TemplatedDataContainer<Script>(),
-sdh(){}
+ScriptSDWrapper::ScriptSDWrapper():
+TemplatedDataSDWrapper<Script>(),
+sd_sdw(){}
 
-ScriptHelper::ScriptHelper(const Script& copy_source):
-TemplatedDataContainer<Script>(copy_source),
-sdh(copy_source.script_description){}
+ScriptSDWrapper::ScriptSDWrapper(const Script& copy_source):
+TemplatedDataSDWrapper<Script>(copy_source),
+sd_sdw(copy_source.script_description){}
 
-ScriptHelper::ScriptHelper(CDataWrapper *serialized_data):
-TemplatedDataContainer<Script>(serialized_data),
-sdh(serialized_data){
+ScriptSDWrapper::ScriptSDWrapper(CDataWrapper *serialized_data):
+TemplatedDataSDWrapper<Script>(serialized_data),
+sd_sdw(serialized_data){
     deserialize(serialized_data);
 }
 
-void ScriptHelper::deserialize(CDataWrapper *serialized_data) {
+void ScriptSDWrapper::deserialize(CDataWrapper *serialized_data) {
     if(serialized_data == NULL) return;
-    sdh.deserialize(serialized_data);
+    sd_sdw.deserialize(serialized_data);
     //dcopy deserialize objet into own contained
-    container().script_description = sdh.container();
-    container().script_content = CDW_GET_SRT_WITH_DEFAULT(serialized_data, SBD_SCRIPT_CONTENT, "");
+    dataWrapped().script_description = sd_sdw.dataWrapped();
+    dataWrapped().script_content = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_SCRIPT_CONTENT, "");
 }
 
-std::auto_ptr<CDataWrapper> ScriptHelper::serialize(const uint64_t sequence) {
-    std::auto_ptr<CDataWrapper> data_serialized = sdh.serialize(sequence);
-    data_serialized->addStringValue(SBD_SCRIPT_CONTENT, container().script_content);
+std::auto_ptr<CDataWrapper> ScriptSDWrapper::serialize(const uint64_t sequence) {
+    std::auto_ptr<CDataWrapper> data_serialized = sd_sdw.serialize(sequence);
+    data_serialized->addStringValue(CHAOS_SBD_SCRIPT_CONTENT, dataWrapped().script_content);
     return data_serialized;
 }

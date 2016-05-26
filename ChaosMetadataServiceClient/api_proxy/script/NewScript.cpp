@@ -28,6 +28,6 @@ using namespace chaos::metadata_service_client::api_proxy::script;
 API_PROXY_CD_DEFINITION(NewScript, "script", "newSript")
 
 ApiProxyResult NewScript::execute(const Script& script_to_insert) {
-    ScriptHelper sh(script_to_insert);
+    ScriptSDWrapper sh(script_to_insert);
     return callApi(sh.serialize().release());
 }

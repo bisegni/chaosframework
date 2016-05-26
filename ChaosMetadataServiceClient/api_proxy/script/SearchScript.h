@@ -43,8 +43,8 @@ namespace chaos {
                      \param script_to_insert is a description of a new script
                      */
                     ApiProxyResult execute(const std::string& search_string,
-                                           const uint64_t start_sequence_id,
-                                           const uint32_t page_dimansion);
+                                           const uint64_t last_sequence_id = 0,
+                                           const uint32_t page_lenght = 30);
                 };
                 
             }

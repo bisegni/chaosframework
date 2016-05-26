@@ -46,8 +46,7 @@ namespace chaos {
                     MongoDBUtilityDataAccess *utility_data_access = NULL;
                     //return the query for a page
                     mongo::Query getNextPagedQuery(uint64_t last_sequence_before_this_page,
-                                                   const std::string& source_uid,
-                                                   const std::vector<std::string>& domain);
+                                                   const std::string& search_string);
                     
                 protected:
                     MongoDBScriptDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
@@ -61,9 +60,9 @@ namespace chaos {
                                             const std::string script_content);
                     
                     //! Inherited Method
-                    int searchScript(chaos::service_common::data::script::ScriptBaseDescriptionList& script_list,
+                    int searchScript(chaos::service_common::data::script::ScriptBaseDescriptionListWrapper& script_list,
                                      const std::string& search_string,
-                                     uint64_t start_sequence_id,
+                                     uint64_t last_sequence_id,
                                      uint32_t page_length);
                 };
             }

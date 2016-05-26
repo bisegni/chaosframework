@@ -24,15 +24,15 @@
 
 #include <chaos/common/chaos_types.h>
 
-#include <chaos_service_common/data/TemplatedDataContainer.h>
+#include <chaos_service_common/data/TemplatedDataSDWrapper.h>
 
 namespace chaos {
     namespace service_common {
         namespace data {
             namespace script {
                 
-#define SBD_NAME        "name"
-#define SBD_DESCRIPTION "description"
+#define CHAOS_SBD_NAME        "script_name"
+#define CHAOS_SBD_DESCRIPTION "script_description"
                 
                 
                 //! The description of a script
@@ -48,20 +48,21 @@ namespace chaos {
                 };
                 
                 //!helper for create or read the script description
-                class ScriptBaseDescriptionHelper:
-                public TemplatedDataContainer<ScriptBaseDescription>{
+                CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(ScriptBaseDescription) {
                 public:
-                    ScriptBaseDescriptionHelper();
-                    ScriptBaseDescriptionHelper(const ScriptBaseDescription& copy_source);
-                    ScriptBaseDescriptionHelper(chaos::common::data::CDataWrapper *serialized_data);
+                    ScriptBaseDescriptionSDWrapper();
+                    ScriptBaseDescriptionSDWrapper(const ScriptBaseDescription& copy_source);
+                    ScriptBaseDescriptionSDWrapper(chaos::common::data::CDataWrapper *serialized_data);
                     void deserialize(chaos::common::data::CDataWrapper *serialized_data);
                     std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0);
                 };
                 
                 //!a list of a script base information usefullt for search operation
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(ScriptBaseDescription, ScriptBaseDescriptionList)
-             
-#define SBD_SCRIPT_CONTENT "content"
+                CHAOS_DEFINE_TYPE_FOR_SD_LIST_WRAPPER(ScriptBaseDescription,
+                                                      ScriptBaseDescriptionSDWrapper,
+                                                      ScriptBaseDescriptionListWrapper);
+                
+#define CHAOS_SBD_SCRIPT_CONTENT "script_content"
 
                 
                 //! Full script description
@@ -81,16 +82,19 @@ namespace chaos {
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(Script, ScriptList)
                 
                 //!heper for script class
-                class ScriptHelper:
-                public TemplatedDataContainer<Script> {
+                CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(Script) {
                 public:
-                    ScriptBaseDescriptionHelper sdh;
-                    ScriptHelper();
-                    ScriptHelper(const Script& copy_source);
-                    ScriptHelper(chaos::common::data::CDataWrapper *serialized_data);
+                    CHAOS_DECLARE_SD_WRAPPER_VAR(ScriptBaseDescription, sd_sdw);
+                    ScriptSDWrapper();
+                    ScriptSDWrapper(const Script& copy_source);
+                    ScriptSDWrapper(chaos::common::data::CDataWrapper *serialized_data);
                     void deserialize(chaos::common::data::CDataWrapper *serialized_data);
                     std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0);
                 };
+                
+                CHAOS_DEFINE_TYPE_FOR_SD_LIST_WRAPPER(Script,
+                                                      ScriptSDWrapper,
+                                                      ScriptListWrapper);
             }
         }
     }

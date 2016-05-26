@@ -328,15 +328,15 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
     
     
     // filter on node unique id
-    boost::split(criteria_token, criteria, is_any_of(" "), token_compress_on );
-    for (std::vector<std::string>::iterator it = criteria_token.begin();
-         it != criteria_token.end();
-         it++) {
-        token_for_mongo = ".*"+*it+".*";
-        bson_find_or <<  MONGODB_REGEX_ON_FILED(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, token_for_mongo);
-    }
-    //compose the or
-    bson_find_and << BSON("$or" << bson_find_or.arr());
+//    boost::split(criteria_token, criteria, is_any_of(" "), token_compress_on );
+//    for (std::vector<std::string>::iterator it = criteria_token.begin();
+//         it != criteria_token.end();
+//         it++) {
+//        token_for_mongo = ".*"+*it+".*";
+//        bson_find_or <<  MONGODB_REGEX_ON_FILED(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, token_for_mongo);
+//    }
+    //compose the 'or' condition for all token of unique_id filed
+    bson_find_and << BSON("$or" << getSearchTokenOnFiled(criteria, chaos::NodeDefinitionKey::NODE_UNIQUE_ID));
     bson_find.appendArray("$and", bson_find_and.obj());
     mongo::BSONObj q = bson_find.obj();
     
