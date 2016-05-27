@@ -612,6 +612,66 @@
 		32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
+		32A88BB91CF8228A001DBAF5 /* lapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B7C1CF8228A001DBAF5 /* lapi.c */; };
+		32A88BBA1CF8228A001DBAF5 /* lapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B7D1CF8228A001DBAF5 /* lapi.h */; };
+		32A88BBB1CF8228A001DBAF5 /* lauxlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B7E1CF8228A001DBAF5 /* lauxlib.c */; };
+		32A88BBC1CF8228A001DBAF5 /* lauxlib.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B7F1CF8228A001DBAF5 /* lauxlib.h */; };
+		32A88BBD1CF8228A001DBAF5 /* lbaselib.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B801CF8228A001DBAF5 /* lbaselib.c */; };
+		32A88BBE1CF8228A001DBAF5 /* lbitlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B811CF8228A001DBAF5 /* lbitlib.c */; };
+		32A88BBF1CF8228A001DBAF5 /* lcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B821CF8228A001DBAF5 /* lcode.c */; };
+		32A88BC01CF8228A001DBAF5 /* lcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B831CF8228A001DBAF5 /* lcode.h */; };
+		32A88BC11CF8228A001DBAF5 /* lcorolib.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B841CF8228A001DBAF5 /* lcorolib.c */; };
+		32A88BC21CF8228A001DBAF5 /* lctype.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B851CF8228A001DBAF5 /* lctype.c */; };
+		32A88BC31CF8228A001DBAF5 /* lctype.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B861CF8228A001DBAF5 /* lctype.h */; };
+		32A88BC41CF8228A001DBAF5 /* ldblib.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B871CF8228A001DBAF5 /* ldblib.c */; };
+		32A88BC51CF8228A001DBAF5 /* ldebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B881CF8228A001DBAF5 /* ldebug.c */; };
+		32A88BC61CF8228A001DBAF5 /* ldebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B891CF8228A001DBAF5 /* ldebug.h */; };
+		32A88BC71CF8228A001DBAF5 /* ldo.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B8A1CF8228A001DBAF5 /* ldo.c */; };
+		32A88BC81CF8228A001DBAF5 /* ldo.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B8B1CF8228A001DBAF5 /* ldo.h */; };
+		32A88BC91CF8228A001DBAF5 /* ldump.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B8C1CF8228A001DBAF5 /* ldump.c */; };
+		32A88BCA1CF8228A001DBAF5 /* lfunc.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B8D1CF8228A001DBAF5 /* lfunc.c */; };
+		32A88BCB1CF8228A001DBAF5 /* lfunc.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B8E1CF8228A001DBAF5 /* lfunc.h */; };
+		32A88BCC1CF8228A001DBAF5 /* lgc.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B8F1CF8228A001DBAF5 /* lgc.c */; };
+		32A88BCD1CF8228A001DBAF5 /* lgc.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B901CF8228A001DBAF5 /* lgc.h */; };
+		32A88BCE1CF8228A001DBAF5 /* linit.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B911CF8228A001DBAF5 /* linit.c */; };
+		32A88BCF1CF8228A001DBAF5 /* liolib.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B921CF8228A001DBAF5 /* liolib.c */; };
+		32A88BD01CF8228A001DBAF5 /* llex.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B931CF8228A001DBAF5 /* llex.c */; };
+		32A88BD11CF8228A001DBAF5 /* llex.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B941CF8228A001DBAF5 /* llex.h */; };
+		32A88BD21CF8228A001DBAF5 /* llimits.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B951CF8228A001DBAF5 /* llimits.h */; };
+		32A88BD31CF8228A001DBAF5 /* lmathlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B961CF8228A001DBAF5 /* lmathlib.c */; };
+		32A88BD41CF8228A001DBAF5 /* lmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B971CF8228A001DBAF5 /* lmem.c */; };
+		32A88BD51CF8228A001DBAF5 /* lmem.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B981CF8228A001DBAF5 /* lmem.h */; };
+		32A88BD61CF8228A001DBAF5 /* loadlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B991CF8228A001DBAF5 /* loadlib.c */; };
+		32A88BD71CF8228A001DBAF5 /* lobject.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B9A1CF8228A001DBAF5 /* lobject.c */; };
+		32A88BD81CF8228A001DBAF5 /* lobject.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B9B1CF8228A001DBAF5 /* lobject.h */; };
+		32A88BD91CF8228A001DBAF5 /* lopcodes.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B9C1CF8228A001DBAF5 /* lopcodes.c */; };
+		32A88BDA1CF8228A001DBAF5 /* lopcodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88B9D1CF8228A001DBAF5 /* lopcodes.h */; };
+		32A88BDB1CF8228A001DBAF5 /* loslib.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B9E1CF8228A001DBAF5 /* loslib.c */; };
+		32A88BDC1CF8228A001DBAF5 /* lparser.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88B9F1CF8228A001DBAF5 /* lparser.c */; };
+		32A88BDD1CF8228A001DBAF5 /* lparser.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BA01CF8228A001DBAF5 /* lparser.h */; };
+		32A88BDE1CF8228A001DBAF5 /* lprefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BA11CF8228A001DBAF5 /* lprefix.h */; };
+		32A88BDF1CF8228A001DBAF5 /* lstate.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BA21CF8228A001DBAF5 /* lstate.c */; };
+		32A88BE01CF8228A001DBAF5 /* lstate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BA31CF8228A001DBAF5 /* lstate.h */; };
+		32A88BE11CF8228A001DBAF5 /* lstring.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BA41CF8228A001DBAF5 /* lstring.c */; };
+		32A88BE21CF8228A001DBAF5 /* lstring.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BA51CF8228A001DBAF5 /* lstring.h */; };
+		32A88BE31CF8228A001DBAF5 /* lstrlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BA61CF8228A001DBAF5 /* lstrlib.c */; };
+		32A88BE41CF8228A001DBAF5 /* ltable.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BA71CF8228A001DBAF5 /* ltable.c */; };
+		32A88BE51CF8228A001DBAF5 /* ltable.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BA81CF8228A001DBAF5 /* ltable.h */; };
+		32A88BE61CF8228A001DBAF5 /* ltablib.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BA91CF8228A001DBAF5 /* ltablib.c */; };
+		32A88BE71CF8228A001DBAF5 /* ltm.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BAA1CF8228A001DBAF5 /* ltm.c */; };
+		32A88BE81CF8228A001DBAF5 /* ltm.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BAB1CF8228A001DBAF5 /* ltm.h */; };
+		32A88BEA1CF8228A001DBAF5 /* lua.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BAD1CF8228A001DBAF5 /* lua.h */; };
+		32A88BEB1CF8228A001DBAF5 /* lua.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BAE1CF8228A001DBAF5 /* lua.hpp */; };
+		32A88BEC1CF8228A001DBAF5 /* luac.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BAF1CF8228A001DBAF5 /* luac.c */; };
+		32A88BED1CF8228A001DBAF5 /* luaconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BB01CF8228A001DBAF5 /* luaconf.h */; };
+		32A88BEE1CF8228A001DBAF5 /* lualib.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BB11CF8228A001DBAF5 /* lualib.h */; };
+		32A88BEF1CF8228A001DBAF5 /* lundump.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BB21CF8228A001DBAF5 /* lundump.c */; };
+		32A88BF01CF8228A001DBAF5 /* lundump.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BB31CF8228A001DBAF5 /* lundump.h */; };
+		32A88BF11CF8228A001DBAF5 /* lutf8lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BB41CF8228A001DBAF5 /* lutf8lib.c */; };
+		32A88BF21CF8228A001DBAF5 /* lvm.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BB51CF8228A001DBAF5 /* lvm.c */; };
+		32A88BF31CF8228A001DBAF5 /* lvm.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BB61CF8228A001DBAF5 /* lvm.h */; };
+		32A88BF41CF8228A001DBAF5 /* lzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BB71CF8228A001DBAF5 /* lzio.c */; };
+		32A88BF51CF8228A001DBAF5 /* lzio.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BB81CF8228A001DBAF5 /* lzio.h */; };
 		32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */; };
 		32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */; };
 		32A91FCA1A49AF0700DCF364 /* RpcSyncServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A91FC81A49AF0700DCF364 /* RpcSyncServer.cpp */; };
@@ -1764,6 +1824,68 @@
 		32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitSemaphore.h; sourceTree = "<group>"; };
 		32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MDSMessageChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSMessageChannel.cpp; sourceTree = "<group>"; };
+		32A88B7B1CF8228A001DBAF5 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		32A88B7C1CF8228A001DBAF5 /* lapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lapi.c; sourceTree = "<group>"; };
+		32A88B7D1CF8228A001DBAF5 /* lapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lapi.h; sourceTree = "<group>"; };
+		32A88B7E1CF8228A001DBAF5 /* lauxlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lauxlib.c; sourceTree = "<group>"; };
+		32A88B7F1CF8228A001DBAF5 /* lauxlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lauxlib.h; sourceTree = "<group>"; };
+		32A88B801CF8228A001DBAF5 /* lbaselib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lbaselib.c; sourceTree = "<group>"; };
+		32A88B811CF8228A001DBAF5 /* lbitlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lbitlib.c; sourceTree = "<group>"; };
+		32A88B821CF8228A001DBAF5 /* lcode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lcode.c; sourceTree = "<group>"; };
+		32A88B831CF8228A001DBAF5 /* lcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lcode.h; sourceTree = "<group>"; };
+		32A88B841CF8228A001DBAF5 /* lcorolib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lcorolib.c; sourceTree = "<group>"; };
+		32A88B851CF8228A001DBAF5 /* lctype.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lctype.c; sourceTree = "<group>"; };
+		32A88B861CF8228A001DBAF5 /* lctype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lctype.h; sourceTree = "<group>"; };
+		32A88B871CF8228A001DBAF5 /* ldblib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ldblib.c; sourceTree = "<group>"; };
+		32A88B881CF8228A001DBAF5 /* ldebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ldebug.c; sourceTree = "<group>"; };
+		32A88B891CF8228A001DBAF5 /* ldebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ldebug.h; sourceTree = "<group>"; };
+		32A88B8A1CF8228A001DBAF5 /* ldo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ldo.c; sourceTree = "<group>"; };
+		32A88B8B1CF8228A001DBAF5 /* ldo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ldo.h; sourceTree = "<group>"; };
+		32A88B8C1CF8228A001DBAF5 /* ldump.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ldump.c; sourceTree = "<group>"; };
+		32A88B8D1CF8228A001DBAF5 /* lfunc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lfunc.c; sourceTree = "<group>"; };
+		32A88B8E1CF8228A001DBAF5 /* lfunc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lfunc.h; sourceTree = "<group>"; };
+		32A88B8F1CF8228A001DBAF5 /* lgc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lgc.c; sourceTree = "<group>"; };
+		32A88B901CF8228A001DBAF5 /* lgc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lgc.h; sourceTree = "<group>"; };
+		32A88B911CF8228A001DBAF5 /* linit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = linit.c; sourceTree = "<group>"; };
+		32A88B921CF8228A001DBAF5 /* liolib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = liolib.c; sourceTree = "<group>"; };
+		32A88B931CF8228A001DBAF5 /* llex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = llex.c; sourceTree = "<group>"; };
+		32A88B941CF8228A001DBAF5 /* llex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = llex.h; sourceTree = "<group>"; };
+		32A88B951CF8228A001DBAF5 /* llimits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = llimits.h; sourceTree = "<group>"; };
+		32A88B961CF8228A001DBAF5 /* lmathlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lmathlib.c; sourceTree = "<group>"; };
+		32A88B971CF8228A001DBAF5 /* lmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lmem.c; sourceTree = "<group>"; };
+		32A88B981CF8228A001DBAF5 /* lmem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lmem.h; sourceTree = "<group>"; };
+		32A88B991CF8228A001DBAF5 /* loadlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = loadlib.c; sourceTree = "<group>"; };
+		32A88B9A1CF8228A001DBAF5 /* lobject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lobject.c; sourceTree = "<group>"; };
+		32A88B9B1CF8228A001DBAF5 /* lobject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lobject.h; sourceTree = "<group>"; };
+		32A88B9C1CF8228A001DBAF5 /* lopcodes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lopcodes.c; sourceTree = "<group>"; };
+		32A88B9D1CF8228A001DBAF5 /* lopcodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lopcodes.h; sourceTree = "<group>"; };
+		32A88B9E1CF8228A001DBAF5 /* loslib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = loslib.c; sourceTree = "<group>"; };
+		32A88B9F1CF8228A001DBAF5 /* lparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lparser.c; sourceTree = "<group>"; };
+		32A88BA01CF8228A001DBAF5 /* lparser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lparser.h; sourceTree = "<group>"; };
+		32A88BA11CF8228A001DBAF5 /* lprefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lprefix.h; sourceTree = "<group>"; };
+		32A88BA21CF8228A001DBAF5 /* lstate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lstate.c; sourceTree = "<group>"; };
+		32A88BA31CF8228A001DBAF5 /* lstate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lstate.h; sourceTree = "<group>"; };
+		32A88BA41CF8228A001DBAF5 /* lstring.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lstring.c; sourceTree = "<group>"; };
+		32A88BA51CF8228A001DBAF5 /* lstring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lstring.h; sourceTree = "<group>"; };
+		32A88BA61CF8228A001DBAF5 /* lstrlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lstrlib.c; sourceTree = "<group>"; };
+		32A88BA71CF8228A001DBAF5 /* ltable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ltable.c; sourceTree = "<group>"; };
+		32A88BA81CF8228A001DBAF5 /* ltable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ltable.h; sourceTree = "<group>"; };
+		32A88BA91CF8228A001DBAF5 /* ltablib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ltablib.c; sourceTree = "<group>"; };
+		32A88BAA1CF8228A001DBAF5 /* ltm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ltm.c; sourceTree = "<group>"; };
+		32A88BAB1CF8228A001DBAF5 /* ltm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ltm.h; sourceTree = "<group>"; };
+		32A88BAC1CF8228A001DBAF5 /* lua.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lua.c; sourceTree = "<group>"; };
+		32A88BAD1CF8228A001DBAF5 /* lua.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lua.h; sourceTree = "<group>"; };
+		32A88BAE1CF8228A001DBAF5 /* lua.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lua.hpp; sourceTree = "<group>"; };
+		32A88BAF1CF8228A001DBAF5 /* luac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = luac.c; sourceTree = "<group>"; };
+		32A88BB01CF8228A001DBAF5 /* luaconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = luaconf.h; sourceTree = "<group>"; };
+		32A88BB11CF8228A001DBAF5 /* lualib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lualib.h; sourceTree = "<group>"; };
+		32A88BB21CF8228A001DBAF5 /* lundump.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lundump.c; sourceTree = "<group>"; };
+		32A88BB31CF8228A001DBAF5 /* lundump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lundump.h; sourceTree = "<group>"; };
+		32A88BB41CF8228A001DBAF5 /* lutf8lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lutf8lib.c; sourceTree = "<group>"; };
+		32A88BB51CF8228A001DBAF5 /* lvm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lvm.c; sourceTree = "<group>"; };
+		32A88BB61CF8228A001DBAF5 /* lvm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lvm.h; sourceTree = "<group>"; };
+		32A88BB71CF8228A001DBAF5 /* lzio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lzio.c; sourceTree = "<group>"; };
+		32A88BB81CF8228A001DBAF5 /* lzio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzio.h; sourceTree = "<group>"; };
 		32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyGroupCache.cpp; sourceTree = "<group>"; };
 		32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyGroupCache.h; sourceTree = "<group>"; };
 		32A91FC81A49AF0700DCF364 /* RpcSyncServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcSyncServer.cpp; sourceTree = "<group>"; };
@@ -2952,6 +3074,7 @@
 		32612AB41CE2053D00F3B8F3 /* lua */ = {
 			isa = PBXGroup;
 			children = (
+				32A88B7A1CF8226C001DBAF5 /* core */,
 				322A3BBE1CEE1A7F00FAD9DA /* LuaScriptVM.cpp */,
 				322A3BBF1CEE1A7F00FAD9DA /* LuaScriptVM.h */,
 				322A3BC01CEE1A7F00FAD9DA /* luna.h */,
@@ -3850,6 +3973,75 @@
 			path = mongodb;
 			sourceTree = "<group>";
 		};
+		32A88B7A1CF8226C001DBAF5 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				32A88B7B1CF8228A001DBAF5 /* CMakeLists.txt */,
+				32A88B7C1CF8228A001DBAF5 /* lapi.c */,
+				32A88B7D1CF8228A001DBAF5 /* lapi.h */,
+				32A88B7E1CF8228A001DBAF5 /* lauxlib.c */,
+				32A88B7F1CF8228A001DBAF5 /* lauxlib.h */,
+				32A88B801CF8228A001DBAF5 /* lbaselib.c */,
+				32A88B811CF8228A001DBAF5 /* lbitlib.c */,
+				32A88B821CF8228A001DBAF5 /* lcode.c */,
+				32A88B831CF8228A001DBAF5 /* lcode.h */,
+				32A88B841CF8228A001DBAF5 /* lcorolib.c */,
+				32A88B851CF8228A001DBAF5 /* lctype.c */,
+				32A88B861CF8228A001DBAF5 /* lctype.h */,
+				32A88B871CF8228A001DBAF5 /* ldblib.c */,
+				32A88B881CF8228A001DBAF5 /* ldebug.c */,
+				32A88B891CF8228A001DBAF5 /* ldebug.h */,
+				32A88B8A1CF8228A001DBAF5 /* ldo.c */,
+				32A88B8B1CF8228A001DBAF5 /* ldo.h */,
+				32A88B8C1CF8228A001DBAF5 /* ldump.c */,
+				32A88B8D1CF8228A001DBAF5 /* lfunc.c */,
+				32A88B8E1CF8228A001DBAF5 /* lfunc.h */,
+				32A88B8F1CF8228A001DBAF5 /* lgc.c */,
+				32A88B901CF8228A001DBAF5 /* lgc.h */,
+				32A88B911CF8228A001DBAF5 /* linit.c */,
+				32A88B921CF8228A001DBAF5 /* liolib.c */,
+				32A88B931CF8228A001DBAF5 /* llex.c */,
+				32A88B941CF8228A001DBAF5 /* llex.h */,
+				32A88B951CF8228A001DBAF5 /* llimits.h */,
+				32A88B961CF8228A001DBAF5 /* lmathlib.c */,
+				32A88B971CF8228A001DBAF5 /* lmem.c */,
+				32A88B981CF8228A001DBAF5 /* lmem.h */,
+				32A88B991CF8228A001DBAF5 /* loadlib.c */,
+				32A88B9A1CF8228A001DBAF5 /* lobject.c */,
+				32A88B9B1CF8228A001DBAF5 /* lobject.h */,
+				32A88B9C1CF8228A001DBAF5 /* lopcodes.c */,
+				32A88B9D1CF8228A001DBAF5 /* lopcodes.h */,
+				32A88B9E1CF8228A001DBAF5 /* loslib.c */,
+				32A88B9F1CF8228A001DBAF5 /* lparser.c */,
+				32A88BA01CF8228A001DBAF5 /* lparser.h */,
+				32A88BA11CF8228A001DBAF5 /* lprefix.h */,
+				32A88BA21CF8228A001DBAF5 /* lstate.c */,
+				32A88BA31CF8228A001DBAF5 /* lstate.h */,
+				32A88BA41CF8228A001DBAF5 /* lstring.c */,
+				32A88BA51CF8228A001DBAF5 /* lstring.h */,
+				32A88BA61CF8228A001DBAF5 /* lstrlib.c */,
+				32A88BA71CF8228A001DBAF5 /* ltable.c */,
+				32A88BA81CF8228A001DBAF5 /* ltable.h */,
+				32A88BA91CF8228A001DBAF5 /* ltablib.c */,
+				32A88BAA1CF8228A001DBAF5 /* ltm.c */,
+				32A88BAB1CF8228A001DBAF5 /* ltm.h */,
+				32A88BAC1CF8228A001DBAF5 /* lua.c */,
+				32A88BAD1CF8228A001DBAF5 /* lua.h */,
+				32A88BAE1CF8228A001DBAF5 /* lua.hpp */,
+				32A88BAF1CF8228A001DBAF5 /* luac.c */,
+				32A88BB01CF8228A001DBAF5 /* luaconf.h */,
+				32A88BB11CF8228A001DBAF5 /* lualib.h */,
+				32A88BB21CF8228A001DBAF5 /* lundump.c */,
+				32A88BB31CF8228A001DBAF5 /* lundump.h */,
+				32A88BB41CF8228A001DBAF5 /* lutf8lib.c */,
+				32A88BB51CF8228A001DBAF5 /* lvm.c */,
+				32A88BB61CF8228A001DBAF5 /* lvm.h */,
+				32A88BB71CF8228A001DBAF5 /* lzio.c */,
+				32A88BB81CF8228A001DBAF5 /* lzio.h */,
+			);
+			path = core;
+			sourceTree = "<group>";
+		};
 		32A91FC71A49AEC300DCF364 /* sync_rpc */ = {
 			isa = PBXGroup;
 			children = (
@@ -4465,7 +4657,9 @@
 				326DB43614B38BC00018A8D0 /* DomainActions.h in Headers */,
 				32AB51CA1A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h in Headers */,
 				32067EA61CABEF0300DE568A /* CDataBuffer.h in Headers */,
+				32A88BC61CF8228A001DBAF5 /* ldebug.h in Headers */,
 				32EE8980191A792000DE2F29 /* stringutils.h in Headers */,
+				32A88BBC1CF8228A001DBAF5 /* lauxlib.h in Headers */,
 				32EA501718A15BF000782435 /* DirectIODispatcher.h in Headers */,
 				326DB45714B38BC00018A8D0 /* chaos_constants.h in Headers */,
 				32B159CE18AE08720096B58B /* ZMQSocketFeeder.h in Headers */,
@@ -4478,13 +4672,19 @@
 				32B5C9511C68E2420021159C /* URLHAServiceFeeder.h in Headers */,
 				329C1EFE1B55286100A84D55 /* RpcServerMetricCollector.h in Headers */,
 				3229700A18BCC6FE0004F70D /* DirectIOServerPublicInterface.h in Headers */,
+				32A88BF31CF8228A001DBAF5 /* lvm.h in Headers */,
 				32EE8978191A5AB000DE2F29 /* status_with.h in Headers */,
 				32D6C8981815293200E9689B /* DirectIOHandler.h in Headers */,
+				32A88BDD1CF8228A001DBAF5 /* lparser.h in Headers */,
+				32A88BE21CF8228A001DBAF5 /* lstring.h in Headers */,
 				32460521179C55FC00B075DA /* sqlite3.h in Headers */,
 				32067EA21CABEE8800DE568A /* CDataVariant.h in Headers */,
+				32A88BF01CF8228A001DBAF5 /* lundump.h in Headers */,
 				326DB46614B38BC00018A8D0 /* ChaosDispatcher.h in Headers */,
 				53DADAAF19C8676C00E13DB2 /* SingletonOnArguments.h in Headers */,
+				32A88BD81CF8228A001DBAF5 /* lobject.h in Headers */,
 				32AB51CE1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h in Headers */,
+				32A88BF51CF8228A001DBAF5 /* lzio.h in Headers */,
 				322884451ADBBA1400CA1F4B /* PropertyCollector.h in Headers */,
 				32F7FEAC18A5066600FC03AB /* FastDelegateBind.h in Headers */,
 				324A4B50191A41EF00975394 /* cstdint.h in Headers */,
@@ -4512,6 +4712,7 @@
 				32C3546A178860EB009ED581 /* decl.hpp in Headers */,
 				324A4B79191A428500975394 /* misc.h in Headers */,
 				32612ACA1CE210BC00F3B8F3 /* script_types.h in Headers */,
+				32A88BDE1CF8228A001DBAF5 /* lprefix.h in Headers */,
 				326DB47E14B38BC00018A8D0 /* CObjectProcessingQueueListener.h in Headers */,
 				326DB47F14B38BC00018A8D0 /* ChaosRpc.h in Headers */,
 				324A4B58191A41EF00975394 /* unordered_set.h in Headers */,
@@ -4522,6 +4723,7 @@
 				326DB48814B38BC00018A8D0 /* ChaosThread.h in Headers */,
 				32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */,
 				32995C471BB2D1F700F68148 /* SWEService.h in Headers */,
+				32A88BE51CF8228A001DBAF5 /* ltable.h in Headers */,
 				324A4B76191A428500975394 /* jsobj.h in Headers */,
 				322DE35518D467E5006F1551 /* ConcuredUsedItem.h in Headers */,
 				326DB48E14B38BC00018A8D0 /* ArrayPointer.h in Headers */,
@@ -4532,6 +4734,7 @@
 				324A4B4C191A41EF00975394 /* bits.h in Headers */,
 				3270E0821C6DF44F00105726 /* exception.h in Headers */,
 				326DB49514B38BC00018A8D0 /* TimingUtil.h in Headers */,
+				32A88BC01CF8228A001DBAF5 /* lcode.h in Headers */,
 				326DB49614B38BC00018A8D0 /* UUIDUtil.h in Headers */,
 				32D72CAB197D196D00512B89 /* WorkUnitManagement.h in Headers */,
 				32C100F8191B6F2900478F40 /* AsyncCentralManager.h in Headers */,
@@ -4565,6 +4768,7 @@
 				324A4B51191A41EF00975394 /* float_utils.h in Headers */,
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
 				3258AEEB1935C34000A66D44 /* URL.h in Headers */,
+				32A88BEE1CF8228A001DBAF5 /* lualib.h in Headers */,
 				32BFF913176C862A00D27A04 /* StartableService.h in Headers */,
 				32B8C1A018292E51001CF714 /* DriverErogatorInterface.h in Headers */,
 				324A4B8D191A523F00975394 /* md5.hpp in Headers */,
@@ -4603,7 +4807,9 @@
 				32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */,
 				325013BD15E9258C00DCB13E /* EventClient.h in Headers */,
 				328556A117F2E33A00A64ED2 /* DirectIOClient.h in Headers */,
+				32A88BE01CF8228A001DBAF5 /* lstate.h in Headers */,
 				324A4B70191A428500975394 /* atomic_int.h in Headers */,
+				32A88BCD1CF8228A001DBAF5 /* lgc.h in Headers */,
 				324A4B48191A41EF00975394 /* atomic_intrinsics_win32.h in Headers */,
 				325013D815E980C800DCB13E /* AsioImplEventClient.h in Headers */,
 				32EBDF071B4FCA6F00278C42 /* ConsoleMetricBackend.h in Headers */,
@@ -4611,6 +4817,7 @@
 				32571D9D1C7C901A0001D884 /* BatchCommandLoggingChannel.h in Headers */,
 				325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */,
 				324A4B7B191A428500975394 /* hash.h in Headers */,
+				32A88BD21CF8228A001DBAF5 /* llimits.h in Headers */,
 				3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */,
 				32661C761AA867E100F1A721 /* MessageRequestFuture.h in Headers */,
 				325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */,
@@ -4621,6 +4828,8 @@
 				3253E09515F27A180079B40E /* EventTypeScheduler.h in Headers */,
 				32FB201D1A3F11C400307A86 /* AttributeCache.h in Headers */,
 				3253F2FF189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h in Headers */,
+				32A88BCB1CF8228A001DBAF5 /* lfunc.h in Headers */,
+				32A88BC31CF8228A001DBAF5 /* lctype.h in Headers */,
 				32B89C9E15F39DB500B17AAA /* ActionExecutionSafetySystem.h in Headers */,
 				32B89CA215F3D1E100B17AAA /* InstrumentEventChannel.h in Headers */,
 				32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */,
@@ -4628,6 +4837,7 @@
 				3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */,
 				326CDBB718D860430054EF19 /* SpinLock.h in Headers */,
 				3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */,
+				32A88BEA1CF8228A001DBAF5 /* lua.h in Headers */,
 				329603291876B45000CDCADA /* BatchCommandSandbox.h in Headers */,
 				322D990218A95F9200C0864C /* QueryDataConsumer.h in Headers */,
 				32EBDEFF1B4E6FC700278C42 /* RpcClientMetricCollector.h in Headers */,
@@ -4697,8 +4907,10 @@
 				32640A28169DCC5800450962 /* GarbageThread.h in Headers */,
 				324A4B0F191A3F6A00975394 /* error_codes.h in Headers */,
 				324A4B93191A541600975394 /* status-inl.h in Headers */,
+				32A88BD51CF8228A001DBAF5 /* lmem.h in Headers */,
 				32EA501318A152BE00782435 /* DirectIOServerEndpoint.h in Headers */,
 				324A4B72191A428500975394 /* bson_extract.h in Headers */,
+				32A88BBA1CF8228A001DBAF5 /* lapi.h in Headers */,
 				324A4B47191A41EF00975394 /* atomic_intrinsics_gcc_intel.h in Headers */,
 				32640A29169DCC5800450962 /* DataAggregationInterface.h in Headers */,
 				324A4B99191A55E800975394 /* mutex.h in Headers */,
@@ -4735,21 +4947,25 @@
 				32C3545D17885A37009ED581 /* library_impl.hpp in Headers */,
 				322A3BC31CEE1A7F00FAD9DA /* luna.h in Headers */,
 				32640A3E169DCC5800450962 /* MemoryAllocator.h in Headers */,
+				32A88BC81CF8228A001DBAF5 /* ldo.h in Headers */,
 				32640A3F169DCC5800450962 /* SmartPointer.h in Headers */,
 				32875F97177634AF00E33D6F /* PluginInspector.h in Headers */,
 				322A3BC21CEE1A7F00FAD9DA /* LuaScriptVM.h in Headers */,
 				324A4B7D191A428500975394 /* str.h in Headers */,
 				320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */,
 				327F51DF1952E81D00BA3D01 /* DirectIOURLManagment.h in Headers */,
+				32A88BEB1CF8228A001DBAF5 /* lua.hpp in Headers */,
 				329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */,
 				32A91FCB1A49AF0700DCF364 /* RpcSyncServer.h in Headers */,
 				32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */,
 				32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */,
 				324A4B7C191A428500975394 /* html.h in Headers */,
+				32A88BE81CF8228A001DBAF5 /* ltm.h in Headers */,
 				324A4B46191A41EF00975394 /* atomic_intrinsics_gcc_generic.h in Headers */,
 				32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */,
 				329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */,
 				323386BB1AD3D78E008863DC /* MultiAddressMessageRequestFuture.h in Headers */,
+				32A88BED1CF8228A001DBAF5 /* luaconf.h in Headers */,
 				32612AC21CE20DD200F3B8F3 /* ScriptApiCaller.h in Headers */,
 				327CFF0A1708C4EB0069497B /* FastHash.h in Headers */,
 				327CFF121708D7760069497B /* CacheGlobal.h in Headers */,
@@ -4759,7 +4975,9 @@
 				32D421B417271572008A326E /* BsonFragment.h in Headers */,
 				328E405E17287B82004E5938 /* LFDataCache.h in Headers */,
 				32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */,
+				32A88BDA1CF8228A001DBAF5 /* lopcodes.h in Headers */,
 				329C1F0E1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.h in Headers */,
+				32A88BD11CF8228A001DBAF5 /* llex.h in Headers */,
 				3298487E1736814700C158DF /* ChannelValueAccessor.h in Headers */,
 				32B73E9F18D9D80F00F0B187 /* PerformanceManagment.h in Headers */,
 				32984880173681BB00C158DF /* SlbCachedInfo.h in Headers */,
@@ -5356,6 +5574,7 @@
 				326DB43314B38BC00018A8D0 /* DeclareAction.cpp in Sources */,
 				326DB43514B38BC00018A8D0 /* DomainActions.cpp in Sources */,
 				326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */,
+				32A88BE11CF8228A001DBAF5 /* lstring.c in Sources */,
 				32995C4E1BB421D400F68148 /* AggregatedCheckList.cpp in Sources */,
 				32F5B00A1B5F998F00457A63 /* CSVFileMetricBackend.cpp in Sources */,
 				32FB20181A3F0FAB00307A86 /* AttributeValue.cpp in Sources */,
@@ -5368,9 +5587,11 @@
 				32543B1A1AFA6D28008D58EC /* HealtMetric.cpp in Sources */,
 				326DB46714B38BC00018A8D0 /* AbstractCommandDispatcher.cpp in Sources */,
 				32B159D518B38CA50096B58B /* DirectIODeviceServerChannel.cpp in Sources */,
+				32A88BDF1CF8228A001DBAF5 /* lstate.c in Sources */,
 				324A4B52191A41EF00975394 /* process_id.cpp in Sources */,
 				3296031E1876B45000CDCADA /* AttributeValueSharedCache.cpp in Sources */,
 				326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */,
+				32A88BD01CF8228A001DBAF5 /* llex.c in Sources */,
 				326DB46D14B38BC00018A8D0 /* DomainActionsScheduler.cpp in Sources */,
 				323386BA1AD3D78E008863DC /* MultiAddressMessageRequestFuture.cpp in Sources */,
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,
@@ -5385,12 +5606,15 @@
 				324A4B30191A405700975394 /* element.cpp in Sources */,
 				3266A5DF18A631A800637592 /* ZMQBaseClass.cpp in Sources */,
 				329C1F091B567C8400A84D55 /* DirectIOClientConnectionMetricCollector.cpp in Sources */,
+				32A88BD71CF8228A001DBAF5 /* lobject.c in Sources */,
 				327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */,
 				32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */,
+				32A88BCA1CF8228A001DBAF5 /* lfunc.c in Sources */,
 				32F5B0061B5F8EBF00457A63 /* FileMetricBackend.cpp in Sources */,
 				329C1EFD1B55286100A84D55 /* RpcServerMetricCollector.cpp in Sources */,
 				32C100FB191B847800478F40 /* TimerHandler.cpp in Sources */,
 				324A4B9E191A569800975394 /* hex.cpp in Sources */,
+				32A88BC91CF8228A001DBAF5 /* ldump.c in Sources */,
 				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,
 				329C1F0D1B568EA600A84D55 /* DirectIOClientConnectionSharedMetricIO.cpp in Sources */,
 				327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */,
@@ -5403,10 +5627,13 @@
 				3253F302189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp in Sources */,
 				32EA501218A152BE00782435 /* DirectIOServerEndpoint.cpp in Sources */,
 				32DF604315E1502700312C94 /* CommandEventDescriptor.cpp in Sources */,
+				32A88BC51CF8228A001DBAF5 /* ldebug.c in Sources */,
 				328556A017F2E33A00A64ED2 /* DirectIOClient.cpp in Sources */,
 				32DF604715E1505F00312C94 /* CustomEventDescriptor.cpp in Sources */,
+				32A88BC41CF8228A001DBAF5 /* ldblib.c in Sources */,
 				324A4B77191A428500975394 /* json.cpp in Sources */,
 				32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */,
+				32A88BCF1CF8228A001DBAF5 /* liolib.c in Sources */,
 				324A4B1B191A402A00975394 /* MurmurHash3.cpp in Sources */,
 				32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */,
 				32EBDEFA1B4E58F300278C42 /* MetricCollector.cpp in Sources */,
@@ -5422,24 +5649,34 @@
 				324A4B2D191A405700975394 /* document.cpp in Sources */,
 				32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */,
 				324A4B96191A557700975394 /* time_support.cpp in Sources */,
+				32A88BBF1CF8228A001DBAF5 /* lcode.c in Sources */,
+				32A88BC21CF8228A001DBAF5 /* lctype.c in Sources */,
+				32A88BBD1CF8228A001DBAF5 /* lbaselib.c in Sources */,
 				324A4B15191A3F6A00975394 /* string_data.cpp in Sources */,
 				3258AEEA1935C34000A66D44 /* URL.cpp in Sources */,
 				325013D715E980C800DCB13E /* AsioImplEventClient.cpp in Sources */,
 				32C100F7191B6F2900478F40 /* AsyncCentralManager.cpp in Sources */,
+				32A88BE31CF8228A001DBAF5 /* lstrlib.c in Sources */,
 				32AB51C91A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.cpp in Sources */,
 				324A4B10191A3F6A00975394 /* parse_number.cpp in Sources */,
 				3253F2FE189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp in Sources */,
 				325013DC15E9843D00DCB13E /* AsioEventForwarder.cpp in Sources */,
 				3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */,
 				32E0EF3718CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp in Sources */,
+				32A88BCE1CF8228A001DBAF5 /* linit.c in Sources */,
+				32A88BCC1CF8228A001DBAF5 /* lgc.c in Sources */,
 				3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */,
 				327F51DE1952E81D00BA3D01 /* DirectIOURLManagment.cpp in Sources */,
+				32A88BE61CF8228A001DBAF5 /* ltablib.c in Sources */,
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
 				32B159D118B38C980096B58B /* DirectIODeviceClientChannel.cpp in Sources */,
 				32B5C9501C68E2420021159C /* URLHAServiceFeeder.cpp in Sources */,
+				32A88BD41CF8228A001DBAF5 /* lmem.c in Sources */,
 				325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */,
+				32A88BDB1CF8228A001DBAF5 /* loslib.c in Sources */,
 				328E36EB1786B89500C1564D /* PluginLoader.cpp in Sources */,
 				3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */,
+				32A88BBE1CF8228A001DBAF5 /* lbitlib.c in Sources */,
 				3206F1AD19C18A8D00C437D8 /* QueryFuture.cpp in Sources */,
 				325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */,
 				3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */,
@@ -5447,8 +5684,10 @@
 				32A273FA1BB7235200572083 /* tracey.cpp in Sources */,
 				329C1F051B5643EF00A84D55 /* DirectIODispatcherMetricCollector.cpp in Sources */,
 				322A3BC11CEE1A7F00FAD9DA /* LuaScriptVM.cpp in Sources */,
+				32A88BF41CF8228A001DBAF5 /* lzio.c in Sources */,
 				32B89CA115F3D1E100B17AAA /* InstrumentEventChannel.cpp in Sources */,
 				32FB201C1A3F11C400307A86 /* AttributeCache.cpp in Sources */,
+				32A88BF21CF8228A001DBAF5 /* lvm.c in Sources */,
 				324A4B12191A3F6A00975394 /* status.cpp in Sources */,
 				32661C711AA7606400F1A721 /* NodeMessageChannel.cpp in Sources */,
 				3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */,
@@ -5461,9 +5700,11 @@
 				32BF74AD167CEB57007F8A57 /* EntityDB.cpp in Sources */,
 				3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */,
 				32C0CC98168CC16400BC2DA7 /* Entity.cpp in Sources */,
+				32A88BEF1CF8228A001DBAF5 /* lundump.c in Sources */,
 				32B1378E189BEC4100B17CA4 /* ZMQDirectIOServer.cpp in Sources */,
 				32BFF912176C862A00D27A04 /* StartableService.cpp in Sources */,
 				32AB51CD1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp in Sources */,
+				32A88BF11CF8228A001DBAF5 /* lutf8lib.c in Sources */,
 				325568521AE3A98B00CFA7C9 /* PropertyCollector.cpp in Sources */,
 				32EFCD6618BDE3A400B5EB77 /* IODirectIODriver.cpp in Sources */,
 				3220F98118A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp in Sources */,
@@ -5475,15 +5716,20 @@
 				32B159CD18AE08720096B58B /* ZMQSocketFeeder.cpp in Sources */,
 				32460520179C55FC00B075DA /* sqlite3.c in Sources */,
 				32C4C2AD1C8D9A8600D74E0F /* CException.cpp in Sources */,
+				32A88BBB1CF8228A001DBAF5 /* lauxlib.c in Sources */,
 				324A4B54191A41EF00975394 /* random.cpp in Sources */,
+				32A88BB91CF8228A001DBAF5 /* lapi.c in Sources */,
 				32FB20201A3F2E7300307A86 /* AbstractSharedDomainCache.cpp in Sources */,
 				3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */,
 				32AF7D4018DAEAF300537DE6 /* PerformanceNodeChannel.cpp in Sources */,
 				32EBDF061B4FCA6F00278C42 /* ConsoleMetricBackend.cpp in Sources */,
+				32A88BEC1CF8228A001DBAF5 /* luac.c in Sources */,
 				324A4B71191A428500975394 /* bson_extract.cpp in Sources */,
 				32067EA11CABEE8800DE568A /* CDataVariant.cpp in Sources */,
 				32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */,
+				32A88BDC1CF8228A001DBAF5 /* lparser.c in Sources */,
 				329603221876B45000CDCADA /* BatchCommand.cpp in Sources */,
+				32A88BC11CF8228A001DBAF5 /* lcorolib.c in Sources */,
 				32A91FCA1A49AF0700DCF364 /* RpcSyncServer.cpp in Sources */,
 				3270E0791C6DECA000105726 /* MetadataLoggingCException.cpp in Sources */,
 				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
@@ -5496,13 +5742,19 @@
 				32EBDEFE1B4E6FC700278C42 /* RpcClientMetricCollector.cpp in Sources */,
 				3219E69F18CC7AE600C2F795 /* DirectIOClientConnection.cpp in Sources */,
 				32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */,
+				32A88BD61CF8228A001DBAF5 /* loadlib.c in Sources */,
 				32CB736F16FE3432008575F0 /* ReaderDataService.cpp in Sources */,
 				32612ABD1CE209BB00F3B8F3 /* ScriptManager.cpp in Sources */,
+				32A88BC71CF8228A001DBAF5 /* ldo.c in Sources */,
+				32A88BE41CF8228A001DBAF5 /* ltable.c in Sources */,
 				329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */,
 				327CFF091708C4EB0069497B /* FastHash.cpp in Sources */,
 				32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */,
 				32612AB91CE2058100F3B8F3 /* AbstractScriptableClass.cpp in Sources */,
 				32D421B317271572008A326E /* BsonFragment.cpp in Sources */,
+				32A88BD31CF8228A001DBAF5 /* lmathlib.c in Sources */,
+				32A88BE71CF8228A001DBAF5 /* ltm.c in Sources */,
+				32A88BD91CF8228A001DBAF5 /* lopcodes.c in Sources */,
 				328E405D17287B82004E5938 /* LFDataCache.cpp in Sources */,
 				324A4B7F191A428500975394 /* safe_num.cpp in Sources */,
 				32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */,
@@ -6154,7 +6406,6 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
-					"-llua",
 					"-lmongoose",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -6199,7 +6450,6 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
-					"-llua",
 					"-lmongoose",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
