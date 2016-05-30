@@ -89,6 +89,11 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/CommandCommonUtility.cpp
                         api/node/GetCommandAndTemplateDescription.cpp)
 
+SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp,
+                        api/script/SearchScript.cpp
+                        api/script/SaveScript.cpp
+                        api/script/LoadFullScript.cpp)
+
 SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/NodeDataAccess.cpp
                         persistence/data_access/UtilityDataAccess.cpp

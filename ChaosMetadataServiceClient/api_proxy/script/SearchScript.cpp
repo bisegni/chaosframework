@@ -19,7 +19,6 @@
  *    	limitations under the License.
  */
 
-
 #include <ChaosMetadataServiceClient/api_proxy/script/SearchScript.h>
 
 using namespace chaos::common::data;

@@ -121,7 +121,8 @@ SOURCES += main.cpp\
     language_editor/ScriptEditor.cpp \
     script/ScriptManager.cpp \
     script/ScriptDescriptionWidget.cpp \
-    data/ScriptListModel.cpp
+    data/ScriptListModel.cpp \
+    script/CreateNewScriptDialog.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -224,7 +225,8 @@ HEADERS  += \
     language_editor/ScriptEditor.h \
     script/ScriptManager.h \
     script/ScriptDescriptionWidget.h \
-    data/ScriptListModel.h
+    data/ScriptListModel.h \
+    script/CreateNewScriptDialog.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -252,7 +254,8 @@ FORMS    += \
     widget/CNodeResourceWidget.ui \
     language_editor/ScriptEditor.ui \
     script/ScriptManager.ui \
-    script/ScriptDescriptionWidget.ui
+    script/ScriptDescriptionWidget.ui \
+    script/CreateNewScriptDialog.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

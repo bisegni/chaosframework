@@ -56,14 +56,18 @@ namespace chaos {
                     int insertNewScript(chaos::service_common::data::script::Script& new_Script);
                     
                     //! Inherited method
-                    int updateScriptContent(chaos::service_common::data::script::ScriptBaseDescription& script_identification,
-                                            const std::string script_content);
+                    int updateScript(chaos::service_common::data::script::Script& script);
                     
                     //! Inherited Method
                     int searchScript(chaos::service_common::data::script::ScriptBaseDescriptionListWrapper& script_list,
                                      const std::string& search_string,
                                      uint64_t last_sequence_id,
                                      uint32_t page_length);
+                    
+                    //! Inherited Method
+                    int loadScript(const chaos::service_common::data::script::ScriptBaseDescription& script_base_description,
+                                   chaos::service_common::data::script::Script& script,
+                                   bool load_source_code = false);
                 };
             }
         }

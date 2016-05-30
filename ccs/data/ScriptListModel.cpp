@@ -15,7 +15,7 @@ int ScriptListModel::getRowCount() const {
 
 QVariant ScriptListModel::getRowData(int row) const {
     //as row data return the script name
-    return QString::fromStdString(script_base_list_wrapper[row].name.c_str());
+    return QString::fromStdString(script_base_list_wrapper[row].name);
 }
 
 QVariant ScriptListModel::getUserData(int row) const {

@@ -31,15 +31,16 @@ namespace chaos {
         namespace data {
             namespace script {
                 
-#define CHAOS_SBD_NAME        "script_name"
-#define CHAOS_SBD_DESCRIPTION "script_description"
-                
+#define CHAOS_SBD_NAME          "script_name"
+#define CHAOS_SBD_DESCRIPTION   "script_description"
+#define CHAOS_SBD_LANGUAGE      "script_language"
                 
                 //! The description of a script
                 struct ScriptBaseDescription {
                     uint64_t unique_id;
                     std::string name;
                     std::string description;
+                    std::string language;
                     
                     ScriptBaseDescription();
                     ScriptBaseDescription(const ScriptBaseDescription& copy_src);

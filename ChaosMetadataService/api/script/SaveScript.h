@@ -1,5 +1,5 @@
 /*
- *	NewScript.h
+ *	SaveScript.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__F94F822_58ED_432B_8D65_FCF227A0B77A_NewScript_h
-#define __CHAOSFramework__F94F822_58ED_432B_8D65_FCF227A0B77A_NewScript_h
+#ifndef __CHAOSFramework__F94F822_58ED_432B_8D65_FCF227A0B77A_SaveScript_h
+#define __CHAOSFramework__F94F822_58ED_432B_8D65_FCF227A0B77A_SaveScript_h
 
 #include "../AbstractApi.h"
 
@@ -34,12 +34,12 @@ namespace chaos {
                 /*!
                  Perform the creation of new script with all data passed in input
                  */
-                class NewScript:
+                class SaveScript:
                 public AbstractApi {
 
                 public:
-                    NewScript();
-                    ~NewScript();
+                    SaveScript();
+                    ~SaveScript();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data);
                 };
@@ -48,4 +48,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework__F94F822_58ED_432B_8D65_FCF227A0B77A_NewScript_h */
+#endif /* __CHAOSFramework__F94F822_58ED_432B_8D65_FCF227A0B77A_SaveScript_h */

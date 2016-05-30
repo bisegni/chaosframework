@@ -21,7 +21,8 @@
 
 #include "ScriptGroupApi.h"
 #include "SearchScript.h"
-#include "NewScript.h"
+#include "SaveScript.h"
+#include "LoadFullScript.h"
 
 using namespace chaos::metadata_service::api::script;
 
@@ -30,8 +31,9 @@ DEFINE_CLASS_FACTORY_NO_ALIAS(ScriptGroupApi,
 
 ScriptGroupApi::ScriptGroupApi():
 AbstractApiGroup("script"){
-    addApi<NewScript>();
+    addApi<SaveScript>();
     addApi<SearchScript>();
+    addApi<LoadFullScript>();
 }
 
 ScriptGroupApi::~ScriptGroupApi() {}

@@ -30,17 +30,20 @@ using namespace chaos::service_common::data::script;
 ScriptBaseDescription::ScriptBaseDescription():
 unique_id(0),
 name(),
-description(){}
+description(),
+language(){}
 
 ScriptBaseDescription::ScriptBaseDescription(const ScriptBaseDescription& copy_src):
 unique_id(copy_src.unique_id),
 name(copy_src.name),
-description(copy_src.description){}
+description(copy_src.description),
+language(copy_src.language){}
 
 ScriptBaseDescription& ScriptBaseDescription::operator=(ScriptBaseDescription const &rhs) {
     unique_id = rhs.unique_id;
     name = rhs.name;
     description = rhs.description;
+    language = rhs.language;
     return *this;
 };
 
@@ -63,6 +66,7 @@ void ScriptBaseDescriptionSDWrapper::deserialize(CDataWrapper *serialized_data) 
     dataWrapped().unique_id = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "seq", 0);
     dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_NAME, "");
     dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_DESCRIPTION, "");
+    dataWrapped().language = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_LANGUAGE, "");
 }
 
 std::auto_ptr<CDataWrapper> ScriptBaseDescriptionSDWrapper::serialize(const uint64_t sequence) {
@@ -70,6 +74,7 @@ std::auto_ptr<CDataWrapper> ScriptBaseDescriptionSDWrapper::serialize(const uint
     data_serialized->addInt64Value("seq", (sequence?sequence:dataWrapped().unique_id));
     data_serialized->addStringValue(CHAOS_SBD_NAME, dataWrapped().name);
     data_serialized->addStringValue(CHAOS_SBD_DESCRIPTION, dataWrapped().description);
+    data_serialized->addStringValue(CHAOS_SBD_LANGUAGE, dataWrapped().language);
     return data_serialized;
 }
 
@@ -114,6 +119,7 @@ void ScriptSDWrapper::deserialize(CDataWrapper *serialized_data) {
 }
 
 std::auto_ptr<CDataWrapper> ScriptSDWrapper::serialize(const uint64_t sequence) {
+    sd_sdw = dataWrapped().script_description;
     std::auto_ptr<CDataWrapper> data_serialized = sd_sdw.serialize(sequence);
     data_serialized->addStringValue(CHAOS_SBD_SCRIPT_CONTENT, dataWrapped().script_content);
     return data_serialized;

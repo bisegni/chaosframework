@@ -76,7 +76,9 @@ SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
                             api_proxy/unit_server/LoadUnloadControlUnit.cpp
                             api_proxy/unit_server/ManageCUType.cpp)
 
-SET(mcl_src ${mcl_src}      api_proxy/script/NewScript.cpp)
+SET(mcl_src ${mcl_src}      api_proxy/script/SaveScript.cpp,
+                            api_proxy/script/SearchScript.hpp
+                            api_proxy/script/LoadFullScript.cpp)
 
 SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
                             monitor_system/QuantumSlot.cpp
