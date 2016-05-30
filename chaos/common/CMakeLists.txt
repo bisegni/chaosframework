@@ -1,6 +1,3 @@
-ADD_SUBDIRECTORY(script/lua/core)
-INCLUDE_DIRECTORIES(script/lua/core)
-
 SET(common_lib_src log/LogManager.cpp)
 
 SET(common_lib_src ${common_lib_src}
@@ -203,8 +200,13 @@ SET(common_lib_src ${common_lib_src}
 SET(common_lib_src ${common_lib_src}
         script/ScriptManager.cpp
         script/AbstractScriptVM.cpp
-        script/AbstractScriptableClass.cpp
-        script/lua/LuaScriptVM.cpp)
+        script/AbstractScriptableClass.cpp)
+
+#compile lua chaos vm and core files
+FILE(GLOB LuaCoreSource script/lua/core/*.c)
+SET(common_lib_src ${common_lib_src}
+	script/lua/LuaScriptVM.cpp
+	${LuaCoreSource})
 
 IF (NOT DEFINED BUILD_FORCE_STATIC)
 
@@ -326,6 +328,13 @@ FILE(GLOB files "caching_system/common_buffer/data_element/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/caching_system/common_buffer/data_element)
 FILE(GLOB files "caching_system/common_buffer/helper/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/caching_system/common_buffer/helper)
+
+FILE(GLOB files "script/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/script/)
+FILE(GLOB files "script/lua/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/script/lua)
+FILE(GLOB files "script/lua/core/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/script/lua/core)
 
 INSTALL(TARGETS chaos_common
         DESTINATION "lib"
