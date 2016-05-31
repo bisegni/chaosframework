@@ -150,6 +150,11 @@ namespace chaos {
                 CHAOS_DEFINE_TYPE_FOR_SD_LIST_WRAPPER(DatasetAttribute,
                                                       DatasetAttributeSDWrapper,
                                                       DatasetAttributeListWrapper);
+
+                
+                //Definition of dataset attribute list
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::service_common::data::dataset::DatasetAttribute,
+                                             DatasetAttributeList);
             }
         }
     }

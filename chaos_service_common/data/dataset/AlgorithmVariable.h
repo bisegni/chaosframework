@@ -168,6 +168,11 @@ namespace chaos {
                 CHAOS_DEFINE_TYPE_FOR_SD_LIST_WRAPPER(AlgorithmVariable,
                                                       AlgorithmVariableSDWrapper,
                                                       AlgorithmVariableListWrapper);
+                
+                
+                //Definition of script variable list
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::service_common::data::dataset::AlgorithmVariable,
+                                             AlgorithmVariableList);
             }
         }
     }

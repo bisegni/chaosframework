@@ -122,7 +122,8 @@ SOURCES += main.cpp\
     script/ScriptManager.cpp \
     script/ScriptDescriptionWidget.cpp \
     data/ScriptListModel.cpp \
-    script/CreateNewScriptDialog.cpp
+    script/CreateNewScriptDialog.cpp \
+    data/EditableDatasetTableModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -226,7 +227,8 @@ HEADERS  += \
     script/ScriptManager.h \
     script/ScriptDescriptionWidget.h \
     data/ScriptListModel.h \
-    script/CreateNewScriptDialog.h
+    script/CreateNewScriptDialog.h \
+    data/EditableDatasetTableModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \

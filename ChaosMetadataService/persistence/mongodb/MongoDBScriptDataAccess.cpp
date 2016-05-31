@@ -24,6 +24,7 @@
 
 using namespace chaos::common::data;
 using namespace chaos::service_common::data::script;
+using namespace chaos::service_common::data::dataset;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::data_access;

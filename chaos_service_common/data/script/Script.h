@@ -105,12 +105,6 @@ namespace chaos {
                 
 #define CHAOS_SBD_SCRIPT_CONTENT "script_content"
                 
-                //Definition of script variable list
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::service_common::data::dataset::AlgorithmVariable, AlgorithmVariableList);
-                
-                //Definition of dataset attribute list
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::service_common::data::dataset::DatasetAttribute, DatasetAttributeList);
-                
                 //! Full script description
                 struct Script {
                     //! base script
@@ -120,10 +114,10 @@ namespace chaos {
                     std::string script_content;
                     
                     //!variable list
-                    AlgorithmVariableList variable_list;
+                    chaos::service_common::data::dataset::AlgorithmVariableList variable_list;
                     
                     //!dataset attribute list
-                    DatasetAttributeList dataset_attribute_list;
+                    chaos::service_common::data::dataset::DatasetAttributeList dataset_attribute_list;
                     
                     Script():
                     script_description(),
@@ -211,7 +205,7 @@ namespace chaos {
                         if(dataWrapped().variable_list.size()) {
                             //we have some variable defined
                             std::auto_ptr<chaos::common::data::CDataWrapper> variable_definition(new chaos::common::data::CDataWrapper());
-                            for(AlgorithmVariableListIterator it = dataWrapped().variable_list.begin(),
+                            for(chaos::service_common::data::dataset::AlgorithmVariableListIterator it = dataWrapped().variable_list.begin(),
                                 end = dataWrapped().variable_list.end();
                                 it != end;
                                 it++) {
@@ -225,7 +219,7 @@ namespace chaos {
                         if(dataWrapped().dataset_attribute_list.size()) {
                             //we have some attribute for dataset
                             std::auto_ptr<chaos::common::data::CDataWrapper> variable_definition(new chaos::common::data::CDataWrapper());
-                            for(DatasetAttributeListIterator it = dataWrapped().dataset_attribute_list.begin(),
+                            for(chaos::service_common::data::dataset::DatasetAttributeListIterator it = dataWrapped().dataset_attribute_list.begin(),
                                 end = dataWrapped().dataset_attribute_list.end();
                                 it != end;
                                 it++) {
