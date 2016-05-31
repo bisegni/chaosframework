@@ -33,14 +33,26 @@ namespace chaos {
     namespace service_common {
         namespace data {
             
-            //! serializer deserializer wrap for class that embed data to transfer with cdata wrapper
             template<typename T>
-            class TemplatedDataSDWrapper {
+            struct ReferenceSDWrapper {
+            protected:
+                T& data;
+            };
+            
+            template<typename T>
+            struct CopySDWrapper {
                 T data;
+            };
+            
+            //! serializer deserializer wrap for class that embed data to transfer with cdata wrapper
+            template<typename T, typename W = CopySDWrapper<T> >
+            class TemplatedDataSDWrapper {
+                W wrapper;
+                //W wrapper;
             public:
                 //!constructor with the default container
                 TemplatedDataSDWrapper(){}
-                TemplatedDataSDWrapper(const T& data_src):data(data_src){}
+                TemplatedDataSDWrapper(const T& data_src){wrapper.data = data_src;}
                 TemplatedDataSDWrapper(chaos::common::data::CDataWrapper *serialized_data){}
                 
                 //!deserialize encoded data in container
@@ -51,28 +63,29 @@ namespace chaos {
                 
                 //!return the container
                 T& dataWrapped(){
-                    return data;
+                    return wrapper.data;
                 }
                 
                 T& operator()() {
-                    return data;
+                    return wrapper.data;
                 }
                 
                 //!assign operation overload with contained data
                 T& operator=(T const &rhs) {
-                    return (data = rhs);
+                    return (wrapper.data = rhs);
                 }
                 
                 //!assign operation overload with wrapper
                 TemplatedDataSDWrapper<T>& operator=(TemplatedDataSDWrapper<T> const &rhs) {
-                    data = rhs.data;
+                    wrapper.data = rhs.wrapper.data;
                     return *this;
                 }
             };
             
 #define CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(x)\
+typedef chaos::service_common::data::TemplatedDataSDWrapper<x> x ## SDWrapperSubclass;\
 class x ## SDWrapper:\
-public chaos::service_common::data::TemplatedDataSDWrapper<x>
+public x ## SDWrapperSubclass
             
             
 #define CHAOS_DEFINE_SD_WRAPPER(x)  x ## SDWrapper

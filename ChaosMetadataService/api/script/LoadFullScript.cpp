@@ -52,7 +52,7 @@ chaos::common::data::CDataWrapper *LoadFullScript::execute(CDataWrapper *api_dat
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
     
     //call data access for insert new script and get the sequence value
-    if((err = s_da->loadScript(script_description_sdw.dataWrapped(), script_sdw.dataWrapped()))) {
+    if((err = s_da->loadScript(script_description_sdw.dataWrapped(), script_sdw.dataWrapped(), true))) {
         LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error loading script",%"casa"));
     }
     //return the script base description

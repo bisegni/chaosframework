@@ -46,21 +46,23 @@ chaos::common::data::CDataWrapper *SaveScript::execute(CDataWrapper *api_data, b
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     //get scrip description
-    CHAOS_DECLARE_SD_WRAPPER_VAR(Script, script_sdw)(api_data);
+    CHAOS_DECLARE_SD_WRAPPER_VAR(Script, script_dw)(api_data);
+    CHAOS_DECLARE_SD_WRAPPER_VAR(ScriptBaseDescription, script_bs_dw);
     //fetch dataaccess for the script managment
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
 
     //call dataaccesso for insert new script and get the sequence value
-    if(script_sdw.dataWrapped().script_description.unique_id == 0) {
-        if((err = s_da->insertNewScript(script_sdw.dataWrapped()))) {
-            LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating new script %1%[%2%]",%script_sdw.dataWrapped().script_description.name%script_sdw.dataWrapped().script_description.unique_id));
+    if(script_dw.dataWrapped().script_description.unique_id == 0) {
+        if((err = s_da->insertNewScript(script_dw.dataWrapped()))) {
+            LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating new script %1%[%2%]",%script_dw.dataWrapped().script_description.name%script_dw.dataWrapped().script_description.unique_id));
         }
     } else {
-        if((err = s_da->insertNewScript(script_sdw.dataWrapped()))) {
-            LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error updating script %1%[%2%]", %script_sdw.dataWrapped().script_description.name%script_sdw.dataWrapped().script_description.unique_id));
+        if((err = s_da->updateScript(script_dw.dataWrapped()))) {
+            LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error updating script %1%[%2%]", %script_dw.dataWrapped().script_description.name%script_dw.dataWrapped().script_description.unique_id));
         }
     }
 
     //return the script base description
-    return script_sdw.sd_sdw.serialize().release();
+    script_bs_dw.dataWrapped() = script_dw.dataWrapped().script_description;
+    return script_bs_dw.serialize().release();
 }

@@ -3,6 +3,7 @@
 
 #include "../language_editor/LuaHighlighter.h"
 
+#include <QDebug>
 
 using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -61,16 +62,46 @@ void ScriptDescriptionWidget::updateScripUI() {
     if(current_highlighter) delete(current_highlighter);
     ui->lineEditScriptName->setText(QString::fromStdString(script_wrapper.dataWrapped().script_description.name));
     ui->plainTextEditScriptDescirption->setPlainText(QString::fromStdString(script_wrapper.dataWrapped().script_description.description));
-    int index = ui->comboBoxsScirptLanguage->findData(QString::fromStdString(script_wrapper.dataWrapped().script_description.language));
+    ui->comboBoxsScirptLanguage->setCurrentIndex(ui->comboBoxsScirptLanguage->findText(QString::fromStdString(script_wrapper.dataWrapped().script_description.language)));
+    //ashow source code
+    ui->textEditSourceCode->setText(QString::fromStdString(script_wrapper.dataWrapped().script_content));
+
+    updateTextEditorFeatures();
+}
+
+void ScriptDescriptionWidget::fillScriptWithGUIValues() {
+    script_wrapper.dataWrapped().script_description.name = ui->lineEditScriptName->text().toStdString();
+    script_wrapper.dataWrapped().script_description.description = ui->plainTextEditScriptDescirption->document()->toPlainText().toStdString();
+    script_wrapper.dataWrapped().script_description.language = ui->comboBoxsScirptLanguage->currentText().toStdString();
+    script_wrapper.dataWrapped().script_content = ui->textEditSourceCode->document()->toPlainText().toStdString();
+    qDebug() << ui->comboBoxsScirptLanguage->currentText();
+}
+
+void ScriptDescriptionWidget::updateTextEditorFeatures() {
+    int index = ui->comboBoxsScirptLanguage->currentIndex();
     if ( index != -1 ) { // -1 for not found
-        ui->comboBoxsScirptLanguage->setCurrentIndex(index);
         switch(index){
         case 0:
             current_highlighter = new LuaHighlighter(ui->textEditSourceCode->document());
             break;
         }
     }
+}
 
-    //ashow source code
-    ui->textEditSourceCode->setText(QString::fromStdString(script_wrapper.dataWrapped().script_content));
+void ScriptDescriptionWidget::on_comboBoxsScirptLanguage_currentIndexChanged(int index) {
+    updateTextEditorFeatures();
+}
+
+void ScriptDescriptionWidget::on_pushButtonSaveScript_clicked() {
+    //update script class description
+    fillScriptWithGUIValues();
+
+    //save script
+    api_submitter.submitApiResult("ScriptDescriptionWidget::updateScript",
+                                  GET_CHAOS_API_PTR(script::SaveScript)->execute(script_wrapper.dataWrapped()));
+}
+
+void ScriptDescriptionWidget::on_pushButtonUpdateAll_clicked() {
+    api_submitter.submitApiResult("ScriptDescriptionWidget::loadFullScript",
+                                  GET_CHAOS_API_PTR(script::LoadFullScript)->execute(script_wrapper.dataWrapped().script_description));
 }

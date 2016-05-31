@@ -727,6 +727,7 @@
 		32B222E11BA71566009BBA9E /* NodeMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B222DD1BA71566009BBA9E /* NodeMonitor.cpp */; };
 		32B224C61CFC626F00B24B58 /* LoadFullScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B224C41CFC626F00B24B58 /* LoadFullScript.cpp */; };
 		32B224CA1CFC830600B24B58 /* LoadFullScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B224C71CFC82F500B24B58 /* LoadFullScript.cpp */; };
+		32B224CE1CFD8D3100B24B58 /* DatasetAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B224CC1CFD8D3100B24B58 /* DatasetAttribute.cpp */; };
 		32B299991BD900F1000D3716 /* CopyInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B299971BD900F1000D3716 /* CopyInstance.cpp */; };
 		32B2999C1BD92B18000D3716 /* CopyInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B2999A1BD92B18000D3716 /* CopyInstance.cpp */; };
 		32B2999D1BD92B18000D3716 /* CopyInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B2999B1BD92B18000D3716 /* CopyInstance.h */; };
@@ -833,6 +834,7 @@
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
 		32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95E15E4DBD3005D607E /* EventFactory.h */; };
 		32D09FE61BBC1EA30059A926 /* ProcInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D09FE41BBC1EA30059A926 /* ProcInfo.h */; };
+		32D20A271CFD972C00F9EDDB /* AlgorithmVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D20A251CFD972C00F9EDDB /* AlgorithmVariable.cpp */; };
 		32D421B317271572008A326E /* BsonFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D421B117271572008A326E /* BsonFragment.cpp */; };
 		32D421B417271572008A326E /* BsonFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D421B217271572008A326E /* BsonFragment.h */; };
 		32D5CB32179D233E00A8427E /* chaos_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D5CB31179D233E00A8427E /* chaos_types.h */; };
@@ -1970,6 +1972,8 @@
 		32B224C51CFC626F00B24B58 /* LoadFullScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadFullScript.h; sourceTree = "<group>"; };
 		32B224C71CFC82F500B24B58 /* LoadFullScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadFullScript.cpp; sourceTree = "<group>"; };
 		32B224C81CFC82F500B24B58 /* LoadFullScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadFullScript.h; sourceTree = "<group>"; };
+		32B224CC1CFD8D3100B24B58 /* DatasetAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetAttribute.cpp; sourceTree = "<group>"; };
+		32B224CD1CFD8D3100B24B58 /* DatasetAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetAttribute.h; sourceTree = "<group>"; };
 		32B299971BD900F1000D3716 /* CopyInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CopyInstance.cpp; sourceTree = "<group>"; };
 		32B299981BD900F1000D3716 /* CopyInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyInstance.h; sourceTree = "<group>"; };
 		32B2999A1BD92B18000D3716 /* CopyInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CopyInstance.cpp; sourceTree = "<group>"; };
@@ -2105,6 +2109,8 @@
 		32CFF95E15E4DBD3005D607E /* EventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventFactory.h; sourceTree = "<group>"; };
 		32D09FE31BBC1EA30059A926 /* ProcInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcInfo.cpp; sourceTree = "<group>"; };
 		32D09FE41BBC1EA30059A926 /* ProcInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcInfo.h; sourceTree = "<group>"; };
+		32D20A251CFD972C00F9EDDB /* AlgorithmVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlgorithmVariable.cpp; sourceTree = "<group>"; };
+		32D20A261CFD972C00F9EDDB /* AlgorithmVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlgorithmVariable.h; sourceTree = "<group>"; };
 		32D24FAF1A7AAD15002D65CE /* DataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataAccess.h; sourceTree = "<group>"; };
 		32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mongo_db_constants.h; sourceTree = "<group>"; };
 		32D421B117271572008A326E /* BsonFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BsonFragment.cpp; sourceTree = "<group>"; };
@@ -4160,6 +4166,17 @@
 			path = worker;
 			sourceTree = "<group>";
 		};
+		32B224CB1CFD8CF800B24B58 /* dataset */ = {
+			isa = PBXGroup;
+			children = (
+				32B224CC1CFD8D3100B24B58 /* DatasetAttribute.cpp */,
+				32B224CD1CFD8D3100B24B58 /* DatasetAttribute.h */,
+				32D20A251CFD972C00F9EDDB /* AlgorithmVariable.cpp */,
+				32D20A261CFD972C00F9EDDB /* AlgorithmVariable.h */,
+			);
+			path = dataset;
+			sourceTree = "<group>";
+		};
 		32B2999E1BDA7C7B000D3716 /* common */ = {
 			isa = PBXGroup;
 			children = (
@@ -4472,6 +4489,7 @@
 			isa = PBXGroup;
 			children = (
 				32D90D621CF4B0A700996F09 /* TemplatedDataSDWrapper.h */,
+				32B224CB1CFD8CF800B24B58 /* dataset */,
 				32D90D5B1CF4AA5B00996F09 /* script */,
 			);
 			path = data;
@@ -5473,6 +5491,7 @@
 				32CAC9E11AE6988200DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				32E09CED1C0DB2800069752F /* SnapshotDataAccess.cpp in Sources */,
 				328D0FF41A8A0862001A2001 /* UnitServerDataAccess.cpp in Sources */,
+				32D20A271CFD972C00F9EDDB /* AlgorithmVariable.cpp in Sources */,
 				32D90D561CF4A4E500996F09 /* ScriptGroupApi.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
@@ -5516,6 +5535,7 @@
 				3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */,
 				3221D7231CF5ADC9001BE971 /* ScriptDataAccess.cpp in Sources */,
 				32D90D5E1CF4AA8200996F09 /* Script.cpp in Sources */,
+				32B224CE1CFD8D3100B24B58 /* DatasetAttribute.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

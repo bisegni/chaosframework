@@ -346,7 +346,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_5">
+      <widget class="QPushButton" name="pushButtonUpdateAll">
        <property name="font">
         <font>
          <pointsize>11</pointsize>

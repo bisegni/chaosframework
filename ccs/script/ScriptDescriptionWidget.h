@@ -16,6 +16,8 @@ class ScriptDescriptionWidget :
         public ApiHandler {
     Q_OBJECT
 
+    void updateTextEditorFeatures();
+    void fillScriptWithGUIValues();
 public:
     explicit ScriptDescriptionWidget(QWidget *parent = 0);
     explicit ScriptDescriptionWidget(const chaos::service_common::data::script::Script& _script, QWidget *parent = 0);
@@ -27,6 +29,12 @@ protected:
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 private slots:
     void updateScripUI();
+    void on_comboBoxsScirptLanguage_currentIndexChanged(int index);
+
+    void on_pushButtonSaveScript_clicked();
+
+    void on_pushButtonUpdateAll_clicked();
+
 private:
     Ui::ScriptDescriptionWidget *ui;
     QSyntaxHighlighter *current_highlighter;

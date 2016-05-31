@@ -104,6 +104,30 @@ int MongoDBScriptDataAccess::updateScript(Script& script) {
         //load script content
         if(script.script_content.size()){query_builder << CHAOS_SBD_SCRIPT_CONTENT << script.script_content;}
         
+        if(script.dataset_attribute_list.size()) {
+            //decalre serialization wrapper
+            CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::dataset::DatasetAttribute, da_dw);
+            
+            mongo::BSONArrayBuilder dataset_array_builder;
+            
+            
+            int size = 0;
+            for(DatasetAttributeListIterator it = script.dataset_attribute_list.begin(),
+                end = script.dataset_attribute_list.end();
+                it != end;
+                it++) {
+                
+                //array builder for bson array
+                da_dw = *it;
+                std::auto_ptr<CDataWrapper> serialization = da_dw.serialize();
+                mongo::BSONObj dataset_attribute(serialization->getBSONRawData(size));
+                
+                dataset_array_builder << dataset_attribute;
+            }
+            //add dataset array to update bson
+            query_builder.appendArray(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION,
+                                      dataset_array_builder.arr());
+        }
         mongo::BSONObj u = query_builder.obj();
         
         DEBUG_CODE(SDA_DBG<<log_message("updateScriptContent",
@@ -127,7 +151,6 @@ int MongoDBScriptDataAccess::updateScript(Script& script) {
     return err;
 }
 
-//! Inherited Method
 int MongoDBScriptDataAccess::searchScript(ScriptBaseDescriptionListWrapper& script_list,
                                           const std::string& search_string,
                                           uint64_t last_sequence_id,

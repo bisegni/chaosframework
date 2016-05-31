@@ -1,10 +1,10 @@
 /*
- *	Script.cpp
+ *	AlgorithmVariable.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 24/05/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 31/05/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,8 +19,15 @@
  *    	limitations under the License.
  */
 
-#include <chaos_service_common/data/script/Script.h>
+
+#include <chaos_service_common/data/dataset/AlgorithmVariable.h>
 
 using namespace chaos::common::data;
 
-using namespace chaos::service_common::data::script;
+using namespace chaos::service_common::data::dataset;
+
+#pragma mark AlgorithmVariable
+
+
+
+#pragma mark AlgorithmVariableSDWrapper
