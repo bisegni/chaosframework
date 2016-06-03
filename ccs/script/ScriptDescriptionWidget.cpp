@@ -37,7 +37,7 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(const Script &_script,
 
     //set the model for the dataset managment
     ui->tableViewDataset->setModel(&editable_dataset_table_model);
-
+    editable_dataset_table_model.setDatasetAttributeList(&script_wrapper.dataWrapped().dataset_attribute_list);
     //update script
     api_submitter.submitApiResult("ScriptDescriptionWidget::loadFullScript",
                                   GET_CHAOS_API_PTR(script::LoadFullScript)->execute(script_wrapper.dataWrapped().script_description));

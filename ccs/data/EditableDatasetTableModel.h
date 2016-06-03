@@ -13,6 +13,7 @@ public:
     void addNewElemenToToDataset(const chaos::service_common::data::dataset::DatasetAttribute& new_dataset_attribute);
     void removeElementFromDataset(const QString& attribute_name,
                                   const chaos::DataType::DataSetAttributeIOAttribute direction);
+    void setDatasetAttributeList(chaos::service_common::data::dataset::DatasetAttributeList *master_attribute_list);
 protected:
     int getRowCount() const;
     int getColumnCount() const;

@@ -11,16 +11,26 @@ void EditableDatasetTableModel::addNewDatasetAttribute() {
     EditableDatasetTableModelEditDialog new_attribute_dialog;
     if(new_attribute_dialog.exec() == QDialog::Accepted) {
         //we have a new element to add
+        addNewElemenToToDataset(new_attribute_dialog.getDatasetAttribute());
     }
 }
 
 void EditableDatasetTableModel::addNewElemenToToDataset(const DatasetAttribute& new_dataset_attribute) {
-
+    if(!attribute_list) return;
+    beginResetModel();
+    attribute_list->push_back(new_dataset_attribute);
+    endResetModel();
 }
 
 void EditableDatasetTableModel::removeElementFromDataset(const QString& attribute_name,
                                                          const DataType::DataSetAttributeIOAttribute direction) {
 
+}
+
+void EditableDatasetTableModel::setDatasetAttributeList(chaos::service_common::data::dataset::DatasetAttributeList *master_attribute_list) {
+    beginResetModel();
+    attribute_list = master_attribute_list;
+    endResetModel();
 }
 
 int EditableDatasetTableModel::getRowCount() const {
