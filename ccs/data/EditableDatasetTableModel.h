@@ -9,6 +9,10 @@ class EditableDatasetTableModel:
         public ChaosAbstractTableModel {
 public:
     EditableDatasetTableModel(QObject *parent=0);
+    void addNewDatasetAttribute();
+    void addNewElemenToToDataset(const chaos::service_common::data::dataset::DatasetAttribute& new_dataset_attribute);
+    void removeElementFromDataset(const QString& attribute_name,
+                                  const chaos::DataType::DataSetAttributeIOAttribute direction);
 protected:
     int getRowCount() const;
     int getColumnCount() const;
@@ -16,6 +20,8 @@ protected:
     QVariant getCellData(int row, int column) const;
     bool setCellData(const QModelIndex &index, const QVariant &value);
     bool isCellEditable(const QModelIndex &index) const;
+    QVariant getTooltipTextForData(int row, int column) const;
+    QVariant getTextAlignForData(int row, int column) const;
 
     QString decodeTypeToString(chaos::DataType::DataType type) const;
     chaos::DataType::DataType decodeStringToType(const QString &type_string);

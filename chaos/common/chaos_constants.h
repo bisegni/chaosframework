@@ -663,6 +663,12 @@ namespace chaos {
             SUB_TYPE_UNSIGNED = 0x200,
         } BinarySubtype;
         
+        //subtype helper macro
+#define CHAOS_SUBTYPE_IS_UNSIGNED(s) ((s & chaos::DataType::SUB_TYPE_UNSIGNED) == chaos::DataType::SUB_TYPE_UNSIGNED)
+#define CHAOS_SUBTYPE_UNWRAP(s) (s & ~chaos::DataType::SUB_TYPE_UNSIGNED)
+#define CHAOS_SUBTYPE_SET_UNSIGNED(s)(s = (chaos::DataType::BinarySubtype)(s | chaos::DataType::SUB_TYPE_UNSIGNED))
+#define CHAOS_SUBTYPE_SET_SIGNED(s)(s = (chaos::DataType::BinarySubtype)(s & ~chaos::DataType::SUB_TYPE_UNSIGNED))
+        
         typedef enum DataTypeModfier {
             //!bool variable length
             MODIFIER_UNSIGNED = 0

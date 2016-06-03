@@ -6,7 +6,7 @@
 
 #include "../language_editor/LuaHighlighter.h"
 #include "../api_async_processor/ApiSubmitter.h"
-
+#include "../data/EditableDatasetTableModel.h"
 namespace Ui {
 class ScriptDescriptionWidget;
 }
@@ -35,8 +35,11 @@ private slots:
 
     void on_pushButtonUpdateAll_clicked();
 
+    void on_pushButtonAddAttributeToDataset_clicked();
+
 private:
     Ui::ScriptDescriptionWidget *ui;
+    EditableDatasetTableModel editable_dataset_table_model;
     QSyntaxHighlighter *current_highlighter;
     ApiSubmitter api_submitter;
     //declre the script serialization wrapper

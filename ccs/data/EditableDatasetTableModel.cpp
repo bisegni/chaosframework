@@ -1,17 +1,34 @@
 #include "EditableDatasetTableModel.h"
-
+#include "editor/dataset/EditableDatasetTableModelEditDialog.h"
+using namespace chaos;
 using namespace chaos::service_common::data::dataset;
 
 EditableDatasetTableModel::EditableDatasetTableModel(QObject *parent):
     ChaosAbstractTableModel(parent),
     attribute_list(NULL){}
 
+void EditableDatasetTableModel::addNewDatasetAttribute() {
+    EditableDatasetTableModelEditDialog new_attribute_dialog;
+    if(new_attribute_dialog.exec() == QDialog::Accepted) {
+        //we have a new element to add
+    }
+}
+
+void EditableDatasetTableModel::addNewElemenToToDataset(const DatasetAttribute& new_dataset_attribute) {
+
+}
+
+void EditableDatasetTableModel::removeElementFromDataset(const QString& attribute_name,
+                                                         const DataType::DataSetAttributeIOAttribute direction) {
+
+}
+
 int EditableDatasetTableModel::getRowCount() const {
     return (attribute_list?attribute_list->size():0);
 }
 
 int EditableDatasetTableModel::getColumnCount() const {
-    return 5;
+    return 3;
 }
 
 QString EditableDatasetTableModel::getHeaderForColumn(int column) const {
@@ -106,5 +123,13 @@ bool EditableDatasetTableModel::setCellData(const QModelIndex &index, const QVar
 }
 
 bool EditableDatasetTableModel::isCellEditable(const QModelIndex &index) const {
-    return true;
+    return false;
+}
+
+QVariant EditableDatasetTableModel::getTooltipTextForData(int row, int column) const {
+
+}
+
+QVariant EditableDatasetTableModel::getTextAlignForData(int row, int column) const {
+
 }

@@ -35,6 +35,9 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(const Script &_script,
     sizes << (size().width()*1/5) << (size().width()*4/5);
     ui->splitter->setSizes(sizes);
 
+    //set the model for the dataset managment
+    ui->tableViewDataset->setModel(&editable_dataset_table_model);
+
     //update script
     api_submitter.submitApiResult("ScriptDescriptionWidget::loadFullScript",
                                   GET_CHAOS_API_PTR(script::LoadFullScript)->execute(script_wrapper.dataWrapped().script_description));
@@ -104,4 +107,8 @@ void ScriptDescriptionWidget::on_pushButtonSaveScript_clicked() {
 void ScriptDescriptionWidget::on_pushButtonUpdateAll_clicked() {
     api_submitter.submitApiResult("ScriptDescriptionWidget::loadFullScript",
                                   GET_CHAOS_API_PTR(script::LoadFullScript)->execute(script_wrapper.dataWrapped().script_description));
+}
+
+void ScriptDescriptionWidget::on_pushButtonAddAttributeToDataset_clicked() {
+    editable_dataset_table_model.addNewDatasetAttribute();
 }
