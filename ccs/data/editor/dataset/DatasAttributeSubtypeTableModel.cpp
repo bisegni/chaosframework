@@ -44,7 +44,7 @@ QString DatasAttributeSubtypeTableModel::getHeaderForColumn(int column) const {
 
 QVariant DatasAttributeSubtypeTableModel::getCellData(int row, int column) const {
     CHAOS_ASSERT(dataset_subtype_list_ptr)
-            bool is_unsigned = CHAOS_SUBTYPE_IS_UNSIGNED((*dataset_subtype_list_ptr)[row]);
+    bool is_unsigned = CHAOS_SUBTYPE_IS_UNSIGNED((*dataset_subtype_list_ptr)[row]);
     chaos::DataType::BinarySubtype bin_sub_type = (chaos::DataType::BinarySubtype)CHAOS_SUBTYPE_UNWRAP((*dataset_subtype_list_ptr)[row]);
     switch(column) {
     case 0:{
@@ -109,9 +109,9 @@ QVariant DatasAttributeSubtypeTableModel::getTooltipTextForData(int row, int col
 }
 
 bool DatasAttributeSubtypeTableModel::setCellData(const QModelIndex &index, const QVariant &value) {
-    bool is_unsigned = CHAOS_SUBTYPE_IS_UNSIGNED((*dataset_subtype_list_ptr)[index.row()]);
     switch(index.column()) {
     case 0:{
+        bool is_unsigned = CHAOS_SUBTYPE_IS_UNSIGNED((*dataset_subtype_list_ptr)[index.row()]);
         if(value.toString().compare("Boolean") == 0) {
             (*dataset_subtype_list_ptr)[index.row()] = chaos::DataType::SUB_TYPE_BOOLEAN;
         } else if(value.toString().compare("Char") == 0) {

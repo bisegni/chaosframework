@@ -40,7 +40,7 @@ namespace chaos {
 #define CHAOS_ALGO_NODE_DS_ATTR  "algo_variable_node_ds_attr"
 #define CHAOS_ALGO_NODE_UID      "algo_variable_node_uid"
                 
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::DataType::BinarySubtype, AlgorithmSubtypeList)
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(unsigned int, AlgorithmSubtypeList)
                 
                 //! The description of a n attribute of a CHAOS dataset
                 struct AlgorithmVariable {

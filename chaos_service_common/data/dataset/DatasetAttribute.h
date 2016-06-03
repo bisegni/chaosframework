@@ -31,7 +31,7 @@ namespace chaos {
         namespace data {
             namespace dataset {
                 
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::DataType::BinarySubtype, DatasetSubtypeList)
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(unsigned int, DatasetSubtypeList)
                 
                 //! The description of a n attribute of a CHAOS dataset
                 struct DatasetAttribute {
