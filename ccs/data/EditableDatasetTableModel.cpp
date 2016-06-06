@@ -51,7 +51,7 @@ int EditableDatasetTableModel::getRowCount() const {
 }
 
 int EditableDatasetTableModel::getColumnCount() const {
-    return 3;
+    return 4;
 }
 
 QString EditableDatasetTableModel::getHeaderForColumn(int column) const {
@@ -61,9 +61,12 @@ QString EditableDatasetTableModel::getHeaderForColumn(int column) const {
         result = QString("Name");
         break;
     case 1:
-        result = QString("Type");
+        result = QString("Dir");
         break;
     case 2:
+        result = QString("Type");
+        break;
+    case 3:
         result = QString("Description");
         break;
     }
@@ -79,27 +82,24 @@ QVariant EditableDatasetTableModel::getCellData(int row, int column) const {
         result = QString::fromStdString(attribute_ref.name);
         break;
     case 1:
-        result =  QString::fromStdString(chaos::DataType::typeDescriptionByCode(attribute_ref.type));
-        break;
-    case 2:
-        result = QString::fromStdString(attribute_ref.description);
-        break;
-    }
-    return result;
-}
+        switch(attribute_ref.direction){
+        case chaos::DataType::Input:
+            return tr("Input");
+            break;
+        case chaos::DataType::Output:
+            return tr("Output");
+            break;
+        case chaos::DataType::Bidirectional:
+            return tr("Bidirectional");
+            break;
+        }
 
-bool EditableDatasetTableModel::setCellData(const QModelIndex &index, const QVariant &value) {
-    bool result = true;
-    DatasetAttribute &attribute_ref =  (*attribute_list)[index.row()];
-    switch (index.column()) {
-    case 0:
-        attribute_ref.name = value.toString().toStdString();
-        break;
-    case 1:
-        attribute_ref.type = chaos::DataType::typeCodeByDescription(value.toString().toStdString());
         break;
     case 2:
-        attribute_ref.description = value.toString().toStdString();
+        result = QString::fromStdString(chaos::DataType::typeDescriptionByCode(attribute_ref.type));
+        break;
+    case 3:
+        result = QString::fromStdString(attribute_ref.description);
         break;
     }
     return result;

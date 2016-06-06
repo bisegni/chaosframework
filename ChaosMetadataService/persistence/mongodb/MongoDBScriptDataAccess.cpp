@@ -92,44 +92,18 @@ int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
 
 int MongoDBScriptDataAccess::updateScript(Script& script) {
     int err = 0;
+    int size = 0;
     mongo::BSONObjBuilder query_builder;
     CHAOS_ASSERT(utility_data_access)
     try {
         mongo::BSONObj q = BSON("seq"<< (long long)script.script_description.unique_id);
         
-        query_builder << "seq"<< (long long)script.script_description.unique_id;
-        if(script.script_description.name.size()){query_builder << CHAOS_SBD_NAME << script.script_description.name;}
-        if(script.script_description.name.size()){query_builder << CHAOS_SBD_DESCRIPTION << script.script_description.description;}
-        if(script.script_description.name.size()){query_builder << CHAOS_SBD_LANGUAGE << script.script_description.language;}
+        //compose bson update
+        CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::script::Script, s_dw);
+        s_dw.dataWrapped() = script;
         
-        //load script content
-        if(script.script_content.size()){query_builder << CHAOS_SBD_SCRIPT_CONTENT << script.script_content;}
-        
-        if(script.dataset_attribute_list.size()) {
-            //decalre serialization wrapper
-            CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::dataset::DatasetAttribute, da_dw);
-            
-            mongo::BSONArrayBuilder dataset_array_builder;
-            
-            
-            int size = 0;
-            for(DatasetAttributeListIterator it = script.dataset_attribute_list.begin(),
-                end = script.dataset_attribute_list.end();
-                it != end;
-                it++) {
-                
-                //array builder for bson array
-                da_dw = *it;
-                std::auto_ptr<CDataWrapper> serialization = da_dw.serialize();
-                mongo::BSONObj dataset_attribute(serialization->getBSONRawData(size));
-                
-                dataset_array_builder << dataset_attribute;
-            }
-            //add dataset array to update bson
-            query_builder.appendArray(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION,
-                                      dataset_array_builder.arr());
-        }
-        mongo::BSONObj u = query_builder.obj();
+        std::auto_ptr<CDataWrapper> serialization = s_dw.serialize();
+        mongo::BSONObj u(serialization->getBSONRawData(size));
         
         DEBUG_CODE(SDA_DBG<<log_message("updateScriptContent",
                                         "update",
@@ -221,13 +195,10 @@ int MongoDBScriptDataAccess::loadScript(const chaos::service_common::data::scrip
                 SDA_ERR << CHAOS_FORMAT("The script %1%[%2%] has not been found", %script_base_description.unique_id%script_base_description.name);
             } else {
                 // fill script with base description
-                script.script_description.unique_id = (uint64_t)element_found.getField("seq").numberLong();
-                if(element_found.hasField(CHAOS_SBD_NAME)){script.script_description.name = element_found.getField(CHAOS_SBD_NAME).String();};
-                if(element_found.hasField(CHAOS_SBD_DESCRIPTION)){script.script_description.description = element_found.getField(CHAOS_SBD_DESCRIPTION).String();}
-                if(element_found.hasField(CHAOS_SBD_LANGUAGE)){script.script_description.language = element_found.getField(CHAOS_SBD_LANGUAGE).String();}
-                
-                //load script content
-                if(load_source_code && element_found.hasField(CHAOS_SBD_SCRIPT_CONTENT)){script.script_content = element_found.getField(CHAOS_SBD_SCRIPT_CONTENT).String();}
+                CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::script::Script, s_dw);
+                CDataWrapper element_found_cdw(element_found.objdata());
+                s_dw.deserialize(&element_found_cdw);
+                script = s_dw.dataWrapped();
             }
         }
         

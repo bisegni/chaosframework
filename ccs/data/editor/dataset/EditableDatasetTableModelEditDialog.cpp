@@ -19,7 +19,7 @@ EditableDatasetTableModelEditDialog::~EditableDatasetTableModelEditDialog() {
 void EditableDatasetTableModelEditDialog::setDatsetAttribute(const chaos::service_common::data::dataset::DatasetAttribute& dataset_attribute) {
     editable_dataset_attribute = dataset_attribute;
     ui->widgetAttributeSubtypesEditor->setDatasetAttrbiute(&editable_dataset_attribute);
-    fillAttributeFromUI();
+    fillUIFromAttribute();
 }
 
 void EditableDatasetTableModelEditDialog::fillUIFromAttribute() {

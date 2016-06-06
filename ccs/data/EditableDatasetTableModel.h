@@ -21,7 +21,6 @@ protected:
     int getColumnCount() const;
     QString getHeaderForColumn(int column) const;
     QVariant getCellData(int row, int column) const;
-    bool setCellData(const QModelIndex &index, const QVariant &value);
     bool isCellEditable(const QModelIndex &index) const;
     QVariant getTooltipTextForData(int row, int column) const;
     QVariant getTextAlignForData(int row, int column) const;

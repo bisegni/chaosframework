@@ -62,14 +62,19 @@ QString ScriptDescriptionWidget::getScriptName() {
 void ScriptDescriptionWidget::onApiDone(const QString& tag,
                                         QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
     //deserialize the script information
-    script_wrapper.deserialize(api_result.data());
-    QMetaObject::invokeMethod(this,
-                              "updateScripUI",
-                              Qt::QueuedConnection);
+    if(tag.compare("ScriptDescriptionWidget::loadFullScript") == 0) {
+        script_wrapper.deserialize(api_result.data());
+        QMetaObject::invokeMethod(this,
+                                  "updateScripUI",
+                                  Qt::QueuedConnection);
+    }
 }
 
 void ScriptDescriptionWidget::updateScripUI() {
-    if(current_highlighter) delete(current_highlighter);
+    if(current_highlighter) {
+        delete(current_highlighter);
+        current_highlighter = NULL;
+    }
     ui->lineEditScriptName->setText(QString::fromStdString(script_wrapper.dataWrapped().script_description.name));
     ui->plainTextEditScriptDescirption->setPlainText(QString::fromStdString(script_wrapper.dataWrapped().script_description.description));
     ui->comboBoxsScirptLanguage->setCurrentIndex(ui->comboBoxsScirptLanguage->findText(QString::fromStdString(script_wrapper.dataWrapped().script_description.language)));
@@ -77,6 +82,9 @@ void ScriptDescriptionWidget::updateScripUI() {
     ui->textEditSourceCode->setText(QString::fromStdString(script_wrapper.dataWrapped().script_content));
 
     updateTextEditorFeatures();
+
+    //update dataset
+    editable_dataset_table_model.setDatasetAttributeList(&script_wrapper.dataWrapped().dataset_attribute_list);
 }
 
 void ScriptDescriptionWidget::fillScriptWithGUIValues() {
@@ -124,5 +132,5 @@ void ScriptDescriptionWidget::on_comboBoxTypes_currentTextChanged(const QString 
 }
 
 void ScriptDescriptionWidget::on_tableViewDataset_doubleClicked(const QModelIndex &index) {
-   editable_dataset_table_model.editDatasetAttributeAtIndex(index.row());
+    editable_dataset_table_model.editDatasetAttributeAtIndex(index.row());
 }

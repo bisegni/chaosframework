@@ -158,7 +158,11 @@ namespace chaos {
                         CHAOS_DECLARE_SD_WRAPPER_VAR(ScriptBaseDescription, sd_dw);
                         CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::dataset::AlgorithmVariable, algo_var_dw);
                         CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::dataset::DatasetAttribute, ds_attr_dw);
-                        
+
+                        //clear all ol data on the list
+                        dataWrapped().variable_list.clear();
+                        dataWrapped().dataset_attribute_list.clear();
+
                         const std::string variable_ser_key = "variables";
                         const std::string ds_attr_ser_key = chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION;
                         

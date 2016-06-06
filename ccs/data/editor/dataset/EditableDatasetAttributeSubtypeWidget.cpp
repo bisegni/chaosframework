@@ -11,7 +11,7 @@ EditableDatasetAttributeSubtypeWidget::EditableDatasetAttributeSubtypeWidget(QWi
     //add model and delegate to table for subtypes
     QStringList subtypes_for_combo;
     subtypes_for_combo << tr("Boolean")<< tr("Char")<< tr("Int8")<< tr("Int16")<< tr("Int32")<< tr("Int64")<< tr("Double")<< tr("String");
-    ui->tableViewSubtypes->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->tableViewSubtypes->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableViewSubtypes->setModel(&dataset_subtypes_table_model);
     ui->tableViewSubtypes->setItemDelegateForColumn(0, new ComboBoxDelegate(subtypes_for_combo,
                                                                             this));
