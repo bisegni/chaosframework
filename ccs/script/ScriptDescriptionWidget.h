@@ -37,6 +37,10 @@ private slots:
 
     void on_pushButtonAddAttributeToDataset_clicked();
 
+    void on_comboBoxTypes_currentTextChanged(const QString &type_selected);
+
+    void on_tableViewDataset_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::ScriptDescriptionWidget *ui;
     EditableDatasetTableModel editable_dataset_table_model;

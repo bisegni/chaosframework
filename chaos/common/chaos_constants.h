@@ -23,6 +23,8 @@
 #include <chaos/common/chaos_errors.h>
 #include <chaos/common/batch_command/BatchCommandConstants.h>
 
+#include <string>
+#include <algorithm>
 
 namespace chaos {
     
@@ -562,33 +564,33 @@ namespace chaos {
         static const char * const CONTROL_UNIT_APPLY_INPUT_DATASET_ATTRIBUTE_CHANGE_SET  = "cunrpc_ida_cs";
         
     }
-
+    
     /** @defgroup ExecutionUnitNodeDefinitionKey List of execution unit node type attribute key
      *  @{
      */
-        //! Name space for grupping key for the execution unit node type
+    //! Name space for grupping key for the execution unit node type
     namespace ExecutionUnitNodeDefinitionKey {
-            //! array of object that describe the input variable [string]
+        //! array of object that describe the input variable [string]
         static const char * const EXECUTION_UNIT_DESCRIPTION        = "eudk_description";
-            //! array of object that describe the input variable [array object]
+        //! array of object that describe the input variable [array object]
         static const char * const EXECUTION_UNIT_VARIABLE_LIST      = "eudk_var_list";
-            //! the alias associated to the variable [string]
+        //! the alias associated to the variable [string]
         static const char * const EXECUTION_UNIT_VAR_ALIAS          = "eudk_var_alias";
-            //! the description associated to the variable [string]
+        //! the description associated to the variable [string]
         static const char * const EXECUTION_UNIT_VAR_DESCRIPTION    = "eudk_var_description";
-            //! the type associated to the variable [int32]
+        //! the type associated to the variable [int32]
         static const char * const EXECUTION_UNIT_VAR_TYPE           = "eudk_var_type";
-            //! the direction(in, out, bidirectional) associated to the variable [int32]
+        //! the direction(in, out, bidirectional) associated to the variable [int32]
         static const char * const EXECUTION_UNIT_VAR_DIRECTION      = "eudk_var_direction";
-            //! the mandatory option associated to the variable [boolean]
+        //! the mandatory option associated to the variable [boolean]
         static const char * const EXECUTION_UNIT_VAR_MANDATORY      = "eudk_var_mandatory";
-            //! the dataset attribute associated to the variable[string]
+        //! the dataset attribute associated to the variable[string]
         static const char * const EXECUTION_UNIT_VAR_DATASET_ATTRIBUTE      = ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME;
-            //! the dataset attribute associated to the variable[string]
+        //! the dataset attribute associated to the variable[string]
         static const char * const EXECUTION_UNIT_VAR_NODE_UID       = NodeDefinitionKey::NODE_UNIQUE_ID;
     }
     /** @} */ // end of ExecutionUnitNodeDefinitionKey
-
+    
     /** @defgroup Contorl unit system key
      *  This is the collection of the key representing the property that are exposed into system dataset
      *  @{
@@ -620,8 +622,10 @@ namespace chaos {
     namespace DataType {
         //!typede for datatype
         typedef enum DataType {
+            //!bool variable length
+            TYPE_BOOLEAN = 0,
             //!Integer 32 bit length
-            TYPE_INT32 = 0,
+            TYPE_INT32,
             //!Integer 64 bit length
             TYPE_INT64,
             //!Double 64 bit length
@@ -630,13 +634,60 @@ namespace chaos {
             TYPE_STRING,
             //!byte array variable length
             TYPE_BYTEARRAY,
-            //!bool variable length
-            TYPE_BOOLEAN,
+            
             TYPE_CLUSTER,
             //!modifier to be ored to normal data types
             TYPE_ACCESS_ARRAY=0x100,
             TYPE_UNDEFINED
         } DataType;
+        
+        
+        //! return the name of the type by the index
+        static std::string inline typeDescriptionByCode(DataType type) {
+            switch(type) {
+                    //!bool variable length
+                case TYPE_BOOLEAN:
+                    return "Boolean";
+                    //!Integer 32 bit length
+                case TYPE_INT32:
+                    return "Int32";
+                    //!Integer 64 bit length
+                case TYPE_INT64:
+                    return "Int64";
+                    //!Double 64 bit length
+                case TYPE_DOUBLE:
+                    return "Double";
+                    //!C string variable length
+                case TYPE_STRING:
+                    return "String";
+                    //!byte array variable length
+                case TYPE_BYTEARRAY:
+                    return "Binary";
+                default:
+                    return "Undefined";
+            }
+        }
+        
+        //! return the name of the type by the index
+        static DataType inline typeCodeByDescription(const std::string& _type_description) {
+            std::string type_description = _type_description;
+            std::transform(type_description.begin(), type_description.end(), type_description.begin(), ::tolower);
+            if(type_description.compare("boolean") == 0) {
+                return TYPE_BOOLEAN;
+            } else if(type_description.compare("int32") == 0) {
+                return TYPE_INT32;
+            } else if(type_description.compare("int64") == 0) {
+                return TYPE_INT64;
+            } else if(type_description.compare("double") == 0) {
+                return TYPE_BOOLEAN;
+            } else if(type_description.compare("string") == 0) {
+                return TYPE_STRING;
+            } else if(type_description.compare("binary") == 0) {
+                return TYPE_BYTEARRAY;
+            } else {
+                return TYPE_UNDEFINED;
+            }
+        }
         
         typedef enum BinarySubtype {
             //!bool variable length
@@ -668,6 +719,74 @@ namespace chaos {
 #define CHAOS_SUBTYPE_UNWRAP(s)         (s & ~chaos::DataType::SUB_TYPE_UNSIGNED)
 #define CHAOS_SUBTYPE_SET_UNSIGNED(s)   (s |= chaos::DataType::SUB_TYPE_UNSIGNED)
 #define CHAOS_SUBTYPE_SET_SIGNED(s)     (s &= ~chaos::DataType::SUB_TYPE_UNSIGNED)
+        
+        //! return the name of the type by the index
+        static std::string inline subtypeDescriptionByIndex( unsigned int sub_type) {
+            BinarySubtype _subtype = (BinarySubtype)CHAOS_SUBTYPE_UNWRAP(sub_type);
+            switch(_subtype) {
+                case SUB_TYPE_BOOLEAN:
+                    return "Boolean";
+                    //!Integer char bit length
+                case SUB_TYPE_CHAR:
+                    return "Char";
+                    //!Integer 8 bit length
+                case SUB_TYPE_INT8:
+                    return "INt8";
+                    //!Integer 16 bit length
+                case SUB_TYPE_INT16:
+                    return "Int16";
+                    //!Integer 32 bit length
+                case SUB_TYPE_INT32:
+                    return "Int32";
+                    //!Integer 64 bit length
+                case SUB_TYPE_INT64:
+                    return "Int64";
+                    //!Double 64 bit length
+                case SUB_TYPE_DOUBLE:
+                    return "Double";
+                    //!C string variable length
+                case SUB_TYPE_STRING:
+                    return "String";
+                    //! the subtype is represented by a specific mime type tagged in specific dataset constants
+                case SUB_TYPE_MIME:
+                    return "Mime";
+                    //! no specific encoding
+                case SUB_TYPE_NONE:
+                    return "Undefined";
+                default:
+                    return "Invalid";
+            }
+        }
+        
+        //! return the name of the type by the index
+        static BinarySubtype inline subtypeCodeByDescription(const std::string& _subtype_description) {
+            std::string subtype_description = _subtype_description;
+            std::transform(subtype_description.begin(), subtype_description.end(), subtype_description.begin(), ::tolower);
+            
+            if(subtype_description.compare("boolean") == 0) {
+                return SUB_TYPE_BOOLEAN;
+            } else if(subtype_description.compare("char") == 0) {
+                return SUB_TYPE_CHAR;
+            } else if(subtype_description.compare("int8") == 0) {
+                return SUB_TYPE_INT8;
+            } else if(subtype_description.compare("int16") == 0) {
+                return SUB_TYPE_INT16;
+            } else if(subtype_description.compare("int32") == 0) {
+                return SUB_TYPE_INT32;
+            } else if(subtype_description.compare("int64") == 0) {
+                return SUB_TYPE_INT64;
+            } else if(subtype_description.compare("double") == 0) {
+                return SUB_TYPE_DOUBLE;
+            } else if(subtype_description.compare("string") == 0) {
+                return SUB_TYPE_STRING;
+            } else if(subtype_description.compare("mime") == 0) {
+                return SUB_TYPE_MIME;
+            } else if(subtype_description.compare("undefined") == 0) {
+                return SUB_TYPE_NONE;
+            } else {
+                return SUB_TYPE_NONE;
+            }
+        }
         
         typedef enum DataTypeModfier {
             //!bool variable length

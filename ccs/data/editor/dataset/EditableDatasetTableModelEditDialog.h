@@ -23,6 +23,8 @@ private slots:
 
     void on_pushButtonCancel_clicked();
 
+    void on_comboBoxTypes_currentTextChanged(const QString &selected_type);
+
 private:
     void fillUIFromAttribute();
     void fillAttributeFromUI();

@@ -125,11 +125,15 @@ namespace chaos {
                     
                     Script(const Script& copy_src):
                     script_description(copy_src.script_description),
-                    script_content(copy_src.script_content){}
+                    script_content(copy_src.script_content),
+                    variable_list(copy_src.variable_list),
+                    dataset_attribute_list(copy_src.dataset_attribute_list){}
                     
                     Script& operator=(Script const &rhs) {
                         script_description = rhs.script_description;
                         script_content = rhs.script_content;
+                        variable_list = rhs.variable_list;
+                        dataset_attribute_list = rhs.dataset_attribute_list;
                         return *this;
                     };
                 };

@@ -92,6 +92,7 @@ namespace chaos {
                         dataWrapped().binary_subtype_list.clear();
                         dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, "");
                         dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, "");
+                        dataWrapped().direction = static_cast<chaos::DataType::DataSetAttributeIOAttribute>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION, chaos::DataType::Bidirectional));
                         dataWrapped().type = static_cast<chaos::DataType::DataType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, chaos::DataType::TYPE_UNDEFINED));
                         dataWrapped().min_value = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, "");
                         dataWrapped().max_value = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, "");
@@ -121,17 +122,18 @@ namespace chaos {
                         std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                         data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, dataWrapped().name);
                         data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, dataWrapped().description);
+                        data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION, dataWrapped().direction);
                         data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, dataWrapped().type);
                         data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, dataWrapped().min_value);
                         data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, dataWrapped().max_value);
                         data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, dataWrapped().default_value);
-                        data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY, dataWrapped().type);
+                        data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY, dataWrapped().binary_cardinality);
                         if((dataWrapped().type == DataType::TYPE_BYTEARRAY) &&
                            dataWrapped().binary_subtype_list.size()) {
                             if(dataWrapped().binary_subtype_list.size() > 1) {
                                 //multiple value
                                 for(DatasetSubtypeListIterator it = dataWrapped().binary_subtype_list.begin(),
-                                    end = dataWrapped().binary_subtype_list.begin();
+                                    end = dataWrapped().binary_subtype_list.end();
                                     it != end;
                                     it++) {
                                     data_serialized->appendInt32ToArray(*it);

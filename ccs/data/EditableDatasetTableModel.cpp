@@ -27,6 +27,19 @@ void EditableDatasetTableModel::removeElementFromDataset(const QString& attribut
 
 }
 
+void EditableDatasetTableModel::editDatasetAttributeAtIndex(unsigned int dsattr_index) {
+    if(dsattr_index >= (*attribute_list).size()) return;
+
+    EditableDatasetTableModelEditDialog new_attribute_dialog;
+    new_attribute_dialog.setDatsetAttribute((*attribute_list)[dsattr_index]);
+    if(new_attribute_dialog.exec() == QDialog::Accepted) {
+        //we have a new element to add
+        beginResetModel();
+        (*attribute_list)[dsattr_index] = new_attribute_dialog.getDatasetAttribute();
+        endResetModel();
+    }
+}
+
 void EditableDatasetTableModel::setDatasetAttributeList(chaos::service_common::data::dataset::DatasetAttributeList *master_attribute_list) {
     beginResetModel();
     attribute_list = master_attribute_list;
@@ -57,46 +70,6 @@ QString EditableDatasetTableModel::getHeaderForColumn(int column) const {
     return result;
 }
 
-QString EditableDatasetTableModel::decodeTypeToString(chaos::DataType::DataType type) const {
-    switch (type) {
-    case chaos::DataType::TYPE_BOOLEAN:{
-        return tr("Boolean");
-    }
-    case chaos::DataType::TYPE_INT32:{
-        return tr("Int32");
-    }
-    case chaos::DataType::TYPE_INT64:{
-        return tr("Int64");
-    }
-    case chaos::DataType::TYPE_DOUBLE:{
-        return tr("Double");
-    }
-    case chaos::DataType::TYPE_STRING:{
-        return tr("String");;
-    }
-    case chaos::DataType::TYPE_BYTEARRAY:{
-        return tr("Binary");
-    }
-    default:
-        return tr("UNKNOWN");
-    }
-}
-
-chaos::DataType::DataType EditableDatasetTableModel::decodeStringToType(const QString& type_string) {
-    if(type_string.compare("Boolean")) {
-        return chaos::DataType::TYPE_BOOLEAN;
-    } else if(type_string.compare("Int32")) {
-        return chaos::DataType::TYPE_INT32;
-    } else if(type_string.compare("Int64")) {
-        return chaos::DataType::TYPE_INT64;
-    } else if(type_string.compare("Double")) {
-        return chaos::DataType::TYPE_BOOLEAN;
-    } else if(type_string.compare("String")) {
-        return chaos::DataType::TYPE_STRING;
-    } else if(type_string.compare("Binary")) {
-        return chaos::DataType::TYPE_BYTEARRAY;
-    }
-}
 
 QVariant EditableDatasetTableModel::getCellData(int row, int column) const {
     QVariant result;
@@ -106,7 +79,7 @@ QVariant EditableDatasetTableModel::getCellData(int row, int column) const {
         result = QString::fromStdString(attribute_ref.name);
         break;
     case 1:
-        result = decodeTypeToString(attribute_ref.type);
+        result =  QString::fromStdString(chaos::DataType::typeDescriptionByCode(attribute_ref.type));
         break;
     case 2:
         result = QString::fromStdString(attribute_ref.description);
@@ -123,10 +96,10 @@ bool EditableDatasetTableModel::setCellData(const QModelIndex &index, const QVar
         attribute_ref.name = value.toString().toStdString();
         break;
     case 1:
-        attribute_ref.type = decodeStringToType(value.toString());
+        attribute_ref.type = chaos::DataType::typeCodeByDescription(value.toString().toStdString());
         break;
     case 2:
-        attribute_ref.description = QString::fromStdString(attribute_ref.description).toStdString();
+        attribute_ref.description = value.toString().toStdString();
         break;
     }
     return result;
@@ -137,9 +110,9 @@ bool EditableDatasetTableModel::isCellEditable(const QModelIndex &index) const {
 }
 
 QVariant EditableDatasetTableModel::getTooltipTextForData(int row, int column) const {
-
+    return getCellData(row, column);
 }
 
 QVariant EditableDatasetTableModel::getTextAlignForData(int row, int column) const {
-
+    return QVariant();
 }

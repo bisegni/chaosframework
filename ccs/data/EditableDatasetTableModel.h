@@ -10,11 +10,13 @@ class EditableDatasetTableModel:
 public:
     EditableDatasetTableModel(QObject *parent=0);
     void addNewDatasetAttribute();
+    void editDatasetAttributeAtIndex(unsigned int dsattr_index);
+    void setDatasetAttributeList(chaos::service_common::data::dataset::DatasetAttributeList *master_attribute_list);
+protected:
     void addNewElemenToToDataset(const chaos::service_common::data::dataset::DatasetAttribute& new_dataset_attribute);
     void removeElementFromDataset(const QString& attribute_name,
                                   const chaos::DataType::DataSetAttributeIOAttribute direction);
-    void setDatasetAttributeList(chaos::service_common::data::dataset::DatasetAttributeList *master_attribute_list);
-protected:
+
     int getRowCount() const;
     int getColumnCount() const;
     QString getHeaderForColumn(int column) const;
@@ -23,9 +25,6 @@ protected:
     bool isCellEditable(const QModelIndex &index) const;
     QVariant getTooltipTextForData(int row, int column) const;
     QVariant getTextAlignForData(int row, int column) const;
-
-    QString decodeTypeToString(chaos::DataType::DataType type) const;
-    chaos::DataType::DataType decodeStringToType(const QString &type_string);
 private:
     //! reference to attribute list
     chaos::service_common::data::dataset::DatasetAttributeList *attribute_list;

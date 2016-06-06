@@ -18,6 +18,11 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(QWidget *parent) :
     sizes << (size().width()*1/5) << (size().width()*4/5);
     ui->splitter->setSizes(sizes);
 
+    //set the model for the dataset managment
+    ui->tableViewDataset->setModel(&editable_dataset_table_model);
+    ui->tableViewDataset->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    editable_dataset_table_model.setDatasetAttributeList(&script_wrapper.dataWrapped().dataset_attribute_list);
     //update script
     api_submitter.submitApiResult("ScriptDescriptionWidget::loadFullScript",
                                   GET_CHAOS_API_PTR(script::LoadFullScript)->execute(script_wrapper.dataWrapped().script_description));
@@ -37,6 +42,8 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(const Script &_script,
 
     //set the model for the dataset managment
     ui->tableViewDataset->setModel(&editable_dataset_table_model);
+    ui->tableViewDataset->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
     editable_dataset_table_model.setDatasetAttributeList(&script_wrapper.dataWrapped().dataset_attribute_list);
     //update script
     api_submitter.submitApiResult("ScriptDescriptionWidget::loadFullScript",
@@ -77,7 +84,6 @@ void ScriptDescriptionWidget::fillScriptWithGUIValues() {
     script_wrapper.dataWrapped().script_description.description = ui->plainTextEditScriptDescirption->document()->toPlainText().toStdString();
     script_wrapper.dataWrapped().script_description.language = ui->comboBoxsScirptLanguage->currentText().toStdString();
     script_wrapper.dataWrapped().script_content = ui->textEditSourceCode->document()->toPlainText().toStdString();
-    qDebug() << ui->comboBoxsScirptLanguage->currentText();
 }
 
 void ScriptDescriptionWidget::updateTextEditorFeatures() {
@@ -111,4 +117,12 @@ void ScriptDescriptionWidget::on_pushButtonUpdateAll_clicked() {
 
 void ScriptDescriptionWidget::on_pushButtonAddAttributeToDataset_clicked() {
     editable_dataset_table_model.addNewDatasetAttribute();
+}
+
+void ScriptDescriptionWidget::on_comboBoxTypes_currentTextChanged(const QString &type_selected) {
+
+}
+
+void ScriptDescriptionWidget::on_tableViewDataset_doubleClicked(const QModelIndex &index) {
+   editable_dataset_table_model.editDatasetAttributeAtIndex(index.row());
 }
