@@ -34,33 +34,33 @@ namespace chaos {
 	namespace metadata_service {
 		namespace persistence {
 			namespace mongodb {
-				
+
 				//forward declaration
 				class MongoDBPersistenceDriver;
-				
+
                 //! Data Access for producer manipulation data
 				class MongoDBUnitServerDataAccess:
 				public data_access::UnitServerDataAccess,
                 protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
-                    
-                    MongoDBNodeDataAccess *node_data_access = NULL;
+
+                    MongoDBNodeDataAccess *node_data_access;
 				protected:
                     MongoDBUnitServerDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
 					~MongoDBUnitServerDataAccess();
 				public:
                     //inherited method
                     int insertNewUS(chaos::common::data::CDataWrapper& unit_server_description, bool check_for_cu_type = true);
-                    
+
                     //inherited method
                     int addCUType(const std::string& unit_server_uid, const std::string& cu_type);
-                    
+
                     //inherited method
                     int removeCUType(const std::string& unit_server_uid, const std::string& cu_type);
-                    
+
                     //inherited method
                     int updateUS(chaos::common::data::CDataWrapper& unit_server_description);
-                    
+
                     //inherited method
                     int checkPresence(const std::string& unit_server_unique_id,
                                       bool& presence);
@@ -71,7 +71,7 @@ namespace chaos {
                     //inherited method
                     int getDescription(const std::string& unit_server_uid,
                                        chaos::common::data::CDataWrapper **unit_server_description);
-                    
+
                     int getUnitserverForControlUnitID(const std::string& control_unit_id,
                                                               std::string& unit_server_host);
 				};

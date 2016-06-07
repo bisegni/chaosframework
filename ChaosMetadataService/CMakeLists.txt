@@ -89,7 +89,7 @@ SET(cnd_src  ${cnd_src}	api/node/NodeGroup.cpp
                         api/node/CommandCommonUtility.cpp
                         api/node/GetCommandAndTemplateDescription.cpp)
 
-SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp,
+SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
                         api/script/SearchScript.cpp
                         api/script/SaveScript.cpp
                         api/script/LoadFullScript.cpp)
@@ -100,8 +100,9 @@ SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
                         persistence/data_access/DataServiceDataAccess.cpp
                         persistence/data_access/SnapshotDataAccess.cpp
-						persistence/data_access/TreeGroupDataAccess.cpp
-                        persistence/data_access/LoggingDataAccess.cpp)
+												persistence/data_access/TreeGroupDataAccess.cpp
+                        persistence/data_access/LoggingDataAccess.cpp
+												persistence/data_access/ScriptDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBUnitServerDataAccess.cpp
@@ -111,7 +112,8 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBDataServiceDataAccess.cpp
                         persistence/mongodb/MongoDBSnapshotDataAccess.cpp
                         persistence/mongodb/MongoDBTreeGroupDataAccess.cpp
-                        persistence/mongodb/MongoDBLoggingDataAccess.cpp)
+                        persistence/mongodb/MongoDBLoggingDataAccess.cpp
+												persistence/mongodb/MongoDBScriptDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)

@@ -76,8 +76,8 @@ SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
                             api_proxy/unit_server/LoadUnloadControlUnit.cpp
                             api_proxy/unit_server/ManageCUType.cpp)
 
-SET(mcl_src ${mcl_src}      api_proxy/script/SaveScript.cpp,
-                            api_proxy/script/SearchScript.hpp
+SET(mcl_src ${mcl_src}      api_proxy/script/SaveScript.cpp
+                            api_proxy/script/SearchScript.cpp
                             api_proxy/script/LoadFullScript.cpp)
 
 SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
@@ -125,6 +125,9 @@ INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/
 
 FILE(GLOB files "../chaos_service_common/data/script/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/script)
+
+FILE(GLOB files "../chaos_service_common/data/dataset/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/dataset)
 
 FILE(GLOB files "api_proxy/script/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/script)

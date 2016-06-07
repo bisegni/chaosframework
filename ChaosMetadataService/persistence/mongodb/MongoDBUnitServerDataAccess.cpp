@@ -34,13 +34,10 @@ using namespace chaos::metadata_service::persistence::mongodb;
 #define MDBUSDA_ERR  ERR_LOG(MongoDBUnitServerDataAccess)
 
 MongoDBUnitServerDataAccess::MongoDBUnitServerDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
-MongoDBAccessor(_connection){
-    
-}
+MongoDBAccessor(_connection),
+node_data_access(NULL){}
 
-MongoDBUnitServerDataAccess::~MongoDBUnitServerDataAccess() {
-    
-}
+MongoDBUnitServerDataAccess::~MongoDBUnitServerDataAccess() {}
 
 //! insert the unit server information
 int MongoDBUnitServerDataAccess::insertNewUS(chaos::common::data::CDataWrapper& unit_server_description, bool check_for_cu_type) {
@@ -48,7 +45,7 @@ int MongoDBUnitServerDataAccess::insertNewUS(chaos::common::data::CDataWrapper& 
     //check if the nedded field are present on data pack
     if(check_for_cu_type) {
         if(!unit_server_description.hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) return -1;
-        
+
         if(!unit_server_description.isVectorValue(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) return -2;
     }
     //we have all filed so we can call the node data access api
@@ -69,13 +66,13 @@ int MongoDBUnitServerDataAccess::addCUType(const std::string& unit_server_uid, c
                                                                     "Update",
                                                                     query.jsonString(),
                                                                     update.jsonString()));)
-        
+
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
             MDBUSDA_ERR << "Error adding the control unit type '"<<cu_type<<"' to the unit server with code " << unit_server_uid << " with error:"<<err;
         }
-        
+
     } catch (const mongo::DBException &e) {
         MDBUSDA_ERR << e.what();
         err = e.getCode();
@@ -97,13 +94,13 @@ int MongoDBUnitServerDataAccess::removeCUType(const std::string& unit_server_uid
                                                                     "Update",
                                                                     query.jsonString(),
                                                                     update.jsonString()));)
-        
+
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      query,
                                      update))) {
             MDBUSDA_ERR << "Error removing the control unit type '"<<cu_type<<"' to the unit server " << unit_server_uid << " with error:"<<err;
         }
-        
+
         //no we need to remove all the control unit node that are instances of this unit server and cu type
         mongo::BSONObj query_for_instance = BSON(boost::str(boost::format("instance_description.%1%")%NodeDefinitionKey::NODE_PARENT) << unit_server_uid <<
                                                  "instance_description.control_unit_implementation" << cu_type );
@@ -136,10 +133,10 @@ int MongoDBUnitServerDataAccess::updateUS(chaos::common::data::CDataWrapper& uni
     try {
         //check if the nedded field are present on data pack
         if(!unit_server_description.hasKey(chaos::UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS)) return -1;
-        
+
         //serach criteria
         bson_find << chaos::NodeDefinitionKey::NODE_UNIQUE_ID << unit_server_description.getStringValue(NodeDefinitionKey::NODE_UNIQUE_ID);
-        
+
         //get the contained control unit type
         mongo::BSONArrayBuilder bab;
         auto_ptr<CMultiTypeDataArrayWrapper> cu_type_array(unit_server_description.getVectorValue(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS));
@@ -148,22 +145,22 @@ int MongoDBUnitServerDataAccess::updateUS(chaos::common::data::CDataWrapper& uni
             idx++) {
             bab.append(cu_type_array->getStringElementAtIndex(idx));
         }
-        
+
         updated_field.appendArray(UnitServerNodeDefinitionKey::UNIT_SERVER_HOSTED_CONTROL_UNIT_CLASS, bab.arr());
-        
+
         mongo::BSONObj query = bson_find.obj();
-        
+
         //set the update
         bson_update << "$set" << updated_field.obj();
         mongo::BSONObj update = bson_update.obj();
-        
+
         DEBUG_CODE(MDBUSDA_DBG<<log_message("updateUS",
                                             "update",
                                             DATA_ACCESS_LOG_2_ENTRY("Query",
                                                                     "Update",
                                                                     query.jsonString(),
                                                                     update.jsonString()));)
-        
+
         //first update thenode part then the unit server
         if((err = node_data_access->updateNode(unit_server_description))) {
             MDBUSDA_ERR << "Error updating node information";
@@ -258,7 +255,7 @@ int MongoDBUnitServerDataAccess::getDescription(const std::string& unit_server_u
                 MDBUSDA_DBG << "No specific attribute found for unit server" << unit_server_uid;
             }
         }
-        
+
     }
     return err;
 }
@@ -267,7 +264,7 @@ int MongoDBUnitServerDataAccess::getUnitserverForControlUnitID(const std::string
                                                                std::string& unit_server_host) {
     int err = 0;
     mongo::BSONObj r;
-    
+
     const std::string key_to_search = boost::str(boost::format("instance_description.%1%")%chaos::NodeDefinitionKey::NODE_PARENT);
     //query for check if there is a control unit that is hosted by an unit server
     mongo::BSONObj q =  BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << control_unit_id <<

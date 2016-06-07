@@ -29,14 +29,14 @@ namespace chaos {
             namespace mongodb {
                 //forward declaration
                 class MongoDBPersistenceDriver;
-                
+
                 //! Data Access for producer manipulation data
                 class MongoDBNodeDataAccess:
                 public data_access::NodeDataAccess,
                 protected service_common::persistence::mongodb::MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
-                    
-                    MongoDBUtilityDataAccess *utility_data_access = NULL;
+
+                    MongoDBUtilityDataAccess *utility_data_access;
                 protected:
                     MongoDBNodeDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
                     ~MongoDBNodeDataAccess();
@@ -69,10 +69,10 @@ namespace chaos {
                                              bool& presence);
                     //! inherited method
                     int setCommand(chaos::common::data::CDataWrapper& command);
-                    
+
                     //! inherited method
                     int deleteCommand(const std::string& command_unique_id);
-                    
+
                     //! inherited method
                     int checkCommandTemplatePresence(const std::string& template_name,
                                                      const std::string& command_unique_id,
