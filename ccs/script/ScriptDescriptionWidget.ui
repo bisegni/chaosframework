@@ -6,18 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>832</width>
-    <height>624</height>
+    <width>512</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>832</width>
-    <height>624</height>
+    <width>512</width>
+    <height>480</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Script Editor</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
    <property name="spacing">
@@ -228,6 +228,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButtonremoveAttributeToDataset">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="font">
                <font>
                 <pointsize>11</pointsize>
@@ -321,7 +324,10 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_3">
+             <widget class="QPushButton" name="pushButtonRemoveVariable">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="font">
                <font>
                 <pointsize>11</pointsize>
@@ -395,12 +401,15 @@
         </font>
        </property>
        <property name="text">
-        <string>Update All</string>
+        <string>Reload All</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonSaveScript">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="font">
         <font>
          <pointsize>11</pointsize>
@@ -417,4 +426,7 @@
  </widget>
  <resources/>
  <connections/>
+ <slots>
+  <slot>onModify()</slot>
+ </slots>
 </ui>

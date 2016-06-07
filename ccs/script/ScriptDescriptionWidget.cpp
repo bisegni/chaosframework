@@ -1,9 +1,10 @@
 #include "ScriptDescriptionWidget.h"
 #include "ui_ScriptDescriptionWidget.h"
-
+#include "MainWindow.h"
 #include "../language_editor/LuaHighlighter.h"
 
 #include <QDebug>
+#include <QStatusBar>
 
 using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -21,6 +22,16 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(QWidget *parent) :
     //set the model for the dataset managment
     ui->tableViewDataset->setModel(&editable_dataset_table_model);
     ui->tableViewDataset->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    connect(ui->tableViewDataset->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SIGNAL(datasetSelectionChanged(QItemSelection,QItemSelection)));
+
+    //set the model for the variable managment
+    ui->tableViewVariable->setModel(&editable_variable_table_model);
+    ui->tableViewVariable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    connect(ui->tableViewVariable->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SIGNAL(variableSelectionChanged(QItemSelection,QItemSelection)));
 
     editable_dataset_table_model.setDatasetAttributeList(&script_wrapper.dataWrapped().dataset_attribute_list);
     //update script
@@ -43,8 +54,17 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(const Script &_script,
     //set the model for the dataset managment
     ui->tableViewDataset->setModel(&editable_dataset_table_model);
     ui->tableViewDataset->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    connect(ui->tableViewDataset->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SLOT(datasetSelectionChanged(QItemSelection,QItemSelection)));
 
-    editable_dataset_table_model.setDatasetAttributeList(&script_wrapper.dataWrapped().dataset_attribute_list);
+    //set the model for the variable managment
+    ui->tableViewVariable->setModel(&editable_variable_table_model);
+    ui->tableViewVariable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    connect(ui->tableViewVariable->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SLOT(variableSelectionChanged(QItemSelection,QItemSelection)));
+
     //update script
     api_submitter.submitApiResult("ScriptDescriptionWidget::loadFullScript",
                                   GET_CHAOS_API_PTR(script::LoadFullScript)->execute(script_wrapper.dataWrapped().script_description));
@@ -71,6 +91,10 @@ void ScriptDescriptionWidget::onApiDone(const QString& tag,
 }
 
 void ScriptDescriptionWidget::updateScripUI() {
+    //set on statu bar that the save operation hase been achieved
+    ((MainWindow*)window())->statusBar()->showMessage(QString("%1 has been saved").arg(QString::fromStdString(script_wrapper.dataWrapped().script_description.name)), 5000);
+
+
     if(current_highlighter) {
         delete(current_highlighter);
         current_highlighter = NULL;
@@ -83,8 +107,9 @@ void ScriptDescriptionWidget::updateScripUI() {
 
     updateTextEditorFeatures();
 
-    //update dataset
+    //update table dataset model
     editable_dataset_table_model.setDatasetAttributeList(&script_wrapper.dataWrapped().dataset_attribute_list);
+    editable_variable_table_model.setVariableList(&script_wrapper.dataWrapped().variable_list);;
 }
 
 void ScriptDescriptionWidget::fillScriptWithGUIValues() {
@@ -127,10 +152,34 @@ void ScriptDescriptionWidget::on_pushButtonAddAttributeToDataset_clicked() {
     editable_dataset_table_model.addNewDatasetAttribute();
 }
 
-void ScriptDescriptionWidget::on_comboBoxTypes_currentTextChanged(const QString &type_selected) {
-
+void ScriptDescriptionWidget::on_pushButtonremoveAttributeToDataset_clicked() {
+    foreach (QModelIndex index, ui->tableViewDataset->selectionModel()->selectedRows()) {
+         editable_dataset_table_model.removeElementFromDatasetAtIndex(index.row());
+    }
 }
 
 void ScriptDescriptionWidget::on_tableViewDataset_doubleClicked(const QModelIndex &index) {
     editable_dataset_table_model.editDatasetAttributeAtIndex(index.row());
+}
+
+void ScriptDescriptionWidget::datasetSelectionChanged(const QItemSelection& selected,const QItemSelection& deselected) {
+    ui->pushButtonremoveAttributeToDataset->setEnabled(selected.size());
+}
+
+void ScriptDescriptionWidget::on_pushButtonAddVariable_clicked() {
+    editable_variable_table_model.addNewVariable();
+}
+
+void ScriptDescriptionWidget::on_tableViewVariable_doubleClicked(const QModelIndex &index) {
+    editable_variable_table_model.editVariableAtIndex(index.row());
+}
+
+void ScriptDescriptionWidget::variableSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
+    ui->pushButtonRemoveVariable->setEnabled(selected.size());
+}
+
+void ScriptDescriptionWidget::on_pushButtonRemoveVariable_clicked() {
+    foreach (QModelIndex index, ui->tableViewVariable->selectionModel()->selectedRows()) {
+         editable_variable_table_model.removeVariableAtIndex(index.row());
+    }
 }

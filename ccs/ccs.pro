@@ -125,9 +125,11 @@ SOURCES += main.cpp\
     script/CreateNewScriptDialog.cpp \
     data/EditableDatasetTableModel.cpp \
     data/editor/dataset/EditableDatasetTableModelEditDialog.cpp \
-    data/editor/dataset/DatasAttributeSubtypeTableModel.cpp \
-    data/editor/dataset/EditableDatasetAttributeSubtypeWidget.cpp \
-    data/delegate/ComboBoxDelegate.cpp
+    data/delegate/ComboBoxDelegate.cpp \
+    data/EditableScriptVariableTableModel.cpp \
+    data/editor/script/EditableScriptVariableTableModelEditDialog.cpp \
+    data/editor/common/EditableSubtypeListWidget.cpp \
+    data/editor/common/EditableSubtypeListTableModel.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -232,11 +234,13 @@ HEADERS  += \
     script/ScriptDescriptionWidget.h \
     data/ScriptListModel.h \
     script/CreateNewScriptDialog.h \
-    data/editor/dataset/DatasAttributeSubtypeTableModel.h \
     data/EditableDatasetTableModel.h \
     data/editor/dataset/EditableDatasetTableModelEditDialog.h \
-    data/editor/dataset/EditableDatasetAttributeSubtypeWidget.h \
-    data/delegate/ComboBoxDelegate.h
+    data/delegate/ComboBoxDelegate.h \
+    data/EditableScriptVariableTableModel.h \
+    data/editor/script/EditableScriptVariableTableModelEditDialog.h \
+    data/editor/common/EditableSubtypeListWidget.h \
+    data/editor/common/EditableSubtypeListTableModel.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -267,7 +271,8 @@ FORMS    += \
     script/ScriptDescriptionWidget.ui \
     script/CreateNewScriptDialog.ui \
     data/editor/dataset/EditableDatasetTableModelEditDialog.ui \
-    data/editor/dataset/EditableDatasetAttributeSubtypeWidget.ui
+    data/editor/script/EditableScriptVariableTableModelEditDialog.ui \
+    data/editor/common/EditableSubtypeListWidget.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

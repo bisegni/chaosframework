@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>EditableDatasetAttributeSubtypeWidget</class>
- <widget class="QWidget" name="EditableDatasetAttributeSubtypeWidget">
+ <class>EditableSubtypeListWidget</class>
+ <widget class="QWidget" name="EditableSubtypeListWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -32,7 +32,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Subtypes:</string>
+      <string>Subtype:</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">

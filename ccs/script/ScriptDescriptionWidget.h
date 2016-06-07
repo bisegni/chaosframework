@@ -3,10 +3,13 @@
 
 #include <QWidget>
 #include <QTextEdit>
+#include <QItemSelection>
 
 #include "../language_editor/LuaHighlighter.h"
 #include "../api_async_processor/ApiSubmitter.h"
 #include "../data/EditableDatasetTableModel.h"
+#include "../data/EditableScriptVariableTableModel.h"
+
 namespace Ui {
 class ScriptDescriptionWidget;
 }
@@ -23,6 +26,7 @@ public:
     explicit ScriptDescriptionWidget(const chaos::service_common::data::script::Script& _script, QWidget *parent = 0);
     ~ScriptDescriptionWidget();
     QString getScriptName();
+
 protected:
 
     void onApiDone(const QString& tag,
@@ -37,13 +41,24 @@ private slots:
 
     void on_pushButtonAddAttributeToDataset_clicked();
 
-    void on_comboBoxTypes_currentTextChanged(const QString &type_selected);
-
     void on_tableViewDataset_doubleClicked(const QModelIndex &index);
+
+    void datasetSelectionChanged(const QItemSelection& selected,const QItemSelection& deselected);
+
+    void on_pushButtonAddVariable_clicked();
+
+    void on_tableViewVariable_doubleClicked(const QModelIndex &index);
+
+    void variableSelectionChanged(const QItemSelection& selected,const QItemSelection& deselected);
+
+    void on_pushButtonRemoveVariable_clicked();
+
+    void on_pushButtonremoveAttributeToDataset_clicked();
 
 private:
     Ui::ScriptDescriptionWidget *ui;
     EditableDatasetTableModel editable_dataset_table_model;
+    EditableScriptVariableTableModel editable_variable_table_model;
     QSyntaxHighlighter *current_highlighter;
     ApiSubmitter api_submitter;
     //declre the script serialization wrapper

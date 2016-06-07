@@ -8,8 +8,8 @@ EditableDatasetTableModelEditDialog::EditableDatasetTableModelEditDialog(QWidget
     ui->setupUi(this);
     ui->lineEditAttributeName->setFocus();
     //init widget for subtype
-    ui->widgetAttributeSubtypesEditor->setVisible(false);
-    ui->widgetAttributeSubtypesEditor->setDatasetAttrbiute(&editable_dataset_attribute);
+    ui->widgetSubtypesEditor->setVisible(false);
+    ui->widgetSubtypesEditor->setSubtypeListPtr(&editable_dataset_attribute.binary_subtype_list);
 }
 
 EditableDatasetTableModelEditDialog::~EditableDatasetTableModelEditDialog() {
@@ -18,7 +18,7 @@ EditableDatasetTableModelEditDialog::~EditableDatasetTableModelEditDialog() {
 
 void EditableDatasetTableModelEditDialog::setDatsetAttribute(const chaos::service_common::data::dataset::DatasetAttribute& dataset_attribute) {
     editable_dataset_attribute = dataset_attribute;
-    ui->widgetAttributeSubtypesEditor->setDatasetAttrbiute(&editable_dataset_attribute);
+    ui->widgetSubtypesEditor->setSubtypeListPtr(&editable_dataset_attribute.binary_subtype_list);
     fillUIFromAttribute();
 }
 
@@ -52,7 +52,7 @@ void EditableDatasetTableModelEditDialog::on_pushButtonCancel_clicked() {
 void EditableDatasetTableModelEditDialog::on_comboBoxTypes_currentTextChanged(const QString &selected_type) {
     bool enable_subtypes = (chaos::DataType::typeCodeByDescription(selected_type.toStdString()) == chaos::DataType::TYPE_BYTEARRAY);
     //set visible state of subtypes widget
-    ui->widgetAttributeSubtypesEditor->setVisible(enable_subtypes);
+    ui->widgetSubtypesEditor->setVisible(enable_subtypes);
     //clear subtype if we don't need it
     if(enable_subtypes == false){editable_dataset_attribute.binary_subtype_list.clear();}
 }

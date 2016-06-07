@@ -76,11 +76,11 @@ namespace chaos {
                     subtype_list(){}
                     
                     AlgorithmVariable(const std::string& _name,
-                                                         const std::string& _description,
-                                                         const chaos::DataType::DataType _type,
-                                                         const DataType::DataSetAttributeIOAttribute _direction,
-                                                         const AlgorithmSubtypeList& _subtype_list,
-                                                         const bool _mandatory):
+                                      const std::string& _description,
+                                      const chaos::DataType::DataType _type,
+                                      const DataType::DataSetAttributeIOAttribute _direction,
+                                      const AlgorithmSubtypeList& _subtype_list,
+                                      const bool _mandatory):
                     name(_name),
                     description(_description),
                     direction(_direction),
@@ -102,7 +102,7 @@ namespace chaos {
                         subtype_list = rhs.subtype_list;
                         return *this;
                     };
-
+                    
                 };
                 
                 //!helper for create or read the script description
@@ -153,7 +153,7 @@ namespace chaos {
                         data_serialized->addBoolValue(CHAOS_ALGO_MANDATORY, dataWrapped().mandatory);
                         
                         for(AlgorithmSubtypeListIterator it = dataWrapped().subtype_list.begin(),
-                            end = dataWrapped().subtype_list.begin();
+                            end = dataWrapped().subtype_list.end();
                             it != end;
                             it++) {
                             data_serialized->appendInt32ToArray(*it);
@@ -161,7 +161,7 @@ namespace chaos {
                         data_serialized->finalizeArrayForKey(CHAOS_ALGO_BIN_SUB_TYPE);
                         return data_serialized;
                     }
-
+                    
                 };
                 
                 //!a list of a script base information usefullt for search operation

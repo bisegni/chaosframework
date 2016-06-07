@@ -1,15 +1,15 @@
-#ifndef DATASATTRIBUTESUBTYPETABLEMODEL_H
-#define DATASATTRIBUTESUBTYPETABLEMODEL_H
+#ifndef EditableSubtypeListTableModel_H
+#define EditableSubtypeListTableModel_H
 
 #include "../../ChaosAbstractTableModel.h"
 
 #include <chaos_service_common/data/dataset/DatasetAttribute.h>
 
-class DatasAttributeSubtypeTableModel:
+class EditableSubtypeListTableModel:
 public ChaosAbstractTableModel {
 public:
-    DatasAttributeSubtypeTableModel(QObject *parent=0);
-    void setDatasetSubtypesList(chaos::service_common::data::dataset::DatasetSubtypeList *dataset_subtype_list);
+    EditableSubtypeListTableModel(QObject *parent=0);
+    void setSubtypesList(std::vector<unsigned int> *subtype_list);
     void addNew();
     void removeAtIndex(unsigned int idx);
 protected:
@@ -24,7 +24,7 @@ protected:
     bool isCellCheckable(const QModelIndex &index) const;
     QVariant getTextAlignForData(int row, int column) const;
 private:
-    chaos::service_common::data::dataset::DatasetSubtypeList *dataset_subtype_list_ptr;
+    std::vector<unsigned int> *subtype_list_ptr;
 };
 
-#endif // DATASATTRIBUTESUBTYPETABLEMODEL_H
+#endif // EditableSubtypeListTableModel_H

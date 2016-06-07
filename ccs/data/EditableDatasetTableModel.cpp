@@ -22,9 +22,10 @@ void EditableDatasetTableModel::addNewElemenToToDataset(const DatasetAttribute& 
     endResetModel();
 }
 
-void EditableDatasetTableModel::removeElementFromDataset(const QString& attribute_name,
-                                                         const DataType::DataSetAttributeIOAttribute direction) {
-
+void EditableDatasetTableModel::removeElementFromDatasetAtIndex(unsigned int var_index) {
+    beginResetModel();
+    attribute_list->erase(attribute_list->begin()+var_index);
+    endResetModel();
 }
 
 void EditableDatasetTableModel::editDatasetAttributeAtIndex(unsigned int dsattr_index) {
@@ -115,4 +116,8 @@ QVariant EditableDatasetTableModel::getTooltipTextForData(int row, int column) c
 
 QVariant EditableDatasetTableModel::getTextAlignForData(int row, int column) const {
     return QVariant();
+}
+
+bool EditableDatasetTableModel::isCellSelectable(const QModelIndex &index) const {
+    return true;
 }
