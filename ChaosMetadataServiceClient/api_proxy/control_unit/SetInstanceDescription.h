@@ -70,6 +70,11 @@ namespace chaos {
                      */
                     bool auto_start;
                     
+                    /*!
+                     define the default value for the scheduler step's delay within the control unit
+                     */
+                    uint64_t default_schedule_delay;
+                    
                         //! the string is passed to the control unit for the load phase
                     std::string load_parameter;
 

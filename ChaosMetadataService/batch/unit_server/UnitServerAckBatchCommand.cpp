@@ -106,6 +106,7 @@ void UnitServerAckCommand::ccHandler() {
         case USAP_CU_FECTH_NEXT: {
             if(list_autoload_cu_current == list_autoload_cu.end()) {
                 list_autoload_cu.clear();
+                //get next autoload cu for unit server
                 if(!(err = getDataAccess<mds_data_access::ControlUnitDataAccess>()->getControlUnitWithAutoFlag(unit_server_uid,
                                                                                                                chaos::metadata_service::persistence::AUTO_LOAD,
                                                                                                                last_worked_cu.seq,

@@ -7,6 +7,7 @@
 #include <QStandardItem>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QIntValidator>
 #include <cassert>
 
 using namespace chaos::common::data;
@@ -75,6 +76,9 @@ void ControUnitInstanceEditor::initUI() {
     headerView = ui->tableViewDatasetAttributes->horizontalHeader();
     headerView->setSectionResizeMode(QHeaderView::Stretch);
 
+    //set the run schedule dealy data formatted for lineedit(from 0 to one hour of delay)
+    ui->lineEditDefaultScheduleTime->setValidator(new QIntValidator(0, 1000*1000*60, this));
+
     //widget connection initialization
     connect(ui->tableViewDriverSpecification->selectionModel(),
             SIGNAL(currentChanged(QModelIndex,QModelIndex)),
@@ -118,6 +122,9 @@ control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSet
     set_instance_api_hepler.auto_start = ui->checkBoxAutoStart->isChecked();
     //load parameter
     set_instance_api_hepler.load_parameter = ui->textEditLoadParameter->toPlainText().toStdString();
+    //schedule delay
+    set_instance_api_hepler.default_schedule_delay = ui->lineEditDefaultScheduleTime->text().toULongLong();
+
     //add all driver description
     set_instance_api_hepler.clearAllDriverDescriptions();
     for(int idx = 0;
@@ -164,9 +171,11 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
             CHECK_AND_SET_CHECK("auto_init", ui->checkBoxAutoInit)
             CHECK_AND_SET_CHECK("auto_start", ui->checkBoxAutoStart)
             CHECK_AND_SET_LABEL(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, ui->textEditLoadParameter)
-
-            //add driverdesc
-            if(api_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
+    if(api_result->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
+        ui->lineEditDefaultScheduleTime->setText(QString::number(api_result->getUInt64Value(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)));
+    }
+    //add driverdesc
+    if(api_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
         std::auto_ptr<CMultiTypeDataArrayWrapper> arr_drv(api_result->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION));
         for(int idx = 0;
             idx != arr_drv->size();
@@ -265,8 +274,7 @@ void ControUnitInstanceEditor::onApiDone(const QString& tag,
                                api_result);
 }
 
-void ControUnitInstanceEditor::on_pushButtonSaveInstance_clicked()
-{
+void ControUnitInstanceEditor::on_pushButtonSaveInstance_clicked() {
     submitApiResult(QString("save_instance"),
                     GET_CHAOS_API_PTR(control_unit::SetInstanceDescription)->execute(prepareSetInstanceApi()));
 }
