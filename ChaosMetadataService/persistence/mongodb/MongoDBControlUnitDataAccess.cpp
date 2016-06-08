@@ -418,6 +418,10 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
             updated_field << ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM << instance_description.getStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM);
         }
         
+        if(instance_description.hasKey(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
+            updated_field << ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY << (long long)instance_description.getInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY);
+        }
+        
         if(instance_description.hasKey("control_unit_implementation")) {
             updated_field << "control_unit_implementation" << instance_description.getStringValue("control_unit_implementation");
         }
@@ -612,6 +616,7 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
             if(instance_description.hasField("auto_start"))(*result)->addBoolValue("auto_start", instance_description.getBoolField("auto_start"));
             
             if(instance_description.hasField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM))(*result)->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, instance_description.getStringField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM));
+            if(instance_description.hasField(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY))(*result)->addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, instance_description.getField(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY).Long());
             if(instance_description.hasField("control_unit_implementation"))(*result)->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
             
             if(instance_description.hasField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {

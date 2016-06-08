@@ -55,6 +55,9 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
     instance_description.addBoolValue("auto_start", api_data.auto_start);
         // set the load parameter
     instance_description.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, api_data.load_parameter);
+        //add the deafult scheduler delay
+    instance_description.addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, api_data.default_schedule_delay);
+    
         //add driver description
     if(api_data.driver_descriptions.size()>0) {
         for(CDWListIterator it = api_data.driver_descriptions.begin();

@@ -74,7 +74,7 @@ void CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(const std::st
     CUCU_DBG << "Prepare autoload request for:" << cu_uid;
     int err = 0;
     CDataWrapper * tmp_ptr = NULL;
-    //if the control unit to load need also to be initilized and started we compose the startup command to achieve this
+    //if the control unit to load need also to be initialized and started we compose the startup command to achieve this
     if((err = cu_da->getInstanceDescription(cu_uid, &tmp_ptr))) {
         LOG_AND_TROW_FORMATTED(CUCU_ERR, err, "Error %1% durring fetch of instance for unit server %2%", %err%cu_da)
     } else if(tmp_ptr) {
@@ -259,7 +259,12 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
         }
         init_datapack->finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
     }
-    //sethte aciton type
+    //ad the default scheduler step delay
+    if(instance_description->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY) &&
+       instance_description->isInt64Value(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
+        instance_description->copyKeyTo(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, *init_datapack);
+    }
+    //set the action type
     init_datapack->addInt32Value("action", (int32_t)0);
     return init_datapack;
 }
