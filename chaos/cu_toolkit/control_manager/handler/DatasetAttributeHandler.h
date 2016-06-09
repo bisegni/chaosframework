@@ -52,7 +52,6 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                     virtual bool executeHandler(chaos::common::data::CDataWrapper *attribute_changes_set) = 0;
                 };
                 
-                //!int32 attribute handler
                 template<typename O, typename T>
                 class DatasetAttributeHandlerDescription:
                 public AbstractHandlerDescription {
@@ -67,9 +66,9 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                     AbstractHandlerDescription(_attribute_name),
                     object_reference(_object_reference),
                     handler_pointer(_handler_pointer){}
-
+                    
                 protected:
-
+                    
                     
                     bool executeHandler(chaos::common::data::CDataWrapper *attribute_changes_set) {
                         if(attribute_changes_set == NULL ||
@@ -103,6 +102,36 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string,
                                              HandlerAssociatedAttributeList);
                 
+                
+                template<typename O>
+                class DatasetAttributeVariantHandlerDescription:
+                public AbstractHandlerDescription {
+                public:
+                    typedef bool (O::*HandlerDescriptionActionPtr)(const std::string& attribute_name,
+                                                                   const chaos::common::data::CDataVariant& value);
+                    
+                    DatasetAttributeVariantHandlerDescription(O* _object_reference,
+                                                              HandlerDescriptionActionPtr _handler_pointer,
+                                                              const std::string& _attribute_name):
+                    AbstractHandlerDescription(_attribute_name),
+                    object_reference(_object_reference),
+                    handler_pointer(_handler_pointer){}
+                    
+                protected:
+                    
+                    
+                    bool executeHandler(chaos::common::data::CDataWrapper *attribute_changes_set) {
+                        if(attribute_changes_set == NULL) return false;
+                        //broadcast the attribute value
+                        return ((*object_reference).*handler_pointer)(attribute_name,
+                                                                      attribute_changes_set->getVariantValue(attribute_name));
+                    }
+                    
+                private:
+                    O* object_reference;
+                    HandlerDescriptionActionPtr handler_pointer;
+                };
+                
                 struct HandlerSetElement {
                     HandlerDescriptionPtr handler_ptr;
                 };
@@ -120,7 +149,6 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                                                    const std::string& attribute_name,
                                                    typename DatasetAttributeHandlerDescription<O,T>::HandlerDescriptionActionPtr handler_ptr) {
                         
-                        //const std::string unique_handler_key = boost::str(boost::fromat("%1%_%2%")%object_reference%handler_ptr);
                         
                         if(map_handlers_for_attribute.count(attribute_name) != 0 ||
                            handler_ptr == NULL) return false;
@@ -131,6 +159,23 @@ typename chaos::cu::control_manager::handler::DatasetAttributeHandlerDescription
                                                                                                                                                       attribute_name))));
                         return true;
                     }
+                    
+                    template<typename O>
+                    bool addVariantHandlerOnAttributeName(O *object_reference,
+                                                          const std::string& attribute_name,
+                                                          typename DatasetAttributeVariantHandlerDescription<O>::HandlerDescriptionActionPtr handler_ptr) {
+                        
+                        
+                        if(map_handlers_for_attribute.count(attribute_name) != 0 ||
+                           handler_ptr == NULL) return false;
+                        
+                        //register the handler
+                        map_handlers_for_attribute.insert(make_pair(attribute_name, HandlerDescriptionPtr(new DatasetAttributeVariantHandlerDescription<O>(object_reference,
+                                                                                                                                                           handler_ptr,
+                                                                                                                                                           attribute_name))));
+                        return true;
+                    }
+                    
                     bool removeHandlerOnAttributeName(const std::string& attribute_name);
                     
                     void clearAllAttributeHandler();

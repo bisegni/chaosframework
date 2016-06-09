@@ -60,6 +60,9 @@ namespace chaos {
                 explicit CDataVariant(CDataBuffer *buffer_value);
                 CDataVariant(const CDataVariant& to_copy);
                 CDataVariant();
+                
+                CDataVariant& operator=(const CDataVariant& arg);
+                
                 DataType::DataType getType() const;
                 
                 int32_t asInt32() const;

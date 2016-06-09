@@ -23,7 +23,8 @@
 
 using namespace chaos::cu::control_manager::handler;
 
-AbstractAttributeHandler::AbstractAttributeHandler() {}
+AbstractAttributeHandler::AbstractAttributeHandler():
+dataset_database(NULL) {}
 AbstractAttributeHandler::~AbstractAttributeHandler() {}
 
 void AbstractAttributeHandler::setHandlerResult(const std::string& attribute_name,
@@ -35,4 +36,8 @@ bool AbstractAttributeHandler::getHandlerResult(const std::string& attirbute_nam
     //if we have no registered handle for that attribute return true(the handler can acept or no the change on the attribute)
     if(map_handler_result.count(attirbute_name) == 0) return true;
     return map_handler_result[attirbute_name];
+}
+
+void AbstractAttributeHandler::setDatasetDB(chaos::common::data::DatasetDB *ds_db_ptr) {
+    dataset_database = ds_db_ptr;
 }
