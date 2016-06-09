@@ -187,7 +187,11 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     //check the default option
     checkDefaultOption();
 }
-
+struct __file_remover__ {
+  const char*name;
+  __file_remover__(const char*_name):name(_name){}
+  ~__file_remover__(){std::remove(name);}
+};
 void GlobalConfiguration::checkDefaultOption() throw (CException) {
     
     //lock file for permit to choose different tcp port for services
@@ -198,6 +202,7 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     //check if we have got the lock
     boost::interprocess::file_lock flock("/tmp/chaos_init.lock");
     boost::interprocess::scoped_lock<boost::interprocess::file_lock> e_lock(flock);
+    __file_remover__ fr("/tmp/chaos_init.lock");
     
     //now we can fill the gloabl configuration
     //start with getting log configuration

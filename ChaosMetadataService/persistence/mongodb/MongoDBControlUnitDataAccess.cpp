@@ -613,7 +613,7 @@ int MongoDBControlUnitDataAccess::getInstanceDescription(const std::string& unit
             if(instance_description.hasField("auto_start"))(*result)->addBoolValue("auto_start", instance_description.getBoolField("auto_start"));
 
             if(instance_description.hasField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM))(*result)->addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, instance_description.getStringField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM));
-            if(instance_description.hasField(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY))(*result)->addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, instance_description.getField(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY).Long());
+            if(instance_description.hasField(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY))(*result)->addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, (int64_t)instance_description.getField(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY).Long());
             if(instance_description.hasField("control_unit_implementation"))(*result)->addStringValue("control_unit_implementation", instance_description.getStringField("control_unit_implementation"));
 
             if(instance_description.hasField(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {
