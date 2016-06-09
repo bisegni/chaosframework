@@ -28,10 +28,10 @@ protected:
 private slots:
     void on_pushButtonUpdateDomainsList_clicked();
 
-    void on_pushButton_clicked();
+    void on_pushButtonAddNewDomain_clicked();
 
-    void handleListSelectionChanged(const QModelIndex& current_row,
-                                    const QModelIndex& previous_row);
+    void handleListSelectionChanged(const QItemSelection &current_selection,
+                                    const QItemSelection &previous_selection);
 
     void handleTreeSelectionChanged(const QItemSelection & selected,
                                     const QItemSelection & deselected);

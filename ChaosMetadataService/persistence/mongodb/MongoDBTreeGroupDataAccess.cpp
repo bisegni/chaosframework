@@ -31,6 +31,7 @@
 #define MDBTGDA_ERR  ERR_LOG(MongoDBTreeGroupDataAccess)
 
 using namespace chaos::common::data;
+using namespace chaos::service_common;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::metadata_service::persistence::mongodb;
 
@@ -55,7 +56,7 @@ int MongoDBTreeGroupDataAccess::checkPathPresenceForDomain(const std::string& gr
         if(!estractNodeFromPath(tree_path,
                                 node_name,
                                 tree_path_tmp)){
-            return -10000;
+            return ErrorMDSCode::EC_MDS_NODE_BAD_PATH_EXTRACTION;
         }
         
         mongo::BSONObj q = BSON("node_name" << node_name <<
@@ -199,15 +200,15 @@ int MongoDBTreeGroupDataAccess::addNewNodeGroupToDomain(const std::string& group
                 return err;
             } else if(presence == false){
                 MDBTGDA_ERR << "The parent for node "<<node_name<<"["<<parent_path<<"]in domain "<< group_domain << " is node present present";
-                return -10000;
+                return ErrorMDSCode::EC_MDS_PARENT_NODE_NOT_IN_DOMAIN;
             }
         } else {
             MDBTGDA_ERR << "The group node "<<node_name<<"["<<parent_path<<"]in domain "<< group_domain << " is already present";
-            return -10001;
+            return ErrorMDSCode::EC_MDS_NODE_DUPLICATION;
         }
         
         if(!checkNodeNameSintax(node_name)) {
-            return -10002;
+            return ErrorMDSCode::EC_MDS_NODE_BAD_NAME;
         }
         
         //create the bson element that identify the node
@@ -241,7 +242,7 @@ int MongoDBTreeGroupDataAccess::addNewNodeGroupToDomain(const std::string& group
     int err = 0;
     try {
         if(!checkNodeNameSintax(node_group_name)) {
-            return -10000;
+            return ErrorMDSCode::EC_MDS_NODE_BAD_NAME;
         }
         //create the bson element that identify the node
         mongo::BSONObj q = BSON("node_name" << node_group_name <<
@@ -305,7 +306,7 @@ int MongoDBTreeGroupDataAccess::deleteNodeGroupToDomain(const std::string& group
                                              node_group_name,
                                              parent_path,
                                              presence))){
-            return err;
+            return ErrorMDSCode::EC_MDS_PARENT_NODE_NOT_IN_DOMAIN;
         } else if(presence == false) {
             MDBTGDA_ERR << "The node "<<node_group_name<<" for parent path" << parent_path << " in the domain "<<group_domain<<" is not present";
             return 0;
@@ -361,7 +362,7 @@ int MongoDBTreeGroupDataAccess::addChaosNodeToGroupDomain(const std::string& gro
         if((err = checkPathPresenceForDomain(group_domain,
                                              tree_path,
                                              presence))){
-            return err;
+            return ErrorMDSCode::EC_MDS_PARENT_NODE_NOT_IN_DOMAIN;
         }
         if(presence == false) {
             MDBTGDA_ERR << "The node for tree path" << tree_path << " is not present";
@@ -409,7 +410,7 @@ int MongoDBTreeGroupDataAccess::getNodeChildFromPath(const std::string& group_do
         if((err = checkPathPresenceForDomain(group_domain,
                                              tree_path,
                                              presence))){
-            return err;
+            return ErrorMDSCode::EC_MDS_PARENT_NODE_NOT_IN_DOMAIN;
         }
         if(presence == false) {
             MDBTGDA_ERR << "The node for tree path" << tree_path << " is not present";
@@ -485,7 +486,7 @@ int MongoDBTreeGroupDataAccess::removeChaosNodeFromGroupDomain(const std::string
         if((err = checkPathPresenceForDomain(group_domain,
                                              tree_path,
                                              presence))){
-            return err;
+            return ErrorMDSCode::EC_MDS_PARENT_NODE_NOT_IN_DOMAIN;
         }
         if(presence == false) {
             MDBTGDA_ERR << "The node for tree path" << tree_path << " is not present";

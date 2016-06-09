@@ -84,7 +84,10 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QPushButton" name="pushButton_2">
+          <widget class="QPushButton" name="pushButtonDeleteDomain">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
@@ -96,7 +99,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="pushButtonAddNewDomain">
            <property name="font">
             <font>
              <pointsize>11</pointsize>
@@ -213,6 +216,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="pushButtonAddRoot">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="font">
             <font>
              <pointsize>11</pointsize>

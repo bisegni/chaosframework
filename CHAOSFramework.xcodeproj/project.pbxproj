@@ -950,6 +950,7 @@
 		32FB201D1A3F11C400307A86 /* AttributeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FB201B1A3F11C400307A86 /* AttributeCache.h */; };
 		32FB20201A3F2E7300307A86 /* AbstractSharedDomainCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB201E1A3F2E7300307A86 /* AbstractSharedDomainCache.cpp */; };
 		32FB20211A3F2E7300307A86 /* AbstractSharedDomainCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FB201F1A3F2E7300307A86 /* AbstractSharedDomainCache.h */; };
+		32FC2EA91D09864F00475B25 /* service_error.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC2EA71D09864F00475B25 /* service_error.h */; };
 		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
 		32FFA3ED1B00D43900C57E07 /* QuantumSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FFA3EB1B00D43900C57E07 /* QuantumSlot.h */; };
@@ -2261,6 +2262,7 @@
 		32FB201B1A3F11C400307A86 /* AttributeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeCache.h; sourceTree = "<group>"; };
 		32FB201E1A3F2E7300307A86 /* AbstractSharedDomainCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractSharedDomainCache.cpp; sourceTree = "<group>"; };
 		32FB201F1A3F2E7300307A86 /* AbstractSharedDomainCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSharedDomainCache.h; sourceTree = "<group>"; };
+		32FC2EA71D09864F00475B25 /* service_error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = service_error.h; sourceTree = "<group>"; };
 		32FC7EDF1A7008780029C2A2 /* mds_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_constants.h; sourceTree = "<group>"; };
 		32FC7EE01A7008FA0029C2A2 /* mds_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_types.h; sourceTree = "<group>"; };
 		32FC7EE11A701BE40029C2A2 /* AbstractApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractApi.h; sourceTree = "<group>"; };
@@ -3961,6 +3963,7 @@
 		32A40D421A9CD4A0000D9A35 /* chaos_service_common */ = {
 			isa = PBXGroup;
 			children = (
+				32FC2EA71D09864F00475B25 /* service_error.h */,
 				32D90D5A1CF4AA3F00996F09 /* data */,
 				32A40D431A9CD541000D9A35 /* persistence */,
 			);
@@ -4845,6 +4848,7 @@
 				32571D9D1C7C901A0001D884 /* BatchCommandLoggingChannel.h in Headers */,
 				325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */,
 				324A4B7B191A428500975394 /* hash.h in Headers */,
+				32FC2EA91D09864F00475B25 /* service_error.h in Headers */,
 				32A88BD21CF8228A001DBAF5 /* llimits.h in Headers */,
 				3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */,
 				32661C761AA867E100F1A721 /* MessageRequestFuture.h in Headers */,

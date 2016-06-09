@@ -46,7 +46,7 @@ chaos::common::data::CDataWrapper *AddNode::execute(chaos::common::data::CDataWr
     CHAOS_LASSERT_EXCEPTION(api_data->isStringValue("node_name"), G_AN_ERR, -3, "The node_name needs to be a string");
         
     CHECK_KEY_THROW_AND_LOG(api_data, "node_domain", G_AN_ERR, -4, "The node_domain key is mandatory");
-    CHAOS_LASSERT_EXCEPTION(api_data->isStringValue("node_domain"), G_AN_ERR, -5, "The node_domain needs to be a string");
+    CHAOS_LASSERT_EXCEPTION((api_data->isStringValue("node_domain") && api_data->getStringValue("node_domain").size()), G_AN_ERR, -5, "The node_domain needs to be a non empty string");
 
     GET_DATA_ACCESS(TreeGroupDataAccess, tg_da, -6);
     
@@ -59,12 +59,12 @@ chaos::common::data::CDataWrapper *AddNode::execute(chaos::common::data::CDataWr
         if((err = tg_da->addNewNodeGroupToDomain(node_domain,
                                                  node_name,
                                                  node_path))) {
-            LOG_AND_TROW_FORMATTED(G_AN_ERR, -6, "Error creating node %1% in path %2% with error code %3%", %node_name%node_path%err);
+            LOG_AND_TROW_FORMATTED(G_AN_ERR, -6, "Error creating node %1% in path %2% with error code %3%(%4)", %node_name%node_path%err%chaos::error::getErrorMessage(err));
         }
     } else {
         if((err = tg_da->addNewNodeGroupToDomain(node_domain,
                                                  node_name))) {
-            LOG_AND_TROW_FORMATTED(G_AN_ERR, -6, "Error creating root node %1% with error code %2%", %node_name%err);
+            LOG_AND_TROW_FORMATTED(G_AN_ERR, -6, "Error creating root node %1% with error code %2%(%3%)", %node_name%err%chaos::error::getErrorMessage(err));
         }
     }
     return NULL;
