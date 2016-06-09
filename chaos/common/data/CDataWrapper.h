@@ -22,6 +22,8 @@
 
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/data/CDataBuffer.h>
+#include <chaos/common/data/CDataVariant.h>
+
 #include <boost/scoped_ptr.hpp>
 
 #include <string>
@@ -204,7 +206,7 @@ namespace chaos {
 				//return the binary data value
 				const char* getBinaryValue(const std::string&, int&);
 
-			  std::auto_ptr<CDataBuffer> getBinaryValueAsCDataBuffer(const std::string &key);
+                std::auto_ptr<CDataBuffer> getBinaryValueAsCDataBuffer(const std::string &key);
                 
 				//return the bson data
 				SerializationBuffer* getBSONData();
@@ -257,6 +259,8 @@ namespace chaos {
                 
 				//! Return the Hashing represetnation of the CDataWrapper
 				string toHash() const;
+                
+                CDataVariant getVariantValue(const std::string& key);
                 
                 //---checking funciton
                 

@@ -306,10 +306,9 @@ void RTAbstractControlUnit::executeOnThread() {
             // check if the output dataset need to be pushed
         pushOutputDataset(true);
             //calculate the number of microsencods to wait
-        time_to_sleep = schedule_dalay - ((TimingUtil::getTimeStampInMicrosends() - start_execution)+next_prediction_error);
+        time_to_sleep = schedule_dalay - (((next_predicted_run = TimingUtil::getTimeStampInMicrosends()) - start_execution)+next_prediction_error);
         if(time_to_sleep>0){
-                //check if we are in sequential or in threaded mode
-            next_predicted_run = TimingUtil::getTimeStampInMicrosends() + time_to_sleep;
+            next_predicted_run += time_to_sleep;
             boost::this_thread::sleep_for(boost::chrono::microseconds(time_to_sleep));
         } else {
             next_predicted_run = 0;

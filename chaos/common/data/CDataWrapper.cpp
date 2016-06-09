@@ -409,6 +409,36 @@ string CDataWrapper::toHash() const{
     return  bsonBuilder->asTempObj().md5();
 }
 
+CDataVariant CDataWrapper::getVariantValue(const std::string& key) {
+    //check if key is present
+    if(!hasKey(key)) return CDataVariant();
+    
+    //create variant using the typed data
+    switch (getValueType(key)) {
+        case CDataWrapperTypeBool:
+            return CDataVariant(getBoolValue(key));
+            break;
+        case CDataWrapperTypeInt32:
+            return CDataVariant(getInt32Value(key));
+            break;
+        case CDataWrapperTypeInt64:
+            return CDataVariant(getInt64Value(key));
+            break;
+        case CDataWrapperTypeDouble:
+            return CDataVariant(getDoubleValue(key));
+            break;
+        case CDataWrapperTypeString:
+            return CDataVariant(getStringValue(key));
+            break;
+        case CDataWrapperTypeBinary:
+            return CDataVariant(getBinaryValueAsCDataBuffer(key).release());
+            break;
+        default:
+            return CDataVariant();
+            break;
+    }
+}
+
 //------------------------checking utility
 
 bool CDataWrapper::isNullValue(const std::string& key){

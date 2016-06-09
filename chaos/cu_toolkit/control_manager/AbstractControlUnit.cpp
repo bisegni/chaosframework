@@ -1344,8 +1344,9 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
     boost::shared_ptr<SharedCacheLockDomain> w_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_INPUT, true);
     w_lock->lock();
     
-    std::vector<std::string> in_attribute_name;
     RangeValueInfo attributeInfo;
+    std::vector<std::string> in_attribute_name;
+
     try {
         //call pre handler
         unitInputAttributePreChangeHandler();

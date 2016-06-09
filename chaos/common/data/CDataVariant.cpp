@@ -99,6 +99,13 @@ type(_type){
 DataType::DataType CDataVariant::getType() const{
     return type;
 }
+
+CDataVariant& CDataVariant::operator=(const CDataVariant& arg) {
+    type = arg.type;
+    _internal_variant = arg._internal_variant;
+    return *this;
+}
+
 int32_t CDataVariant::asInt32() const {
     return  boost::get<int32_t>(_internal_variant);
 }
