@@ -24,7 +24,6 @@ protected:
     bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
-    void updateDomains();
 private slots:
     void on_pushButtonUpdateDomainsList_clicked();
 
@@ -38,6 +37,7 @@ private slots:
 
     void on_pushButtonAddRoot_clicked();
 
+    void domainUpdated();
 private:
     void contextualMenuActionTrigger(const QString& cm_title,
                                      const QVariant& cm_data);

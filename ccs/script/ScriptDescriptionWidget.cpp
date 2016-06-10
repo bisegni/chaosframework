@@ -103,7 +103,7 @@ void ScriptDescriptionWidget::updateScripUI() {
     ui->plainTextEditScriptDescirption->setPlainText(QString::fromStdString(script_wrapper.dataWrapped().script_description.description));
     ui->comboBoxsScirptLanguage->setCurrentIndex(ui->comboBoxsScirptLanguage->findText(QString::fromStdString(script_wrapper.dataWrapped().script_description.language)));
     //ashow source code
-    ui->textEditSourceCode->setText(QString::fromStdString(script_wrapper.dataWrapped().script_content));
+    ui->textEditSourceCode->setPlainText(QString::fromStdString(script_wrapper.dataWrapped().script_content));
 
     updateTextEditorFeatures();
 

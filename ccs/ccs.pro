@@ -129,7 +129,9 @@ SOURCES += main.cpp\
     data/EditableScriptVariableTableModel.cpp \
     data/editor/script/EditableScriptVariableTableModelEditDialog.cpp \
     data/editor/common/EditableSubtypeListWidget.cpp \
-    data/editor/common/EditableSubtypeListTableModel.cpp
+    data/editor/common/EditableSubtypeListTableModel.cpp \
+    script/ExecutionPoolsManager.cpp \
+    script/editor/CodeEditor.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -240,7 +242,9 @@ HEADERS  += \
     data/EditableScriptVariableTableModel.h \
     data/editor/script/EditableScriptVariableTableModelEditDialog.h \
     data/editor/common/EditableSubtypeListWidget.h \
-    data/editor/common/EditableSubtypeListTableModel.h
+    data/editor/common/EditableSubtypeListTableModel.h \
+    script/ExecutionPoolsManager.h \
+    script/editor/CodeEditor.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -272,7 +276,8 @@ FORMS    += \
     script/CreateNewScriptDialog.ui \
     data/editor/dataset/EditableDatasetTableModelEditDialog.ui \
     data/editor/script/EditableScriptVariableTableModelEditDialog.ui \
-    data/editor/common/EditableSubtypeListWidget.ui
+    data/editor/common/EditableSubtypeListWidget.ui \
+    script/ExecutionPoolsManager.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

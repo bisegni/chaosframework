@@ -363,7 +363,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QTextEdit" name="textEditSourceCode">
+        <widget class="CodeEditor" name="textEditSourceCode">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
@@ -424,6 +424,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CodeEditor</class>
+   <extends>QTextEdit</extends>
+   <header>script/editor/CodeEditor.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
  <slots>

@@ -50,6 +50,9 @@ void TreeGroupManager::initUI() {
     connect(ui->listViewDomains->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(handleListSelectionChanged(QItemSelection,QItemSelection)));
+    connect(&domain_list_model,
+            SIGNAL(domainUpdated()),
+            SLOT(domainUpdated()));
 
     registerWidgetForContextualMenu(ui->listViewDomains,
                                     &cm_list_map,
@@ -73,7 +76,7 @@ void TreeGroupManager::initUI() {
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(handleTreeSelectionChanged(QItemSelection,QItemSelection)));
 
-    updateDomains();
+    domain_list_model.update();
 }
 
 bool TreeGroupManager::isClosing() {
@@ -86,18 +89,14 @@ void TreeGroupManager::onApiDone(const QString& tag,
     PresenterWidget::onApiDone(tag,
                                api_result);
 
-    if(tag.compare("get_domains") == 0) {
-        domain_list_model.update(groups::GetDomains::getHelper(api_result.data()));
-        tree_model.clear();
-    } else if(tag.compare("add_domain") == 0) {
-        updateDomains();
+    if(tag.compare("add_domain") == 0) {
+       domain_list_model.update();
     }
-
 }
 
-void TreeGroupManager::updateDomains() {
-    submitApiResult("get_domains",
-                    GET_CHAOS_API_PTR(groups::GetDomains)->execute());
+void TreeGroupManager::domainUpdated() {
+    //reset tree
+    tree_model.clear();
 }
 
 void TreeGroupManager::contextualMenuActionTrigger(const QString& cm_title,
@@ -188,7 +187,7 @@ void TreeGroupManager::handleTreeSelectionChanged(const QItemSelection & selecte
 }
 
 void TreeGroupManager::on_pushButtonUpdateDomainsList_clicked() {
-    updateDomains();
+    domain_list_model.update();
 }
 
 void TreeGroupManager::on_pushButtonAddNewDomain_clicked() {
