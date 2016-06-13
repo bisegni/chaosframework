@@ -17,6 +17,7 @@ class TreeGroupManager :
 
 public:
     explicit TreeGroupManager(bool _selection_mode = false,
+                              const QString& _selection_tag = QString(),
                               QWidget *parent = 0);
     ~TreeGroupManager();
 protected:
@@ -25,7 +26,8 @@ protected:
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 signals:
-    void selectedPath(const QStringList& selected_path);
+    void selectedPath(const QString& selection_tag,
+                      const QStringList& selected_path);
 
 private slots:
     void on_pushButtonUpdateDomainsList_clicked();
@@ -48,6 +50,7 @@ private:
                                      const QVariant& cm_data);
     Ui::TreeGroupManager *ui;
     bool selection_mmode;
+    QString selection_tag;
     GroupTreeModel tree_model;
     DomainListModel domain_list_model;
 };

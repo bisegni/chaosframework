@@ -44,20 +44,26 @@ private slots:
 
     void on_tableViewDataset_doubleClicked(const QModelIndex &index);
 
-    void datasetSelectionChanged(const QItemSelection& selected,const QItemSelection& deselected);
-
-    void on_pushButtonAddVariable_clicked();
+    void handleModelSelectionChanged(const QItemSelection& selected,const QItemSelection& deselected);
 
     void on_pushButtonremoveAttributeToDataset_clicked();
 
     void on_pushButtonSelectClass_clicked();
 
-    void selectedGroupPath(const QStringList& selected_groups);
+    void selectedGroupPath(const QString& selection_tag,
+                           const QStringList& selected_groups);
+
+    void on_pushButtonRemoveSelectedClass_clicked();
+
+    void on_pushButtonSelectExecutionPools_clicked();
+
+    void on_pushButtonRemoveSelectedExecutionPools_clicked();
+
 private:
     Ui::ScriptDescriptionWidget *ui;
+    QStringListModel execution_pool_model;
     QStringListModel classification_model;
     EditableDatasetTableModel editable_dataset_table_model;
-    EditableScriptVariableTableModel editable_variable_table_model;
     QSyntaxHighlighter *current_highlighter;
     ApiSubmitter api_submitter;
     //declre the script serialization wrapper

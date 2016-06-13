@@ -114,7 +114,11 @@ namespace chaos {
                     //! the sourc ecode of the script
                     std::string script_content;
                     
+                    //! contains all classification for a script
                     ChaosStringList classification_list;
+                    
+                    //! contains all pool associated to the script
+                    ChaosStringList execution_pool_lis;
                     
                     //!variable list
                     chaos::service_common::data::dataset::AlgorithmVariableList variable_list;
@@ -187,6 +191,17 @@ namespace chaos {
                             }
                         }
                         
+                        //deserialize pool list
+                        if(serialized_data->hasKey("execution_pool_lis")) {
+                            //encode classification list into array
+                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("execution_pool_lis"));
+                            for(int idx = 0;
+                                idx < serialized_array->size();
+                                idx++) {
+                                dataWrapped().execution_pool_lis.push_back(serialized_array->getStringElementAtIndex(idx));
+                            }
+                        }
+                        
                         //deserialize variable
                         if(serialized_data->hasKey(variable_ser_key) &&
                            serialized_data->isVectorValue(variable_ser_key)) {
@@ -234,6 +249,17 @@ namespace chaos {
                                 data_serialized->appendStringToArray(*str_it);
                             }
                             data_serialized->finalizeArrayForKey("classification_list");
+                        }
+                        
+                        if(dataWrapped().execution_pool_lis.size()) {
+                            //encode classification list into array
+                            for(ChaosStringListIterator str_it = dataWrapped().execution_pool_lis.begin(),
+                                str_end = dataWrapped().classification_list.end();
+                                str_it != str_end;
+                                str_it++) {
+                                data_serialized->appendStringToArray(*str_it);
+                            }
+                            data_serialized->finalizeArrayForKey("execution_pool_lis");
                         }
                         
                         //check for variable

@@ -24,9 +24,11 @@ using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::node;
 
 TreeGroupManager::TreeGroupManager(bool _selection_mode,
+                                   const QString &_selection_tag,
                                    QWidget *parent) :
     PresenterWidget(parent),
     selection_mmode(_selection_mode),
+    selection_tag(_selection_tag),
     ui(new Ui::TreeGroupManager) {
     ui->setupUi(this);
 }
@@ -57,7 +59,7 @@ void TreeGroupManager::initUI() {
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(handleListSelectionChanged(QItemSelection,QItemSelection)));
     connect(&domain_list_model,
-            SIGNAL(domainUpdated()),
+            SIGNAL(domainListUpdated()),
             SLOT(domainUpdated()));
 
     registerWidgetForContextualMenu(ui->listViewDomains,
@@ -230,9 +232,10 @@ void TreeGroupManager::on_pushButtonAcceptSelection_clicked() {
         GroupTreeItem *current_item = static_cast<GroupTreeItem*>(current_index.internalPointer());
         if(current_item) {
             //add path
-            selected_path << current_item->getPathToRoot();
+            selected_path << QString("%1:%2").arg(current_item->getDomain(), current_item->getPathToRoot());
         }
     }
-    emit selectedPath(selected_path);
+    emit selectedPath(selection_tag,
+                      selected_path);
     closeTab();
 }
