@@ -9,6 +9,8 @@
 #include "tree_group/TreeGroupManager.h"
 #include "log_browser/LogBrowser.h"
 #include "script/ScriptManager.h"
+#include "script/ExecutionPoolsManager.h"
+#include "GlobalServices.h"
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
@@ -36,6 +38,9 @@ MainWindow::MainWindow(QWidget *parent) :
             SIGNAL(stopMonitoringHealtForNode(QString)),
             healt_widget,
             SLOT(stopMonitoringNode(QString)));
+
+    //set presenter on gloabl service class
+    GlobalServices::getInstance()->setPresenter(command_presenter);
 }
 
 MainWindow::~MainWindow(){
@@ -192,4 +197,8 @@ void MainWindow::on_actionLog_Browser_triggered() {
 
 void MainWindow::on_actionScript_Manager_triggered() {
     command_presenter->showCommandPresenter(new ScriptManager());
+}
+
+void MainWindow::on_actionExecution_Pools_triggered() {
+    command_presenter->showCommandPresenter(new ExecutionPoolsManager());
 }

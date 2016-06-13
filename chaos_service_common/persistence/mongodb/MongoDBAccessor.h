@@ -30,12 +30,12 @@
 
 //#define MONGO_DB_COLLECTION_NAME(db,coll)	boost::str(boost::format("%1%.%2%") % db % coll)
 #define MONGO_DB_COLLECTION_NAME(coll)	boost::str(boost::format("%1%.%2%") % getDatabaseName() % coll)
-    //! add a regex on a field
+//! add a regex on a field
 /*!
  create a return a BSON object with a query expresion with a regular expression like:
  { field_name: {$regex:regex}}
  */
-#define MONGODB_REGEX_ON_FILED(field_name, regex) BSON(field_name << BSON("$regex" << regex <<"$options" << "-i"))
+#define MONGODB_REGEX_ON_FILED(field_name, regex) BSON(field_name << BSON("$regex" << regex))
 
 //copy chaos data wrapper key into the bson obj builder
 #define MDB_COPY_STRING_CDWKEY_TO_BUILDER(b, o, k)\
@@ -52,9 +52,9 @@ namespace chaos {
     namespace service_common {
         namespace persistence {
             namespace mongodb {
-
+                
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(mongo::BSONObj, SearchResult)
-
+                
                 class MongoDBAccessor {
                     friend class MongoDBPersistenceDriver;
                 protected:
@@ -65,23 +65,34 @@ namespace chaos {
                     virtual ~MongoDBAccessor();
                     
                     const std::string& getDatabaseName();
-
+                    
                     mongo::BSONObj regexOnField(const std::string& field_name,
                                                 const std::string& regex);
-
-                        //! search within an array with a list of simple query()key/value
+                    
+                    //! search within an array with a list of simple query()key/value
                     /*!
                      \param search_keys_values the key valu epairs that are the simple mongodb query(key/value)
                      */
-                    mongo::BSONObj arrayMatch(const std::vector<std::pair<std::string, std::string> >& search_keys_values);
-
-                        //! search within an array with simple query key/value
+                    mongo::BSONObj arrayMatch(const std::vector< std::pair<std::string, std::string> >& search_keys_values);
+                    
+                    //! search within an array with simple query key/value
                     /*!
                      \param serach_key the key for the field
                      \param search_value the value corresponding to the key
                      */
-                    mongo::BSONObj arrayMatch(const std::string& serach_key, const std::string& search_value);
-
+                    mongo::BSONObj arrayMatch(const std::string& serach_key,
+                                              const std::string& search_value);
+                    
+                    //! create the array of 'or' condition with all token in search string
+                    /*!
+                     create the 'or' query for all token in search string for search all they in
+                     a field of a collection
+                     \param search_string the set of token to search witin a collection field
+                     \param field_target_for_search the field target of the search
+                     */
+                    mongo::BSONArray getSearchTokenOnFiled(const std::string& search_string,
+                                                           const std::string& field_target_for_search);
+                    
                     //! perform a paged query
                     /*!
                      perform a query using paging logic

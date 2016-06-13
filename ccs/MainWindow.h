@@ -45,6 +45,8 @@ private slots:
 
     void on_actionScript_Manager_triggered();
 
+    void on_actionExecution_Pools_triggered();
+
 private:
     ApiAsyncProcessor api_processor;
     HealtMonitorWidget *healt_widget;

@@ -2,7 +2,13 @@
 using namespace chaos::metadata_service_client::api_proxy::groups;
 
 DomainListModel::DomainListModel(QObject *parent):
-    ChaosAbstractListModel(parent) {
+    ChaosAbstractListModel(parent),
+    ApiHandler(),
+    api_submitter(this){
+
+}
+
+DomainListModel::~DomainListModel() {
 
 }
 
@@ -17,8 +23,17 @@ QVariant DomainListModel::getUserData(int row) const {
     return getRowData(row);
 }
 
-void DomainListModel::update(std::auto_ptr<GetDomainsHelper> _get_domains_helper) {
-    beginResetModel();
-    get_domains_helper = _get_domains_helper;
-    endResetModel();
+void DomainListModel::update() {
+    api_submitter.submitApiResult("get_domains",
+                                  GET_CHAOS_API_PTR(GetDomains)->execute());
+}
+
+void DomainListModel::onApiDone(const QString& tag,
+                                QSharedPointer<chaos::common::data::CDataWrapper> api_result) {
+    if(tag.compare("get_domains") == 0) {
+        beginResetModel();
+        get_domains_helper = GetDomains::getHelper(api_result.data());
+        endResetModel();
+        emit domainListUpdated();
+    }
 }

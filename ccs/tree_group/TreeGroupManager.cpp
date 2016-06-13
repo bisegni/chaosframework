@@ -5,6 +5,8 @@
 
 #include <QMap>
 #include <QDebug>
+#include <QVector>
+#include <QVariant>
 #include <QInputDialog>
 
 //tree contextual menu label
@@ -22,8 +24,12 @@ using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::node;
 
-TreeGroupManager::TreeGroupManager() :
-    PresenterWidget(NULL),
+TreeGroupManager::TreeGroupManager(bool _selection_mode,
+                                   const QString &_selection_tag,
+                                   QWidget *parent) :
+    PresenterWidget(parent),
+    selection_mmode(_selection_mode),
+    selection_tag(_selection_tag),
     ui(new Ui::TreeGroupManager) {
     ui->setupUi(this);
 }
@@ -33,6 +39,13 @@ TreeGroupManager::~TreeGroupManager() {
 }
 
 void TreeGroupManager::initUI() {
+    QList<int> sizes;
+    sizes << (size().width()*1/5) << (size().width()*4/5);
+    ui->splitter->setSizes(sizes);
+
+    //set for selection or not
+    ui->pushButtonAcceptSelection->setVisible(selection_mmode);
+
     QMap<QString, QVariant> cm_tree_map;
     cm_tree_map.insert(TREE_CM_NEW_ROOT_GROUP, tr("new_root"));
     cm_tree_map.insert(TREE_CM_NEW_SUB_GROUP, tr("new_sub"));
@@ -48,8 +61,11 @@ void TreeGroupManager::initUI() {
 
     ui->listViewDomains->setModel(&domain_list_model);
     connect(ui->listViewDomains->selectionModel(),
-            SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
-            SLOT(handleListSelectionChanged(QModelIndex,QModelIndex)));
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SLOT(handleListSelectionChanged(QItemSelection,QItemSelection)));
+    connect(&domain_list_model,
+            SIGNAL(domainListUpdated()),
+            SLOT(domainUpdated()));
 
     registerWidgetForContextualMenu(ui->listViewDomains,
                                     &cm_list_map,
@@ -73,7 +89,7 @@ void TreeGroupManager::initUI() {
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(handleTreeSelectionChanged(QItemSelection,QItemSelection)));
 
-    updateDomains();
+    domain_list_model.update();
 }
 
 bool TreeGroupManager::isClosing() {
@@ -86,23 +102,20 @@ void TreeGroupManager::onApiDone(const QString& tag,
     PresenterWidget::onApiDone(tag,
                                api_result);
 
-    if(tag.compare("get_domains") == 0) {
-        domain_list_model.update(groups::GetDomains::getHelper(api_result.data()));
-        tree_model.clear();
-    } else if(tag.compare("add_domain") == 0) {
-        updateDomains();
+    if(tag.compare("add_domain") == 0) {
+        domain_list_model.update();
     }
-
 }
 
-void TreeGroupManager::updateDomains() {
-    submitApiResult("get_domains",
-                    GET_CHAOS_API_PTR(groups::GetDomains)->execute());
+void TreeGroupManager::domainUpdated() {
+    //reset tree
+    tree_model.clear();
 }
 
 void TreeGroupManager::contextualMenuActionTrigger(const QString& cm_title,
                                                    const QVariant& cm_data){
     if(cm_title.compare(LIST_CM_SELECT_DOMAIN)==0) {
+        ui->pushButtonAddRoot->setEnabled(true);
         ui->labelDomainSelected->setText(cm_data.toString());
         tree_model.loadRootsForDomain(cm_data.toString());
     } else if(cm_title.compare(TREE_CM_NEW_SUB_GROUP) == 0) {
@@ -125,36 +138,44 @@ void TreeGroupManager::contextualMenuActionTrigger(const QString& cm_title,
         if(parent_item == NULL) return;
         tree_model.updateNodeChildList(parent_node_index);
     } else if(cm_title.compare(TREE_CM_DELETE_GROUP) == 0) {
-        QModelIndex parent_node_index = cm_data.toModelIndex();
-        GroupTreeItem *parent_item = static_cast<GroupTreeItem*>(parent_node_index.internalPointer());
-        if(parent_item == NULL) return;
-        tree_model.deleteNode(parent_node_index);
+        QModelIndexList selected_nodes = cm_data.value<QModelIndexList>();
+        foreach (QModelIndex parent_node_index, selected_nodes) {
+            GroupTreeItem *parent_item = static_cast<GroupTreeItem*>(parent_node_index.internalPointer());
+            if(parent_item == NULL) return;
+            tree_model.deleteNode(parent_node_index);
+        }
     } else if(cm_title.compare(TREE_CM_NEW_ROOT_GROUP) == 0) {
         on_pushButtonAddRoot_clicked();
     }
 }
 
-void TreeGroupManager::handleListSelectionChanged(const QModelIndex &current_row,
-                                                  const QModelIndex &previous_row) {
-    if(!current_row.isValid()) {
-        contextualMenuActionSetVisible(ui->listViewDomains,
-                                       LIST_CM_SELECT_DOMAIN,
-                                       false);
-    } else {
+void TreeGroupManager::handleListSelectionChanged(const QItemSelection &current_selection,
+                                                  const QItemSelection &previous_selection) {
+
+    ui->pushButtonDeleteDomain->setEnabled(current_selection.indexes().size());
+
+    if(current_selection.indexes().size() == 1) {
         contextualMenuActionSetVisible(ui->listViewDomains,
                                        LIST_CM_SELECT_DOMAIN,
                                        true);
         contextualMenuActionSetData(ui->listViewDomains,
                                     LIST_CM_SELECT_DOMAIN,
-                                    current_row.data());
+                                    current_selection.first().indexes().first().data());
+    } else {
+        contextualMenuActionSetVisible(ui->listViewDomains,
+                                       LIST_CM_SELECT_DOMAIN,
+                                       false);
     }
 }
 
 void TreeGroupManager::handleTreeSelectionChanged(const QItemSelection & selected,
                                                   const QItemSelection & deselected) {
-    bool empty_selection = selected.indexes().size() == 0;
-    bool single_selection = selected.indexes().size() == 1;
+    unsigned int selected_row = ui->treeViewDomainsTree->selectionModel()->selectedRows().size();
+    bool empty_selection = selected_row == 0;
+    bool single_selection = selected_row == 1;
     bool can_create_child = single_selection;
+
+    if(selection_mmode){ui->pushButtonAcceptSelection->setEnabled(empty_selection == false);}
 
     contextualMenuActionSetVisible(ui->treeViewDomainsTree,
                                    TREE_CM_NEW_SUB_GROUP,
@@ -164,30 +185,30 @@ void TreeGroupManager::handleTreeSelectionChanged(const QItemSelection & selecte
                                    can_create_child);
     contextualMenuActionSetVisible(ui->treeViewDomainsTree,
                                    TREE_CM_DELETE_GROUP,
-                                   can_create_child);
+                                   empty_selection == false);
     if(can_create_child) {
-        //set the model indel as contextual menu data
+        //set the model index as contextual menu data
         contextualMenuActionSetData(ui->treeViewDomainsTree,
                                     TREE_CM_NEW_SUB_GROUP,
-                                    selected.indexes().first());
+                                    ui->treeViewDomainsTree->selectionModel()->selectedRows().first());
 
         contextualMenuActionSetData(ui->treeViewDomainsTree,
                                     TREE_CM_UPDATE_DOMAIN_CHILD,
-                                    selected.indexes().first());
-
-        contextualMenuActionSetData(ui->treeViewDomainsTree,
-                                    TREE_CM_DELETE_GROUP,
-                                    selected.indexes().first());
+                                    ui->treeViewDomainsTree->selectionModel()->selectedRows().first());
     }
 
-
+    if(empty_selection == false) {
+        contextualMenuActionSetData(ui->treeViewDomainsTree,
+                                    TREE_CM_DELETE_GROUP,
+                                    QVariant::fromValue<QModelIndexList>(ui->treeViewDomainsTree->selectionModel()->selectedRows()));
+    }
 }
 
 void TreeGroupManager::on_pushButtonUpdateDomainsList_clicked() {
-    updateDomains();
+    domain_list_model.update();
 }
 
-void TreeGroupManager::on_pushButton_clicked() {
+void TreeGroupManager::on_pushButtonAddNewDomain_clicked() {
     AddNewDomain add_new_domain_dialog;
     int result = add_new_domain_dialog.exec();
     if(result == 1) {
@@ -201,12 +222,28 @@ void TreeGroupManager::on_pushButton_clicked() {
 void TreeGroupManager::on_pushButtonAddRoot_clicked() {
     bool ok = false;
     QString root_node_name = QInputDialog::getText(this,
-                                              tr("Create new root"),
-                                              tr("Root node name:"),
-                                              QLineEdit::Normal,
-                                              tr("Root Name"),
-                                              &ok);
+                                                   tr("Create new root"),
+                                                   tr("Root node name:"),
+                                                   QLineEdit::Normal,
+                                                   tr("Root Name"),
+                                                   &ok);
     if(ok && root_node_name.size()>0) {
         tree_model.addNewRoot(root_node_name);
     }
+}
+
+void TreeGroupManager::on_pushButtonAcceptSelection_clicked() {
+    const QString domain_selected = tree_model.currentDomain();
+    QStringList selected_path;
+
+    foreach (QModelIndex current_index, ui->treeViewDomainsTree->selectionModel()->selectedRows()) {
+        GroupTreeItem *current_item = static_cast<GroupTreeItem*>(current_index.internalPointer());
+        if(current_item) {
+            //add path
+            selected_path << QString("%1:%2").arg(current_item->getDomain(), current_item->getPathToRoot());
+        }
+    }
+    emit selectedPath(selection_tag,
+                      selected_path);
+    closeTab();
 }

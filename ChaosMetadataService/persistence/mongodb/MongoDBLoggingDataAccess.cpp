@@ -49,7 +49,8 @@ using namespace chaos::metadata_service::persistence::data_access;
 
 MongoDBLoggingDataAccess::MongoDBLoggingDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
-LoggingDataAccess(){}
+LoggingDataAccess(),
+utility_data_access(NULL){}
 
 MongoDBLoggingDataAccess::~MongoDBLoggingDataAccess() {}
 
@@ -60,40 +61,40 @@ int MongoDBLoggingDataAccess::insertNewEntry(LogEntry& log_entry) {
     CHAOS_ASSERT(utility_data_access)
     try {
         if(!log_entry.source_identifier.size()) return -1;
-        
+
         if(utility_data_access->getNextSequenceValue("logging", log_entry.sequence)) {
             MDBLDA_ERR << "Error getting new sequence for log";
             return err;
         }
-        
+
         //add default log entry attribute
         builder << "seq" << (long long)log_entry.sequence;
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << log_entry.source_identifier;
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP << mongo::Date_t(log_entry.ts);
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << log_entry.domain;
         builder << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SUBJECT << log_entry.subject;
-        
+
         //append source and subject to the search string
         search_field.append(log_entry.source_identifier); search_field.append("|");
         search_field.append(log_entry.subject); search_field.append("|");
-        
+
         //add custom attribute in log entry
         WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, LoggingKeyValueStringMapIterator, map_string_value, , search_field);
         WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, LoggingKeyValueInt64MapIterator, map_int64_value, (long long), search_field);
         WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, LoggingKeyValueInt32MapIterator, map_int32_value, (int), search_field);
         WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, LoggingKeyValueDoubleMapIterator, map_double_value, , search_field);
         WRITE_LOG_ATTRIBUTE_MAP_ON_BUILDER(builder, LoggingKeyValueBoolMapIterator, map_bool_value, , search_field);
-        
+
         //add key with the all custom variable ass
         builder << "advanced_search" << search_field;
-        
+
         mongo::BSONObj q = builder.obj();
-        
+
         DEBUG_CODE(MDBLDA_DBG<<log_message("insertNewEntry",
                                            "insert",
                                            DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                    q));)
-        
+
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_LOGGING),
                                      q))) {
             MDBLDA_ERR << "Error creating new entry in log";
@@ -120,7 +121,7 @@ mongo::Query MongoDBLoggingDataAccess::getNextPagedQuery(uint64_t last_sequence,
             it++) {
             or_builder.append(*it);
         }
-        
+
         build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << BSON("$in" << or_builder.arr());
     }
     q = build_query.obj();
@@ -131,7 +132,7 @@ mongo::Query MongoDBLoggingDataAccess::getNextPagedQuery(uint64_t last_sequence,
 boost::shared_ptr<LogEntry> MongoDBLoggingDataAccess::getEntryByBSON(const mongo::BSONObj& entry_bson) {
     std::vector<mongo::BSONElement> all_element;
     boost::shared_ptr<LogEntry> log_entry(new LogEntry());
-    
+
     entry_bson.elems(all_element);
     for(std::vector<mongo::BSONElement>::iterator it_ele = all_element.begin();
         it_ele != all_element.end();
@@ -165,10 +166,10 @@ boost::shared_ptr<LogEntry> MongoDBLoggingDataAccess::getEntryByBSON(const mongo
                 case Bool:
                     log_entry->map_bool_value.insert(make_pair(field_name, it_ele->boolean()));
                     break;
-                    
+
                 default:
                     break;
-                    
+
             }
         }
     }
@@ -182,7 +183,7 @@ int MongoDBLoggingDataAccess::searchEntryForSource(LogEntryList& entry_list,
                                                    uint32_t page_length) {
     int err = 0;
     SearchResult paged_result;
-    
+
     mongo::Query q = getNextPagedQuery(start_sequence_id,
                                        source_uid,
                                        domain);
@@ -194,7 +195,7 @@ int MongoDBLoggingDataAccess::searchEntryForSource(LogEntryList& entry_list,
                                                                "Projection",
                                                                q.toString(),
                                                                p.jsonString()));)
-    
+
     //perform the search for the query page
     if((err = performPagedQuery(paged_result,
                                 MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_LOGGING),
@@ -228,10 +229,10 @@ int MongoDBLoggingDataAccess::searchEntryAdvanced(LogEntryList& entry_list,
     SearchResult paged_result;
     std::string token_for_mongo;
     std::vector<std::string> criteria_token;
-    
+
     mongo::BSONArrayBuilder bson_find_and;
     mongo::BSONObjBuilder bson_query_builder;
-    
+
     if(search_string.size()) {
         mongo::BSONArrayBuilder bson_find_token_or;
         boost::split(criteria_token,
@@ -245,12 +246,12 @@ int MongoDBLoggingDataAccess::searchEntryAdvanced(LogEntryList& entry_list,
                 token_for_mongo = ".*"+*it+".*";
                 bson_find_token_or <<  MONGODB_REGEX_ON_FILED("advanced_search", token_for_mongo);
             }
-            
+
             //add query on single token
             bson_find_and << BSON("$or" << bson_find_token_or.arr());
         }
     }
-    
+
     if(domain.size()) {
         mongo::BSONArrayBuilder or_builder;
         //add all domain into array
@@ -259,23 +260,23 @@ int MongoDBLoggingDataAccess::searchEntryAdvanced(LogEntryList& entry_list,
             it++) {
             or_builder.append(*it);
         }
-        
+
         bson_find_and << BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN << BSON("$in" << or_builder.arr()));
     }
 
-    
+
     //add query for timestamp if ar > 0
     if(start_timestamp) {
         bson_find_and << BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP << BSON("$gte" << mongo::Date_t(start_timestamp)));
     }
-    
+
     if(end_timestamp) {
         bson_find_and << BSON(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_TIMESTAMP << BSON("$lte" << mongo::Date_t(end_timestamp)));
     }
-    
+
     mongo::Query q;
     mongo::BSONArray query_arr = bson_find_and.arr();
-    
+
     if(query_arr.isEmpty() == false) {
         q = BSON("$and" << query_arr);
     }
@@ -289,7 +290,7 @@ int MongoDBLoggingDataAccess::searchEntryAdvanced(LogEntryList& entry_list,
                                                                "Projection",
                                                                q.toString(),
                                                                p.jsonString()));)
-    
+
     //perform the search for the query page
     if((err = performPagedQuery(paged_result,
                                 MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_LOGGING),
@@ -327,19 +328,19 @@ int MongoDBLoggingDataAccess::getLogDomainsForSource(LogDomainList& entry_list,
                 it++) {
                 or_builder.append(*it);
             }
-            
+
             build_query << MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER << BSON("$in" << or_builder.arr());
         }
-        
+
         mongo::Query q = build_query.obj();
-        
+
         DEBUG_CODE(MDBLDA_DBG<<log_message("getLogDomainsForSource",
                                            "query",
                                            DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                    "no query"));)
-        
+
         distinct_result = connection->distinct(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_LOGGING), MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_DOMAIN);
-        
+
         if(!distinct_result.isEmpty() &&
            distinct_result.couldBeArray()){
             distinct_result.Vals<std::string>(entry_list);

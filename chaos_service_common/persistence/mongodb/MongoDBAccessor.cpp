@@ -18,8 +18,13 @@
  *    	limitations under the License.
  */
 
-#include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
+
 #include <chaos/common/global.h>
+
+#include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
+
+#include <boost/algorithm/string.hpp>
+
 #define MDBACC_INFO INFO_LOG(MongoDBAccessor)
 #define MDBACC_DBG  DBG_LOG(MongoDBAccessor)
 #define MDBACC_ERR  ERR_LOG(MongoDBAccessor)
@@ -50,14 +55,32 @@ mongo::BSONObj MongoDBAccessor::arrayMatch(const std::string& serach_key, const 
 
 mongo::BSONObj MongoDBAccessor::arrayMatch(const std::vector<std::pair<std::string, std::string> >& search_keys_values) {
     mongo::BSONObjBuilder q_math_build;
-        //scan all search info within array
+    //scan all search info within array
     for(std::vector<std::pair<std::string, std::string> >::const_iterator it = search_keys_values.begin();
         it != search_keys_values.end();
         it++){
         q_math_build << it->first << it->second;
     }
-
+    
     return BSON("$elemMatch" << q_math_build.obj());
+}
+
+mongo::BSONArray MongoDBAccessor::getSearchTokenOnFiled(const std::string& search_string,
+                                                        const std::string& field_target_for_search) {
+    //contain token found in criteria
+    mongo::BSONArrayBuilder bson_find_or;
+    std::vector<std::string> criteria_token;
+    
+    boost::split(criteria_token, search_string,
+                 boost::is_any_of(" "),
+                 boost::token_compress_on);
+    for (std::vector<std::string>::iterator it = criteria_token.begin();
+         it != criteria_token.end();
+         it++) {
+        bson_find_or <<  MONGODB_REGEX_ON_FILED(field_target_for_search, std::string(".*"+*it+".*"));
+    }
+    //compose the or
+    return bson_find_or.arr();
 }
 
 int MongoDBAccessor::performPagedQuery(SearchResult& paged_result,

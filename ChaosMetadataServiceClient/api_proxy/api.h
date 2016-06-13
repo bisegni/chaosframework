@@ -24,65 +24,12 @@
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxyManager.h>
 
 //---include all api header
-
-//----------------------------logging----------------------------------------
-#include <ChaosMetadataServiceClient/api_proxy/logging/SearchLogEntry.h>
-#include <ChaosMetadataServiceClient/api_proxy/logging/GetLogForSourceUID.h>
-#include <ChaosMetadataServiceClient/api_proxy/logging/GetLogDomainForSourceUID.h>
-
-//----------------------------groups----------------------------------------
-#include <ChaosMetadataServiceClient/api_proxy/groups/AddNode.h>
-#include <ChaosMetadataServiceClient/api_proxy/groups/DeleteNode.h>
-#include <ChaosMetadataServiceClient/api_proxy/groups/GetDomains.h>
-#include <ChaosMetadataServiceClient/api_proxy/groups/GetNodeChilds.h>
-
-//----------------------------service----------------------------------------
-#include <ChaosMetadataServiceClient/api_proxy/service/ResetAll.h>
-#include <ChaosMetadataServiceClient/api_proxy/service/GetAllSnapshot.h>
-#include <ChaosMetadataServiceClient/api_proxy/service/DeleteSnapshot.h>
-#include <ChaosMetadataServiceClient/api_proxy/service/RestoreSnapshot.h>
-#include <ChaosMetadataServiceClient/api_proxy/service/CreateNewSnapshot.h>
-#include <ChaosMetadataServiceClient/api_proxy/service/GetNodesForSnapshot.h>
-
-//----------------------------data service nodes---------------------------------------
-#include <ChaosMetadataServiceClient/api_proxy/data_service/NewDS.h>
-#include <ChaosMetadataServiceClient/api_proxy/data_service/UpdateDS.h>
-#include <ChaosMetadataServiceClient/api_proxy/data_service/DeleteDS.h>
-#include <ChaosMetadataServiceClient/api_proxy/data_service/GetAllDS.h>
-#include <ChaosMetadataServiceClient/api_proxy/data_service/GetBestEndpoints.h>
-#include <ChaosMetadataServiceClient/api_proxy/data_service/GetAssociationByDS.h>
-#include <ChaosMetadataServiceClient/api_proxy/data_service/AssociationControlUnit.h>
-
-    //----------------------------control unit nodes---------------------------------------
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/Delete.h>
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/StartStop.h>
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/InitDeinit.h>
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/GetInstance.h>
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/CopyInstance.h>
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/RecoverError.h>
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/DeleteInstance.h>
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/GetCurrentDataset.h>
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/SearchInstancesByUS.h>
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInstanceDescription.h>
-#include <ChaosMetadataServiceClient/api_proxy/control_unit/SetInputDatasetAttributeValues.h>
-
-    //----------------------------unit server nodes----------------------------------------
-#include <ChaosMetadataServiceClient/api_proxy/unit_server/NewUS.h>
-#include <ChaosMetadataServiceClient/api_proxy/unit_server/ManageCUType.h>
-#include <ChaosMetadataServiceClient/api_proxy/unit_server/GetDescription.h>
-#include <ChaosMetadataServiceClient/api_proxy/unit_server/LoadUnloadControlUnit.h>
-
-//------------------------------abstract nodes-----------------------------------------
-#include <ChaosMetadataServiceClient/api_proxy/node/NodeSearch.h>
-#include <ChaosMetadataServiceClient/api_proxy/node/CommandGet.h>
-#include <ChaosMetadataServiceClient/api_proxy/node/UpdateProperty.h>
-#include <ChaosMetadataServiceClient/api_proxy/node/ChangeNodeState.h>
-#include <ChaosMetadataServiceClient/api_proxy/node/GetNodeDescription.h>
-#include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateSet.h>
-#include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateGet.h>
-#include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateDelete.h>
-#include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateSearch.h>
-#include <ChaosMetadataServiceClient/api_proxy/node/CommandTemplateSubmit.h>
-#include <ChaosMetadataServiceClient/api_proxy/node/GetCommandAndTemplateDescription.h>
-
+#include <ChaosMetadataServiceClient/api_proxy/node/node.h>
+#include <ChaosMetadataServiceClient/api_proxy/groups/groups.h>
+#include <ChaosMetadataServiceClient/api_proxy/script/script.h>
+#include <ChaosMetadataServiceClient/api_proxy/logging/logging.h>
+#include <ChaosMetadataServiceClient/api_proxy/service/service.h>
+#include <ChaosMetadataServiceClient/api_proxy/data_service/data_service.h>
+#include <ChaosMetadataServiceClient/api_proxy/control_unit/control_unit.h>
+#include <ChaosMetadataServiceClient/api_proxy/unit_server/unit_server.h>
 #endif

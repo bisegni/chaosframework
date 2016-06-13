@@ -19,6 +19,9 @@
  */
 #ifndef CHAOSFramework_DataAccess_h
 #define CHAOSFramework_DataAccess_h
+
+#include <chaos_service_common/service_error.h>
+
 #include "NodeDataAccess.h"
 #include "UtilityDataAccess.h"
 #include "UnitServerDataAccess.h"
@@ -27,4 +30,5 @@
 #include "SnapshotDataAccess.h"
 #include "TreeGroupDataAccess.h"
 #include "LoggingDataAccess.h"
+#include "ScriptDataAccess.h"
 #endif

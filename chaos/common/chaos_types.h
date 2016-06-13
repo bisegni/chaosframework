@@ -83,4 +83,7 @@ it++) {\
    to_execute \
 }\
 
+
+CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, ChaosStringList);
+
 #endif

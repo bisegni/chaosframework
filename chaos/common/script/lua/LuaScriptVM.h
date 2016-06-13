@@ -23,10 +23,10 @@
 #define __CHAOSFramework__LuaScriptVM_h
 
 #include <chaos/common/script/lua/luna.h>
+#include <chaos/common/script/lua/core/lua.hpp>
 #include <chaos/common/script/AbstractScriptVM.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
-#include <lua.hpp>
 
 namespace chaos {
     namespace common {

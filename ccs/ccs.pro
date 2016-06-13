@@ -121,7 +121,18 @@ SOURCES += main.cpp\
     language_editor/ScriptEditor.cpp \
     script/ScriptManager.cpp \
     script/ScriptDescriptionWidget.cpp \
-    data/ScriptListModel.cpp
+    data/ScriptListModel.cpp \
+    script/CreateNewScriptDialog.cpp \
+    data/EditableDatasetTableModel.cpp \
+    data/editor/dataset/EditableDatasetTableModelEditDialog.cpp \
+    data/delegate/ComboBoxDelegate.cpp \
+    data/EditableScriptVariableTableModel.cpp \
+    data/editor/script/EditableScriptVariableTableModelEditDialog.cpp \
+    data/editor/common/EditableSubtypeListWidget.cpp \
+    data/editor/common/EditableSubtypeListTableModel.cpp \
+    script/ExecutionPoolsManager.cpp \
+    script/editor/CodeEditor.cpp \
+    GlobalServices.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -224,7 +235,18 @@ HEADERS  += \
     language_editor/ScriptEditor.h \
     script/ScriptManager.h \
     script/ScriptDescriptionWidget.h \
-    data/ScriptListModel.h
+    data/ScriptListModel.h \
+    script/CreateNewScriptDialog.h \
+    data/EditableDatasetTableModel.h \
+    data/editor/dataset/EditableDatasetTableModelEditDialog.h \
+    data/delegate/ComboBoxDelegate.h \
+    data/EditableScriptVariableTableModel.h \
+    data/editor/script/EditableScriptVariableTableModelEditDialog.h \
+    data/editor/common/EditableSubtypeListWidget.h \
+    data/editor/common/EditableSubtypeListTableModel.h \
+    script/ExecutionPoolsManager.h \
+    script/editor/CodeEditor.h \
+    GlobalServices.h
 
 FORMS    += \
     search/searchnoderesult.ui \
@@ -252,7 +274,12 @@ FORMS    += \
     widget/CNodeResourceWidget.ui \
     language_editor/ScriptEditor.ui \
     script/ScriptManager.ui \
-    script/ScriptDescriptionWidget.ui
+    script/ScriptDescriptionWidget.ui \
+    script/CreateNewScriptDialog.ui \
+    data/editor/dataset/EditableDatasetTableModelEditDialog.ui \
+    data/editor/script/EditableScriptVariableTableModelEditDialog.ui \
+    data/editor/common/EditableSubtypeListWidget.ui \
+    script/ExecutionPoolsManager.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

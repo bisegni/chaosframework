@@ -27,5 +27,9 @@ static const char * const MONGODB_COLLECTION_SNAPSHOT_DATA              = "snaps
 static const char * const MONGODB_COLLECTION_TREE_GROUP                 = "mds_tree_group";
 
 //---------logging----------
-static const char * const MONGODB_COLLECTION_LOGGING                 = "mds_logging";
+static const char * const MONGODB_COLLECTION_LOGGING                    = "mds_logging";
+
+//---------script----------
+static const char * const MONGODB_COLLECTION_SCRIPT                     = "mds_script";
+
 #endif

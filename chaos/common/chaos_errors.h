@@ -22,56 +22,104 @@
 #ifndef __CHAOSFramework__chaos_errors_h
 #define __CHAOSFramework__chaos_errors_h
 
+#include <string>
+#include <map>
+#include <cassert>
 namespace chaos{
-
+    namespace error {
+        //forward decalration
+        static std::string getErrorMessage(int error_code);
+        
+        //!error mapping helper class
+        class __attribute__((visibility("hidden"))) ErrorCodeMapping {
+            friend std::string getErrorMessage(int error_code);
+        private:
+            int code;
+            
+            typedef std::map<int,std::string> ErrorMap;
+            static ErrorMap& getErrorMap() {
+                static ErrorMap errMap;
+                return errMap;
+            }
+            
+        public:
+            ErrorCodeMapping(int _code,
+                             const std::string& _message):
+            code(_code) {
+#ifdef DEBUG
+                ErrorMap::iterator found = getErrorMap().find( code );
+                if(found != getErrorMap().end()) {
+                    assert(found->second.compare(_message) == 0);
+                }
+#endif
+                getErrorMap()[code] = _message;
+            }
+            
+            // auto-cast Error to integer error code settitn this cose as last error got
+            operator int() { return (code); }
+        };
+        
+        __attribute__((unused))
+        static std::string getErrorMessage(int error_code) {
+            ErrorCodeMapping::ErrorMap::iterator found = ErrorCodeMapping::getErrorMap().find(error_code);
+            if(found == ErrorCodeMapping::getErrorMap().end()){
+                return "Not Chaos Error Code";
+            }else {
+                return found->second;
+            }
+        }
+    }
+#define CHAOS_DEFINE_ERROR_CODE_MAPPING(e, c, m)\
+static __attribute__((visibility("hidden"))) chaos::error::ErrorCodeMapping e(c, m);
+    
     /** @defgroup ChaosErrorCode
      *  This is the collection of the definition of the chaos error code
      *  @{
      */
-        //! Name space for grupping the definition of the chaos error code
+    //! Name space for grupping the definition of the chaos error code
     namespace ErrorCode {
-            //!the list of principal chaos error code
+        //!the list of principal chaos error code
         typedef enum {
-                //!no error
+            //!no error
             EC_NO_ERROR = 0,
-                //! rpc timeout
+            //! rpc timeout
             EC_TIMEOUT = 100,
-                //! dataset attribute not found
+            //! dataset attribute not found
             EC_ATTRIBUTE_NOT_FOUND, // 101 ...
-                //! dataset attribute bad direction
+            //! dataset attribute bad direction
             EC_ATTRIBUTE_BAD_DIR ,
-                //!dataset attribute not supported
+            //!dataset attribute not supported
             EC_ATTRIBUTE_TYPE_NOT_SUPPORTED ,
-                //! has been called a not supported method
-                //! to be used for instance in driver methods that not are supported in a particular Abstraction
+            //! has been called a not supported method
+            //! to be used for instance in driver methods that not are supported in a particular Abstraction
             EC_NODE_OPERATION_NOT_SUPPORTED=-10000,
-
-                //!unit server registration is gone well
+            
+            //!unit server registration is gone well
             EC_MDS_NODE_REGISTRATION_OK = 500,
-                //!unit server registration has failed for invalid alias
+            //!unit server registration has failed for invalid alias
             EC_MDS_NODE_REGISTRATION_FAILURE_INVALID_ALIAS,
-                //!unit server registration for duplicated alias
+            //!unit server registration for duplicated alias
             EC_MDS_NODE_REGISTRATION_FAILURE_DUPLICATE_ALIAS,
-                //! node bad state machine state in response to mds ack event
+            //! node bad state machine state in response to mds ack event
             EC_MDS_NODE_BAD_SM_STATE,
-                //!work unit is not self manageable and need to be loaded within an unit server
+            //!work unit is not self manageable and need to be loaded within an unit server
             EC_MDS_NODE_ID_NOT_SELF_MANAGEABLE
         } ErrorCode;
     }
     /** @} */ // end of ChaosErrorCode
-
+    
     /** @defgroup ChaosRPCErrorCode
      *  This is the collection of the definition of the rpc error code
      *  @{
      */
-        //! Name space for grupping the definition of the rpc error code
+    //! Name space for grupping the definition of the rpc error code
     namespace ErrorRpcCoce {
         typedef enum {
-                //! rpc system has not been able to get a socket
+            //! rpc system has not been able to get a socket
             EC_RPC_NO_SOCKET = -1000,
-                //!error occuring udring the forwarding of the data
+            //!error occuring udring the forwarding of the data
             EC_RPC_SENDING_DATA = -1001,
-                //!error receiving data
+            //!error receiving data
             EC_RPC_GETTING_ACK_DATA = -1002,
             EC_RPC_NO_DOMAIN_FOUND_IN_MESSAGE = -1003,
             EC_RPC_NO_ACTION_FOUND_IN_MESSAGE = -1004,
@@ -80,17 +128,17 @@ namespace chaos{
             EC_RPC_UNMANAGED_ERROR_DURING_FORWARDING = -1007,
             EC_RPC_IMPL_ERR = -1100
         }ErrorRpcCoce;
-
+        
 #define CHAOS_IS_RPC_ERROR_CODE(x)\
 ((x<= ErrorRpcCoce::EC_RPC_NO_SOCKET) && \
-        (x>= ErrorRpcCoce::EC_RPC_IMPL_ERR))
-
+(x>= ErrorRpcCoce::EC_RPC_IMPL_ERR))
+        
 #define CHAOS_IS_RPC_SERVER_OFFLINE(x)\
 ((x == ErrorRpcCoce::EC_RPC_GETTING_ACK_DATA) || \
-        (x == ErrorRpcCoce::EC_RPC_NO_DOMAIN_REGISTERED_ON_SERVER) ||\
-        (x == ErrorRpcCoce::EC_RPC_UNMANAGED_ERROR_DURING_FORWARDING) ||\
-        (x == ErrorRpcCoce::EC_RPC_SENDING_DATA) ||\
-        (x == ErrorRpcCoce::EC_RPC_NO_SOCKET))
+(x == ErrorRpcCoce::EC_RPC_NO_DOMAIN_REGISTERED_ON_SERVER) ||\
+(x == ErrorRpcCoce::EC_RPC_UNMANAGED_ERROR_DURING_FORWARDING) ||\
+(x == ErrorRpcCoce::EC_RPC_SENDING_DATA) ||\
+(x == ErrorRpcCoce::EC_RPC_NO_SOCKET))
     }
     /** @} */ // end of ChaosRPCErrorCode
 }

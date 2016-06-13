@@ -7,13 +7,39 @@
     <x>0</x>
     <y>0</y>
     <width>969</width>
-    <height>622</height>
+    <height>624</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>832</width>
+    <height>624</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>11</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Script Managment</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>4</number>
+   </property>
+   <property name="leftMargin">
+    <number>4</number>
+   </property>
+   <property name="topMargin">
+    <number>4</number>
+   </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
+   <property name="bottomMargin">
+    <number>4</number>
+   </property>
    <item>
     <widget class="QSplitter" name="splitterMain">
      <property name="orientation">
@@ -23,6 +49,11 @@
       <number>2</number>
      </property>
      <widget class="QGroupBox" name="groupBox">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
       <property name="title">
        <string>Script List</string>
       </property>
@@ -49,7 +80,26 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QListView" name="listView"/>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLineEdit" name="lineEditSearchString"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonStartSearch">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Search</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QListView" name="listViewScriptList"/>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
@@ -68,6 +118,11 @@
          </item>
          <item>
           <widget class="QPushButton" name="pushButtonDeleteScript">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Delete</string>
            </property>
@@ -75,6 +130,11 @@
          </item>
          <item>
           <widget class="QPushButton" name="pushButtonCreateNewScript">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>New</string>
            </property>
@@ -85,6 +145,11 @@
       </layout>
      </widget>
      <widget class="QTabWidget" name="tabWidgetSourcesDocument">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
       <property name="tabShape">
        <enum>QTabWidget::Rounded</enum>
       </property>

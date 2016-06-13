@@ -3,9 +3,9 @@
 #include <QDebug>
 
 ChaosAbstractListModel::ChaosAbstractListModel(QObject *parent):
-    QAbstractListModel(parent) {
+    QAbstractListModel(parent) {}
 
-}
+ChaosAbstractListModel::~ChaosAbstractListModel(){}
 
 QVariant ChaosAbstractListModel::getRowData(int row) const {
     return QVariant();

@@ -5,7 +5,7 @@
 //  Created by Claudio Bisegni on 28/05/14.
 //  Copyright (c) 2014 INFN. All rights reserved.
 //
-
+#include <chaos/common/chaos_constants.h>
 #include "utility/HashMapTest.h"
 #include "network/FeederTest.h"
 #include "thread/ObjectQueueTest.h"
@@ -34,6 +34,21 @@ public:
 };
 
 int main(int argc, const char * argv[]) {
+    
+    //test bitfield
+//    int test_bit = chaos::DataType::SUB_TYPE_INT16;
+//    bool test_bool = CHAOS_SUBTYPE_IS_UNSIGNED(test_bit);
+//    
+//    std::cout << CHAOS_SUBTYPE_UNWRAP(test_bit) <<"-"<< test_bool <<std::endl;
+//    
+//    CHAOS_SUBTYPE_SET_UNSIGNED(test_bit);
+//    test_bool = CHAOS_SUBTYPE_IS_UNSIGNED(test_bit);
+//    std::cout << CHAOS_SUBTYPE_UNWRAP(test_bit) <<"-"<< test_bool <<std::endl;
+//
+//    CHAOS_SUBTYPE_SET_SIGNED(test_bit);
+//    test_bool = CHAOS_SUBTYPE_IS_UNSIGNED(test_bit);
+//    std::cout << CHAOS_SUBTYPE_UNWRAP(test_bit) <<"-"<< test_bool <<std::endl;
+
     
     TestProp tp;
     tp.property_one = 34;

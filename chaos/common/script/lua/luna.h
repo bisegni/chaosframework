@@ -9,7 +9,7 @@
 #ifndef luna_h
 #define luna_h
 
-#include <lua.hpp>
+#include <chaos/common/script/lua/core/lua.hpp>
 
 namespace chaos {
     namespace common {

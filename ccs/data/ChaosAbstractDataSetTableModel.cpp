@@ -110,9 +110,11 @@ void ChaosAbstractDataSetTableModel::consumeValue(const QString& key,
     }
     case chaos::DataType::TYPE_BYTEARRAY:{
         QSharedPointer<ChaosByteArray> value_buffer = value.value< QSharedPointer<ChaosByteArray> >();
-        map_doe_current_values.insert(it.value()->row,
-                                      base64Encode(QString(QByteArray::fromRawData(value_buffer->getByteArray().data(),
-                                                                                   (value_buffer->getByteArray().count()<20?value_buffer->getByteArray().count():20)))));
+        if(!value_buffer.isNull()){
+            map_doe_current_values.insert(it.value()->row,
+                                          base64Encode(QString(QByteArray::fromRawData(value_buffer->getByteArray().data(),
+                                                                                       (value_buffer->getByteArray().count()<20?value_buffer->getByteArray().count():20)))));
+        }
         break;
     }
     }

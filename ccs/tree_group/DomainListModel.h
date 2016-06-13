@@ -2,22 +2,32 @@
 #define DOMAINLISTMODEL_H
 
 #include "../data/ChaosAbstractListModel.h"
+#include "../api_async_processor/ApiSubmitter.h"
 
 #include <QVector>
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
 
 class DomainListModel :
-        public ChaosAbstractListModel {
+        public ChaosAbstractListModel,
+        protected ApiHandler {
+    Q_OBJECT
 
 protected:
     int getRowCount() const;
     QVariant getRowData(int row) const;
     QVariant getUserData(int row) const;
-
+    void onApiDone(const QString& tag,
+                   QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 public:
     DomainListModel(QObject *parent = 0);
-    void update(std::auto_ptr<chaos::metadata_service_client::api_proxy::groups::GetDomainsHelper> _get_domains_helper);
+    ~DomainListModel();
+    void update();
+
+signals:
+    void domainListUpdated();
+
 private:
+    ApiSubmitter api_submitter;
     std::auto_ptr<chaos::metadata_service_client::api_proxy::groups::GetDomainsHelper> get_domains_helper;
 };
 

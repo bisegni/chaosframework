@@ -17,6 +17,7 @@ class GroupTreeModel: public QAbstractItemModel {
 public:
     explicit GroupTreeModel(QObject *parent = 0);
     ~GroupTreeModel();
+
     void clear();
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
     Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
@@ -29,6 +30,7 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
     void loadRootsForDomain(const QString& domain);
+    const QString& currentDomain();
     void addNewRoot(QString node_name);
     void addNewNodeToIndex(const QModelIndex &node_parent, QString node_name);
     void updateNodeChildList(const QModelIndex &node_parent) const;
