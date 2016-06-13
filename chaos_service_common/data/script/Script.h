@@ -118,7 +118,7 @@ namespace chaos {
                     ChaosStringList classification_list;
                     
                     //! contains all pool associated to the script
-                    ChaosStringList execution_pool_lis;
+                    ChaosStringList execution_pool_list;
                     
                     //!variable list
                     chaos::service_common::data::dataset::AlgorithmVariableList variable_list;
@@ -134,6 +134,7 @@ namespace chaos {
                     script_description(copy_src.script_description),
                     script_content(copy_src.script_content),
                     classification_list(copy_src.classification_list),
+                    execution_pool_list(copy_src.execution_pool_list),
                     variable_list(copy_src.variable_list),
                     dataset_attribute_list(copy_src.dataset_attribute_list){}
                     
@@ -141,6 +142,7 @@ namespace chaos {
                         script_description = rhs.script_description;
                         script_content = rhs.script_content;
                         classification_list = rhs.classification_list;
+                        execution_pool_list = rhs.execution_pool_list;
                         variable_list = rhs.variable_list;
                         dataset_attribute_list = rhs.dataset_attribute_list;
                         return *this;
@@ -171,7 +173,10 @@ namespace chaos {
                         //clear all ol data on the list
                         dataWrapped().variable_list.clear();
                         dataWrapped().dataset_attribute_list.clear();
-
+                        dataWrapped().classification_list.clear();
+                        dataWrapped().execution_pool_list.clear();
+                        
+                        
                         const std::string variable_ser_key = "variables";
                         const std::string ds_attr_ser_key = chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION;
                         
@@ -192,13 +197,13 @@ namespace chaos {
                         }
                         
                         //deserialize pool list
-                        if(serialized_data->hasKey("execution_pool_lis")) {
+                        if(serialized_data->hasKey("execution_pool_list")) {
                             //encode classification list into array
-                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("execution_pool_lis"));
+                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("execution_pool_list"));
                             for(int idx = 0;
                                 idx < serialized_array->size();
                                 idx++) {
-                                dataWrapped().execution_pool_lis.push_back(serialized_array->getStringElementAtIndex(idx));
+                                dataWrapped().execution_pool_list.push_back(serialized_array->getStringElementAtIndex(idx));
                             }
                         }
                         
@@ -251,15 +256,15 @@ namespace chaos {
                             data_serialized->finalizeArrayForKey("classification_list");
                         }
                         
-                        if(dataWrapped().execution_pool_lis.size()) {
+                        if(dataWrapped().execution_pool_list.size()) {
                             //encode classification list into array
-                            for(ChaosStringListIterator str_it = dataWrapped().execution_pool_lis.begin(),
-                                str_end = dataWrapped().classification_list.end();
+                            for(ChaosStringListIterator str_it = dataWrapped().execution_pool_list.begin(),
+                                str_end = dataWrapped().execution_pool_list.end();
                                 str_it != str_end;
                                 str_it++) {
                                 data_serialized->appendStringToArray(*str_it);
                             }
-                            data_serialized->finalizeArrayForKey("execution_pool_lis");
+                            data_serialized->finalizeArrayForKey("execution_pool_list");
                         }
                         
                         //check for variable

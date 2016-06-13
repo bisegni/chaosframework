@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QDebug>
 #include <QVector>
+#include <QVariant>
 #include <QInputDialog>
 
 //tree contextual menu label
@@ -38,6 +39,10 @@ TreeGroupManager::~TreeGroupManager() {
 }
 
 void TreeGroupManager::initUI() {
+    QList<int> sizes;
+    sizes << (size().width()*1/5) << (size().width()*4/5);
+    ui->splitter->setSizes(sizes);
+
     //set for selection or not
     ui->pushButtonAcceptSelection->setVisible(selection_mmode);
 
@@ -133,10 +138,12 @@ void TreeGroupManager::contextualMenuActionTrigger(const QString& cm_title,
         if(parent_item == NULL) return;
         tree_model.updateNodeChildList(parent_node_index);
     } else if(cm_title.compare(TREE_CM_DELETE_GROUP) == 0) {
-        QModelIndex parent_node_index = cm_data.toModelIndex();
-        GroupTreeItem *parent_item = static_cast<GroupTreeItem*>(parent_node_index.internalPointer());
-        if(parent_item == NULL) return;
-        tree_model.deleteNode(parent_node_index);
+        QModelIndexList selected_nodes = cm_data.value<QModelIndexList>();
+        foreach (QModelIndex parent_node_index, selected_nodes) {
+            GroupTreeItem *parent_item = static_cast<GroupTreeItem*>(parent_node_index.internalPointer());
+            if(parent_item == NULL) return;
+            tree_model.deleteNode(parent_node_index);
+        }
     } else if(cm_title.compare(TREE_CM_NEW_ROOT_GROUP) == 0) {
         on_pushButtonAddRoot_clicked();
     }
@@ -163,8 +170,9 @@ void TreeGroupManager::handleListSelectionChanged(const QItemSelection &current_
 
 void TreeGroupManager::handleTreeSelectionChanged(const QItemSelection & selected,
                                                   const QItemSelection & deselected) {
-    bool empty_selection = selected.indexes().size() == 0;
-    bool single_selection = selected.indexes().size() == 1;
+    unsigned int selected_row = ui->treeViewDomainsTree->selectionModel()->selectedRows().size();
+    bool empty_selection = selected_row == 0;
+    bool single_selection = selected_row == 1;
     bool can_create_child = single_selection;
 
     if(selection_mmode){ui->pushButtonAcceptSelection->setEnabled(empty_selection == false);}
@@ -177,23 +185,23 @@ void TreeGroupManager::handleTreeSelectionChanged(const QItemSelection & selecte
                                    can_create_child);
     contextualMenuActionSetVisible(ui->treeViewDomainsTree,
                                    TREE_CM_DELETE_GROUP,
-                                   can_create_child);
+                                   empty_selection == false);
     if(can_create_child) {
         //set the model index as contextual menu data
         contextualMenuActionSetData(ui->treeViewDomainsTree,
                                     TREE_CM_NEW_SUB_GROUP,
-                                    selected.indexes().first());
+                                    ui->treeViewDomainsTree->selectionModel()->selectedRows().first());
 
         contextualMenuActionSetData(ui->treeViewDomainsTree,
                                     TREE_CM_UPDATE_DOMAIN_CHILD,
-                                    selected.indexes().first());
-
-        contextualMenuActionSetData(ui->treeViewDomainsTree,
-                                    TREE_CM_DELETE_GROUP,
-                                    selected.indexes().first());
+                                    ui->treeViewDomainsTree->selectionModel()->selectedRows().first());
     }
 
-
+    if(empty_selection == false) {
+        contextualMenuActionSetData(ui->treeViewDomainsTree,
+                                    TREE_CM_DELETE_GROUP,
+                                    QVariant::fromValue<QModelIndexList>(ui->treeViewDomainsTree->selectionModel()->selectedRows()));
+    }
 }
 
 void TreeGroupManager::on_pushButtonUpdateDomainsList_clicked() {

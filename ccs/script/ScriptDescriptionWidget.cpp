@@ -95,18 +95,20 @@ void ScriptDescriptionWidget::onApiDone(const QString& tag,
         QMetaObject::invokeMethod(this,
                                   "updateScripUI",
                                   Qt::QueuedConnection);
+    }else if(tag.compare("ScriptDescriptionWidget::updateScript") == 0) {
+        //set on statu bar that the save operation hase been achieved
+        ((MainWindow*)window())->statusBar()->showMessage(QString("%1 has been saved").arg(QString::fromStdString(script_wrapper.dataWrapped().script_description.name)), 5000);
     }
 }
 
 void ScriptDescriptionWidget::updateScripUI() {
     QStringList string_list;
-    //set on statu bar that the save operation hase been achieved
-    ((MainWindow*)window())->statusBar()->showMessage(QString("%1 has been saved").arg(QString::fromStdString(script_wrapper.dataWrapped().script_description.name)), 5000);
 
     if(current_highlighter) {
         delete(current_highlighter);
         current_highlighter = NULL;
     }
+    ui->toolBox->setCurrentIndex(0);
     ui->lineEditScriptName->setText(QString::fromStdString(script_wrapper.dataWrapped().script_description.name));
     ui->plainTextEditScriptDescirption->setPlainText(QString::fromStdString(script_wrapper.dataWrapped().script_description.description));
     ui->comboBoxsScirptLanguage->setCurrentIndex(ui->comboBoxsScirptLanguage->findText(QString::fromStdString(script_wrapper.dataWrapped().script_description.language)));
@@ -127,13 +129,14 @@ void ScriptDescriptionWidget::updateScripUI() {
     classification_model.setStringList(string_list);
 
     //update execution pools
-    for(ChaosStringListIterator c_it = script_wrapper.dataWrapped().execution_pool_lis.begin(),
-        c_end = script_wrapper.dataWrapped().execution_pool_lis.end();
+    string_list.clear();
+    for(ChaosStringListIterator c_it = script_wrapper.dataWrapped().execution_pool_list.begin(),
+        c_end = script_wrapper.dataWrapped().execution_pool_list.end();
         c_it != c_end;
         c_it++) {
         string_list << QString::fromStdString(*c_it);
     }
-    classification_model.setStringList(string_list);
+    execution_pool_model.setStringList(string_list);
 }
 
 void ScriptDescriptionWidget::fillScriptWithGUIValues() {
@@ -146,8 +149,9 @@ void ScriptDescriptionWidget::fillScriptWithGUIValues() {
         script_wrapper.dataWrapped().classification_list.push_back(classification.toStdString());
     }
 
+    script_wrapper.dataWrapped().execution_pool_list.clear();
     foreach (QString ep, execution_pool_model.stringList()) {
-        script_wrapper.dataWrapped().classification_list.push_back(ep.toStdString());
+        script_wrapper.dataWrapped().execution_pool_list.push_back(ep.toStdString());
     }
 }
 
@@ -197,9 +201,11 @@ void ScriptDescriptionWidget::on_tableViewDataset_doubleClicked(const QModelInde
 void ScriptDescriptionWidget::handleModelSelectionChanged(const QItemSelection& selected,const QItemSelection& deselected) {
     QObject* sndr = sender();
     if(sndr == ui->tableViewDataset->selectionModel()) {
-        ui->pushButtonremoveAttributeToDataset->setEnabled(selected.size());
+        ui->pushButtonremoveAttributeToDataset->setEnabled(selected.indexes().size());
     } else if(sndr == ui->listViewClassifications->selectionModel()) {
-        ui->pushButtonRemoveSelectedClass->setEnabled(selected.size());
+        ui->pushButtonRemoveSelectedClass->setEnabled(selected.indexes().size());
+    }else if(sndr == ui->listViewExecutionPools->selectionModel()) {
+        ui->pushButtonRemoveSelectedExecutionPools->setEnabled(selected.indexes().size());
     }
 }
 
@@ -224,9 +230,14 @@ void ScriptDescriptionWidget::selectedGroupPath(const QString &selection_tag,
 }
 
 void ScriptDescriptionWidget::on_pushButtonRemoveSelectedClass_clicked() {
-    foreach (QModelIndex index, ui->listViewClassifications->selectionModel()->selectedRows()) {
-        classification_model.removeRow(index.row());
+    ui->listViewClassifications->setUpdatesEnabled(false);
+    QModelIndexList selected_list = ui->listViewClassifications->selectionModel()->selectedRows();
+    for(int idx  = selected_list.count()-1;
+        idx >= 0;
+        idx--) {
+        classification_model.removeRow(selected_list.at(idx).row());
     }
+    ui->listViewClassifications->setUpdatesEnabled(true);
 }
 
 void ScriptDescriptionWidget::on_pushButtonSelectExecutionPools_clicked() {
@@ -240,7 +251,12 @@ void ScriptDescriptionWidget::on_pushButtonSelectExecutionPools_clicked() {
 }
 
 void ScriptDescriptionWidget::on_pushButtonRemoveSelectedExecutionPools_clicked() {
-    foreach (QModelIndex index, ui->listViewExecutionPools->selectionModel()->selectedRows()) {
-        execution_pool_model.removeRow(index.row());
+    ui->listViewExecutionPools->setUpdatesEnabled(false);
+    QModelIndexList selected_list = ui->listViewExecutionPools->selectionModel()->selectedRows();
+    for(int idx  = selected_list.count()-1;
+        idx >= 0;
+        idx--) {
+        execution_pool_model.removeRow(selected_list.at(idx).row());
     }
+    ui->listViewExecutionPools->setUpdatesEnabled(true);
 }

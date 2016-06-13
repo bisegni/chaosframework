@@ -188,6 +188,9 @@
            <pointsize>11</pointsize>
           </font>
          </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::MultiSelection</enum>
+         </property>
          <property name="indentation">
           <number>20</number>
          </property>

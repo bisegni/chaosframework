@@ -170,7 +170,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QToolBox" name="toolBoxClassification">
+           <widget class="QToolBox" name="toolBox">
             <property name="currentIndex">
              <number>2</number>
             </property>
@@ -249,25 +249,37 @@
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>15</width>
+                    <height>15</height>
+                   </size>
+                  </property>
                   <property name="font">
                    <font>
                     <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
-                   <string>Remove Attribute</string>
+                   <string>-</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButtonAddAttributeToDataset">
+                  <property name="maximumSize">
+                   <size>
+                    <width>15</width>
+                    <height>15</height>
+                   </size>
+                  </property>
                   <property name="font">
                    <font>
                     <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
-                   <string>Add Attribute</string>
+                   <string>+</string>
                   </property>
                  </widget>
                 </item>
@@ -314,6 +326,12 @@
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::MultiSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
                </widget>
               </item>
               <item>
@@ -336,25 +354,37 @@
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>15</width>
+                    <height>15</height>
+                   </size>
+                  </property>
                   <property name="font">
                    <font>
                     <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
-                   <string>Remove Selected</string>
+                   <string>-</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButtonSelectClass">
+                  <property name="maximumSize">
+                   <size>
+                    <width>15</width>
+                    <height>15</height>
+                   </size>
+                  </property>
                   <property name="font">
                    <font>
                     <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
-                   <string>Add Class</string>
+                   <string>+</string>
                   </property>
                  </widget>
                 </item>
@@ -390,6 +420,12 @@
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::MultiSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
                </widget>
               </item>
               <item>
@@ -412,25 +448,37 @@
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>15</width>
+                    <height>15</height>
+                   </size>
+                  </property>
                   <property name="font">
                    <font>
                     <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
-                   <string>Remove Selected</string>
+                   <string>-</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="pushButtonSelectExecutionPools">
+                  <property name="maximumSize">
+                   <size>
+                    <width>15</width>
+                    <height>15</height>
+                   </size>
+                  </property>
                   <property name="font">
                    <font>
                     <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
-                   <string>Add Pool</string>
+                   <string>+</string>
                   </property>
                  </widget>
                 </item>
