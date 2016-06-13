@@ -1,7 +1,6 @@
 #ifndef TREEGROUPMANAGER_H
 #define TREEGROUPMANAGER_H
 
-#include <QWidget>
 #include <QItemSelection>
 
 #include "DomainListModel.h"
@@ -17,13 +16,17 @@ class TreeGroupManager :
     Q_OBJECT
 
 public:
-    explicit TreeGroupManager();
+    explicit TreeGroupManager(bool _selection_mode = false,
+                              QWidget *parent = 0);
     ~TreeGroupManager();
 protected:
     void initUI();
     bool isClosing();
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+signals:
+    void selectedPath(const QStringList& selected_path);
+
 private slots:
     void on_pushButtonUpdateDomainsList_clicked();
 
@@ -38,11 +41,13 @@ private slots:
     void on_pushButtonAddRoot_clicked();
 
     void domainUpdated();
+
+    void on_pushButtonAcceptSelection_clicked();
 private:
     void contextualMenuActionTrigger(const QString& cm_title,
                                      const QVariant& cm_data);
     Ui::TreeGroupManager *ui;
-
+    bool selection_mmode;
     GroupTreeModel tree_model;
     DomainListModel domain_list_model;
 };

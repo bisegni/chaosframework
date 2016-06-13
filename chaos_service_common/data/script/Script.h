@@ -102,6 +102,7 @@ namespace chaos {
                 CHAOS_DEFINE_TYPE_FOR_SD_LIST_WRAPPER(ScriptBaseDescription,
                                                       ScriptBaseDescriptionSDWrapper,
                                                       ScriptBaseDescriptionListWrapper);
+
                 
 #define CHAOS_SBD_SCRIPT_CONTENT "script_content"
                 
@@ -112,6 +113,8 @@ namespace chaos {
                     
                     //! the sourc ecode of the script
                     std::string script_content;
+                    
+                    ChaosStringList classification_list;
                     
                     //!variable list
                     chaos::service_common::data::dataset::AlgorithmVariableList variable_list;
@@ -126,12 +129,14 @@ namespace chaos {
                     Script(const Script& copy_src):
                     script_description(copy_src.script_description),
                     script_content(copy_src.script_content),
+                    classification_list(copy_src.classification_list),
                     variable_list(copy_src.variable_list),
                     dataset_attribute_list(copy_src.dataset_attribute_list){}
                     
                     Script& operator=(Script const &rhs) {
                         script_description = rhs.script_description;
                         script_content = rhs.script_content;
+                        classification_list = rhs.classification_list;
                         variable_list = rhs.variable_list;
                         dataset_attribute_list = rhs.dataset_attribute_list;
                         return *this;
@@ -171,6 +176,17 @@ namespace chaos {
                         dataWrapped().script_description = sd_dw.dataWrapped();
                         dataWrapped().script_content = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_SCRIPT_CONTENT, "");
                         
+                        //deserialize classificaion list
+                        if(serialized_data->hasKey("classification_list")) {
+                            //encode classification list into array
+                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue("classification_list"));
+                            for(int idx = 0;
+                                idx < serialized_array->size();
+                                idx++) {
+                                dataWrapped().classification_list.push_back(serialized_array->getStringElementAtIndex(idx));
+                            }
+                        }
+                        
                         //deserialize variable
                         if(serialized_data->hasKey(variable_ser_key) &&
                            serialized_data->isVectorValue(variable_ser_key)) {
@@ -208,6 +224,17 @@ namespace chaos {
                         
                         //add script content
                         data_serialized->addStringValue(CHAOS_SBD_SCRIPT_CONTENT, dataWrapped().script_content);
+                        
+                        if(dataWrapped().classification_list.size()) {
+                            //encode classification list into array
+                            for(ChaosStringListIterator str_it = dataWrapped().classification_list.begin(),
+                                str_end = dataWrapped().classification_list.end();
+                                str_it != str_end;
+                                str_it++) {
+                                data_serialized->appendStringToArray(*str_it);
+                            }
+                            data_serialized->finalizeArrayForKey("classification_list");
+                        }
                         
                         //check for variable
                         if(dataWrapped().variable_list.size()) {

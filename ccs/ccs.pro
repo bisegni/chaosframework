@@ -131,7 +131,8 @@ SOURCES += main.cpp\
     data/editor/common/EditableSubtypeListWidget.cpp \
     data/editor/common/EditableSubtypeListTableModel.cpp \
     script/ExecutionPoolsManager.cpp \
-    script/editor/CodeEditor.cpp
+    script/editor/CodeEditor.cpp \
+    GlobalServices.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -244,7 +245,8 @@ HEADERS  += \
     data/editor/common/EditableSubtypeListWidget.h \
     data/editor/common/EditableSubtypeListTableModel.h \
     script/ExecutionPoolsManager.h \
-    script/editor/CodeEditor.h
+    script/editor/CodeEditor.h \
+    GlobalServices.h
 
 FORMS    += \
     search/searchnoderesult.ui \

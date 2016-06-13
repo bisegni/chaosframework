@@ -1,7 +1,9 @@
 #include "ScriptDescriptionWidget.h"
 #include "ui_ScriptDescriptionWidget.h"
-#include "MainWindow.h"
+#include "../MainWindow.h"
+#include "../GlobalServices.h"
 #include "../language_editor/LuaHighlighter.h"
+#include "../tree_group/TreeGroupManager.h"
 
 #include <QDebug>
 #include <QStatusBar>
@@ -26,14 +28,10 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(QWidget *parent) :
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SIGNAL(datasetSelectionChanged(QItemSelection,QItemSelection)));
 
-    //set the model for the variable managment
-    ui->tableViewVariable->setModel(&editable_variable_table_model);
-    ui->tableViewVariable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    connect(ui->tableViewVariable->selectionModel(),
-            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-            SIGNAL(variableSelectionChanged(QItemSelection,QItemSelection)));
-
     editable_dataset_table_model.setDatasetAttributeList(&script_wrapper.dataWrapped().dataset_attribute_list);
+
+    ui->listViewClassifications->setModel(&classification_model);
+
     //update script
     api_submitter.submitApiResult("ScriptDescriptionWidget::loadFullScript",
                                   GET_CHAOS_API_PTR(script::LoadFullScript)->execute(script_wrapper.dataWrapped().script_description));
@@ -58,12 +56,8 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(const Script &_script,
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(datasetSelectionChanged(QItemSelection,QItemSelection)));
 
-    //set the model for the variable managment
-    ui->tableViewVariable->setModel(&editable_variable_table_model);
-    ui->tableViewVariable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    connect(ui->tableViewVariable->selectionModel(),
-            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-            SLOT(variableSelectionChanged(QItemSelection,QItemSelection)));
+
+    ui->listViewClassifications->setModel(&classification_model);
 
     //update script
     api_submitter.submitApiResult("ScriptDescriptionWidget::loadFullScript",
@@ -109,7 +103,16 @@ void ScriptDescriptionWidget::updateScripUI() {
 
     //update table dataset model
     editable_dataset_table_model.setDatasetAttributeList(&script_wrapper.dataWrapped().dataset_attribute_list);
-    editable_variable_table_model.setVariableList(&script_wrapper.dataWrapped().variable_list);;
+    editable_variable_table_model.setVariableList(&script_wrapper.dataWrapped().variable_list);
+    //update classification
+    QStringList classifications;
+    for(ChaosStringListIterator c_it = script_wrapper.dataWrapped().classification_list.begin(),
+        c_end = script_wrapper.dataWrapped().classification_list.end();
+        c_it != c_end;
+        c_it++) {
+        classifications << QString::fromStdString(*c_it);
+    }
+    classification_model.setStringList(classifications);
 }
 
 void ScriptDescriptionWidget::fillScriptWithGUIValues() {
@@ -117,6 +120,10 @@ void ScriptDescriptionWidget::fillScriptWithGUIValues() {
     script_wrapper.dataWrapped().script_description.description = ui->plainTextEditScriptDescirption->document()->toPlainText().toStdString();
     script_wrapper.dataWrapped().script_description.language = ui->comboBoxsScirptLanguage->currentText().toStdString();
     script_wrapper.dataWrapped().script_content = ui->textEditSourceCode->document()->toPlainText().toStdString();
+    script_wrapper.dataWrapped().classification_list.clear();
+    foreach (QString classification, classification_model.stringList()) {
+        script_wrapper.dataWrapped().classification_list.push_back(classification.toStdString());
+    }
 }
 
 void ScriptDescriptionWidget::updateTextEditorFeatures() {
@@ -154,7 +161,7 @@ void ScriptDescriptionWidget::on_pushButtonAddAttributeToDataset_clicked() {
 
 void ScriptDescriptionWidget::on_pushButtonremoveAttributeToDataset_clicked() {
     foreach (QModelIndex index, ui->tableViewDataset->selectionModel()->selectedRows()) {
-         editable_dataset_table_model.removeElementFromDatasetAtIndex(index.row());
+        editable_dataset_table_model.removeElementFromDatasetAtIndex(index.row());
     }
 }
 
@@ -170,16 +177,17 @@ void ScriptDescriptionWidget::on_pushButtonAddVariable_clicked() {
     editable_variable_table_model.addNewVariable();
 }
 
-void ScriptDescriptionWidget::on_tableViewVariable_doubleClicked(const QModelIndex &index) {
-    editable_variable_table_model.editVariableAtIndex(index.row());
-}
-
-void ScriptDescriptionWidget::variableSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
-    ui->pushButtonRemoveVariable->setEnabled(selected.size());
-}
-
-void ScriptDescriptionWidget::on_pushButtonRemoveVariable_clicked() {
-    foreach (QModelIndex index, ui->tableViewVariable->selectionModel()->selectedRows()) {
-         editable_variable_table_model.removeVariableAtIndex(index.row());
+void ScriptDescriptionWidget::on_pushButtonSelectClass_clicked() {
+    TreeGroupManager *selection_group_presenter = new TreeGroupManager(true);
+    if(selection_group_presenter) {
+        connect(selection_group_presenter,
+                SIGNAL(selectedPath(QStringList)),
+                SLOT(selectedGroupPath(QStringList)));
+        GlobalServices::getInstance()->presenter()->showCommandPresenter(selection_group_presenter);
     }
+}
+
+void ScriptDescriptionWidget::selectedGroupPath(const QStringList& selected_groups) {
+    //se seletced class
+    classification_model.setStringList(selected_groups);
 }

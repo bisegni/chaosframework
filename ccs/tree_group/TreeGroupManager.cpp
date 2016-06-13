@@ -5,6 +5,7 @@
 
 #include <QMap>
 #include <QDebug>
+#include <QVector>
 #include <QInputDialog>
 
 //tree contextual menu label
@@ -22,8 +23,10 @@ using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::node;
 
-TreeGroupManager::TreeGroupManager() :
-    PresenterWidget(NULL),
+TreeGroupManager::TreeGroupManager(bool _selection_mode,
+                                   QWidget *parent) :
+    PresenterWidget(parent),
+    selection_mmode(_selection_mode),
     ui(new Ui::TreeGroupManager) {
     ui->setupUi(this);
 }
@@ -33,6 +36,9 @@ TreeGroupManager::~TreeGroupManager() {
 }
 
 void TreeGroupManager::initUI() {
+    //set for selection or not
+    ui->pushButtonAcceptSelection->setVisible(selection_mmode);
+
     QMap<QString, QVariant> cm_tree_map;
     cm_tree_map.insert(TREE_CM_NEW_ROOT_GROUP, tr("new_root"));
     cm_tree_map.insert(TREE_CM_NEW_SUB_GROUP, tr("new_sub"));
@@ -90,7 +96,7 @@ void TreeGroupManager::onApiDone(const QString& tag,
                                api_result);
 
     if(tag.compare("add_domain") == 0) {
-       domain_list_model.update();
+        domain_list_model.update();
     }
 }
 
@@ -159,6 +165,8 @@ void TreeGroupManager::handleTreeSelectionChanged(const QItemSelection & selecte
     bool single_selection = selected.indexes().size() == 1;
     bool can_create_child = single_selection;
 
+    if(selection_mmode){ui->pushButtonAcceptSelection->setEnabled(empty_selection == false);}
+
     contextualMenuActionSetVisible(ui->treeViewDomainsTree,
                                    TREE_CM_NEW_SUB_GROUP,
                                    can_create_child);
@@ -204,12 +212,27 @@ void TreeGroupManager::on_pushButtonAddNewDomain_clicked() {
 void TreeGroupManager::on_pushButtonAddRoot_clicked() {
     bool ok = false;
     QString root_node_name = QInputDialog::getText(this,
-                                              tr("Create new root"),
-                                              tr("Root node name:"),
-                                              QLineEdit::Normal,
-                                              tr("Root Name"),
-                                              &ok);
+                                                   tr("Create new root"),
+                                                   tr("Root node name:"),
+                                                   QLineEdit::Normal,
+                                                   tr("Root Name"),
+                                                   &ok);
     if(ok && root_node_name.size()>0) {
         tree_model.addNewRoot(root_node_name);
     }
+}
+
+void TreeGroupManager::on_pushButtonAcceptSelection_clicked() {
+    const QString domain_selected = tree_model.currentDomain();
+    QStringList selected_path;
+
+    foreach (QModelIndex current_index, ui->treeViewDomainsTree->selectionModel()->selectedRows()) {
+        GroupTreeItem *current_item = static_cast<GroupTreeItem*>(current_index.internalPointer());
+        if(current_item) {
+            //add path
+            selected_path << current_item->getPathToRoot();
+        }
+    }
+    emit selectedPath(selected_path);
+    closeTab();
 }

@@ -191,6 +191,10 @@ void GroupTreeModel::loadRootsForDomain(const QString& domain) {
     mutex_update_model.unlock();
 }
 
+const QString& GroupTreeModel::currentDomain() {
+    return current_domain;
+}
+
 void GroupTreeModel::updateNodeChildList(const QModelIndex &node_parent) const {
     if(!node_parent.isValid()) return;
     GroupTreeItem *parent_item = static_cast<GroupTreeItem*>(node_parent.internalPointer());
@@ -238,9 +242,9 @@ void GroupTreeModel::_updateNodeChildList(const QModelIndex &parent,
         }
     } else {
 
-            beginRemoveColumns(parent, 0, 0);
-            parentItem->removeChild();
-            endRemoveColumns();
+        beginRemoveColumns(parent, 0, 0);
+        parentItem->removeChild();
+        endRemoveColumns();
 
     }
     mutex_update_model.unlock();
