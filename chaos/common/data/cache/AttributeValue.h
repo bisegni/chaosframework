@@ -86,7 +86,10 @@ namespace chaos{
                     bool setValue(const void* value_ptr,
                                   uint32_t value_size,
                                   bool tag_has_changed = true);
-
+                    
+                    bool setValue(const CDataVariant& attribute_value,
+                                  bool tag_has_changed = true);
+                    
                         //! marck attribute as changed
                     void markAsChanged();
 
@@ -117,8 +120,11 @@ namespace chaos{
                     
                         //!return value as CDataVariant
                     CDataVariant getAsVariant();
+
                 private:
                     inline void reallignPointer();
+                    
+                    inline bool grow(uint32_t value_size);
                 };
             }
         }

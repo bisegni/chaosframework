@@ -309,7 +309,7 @@ namespace chaos{
                 std::vector<AttributeValue*> cache_custom_attribute_vector;
                 std::vector<AttributeValue*> cache_system_attribute_vector;
                 
-                //! ofr security reason subclass needs to modifier the access to this method(overloading it and keep private)
+                //! for security reason subclass needs to modifier the access to this method(overloading it and keep private)
                 virtual AbstractSharedDomainCache *_getAttributeCache();
                 
                 //! initialize system attribute

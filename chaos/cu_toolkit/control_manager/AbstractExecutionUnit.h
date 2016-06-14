@@ -24,6 +24,7 @@
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/io/IODataDriver.h>
+#include <chaos/common/data/CDataVariant.h>
 #include <chaos/common/data/cache/AttributeCache.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/DeviceMessageChannel.h>
@@ -33,82 +34,6 @@
 namespace chaos{
     namespace cu {
         namespace control_manager {
-            //!define an input or output variable
-            /*
-             this variable will be asociated, by configuration,
-             to an input or output dataset. The configuraiton will
-             be permitte by ccs or MDS API
-             */
-            struct VariableParameterDefinition {
-                //! is the alias associate to the variable
-                std::string alias;
-                
-                //! is the description that explaint the usage of the variable whitin the execution unit
-                std::string description;
-                
-                //! node class
-                chaos::DataType::DataType type;
-                
-                //! direction
-                DataType::DataSetAttributeIOAttribute direction;
-                
-                //! node is mandatory
-                bool mandatory;
-                
-                //! node dataset attribute that has been attacched to variable
-                std::string node_dataset_attribute;
-                
-                //! node unique that is used to fetch the dataset for variable
-                std::string node_uid;
-                
-                VariableParameterDefinition():
-                alias(),
-                description(),
-                type(DataType::TYPE_UNDEFINED),
-                direction(DataType::Undefined),
-                mandatory(false){}
-                
-                VariableParameterDefinition(const std::string& _alias,
-                                            const std::string& _description,
-                                            chaos::DataType::DataType _type,
-                                            DataType::DataSetAttributeIOAttribute _direction,
-                                            bool _mandatory):
-                alias(_alias),
-                description(_description),
-                type(_type),
-                direction(_direction),
-                mandatory(_mandatory){}
-                
-                VariableParameterDefinition(const VariableParameterDefinition& source):
-                alias(source.alias),
-                description(source.description),
-                type(source.type),
-                direction(source.direction),
-                mandatory(source.mandatory){}
-            };
-            
-            //search on alias in the vector
-            struct SearchVariableAlias {
-                SearchVariableAlias(const std::string& _alias) : alias(_alias) {}
-                bool operator()(const VariableParameterDefinition& obj) const
-                {
-                    return obj.alias.compare(alias) == 0;
-                }
-            private:
-                const std::string& alias;
-            };
-            
-            //!map that associate the name of variable to the description
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, VariableParameterDefinition, VPDMap);
-            
-            //!define map to correlate the node uid to control with respective device channel
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, chaos::common::message::DeviceMessageChannel*, DeviceMessageChannelMap);
-            
-            //!set for the variable aliases
-            CHAOS_DEFINE_SET_FOR_TYPE(std::string, SetVariableAlias)
-            
-            //map to correlate the node uid with cached attribute (used for input variable)
-            CHAOS_DEFINE_MAP_FOR_TYPE(std::string, SetVariableAlias, NodeUIDToVariableMap);
             
             //!  Base class for execution unit !CHAOS node.
             /*!
@@ -123,54 +48,11 @@ namespace chaos{
                 //!is the alias associated to the algorithm
                 std::string eu_description;
                 
-                //!map that correlate the variable alias to the variable description
-                VPDMap variable_map;
-                
-                //!map that correlate the node uid to the associated input variable cache
-                NodeUIDToVariableMap map_node_in_var_alias;
-                
-                //!map that correlate the node uid to the associated ouput variable cache
-                NodeUIDToVariableMap map_node_out_var_alias;
-                
-                //! cache taht contains all variable cache
-                boost::shared_ptr<chaos::common::data::cache::AttributeCache> input_variable_cache;
-                
-                //! cache taht contains all variable cache
-                boost::shared_ptr<chaos::common::data::cache::AttributeCache> output_variable_cache;
-                
-                //!chaos mds channel for query metadata
-                chaos::common::message::MDSMessageChannel *mds_msg_chnl;
-                
-                //!high speed chaos query
-                std::auto_ptr<chaos::common::io::IODataDriver> data_driver;
-                
-                //!map for node uid->device message channel
-                DeviceMessageChannelMap map_nuid_dmc;
-                
                 //! keep track of last ts for step
                 uint64_t last_execution_ts;
                 
                 //!inherited method
                 void _defineActionAndDataset(chaos::common::data::CDataWrapper& setup_configuration) throw(CException);
-                
-                //! perform device message channel allcoation
-                /*!
-                 For all unique node uid associated to an output variable a device message channel
-                 is allocated to perform the control of that device.
-                 */
-                void completeVaribleAndAllocateDMC(CDataWrapper& variable_configuration) throw(CException);
-                
-                //!provide the deallcoation of all allocated device messag echannel
-                void deallcoateDMC();
-                
-                //! allcoate data io driver
-                void initDataIODriver() throw(CException);
-                
-                //! deinitialize the data io driver
-                void deinitDataIODriver();
-                
-                //! prepare the cache for the input and output variable
-                void addVariableInCache(VariableParameterDefinition& input_variable);
                 
                 //! inherited method
                 void unitRun() throw(CException);
@@ -187,21 +69,6 @@ namespace chaos{
                 //! inherited method
                 void unitDeinit() throw(CException);
                 
-                //! fetch all input variable values
-                /*!
-                 Scan map_node_var_alias maps with iterator in this way. For every node_uid,
-                 the dataset is got from live and the associated set is scan for get the aliases
-                 associated to it. For every alias is got the value form the dataset and updated
-                 the cached one.
-                 */
-                void fetchInputVariableValues();
-                
-                //! apply output variable modification
-                /*!
-                 get all output variable and fi there are change, it will be sent to the
-                 corrispettive node.
-                 */
-                void applyModificationOnOutputNode();
             protected:
                 
                 /*!
@@ -212,108 +79,64 @@ namespace chaos{
                 void setExecutionUnitDescription(const std::string& description);
                 
                 //! add an attribute to the dataset fo the execution unit
-                virtual void addExecutionUnitAttributeToDataSet(const std::string& attribute_name,
-                                                                const std::string& attribute_description,
-                                                                DataType::DataType attribute_type,
-                                                                DataType::DataSetAttributeIOAttribute attribute_direction,
-                                                                uint32_t maxSize = 0);
+                void addExecutionUnitAttributeToDataSet(const std::string& attribute_name,
+                                                        const std::string& attribute_description,
+                                                        DataType::DataType attribute_type,
+                                                        DataType::DataSetAttributeIOAttribute attribute_direction,
+                                                        uint32_t maxSize = 0);
+                /*!
+                 \ingroup Control_Unit_User_Api
+                 \ingroup Control_Unit_Definition_Api
+                 proxy for DatasetDB::addBinaryAttributeAsSubtypeToDataSet
+                 */
+                void addBinaryAttributeAsSubtypeToDataSet(const std::string& attribute_name,
+                                                          const std::string& attribute_description,
+                                                          DataType::BinarySubtype               subtype,
+                                                          int32_t    cardinality,
+                                                          DataType::DataSetAttributeIOAttribute attribute_direction);
                 
                 /*!
-                 Add a new execution unit variable specifying the property
-                 \ingroup Execution_Unit_User_Api
-                 \param alias is the name of the alias use for reference by execution unit
-                 \param description
+                 \ingroup Control_Unit_User_Api
+                 \ingroup Control_Unit_Definition_Api
+                 proxy for DatasetDB::addBinaryAttributeAsSubtypeToDataSet
                  */
-                virtual void addExecutionUnitVariable(const std::string& alias,
-                                                      const std::string& description,
-                                                      chaos::DataType::DataType type,
-                                                      DataType::DataSetAttributeIOAttribute direction,
-                                                      bool mandatory);
+                void addBinaryAttributeAsSubtypeToDataSet(const std::string&            attribute_name,
+                                                          const std::string&            attribute_description,
+                                                          const std::vector<int32_t>&   subtype_list,
+                                                          int32_t                       cardinality,
+                                                          DataType::DataSetAttributeIOAttribute attribute_direction);
                 
-                //! return the pointer to the values for the input variable
                 /*!
-                 Access the variable cache and return directly the read only pointer to the cache buffer
-                 \ingroup Execution_Unit_User_Api
+                 \ingroup Control_Unit_User_Api
+                 \ingroup Control_Unit_Definition_Api
+                 proxy for DatasetDB::addBinaryAttributeAsMIMETypeToDataSet
                  */
-                template<typename T>
-                const T * getInputVariablePtr(const std::string& variable_name) {
-                    AttributeValue *value_setting = input_variable_cache->getValueSettingByName(variable_name);
-                    return (const T *)value_setting->getValuePtr<T>();
-                }
+                void addBinaryAttributeAsMIMETypeToDataSet(const std::string& attribute_name,
+                                                           const std::string& attribute_description,
+                                                           std::string mime_type,
+                                                           DataType::DataSetAttributeIOAttribute attribute_direction);
                 
-                //! set the value of and output variable
+                //!Get the value from an output attribute
                 /*!
-                 Update the variable output value, after the algorithm step all output
-                 variable values are sent to the respective node to update input attribute
-                 of their dataset.
-                 \ingroup Execution_Unit_User_Api
-                 \param variable_name the name of the variable to update
-                 \param value_ptr the pointer to the new value
-                 \param the size of the new value
+                \ingroup Execution_Unit_User_Api
+                \ingroup Execution_Unit_Definition_Api
                  */
-                void setOutputVariableValue(const std::string& variable_name,
-                                            const void * value_ptr,
-                                            uint32_t value_size);
+                CDataVariant getOutputAttributeValue(const std::string& attribute_name);
                 
-                //! set the value of and output variable
+                //!Get the value from an input attribute
                 /*!
-                 Update the variable output value, after the algorithm step all output
-                 variable values are sent to the respective node to update input attribute
-                 of their dataset.
                  \ingroup Execution_Unit_User_Api
-                 \param variable_name the name of the variable to update
-                 \param value the value of the variable
+                 \ingroup Execution_Unit_Definition_Api
                  */
-                void setOutputVariableValue(const std::string& variable_name,
-                                            bool value);
+                CDataVariant getInputAttributeValue(const std::string& attribute_name);
                 
-                //! set the value of and output variable
+                //!Set the value from an output attribute
                 /*!
-                 Update the variable output value, after the algorithm step all output
-                 variable values are sent to the respective node to update input attribute
-                 of their dataset.
                  \ingroup Execution_Unit_User_Api
-                 \param variable_name the name of the variable to update
-                 \param value the value of the variable
+                 \ingroup Execution_Unit_Definition_Api
                  */
-                void setOutputVariableValue(const std::string& variable_name,
-                                            uint32_t value);
-                
-                //! set the value of and output variable
-                /*!
-                 Update the variable output value, after the algorithm step all output
-                 variable values are sent to the respective node to update input attribute
-                 of their dataset.
-                 \ingroup Execution_Unit_User_Api
-                 \param variable_name the name of the variable to update
-                 \param value the value of the variable
-                 */
-                void setOutputVariableValue(const std::string& variable_name,
-                                            uint64_t value);
-                
-                //! set the value of and output variable
-                /*!
-                 Update the variable output value, after the algorithm step all output
-                 variable values are sent to the respective node to update input attribute
-                 of their dataset.
-                 \ingroup Execution_Unit_User_Api
-                 \param variable_name the name of the variable to update
-                 \param value the value of the variable
-                 */
-                void setOutputVariableValue(const std::string& variable_name,
-                                            double value);
-                
-                //! set the value of and output variable
-                /*!
-                 Update the variable output value, after the algorithm step all output
-                 variable values are sent to the respective node to update input attribute
-                 of their dataset.
-                 \ingroup Execution_Unit_User_Api
-                 \param variable_name the name of the variable to update
-                 \param value the value of the variable
-                 */
-                void setOutputVariableValue(const std::string& variable_name,
-                                            const std::string& value);
+                void setOutputAttributeValue(const std::string& attribute_name,
+                                             const CDataVariant& attribute_value);
                 
                 //!perform a step of the algorithm
                 /*!

@@ -77,19 +77,30 @@ namespace chaos {
 										   DataType::DataType attribute_type,
 										   DataType::DataSetAttributeIOAttribute attribute_direction,
 										   uint32_t maxSize = 0);
-				
+                /*!
+                 \ingroup Control_Unit_User_Api
+                 \ingroup Control_Unit_Definition_Api
+                 */
                 void addBinaryAttributeAsSubtypeToDataSet(const std::string& attribute_name,
                                                           const std::string& attribute_description,
                                                           DataType::BinarySubtype               subtype,
                                                           int32_t    cardinality,
                                                           DataType::DataSetAttributeIOAttribute attribute_direction);
                 
+                /*!
+                 \ingroup Control_Unit_User_Api
+                 \ingroup Control_Unit_Definition_Api
+                 */
                 void addBinaryAttributeAsSubtypeToDataSet(const std::string&            attribute_name,
                                                           const std::string&            attribute_description,
                                                           const std::vector<int32_t>&   subtype_list,
                                                           int32_t                       cardinality,
                                                           DataType::DataSetAttributeIOAttribute attribute_direction);
                 
+                /*!
+                 \ingroup Control_Unit_User_Api
+                 \ingroup Control_Unit_Definition_Api
+                 */
                 void addBinaryAttributeAsMIMETypeToDataSet(const std::string& attribute_name,
                                                            const std::string& attribute_description,
                                                            std::string mime_type,

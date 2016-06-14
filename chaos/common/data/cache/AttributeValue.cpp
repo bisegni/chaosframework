@@ -69,22 +69,96 @@ AttributeValue::~AttributeValue() {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-bool AttributeValue::setValue(const void* value_ptr,
-                              uint32_t value_size,
-                              bool tag_has_changed) {
-   
+bool AttributeValue::grow(uint32_t value_size) {
     if(size<value_size){
         if(setNewSize(value_size,false)==false){
             return false;
-        } 
+        }
     }
+    return true;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+bool AttributeValue::setValue(const void* value_ptr,
+                              uint32_t value_size,
+                              bool tag_has_changed) {
+    
+    if(!grow(value_size)) return false;
+    
     if(value_size==0)
         return true;
+    
     CHAOS_ASSERT(value_buffer)
     
     //copy the new value
     std::memcpy(value_buffer, value_ptr, value_size);
     
+    //set the relative field for set has changed
+    if(tag_has_changed) sharedBitmapChangedAttribute->set(index);
+    return true;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+
+bool AttributeValue::setValue(const CDataVariant& attribute_value,
+                              bool tag_has_changed) {
+    CHAOS_ASSERT(value_buffer)
+    
+    if(type != attribute_value.getType()) return false;
+    switch (attribute_value.getType()) {
+        case DataType::TYPE_DOUBLE: {
+            bool bv = attribute_value.asBool();
+            //copy string to buffer
+            std::memcpy(value_buffer,
+                        &bv,
+                        sizeof(bool));
+            break;
+        }
+        case DataType::TYPE_INT32: {
+            int32_t i32v = attribute_value.asInt32();
+            //copy string to buffer
+            std::memcpy(value_buffer,
+                        &i32v,
+                        sizeof(int32_t));
+            break;
+        }
+            
+        case DataType::TYPE_INT64: {
+            int32_t i64v = attribute_value.asInt32();
+            //copy string to buffer
+            std::memcpy(value_buffer,
+                        &i64v,
+                        sizeof(int64_t));
+            break;
+        }
+
+        case DataType::TYPE_STRING: {
+            const std::string value = attribute_value.asString();
+            if(!grow((uint32_t)value.size())) return false;
+            //copy string to buffer
+            std::memcpy(value_buffer,
+                        value.c_str(),
+                        value.size());
+            break;
+        }
+       
+        case DataType::TYPE_BYTEARRAY:{
+            const CDataBuffer * byte_array_value = attribute_value.asCDataBuffer();
+            if(!grow(byte_array_value->getBufferSize())) return false;
+            //copy buffer to buffer
+            std::memcpy(value_buffer,
+                        byte_array_value->getBuffer(),
+                        byte_array_value->getBufferSize());
+            break;
+        }
+        default:
+            break;
+    }
+
     //set the relative field for set has changed
     if(tag_has_changed) sharedBitmapChangedAttribute->set(index);
     return true;
@@ -100,8 +174,8 @@ bool AttributeValue::setNewSize(uint32_t _new_size,
         size=_new_size;
         return true;
     }
-   // generate aligned memory allocations
-
+    // generate aligned memory allocations
+    
     buf_size = _new_size + ((_new_size%4)?(4 - (_new_size%4)):0);
     
     size = _new_size;
@@ -226,7 +300,7 @@ std::string AttributeValue::toString() {
     return "bad type";
 }
 
-    //!return value as CDataVariant
+//!return value as CDataVariant
 CDataVariant AttributeValue::getAsVariant() {
     return CDataVariant(type,
                         (const char *)value_buffer,
