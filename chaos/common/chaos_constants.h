@@ -247,6 +247,12 @@ namespace chaos {
          !CHAOS async one.
          */
         static const char * const NODE_TYPE_WAN_PROXY       = "nt_wan_proxy";
+        //! identify an execution unit of type script
+        /*!
+         A scriptable execution unit consinst of a framework implementaion of the an
+         execution unit that permit o load script for different language.
+         */
+        static const char * const NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT  = "nt_script_eu";
     }
     /** @} */ // end of NodeType
     

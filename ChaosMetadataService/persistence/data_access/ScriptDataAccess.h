@@ -26,7 +26,7 @@
 
 #include <chaos/common/chaos_types.h>
 
-#include <chaos_service_common/data/script/Script.h>
+#include <chaos_service_common/data/data.h>
 
 namespace chaos {
     namespace metadata_service {
@@ -69,6 +69,29 @@ namespace chaos {
                                              const std::string& search_string,
                                              uint64_t start_sequence_id,
                                              uint32_t page_length) = 0;
+                    
+                    //! add a new instance to the script
+                    virtual int addScriptInstance(const std::string& script_name,
+                                                  const std::string& instance_name) = 0;
+                    
+                    //! remove an instance to the script
+                    virtual int removeScriptInstance(const std::string& script_name,
+                                                    const std::string& instance_name) = 0;
+                    
+                    //!Perform a search on script entries
+                    /*!
+                     perform a simple search on node filtering on type
+                     \param instance_list the found element for current page
+                     \param is the name of the script for wich we need the isntance
+                     \param search_string is the search string
+                     \param start_sequence_id is identified the sequence after wich we need to search
+                     \param page_length is the maximum number of the element to return
+                     */
+                    virtual int searchScriptInstance(ChaosStringList& instance_list,
+                                                     const std::string& script_name,
+                                                     const std::string& search_string,
+                                                     uint64_t start_sequence_id,
+                                                     uint32_t page_length) = 0;
                     
                     //!Load a fulls cript information
                     /*!

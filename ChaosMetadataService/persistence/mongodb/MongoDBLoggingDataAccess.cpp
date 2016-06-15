@@ -244,7 +244,7 @@ int MongoDBLoggingDataAccess::searchEntryAdvanced(LogEntryList& entry_list,
                  it != criteria_token.end();
                  it++) {
                 token_for_mongo = ".*"+*it+".*";
-                bson_find_token_or <<  MONGODB_REGEX_ON_FILED("advanced_search", token_for_mongo);
+                bson_find_token_or <<  MONGODB_REGEX_ON_FILED(MetadataServerLoggingDefinitionKeyRPC::PARAM_NODE_LOGGING_LOG_SOURCE_IDENTIFIER, token_for_mongo);
             }
 
             //add query on single token

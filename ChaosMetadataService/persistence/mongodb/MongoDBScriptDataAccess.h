@@ -24,7 +24,7 @@
 
 #include "../data_access/ScriptDataAccess.h"
 #include "MongoDBUtilityDataAccess.h"
-
+#include "MongoDBNodeDataAccess.h"
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos_service_common/persistence/mongodb/MongoDBAccessor.h>
 
@@ -44,9 +44,14 @@ namespace chaos {
                     friend class MongoDBPersistenceDriver;
                     
                     MongoDBUtilityDataAccess *utility_data_access = NULL;
+                    MongoDBNodeDataAccess *node_data_access = NULL;
                     //return the query for a page
                     mongo::Query getNextPagedQuery(uint64_t last_sequence_before_this_page,
                                                    const std::string& search_string);
+                    
+                    mongo::Query getNextPagedQueryForInstance(uint64_t last_sequence_before_this_page,
+                                                              const std::string& script_name,
+                                                              const std::string& search_string);
                     
                 protected:
                     MongoDBScriptDataAccess(const boost::shared_ptr<chaos::service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection);
@@ -64,6 +69,20 @@ namespace chaos {
                                      uint64_t last_sequence_id,
                                      uint32_t page_length);
                     
+                    //! Inherited Method
+                    int addScriptInstance(const std::string& script_name,
+                                          const std::string& instance_name);
+                    
+                    //! Inherited Method
+                    int removeScriptInstance(const std::string& script_name,
+                                             const std::string& instance_name);
+                    
+                    //! Inherited Method
+                    int searchScriptInstance(ChaosStringList& instance_list,
+                                             const std::string& script_name,
+                                             const std::string& search_string,
+                                             uint64_t start_sequence_id,
+                                             uint32_t page_length);
                     //! Inherited Method
                     int loadScript(const chaos::service_common::data::script::ScriptBaseDescription& script_base_description,
                                    chaos::service_common::data::script::Script& script,
