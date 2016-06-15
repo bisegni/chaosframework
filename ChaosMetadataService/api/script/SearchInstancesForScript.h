@@ -1,10 +1,10 @@
 /*
- *	LoadFullScript.h
+ *	SearchInstancesForScript.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 30/05/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 15/06/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,12 +19,10 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__2FFD570_A5BC_4DDE_8654_86C80C934C4F_LoadFullScript_h
-#define __CHAOSFramework__2FFD570_A5BC_4DDE_8654_86C80C934C4F_LoadFullScript_h
+#ifndef __CHAOSFramework_A2CDE7DC_50DD_4722_9425_C6335E1304F9_SearchInstancesForScript_h
+#define __CHAOSFramework_A2CDE7DC_50DD_4722_9425_C6335E1304F9_SearchInstancesForScript_h
 
 #include "../AbstractApi.h"
-
-#include <chaos_service_common/data/script/Script.h>
 
 namespace chaos {
     namespace metadata_service {
@@ -32,12 +30,12 @@ namespace chaos {
             namespace script {
                 //! Load full script
                 //! the only information needed are the sequence and name
-                class LoadFullScript:
+                class SearchInstancesForScript:
                 public AbstractApi {
                     
                 public:
-                    LoadFullScript();
-                    ~LoadFullScript();
+                    SearchInstancesForScript();
+                    ~SearchInstancesForScript();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data);
                 };
@@ -46,4 +44,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework__2FFD570_A5BC_4DDE_8654_86C80C934C4F_LoadFullScript_h */
+#endif /* __CHAOSFramework_A2CDE7DC_50DD_4722_9425_C6335E1304F9_SearchInstancesForScript_h */
