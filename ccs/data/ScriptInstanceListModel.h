@@ -17,10 +17,9 @@ protected:
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 public:
-    ScriptInstanceListModel(const chaos::service_common::data::script::ScriptBaseDescription& script_desc,
+    ScriptInstanceListModel(const chaos::service_common::data::script::ScriptBaseDescription& _script_description,
                             QObject *parent=0);
-    //update the list with all the domain emitted by source uid
-    void updateInstanceListForSearchString(const QString& search_tring);
+    void updateInstanceListForSearchString(const QString& search_string);
 private:
     ApiSubmitter api_submitter;
     chaos::service_common::data::script::ScriptBaseDescription script_description;

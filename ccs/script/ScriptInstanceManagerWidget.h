@@ -17,7 +17,9 @@ class ScriptInstanceManagerWidget :
 public:
     explicit ScriptInstanceManagerWidget(QWidget *parent = 0);
     ~ScriptInstanceManagerWidget();
-
+protected:
+    void onApiDone(const QString& tag,
+                   QSharedPointer<chaos::common::data::CDataWrapper> api_result);
 private slots:
     void on_pushButtonSearchInstances_clicked();
 
