@@ -1,19 +1,22 @@
 #include "ScriptInstanceListModel.h"
 
-ScriptInstanceListModel::ScriptInstanceListModel(const chaos::service_common::data::script::ScriptBaseDescription &script_desc,
-                                                 QObject *parent)
-    : ChaosAbstractListModel(parent),
-      api_submitter(this){
+using namespace chaos::common::data;
+using namespace chaos::service_common::data::script;
+using namespace chaos::metadata_service_client::api_proxy::script;
+
+ScriptInstanceListModel::ScriptInstanceListModel(const ScriptBaseDescription& _script_description,
+                                                 QObject *parent):
+    ChaosAbstractListModel(parent),
+    script_description(_script_description),
+    api_submitter(this){
 }
 
-
-ScriptInstanceListModel::ScriptInstanceListModel(const chaos::service_common::data::script::ScriptBaseDescription& script_desc,
-                                                 QObject *parent=0) {
-
-}
-
-void ScriptInstanceListModel::updateInstanceListForSearchString(const QString& search_tring) {
-
+void ScriptInstanceListModel::updateInstanceListForSearchString(const QString& search_string) {
+    api_submitter.submitApiResult("search_instances",
+                                  GET_CHAOS_API_PTR(SearchInstanceForScript)->execute(script_description.name,
+                                                                                      search_string.toStdString(),
+                                                                                      0,
+                                                                                      100));
 }
 
 int ScriptInstanceListModel::getRowCount() const{
@@ -28,19 +31,7 @@ QVariant ScriptInstanceListModel::getUserData(int row) const{
 
 }
 
-bool ScriptInstanceListModel::isRowCheckable(int row) const{
-
-}
-
-Qt::CheckState ScriptInstanceListModel::getCheckableState(int row)const{
-
-}
-
-bool ScriptInstanceListModel::setRowCheckState(const int row, const QVariant& value){
-
-}
-
 void ScriptInstanceListModel::onApiDone(const QString& tag,
-                                        QSharedPointer<chaos::common::data::CDataWrapper> api_result){
+                                        QSharedPointer<CDataWrapper> api_result){
 
 }
