@@ -23,8 +23,12 @@
 #define __CHAOSFramework_EB44C3EB_D602_48B6_A57E_FBF4555A4C6A_TempaltedDataHelper_h
 
 #include <chaos/common/data/CDataWrapper.h>
-
+#if ! defined(BOOST_NO_TYPEID)
+#define GET_TYPE_NAME(T) typeid(T).name();
+#else
 #include <boost/type_index.hpp>
+#define GET_TYPE_NAME(T) boost::typeindex::type_id<T>().pretty_name();
+#endif
 
 #include <typeinfo>
 #include <vector>
@@ -206,7 +210,7 @@ public x ## SDWrapperSubclass
             };
             
             template<typename T, typename DW>
-            const  std::string TemplatedDataListWrapper<T,DW>::master_serialization_key = boost::typeindex::type_id<T>().pretty_name();//typeid(T).name();
+	      const  std::string TemplatedDataListWrapper<T,DW>::master_serialization_key = GET_TYPE_NAME(T);
             
 #define CHAOS_DEFINE_SD_LIST_WRAPPER(x, serializer_wrapper)  chaos::service_common::data::TemplatedDataListWrapper<x,serializer_wrapper>
             
