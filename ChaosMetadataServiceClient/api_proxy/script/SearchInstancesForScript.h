@@ -1,5 +1,5 @@
 /*
- *	SearchInstanceForScript.h
+ *	SearchInstancesForScript.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_FDFC9046_54C9_4032_B775_70F29A8A8C1C_SearchInstanceForScript_h
-#define __CHAOSFramework_FDFC9046_54C9_4032_B775_70F29A8A8C1C_SearchInstanceForScript_h
+#ifndef __CHAOSFramework_FDFC9046_54C9_4032_B775_70F29A8A8C1C_SearchInstancesForScript_h
+#define __CHAOSFramework_FDFC9046_54C9_4032_B775_70F29A8A8C1C_SearchInstancesForScript_h
 
 #include <chaos_service_common/data/script/Script.h>
 #include <ChaosMetadataServiceClient/api_proxy/ApiProxy.h>
@@ -30,11 +30,11 @@ namespace chaos {
         namespace api_proxy {
             namespace script {
                 
-                class SearchInstanceForScript:
+                class SearchInstancesForScript:
                 public chaos::metadata_service_client::api_proxy::ApiProxy {
-                    API_PROXY_CLASS(SearchInstanceForScript)
+                    API_PROXY_CLASS(SearchInstancesForScript)
                 protected:
-                    API_PROXY_CD_DECLARATION(SearchInstanceForScript)
+                    API_PROXY_CD_DECLARATION(SearchInstancesForScript)
                 public:
                     
                     /*!
@@ -51,4 +51,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework_FDFC9046_54C9_4032_B775_70F29A8A8C1C_SearchInstanceForScript_h */
+#endif /* __CHAOSFramework_FDFC9046_54C9_4032_B775_70F29A8A8C1C_SearchInstancesForScript_h */

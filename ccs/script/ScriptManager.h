@@ -34,8 +34,14 @@ private slots:
 
     void on_listViewScriptList_doubleClicked(const QModelIndex &index);
 
+    void on_scriptListSelectionchanged(const QItemSelection &selected,
+                                       const QItemSelection &unselected);
+
     void closeScriptEditorTab(int idx);
 private:
+    void contextualMenuActionTrigger(const QString& cm_title,
+                                     const QVariant& cm_data);
+
     ScriptListModel script_list_model;
     Ui::ScriptManager *ui;
 };

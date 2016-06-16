@@ -30,7 +30,7 @@
 using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::common::event::channel;
-using namespace chaos::service_common::data::script;
+using namespace chaos::service_common::data::node;
 using namespace chaos::service_common::data::general;
 using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
@@ -58,17 +58,18 @@ chaos::common::data::CDataWrapper *SearchInstancesForScript::execute(CDataWrappe
     
     //fetch dataaccess for the script managment
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
+
     
-    //fetch dataaccess for the script managment
-    ChaosStringListSDWrapper lser_wrapper;
+    //create sd wrapper for a std vector list with node description
+    StdVectorSDWrapper<NodeInstance, NodeInstanceSDWrapper> ni_list_wrapper;
     
-    if((err = s_da->searchScriptInstance(lser_wrapper.dataWrapped(),
+    if((err = s_da->searchScriptInstance(ni_list_wrapper.dataWrapped(),
                                          script_name,
                                          search_string,
                                          last_sequence_id,
                                          page_lenght))) {
         LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error searching instance for script %1%",%script_name));
     }
-        //return the script base description
-    return lser_wrapper.serialize().release();
+
+    return ni_list_wrapper.serialize().release();
 }

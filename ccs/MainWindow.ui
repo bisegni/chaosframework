@@ -118,7 +118,6 @@
      <string>Algorithm</string>
     </property>
     <addaction name="actionScript_Manager"/>
-    <addaction name="actionExecution_Pools"/>
    </widget>
    <addaction name="menuNode"/>
    <addaction name="menuData"/>

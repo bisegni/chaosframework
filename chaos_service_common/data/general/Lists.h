@@ -71,6 +71,7 @@ namespace chaos {
                             result->appendStringToArray(*it);
                         }
                         result->finalizeArrayForKey(ser_key);
+                        return result;
                     }
                 };
                 
@@ -119,6 +120,7 @@ namespace chaos {
                             result->appendCDataWrapperToArray(*embedded_data_serializer.serialize());
                         }
                         result->finalizeArrayForKey(ser_key);
+                        return result;
                     }
                 };
             }

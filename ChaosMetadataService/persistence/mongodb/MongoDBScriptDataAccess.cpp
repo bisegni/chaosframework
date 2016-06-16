@@ -25,6 +25,7 @@
 #include <boost/algorithm/string.hpp>
 
 using namespace chaos::common::data;
+using namespace chaos::service_common::data::node;
 using namespace chaos::service_common::data::script;
 using namespace chaos::service_common::data::dataset;
 using namespace chaos::service_common::persistence::mongodb;
@@ -181,9 +182,10 @@ int MongoDBScriptDataAccess::addScriptInstance(const std::string& script_name,
     int err = 0;
     try {
         CDataWrapper node_description;
-        node_description.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, CHAOS_FORMAT("%1%/%2%",%script_name%instance_name));
+        node_description.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, instance_name);
         node_description.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT);
-
+        node_description.addStringValue(chaos::NodeDefinitionKey::NODE_GROUP_SET, script_name);
+        
         //now all other part of the script are managed with update
         err = node_data_access->insertNewNode(node_description);
     } catch (const mongo::DBException &e) {
@@ -200,7 +202,12 @@ int MongoDBScriptDataAccess::removeScriptInstance(const std::string& script_name
     int err = 0;
     try {
         //now all other part of the script are managed with update
-        err = node_data_access->deleteNode(CHAOS_FORMAT("%1%/%2%",%script_name%instance_name));
+        mongo::Query q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID<< instance_name<<
+                              chaos::NodeDefinitionKey::NODE_GROUP_SET << script_name);
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                     q))) {
+            SDA_ERR << CHAOS_FORMAT("Error removing instance %1% for script %2% with code %3%", %instance_name%script_name%err);
+        }
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();
         err = e.getCode();
@@ -208,7 +215,7 @@ int MongoDBScriptDataAccess::removeScriptInstance(const std::string& script_name
     return err;
 }
 
-int MongoDBScriptDataAccess::searchScriptInstance(ChaosStringList& instance_list,
+int MongoDBScriptDataAccess::searchScriptInstance(std::vector<NodeInstance>& instance_list,
                                                   const std::string& script_name,
                                                   const std::string& search_string,
                                                   uint64_t start_sequence_id,
@@ -220,7 +227,8 @@ int MongoDBScriptDataAccess::searchScriptInstance(ChaosStringList& instance_list
                                                       script_name,
                                                       search_string);
         
-        mongo::BSONObj p = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << 1);
+        mongo::BSONObj p = BSON("seq" << 1 <<
+                                chaos::NodeDefinitionKey::NODE_UNIQUE_ID << 1);
         DEBUG_CODE(SDA_DBG<<log_message("searchScriptInstance",
                                         "performPagedQuery",
                                         DATA_ACCESS_LOG_2_ENTRY("Query",
@@ -229,7 +237,7 @@ int MongoDBScriptDataAccess::searchScriptInstance(ChaosStringList& instance_list
                                                                 p));)
         //inset on database new script description
         if((err = performPagedQuery(paged_result,
-                                    MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                    MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                     q,
                                     &p,
                                     NULL,
@@ -241,7 +249,10 @@ int MongoDBScriptDataAccess::searchScriptInstance(ChaosStringList& instance_list
                 for (SearchResultIterator it = paged_result.begin();
                      it != paged_result.end();
                      it++) {
-                    instance_list.push_back(it->getField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID).String());
+                    if(it->hasField("seq") &&
+                       it->hasField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID)){
+                        instance_list.push_back(NodeInstance((uint64_t)it->getField("seq").Long(), it->getField(chaos::NodeDefinitionKey::NODE_UNIQUE_ID).String()));
+                    }
                 }
             }
         }
@@ -309,8 +320,8 @@ mongo::Query MongoDBScriptDataAccess::getNextPagedQuery(uint64_t last_sequence,
 }
 
 mongo::Query MongoDBScriptDataAccess::getNextPagedQueryForInstance(uint64_t last_sequence_before_this_page,
-                                          const std::string& script_name,
-                                          const std::string& search_string) {
+                                                                   const std::string& script_name,
+                                                                   const std::string& search_string) {
     mongo::Query q;
     mongo::BSONObjBuilder   bson_find;
     mongo::BSONArrayBuilder bson_find_or;
@@ -318,7 +329,7 @@ mongo::Query MongoDBScriptDataAccess::getNextPagedQueryForInstance(uint64_t last
     std::vector<std::string> criteria_token;
     
     if(last_sequence_before_this_page){bson_find_and <<BSON("seq" << BSON("$lt"<<(long long)last_sequence_before_this_page));}
-
+    
     
     boost::split(criteria_token, search_string,
                  boost::is_any_of(" "),
@@ -326,10 +337,10 @@ mongo::Query MongoDBScriptDataAccess::getNextPagedQueryForInstance(uint64_t last
     for (std::vector<std::string>::iterator it = criteria_token.begin();
          it != criteria_token.end();
          it++) {
-        bson_find_or <<  MONGODB_REGEX_ON_FILED(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, std::string(script_name+"/"+*it+".*"));
+        bson_find_or <<  MONGODB_REGEX_ON_FILED(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ".*"+*it+".*");
     }
-
     
+    bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_GROUP_SET << script_name);
     bson_find_and << BSON("$or" << bson_find_or.arr());
     bson_find.appendArray("$and", bson_find_and.obj());
     q = bson_find.obj();

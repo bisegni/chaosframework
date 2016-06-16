@@ -83,7 +83,6 @@
 		3221D7261CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3221D7241CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp */; };
 		3221D72A1CF5EB22001BE971 /* SaveScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3221D7281CF5EB22001BE971 /* SaveScript.cpp */; };
 		3221D72B1CF5EB22001BE971 /* SaveScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7291CF5EB22001BE971 /* SaveScript.h */; };
-		3221D72C1CF5EB2E001BE971 /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D90D5C1CF4AA8200996F09 /* Script.cpp */; };
 		3221D7301CF5F292001BE971 /* script.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D72E1CF5F292001BE971 /* script.h */; };
 		3221D7341CF5F2BA001BE971 /* node.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7321CF5F2BA001BE971 /* node.h */; };
 		3221D7381CF5F2F3001BE971 /* unit_server.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7361CF5F2F3001BE971 /* unit_server.h */; };
@@ -602,10 +601,11 @@
 		32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */; };
 		32A116441D116F8C00FF44ED /* SearchInstancesForScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A116421D116F8C00FF44ED /* SearchInstancesForScript.cpp */; };
 		32A116491D117F0700FF44ED /* ManageScriptInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A116471D117F0700FF44ED /* ManageScriptInstance.cpp */; };
-		32A1164C1D11A17D00FF44ED /* SearchInstanceForScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A1164A1D11A17D00FF44ED /* SearchInstanceForScript.cpp */; };
-		32A1164D1D11A17D00FF44ED /* SearchInstanceForScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A1164B1D11A17D00FF44ED /* SearchInstanceForScript.h */; };
+		32A1164C1D11A17D00FF44ED /* SearchInstancesForScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A1164A1D11A17D00FF44ED /* SearchInstancesForScript.cpp */; };
+		32A1164D1D11A17D00FF44ED /* SearchInstancesForScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A1164B1D11A17D00FF44ED /* SearchInstancesForScript.h */; };
 		32A116501D11A19200FF44ED /* ManageScriptInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A1164E1D11A19200FF44ED /* ManageScriptInstance.cpp */; };
 		32A116511D11A19200FF44ED /* ManageScriptInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A1164F1D11A19200FF44ED /* ManageScriptInstance.h */; };
+		32A116561D128B9C00FF44ED /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A116541D128B9C00FF44ED /* Node.h */; };
 		32A13EB81C2014170010F3FC /* Delete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A13EB61C2014170010F3FC /* Delete.cpp */; };
 		32A13EB91C2014170010F3FC /* Delete.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A13EB71C2014170010F3FC /* Delete.h */; };
 		32A13EBC1C2016C60010F3FC /* Delete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A13EBA1C2016C60010F3FC /* Delete.cpp */; };
@@ -733,7 +733,6 @@
 		32B222E11BA71566009BBA9E /* NodeMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B222DD1BA71566009BBA9E /* NodeMonitor.cpp */; };
 		32B224C61CFC626F00B24B58 /* LoadFullScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B224C41CFC626F00B24B58 /* LoadFullScript.cpp */; };
 		32B224CA1CFC830600B24B58 /* LoadFullScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B224C71CFC82F500B24B58 /* LoadFullScript.cpp */; };
-		32B224CE1CFD8D3100B24B58 /* DatasetAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B224CC1CFD8D3100B24B58 /* DatasetAttribute.cpp */; };
 		32B299991BD900F1000D3716 /* CopyInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B299971BD900F1000D3716 /* CopyInstance.cpp */; };
 		32B2999C1BD92B18000D3716 /* CopyInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B2999A1BD92B18000D3716 /* CopyInstance.cpp */; };
 		32B2999D1BD92B18000D3716 /* CopyInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B2999B1BD92B18000D3716 /* CopyInstance.h */; };
@@ -840,7 +839,6 @@
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
 		32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95E15E4DBD3005D607E /* EventFactory.h */; };
 		32D09FE61BBC1EA30059A926 /* ProcInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D09FE41BBC1EA30059A926 /* ProcInfo.h */; };
-		32D20A271CFD972C00F9EDDB /* AlgorithmVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D20A251CFD972C00F9EDDB /* AlgorithmVariable.cpp */; };
 		32D421B317271572008A326E /* BsonFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D421B117271572008A326E /* BsonFragment.cpp */; };
 		32D421B417271572008A326E /* BsonFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D421B217271572008A326E /* BsonFragment.h */; };
 		32D5CB32179D233E00A8427E /* chaos_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D5CB31179D233E00A8427E /* chaos_types.h */; };
@@ -860,7 +858,6 @@
 		32D746051C7367A200F4D719 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D746031C7367A200F4D719 /* event.h */; };
 		32D90D561CF4A4E500996F09 /* ScriptGroupApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D90D541CF4A4E500996F09 /* ScriptGroupApi.cpp */; };
 		32D90D591CF4A6DC00996F09 /* SearchScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D90D571CF4A6DC00996F09 /* SearchScript.cpp */; };
-		32D90D5E1CF4AA8200996F09 /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D90D5C1CF4AA8200996F09 /* Script.cpp */; };
 		32D90D601CF4AA8200996F09 /* Script.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D90D5D1CF4AA8200996F09 /* Script.h */; };
 		32DBAFCB1C9C1745003E2769 /* NodeMonitorHandlerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBAFC91C9C1745003E2769 /* NodeMonitorHandlerTest.cpp */; };
 		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
@@ -1827,10 +1824,11 @@
 		32A116461D11763A00FF44ED /* data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = data.h; sourceTree = "<group>"; };
 		32A116471D117F0700FF44ED /* ManageScriptInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageScriptInstance.cpp; sourceTree = "<group>"; };
 		32A116481D117F0700FF44ED /* ManageScriptInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageScriptInstance.h; sourceTree = "<group>"; };
-		32A1164A1D11A17D00FF44ED /* SearchInstanceForScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchInstanceForScript.cpp; sourceTree = "<group>"; };
-		32A1164B1D11A17D00FF44ED /* SearchInstanceForScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchInstanceForScript.h; sourceTree = "<group>"; };
+		32A1164A1D11A17D00FF44ED /* SearchInstancesForScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchInstancesForScript.cpp; sourceTree = "<group>"; };
+		32A1164B1D11A17D00FF44ED /* SearchInstancesForScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchInstancesForScript.h; sourceTree = "<group>"; };
 		32A1164E1D11A19200FF44ED /* ManageScriptInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageScriptInstance.cpp; sourceTree = "<group>"; };
 		32A1164F1D11A19200FF44ED /* ManageScriptInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageScriptInstance.h; sourceTree = "<group>"; };
+		32A116541D128B9C00FF44ED /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
 		32A13EB61C2014170010F3FC /* Delete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
 		32A13EB71C2014170010F3FC /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delete.h; sourceTree = "<group>"; };
 		32A13EBA1C2016C60010F3FC /* Delete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
@@ -1989,7 +1987,6 @@
 		32B224C51CFC626F00B24B58 /* LoadFullScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadFullScript.h; sourceTree = "<group>"; };
 		32B224C71CFC82F500B24B58 /* LoadFullScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadFullScript.cpp; sourceTree = "<group>"; };
 		32B224C81CFC82F500B24B58 /* LoadFullScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadFullScript.h; sourceTree = "<group>"; };
-		32B224CC1CFD8D3100B24B58 /* DatasetAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetAttribute.cpp; sourceTree = "<group>"; };
 		32B224CD1CFD8D3100B24B58 /* DatasetAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetAttribute.h; sourceTree = "<group>"; };
 		32B299971BD900F1000D3716 /* CopyInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CopyInstance.cpp; sourceTree = "<group>"; };
 		32B299981BD900F1000D3716 /* CopyInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyInstance.h; sourceTree = "<group>"; };
@@ -2126,7 +2123,6 @@
 		32CFF95E15E4DBD3005D607E /* EventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventFactory.h; sourceTree = "<group>"; };
 		32D09FE31BBC1EA30059A926 /* ProcInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcInfo.cpp; sourceTree = "<group>"; };
 		32D09FE41BBC1EA30059A926 /* ProcInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcInfo.h; sourceTree = "<group>"; };
-		32D20A251CFD972C00F9EDDB /* AlgorithmVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlgorithmVariable.cpp; sourceTree = "<group>"; };
 		32D20A261CFD972C00F9EDDB /* AlgorithmVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlgorithmVariable.h; sourceTree = "<group>"; };
 		32D24FAF1A7AAD15002D65CE /* DataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataAccess.h; sourceTree = "<group>"; };
 		32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mongo_db_constants.h; sourceTree = "<group>"; };
@@ -2152,7 +2148,6 @@
 		32D90D551CF4A4E500996F09 /* ScriptGroupApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptGroupApi.h; sourceTree = "<group>"; };
 		32D90D571CF4A6DC00996F09 /* SearchScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchScript.cpp; sourceTree = "<group>"; };
 		32D90D581CF4A6DC00996F09 /* SearchScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchScript.h; sourceTree = "<group>"; };
-		32D90D5C1CF4AA8200996F09 /* Script.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Script.cpp; sourceTree = "<group>"; };
 		32D90D5D1CF4AA8200996F09 /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
 		32D90D621CF4B0A700996F09 /* TemplatedDataSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedDataSDWrapper.h; sourceTree = "<group>"; };
 		32DA666F1700DBB6004FC02B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
@@ -2517,8 +2512,8 @@
 				3221D74E1CF606BC001BE971 /* SearchScript.h */,
 				32B224C71CFC82F500B24B58 /* LoadFullScript.cpp */,
 				32B224C81CFC82F500B24B58 /* LoadFullScript.h */,
-				32A1164A1D11A17D00FF44ED /* SearchInstanceForScript.cpp */,
-				32A1164B1D11A17D00FF44ED /* SearchInstanceForScript.h */,
+				32A1164A1D11A17D00FF44ED /* SearchInstancesForScript.cpp */,
+				32A1164B1D11A17D00FF44ED /* SearchInstancesForScript.h */,
 				32A1164E1D11A19200FF44ED /* ManageScriptInstance.cpp */,
 				32A1164F1D11A19200FF44ED /* ManageScriptInstance.h */,
 				3221D72E1CF5F292001BE971 /* script.h */,
@@ -3977,6 +3972,14 @@
 			path = general;
 			sourceTree = "<group>";
 		};
+		32A116521D128B8300FF44ED /* node */ = {
+			isa = PBXGroup;
+			children = (
+				32A116541D128B9C00FF44ED /* Node.h */,
+			);
+			path = node;
+			sourceTree = "<group>";
+		};
 		32A273EB1BB5A93D00572083 /* debug */ = {
 			isa = PBXGroup;
 			children = (
@@ -4200,9 +4203,7 @@
 		32B224CB1CFD8CF800B24B58 /* dataset */ = {
 			isa = PBXGroup;
 			children = (
-				32B224CC1CFD8D3100B24B58 /* DatasetAttribute.cpp */,
 				32B224CD1CFD8D3100B24B58 /* DatasetAttribute.h */,
-				32D20A251CFD972C00F9EDDB /* AlgorithmVariable.cpp */,
 				32D20A261CFD972C00F9EDDB /* AlgorithmVariable.h */,
 			);
 			path = dataset;
@@ -4523,6 +4524,7 @@
 				32D90D621CF4B0A700996F09 /* TemplatedDataSDWrapper.h */,
 				32A1163F1D115D6100FF44ED /* general */,
 				32B224CB1CFD8CF800B24B58 /* dataset */,
+				32A116521D128B8300FF44ED /* node */,
 				32D90D5B1CF4AA5B00996F09 /* script */,
 			);
 			path = data;
@@ -4531,7 +4533,6 @@
 		32D90D5B1CF4AA5B00996F09 /* script */ = {
 			isa = PBXGroup;
 			children = (
-				32D90D5C1CF4AA8200996F09 /* Script.cpp */,
 				32D90D5D1CF4AA8200996F09 /* Script.h */,
 			);
 			path = script;
@@ -5155,13 +5156,14 @@
 				3234BE801B04CC9400AE6B08 /* HealtStatusAttributeHandler.h in Headers */,
 				32B1E8071B2EA07200221E49 /* CommandTemplateDelete.h in Headers */,
 				328C87331ADFDB9A0047C79B /* SearchInstancesByUS.h in Headers */,
+				32A116561D128B9C00FF44ED /* Node.h in Headers */,
 				3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */,
 				32D745F21C7332FC00F4D719 /* EventDispatchManager.h in Headers */,
 				3239EF4F1C0EFEA60052BE61 /* CreateNewSnapshot.h in Headers */,
 				3221D7481CF5F38E001BE971 /* groups.h in Headers */,
 				32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */,
 				32B419381B16236300C3CA7D /* SetInputDatasetAttributeValues.h in Headers */,
-				32A1164D1D11A17D00FF44ED /* SearchInstanceForScript.h in Headers */,
+				32A1164D1D11A17D00FF44ED /* SearchInstancesForScript.h in Headers */,
 				327F39AC1AEAA2390000C845 /* UpdateDS.h in Headers */,
 				32362C221ADD0C45000CA079 /* SetInstanceDescription.h in Headers */,
 				323386B21ACD731E008863DC /* NodeSearch.h in Headers */,
@@ -5533,7 +5535,6 @@
 				32E09CED1C0DB2800069752F /* SnapshotDataAccess.cpp in Sources */,
 				328D0FF41A8A0862001A2001 /* UnitServerDataAccess.cpp in Sources */,
 				32A116491D117F0700FF44ED /* ManageScriptInstance.cpp in Sources */,
-				32D20A271CFD972C00F9EDDB /* AlgorithmVariable.cpp in Sources */,
 				32D90D561CF4A4E500996F09 /* ScriptGroupApi.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
@@ -5576,8 +5577,6 @@
 				32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */,
 				3221D7231CF5ADC9001BE971 /* ScriptDataAccess.cpp in Sources */,
-				32D90D5E1CF4AA8200996F09 /* Script.cpp in Sources */,
-				32B224CE1CFD8D3100B24B58 /* DatasetAttribute.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5933,7 +5932,7 @@
 				326150991CAAB5920003D0C2 /* ControlUnitMonitorHandler.cpp in Sources */,
 				32B1E7FD1B2B06CE00221E49 /* CommandGet.cpp in Sources */,
 				3221D72A1CF5EB22001BE971 /* SaveScript.cpp in Sources */,
-				32A1164C1D11A17D00FF44ED /* SearchInstanceForScript.cpp in Sources */,
+				32A1164C1D11A17D00FF44ED /* SearchInstancesForScript.cpp in Sources */,
 				327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */,
 				3239EF4E1C0EFEA60052BE61 /* CreateNewSnapshot.cpp in Sources */,
 				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
@@ -5948,7 +5947,6 @@
 				3283B88E1C7F31D20019255B /* SearchLogEntry.cpp in Sources */,
 				3239EF591C0F26D90052BE61 /* GetAllSnapshot.cpp in Sources */,
 				32D745F81C73388900F4D719 /* AlertEventHandler.cpp in Sources */,
-				3221D72C1CF5EB2E001BE971 /* Script.cpp in Sources */,
 				32E2B1B41C32A60D00FCFB42 /* DeleteNode.cpp in Sources */,
 				32D745F41C73357900F4D719 /* EventDispatchManager.cpp in Sources */,
 				32A116501D11A19200FF44ED /* ManageScriptInstance.cpp in Sources */,

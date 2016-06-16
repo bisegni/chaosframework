@@ -37,3 +37,19 @@ ApiProxyResult ManageScriptInstance::execute(const std::string& script_name,
     api_data->addBoolValue("create", create);
     return callApi(api_data.release());
 }
+
+ApiProxyResult ManageScriptInstance::execute(const std::string& script_name,
+                                             const ChaosStringList& instance_names,
+                                             const bool create) {
+    std::auto_ptr<CDataWrapper> api_data(new CDataWrapper());
+    api_data->addStringValue("script_name", script_name);
+    for(ChaosStringListConstIterator it = instance_names.begin(),
+        end = instance_names.end();
+        it != end;
+        it++) {
+        api_data->appendStringToArray(*it);
+    }
+    api_data->finalizeArrayForKey("instance_name");
+    api_data->addBoolValue("create", create);
+    return callApi(api_data.release());
+}
