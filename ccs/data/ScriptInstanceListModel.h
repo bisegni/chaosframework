@@ -20,9 +20,15 @@ public:
     ScriptInstanceListModel(const chaos::service_common::data::script::ScriptBaseDescription& _script_description,
                             QObject *parent=0);
     void updateInstanceListForSearchString(const QString& search_string);
+
+    const chaos::service_common::data::script::ScriptBaseDescription& getScriptDescription();
 private:
     ApiSubmitter api_submitter;
+    //description of the script parent of the found instance
     chaos::service_common::data::script::ScriptBaseDescription script_description;
+    //list of the current pag contained the found instances
+    chaos::service_common::data::general::StdVectorSDWrapper<chaos::service_common::data::node::NodeInstance,
+    chaos::service_common::data::node::NodeInstanceSDWrapper> ni_list_wrapper;
 };
 
 #endif // SCRIPTINSTANCELISTMODEL_H

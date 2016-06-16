@@ -26,6 +26,6 @@
 #include <ChaosMetadataServiceClient/api_proxy/script/SearchScript.h>
 #include <ChaosMetadataServiceClient/api_proxy/script/LoadFullScript.h>
 #include <ChaosMetadataServiceClient/api_proxy/script/ManageScriptInstance.h>
-#include <ChaosMetadataServiceClient/api_proxy/script/SearchInstanceForScript.h>
+#include <ChaosMetadataServiceClient/api_proxy/script/SearchInstancesForScript.h>
 
 #endif /* __CHAOSFramework_F951FF55_A546_4753_8859_3E5E05C482CA_script_h */

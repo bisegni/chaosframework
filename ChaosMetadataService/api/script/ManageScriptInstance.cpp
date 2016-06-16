@@ -36,7 +36,7 @@ using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
 
 ManageScriptInstance::ManageScriptInstance():
-AbstractApi("ManageScriptInstance"){
+AbstractApi("manageScriptInstance"){
 }
 
 ManageScriptInstance::~ManageScriptInstance() {
@@ -52,21 +52,41 @@ chaos::common::data::CDataWrapper *ManageScriptInstance::execute(CDataWrapper *a
     CHECK_KEY_THROW_AND_LOG(api_data, "instance_name", ERR, -3, "The instance name is mandatory")
     CHECK_KEY_THROW_AND_LOG(api_data, "create", ERR, -4, "The create key is mandatory")
     const std::string script_name =  CDW_GET_VALUE_WITH_DEFAULT(api_data, "script_name", getStringValue,"");
-    const std::string instance_name = CDW_GET_VALUE_WITH_DEFAULT(api_data, "instance_name", getStringValue, "");
     const bool create = CDW_GET_VALUE_WITH_DEFAULT(api_data, "create", getBoolValue, false);
+    
     //fetch dataaccess for the script managment
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
+    ChaosStringList str_list;
     
-    if(create) {
-        if((err = s_da->addScriptInstance(script_name,
-                                          instance_name))) {
-            LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating instance %1% for script %2%",%instance_name%script_name));
-        }
-    } else {
-        if((err = s_da->removeScriptInstance(script_name,
-                                             instance_name))) {
-            LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error removing instance %1% for script %2%",%instance_name%script_name));
+    //standardize the usage mwith array
+    if(api_data->isStringValue("instance_name")) {
+        str_list.push_back(api_data->getStringValue("instance_name"));
+    } else if(api_data->isVectorValue("instance_name")) {
+        std::auto_ptr<CMultiTypeDataArrayWrapper> array(api_data->getVectorValue("instance_name"));
+        for(int idx = 0;
+            idx < array->size();
+            idx++) {
+            str_list.push_back(array->getStringElementAtIndex(idx));
         }
     }
+    
+    //do operation on the arry list
+    for(ChaosStringListIterator it = str_list.begin(),
+        end = str_list.end();
+        it != end;
+        it++) {
+        if(create) {
+            if((err = s_da->addScriptInstance(script_name,
+                                              *it))) {
+                LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating instance %1% for script %2%",%*it%script_name));
+            }
+        } else {
+            if((err = s_da->removeScriptInstance(script_name,
+                                                 *it))) {
+                LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error removing instance %1% for script %2%",%*it%script_name));
+            }
+        }
+    }
+    
     return NULL;
 }

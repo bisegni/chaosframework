@@ -32,4 +32,8 @@
 #include <ChaosMetadataServiceClient/api_proxy/data_service/data_service.h>
 #include <ChaosMetadataServiceClient/api_proxy/control_unit/control_unit.h>
 #include <ChaosMetadataServiceClient/api_proxy/unit_server/unit_server.h>
+
+//add all service common data
+#include <chaos_service_common/data/data.h>
+
 #endif

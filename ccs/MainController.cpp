@@ -11,6 +11,9 @@
 #include <QSettings>
 
 #include <string>
+
+#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
+
 using namespace chaos::metadata_service_client;
 
 //declare metatype used in chaos
@@ -32,6 +35,7 @@ Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::SerializationBuffer>)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>)
 Q_DECLARE_METATYPE(boost::shared_ptr<chaos::CException>)
 Q_DECLARE_METATYPE(chaos::metadata_service_client::node_monitor::OnlineState)
+Q_DECLARE_METATYPE(chaos::service_common::data::node::NodeInstance)
 
 MainController::MainController() {
 }
@@ -64,6 +68,7 @@ void MainController::init(int argc, char **argv, QApplication& a) {
     qRegisterMetaType<boost::shared_ptr<chaos::CException> >("chaos::CException");
     qRegisterMetaType<boost::shared_ptr<chaos::common::data::CDataWrapper> >("chaos::metadata_service_client::monitor_system::KeyValue");
     qRegisterMetaType<chaos::metadata_service_client::node_monitor::OnlineState>("chaos::metadata_service_client::node_monitor::OnlineState");
+    qRegisterMetaType<chaos::service_common::data::node::NodeInstance>("chaos::service_common::data::node::NodeInstance");
 
     QPixmap pixmap(":splash/main_splash.png");
     QApplication::setApplicationName("chaos_control_studio");

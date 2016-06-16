@@ -1,5 +1,5 @@
 /*
- *	SearchInstanceForScript.cpp
+ *	SearchInstancesForScript.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -19,16 +19,16 @@
  *    	limitations under the License.
  */
 
-#include <ChaosMetadataServiceClient/api_proxy/script/SearchInstanceForScript.h>
+#include <ChaosMetadataServiceClient/api_proxy/script/SearchInstancesForScript.h>
 
 using namespace chaos::common::data;
 using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service_client::api_proxy;
 using namespace chaos::metadata_service_client::api_proxy::script;
 
-API_PROXY_CD_DEFINITION(SearchInstanceForScript, "script", "searchInstanceForScript")
+API_PROXY_CD_DEFINITION(SearchInstancesForScript, "script", "searchInstancesForScript")
 
-ApiProxyResult SearchInstanceForScript::execute(const std::string& script_name,
+ApiProxyResult SearchInstancesForScript::execute(const std::string& script_name,
                                                 const std::string& search_string,
                                                 const uint64_t start_sequence_id,
                                                 const uint32_t page_lenght) {

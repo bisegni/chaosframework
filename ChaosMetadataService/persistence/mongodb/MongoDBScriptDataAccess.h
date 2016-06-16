@@ -78,7 +78,7 @@ namespace chaos {
                                              const std::string& instance_name);
                     
                     //! Inherited Method
-                    int searchScriptInstance(ChaosStringList& instance_list,
+                    int searchScriptInstance(std::vector<chaos::service_common::data::node::NodeInstance>& instance_list,
                                              const std::string& script_name,
                                              const std::string& search_string,
                                              uint64_t start_sequence_id,
