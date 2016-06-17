@@ -80,12 +80,12 @@ int MongoDBScriptDataAccess::insertNewScript(Script& script_entry) {
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
                                      i))) {
             SDA_ERR << "Error creating new script";
-        }
-        
-        //now all other part of the script are managed with update
-        if(script_entry.script_content.size()) {
-            //add sccript content
-            err = updateScript(script_entry);
+        } else {
+            //now all other part of the script are managed with update
+            if(script_entry.script_content.size()) {
+                //add sccript content
+                err = updateScript(script_entry);
+            }
         }
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();
@@ -187,15 +187,28 @@ int MongoDBScriptDataAccess::addScriptInstance(const uint64_t seq,
         node_description.addStringValue(chaos::NodeDefinitionKey::NODE_GROUP_SET, script_name);
         node_description.addInt64Value("script_seq", seq);
         //now all other part of the script are managed with update
-        err = node_data_access->insertNewNode(node_description);
-        
-        //at this moment we need to load the intere scrit
-        ScriptSDWrapper script_sd_wrapper;
-        if((err = loadScript(seq, script_name,
-                             script_sd_wrapper.dataWrapped()))){
+        if((err = node_data_access->insertNewNode(node_description))){
             return err;
         }
+
+        mongo::Query q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID<< instance_name<<
+                              chaos::NodeDefinitionKey::NODE_GROUP_SET << script_name<<
+                              "script_seq" << (long long)seq);
+        //add base instanceinformation control control unit implementation
+        mongo::BSONObj u = BSON("$set" << BSON("instance_description" << BSON("control_unit_implementation" << "ScriptableExecutionUnit")));
         
+        DEBUG_CODE(SDA_DBG<<log_message("addScriptInstance",
+                                        "update",
+                                        DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                "Update",
+                                                                q,
+                                                                u));)
+
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), q, u))){
+            SDA_ERR << "Error updating script instance node with default instance data" << err;
+            return err;
+        }
+
         //we have the script now get the dataset and attach it to the instance
         
     } catch (const mongo::DBException &e) {
