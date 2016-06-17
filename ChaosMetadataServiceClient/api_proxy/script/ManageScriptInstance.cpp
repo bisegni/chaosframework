@@ -28,20 +28,24 @@ using namespace chaos::metadata_service_client::api_proxy::script;
 
 API_PROXY_CD_DEFINITION(ManageScriptInstance, "script", "manageScriptInstance")
 
-ApiProxyResult ManageScriptInstance::execute(const std::string& script_name,
+ApiProxyResult ManageScriptInstance::execute(const uint64_t script_seq,
+                                             const std::string& script_name,
                                              const std::string& instance_name,
                                              const bool create) {
     std::auto_ptr<CDataWrapper> api_data(new CDataWrapper());
+    api_data->addInt64Value("script_seq", script_seq);
     api_data->addStringValue("script_name", script_name);
     api_data->addStringValue("instance_name", instance_name);
     api_data->addBoolValue("create", create);
     return callApi(api_data.release());
 }
 
-ApiProxyResult ManageScriptInstance::execute(const std::string& script_name,
+ApiProxyResult ManageScriptInstance::execute(const uint64_t script_seq,
+                                             const std::string& script_name,
                                              const ChaosStringList& instance_names,
                                              const bool create) {
     std::auto_ptr<CDataWrapper> api_data(new CDataWrapper());
+    api_data->addInt64Value("script_seq", script_seq);
     api_data->addStringValue("script_name", script_name);
     for(ChaosStringListConstIterator it = instance_names.begin(),
         end = instance_names.end();
