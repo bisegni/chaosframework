@@ -45,7 +45,6 @@ LIBS +=     -ljsoncpp\
 
 SOURCES += main.cpp\
     search/SearchNodeResult.cpp \
-    search/SearchNode.cpp \
     presenter/PresenterWidget.cpp \
     presenter/CommandPresenter.cpp \
     api_async_processor/ApiAsyncProcessor.cpp \
@@ -137,7 +136,6 @@ SOURCES += main.cpp\
 
 HEADERS  += \
     search/SearchNodeResult.h \
-    search/SearchNode.h \
     presenter/PresenterWidget.h \
     presenter/CommandPresenter.h \
     api_async_processor/ApiAsyncProcessor.h \
@@ -252,7 +250,6 @@ HEADERS  += \
 
 FORMS    += \
     search/searchnoderesult.ui \
-    search/searchnode.ui \
     node/unit_server/UnitServerEditor.ui \
     node/control_unit/ControUnitInstanceEditor.ui \
     node/control_unit/DriverDescriptionInputDialog.ui \

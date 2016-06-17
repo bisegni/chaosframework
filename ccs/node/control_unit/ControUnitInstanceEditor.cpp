@@ -102,7 +102,7 @@ void ControUnitInstanceEditor::initUI() {
                         GET_CHAOS_API_PTR(control_unit::GetInstance)->execute(ui->lineEditControlUnitUniqueID->text().toStdString()));
     }
 
-    //get unit server information
+    //get unit server informationi
     submitApiResult(QString("get_us_description"),
                     GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(ui->labelUnitServer->text().toStdString()));
 }

@@ -70,11 +70,13 @@ namespace chaos {
                                      uint32_t page_length);
                     
                     //! Inherited Method
-                    int addScriptInstance(const std::string& script_name,
+                    int addScriptInstance(const uint64_t seq,
+                                          const std::string& script_name,
                                           const std::string& instance_name);
                     
                     //! Inherited Method
-                    int removeScriptInstance(const std::string& script_name,
+                    int removeScriptInstance(const uint64_t seq,
+                                             const std::string& script_name,
                                              const std::string& instance_name);
                     
                     //! Inherited Method
@@ -84,7 +86,8 @@ namespace chaos {
                                              uint64_t start_sequence_id,
                                              uint32_t page_length);
                     //! Inherited Method
-                    int loadScript(const chaos::service_common::data::script::ScriptBaseDescription& script_base_description,
+                    int loadScript(const uint64_t unique_id,
+                                   const std::string& name,
                                    chaos::service_common::data::script::Script& script,
                                    bool load_source_code = false);
                 };

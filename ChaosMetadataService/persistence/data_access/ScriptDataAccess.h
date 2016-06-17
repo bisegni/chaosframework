@@ -71,12 +71,14 @@ namespace chaos {
                                              uint32_t page_length) = 0;
                     
                     //! add a new instance to the script
-                    virtual int addScriptInstance(const std::string& script_name,
+                    virtual int addScriptInstance(const uint64_t seq,
+                                                  const std::string& script_name,
                                                   const std::string& instance_name) = 0;
                     
                     //! remove an instance to the script
-                    virtual int removeScriptInstance(const std::string& script_name,
-                                                    const std::string& instance_name) = 0;
+                    virtual int removeScriptInstance(const uint64_t seq,
+                                                     const std::string& script_name,
+                                                     const std::string& instance_name) = 0;
                     
                     //!Perform a search on script entries
                     /*!
@@ -99,7 +101,8 @@ namespace chaos {
                      \param script the script strucutre filled with all script infromation
                      \param load_source_code specify if we need to load all script source code
                      */
-                    virtual int loadScript(const chaos::service_common::data::script::ScriptBaseDescription& script_base_description,
+                    virtual int loadScript(const uint64_t unique_id,
+                                           const std::string& name,
                                            chaos::service_common::data::script::Script& script,
                                            bool load_source_code = false) = 0;
                 };

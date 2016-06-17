@@ -100,7 +100,8 @@ int MongoDBScriptDataAccess::updateScript(Script& script) {
     mongo::BSONObjBuilder query_builder;
     CHAOS_ASSERT(utility_data_access)
     try {
-        mongo::BSONObj q = BSON("seq"<< (long long)script.script_description.unique_id);
+        mongo::BSONObj q = BSON("seq"<< (long long)script.script_description.unique_id <<
+                                chaos::NodeDefinitionKey::NODE_UNIQUE_ID << script.script_description.name);
         
         //compose bson update
         CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::script::Script, s_dw);
@@ -121,8 +122,6 @@ int MongoDBScriptDataAccess::updateScript(Script& script) {
                                      u))) {
             SDA_ERR << "Error Updating sript content";
         }
-        
-        //now all other part of the script are managed with update
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();
         err = e.getCode();
@@ -176,7 +175,8 @@ int MongoDBScriptDataAccess::searchScript(ScriptBaseDescriptionListWrapper& scri
 }
 
 //! Inherited Method
-int MongoDBScriptDataAccess::addScriptInstance(const std::string& script_name,
+int MongoDBScriptDataAccess::addScriptInstance(const uint64_t seq,
+                                               const std::string& script_name,
                                                const std::string& instance_name) {
     CHAOS_ASSERT(node_data_access)
     int err = 0;
@@ -185,9 +185,19 @@ int MongoDBScriptDataAccess::addScriptInstance(const std::string& script_name,
         node_description.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, instance_name);
         node_description.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT);
         node_description.addStringValue(chaos::NodeDefinitionKey::NODE_GROUP_SET, script_name);
-        
+        node_description.addInt64Value("script_seq", seq);
         //now all other part of the script are managed with update
         err = node_data_access->insertNewNode(node_description);
+        
+        //at this moment we need to load the intere scrit
+        ScriptSDWrapper script_sd_wrapper;
+        if((err = loadScript(seq, script_name,
+                             script_sd_wrapper.dataWrapped()))){
+            return err;
+        }
+        
+        //we have the script now get the dataset and attach it to the instance
+        
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();
         err = e.getCode();
@@ -196,14 +206,16 @@ int MongoDBScriptDataAccess::addScriptInstance(const std::string& script_name,
 }
 
 //! Inherited Method
-int MongoDBScriptDataAccess::removeScriptInstance(const std::string& script_name,
+int MongoDBScriptDataAccess::removeScriptInstance(const uint64_t seq,
+                                                  const std::string& script_name,
                                                   const std::string& instance_name) {
     CHAOS_ASSERT(node_data_access)
     int err = 0;
     try {
         //now all other part of the script are managed with update
         mongo::Query q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID<< instance_name<<
-                              chaos::NodeDefinitionKey::NODE_GROUP_SET << script_name);
+                              chaos::NodeDefinitionKey::NODE_GROUP_SET << script_name<<
+                              "script_seq" << (long long)seq);
         if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      q))) {
             SDA_ERR << CHAOS_FORMAT("Error removing instance %1% for script %2% with code %3%", %instance_name%script_name%err);
@@ -265,15 +277,16 @@ int MongoDBScriptDataAccess::searchScriptInstance(std::vector<NodeInstance>& ins
     return err;
 }
 
-int MongoDBScriptDataAccess::loadScript(const chaos::service_common::data::script::ScriptBaseDescription& script_base_description,
+int MongoDBScriptDataAccess::loadScript(const uint64_t unique_id,
+                                        const std::string& name,
                                         chaos::service_common::data::script::Script& script,
                                         bool load_source_code) {
     int err = 0;
     mongo::BSONObj element_found;
     CHAOS_ASSERT(utility_data_access)
     try {
-        mongo::BSONObj q = BSON("seq" << (long long)script_base_description.unique_id
-                                << CHAOS_SBD_NAME << script_base_description.name);
+        mongo::BSONObj q = BSON("seq" << (long long)unique_id
+                                << CHAOS_SBD_NAME << name);
         
         DEBUG_CODE(SDA_DBG<<log_message("loadScript",
                                         "findOne",
@@ -283,10 +296,10 @@ int MongoDBScriptDataAccess::loadScript(const chaos::service_common::data::scrip
         if((err = connection->findOne(element_found,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
                                       q))) {
-            SDA_ERR << CHAOS_FORMAT("Error executin query for load script %1%[%2%] with error [%3%]", %script_base_description.unique_id%script_base_description.name%err);
+            SDA_ERR << CHAOS_FORMAT("Error executin query for load script %1%[%2%] with error [%3%]", %unique_id%name%err);
         } else {
             if(element_found.isEmpty()) {
-                SDA_ERR << CHAOS_FORMAT("The script %1%[%2%] has not been found", %script_base_description.unique_id%script_base_description.name);
+                SDA_ERR << CHAOS_FORMAT("The script %1%[%2%] has not been found", %unique_id%name);
             } else {
                 // fill script with base description
                 CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::script::Script, s_dw);
@@ -296,7 +309,6 @@ int MongoDBScriptDataAccess::loadScript(const chaos::service_common::data::scrip
             }
         }
         
-        //now all other part of the script are managed with update
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();
         err = e.getCode();

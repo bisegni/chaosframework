@@ -54,7 +54,8 @@ void ScriptInstanceManagerWidget::on_pushButtonAddNew_clicked() {
                                                   &ok);
     if (ok && !instance_name.isEmpty()) {
         api_submitter.submitApiResult("create_instance",
-                                      GET_CHAOS_API_PTR(ManageScriptInstance)->execute(instance_list_model.getScriptDescription().name,
+                                      GET_CHAOS_API_PTR(ManageScriptInstance)->execute(instance_list_model.getScriptDescription().unique_id,
+                                                                                       instance_list_model.getScriptDescription().name,
                                                                                        instance_name.toStdString(),
                                                                                        true));
     }
@@ -66,7 +67,8 @@ void ScriptInstanceManagerWidget::on_pushButtonremoveInstance_clicked() {
         str_list.push_back(index.data().toString().toStdString());
     }
     api_submitter.submitApiResult("delete_instance",
-                                  GET_CHAOS_API_PTR(ManageScriptInstance)->execute(instance_list_model.getScriptDescription().name,
+                                  GET_CHAOS_API_PTR(ManageScriptInstance)->execute(instance_list_model.getScriptDescription().unique_id,
+                                                                                   instance_list_model.getScriptDescription().name,
                                                                                    str_list,
                                                                                    false));
 }

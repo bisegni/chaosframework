@@ -48,9 +48,12 @@ chaos::common::data::CDataWrapper *ManageScriptInstance::execute(CDataWrapper *a
     //check for mandatory attributes
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
-    CHECK_KEY_THROW_AND_LOG(api_data, "script_name", ERR, -2, "The script name is mandatory")
-    CHECK_KEY_THROW_AND_LOG(api_data, "instance_name", ERR, -3, "The instance name is mandatory")
-    CHECK_KEY_THROW_AND_LOG(api_data, "create", ERR, -4, "The create key is mandatory")
+    CHECK_KEY_THROW_AND_LOG(api_data, "script_seq", ERR, -2, "The script seq is mandatory");
+    CHECK_KEY_THROW_AND_LOG(api_data, "script_name", ERR, -3, "The script name is mandatory");
+    CHECK_KEY_THROW_AND_LOG(api_data, "instance_name", ERR, -4, "The instance name is mandatory");
+    CHECK_KEY_THROW_AND_LOG(api_data, "create", ERR, -5, "The create key is mandatory");
+    
+    const uint64_t seq = CDW_GET_VALUE_WITH_DEFAULT(api_data, "seq", getInt64Value,0);
     const std::string script_name =  CDW_GET_VALUE_WITH_DEFAULT(api_data, "script_name", getStringValue,"");
     const bool create = CDW_GET_VALUE_WITH_DEFAULT(api_data, "create", getBoolValue, false);
     
@@ -76,12 +79,14 @@ chaos::common::data::CDataWrapper *ManageScriptInstance::execute(CDataWrapper *a
         it != end;
         it++) {
         if(create) {
-            if((err = s_da->addScriptInstance(script_name,
+            if((err = s_da->addScriptInstance(seq,
+                                              script_name,
                                               *it))) {
                 LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error creating instance %1% for script %2%",%*it%script_name));
             }
         } else {
-            if((err = s_da->removeScriptInstance(script_name,
+            if((err = s_da->removeScriptInstance(seq,
+                                                 script_name,
                                                  *it))) {
                 LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error removing instance %1% for script %2%",%*it%script_name));
             }

@@ -40,14 +40,16 @@ namespace chaos {
                     /*!
                      Create or remove a script instance
                      */
-                    ApiProxyResult execute(const std::string& script_name,
+                    ApiProxyResult execute(const uint64_t script_seq,
+                                           const std::string& script_name,
                                            const std::string& instance_name,
                                            const bool create);
                     
                     /*!
                      Create or remove multiple script instance
                      */
-                    ApiProxyResult execute(const std::string& script_name,
+                    ApiProxyResult execute(const uint64_t script_seq,
+                                           const std::string& script_name,
                                            const ChaosStringList& instance_names,
                                            const bool create);
                 };
