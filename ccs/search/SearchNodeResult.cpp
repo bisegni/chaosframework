@@ -1,6 +1,7 @@
 #include "ui_searchnoderesult.h"
 #include "node/unit_server/UnitServerEditor.h"
 #include "node/control_unit/ControlUnitEditor.h"
+#include "../node/control_unit/ControlUnitEditor.h"
 #include "../node/control_unit/ControUnitInstanceEditor.h"
 
 #include <QDebug>
@@ -118,14 +119,19 @@ void SearchNodeResult::contextualMenuActionTrigger(const QString& cm_title,
                                                  cm_data);
     if(cm_title.compare(CM_EDIT_NODE) == 0) {
         //edit node
+        foreach (QModelIndex element, ui->tableViewResult->selectionModel()->selectedRows()) {
+            QString unit_uid = table_model->item(element.row(), 0)->text();
+            qDebug() << "Edit " << unit_uid << " instance";
+            addWidgetToPresenter(new ControlUnitEditor(unit_uid));
+        }
     } else if(cm_title.compare(CM_EDIT_INSTANCE) == 0) {
         //edit instance
         foreach (QModelIndex element, ui->tableViewResult->selectionModel()->selectedRows()) {
-            QString cu_inst_id = table_model->item(element.row(), 0)->text();
-            qDebug() << "Edit " << cu_inst_id << " instance";
-            //addWidgetToPresenter(new ControUnitInstanceEditor(node_unique_id,
-                                                       //       cu_inst_id,
-                                                          //    true));
+            QString unit_uid = table_model->item(element.row(), 0)->text();
+            qDebug() << "Edit " << unit_uid << " instance";
+            addWidgetToPresenter(new ControUnitInstanceEditor("",
+                                                              unit_uid,
+                                                              true));
         }
     }
 }

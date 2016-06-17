@@ -103,8 +103,13 @@ void ControUnitInstanceEditor::initUI() {
     }
 
     //get unit server informationi
-    submitApiResult(QString("get_us_description"),
-                    GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(ui->labelUnitServer->text().toStdString()));
+    ui->labelUnitServer->setEnabled(ui->labelUnitServer->text().size() > 0);
+    ui->labelUnitServer->setEnabled(ui->labelUnitServerUID->text().size() > 0);
+    ui->labelUnitServer->setEnabled(ui->pushButtonChooseControlUnitType->text().size() > 0);
+    if(ui->labelUnitServerUID->text().size() > 0) {
+        submitApiResult(QString("get_us_description"),
+                        GET_CHAOS_API_PTR(unit_server::GetDescription)->execute(ui->labelUnitServer->text().toStdString()));
+    }
 }
 
 control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSetInstanceApi() {
@@ -171,7 +176,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
             CHECK_AND_SET_CHECK("auto_init", ui->checkBoxAutoInit)
             CHECK_AND_SET_CHECK("auto_start", ui->checkBoxAutoStart)
             CHECK_AND_SET_LABEL(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, ui->textEditLoadParameter)
-    if(api_result->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
+            if(api_result->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
         ui->lineEditDefaultScheduleTime->setText(QString::number(api_result->getUInt64Value(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)));
     }
     //add driverdesc

@@ -400,8 +400,7 @@ int MongoDBControlUnitDataAccess::setInstanceDescription(const std::string& cu_u
         if(!instance_description.hasKey(NodeDefinitionKey::NODE_PARENT)) return -1;
 
         //serach criteria
-        bson_find   << NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id
-        << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
+        bson_find   << NodeDefinitionKey::NODE_UNIQUE_ID << cu_unique_id;//<< NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
 
         //add the load_at_startup field
         updated_field << NodeDefinitionKey::NODE_PARENT << instance_description.getStringValue(NodeDefinitionKey::NODE_PARENT)
