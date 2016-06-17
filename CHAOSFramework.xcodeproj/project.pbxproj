@@ -662,7 +662,6 @@
 		32A88BE81CF8228A001DBAF5 /* ltm.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BAB1CF8228A001DBAF5 /* ltm.h */; };
 		32A88BEA1CF8228A001DBAF5 /* lua.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BAD1CF8228A001DBAF5 /* lua.h */; };
 		32A88BEB1CF8228A001DBAF5 /* lua.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BAE1CF8228A001DBAF5 /* lua.hpp */; };
-		32A88BEC1CF8228A001DBAF5 /* luac.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BAF1CF8228A001DBAF5 /* luac.c */; };
 		32A88BED1CF8228A001DBAF5 /* luaconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BB01CF8228A001DBAF5 /* luaconf.h */; };
 		32A88BEE1CF8228A001DBAF5 /* lualib.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A88BB11CF8228A001DBAF5 /* lualib.h */; };
 		32A88BEF1CF8228A001DBAF5 /* lundump.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A88BB21CF8228A001DBAF5 /* lundump.c */; };
@@ -1878,10 +1877,8 @@
 		32A88BA91CF8228A001DBAF5 /* ltablib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ltablib.c; sourceTree = "<group>"; };
 		32A88BAA1CF8228A001DBAF5 /* ltm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ltm.c; sourceTree = "<group>"; };
 		32A88BAB1CF8228A001DBAF5 /* ltm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ltm.h; sourceTree = "<group>"; };
-		32A88BAC1CF8228A001DBAF5 /* lua.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lua.c; sourceTree = "<group>"; };
 		32A88BAD1CF8228A001DBAF5 /* lua.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lua.h; sourceTree = "<group>"; };
 		32A88BAE1CF8228A001DBAF5 /* lua.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = lua.hpp; sourceTree = "<group>"; };
-		32A88BAF1CF8228A001DBAF5 /* luac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = luac.c; sourceTree = "<group>"; };
 		32A88BB01CF8228A001DBAF5 /* luaconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = luaconf.h; sourceTree = "<group>"; };
 		32A88BB11CF8228A001DBAF5 /* lualib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lualib.h; sourceTree = "<group>"; };
 		32A88BB21CF8228A001DBAF5 /* lundump.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lundump.c; sourceTree = "<group>"; };
@@ -4042,10 +4039,8 @@
 				32A88BA91CF8228A001DBAF5 /* ltablib.c */,
 				32A88BAA1CF8228A001DBAF5 /* ltm.c */,
 				32A88BAB1CF8228A001DBAF5 /* ltm.h */,
-				32A88BAC1CF8228A001DBAF5 /* lua.c */,
 				32A88BAD1CF8228A001DBAF5 /* lua.h */,
 				32A88BAE1CF8228A001DBAF5 /* lua.hpp */,
-				32A88BAF1CF8228A001DBAF5 /* luac.c */,
 				32A88BB01CF8228A001DBAF5 /* luaconf.h */,
 				32A88BB11CF8228A001DBAF5 /* lualib.h */,
 				32A88BB21CF8228A001DBAF5 /* lundump.c */,
@@ -5758,7 +5753,6 @@
 				3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */,
 				32AF7D4018DAEAF300537DE6 /* PerformanceNodeChannel.cpp in Sources */,
 				32EBDF061B4FCA6F00278C42 /* ConsoleMetricBackend.cpp in Sources */,
-				32A88BEC1CF8228A001DBAF5 /* luac.c in Sources */,
 				324A4B71191A428500975394 /* bson_extract.cpp in Sources */,
 				32067EA11CABEE8800DE568A /* CDataVariant.cpp in Sources */,
 				32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */,
