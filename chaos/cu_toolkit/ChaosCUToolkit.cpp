@@ -63,6 +63,10 @@ ChaosCUToolkit::ChaosCUToolkit() {
 	GlobalConfiguration::getInstance()->addOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC,
 															CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_desc,
 															CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_DEFAULT);
+    
+    GlobalConfiguration::getInstance()->addOption< std::vector<std::string> >(CONTROL_MANAGER_EXECUTION_POOLS,
+                                                                              "Determinate wich execution pool are used by this unit server to load script");
+
 
 }
 

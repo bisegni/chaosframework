@@ -6,7 +6,7 @@
 #include <QMap>
 #include <QDebug>
 
-const QString CM_EDIT_INSTANCE = "edit_instance";
+const QString CM_EDIT_INSTANCE = "Instances List";
 
 using namespace chaos::common::data;
 using namespace chaos::service_common::data::script;
