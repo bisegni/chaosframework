@@ -1,6 +1,7 @@
 #ifndef SCRIPTINSTANCEMANAGERWIDGET_H
 #define SCRIPTINSTANCEMANAGERWIDGET_H
 
+#include "../utility/WidgetUtility.h"
 #include "../data/ScriptInstanceListModel.h"
 #include "../api_async_processor/ApiSubmitter.h"
 
@@ -13,7 +14,8 @@ class ScriptInstanceManagerWidget;
 
 class ScriptInstanceManagerWidget :
         public QWidget,
-        public ApiHandler {
+        public ApiHandler,
+        protected WidgetUtilityhandler {
     Q_OBJECT
 
 public:
@@ -23,6 +25,9 @@ public:
 protected:
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+
+    void cmActionTrigger(const QString& cm_title,
+                         const QVariant& cm_data);
 private slots:
     void on_pushButtonSearchInstances_clicked();
 
@@ -34,6 +39,7 @@ private slots:
                           const QItemSelection& unselected);
 private:
     ApiSubmitter api_submitter;
+    WidgetUtility widget_utility;
     Ui::ScriptInstanceManagerWidget *ui;
     ScriptInstanceListModel instance_list_model;
 };

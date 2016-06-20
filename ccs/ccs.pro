@@ -132,7 +132,8 @@ SOURCES += main.cpp\
     script/editor/CodeEditor.cpp \
     GlobalServices.cpp \
     script/ScriptInstanceManagerWidget.cpp \
-    data/ScriptInstanceListModel.cpp
+    data/ScriptInstanceListModel.cpp \
+    utility/WidgetUtility.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
@@ -246,7 +247,8 @@ HEADERS  += \
     script/editor/CodeEditor.h \
     GlobalServices.h \
     script/ScriptInstanceManagerWidget.h \
-    data/ScriptInstanceListModel.h
+    data/ScriptInstanceListModel.h \
+    utility/WidgetUtility.h
 
 FORMS    += \
     search/searchnoderesult.ui \

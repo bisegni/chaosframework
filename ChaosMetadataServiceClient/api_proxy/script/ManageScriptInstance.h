@@ -50,7 +50,7 @@ namespace chaos {
                      */
                     ApiProxyResult execute(const uint64_t script_seq,
                                            const std::string& script_name,
-                                           const ChaosStringList& instance_names,
+                                           const ChaosStringVector& instance_names,
                                            const bool create);
                 };
                 

@@ -59,7 +59,7 @@ chaos::common::data::CDataWrapper *ManageScriptInstance::execute(CDataWrapper *a
     
     //fetch dataaccess for the script managment
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)
-    ChaosStringList str_list;
+    ChaosStringVector str_list;
     
     //standardize the usage mwith array
     if(api_data->isStringValue("instance_name")) {
@@ -74,7 +74,7 @@ chaos::common::data::CDataWrapper *ManageScriptInstance::execute(CDataWrapper *a
     }
     
     //do operation on the arry list
-    for(ChaosStringListIterator it = str_list.begin(),
+    for(ChaosStringVectorIterator it = str_list.begin(),
         end = str_list.end();
         it != end;
         it++) {

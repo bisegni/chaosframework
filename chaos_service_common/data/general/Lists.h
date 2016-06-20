@@ -31,23 +31,23 @@ namespace chaos {
         namespace data {
             namespace general {
                 
-                class ChaosStringListSDWrapper:
-                public chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringList > {
+                class ChaosStringVectorSDWrapper:
+                public chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringVector > {
                 public:
                     const std::string serialization_postfix;
                     
-                    ChaosStringListSDWrapper():
-                    chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringList >(){}
+                    ChaosStringVectorSDWrapper():
+                    chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringVector >(){}
                     
-                    ChaosStringListSDWrapper(const ChaosStringList& copy_source):
-                    chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringList >(copy_source){}
+                    ChaosStringVectorSDWrapper(const ChaosStringVector& copy_source):
+                    chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringVector >(copy_source){}
                     
-                    ChaosStringListSDWrapper(chaos::common::data::CDataWrapper *serialized_data):
-                    chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringList >(serialized_data){deserialize(serialized_data);}
+                    ChaosStringVectorSDWrapper(chaos::common::data::CDataWrapper *serialized_data):
+                    chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringVector >(serialized_data){deserialize(serialized_data);}
                     
                     void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                         if(serialized_data == NULL) return;
-                        chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringList >::dataWrapped().clear();
+                        chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringVector >::dataWrapped().clear();
                         const std::string ser_key = "std_vector_"+serialization_postfix;
                         if(serialized_data->hasKey(ser_key) &&
                            serialized_data->isVectorValue(ser_key)) {
@@ -56,7 +56,7 @@ namespace chaos {
                                 idx < serialized_array->size();
                                 idx++) {
                                 const std::string element(serialized_array->getStringElementAtIndex(idx));
-                                chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringList >::dataWrapped().push_back(element);
+                                chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringVector >::dataWrapped().push_back(element);
                             }
                         }
                     }
@@ -64,8 +64,8 @@ namespace chaos {
                     std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0) {
                         std::auto_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
                         const std::string ser_key = "std_vector_"+serialization_postfix;
-                        for(ChaosStringListIterator it = chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringList >::dataWrapped().begin(),
-                            end = chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringList >::dataWrapped().end();
+                        for(ChaosStringVectorIterator it = chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringVector >::dataWrapped().begin(),
+                            end = chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringVector >::dataWrapped().end();
                             it != end;
                             it++) {
                             result->appendStringToArray(*it);

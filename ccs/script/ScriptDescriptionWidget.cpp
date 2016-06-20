@@ -120,7 +120,7 @@ void ScriptDescriptionWidget::updateScripUI() {
     //update table dataset model
     editable_dataset_table_model.setDatasetAttributeList(&script_wrapper.dataWrapped().dataset_attribute_list);
     //update classification
-    for(ChaosStringListIterator c_it = script_wrapper.dataWrapped().classification_list.begin(),
+    for(ChaosStringVectorIterator c_it = script_wrapper.dataWrapped().classification_list.begin(),
         c_end = script_wrapper.dataWrapped().classification_list.end();
         c_it != c_end;
         c_it++) {
@@ -130,7 +130,7 @@ void ScriptDescriptionWidget::updateScripUI() {
 
     //update execution pools
     string_list.clear();
-    for(ChaosStringListIterator c_it = script_wrapper.dataWrapped().execution_pool_list.begin(),
+    for(ChaosStringVectorIterator c_it = script_wrapper.dataWrapped().execution_pool_list.begin(),
         c_end = script_wrapper.dataWrapped().execution_pool_list.end();
         c_it != c_end;
         c_it++) {

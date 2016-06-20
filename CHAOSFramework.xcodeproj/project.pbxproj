@@ -28,6 +28,17 @@
 			name = "Compile ALL";
 			productName = "Compile ALL";
 		};
+		32A116A51D17D78500FF44ED /* OCLint */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 32A116A81D17D78500FF44ED /* Build configuration list for PBXAggregateTarget "OCLint" */;
+			buildPhases = (
+				32A116A91D17D79400FF44ED /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = OCLint;
+			productName = OCLint;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -606,6 +617,8 @@
 		32A116501D11A19200FF44ED /* ManageScriptInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A1164E1D11A19200FF44ED /* ManageScriptInstance.cpp */; };
 		32A116511D11A19200FF44ED /* ManageScriptInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A1164F1D11A19200FF44ED /* ManageScriptInstance.h */; };
 		32A116561D128B9C00FF44ED /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A116541D128B9C00FF44ED /* Node.h */; };
+		32A116AD1D181D2500FF44ED /* ExecutionPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A116AB1D181D2500FF44ED /* ExecutionPool.cpp */; };
+		32A116AE1D181D2500FF44ED /* ExecutionPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A116AC1D181D2500FF44ED /* ExecutionPool.h */; };
 		32A13EB81C2014170010F3FC /* Delete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A13EB61C2014170010F3FC /* Delete.cpp */; };
 		32A13EB91C2014170010F3FC /* Delete.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A13EB71C2014170010F3FC /* Delete.h */; };
 		32A13EBC1C2016C60010F3FC /* Delete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A13EBA1C2016C60010F3FC /* Delete.cpp */; };
@@ -1829,6 +1842,8 @@
 		32A1164E1D11A19200FF44ED /* ManageScriptInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageScriptInstance.cpp; sourceTree = "<group>"; };
 		32A1164F1D11A19200FF44ED /* ManageScriptInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageScriptInstance.h; sourceTree = "<group>"; };
 		32A116541D128B9C00FF44ED /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
+		32A116AB1D181D2500FF44ED /* ExecutionPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutionPool.cpp; sourceTree = "<group>"; };
+		32A116AC1D181D2500FF44ED /* ExecutionPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutionPool.h; sourceTree = "<group>"; };
 		32A13EB61C2014170010F3FC /* Delete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
 		32A13EB71C2014170010F3FC /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delete.h; sourceTree = "<group>"; };
 		32A13EBA1C2016C60010F3FC /* Delete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
@@ -3555,6 +3570,7 @@
 				329E434D1CE5D071005E2FAD /* script */,
 				3252A30C1C8ED15B00900FF2 /* handler */,
 				325F8B4E1763AED200EFE616 /* slow_command */,
+				32A116AA1D181CF900FF44ED /* execution_pool */,
 				32CFC5C31AF55FED00E2A0B6 /* IOCU.cpp */,
 				32CFC5C41AF55FED00E2A0B6 /* IOCU.h */,
 				3250105D19E2DB4A00809415 /* AttributeSharedCacheWrapper.cpp */,
@@ -3978,6 +3994,15 @@
 				32A116541D128B9C00FF44ED /* Node.h */,
 			);
 			path = node;
+			sourceTree = "<group>";
+		};
+		32A116AA1D181CF900FF44ED /* execution_pool */ = {
+			isa = PBXGroup;
+			children = (
+				32A116AB1D181D2500FF44ED /* ExecutionPool.cpp */,
+				32A116AC1D181D2500FF44ED /* ExecutionPool.h */,
+			);
+			path = execution_pool;
 			sourceTree = "<group>";
 		};
 		32A273EB1BB5A93D00572083 /* debug */ = {
@@ -5066,6 +5091,7 @@
 				3252A3101C8ED2A800900FF2 /* AbstractAttributeHandler.h in Headers */,
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
 				3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */,
+				32A116AE1D181D2500FF44ED /* ExecutionPool.h in Headers */,
 				322A3BC91CEE1AA900FAD9DA /* EUScriptableWrapper.h in Headers */,
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
 				326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */,
@@ -5399,6 +5425,10 @@
 					32809C6B1A97433E00C02C12 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
+					32A116A51D17D78500FF44ED = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
+					};
 					32C7EAD31A5D9E450008DFE8 = {
 						CreatedOnToolsVersion = 6.1;
 					};
@@ -5428,6 +5458,7 @@
 				3258AEFF1935EE4C00A66D44 /* EchitectureTests */,
 				32809C6B1A97433E00C02C12 /* TestCDSQuery */,
 				3211C65B1C146200003B38BF /* Compile ALL */,
+				32A116A51D17D78500FF44ED /* OCLint */,
 			);
 		};
 /* End PBXProject section */
@@ -5445,6 +5476,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = chaos/common/version.sh;
+		};
+		32A116A91D17D79400FF44ED /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "source ~/.profile\ncd ${SRCROOT}\nxcodebuild clean\nxcodebuild | xcpretty -r json-compilation-database\noclint-json-compilation-database -- -report-type xcode";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -5846,6 +5890,7 @@
 				3270D5E81CCFAC4F0072017B /* AbstractExecutionUnit.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
 				3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */,
+				32A116AD1D181D2500FF44ED /* ExecutionPool.cpp in Sources */,
 				322A3BCA1CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp in Sources */,
 				32CFC5CC1AF5601300E2A0B6 /* BasicIODriverInterface.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
@@ -6857,6 +6902,20 @@
 			};
 			name = Release;
 		};
+		32A116A61D17D78500FF44ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		32A116A71D17D78500FF44ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		32B10914188C1D6200969D3D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7143,6 +7202,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		32A116A81D17D78500FF44ED /* Build configuration list for PBXAggregateTarget "OCLint" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32A116A61D17D78500FF44ED /* Debug */,
+				32A116A71D17D78500FF44ED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		32B10913188C1D6200969D3D /* Build configuration list for PBXNativeTarget "TestAsyncRpc" */ = {
 			isa = XCConfigurationList;
