@@ -78,10 +78,10 @@ scheduler_run(false) {
 }
 
 
-RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _subtype,
+RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _alternate_type,
                                              const std::string& _control_unit_id,
                                              const std::string& _control_unit_param):
-AbstractControlUnit(boost::str(boost::format("%1%::%2%")%CUType::RTCU%_subtype),
+AbstractControlUnit(_alternate_type,
                     _control_unit_id,
                     _control_unit_param),
 schedule_dalay(1000000),
@@ -91,11 +91,11 @@ scheduler_run(false) {
 
 }
 
-RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _subtype,
+RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _alternate_type,
                                              const std::string& _control_unit_id,
                                              const std::string& _control_unit_param,
                                              const ControlUnitDriverList& _control_unit_drivers):
-AbstractControlUnit(boost::str(boost::format("%1%::%2%")%CUType::RTCU%_subtype),
+AbstractControlUnit(_alternate_type,
                     _control_unit_id,
                     _control_unit_param,
                     _control_unit_drivers),

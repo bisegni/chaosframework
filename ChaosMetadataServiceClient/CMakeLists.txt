@@ -78,7 +78,9 @@ SET(mcl_src ${mcl_src}      api_proxy/unit_server/GetDescription.cpp
 
 SET(mcl_src ${mcl_src}      api_proxy/script/SaveScript.cpp
                             api_proxy/script/SearchScript.cpp
-                            api_proxy/script/LoadFullScript.cpp)
+                            api_proxy/script/LoadFullScript.cpp
+                            api_proxy/script/SearchInstancesForScript.cpp
+                            api_proxy/script/ManageScriptInstance.cpp)
 
 SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
                             monitor_system/QuantumSlot.cpp
@@ -95,6 +97,22 @@ ENDIF()
 
 
 TARGET_LINK_LIBRARIES(chaos_metadata_service_client  chaos_common ${FrameworkLib})
+
+#install common header
+
+FILE(GLOB files "../chaos_service_common/data/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data)
+
+FILE(GLOB files "../chaos_service_common/data/script/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/script)
+
+FILE(GLOB files "../chaos_service_common/data/dataset/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/dataset)
+
+FILE(GLOB files "../chaos_service_common/data/general/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/general)
+
+#install lib header
 
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient)
@@ -122,13 +140,6 @@ INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/
 
 FILE(GLOB files "api_proxy/groups/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/groups)
-
-FILE(GLOB files "../chaos_service_common/data/script/*.h")
-INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/script)
-
-FILE(GLOB files "../chaos_service_common/data/dataset/*.h")
-INSTALL(FILES ${files} DESTINATION include/chaos_service_common/data/dataset)
-
 FILE(GLOB files "api_proxy/script/*.h")
 INSTALL(FILES ${files} DESTINATION include/ChaosMetadataServiceClient/api_proxy/script)
 

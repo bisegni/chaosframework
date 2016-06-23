@@ -45,7 +45,6 @@ LIBS +=     -ljsoncpp\
 
 SOURCES += main.cpp\
     search/SearchNodeResult.cpp \
-    search/SearchNode.cpp \
     presenter/PresenterWidget.cpp \
     presenter/CommandPresenter.cpp \
     api_async_processor/ApiAsyncProcessor.cpp \
@@ -130,13 +129,14 @@ SOURCES += main.cpp\
     data/editor/script/EditableScriptVariableTableModelEditDialog.cpp \
     data/editor/common/EditableSubtypeListWidget.cpp \
     data/editor/common/EditableSubtypeListTableModel.cpp \
-    script/ExecutionPoolsManager.cpp \
     script/editor/CodeEditor.cpp \
-    GlobalServices.cpp
+    GlobalServices.cpp \
+    script/ScriptInstanceManagerWidget.cpp \
+    data/ScriptInstanceListModel.cpp \
+    utility/WidgetUtility.cpp
 
 HEADERS  += \
     search/SearchNodeResult.h \
-    search/SearchNode.h \
     presenter/PresenterWidget.h \
     presenter/CommandPresenter.h \
     api_async_processor/ApiAsyncProcessor.h \
@@ -244,13 +244,14 @@ HEADERS  += \
     data/editor/script/EditableScriptVariableTableModelEditDialog.h \
     data/editor/common/EditableSubtypeListWidget.h \
     data/editor/common/EditableSubtypeListTableModel.h \
-    script/ExecutionPoolsManager.h \
     script/editor/CodeEditor.h \
-    GlobalServices.h
+    GlobalServices.h \
+    script/ScriptInstanceManagerWidget.h \
+    data/ScriptInstanceListModel.h \
+    utility/WidgetUtility.h
 
 FORMS    += \
     search/searchnoderesult.ui \
-    search/searchnode.ui \
     node/unit_server/UnitServerEditor.ui \
     node/control_unit/ControUnitInstanceEditor.ui \
     node/control_unit/DriverDescriptionInputDialog.ui \
@@ -279,7 +280,7 @@ FORMS    += \
     data/editor/dataset/EditableDatasetTableModelEditDialog.ui \
     data/editor/script/EditableScriptVariableTableModelEditDialog.ui \
     data/editor/common/EditableSubtypeListWidget.ui \
-    script/ExecutionPoolsManager.ui
+    script/ScriptInstanceManagerWidget.ui
 
 DISTFILES += \
     dark_orange.stylesheet \

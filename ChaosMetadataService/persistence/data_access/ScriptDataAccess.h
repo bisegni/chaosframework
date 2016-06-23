@@ -26,7 +26,7 @@
 
 #include <chaos/common/chaos_types.h>
 
-#include <chaos_service_common/data/script/Script.h>
+#include <chaos_service_common/data/data.h>
 
 namespace chaos {
     namespace metadata_service {
@@ -70,13 +70,39 @@ namespace chaos {
                                              uint64_t start_sequence_id,
                                              uint32_t page_length) = 0;
                     
+                    //! add a new instance to the script
+                    virtual int addScriptInstance(const uint64_t seq,
+                                                  const std::string& script_name,
+                                                  const std::string& instance_name) = 0;
+                    
+                    //! remove an instance to the script
+                    virtual int removeScriptInstance(const uint64_t seq,
+                                                     const std::string& script_name,
+                                                     const std::string& instance_name) = 0;
+                    
+                    //!Perform a search on script entries
+                    /*!
+                     perform a simple search on node filtering on type
+                     \param instance_list the found element for current page
+                     \param is the name of the script for wich we need the isntance
+                     \param search_string is the search string
+                     \param start_sequence_id is identified the sequence after wich we need to search
+                     \param page_length is the maximum number of the element to return
+                     */
+                    virtual int searchScriptInstance(std::vector<chaos::service_common::data::node::NodeInstance>& instance_list,
+                                                     const std::string& script_name,
+                                                     const std::string& search_string,
+                                                     uint64_t start_sequence_id,
+                                                     uint32_t page_length) = 0;
+                    
                     //!Load a fulls cript information
                     /*!
                      \param script_base_description the base infromation to retrieve the script
                      \param script the script strucutre filled with all script infromation
                      \param load_source_code specify if we need to load all script source code
                      */
-                    virtual int loadScript(const chaos::service_common::data::script::ScriptBaseDescription& script_base_description,
+                    virtual int loadScript(const uint64_t unique_id,
+                                           const std::string& name,
                                            chaos::service_common::data::script::Script& script,
                                            bool load_source_code = false) = 0;
                 };

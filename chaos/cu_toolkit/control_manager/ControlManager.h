@@ -36,8 +36,9 @@
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/async_central/async_central.h>
 
-#include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/control_manager/WorkUnitManagement.h>
+#include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
+#include <chaos/cu_toolkit/control_manager/execution_pool/ExecutionPool.h>
 
 #include <boost/thread.hpp>
 #include <boost/msm/back/state_machine.hpp>
@@ -144,6 +145,7 @@ namespace chaos {
 				
 				//unit server state machine
 				bool					use_unit_server;
+                bool                    use_execution_pools;
                 unsigned int            publishing_counter_delay;
 				std::string				unit_server_alias;
 				std::string				unit_server_key;

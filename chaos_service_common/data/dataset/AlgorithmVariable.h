@@ -73,7 +73,8 @@ namespace chaos {
                     description(),
                     direction(chaos::DataType::Bidirectional),
                     type(chaos::DataType::TYPE_UNDEFINED),
-                    subtype_list(){}
+                    subtype_list(),
+                    mandatory(false){}
                     
                     AlgorithmVariable(const std::string& _name,
                                       const std::string& _description,
@@ -85,14 +86,16 @@ namespace chaos {
                     description(_description),
                     direction(_direction),
                     type(_type),
-                    subtype_list(_subtype_list){}
+                    subtype_list(_subtype_list),
+                    mandatory(_mandatory){}
                     
                     AlgorithmVariable(const AlgorithmVariable& copy_src):
                     name(copy_src.name),
                     description(copy_src.description),
                     direction(copy_src.direction),
                     type(copy_src.type),
-                    subtype_list(copy_src.type){}
+                    subtype_list(copy_src.subtype_list),
+                    mandatory(copy_src.mandatory){}
                     
                     AlgorithmVariable& operator=(AlgorithmVariable const &rhs) {
                         name = rhs.name;
@@ -100,6 +103,7 @@ namespace chaos {
                         direction = rhs.direction;
                         type = rhs.type;
                         subtype_list = rhs.subtype_list;
+                        mandatory = rhs.mandatory;
                         return *this;
                     };
                     

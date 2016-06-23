@@ -1,12 +1,18 @@
-#include "SearchNodeResult.h"
 #include "ui_searchnoderesult.h"
 #include "node/unit_server/UnitServerEditor.h"
 #include "node/control_unit/ControlUnitEditor.h"
+#include "../node/control_unit/ControlUnitEditor.h"
+#include "../node/control_unit/ControUnitInstanceEditor.h"
 
 #include <QDebug>
 #include <QPair>
+#include <QMap>
 #include <QMessageBox>
 #include <QHeaderView>
+
+const QString CM_EDIT_NODE      = "Edit Node";
+const QString CM_EDIT_INSTANCE  = "Edit Instance";
+
 using namespace chaos::common::data;
 using namespace chaos::metadata_service_client;
 using namespace chaos::metadata_service_client::api_proxy;
@@ -60,7 +66,7 @@ void SearchNodeResult::initUI() {
 
     QStringList search_types;
     if(selectable_types.size() == 0) {
-        search_types << "All types" << "Unit server" << "Control unit";
+        search_types << "All types" << "Unit server" << "Control unit" << "Scriptable Execution unit";
     } else {
         foreach(SearchNodeType searchable_type , selectable_types) {
             switch(searchable_type) {
@@ -72,6 +78,9 @@ void SearchNodeResult::initUI() {
                 break;
             case SNT_CONTROL_UNIT:
                 search_types << "Control unit";
+                break;
+            case SNT_SCRIPTABLE_EXECUTION_UNIT:
+                search_types << "Scriptable Execution Unit";
                 break;
             }
         }
@@ -95,9 +104,36 @@ void SearchNodeResult::initUI() {
     ui->tableViewResult->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     //add contextual menu to result table
+    QMap<QString, QVariant> cm_list_map;
+    cm_list_map.insert(CM_EDIT_NODE, tr("Edit Node"));
+    cm_list_map.insert(CM_EDIT_INSTANCE, tr("Edit Instance"));
     registerWidgetForContextualMenu(ui->tableViewResult,
-                                    NULL,
+                                    &cm_list_map,
                                     true);
+}
+
+void SearchNodeResult::contextualMenuActionTrigger(const QString& cm_title,
+                                                   const QVariant& cm_data) {
+    //call subcalss implementation
+    PresenterWidget::contextualMenuActionTrigger(cm_title,
+                                                 cm_data);
+    if(cm_title.compare(CM_EDIT_NODE) == 0) {
+        //edit node
+        foreach (QModelIndex element, ui->tableViewResult->selectionModel()->selectedRows()) {
+            QString unit_uid = table_model->item(element.row(), 0)->text();
+            qDebug() << "Edit " << unit_uid << " instance";
+            addWidgetToPresenter(new ControlUnitEditor(unit_uid));
+        }
+    } else if(cm_title.compare(CM_EDIT_INSTANCE) == 0) {
+        //edit instance
+        foreach (QModelIndex element, ui->tableViewResult->selectionModel()->selectedRows()) {
+            QString unit_uid = table_model->item(element.row(), 0)->text();
+            qDebug() << "Edit " << unit_uid << " instance";
+            addWidgetToPresenter(new ControUnitInstanceEditor("",
+                                                              unit_uid,
+                                                              true));
+        }
+    }
 }
 
 void SearchNodeResult::onApiDone(const QString& tag,
@@ -138,10 +174,16 @@ void SearchNodeResult::onApiDone(const QString& tag,
     PresenterWidget::onApiDone(tag, api_result);
 }
 
-void SearchNodeResult::on_tableViewResult_clicked(const QModelIndex &index)
-{
+void SearchNodeResult::on_tableViewResult_clicked(const QModelIndex &index) {
     QModelIndexList indexes = ui->tableViewResult->selectionModel()->selectedIndexes();
+
     ui->pushButtonActionOnSelected->setEnabled(indexes.size()>0);
+    contextualMenuActionSetVisible(ui->tableViewResult,
+                                   CM_EDIT_NODE,
+                                   indexes.size()>0);
+    contextualMenuActionSetVisible(ui->tableViewResult,
+                                   CM_EDIT_INSTANCE,
+                                   indexes.size()>0);
 }
 
 void SearchNodeResult::on_pushButtonStartSearch_clicked()
@@ -212,7 +254,8 @@ void SearchNodeResult::on_tableViewResult_doubleClicked(const QModelIndex &index
         if(node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
             qDebug() << "Open unit server editor for" << node_uid->text();
             addWidgetToPresenter(new UnitServerEditor(node_uid->text()));
-        }else if(node_type->text().compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) {
+        }else if(node_type->text().compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0 ||
+                 node_type->text().compare(chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT) == 0 ) {
             qDebug() << "Open control unit editor for" << node_uid->text();
             addWidgetToPresenter(new ControlUnitEditor(node_uid->text()));
         }

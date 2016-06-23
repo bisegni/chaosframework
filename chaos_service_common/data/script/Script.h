@@ -115,10 +115,10 @@ namespace chaos {
                     std::string script_content;
                     
                     //! contains all classification for a script
-                    ChaosStringList classification_list;
+                    ChaosStringVector classification_list;
                     
                     //! contains all pool associated to the script
-                    ChaosStringList execution_pool_list;
+                    ChaosStringVector execution_pool_list;
                     
                     //!variable list
                     chaos::service_common::data::dataset::AlgorithmVariableList variable_list;
@@ -247,7 +247,7 @@ namespace chaos {
                         
                         if(dataWrapped().classification_list.size()) {
                             //encode classification list into array
-                            for(ChaosStringListIterator str_it = dataWrapped().classification_list.begin(),
+                            for(ChaosStringVectorIterator str_it = dataWrapped().classification_list.begin(),
                                 str_end = dataWrapped().classification_list.end();
                                 str_it != str_end;
                                 str_it++) {
@@ -258,7 +258,7 @@ namespace chaos {
                         
                         if(dataWrapped().execution_pool_list.size()) {
                             //encode classification list into array
-                            for(ChaosStringListIterator str_it = dataWrapped().execution_pool_list.begin(),
+                            for(ChaosStringVectorIterator str_it = dataWrapped().execution_pool_list.begin(),
                                 str_end = dataWrapped().execution_pool_list.end();
                                 str_it != str_end;
                                 str_it++) {

@@ -17,7 +17,8 @@ class SearchNodeResult;
 typedef enum SearchNodeType {
     SNT_ALL_TYPE,
     SNT_UNIT_SERVER,
-    SNT_CONTROL_UNIT
+    SNT_CONTROL_UNIT,
+    SNT_SCRIPTABLE_EXECUTION_UNIT
 } SearchNodeType;
 
 class SearchNodeResult :
@@ -41,7 +42,8 @@ class SearchNodeResult :
 protected:
     void initUI();
     bool isClosing();
-
+    void contextualMenuActionTrigger(const QString& cm_title,
+                                     const QVariant& cm_data);
 public:
     explicit SearchNodeResult(bool _selection_mode = false,
                               const QString& _tag = QString());

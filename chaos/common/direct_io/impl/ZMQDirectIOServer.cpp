@@ -203,6 +203,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
             if((err = reveiceDatapack(socket,
                                      identity,
                                      &data_pack))) {
+                CHK_AND_DELETE_OBJ_POINTER(data_pack);
                 continue;
             } else {
              //   DEBUG_CODE(ZMQDIO_SRV_LAPP_ << "Received pack in " << PS_STR(priority_service) << " by " << identity;)

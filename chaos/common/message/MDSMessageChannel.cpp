@@ -69,7 +69,7 @@ void MDSMessageChannel::sendHeartBeatForDeviceID(const std::string& identificati
     hb_message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identification_id);
     sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                 ChaosSystemDomainAndActionLabel::MDS_CU_HEARTBEAT,
-                hb_message.release());
+                hb_message.get());
 }
 
 

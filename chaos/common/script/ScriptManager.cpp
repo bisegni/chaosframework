@@ -32,7 +32,8 @@ using namespace chaos::common::utility;
 
 ScriptManager::ScriptManager(const std::string& _script_language):
 vm_name(CHAOS_FORMAT("%1%ScriptVM", %_script_language)),
-script_language(_script_language){}
+script_language(_script_language),
+script_vm(NULL){}
 
 ScriptManager::~ScriptManager() {
     map_api_class.clear();

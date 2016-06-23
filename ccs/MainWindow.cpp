@@ -1,6 +1,5 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "search/SearchNode.h"
 #include "node/unit_server/UnitServerEditor.h"
 #include "node/data_service/DataServiceEditor.h"
 #include "search/SearchNodeResult.h"
@@ -9,7 +8,6 @@
 #include "tree_group/TreeGroupManager.h"
 #include "log_browser/LogBrowser.h"
 #include "script/ScriptManager.h"
-#include "script/ExecutionPoolsManager.h"
 #include "GlobalServices.h"
 
 #include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
@@ -200,5 +198,4 @@ void MainWindow::on_actionScript_Manager_triggered() {
 }
 
 void MainWindow::on_actionExecution_Pools_triggered() {
-    command_presenter->showCommandPresenter(new ExecutionPoolsManager());
 }

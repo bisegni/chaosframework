@@ -6,8 +6,6 @@
 #include <QApplication>
 #include <QSplashScreen>
 
-#include <ChaosMetadataServiceClient/ChaosMetadataServiceClient.h>
-
 class MainController
 {
     MainWindow w;

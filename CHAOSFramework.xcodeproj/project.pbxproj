@@ -28,6 +28,17 @@
 			name = "Compile ALL";
 			productName = "Compile ALL";
 		};
+		32A116A51D17D78500FF44ED /* OCLint */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 32A116A81D17D78500FF44ED /* Build configuration list for PBXAggregateTarget "OCLint" */;
+			buildPhases = (
+				32A116A91D17D79400FF44ED /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = OCLint;
+			productName = OCLint;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
@@ -83,7 +94,6 @@
 		3221D7261CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3221D7241CF5AEDE001BE971 /* MongoDBScriptDataAccess.cpp */; };
 		3221D72A1CF5EB22001BE971 /* SaveScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3221D7281CF5EB22001BE971 /* SaveScript.cpp */; };
 		3221D72B1CF5EB22001BE971 /* SaveScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7291CF5EB22001BE971 /* SaveScript.h */; };
-		3221D72C1CF5EB2E001BE971 /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D90D5C1CF4AA8200996F09 /* Script.cpp */; };
 		3221D7301CF5F292001BE971 /* script.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D72E1CF5F292001BE971 /* script.h */; };
 		3221D7341CF5F2BA001BE971 /* node.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7321CF5F2BA001BE971 /* node.h */; };
 		3221D7381CF5F2F3001BE971 /* unit_server.h in Headers */ = {isa = PBXBuildFile; fileRef = 3221D7361CF5F2F3001BE971 /* unit_server.h */; };
@@ -600,6 +610,15 @@
 		329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */; };
 		329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 329FFFD0170712CE00D69CDE /* ManagedMemory.h */; };
 		32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */; };
+		32A116441D116F8C00FF44ED /* SearchInstancesForScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A116421D116F8C00FF44ED /* SearchInstancesForScript.cpp */; };
+		32A116491D117F0700FF44ED /* ManageScriptInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A116471D117F0700FF44ED /* ManageScriptInstance.cpp */; };
+		32A1164C1D11A17D00FF44ED /* SearchInstancesForScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A1164A1D11A17D00FF44ED /* SearchInstancesForScript.cpp */; };
+		32A1164D1D11A17D00FF44ED /* SearchInstancesForScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A1164B1D11A17D00FF44ED /* SearchInstancesForScript.h */; };
+		32A116501D11A19200FF44ED /* ManageScriptInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A1164E1D11A19200FF44ED /* ManageScriptInstance.cpp */; };
+		32A116511D11A19200FF44ED /* ManageScriptInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A1164F1D11A19200FF44ED /* ManageScriptInstance.h */; };
+		32A116561D128B9C00FF44ED /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A116541D128B9C00FF44ED /* Node.h */; };
+		32A116AD1D181D2500FF44ED /* ExecutionPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A116AB1D181D2500FF44ED /* ExecutionPool.cpp */; };
+		32A116AE1D181D2500FF44ED /* ExecutionPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A116AC1D181D2500FF44ED /* ExecutionPool.h */; };
 		32A13EB81C2014170010F3FC /* Delete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A13EB61C2014170010F3FC /* Delete.cpp */; };
 		32A13EB91C2014170010F3FC /* Delete.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A13EB71C2014170010F3FC /* Delete.h */; };
 		32A13EBC1C2016C60010F3FC /* Delete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A13EBA1C2016C60010F3FC /* Delete.cpp */; };
@@ -726,7 +745,6 @@
 		32B222E11BA71566009BBA9E /* NodeMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B222DD1BA71566009BBA9E /* NodeMonitor.cpp */; };
 		32B224C61CFC626F00B24B58 /* LoadFullScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B224C41CFC626F00B24B58 /* LoadFullScript.cpp */; };
 		32B224CA1CFC830600B24B58 /* LoadFullScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B224C71CFC82F500B24B58 /* LoadFullScript.cpp */; };
-		32B224CE1CFD8D3100B24B58 /* DatasetAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B224CC1CFD8D3100B24B58 /* DatasetAttribute.cpp */; };
 		32B299991BD900F1000D3716 /* CopyInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B299971BD900F1000D3716 /* CopyInstance.cpp */; };
 		32B2999C1BD92B18000D3716 /* CopyInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B2999A1BD92B18000D3716 /* CopyInstance.cpp */; };
 		32B2999D1BD92B18000D3716 /* CopyInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B2999B1BD92B18000D3716 /* CopyInstance.h */; };
@@ -833,7 +851,6 @@
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
 		32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95E15E4DBD3005D607E /* EventFactory.h */; };
 		32D09FE61BBC1EA30059A926 /* ProcInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D09FE41BBC1EA30059A926 /* ProcInfo.h */; };
-		32D20A271CFD972C00F9EDDB /* AlgorithmVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D20A251CFD972C00F9EDDB /* AlgorithmVariable.cpp */; };
 		32D421B317271572008A326E /* BsonFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D421B117271572008A326E /* BsonFragment.cpp */; };
 		32D421B417271572008A326E /* BsonFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D421B217271572008A326E /* BsonFragment.h */; };
 		32D5CB32179D233E00A8427E /* chaos_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D5CB31179D233E00A8427E /* chaos_types.h */; };
@@ -853,7 +870,6 @@
 		32D746051C7367A200F4D719 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D746031C7367A200F4D719 /* event.h */; };
 		32D90D561CF4A4E500996F09 /* ScriptGroupApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D90D541CF4A4E500996F09 /* ScriptGroupApi.cpp */; };
 		32D90D591CF4A6DC00996F09 /* SearchScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D90D571CF4A6DC00996F09 /* SearchScript.cpp */; };
-		32D90D5E1CF4AA8200996F09 /* Script.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D90D5C1CF4AA8200996F09 /* Script.cpp */; };
 		32D90D601CF4AA8200996F09 /* Script.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D90D5D1CF4AA8200996F09 /* Script.h */; };
 		32DBAFCB1C9C1745003E2769 /* NodeMonitorHandlerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBAFC91C9C1745003E2769 /* NodeMonitorHandlerTest.cpp */; };
 		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
@@ -1814,6 +1830,19 @@
 		329FFFD0170712CE00D69CDE /* ManagedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedMemory.h; sourceTree = "<group>"; };
 		32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorker.cpp; sourceTree = "<group>"; };
 		32A10C0218C87806006EA04C /* DeviceSharedDataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorker.h; sourceTree = "<group>"; };
+		32A116411D115D9200FF44ED /* Lists.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lists.h; sourceTree = "<group>"; };
+		32A116421D116F8C00FF44ED /* SearchInstancesForScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchInstancesForScript.cpp; sourceTree = "<group>"; };
+		32A116431D116F8C00FF44ED /* SearchInstancesForScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchInstancesForScript.h; sourceTree = "<group>"; };
+		32A116461D11763A00FF44ED /* data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = data.h; sourceTree = "<group>"; };
+		32A116471D117F0700FF44ED /* ManageScriptInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageScriptInstance.cpp; sourceTree = "<group>"; };
+		32A116481D117F0700FF44ED /* ManageScriptInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageScriptInstance.h; sourceTree = "<group>"; };
+		32A1164A1D11A17D00FF44ED /* SearchInstancesForScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchInstancesForScript.cpp; sourceTree = "<group>"; };
+		32A1164B1D11A17D00FF44ED /* SearchInstancesForScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchInstancesForScript.h; sourceTree = "<group>"; };
+		32A1164E1D11A19200FF44ED /* ManageScriptInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManageScriptInstance.cpp; sourceTree = "<group>"; };
+		32A1164F1D11A19200FF44ED /* ManageScriptInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManageScriptInstance.h; sourceTree = "<group>"; };
+		32A116541D128B9C00FF44ED /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
+		32A116AB1D181D2500FF44ED /* ExecutionPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutionPool.cpp; sourceTree = "<group>"; };
+		32A116AC1D181D2500FF44ED /* ExecutionPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutionPool.h; sourceTree = "<group>"; };
 		32A13EB61C2014170010F3FC /* Delete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
 		32A13EB71C2014170010F3FC /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delete.h; sourceTree = "<group>"; };
 		32A13EBA1C2016C60010F3FC /* Delete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
@@ -1970,7 +1999,6 @@
 		32B224C51CFC626F00B24B58 /* LoadFullScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadFullScript.h; sourceTree = "<group>"; };
 		32B224C71CFC82F500B24B58 /* LoadFullScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadFullScript.cpp; sourceTree = "<group>"; };
 		32B224C81CFC82F500B24B58 /* LoadFullScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadFullScript.h; sourceTree = "<group>"; };
-		32B224CC1CFD8D3100B24B58 /* DatasetAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetAttribute.cpp; sourceTree = "<group>"; };
 		32B224CD1CFD8D3100B24B58 /* DatasetAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetAttribute.h; sourceTree = "<group>"; };
 		32B299971BD900F1000D3716 /* CopyInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CopyInstance.cpp; sourceTree = "<group>"; };
 		32B299981BD900F1000D3716 /* CopyInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyInstance.h; sourceTree = "<group>"; };
@@ -2107,7 +2135,6 @@
 		32CFF95E15E4DBD3005D607E /* EventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventFactory.h; sourceTree = "<group>"; };
 		32D09FE31BBC1EA30059A926 /* ProcInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcInfo.cpp; sourceTree = "<group>"; };
 		32D09FE41BBC1EA30059A926 /* ProcInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcInfo.h; sourceTree = "<group>"; };
-		32D20A251CFD972C00F9EDDB /* AlgorithmVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlgorithmVariable.cpp; sourceTree = "<group>"; };
 		32D20A261CFD972C00F9EDDB /* AlgorithmVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlgorithmVariable.h; sourceTree = "<group>"; };
 		32D24FAF1A7AAD15002D65CE /* DataAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataAccess.h; sourceTree = "<group>"; };
 		32D24FB31A7BBD59002D65CE /* mongo_db_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mongo_db_constants.h; sourceTree = "<group>"; };
@@ -2133,7 +2160,6 @@
 		32D90D551CF4A4E500996F09 /* ScriptGroupApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptGroupApi.h; sourceTree = "<group>"; };
 		32D90D571CF4A6DC00996F09 /* SearchScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchScript.cpp; sourceTree = "<group>"; };
 		32D90D581CF4A6DC00996F09 /* SearchScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchScript.h; sourceTree = "<group>"; };
-		32D90D5C1CF4AA8200996F09 /* Script.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Script.cpp; sourceTree = "<group>"; };
 		32D90D5D1CF4AA8200996F09 /* Script.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Script.h; sourceTree = "<group>"; };
 		32D90D621CF4B0A700996F09 /* TemplatedDataSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedDataSDWrapper.h; sourceTree = "<group>"; };
 		32DA666F1700DBB6004FC02B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
@@ -2498,6 +2524,10 @@
 				3221D74E1CF606BC001BE971 /* SearchScript.h */,
 				32B224C71CFC82F500B24B58 /* LoadFullScript.cpp */,
 				32B224C81CFC82F500B24B58 /* LoadFullScript.h */,
+				32A1164A1D11A17D00FF44ED /* SearchInstancesForScript.cpp */,
+				32A1164B1D11A17D00FF44ED /* SearchInstancesForScript.h */,
+				32A1164E1D11A19200FF44ED /* ManageScriptInstance.cpp */,
+				32A1164F1D11A19200FF44ED /* ManageScriptInstance.h */,
 				3221D72E1CF5F292001BE971 /* script.h */,
 			);
 			path = script;
@@ -3537,6 +3567,7 @@
 				329E434D1CE5D071005E2FAD /* script */,
 				3252A30C1C8ED15B00900FF2 /* handler */,
 				325F8B4E1763AED200EFE616 /* slow_command */,
+				32A116AA1D181CF900FF44ED /* execution_pool */,
 				32CFC5C31AF55FED00E2A0B6 /* IOCU.cpp */,
 				32CFC5C41AF55FED00E2A0B6 /* IOCU.h */,
 				3250105D19E2DB4A00809415 /* AttributeSharedCacheWrapper.cpp */,
@@ -3946,6 +3977,31 @@
 			path = memory;
 			sourceTree = "<group>";
 		};
+		32A1163F1D115D6100FF44ED /* general */ = {
+			isa = PBXGroup;
+			children = (
+				32A116411D115D9200FF44ED /* Lists.h */,
+			);
+			path = general;
+			sourceTree = "<group>";
+		};
+		32A116521D128B8300FF44ED /* node */ = {
+			isa = PBXGroup;
+			children = (
+				32A116541D128B9C00FF44ED /* Node.h */,
+			);
+			path = node;
+			sourceTree = "<group>";
+		};
+		32A116AA1D181CF900FF44ED /* execution_pool */ = {
+			isa = PBXGroup;
+			children = (
+				32A116AB1D181D2500FF44ED /* ExecutionPool.cpp */,
+				32A116AC1D181D2500FF44ED /* ExecutionPool.h */,
+			);
+			path = execution_pool;
+			sourceTree = "<group>";
+		};
 		32A273EB1BB5A93D00572083 /* debug */ = {
 			isa = PBXGroup;
 			children = (
@@ -4167,9 +4223,7 @@
 		32B224CB1CFD8CF800B24B58 /* dataset */ = {
 			isa = PBXGroup;
 			children = (
-				32B224CC1CFD8D3100B24B58 /* DatasetAttribute.cpp */,
 				32B224CD1CFD8D3100B24B58 /* DatasetAttribute.h */,
-				32D20A251CFD972C00F9EDDB /* AlgorithmVariable.cpp */,
 				32D20A261CFD972C00F9EDDB /* AlgorithmVariable.h */,
 			);
 			path = dataset;
@@ -4486,8 +4540,11 @@
 		32D90D5A1CF4AA3F00996F09 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				32A116461D11763A00FF44ED /* data.h */,
 				32D90D621CF4B0A700996F09 /* TemplatedDataSDWrapper.h */,
+				32A1163F1D115D6100FF44ED /* general */,
 				32B224CB1CFD8CF800B24B58 /* dataset */,
+				32A116521D128B8300FF44ED /* node */,
 				32D90D5B1CF4AA5B00996F09 /* script */,
 			);
 			path = data;
@@ -4496,7 +4553,6 @@
 		32D90D5B1CF4AA5B00996F09 /* script */ = {
 			isa = PBXGroup;
 			children = (
-				32D90D5C1CF4AA8200996F09 /* Script.cpp */,
 				32D90D5D1CF4AA8200996F09 /* Script.h */,
 			);
 			path = script;
@@ -4558,6 +4614,10 @@
 				3221D71F1CF5AD09001BE971 /* SaveScript.h */,
 				32B224C41CFC626F00B24B58 /* LoadFullScript.cpp */,
 				32B224C51CFC626F00B24B58 /* LoadFullScript.h */,
+				32A116421D116F8C00FF44ED /* SearchInstancesForScript.cpp */,
+				32A116431D116F8C00FF44ED /* SearchInstancesForScript.h */,
+				32A116471D117F0700FF44ED /* ManageScriptInstance.cpp */,
+				32A116481D117F0700FF44ED /* ManageScriptInstance.h */,
 			);
 			path = script;
 			sourceTree = "<group>";
@@ -5026,6 +5086,7 @@
 				3252A3101C8ED2A800900FF2 /* AbstractAttributeHandler.h in Headers */,
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
 				3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */,
+				32A116AE1D181D2500FF44ED /* ExecutionPool.h in Headers */,
 				322A3BC91CEE1AA900FAD9DA /* EUScriptableWrapper.h in Headers */,
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
 				326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */,
@@ -5103,6 +5164,7 @@
 				32D745F91C73388900F4D719 /* AlertEventHandler.h in Headers */,
 				32AE8BA41B678C1500FAC528 /* ResetAll.h in Headers */,
 				32761A391B314697006C8719 /* GetCommandAndTemplateDescription.h in Headers */,
+				32A116511D11A19200FF44ED /* ManageScriptInstance.h in Headers */,
 				3221D73C1CF5F31F001BE971 /* control_unit.h in Headers */,
 				32D90D601CF4AA8200996F09 /* Script.h in Headers */,
 				327F39B41AEAA2680000C845 /* GetAssociationByDS.h in Headers */,
@@ -5115,12 +5177,14 @@
 				3234BE801B04CC9400AE6B08 /* HealtStatusAttributeHandler.h in Headers */,
 				32B1E8071B2EA07200221E49 /* CommandTemplateDelete.h in Headers */,
 				328C87331ADFDB9A0047C79B /* SearchInstancesByUS.h in Headers */,
+				32A116561D128B9C00FF44ED /* Node.h in Headers */,
 				3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */,
 				32D745F21C7332FC00F4D719 /* EventDispatchManager.h in Headers */,
 				3239EF4F1C0EFEA60052BE61 /* CreateNewSnapshot.h in Headers */,
 				3221D7481CF5F38E001BE971 /* groups.h in Headers */,
 				32B4192D1B0DE55E00C3CA7D /* ChangeNodeState.h in Headers */,
 				32B419381B16236300C3CA7D /* SetInputDatasetAttributeValues.h in Headers */,
+				32A1164D1D11A17D00FF44ED /* SearchInstancesForScript.h in Headers */,
 				327F39AC1AEAA2390000C845 /* UpdateDS.h in Headers */,
 				32362C221ADD0C45000CA079 /* SetInstanceDescription.h in Headers */,
 				323386B21ACD731E008863DC /* NodeSearch.h in Headers */,
@@ -5356,6 +5420,10 @@
 					32809C6B1A97433E00C02C12 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
+					32A116A51D17D78500FF44ED = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
+					};
 					32C7EAD31A5D9E450008DFE8 = {
 						CreatedOnToolsVersion = 6.1;
 					};
@@ -5385,6 +5453,7 @@
 				3258AEFF1935EE4C00A66D44 /* EchitectureTests */,
 				32809C6B1A97433E00C02C12 /* TestCDSQuery */,
 				3211C65B1C146200003B38BF /* Compile ALL */,
+				32A116A51D17D78500FF44ED /* OCLint */,
 			);
 		};
 /* End PBXProject section */
@@ -5402,6 +5471,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = chaos/common/version.sh;
+		};
+		32A116A91D17D79400FF44ED /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "source ~/.profile\ncd ${SRCROOT}\nxcodebuild clean\nxcodebuild | xcpretty -r json-compilation-database\noclint-json-compilation-database -- -report-type xcode";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -5469,6 +5551,7 @@
 				32B1E8001B2B0EB600221E49 /* CommandGet.cpp in Sources */,
 				3210EE1E1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp in Sources */,
 				32C067BD1AEFE5DD000B1ED9 /* IDSTControlUnitBatchCommand.cpp in Sources */,
+				32A116441D116F8C00FF44ED /* SearchInstancesForScript.cpp in Sources */,
 				328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */,
 				325D2FDF1AFB65DE00B2A706 /* ProcessHello.cpp in Sources */,
 				32B1E7E51B297A6100221E49 /* CommandTemplateSet.cpp in Sources */,
@@ -5490,7 +5573,7 @@
 				32CAC9E11AE6988200DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				32E09CED1C0DB2800069752F /* SnapshotDataAccess.cpp in Sources */,
 				328D0FF41A8A0862001A2001 /* UnitServerDataAccess.cpp in Sources */,
-				32D20A271CFD972C00F9EDDB /* AlgorithmVariable.cpp in Sources */,
+				32A116491D117F0700FF44ED /* ManageScriptInstance.cpp in Sources */,
 				32D90D561CF4A4E500996F09 /* ScriptGroupApi.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
@@ -5533,8 +5616,6 @@
 				32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */,
 				3235FDC71A6FF43000EC83A9 /* UnitServerApiGroup.cpp in Sources */,
 				3221D7231CF5ADC9001BE971 /* ScriptDataAccess.cpp in Sources */,
-				32D90D5E1CF4AA8200996F09 /* Script.cpp in Sources */,
-				32B224CE1CFD8D3100B24B58 /* DatasetAttribute.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5803,6 +5884,7 @@
 				3270D5E81CCFAC4F0072017B /* AbstractExecutionUnit.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
 				3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */,
+				32A116AD1D181D2500FF44ED /* ExecutionPool.cpp in Sources */,
 				322A3BCA1CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp in Sources */,
 				32CFC5CC1AF5601300E2A0B6 /* BasicIODriverInterface.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
@@ -5889,6 +5971,7 @@
 				326150991CAAB5920003D0C2 /* ControlUnitMonitorHandler.cpp in Sources */,
 				32B1E7FD1B2B06CE00221E49 /* CommandGet.cpp in Sources */,
 				3221D72A1CF5EB22001BE971 /* SaveScript.cpp in Sources */,
+				32A1164C1D11A17D00FF44ED /* SearchInstancesForScript.cpp in Sources */,
 				327F39A71AEAA2290000C845 /* NewDS.cpp in Sources */,
 				3239EF4E1C0EFEA60052BE61 /* CreateNewSnapshot.cpp in Sources */,
 				324FD0811B00ACEF003800BA /* MonitorManager.cpp in Sources */,
@@ -5903,9 +5986,9 @@
 				3283B88E1C7F31D20019255B /* SearchLogEntry.cpp in Sources */,
 				3239EF591C0F26D90052BE61 /* GetAllSnapshot.cpp in Sources */,
 				32D745F81C73388900F4D719 /* AlertEventHandler.cpp in Sources */,
-				3221D72C1CF5EB2E001BE971 /* Script.cpp in Sources */,
 				32E2B1B41C32A60D00FCFB42 /* DeleteNode.cpp in Sources */,
 				32D745F41C73357900F4D719 /* EventDispatchManager.cpp in Sources */,
+				32A116501D11A19200FF44ED /* ManageScriptInstance.cpp in Sources */,
 				32AE8BA31B678C1500FAC528 /* ResetAll.cpp in Sources */,
 				3239EF4A1C0EFE910052BE61 /* RestoreSnapshot.cpp in Sources */,
 				328C87361ADFDD410047C79B /* GetInstance.cpp in Sources */,
@@ -6813,6 +6896,20 @@
 			};
 			name = Release;
 		};
+		32A116A61D17D78500FF44ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		32A116A71D17D78500FF44ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		32B10914188C1D6200969D3D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7099,6 +7196,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		32A116A81D17D78500FF44ED /* Build configuration list for PBXAggregateTarget "OCLint" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32A116A61D17D78500FF44ED /* Debug */,
+				32A116A71D17D78500FF44ED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		32B10913188C1D6200969D3D /* Build configuration list for PBXNativeTarget "TestAsyncRpc" */ = {
 			isa = XCConfigurationList;

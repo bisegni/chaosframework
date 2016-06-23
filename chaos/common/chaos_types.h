@@ -75,6 +75,7 @@ typedef boost::ptr_map< t1, t2 >::const_iterator   n ## ConstIterator;
 dynamic_cast<element_type*>(&map.at(element_key));
 
 CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, ChaosStringVector)
+CHAOS_DEFINE_SET_FOR_TYPE(std::string, ChaosStringSet)
 
 #define CHAOS_SCAN_VECTOR_ITERATOR(iter, vec, to_execute)\
 for(iter it = vec.begin();\
@@ -82,8 +83,5 @@ it != vec.end();\
 it++) {\
    to_execute \
 }\
-
-
-CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, ChaosStringList);
 
 #endif

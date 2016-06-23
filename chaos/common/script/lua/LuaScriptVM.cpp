@@ -38,7 +38,8 @@ const Luna<ChaosLuaWrapperInterface>::RegType ChaosLuaWrapperInterface::Register
     { 0 }
 };
 
-ChaosLuaWrapperInterface::ChaosLuaWrapperInterface(lua_State *L) {
+ChaosLuaWrapperInterface::ChaosLuaWrapperInterface(lua_State *L):
+script_caller(NULL){
     printf("in ChaosLuaWrapperInterface constructor\n");
 }
 
