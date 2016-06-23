@@ -49,6 +49,7 @@ namespace chaos {
                 boost::shared_mutex map_mutex;
                 const std::string vm_name;
                 const std::string script_language;
+                
                 AbstractScriptVM *script_vm;
                 MapRegisteredApiClass map_api_class;
             protected:

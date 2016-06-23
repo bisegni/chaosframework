@@ -40,6 +40,24 @@ namespace chaos {
     namespace common{
         namespace healt_system {
             
+            struct ProcInfo {
+                double usr_time;
+                double sys_time;
+                double swap_rsrc;
+                
+                ProcInfo():
+                usr_time(0.0),
+                sys_time(0.0),
+                swap_rsrc(0.0){}
+                
+                ProcInfo& operator=(ProcInfo const &rhs) {
+                    usr_time = rhs.usr_time;
+                    sys_time = rhs.sys_time;
+                    swap_rsrc = rhs.swap_rsrc;
+                    return *this;
+                };
+            };
+            
             //! define the map for the metric
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<HealtMetric>, HealtNodeElementMap)
             
@@ -115,13 +133,11 @@ namespace chaos {
                 inline void _publish(const boost::shared_ptr<NodeHealtSet>& heath_set,
                                      uint64_t publish_ts);
                 
-                double user_time_computed;
-                double system_time_computed;
+                ProcInfo current_proc_info;
                 //last sampling resurce usage
                 double last_usr_time;
                 double last_sys_time;
                 double last_total_time;
-                int64_t last_process_swap;
                 uint64_t last_sampling_time;
                 //! update the information about process
                 inline void updateProcInfo();
@@ -150,6 +166,9 @@ namespace chaos {
                 
                 //! inherited method
                 void deinit() throw (chaos::CException);
+                
+                //! return the const info for the calculater proc info state
+                const ProcInfo& getLastProcInfo();
                 
                 //!add a new node to the healt system
                 void addNewNode(const std::string& node_uid);

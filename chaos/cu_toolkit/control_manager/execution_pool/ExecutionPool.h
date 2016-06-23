@@ -23,11 +23,20 @@
 #define __CHAOSFramework__1B9BEDD_3879_4B52_BCEA_66BB810F0975_ExecutionPool_h
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/async_central/async_central.h>
 
 #include <chaos/common/utility/InizializableService.h>
 
+#include <boost/thread.hpp>
 
-#define CONTROL_MANAGER_EXECUTION_POOLS "execution_pools"
+#define CONTROL_MANAGER_EXECUTION_POOLS                 "execution_pools"
+#define CONTROL_MANAGER_EXECUTION_POOLS_DESC            "Is the lis tof execution pool to use for request job"
+
+#define CONTROL_MANAGER_EXECUTION_POOLS_CHECK_TIME      30000
+
+#define CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP         "execution_pools_cpu_cap"
+#define CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DEFAULT 70
+#define CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DESC    "Is the maximum percentage of cpu occupancy, used to check when unit server don't must ask anymore for new job"
 
 namespace chaos{
     namespace cu {
@@ -49,19 +58,25 @@ namespace chaos{
                  hearbeat can be reassigned to other unit server for the same execution pool.
                  */
                 class ExecutionPoolManager:
-                public chaos::common::utility::InizializableService {
+                public chaos::common::utility::InizializableService,
+                public chaos::common::async_central::TimerHandler {
                     
                     //! contain all uid for the loaded execution unit
-                    ChaosStringVector eu_uid_list;
+                    ChaosStringSet      eu_uid_list;
+                    ChaosStringVector   execution_pool_list;
+                    boost::mutex        mutex_uid_set;
+                    double              cpu_cap_percentage;
                 protected:
                     ExecutionPoolManager();
                     ~ExecutionPoolManager();
+                    //!time handler inherited
+                    void timeout();
                 public:
                     void init(void *init_data) throw(chaos::CException);
                     void deinit() throw(chaos::CException);
                     
                     void registerUID(const std::string& new_uid);
-                    void deregisterUID(const std::string& new_uid);
+                    void deregisterUID(const std::string& remove_uid);
                 };
                 
             }

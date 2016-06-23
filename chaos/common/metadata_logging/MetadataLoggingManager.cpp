@@ -126,7 +126,7 @@ void MetadataLoggingManager::processBufferElement(CDataWrapper *log_entry,
         if((err = sendLogEntry(log_entry))) {
             MLM_ERR << "Error forwarding log entry with code:" << err;
             //log entry need to be resubmitted or stored on disk (in future version)
-            delete(log_entry);
+            //delete(log_entry);
         } else {
             //log entry has been submitted
             MLM_DBG << "Successfully submited log entry";
@@ -160,8 +160,9 @@ int MetadataLoggingManager::sendLogEntry(chaos::common::data::CDataWrapper *log_
             DEBUG_CODE(MLM_DBG << "Log has been successfully forwarded");
         }
     } else {
-        //we can't be able to send log to any mds server so detach it
-        log_future->detachMessageData();
+        //we can't be able to send log to any mds server so detach it and need to store it
+        //for later transmisison
+        //log_future->detachMessageData();
         err = -10000;
     }
     return err;

@@ -34,7 +34,9 @@ DEFINE_CLASS_FACTORY(DirectIODeviceServerChannel, DirectIOVirtualServerChannel);
 DirectIODeviceServerChannel::DirectIODeviceServerChannelDeallocator DirectIODeviceServerChannel::STATIC_DirectIODeviceServerChannelDeallocator;
 
 
-DirectIODeviceServerChannel::DirectIODeviceServerChannel(std::string alias):DirectIOVirtualServerChannel(alias, DIODataset_Channel_Index), handler(NULL) {
+DirectIODeviceServerChannel::DirectIODeviceServerChannel(std::string alias):
+DirectIOVirtualServerChannel(alias, DIODataset_Channel_Index),
+handler(NULL) {
     //set this class as delegate for the endpoint
     DirectIOVirtualServerChannel::setDelegate(this);
 }
