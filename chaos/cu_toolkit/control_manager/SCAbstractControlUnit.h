@@ -152,7 +152,9 @@ namespace chaos {
 				
 				~SCAbstractControlUnit();
 				
-				void setDefaultCommand(const std::string& dafaultCommandName, unsigned int sandbox_instance = 0);
+				void setDefaultCommand(const std::string& dafaultCommandName,
+                                       bool sticky = true,
+                                       unsigned int sandbox_instance = 0);
 				void addExecutionChannels(unsigned int execution_channels=1);
 				
 				template<typename T>
@@ -163,6 +165,7 @@ namespace chaos {
                 
                 void installCommand(boost::shared_ptr<BatchCommandDescription> command_description,
                                     bool is_default = false,
+                                    bool sticky = true,
                                     unsigned int sandbox = 0);
 			};
 		}

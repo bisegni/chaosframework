@@ -85,6 +85,7 @@ namespace chaos {
 
                 //!point to the current executing command
                 std::string     default_command_alias;
+                bool            default_command_stickyness;
                 unsigned int    default_command_sandbox_instance;
 
                 //! Mutex for the map managment lock
@@ -118,12 +119,25 @@ namespace chaos {
 
                 //! Return a command stat
                 boost::shared_ptr<CommandState> getCommandState(uint64_t command_sequence);
+                
+                //! submit a new instance of the default command
+                /*!
+                    Submit a new instance of the default command if it has been set
+                 \param when_cmd_queue_empty if true ensure that a new instance is submitted only if the cmd queue is empty
+                */
+                void submitDefaultCommand(bool when_cmd_queue_empty = true);
             protected:
                 //command event handler
-                virtual void handleCommandEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_value_ptr, uint32_t type_value_size);
+                virtual void handleCommandEvent(uint64_t command_seq,
+                                                BatchCommandEventType::BatchCommandEventType type,
+                                                void* type_value_ptr,
+                                                uint32_t type_value_size);
 
                 //! general sandbox event handler
-                virtual void handleSandboxEvent(const std::string& sandbox_id, BatchSandboxEventType::BatchSandboxEventType type, void* type_value_ptr, uint32_t type_value_size);
+                virtual void handleSandboxEvent(const std::string& sandbox_id,
+                                                BatchSandboxEventType::BatchSandboxEventType type,
+                                                void* type_value_ptr,
+                                                uint32_t type_value_size);
 
                 //! Global cache shared across the sandbox it can be alsog given
                 AttributeValueSharedCache  global_attribute_cache;
@@ -213,9 +227,13 @@ namespace chaos {
                 /*!
                  An instance of the command si registered within the executor.
                  \param alias is the name of the command to use as default (started at startup)
+                 \param sticky, if tru, wen command queueu is empty and last command has finisched, 
+                        a new instance of the default command is submitted.
                  \param sandbox_instance is the 1-based index of the sandbox where install the command
                  */
-                void setDefaultCommand(const string& alias, unsigned int sandbox_instance = COMMAND_BASE_SANDOXX_ID);
+                void setDefaultCommand(const string& alias,
+                                       bool sticky = true,
+                                       unsigned int sandbox_instance = COMMAND_BASE_SANDOXX_ID);
 
                 /*!
                  \ingroup API_Slow_Control

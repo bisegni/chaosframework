@@ -32,10 +32,10 @@ using namespace chaos::common::batch_command;
 #define BCLERR_ LERR_ << LOG_HEAD_SL
 
 // default constructor
-BatchCommand::BatchCommand() {
-    
-    already_setupped = false;
-    
+BatchCommand::BatchCommand():
+already_setupped(false),
+runningProperty(RunningPropertyType::RP_Normal),
+submissionRule(SubmissionRuleType::SUBMIT_NORMAL){
 	//reset all lock flag
     lockFeaturePropertyFlag.reset();
 	//setup feautere fields
@@ -44,11 +44,6 @@ BatchCommand::BatchCommand() {
 	
 	//reset the timing flags
 	std::memset(&timing_stats,0,sizeof(CommandTimingStats));
-	
-	//set default value for running property and submission flag
-    runningProperty = RunningPropertyType::RP_Normal;
-    submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
-
 }
 
 // default destructor

@@ -219,8 +219,12 @@ void SCAbstractControlUnit::stop() throw(CException) {
 }
 
 // Perform a command registration
-void SCAbstractControlUnit::setDefaultCommand(const std::string& dafaultCommandName, unsigned int sandbox_instance) {
-    slow_command_executor->setDefaultCommand(dafaultCommandName, sandbox_instance);
+void SCAbstractControlUnit::setDefaultCommand(const std::string& dafaultCommandName,
+                                              bool sticky,
+                                              unsigned int sandbox_instance) {
+    slow_command_executor->setDefaultCommand(dafaultCommandName,
+                                             sticky,
+                                             sandbox_instance);
 }
 
 void SCAbstractControlUnit::addExecutionChannels(unsigned int execution_channels) {
@@ -424,11 +428,13 @@ CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *update_pa
 
 void SCAbstractControlUnit::installCommand(boost::shared_ptr<BatchCommandDescription> command_description,
                                            bool is_default,
+                                           bool sticky,
                                            unsigned int sandbox) {
     CHAOS_ASSERT(slow_command_executor)
     slow_command_executor->installCommand(command_description);
     if(is_default){
         setDefaultCommand(command_description->getAlias(),
+                          sticky,
                           sandbox);
     }
 }

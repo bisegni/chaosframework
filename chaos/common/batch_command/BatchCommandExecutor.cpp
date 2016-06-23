@@ -44,6 +44,7 @@ using namespace chaos::common::batch_command;
 
 BatchCommandExecutor::BatchCommandExecutor(const std::string& _executorID):
 executorID(_executorID),
+default_command_stickyness(true),
 default_command_sandbox_instance(COMMAND_BASE_SANDOXX_ID),
 command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE) {
     // this need to be removed from here need to be implemented the def undef services
@@ -155,7 +156,6 @@ BatchCommandExecutor::~BatchCommandExecutor() {
 
 // Initialize instance
 void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
-    ReadLock       lock(sandbox_map_mutex);
     
     //reset the command sequence on initialization
     command_sequence_id = 0;
@@ -170,48 +170,44 @@ void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
                                              __PRETTY_FUNCTION__);
     
     BCELAPP_ << "Initializing all the instance of sandbox";
-    for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
-        it != sandbox_map.end();
-        it++) {
-        boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
-        //init the sand box
-        BCELAPP_ << "Initialize instance " << tmp_ptr->identification;
-        StartableService::initImplementation(tmp_ptr.get(),
-                                             initData,
-                                             "BatchCommandSandbox",
-                                             __PRETTY_FUNCTION__);
+    {
+        ReadLock       lock(sandbox_map_mutex);
+        for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
+            it != sandbox_map.end();
+            it++) {
+            boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
+            //init the sand box
+            BCELAPP_ << "Initialize instance " << tmp_ptr->identification;
+            StartableService::initImplementation(tmp_ptr.get(),
+                                                 initData,
+                                                 "BatchCommandSandbox",
+                                                 __PRETTY_FUNCTION__);
+        }
     }
-    
     BCELAPP_ << "Check if we need to use the default command or we have pause instance";
-    if(default_command_alias.size()) {
-        BCELAPP_ << "Set the default command ->"<<"\""<<default_command_alias<<"\"";
-        BatchCommand * def_cmd_impl = instanceCommandInfo(default_command_alias, (CDataWrapper*)NULL);
-        def_cmd_impl->unique_id = ++command_sequence_id;
-        sandbox_map[default_command_sandbox_instance]->enqueueCommand(NULL, def_cmd_impl, 50);
-        DEBUG_CODE(BCELDBG_ << "Command \"" << default_command_alias << "\" successfully installed";)
-    }
+    submitDefaultCommand();
 }
 
 // Start the implementation
 void BatchCommandExecutor::start() throw(chaos::CException) {
-    ReadLock       lock(sandbox_map_mutex);
-    
     try {
         // set thread run flag for work
         StartableService::start();
         
         BCELAPP_ << "Starting all the instance of sandbox";
-        for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
-            it != sandbox_map.end();
-            it++) {
-            boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
-            BCELAPP_ << "Starting instance " << tmp_ptr->identification;
-            //starting the sand box
-            StartableService::startImplementation(tmp_ptr.get(),
-                                                  "SlowCommandSandbox",
-                                                  __PRETTY_FUNCTION__);
+        {
+            ReadLock       lock(sandbox_map_mutex);
+            for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
+                it != sandbox_map.end();
+                it++) {
+                boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
+                BCELAPP_ << "Starting instance " << tmp_ptr->identification;
+                //starting the sand box
+                StartableService::startImplementation(tmp_ptr.get(),
+                                                      "SlowCommandSandbox",
+                                                      __PRETTY_FUNCTION__);
+            }
         }
-        
         //start capper timer
         AsyncCentralManager::getInstance()->addTimer(this, PURGE_TS_DELAY, PURGE_TS_DELAY);
     } catch (...) {
@@ -222,43 +218,46 @@ void BatchCommandExecutor::start() throw(chaos::CException) {
 
 // Start the implementation
 void BatchCommandExecutor::stop() throw(chaos::CException) {
-    ReadLock       lock(sandbox_map_mutex);
     
     //!remove capper timer
     AsyncCentralManager::getInstance()->removeTimer(this);
     
     //lock for queue access
     BCELAPP_ << "Stopping all the instance of sandbox";
-    for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
-        it != sandbox_map.end();
-        it++) {
-        boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
-        BCELAPP_ << "Stop instance " << tmp_ptr->identification;
-        
-        //stopping the sand box
-        StartableService::stopImplementation(tmp_ptr.get(),
-                                             "SlowCommandSandbox",
-                                             __PRETTY_FUNCTION__);
+    {
+        ReadLock       lock(sandbox_map_mutex);
+        for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
+            it != sandbox_map.end();
+            it++) {
+            boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
+            BCELAPP_ << "Stop instance " << tmp_ptr->identification;
+            
+            //stopping the sand box
+            StartableService::stopImplementation(tmp_ptr.get(),
+                                                 "SlowCommandSandbox",
+                                                 __PRETTY_FUNCTION__);
+        }
     }
     StartableService::stop();
 }
 
 // Deinit the implementation
 void BatchCommandExecutor::deinit() throw(chaos::CException) {
-    ReadLock       lock(sandbox_map_mutex);
-    
-    BCELAPP_ << "Deinitializing all the instance of sandbox";
-    for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
-        it != sandbox_map.end();
-        it++) {
-        boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
-        BCELAPP_ << "Deinitializing instance " << tmp_ptr->identification;
-        //deinit the sand box
-        StartableService::deinitImplementation(tmp_ptr.get(),
-                                               "SlowCommandSandbox",
-                                               __PRETTY_FUNCTION__);
+    {
+        ReadLock       lock(sandbox_map_mutex);
+        
+        BCELAPP_ << "Deinitializing all the instance of sandbox";
+        for(std::map<unsigned int, boost::shared_ptr<BatchCommandSandbox> >::iterator it = sandbox_map.begin();
+            it != sandbox_map.end();
+            it++) {
+            boost::shared_ptr<BatchCommandSandbox> tmp_ptr =  it->second;
+            BCELAPP_ << "Deinitializing instance " << tmp_ptr->identification;
+            //deinit the sand box
+            StartableService::deinitImplementation(tmp_ptr.get(),
+                                                   "SlowCommandSandbox",
+                                                   __PRETTY_FUNCTION__);
+        }
     }
-    
     //initialize the shared channel setting
     InizializableService::deinitImplementation(global_attribute_cache,
                                                "AttributeCache",
@@ -273,6 +272,7 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
                                               void* type_value_ptr,
                                               uint32_t type_value_size) {
     DEBUG_CODE(BCELDBG_ << "Received event of type->" << type << " on command id -> "<<command_id;)
+    
     switch(type) {
         case BatchCommandEventType::EVT_QUEUED: {
             // get upgradable access
@@ -292,8 +292,17 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
                 cmd_state->last_event = type;
                 cmd_state->fault_description = *static_cast<FaultDescription*>(type_value_ptr);
             }
+            //check for defautl resubmizion
+            if(default_command_stickyness) submitDefaultCommand(true);
             break;
         }
+            
+        case BatchCommandEventType::EVT_COMPLETED:
+            //in case of comamnd has ended, befor go to the deafult switch
+            //we need to check if we need to submit a new instance
+            //of the dauflt command
+            if(default_command_stickyness) submitDefaultCommand(true);
+            
         default: {
             ReadLock lock(command_state_rwmutex);
             boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
@@ -399,7 +408,9 @@ std::auto_ptr<CommandState> BatchCommandExecutor::getStateForCommandID(uint64_t 
 }
 
 //! Perform a command registration
-void BatchCommandExecutor::setDefaultCommand(const string& command_alias, unsigned int sandbox_instance) {
+void BatchCommandExecutor::setDefaultCommand(const string& command_alias,
+                                             bool sticky,
+                                             unsigned int sandbox_instance) {
     // check if we can set the default, the condition are:
     // the executor and the sandbox are in the init state or in stop state
     if(StartableService::serviceState ==
@@ -408,6 +419,7 @@ void BatchCommandExecutor::setDefaultCommand(const string& command_alias, unsign
     }
     
     default_command_alias = command_alias;
+    default_command_stickyness = sticky;
     default_command_sandbox_instance = sandbox_instance;
     BCELAPP_ << "Install the default command with alias: " << default_command_alias;
 }
@@ -416,6 +428,27 @@ const std::string& BatchCommandExecutor::getDefaultCommand() {
     return default_command_alias;
 }
 
+void BatchCommandExecutor::submitDefaultCommand(bool when_cmd_queue_empty) {
+    unsigned long enqueued_command = 0;
+    if(default_command_alias.size() == 0) {
+        DEBUG_CODE(BCELDBG_ << "No default command to execute successfully installed";)
+        return;
+    }
+    //lock submission queue
+    WriteLock       lock(sandbox_map_mutex);
+    
+    //check for empry queue
+    if(when_cmd_queue_empty && (enqueued_command = sandbox_map[default_command_sandbox_instance]->getNumberOfEnqueuedCommand()))  {
+        DEBUG_CODE(BCELDBG_ << CHAOS_FORMAT("Command must be installed only if there are nocommand in queue that now have %1% element",%enqueued_command);)
+        return;
+    }
+    BCELAPP_ << "Submit the default command ->"<<"\""<<default_command_alias<<"\"";
+    BatchCommand * def_cmd_impl = instanceCommandInfo(default_command_alias, (CDataWrapper*)NULL);
+    def_cmd_impl->unique_id = ++command_sequence_id;
+    sandbox_map[default_command_sandbox_instance]->enqueueCommand(NULL, def_cmd_impl, 50);
+    DEBUG_CODE(BCELDBG_ << "Command \"" << default_command_alias << "\" successfully installed";)
+    
+}
 //! return all the command description
 void BatchCommandExecutor::getCommandsDescriptions(std::vector< boost::shared_ptr<BatchCommandDescription> >& descriptions) {
     for(MapCommandDescriptionIterator it = map_command_description.begin();

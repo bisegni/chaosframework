@@ -813,6 +813,11 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
     return true;
 }
 
+unsigned long BatchCommandSandbox::getNumberOfEnqueuedCommand() {
+    boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue);
+    return command_submitted_queue.size();
+}
+
 //! Command features modification rpc action
 
 void BatchCommandSandbox::setCommandFeatures(features::Features& features) throw (CException) {

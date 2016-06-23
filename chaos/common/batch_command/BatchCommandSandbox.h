@@ -209,7 +209,11 @@ namespace chaos{
                 // Deinit the implementation
                 void deinit() throw(chaos::CException);
                 
+                //! enqueue a new command
                 bool enqueueCommand(CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
+
+                //! return the number of enqueued command
+                unsigned long getNumberOfEnqueuedCommand();
             public:
                 ~BatchCommandSandbox();
                 //! Command features modification rpc action
