@@ -90,6 +90,24 @@ namespace chaos {
                                    const std::string& name,
                                    chaos::service_common::data::script::Script& script,
                                    bool load_source_code = false);
+                    
+                    //! Inherited Method
+                    int getScriptForExecutionPoolPathList(const ChaosStringVector& pool_path,
+                                                          std::vector<chaos::service_common::data::script::ScriptBaseDescription>& script_found,
+                                                          uint32_t max_result = 10);
+                    
+                    //! Inherited Method
+                    int getUnscheduledInstanceForJob(const chaos::service_common::data::script::ScriptBaseDescription& script,
+                                                     ChaosStringVector& instance_found_list,
+                                                     uint32_t max_result = 10);
+                    
+                    //! Inherited Method
+                    int prenotateInstanceForScheduling(const std::string& instance_uid);
+                    
+                    //! Inherited Method
+                    int instanceForUnitServerHeartbeat(const ChaosStringVector& script_instance_list,
+                                                       const std::string& unit_server_parent,
+                                                       const uint64_t hb_ts);
                 };
             }
         }

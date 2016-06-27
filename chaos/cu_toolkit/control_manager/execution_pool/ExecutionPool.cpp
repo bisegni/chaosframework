@@ -72,6 +72,8 @@ void ExecutionPoolManager::timeout() {
     // make heart beat for the managed eu uid
     
     // check if we have enought resources for run script
-    
-    // request new job for contained poo
+    if(cur_proc_stat <= cpu_cap_percentage) {
+        // request new job for contained pool
+        DBGL << CHAOS_FORMAT("Tell MDS that we have want other script to execute(cpu res/cap[%1%-%2%])!", %cur_proc_stat%cpu_cap_percentage);
+    }
 }

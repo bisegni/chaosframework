@@ -1,9 +1,10 @@
 /*
- *	LoadUnloadControlUnit.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ *	LoadInstanceOnUnitServer.h
  *
- *    	Copyright 2015 INFN, National Institute of Nuclear Physics
+ *	!CHAOS [CHAOSFramework]
+ *	Created by Claudio Bisegni.
+ *
+ *    	Copyright 27/06/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,8 +18,9 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__LoadUnloadControlUnit__
-#define __CHAOSFramework__LoadUnloadControlUnit__
+
+#ifndef __CHAOSFramework_AE318A9D_3558_4D57_95E0_C12899F43BD9_LoadInstanceOnUnitServer_h
+#define __CHAOSFramework_AE318A9D_3558_4D57_95E0_C12899F43BD9_LoadInstanceOnUnitServer_h
 
 #include "../mds_service_batch.h"
 
@@ -27,38 +29,34 @@ namespace chaos {
     namespace metadata_service{
         namespace batch {
             class MDSBatchExcecutor;
-            namespace unit_server {
-
-                class LoadUnloadControlUnit:
+            namespace script {
+                
+                class LoadInstanceOnUnitServer:
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
-
-                    bool load;
-                    std::string cu_id;
-                    std::string cu_type;
-                    std::string us_address;
-
+                    
+                    std::string unit_server;
+                    ChaosStringVector epool_list;
                     std::auto_ptr<RequestInfo> request;
                     std::auto_ptr<CDataWrapper> load_unload_pack;
                 public:
-                    LoadUnloadControlUnit();
-                    ~LoadUnloadControlUnit();
+                    LoadInstanceOnUnitServer();
+                    ~LoadInstanceOnUnitServer();
                 protected:
-                        // inherited method
+                    // inherited method
                     void setHandler(chaos_data::CDataWrapper *data);
-
-                        // inherited method
+                    
+                    // inherited method
                     void acquireHandler();
-
-                        // inherited method
+                    
+                    // inherited method
                     void ccHandler();
-
-                        // inherited method
+                    
+                    // inherited method
                     bool timeoutHandler();
                 };
             }
         }
     }
 }
-
-#endif /* defined(__CHAOSFramework__LoadUnloadControlUnit__) */
+#endif /* __CHAOSFramework_AE318A9D_3558_4D57_95E0_C12899F43BD9_LoadInstanceOnUnitServer_h */

@@ -105,6 +105,42 @@ namespace chaos {
                                            const std::string& name,
                                            chaos::service_common::data::script::Script& script,
                                            bool load_source_code = false) = 0;
+                    
+                    //!Return script associated to the execution pool list
+                    /*!
+                     \param pool_path a list of pool path
+                     \param script_found the found script that belong to one or more execution pool path
+                     \param max_result determinate how much instance need to return
+                     */
+                    virtual int getScriptForExecutionPoolPathList(const ChaosStringVector& pool_path,
+                                                                  std::vector<chaos::service_common::data::script::ScriptBaseDescription>& script_found,
+                                                                  uint32_t max_result = 10) = 0;
+                    
+                    //!Return all unscheduled instance for the script
+                    /*!
+                     \param script script description
+                     \param instance_found_list the found instances that are not running
+                     \param max_result determinate how much instance need to return
+                     */
+                    virtual int getUnscheduledInstanceForJob(const chaos::service_common::data::script::ScriptBaseDescription& script,
+                                                             ChaosStringVector& instance_found_list,
+                                                             uint32_t max_result = 10) = 0;
+                    
+                    /*!
+                     prenotate the instance to be executed on a unit server
+                     */
+                    virtual int prenotateInstanceForScheduling(const std::string& instance_uid) = 0;
+                    
+                    //! make an heartbeat on the instance
+                    /*!
+                     the first hearttbeat for an instance and new unit server, this last is set as parent
+                     mds consider an instance as runnit unitil hb is within the timeout delay. Pass out
+                     the timeout the istance is considered not runnit so on the first exectuion pool
+                     request it will be rescheduled.
+                     */
+                    virtual int instanceForUnitServerHeartbeat(const ChaosStringVector& script_instance_list,
+                                                               const std::string& unit_server_parent,
+                                                               const uint64_t hb_ts) = 0;
                 };
             }
         }

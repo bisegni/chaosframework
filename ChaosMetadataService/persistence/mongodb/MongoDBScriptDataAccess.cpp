@@ -190,7 +190,7 @@ int MongoDBScriptDataAccess::addScriptInstance(const uint64_t seq,
         if((err = node_data_access->insertNewNode(node_description))){
             return err;
         }
-
+        
         mongo::Query q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID<< instance_name<<
                               chaos::NodeDefinitionKey::NODE_GROUP_SET << script_name<<
                               "script_seq" << (long long)seq);
@@ -203,12 +203,12 @@ int MongoDBScriptDataAccess::addScriptInstance(const uint64_t seq,
                                                                 "Update",
                                                                 q,
                                                                 u));)
-
+        
         if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES), q, u))){
             SDA_ERR << "Error updating script instance node with default instance data" << err;
             return err;
         }
-
+        
         //we have the script now get the dataset and attach it to the instance
         
     } catch (const mongo::DBException &e) {
@@ -329,6 +329,71 @@ int MongoDBScriptDataAccess::loadScript(const uint64_t unique_id,
     return err;
 }
 
+
+
+int MongoDBScriptDataAccess::getScriptForExecutionPoolPathList(const ChaosStringVector& pool_path,
+                                                               std::vector<chaos::service_common::data::script::ScriptBaseDescription>& script_found,
+                                                               uint32_t max_result) {
+    int err = 0;
+    //given a list of execution pool path the list of the script is returned. Every script into the
+    //list can belog to one or more of the path present in the input list
+    //the key execution_pool_list need to have one or more of the value present in the list "field : { $in : array }"
+    return err;
+}
+
+
+int MongoDBScriptDataAccess::getUnscheduledInstanceForJob(const chaos::service_common::data::script::ScriptBaseDescription& script,
+                                                          ChaosStringVector& instance_found_list,
+                                                          uint32_t max_result) {
+    int err = 0;
+    //return all unscheduled instance for a script
+    return err;
+}
+
+
+int MongoDBScriptDataAccess::prenotateInstanceForScheduling(const std::string& instance_uid) {
+    int err = 0;
+    return err;
+}
+
+
+int MongoDBScriptDataAccess::instanceForUnitServerHeartbeat(const ChaosStringVector& script_instance_list,
+                                                            const std::string& unit_server_parent,
+                                                            const uint64_t hb_ts) {
+    int err = 0;
+    mongo::BSONArrayBuilder bson_find_in;
+    CHAOS_ASSERT(utility_data_access)
+    try {
+        for(ChaosStringVectorConstIterator in_it = script_instance_list.begin(),
+            in_end = script_instance_list.end();
+            in_it < in_end;
+            in_it++) {
+            //add every instance uid to the array
+            bson_find_in << *in_it;
+        }
+        
+        mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << BSON("$in" << bson_find_in.arr()));
+        mongo::BSONObj u = BSON("$set" << BSON(chaos::NodeDefinitionKey::NODE_PARENT << unit_server_parent <<
+                                               "ep_hb_ts" << (long long)hb_ts));
+        DEBUG_CODE(SDA_DBG<<log_message("instanceHeartbeat",
+                                        "update",
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                q));)
+        //inset on database new script description
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                     q,
+                                     u,
+                                     false,
+                                     true))) {
+            SDA_ERR << CHAOS_FORMAT("Error executin query for update running script intance with error [%1%]", %err);
+        }
+    } catch (const mongo::DBException &e) {
+        SDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
+
 #pragma Private Methods
 mongo::Query MongoDBScriptDataAccess::getNextPagedQuery(uint64_t last_sequence,
                                                         const std::string& search_string) {
@@ -371,3 +436,4 @@ mongo::Query MongoDBScriptDataAccess::getNextPagedQueryForInstance(uint64_t last
     q = bson_find.obj();
     return q.sort(BSON("seq"<<(int)1));
 }
+

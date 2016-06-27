@@ -1,10 +1,10 @@
 /*
- *	ManageScriptInstance.h
+ *	ExecutionPoolHeartbeat.h
  *
  *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ *	Created by Claudio Bisegni.
  *
- *    	Copyright 15/06/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 27/06/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework_E7B0A98B_A6AB_4230_9822_34686FA58C52_ManageScriptInstance_h
-#define __CHAOSFramework_E7B0A98B_A6AB_4230_9822_34686FA58C52_ManageScriptInstance_h
+#ifndef __CHAOSFramework_C1FD7B42_4423_49BA_87AC_A3622D4E4FF6_ExecutionPoolHeartbeat_h
+#define __CHAOSFramework_C1FD7B42_4423_49BA_87AC_A3622D4E4FF6_ExecutionPoolHeartbeat_h
 
 #include "../AbstractApi.h"
 
@@ -29,12 +29,12 @@ namespace chaos {
         namespace api {
             namespace script {
                 //! Add a new instance to the script
-                class ManageScriptInstance:
+                class ExecutionPoolHeartbeat:
                 public AbstractApi {
                     
                 public:
-                    ManageScriptInstance();
-                    ~ManageScriptInstance();
+                    ExecutionPoolHeartbeat();
+                    ~ExecutionPoolHeartbeat();
                     chaos::common::data::CDataWrapper *execute(chaos::common::data::CDataWrapper *api_data,
                                                                bool& detach_data);
                 };
@@ -43,4 +43,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework_E7B0A98B_A6AB_4230_9822_34686FA58C52_ManageScriptInstance_h */
+#endif /* __CHAOSFramework_C1FD7B42_4423_49BA_87AC_A3622D4E4FF6_ExecutionPoolHeartbeat_h */

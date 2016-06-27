@@ -94,7 +94,8 @@ SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
                         api/script/SaveScript.cpp
                         api/script/LoadFullScript.cpp
                         api/script/SearchInstanceForScript.cpp
-                        api/script/ManageScriptInstance.cpp)
+                        api/script/ManageScriptInstance.cpp
+                        api/script/ExecutionPoolHeartbeah.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/NodeDataAccess.cpp
@@ -102,9 +103,9 @@ SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/ControlUnitDataAccess.cpp
                         persistence/data_access/DataServiceDataAccess.cpp
                         persistence/data_access/SnapshotDataAccess.cpp
-												persistence/data_access/TreeGroupDataAccess.cpp
+						persistence/data_access/TreeGroupDataAccess.cpp
                         persistence/data_access/LoggingDataAccess.cpp
-												persistence/data_access/ScriptDataAccess.cpp)
+						persistence/data_access/ScriptDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBUnitServerDataAccess.cpp
@@ -115,7 +116,7 @@ SET(cnd_src  ${cnd_src}	persistence/mongodb/MongoDBPersistenceDriver.cpp
                         persistence/mongodb/MongoDBSnapshotDataAccess.cpp
                         persistence/mongodb/MongoDBTreeGroupDataAccess.cpp
                         persistence/mongodb/MongoDBLoggingDataAccess.cpp
-												persistence/mongodb/MongoDBScriptDataAccess.cpp)
+						persistence/mongodb/MongoDBScriptDataAccess.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/MDSBatchExecutor.cpp
                         batch/MDSBatchCommand.cpp)
@@ -130,6 +131,8 @@ SET(cnd_src  ${cnd_src}	batch/control_unit/RegistrationAckBatchCommand.cpp
                         batch/control_unit/IDSTControlUnitBatchCommand.cpp
                         batch/control_unit/ApplyChangeSet.cpp
                         batch/control_unit/RecoverError.cpp)
+
+SET(cnd_src  ${cnd_src}	batch/script/LoadInstanceOnUnitServer.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp)
 

@@ -132,6 +132,7 @@
 		3230BEC3181A6ADB00EA5793 /* DatasetDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230BEC1181A6ADB00EA5793 /* DatasetDB.h */; };
 		3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230DA091652C41D00113C93 /* NetworkForwardInfo.h */; };
 		3230DA0D1652C44B00113C93 /* RpcMessageForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */; };
+		3232018A1D21591300701B03 /* ExecutionPoolHeartbeat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323201881D21591300701B03 /* ExecutionPoolHeartbeat.cpp */; };
 		323236CB164573C60052CE06 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323236CA164573C60052CE06 /* main.cpp */; };
 		323236DA164573F50052CE06 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323236D9164573F50052CE06 /* main.cpp */; };
 		3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */; };
@@ -305,6 +306,7 @@
 		3258AEEB1935C34000A66D44 /* URL.h in Headers */ = {isa = PBXBuildFile; fileRef = 3258AEE91935C34000A66D44 /* URL.h */; };
 		3258AF031935EE4D00A66D44 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AF021935EE4D00A66D44 /* main.cpp */; };
 		3258AF0C1935F46D00A66D44 /* FeederTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AF0A1935F46D00A66D44 /* FeederTest.cpp */; };
+		325963981D216BD800D94853 /* LoadInstanceOnUnitServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325963961D216BD800D94853 /* LoadInstanceOnUnitServer.cpp */; };
 		325B421E1C8854820038E0C2 /* HandlerMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */; };
 		325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325CA6B915EE10B3007FCC12 /* EventAction.cpp */; };
 		325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325CA6BA15EE10B3007FCC12 /* EventAction.h */; };
@@ -1240,6 +1242,8 @@
 		3230D9E81652AAF100113C93 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3230DA091652C41D00113C93 /* NetworkForwardInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkForwardInfo.h; sourceTree = "<group>"; };
 		3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcMessageForwarder.h; sourceTree = "<group>"; };
+		323201881D21591300701B03 /* ExecutionPoolHeartbeat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutionPoolHeartbeat.cpp; sourceTree = "<group>"; };
+		323201891D21591300701B03 /* ExecutionPoolHeartbeat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutionPoolHeartbeat.h; sourceTree = "<group>"; };
 		323236CA164573C60052CE06 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		323236D9164573F50052CE06 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDriverPlugin.h; sourceTree = "<group>"; };
@@ -1446,6 +1450,8 @@
 		3258AF091935EE9700A66D44 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3258AF0A1935F46D00A66D44 /* FeederTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FeederTest.cpp; sourceTree = "<group>"; };
 		3258AF0B1935F46D00A66D44 /* FeederTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeederTest.h; sourceTree = "<group>"; };
+		325963961D216BD800D94853 /* LoadInstanceOnUnitServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadInstanceOnUnitServer.cpp; sourceTree = "<group>"; };
+		325963971D216BD800D94853 /* LoadInstanceOnUnitServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadInstanceOnUnitServer.h; sourceTree = "<group>"; };
 		325B421C1C8854820038E0C2 /* HandlerMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandlerMonitor.cpp; sourceTree = "<group>"; };
 		325B421D1C8854820038E0C2 /* HandlerMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandlerMonitor.h; sourceTree = "<group>"; };
 		325CA6B915EE10B3007FCC12 /* EventAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventAction.cpp; sourceTree = "<group>"; };
@@ -2982,6 +2988,15 @@
 			path = ArchitectureTests;
 			sourceTree = "<group>";
 		};
+		325963951D216AE300D94853 /* script */ = {
+			isa = PBXGroup;
+			children = (
+				325963961D216BD800D94853 /* LoadInstanceOnUnitServer.cpp */,
+				325963971D216BD800D94853 /* LoadInstanceOnUnitServer.h */,
+			);
+			path = script;
+			sourceTree = "<group>";
+		};
 		325D2FCA1AFA19B600B2A706 /* healt_system */ = {
 			isa = PBXGroup;
 			children = (
@@ -4253,6 +4268,7 @@
 				32761A3D1B37F1DD006C8719 /* node */,
 				32610F9A1AE676A400779B84 /* control_unit */,
 				320E773B1A7FBD1E001FB8BC /* unit_server */,
+				325963951D216AE300D94853 /* script */,
 			);
 			path = batch;
 			sourceTree = "<group>";
@@ -4618,6 +4634,8 @@
 				32A116431D116F8C00FF44ED /* SearchInstancesForScript.h */,
 				32A116471D117F0700FF44ED /* ManageScriptInstance.cpp */,
 				32A116481D117F0700FF44ED /* ManageScriptInstance.h */,
+				323201881D21591300701B03 /* ExecutionPoolHeartbeat.cpp */,
+				323201891D21591300701B03 /* ExecutionPoolHeartbeat.h */,
 			);
 			path = script;
 			sourceTree = "<group>";
@@ -5519,6 +5537,7 @@
 				325FC85A1AF77A7900DB9D66 /* NewUS.cpp in Sources */,
 				32E09CF01C0DC7100069752F /* MongoDBSnapshotDataAccess.cpp in Sources */,
 				32092B401BFA353F006A4D06 /* NodeLoadCompletion.cpp in Sources */,
+				3232018A1D21591300701B03 /* ExecutionPoolHeartbeat.cpp in Sources */,
 				324EF3E31AE923F9000837AF /* DataServiceApiGroup.cpp in Sources */,
 				327F39A01AEA47980000C845 /* GetAssociationByDS.cpp in Sources */,
 				3270E0701C6CBBE600105726 /* SubmitEntry.cpp in Sources */,
@@ -5563,6 +5582,7 @@
 				32CAC9E41AE6991500DC6AAB /* LoadUnloadControlUnit.cpp in Sources */,
 				324EF3E01AE9238B000837AF /* UpdateDS.cpp in Sources */,
 				3211CCD61B0205C700F9B80E /* GetBestEndpoints.cpp in Sources */,
+				325963981D216BD800D94853 /* LoadInstanceOnUnitServer.cpp in Sources */,
 				32A13EBF1C2019080010F3FC /* MongoDBTreeGroupDataAccess.cpp in Sources */,
 				320530DA1AE92D770064275B /* DataServiceDataAccess.cpp in Sources */,
 				32B299A11BDA7CAA000D3716 /* CUCommonUtility.cpp in Sources */,
@@ -7204,6 +7224,7 @@
 				32A116A71D17D78500FF44ED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		32B10913188C1D6200969D3D /* Build configuration list for PBXNativeTarget "TestAsyncRpc" */ = {
 			isa = XCConfigurationList;
