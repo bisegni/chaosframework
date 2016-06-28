@@ -99,15 +99,18 @@ namespace chaos {
                     //! Inherited Method
                     int getUnscheduledInstanceForJob(const chaos::service_common::data::script::ScriptBaseDescription& script,
                                                      ChaosStringVector& instance_found_list,
+                                                     uint32_t timeout = 30000,
                                                      uint32_t max_result = 10);
                     
                     //! Inherited Method
-                    int prenotateInstanceForScheduling(const std::string& instance_uid);
+                    int reserveInstanceForScheduling(const std::string& instance_uid,
+                                                     const std::string& unit_server_parent,
+                                                     uint32_t timeout = 30000);
                     
                     //! Inherited Method
                     int instanceForUnitServerHeartbeat(const ChaosStringVector& script_instance_list,
                                                        const std::string& unit_server_parent,
-                                                       const uint64_t hb_ts);
+                                                       uint32_t timeout);
                 };
             }
         }

@@ -120,16 +120,23 @@ namespace chaos {
                     /*!
                      \param script script description
                      \param instance_found_list the found instances that are not running
+                     \param timeout the amount of milliseconds after wich an isntance is consider in timeout
                      \param max_result determinate how much instance need to return
                      */
                     virtual int getUnscheduledInstanceForJob(const chaos::service_common::data::script::ScriptBaseDescription& script,
                                                              ChaosStringVector& instance_found_list,
+                                                             uint32_t timeout = 30000,
                                                              uint32_t max_result = 10) = 0;
                     
                     /*!
                      prenotate the instance to be executed on a unit server
+                     \param instance_uid the uinque id of the instance
+                     \param unit_server_parent is the unit server that wish to reserve that instance
+                     \param timeout the amount of milliseconds after wich an isntance is consider in timeout
                      */
-                    virtual int prenotateInstanceForScheduling(const std::string& instance_uid) = 0;
+                    virtual int reserveInstanceForScheduling(const std::string& instance_uid,
+                                                             const std::string& unit_server_parent,
+                                                             uint32_t timeout) = 0;
                     
                     //! make an heartbeat on the instance
                     /*!
@@ -140,7 +147,7 @@ namespace chaos {
                      */
                     virtual int instanceForUnitServerHeartbeat(const ChaosStringVector& script_instance_list,
                                                                const std::string& unit_server_parent,
-                                                               const uint64_t hb_ts) = 0;
+                                                               uint32_t timeout) = 0;
                 };
             }
         }

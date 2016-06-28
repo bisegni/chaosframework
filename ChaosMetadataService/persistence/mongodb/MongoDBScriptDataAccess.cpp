@@ -22,9 +22,13 @@
 #include "MongoDBScriptDataAccess.h"
 #include "mongo_db_constants.h"
 
+#include <chaos/common/utility/TimingUtil.h>
+
+#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::service_common::data::node;
 using namespace chaos::service_common::data::script;
 using namespace chaos::service_common::data::dataset;
@@ -332,35 +336,134 @@ int MongoDBScriptDataAccess::loadScript(const uint64_t unique_id,
 
 
 int MongoDBScriptDataAccess::getScriptForExecutionPoolPathList(const ChaosStringVector& pool_path,
-                                                               std::vector<chaos::service_common::data::script::ScriptBaseDescription>& script_found,
+                                                               std::vector<ScriptBaseDescription>& script_found,
                                                                uint32_t max_result) {
     int err = 0;
     //given a list of execution pool path the list of the script is returned. Every script into the
     //list can belog to one or more of the path present in the input list
     //the key execution_pool_list need to have one or more of the value present in the list "field : { $in : array }"
+    SearchResult paged_result;
+    mongo::BSONArrayBuilder bson_find_in;
+    try {
+        BOOST_FOREACH( std::string pool_path_element, pool_path ) {
+            bson_find_in << pool_path_element;
+        }
+        mongo::BSONObj q = BSON("execution_pool_list" << BSON("$in" << bson_find_in.arr()));
+        DEBUG_CODE(SDA_DBG<<log_message("getScriptForExecutionPoolPathList",
+                                        "find",
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                q));)
+        //inset on database new script description
+        connection->findN(paged_result,
+                          MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                          q,
+                          max_result);
+        if(paged_result.size()) {
+            ScriptBaseDescriptionSDWrapper scrpt_desc_dw;
+            //iterate for each elemente deserializing it with the data wrapper
+            BOOST_FOREACH( mongo::BSONObj element, paged_result ) {
+                CDataWrapper dw(element.objdata());
+                scrpt_desc_dw.deserialize(&dw);
+                script_found.push_back(scrpt_desc_dw.dataWrapped());
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        SDA_ERR << e.what();
+        err = e.getCode();
+    }
+    
     return err;
 }
 
 
 int MongoDBScriptDataAccess::getUnscheduledInstanceForJob(const chaos::service_common::data::script::ScriptBaseDescription& script,
                                                           ChaosStringVector& instance_found_list,
+                                                          uint32_t timeout,
                                                           uint32_t max_result) {
     int err = 0;
-    //return all unscheduled instance for a script
+    SearchResult paged_result;
+    mongo::BSONArrayBuilder bson_find_and;
+    CHAOS_ASSERT(utility_data_access)
+    try {
+        //calucate the millisecond that we want to consider timeout
+        mongo::Date_t start_timeout_date(TimingUtil::getTimeStamp() - timeout);
+        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << script.name);
+        bson_find_and << BSON("seq" << (long long)script.unique_id);
+        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << true << "$lt" << start_timeout_date));
+        mongo::BSONObj q = BSON("$and" << bson_find_and.arr());
+        
+        DEBUG_CODE(SDA_DBG<<log_message("instanceHeartbeat",
+                                        "update",
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                q));)
+        //inset on database new script description
+        connection->findN(paged_result,
+                          MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                          q,
+                          max_result);
+        
+        //!return instance
+        BOOST_FOREACH( mongo::BSONObj element, paged_result ) {
+            if(element.hasField(NodeDefinitionKey::NODE_UNIQUE_ID) == false) continue;
+            instance_found_list.push_back(element.getStringField(NodeDefinitionKey::NODE_UNIQUE_ID));
+        }
+    } catch (const mongo::DBException &e) {
+        SDA_ERR << e.what();
+        err = e.getCode();
+    }
     return err;
 }
 
 
-int MongoDBScriptDataAccess::prenotateInstanceForScheduling(const std::string& instance_uid) {
+int MongoDBScriptDataAccess::reserveInstanceForScheduling(const std::string& instance_uid,
+                                                          const std::string& unit_server_parent,
+                                                          uint32_t timeout) {
     int err = 0;
+    //we need to use find adn update to perform prenotation of the instance uid, the rule are
+    // instance is in timeout of not have the heartbeat
+    mongo::BSONObj result;
+    mongo::BSONArrayBuilder bson_find_and;
+    mongo::BSONArrayBuilder bson_find_hb_or;
+    CHAOS_ASSERT(utility_data_access)
+    try {
+        //unique id rule
+        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << instance_uid);
+        
+        //timeout rule
+        uint64_t now = TimingUtil::getTimeStamp();
+        mongo::Date_t start_timeout_date(now - timeout);
+        bson_find_hb_or << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << true << "$lt" << start_timeout_date));
+        bson_find_hb_or << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << false));
+        bson_find_and << BSON("$or" << bson_find_hb_or.arr());
+        
+        mongo::BSONObj q = BSON("$and" << bson_find_and.arr());
+        //the reservation is done using updateing the heartbeat and unit server alias
+        mongo::BSONObj u = BSON("$set" << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << mongo::Date_t(now)));
+        
+        DEBUG_CODE(SDA_DBG<<log_message("instanceHeartbeat",
+                                        "update",
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                q));)
+        //inset on database new script description
+        if((err = connection->findAndModify(result,
+                                            MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                            q,
+                                            u))){
+            SDA_ERR << CHAOS_FORMAT("Error executin reservation on script instance %1% with error %2%", %instance_uid%err);
+        }
+    } catch (const mongo::DBException &e) {
+        SDA_ERR << e.what();
+        err = e.getCode();
+    }
     return err;
 }
 
 
 int MongoDBScriptDataAccess::instanceForUnitServerHeartbeat(const ChaosStringVector& script_instance_list,
                                                             const std::string& unit_server_parent,
-                                                            const uint64_t hb_ts) {
+                                                            uint32_t timeout) {
     int err = 0;
+    mongo::BSONArrayBuilder bson_find_and;
     mongo::BSONArrayBuilder bson_find_in;
     CHAOS_ASSERT(utility_data_access)
     try {
@@ -371,10 +474,22 @@ int MongoDBScriptDataAccess::instanceForUnitServerHeartbeat(const ChaosStringVec
             //add every instance uid to the array
             bson_find_in << *in_it;
         }
+        uint64_t now = TimingUtil::getTimeStamp();
+        mongo::Date_t start_timeout_date(now-timeout);
         
-        mongo::BSONObj q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << BSON("$in" << bson_find_in.arr()));
-        mongo::BSONObj u = BSON("$set" << BSON(chaos::NodeDefinitionKey::NODE_PARENT << unit_server_parent <<
-                                               "ep_hb_ts" << (long long)hb_ts));
+        //and rule for uid
+        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << BSON("$in" << bson_find_in.arr()));
+        
+        //! for this unit server associaito
+        bson_find_and << BSON(CHAOS_FORMAT("instance_description.%1%",%chaos::NodeDefinitionKey::NODE_PARENT) << unit_server_parent);
+        
+        //not in timeout
+        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << true << "$gte" << start_timeout_date));
+        
+        //compose the query
+        mongo::BSONObj q = BSON("$and" << bson_find_and.arr());
+        //we need to update only the timeout
+        mongo::BSONObj u = BSON("$set" << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << mongo::Date_t(now)));
         DEBUG_CODE(SDA_DBG<<log_message("instanceHeartbeat",
                                         "update",
                                         DATA_ACCESS_LOG_1_ENTRY("Query",
