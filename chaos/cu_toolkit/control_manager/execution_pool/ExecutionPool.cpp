@@ -69,11 +69,12 @@ void ExecutionPoolManager::deregisterUID(const std::string& remove_uid) {
 
 void ExecutionPoolManager::timeout() {
     const ProcInfo cur_proc_stat = HealtManager::getInstance()->getLastProcInfo();
+    const double total_cpu_usage = cur_proc_stat.sys_time+cur_proc_stat.usr_time;
     // make heart beat for the managed eu uid
     
     // check if we have enought resources for run script
-    if(cur_proc_stat <= cpu_cap_percentage) {
+    if(total_cpu_usage < cpu_cap_percentage) {
         // request new job for contained pool
-        DBGL << CHAOS_FORMAT("Tell MDS that we have want other script to execute(cpu res/cap[%1%-%2%])!", %cur_proc_stat%cpu_cap_percentage);
+        DBGL << CHAOS_FORMAT("Tell MDS that we have want other script to execute(cpu res/cap[%1%-%2%])!", %total_cpu_usage%cpu_cap_percentage);
     }
 }
