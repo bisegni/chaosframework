@@ -23,6 +23,7 @@
 #include "node/node_batch.h"
 #include "general/general_batch.h"
 #include "../ChaosMetadataService.h"
+#include "script/script_batch.h"
 
 using namespace chaos::metadata_service::batch;
 #define BCE_INFO INFO_LOG(BatchCommandExecutor)
@@ -56,9 +57,12 @@ last_used_sb_idx(3){
     installCommand(control_unit::RegistrationAckBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::RegistrationAckBatchCommand));
     installCommand(control_unit::IDSTControlUnitBatchCommand::command_alias, MDS_BATCH_COMMAND_INSTANCER(control_unit::IDSTControlUnitBatchCommand));
     
-    //!general batch command
+    //general batch command
     installCommand(general::RestoreSnapshotBatch::command_alias, MDS_BATCH_COMMAND_INSTANCER(general::RestoreSnapshotBatch));
    
+    //general batch command
+    installCommand(script::LoadInstanceOnUnitServer::command_alias, MDS_BATCH_COMMAND_INSTANCER(script::LoadInstanceOnUnitServer));
+    
     //add all sandbox instances
     if(ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_BATCH_SANDBOX_SIZE)) {
         addSandboxInstance(ChaosMetadataService::getInstance()->getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_BATCH_SANDBOX_SIZE));

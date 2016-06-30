@@ -19,8 +19,9 @@
  *    	limitations under the License.
  */
 
-#include <json/json.h>
 #include <chaos/cu_toolkit/control_manager/script/ScriptableExecutionUnit.h>
+
+#include <json/json.h>
 
 using namespace chaos::common::script;
 using namespace chaos::common::utility;
@@ -89,8 +90,8 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     
     //scan json option
     if(json_reader.parse(getCUParam(), json_params)) {
-        const Json::Value& _script_language = json_params[SEU_SCRIPT_LANGUAGE];
-        const Json::Value&  _script_content = json_params[SEU_SCRIPT_CONTENT];
+        const Json::Value& _script_language = json_params[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE];
+        const Json::Value&  _script_content = json_params[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT];
         CHAOS_LASSERT_EXCEPTION((_script_language.isNull() && _script_content.isString()), SEU_LERR, -2, "The script language is not defined (or not a string) into load parameter");
         CHAOS_LASSERT_EXCEPTION((_script_content.isNull() && _script_content.isString()), SEU_LERR, -3, "The script content is not defined (or not a string) into load parameter");
         if(_script_language.isNull())

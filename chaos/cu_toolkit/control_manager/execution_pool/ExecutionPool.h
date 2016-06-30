@@ -22,6 +22,9 @@
 #ifndef __CHAOSFramework__1B9BEDD_3879_4B52_BCEA_66BB810F0975_ExecutionPool_h
 #define __CHAOSFramework__1B9BEDD_3879_4B52_BCEA_66BB810F0975_ExecutionPool_h
 
+#include <chaos/cu_toolkit/control_manager/execution_pool/execution_pool_constants.h>
+#include <chaos/cu_toolkit/control_manager/control_manager_constants.h>
+
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/async_central/async_central.h>
 
@@ -29,18 +32,16 @@
 
 #include <boost/thread.hpp>
 
-#define CONTROL_MANAGER_EXECUTION_POOLS                 "execution_pools"
-#define CONTROL_MANAGER_EXECUTION_POOLS_DESC            "Is the lis tof execution pool to use for request job"
-
-#define CONTROL_MANAGER_EXECUTION_POOLS_CHECK_TIME      30000
-
-#define CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP         "execution_pools_cpu_cap"
-#define CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DEFAULT 70
-#define CONTROL_MANAGER_EXECUTION_POOLS_CPU_CAP_DESC    "Is the maximum percentage of cpu occupancy, used to check when unit server don't must ask anymore for new job"
 
 namespace chaos{
+    namespace common {
+        namespace message {
+            class MDSMessageChannel;
+        }
+    }
     namespace cu {
         namespace control_manager {
+            
             //!execution pool name space
             namespace execution_pool {
                 
@@ -66,12 +67,15 @@ namespace chaos{
                     ChaosStringVector   execution_pool_list;
                     boost::mutex        mutex_uid_set;
                     double              cpu_cap_percentage;
+                    std::string         unit_server_alias;
+                    
+                    chaos::common::message::MDSMessageChannel *mds_message_channel;
                 protected:
-                    ExecutionPoolManager();
-                    ~ExecutionPoolManager();
                     //!time handler inherited
                     void timeout();
                 public:
+                    ExecutionPoolManager();
+                    ~ExecutionPoolManager();
                     void init(void *init_data) throw(chaos::CException);
                     void deinit() throw(chaos::CException);
                     

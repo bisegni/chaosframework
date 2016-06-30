@@ -144,13 +144,13 @@ namespace chaos {
                 /*!
                  \param message_pack memory is not managed to the ownershiw is not keeped
                  */
-                int sendMessage(const std::string& action_domain,
-                                const std::string& action_name,
-                                chaos::common::data::CDataWrapper *message_pack);
+                void sendMessage(const std::string& action_domain,
+                                 const std::string& action_name,
+                                 chaos::common::data::CDataWrapper *message_pack);
                 
                 //! call an rpc mds function without data
-                int callMethod(const std::string& action_domain,
-                               const std::string& action_name);
+                void callMethod(const std::string& action_domain,
+                                const std::string& action_name);
                 
                 //! send a custom request to the servers
                 /*!
@@ -160,7 +160,7 @@ namespace chaos {
                                                                                       const std::string& action_name,
                                                                                       chaos::common::data::CDataWrapper *request_pack,
                                                                                       int32_t request_timeout = 1000);
-
+                
             };
         }
     }

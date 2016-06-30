@@ -194,6 +194,10 @@ const string& AbstractControlUnit::getCUParam() {
     return control_unit_param;
 }
 
+const std::string& AbstractControlUnit::getCUType() {
+    return control_unit_type;
+}
+
 /*
  fill the CDataWrapper with AbstractCU system configuration, this method
  is called after getStartConfiguration directly by sandbox. in this method

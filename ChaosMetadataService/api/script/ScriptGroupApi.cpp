@@ -24,6 +24,7 @@
 #include "ScriptGroupApi.h"
 #include "LoadFullScript.h"
 #include "ManageScriptInstance.h"
+#include "ExecutionPoolHeartbeat.h"
 #include "SearchInstancesForScript.h"
 
 using namespace chaos::metadata_service::api::script;
@@ -37,6 +38,7 @@ AbstractApiGroup("script"){
     addApi<SearchScript>();
     addApi<LoadFullScript>();
     addApi<ManageScriptInstance>();
+    addApi<ExecutionPoolHeartbeat>();
     addApi<SearchInstancesForScript>();
 }
 

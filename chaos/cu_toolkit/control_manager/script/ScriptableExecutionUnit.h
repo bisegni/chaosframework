@@ -27,9 +27,6 @@
 #include <chaos/cu_toolkit/control_manager/script/EUScriptableWrapper.h>
 #include <chaos/cu_toolkit/control_manager/AbstractExecutionUnit.h>
 
-#define SEU_SCRIPT_LANGUAGE     "script_language"
-#define SEU_SCRIPT_CONTENT      "script_content"
-
 namespace chaos {
     namespace cu {
         namespace control_manager {

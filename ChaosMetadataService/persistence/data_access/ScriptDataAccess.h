@@ -114,6 +114,7 @@ namespace chaos {
                      */
                     virtual int getScriptForExecutionPoolPathList(const ChaosStringVector& pool_path,
                                                                   std::vector<chaos::service_common::data::script::ScriptBaseDescription>& script_found,
+                                                                  uint64_t last_sequence_id = 0,
                                                                   uint32_t max_result = 10) = 0;
                     
                     //!Return all unscheduled instance for the script
@@ -137,6 +138,18 @@ namespace chaos {
                     virtual int reserveInstanceForScheduling(const std::string& instance_uid,
                                                              const std::string& unit_server_parent,
                                                              uint32_t timeout) = 0;
+                    
+                    //!copy the script dataset to an his instance
+                    /*!
+                     this is done because during the script load operation we need to ensure that meanwhile script is runinng, if
+                     the script is modified in his dataset or content, the instance doens't need to have problem. So instance will have
+                     a snapshop of script dataset at the load moment. API Check if the instance belogn to the script so it is
+                     safe.
+                     \param script, the base information that permit to find a script
+                     \param script_instance the instance connected to the script
+                     */
+                    virtual int copyScriptDatasetAndContentToInstance(const chaos::service_common::data::script::ScriptBaseDescription& script,
+                                                            const std::string& script_instance) = 0;
                     
                     //! make an heartbeat on the instance
                     /*!

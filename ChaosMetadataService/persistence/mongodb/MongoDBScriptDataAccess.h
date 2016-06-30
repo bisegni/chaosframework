@@ -94,6 +94,7 @@ namespace chaos {
                     //! Inherited Method
                     int getScriptForExecutionPoolPathList(const ChaosStringVector& pool_path,
                                                           std::vector<chaos::service_common::data::script::ScriptBaseDescription>& script_found,
+                                                          uint64_t last_sequence_id = 0,
                                                           uint32_t max_result = 10);
                     
                     //! Inherited Method
@@ -106,6 +107,10 @@ namespace chaos {
                     int reserveInstanceForScheduling(const std::string& instance_uid,
                                                      const std::string& unit_server_parent,
                                                      uint32_t timeout = 30000);
+                    
+                    //! Inherited Method
+                    int copyScriptDatasetAndContentToInstance(const chaos::service_common::data::script::ScriptBaseDescription& script,
+                                                              const std::string& script_instance);
                     
                     //! Inherited Method
                     int instanceForUnitServerHeartbeat(const ChaosStringVector& script_instance_list,

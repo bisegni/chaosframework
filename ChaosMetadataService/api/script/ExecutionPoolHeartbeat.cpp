@@ -62,8 +62,8 @@ chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper 
     
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -3)
     
-    if(api_data->hasKey("running_instance_list")) {
-        CHAOS_LASSERT_EXCEPTION(api_data->isVectorValue("running_instance_list"), ERR, -4, "The running instance list key need to be a vector");
+    if(api_data->hasKey(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST)) {
+        CHAOS_LASSERT_EXCEPTION(api_data->isVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LIST), ERR, -4, "The running instance list key need to be a vector");
         
         std::auto_ptr<CMultiTypeDataArrayWrapper> array(api_data->getVectorValue("running_instance_list"));
         for(int idx = 0;
@@ -75,18 +75,18 @@ chaos::common::data::CDataWrapper *ExecutionPoolHeartbeat::execute(CDataWrapper 
         //fire the heartbeat on the instance list
         if((err = s_da->instanceForUnitServerHeartbeat(running_script_instance_list,
                                                        us_uid,
-                                                       TimingUtil::getTimeStamp()))){
+                                                       30000))){
             LOG_AND_TROW_FORMATTED(ERR, err, "Error during heartbeating peration for running script on unit server %1%", %us_uid);
         }
     }
     
-    if(api_data->hasKey("ep_pool_list")) {
-        CHAOS_LASSERT_EXCEPTION(api_data->isVectorValue("ep_pool_list"), ERR, -6, "The execution pool list key need to be a vector");
+    if(api_data->hasKey(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST)) {
+        CHAOS_LASSERT_EXCEPTION(api_data->isVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST), ERR, -6, "The execution pool list key need to be a vector");
                 //all is gone weel
         std::auto_ptr<CDataWrapper> batch_data(new CDataWrapper());
         //copy to batch data unit server name and pool list
         batch_data->addStringValue(chaos::NodeDefinitionKey::NODE_PARENT, us_uid);
-        batch_data->copyKeyTo("ep_pool_list", *batch_data);
+        api_data->copyKeyTo(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST, *batch_data);
         
         //load operation is done in the batch system
         getBatchExecutor()->submitCommand(GET_MDS_COMMAND_ALIAS(batch::script::LoadInstanceOnUnitServer),

@@ -1849,6 +1849,9 @@
 		32A116541D128B9C00FF44ED /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
 		32A116AB1D181D2500FF44ED /* ExecutionPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutionPool.cpp; sourceTree = "<group>"; };
 		32A116AC1D181D2500FF44ED /* ExecutionPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutionPool.h; sourceTree = "<group>"; };
+		32A116B01D25296C00FF44ED /* control_manager_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = control_manager_constants.h; sourceTree = "<group>"; };
+		32A116B41D2529DB00FF44ED /* execution_pool_constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = execution_pool_constants.h; sourceTree = "<group>"; };
+		32A116B81D25596A00FF44ED /* script_batch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = script_batch.h; sourceTree = "<group>"; };
 		32A13EB61C2014170010F3FC /* Delete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
 		32A13EB71C2014170010F3FC /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delete.h; sourceTree = "<group>"; };
 		32A13EBA1C2016C60010F3FC /* Delete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Delete.cpp; sourceTree = "<group>"; };
@@ -2993,6 +2996,7 @@
 			children = (
 				325963961D216BD800D94853 /* LoadInstanceOnUnitServer.cpp */,
 				325963971D216BD800D94853 /* LoadInstanceOnUnitServer.h */,
+				32A116B81D25596A00FF44ED /* script_batch.h */,
 			);
 			path = script;
 			sourceTree = "<group>";
@@ -3599,6 +3603,7 @@
 				32D72CA9197D196D00512B89 /* WorkUnitManagement.h */,
 				326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */,
 				326DB4A814B3A3E50018A8D0 /* ControlManager.h */,
+				32A116B01D25296C00FF44ED /* control_manager_constants.h */,
 			);
 			path = control_manager;
 			sourceTree = "<group>";
@@ -4013,6 +4018,7 @@
 			children = (
 				32A116AB1D181D2500FF44ED /* ExecutionPool.cpp */,
 				32A116AC1D181D2500FF44ED /* ExecutionPool.h */,
+				32A116B41D2529DB00FF44ED /* execution_pool_constants.h */,
 			);
 			path = execution_pool;
 			sourceTree = "<group>";
@@ -6274,8 +6280,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
-					"-levent",
 					"-lchaos_common",
+					"-ljsoncpp",
+					"-levent",
 					"-lmongoclient",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -6308,8 +6315,9 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
-					"-levent",
 					"-lchaos_common",
+					"-ljsoncpp",
+					"-levent",
 					"-lmongoclient",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

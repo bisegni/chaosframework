@@ -23,7 +23,7 @@
 #define __CHAOSFramework_AE318A9D_3558_4D57_95E0_C12899F43BD9_LoadInstanceOnUnitServer_h
 
 #include "../mds_service_batch.h"
-
+#include "../../../chaos_service_common/data/data.h"
 #include <memory>
 namespace chaos {
     namespace metadata_service{
@@ -35,10 +35,33 @@ namespace chaos {
                 public metadata_service::batch::MDSBatchCommand {
                     DECLARE_MDS_COMMAND_ALIAS
                     
+                    typedef enum SearchScriptPhase {
+                        SearchScriptPhaseLoadScriptPage,
+                        SearchScriptPhaseLoadInstancePage,
+                        SearchScriptPhaseConsumeInstance
+                    } SearchScriptPhase;
+                    
+                    typedef enum InstanceWorkPhase {
+                        InstanceWorkPhasePrepare,
+                        InstanceWorkPhaseLoadOnServer
+                    } InstanceWorkPhase;
+                    
                     std::string unit_server;
+                    std::string unit_server_rpc_addr;
+                    
                     ChaosStringVector epool_list;
                     std::auto_ptr<RequestInfo> request;
                     std::auto_ptr<CDataWrapper> load_unload_pack;
+                    
+                    uint64_t                last_sequence_id;
+                    SearchScriptPhase       search_script_phase;
+                    InstanceWorkPhase       instance_work_phase;
+                    
+                    uint32_t current_script_idx;
+                    uint32_t current_instance_idx;
+                    
+                    ChaosStringVector current_instance_page;
+                    std::vector<chaos::service_common::data::script::ScriptBaseDescription> current_script_page;
                 public:
                     LoadInstanceOnUnitServer();
                     ~LoadInstanceOnUnitServer();
@@ -54,6 +77,21 @@ namespace chaos {
                     
                     // inherited method
                     bool timeoutHandler();
+                    
+                    //! try to prepare the messag efor load instance on server
+                    /*!
+                     \param current_instance is the name of the scrip instance that is a chaos node
+                     \ return true if operation is gone well, false if load of instance need to abort
+                     */
+                    bool prepareScriptInstance(const chaos::service_common::data::script::ScriptBaseDescription& current_script_description,
+                                               const std::string& current_instance_name);
+                    
+                    //! try to load curren tinstance on the unit server
+                    /*!
+                     \param current_instance is the name of the scrip instance that is a chaos node
+                     \ return true if operation is terminated, false if the opreation need more time
+                     */
+                    bool loadScriptInstance();
                 };
             }
         }

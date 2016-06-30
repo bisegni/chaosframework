@@ -24,6 +24,7 @@
 #include "../control_unit/IDSTControlUnitBatchCommand.h"
 #include "../../common/CUCommonUtility.h"
 
+
 using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::metadata_service::common;
@@ -36,75 +37,218 @@ using namespace chaos::metadata_service::batch::script;
 DEFINE_MDS_COMAMND_ALIAS(LoadInstanceOnUnitServer)
 
 LoadInstanceOnUnitServer::LoadInstanceOnUnitServer():
-MDSBatchCommand() {}
+MDSBatchCommand(),
+last_sequence_id(0){}
+
 LoadInstanceOnUnitServer::~LoadInstanceOnUnitServer() {}
 
 // inherited method
 void LoadInstanceOnUnitServer::setHandler(CDataWrapper *data) {
+    int err = 0;
     MDSBatchCommand::setHandler(data);
+    CDataWrapper *tmp_ptr = NULL;
     CHECK_CDW_THROW_AND_LOG(data, ERR, -1, "No parameter found");
     
     CHECK_KEY_THROW_AND_LOG(data, chaos::NodeDefinitionKey::NODE_PARENT, ERR, -2, "The node parent key for unit server is mandatory");
     CHAOS_LASSERT_EXCEPTION(data->isStringValue(chaos::NodeDefinitionKey::NODE_PARENT), ERR, -3, CHAOS_FORMAT("%1% key need to be a string with the unit server uid", %chaos::NodeDefinitionKey::NODE_PARENT));
     
-    CHECK_KEY_THROW_AND_LOG(data, "ep_pool_list", ERR, -4, "The execution pool list is mandatory");
-    CHAOS_LASSERT_EXCEPTION(data->isVectorValue("ep_pool_list"), ERR, -5, "ep_pool_list key need to be a vector with the execution pool list");
-
+    CHECK_KEY_THROW_AND_LOG(data, ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST, ERR, -4, "The execution pool list is mandatory");
+    CHAOS_LASSERT_EXCEPTION(data->isVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST), ERR, -5, "ep_pool_list key need to be a vector with the execution pool list");
+    
     unit_server = data->getStringValue(chaos::NodeDefinitionKey::NODE_PARENT);
-    std::auto_ptr<CMultiTypeDataArrayWrapper> array(data->getVectorValue("ep_pool_list"));
+    std::auto_ptr<CMultiTypeDataArrayWrapper> array(data->getVectorValue(ExecutionUnitNodeDefinitionKey::EXECUTION_POOL_LIST));
     for(int idx = 0;
         idx < array->size();
         idx++) {
         epool_list.push_back(array->getStringElementAtIndex(idx));
     }
     
-
+    err = getDataAccess<mds_data_access::UnitServerDataAccess>()->getDescription(unit_server, &tmp_ptr);
+    std::auto_ptr<CDataWrapper> unit_server_description(tmp_ptr);
+    if(err){
+        LOG_AND_TROW(ERR, err, "Error fetching unit server description");
+    }
     
+    if(unit_server_description.get() &&
+       unit_server_description->hasKey(NodeDefinitionKey::NODE_RPC_ADDR)) {
         //set the send command phase
-//    request = createRequest(us_address,
-//                            UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
-//                            (load?UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT:UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_UNLOAD_CONTROL_UNIT));
+        unit_server_rpc_addr = unit_server_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
+        search_script_phase = SearchScriptPhaseLoadScriptPage;
+    } else {
+        DBG << "we have no execution pool so we terminate the command here";
+        BC_END_RUNNIG_PROPERTY
+    }
 }
 
 // inherited method
 void LoadInstanceOnUnitServer::acquireHandler() {
-//    MDSBatchCommand::acquireHandler();
-//    switch(request->phase) {
-//        case MESSAGE_PHASE_UNSENT:{
-//            sendMessage(*request,
-//                        load_unload_pack.get());
-//            BC_END_RUNNIG_PROPERTY
-//            break;
-//        }
-//        case MESSAGE_PHASE_SENT:
-//        case MESSAGE_PHASE_COMPLETED:
-//        case MESSAGE_PHASE_TIMEOUT:
-//            break;
-//    }
+    int err = 0;
+    
+    switch(search_script_phase) {
+        case SearchScriptPhaseLoadScriptPage:
+            current_script_idx = 0;
+            //load next page
+            //get the script that are present into the pools
+            if((err = getDataAccess<mds_data_access::ScriptDataAccess>()->getScriptForExecutionPoolPathList(epool_list,
+                                                                                                            current_script_page,
+                                                                                                            last_sequence_id,
+                                                                                                            10))) {
+                LOG_AND_TROW(ERR, err, "Error fetching script page");
+            }
+            
+            //set the last sequnce id since now
+            if(current_script_page.size()) {
+                last_sequence_id = current_script_page[current_script_page.size()-1].unique_id;
+                
+                //change to the load instance per script phase
+                search_script_phase = SearchScriptPhaseLoadInstancePage;
+            } else {
+                //we have no had script so we finisch here
+                BC_END_RUNNIG_PROPERTY;
+                break;
+            }
+            
+            
+        case SearchScriptPhaseLoadInstancePage:
+            //load instance for script
+            current_instance_idx = 0;
+            if(current_script_idx < current_script_page.size()) {
+                if((err = getDataAccess<mds_data_access::ScriptDataAccess>()->getUnscheduledInstanceForJob(current_script_page[current_script_idx],
+                                                                                                           current_instance_page))) {
+                    LOG_AND_TROW(ERR, err, "Error fetching script page");
+                }
+                //set the last sequnce id since now
+                if(current_instance_page.size()) {
+                    //change to the load instance per script phase
+                    search_script_phase = SearchScriptPhaseConsumeInstance;
+                    instance_work_phase = InstanceWorkPhasePrepare;
+                } else {
+                    //we terminate here and we are doing another loop on same phase for check instance on the next script
+                    //go to next script
+                    current_script_idx++;
+                    break;
+                }
+            }else {
+                //we need to load another script page
+                search_script_phase = SearchScriptPhaseLoadScriptPage;
+                break;
+            }
+            
+            
+        case SearchScriptPhaseConsumeInstance:
+            //load instance for script
+            if(current_instance_idx < current_instance_page.size()) {
+                //we can work on current
+            } else {
+                //try to load more instances
+                search_script_phase = SearchScriptPhaseLoadInstancePage;
+            }
+            break;
+    }
 }
 
 // inherited method
 void LoadInstanceOnUnitServer::ccHandler() {
-//    MDSBatchCommand::ccHandler();
-//    switch(request->phase) {
-//        case MESSAGE_PHASE_UNSENT:
-//            break;
-//            
-//        case MESSAGE_PHASE_SENT:{
-//            manageRequestPhase(*request);
-//            break;
-//        }
-//            
-//        case MESSAGE_PHASE_COMPLETED:
-//        case MESSAGE_PHASE_TIMEOUT:{
-//            BC_END_RUNNIG_PROPERTY
-//            break;
-//        }
-//    }
+    switch(search_script_phase) {
+        case SearchScriptPhaseLoadScriptPage:
+            break;
+            
+            
+        case SearchScriptPhaseLoadInstancePage:
+            break;
+            
+            
+        case SearchScriptPhaseConsumeInstance: {
+            switch(instance_work_phase) {
+                case InstanceWorkPhasePrepare:
+                    if(prepareScriptInstance(current_script_page[current_script_idx],
+                                             current_instance_page[current_instance_idx])) {
+                        //we need to the laod phase
+                        instance_work_phase = InstanceWorkPhaseLoadOnServer;
+                    } else {
+                        //we need to work on another instance
+                        current_instance_idx++;
+                        search_script_phase = SearchScriptPhaseConsumeInstance;
+                        break;
+                    }
+                    break;
+                    
+                case InstanceWorkPhaseLoadOnServer:
+                    if(loadScriptInstance()){
+                        //load operation has terminated
+                        //we need to work on another instance
+                        current_instance_idx++;
+                        search_script_phase = SearchScriptPhaseConsumeInstance;
+                    } else {
+                        //load operation need more timing
+                    }
+                    break;
+            }
+            
+            break;
+        }
+    }
 }
 
 // inherited method
 bool LoadInstanceOnUnitServer::timeoutHandler() {
     bool result = MDSBatchCommand::timeoutHandler();
     return result;
+}
+
+bool LoadInstanceOnUnitServer::prepareScriptInstance(const chaos::service_common::data::script::ScriptBaseDescription& current_script_description,
+                                                     const std::string& current_instance_name) {
+    int err = 0;
+    
+    //first time we need to copy the script dataset into the instance
+    if((err = getDataAccess<mds_data_access::ScriptDataAccess>()->copyScriptDatasetAndContentToInstance(current_script_description,
+                                                                                                        current_instance_name))){
+        ERR << "We have had error copying script dataset to instance";
+        return true;
+    }
+    
+    //script is ever considered that it is in autoload
+    std::auto_ptr<CDataWrapper> autoload_pack = CUCommonUtility::prepareRequestPackForLoadControlUnit(current_instance_name,
+                                                                                                      getDataAccess<mds_data_access::ControlUnitDataAccess>());
+    if(autoload_pack.get() == NULL){
+        ERR << "Error creating autoload datapack for:"<<current_instance_name;
+        return false;
+    }
+    //prepare auto init and autostart message into autoload pack
+    CUCommonUtility::prepareAutoInitAndStartInAutoLoadControlUnit(current_instance_name,
+                                                                  getDataAccess<mds_data_access::NodeDataAccess>(),
+                                                                  getDataAccess<mds_data_access::ControlUnitDataAccess>(),
+                                                                  getDataAccess<mds_data_access::DataServiceDataAccess>(),
+                                                                  autoload_pack.get());
+    
+    INFO << "Autoload control unit " << current_instance_name;
+    request = createRequest(unit_server_rpc_addr,
+                            UnitServerNodeDomainAndActionRPC::RPC_DOMAIN,
+                            UnitServerNodeDomainAndActionRPC::ACTION_UNIT_SERVER_LOAD_CONTROL_UNIT);
+    
+    return true;
+}
+
+bool LoadInstanceOnUnitServer::loadScriptInstance() {
+    bool result = false;
+    switch(request->phase) {
+        case MESSAGE_PHASE_UNSENT:{
+            sendMessage(*request,
+                        load_unload_pack.get());
+            result = true;
+            break;
+        }
+            
+        case MESSAGE_PHASE_SENT:{
+            manageRequestPhase(*request);
+            break;
+        }
+            
+        case MESSAGE_PHASE_COMPLETED:
+        case MESSAGE_PHASE_TIMEOUT:{
+            result = true;
+            break;
+        }
+    }
+    return true;
 }

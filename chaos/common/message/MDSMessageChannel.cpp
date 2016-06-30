@@ -252,24 +252,24 @@ std::auto_ptr<MultiAddressMessageRequestFuture> MDSMessageChannel::sendRequestWi
                                                                                          const std::string& action_name,
                                                                                          chaos::common::data::CDataWrapper *request_pack,
                                                                                          int32_t request_timeout) {
-    return sendRequestWithFuture(action_domain,
-                                 action_name,
-                                 request_pack,
-                                 request_timeout);
+    return MultiAddressMessageChannel::sendRequestWithFuture(action_domain,
+                                                             action_name,
+                                                             request_pack,
+                                                             request_timeout);
 }
 
-int MDSMessageChannel::sendMessage(const std::string& action_domain,
+void MDSMessageChannel::sendMessage(const std::string& action_domain,
                                    const std::string& action_name,
                                    chaos::common::data::CDataWrapper *request_pack) {
-    return sendMessage(action_domain,
-                       action_name,
-                       request_pack);
+    return MultiAddressMessageChannel::sendMessage(action_domain,
+                                                   action_name,
+                                                   request_pack);
 }
 
-int MDSMessageChannel::callMethod(const std::string& action_domain,
+void MDSMessageChannel::callMethod(const std::string& action_domain,
                                   const std::string& action_name) {
-    return sendMessage(action_domain,
-                       action_name,
-                       NULL);
+    return MultiAddressMessageChannel::sendMessage(action_domain,
+                                                   action_name,
+                                                   NULL);
 }
 

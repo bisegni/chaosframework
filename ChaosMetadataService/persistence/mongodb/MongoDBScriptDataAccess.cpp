@@ -27,6 +27,8 @@
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <json/json.h>
+
 using namespace chaos::common::data;
 using namespace chaos::common::utility;
 using namespace chaos::service_common::data::node;
@@ -337,6 +339,7 @@ int MongoDBScriptDataAccess::loadScript(const uint64_t unique_id,
 
 int MongoDBScriptDataAccess::getScriptForExecutionPoolPathList(const ChaosStringVector& pool_path,
                                                                std::vector<ScriptBaseDescription>& script_found,
+                                                               uint64_t last_sequence_id,
                                                                uint32_t max_result) {
     int err = 0;
     //given a list of execution pool path the list of the script is returned. Every script into the
@@ -348,7 +351,11 @@ int MongoDBScriptDataAccess::getScriptForExecutionPoolPathList(const ChaosString
         BOOST_FOREACH( std::string pool_path_element, pool_path ) {
             bson_find_in << pool_path_element;
         }
-        mongo::BSONObj q = BSON("execution_pool_list" << BSON("$in" << bson_find_in.arr()));
+        mongo::Query q = BSON("execution_pool_list" << BSON("$in" << bson_find_in.arr()) <<
+                              "seq" << BSON("$gt" << (long long)last_sequence_id));
+        //ordered by sequence
+        q = q.sort(BSON("seq"<< 1));
+        
         DEBUG_CODE(SDA_DBG<<log_message("getScriptForExecutionPoolPathList",
                                         "find",
                                         DATA_ACCESS_LOG_1_ENTRY("Query",
@@ -458,6 +465,89 @@ int MongoDBScriptDataAccess::reserveInstanceForScheduling(const std::string& ins
     return err;
 }
 
+int MongoDBScriptDataAccess::copyScriptDatasetAndContentToInstance(const chaos::service_common::data::script::ScriptBaseDescription& script,
+                                                                   const std::string& script_instance) {
+    int err = 0;
+    mongo::BSONObj script_found;
+    mongo::BSONObj instance_found;
+    
+    CHAOS_ASSERT(utility_data_access)
+    try {
+        mongo::BSONObj q = BSON("seq" << (long long)script.unique_id
+                                << CHAOS_SBD_NAME << script.name);
+        
+        DEBUG_CODE(SDA_DBG<<log_message("copyScriptDatasetToInstance",
+                                        "findOne[script]",
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                q));)
+        //inset on database new script description
+        if((err = connection->findOne(script_found,
+                                      MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                      q))) {
+            SDA_ERR << CHAOS_FORMAT("Error executin query for load script %1%[%2%] with error [%3%]", %script.unique_id%script.name%err);
+        } else {
+            if(script_found.isEmpty()) {
+                SDA_ERR << CHAOS_FORMAT("The script %1%[%2%] has not been found", %script.unique_id%script.name);
+            } else {
+                //check the dataset presence within th script
+                if(script_found.hasElement(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION) == false) {
+                    err = -100;
+                    SDA_ERR << "The script ans't any dataset configured";
+                } else {
+                    //now we need to search the instance and verify that it si conencted to the script so we need one query bson objet
+                    q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << script_instance <<
+                             chaos::NodeDefinitionKey::NODE_TYPE << chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT <<
+                             chaos::NodeDefinitionKey::NODE_GROUP_SET << script.name <<
+                             "script_seq" << (long long)script.unique_id);
+                    
+                    DEBUG_CODE(SDA_DBG<<log_message("copyScriptDatasetToInstance",
+                                                    "findOne[instance for script]",
+                                                    DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                            q));)
+                    
+                    if((err = connection->findOne(instance_found,
+                                                  MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                                  q))) {
+                        SDA_ERR << CHAOS_FORMAT("Error executin query for load instance %1% for script %2%[%3%] with error [%4%]", %script_instance%script.unique_id%script.name%err);
+                    } else {
+                        if(instance_found.isEmpty()) {
+                            SDA_ERR << CHAOS_FORMAT("The instance %1% for script %2%[%3%] has not been found", %script_instance%script.unique_id%script.name);
+                        } else {
+                            //now we can copy the dataset to the instance from his script
+                            mongo::BSONObjBuilder ub;
+                            
+                            //copy dataset
+                            ub.append(script_found.getField(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+                            
+                            //ccompose the laod parameter for describe the script language and content
+                            const std::string script_language = script_found.getField(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE).String();
+                            const std::string script_content = script_found.getField(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT).String();
+                            
+                            Json::Value script_load_parameter;
+                            script_load_parameter[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE] = script_language;
+                            script_load_parameter[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT] = script_content;
+                            ub.append(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, script_load_parameter.asCString());
+                            
+                            //copy dataset to update bson objet
+                            mongo::BSONObj u = ub.obj();
+                            
+                            DEBUG_CODE(SDA_DBG<<log_message("copyScriptDatasetToInstance",
+                                                            "update",
+                                                            DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                                    "Update",
+                                                                                    q,
+                                                                                    u));)
+                        }
+                    }
+                }
+            }
+        }
+    } catch (const mongo::DBException &e) {
+        SDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
 
 int MongoDBScriptDataAccess::instanceForUnitServerHeartbeat(const ChaosStringVector& script_instance_list,
                                                             const std::string& unit_server_parent,
