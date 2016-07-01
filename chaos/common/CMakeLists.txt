@@ -203,7 +203,7 @@ SET(common_lib_src ${common_lib_src}
         script/AbstractScriptableClass.cpp)
 
 #compile lua chaos vm and core files
-INCLUDE_DIRECTORIES(script/lua/core chaos/common)
+INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_logging ../../)
 FILE(GLOB LuaCoreSource script/lua/core/*.c)
 SET(common_lib_src ${common_lib_src}
 	script/lua/LuaScriptVM.cpp
@@ -213,8 +213,8 @@ IF (NOT DEFINED BUILD_FORCE_STATIC)
 
 ENDIF ()
 
-SET(common_lib_library $ENV{CHAOS_LINK_LIBRARY})
-separate_arguments(common_lib_library)
+#SET(common_lib_library $ENV{CHAOS_LINK_LIBRARY})
+# separate_arguments(common_lib_library)
 
 IF (BUILD_FORCE_STATIC)
     ADD_LIBRARY(chaos_common STATIC ${common_lib_src})
@@ -225,7 +225,7 @@ ENDIF ()
 #SET_TARGET_PROPERTIES(chaos_common_static PROPERTIES OUTPUT_NAME chaos_common)
 
 #set_target_properties(chaos_common PROPERTIES VERSION 1.0.0 SOVERSION 1)
-TARGET_LINK_LIBRARIES(chaos_common ${common_lib_library})
+TARGET_LINK_LIBRARIES(chaos_common ${FrameworkLib})
 
 
 FILE(GLOB files "*.h")

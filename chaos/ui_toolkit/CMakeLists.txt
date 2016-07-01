@@ -1,3 +1,4 @@
+INCLUDE_DIRECTORIES(chaos/ui_toolkit ../../)
 SET(ui_lib_src ChaosUIToolkit.cpp ChaosUIToolkitCWrapper.cc
 				HighLevelApi/DeviceController.cpp HighLevelApi/HLDataApi.cpp
 				HighLevelApi/HLInfrastructureApi.cpp LowLevelApi/LLDataApi.cpp LowLevelApi/LLRpcApi.cpp)

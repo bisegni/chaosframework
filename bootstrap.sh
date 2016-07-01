@@ -65,9 +65,18 @@ if [ ! -n "$COUCHBASE_VERSION" ]; then
     COUCHBASE_VERSION=2.4.6
 fi;
 
+if [ -z "CXXFLAGS" ];then
+    export CXXFLAGS="-DCHAOS -fPIC"
+fi
+if [ -z "CFLAGS" ];then
+    export CFLAGS="-DCHAOS -fPIC"
+fi
+
+
 #####
 if [ -e $CHAOS_BUNDLE/tools/common_util.sh ];then
     source $CHAOS_BUNDLE/tools/common_util.sh
+    NO_MONGOOSE="TRUE"
 else
     OS=`uname -s`
     ARCH=`uname -m`
@@ -83,6 +92,7 @@ else
     CHAOS_DIR=$CHAOS_BUNDLE
     if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ] && [ $KERNEL_SHORT_VER -ge 1300 ] && [ ! -n "$CROSS_HOST" ]; then
 	echo "Use standard CLIB with clang"
+	
 	export CHAOS_CMAKE_FLAGS="$CHAOS_CMAKE_FLAGS -DCMAKE_CXX_FLAGS=-stdlib=libstdc++ $CHAOS_COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$CHAOS_PREFIX"
 	export CC=clang
 	export CXX="clang++"
@@ -94,6 +104,7 @@ else
 	export LMEM_VERSION=1.0.18
 	export CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++"
     fi
+
 fi
 
 
@@ -398,38 +409,39 @@ if [ ! -f $PREFIX/include/json/json.h ]; then
     # else
     # 	CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF -DJSONCPP_LIB_BUILD_SHARED=ON
     # fi
-    CXX=$CXX cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF
+    CXX=$CXX cmake $CHAOS_CMAKE_FLAGS" cxxflags=-fPIC" -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF
     do_make "jsoncpp" 1
 fi
 
 ## mongoose install
-if [ ! -f $PREFIX/include/mongoose.h ]; then
-    echo "* need mongoose"
-    if [ ! -f $BASE_EXTERNAL/mongoose-cpp/mongoose.h ]; then
-		  if !(git clone https://github.com/bisegni/mongoose-cpp.git $BASE_EXTERNAL/mongoose-cpp) ; then
-			  echo "## cannot checkout moongoose-cpp"
-			  exit 1
-		  else
-        cd $BASE_EXTERNAL/mongoose-cpp
-        git checkout -b chaos_master origin/chaos_master
-      fi
-    else
-      cd $BASE_EXTERNAL/mongoose-cpp
+if [ -z "$NO_MONGOOSE" ];then
+    if [ ! -f $PREFIX/include/mongoose.h ]; then
+	echo "* need mongoose"
+	if [ ! -f $BASE_EXTERNAL/mongoose-cpp/mongoose.h ]; then
+	    if !(git clone https://github.com/bisegni/mongoose-cpp.git $BASE_EXTERNAL/mongoose-cpp) ; then
+		echo "## cannot checkout moongoose-cpp"
+		exit 1
+	    else
+		cd $BASE_EXTERNAL/mongoose-cpp
+		git checkout -b chaos_master origin/chaos_master
+	    fi
+	else
+	    cd $BASE_EXTERNAL/mongoose-cpp
       git pull
-    fi
-    rm CMakeCache.txt
-    make clean
-    CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
-# -DHAS_JSONCPP=ON
-   # if [ -n "$CHAOS_STATIC" ]; then
-   #     CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
-   # else
+	fi
+	rm CMakeCache.txt
+	make clean
+	cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
+	# -DHAS_JSONCPP=ON
+	# if [ -n "$CHAOS_STATIC" ]; then
+	#     CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
+	# else
    #     CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DSHAREDLIB=ON -DHAS_JSONCPP=ON -DJSONCPP_DIR=$PREFIX
-   # fi
-
+	# fi
+	
 	do_make "mongoose-cpp" 1
+    fi
 fi
-
 ##
 
 if [ ! -d "$PREFIX/include/boost" ]; then

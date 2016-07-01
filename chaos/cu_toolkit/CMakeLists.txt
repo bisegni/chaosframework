@@ -1,3 +1,4 @@
+INCLUDE_DIRECTORIES(chaos/cu_toolkit ../../)
 SET(cu_lib_src
     ChaosCUToolkit.cpp
     command_manager/CommandManager.cpp)
