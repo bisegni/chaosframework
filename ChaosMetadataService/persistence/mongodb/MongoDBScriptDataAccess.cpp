@@ -107,7 +107,7 @@ int MongoDBScriptDataAccess::updateScript(Script& script) {
     CHAOS_ASSERT(utility_data_access)
     try {
         mongo::BSONObj q = BSON("seq"<< (long long)script.script_description.unique_id <<
-                                chaos::NodeDefinitionKey::NODE_UNIQUE_ID << script.script_description.name);
+                                CHAOS_SBD_NAME << script.script_description.name);
         
         //compose bson update
         CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::script::Script, s_dw);
@@ -115,7 +115,6 @@ int MongoDBScriptDataAccess::updateScript(Script& script) {
         
         std::auto_ptr<CDataWrapper> serialization = s_dw.serialize();
         mongo::BSONObj u(serialization->getBSONRawData(size));
-        
         DEBUG_CODE(SDA_DBG<<log_message("updateScriptContent",
                                         "update",
                                         DATA_ACCESS_LOG_2_ENTRY("Query",
@@ -335,7 +334,42 @@ int MongoDBScriptDataAccess::loadScript(const uint64_t unique_id,
     return err;
 }
 
-
+int MongoDBScriptDataAccess::deleteScript(const uint64_t unique_id,
+                                          const std::string& name) {
+    int err = 0;
+    mongo::BSONObj element_found;
+    CHAOS_ASSERT(utility_data_access)
+    try {
+        mongo::BSONObj q_script = BSON("seq" << (long long)unique_id
+                                       << CHAOS_SBD_NAME << name);
+        mongo::BSONObj q_instance = BSON("script_seq" << (long long)unique_id
+                                         << chaos::NodeDefinitionKey::NODE_GROUP_SET << name);
+        DEBUG_CODE(SDA_DBG<<log_message("deleteScript",
+                                        "remove[instance]",
+                                        DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                q_instance));)
+        //inset on database new script description
+        if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                      q_instance))) {
+            SDA_ERR << CHAOS_FORMAT("Error removing instance for script %1%[%2%] with error [%3%]", %unique_id%name%err);
+        } else {
+            DEBUG_CODE(SDA_DBG<<log_message("deleteScript",
+                                            "remove[script]",
+                                            DATA_ACCESS_LOG_1_ENTRY("Query",
+                                                                    q_script));)
+            //inset on database new script description
+            if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                         q_script))) {
+                SDA_ERR << CHAOS_FORMAT("Error removing script %1%[%2%] with error [%3%]", %unique_id%name%err);
+            }
+        }
+        
+    } catch (const mongo::DBException &e) {
+        SDA_ERR << e.what();
+        err = e.getCode();
+    }
+    return err;
+}
 
 int MongoDBScriptDataAccess::getScriptForExecutionPoolPathList(const ChaosStringVector& pool_path,
                                                                std::vector<ScriptBaseDescription>& script_found,
@@ -390,17 +424,23 @@ int MongoDBScriptDataAccess::getUnscheduledInstanceForJob(const chaos::service_c
     int err = 0;
     SearchResult paged_result;
     mongo::BSONArrayBuilder bson_find_and;
+    mongo::BSONArrayBuilder bson_find_hb_or;
     CHAOS_ASSERT(utility_data_access)
     try {
         //calucate the millisecond that we want to consider timeout
         mongo::Date_t start_timeout_date(TimingUtil::getTimeStamp() - timeout);
-        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << script.name);
-        bson_find_and << BSON("seq" << (long long)script.unique_id);
-        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << true << "$lt" << start_timeout_date));
+        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_GROUP_SET << script.name);
+        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_TYPE << chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT);
+        bson_find_and << BSON("script_seq" << (long long)script.unique_id);
+        
+        bson_find_hb_or << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << true << "$lt" << start_timeout_date));
+        bson_find_hb_or << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << false));
+        bson_find_and << BSON("$or" << bson_find_hb_or.arr());
+        
         mongo::BSONObj q = BSON("$and" << bson_find_and.arr());
         
         DEBUG_CODE(SDA_DBG<<log_message("instanceHeartbeat",
-                                        "update",
+                                        "findN",
                                         DATA_ACCESS_LOG_1_ENTRY("Query",
                                                                 q));)
         //inset on database new script description
@@ -422,7 +462,8 @@ int MongoDBScriptDataAccess::getUnscheduledInstanceForJob(const chaos::service_c
 }
 
 
-int MongoDBScriptDataAccess::reserveInstanceForScheduling(const std::string& instance_uid,
+int MongoDBScriptDataAccess::reserveInstanceForScheduling(bool& reserverd,
+                                                          const std::string& instance_uid,
                                                           const std::string& unit_server_parent,
                                                           uint32_t timeout) {
     int err = 0;
@@ -433,19 +474,22 @@ int MongoDBScriptDataAccess::reserveInstanceForScheduling(const std::string& ins
     mongo::BSONArrayBuilder bson_find_hb_or;
     CHAOS_ASSERT(utility_data_access)
     try {
+        reserverd = false;
+        
         //unique id rule
         bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << instance_uid);
         
         //timeout rule
         uint64_t now = TimingUtil::getTimeStamp();
-        mongo::Date_t start_timeout_date(now - timeout);
+        mongo::Date_t start_timeout_date(now + timeout); //date need to be in the future because we need to reserve it
         bson_find_hb_or << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << true << "$lt" << start_timeout_date));
         bson_find_hb_or << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << false));
         bson_find_and << BSON("$or" << bson_find_hb_or.arr());
         
         mongo::BSONObj q = BSON("$and" << bson_find_and.arr());
         //the reservation is done using updateing the heartbeat and unit server alias
-        mongo::BSONObj u = BSON("$set" << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << mongo::Date_t(now)));
+        mongo::BSONObj u = BSON("$set" << BSON(CHAOS_FORMAT("instance_description.%1%",%chaos::NodeDefinitionKey::NODE_PARENT) << unit_server_parent <<
+                                               chaos::NodeDefinitionKey::NODE_TIMESTAMP << mongo::Date_t(now)));
         
         DEBUG_CODE(SDA_DBG<<log_message("instanceHeartbeat",
                                         "update",
@@ -457,6 +501,8 @@ int MongoDBScriptDataAccess::reserveInstanceForScheduling(const std::string& ins
                                             q,
                                             u))){
             SDA_ERR << CHAOS_FORMAT("Error executin reservation on script instance %1% with error %2%", %instance_uid%err);
+        } else {
+            reserverd = (result.isEmpty() == false);
         }
     } catch (const mongo::DBException &e) {
         SDA_ERR << e.what();
@@ -506,12 +552,12 @@ int MongoDBScriptDataAccess::copyScriptDatasetAndContentToInstance(const chaos::
                                                                             q));)
                     
                     if((err = connection->findOne(instance_found,
-                                                  MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+                                                  MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                                   q))) {
                         SDA_ERR << CHAOS_FORMAT("Error executin query for load instance %1% for script %2%[%3%] with error [%4%]", %script_instance%script.unique_id%script.name%err);
                     } else {
                         if(instance_found.isEmpty()) {
-                            SDA_ERR << CHAOS_FORMAT("The instance %1% for script %2%[%3%] has not been found", %script_instance%script.unique_id%script.name);
+                            SDA_ERR << CHAOS_FORMAT("The instance %1% for script %2%[%3%] has not been found", %script.name%script_instance%script.unique_id);
                         } else {
                             //now we can copy the dataset to the instance from his script
                             mongo::BSONObjBuilder ub;
@@ -523,13 +569,14 @@ int MongoDBScriptDataAccess::copyScriptDatasetAndContentToInstance(const chaos::
                             const std::string script_language = script_found.getField(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE).String();
                             const std::string script_content = script_found.getField(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT).String();
                             
+                            Json::FastWriter fast_writer;
                             Json::Value script_load_parameter;
                             script_load_parameter[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE] = script_language;
                             script_load_parameter[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT] = script_content;
-                            ub.append(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, script_load_parameter.asCString());
+                            ub.append(CHAOS_FORMAT("instance_description.%1%",%ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM), fast_writer.write(script_load_parameter));
                             
                             //copy dataset to update bson objet
-                            mongo::BSONObj u = ub.obj();
+                            mongo::BSONObj u = BSON("$set" << ub.obj());
                             
                             DEBUG_CODE(SDA_DBG<<log_message("copyScriptDatasetToInstance",
                                                             "update",
@@ -537,6 +584,11 @@ int MongoDBScriptDataAccess::copyScriptDatasetAndContentToInstance(const chaos::
                                                                                     "Update",
                                                                                     q,
                                                                                     u));)
+                            if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
+                                                         q,
+                                                         u))){
+                                SDA_ERR << CHAOS_FORMAT("Error updating instance %1% for script %2%[%3%] with error [%4%]", %script_instance%script.unique_id%script.name%err);
+                            }
                         }
                     }
                 }

@@ -92,6 +92,10 @@ namespace chaos {
                                    bool load_source_code = false);
                     
                     //! Inherited Method
+                    int deleteScript(const uint64_t unique_id,
+                                     const std::string& name);
+                    
+                    //! Inherited Method
                     int getScriptForExecutionPoolPathList(const ChaosStringVector& pool_path,
                                                           std::vector<chaos::service_common::data::script::ScriptBaseDescription>& script_found,
                                                           uint64_t last_sequence_id = 0,
@@ -104,7 +108,8 @@ namespace chaos {
                                                      uint32_t max_result = 10);
                     
                     //! Inherited Method
-                    int reserveInstanceForScheduling(const std::string& instance_uid,
+                    int reserveInstanceForScheduling(bool& reserverd,
+                                                     const std::string& instance_uid,
                                                      const std::string& unit_server_parent,
                                                      uint32_t timeout = 30000);
                     

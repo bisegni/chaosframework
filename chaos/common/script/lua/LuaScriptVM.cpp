@@ -168,7 +168,6 @@ void LuaScriptVM::init(void *init_data) throw(chaos::CException) {
     luaopen_os(ls);
     luaopen_base(ls);
     luaopen_math(ls);
-    luaopen_bit32(ls);
     luaopen_table(ls);
     luaopen_string(ls);
     
@@ -198,9 +197,13 @@ void LuaScriptVM::deallocationOf(ChaosLuaWrapperInterface *deallocatedClass) {
 
 int LuaScriptVM::loadScript(const std::string& loadable_script) {
     int err = 0;
+    //load script
     if((err = luaL_loadstring(ls, loadable_script.c_str()))){
         LSVM_ERR << CHAOS_FORMAT("Error %1% loading script", %lua_tostring(ls, -1));
-    } else if((err = (lua_pcall(ls, 0, 0, 0)))){
+    }
+    
+    //compile script
+    if((err = (lua_pcall(ls, 0, 0, 0)))){
         LSVM_ERR << CHAOS_FORMAT("Error %1% compiling script", %lua_tostring(ls, -1));
     }
     return err;
@@ -210,7 +213,6 @@ int LuaScriptVM::callFunction(const std::string& function_name,
                               const ScriptInParam& input_parameter,
                               ScriptOutParam& output_parameter) {
     int err = 0;
-    int result_element = 0;
     // push functions and arguments
     lua_getglobal(ls, function_name.c_str());
     
@@ -247,42 +249,80 @@ int LuaScriptVM::callFunction(const std::string& function_name,
     // do the call (2 arguments, 1 result)
     if ((err = lua_pcall(ls,
                          (int)input_parameter.size(),
-                         LUA_MULTRET,
-                         0) != 0)) {
+                         0,
+                         1) != 0)) {
         LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %lua_tostring(ls, -1)%function_name);
     } else {
-        result_element = lua_gettop(ls);
+        //result_element = lua_gettop(ls);
         //execution as gone well, we can get the expected result
-        for(int idx = 0;
-            idx < result_element;
-            idx++) {
-            switch(lua_type(ls, -1)){
-                case LUA_TSTRING:
-                    output_parameter.push_back(CDataVariant(lua_tostring(ls, -1)));
-                    break;
-                case LUA_TNUMBER:
-                    if(lua_isinteger(ls, -1)){
-                        output_parameter.push_back(CDataVariant((int64_t)lua_tointeger(ls, -1)));
-                    } else if (lua_isnumber(ls, -1)) {
-                        output_parameter.push_back(CDataVariant(lua_isnumber(ls, -1)));
-                    }
-                    break;
-                case LUA_TBOOLEAN:
-                    output_parameter.push_back(CDataVariant(lua_toboolean(ls, -1)));
-                    break;
-                default:
-                    break;
-            }
-            lua_pop(ls, 1);
+        //        for(int idx = 0;
+        //            idx < result_element;
+        //            idx++) {
+        switch(lua_type(ls, -1)){
+            case LUA_TSTRING:
+                output_parameter.push_back(CDataVariant(lua_tostring(ls, -1)));
+                break;
+            case LUA_TNUMBER:
+                if(lua_isinteger(ls, -1)){
+                    output_parameter.push_back(CDataVariant((int64_t)lua_tointeger(ls, -1)));
+                } else if (lua_isnumber(ls, -1)) {
+                    output_parameter.push_back(CDataVariant(lua_isnumber(ls, -1)));
+                }
+                break;
+            case LUA_TBOOLEAN:
+                output_parameter.push_back(CDataVariant(lua_toboolean(ls, -1)));
+                break;
+            default:
+                break;
         }
+        lua_pop(ls, 1);
+        //        }
     }
     return err;
 }
 
-int LuaScriptVM::callFunction(const std::string& function_name,
-                              ScriptOutParam& output_parameter) {
-    ScriptInParam input_parameter;
-    return callFunction(function_name,
-                        input_parameter,
-                        output_parameter);
+int LuaScriptVM::callProcedure(const std::string& function_name,
+                               const ScriptInParam& input_parameter) {
+    int err = 0;
+    // push functions and arguments
+    lua_getglobal(ls, function_name.c_str());
+    
+    for(ScriptInParamConstIterator it = input_parameter.begin(),
+        end = input_parameter.end();
+        it != end;
+        it++) {
+        switch(it->getType()) {
+            case DataType::TYPE_BOOLEAN:
+                lua_pushboolean(ls, it->asBool());
+                break;
+            case DataType::TYPE_INT32:
+                lua_pushinteger(ls, it->asInt32());
+                break;
+            case DataType::TYPE_INT64:
+                lua_pushinteger(ls, it->asInt64());
+                break;
+            case DataType::TYPE_DOUBLE:
+                lua_pushnumber(ls, it->asDouble());
+                break;
+            case DataType::TYPE_STRING:
+                lua_pushstring(ls, it->asString().c_str());
+                break;
+            case DataType::TYPE_BYTEARRAY:{
+                const CDataBuffer *buf = it->asCDataBuffer();
+                lua_pushlstring(ls, buf->getBuffer(), buf->getBufferSize());
+                break;
+            }
+            default:
+                break;
+        }
+    }
+    
+    // do the call (2 arguments, 1 result)
+    if ((err = lua_pcall(ls,
+                         (int)input_parameter.size(),
+                         0,
+                         0) != 0)) {
+        LSVM_ERR << CHAOS_FORMAT("Error %1% calling script function %2%", %lua_tostring(ls, -1)%function_name);
+    }
+    return err;
 }

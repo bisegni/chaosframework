@@ -106,6 +106,15 @@ namespace chaos {
                                            chaos::service_common::data::script::Script& script,
                                            bool load_source_code = false) = 0;
                     
+                    //!Delete ascript and all instance related
+                    /*!
+                     \param script_base_description the base infromation to retrieve the script
+                     \param script the script strucutre filled with all script infromation
+                     */
+                    virtual int deleteScript(const uint64_t unique_id,
+                                             const std::string& name) = 0;
+                    
+                    
                     //!Return script associated to the execution pool list
                     /*!
                      \param pool_path a list of pool path
@@ -135,7 +144,8 @@ namespace chaos {
                      \param unit_server_parent is the unit server that wish to reserve that instance
                      \param timeout the amount of milliseconds after wich an isntance is consider in timeout
                      */
-                    virtual int reserveInstanceForScheduling(const std::string& instance_uid,
+                    virtual int reserveInstanceForScheduling(bool& reserverd,
+                                                             const std::string& instance_uid,
                                                              const std::string& unit_server_parent,
                                                              uint32_t timeout) = 0;
                     

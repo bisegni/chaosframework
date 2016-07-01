@@ -118,12 +118,6 @@ void ControlManager::init(void *initParameter) throw(CException) {
         
         unit_server_alias = GlobalConfiguration::getInstance()->getOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
         
-        //initilize exectuion pool manager
-        if(use_execution_pools) {
-            exectuion_pool_manager.reset(new chaos::cu::control_manager::execution_pool::ExecutionPoolManager(), "ExecutionPoolManager");
-            exectuion_pool_manager.init(NULL, __PRETTY_FUNCTION__);
-        }
-        
         //init CU action
         actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
                                                                                        &ControlManager::loadControlUnit,
@@ -744,6 +738,12 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
                     HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
                                                                     NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                                     NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
+                    
+                    //now we can start the execution pool manager becuase our unit server has ben successfully registered on the mds
+                    if(use_execution_pools) {
+                        exectuion_pool_manager.reset(new chaos::cu::control_manager::execution_pool::ExecutionPoolManager(), "ExecutionPoolManager");
+                        exectuion_pool_manager.init(NULL, __PRETTY_FUNCTION__);
+                    }
                 } else {
                     LCMERR_ << "Registration ACK received,bad  SM state "<<(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()));
                     throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for published event", __PRETTY_FUNCTION__);

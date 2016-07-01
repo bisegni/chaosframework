@@ -74,10 +74,14 @@ void LoadInstanceOnUnitServer::setHandler(CDataWrapper *data) {
         //set the send command phase
         unit_server_rpc_addr = unit_server_description->getStringValue(NodeDefinitionKey::NODE_RPC_ADDR);
         search_script_phase = SearchScriptPhaseLoadScriptPage;
+        BC_NORMAL_RUNNIG_PROPERTY
     } else {
         DBG << "we have no execution pool so we terminate the command here";
         BC_END_RUNNIG_PROPERTY
     }
+    
+    //for debug
+    setFeatures(::chaos::common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)1000000000);
 }
 
 // inherited method
@@ -87,6 +91,7 @@ void LoadInstanceOnUnitServer::acquireHandler() {
     switch(search_script_phase) {
         case SearchScriptPhaseLoadScriptPage:
             current_script_idx = 0;
+            current_script_page.clear();
             //load next page
             //get the script that are present into the pools
             if((err = getDataAccess<mds_data_access::ScriptDataAccess>()->getScriptForExecutionPoolPathList(epool_list,
@@ -112,6 +117,7 @@ void LoadInstanceOnUnitServer::acquireHandler() {
         case SearchScriptPhaseLoadInstancePage:
             //load instance for script
             current_instance_idx = 0;
+            current_instance_page.clear();
             if(current_script_idx < current_script_page.size()) {
                 if((err = getDataAccess<mds_data_access::ScriptDataAccess>()->getUnscheduledInstanceForJob(current_script_page[current_script_idx],
                                                                                                            current_instance_page))) {
@@ -160,18 +166,38 @@ void LoadInstanceOnUnitServer::ccHandler() {
             
         case SearchScriptPhaseConsumeInstance: {
             switch(instance_work_phase) {
-                case InstanceWorkPhasePrepare:
-                    if(prepareScriptInstance(current_script_page[current_script_idx],
-                                             current_instance_page[current_instance_idx])) {
-                        //we need to the laod phase
-                        instance_work_phase = InstanceWorkPhaseLoadOnServer;
+                case InstanceWorkPhasePrepare: {
+                    int err = 0;
+                    bool reserved = false;
+                    //reserve the instance
+                    if((err = getDataAccess<mds_data_access::ScriptDataAccess>()->reserveInstanceForScheduling(reserved,
+                                                                                                               current_instance_page[current_instance_idx],
+                                                                                                               unit_server,
+                                                                                                               30000))){
+                        LOG_AND_TROW(ERR, err, CHAOS_FORMAT("Error reserving %1% instance",%current_instance_page[current_instance_idx]));
                     } else {
-                        //we need to work on another instance
-                        current_instance_idx++;
-                        search_script_phase = SearchScriptPhaseConsumeInstance;
-                        break;
+                        if(reserved == false) {
+                            //go to the next instance
+                            current_instance_idx++;
+                            search_script_phase = SearchScriptPhaseConsumeInstance;
+                            break;
+                            
+                        } else {
+                            //we have had success reserving the instance
+                            if(prepareScriptInstance(current_script_page[current_script_idx],
+                                                     current_instance_page[current_instance_idx])) {
+                                //we need to the laod phase
+                                instance_work_phase = InstanceWorkPhaseLoadOnServer;
+                            } else {
+                                //we need to work on another instance
+                                current_instance_idx++;
+                                search_script_phase = SearchScriptPhaseConsumeInstance;
+                                break;
+                            }
+                        }
                     }
-                    break;
+                    
+                }
                     
                 case InstanceWorkPhaseLoadOnServer:
                     if(loadScriptInstance()){
@@ -208,9 +234,9 @@ bool LoadInstanceOnUnitServer::prepareScriptInstance(const chaos::service_common
     }
     
     //script is ever considered that it is in autoload
-    std::auto_ptr<CDataWrapper> autoload_pack = CUCommonUtility::prepareRequestPackForLoadControlUnit(current_instance_name,
-                                                                                                      getDataAccess<mds_data_access::ControlUnitDataAccess>());
-    if(autoload_pack.get() == NULL){
+    load_datapack = CUCommonUtility::prepareRequestPackForLoadControlUnit(current_instance_name,
+                                                                          getDataAccess<mds_data_access::ControlUnitDataAccess>());
+    if(load_datapack.get() == NULL){
         ERR << "Error creating autoload datapack for:"<<current_instance_name;
         return false;
     }
@@ -219,7 +245,7 @@ bool LoadInstanceOnUnitServer::prepareScriptInstance(const chaos::service_common
                                                                   getDataAccess<mds_data_access::NodeDataAccess>(),
                                                                   getDataAccess<mds_data_access::ControlUnitDataAccess>(),
                                                                   getDataAccess<mds_data_access::DataServiceDataAccess>(),
-                                                                  autoload_pack.get());
+                                                                  load_datapack.get());
     
     INFO << "Autoload control unit " << current_instance_name;
     request = createRequest(unit_server_rpc_addr,
@@ -234,7 +260,7 @@ bool LoadInstanceOnUnitServer::loadScriptInstance() {
     switch(request->phase) {
         case MESSAGE_PHASE_UNSENT:{
             sendMessage(*request,
-                        load_unload_pack.get());
+                        load_datapack.get());
             result = true;
             break;
         }
@@ -250,5 +276,5 @@ bool LoadInstanceOnUnitServer::loadScriptInstance() {
             break;
         }
     }
-    return true;
+    return result;
 }
