@@ -76,6 +76,7 @@ void MongoDBPersistenceDriver::init(void *init_data) throw (chaos::CException) {
     getDataAccess<MongoDBUnitServerDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
     getDataAccess<MongoDBControlUnitDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
     getDataAccess<MongoDBDataServiceDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
+    getDataAccess<MongoDBScriptDataAccess>()->node_data_access = getDataAccess<MongoDBNodeDataAccess>();
 }
 
 void MongoDBPersistenceDriver::deinit() throw (chaos::CException) {

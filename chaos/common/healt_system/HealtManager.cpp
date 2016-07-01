@@ -60,12 +60,9 @@ HealtManager::HealtManager():
 mds_message_channel(NULL),
 last_fire_counter_set(0),
 current_fire_slot(0),
-user_time_computed(0),
-system_time_computed(0),
 last_usr_time(0),
 last_sys_time(0),
 last_total_time(0),
-last_process_swap(0),
 last_sampling_time(0){}
 
 HealtManager::~HealtManager() {
@@ -88,17 +85,17 @@ void HealtManager::updateProcInfo() {
        last_sampling_time) {
         uint64_t temp_ts = (sampling_time-last_sampling_time);
         if(temp_ts > 0) {
-            user_time_computed = 100*(local_usr_time-last_usr_time)/(double)temp_ts;
-            system_time_computed = 100*(local_sys_time-last_sys_time)/(double)temp_ts;
+            current_proc_info.usr_time = 100*(local_usr_time-last_usr_time)/(double)temp_ts;
+            current_proc_info.sys_time = 100*(local_sys_time-last_sys_time)/(double)temp_ts;
         }else {
-            user_time_computed = system_time_computed = 0;
+            current_proc_info.usr_time = current_proc_info.sys_time = 0;
         }
         
     }
     last_usr_time = local_usr_time;
     last_sys_time = local_sys_time;
     last_sampling_time = sampling_time;
-    last_process_swap = local_process_resurce_usage.ru_nswap;
+    current_proc_info.swap_rsrc = local_process_resurce_usage.ru_nswap;
 }
 
 
@@ -214,6 +211,10 @@ void HealtManager::deinit() throw (chaos::CException) {
         NetworkBroker::getInstance()->disposeMessageChannel(mds_message_channel);
         mds_message_channel = NULL;
     }
+}
+
+const ProcInfo& HealtManager::getLastProcInfo() {
+    return current_proc_info;
 }
 
 void HealtManager::addNewNode(const std::string& node_uid) {
@@ -423,11 +424,11 @@ CDataWrapper*  HealtManager::prepareNodeDataPack(HealtNodeElementMap& element_ma
         //set the push timestamp
         static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP].get())->value = push_timestamp;
         
-        static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP].get())->value = last_process_swap;
+        static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_SWAP].get())->value = current_proc_info.swap_rsrc;
 
-        static_cast<DoubleHealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_USER_TIME].get())->value = user_time_computed;
+        static_cast<DoubleHealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_USER_TIME].get())->value = current_proc_info.usr_time;
 
-        static_cast<DoubleHealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME].get())->value = system_time_computed;
+        static_cast<DoubleHealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME].get())->value = current_proc_info.sys_time;
         //get the uptime in seconds
         static_cast<Int64HealtMetric*>(element_map[NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME].get())->value = (push_timestamp - node_startup_ts)/1000;
         

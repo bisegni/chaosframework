@@ -48,8 +48,8 @@ namespace chaos {
                                          const ScriptInParam& input_parameter,
                                          ScriptOutParam& output_parameter) = 0;
                 
-                virtual int callFunction(const std::string& function_name,
-                                         ScriptOutParam& output_parameter) = 0;
+                virtual int callProcedure(const std::string& function_name,
+                                          const ScriptInParam& input_parameter) = 0;
             };
 
         }

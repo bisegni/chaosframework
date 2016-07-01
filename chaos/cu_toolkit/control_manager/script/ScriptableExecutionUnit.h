@@ -27,16 +27,13 @@
 #include <chaos/cu_toolkit/control_manager/script/EUScriptableWrapper.h>
 #include <chaos/cu_toolkit/control_manager/AbstractExecutionUnit.h>
 
-#define SEU_SCRIPT_LANGUAGE     "script_language"
-#define SEU_SCRIPT_CONTENT      "script_content"
-
 namespace chaos {
     namespace cu {
         namespace control_manager {
             namespace script {
                 
-#define SEU_DEFINE_DATASET  "defineDataset"
-#define SEU_ALGORITHM_STEP  "algorithmStep"
+#define SEU_ALGORITHM_SETUP     "algorithmSetup"
+#define SEU_ALGORITHM_STEP      "algorithmStep"
                 
                 //! this class implementa an execution unit defined by a script
                 /*!

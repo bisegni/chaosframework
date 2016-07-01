@@ -35,6 +35,8 @@ SET(cu_lib_src  ${cu_lib_src}
     control_manager/slow_command/command/SCWaitCommand.cpp
     control_manager/AttributeSharedCacheWrapper.cpp)
 
+SET(cu_lib_src  ${cu_lib_src}
+    control_manager/execution_pool/ExecutionPool.cpp)
 
 IF(BUILD_FORCE_STATIC)
 ADD_LIBRARY(chaos_cutoolkit STATIC ${cu_lib_src})

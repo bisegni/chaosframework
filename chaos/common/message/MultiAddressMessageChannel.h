@@ -34,35 +34,35 @@ namespace chaos {
             class NetworkBroker;
         }
         namespace message {
-
-                //!structure for the association with the feeder index and the node address
+            
+            //!structure for the association with the feeder index and the node address
             struct CNetworkAddressInfo {
-                    //! index that indetify the address node within the feeder
+                //! index that indetify the address node within the feeder
                 uint32_t feeder_index;
-
-                    //! the node address
+                
+                //! the node address
                 chaos::common::network::CNetworkAddress network_address;
-
+                
                 CNetworkAddressInfo(){};
                 CNetworkAddressInfo(uint32_t _feeder_index,
                                     const chaos::common::network::CNetworkAddress& _network_address):
                 feeder_index(_feeder_index),
                 network_address(_network_address){};
             };
-
-                //! feeder service structure
+            
+            //! feeder service structure
             struct MMCFeederService {
-                    //url of the service
+                //url of the service
                 std::string ip_port;
                 MMCFeederService(const std::string& _ip_port):
                 ip_port(_ip_port){};
             };
-
-
+            
+            
             //! Multinode message channel
             /*!
              This channel permit to scale the message and request on many different server in a
-             fail over or roundrobin way. Obviously this kind of channel can be used thinking 
+             fail over or roundrobin way. Obviously this kind of channel can be used thinking
              that the service that the channel needs to comunicate with, is the same. In different url the
              service could have a different node id (internall to the network broker). So a map
              is used to mantains the node_id with the url.
@@ -74,22 +74,22 @@ namespace chaos {
             private chaos::common::network::URLHAServiceCheckerFeederHandler {
                 friend class chaos::common::network::NetworkBroker;
                 friend class chaos::common::message::MultiAddressMessageRequestFuture;
-                    //!mutex for the managment of rescheduling server
+                //!mutex for the managment of rescheduling server
                 boost::mutex mutex_server_usage;
-
+                
                 uint64_t last_retry;
-                    //!list of the offline server index
+                //!list of the offline server index
                 /*!
                  during the wait the server that are in error are put offline, when
                  a new wait is executed all offline server are put online to try
                  if the are available
                  */
                 std::set<uint32_t> set_off_line_servers;
-
+                
                 //! url manager
                 chaos::common::network::URLHAServiceFeeder service_feeder;
-
-                    //!internal send request method
+                
+                //!internal send request method
                 /*!
                  send an rpc request with url feeder rule for servec choice and return the future.
                  IMPORTANT: the memory for request data is internally managed by the channel for permitting the
@@ -141,7 +141,7 @@ namespace chaos {
                 void addNode(const chaos::common::network::CNetworkAddress& node_address);
                 //! remove a node from the channel
                 void removeNode(const chaos::common::network::CNetworkAddress& node_address);
-                    //! remove all configured node
+                //! remove all configured node
                 void removeAllNode();
                 //! get the rpc published host and port
                 void getRpcPublishedHostAndPort(std::string& rpc_published_host_port);
@@ -149,7 +149,7 @@ namespace chaos {
                  \brief send a message
                  \param node_id id of the remote node within a network broker interface
                  \param action_name the name of the action to call
-                 \param message_pack the data to send, the pointer is not deallocated and i scopied into the pack
+                 \param message_pack the data to send, the pointer is not deallocated and is copied into the pack
                  \param on_this_thread notify when the message need to be sent syncronously or in async  way
                  */
                 void sendMessage(const std::string& action_domain,

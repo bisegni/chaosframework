@@ -58,6 +58,7 @@ namespace chaos {
                 TemplatedDataSDWrapper(){}
                 TemplatedDataSDWrapper(const T& data_src){wrapper.data = data_src;}
                 TemplatedDataSDWrapper(chaos::common::data::CDataWrapper *serialized_data){}
+                virtual ~TemplatedDataSDWrapper(){};
                 
                 //!deserialize encoded data in container
                 virtual void deserialize(chaos::common::data::CDataWrapper *serialized_data) = 0;
@@ -67,6 +68,10 @@ namespace chaos {
                 
                 //!return the container
                 T& dataWrapped(){
+                    return wrapper.data;
+                }
+                
+                const T& dataWrapped() const {
                     return wrapper.data;
                 }
                 

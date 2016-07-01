@@ -1,10 +1,10 @@
 /*
- *	DatasetAttribute.cpp
+ *	script_batch.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 31/05/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 30/06/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,12 +19,9 @@
  *    	limitations under the License.
  */
 
-#include <chaos_service_common/data/dataset/DatasetAttribute.h>
+#ifndef __CHAOSFramework_D12F617D_41D0_413A_9915_A50B8783724D_script_batch_h
+#define __CHAOSFramework_D12F617D_41D0_413A_9915_A50B8783724D_script_batch_h
 
-using namespace chaos::common::data;
+#include "LoadInstanceOnUnitServer.h"
 
-using namespace chaos::service_common::data::dataset;
-
-#pragma mark DatasetAttribute
-
-
+#endif /* __CHAOSFramework_D12F617D_41D0_413A_9915_A50B8783724D_script_batch_h */

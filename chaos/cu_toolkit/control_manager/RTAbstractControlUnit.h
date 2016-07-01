@@ -73,7 +73,25 @@ namespace chaos {
                 //!redefine private for protection
                 AbstractSharedDomainCache* _getAttributeCache();
 			protected:
-				
+                
+                /*! default constructor
+                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
+                 \param _control_unit_drivers driver information
+                 */
+                RTAbstractControlUnit(const std::string& _alternate_type,
+                                      const std::string& _control_unit_id,
+                                      const std::string& _control_unit_param);
+                /*!
+                 Parametrized constructor
+                 \param _control_unit_id unique id for the control unit
+                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
+                 \param _control_unit_drivers driver information
+                 */
+                RTAbstractControlUnit(const std::string& _alternate_type,
+                                      const std::string& _control_unit_id,
+                                      const std::string& _control_unit_param,
+                                      const ControlUnitDriverList& _control_unit_drivers);
+                
 				//! schdule a run of the rt control unit
 				virtual void unitRun() throw(CException) = 0;
 				
@@ -111,24 +129,6 @@ namespace chaos {
 				RTAbstractControlUnit(const std::string& _control_unit_id,
 									  const std::string& _control_unit_param,
 									  const ControlUnitDriverList& _control_unit_drivers);
-
-                /*! default constructor
-                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
-                 \param _control_unit_drivers driver information
-                 */
-                RTAbstractControlUnit(const std::string& _subtype,
-                                      const std::string& _control_unit_id,
-                                      const std::string& _control_unit_param);
-                /*!
-                 Parametrized constructor
-                 \param _control_unit_id unique id for the control unit
-                 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
-                 \param _control_unit_drivers driver information
-                 */
-                RTAbstractControlUnit(const std::string& _subtype,
-                                      const std::string& _control_unit_id,
-                                      const std::string& _control_unit_param,
-                                      const ControlUnitDriverList& _control_unit_drivers);
 
 				~RTAbstractControlUnit();
 			};

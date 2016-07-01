@@ -561,6 +561,9 @@ namespace chaos{
                 //! get control unit load parameter
                 const string& getCUParam();
                 
+                //! return the type of the control unit
+                const std::string& getCUType();
+                
                 //!push output dataset
                 virtual void pushOutputDataset(bool ts_already_set = false);
                 

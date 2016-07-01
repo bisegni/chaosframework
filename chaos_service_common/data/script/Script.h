@@ -35,7 +35,6 @@ namespace chaos {
                 
 #define CHAOS_SBD_NAME          "script_name"
 #define CHAOS_SBD_DESCRIPTION   "script_description"
-#define CHAOS_SBD_LANGUAGE      "script_language"
                 
                 //! The description of a script
                 struct ScriptBaseDescription {
@@ -85,7 +84,7 @@ namespace chaos {
                         dataWrapped().unique_id = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "seq", 0);
                         dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_NAME, "");
                         dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_DESCRIPTION, "");
-                        dataWrapped().language = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_LANGUAGE, "");
+                        dataWrapped().language = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE, "");
                     }
                     
                     std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0) {
@@ -93,7 +92,7 @@ namespace chaos {
                         data_serialized->addInt64Value("seq", (sequence?sequence:dataWrapped().unique_id));
                         data_serialized->addStringValue(CHAOS_SBD_NAME, dataWrapped().name);
                         data_serialized->addStringValue(CHAOS_SBD_DESCRIPTION, dataWrapped().description);
-                        data_serialized->addStringValue(CHAOS_SBD_LANGUAGE, dataWrapped().language);
+                        data_serialized->addStringValue(chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE, dataWrapped().language);
                         return data_serialized;
                     }
                 };
@@ -104,8 +103,6 @@ namespace chaos {
                                                       ScriptBaseDescriptionListWrapper);
 
                 
-#define CHAOS_SBD_SCRIPT_CONTENT "script_content"
-                
                 //! Full script description
                 struct Script {
                     //! base script
@@ -115,10 +112,10 @@ namespace chaos {
                     std::string script_content;
                     
                     //! contains all classification for a script
-                    ChaosStringList classification_list;
+                    ChaosStringVector classification_list;
                     
                     //! contains all pool associated to the script
-                    ChaosStringList execution_pool_list;
+                    ChaosStringVector execution_pool_list;
                     
                     //!variable list
                     chaos::service_common::data::dataset::AlgorithmVariableList variable_list;
@@ -183,7 +180,7 @@ namespace chaos {
                         sd_dw.deserialize(serialized_data);
                         //dcopy deserialize objet into own contained
                         dataWrapped().script_description = sd_dw.dataWrapped();
-                        dataWrapped().script_content = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_SCRIPT_CONTENT, "");
+                        dataWrapped().script_content = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT, "");
                         
                         //deserialize classificaion list
                         if(serialized_data->hasKey("classification_list")) {
@@ -243,11 +240,11 @@ namespace chaos {
                         std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized = sd_dw.serialize(sequence);
                         
                         //add script content
-                        data_serialized->addStringValue(CHAOS_SBD_SCRIPT_CONTENT, dataWrapped().script_content);
+                        data_serialized->addStringValue(chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT, dataWrapped().script_content);
                         
                         if(dataWrapped().classification_list.size()) {
                             //encode classification list into array
-                            for(ChaosStringListIterator str_it = dataWrapped().classification_list.begin(),
+                            for(ChaosStringVectorIterator str_it = dataWrapped().classification_list.begin(),
                                 str_end = dataWrapped().classification_list.end();
                                 str_it != str_end;
                                 str_it++) {
@@ -258,7 +255,7 @@ namespace chaos {
                         
                         if(dataWrapped().execution_pool_list.size()) {
                             //encode classification list into array
-                            for(ChaosStringListIterator str_it = dataWrapped().execution_pool_list.begin(),
+                            for(ChaosStringVectorIterator str_it = dataWrapped().execution_pool_list.begin(),
                                 str_end = dataWrapped().execution_pool_list.end();
                                 str_it != str_end;
                                 str_it++) {

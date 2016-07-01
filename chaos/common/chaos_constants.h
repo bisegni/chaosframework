@@ -247,6 +247,12 @@ namespace chaos {
          !CHAOS async one.
          */
         static const char * const NODE_TYPE_WAN_PROXY       = "nt_wan_proxy";
+        //! identify an execution unit of type script
+        /*!
+         A scriptable execution unit consinst of a framework implementaion of the an
+         execution unit that permit o load script for different language.
+         */
+        static const char * const NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT  = "nt_script_eu";
     }
     /** @} */ // end of NodeType
     
@@ -571,23 +577,19 @@ namespace chaos {
     //! Name space for grupping key for the execution unit node type
     namespace ExecutionUnitNodeDefinitionKey {
         //! array of object that describe the input variable [string]
-        static const char * const EXECUTION_UNIT_DESCRIPTION        = "eudk_description";
-        //! array of object that describe the input variable [array object]
-        static const char * const EXECUTION_UNIT_VARIABLE_LIST      = "eudk_var_list";
-        //! the alias associated to the variable [string]
-        static const char * const EXECUTION_UNIT_VAR_ALIAS          = "eudk_var_alias";
-        //! the description associated to the variable [string]
-        static const char * const EXECUTION_UNIT_VAR_DESCRIPTION    = "eudk_var_description";
-        //! the type associated to the variable [int32]
-        static const char * const EXECUTION_UNIT_VAR_TYPE           = "eudk_var_type";
-        //! the direction(in, out, bidirectional) associated to the variable [int32]
-        static const char * const EXECUTION_UNIT_VAR_DIRECTION      = "eudk_var_direction";
-        //! the mandatory option associated to the variable [boolean]
-        static const char * const EXECUTION_UNIT_VAR_MANDATORY      = "eudk_var_mandatory";
+        static const char * const EXECUTION_UNIT_DESCRIPTION            = "eudk_description";
+        //!the list of the pool managed by a unit server
+        static const char * const EXECUTION_POOL_LIST                   = "eudk_pool_list";
+        //!the list of the pool managed by a unit server
+        static const char * const EXECUTION_SCRIPT_INSTANCE_LIST        = "eudk_script_instance_list";
+        //!is the language that represent the script of the execution unit
+        static const char * const EXECUTION_SCRIPT_INSTANCE_LANGUAGE    = "eudk_script_language";
+        //!is the content of the script to be execution
+        static const char * const EXECUTION_SCRIPT_INSTANCE_CONTENT     = "eudk_script_content";
         //! the dataset attribute associated to the variable[string]
-        static const char * const EXECUTION_UNIT_VAR_DATASET_ATTRIBUTE      = ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME;
+        static const char * const EXECUTION_UNIT_VAR_DATASET_ATTRIBUTE  = ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME;
         //! the dataset attribute associated to the variable[string]
-        static const char * const EXECUTION_UNIT_VAR_NODE_UID       = NodeDefinitionKey::NODE_UNIQUE_ID;
+        static const char * const EXECUTION_UNIT_VAR_NODE_UID           = NodeDefinitionKey::NODE_UNIQUE_ID;
     }
     /** @} */ // end of ExecutionUnitNodeDefinitionKey
     

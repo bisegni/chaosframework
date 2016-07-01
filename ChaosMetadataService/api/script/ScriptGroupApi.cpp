@@ -19,10 +19,13 @@
  *    	limitations under the License.
  */
 
-#include "ScriptGroupApi.h"
-#include "SearchScript.h"
 #include "SaveScript.h"
+#include "SearchScript.h"
+#include "ScriptGroupApi.h"
 #include "LoadFullScript.h"
+#include "ManageScriptInstance.h"
+#include "ExecutionPoolHeartbeat.h"
+#include "SearchInstancesForScript.h"
 
 using namespace chaos::metadata_service::api::script;
 
@@ -34,6 +37,9 @@ AbstractApiGroup("script"){
     addApi<SaveScript>();
     addApi<SearchScript>();
     addApi<LoadFullScript>();
+    addApi<ManageScriptInstance>();
+    addApi<ExecutionPoolHeartbeat>();
+    addApi<SearchInstancesForScript>();
 }
 
 ScriptGroupApi::~ScriptGroupApi() {}

@@ -32,7 +32,8 @@ using namespace chaos::common::utility;
 
 ScriptManager::ScriptManager(const std::string& _script_language):
 vm_name(CHAOS_FORMAT("%1%ScriptVM", %_script_language)),
-script_language(_script_language){}
+script_language(_script_language),
+script_vm(NULL){}
 
 ScriptManager::~ScriptManager() {
     map_api_class.clear();
@@ -74,7 +75,7 @@ void ScriptManager::init(void *init_data) throw(chaos::CException) {
     SCRTMAN_INFO << "Use " << script_language << " as script language";
     SCRTMAN_INFO << "Try to load " << vm_name << " virtual machine";
     script_vm = ObjectFactoryRegister<AbstractScriptVM>::getInstance()->getNewInstanceByName(vm_name);
-    if(script_vm) throw chaos::CException(-1, CHAOS_FORMAT("Virtual machine '%1%' has not been instantiated", %vm_name), __PRETTY_FUNCTION__);
+    CHAOS_LASSERT_EXCEPTION(script_vm, SCRPTMAN_ERR, -1, CHAOS_FORMAT("Virtual machine '%1%' has not been instantiated", %vm_name));
     InizializableService::initImplementation(script_vm, NULL, vm_name, __PRETTY_FUNCTION__);
 }
 

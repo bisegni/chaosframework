@@ -1,10 +1,10 @@
 /*
- *	Script.cpp
+ *	data.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 24/05/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 15/06/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,8 +19,18 @@
  *    	limitations under the License.
  */
 
-#include <chaos_service_common/data/script/Script.h>
+#ifndef __CHAOSFramework__1BA8927_9D5A_4782_83F3_C932C2CD5061_data_h
+#define __CHAOSFramework__1BA8927_9D5A_4782_83F3_C932C2CD5061_data_h
 
-using namespace chaos::common::data;
+#include <chaos_service_common/data/TemplatedDataSDWrapper.h>
 
-using namespace chaos::service_common::data::script;
+#include <chaos_service_common/data/node/Node.h>
+
+#include <chaos_service_common/data/script/script.h>
+
+#include <chaos_service_common/data/general/Lists.h>
+
+#include <chaos_service_common/data/dataset/DatasetAttribute.h>
+#include <chaos_service_common/data/dataset/AlgorithmVariable.h>
+
+#endif /* __CHAOSFramework__1BA8927_9D5A_4782_83F3_C932C2CD5061_data_h */

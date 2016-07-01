@@ -19,8 +19,9 @@
  *    	limitations under the License.
  */
 
-#include <json/json.h>
 #include <chaos/cu_toolkit/control_manager/script/ScriptableExecutionUnit.h>
+
+#include <json/json.h>
 
 using namespace chaos::common::script;
 using namespace chaos::common::utility;
@@ -71,31 +72,30 @@ void ScriptableExecutionUnit::addAttributeToDataSet(const std::string& attribute
                                                  attribute_direction);
 }
 
-
-void ScriptableExecutionUnit::addExecutionUnitVariable(const std::string& alias,
-                              const std::string& description,
-                              chaos::DataType::DataType type,
-                              DataType::DataSetAttributeIOAttribute direction,
-                              bool mandatory) {
-    
-}
-
 void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     //scan load parameter
     CHAOS_LASSERT_EXCEPTION((getCUParam().size() > 0), SEU_LERR, -1, "NO JSON script information has been set at load time");
-    ScriptOutParam  out_param;
+    ScriptInParam   in_param;
     Json::Reader    json_reader;
     Json::Value     json_params;
     
     //scan json option
-    if(json_reader.parse(getCUParam(), json_params)) {
-        const Json::Value& _script_language = json_params[SEU_SCRIPT_LANGUAGE];
-        const Json::Value&  _script_content = json_params[SEU_SCRIPT_CONTENT];
-        CHAOS_LASSERT_EXCEPTION((_script_language.isNull() && _script_content.isString()), SEU_LERR, -2, "The script language is not defined (or not a string) into load parameter");
-        CHAOS_LASSERT_EXCEPTION((_script_content.isNull() && _script_content.isString()), SEU_LERR, -3, "The script content is not defined (or not a string) into load parameter");
-        if(_script_language.isNull())
-            //we nned to crasch in some situation
-            script_language = _script_language.asString();
+    if(json_reader.parse(getCUParam(), json_params) &&
+       json_params.isNull() == false) {
+        const Json::Value& _script_language = json_params[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE];
+        const Json::Value&  _script_content = json_params[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT];
+        CHAOS_LASSERT_EXCEPTION(((_script_language.isNull() == false) && _script_content.isString()),
+                                SEU_LERR,
+                                -2,
+                                "The script language is not defined (or not a string) into load parameter");
+        CHAOS_LASSERT_EXCEPTION(((_script_content.isNull() == false)  &&
+                                 _script_content.isString()),
+                                SEU_LERR,
+                                -3,
+                                "The script content is not defined (or not a string) into load parameter");
+      
+        //we nned to crasch in some situation
+        script_language = _script_language.asString();
         
         //we nned to crasch in some situation
         script_content = _script_content.asString();
@@ -123,9 +123,9 @@ void ScriptableExecutionUnit::unitDefineActionAndDataset() throw(CException) {
     
     //execute script method that define the dataset
 
-    if(script_manager->getVirtualMachine()->callFunction(SEU_DEFINE_DATASET,
-                                                         out_param)) {
-        LOG_AND_TROW_FORMATTED(SEU_LERR, -6, "Error calling function %1% of the script(it maybe not implemented)", %SEU_DEFINE_DATASET);
+    if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_SETUP,
+                                                         in_param)) {
+        LOG_AND_TROW_FORMATTED(SEU_LERR, -6, "Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_SETUP);
     }
 }
 
@@ -136,9 +136,8 @@ void ScriptableExecutionUnit::executeAlgorithmStep(uint64_t step_delay_time) thr
     
     //add step delay time
     input_param.push_back(CDataVariant(step_delay_time));
-    if(script_manager->getVirtualMachine()->callFunction(SEU_ALGORITHM_STEP,
-                                                         input_param,
-                                                         output_param)) {
+    if(script_manager->getVirtualMachine()->callProcedure(SEU_ALGORITHM_STEP,
+                                                          input_param)) {
         LOG_AND_TROW_FORMATTED(SEU_LERR, -1, "Error calling function %1% of the script(it maybe not implemented)", %SEU_ALGORITHM_STEP);
     }
 }

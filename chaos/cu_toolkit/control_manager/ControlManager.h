@@ -36,8 +36,10 @@
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/async_central/async_central.h>
 
-#include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/control_manager/WorkUnitManagement.h>
+#include <chaos/cu_toolkit/control_manager/AbstractControlUnit.h>
+#include <chaos/cu_toolkit/control_manager/control_manager_constants.h>
+#include <chaos/cu_toolkit/control_manager/execution_pool/ExecutionPool.h>
 
 #include <boost/thread.hpp>
 #include <boost/msm/back/state_machine.hpp>
@@ -46,26 +48,12 @@
 #include <boost/msm/front/euml/common.hpp>
 #include <boost/msm/front/euml/operator.hpp>
 
-//startup parameter for unit server
-#define CONTROL_MANAGER_UNIT_SERVER_ENABLE							"unit-server-enable"
-#define CONTROL_MANAGER_UNIT_SERVER_ENABLE_desc						"Enable the unit server on this instance of process"
-
-#define CONTROL_MANAGER_UNIT_SERVER_ALIAS							"unit-server-alias"
-#define CONTROL_MANAGER_UNIT_SERVER_ALIAS_desc						"Alias used to publish the unit server"
-#define CONTROL_MANAGER_UNIT_SERVER_KEY								"unit-server-file-key"
-#define CONTROL_MANAGER_UNIT_SERVER_KEY_desc						"the path to the file that contains the rsa public key for the unit server alias"
-#define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC			"unit-server-retry-ms"
-#define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_desc	"Delay in milliseconds for the registration retry"
-#define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_DEFAULT	2000
-
 
 //define the type for the Control Unit instancer
 
 namespace chaos {
     namespace cu {
 		namespace control_manager {
-
-
 #define REGISTER_CU(_cu_)						\
 		  chaos::cu::ChaosCUToolkit::getInstance()->registerControlUnit< _cu_ >();
 
@@ -144,11 +132,17 @@ namespace chaos {
 				
 				//unit server state machine
 				bool					use_unit_server;
+                bool                    use_execution_pools;
                 unsigned int            publishing_counter_delay;
+                
+                //!unit server variable
 				std::string				unit_server_alias;
 				std::string				unit_server_key;
 				boost::shared_mutex		unit_server_sm_mutex;
 				UnitServerStateMachine	unit_server_sm;
+                
+                //!execution pool managment root class
+                common::utility::InizializableServiceContainer<chaos::cu::control_manager::execution_pool::ExecutionPoolManager> exectuion_pool_manager;
 				
 				bool thread_run;
 				chaos::WaitSemaphore thread_waith_semaphore;

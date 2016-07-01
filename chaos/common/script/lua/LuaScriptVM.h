@@ -66,9 +66,8 @@ namespace chaos {
                     int callFunction(const std::string& function_name,
                                      const ScriptInParam& input_parameter,
                                      ScriptOutParam& output_parameter);
-                    
-                    int callFunction(const std::string& function_name,
-                                     ScriptOutParam& output_parameter);
+                    int callProcedure(const std::string& function_name,
+                                      const ScriptInParam& input_parameter);
                 };
             }
         }

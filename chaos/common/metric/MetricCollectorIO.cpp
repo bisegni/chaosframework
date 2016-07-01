@@ -24,7 +24,7 @@ using namespace chaos::common::metric;
 
 static const char * const METRIC_KEY_PACKET_COUNT = "packet_count";
 static const char * const METRIC_KEY_BANDWITH = "kb_sec";
-static const char * const METRIC_KEY_PACKET_UNSENT_COUNT = "packet_waiting";
+//static const char * const METRIC_KEY_PACKET_UNSENT_COUNT = "packet_waiting";
 
 MetricCollectorIO::MetricCollectorIO(const std::string& _collector_name,
                                      uint64_t update_time_in_sec):

@@ -74,11 +74,15 @@ ControlManager::~ControlManager() {
  */
 void ControlManager::init(void *initParameter) throw(CException) {
     //control manager action initialization
-    
     AbstActionDescShrPtr actionDescription;
+    
+    //check if we need to start the unit server
     use_unit_server =	GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ENABLE) &&
-                        GlobalConfiguration::getInstance()->getOption<bool>(CONTROL_MANAGER_UNIT_SERVER_ENABLE) &&
-                        GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
+    GlobalConfiguration::getInstance()->getOption<bool>(CONTROL_MANAGER_UNIT_SERVER_ENABLE) &&
+    GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
+    
+    //check for execution pools
+    use_execution_pools = GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_EXECUTION_POOLS);
     
     LCMAPP_ << "Get the Metadataserver channel";
     mds_channel = CommandManager::getInstance()->getMetadataserverChannel();
@@ -233,7 +237,6 @@ void ControlManager::deinit() throw(CException) {
     
     
     LCMAPP_  << "Deinit all the submitted Control Unit";
-    
     for (map<string, shared_ptr<WorkUnitManagement> >::iterator cuIter = map_cuid_registered_instance.begin();
          cuIter != map_cuid_registered_instance.end();
          cuIter++ ){
@@ -252,7 +255,7 @@ void ControlManager::deinit() throw(CException) {
         for (vector<string>::iterator iter =  allCUDeviceIDToStop.begin();
              iter != allCUDeviceIDToStop.end();
              iter++) {
-
+            
             CDataWrapper fakeDWForDeinit;
             fakeDWForDeinit.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, *iter);
             try{
@@ -290,6 +293,9 @@ void ControlManager::deinit() throw(CException) {
     map_cuid_registered_instance.clear();
     map_cuid_reg_unreg_instance.clear();
     
+    if(exectuion_pool_manager.get()) {
+        exectuion_pool_manager.deinit(__PRETTY_FUNCTION__);
+    }
     if(mds_channel) {
         CommandManager::getInstance()->deleteMDSChannel(mds_channel);
         mds_channel = NULL;
@@ -301,29 +307,37 @@ void ControlManager::deinit() throw(CException) {
 /*
  Submit a new Control unit for operation
  */
-void ControlManager::submitControlUnit(AbstractControlUnit *data) throw(CException) {
-    CHAOS_ASSERT(data)
+void ControlManager::submitControlUnit(AbstractControlUnit *control_unit_instance) throw(CException) {
+    CHAOS_ASSERT(control_unit_instance)
     //lock the hastable of cu instance and managmer
     boost::unique_lock<boost::shared_mutex> lock(mutex_queue_submitted_cu);
     
+    if(exectuion_pool_manager.get() != NULL &&
+       control_unit_instance->getCUType().compare(chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT)){
+        //in this case we need to register the uinit within the execution pool manager
+        // doing that execution pool notify fast as possible that it manage the heratbeat
+        //for the relative script
+        exectuion_pool_manager->registerUID(control_unit_instance->getCUID());
+    }
+    
     //add healt metric for newly create control unit instance
-    HealtManager::getInstance()->addNewNode(data->getCUID());
+    HealtManager::getInstance()->addNewNode(control_unit_instance->getCUID());
     //! add error code metric for control unit
-    HealtManager::getInstance()->addNodeMetric(data->getCUID(),
+    HealtManager::getInstance()->addNodeMetric(control_unit_instance->getCUID(),
                                                NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
                                                chaos::DataType::TYPE_INT32);
-    HealtManager::getInstance()->addNodeMetric(data->getCUID(),
+    HealtManager::getInstance()->addNodeMetric(control_unit_instance->getCUID(),
                                                NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
                                                chaos::DataType::TYPE_STRING);
-    HealtManager::getInstance()->addNodeMetric(data->getCUID(),
+    HealtManager::getInstance()->addNodeMetric(control_unit_instance->getCUID(),
                                                NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
                                                chaos::DataType::TYPE_STRING);
     //add push rate metric
-    HealtManager::getInstance()->addNodeMetric(data->getCUID(),
+    HealtManager::getInstance()->addNodeMetric(control_unit_instance->getCUID(),
                                                ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
                                                chaos::DataType::TYPE_DOUBLE);
-
-    queue_submitted_cu.push(data);
+    
+    queue_submitted_cu.push(control_unit_instance);
     
     //unlock thread
     thread_waith_semaphore.unlock();
@@ -363,6 +377,18 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
                 default:
                     break;
             }
+            
+            if(exectuion_pool_manager.get() != NULL &&                          //we have execution pool manager
+               (i->second->getCurrentState() == UnitStatePublishingFailure ||   //we heva etrminated the publishing unpublishing work
+                i->second->getCurrentState() == UnitStateUnpublished ||
+                i->second->getCurrentState() == UnitStatePublished) &&
+               i->second->work_unit_instance->getCUType().compare(chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT)){  //wthe cu in a scriptable execution unit
+                //in this case we need to register the uinit within the execution pool manager
+                // doing that execution pool notify fast as possible that it manage the heratbeat
+                //for the relative script
+                exectuion_pool_manager->registerUID(i->second->work_unit_instance->getCUID());
+            }
+            
             
             //remove the iterator
             map_cuid_reg_unreg_instance.erase(i++); // first is executed the uncrement that return
@@ -508,22 +534,22 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
     std::auto_ptr<AbstractControlUnit> instance(map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params));
     CHECK_ASSERTION_THROW_AND_LOG(instance.get(), LCMERR_, -7, "Error creating work unit instance");
     
-    //add healt metric for newly create control unit instance
-    HealtManager::getInstance()->addNewNode(work_unit_id);
-    //! add error code metric for control unit
-    HealtManager::getInstance()->addNodeMetric(work_unit_id,
-                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
-                                               chaos::DataType::TYPE_INT32);
-    HealtManager::getInstance()->addNodeMetric(work_unit_id,
-                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
-                                               chaos::DataType::TYPE_STRING);
-    HealtManager::getInstance()->addNodeMetric(work_unit_id,
-                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
-                                               chaos::DataType::TYPE_STRING);
-    //add push rate metric
-    HealtManager::getInstance()->addNodeMetric(work_unit_id,
-                                               ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
-                                               chaos::DataType::TYPE_DOUBLE);
+    //    //add healt metric for newly create control unit instance
+    //    HealtManager::getInstance()->addNewNode(work_unit_id);
+    //    //! add error code metric for control unit
+    //    HealtManager::getInstance()->addNodeMetric(work_unit_id,
+    //                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_CODE,
+    //                                               chaos::DataType::TYPE_INT32);
+    //    HealtManager::getInstance()->addNodeMetric(work_unit_id,
+    //                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_MESSAGE,
+    //                                               chaos::DataType::TYPE_STRING);
+    //    HealtManager::getInstance()->addNodeMetric(work_unit_id,
+    //                                               NodeHealtDefinitionKey::NODE_HEALT_LAST_ERROR_DOMAIN,
+    //                                               chaos::DataType::TYPE_STRING);
+    //    //add push rate metric
+    //    HealtManager::getInstance()->addNodeMetric(work_unit_id,
+    //                                               ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE,
+    //                                               chaos::DataType::TYPE_DOUBLE);
     //tag control uinit for mds managed
     instance->control_key = "mds";
     
@@ -712,6 +738,12 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *message_da
                     HealtManager::getInstance()->addNodeMetricValue(unit_server_alias,
                                                                     NodeHealtDefinitionKey::NODE_HEALT_STATUS,
                                                                     NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD);
+                    
+                    //now we can start the execution pool manager becuase our unit server has ben successfully registered on the mds
+                    if(use_execution_pools) {
+                        exectuion_pool_manager.reset(new chaos::cu::control_manager::execution_pool::ExecutionPoolManager(), "ExecutionPoolManager");
+                        exectuion_pool_manager.init(NULL, __PRETTY_FUNCTION__);
+                    }
                 } else {
                     LCMERR_ << "Registration ACK received,bad  SM state "<<(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()));
                     throw CException(ErrorCode::EC_MDS_NODE_BAD_SM_STATE, "Bad state of the sm for published event", __PRETTY_FUNCTION__);

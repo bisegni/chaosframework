@@ -29,11 +29,11 @@ using namespace chaos::common::message;
 
 #define DECODE_ERROR(x) \
 if((last_error_code = x->getError())){\
-    last_error_message = x->getErrorMessage();\
-    last_error_domain = x->getErrorDomain();\
+last_error_message = x->getErrorMessage();\
+last_error_domain = x->getErrorDomain();\
 } else {\
-    last_error_message = "No Error";\
-    last_error_domain = "No Domain";\
+last_error_message = "No Error";\
+last_error_domain = "No Domain";\
 }
 
 MDSMessageChannel::MDSMessageChannel(NetworkBroker *network_broker,
@@ -69,7 +69,7 @@ void MDSMessageChannel::sendHeartBeatForDeviceID(const std::string& identificati
     hb_message->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, identification_id);
     sendMessage(NodeDomainAndActionRPC::RPC_DOMAIN,
                 ChaosSystemDomainAndActionLabel::MDS_CU_HEARTBEAT,
-                hb_message.release());
+                hb_message.get());
 }
 
 
@@ -138,12 +138,12 @@ int MDSMessageChannel::sendNodeLoadCompletion(CDataWrapper& node_information,
                                               uint32_t millisec_to_wait) {
     int size_bson = 0;
     std::string currentBrokerIpPort;
-
+    
     //get rpc receive port
     getRpcPublishedHostAndPort(currentBrokerIpPort);
     std::auto_ptr<CDataWrapper> data(new CDataWrapper(node_information.getBSONRawData(size_bson)));
     data->addStringValue(NodeDefinitionKey::NODE_RPC_ADDR, currentBrokerIpPort);
-
+    
     //set our timestamp
     data->addInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP,
                         chaos::common::utility::TimingUtil::getTimeStamp());
@@ -247,3 +247,29 @@ int MDSMessageChannel::getDataDriverBestConfiguration(CDataWrapper** deviceDefin
     }
     return err;
 }
+
+std::auto_ptr<MultiAddressMessageRequestFuture> MDSMessageChannel::sendRequestWithFuture(const std::string& action_domain,
+                                                                                         const std::string& action_name,
+                                                                                         chaos::common::data::CDataWrapper *request_pack,
+                                                                                         int32_t request_timeout) {
+    return MultiAddressMessageChannel::sendRequestWithFuture(action_domain,
+                                                             action_name,
+                                                             request_pack,
+                                                             request_timeout);
+}
+
+void MDSMessageChannel::sendMessage(const std::string& action_domain,
+                                   const std::string& action_name,
+                                   chaos::common::data::CDataWrapper *request_pack) {
+    return MultiAddressMessageChannel::sendMessage(action_domain,
+                                                   action_name,
+                                                   request_pack);
+}
+
+void MDSMessageChannel::callMethod(const std::string& action_domain,
+                                  const std::string& action_name) {
+    return MultiAddressMessageChannel::sendMessage(action_domain,
+                                                   action_name,
+                                                   NULL);
+}
+
