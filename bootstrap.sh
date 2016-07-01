@@ -4,8 +4,138 @@
 #Dipendence: automake libtool subversion git-core bzr ruby1.8-full cmake zlib1g-dev libcloog-ppl0 wget g++
 #####
 nmake=0
-SCRIPTPATH=`dirname $0`
-source $CHAOS_BUNDLE/tools/common_util.sh
+
+pushd `dirname $0` > /dev/null
+SCRIPTPATH=`pwd -P`
+popd > /dev/null
+
+
+chaos_exclude(){
+    name=$1
+    for i in $CHAOS_EXCLUDE_DIR;do
+	if [ "$name" == "$i" ]; then
+	    return 0;
+	fi
+    done
+    return 1
+}
+
+
+if [ -z "$CHAOS_BUNDLE" ];then
+    CHAOS_BUNDLE=$SCRIPTPATH
+    echo "* setting CHAOS_BUNDLE=$CHAOS_BUNDLE"
+fi
+
+if [ -z "$CHAOS_PREFIX" ];then
+    mkdir -p $CHAOS_BUNDLE/usr/local
+    CHAOS_PREFIX=$CHAOS_BUNDLE/usr/local
+    echo "* setting CHAOS_PREFIX=$CHAOS_PREFIX"
+fi
+
+
+### DEFAULT VERSIONS
+if [ -z "$MONGO_VERSION" ];then
+    MONGO_VERSION=legacy-1.0.0-rc0
+fi
+if [ -z "$LIB_EVENT_VERSION" ];then
+    LIB_EVENT_VERSION=release-2.1.4-alpha
+fi
+
+if [ -z "$CHAOS_BOOST_VERSION" ];then
+    CHAOS_BOOST_VERSION=55
+fi
+
+if [ ! -n "$LUA_VERSION" ]; then
+    LUA_VERSION=5.3.2
+fi;
+
+if [ ! -n "$ZLIB_VERSION" ]; then
+    ZLIB_VERSION=1.2.8
+fi;
+
+if [ ! -n "$LMEM_VERSION" ]; then
+    LMEM_VERSION=1.0.18
+fi;
+
+if [ ! -n "$ZMQ_VERSION" ]; then
+    ZMQ_VERSION=zeromq4-x
+fi;
+
+if [ ! -n "$COUCHBASE_VERSION" ]; then
+    COUCHBASE_VERSION=2.4.6
+fi;
+
+#####
+if [ -e $CHAOS_BUNDLE/tools/common_util.sh ];then
+    source $CHAOS_BUNDLE/tools/common_util.sh
+else
+    OS=`uname -s`
+    ARCH=`uname -m`
+    KERNEL_VER=$(uname -r)
+    KERNEL_SHORT_VER=$(uname -r|cut -d\- -f1|tr -d '.'| tr -d '[A-Z][a-z]')
+    PID=$$
+    CHAOSTMP="/tmp/""$USER"
+    TEST_INFO_NAME=$CHAOSTMP"/__chaos_test_info__"
+    mkdir -p /tmp/$USER >& /dev/null
+    if [ -z "$NPROC" ];then
+	NPROC=$(getconf _NPROCESSORS_ONLN)
+    fi
+    CHAOS_DIR=$CHAOS_BUNDLE
+    if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ] && [ $KERNEL_SHORT_VER -ge 1300 ] && [ ! -n "$CROSS_HOST" ]; then
+	echo "Use standard CLIB with clang"
+	export CHAOS_CMAKE_FLAGS="$CHAOS_CMAKE_FLAGS -DCMAKE_CXX_FLAGS=-stdlib=libstdc++ $CHAOS_COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$CHAOS_PREFIX"
+	export CC=clang
+	export CXX="clang++"
+	export CXXFLAGS="-stdlib=libstdc++"
+	export LDFLAGS="-stdlib=libstdc++"
+	export LD=clang
+	APPLE="true"
+    ## 18, 16 doesnt compile
+	export LMEM_VERSION=1.0.18
+	export CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++"
+    fi
+fi
+
+
+
+if [ -z "$CHAOS_COMP_TYPE" ];then
+    CHAOS_COMP_TYPE=" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS_DEBUG=-DDEBUG=1 "
+fi
+
+
+
+if [ -z "$CHAOS_BOOS_FLAGS" ];then
+    CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS --prefix=$CHAOS_PREFIX --with-program_options --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer install"
+    echo "* setting CHAOS_BOOST_FLAGS=$CHAOS_BOOST_FLAGS"
+fi
+
+if [ -z "$CHAOS_CMAKE_FLAGS" ];then
+    CHAOS_CMAKE_FLAGS="$CHAOS_CMAKE_FLAGS $CHAOS_COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$CHAOS_PREFIX"
+    echo "* setting CHAOS_CMAKE_FLAGS=$CHAOS_CMAKE_FLAGS"
+fi
+
+if [ -z "$CHAOS_ZMQ_CONFIGURE" ];then
+    CHAOS_ZMQ_CONFIGURE="--prefix=$CHAOS_PREFIX $CROSS_HOST_CONFIGURE --with-gnu-ld --disable-eventfd"
+    echo "* setting CHAOS_ZMQ_CONFIGURE=$CHAOS_ZMQ_CONFIGURE"
+fi
+
+if [ -z "$CHAOS_LIBEVENT_CONFIGURE" ];then 
+    CHAOS_LIBEVENT_CONFIGURE="--disable-openssl --prefix=$CHAOS_PREFIX"
+    echo "* setting CHAOS_LIBEVENT_CONFIGURE=$CHAOS_LIBEVENT_CONFIGURE"
+fi
+ 
+if [ -z "$CHAOS_LIBMEMCACHED_CONFIGURE" ];then
+    CHAOS_LIBMEMCACHED_CONFIGURE="--without-memcached --with-pic --disable-memaslap --disable-sasl --prefix=$CHAOS_PREFIX $CROSS_HOST_CONFIGURE"
+    echo "* setting CHAOS_LIBMEMCACHED_CONFIGURE=$CHAOS_LIBMEMCACHED_CONFIGURE"
+fi
+    
+
+
+if [ -z "$CHAOS_CB_CONFIGURE" ];then
+    CHAOS_CB_CONFIGURE="$CHAOS_CMAKE_FLAGS -DLCB_NO_SSL=true -DLCB_NO_TESTS=true -DLCB_NO_TOOLS=true -DLCB_NO_PLUGINS=true"
+    echo "* setting CHAOS_CB_CONFIGURE=$CHAOS_CB_CONFIGURE"
+fi
+
 
 if [ "$ARCH" = "armv7l" ]; then
     NPROC=1
@@ -45,25 +175,6 @@ if [ ! -n "$OS" ]; then
     OS=$(uname -s)
 fi;
 
-if [ ! -n "$LUA_VERSION" ]; then
-    LUA_VERSION=5.3.2
-fi;
-
-if [ ! -n "$ZLIB_VERSION" ]; then
-    ZLIB_VERSION=1.2.8
-fi;
-
-if [ ! -n "$LMEM_VERSION" ]; then
-    LMEM_VERSION=1.0.18
-fi;
-
-if [ ! -n "$ZMQ_VERSION" ]; then
-    ZMQ_VERSION=zeromq4-x
-fi;
-
-if [ ! -n "$COUCHBASE_VERSION" ]; then
-    COUCHBASE_VERSION=2.4.6
-fi;
 
 if [ ! -n "$CHAOS_LINK_LIBRARY" ]; then
     echo "Set the dafult chaos framework linking library"
@@ -335,7 +446,9 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     if [ ! -e $BASE_EXTERNAL/boost ]; then
         tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
         mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
-	cp $CHAOS_BUNDLE/tools/patches/boost-1.55.0-atomic-check_lock_free_flag.patch $BASE_EXTERNAL/boost
+	if [ -e $CHAOS_BUNDLE/tools/patches/boost-1.55.0-atomic-check_lock_free_flag.patch ];then
+	    cp $CHAOS_BUNDLE/tools/patches/boost-1.55.0-atomic-check_lock_free_flag.patch $BASE_EXTERNAL/boost
+	fi
 	
     fi
     
@@ -360,7 +473,9 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     
     echo "Boostrapping boost"
     cd $BASE_EXTERNAL/boost
-    patch -p1 < boost-1.55.0-atomic-check_lock_free_flag.patch >& /dev/null
+    if [ -e boost-1.55.0-atomic-check_lock_free_flag.patch ];then
+	patch -p1 < boost-1.55.0-atomic-check_lock_free_flag.patch >& /dev/null
+    fi
     if !( ./bootstrap.sh ); then
 	echo "## cannot bootstrap boost"
 	exit 1;

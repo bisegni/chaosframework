@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
-include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
+IF (DEFINED ENV{CHAOS_BUNDLE} )
+  include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
+ENDIF()
 
 SET(chaos_cli_src main.cpp)
 

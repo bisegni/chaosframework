@@ -203,7 +203,7 @@ SET(common_lib_src ${common_lib_src}
         script/AbstractScriptableClass.cpp)
 
 #compile lua chaos vm and core files
-INCLUDE_DIRECTORIES(script/lua/core)
+INCLUDE_DIRECTORIES(script/lua/core chaos/common)
 FILE(GLOB LuaCoreSource script/lua/core/*.c)
 SET(common_lib_src ${common_lib_src}
 	script/lua/LuaScriptVM.cpp
