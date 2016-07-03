@@ -45,9 +45,9 @@ if [ -z "$CHAOS_BOOST_VERSION" ];then
     CHAOS_BOOST_VERSION=55
 fi
 
-if [ ! -n "$LUA_VERSION" ]; then
-    LUA_VERSION=5.3.2
-fi;
+#if [ ! -n "$LUA_VERSION" ]; then
+#    LUA_VERSION=5.3.2
+#fi;
 
 if [ ! -n "$ZLIB_VERSION" ]; then
     ZLIB_VERSION=1.2.8

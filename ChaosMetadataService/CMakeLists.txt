@@ -96,9 +96,9 @@ SET(cnd_src  ${cnd_src}	api/script/ScriptGroupApi.cpp
                         api/script/SearchScript.cpp
                         api/script/SaveScript.cpp
                         api/script/LoadFullScript.cpp
-                        api/script/SearchInstanceForScript.cpp
+                        api/script/SearchInstancesForScript.cpp
                         api/script/ManageScriptInstance.cpp
-                        api/script/ExecutionPoolHeartbeah.cpp)
+                        api/script/ExecutionPoolHeartbeat.cpp)
 
 SET(cnd_src  ${cnd_src}	persistence/data_access/UnitServerDataAccess.cpp
                         persistence/data_access/NodeDataAccess.cpp
