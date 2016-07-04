@@ -161,11 +161,12 @@ void AbstractExecutionUnit::_defineActionAndDataset(chaos_data::CDataWrapper& se
 
 //! inherited method
 void AbstractExecutionUnit::unitInit() throw(CException) {
+    executeAlgorithmLaunch();
 }
 
 //! inherited method
 void AbstractExecutionUnit::unitStart() throw(CException) {
-    
+    executeAlgorithmStart();
 }
 
 //! inherited method
@@ -180,8 +181,10 @@ void AbstractExecutionUnit::unitRun() throw(CException) {
 
 //! inherited method
 void AbstractExecutionUnit::unitStop() throw(CException) {
+    executeAlgorithmStop();
 }
 
 //! inherited method
 void AbstractExecutionUnit::unitDeinit() throw(CException) {
+    executeAlgorithmEnd();
 }

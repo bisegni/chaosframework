@@ -252,7 +252,9 @@ namespace chaos {
          A scriptable execution unit consinst of a framework implementaion of the an
          execution unit that permit o load script for different language.
          */
-        static const char * const NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT  = "nt_script_eu";
+        static const char * const NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT    = "nt_script_eu";
+        static const char * const NODE_SUBTYPE_REALTIME_CONTROL_UNIT        = "nt_rt_cu";
+        static const char * const NODE_SUBTYPE_BATCH_CONTROL_UNIT           = "nt_batch_cu";
     }
     /** @} */ // end of NodeType
     
@@ -610,9 +612,9 @@ namespace chaos {
      */
     //! Name space for grupping control unit types
     namespace CUType {
-        static const char * const RTCU	= "rtcu";
-        static const char * const SCCU  = "sccu";
-        static const char * const EXUT  = "exut";
+        static const char * const RTCU	= NodeType::NODE_SUBTYPE_REALTIME_CONTROL_UNIT;
+        static const char * const SCCU  = NodeType::NODE_SUBTYPE_BATCH_CONTROL_UNIT;
+        static const char * const EXUT  = NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT;
     }
     /** @} */ // end of CUType
     

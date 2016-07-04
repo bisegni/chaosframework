@@ -17,13 +17,11 @@ class SearchNodeResult;
 typedef enum SearchNodeType {
     SNT_ALL_TYPE,
     SNT_UNIT_SERVER,
-    SNT_CONTROL_UNIT,
-    SNT_SCRIPTABLE_EXECUTION_UNIT
+    SNT_CONTROL_UNIT
 } SearchNodeType;
 
 class SearchNodeResult :
-        public PresenterWidget
-{
+        public PresenterWidget {
     Q_OBJECT
     //! search property
 

@@ -157,7 +157,7 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
         LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetching dataset for control unit %1%") % cu_uid));
     } else if(result != NULL){
         //we have the published dataset
-        dataset_description.reset(result);
+        dataset_description.reset(result);    
         
         std:auto_ptr<CMultiTypeDataArrayWrapper> dataset_element_vec(dataset_description->getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
         std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());

@@ -32,6 +32,8 @@ DatasetDB::~DatasetDB() {
 
 void DatasetDB::setDeviceID(const std::string &_device_id) {
     device_id = _device_id;
+    //initialize entity
+    getDeviceEntity(device_id);
 }
 
 const string & DatasetDB::getDeviceID() {

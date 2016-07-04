@@ -199,7 +199,7 @@ chaos::common::data::CDataWrapper *NodeRegister::controlUnitRegistration(chaos::
         has_an_unit_server = (us_host.size()>0);
         
         if(has_an_unit_server) {
-            if(loaded_from_unit_server == false) {LOG_AND_TROW_FORMATTED(USRA_ERR, -7, "The control unit %1% need to be loaded form the unit server %2%",%cu_uid%us_host);}
+            if(loaded_from_unit_server == false) {LOG_AND_TROW_FORMATTED(USRA_ERR, -7, "The control unit %1% need to be loaded from the unit server %2%",%cu_uid%us_host);}
         }
         
         //check if the node is present

@@ -138,6 +138,12 @@ namespace chaos{
                 void setOutputAttributeValue(const std::string& attribute_name,
                                              const CDataVariant& attribute_value);
                 
+                //!Event for notify that alghortim is going to be executed
+                virtual void executeAlgorithmLaunch() throw (CException) = 0;
+                
+                //!Event for notify that alghortim is going to start
+                virtual void executeAlgorithmStart() throw (CException) = 0;
+                
                 //!perform a step of the algorithm
                 /*!
                  In this method the user can compute the spep of the algorithm to work on the newst data.
@@ -146,6 +152,12 @@ namespace chaos{
                  /param step_delay_time is the delay form the last step of the algorithm
                  */
                 virtual void executeAlgorithmStep(uint64_t step_delay_time) throw (CException) = 0;
+                
+                //!Event for notify that alghorithm is going to stop it's execution
+                virtual void executeAlgorithmStop() throw (CException) = 0;
+                
+                //!Event for notify that alghorithm is going to end the execution
+                virtual void executeAlgorithmEnd() throw (CException) = 0;
             public:
                 
                 /*! default constructor

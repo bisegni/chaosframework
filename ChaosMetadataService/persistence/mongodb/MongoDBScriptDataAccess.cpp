@@ -22,6 +22,7 @@
 #include "MongoDBScriptDataAccess.h"
 #include "mongo_db_constants.h"
 
+#include <chaos/common/bson/util/base64.h>
 #include <chaos/common/utility/TimingUtil.h>
 
 #include <boost/foreach.hpp>
@@ -188,7 +189,8 @@ int MongoDBScriptDataAccess::addScriptInstance(const uint64_t seq,
     try {
         CDataWrapper node_description;
         node_description.addStringValue(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, instance_name);
-        node_description.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT);
+        node_description.addStringValue(chaos::NodeDefinitionKey::NODE_TYPE, chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+        node_description.addStringValue(chaos::NodeDefinitionKey::NODE_SUB_TYPE, chaos::NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
         node_description.addStringValue(chaos::NodeDefinitionKey::NODE_GROUP_SET, script_name);
         node_description.addInt64Value("script_seq", seq);
         //now all other part of the script are managed with update
@@ -430,7 +432,8 @@ int MongoDBScriptDataAccess::getUnscheduledInstanceForJob(const chaos::service_c
         //calucate the millisecond that we want to consider timeout
         mongo::Date_t start_timeout_date(TimingUtil::getTimeStamp() - timeout);
         bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_GROUP_SET << script.name);
-        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_TYPE << chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT);
+        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_TYPE << chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
+        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_SUB_TYPE << chaos::NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
         bson_find_and << BSON("script_seq" << (long long)script.unique_id);
         
         bson_find_hb_or << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << true << "$lt" << start_timeout_date));
@@ -542,7 +545,8 @@ int MongoDBScriptDataAccess::copyScriptDatasetAndContentToInstance(const chaos::
                 } else {
                     //now we need to search the instance and verify that it si conencted to the script so we need one query bson objet
                     q = BSON(chaos::NodeDefinitionKey::NODE_UNIQUE_ID << script_instance <<
-                             chaos::NodeDefinitionKey::NODE_TYPE << chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT <<
+                             chaos::NodeDefinitionKey::NODE_TYPE << chaos::NodeType::NODE_TYPE_CONTROL_UNIT <<
+                             chaos::NodeDefinitionKey::NODE_SUB_TYPE << chaos::NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT <<
                              chaos::NodeDefinitionKey::NODE_GROUP_SET << script.name <<
                              "script_seq" << (long long)script.unique_id);
                     
@@ -561,18 +565,44 @@ int MongoDBScriptDataAccess::copyScriptDatasetAndContentToInstance(const chaos::
                         } else {
                             //now we can copy the dataset to the instance from his script
                             mongo::BSONObjBuilder ub;
-                            
                             //copy dataset
-                            ub.append(script_found.getField(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+//                            ub << chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << BSON(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp()) <<
+//                                                                                                                chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << script_found.getField(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
                             
                             //ccompose the laod parameter for describe the script language and content
                             const std::string script_language = script_found.getField(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE).String();
                             const std::string script_content = script_found.getField(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT).String();
                             
+                            //load parameter need to have script and dataset
                             Json::FastWriter fast_writer;
                             Json::Value script_load_parameter;
                             script_load_parameter[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE] = script_language;
                             script_load_parameter[ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT] = script_content;
+                            
+                            
+                            CDataWrapper dataset_description;
+                            //add node uid
+                            dataset_description.addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID, script_instance);
+                            
+                            std::vector<mongo::BSONElement> dataset_element = script_found.getField(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION).Array();
+                            
+                            CDataWrapper node_dataset;
+                            for(std::vector<mongo::BSONElement>::iterator it = dataset_element.begin(),
+                                end = dataset_element.end();
+                                it != end;
+                                it++) {
+                                CDataWrapper dataset_element(it->embeddedObject().objdata());
+                                node_dataset.appendCDataWrapperToArray(dataset_element);
+                            }
+                            node_dataset.finalizeArrayForKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
+                            dataset_description.addCSDataValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION, node_dataset);
+                            
+                            
+                            int bin_len;
+                            const char * bin_data = dataset_description.getBSONRawData(bin_len);
+                            const std::string encoded_binary_ds = bson::base64::encode(bin_data, bin_len);
+                            
+                            script_load_parameter[ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION] = encoded_binary_ds;
                             ub.append(CHAOS_FORMAT("instance_description.%1%",%ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM), fast_writer.write(script_load_parameter));
                             
                             //copy dataset to update bson objet
@@ -626,7 +656,7 @@ int MongoDBScriptDataAccess::instanceForUnitServerHeartbeat(const ChaosStringVec
         bson_find_and << BSON(CHAOS_FORMAT("instance_description.%1%",%chaos::NodeDefinitionKey::NODE_PARENT) << unit_server_parent);
         
         //not in timeout
-        bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << true << "$gte" << start_timeout_date));
+        //bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << true << "$lte" << start_timeout_date));
         
         //compose the query
         mongo::BSONObj q = BSON("$and" << bson_find_and.arr());
@@ -634,10 +664,12 @@ int MongoDBScriptDataAccess::instanceForUnitServerHeartbeat(const ChaosStringVec
         mongo::BSONObj u = BSON("$set" << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << mongo::Date_t(now)));
         DEBUG_CODE(SDA_DBG<<log_message("instanceHeartbeat",
                                         "update",
-                                        DATA_ACCESS_LOG_1_ENTRY("Query",
-                                                                q));)
+                                        DATA_ACCESS_LOG_2_ENTRY("Query",
+                                                                "Update",
+                                                                q,
+                                                                u));)
         //inset on database new script description
-        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
+        if((err = connection->update(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_NODES),
                                      q,
                                      u,
                                      false,

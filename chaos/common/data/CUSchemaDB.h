@@ -90,6 +90,7 @@ namespace chaos {
                 //! entity poitner for all device defined withing the control unit
                 std::map<const char *, uint32_t> mapDatasetKeyForID;
                 
+            protected:
                 //! fill a CDatawrapper with the device description
                 void fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute,  entity::Entity *deviceIDEntity, entity::Entity *attrEntity, ptr_vector<edb::KeyIdAndValue>& attrProperty);
                 

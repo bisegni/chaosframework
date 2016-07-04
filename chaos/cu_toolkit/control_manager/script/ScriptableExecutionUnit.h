@@ -27,13 +27,18 @@
 #include <chaos/cu_toolkit/control_manager/script/EUScriptableWrapper.h>
 #include <chaos/cu_toolkit/control_manager/AbstractExecutionUnit.h>
 
+#include <bitset>
+
 namespace chaos {
     namespace cu {
         namespace control_manager {
             namespace script {
                 
-#define SEU_ALGORITHM_SETUP     "algorithmSetup"
+#define SEU_ALGORITHM_LAUNCH    "algorithmLaunch"
+#define SEU_ALGORITHM_START     "algorithmStart"
 #define SEU_ALGORITHM_STEP      "algorithmStep"
+#define SEU_ALGORITHM_STOP      "algorithmStop"
+#define SEU_ALGORITHM_END       "algorithmEnd"
                 
                 //! this class implementa an execution unit defined by a script
                 /*!
@@ -59,6 +64,8 @@ namespace chaos {
                     
                     //! class taht wrap the execution uni to script
                     EUScriptableWrapper scriptable_wrapper;
+                    
+                    std::bitset<5> alghorithm_handler_implemented;
                 public:
                     /*! default constructor
                      \param _execution_unit_param is a string that contains parameter to pass during the contorl unit creation
@@ -102,8 +109,22 @@ namespace chaos {
                     //! inherited method
                     void unitDefineActionAndDataset() throw(CException);
                     
+                    
+                    //! inherithed method
+                    void executeAlgorithmLaunch() throw (CException);
+                    
+                    //! inherithed method
+                    void executeAlgorithmStart() throw (CException);
+                    
                     //! inherithed method
                     void executeAlgorithmStep(uint64_t step_delay_time) throw (CException);
+                    
+                    //! inherithed method
+                    void executeAlgorithmStop() throw (CException);
+                    
+                    //! inherithed method
+                    void executeAlgorithmEnd() throw (CException);
+                    
                     
                     //! inherithed method
                     void unitUndefineActionAndDataset() throw(CException);

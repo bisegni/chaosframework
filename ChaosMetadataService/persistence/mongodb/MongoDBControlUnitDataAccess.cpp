@@ -63,7 +63,9 @@ int MongoDBControlUnitDataAccess::getControlUnitWithAutoFlag(const std::string& 
 
         //filter on unit server
         query_builder << boost::str(boost::format("instance_description.%1%") % NodeDefinitionKey::NODE_PARENT) << unit_server_host;
-
+        query_builder << NodeDefinitionKey::NODE_TYPE << NodeType::NODE_TYPE_CONTROL_UNIT;
+        //exlude execution unit from autoload phase because hte ened to be loaded by execution pool
+        query_builder << NodeDefinitionKey::NODE_SUB_TYPE << BSON("$not" << NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
         switch(auto_flag) {
             case AUTO_LOAD:
                 query_builder << "instance_description.auto_load" << true;

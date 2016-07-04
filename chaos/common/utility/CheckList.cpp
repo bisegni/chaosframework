@@ -23,7 +23,7 @@
 using namespace chaos::common::utility;
 
 void CheckList::addElement(int element_to_do){
-    list_element_to_do.insert(element_to_do);
+    list_element_to_do.insert( element_to_do);
 }
 
 void CheckList::removeElement(int element_to_remove) {

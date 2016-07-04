@@ -106,8 +106,8 @@ namespace chaos{
             
             
             typedef enum {
-                START_RPC_PHASE_IMPLEMENTATION = 0,
-                START_RPC_PHASE_UNIT
+                START_RPC_PHASE_UNIT = 0,
+                START_RPC_PHASE_IMPLEMENTATION
             }StartRPCPhase;
             
             typedef enum {

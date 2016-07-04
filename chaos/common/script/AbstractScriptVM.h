@@ -50,6 +50,8 @@ namespace chaos {
                 
                 virtual int callProcedure(const std::string& function_name,
                                           const ScriptInParam& input_parameter) = 0;
+                
+                virtual int functionExists(const std::string& name, bool& exists) = 0;
             };
 
         }

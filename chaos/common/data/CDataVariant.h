@@ -66,7 +66,9 @@ namespace chaos {
                 DataType::DataType getType() const;
                 
                 int32_t asInt32() const;
+                uint32_t asUInt32() const;
                 int64_t asInt64() const;
+                uint64_t asUInt64() const;
                 double asDouble() const;
                 bool asBool() const;
                 const std::string& asString() const;

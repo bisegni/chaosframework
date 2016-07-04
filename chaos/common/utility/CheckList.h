@@ -22,7 +22,9 @@
 #define __CHAOSFramework__CheckList_hpp
 
 #include <string>
+
 #include <set>
+
 namespace chaos {
     namespace common {
         namespace utility {

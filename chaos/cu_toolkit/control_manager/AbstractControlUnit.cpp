@@ -159,9 +159,9 @@ void AbstractControlUnit::_initChecklist() {
     
     
     check_list_sub_service.addCheckList("_start");
-    check_list_sub_service.getSharedCheckList("_start")->addElement(START_RPC_PHASE_IMPLEMENTATION);
     check_list_sub_service.getSharedCheckList("_start")->addElement(START_RPC_PHASE_UNIT);
-    
+    check_list_sub_service.getSharedCheckList("_start")->addElement(START_RPC_PHASE_IMPLEMENTATION);
+ 
     check_list_sub_service.addCheckList("start");
     check_list_sub_service.getSharedCheckList("start")->addElement(START_SM_PHASE_STAT_TIMER);
 }
@@ -220,7 +220,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setup_configurat
     
     //add the control unit type with semantonc type::subtype
     setup_configuration.addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
-    
+    setup_configuration.addStringValue(NodeDefinitionKey::NODE_SUB_TYPE, control_unit_type);
     //check if as been setuped a file for configuration
     //LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
     //loadCDataWrapperForJsonFile(setup_configuration);
@@ -449,6 +449,7 @@ void AbstractControlUnit::doInitSMCheckList() throw(CException) {
 
 void AbstractControlUnit::doStartRpCheckList() throw(CException) {
     CHAOS_CHECK_LIST_START_SCAN_TO_DO(check_list_sub_service, "_start"){
+        
         CHAOS_CHECK_LIST_DONE(check_list_sub_service, "_start", START_RPC_PHASE_IMPLEMENTATION){
             start();
             break;
@@ -556,6 +557,7 @@ void AbstractControlUnit::redoStartRpCheckList(bool throw_exception) throw(CExce
             break;
         }
         
+        //unit sto need to go after the abstract cu has been stopped
         CHAOS_CHECK_LIST_REDO(check_list_sub_service, "_start", START_RPC_PHASE_UNIT){
             CHEK_IF_NEED_TO_THROW(throw_exception, unitStop();)
         }
@@ -1262,7 +1264,8 @@ CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam,
                                             bool& detachParam) throw(CException) {
     CDataWrapper *stateResult = new CDataWrapper();
     //set the string representing the type of the control unit
-    stateResult->addStringValue(NodeDefinitionKey::NODE_TYPE, control_unit_type);
+    stateResult->addStringValue(NodeDefinitionKey::NODE_TYPE, NodeType::NODE_TYPE_CONTROL_UNIT);
+    stateResult->addStringValue(NodeDefinitionKey::NODE_SUB_TYPE, control_unit_type);
     return stateResult;
 }
 

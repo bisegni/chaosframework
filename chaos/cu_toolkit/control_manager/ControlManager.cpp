@@ -313,7 +313,7 @@ void ControlManager::submitControlUnit(AbstractControlUnit *control_unit_instanc
     boost::unique_lock<boost::shared_mutex> lock(mutex_queue_submitted_cu);
     
     if(exectuion_pool_manager.get() != NULL &&
-       control_unit_instance->getCUType().compare(chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT)){
+       control_unit_instance->getCUType().compare(chaos::NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT) == 0){
         //in this case we need to register the uinit within the execution pool manager
         // doing that execution pool notify fast as possible that it manage the heratbeat
         //for the relative script
@@ -382,7 +382,7 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
                (i->second->getCurrentState() == UnitStatePublishingFailure ||   //we heva etrminated the publishing unpublishing work
                 i->second->getCurrentState() == UnitStateUnpublished ||
                 i->second->getCurrentState() == UnitStatePublished) &&
-               i->second->work_unit_instance->getCUType().compare(chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT)){  //wthe cu in a scriptable execution unit
+               i->second->work_unit_instance->getCUType().compare(chaos::NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT) == 0){
                 //in this case we need to register the uinit within the execution pool manager
                 // doing that execution pool notify fast as possible that it manage the heratbeat
                 //for the relative script

@@ -149,7 +149,7 @@ int MongoDBNodeDataAccess::updateNode(chaos::common::data::CDataWrapper& node_de
             updated_field << chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR << node_description.getStringValue(chaos::NodeDefinitionKey::NODE_DIRECT_IO_ADDR);
         }
         if(node_description.hasKey(chaos::NodeDefinitionKey::NODE_TIMESTAMP)) {
-            updated_field << chaos::NodeDefinitionKey::NODE_TIMESTAMP << (long long)node_description.getUInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP);
+            updated_field << chaos::NodeDefinitionKey::NODE_TIMESTAMP << mongo::Date_t(node_description.getUInt64Value(chaos::NodeDefinitionKey::NODE_TIMESTAMP));
         }
         if(node_description.hasKey(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC)) {
             std::auto_ptr<CMultiTypeDataArrayWrapper> action_array(node_description.getVectorValue(chaos::RpcActionDefinitionKey::CS_CMDM_ACTION_DESC));
@@ -320,9 +320,6 @@ int MongoDBNodeDataAccess::searchNode(chaos::common::data::CDataWrapper **result
                 break;
             case 2:
                 type_of_node = chaos::NodeType::NODE_TYPE_CONTROL_UNIT;
-                break;
-            case 3:
-                type_of_node = chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT;
                 break;
             default:
                 break;

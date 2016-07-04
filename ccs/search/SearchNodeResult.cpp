@@ -66,7 +66,7 @@ void SearchNodeResult::initUI() {
 
     QStringList search_types;
     if(selectable_types.size() == 0) {
-        search_types << "All types" << "Unit server" << "Control unit" << "Scriptable Execution unit";
+        search_types << "All types" << "Unit server" << "Control unit";
     } else {
         foreach(SearchNodeType searchable_type , selectable_types) {
             switch(searchable_type) {
@@ -78,9 +78,6 @@ void SearchNodeResult::initUI() {
                 break;
             case SNT_CONTROL_UNIT:
                 search_types << "Control unit";
-                break;
-            case SNT_SCRIPTABLE_EXECUTION_UNIT:
-                search_types << "Scriptable Execution Unit";
                 break;
             }
         }
@@ -254,8 +251,7 @@ void SearchNodeResult::on_tableViewResult_doubleClicked(const QModelIndex &index
         if(node_type->text().compare(chaos::NodeType::NODE_TYPE_UNIT_SERVER) == 0) {
             qDebug() << "Open unit server editor for" << node_uid->text();
             addWidgetToPresenter(new UnitServerEditor(node_uid->text()));
-        }else if(node_type->text().compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0 ||
-                 node_type->text().compare(chaos::NodeType::NODE_TYPE_SCRIPTABLE_EXECUTION_UNIT) == 0 ) {
+        }else if(node_type->text().compare(chaos::NodeType::NODE_TYPE_CONTROL_UNIT) == 0) {
             qDebug() << "Open control unit editor for" << node_uid->text();
             addWidgetToPresenter(new ControlUnitEditor(node_uid->text()));
         }

@@ -326,3 +326,13 @@ int LuaScriptVM::callProcedure(const std::string& function_name,
     }
     return err;
 }
+
+int LuaScriptVM::functionExists(const std::string& name,
+                                bool& exists) {
+    int err = 0;
+    exists = false;
+    lua_getglobal(ls, name.c_str());
+    exists = lua_isfunction(ls, -1);
+    lua_pop(ls, 1);
+    return err;
+}
