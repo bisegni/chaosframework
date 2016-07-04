@@ -107,7 +107,7 @@ CDataVariant& CDataVariant::operator=(const CDataVariant& arg) {
 }
 
 int32_t CDataVariant::asInt32() const {
-    return  boost::get<int32_t>(_internal_variant);
+    return  boost::apply_visitor( Int32Visitor(), _internal_variant ); //boost::get<int32_t>(_internal_variant);
 }
 uint32_t CDataVariant::asUInt32() const {
     return  boost::get<uint32_t>(_internal_variant);

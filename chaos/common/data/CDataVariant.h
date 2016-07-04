@@ -27,10 +27,43 @@
 
 #include <boost/variant.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/lexical_cast.hpp>
 
 namespace chaos {
     namespace common {
         namespace data {
+            
+            class Int32Visitor:
+            public boost::static_visitor< int32_t > {
+            public:
+                int32_t operator()(std::string str) const {
+                    return boost::lexical_cast<int32_t>(str);
+                }
+                
+                int32_t operator()(int32_t i32v) const {
+                    return i32v;
+                }
+                
+                int32_t operator()(uint32_t ui32v) const {
+                    return (int32_t)ui32v;
+                }
+                
+                int32_t operator()(int64_t i64v) const {
+                    return (int32_t)i64v;
+                }
+                
+                int32_t operator()(uint64_t ui64v) const {
+                    return (int32_t)ui64v;
+                }
+                
+                int32_t operator()(double dv) const {
+                    return (int32_t)dv;
+                }
+                
+                int32_t operator()(bool bv) const {
+                    return (int32_t)bv;
+                }
+            };
             
             /*!
              * Chaos variant implementation that host all dataset CHAOS data type
