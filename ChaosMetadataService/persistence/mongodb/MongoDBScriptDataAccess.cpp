@@ -435,6 +435,7 @@ int MongoDBScriptDataAccess::getUnscheduledInstanceForJob(const chaos::service_c
         bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_TYPE << chaos::NodeType::NODE_TYPE_CONTROL_UNIT);
         bson_find_and << BSON(chaos::NodeDefinitionKey::NODE_SUB_TYPE << chaos::NodeType::NODE_SUBTYPE_SCRIPTABLE_EXECUTION_UNIT);
         bson_find_and << BSON("script_seq" << (long long)script.unique_id);
+        bson_find_and << BSON("instance_description.auto_load"  << true);
         
         bson_find_hb_or << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << true << "$lt" << start_timeout_date));
         bson_find_hb_or << BSON(chaos::NodeDefinitionKey::NODE_TIMESTAMP << BSON("$exists" << false));
