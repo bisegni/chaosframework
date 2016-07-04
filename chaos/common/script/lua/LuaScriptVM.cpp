@@ -40,18 +40,18 @@ const Luna<ChaosLuaWrapperInterface>::RegType ChaosLuaWrapperInterface::Register
 
 ChaosLuaWrapperInterface::ChaosLuaWrapperInterface(lua_State *L):
 script_caller(NULL){
-    printf("in ChaosLuaWrapperInterface constructor\n");
+    LSVM_IDBG << "ChaosLuaWrapperInterface constructor\n";
 }
 
 ChaosLuaWrapperInterface::~ChaosLuaWrapperInterface() {
-    printf("in ChaosLuaWrapperInterface destructor\n");
+    LSVM_IDBG << "ChaosLuaWrapperInterface destructor\n";
 }
 
 int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
     int err = 0;
     //the minimum number of parameter are two (class and api name)
     int nargs = lua_gettop(ls);
-    if(nargs < 2) {
+    if(nargs < 3) {
         //return error
         lua_pushinteger(ls, -1);
         return 1;
@@ -60,14 +60,14 @@ int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
     ScriptInParam   in_param;
     ScriptOutParam  out_param;
     //get api class and function names
-    const std::string class_api_name = lua_tostring(ls, 1);
-    const std::string api_name = lua_tostring(ls, 2);
+    const std::string class_api_name = lua_tostring(ls, 2);
+    const std::string api_name = lua_tostring(ls, 3);
     
     //scan all input parameter
-    for (int i=3; i <= nargs; i++) {
-        switch(lua_type(ls, 1)) {
+    for (int i=4; i <= nargs; i++) {
+        switch(lua_type(ls, i)) {
             case LUA_TSTRING:
-                in_param.push_back(CDataVariant(lua_tostring(ls, i)));
+                in_param.push_back(CDataVariant(std::string(lua_tostring(ls, i))));
                 break;
             case LUA_TNUMBER:
                 if(lua_isinteger(ls, i)){
@@ -84,10 +84,13 @@ int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
         }
     }
     
-    if((err = script_caller->callScriptApi(class_api_name,
-                                           api_name,
-                                           in_param,
-                                           out_param))) {
+    lua_getglobal(ls, "script_vm");
+    LuaScriptVM *lua_vm = static_cast<LuaScriptVM*>(lua_touserdata(ls, -1));
+    
+    if((err = lua_vm->getCaller()->callScriptApi(class_api_name,
+                                                 api_name,
+                                                 in_param,
+                                                 out_param))) {
         LSVM_ERR << CHAOS_FORMAT("Error calling %1%[%2%] with code %3%", %api_name%api_name%class_api_name%err);
         luaL_argerror(ls, err, CHAOS_FORMAT("Error executing %1%[%2%]", %api_name%api_name).c_str());
     } else {
@@ -175,8 +178,6 @@ void LuaScriptVM::init(void *init_data) throw(chaos::CException) {
     luaL_setfuncs(ls, chaos_wrap, 0);
     lua_pop(ls, 1);
     
-    //set virtual machine as allocation handler
-    Luna<ChaosLuaWrapperInterface>::setHandler(this);
     //register wrapper interface
     Luna<ChaosLuaWrapperInterface>::Register(ls);
     
@@ -197,6 +198,10 @@ void LuaScriptVM::deallocationOf(ChaosLuaWrapperInterface *deallocatedClass) {
 
 int LuaScriptVM::loadScript(const std::string& loadable_script) {
     int err = 0;
+    
+    lua_pushlightuserdata(ls, static_cast<void*>(this));
+    lua_setglobal(ls, "script_vm");
+    
     //load script
     if((err = luaL_loadstring(ls, loadable_script.c_str()))){
         LSVM_ERR << CHAOS_FORMAT("Error %1% loading script", %lua_tostring(ls, -1));

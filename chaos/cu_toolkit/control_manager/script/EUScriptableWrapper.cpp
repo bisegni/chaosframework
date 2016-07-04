@@ -36,6 +36,7 @@ TemplatedAbstractScriptableClass(this,
 eu_instance(_eu_instance){
     //add all exposed api
     addApi(EUSW_ADD_DATASET_ATTRIBUTE, &EUScriptableWrapper::addDatasetAttribute);
+    addApi(EUSW_GET_DOMAIN_ATTRIBUTE_VALUE, &EUScriptableWrapper::getDomainAttributeValue);
 }
 
 EUScriptableWrapper::~EUScriptableWrapper() {}
@@ -52,7 +53,7 @@ int EUScriptableWrapper::addDatasetAttribute(const ScriptInParam& input_paramete
     DataType::DataSetAttributeIOAttribute attribute_direction = static_cast<DataType::DataSetAttributeIOAttribute>(input_parameter[3].asInt32());
     uint32_t maxSize = (uint32_t)(input_parameter.size() == 5 ?input_parameter[4].asInt32():0);
     EUSW_LAPP<< CHAOS_FORMAT("Call of addDatasetAttribute with %1% %2% %3% %4%", %attribute_name%attribute_description%attribute_type%attribute_direction);
-
+    
     eu_instance->addAttributeToDataSet(attribute_name,
                                        attribute_description,
                                        attribute_type,
@@ -61,8 +62,21 @@ int EUScriptableWrapper::addDatasetAttribute(const ScriptInParam& input_paramete
     return 0;
 }
 
-int EUScriptableWrapper::addVariable(const ScriptInParam& input_parameter,
-                                     ScriptOutParam& output_parameter){
-    EUSW_LAPP<<"Call of addVariable";
+//! return the value of an dataset attribute
+int EUScriptableWrapper::getDomainAttributeValue(const common::script::ScriptInParam& input_parameter,
+                                                 common::script::ScriptOutParam& output_parameter) {
+    if(input_parameter.size() != 2) {
+        return -1;
+    }
+    try{
+        AttributeValue *cached_value = eu_instance->_getAttributeCache()->getAttributeValue((chaos::common::data::cache::SharedCacheDomain)input_parameter[0].asInt32(),
+                                                                                            input_parameter[1].asString());
+        if(cached_value == NULL) return -2;
+        output_parameter.push_back(cached_value->getAsVariant());
+    } catch(...) {
+        return -3;
+    }
+    
+    //check number of parameter
     return 0;
 }

@@ -42,7 +42,7 @@ namespace chaos {
                 //forward declarations
             class ControManager;
             class AbstractExecutionUnit;
-
+            
 			class RTAbstractControlUnit:
             public AbstractControlUnit {
 				friend class ControlManager;

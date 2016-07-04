@@ -41,7 +41,7 @@ namespace chaos {
                 AbstractScriptVM(const std::string& service_name);
                 virtual ~AbstractScriptVM();
                 void setCaller(ScriptApiCaller *_script_caller);
-
+                ScriptApiCaller *getCaller();
                 virtual int loadScript(const std::string& loadable_script) = 0;
 
                 virtual int callFunction(const std::string& function_name,

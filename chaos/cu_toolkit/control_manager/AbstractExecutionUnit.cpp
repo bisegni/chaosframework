@@ -69,6 +69,11 @@ last_execution_ts(0){}
 
 AbstractExecutionUnit::~AbstractExecutionUnit() {}
 
+//!redefine private for protection
+AbstractSharedDomainCache* AbstractExecutionUnit::_getAttributeCache() {
+    return RTAbstractControlUnit::_getAttributeCache();
+}
+
 #pragma Execution Uni tAPI
 
 void AbstractExecutionUnit::setExecutionUnitDescription(const std::string& description) {

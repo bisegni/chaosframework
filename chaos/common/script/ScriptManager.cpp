@@ -64,7 +64,7 @@ int ScriptManager::callScriptApi(const std::string& api_class,
                                  ScriptOutParam& output_parameter) {
         //read lock the map
     boost::shared_lock<boost::shared_mutex> rl(map_mutex);
-
+    if(map_api_class.count(api_class) == 0) return -1;
         //call api class
     return map_api_class[api_class]->callApi(api_name,
                                              input_parameter,
@@ -77,6 +77,7 @@ void ScriptManager::init(void *init_data) throw(chaos::CException) {
     script_vm = ObjectFactoryRegister<AbstractScriptVM>::getInstance()->getNewInstanceByName(vm_name);
     CHAOS_LASSERT_EXCEPTION(script_vm, SCRPTMAN_ERR, -1, CHAOS_FORMAT("Virtual machine '%1%' has not been instantiated", %vm_name));
     InizializableService::initImplementation(script_vm, NULL, vm_name, __PRETTY_FUNCTION__);
+    script_vm->setCaller(this);
 }
 
 void ScriptManager::deinit() throw(chaos::CException) {

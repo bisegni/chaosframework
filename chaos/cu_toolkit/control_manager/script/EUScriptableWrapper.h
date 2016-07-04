@@ -30,6 +30,7 @@ namespace chaos {
             namespace script {
                 
 #define EUSW_ADD_DATASET_ATTRIBUTE "addDatasetAttrbiute"
+#define EUSW_GET_DOMAIN_ATTRIBUTE_VALUE "getDomainAttributeValue"
                 
                 //! forward declaration
                 class ScriptableExecutionUnit;
@@ -45,28 +46,6 @@ namespace chaos {
                     EUScriptableWrapper(ScriptableExecutionUnit *_eu_instance);
                     ~EUScriptableWrapper();
                     
-                    //! Add an algoritm variable
-                    /*!
-                     A variable is the way an algorithm can receive or emit data. Theinput variable
-                     are automatically fill with the vauels of the attribute dataset of other control unit
-                     or execution unit, that are assocaited to the variable using the MDS services. The output
-                     variable are vaalorized by algorithm and after the execution step the are sent to the
-                     respective CU or EU that are associated to the variable using the MDS services.
-                     The api need the following information:
-                     
-                     alias[string] - the alias of the variable
-                     description[string] - the description of the variable
-                     type[number] - the type of the value(@chaos::DataType::DataType)
-                     direction[number] - is the variable direction @chaos::DataType::DataSetAttributeIOAttribute
-                     mandatory[bool] - determinate if the variable is mandatory or no
-                     
-                     \param input_parameter, parameter  given by the script encoded into !CHAOS variable
-                     \param output_parameter, results sent to the script
-                     */
-                    int addVariable(const common::script::ScriptInParam& input_parameter,
-                                    common::script::ScriptOutParam& output_parameter);
-                    
-                    
                     //! Add an attribute to the dataset
                     /*!
                      Add an attribute to the execution unit dataset, that represent the thirth type of data managed by EU.
@@ -79,6 +58,19 @@ namespace chaos {
                      */
                     int addDatasetAttribute(const common::script::ScriptInParam& input_parameter,
                                             common::script::ScriptOutParam& output_parameter);
+                    
+                    //! return the value of an dataset attribute
+                    /*!
+                     input parameter
+                     domain[number] - 0,DOMAIN_OUTPUT 1,DOMAIN_INPUT 2,DOMAIN_CUSTOM 3,DOMAIN_SYSTEM
+                     attribute_name[string] - the name of the attribute
+                     
+                     output attribute
+                     atribute type[number] a value that represent the enum @chaos::DataType::DataType
+                     atribute value[as type]
+                     */
+                    int getDomainAttributeValue(const common::script::ScriptInParam& input_parameter,
+                                                common::script::ScriptOutParam& output_parameter);
                 };
             }
         }

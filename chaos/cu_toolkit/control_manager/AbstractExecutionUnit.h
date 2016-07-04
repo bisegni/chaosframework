@@ -35,6 +35,10 @@ namespace chaos{
     namespace cu {
         namespace control_manager {
             
+            namespace script {
+                class EUScriptableWrapper;
+            }
+            
             //!  Base class for execution unit !CHAOS node.
             /*!
              This is the abstraction of the execution unit. It permit to run algorithm that can
@@ -45,6 +49,8 @@ namespace chaos{
             public RTAbstractControlUnit  {
                 friend class ControlManager;
                 friend class DomainActionsScheduler;
+                friend class script::EUScriptableWrapper;
+                
                 //!is the alias associated to the algorithm
                 std::string eu_description;
                 
@@ -68,6 +74,9 @@ namespace chaos{
                 
                 //! inherited method
                 void unitDeinit() throw(CException);
+                
+                //!redefine private for protection
+                AbstractSharedDomainCache* _getAttributeCache();
                 
             protected:
                 
