@@ -29,41 +29,33 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
 
+#define CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(n,t)\
+class n ## _visitor:\
+public boost::static_visitor< t > {\
+public:\
+    t operator()(bool bv) const;\
+    t operator()(int32_t i32v) const;\
+    t operator()(uint32_t ui32v) const;\
+    t operator()(int64_t i64v) const;\
+    t operator()(uint64_t ui64v) const;\
+    t operator()(double dv) const;\
+    t operator()(const std::string& str) const;\
+    t operator()(boost::shared_ptr<chaos::common::data::CDataBuffer> buffer) const;\
+};
+
+#define CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(t) CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(t,t)
+
 namespace chaos {
     namespace common {
         namespace data {
-            
-            class Int32Visitor:
-            public boost::static_visitor< int32_t > {
-            public:
-                int32_t operator()(std::string str) const {
-                    return boost::lexical_cast<int32_t>(str);
-                }
-                
-                int32_t operator()(int32_t i32v) const {
-                    return i32v;
-                }
-                
-                int32_t operator()(uint32_t ui32v) const {
-                    return (int32_t)ui32v;
-                }
-                
-                int32_t operator()(int64_t i64v) const {
-                    return (int32_t)i64v;
-                }
-                
-                int32_t operator()(uint64_t ui64v) const {
-                    return (int32_t)ui64v;
-                }
-                
-                int32_t operator()(double dv) const {
-                    return (int32_t)dv;
-                }
-                
-                int32_t operator()(bool bv) const {
-                    return (int32_t)bv;
-                }
-            };
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(bool);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(int32_t);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(uint32_t);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(int64_t);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(uint64_t);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_TYPE(double);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(string,std::string);
+            CHAOS_VARIANT_DEFINE_VISITOR_WITH_NAME_TYPE(CDataBuffer,boost::shared_ptr<chaos::common::data::CDataBuffer>);
             
             /*!
              * Chaos variant implementation that host all dataset CHAOS data type
@@ -77,7 +69,7 @@ namespace chaos {
                 double,
                 bool,
                 std::string,
-                boost::shared_ptr<CDataBuffer> > _internal_variant;
+                boost::shared_ptr<chaos::common::data::CDataBuffer> > _internal_variant;
             public:
                 explicit CDataVariant(DataType::DataType _type,
                                       const void *_value_pointer,
@@ -104,8 +96,8 @@ namespace chaos {
                 uint64_t asUInt64() const;
                 double asDouble() const;
                 bool asBool() const;
-                const std::string& asString() const;
-                const CDataBuffer *const asCDataBuffer() const;
+                const std::string asString() const;
+                const chaos::common::data::CDataBuffer *const asCDataBuffer() const;
             };
         }
     }
