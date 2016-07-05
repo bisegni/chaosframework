@@ -29,9 +29,11 @@ namespace chaos {
         namespace control_manager {
             namespace script {
                 
-#define EUSW_ADD_DATASET_ATTRIBUTE "addDatasetAttrbiute"
-#define EUSW_GET_DOMAIN_ATTRIBUTE_VALUE "getDomainAttributeValue"
-                
+#define EUSW_ADD_DATASET_ATTRIBUTE      "addDatasetAttrbiute"
+#define EUSW_GET_OUTPUT_ATTRIBUTE_VALUE "getOutputAttributeValue"
+#define EUSW_SET_OUTPUT_ATTRIBUTE_VALUE "setOutputAttributeValue"
+#define EUSW_GET_INPUT_ATTRIBUTE_VALUE  "getInputAttributeValue"
+               
                 //! forward declaration
                 class ScriptableExecutionUnit;
                 
@@ -59,18 +61,36 @@ namespace chaos {
                     int addDatasetAttribute(const common::script::ScriptInParam& input_parameter,
                                             common::script::ScriptOutParam& output_parameter);
                     
-                    //! return the value of an dataset attribute
+                    //! set the value of an output dataset attribute
                     /*!
                      input parameter
-                     domain[number] - 0,DOMAIN_OUTPUT 1,DOMAIN_INPUT 2,DOMAIN_CUSTOM 3,DOMAIN_SYSTEM
+                     attribute_name[string] - the name of the attribute
+                     atribute value[as type] - the value of the attribute
+                     */
+                    int setOutputAttributeValue(const common::script::ScriptInParam& input_parameter,
+                                                common::script::ScriptOutParam& output_parameter);
+                    
+                    //! return the value of an output dataset attribute
+                    /*!
+                     input parameter
                      attribute_name[string] - the name of the attribute
                      
                      output attribute
-                     atribute type[number] a value that represent the enum @chaos::DataType::DataType
                      atribute value[as type]
                      */
-                    int getDomainAttributeValue(const common::script::ScriptInParam& input_parameter,
+                    int getOutputAttributeValue(const common::script::ScriptInParam& input_parameter,
                                                 common::script::ScriptOutParam& output_parameter);
+                    
+                    //! return the value of an input dataset attribute
+                    /*!
+                     input parameter
+                     attribute_name[string] - the name of the attribute
+                     
+                     output attribute
+                     atribute value[as type]
+                     */
+                    int getInputAttributeValue(const common::script::ScriptInParam& input_parameter,
+                                               common::script::ScriptOutParam& output_parameter);
                 };
             }
         }

@@ -36,7 +36,9 @@ TemplatedAbstractScriptableClass(this,
 eu_instance(_eu_instance){
     //add all exposed api
     addApi(EUSW_ADD_DATASET_ATTRIBUTE, &EUScriptableWrapper::addDatasetAttribute);
-    addApi(EUSW_GET_DOMAIN_ATTRIBUTE_VALUE, &EUScriptableWrapper::getDomainAttributeValue);
+    addApi(EUSW_SET_OUTPUT_ATTRIBUTE_VALUE, &EUScriptableWrapper::setOutputAttributeValue);
+    addApi(EUSW_GET_OUTPUT_ATTRIBUTE_VALUE, &EUScriptableWrapper::getOutputAttributeValue);
+    addApi(EUSW_GET_INPUT_ATTRIBUTE_VALUE, &EUScriptableWrapper::getInputAttributeValue);
 }
 
 EUScriptableWrapper::~EUScriptableWrapper() {}
@@ -63,14 +65,54 @@ int EUScriptableWrapper::addDatasetAttribute(const ScriptInParam& input_paramete
 }
 
 //! return the value of an dataset attribute
-int EUScriptableWrapper::getDomainAttributeValue(const common::script::ScriptInParam& input_parameter,
+int EUScriptableWrapper::setOutputAttributeValue(const common::script::ScriptInParam& input_parameter,
                                                  common::script::ScriptOutParam& output_parameter) {
     if(input_parameter.size() != 2) {
+        EUSW_LERR << "Bad number of parameter for setOutputAttributeValue";
         return -1;
     }
     try{
-        AttributeValue *cached_value = eu_instance->_getAttributeCache()->getAttributeValue((chaos::common::data::cache::SharedCacheDomain)input_parameter[0].asInt32(),
-                                                                                            input_parameter[1].asString());
+        AttributeValue *cached_value = eu_instance->_getAttributeCache()->getAttributeValue(chaos::common::data::cache::DOMAIN_OUTPUT,
+                                                                                            input_parameter[0].asString());
+        if(cached_value == NULL) return -2;
+        cached_value->setValue(input_parameter[1]);
+    } catch(...) {
+        return -3;
+    }
+    
+    //check number of parameter
+    return 0;
+}
+
+//! return the value of an dataset attribute
+int EUScriptableWrapper::getOutputAttributeValue(const common::script::ScriptInParam& input_parameter,
+                                                 common::script::ScriptOutParam& output_parameter) {
+    if(input_parameter.size() != 1) {
+        EUSW_LERR << "Bad number of parameter for getOutputAttributeValue";
+        return -1;
+    }
+    try{
+        AttributeValue *cached_value = eu_instance->_getAttributeCache()->getAttributeValue(chaos::common::data::cache::DOMAIN_OUTPUT,
+                                                                                            input_parameter[0].asString());
+        if(cached_value == NULL) return -2;
+        output_parameter.push_back(cached_value->getAsVariant());
+    } catch(...) {
+        return -3;
+    }
+    
+    //check number of parameter
+    return 0;
+}
+
+int EUScriptableWrapper::getInputAttributeValue(const common::script::ScriptInParam& input_parameter,
+                                                common::script::ScriptOutParam& output_parameter) {
+    if(input_parameter.size() != 1) {
+        EUSW_LERR << "Bad number of parameter for getInputAttributeValue";
+        return -1;
+    }
+    try{
+        AttributeValue *cached_value = eu_instance->_getAttributeCache()->getAttributeValue(chaos::common::data::cache::DOMAIN_INPUT,
+                                                                                            input_parameter[0].asString());
         if(cached_value == NULL) return -2;
         output_parameter.push_back(cached_value->getAsVariant());
     } catch(...) {

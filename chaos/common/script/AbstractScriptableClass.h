@@ -76,7 +76,10 @@ namespace chaos {
                             const ScriptInParam& input_parameter,
                             ScriptOutParam& output_parameter) {
                         //check for api presence
-                    if(map_api_ptr.count(api_name) == 0) return -1;
+                    if(map_api_ptr.count(api_name) == 0) {
+                        ERR_LOG(TemplatedAbstractScriptableClass) << CHAOS_FORMAT("Api name %1% is not registered", %api_name);
+                        return -1;
+                    }
                         //we have the api, then we can call it
                      return ((*object_reference).*map_api_ptr[api_name])(input_parameter,
                                                              output_parameter);

@@ -91,7 +91,7 @@ int ChaosLuaWrapperInterface::callApi(lua_State *ls) {
                                                  api_name,
                                                  in_param,
                                                  out_param))) {
-        LSVM_ERR << CHAOS_FORMAT("Error calling %1%[%2%] with code %3%", %api_name%api_name%class_api_name%err);
+        LSVM_ERR << CHAOS_FORMAT("Error %1% calling %2%[%3%] with code %4%", %err%api_name%api_name%class_api_name);
         luaL_argerror(ls, err, CHAOS_FORMAT("Error executing %1%[%2%]", %api_name%api_name).c_str());
     } else {
         //we can send the return
@@ -205,10 +205,7 @@ int LuaScriptVM::loadScript(const std::string& loadable_script) {
     //load script
     if((err = luaL_loadstring(ls, loadable_script.c_str()))){
         LSVM_ERR << CHAOS_FORMAT("Error %1% loading script", %lua_tostring(ls, -1));
-    }
-    
-    //compile script
-    if((err = (lua_pcall(ls, 0, 0, 0)))){
+    } else if((err = (lua_pcall(ls, 0, 0, 0)))){
         LSVM_ERR << CHAOS_FORMAT("Error %1% compiling script", %lua_tostring(ls, -1));
     }
     return err;
