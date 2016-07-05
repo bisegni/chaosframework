@@ -323,13 +323,6 @@
               </property>
              </widget>
             </item>
-            <item alignment="Qt::AlignTop">
-             <widget class="QPushButton" name="pushButton">
-              <property name="text">
-               <string>Edit</string>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item>

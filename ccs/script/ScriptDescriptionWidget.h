@@ -10,14 +10,15 @@
 #include "../api_async_processor/ApiSubmitter.h"
 #include "../data/EditableDatasetTableModel.h"
 #include "../data/EditableScriptVariableTableModel.h"
-
+#include "../utility/WidgetUtility.h"
 namespace Ui {
 class ScriptDescriptionWidget;
 }
 
 class ScriptDescriptionWidget :
         public QWidget,
-        public ApiHandler {
+        public ApiHandler,
+        public WidgetUtilityhandler {
     Q_OBJECT
 
     void updateTextEditorFeatures();
@@ -32,6 +33,9 @@ protected:
 
     void onApiDone(const QString& tag,
                    QSharedPointer<chaos::common::data::CDataWrapper> api_result);
+
+    void cmActionTrigger(const QString& cm_title,
+                                     const QVariant& cm_data);
 private slots:
     void updateScripUI();
     void on_comboBoxsScirptLanguage_currentIndexChanged(int index);
@@ -60,6 +64,7 @@ private slots:
     void on_pushButtonRemoveSelectedExecutionPools_clicked();
 
 private:
+    WidgetUtility widget_utility;
     Ui::ScriptDescriptionWidget *ui;
     QStringListModel execution_pool_model;
     QStringListModel classification_model;

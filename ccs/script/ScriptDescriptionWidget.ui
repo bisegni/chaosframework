@@ -183,7 +183,7 @@
                <x>0</x>
                <y>0</y>
                <width>422</width>
-               <height>268</height>
+               <height>214</height>
               </rect>
              </property>
              <attribute name="label">
@@ -286,9 +286,6 @@
                </layout>
               </item>
              </layout>
-             <zorder>groupBoxDataset</zorder>
-             <zorder>tableViewDataset</zorder>
-             <zorder>layoutWidget_2</zorder>
             </widget>
             <widget class="QWidget" name="pageClassification">
              <property name="geometry">
@@ -296,7 +293,7 @@
                <x>0</x>
                <y>0</y>
                <width>422</width>
-               <height>255</height>
+               <height>214</height>
               </rect>
              </property>
              <attribute name="label">
@@ -393,6 +390,14 @@
              </layout>
             </widget>
             <widget class="QWidget" name="pageExecutionPools">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>422</width>
+               <height>214</height>
+              </rect>
+             </property>
              <attribute name="label">
               <string>Execution Pools</string>
              </attribute>

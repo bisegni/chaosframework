@@ -5,14 +5,23 @@
 #include "../language_editor/LuaHighlighter.h"
 #include "../tree_group/TreeGroupManager.h"
 
+#include <QMap>
 #include <QDebug>
 #include <QStatusBar>
 
 using namespace chaos::service_common::data::script;
 using namespace chaos::metadata_service_client::api_proxy;
 
+const QString CM_ADD_CHAOS_WRAPPER  = "Add chaos wrapper";
+const QString CM_ADD_LAUNCH_PHASE   = "Add launch handler";
+const QString CM_ADD_START_PHASE    = "Add start handler";
+const QString CM_ADD_STEP_PHASE     = "Add step handler";
+const QString CM_ADD_STOP_PHASE     = "Add stop handler";
+const QString CM_ADD_DEINIT_PHASE   = "Add deinit handler";
+
 ScriptDescriptionWidget::ScriptDescriptionWidget(QWidget *parent) :
     QWidget(parent),
+    widget_utility(this),
     ui(new Ui::ScriptDescriptionWidget),
     current_highlighter(NULL),
     api_submitter(this){
@@ -40,6 +49,17 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(QWidget *parent) :
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(handleModelSelectionChanged(QItemSelection,QItemSelection)));
 
+    QMap<QString, QVariant> cm_map;
+    cm_map.insert(CM_ADD_CHAOS_WRAPPER, QVariant());
+    cm_map.insert(CM_ADD_LAUNCH_PHASE, QVariant());
+    cm_map.insert(CM_ADD_START_PHASE, QVariant());
+    cm_map.insert(CM_ADD_STEP_PHASE, QVariant());
+    cm_map.insert(CM_ADD_STOP_PHASE, QVariant());
+    cm_map.insert(CM_ADD_DEINIT_PHASE, QVariant());
+    ui->textEditSourceCode->setContextMenuPolicy(Qt::CustomContextMenu);
+    widget_utility.cmRegisterActions(ui->textEditSourceCode,
+                                     cm_map);
+
     //update script
     api_submitter.submitApiResult("ScriptDescriptionWidget::loadFullScript",
                                   GET_CHAOS_API_PTR(script::LoadFullScript)->execute(script_wrapper.dataWrapped().script_description));
@@ -48,6 +68,7 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(QWidget *parent) :
 ScriptDescriptionWidget::ScriptDescriptionWidget(const Script &_script,
                                                  QWidget *parent):
     QWidget(parent),
+    widget_utility(this),
     ui(new Ui::ScriptDescriptionWidget),
     current_highlighter(NULL),
     api_submitter(this),
@@ -73,6 +94,16 @@ ScriptDescriptionWidget::ScriptDescriptionWidget(const Script &_script,
     connect(ui->listViewExecutionPools->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(handleModelSelectionChanged(QItemSelection,QItemSelection)));
+    QMap<QString, QVariant> cm_map;
+    cm_map.insert(CM_ADD_CHAOS_WRAPPER, QVariant());
+    cm_map.insert(CM_ADD_LAUNCH_PHASE, QVariant());
+    cm_map.insert(CM_ADD_START_PHASE, QVariant());
+    cm_map.insert(CM_ADD_STEP_PHASE, QVariant());
+    cm_map.insert(CM_ADD_STOP_PHASE, QVariant());
+    cm_map.insert(CM_ADD_DEINIT_PHASE, QVariant());
+    ui->textEditSourceCode->setContextMenuPolicy(Qt::CustomContextMenu);
+    widget_utility.cmRegisterActions(ui->textEditSourceCode,
+                                     cm_map);
     //update script
     api_submitter.submitApiResult("ScriptDescriptionWidget::loadFullScript",
                                   GET_CHAOS_API_PTR(script::LoadFullScript)->execute(script_wrapper.dataWrapped().script_description));
@@ -99,6 +130,32 @@ void ScriptDescriptionWidget::onApiDone(const QString& tag,
         //set on statu bar that the save operation hase been achieved
         ((MainWindow*)window())->statusBar()->showMessage(QString("%1 has been saved").arg(QString::fromStdString(script_wrapper.dataWrapped().script_description.name)), 5000);
     }
+}
+
+void ScriptDescriptionWidget::cmActionTrigger(const QString& cm_title,
+                                 const QVariant& cm_data) {
+    QTextCursor text_cursor = QTextCursor(ui->textEditSourceCode->document());
+    int current_position = text_cursor.position();
+    if(cm_title.compare(CM_ADD_CHAOS_WRAPPER) == 0) {
+        text_cursor.movePosition(QTextCursor::Start);
+        ui->textEditSourceCode->insertPlainText("local chaos = chaos()");
+    } else if(cm_title.compare(CM_ADD_LAUNCH_PHASE) == 0) {
+        text_cursor.movePosition(QTextCursor::End);
+        ui->textEditSourceCode->insertPlainText("function algorithmLaunch()\n\tprint ( \"executing algorithmLaunch\" );\nend");
+    } else if(cm_title.compare(CM_ADD_START_PHASE) == 0) {
+        text_cursor.movePosition(QTextCursor::End);
+        ui->textEditSourceCode->insertPlainText("function algorithmStart()\n\tprint ( \"executing algorithmStart\" );\nend");
+    } else if(cm_title.compare(CM_ADD_STEP_PHASE) == 0) {
+        text_cursor.movePosition(QTextCursor::End);
+        ui->textEditSourceCode->insertPlainText("function algorithmStep(delay_from_last_step) \n\tprint ( \"executing algorithmStep--->\"..tostring(delay_from_last_step) );\nend");
+    } else if(cm_title.compare(CM_ADD_STOP_PHASE) == 0) {
+        text_cursor.movePosition(QTextCursor::End);
+        ui->textEditSourceCode->insertPlainText("function algorithmStop()\n\tprint ( \"executing algorithmStop\" );\nend");
+    } else if(cm_title.compare(CM_ADD_DEINIT_PHASE) == 0) {
+        text_cursor.movePosition(QTextCursor::End);
+        ui->textEditSourceCode->insertPlainText("function algorithmEnd()\n\tprint ( \"executing algorithmEnd\" );\nend");
+    }
+     text_cursor.setPosition(current_position);
 }
 
 void ScriptDescriptionWidget::updateScripUI() {

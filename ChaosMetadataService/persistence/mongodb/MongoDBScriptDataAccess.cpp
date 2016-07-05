@@ -25,6 +25,7 @@
 #include <chaos/common/bson/util/base64.h>
 #include <chaos/common/utility/TimingUtil.h>
 
+#include <boost/regex.hpp>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -42,6 +43,10 @@ using namespace chaos::metadata_service::persistence::data_access;
 #define SDA_INFO    INFO_LOG(MongoDBScriptDataAccess)
 #define SDA_DBG     DBG_LOG(MongoDBScriptDataAccess)
 #define SDA_ERR     ERR_LOG(MongoDBScriptDataAccess)
+
+static const std::string    ESCAPE_REPLACE_STRING("\\\\&");
+static const boost::regex   ESCAPE_REPLACE_SEARCH_REGEXP("([\\^\\.\\$\\|\\(\\)\\[\\]\\*\\+\\?\\/\\\\])");
+static const boost::regex   REGEX_EXECUTION_POOL_VALIDATION("[A-Za-z0-9_]+:[A-Za-z0-9\\/_]+");
 
 MongoDBScriptDataAccess::MongoDBScriptDataAccess(const boost::shared_ptr<service_common::persistence::mongodb::MongoDBHAConnectionManager>& _connection):
 MongoDBAccessor(_connection),
@@ -352,7 +357,7 @@ int MongoDBScriptDataAccess::deleteScript(const uint64_t unique_id,
                                                                 q_instance));)
         //inset on database new script description
         if((err = connection->remove(MONGO_DB_COLLECTION_NAME(MONGODB_COLLECTION_SCRIPT),
-                                      q_instance))) {
+                                     q_instance))) {
             SDA_ERR << CHAOS_FORMAT("Error removing instance for script %1%[%2%] with error [%3%]", %unique_id%name%err);
         } else {
             DEBUG_CODE(SDA_DBG<<log_message("deleteScript",
@@ -385,9 +390,17 @@ int MongoDBScriptDataAccess::getScriptForExecutionPoolPathList(const ChaosString
     mongo::BSONArrayBuilder bson_find_in;
     try {
         BOOST_FOREACH( std::string pool_path_element, pool_path ) {
-            bson_find_in << pool_path_element;
+            if(boost::regex_match(pool_path_element,
+                                  REGEX_EXECUTION_POOL_VALIDATION) == false) continue;
+            
+            //escape xecution ppool path for earchunder the path
+            const std::string result = boost::regex_replace(pool_path_element,
+                                                            ESCAPE_REPLACE_SEARCH_REGEXP,
+                                                            ESCAPE_REPLACE_STRING,
+                                                            boost::match_default | boost::format_sed);
+            bson_find_in.appendRegex(CHAOS_FORMAT("%1%[A-Za-z0-9\\/_]*",%result));
         }
-        mongo::Query q = BSON("execution_pool_list" << BSON("$in" << bson_find_in.arr()) <<
+        mongo::Query q = BSON("execution_pool_list" << BSON("$in"<< bson_find_in.arr()) <<
                               "seq" << BSON("$gt" << (long long)last_sequence_id));
         //ordered by sequence
         q = q.sort(BSON("seq"<< 1));
@@ -567,8 +580,8 @@ int MongoDBScriptDataAccess::copyScriptDatasetAndContentToInstance(const chaos::
                             //now we can copy the dataset to the instance from his script
                             mongo::BSONObjBuilder ub;
                             //copy dataset
-//                            ub << chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << BSON(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp()) <<
-//                                                                                                                chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << script_found.getField(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+                            //                            ub << chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << BSON(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp()) <<
+                            //                                                                                                                chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION << script_found.getField(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
                             
                             //ccompose the laod parameter for describe the script language and content
                             const std::string script_language = script_found.getField(ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE).String();
