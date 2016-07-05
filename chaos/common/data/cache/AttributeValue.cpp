@@ -128,7 +128,7 @@ bool AttributeValue::setValue(const CDataVariant& attribute_value,
         }
             
         case DataType::TYPE_INT64: {
-            int32_t i64v = attribute_value.asInt32();
+            int64_t i64v = attribute_value.asInt64();
             //copy string to buffer
             std::memcpy(value_buffer,
                         &i64v,
