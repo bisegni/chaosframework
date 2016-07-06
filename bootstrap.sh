@@ -177,8 +177,8 @@ if [ -n "$CHAOS_BOOST_VERSION" ]; then
     BOOST_VERSION="1_"$CHAOS_BOOST_VERSION"_0"
     BOOST_VERSION_IN_PATH="1.$CHAOS_BOOST_VERSION.0"
 else
-    BOOST_VERSION=1_53_0
-    BOOST_VERSION_IN_PATH=1.53.0
+    BOOST_VERSION=1_56_0
+    BOOST_VERSION_IN_PATH=1.56.0
 fi
 
 BOOST_NUMBER_VERSION=$(echo $BOOST_VERSION_IN_PATH |sed "s/[^0-9]//g" )
@@ -190,7 +190,7 @@ fi;
 
 if [ ! -n "$CHAOS_LINK_LIBRARY" ]; then
     echo "Set the dafult chaos framework linking library"
-    export CHAOS_LINK_LIBRARY="boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup zmq uv dl"
+    export CHAOS_LINK_LIBRARY="boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup zmq dl"
     echo $CHAOS_LINK_LIBRARY
 fi;
 
