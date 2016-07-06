@@ -26,7 +26,7 @@
 
 #include <chaos_service_common/data/node/Node.h>
 
-#include <chaos_service_common/data/script/script.h>
+#include <chaos_service_common/data/script/Script.h>
 
 #include <chaos_service_common/data/general/Lists.h>
 
