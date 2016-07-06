@@ -190,7 +190,7 @@ fi;
 
 if [ ! -n "$CHAOS_LINK_LIBRARY" ]; then
     echo "Set the dafult chaos framework linking library"
-    export CHAOS_LINK_LIBRARY="boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached zmq uv dl"
+    export CHAOS_LINK_LIBRARY="boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup zmq uv dl"
     echo $CHAOS_LINK_LIBRARY
 fi;
 
@@ -383,34 +383,34 @@ if [ -z "$NO_MONGOOSE" ];then
 fi
 ##
 
-if [ -z "$CHAOS_NO_MEMCACHE" ];then
-echo "Setup LIBMEMCACHED"
-if [ ! -d "$PREFIX/include/libmemcached" ]; then
-    echo "* need memcached"
-
-    if [ ! -d "$BASE_EXTERNAL/libmemcached-$LMEM_VERSION" ]; then
-	if !(wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz); then
-	    echo "## cannot wget  https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz"
-	    exit 1
-	fi
-	tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
-    fi
-    cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
-
-    if !(./configure $CHAOS_LIBMEMCACHED_CONFIGURE ); then
-	echo "Memcached configuration failed"
-	exit 1
-    fi
-    ## use standard types instead cinttypes that generates troubles in ARM annd clang
-    echo "patching memcached.h to use the correct cinttypes"
-    sed -i .bak -e "s/include <cinttypes>/include <tr1\/cinttypes>/" libmemcached-1.0/memcached.h
-
-    do_make "LIBMEMCACHED" 1 -k
-fi
-echo "Libmemcached done"
-else
-echo "skipping libmemcached"
-fi
+#if [ -z "$CHAOS_NO_MEMCACHE" ];then
+#echo "Setup LIBMEMCACHED"
+#if [ ! -d "$PREFIX/include/libmemcached" ]; then
+#    echo "* need memcached"
+#
+#    if [ ! -d "$BASE_EXTERNAL/libmemcached-$LMEM_VERSION" ]; then
+#	if !(wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz); then
+#	    echo "## cannot wget  https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz"
+#	    exit 1
+#	fi
+#	tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
+#    fi
+#    cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
+#
+#    if !(./configure $CHAOS_LIBMEMCACHED_CONFIGURE ); then
+#	echo "Memcached configuration failed"
+#	exit 1
+#    fi
+#    ## use standard types instead cinttypes that generates troubles in ARM annd clang
+#    echo "patching memcached.h to use the correct cinttypes"
+#    sed -i .bak -e "s/include <cinttypes>/include <tr1\/cinttypes>/" libmemcached-1.0/memcached.h
+#
+#    do_make "LIBMEMCACHED" 1 -k
+#fi
+#echo "Libmemcached done"
+#else
+#echo "skipping libmemcached"
+#fi
 
 
 export CXXFLAGS="$CXXFLAGS $PROF"

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 IF (DEFINED ENV{CHAOS_BUNDLE} )
   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 ELSE()
-  SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic memcached zmq jsoncpp pthread rt dl)
+  SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic zmq jsoncpp pthread rt dl)
 ENDIF()
 
 project (chaos)

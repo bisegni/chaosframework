@@ -726,7 +726,6 @@
 		32B159D518B38CA50096B58B /* DirectIODeviceServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159D318B38CA50096B58B /* DirectIODeviceServerChannel.cpp */; };
 		32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B159D418B38CA50096B58B /* DirectIODeviceServerChannel.h */; };
 		32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159D818B4B9F90096B58B /* DataWorker.cpp */; };
-		32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159DC18B4D4200096B58B /* MemcachedCacheDriver.cpp */; };
 		32B1E7E51B297A6100221E49 /* CommandTemplateSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E7E31B297A6100221E49 /* CommandTemplateSet.cpp */; };
 		32B1E7E91B297C7F00221E49 /* CommandTemplateSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E7E61B297AB300221E49 /* CommandTemplateSet.cpp */; };
 		32B1E7EC1B297CF800221E49 /* CommandTemplateSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E7EA1B297CF800221E49 /* CommandTemplateSearch.cpp */; };
@@ -1966,8 +1965,6 @@
 		32B159D718B39FBB0096B58B /* DirectIODeviceChannelGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIODeviceChannelGlobal.h; sourceTree = "<group>"; };
 		32B159D818B4B9F90096B58B /* DataWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataWorker.cpp; sourceTree = "<group>"; };
 		32B159D918B4B9F90096B58B /* DataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataWorker.h; sourceTree = "<group>"; };
-		32B159DC18B4D4200096B58B /* MemcachedCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemcachedCacheDriver.cpp; sourceTree = "<group>"; };
-		32B159DD18B4D4210096B58B /* MemcachedCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemcachedCacheDriver.h; sourceTree = "<group>"; };
 		32B159DF18B4F0DE0096B58B /* dataservice_global.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dataservice_global.h; sourceTree = "<group>"; };
 		32B159E318B635580096B58B /* cache_system.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cache_system.h; sourceTree = "<group>"; };
 		32B1E7E31B297A6100221E49 /* CommandTemplateSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandTemplateSet.cpp; sourceTree = "<group>"; };
@@ -3681,8 +3678,6 @@
 			children = (
 				32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */,
 				32DBF9D018E1845E0095B289 /* CouchbaseCacheDriver.h */,
-				32B159DC18B4D4200096B58B /* MemcachedCacheDriver.cpp */,
-				32B159DD18B4D4210096B58B /* MemcachedCacheDriver.h */,
 				3272152218B006BC005AC8FD /* CacheDriver.cpp */,
 				3272152318B006BC005AC8FD /* CacheDriver.h */,
 				32B159E318B635580096B58B /* cache_system.h */,
@@ -5672,7 +5667,6 @@
 				326096C519BF22080032F55E /* DataBlockFetcher.cpp in Sources */,
 				32AFEB3919BDDACF00AF49F4 /* QueryEngine.cpp in Sources */,
 				327EA46119B7036600FF24F1 /* VFSQuery.cpp in Sources */,
-				32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */,
 				32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */,
 				3228142B1B8B552200EC86C4 /* DriverPoolManager.cpp in Sources */,
 				3250884D18E49975001C9733 /* VFSFile.cpp in Sources */,
@@ -6357,7 +6351,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
-					"-lmemcached",
 					"-levent",
 					"-lchaos_common",
 					"-lcouchbase",
@@ -6393,7 +6386,6 @@
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
-					"-lmemcached",
 					"-levent",
 					"-lchaos_common",
 					"-lcouchbase",
@@ -6538,7 +6530,6 @@
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
-					"-lmemcached",
 					"-lboost_system",
 					"-lboost_thread",
 					"-lboost_program_options",
@@ -6582,7 +6573,6 @@
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
-					"-lmemcached",
 					"-lboost_system",
 					"-lboost_thread",
 					"-lboost_program_options",
