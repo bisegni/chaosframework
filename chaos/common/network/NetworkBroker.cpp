@@ -594,6 +594,7 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
             channel = use_shared_request_domain?
             new DeviceMessageChannel(this,
                                      static_cast<CDeviceNetworkAddress*>(node_network_address),
+                                     false,
                                      global_request_domain):
             new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(node_network_address));
             break;
