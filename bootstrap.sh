@@ -102,7 +102,7 @@ else
 	APPLE="true"
     ## 18, 16 doesnt compile
 	export LMEM_VERSION=1.0.18
-	export CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++"
+	export CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++ link=static"
 
     fi
 
