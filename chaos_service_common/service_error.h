@@ -29,11 +29,12 @@ namespace chaos {
         
         //!all mds error mapping
         namespace ErrorMDSCode {
-            CHAOS_DEFINE_ERROR_CODE_MAPPING(EC_MDS_NODE_BAD_NAME, -10000, "Bad name format for node");
-            CHAOS_DEFINE_ERROR_CODE_MAPPING(EC_MDS_NODE_BAD_PATH_EXTRACTION, -10001, "Node name cannot be extract from parent path");
-            CHAOS_DEFINE_ERROR_CODE_MAPPING(EC_MDS_PARENT_NODE_NOT_IN_DOMAIN, -10002, "The parent path has not been found on domain");
-            CHAOS_DEFINE_ERROR_CODE_MAPPING(EC_MDS_NODE_DUPLICATION, -10003, "There another node with same name");
+        static const int EC_MDS_NODE_BAD_NAME = -10000;
+        static const int EC_MDS_NODE_BAD_PATH_EXTRACTION = -10001;
+        static const int EC_MDS_PARENT_NODE_NOT_IN_DOMAIN = -10002;
+        static const int EC_MDS_NODE_DUPLICATION = -10003;
         }
+
     }
 }
 

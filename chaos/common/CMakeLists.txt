@@ -1,4 +1,5 @@
-SET(common_lib_src log/LogManager.cpp)
+SET(common_lib_src chaos_errors.cpp
+                   log/LogManager.cpp)
 
 SET(common_lib_src ${common_lib_src}
                     metadata_logging/ErrorLoggingChannel.cpp

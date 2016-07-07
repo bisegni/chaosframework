@@ -22,7 +22,6 @@
 
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/data/CDataBuffer.h>
-#include <chaos/common/data/CDataVariant.h>
 
 #include <boost/scoped_ptr.hpp>
 
@@ -49,6 +48,7 @@ namespace chaos {
             } CDataWrapperType;
 			
 			class CDataWrapper;
+            class CDataVariant;
 			/*!
 			 Class to read the and arry of multivalue
 			 */

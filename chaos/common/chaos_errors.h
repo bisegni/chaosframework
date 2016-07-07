@@ -22,55 +22,51 @@
 #ifndef __CHAOSFramework__chaos_errors_h
 #define __CHAOSFramework__chaos_errors_h
 
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/utility/Singleton.h>
+
 #include <string>
 #include <map>
 #include <cassert>
 namespace chaos{
     namespace error {
-        //forward decalration
-        static std::string getErrorMessage(int error_code);
+        
+        CHAOS_DEFINE_MAP_FOR_TYPE(int, std::string, ChaosErrorMap);
         
         //!error mapping helper class
-        class __attribute__((visibility("hidden"))) ErrorCodeMapping {
-            friend std::string getErrorMessage(int error_code);
+        class ChaosErrorCodeMapping:
+        public chaos::common::utility::Singleton<ChaosErrorCodeMapping>{
+            friend class chaos::common::utility::Singleton<ChaosErrorCodeMapping>;
         private:
-            int code;
-            
-            typedef std::map<int,std::string> ErrorMap;
-            static ErrorMap& getErrorMap() {
-                static ErrorMap errMap;
-                return errMap;
-            }
-            
+            ChaosErrorCodeMapping();
+            ChaosErrorMap map_error_description;
         public:
-            ErrorCodeMapping(int _code,
-                             const std::string& _message):
-            code(_code) {
-#ifdef DEBUG
-                ErrorMap::iterator found = getErrorMap().find( code );
-                if(found != getErrorMap().end()) {
-                    assert(found->second.compare(_message) == 0);
-                }
-#endif
-                getErrorMap()[code] = _message;
-            }
-            
-            // auto-cast Error to integer error code settitn this cose as last error got
-            operator int() { return (code); }
+
+            //!register the message for the an erorr code that need to be unique
+            /*!
+             if the error code s present an exception is thrown
+             */
+            void registerErrorDescription(int error_code, const std::string& error_message);
+            const std::string& getErrorMessage(int error_code);
         };
-        
-        __attribute__((unused))
-        static std::string getErrorMessage(int error_code) {
-            ErrorCodeMapping::ErrorMap::iterator found = ErrorCodeMapping::getErrorMap().find(error_code);
-            if(found == ErrorCodeMapping::getErrorMap().end()){
-                return "Not Chaos Error Code";
-            }else {
-                return found->second;
-            }
-        }
     }
-#define CHAOS_DEFINE_ERROR_CODE_MAPPING(e, c, m)\
-static __attribute__((visibility("hidden"))) chaos::error::ErrorCodeMapping e(c, m);
+ 
+    
+#define CHAOS_DECLARE_ERROR_CODE_MAPPING(e)\
+const int e
+//class e ## Register {public:e ## Register(int c, const std::string& m);};\
+//extern e ## Register e ## RegisterInstancer;
+
+
+#define CHAOS_DEFINE_ERROR_CODE_MAPPING(e, c, m)
+//const int e = c;\
+//e ## Register  e ## RegisterInstance(c, m);\
+//e ## Register::e ## Register(int _c, const std::string& _m){chaos::error::ChaosErrorCodeMapping::getInstance()->registerErrorDescription(_c,_m);}
+    
+    
+#define ChaosGetErrorMessage(error_code)\
+chaos::error::ChaosErrorCodeMapping::getInstance()->getErrorMessage(error_code)
+
     
     /** @defgroup ChaosErrorCode
      *  This is the collection of the definition of the chaos error code

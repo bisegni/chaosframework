@@ -18,10 +18,11 @@
  *    	limitations under the License.
  */
 #include <chaos/common/global.h>
-#include <chaos/common/chaos_constants.h>
-#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/bson/util/json.h>
 #include <chaos/common/bson/bsontypes.h>
+#include <chaos/common/chaos_constants.h>
+#include <chaos/common/data/CDataVariant.h>
+#include <chaos/common/data/CDataWrapper.h>
 using namespace bson;
 
 using namespace chaos;

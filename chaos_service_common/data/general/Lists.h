@@ -31,6 +31,7 @@ namespace chaos {
         namespace data {
             namespace general {
                 
+                //! Implementation of a SDWrapepr for a string list
                 class ChaosStringVectorSDWrapper:
                 public chaos::service_common::data::TemplatedDataSDWrapper< ChaosStringVector > {
                 public:

@@ -19,7 +19,7 @@
  */
 
 #include "AddNode.h"
-
+#include <chaos/common/chaos_errors.h>
 using namespace chaos::metadata_service::api::groups;
 
 #define G_AN_INFO INFO_LOG(AddNode)
@@ -59,12 +59,18 @@ chaos::common::data::CDataWrapper *AddNode::execute(chaos::common::data::CDataWr
         if((err = tg_da->addNewNodeGroupToDomain(node_domain,
                                                  node_name,
                                                  node_path))) {
-            LOG_AND_TROW_FORMATTED(G_AN_ERR, -6, "Error creating node %1% in path %2% with error code %3%(%4)", %node_name%node_path%err%chaos::error::getErrorMessage(err));
+            LOG_AND_TROW_FORMATTED(G_AN_ERR,
+                                   -6,
+                                   "Error creating node %1% in path %2% with error code %3%(%4)",
+                                   %node_name%node_path%err%ChaosGetErrorMessage(err));
         }
     } else {
         if((err = tg_da->addNewNodeGroupToDomain(node_domain,
                                                  node_name))) {
-            LOG_AND_TROW_FORMATTED(G_AN_ERR, -6, "Error creating root node %1% with error code %2%(%3%)", %node_name%err%chaos::error::getErrorMessage(err));
+            LOG_AND_TROW_FORMATTED(G_AN_ERR,
+                                   -6,
+                                   "Error creating root node %1% with error code %2%(%3%)",
+                                   %node_name%err%ChaosGetErrorMessage(err));
         }
     }
     return NULL;
