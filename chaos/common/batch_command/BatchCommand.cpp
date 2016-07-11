@@ -51,6 +51,10 @@ BatchCommand::~BatchCommand() {
     
 }
 
+AbstractSharedDomainCache * const BatchCommand::getSharedCacheInterface() {
+    return sharedAttributeCachePtr;
+}
+
 //return the unique id
 uint64_t BatchCommand::getUID() {
 	return unique_id;

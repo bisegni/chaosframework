@@ -142,9 +142,7 @@ namespace chaos{
                 virtual ~BatchCommand();
                 
                 virtual
-                AbstractSharedDomainCache * const getSharedCacheInterface() {
-                    return sharedAttributeCachePtr;
-                }
+                AbstractSharedDomainCache * const getSharedCacheInterface();
                 
             public:
                 //! return the unique id for the command instance
