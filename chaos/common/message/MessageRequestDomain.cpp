@@ -115,6 +115,6 @@ std::auto_ptr<MessageRequestFuture> MessageRequestDomain::getNewRequestMessageFu
     DEBUG_CODE(MRDDBG_ << "New MessageRequestFuture create with id " << new_request_id << " on answer domain " << domain_id;);
     //return future
     return std::auto_ptr<MessageRequestFuture>(new  MessageRequestFuture(new_request_id,
-                                                                         promise->get_future()));
+                                                                         boost::shared_future< boost::shared_ptr<CDataWrapper> >(promise->get_future())));
 }
 

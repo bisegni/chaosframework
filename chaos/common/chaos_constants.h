@@ -904,6 +904,12 @@ namespace chaos {
             
             //! the key represent descirption of the state [string]
             static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_STATE_DESCRIPTION = "mdsndk_nl_c_s_desc";
+            
+            //! the key represent the running property of the command [int32_t]
+            static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_RUN_PROPERTY = "mdsndk_nl_c_rp";
+            
+            //! the key represent descirption of the running property [string]
+            static const char * const PARAM_NODE_LOGGING_LOG_COMMAND_RUN_PROPERTY_DESCRIPTION = "mdsndk_nl_c_rp_desc";
         }
     }
     /** @} */ // end of MetadataServerLoggingDefinitionKeyRPC

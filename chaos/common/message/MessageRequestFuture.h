@@ -75,7 +75,7 @@ namespace chaos {
 
                     //!private constructor
                 MessageRequestFuture(chaos::common::utility::atomic_int_type _request_id,
-                                     boost::unique_future< boost::shared_ptr<chaos::common::data::CDataWrapper> > _future);
+                                     boost::shared_future< boost::shared_ptr<chaos::common::data::CDataWrapper> > _future);
 
             public:
                 //!private destructor

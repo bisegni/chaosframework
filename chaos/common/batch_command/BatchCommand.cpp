@@ -60,6 +60,17 @@ void BatchCommand::setCommandAlias(const std::string& _command_alias) {
 	fault_description.source = command_alias = _command_alias;
 }
 
+bool BatchCommand::setRunningProperty(uint8_t property)  {
+    if(lockFeaturePropertyFlag.test(1)) return false;
+    runningProperty = property;
+    return true;
+}
+
+//! return the current running property
+uint8_t BatchCommand::getRunningProperty() {
+    return runningProperty;
+}
+
 /*
  Start the slow command sequence
  */

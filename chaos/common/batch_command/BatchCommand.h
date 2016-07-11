@@ -255,18 +255,10 @@ namespace chaos{
                 }
                 
                 //! set the running property
-                inline
-                bool setRunningProperty(uint8_t property)  {
-                    if(lockFeaturePropertyFlag.test(1)) return false;
-                    runningProperty = property;
-                    return true;
-                }
+                virtual bool setRunningProperty(uint8_t property);
                 
                 //! return the current running property
-                inline
-                uint8_t getRunningProperty() {
-                    return runningProperty;
-                }
+                virtual uint8_t getRunningProperty();
                 
                 //! return the implemented handler
                 /*!

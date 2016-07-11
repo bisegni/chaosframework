@@ -56,5 +56,5 @@ int ErrorLoggingChannel::logError(const std::string& node_uid,
     log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_MESSAGE, error_message);
     log_entry->addStringValue(MetadataServerLoggingDefinitionKeyRPC::ErrorLogging::PARAM_NODE_LOGGING_LOG_ERROR_DOMAIN, error_domain);
     return sendLog(log_entry,
-                    true);
+                   0);
 }
