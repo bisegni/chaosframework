@@ -128,6 +128,8 @@
 		322DE35518D467E5006F1551 /* ConcuredUsedItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 322DE35418D467E5006F1551 /* ConcuredUsedItem.h */; };
 		322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322E1578161B629700C3003C /* NetworkBroker.cpp */; };
 		322E157D161B62A900C3003C /* NetworkBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E157C161B62A900C3003C /* NetworkBroker.h */; };
+		322EC1B71D3406650012467C /* status_manager_types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322EC1B51D3406650012467C /* status_manager_types.cpp */; };
+		322EC1B81D3406650012467C /* status_manager_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 322EC1B61D3406650012467C /* status_manager_types.h */; };
 		3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3230BEC0181A6ADB00EA5793 /* DatasetDB.cpp */; };
 		3230BEC3181A6ADB00EA5793 /* DatasetDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230BEC1181A6ADB00EA5793 /* DatasetDB.h */; };
 		3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230DA091652C41D00113C93 /* NetworkForwardInfo.h */; };
@@ -1231,6 +1233,8 @@
 		322E1578161B629700C3003C /* NetworkBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = NetworkBroker.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		322E157C161B62A900C3003C /* NetworkBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NetworkBroker.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		322E26721AC6E437002E5DA4 /* api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
+		322EC1B51D3406650012467C /* status_manager_types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = status_manager_types.cpp; sourceTree = "<group>"; };
+		322EC1B61D3406650012467C /* status_manager_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = status_manager_types.h; sourceTree = "<group>"; };
 		3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_cutoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_uitoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2605,6 +2609,15 @@
 			path = property;
 			sourceTree = "<group>";
 		};
+		322EC1B41D3405C30012467C /* status_manager */ = {
+			isa = PBXGroup;
+			children = (
+				322EC1B51D3406650012467C /* status_manager_types.cpp */,
+				322EC1B61D3406650012467C /* status_manager_types.h */,
+			);
+			path = status_manager;
+			sourceTree = "<group>";
+		};
 		323236C9164573C60052CE06 /* ChaosMetadataService */ = {
 			isa = PBXGroup;
 			children = (
@@ -3304,6 +3317,7 @@
 				326DB40C14B38BC00018A8D0 /* pqueue */,
 				326DB41114B38BC00018A8D0 /* rpc */,
 				32A91FC71A49AEC300DCF364 /* sync_rpc */,
+				322EC1B41D3405C30012467C /* status_manager */,
 				32AAD78114CD630D005A097C /* message */,
 				326DB41914B38BC00018A8D0 /* network */,
 				32E727031CE200380094F826 /* script */,
@@ -5001,6 +5015,7 @@
 				32B57208168E02D10002A198 /* oid.h in Headers */,
 				32F5B0071B5F8EBF00457A63 /* FileMetricBackend.h in Headers */,
 				32B57209168E02D10002A198 /* ordering.h in Headers */,
+				322EC1B81D3406650012467C /* status_manager_types.h in Headers */,
 				329C1F061B5643EF00A84D55 /* DirectIODispatcherMetricCollector.h in Headers */,
 				324A4B2C191A405700975394 /* document-inl.h in Headers */,
 				32C35467178860E5009ED581 /* extension.hpp in Headers */,
@@ -5840,6 +5855,7 @@
 				32AB51CD1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp in Sources */,
 				32A88BF11CF8228A001DBAF5 /* lutf8lib.c in Sources */,
 				325568521AE3A98B00CFA7C9 /* PropertyCollector.cpp in Sources */,
+				322EC1B71D3406650012467C /* status_manager_types.cpp in Sources */,
 				32EFCD6618BDE3A400B5EB77 /* IODirectIODriver.cpp in Sources */,
 				3220F98118A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp in Sources */,
 				32B73E9A18D9A8FF00F0B187 /* DirectIOPerformanceServerChannel.cpp in Sources */,
