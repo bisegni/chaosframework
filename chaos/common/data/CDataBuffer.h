@@ -45,6 +45,9 @@ namespace chaos {
                 const char *getBuffer() const;
                 
                 uint32_t getBufferSize() const;
+                
+                static CDataBuffer *newOwnBufferFromBuffer(char * buffer,
+                                                           uint32_t _buffer_size);
             };
             
         }

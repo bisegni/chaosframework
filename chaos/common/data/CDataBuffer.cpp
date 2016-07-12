@@ -60,4 +60,11 @@ uint32_t CDataBuffer::getBufferSize() const {
     return buffer_size;
 }
 
-
+CDataBuffer *CDataBuffer::newOwnBufferFromBuffer(char * buffer,
+                                                 uint32_t _buffer_size) {
+    CDataBuffer *result = new CDataBuffer();
+    result->own_buffer = true;
+    result->buffer = buffer;
+    result->buffer_size = _buffer_size;
+    return result;
+}
