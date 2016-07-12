@@ -38,5 +38,5 @@ void DeclareStatusFlag::addLevelFlag(const std::string flag_name,
                                      const std::string flag_description,
                                      const MapFlagLevelState& map_code_level_state) {
     StatusFlag level_flag(flag_name, flag_description);
-    addFlag(bool_flag);
+    
 }
