@@ -42,6 +42,16 @@ description(src.description),
 severity(src.severity),
 occurence(src.occurence){}
 
+#pragma mark StatusFlagListener
+StatusFlagListener::StatusFlagListener():
+listener_uuid(UUIDUtil::generateUUIDLite()){}
+
+StatusFlagListener::~StatusFlagListener(){}
+
+const std::string& StatusFlagListener::getStatusFlagListenerUUID(){
+    return listener_uuid;
+}
+
 #pragma mark StatusFlag
 StatusFlag::StatusFlag(const std::string& _name,
                        const std::string& _description):
@@ -69,6 +79,7 @@ void StatusFlag::setCurrentLevel(int8_t _current_level) {
     if(current_level != _current_level){
         current_level = _current_level;
         map_level_tag[current_level].occurence = 0;
+        if(listener){listener->statusFlagUpdated(flag_uuid);}
     } else {
         map_level_tag[current_level].occurence++;
     }
@@ -86,6 +97,11 @@ const std::string& StatusFlag::getFlagUUID() {
     return flag_uuid;
 }
 
+void StatusFlag::setListener(StatusFlagListener *new_listener) {
+    boost::shared_lock<boost::shared_mutex> wl(mutex_listener);
+    listener = new_listener;
+}
+
 #pragma mark StatusFlagBoolState
 StatusFlagBoolState::StatusFlagBoolState(const std::string& _name,
                                          const std::string& _description):
@@ -98,17 +114,10 @@ StatusFlag(_name,
 StatusFlagBoolState::StatusFlagBoolState(const StatusFlagBoolState& src):
 StatusFlag(src){}
 
-void StatusFlagBoolState::setState(bool state){
-    StatusFlag::setCurrentLevel((int)state);
+bool StatusFlagBoolState::addLevel(int8_t level, const LevelState& level_state) {
+    StatusFlag::addLevel(level, level_state);
 }
 
-#pragma mark StatusFlagListener
-
-StatusFlagListener::StatusFlagListener():
-listener_uuid(UUIDUtil::generateUUIDLite()){}
-
-StatusFlagListener::~StatusFlagListener(){}
-
-const std::string& StatusFlagListener::getStatusFlagListenerUUID(){
-    return listener_uuid;
+void StatusFlagBoolState::setState(bool state){
+    setCurrentLevel((int)state);
 }

@@ -36,11 +36,15 @@ namespace chaos {
             
             //! define a set of status flag with usefull operation on it
             class StatusFlagCatalog {
+                const std::string catalog_name;
                 //define the catalog where is assigned an unique id to a flag
                 MapSFCatalog        catalog;
                 mutable boost::shared_mutex mutex_catalog;
             public:
-                void addFlag(const StatusFlag& status_flag);
+                StatusFlagCatalog(const std::string& _catalog_name);
+                virtual ~StatusFlagCatalog();
+                
+                void addFlag(const StatusFlag& flag);
                 void appendCatalog(const StatusFlagCatalog& src);
                 
                 std::auto_ptr<chaos::common::data::CDataBuffer> getRawFlagsLevel();

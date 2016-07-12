@@ -24,6 +24,8 @@
 
 #include <chaos/common//chaos_constants.h>
 
+#include <boost/thread.hpp>
+
 namespace chaos {
     namespace common {
         namespace status_manager {
@@ -56,6 +58,23 @@ namespace chaos {
             };
             
             CHAOS_DEFINE_MAP_FOR_TYPE(int8_t, LevelState, MapFlagLevelState);
+            
+            //forward declaration
+            class StatusFlag;
+            
+            class StatusFlagListener {
+                friend class StatusFlag;
+                
+                const std::string listener_uuid;
+            protected:
+                StatusFlagListener();
+                virtual ~StatusFlagListener();
+                
+                virtual void statusFlagUpdated(const std::string flag_uuid) = 0;
+                
+            public:
+                const std::string& getStatusFlagListenerUUID();
+            };
 
             
             //! Status Flag description
@@ -71,6 +90,9 @@ namespace chaos {
                 //! mantains the mapping from level and the state description of that level
                 MapFlagLevelState map_level_tag;
                 
+                
+                StatusFlagListener *listener;
+                boost::shared_mutex mutex_listener;
             public:
                 StatusFlag(const std::string& _name,
                            const std::string& _description);
@@ -85,12 +107,15 @@ namespace chaos {
                 const LevelState& getCurrentLevelState();
                 
                 const std::string& getFlagUUID();
+                
+                void setListener(StatusFlagListener *new_listener);
             };
 
             
             //! identify a flag that can be expressed as On/off, 0/1, true/false etc
             class StatusFlagBoolState:
-            protected StatusFlag {
+            public StatusFlag {
+                bool addLevel(int8_t level, const LevelState& level_state);
             public:
                 StatusFlagBoolState(const std::string& _name,
                                      const std::string& _description);
@@ -99,17 +124,6 @@ namespace chaos {
                 void setState(bool state);
             };
             
-            class StatusFlagListener {
-                const std::string listener_uuid;
-            protected:
-                StatusFlagListener();
-                virtual ~StatusFlagListener();
-                
-                virtual void statusFlagUpdated(const std::string flag_uuid) = 0;
-                
-            public:
-                const std::string& getStatusFlagListenerUUID();
-            };
         }
     }
 }

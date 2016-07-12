@@ -24,6 +24,11 @@
 using namespace chaos::common::data;
 using namespace chaos::common::status_manager;
 
+StatusFlagCatalog::StatusFlagCatalog(const std::string& _catalog_name):
+catalog_name(_catalog_name){}
+
+StatusFlagCatalog::~StatusFlagCatalog(){}
+
 void StatusFlagCatalog::addFlag(const StatusFlag& flag) {
     boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
     catalog.insert(MapSFCatalogPair((unsigned int)(catalog.size()+1), flag));

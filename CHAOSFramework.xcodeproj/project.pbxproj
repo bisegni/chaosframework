@@ -536,6 +536,8 @@
 		32875F97177634AF00E33D6F /* PluginInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32875F96177634AF00E33D6F /* PluginInspector.h */; };
 		3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326D3A5F17B0CD01004601A8 /* DriverManager.cpp */; };
 		3287F7E717B27621009DD6ED /* DriverManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326D3A6017B0CD01004601A8 /* DriverManager.h */; };
+		328933591D3549DE00FBA95B /* DeclareStatusFlag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328933571D3549DE00FBA95B /* DeclareStatusFlag.cpp */; };
+		3289335A1D3549DE00FBA95B /* DeclareStatusFlag.h in Headers */ = {isa = PBXBuildFile; fileRef = 328933581D3549DE00FBA95B /* DeclareStatusFlag.h */; };
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328C872A1ADEA45E0047C79B /* SearchInstancesByUS.cpp */; };
@@ -1737,6 +1739,8 @@
 		32875F96177634AF00E33D6F /* PluginInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInspector.h; sourceTree = "<group>"; };
 		32875F9817763AE200E33D6F /* PluginLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginLoader.h; sourceTree = "<group>"; };
 		32875F9917763B0800E33D6F /* AbstractPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractPlugin.h; sourceTree = "<group>"; };
+		328933571D3549DE00FBA95B /* DeclareStatusFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeclareStatusFlag.cpp; sourceTree = "<group>"; };
+		328933581D3549DE00FBA95B /* DeclareStatusFlag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclareStatusFlag.h; sourceTree = "<group>"; };
 		3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteEntityDB.cpp; sourceTree = "<group>"; };
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
 		328C872A1ADEA45E0047C79B /* SearchInstancesByUS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchInstancesByUS.cpp; sourceTree = "<group>"; };
@@ -2620,6 +2624,8 @@
 				322EC1B61D3406650012467C /* StatusFlag.h */,
 				322EC1B91D34F2E10012467C /* StatusFlagCatalog.cpp */,
 				322EC1BA1D34F2E10012467C /* StatusFlagCatalog.h */,
+				328933571D3549DE00FBA95B /* DeclareStatusFlag.cpp */,
+				328933581D3549DE00FBA95B /* DeclareStatusFlag.h */,
 			);
 			path = status_manager;
 			sourceTree = "<group>";
@@ -4857,6 +4863,7 @@
 				324A4B76191A428500975394 /* jsobj.h in Headers */,
 				322DE35518D467E5006F1551 /* ConcuredUsedItem.h in Headers */,
 				326DB48E14B38BC00018A8D0 /* ArrayPointer.h in Headers */,
+				3289335A1D3549DE00FBA95B /* DeclareStatusFlag.h in Headers */,
 				32EBDEFB1B4E58F300278C42 /* MetricCollector.h in Headers */,
 				329603231876B45000CDCADA /* BatchCommand.h in Headers */,
 				326DB49214B38BC00018A8D0 /* ObjectFactoryRegister.h in Headers */,
@@ -5745,6 +5752,7 @@
 				32B159D518B38CA50096B58B /* DirectIODeviceServerChannel.cpp in Sources */,
 				32A88BDF1CF8228A001DBAF5 /* lstate.c in Sources */,
 				324A4B52191A41EF00975394 /* process_id.cpp in Sources */,
+				328933591D3549DE00FBA95B /* DeclareStatusFlag.cpp in Sources */,
 				3296031E1876B45000CDCADA /* AttributeValueSharedCache.cpp in Sources */,
 				326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */,
 				32A88BD01CF8228A001DBAF5 /* llex.c in Sources */,
