@@ -109,10 +109,6 @@ const StateLevel& StatusFlag::getCurrentStateLevel() {
     return map_level_tag[getCurrentLevel()];
 }
 
-const std::string& StatusFlag::getFlagUUID() {
-    return flag_uuid;
-}
-
 void StatusFlag::setListener(StatusFlagListener *new_listener) {
     boost::shared_lock<boost::shared_mutex> wl(mutex_listener);
     listener = new_listener;

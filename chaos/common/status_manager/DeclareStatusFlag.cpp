@@ -30,14 +30,14 @@ DeclareStatusFlag::~DeclareStatusFlag(){}
 
 void DeclareStatusFlag::addBoolFlag(const std::string flag_name,
                                     const std::string flag_description) {
-    StatusFlagBoolState bool_flag(flag_name, flag_description);
-    addFlag(bool_flag);
+    std::auto_ptr<StatusFlagBoolState> bool_flag(new StatusFlagBoolState(flag_name, flag_description));
+    addFlag(bool_flag.release());
 }
 
 void DeclareStatusFlag::addLevelFlag(const std::string flag_name,
                                      const std::string flag_description,
                                      const MapFlagStateLevel& map_code_level_state) {
-    StatusFlag level_flag(flag_name, flag_description);
-    level_flag.addLevelsFromMap(map_code_level_state);
-    addFlag(level_flag);
+    std::auto_ptr<StatusFlag> level_flag(new StatusFlag(flag_name, flag_description));
+    level_flag->addLevelsFromMap(map_code_level_state);
+    addFlag(level_flag.release());
 }

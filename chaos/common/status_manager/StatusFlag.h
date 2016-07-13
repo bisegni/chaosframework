@@ -30,6 +30,9 @@ namespace chaos {
     namespace common {
         namespace status_manager {
             
+            //!forward decalration
+            class SatusFlagCatalog;
+            
             //! define the level of severity of a status flag
             /*!
              Status flag can notify variation on several behaviour of
@@ -79,21 +82,21 @@ namespace chaos {
             
             //! Status Flag description
             class StatusFlag {
-                const std::string flag_uuid;
-                //! the name taht identify the flag
-                const std::string name;
-                //! the compelte description of the flag
-                const std::string description;
                 //! kep track of the current level
                 int8_t current_level;
 
                 //! mantains the mapping from level and the state description of that level
                 MapFlagStateLevel map_level_tag;
                 
-                
                 StatusFlagListener *listener;
                 boost::shared_mutex mutex_listener;
             public:
+                const std::string flag_uuid;
+                //! the name taht identify the flag
+                const std::string name;
+                //! the compelte description of the flag
+                const std::string description;
+                
                 StatusFlag(const std::string& _name,
                            const std::string& _description);
                 StatusFlag(const StatusFlag& src);
@@ -109,8 +112,7 @@ namespace chaos {
                 int8_t getCurrentLevel() const;
 
                 const StateLevel& getCurrentStateLevel();
-                
-                const std::string& getFlagUUID();
+
                 
                 void setListener(StatusFlagListener *new_listener);
             };

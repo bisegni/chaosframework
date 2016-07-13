@@ -29,9 +29,9 @@ catalog_name(_catalog_name){}
 
 StatusFlagCatalog::~StatusFlagCatalog(){}
 
-void StatusFlagCatalog::addFlag(const StatusFlag& flag) {
+void StatusFlagCatalog::addFlag(StatusFlag *flag) {
     boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
-    catalog.insert(MapSFCatalogPair((unsigned int)(catalog.size()+1), flag));
+    catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)(catalog_container.size()+1), boost::shared_ptr<StatusFlag>(flag))));
 }
 
 void StatusFlagCatalog::appendCatalog(const StatusFlagCatalog& src) {
@@ -40,28 +40,45 @@ void StatusFlagCatalog::appendCatalog(const StatusFlagCatalog& src) {
     
     //read lock on source catalog
     boost::shared_lock<boost::shared_mutex> rl(src.mutex_catalog);
-    for(MapSFCatalogConstIterator it = src.catalog.begin(),
-        end = src.catalog.end();
+    //retrieve the ordered index
+    const StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<ordered>(src.catalog_container);
+    for(StatusFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
+        end = ordered_index.end();
         it != end;
         it++){
-        catalog.insert(MapSFCatalogPair((unsigned int)(catalog.size()+1), it->second));
+        catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)(catalog_container.size()+1), (*it)->status_flag)));
     }
 }
 
+StatusFlag *StatusFlagCatalog::getFlagByName(const std::string& flag_name) {
+    return NULL;
+}
+
+bool StatusFlagCatalog::hasChanged() {
+    return bitmap_changed_flag.any();
+}
+
+void StatusFlagCatalog::resetChanged() {
+    bitmap_changed_flag.reset();
+}
+
+#pragma mark Serialization Method
 std::auto_ptr<chaos::common::data::CDataBuffer> StatusFlagCatalog::getRawFlagsLevel() {
     //read lock on owned catalog
     boost::shared_lock<boost::shared_mutex> rl(mutex_catalog);
     std::auto_ptr<CDataBuffer> result;
-    char * raw_description = (char*)malloc(catalog.size());
+    char * raw_description = (char*)malloc(catalog_container.size());
     if(raw_description) {
-        for(MapSFCatalogConstIterator it = catalog.begin(),
-            end = catalog.end();
+        //retrieve the ordered index
+        StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<ordered>(catalog_container);
+        for(StatusFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
+            end = ordered_index.end();
             it != end;
             it++){
-            raw_description[it->first] = static_cast<char>(it->second.getCurrentLevel());
+            raw_description[(*it)->seq_id] = static_cast<char>((*it)->status_flag->getCurrentLevel());
         }
         result.reset(CDataBuffer::newOwnBufferFromBuffer(raw_description,
-                                                         (uint32_t)catalog.size()));
+                                                         (uint32_t)catalog_container.size()));
     }
     return result;
 }
@@ -71,17 +88,20 @@ void StatusFlagCatalog::setApplyRawFlagsValue(std::auto_ptr<chaos::common::data:
     const char * buffer = raw_level->getBuffer();
     uint32_t buffer_size = raw_level->getBufferSize();
     
+    if(buffer_size != catalog_container.size()) return;
+    
     boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
     for(int idx = 0;
         idx < raw_level->getBufferSize();
         idx++) {
-        for(MapSFCatalogIterator it = catalog.begin(),
-            end = catalog.end();
+        StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<ordered>(catalog_container);
+        for(StatusFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
+            end = ordered_index.end();
             it != end;
             it++){
-            if(it->first >= buffer_size) continue;
-            //assign value
-            it->second.setCurrentLevel(buffer[it->first]);
+            
+            (*it)->status_flag->setCurrentLevel(buffer[(*it)->seq_id]);
         }
     }
 }
+
