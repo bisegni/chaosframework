@@ -24,7 +24,7 @@
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/chaos_constants.h>
-#include <chaos_service_common/data/TemplatedDataSDWrapper.h>
+#include <chaos/common/data/TemplatedDataSDWrapper.h>
 
 namespace chaos {
     namespace service_common {

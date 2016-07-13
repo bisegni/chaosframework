@@ -28,11 +28,11 @@ namespace chaos {
     namespace common {
         namespace status_manager {
             
-            CHAOS_DEFINE_VECTOR_FOR_TYPE(LevelState, LevelStateVector);
+            CHAOS_DEFINE_VECTOR_FOR_TYPE(StateLevel, LevelStateVector);
             
             //!helper class for the management of status flag
             /*!
-             Expose simplify api for creating sattus flag
+             Expose simplifyed api for creating satus flag
              */
             class DeclareStatusFlag:
             public StatusFlagCatalog {
@@ -44,7 +44,7 @@ namespace chaos {
                                  const std::string flag_description);
                 void addLevelFlag(const std::string flag_name,
                                  const std::string flag_description,
-                                  const MapFlagLevelState& map_code_level_state);
+                                  const MapFlagStateLevel& map_code_level_state);
             };
             
         }

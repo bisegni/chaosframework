@@ -23,8 +23,8 @@
 #define __CHAOSFramework__B6FD4CC_B9C0_439B_9FD7_53540B34EC15_Script_h
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/data/TemplatedDataSDWrapper.h>
 
-#include <chaos_service_common/data/TemplatedDataSDWrapper.h>
 #include <chaos_service_common/data/dataset/DatasetAttribute.h>
 #include <chaos_service_common/data/dataset/AlgorithmVariable.h>
 

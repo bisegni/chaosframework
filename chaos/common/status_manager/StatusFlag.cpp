@@ -25,19 +25,19 @@
 using namespace chaos::common::utility;
 using namespace chaos::common::status_manager;
 
-#pragma mark LevelState
-LevelState::LevelState():
+#pragma mark StateLevel
+StateLevel::StateLevel():
 description(),
 severity(StatusFlagServerityOperationl),
 occurence(0){}
 
-LevelState::LevelState(const std::string& _description,
+StateLevel::StateLevel(const std::string& _description,
                        StatusFlagServerity _severity):
 description(_description),
 severity(_severity),
 occurence(0){}
 
-LevelState::LevelState(const LevelState& src):
+StateLevel::StateLevel(const StateLevel& src):
 description(src.description),
 severity(src.severity),
 occurence(src.occurence){}
@@ -66,11 +66,27 @@ name(src.name),
 description(src.description),
 current_level(src.current_level){}
 
-bool StatusFlag::addLevel(int8_t level, const LevelState& level_state) {
+bool StatusFlag::addLevel(int8_t level, const StateLevel& level_state) {
     //chec if the level has been already added
     if(map_level_tag.find(level) != map_level_tag.end()) return false;
     //add the level state description
-    map_level_tag.insert(MapFlagLevelStatePair(level, level_state));
+    map_level_tag.insert(MapFlagStateLevelPair(level, level_state));
+    return true;
+}
+
+//! add a new level with level state
+bool StatusFlag::addLevelsFromMap(const MapFlagStateLevel& src_levels_map) {
+    for(MapFlagStateLevelConstIterator it = src_levels_map.begin(),
+        end = src_levels_map.end();
+        it != end;
+        it++){
+        //check if key is already present
+        if(map_level_tag.count(it->first)) continue;
+        
+        //add level
+        map_level_tag.insert(MapFlagStateLevelPair(it->first, it->second));
+    }
+    
     return true;
 }
 
@@ -89,7 +105,7 @@ int8_t StatusFlag::getCurrentLevel() const {
     return current_level;
 }
 
-const LevelState& StatusFlag::getCurrentLevelState() {
+const StateLevel& StatusFlag::getCurrentStateLevel() {
     return map_level_tag[getCurrentLevel()];
 }
 
@@ -107,15 +123,15 @@ StatusFlagBoolState::StatusFlagBoolState(const std::string& _name,
                                          const std::string& _description):
 StatusFlag(_name,
            _description){
-    addLevel(0, LevelState("Off"));
-    addLevel(1, LevelState("On"));
+    addLevel(0, StateLevel("Off"));
+    addLevel(1, StateLevel("On"));
 }
 
 StatusFlagBoolState::StatusFlagBoolState(const StatusFlagBoolState& src):
 StatusFlag(src){}
 
-bool StatusFlagBoolState::addLevel(int8_t level, const LevelState& level_state) {
-    StatusFlag::addLevel(level, level_state);
+bool StatusFlagBoolState::addLevel(int8_t level, const StateLevel& level_state) {
+    return StatusFlag::addLevel(level, level_state);
 }
 
 void StatusFlagBoolState::setState(bool state){

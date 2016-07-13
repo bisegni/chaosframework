@@ -36,7 +36,8 @@ void DeclareStatusFlag::addBoolFlag(const std::string flag_name,
 
 void DeclareStatusFlag::addLevelFlag(const std::string flag_name,
                                      const std::string flag_description,
-                                     const MapFlagLevelState& map_code_level_state) {
+                                     const MapFlagStateLevel& map_code_level_state) {
     StatusFlag level_flag(flag_name, flag_description);
-    
+    level_flag.addLevelsFromMap(map_code_level_state);
+    addFlag(level_flag);
 }

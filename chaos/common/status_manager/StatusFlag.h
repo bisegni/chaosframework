@@ -45,19 +45,19 @@ namespace chaos {
             
             
             //! define a single level with the tag and a description
-            struct LevelState {
+            struct StateLevel {
                 const std::string description;
                 const StatusFlagServerity severity;
                 //!keep track of how many times the current level has been detected
                 unsigned int occurence;
                 
-                LevelState();
-                LevelState(const std::string& _description,
+                StateLevel();
+                StateLevel(const std::string& _description,
                            StatusFlagServerity _severity = StatusFlagServerityOperationl);
-                LevelState(const LevelState& src);
+                StateLevel(const StateLevel& src);
             };
             
-            CHAOS_DEFINE_MAP_FOR_TYPE(int8_t, LevelState, MapFlagLevelState);
+            CHAOS_DEFINE_MAP_FOR_TYPE(int8_t, StateLevel, MapFlagStateLevel);
             
             //forward declaration
             class StatusFlag;
@@ -88,7 +88,7 @@ namespace chaos {
                 int8_t current_level;
 
                 //! mantains the mapping from level and the state description of that level
-                MapFlagLevelState map_level_tag;
+                MapFlagStateLevel map_level_tag;
                 
                 
                 StatusFlagListener *listener;
@@ -98,13 +98,17 @@ namespace chaos {
                            const std::string& _description);
                 StatusFlag(const StatusFlag& src);
                 //! add a new level with level state
-                bool addLevel(int8_t level, const LevelState& level_state);
+                bool addLevel(int8_t level, const StateLevel& level_state);
+                
+                //! add new level from a source map
+                bool addLevelsFromMap(const MapFlagStateLevel& src_levels_map);
+                
                 //!set the current level
                 void setCurrentLevel(int8_t _current_level);
                 
                 int8_t getCurrentLevel() const;
 
-                const LevelState& getCurrentLevelState();
+                const StateLevel& getCurrentStateLevel();
                 
                 const std::string& getFlagUUID();
                 
@@ -115,7 +119,7 @@ namespace chaos {
             //! identify a flag that can be expressed as On/off, 0/1, true/false etc
             class StatusFlagBoolState:
             public StatusFlag {
-                bool addLevel(int8_t level, const LevelState& level_state);
+                bool addLevel(int8_t level, const StateLevel& level_state);
             public:
                 StatusFlagBoolState(const std::string& _name,
                                      const std::string& _description);

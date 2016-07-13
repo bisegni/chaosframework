@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework__D60BF03_96AD_4396_A485_4ED793258A16_Node_h
 #define __CHAOSFramework__D60BF03_96AD_4396_A485_4ED793258A16_Node_h
 
-#include <chaos_service_common/data/TemplatedDataSDWrapper.h>
+#include <chaos/common/data/TemplatedDataSDWrapper.h>
 
 namespace chaos {
     namespace service_common {
