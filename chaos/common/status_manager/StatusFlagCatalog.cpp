@@ -29,9 +29,12 @@ catalog_name(_catalog_name){}
 
 StatusFlagCatalog::~StatusFlagCatalog(){}
 
-void StatusFlagCatalog::addFlag(StatusFlag *flag) {
+void StatusFlagCatalog::addFlag(boost::shared_ptr<StatusFlag> flag) {
     boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
-    catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)(catalog_container.size()+1), boost::shared_ptr<StatusFlag>(flag))));
+    StatusFlagElementContainerNameIndex& name_index = catalog_container.get<name>();
+    if(name_index.find(flag->name) != name_index.end()) return;
+    //we can insert flag with unique name
+    catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)(catalog_container.size()+1), flag->name, flag)));
 }
 
 void StatusFlagCatalog::appendCatalog(const StatusFlagCatalog& src) {
@@ -41,12 +44,16 @@ void StatusFlagCatalog::appendCatalog(const StatusFlagCatalog& src) {
     //read lock on source catalog
     boost::shared_lock<boost::shared_mutex> rl(src.mutex_catalog);
     //retrieve the ordered index
+    StatusFlagElementContainerNameIndex& name_index = catalog_container.get<name>();
     const StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<ordered>(src.catalog_container);
     for(StatusFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
         end = ordered_index.end();
         it != end;
         it++){
-        catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)(catalog_container.size()+1), (*it)->status_flag)));
+        const std::string cat_flag_name = src.catalog_name + (*it)->flag_name;
+        if(name_index.find(cat_flag_name) != name_index.end()) continue;
+        //we can insert
+        catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)(catalog_container.size()+1), cat_flag_name, (*it)->status_flag)));
     }
 }
 

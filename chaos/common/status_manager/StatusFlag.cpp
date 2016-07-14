@@ -27,20 +27,28 @@ using namespace chaos::common::status_manager;
 
 #pragma mark StateLevel
 StateLevel::StateLevel():
+value(0),
 description(),
 severity(StatusFlagServerityOperationl),
 occurence(0){}
 
-StateLevel::StateLevel(const std::string& _description,
+StateLevel::StateLevel(const int8_t _value,
+                       const std::string& _description,
                        StatusFlagServerity _severity):
+value(_value),
 description(_description),
 severity(_severity),
 occurence(0){}
 
 StateLevel::StateLevel(const StateLevel& src):
+value(src.value),
 description(src.description),
 severity(src.severity),
 occurence(src.occurence){}
+
+bool StateLevel::operator< (const StateLevel &right) {
+    return value < right.value;
+}
 
 #pragma mark StatusFlagListener
 StatusFlagListener::StatusFlagListener():
@@ -66,38 +74,43 @@ name(src.name),
 description(src.description),
 current_level(src.current_level){}
 
-bool StatusFlag::addLevel(int8_t level, const StateLevel& level_state) {
+bool StatusFlag::addLevel(const StateLevel& level_state) {
+    StatusLevelContainerOrderedIndex& ordered_index = boost::multi_index::get<ordered_index_tag>(set_levels);
     //chec if the level has been already added
-    if(map_level_tag.find(level) != map_level_tag.end()) return false;
+    if(ordered_index.find(level_state.value) != ordered_index.end()) return false;
     //add the level state description
-    map_level_tag.insert(MapFlagStateLevelPair(level, level_state));
+    set_levels.insert(level_state);
     return true;
 }
 
 //! add a new level with level state
-bool StatusFlag::addLevelsFromMap(const MapFlagStateLevel& src_levels_map) {
-    for(MapFlagStateLevelConstIterator it = src_levels_map.begin(),
-        end = src_levels_map.end();
+bool StatusFlag::addLevelsFromSet(const StateLevelContainer& src_set_levels) {
+    StatusLevelContainerOrderedIndex& local_ordered_index = set_levels.get<ordered_index_tag>();
+    const StatusLevelContainerOrderedIndex& src_ordered_index = src_set_levels.get<ordered_index_tag>();
+    for(StatusLevelContainerOrderedIndexConstIterator it = src_ordered_index.begin(),
+        end = src_ordered_index.end();
         it != end;
         it++){
         //check if key is already present
-        if(map_level_tag.count(it->first)) continue;
+        if(local_ordered_index.find(it->value) != local_ordered_index.end()) continue;
         
         //add level
-        map_level_tag.insert(MapFlagStateLevelPair(it->first, it->second));
+        set_levels.insert(*it);
     }
     
     return true;
 }
 
 void StatusFlag::setCurrentLevel(int8_t _current_level) {
-    if(map_level_tag.find(_current_level) != map_level_tag.end()) return;
+    StateLevelContainerIncrementCounter increment_counter;
+    StatusLevelContainerOrderedIndex& local_ordered_index = set_levels.get<ordered_index_tag>();
+    StatusLevelContainerOrderedIndexIterator it = local_ordered_index.find(_current_level);
+    if(it == local_ordered_index.end()) return;
     if(current_level != _current_level){
         current_level = _current_level;
-        map_level_tag[current_level].occurence = 0;
-        if(listener){listener->statusFlagUpdated(flag_uuid);}
+        fireToListener();
     } else {
-        map_level_tag[current_level].occurence++;
+        local_ordered_index.modify(it, increment_counter);
     }
 }
 
@@ -106,28 +119,42 @@ int8_t StatusFlag::getCurrentLevel() const {
 }
 
 const StateLevel& StatusFlag::getCurrentStateLevel() {
-    return map_level_tag[getCurrentLevel()];
+    StatusLevelContainerOrderedIndex& local_ordered_index = set_levels.get<ordered_index_tag>();
+    StatusLevelContainerOrderedIndexIterator it = local_ordered_index.find(getCurrentLevel());
+    return *it;
 }
 
-void StatusFlag::setListener(StatusFlagListener *new_listener) {
+void StatusFlag::addListener(StatusFlagListener *new_listener) {
     boost::shared_lock<boost::shared_mutex> wl(mutex_listener);
-    listener = new_listener;
+    listener.insert(new_listener);
 }
 
+void StatusFlag::removeListener(StatusFlagListener *erase_listener) {
+    listener.erase(erase_listener);
+}
+
+void StatusFlag::fireToListener() {
+    for(SetListnerIterator it = listener.begin(),
+        end = listener.end();
+        it != end;
+        it++){
+        (*it)->statusFlagUpdated(flag_uuid);
+    }
+}
 #pragma mark StatusFlagBoolState
 StatusFlagBoolState::StatusFlagBoolState(const std::string& _name,
                                          const std::string& _description):
 StatusFlag(_name,
            _description){
-    addLevel(0, StateLevel("Off"));
-    addLevel(1, StateLevel("On"));
+    addLevel(StateLevel(0, "Off"));
+    addLevel(StateLevel(1, "On"));
 }
 
 StatusFlagBoolState::StatusFlagBoolState(const StatusFlagBoolState& src):
 StatusFlag(src){}
 
-bool StatusFlagBoolState::addLevel(int8_t level, const StateLevel& level_state) {
-    return StatusFlag::addLevel(level, level_state);
+bool StatusFlagBoolState::addLevel(const StateLevel& level_state) {
+    return StatusFlag::addLevel(level_state);
 }
 
 void StatusFlagBoolState::setState(bool state){

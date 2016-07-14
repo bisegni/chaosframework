@@ -43,11 +43,14 @@ namespace chaos {
                 typedef boost::shared_ptr<StatusFlagElement> StatusFlagElementPtr;
                 
                 const unsigned int seq_id;
+                const std::string flag_name;
                 boost::shared_ptr<StatusFlag> status_flag;
                 
                 StatusFlagElement(unsigned int _seq_id,
+                                  std::string _flag_name,
                                   boost::shared_ptr<StatusFlag> _status_flag):
                 seq_id(_seq_id),
+                flag_name(_flag_name),
                 status_flag(_status_flag){}
                 bool operator<(const StatusFlagElement& src)const{return seq_id<src.seq_id;}
                 
@@ -62,7 +65,7 @@ namespace chaos {
                     // modify_key() requires return type to be non-const
                     const result_type &operator()(const StatusFlagElementPtr &p) const
                     {
-                        return p->status_flag->name;
+                        return p->flag_name;
                     }
                 };
                 
@@ -81,14 +84,12 @@ namespace chaos {
             struct ordered{};
             struct name{};
             
-           
-            
             //multi-index set
             typedef boost::multi_index_container<
             StatusFlagElement::StatusFlagElementPtr,
             boost::multi_index::indexed_by<
             boost::multi_index::ordered_unique<boost::multi_index::tag<ordered>,  StatusFlagElement::extract_unique_id>,
-            boost::multi_index::hashed_unique<boost::multi_index::tag<name>,  StatusFlagElement::extract_unique_id>
+            boost::multi_index::hashed_unique<boost::multi_index::tag<name>,  StatusFlagElement::extract_key>
             >
             > StatusFlagElementContainer;
             
@@ -115,7 +116,7 @@ namespace chaos {
                 virtual ~StatusFlagCatalog();
                 
                 //!add a new status flag
-                void addFlag(StatusFlag *flag);
+                void addFlag(boost::shared_ptr<StatusFlag> flag);
                 
                 //!append an intere status flag map into owned one
                 void appendCatalog(const StatusFlagCatalog& src);

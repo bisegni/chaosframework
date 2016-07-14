@@ -44,7 +44,7 @@ namespace chaos {
                                  const std::string flag_description);
                 void addLevelFlag(const std::string flag_name,
                                  const std::string flag_description,
-                                  const MapFlagStateLevel& map_code_level_state);
+                                  const StateLevelContainer& map_code_level_state);
             };
             
         }

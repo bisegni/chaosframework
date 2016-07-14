@@ -25,7 +25,10 @@
 #include <chaos/common//chaos_constants.h>
 
 #include <boost/thread.hpp>
-
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/hashed_index.hpp>
 namespace chaos {
     namespace common {
         namespace status_manager {
@@ -49,20 +52,52 @@ namespace chaos {
             
             //! define a single level with the tag and a description
             struct StateLevel {
-                const std::string description;
-                const StatusFlagServerity severity;
+                //!level value
+                const int8_t        value;
+                //value description
+                const std::string   description;
+                StatusFlagServerity severity;
                 //!keep track of how many times the current level has been detected
                 unsigned int occurence;
                 
                 StateLevel();
-                StateLevel(const std::string& _description,
+                StateLevel(const int8_t value,
+                           const std::string& _description,
                            StatusFlagServerity _severity = StatusFlagServerityOperationl);
                 StateLevel(const StateLevel& src);
+                
+                bool operator< (const StateLevel &right);
             };
             
-            CHAOS_DEFINE_MAP_FOR_TYPE(int8_t, StateLevel, MapFlagStateLevel);
             
-            //forward declaration
+            struct ordered_index_tag{};
+
+            //multi-index set
+            typedef boost::multi_index_container<
+            StateLevel,
+            boost::multi_index::indexed_by<
+            boost::multi_index::ordered_unique<boost::multi_index::tag<ordered_index_tag>,
+                                                BOOST_MULTI_INDEX_MEMBER(StateLevel,
+                                                                        const int8_t,
+                                                                        value)>
+            >
+            > StateLevelContainer;
+            
+            //!priority index and iterator
+            typedef boost::multi_index::index<StateLevelContainer, ordered_index_tag>  StatusLevelContainerIndex;
+            typedef StatusLevelContainerIndex::type                                    StatusLevelContainerOrderedIndex;
+            typedef StatusLevelContainerIndex::type::iterator                          StatusLevelContainerOrderedIndexIterator;
+            
+            typedef StatusLevelContainerIndex::type::const_iterator                          StatusLevelContainerOrderedIndexConstIterator;
+            
+            struct StateLevelContainerIncrementCounter{
+                StateLevelContainerIncrementCounter(){}
+                
+                void operator()(StateLevel& sl) {
+                    sl.occurence++;
+                }
+            };
+                        //forward declaration
             class StatusFlag;
             
             class StatusFlagListener {
@@ -80,15 +115,18 @@ namespace chaos {
             };
 
             
+            CHAOS_DEFINE_SET_FOR_TYPE(StatusFlagListener*, SetListner);
+            
             //! Status Flag description
             class StatusFlag {
                 //! kep track of the current level
                 int8_t current_level;
-
-                //! mantains the mapping from level and the state description of that level
-                MapFlagStateLevel map_level_tag;
+                boost::shared_mutex mutex_current_level;
                 
-                StatusFlagListener *listener;
+                //! mantains the mapping from level and the state description of that level
+                StateLevelContainer set_levels;
+                
+                SetListner listener;
                 boost::shared_mutex mutex_listener;
             public:
                 const std::string flag_uuid;
@@ -101,27 +139,30 @@ namespace chaos {
                            const std::string& _description);
                 StatusFlag(const StatusFlag& src);
                 //! add a new level with level state
-                bool addLevel(int8_t level, const StateLevel& level_state);
+                bool addLevel(const StateLevel& level_state);
                 
                 //! add new level from a source map
-                bool addLevelsFromMap(const MapFlagStateLevel& src_levels_map);
+                bool addLevelsFromSet(const StateLevelContainer& src_set_levels);
                 
                 //!set the current level
                 void setCurrentLevel(int8_t _current_level);
                 
+                //return the current level of the flag
                 int8_t getCurrentLevel() const;
 
                 const StateLevel& getCurrentStateLevel();
 
                 
-                void setListener(StatusFlagListener *new_listener);
+                void addListener(StatusFlagListener *new_listener);
+                void removeListener(StatusFlagListener *erase_listener);
+                void fireToListener();
             };
 
             
             //! identify a flag that can be expressed as On/off, 0/1, true/false etc
             class StatusFlagBoolState:
             public StatusFlag {
-                bool addLevel(int8_t level, const StateLevel& level_state);
+                bool addLevel(const StateLevel& level_state);
             public:
                 StatusFlagBoolState(const std::string& _name,
                                      const std::string& _description);
