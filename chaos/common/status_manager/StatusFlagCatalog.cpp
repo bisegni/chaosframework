@@ -24,17 +24,87 @@
 using namespace chaos::common::data;
 using namespace chaos::common::status_manager;
 
-StatusFlagCatalog::StatusFlagCatalog(const std::string& _catalog_name):
-catalog_name(_catalog_name){}
+#define SLC_LOG INFO_LOG_1_P(StatusFlag, catalog_name)
+#define SLC_DBG DBG_LOG_1_P(StatusFlag, catalog_name)
+#define SLC_ERR ERR_LOG_1_p(StatusFlag, catalog_name)
 
-StatusFlagCatalog::~StatusFlagCatalog(){}
+StatusFlagCatalog::StatusFlagCatalog(const std::string& _catalog_name):
+catalog_name(_catalog_name){
+    //iitializethe severity map
+    for(int s = StatusFlagServerityRegular;
+        s != StatusFlagServerityUndefuned;
+        ++s) {
+        map_severity_bf_flag.insert(MapSeverityBitfieldPair((StatusFlagServerity)s, boost::dynamic_bitset<uint8_t>()));
+    }
+}
+
+StatusFlagCatalog::~StatusFlagCatalog(){
+    //!remove listere to all flag
+    StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(catalog_container);
+    for(StatusFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
+        end = ordered_index.end();
+        it != end;
+        it++){
+        (*it)->status_flag->removeListener(this);
+    }
+}
+
+
+void StatusFlagCatalog::statusFlagUpdated(const std::string& flag_uuid,
+                                          const StatusFlagServerity current_level_severity) {
+    StatusFlagElementContainerFlaUUIDIndex& uuid_index = catalog_container.get<mitag_flag_uuid>();
+    StatusFlagElementContainerFlaUUIDIndexItarator src_flag_it = uuid_index.find(flag_uuid);
+    if(src_flag_it == uuid_index.end()) return;
+    SLC_DBG << "Signal from " << (*src_flag_it)->flag_name << "with severity" << current_level_severity;
+    
+    for(int s = StatusFlagServerityRegular;
+        s != StatusFlagServerityUndefuned;
+        ++s) {
+        if(s == current_level_severity) {
+            map_severity_bf_flag[(StatusFlagServerity)s].set((*src_flag_it)->seq_id);
+        } else {
+            map_severity_bf_flag[(StatusFlagServerity)s].reset((*src_flag_it)->seq_id);
+        }
+        DEBUG_CODE(
+                   std::string buffer;
+                   boost::to_string(map_severity_bf_flag[(StatusFlagServerity)s], buffer);
+                   SLC_DBG << "Bitfiled for severity "<< (StatusFlagServerity)s <<"representation:" << buffer;
+                   );
+    }
+}
+
+void StatusFlagCatalog::addMemberToSeverityMap(boost::shared_ptr<StatusFlag> new_status_flag) {
+    DEBUG_CODE(SLC_DBG << "Add fag to severity bitfield map " << new_status_flag->name;);
+    //iitializethe severity map
+    for(int s = StatusFlagServerityRegular;
+        s != StatusFlagServerityUndefuned;
+        ++s) {
+        if(s == new_status_flag->getCurrentStateLevel().severity) {
+            map_severity_bf_flag[(StatusFlagServerity)s].push_back(1);
+        } else {
+            map_severity_bf_flag[(StatusFlagServerity)s].push_back(0);
+        }
+        DEBUG_CODE(
+                   std::string buffer;
+                   boost::to_string(map_severity_bf_flag[(StatusFlagServerity)s], buffer);
+                   SLC_DBG << "Bitfiled for severity "<< (StatusFlagServerity)s <<"representation:" << buffer;
+                   );
+    }
+    
+}
 
 void StatusFlagCatalog::addFlag(boost::shared_ptr<StatusFlag> flag) {
     boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
-    StatusFlagElementContainerNameIndex& name_index = catalog_container.get<name>();
+    StatusFlagElementContainerNameIndex& name_index = catalog_container.get<mitag_name>();
     if(name_index.find(flag->name) != name_index.end()) return;
+    
     //we can insert flag with unique name
-    catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)(catalog_container.size()+1), flag->name, flag)));
+    catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)catalog_container.size(), flag->name, flag)));
+    
+    addMemberToSeverityMap(flag);
+    
+    //add this catalog as listener
+    flag->addListener(this);
 }
 
 void StatusFlagCatalog::appendCatalog(const StatusFlagCatalog& src) {
@@ -44,29 +114,47 @@ void StatusFlagCatalog::appendCatalog(const StatusFlagCatalog& src) {
     //read lock on source catalog
     boost::shared_lock<boost::shared_mutex> rl(src.mutex_catalog);
     //retrieve the ordered index
-    StatusFlagElementContainerNameIndex& name_index = catalog_container.get<name>();
-    const StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<ordered>(src.catalog_container);
+    StatusFlagElementContainerNameIndex& name_index = catalog_container.get<mitag_name>();
+    const StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(src.catalog_container);
     for(StatusFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
         end = ordered_index.end();
         it != end;
         it++){
-        const std::string cat_flag_name = src.catalog_name + (*it)->flag_name;
+        const std::string cat_flag_name = src.catalog_name + "/" + (*it)->flag_name;
         if(name_index.find(cat_flag_name) != name_index.end()) continue;
         //we can insert
-        catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)(catalog_container.size()+1), cat_flag_name, (*it)->status_flag)));
+        catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)catalog_container.size(), cat_flag_name, (*it)->status_flag)));
+        
+        addMemberToSeverityMap((*it)->status_flag);
+        
+        (*it)->status_flag->addListener(this);
     }
 }
 
-StatusFlag *StatusFlagCatalog::getFlagByName(const std::string& flag_name) {
-    return NULL;
+boost::shared_ptr<StatusFlag> StatusFlagCatalog::getFlagByName(const std::string& flag_name) {
+    StatusFlagElementContainerNameIndex& name_index = catalog_container.get<mitag_name>();
+    StatusFlagElementContainerNameIterator nit = name_index.find(flag_name);
+    if(nit == name_index.end()) return boost::shared_ptr<StatusFlag>();
+    return (*nit)->status_flag;
 }
 
-bool StatusFlagCatalog::hasChanged() {
-    return bitmap_changed_flag.any();
+boost::shared_ptr<StatusFlag> StatusFlagCatalog::getFlagByOrderedID(const unsigned int flag_ordered_id) {
+    StatusFlagElementContainerOrderedIndex& ordered_index = catalog_container.get<mitag_ordered>();
+    StatusFlagElementContainerOrderedIndexIterator nit = ordered_index.find(flag_ordered_id);
+    if(nit == ordered_index.end()) return boost::shared_ptr<StatusFlag>();
+    return (*nit)->status_flag;
 }
 
-void StatusFlagCatalog::resetChanged() {
-    bitmap_changed_flag.reset();
+void StatusFlagCatalog::getFlagsForSeverity(StatusFlagServerity severity,
+                                            VectorStatusFlag& found_flag) {
+    //iterate on active flag for severity
+    size_t index = map_severity_bf_flag[severity].find_first();
+    while(index != boost::dynamic_bitset<uint8_t>::npos) {
+        found_flag.push_back(getFlagByOrderedID((unsigned int)index));
+        
+        //nex index
+        index = map_severity_bf_flag[severity].find_next(index);
+    }
 }
 
 #pragma mark Serialization Method
@@ -77,7 +165,7 @@ std::auto_ptr<chaos::common::data::CDataBuffer> StatusFlagCatalog::getRawFlagsLe
     char * raw_description = (char*)malloc(catalog_container.size());
     if(raw_description) {
         //retrieve the ordered index
-        StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<ordered>(catalog_container);
+        StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(catalog_container);
         for(StatusFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
             end = ordered_index.end();
             it != end;
@@ -101,7 +189,7 @@ void StatusFlagCatalog::setApplyRawFlagsValue(std::auto_ptr<chaos::common::data:
     for(int idx = 0;
         idx < raw_level->getBufferSize();
         idx++) {
-        StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<ordered>(catalog_container);
+        StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(catalog_container);
         for(StatusFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
             end = ordered_index.end();
             it != end;
@@ -111,4 +199,3 @@ void StatusFlagCatalog::setApplyRawFlagsValue(std::auto_ptr<chaos::common::data:
         }
     }
 }
-

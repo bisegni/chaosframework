@@ -44,17 +44,20 @@ namespace chaos {
              identify fault situation that can be critical or warning
              */
             typedef enum StatusFlagServerity{
-                StatusFlagServerityOperationl,
+                StatusFlagServerityRegular,
                 StatusFlagServerityWarning,
-                StatusFlagServerityCritical
+                StatusFlagServerityCritical,
+                StatusFlagServerityUndefuned
             }StatusFlagServerity;
             
             
             //! define a single level with the tag and a description
             struct StateLevel {
-                //!level value
+                //! level value
                 const int8_t        value;
-                //value description
+                //! short name
+                const std::string   tag;
+                //! full description
                 const std::string   description;
                 StatusFlagServerity severity;
                 //!keep track of how many times the current level has been detected
@@ -62,8 +65,9 @@ namespace chaos {
                 
                 StateLevel();
                 StateLevel(const int8_t value,
+                           const std::string& _tag,
                            const std::string& _description,
-                           StatusFlagServerity _severity = StatusFlagServerityOperationl);
+                           StatusFlagServerity _severity = StatusFlagServerityRegular);
                 StateLevel(const StateLevel& src);
                 
                 bool operator< (const StateLevel &right);
@@ -71,15 +75,15 @@ namespace chaos {
             
             
             struct ordered_index_tag{};
-
+            
             //multi-index set
             typedef boost::multi_index_container<
             StateLevel,
             boost::multi_index::indexed_by<
             boost::multi_index::ordered_unique<boost::multi_index::tag<ordered_index_tag>,
-                                                BOOST_MULTI_INDEX_MEMBER(StateLevel,
-                                                                        const int8_t,
-                                                                        value)>
+            BOOST_MULTI_INDEX_MEMBER(StateLevel,
+            const int8_t,
+            value)>
             >
             > StateLevelContainer;
             
@@ -97,9 +101,10 @@ namespace chaos {
                     sl.occurence++;
                 }
             };
-                        //forward declaration
+            //forward declaration
             class StatusFlag;
             
+            //! status flag listener
             class StatusFlagListener {
                 friend class StatusFlag;
                 
@@ -107,13 +112,14 @@ namespace chaos {
             protected:
                 StatusFlagListener();
                 virtual ~StatusFlagListener();
-                
-                virtual void statusFlagUpdated(const std::string flag_uuid) = 0;
+                //!signal the change of the current selected level severity
+                virtual void statusFlagUpdated(const std::string& flag_uuid,
+                                               const StatusFlagServerity current_level_severity) = 0;
                 
             public:
                 const std::string& getStatusFlagListenerUUID();
             };
-
+            
             
             CHAOS_DEFINE_SET_FOR_TYPE(StatusFlagListener*, SetListner);
             
@@ -149,15 +155,15 @@ namespace chaos {
                 
                 //return the current level of the flag
                 int8_t getCurrentLevel() const;
-
+                
                 const StateLevel& getCurrentStateLevel();
-
+                
                 
                 void addListener(StatusFlagListener *new_listener);
                 void removeListener(StatusFlagListener *erase_listener);
                 void fireToListener();
             };
-
+            
             
             //! identify a flag that can be expressed as On/off, 0/1, true/false etc
             class StatusFlagBoolState:
@@ -165,9 +171,11 @@ namespace chaos {
                 bool addLevel(const StateLevel& level_state);
             public:
                 StatusFlagBoolState(const std::string& _name,
-                                     const std::string& _description);
+                                    const std::string& _description,
+                                    const StateLevel& off_state_level,
+                                    const StateLevel& on_state_level);
                 StatusFlagBoolState(const StatusFlagBoolState& src);
-
+                
                 void setState(bool state);
             };
             

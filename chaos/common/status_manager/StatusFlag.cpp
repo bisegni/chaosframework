@@ -25,23 +25,30 @@
 using namespace chaos::common::utility;
 using namespace chaos::common::status_manager;
 
+#define SL_LOG INFO_LOG(StatusFlag)
+#define SL_DBG DBG_LOG(StatusFlag)
+#define SL_ERR ERR_LOG(StatusFlag)
+
 #pragma mark StateLevel
 StateLevel::StateLevel():
 value(0),
 description(),
-severity(StatusFlagServerityOperationl),
+severity(StatusFlagServerityRegular),
 occurence(0){}
 
 StateLevel::StateLevel(const int8_t _value,
+                       const std::string& _tag,
                        const std::string& _description,
                        StatusFlagServerity _severity):
 value(_value),
+tag(_tag),
 description(_description),
 severity(_severity),
 occurence(0){}
 
 StateLevel::StateLevel(const StateLevel& src):
 value(src.value),
+tag(src.tag),
 description(src.description),
 severity(src.severity),
 occurence(src.occurence){}
@@ -80,6 +87,11 @@ bool StatusFlag::addLevel(const StateLevel& level_state) {
     if(ordered_index.find(level_state.value) != ordered_index.end()) return false;
     //add the level state description
     set_levels.insert(level_state);
+    if(set_levels.size() == 1) {
+        //set this state as current selected
+        current_level = level_state.value;
+    }
+    DEBUG_CODE(SL_DBG << CHAOS_FORMAT("Code: %1%, tag:%2%, Desc:%3%, Severity:%4%", %(int32_t)level_state.value%level_state.tag%level_state.description%level_state.severity);)
     return true;
 }
 
@@ -96,8 +108,8 @@ bool StatusFlag::addLevelsFromSet(const StateLevelContainer& src_set_levels) {
         
         //add level
         set_levels.insert(*it);
+        DEBUG_CODE(SL_DBG << CHAOS_FORMAT("Code: %1%, tag:%2%, Desc:%3%, Severity:%4%", %(int32_t)it->value%it->tag%it->description%it->severity);)
     }
-    
     return true;
 }
 
@@ -138,16 +150,20 @@ void StatusFlag::fireToListener() {
         end = listener.end();
         it != end;
         it++){
-        (*it)->statusFlagUpdated(flag_uuid);
+        //call listener method to update severity on slistening class
+        (*it)->statusFlagUpdated(flag_uuid,
+                                 getCurrentStateLevel().severity);
     }
 }
 #pragma mark StatusFlagBoolState
 StatusFlagBoolState::StatusFlagBoolState(const std::string& _name,
-                                         const std::string& _description):
+                                         const std::string& _description,
+                                         const StateLevel& off_state_level,
+                                         const StateLevel& on_state_level):
 StatusFlag(_name,
            _description){
-    addLevel(StateLevel(0, "Off"));
-    addLevel(StateLevel(1, "On"));
+    addLevel(off_state_level);
+    addLevel(on_state_level);
 }
 
 StatusFlagBoolState::StatusFlagBoolState(const StatusFlagBoolState& src):

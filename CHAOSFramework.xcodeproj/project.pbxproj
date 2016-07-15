@@ -538,6 +538,7 @@
 		3287F7E717B27621009DD6ED /* DriverManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326D3A6017B0CD01004601A8 /* DriverManager.h */; };
 		328933591D3549DE00FBA95B /* DeclareStatusFlag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328933571D3549DE00FBA95B /* DeclareStatusFlag.cpp */; };
 		3289335A1D3549DE00FBA95B /* DeclareStatusFlag.h in Headers */ = {isa = PBXBuildFile; fileRef = 328933581D3549DE00FBA95B /* DeclareStatusFlag.h */; };
+		3289335F1D38DBA400FBA95B /* StateFlagCatalogTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289335D1D38DBA400FBA95B /* StateFlagCatalogTest.cpp */; };
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328C872C1ADEA45E0047C79B /* SearchInstancesByUS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328C872A1ADEA45E0047C79B /* SearchInstancesByUS.cpp */; };
@@ -1742,6 +1743,8 @@
 		328933571D3549DE00FBA95B /* DeclareStatusFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeclareStatusFlag.cpp; sourceTree = "<group>"; };
 		328933581D3549DE00FBA95B /* DeclareStatusFlag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclareStatusFlag.h; sourceTree = "<group>"; };
 		3289335B1D3648F000FBA95B /* TemplatedDataSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedDataSDWrapper.h; sourceTree = "<group>"; };
+		3289335D1D38DBA400FBA95B /* StateFlagCatalogTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StateFlagCatalogTest.cpp; sourceTree = "<group>"; };
+		3289335E1D38DBA400FBA95B /* StateFlagCatalogTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateFlagCatalogTest.h; sourceTree = "<group>"; };
 		3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteEntityDB.cpp; sourceTree = "<group>"; };
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
 		328C872A1ADEA45E0047C79B /* SearchInstancesByUS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchInstancesByUS.cpp; sourceTree = "<group>"; };
@@ -2931,6 +2934,8 @@
 			children = (
 				3251B5111A768A9E00EF3F82 /* HashMapTest.cpp */,
 				3251B5121A768A9E00EF3F82 /* HashMapTest.h */,
+				3289335D1D38DBA400FBA95B /* StateFlagCatalogTest.cpp */,
+				3289335E1D38DBA400FBA95B /* StateFlagCatalogTest.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -5724,6 +5729,7 @@
 				3251B5141A768A9E00EF3F82 /* HashMapTest.cpp in Sources */,
 				3258AF0C1935F46D00A66D44 /* FeederTest.cpp in Sources */,
 				32F1FC6B1A7652BE000C9B0C /* ObjectPriorityQueueTest.cpp in Sources */,
+				3289335F1D38DBA400FBA95B /* StateFlagCatalogTest.cpp in Sources */,
 				3258AF031935EE4D00A66D44 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

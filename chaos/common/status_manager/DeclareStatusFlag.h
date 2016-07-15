@@ -41,7 +41,9 @@ namespace chaos {
                 ~DeclareStatusFlag();
                 
                 void addBoolFlag(const std::string flag_name,
-                                 const std::string flag_description);
+                                 const std::string flag_description,
+                                 const StateLevel& off_level,
+                                 const StateLevel& on_level);
                 void addLevelFlag(const std::string flag_name,
                                  const std::string flag_description,
                                   const StateLevelContainer& map_code_level_state);

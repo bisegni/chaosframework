@@ -29,8 +29,13 @@ StatusFlagCatalog(_catalog_name){}
 DeclareStatusFlag::~DeclareStatusFlag(){}
 
 void DeclareStatusFlag::addBoolFlag(const std::string flag_name,
-                                    const std::string flag_description) {
-    boost::shared_ptr<StatusFlagBoolState> bool_flag(new StatusFlagBoolState(flag_name, flag_description));
+                                    const std::string flag_description,
+                                    const StateLevel& off_level,
+                                    const StateLevel& on_level) {
+    boost::shared_ptr<StatusFlagBoolState> bool_flag(new StatusFlagBoolState(flag_name,
+                                                                             flag_description,
+                                                                             off_level,
+                                                                             on_level));
     addFlag(bool_flag);
 }
 

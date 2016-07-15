@@ -7,6 +7,7 @@
 //
 #include <chaos/common/chaos_constants.h>
 #include "utility/HashMapTest.h"
+#include "utility/StateFlagCatalogTest.h"
 #include "network/FeederTest.h"
 #include "thread/ObjectQueueTest.h"
 #include "thread/ObjectPriorityQueueTest.h"
@@ -64,6 +65,10 @@ int main(int argc, const char * argv[]) {
     tp.property_one = "1500";
     i = tp.property_one;
     
+    chaos::common::utility::test::StatusFlagCatalogTest sft;
+    if(!sft.test()) return 1;
+
+    
     chaos::common::pqueue::test::PriorityTest ptest;
     if(!ptest.test(50, 1000)) return 1;
     
@@ -76,9 +81,6 @@ int main(int argc, const char * argv[]) {
 	chaos::common::pqueue::test::ObjectPriorityQueueTest opqt;
 	if(!(oqt.test(10, 100, 100, 0, true) == true)) return 1;
 
-	chaos::common::utility::test::HashMapTest hmt;
-	if(!hmt.test(10, 10, 10)) return 1;
-    
     return 0;
 }
 
