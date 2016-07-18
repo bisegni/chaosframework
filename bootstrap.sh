@@ -77,7 +77,7 @@ fi
 #####
 if [ -e $CHAOS_BUNDLE/tools/common_util.sh ];then
     source $CHAOS_BUNDLE/tools/common_util.sh
-    NO_MONGOOSE="TRUE"
+#    NO_MONGOOSE="TRUE"
 else
     OS=`uname -s`
     ARCH=`uname -m`
