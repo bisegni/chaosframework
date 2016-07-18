@@ -98,7 +98,7 @@ else
 	export CXX="clang++"
 	export CXXFLAGS="-stdlib=libstdc++"
 	export LDFLAGS="-stdlib=libstdc++"
-	export CHAOS_CMAKE_FLAGS="$CHAOS_CMAKE_FLAGS -DCMAKE_CXX_FLAGS=\"-stdlib=libstdc++ -fPIC\" $CHAOS_COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$CHAOS_PREFIX"
+	export CHAOS_CMAKE_FLAGS="$CHAOS_CMAKE_FLAGS -DCMAKE_CXX_FLAGS=-stdlib=libstdc++ $CHAOS_COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$CHAOS_PREFIX"
 	export LD=clang
 	APPLE="true"
     ## 18, 16 doesnt compile
