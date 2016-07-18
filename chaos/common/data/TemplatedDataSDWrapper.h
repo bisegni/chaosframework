@@ -34,7 +34,7 @@
 #include <vector>
 
 namespace chaos {
-    namespace service_common {
+    namespace common {
         namespace data {
             
             template<typename T>
@@ -92,7 +92,7 @@ namespace chaos {
             };
             
 #define CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(x)\
-typedef chaos::service_common::data::TemplatedDataSDWrapper<x> x ## SDWrapperSubclass;\
+typedef chaos::common::data::TemplatedDataSDWrapper<x> x ## SDWrapperSubclass;\
 class x ## SDWrapper:\
 public x ## SDWrapperSubclass
             
@@ -217,7 +217,7 @@ public x ## SDWrapperSubclass
             template<typename T, typename DW>
 	      const  std::string TemplatedDataListWrapper<T,DW>::master_serialization_key = GET_TYPE_NAME(T);
             
-#define CHAOS_DEFINE_SD_LIST_WRAPPER(x, serializer_wrapper)  chaos::service_common::data::TemplatedDataListWrapper<x,serializer_wrapper>
+#define CHAOS_DEFINE_SD_LIST_WRAPPER(x, serializer_wrapper)  chaos::common::data::TemplatedDataListWrapper<x,serializer_wrapper>
             
 #define CHAOS_DEFINE_TYPE_FOR_SD_LIST_WRAPPER(x, serializer_wrapper, type_name)  typedef CHAOS_DEFINE_SD_LIST_WRAPPER(x, serializer_wrapper) type_name
             

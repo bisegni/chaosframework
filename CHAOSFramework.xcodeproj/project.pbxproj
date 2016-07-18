@@ -464,6 +464,10 @@
 		3270E0861C6E37A900105726 /* event.h in Headers */ = {isa = PBXBuildFile; fileRef = 3270E0841C6E37A900105726 /* event.h */; };
 		3271063519A6157800946A8B /* VFSDataFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063319A6157800946A8B /* VFSDataFile.cpp */; };
 		3271063819A6188000946A8B /* VFSDataWriteableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */; };
+		3271B8911D3CE0B30035290E /* StatusFlagSDWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271B88F1D3CE0B30035290E /* StatusFlagSDWrapper.cpp */; };
+		3271B8921D3CE0B30035290E /* StatusFlagSDWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3271B8901D3CE0B30035290E /* StatusFlagSDWrapper.h */; };
+		3271B8951D3D0D520035290E /* StatusFlagCatalogSDWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271B8931D3D0D520035290E /* StatusFlagCatalogSDWrapper.cpp */; };
+		3271B8961D3D0D520035290E /* StatusFlagCatalogSDWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3271B8941D3D0D520035290E /* StatusFlagCatalogSDWrapper.h */; };
 		3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3272152218B006BC005AC8FD /* CacheDriver.cpp */; };
 		3272FE1715E1053100B096FB /* EventForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3272FE1615E1053100B096FB /* EventForwarder.h */; };
 		3274A90C1AC2F214000C6A4D /* ApiProxyManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3274A90A1AC2F214000C6A4D /* ApiProxyManager.cpp */; };
@@ -1640,6 +1644,10 @@
 		3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSDataWriteableFile.cpp; sourceTree = "<group>"; };
 		3271063719A6188000946A8B /* VFSDataWriteableFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSDataWriteableFile.h; sourceTree = "<group>"; };
 		3271063C19A7417000946A8B /* db_system_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = db_system_types.h; sourceTree = "<group>"; };
+		3271B88F1D3CE0B30035290E /* StatusFlagSDWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatusFlagSDWrapper.cpp; sourceTree = "<group>"; };
+		3271B8901D3CE0B30035290E /* StatusFlagSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusFlagSDWrapper.h; sourceTree = "<group>"; };
+		3271B8931D3D0D520035290E /* StatusFlagCatalogSDWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatusFlagCatalogSDWrapper.cpp; sourceTree = "<group>"; };
+		3271B8941D3D0D520035290E /* StatusFlagCatalogSDWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusFlagCatalogSDWrapper.h; sourceTree = "<group>"; };
 		3272152218B006BC005AC8FD /* CacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriver.cpp; sourceTree = "<group>"; };
 		3272152318B006BC005AC8FD /* CacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriver.h; sourceTree = "<group>"; };
 		3272FE1615E1053100B096FB /* EventForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventForwarder.h; sourceTree = "<group>"; };
@@ -2629,6 +2637,10 @@
 				322EC1BA1D34F2E10012467C /* StatusFlagCatalog.h */,
 				328933571D3549DE00FBA95B /* DeclareStatusFlag.cpp */,
 				328933581D3549DE00FBA95B /* DeclareStatusFlag.h */,
+				3271B88F1D3CE0B30035290E /* StatusFlagSDWrapper.cpp */,
+				3271B8901D3CE0B30035290E /* StatusFlagSDWrapper.h */,
+				3271B8931D3D0D520035290E /* StatusFlagCatalogSDWrapper.cpp */,
+				3271B8941D3D0D520035290E /* StatusFlagCatalogSDWrapper.h */,
 			);
 			path = status_manager;
 			sourceTree = "<group>";
@@ -4870,6 +4882,7 @@
 				326DB48E14B38BC00018A8D0 /* ArrayPointer.h in Headers */,
 				3289335A1D3549DE00FBA95B /* DeclareStatusFlag.h in Headers */,
 				32EBDEFB1B4E58F300278C42 /* MetricCollector.h in Headers */,
+				3271B8961D3D0D520035290E /* StatusFlagCatalogSDWrapper.h in Headers */,
 				329603231876B45000CDCADA /* BatchCommand.h in Headers */,
 				326DB49214B38BC00018A8D0 /* ObjectFactoryRegister.h in Headers */,
 				326DB49314B38BC00018A8D0 /* Singleton.h in Headers */,
@@ -4919,6 +4932,7 @@
 				3230BEC3181A6ADB00EA5793 /* DatasetDB.h in Headers */,
 				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,
 				32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */,
+				3271B8921D3CE0B30035290E /* StatusFlagSDWrapper.h in Headers */,
 				324A4B31191A405700975394 /* element.h in Headers */,
 				320C218A151B555A00BD0F41 /* EventServer.h in Headers */,
 				32F158681B7C9D8400B6A5DF /* ResourcePool.h in Headers */,
@@ -5820,6 +5834,7 @@
 				32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */,
 				324A4B96191A557700975394 /* time_support.cpp in Sources */,
 				32A88BBF1CF8228A001DBAF5 /* lcode.c in Sources */,
+				3271B8951D3D0D520035290E /* StatusFlagCatalogSDWrapper.cpp in Sources */,
 				32A88BC21CF8228A001DBAF5 /* lctype.c in Sources */,
 				32A88BBD1CF8228A001DBAF5 /* lbaselib.c in Sources */,
 				324A4B15191A3F6A00975394 /* string_data.cpp in Sources */,
@@ -5840,6 +5855,7 @@
 				32A88BE61CF8228A001DBAF5 /* ltablib.c in Sources */,
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
 				32B159D118B38C980096B58B /* DirectIODeviceClientChannel.cpp in Sources */,
+				3271B8911D3CE0B30035290E /* StatusFlagSDWrapper.cpp in Sources */,
 				32B5C9501C68E2420021159C /* URLHAServiceFeeder.cpp in Sources */,
 				32A88BD41CF8228A001DBAF5 /* lmem.c in Sources */,
 				325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */,

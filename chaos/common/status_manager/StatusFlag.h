@@ -50,19 +50,21 @@ namespace chaos {
                 StatusFlagServerityUndefuned
             }StatusFlagServerity;
             
-            
+            class StateLevelSDVWrapper;
             //! define a single level with the tag and a description
-            struct StateLevel {
+            class StateLevel {
+                friend class StateLevelSDWrapper;
                 //! level value
-                const int8_t        value;
+                int8_t        value;
                 //! short name
-                const std::string   tag;
+                std::string   tag;
                 //! full description
-                const std::string   description;
+                std::string   description;
                 StatusFlagServerity severity;
+
+            public:
                 //!keep track of how many times the current level has been detected
                 unsigned int occurence;
-                
                 StateLevel();
                 StateLevel(const int8_t value,
                            const std::string& _tag,
@@ -71,6 +73,22 @@ namespace chaos {
                 StateLevel(const StateLevel& src);
                 
                 bool operator< (const StateLevel &right);
+                
+                StateLevel& operator=(StateLevel const &rhs);
+                
+                const std::string& getTag() const;
+                const std::string& getDescription() const;
+                const int8_t getValue() const;
+                const StatusFlagServerity getSeverity() const;
+                
+                struct ExtractValue {
+                    typedef int8_t result_type;
+                    // modify_key() requires return type to be non-const
+                    const result_type &operator()(const StateLevel &p) const {
+                        return p.value;
+                    }
+                };
+
             };
             
             
@@ -80,10 +98,7 @@ namespace chaos {
             typedef boost::multi_index_container<
             StateLevel,
             boost::multi_index::indexed_by<
-            boost::multi_index::ordered_unique<boost::multi_index::tag<ordered_index_tag>,
-            BOOST_MULTI_INDEX_MEMBER(StateLevel,
-            const int8_t,
-            value)>
+            boost::multi_index::ordered_unique<boost::multi_index::tag<ordered_index_tag>, StateLevel::ExtractValue>
             >
             > StateLevelContainer;
             
@@ -123,8 +138,12 @@ namespace chaos {
             
             CHAOS_DEFINE_SET_FOR_TYPE(StatusFlagListener*, SetListner);
             
+            //!forward declaration
+            class StatusFlagSDWrapper;
+            
             //! Status Flag description
             class StatusFlag {
+                friend class StatusFlagSDWrapper;
                 //! kep track of the current level
                 int8_t current_level;
                 boost::shared_mutex mutex_current_level;
@@ -134,16 +153,26 @@ namespace chaos {
                 
                 SetListner listener;
                 boost::shared_mutex mutex_listener;
-            public:
-                const std::string flag_uuid;
-                //! the name taht identify the flag
-                const std::string name;
-                //! the compelte description of the flag
-                const std::string description;
                 
+            protected:
+                std::string flag_uuid;
+                //! the name taht identify the flag
+                std::string name;
+                //! the compelte description of the flag
+                std::string description;
+                
+            public:
+                StatusFlag();
                 StatusFlag(const std::string& _name,
                            const std::string& _description);
                 StatusFlag(const StatusFlag& src);
+                
+                StatusFlag& operator=(StatusFlag const &rhs);
+                
+                const std::string& getName();
+                const std::string& getDescription();
+                const std::string& getFlagUUID();
+                
                 //! add a new level with level state
                 bool addLevel(const StateLevel& level_state);
                 

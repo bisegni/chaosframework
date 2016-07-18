@@ -63,34 +63,34 @@ bool StatusFlagCatalogTest::test() {
     catalog_b.addFlag(flag_serial_port);
     
     flag = catalog_a.getFlagByName("powersupply_state");
-    assert(flag->name.compare("powersupply_state") == 0);
+    assert(flag->getName().compare("powersupply_state") == 0);
     flag = catalog_a.getFlagByName("serial_comunication");
-    assert(flag->name.compare("serial_comunication") == 0);
+    assert(flag->getName().compare("serial_comunication") == 0);
     flag = catalog_b.getFlagByName("serial_port_state");
-    assert(flag->name.compare("serial_port_state") == 0);
+    assert(flag->getName().compare("serial_port_state") == 0);
     
     flag = catalog_a.getFlagByOrderedID(0);
-    assert(flag->name.compare("powersupply_state") == 0);
+    assert(flag->getName().compare("powersupply_state") == 0);
     flag = catalog_a.getFlagByOrderedID(1);
-    assert(flag->name.compare("serial_comunication") == 0);
+    assert(flag->getName().compare("serial_comunication") == 0);
     flag = catalog_b.getFlagByOrderedID(0);
-    assert(flag->name.compare("serial_port_state") == 0);
+    assert(flag->getName().compare("serial_port_state") == 0);
     
     //cataog union test
     catalog_b.appendCatalog(catalog_a);
     flag = catalog_b.getFlagByOrderedID(0);
-    assert(flag->name.compare("serial_port_state") == 0);
+    assert(flag->getName().compare("serial_port_state") == 0);
     flag = catalog_b.getFlagByOrderedID(1);
-    assert(flag->name.compare("powersupply_state") == 0);
+    assert(flag->getName().compare("powersupply_state") == 0);
     flag = catalog_b.getFlagByOrderedID(2);
-    assert(flag->name.compare("serial_comunication") == 0);
+    assert(flag->getName().compare("serial_comunication") == 0);
     
     flag = catalog_b.getFlagByName("serial_port_state");
-    assert(flag->name.compare("serial_port_state") == 0);
+    assert(flag->getName().compare("serial_port_state") == 0);
     flag = catalog_b.getFlagByName("catalog_a/powersupply_state");
-    assert(flag->name.compare("powersupply_state") == 0);
+    assert(flag->getName().compare("powersupply_state") == 0);
     flag = catalog_b.getFlagByName("catalog_a/serial_comunication");
-    assert(flag->name.compare("serial_comunication") == 0);
+    assert(flag->getName().compare("serial_comunication") == 0);
     
     //change some level
     flag_powersupply_state->setCurrentLevel(3);
@@ -99,31 +99,33 @@ bool StatusFlagCatalogTest::test() {
     
     catalog_a.getFlagsForSeverity(StatusFlagServerityRegular, found_flag_for_severity);
     std::cout << "catalog_a StatusFlagServerityRegular"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->name << std::endl;}
+    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName() << std::endl;}
     
     found_flag_for_severity.clear();
     catalog_a.getFlagsForSeverity(StatusFlagServerityWarning, found_flag_for_severity);
     std::cout << "catalog_a StatusFlagServerityWarning"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->name << std::endl;}
+    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
     catalog_a.getFlagsForSeverity(StatusFlagServerityCritical, found_flag_for_severity);
     std::cout << "catalog_a StatusFlagServerityCritical"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->name << std::endl;}
+    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
     catalog_b.getFlagsForSeverity(StatusFlagServerityRegular, found_flag_for_severity);
     std::cout << "catalog_b StatusFlagServerityRegular"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->name << std::endl;}
+    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
     catalog_b.getFlagsForSeverity(StatusFlagServerityWarning, found_flag_for_severity);
     std::cout << "catalog_b StatusFlagServerityWarning"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->name << std::endl;}
+    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     found_flag_for_severity.clear();
     catalog_b.getFlagsForSeverity(StatusFlagServerityCritical, found_flag_for_severity);
     std::cout << "catalog_b StatusFlagServerityCritical"<<std::endl;
-    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->name << std::endl;}
+    BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
+    
+    //print serialization
     return true;
 }

@@ -57,6 +57,30 @@ bool StateLevel::operator< (const StateLevel &right) {
     return value < right.value;
 }
 
+StateLevel& StateLevel::operator=(StateLevel const &rhs) {
+    value = rhs.value;
+    tag = rhs.tag;
+    description = rhs.description;
+    severity = rhs.severity;
+    occurence = rhs.occurence;
+    return *this;
+}
+
+const std::string& StateLevel::getTag() const {
+    return tag;
+}
+
+const std::string& StateLevel::getDescription() const {
+    return description;
+}
+
+const int8_t StateLevel::getValue() const {
+    return value;
+}
+const StatusFlagServerity StateLevel::getSeverity() const {
+    return severity;
+}
+
 #pragma mark StatusFlagListener
 StatusFlagListener::StatusFlagListener():
 listener_uuid(UUIDUtil::generateUUIDLite()){}
@@ -68,6 +92,13 @@ const std::string& StatusFlagListener::getStatusFlagListenerUUID(){
 }
 
 #pragma mark StatusFlag
+StatusFlag::StatusFlag():
+flag_uuid(UUIDUtil::generateUUIDLite()),
+name(),
+description(),
+current_level(0){}
+
+
 StatusFlag::StatusFlag(const std::string& _name,
                        const std::string& _description):
 flag_uuid(UUIDUtil::generateUUIDLite()),
@@ -81,17 +112,38 @@ name(src.name),
 description(src.description),
 current_level(src.current_level){}
 
+StatusFlag& StatusFlag::operator=(StatusFlag const &rhs) {
+    name = rhs.name;
+    description = rhs.description;
+    current_level = rhs.current_level;
+    set_levels = rhs.set_levels;
+    return *this;
+};
+
+const std::string& StatusFlag::getDescription() {
+    return description;
+}
+
+const std::string& StatusFlag::getFlagUUID() {
+    return flag_uuid;
+}
+
+const std::string& StatusFlag::getName() {
+    return name;
+}
+
+
 bool StatusFlag::addLevel(const StateLevel& level_state) {
     StatusLevelContainerOrderedIndex& ordered_index = boost::multi_index::get<ordered_index_tag>(set_levels);
     //chec if the level has been already added
-    if(ordered_index.find(level_state.value) != ordered_index.end()) return false;
+    if(ordered_index.find(level_state.getValue()) != ordered_index.end()) return false;
     //add the level state description
     set_levels.insert(level_state);
     if(set_levels.size() == 1) {
         //set this state as current selected
-        current_level = level_state.value;
+        current_level = level_state.getValue();
     }
-    DEBUG_CODE(SL_DBG << CHAOS_FORMAT("Code: %1%, tag:%2%, Desc:%3%, Severity:%4%", %(int32_t)level_state.value%level_state.tag%level_state.description%level_state.severity);)
+    DEBUG_CODE(SL_DBG << CHAOS_FORMAT("Code: %1%, tag:%2%, Desc:%3%, Severity:%4%", %(int32_t)level_state.getValue()%level_state.getTag()%level_state.getDescription()%level_state.getSeverity());)
     return true;
 }
 
@@ -104,11 +156,11 @@ bool StatusFlag::addLevelsFromSet(const StateLevelContainer& src_set_levels) {
         it != end;
         it++){
         //check if key is already present
-        if(local_ordered_index.find(it->value) != local_ordered_index.end()) continue;
+        if(local_ordered_index.find(it->getValue()) != local_ordered_index.end()) continue;
         
         //add level
         set_levels.insert(*it);
-        DEBUG_CODE(SL_DBG << CHAOS_FORMAT("Code: %1%, tag:%2%, Desc:%3%, Severity:%4%", %(int32_t)it->value%it->tag%it->description%it->severity);)
+        DEBUG_CODE(SL_DBG << CHAOS_FORMAT("Code: %1%, tag:%2%, Desc:%3%, Severity:%4%", %(int32_t)it->getValue()%it->getTag()%it->getDescription()%it->getSeverity());)
     }
     return true;
 }
@@ -152,7 +204,7 @@ void StatusFlag::fireToListener() {
         it++){
         //call listener method to update severity on slistening class
         (*it)->statusFlagUpdated(flag_uuid,
-                                 getCurrentStateLevel().severity);
+                                 getCurrentStateLevel().getSeverity());
     }
 }
 #pragma mark StatusFlagBoolState

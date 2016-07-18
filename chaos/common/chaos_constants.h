@@ -324,6 +324,39 @@ namespace chaos {
     }
     /** @} */ // end of NodeHealtDefinitionValue
     
+    /** @defgroup NodeStatusFlagDefinitionKey constant for serialization of the status flag
+     *  @{
+     */
+    //! This namespace enclose all the constant for serialization of the status flag
+    namespace NodeStatusFlagDefinitionKey {
+        //! flag name[string]
+        static const char * const NODE_SF_NAME                  = "nsfdk_name";
+        //! flag description[string]
+        static const char * const NODE_SF_DESCRIPTION           = "nsfdk_description";
+        //! flag level name[int32(char)]
+        static const char * const NODE_SF_LEVEL_VALUE           = "nsfdk_level_value";
+        //!contains the lis tof the level that belong to the flag[bson vector of object]
+        static const char * const NODE_SF_LEVEL_SET             = "nsfdk_level_set";
+        //! flag level tag[string]
+        /*!
+         tag is some king of minimal string code tath permit to recognize tha level
+         */
+        static const char * const NODE_SF_LEVEL_TAG             = "nsfdk_level_tag";
+        //! flag level description [string]
+        /*!
+         thi spermit to fully exmplain what the level indicate
+         */
+        static const char * const NODE_SF_LEVEL_DESCRIPTION     = "nsfdk_level_description";
+        //! flag level name [enum]
+        static const char * const NODE_SF_LEVEL_SEVERITY        = "nsfdk_level_severity";
+        
+        //! the name of the catalog of a status flag set [string]
+        static const char * const NODE_SF_CATALOG_NAME          = "nsfdk_catalog_name";
+        //!define a vector of flag set within the catalog
+        static const char * const NODE_SF_CATALOG_FLAG_SET      = "nsfdk_catalog_flag_set";
+    }
+    /** @} */ // end of NodeStatusFlagDefinitionKey
+    
     /** @defgroup ControlUnitHealtDefinitionValue !CHAOS control unit specific key
      *  @{
      */
