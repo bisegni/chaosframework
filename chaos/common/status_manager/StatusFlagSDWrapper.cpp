@@ -21,6 +21,8 @@
 
 #include <chaos/common/status_manager/StatusFlagSDWrapper.h>
 
+#include <boost/algorithm/string.hpp>
+
 using namespace chaos::common::data;
 using namespace chaos::common::status_manager;
 
@@ -45,6 +47,10 @@ void StateLevelSDWrapper::deserialize(CDataWrapper *serialized_data) {
 
 std::auto_ptr<CDataWrapper> StateLevelSDWrapper::serialize(const uint64_t sequence) {
     std::auto_ptr<CDataWrapper> data_serialized(new CDataWrapper());
+    data_serialized->addInt32Value(chaos::NodeStatusFlagDefinitionKey::NODE_SF_LEVEL_VALUE, static_cast<int32_t>(dataWrapped().value));
+    data_serialized->addStringValue(chaos::NodeStatusFlagDefinitionKey::NODE_SF_LEVEL_TAG, dataWrapped().tag);
+    data_serialized->addStringValue(chaos::NodeStatusFlagDefinitionKey::NODE_SF_LEVEL_DESCRIPTION, dataWrapped().description);
+    data_serialized->addInt32Value(chaos::NodeStatusFlagDefinitionKey::NODE_SF_LEVEL_SEVERITY, static_cast<StatusFlagServerity>(dataWrapped().severity));
     return data_serialized;
 }
 
@@ -61,6 +67,15 @@ StatusFlagSDWrapperSubclass(serialized_data){deserialize(serialized_data);}
 void StatusFlagSDWrapper::deserialize(CDataWrapper *serialized_data) {
     if(serialized_data == NULL) return;
     dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeStatusFlagDefinitionKey::NODE_SF_NAME, "");
+    //check if we have a catalog name
+    ChaosStringVector splitted_name;
+    boost::split( splitted_name,
+                 dataWrapped().name ,
+                 boost::is_any_of("/"),
+                 boost::token_compress_on);
+    if(splitted_name.size() > 1) {
+        dataWrapped().name = splitted_name[splitted_name.size()-1];
+    }
     dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeStatusFlagDefinitionKey::NODE_SF_DESCRIPTION, "");
     
     //decode the list fo state level

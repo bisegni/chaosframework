@@ -73,6 +73,8 @@ std::auto_ptr<CDataWrapper> StatusFlagCatalogSDWrapper::serialize(const uint64_t
             end = ordered_index.end();
             it != end;
             it++){
+//            StatusFlag sf( *(*it)->status_flag);
+//            sf.name = (*it)->flag_name;
             sfsdw.dataWrapped() = *(*it)->status_flag;
             data_serialized->appendCDataWrapperToArray(*sfsdw.serialize());
         }

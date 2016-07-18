@@ -21,6 +21,8 @@
 
 #include "StateFlagCatalogTest.h"
 
+#include <chaos/common/status_manager/StatusFlagCatalogSDWrapper.h>
+
 #include <boost/foreach.hpp>
 
 using namespace chaos::common::utility::test;
@@ -127,5 +129,8 @@ bool StatusFlagCatalogTest::test() {
     BOOST_FOREACH(boost::shared_ptr<StatusFlag> flag, found_flag_for_severity ){std::cout << flag->getName()  << std::endl;}
     
     //print serialization
+    StatusFlagCatalogSDWrapper sfcsdw;
+    sfcsdw.dataWrapped() = catalog_b;
+    std::cout << sfcsdw.serialize()->getJSONString() << std::endl;
     return true;
 }

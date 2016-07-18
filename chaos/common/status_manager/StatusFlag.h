@@ -122,7 +122,6 @@ namespace chaos {
             //! status flag listener
             class StatusFlagListener {
                 friend class StatusFlag;
-                
                 const std::string listener_uuid;
             protected:
                 StatusFlagListener();
@@ -139,11 +138,17 @@ namespace chaos {
             CHAOS_DEFINE_SET_FOR_TYPE(StatusFlagListener*, SetListner);
             
             //!forward declaration
+            class StatusFlagCatalog;
+            //!forward declaration
             class StatusFlagSDWrapper;
+            //!forward decalration
+            class StatusFlagCatalogSDWrapper;
             
             //! Status Flag description
             class StatusFlag {
+                friend class StatusFlagCatalog;
                 friend class StatusFlagSDWrapper;
+                friend class StatusFlagCatalogSDWrapper;
                 //! kep track of the current level
                 int8_t current_level;
                 boost::shared_mutex mutex_current_level;
