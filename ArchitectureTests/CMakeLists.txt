@@ -6,7 +6,9 @@ ENDIF()
 SET(ArchitectureTestsSrc main.cpp)
 SET(ArchitectureTestsSrc
     ${ArchitectureTestsSrc}
-    utility/HashMapTest.cpp)
+    utility/HashMapTest.cpp
+    utility/StateFlagCatalogTest.cpp
+    )
 SET(ArchitectureTestsSrc
     ${ArchitectureTestsSrc}
     network/FeederTest.cpp)

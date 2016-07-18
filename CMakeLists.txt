@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
+option(CHAOS_MEMCACHE_TEST "Memcached test" OFF)
+option(CHAOS_ARCHITECTURE_TEST "Architecture tests" ON)
+
 IF (DEFINED ENV{CHAOS_BUNDLE} )
   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 ELSE()
@@ -18,7 +21,7 @@ add_definitions(-DDEBUG)
 EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
 ADD_DEFINITIONS(-O3 )
-INCLUDE_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/include)
+INCLUDE_DIRECTORIES(. ../ ../../ ${CMAKE_INSTALL_PREFIX}/include)
 LINK_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/lib)
 IF(NOT BUILD_PREFIX)
 set (BUILD_PREFIX usr/local)
@@ -29,56 +32,59 @@ message(STATUS "Using ${BUILD_PREFIX} as installation directory")
 SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 
 message(STATUS "Configure Common Layer")
-ADD_SUBDIRECTORY(chaos/common bin/bin_common)
+ADD_SUBDIRECTORY(chaos/common)
 
 message(STATUS "Configure CUToolkit Layer")
-ADD_SUBDIRECTORY(chaos/cu_toolkit bin/bin_cutoolkit)
+ADD_SUBDIRECTORY(chaos/cu_toolkit)
 
 message(STATUS "Configure UIToolkit Layer")
-ADD_SUBDIRECTORY(chaos/ui_toolkit bin/bin_uitoolkit)
+ADD_SUBDIRECTORY(chaos/ui_toolkit)
 
 IF (NOT CHAOS_NO_MONGO)
 message(STATUS "Configure Chaos Metadata Service")
-ADD_SUBDIRECTORY(ChaosMetadataService bin/bin_metadata_service)
+ADD_SUBDIRECTORY(ChaosMetadataService)
 ENDIF()
 
 message(STATUS "Configure Chaos Metadata Service Client Library")
-ADD_SUBDIRECTORY(ChaosMetadataServiceClient bin/bin_metadata_service_client)
+ADD_SUBDIRECTORY(ChaosMetadataServiceClient)
 
 message(STATUS "Configure Chaos Metadata Service Client Library Test Application")
-ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest bin/ChaosMetadataServiceClientTest)
+ADD_SUBDIRECTORY(ChaosMetadataServiceClientTest)
 
 message(STATUS "Configure Chaos WAN Proxy")
-ADD_SUBDIRECTORY(ChaosWANProxy bin/bin_wan_proxy)
+ADD_SUBDIRECTORY(ChaosWANProxy)
 
 IF (NOT CHAOS_NO_MONGO)
 message(STATUS "Configure Chaos Data Service")
-ADD_SUBDIRECTORY(ChaosDataService bin/bin_cds)
+ADD_SUBDIRECTORY(ChaosDataService)
 ENDIF()
 
 message(STATUS "Configure Chaos Data Export")
-ADD_SUBDIRECTORY(ChaosDataExport bin/chaos_cde)
+ADD_SUBDIRECTORY(ChaosDataExport)
 
 message(STATUS "Configure Chaos CLI")
-ADD_SUBDIRECTORY(example/ChaosCLI bin/chaos_cli)
+ADD_SUBDIRECTORY(example/ChaosCLI)
 
 message(STATUS "Configure Chaos ChaosMDSCmd")
-ADD_SUBDIRECTORY(example/ChaosMDSCmd bin/ChaosMDSCmd)
+ADD_SUBDIRECTORY(example/ChaosMDSCmd)
 
 message(STATUS "Configure Chaos Performance Tester")
-ADD_SUBDIRECTORY(example/ChaosPerformanceTester bin/ChaosPerformanceTester)
+ADD_SUBDIRECTORY(example/ChaosPerformanceTester)
 
 #message(STATUS "Configure Control Unit Test examples")
 #ADD_SUBDIRECTORY(example/ControlUnitTest bin/bin_example_cutest)
 
 #message(STATUS "Configure BenchTest simulation excutable")
 #ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
+IF (CHAOS_MEMCACHE_TEST)
+  message(STATUS "Configure ChaosMemCacheTest test excutable")
+  ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest)
+ENDIF()
 
-message(STATUS "Configure ChaosMemCacheTest test excutable")
-ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest bin/cache_test)
-
-message(STATUS "Configure ChaosArchitectureTests test excutable")
-ADD_SUBDIRECTORY(ArchitectureTests bin/architecture_test)
+IF (CHAOS_ARCHITECTURE_TEST)
+  message(STATUS "Configure ChaosArchitectureTests test excutable")
+  ADD_SUBDIRECTORY(ArchitectureTests)
+ENDIF()
 
 # message(STATUS "Configure Chaos Snapshot Utility")
 # ADD_SUBDIRECTORY(ChaosSnapshotUtility/ChaosSnapshotUtility bin/chaos_snap_util)

@@ -181,7 +181,8 @@ SET(common_lib_src ${common_lib_src}
         utility/InizializableService.cpp
         utility/SWEService.cpp
         utility/CheckList.cpp
-        utility/AggregatedCheckList.cpp)
+        utility/AggregatedCheckList.cpp
+)
 
 SET(common_lib_src ${common_lib_src}
         batch_command/BatchCommandExecutor.cpp
@@ -202,6 +203,11 @@ SET(common_lib_src ${common_lib_src}
         script/ScriptManager.cpp
         script/AbstractScriptVM.cpp
         script/AbstractScriptableClass.cpp)
+
+SET(common_lib_src ${common_lib_src}
+        status_manager/StatusFlagCatalog.cpp
+	status_manager/StatusFlag.cpp
+	status_manager/DeclareStatusFlag.cpp)
 
 #compile lua chaos vm and core files
 INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_logging ../../)
@@ -226,7 +232,7 @@ ENDIF ()
 #SET_TARGET_PROPERTIES(chaos_common_static PROPERTIES OUTPUT_NAME chaos_common)
 
 #set_target_properties(chaos_common PROPERTIES VERSION 1.0.0 SOVERSION 1)
-TARGET_LINK_LIBRARIES(chaos_common ${FrameworkLib})
+TARGET_LINK_LIBRARIES(chaos_common mongoose ${FrameworkLib})
 
 
 FILE(GLOB files "*.h")

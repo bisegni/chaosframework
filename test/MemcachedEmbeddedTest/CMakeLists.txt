@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 2.6)
 option(BUILD_FORCE_32 "Set to ON to enable 32 bit compilation" OFF)
 
+IF (DEFINED ENV{CHAOS_BUNDLE} )
+  include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
+ELSE()
+  SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic zmq.a jsoncpp pthread rt dl)
+ENDIF()
+
 IF( ($ENV{CHAOS32}) OR (BUILD_FORCE_32) )
     MESSAGE(STATUS "Enabling 32 bit Compilation")
     set (CMAKE_C_FLAGS "-m32")

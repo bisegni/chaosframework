@@ -9,7 +9,8 @@ pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd -P`
 popd > /dev/null
 
-
+# export CXXFLAGS="$CXXFLAGS -fPIC"
+# export CFLAGS="$CFLAGS -fPIC"
 chaos_exclude(){
     name=$1
     for i in $CHAOS_EXCLUDE_DIR;do
@@ -102,7 +103,7 @@ else
 	APPLE="true"
     ## 18, 16 doesnt compile
 	export LMEM_VERSION=1.0.18
-	export CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++ link=static"
+	export CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS toolset=clang cxxflags=\"-stdlib=libstdc++ -fPIC\" linkflags=-stdlib=libstdc++ link=static runtime-link=shared variant=release"
 
     fi
 
@@ -117,7 +118,7 @@ fi
 
 
 if [ -z "$CHAOS_BOOS_FLAGS" ];then
-    CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS --prefix=$CHAOS_PREFIX --with-program_options --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer install"
+    CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS --prefix=$CHAOS_PREFIX --with-program_options --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer install link=static runtime-link=shared variant=release cxxflags=-fPIC"
     echo "* setting CHAOS_BOOST_FLAGS=$CHAOS_BOOST_FLAGS"
 fi
 
@@ -370,7 +371,7 @@ if [ -z "$NO_MONGOOSE" ];then
 	fi
 	rm CMakeCache.txt
 	make clean
-	cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
+	cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON -DENABLE_PIC=ON
 	# -DHAS_JSONCPP=ON
 	# if [ -n "$CHAOS_STATIC" ]; then
 	#     CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON
