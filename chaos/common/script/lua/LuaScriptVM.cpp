@@ -163,7 +163,7 @@ ls(NULL){
 }
 
 LuaScriptVM::~LuaScriptVM() {
-    if(ls)lua_close(ls);
+    if(ls){lua_close(ls);}
 }
 
 void LuaScriptVM::init(void *init_data) throw(chaos::CException) {
@@ -184,7 +184,10 @@ void LuaScriptVM::init(void *init_data) throw(chaos::CException) {
 }
 
 void LuaScriptVM::deinit() throw(chaos::CException) {
-    if(ls)lua_close(ls);
+    if(ls){
+        lua_close(ls);
+        ls = NULL;
+    }
 }
 
 void LuaScriptVM::allocationOf(ChaosLuaWrapperInterface *newAllocatedClass) {

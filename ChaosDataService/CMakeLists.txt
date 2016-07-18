@@ -19,7 +19,6 @@ SET(src  ${src} worker/DataWorker.cpp
                 worker/SnapshotCreationWorker.cpp)
 
 SET(src  ${src} cache_system/CacheDriver.cpp
-                cache_system/MemcachedCacheDriver.cpp
                 cache_system/CouchbaseCacheDriver.cpp
                 cache_system/CacheDriverMetricCollector.cpp
                 cache_system/CacheDriverSharedMetricIO.cpp)
