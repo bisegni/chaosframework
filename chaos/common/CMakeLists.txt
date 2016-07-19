@@ -206,8 +206,10 @@ SET(common_lib_src ${common_lib_src}
 
 SET(common_lib_src ${common_lib_src}
         status_manager/StatusFlagCatalog.cpp
-	status_manager/StatusFlag.cpp
-	status_manager/DeclareStatusFlag.cpp)
+        status_manager/StatusFlag.cpp
+        status_manager/DeclareStatusFlag.cpp
+        status_manager/StatusFlagSDWrapper.cpp
+        status_manager/StatusFlagCatalogSDWrapper.cpp)
 
 #compile lua chaos vm and core files
 INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_logging ../../)
