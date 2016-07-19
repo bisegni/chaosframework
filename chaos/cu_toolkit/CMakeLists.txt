@@ -74,6 +74,8 @@ INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/control_manager/hand
 
 FILE(GLOB files "control_manager/slow_command/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/control_manager/slow_command)
+FILE(GLOB files "control_manager/execution_pool/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/control_manager/execution_pool)
 
 #we don't install default command header
 

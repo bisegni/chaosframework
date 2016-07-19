@@ -22,7 +22,7 @@ SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
 
-add_definitions(-DDEBUG)
+add_definitions(-DDEBUG -static-libstdc++)
 
 
 EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
