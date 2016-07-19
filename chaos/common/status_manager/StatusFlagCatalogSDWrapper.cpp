@@ -49,16 +49,27 @@ void StatusFlagCatalogSDWrapper::deserialize(CDataWrapper *serialized_data) {
             for (int idx = 0;
                  idx < flags_vec->size();
                  idx++) {
-                std::auto_ptr<CDataWrapper> status_flag_ser(flags_vec->getCDataWrapperElementAtIndex(idx));
+                std::auto_ptr<CDataWrapper> status_flag_element_obj_ser(flags_vec->getCDataWrapperElementAtIndex(idx));
+                if(!status_flag_element_obj_ser->hasKey(NodeStatusFlagDefinitionKey::NODE_SF_COMPOSED_NAME) ||
+                   !status_flag_element_obj_ser->hasKey(NodeStatusFlagDefinitionKey::NODE_SF_CATALOG_FLAG)) continue;
+                
+                //deserialize the flag
+                const std::string cat_flag_name = CDW_GET_SRT_WITH_DEFAULT(status_flag_element_obj_ser, NodeStatusFlagDefinitionKey::NODE_SF_COMPOSED_NAME, "");
+                std::auto_ptr<CDataWrapper> status_flag_ser(status_flag_element_obj_ser->getCSDataValue(NodeStatusFlagDefinitionKey::NODE_SF_CATALOG_FLAG));
                 sfsdw.deserialize(status_flag_ser.get());
                 boost::shared_ptr<StatusFlag> new_flag(new StatusFlag(sfsdw.dataWrapped()));
-                dataWrapped().addFlag(new_flag);
+                
+                //we can insert
+                dataWrapped().catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)dataWrapped().catalog_container.size(), cat_flag_name, new_flag)));
+                
+                dataWrapped().addMemberToSeverityMap(new_flag);
+                
+                new_flag->addListener(&dataWrapped());
             }
         }
-        
     }
-
 }
+
 
 std::auto_ptr<CDataWrapper> StatusFlagCatalogSDWrapper::serialize(const uint64_t sequence) {
     std::auto_ptr<CDataWrapper> data_serialized(new CDataWrapper());
@@ -66,17 +77,18 @@ std::auto_ptr<CDataWrapper> StatusFlagCatalogSDWrapper::serialize(const uint64_t
     
     if(dataWrapped().catalog_container.size()) {
         StatusFlagSDWrapper sfsdw;
-
+        
         //we have flag to encode
         StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(dataWrapped().catalog_container);
         for(StatusFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
             end = ordered_index.end();
             it != end;
             it++){
-//            StatusFlag sf( *(*it)->status_flag);
-//            sf.name = (*it)->flag_name;
+            CDataWrapper status_flag_ser;
+            status_flag_ser.addStringValue(NodeStatusFlagDefinitionKey::NODE_SF_COMPOSED_NAME, (*it)->flag_name);
             sfsdw.dataWrapped() = *(*it)->status_flag;
-            data_serialized->appendCDataWrapperToArray(*sfsdw.serialize());
+            status_flag_ser.addCSDataValue(NodeStatusFlagDefinitionKey::NODE_SF_CATALOG_FLAG, *sfsdw.serialize());
+            data_serialized->appendCDataWrapperToArray(status_flag_ser);
         }
         data_serialized->finalizeArrayForKey(NodeStatusFlagDefinitionKey::NODE_SF_CATALOG_FLAG_SET);
     }

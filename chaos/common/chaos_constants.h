@@ -331,6 +331,8 @@ namespace chaos {
     namespace NodeStatusFlagDefinitionKey {
         //! flag name[string]
         static const char * const NODE_SF_NAME                  = "nsfdk_name";
+        //! flag catalog+name[string]
+        static const char * const NODE_SF_COMPOSED_NAME         = "nsfdk_composed_name";
         //! flag description[string]
         static const char * const NODE_SF_DESCRIPTION           = "nsfdk_description";
         //! flag level name[int32(char)]
@@ -354,6 +356,8 @@ namespace chaos {
         static const char * const NODE_SF_CATALOG_NAME          = "nsfdk_catalog_name";
         //!define a vector of flag set within the catalog
         static const char * const NODE_SF_CATALOG_FLAG_SET      = "nsfdk_catalog_flag_set";
+        //!define a serialization of status flag within the searialization set
+        static const char * const NODE_SF_CATALOG_FLAG          = "nsfdk_catalog_flag";
     }
     /** @} */ // end of NodeStatusFlagDefinitionKey
     

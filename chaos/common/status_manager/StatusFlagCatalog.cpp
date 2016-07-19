@@ -222,5 +222,14 @@ const std::string& StatusFlagCatalog::getName() const {
 StatusFlagCatalog& StatusFlagCatalog::operator=(StatusFlagCatalog const &rhs) {
     catalog_name = rhs.catalog_name;
     catalog_container = rhs.catalog_container;
+    //gester this new container has listener
+    StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(catalog_container);
+    for(StatusFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
+        end = ordered_index.end();
+        it != end;
+        it++){
+        
+        (*it)->status_flag->addListener(this);
+    }
     return *this;
 }

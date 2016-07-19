@@ -90,17 +90,19 @@ namespace chaos {
                     return *this;
                 }
             };
-            
+
+#define CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS_WITH_ALIAS(a,x)\
+typedef chaos::common::data::TemplatedDataSDWrapper<x> a ## SDWrapperSubclass;\
+class a ## SDWrapper:\
+public a ## SDWrapperSubclass
+
 #define CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(x)\
-typedef chaos::common::data::TemplatedDataSDWrapper<x> x ## SDWrapperSubclass;\
-class x ## SDWrapper:\
-public x ## SDWrapperSubclass
-            
-            
+CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS_WITH_ALIAS(x,x)
+
 #define CHAOS_DEFINE_SD_WRAPPER(x)  x ## SDWrapper
 #define CHAOS_DECLARE_SD_WRAPPER_VAR(x, v)  CHAOS_DEFINE_SD_WRAPPER(x) v
-            
-            
+
+
             template<typename T,
                     typename DW>
             class TemplatedDataListWrapper {
