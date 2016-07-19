@@ -42,9 +42,6 @@ if [ -z "$LIB_EVENT_VERSION" ];then
     LIB_EVENT_VERSION=release-2.1.4-alpha
 fi
 
-if [ -z "$CHAOS_BOOST_VERSION" ];then
-    CHAOS_BOOST_VERSION=55
-fi
 
 #if [ ! -n "$LUA_VERSION" ]; then
 #    LUA_VERSION=5.3.2
@@ -73,6 +70,9 @@ if [ -z "CFLAGS" ];then
     export CFLAGS="-DCHAOS -fPIC"
 fi
 
+if [ -z "$CHAOS_BOOST_VERSION" ];then
+    CHAOS_BOOST_VERSION=55
+fi
 
 #####
 if [ -e $CHAOS_BUNDLE/tools/common_util.sh ];then
@@ -93,7 +93,7 @@ else
     CHAOS_DIR=$CHAOS_BUNDLE
     if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ] && [ $KERNEL_SHORT_VER -ge 1300 ] && [ ! -n "$CROSS_HOST" ]; then
 	echo "Use standard CLIB with clang"
-	
+	CHAOS_BOOST_VERSION=56
 	export CC=clang
 	export CXX="clang++"
 	export CXXFLAGS="-stdlib=libstdc++"
@@ -103,7 +103,7 @@ else
 	APPLE="true"
     ## 18, 16 doesnt compile
 	export LMEM_VERSION=1.0.18
-	export CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS toolset=clang cxxflags=\"-stdlib=libstdc++ -fPIC\" linkflags=-stdlib=libstdc++ link=static runtime-link=shared variant=release"
+	export CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++ link=static runtime-link=shared variant=release"
 
     fi
 

@@ -5,16 +5,18 @@ option(CHAOS_ARCHITECTURE_TEST "Architecture tests" ON)
 IF (DEFINED ENV{CHAOS_BUNDLE} )
   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 ELSE()
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
+EXECUTE_PROCESS(COMMAND uname -s OUTPUT_VARIABLE SYSTEM_NAME)
+MESSAGE(STATUS " System : ${SYSTEM_NAME}")
+IF(${SYSTEM_NAME} MATCHES "Darwin")
    # Mac OS X specific code
-   MESSAGE(status "enabling MAC compulation")
+   MESSAGE(STATUS " enabling MAC compilation")
   SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic zmq jsoncpp pthread dl)
 ELSE()
   SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic zmq jsoncpp pthread rt dl)
-ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") 
 
 ENDIF()
-
+ENDIF()
 project (chaos)
 
 SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
@@ -22,8 +24,8 @@ SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
 
-add_definitions(-DDEBUG -static-libstdc++)
-
+add_definitions(-DDEBUG )
+SET(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++")
 
 EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
