@@ -1,8 +1,4 @@
 #!/bin/bash
-
-#####
-#Dipendence: automake libtool subversion git-core bzr ruby1.8-full cmake zlib1g-dev libcloog-ppl0 wget g++
-#####
 nmake=0
 
 pushd `dirname $0` > /dev/null
