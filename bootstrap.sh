@@ -252,34 +252,31 @@ else
     TEST_INFO_NAME=$CHAOSTMP"/__chaos_test_info__"
     mkdir -p /tmp/$USER >& /dev/null
     if [ -z "$NPROC" ];then
-	NPROC=$(getconf _NPROCESSORS_ONLN)
+	     NPROC=$(getconf _NPROCESSORS_ONLN)
     fi
     CHAOS_DIR=$CHAOS_BUNDLE
     if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ] && [ $KERNEL_SHORT_VER -ge 1300 ] && [ ! -n "$CROSS_HOST" ]; then
-	echo "Use standard CLIB with clang"
-	CHAOS_BOOST_VERSION=56
-	export CC=clang
-	export CXX="clang++"
-	export CXXFLAGS="-stdlib=libstdc++"
-	export LDFLAGS="-stdlib=libstdc++"
-	export CHAOS_CMAKE_FLAGS="$CHAOS_CMAKE_FLAGS -DCMAKE_CXX_FLAGS=-stdlib=libstdc++ $CHAOS_COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$CHAOS_PREFIX"
-	export LD=clang
-	APPLE="true"
-    ## 18, 16 doesnt compile
-	export LMEM_VERSION=1.0.18
-	export CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++ link=static runtime-link=shared variant=release"
-
+    	echo "Use standard CLIB with clang"
+    	CHAOS_BOOST_VERSION=56
+    	export CC=clang
+    	export CXX="clang++"
+    	export CXXFLAGS="-stdlib=libstdc++"
+    	export LDFLAGS="-stdlib=libstdc++"
+    	export CHAOS_CMAKE_FLAGS="$CHAOS_CMAKE_FLAGS -DCMAKE_CXX_FLAGS=-stdlib=libstdc++ $CHAOS_COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$CHAOS_PREFIX"
+    	export LD=clang
+    	APPLE="true"
+        ## 18, 16 doesnt compile
+    	export LMEM_VERSION=1.0.18
+    	export CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++ link=static runtime-link=shared variant=release"
+      #osx doesn't compile boost prior of xcode 8
+      CHAOS_BOOST_VERSION=56
     fi
 
 fi
-
-
 
 if [ -z "$CHAOS_COMP_TYPE" ];then
     CHAOS_COMP_TYPE=" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS_DEBUG=-DDEBUG=1 "
 fi
-
-
 
 if [ -z "$CHAOS_BOOS_FLAGS" ];then
     CHAOS_BOOST_FLAGS="$CHAOS_BOOST_FLAGS --prefix=$CHAOS_PREFIX --with-program_options --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer install link=static runtime-link=shared variant=release cxxflags=-fPIC"
@@ -296,16 +293,16 @@ if [ -z "$CHAOS_ZMQ_CONFIGURE" ];then
     echo "* setting CHAOS_ZMQ_CONFIGURE=$CHAOS_ZMQ_CONFIGURE"
 fi
 
-if [ -z "$CHAOS_LIBEVENT_CONFIGURE" ];then 
+if [ -z "$CHAOS_LIBEVENT_CONFIGURE" ];then
     CHAOS_LIBEVENT_CONFIGURE="--disable-openssl --prefix=$CHAOS_PREFIX"
     echo "* setting CHAOS_LIBEVENT_CONFIGURE=$CHAOS_LIBEVENT_CONFIGURE"
 fi
- 
+
 if [ -z "$CHAOS_LIBMEMCACHED_CONFIGURE" ];then
     CHAOS_LIBMEMCACHED_CONFIGURE="--without-memcached --with-pic --disable-memaslap --disable-sasl --prefix=$CHAOS_PREFIX $CROSS_HOST_CONFIGURE"
     echo "* setting CHAOS_LIBMEMCACHED_CONFIGURE=$CHAOS_LIBMEMCACHED_CONFIGURE"
 fi
-    
+
 
 
 if [ -z "$CHAOS_CB_CONFIGURE" ];then
@@ -475,7 +472,7 @@ fi
 # 	exit 1;
 # 	fi
 #     fi
-    
+
 #     if [ -d "$BASE_EXTERNAL/sigar" ]; then
 # 	cd $BASE_EXTERNAL/sigar
 # 	echo "entering in $BASE_EXTERNAL/sigar"
@@ -486,7 +483,7 @@ fi
 # 	else
 # 	    ./configure --enable-maintainer-mode --enable-shared --prefix=$PREFIX $CROSS_HOST_CONFIGURE
 # 	fi
-	
+
 # 	do_make "sigar" 1
 #     else
 # 	echo "$BASE_EXTERNAL/sigar not found"
@@ -542,7 +539,7 @@ if [ -z "$NO_MONGOOSE" ];then
 	# else
    #     CXX=$CXX CC=$CC cmake $CHAOS_CMAKE_FLAGS -DSHAREDLIB=ON -DHAS_JSONCPP=ON -DJSONCPP_DIR=$PREFIX
 	# fi
-	
+
 	do_make "mongoose-cpp" 1
     fi
 fi
@@ -619,25 +616,25 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 	    echo "## cannot download boost_$BOOST_VERSION.tar.gz"
 	    exit 1
 	fi
-	    
+
     fi
-    
+
     if [ ! -e $BASE_EXTERNAL/boost ]; then
         tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
         mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
 	if [ -e $CHAOS_BUNDLE/tools/patches/boost-1.55.0-atomic-check_lock_free_flag.patch ];then
 	    cp $CHAOS_BUNDLE/tools/patches/boost-1.55.0-atomic-check_lock_free_flag.patch $BASE_EXTERNAL/boost
 	fi
-	
+
     fi
-    
+
     #install old version of boost log
     if [ $BOOST_NUMBER_VERSION -le 1530 ] && [ ! -d "$BASE_EXTERNAL/boost_log" ]; then
         if !(git clone https://cvs.lnf.infn.it/boost_log $BASE_EXTERNAL/boost_log); then
             echo "## cannot git clone  https://cvs.lnf.infn.it/boost_log"
             exit 1
         fi
-        
+
         if [ ! -d "$BASE_EXTERNAL/boost/boost/log" ]; then
             echo "link $BASE_EXTERNAL/boost/boost/log -> $BASE_EXTERNAL/boost_log/boost/log"
             ln -s $BASE_EXTERNAL/boost_log/boost/log $BASE_EXTERNAL/boost/boost/log
@@ -648,8 +645,8 @@ if [ ! -d "$PREFIX/include/boost" ]; then
             ln -s $BASE_EXTERNAL/boost_log/libs/log $BASE_EXTERNAL/boost/libs/log
         fi
     fi
-    
-    
+
+
     echo "Boostrapping boost"
     cd $BASE_EXTERNAL/boost
     if [ -e boost-1.55.0-atomic-check_lock_free_flag.patch ];then
@@ -659,19 +656,19 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 	echo "## cannot bootstrap boost"
 	exit 1;
     fi
-    
+
     if [ -n "$CHAOS_CROSS_HOST" ]; then
 	echo "* Patching project-config.jam to cross compile for $CHAOS_CROSS_HOST"
 	sed -i .bak -e "s/using gcc/using gcc : arm : $CXX/" project-config.jam
     fi
-    
-    
+
+
     cd $BASE_EXTERNAL/boost
     echo "Compile and install boost libraries into $PREFIX/"
     ./b2 --clean
     echo "using zlib : $ZLIB_VERSION : $CHAOS_PREFIX ;" > user-config.jam
     ./b2 $CHAOS_BOOST_FLAGS -j $NPROC
-    
+
 else
     echo "Boost Already present"
 fi
@@ -756,7 +753,7 @@ if [ ! -d "$PREFIX/include/event2" ]; then
     git checkout $LIB_EVENT_VERSION
     git pull
     ./autogen.sh
-   
+
     ./configure $CHAOS_LIBEVENT_CONFIGURE
     do_make "LIBEVENT" 1
     echo "LIBEVENT done"
@@ -819,7 +816,7 @@ if [ -z "$CHAOS_NO_ZMQ" ]; then
 	echo "* need zmq"
 	if [ ! -d "$BASE_EXTERNAL/$ZMQ_VERSION" ]; then
 	    echo "Download zmq source"
-	    
+
 	    if !(git clone https://github.com/zeromq/$ZMQ_VERSION.git $BASE_EXTERNAL/$ZMQ_VERSION); then
 		echo "## cannot git clone  https://github.com/zeromq/$ZMQ_VERSION.git"
 		exit 1
@@ -830,7 +827,7 @@ if [ -z "$CHAOS_NO_ZMQ" ]; then
 	    git pull
 	fi
 	cd $BASE_EXTERNAL/$ZMQ_VERSION
-	
+
 	./autogen.sh
     ./configure $CHAOS_ZMQ_CONFIGURE
     do_make "ZMQ" 1
