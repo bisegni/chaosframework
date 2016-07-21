@@ -11,9 +11,9 @@ MESSAGE(STATUS " System : ${SYSTEM_NAME}")
 IF(${SYSTEM_NAME} MATCHES "Darwin")
    # Mac OS X specific code
    MESSAGE(STATUS " enabling MAC compilation")
-  SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic zmq jsoncpp pthread dl)
+  SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic zmq.a jsoncpp pthread dl)
 ELSE()
-  SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic zmq jsoncpp pthread rt dl)
+  SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic zmq.a jsoncpp pthread rt dl)
 
 ENDIF()
 ENDIF()
