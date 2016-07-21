@@ -36,7 +36,7 @@ void DeclareStatusFlag::addBoolFlag(const std::string flag_name,
                                                                              flag_description,
                                                                              off_level,
                                                                              on_level));
-    addFlag(bool_flag);
+    StatusFlagCatalog::addFlag(bool_flag);
 }
 
 void DeclareStatusFlag::addLevelFlagWithStates(const std::string flag_name,
@@ -44,13 +44,13 @@ void DeclareStatusFlag::addLevelFlagWithStates(const std::string flag_name,
                                                const StateLevelContainer& map_code_level_state) {
     boost::shared_ptr<StatusFlag> level_flag(new StatusFlag(flag_name, flag_description));
     level_flag->addLevelsFromSet(map_code_level_state);
-    addFlag(level_flag);
+    StatusFlagCatalog::addFlag(level_flag);
 }
 
 void DeclareStatusFlag::addFlag(const std::string flag_name,
                                 const std::string flag_description) {
-    addFlag(boost::shared_ptr<StatusFlag>(new StatusFlag(flag_name,
-                                                         flag_description)));
+    StatusFlagCatalog::addFlag(boost::shared_ptr<StatusFlag>(new StatusFlag(flag_name,
+                                                                            flag_description)));
 }
 
 void DeclareStatusFlag::addStateToFlag(const std::string flag_name,
