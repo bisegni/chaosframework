@@ -6,5 +6,5 @@ services:
   - docker
 
 before_install:
-- docker bisegni/chaos
+- docker pull bisegni/chaos
 - docker run --rm -v $PWD:/tmp/test_result bisegni/chaos /tmp/chaos_start.sh -b $BRANCH -t
