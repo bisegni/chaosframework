@@ -24,7 +24,7 @@ chaos_exclude(){
 
 
 if [ -z "$CHAOS_BUNDLE" ];then
-    CHAOS_BUNDLE=$SCRIPTPATH
+    export CHAOS_BUNDLE=$SCRIPTPATH/../
     echo "* setting CHAOS_BUNDLE=$CHAOS_BUNDLE"
 fi
 
@@ -759,28 +759,28 @@ if [ ! -d "$PREFIX/include/event2" ]; then
     echo "LIBEVENT done"
 fi
 
-if [ -z "$CHAOS_NO_COUCHBASE" ]; then
-echo "Setup Couchbase sdk, $CHAOS_CB_CONFIGURE"
-if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
-    echo "* need couchbase"
-    if [ ! -d "$BASE_EXTERNAL/libcouchbase" ]; then
-	echo "Download couchabse source"
-	if !(git clone https://github.com/couchbase/libcouchbase.git $BASE_EXTERNAL/libcouchbase); then
-	    echo "## cannot wget http://packages.couchbase.com/clients/c/libcouchbase-$COUCHBASE_VERSION.tar.gz"
-	    exit 1
-	fi
-    cd $BASE_EXTERNAL/libcouchbase
-    git checkout -b good_for_chaos $COUCHBASE_VERSION
-    fi
-    cd $BASE_EXTERNAL/libcouchbase
-    cmake $CHAOS_CB_CONFIGURE .
+# if [ -z "$CHAOS_NO_COUCHBASE" ]; then
+# echo "Setup Couchbase sdk, $CHAOS_CB_CONFIGURE"
+# if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
+#     echo "* need couchbase"
+#     if [ ! -d "$BASE_EXTERNAL/libcouchbase" ]; then
+# 	echo "Download couchabse source"
+# 	if !(git clone https://github.com/amichelotti/libcouchbase.git $BASE_EXTERNAL/libcouchbase); then
+# 	    echo "## cannot wget http://packages.couchbase.com/clients/c/libcouchbase-$COUCHBASE_VERSION.tar.gz"
+# 	    exit 1
+# 	fi
+#     cd $BASE_EXTERNAL/libcouchbase
+#     git checkout -b good_for_chaos $COUCHBASE_VERSION
+#     fi
+#     cd $BASE_EXTERNAL/libcouchbase
+#     cmake $CHAOS_CB_CONFIGURE .
 
-    do_make "COUCHBASE" 1
-    echo "Couchbase done"
-fi
-else
-echo "skipping COUCHBASE"
-fi
+#     do_make "COUCHBASE" 1
+#     echo "Couchbase done"
+# fi
+# else
+# echo "skipping COUCHBASE"
+# fi
 
 if [ -z "$CHAOS_NO_MONGO" ]; then
 echo "Setup MongoDB client"
@@ -848,6 +848,28 @@ else
 fi
 
 do_make "!CHAOS"
+if [ -e /usr/local/chaos/qt5.6-static-x86_64/ ];then
+    export PATH=/usr/local/chaos/qt5.6-static-x86_64/bin:$PATH
+    cd ccs
+    if qmake;then
+	echo "* [CCS] Compiling"
+	if make -j $NPROC;then
+	    echo "* [CCS] OK installing"
+	    cp ccs $CHAOS_PREFIX/bin
+	    echo 'pushd `dirname $0` > /dev/null' > $CHAOS_PREFIX/bin/ccs.sh
+	    echo 'SCRIPTPATH=`pwd -P`' >> $CHAOS_PREFIX/bin/ccs.sh
+	    echo 'popd > /dev/null' >> $CHAOS_PREFIX/bin/ccs.sh
+	    echo 'LD_LIBRARY_PATH=$SCRIPTPATH/../lib $SCRIPTPATH/ccs' >> $CHAOS_PREFIX/bin/ccs.sh
+	    chmod +x $CHAOS_PREFIX/bin/ccs.sh
+	else
+	    echo "## [CCS] error compiling"
+	    exit 1
+	fi
+    else
+	    echo "## [CCS] error performing qmake"
+    fi
+
+fi
 exit 0
 
 # if [ -n "$CHAOS_DEVELOPMENT" ]; then
