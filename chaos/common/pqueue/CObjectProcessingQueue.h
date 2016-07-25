@@ -56,9 +56,7 @@ namespace chaos {
 		boost::thread_group t_group;
 	protected:
 		std::queue<T*> bufferQueue;
-		//boost::lockfree::queue<T*> bufferQueue;
 		bool in_deinit;
-		int output_thread_number;
 		mutable boost::mutex qMutex;
 		boost::condition_variable liveThreadConditionLock;
 		boost::condition_variable emptyQueueConditionLock;
@@ -113,10 +111,12 @@ namespace chaos {
 		
 		CObjectProcessingQueue():
 		in_deinit(false),
+        tag(0),
 		eventListener(NULL),
 		uid(common::utility::UUIDUtil::generateUUIDLite()){}
 		
 		CObjectProcessingQueue(CObjectProcessingQueueListener<T> *_eventListener):
+        tag(0),
 		in_deinit(false),
 		eventListener(_eventListener),
 		uid(common::utility::UUIDUtil::generateUUIDLite()){}

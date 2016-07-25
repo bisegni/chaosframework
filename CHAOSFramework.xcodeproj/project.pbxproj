@@ -3425,7 +3425,6 @@
 				32067EA41CABEF0300DE568A /* CDataBuffer.h */,
 				32067E9F1CABEE8800DE568A /* CDataVariant.cpp */,
 				32067EA01CABEE8800DE568A /* CDataVariant.h */,
-				32CFD5DE1B27097C0060AED5 /* CDataWrapperKeyValueSetter.h */,
 				326DB3E914B38BC00018A8D0 /* CUSchemaDB.cpp */,
 				326DB3EA14B38BC00018A8D0 /* CUSchemaDB.h */,
 				3230BEC0181A6ADB00EA5793 /* DatasetDB.cpp */,
@@ -3433,6 +3432,7 @@
 				32D421B117271572008A326E /* BsonFragment.cpp */,
 				32D421B217271572008A326E /* BsonFragment.h */,
 				3289335B1D3648F000FBA95B /* TemplatedDataSDWrapper.h */,
+				32CFD5DE1B27097C0060AED5 /* CDataWrapperKeyValueSetter.h */,
 			);
 			path = data;
 			sourceTree = "<group>";
