@@ -50,11 +50,19 @@ SET(src  ${src} vfs/query/DataBlockCache.cpp
                 vfs/query/DataBlockFetcher.cpp)
 
 ADD_EXECUTABLE(ChaosDataService ${src})
+find_library(couchbaseS LIB_NEED PATHS ${PROJECT_SOURCE_DIR}/usr/local/lib ${CMAKE_INSTALL_PREFIX}/lib /usr/lib DOC "libcouchbase library")
+
+if(NOT LIB_NEED)
+  GitClone(libcouchbase)
+  GitCheckout(libcouchbase chaos-0.1)
+  ConfigureAndBuild(libcouchbase  "-DLCB_NO_SSL=true -DLCB_NO_TESTS=true -DLCB_NO_TOOLS=true -DLCB_NO_PLUGINS=true")
+
+endif()
 
 
 IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
 
-TARGET_LINK_LIBRARIES(ChaosDataService mongoclient couchbase chaos_common ${FrameworkLib})
+TARGET_LINK_LIBRARIES(ChaosDataService mongoclient couchbaseS chaos_common ${FrameworkLib})
 INSTALL_TARGETS(/bin ChaosDataService)
