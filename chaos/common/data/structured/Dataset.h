@@ -24,16 +24,27 @@
 
 #include <chaos/common/chaos_constants.h>
 
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/data/structured/DatasetAttribute.h>
+
 namespace chaos {
     namespace common {
         namespace data {
             namespace structured {
                 
+                
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(DatasetAttribute, DatasetAttributeVector);
+                
                 //! The description of a complete dataset with his attribute and property
                 struct Dataset {
+                    //is the name of the dataset
                     std::string                     name;
-                    std::string                     description;
+                    //is the postfix associated with the key that represent the dataset into the shared memory
+                    std::string                     post_fix;
+                    //is the type of the dataset
                     chaos::DataType::DatasetType    type;
+                    //is the ocmplete list of the attribute of the dataset
+                    DatasetAttributeVector          attribute_list;
                     
                     Dataset();
                     Dataset(const Dataset& copy_src);

@@ -20,3 +20,25 @@
  */
 
 #include <chaos/common/data/structured/Dataset.h>
+
+using namespace chaos::common::data::structured;
+
+Dataset::Dataset():
+name(),
+post_fix(),
+type(chaos::DataType::DatasetTypeUndefined){
+    
+}
+
+Dataset::Dataset(const Dataset& copy_src):
+name(copy_src.name),
+post_fix(copy_src.post_fix),
+type(copy_src.type){}
+
+Dataset& Dataset::operator=(Dataset const &rhs) {
+    name = rhs.name;
+    post_fix = rhs.post_fix;
+    type = rhs.type;
+    attribute_list = rhs.attribute_list;
+    return *this;
+}
