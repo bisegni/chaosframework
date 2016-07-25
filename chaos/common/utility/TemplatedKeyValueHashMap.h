@@ -199,8 +199,6 @@ namespace chaos {
 						}
 						_cur_hash_element = _cur_hash_element->next;
 					}
-					
-					element_ptr = NULL;
 					return err;
 					
 				}

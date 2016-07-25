@@ -28,6 +28,16 @@ using namespace chaos::common::status_manager;
 #define SLC_DBG DBG_LOG_1_P(StatusFlag, catalog_name)
 #define SLC_ERR ERR_LOG_1_p(StatusFlag, catalog_name)
 
+StatusFlagCatalog::StatusFlagCatalog():
+catalog_name(){
+    //iitializethe severity map
+    for(int s = StatusFlagServerityRegular;
+        s != StatusFlagServerityUndefuned;
+        ++s) {
+        map_severity_bf_flag.insert(MapSeverityBitfieldPair((StatusFlagServerity)s, boost::dynamic_bitset<uint8_t>()));
+    }
+}
+
 StatusFlagCatalog::StatusFlagCatalog(const std::string& _catalog_name):
 catalog_name(_catalog_name){
     //iitializethe severity map
@@ -74,12 +84,12 @@ void StatusFlagCatalog::statusFlagUpdated(const std::string& flag_uuid,
 }
 
 void StatusFlagCatalog::addMemberToSeverityMap(boost::shared_ptr<StatusFlag> new_status_flag) {
-    DEBUG_CODE(SLC_DBG << "Add fag to severity bitfield map " << new_status_flag->name;);
+    DEBUG_CODE(SLC_DBG << "Add fag to severity bitfield map " << new_status_flag->getName(););
     //iitializethe severity map
     for(int s = StatusFlagServerityRegular;
         s != StatusFlagServerityUndefuned;
         ++s) {
-        if(s == new_status_flag->getCurrentStateLevel().severity) {
+        if(s == new_status_flag->getCurrentStateLevel().getSeverity()) {
             map_severity_bf_flag[(StatusFlagServerity)s].push_back(1);
         } else {
             map_severity_bf_flag[(StatusFlagServerity)s].push_back(0);
@@ -96,10 +106,10 @@ void StatusFlagCatalog::addMemberToSeverityMap(boost::shared_ptr<StatusFlag> new
 void StatusFlagCatalog::addFlag(boost::shared_ptr<StatusFlag> flag) {
     boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
     StatusFlagElementContainerNameIndex& name_index = catalog_container.get<mitag_name>();
-    if(name_index.find(flag->name) != name_index.end()) return;
+    if(name_index.find(flag->getName()) != name_index.end()) return;
     
     //we can insert flag with unique name
-    catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)catalog_container.size(), flag->name, flag)));
+    catalog_container.insert(StatusFlagElement::StatusFlagElementPtr(new StatusFlagElement((unsigned int)catalog_container.size(), flag->getName(), flag)));
     
     addMemberToSeverityMap(flag);
     
@@ -198,4 +208,28 @@ void StatusFlagCatalog::setApplyRawFlagsValue(std::auto_ptr<chaos::common::data:
             (*it)->status_flag->setCurrentLevel(buffer[(*it)->seq_id]);
         }
     }
+}
+
+const size_t StatusFlagCatalog::size() const {
+    boost::unique_lock<boost::shared_mutex> wl(mutex_catalog);
+    return catalog_container.size();
+}
+
+const std::string& StatusFlagCatalog::getName() const {
+    return catalog_name;
+}
+
+StatusFlagCatalog& StatusFlagCatalog::operator=(StatusFlagCatalog const &rhs) {
+    catalog_name = rhs.catalog_name;
+    catalog_container = rhs.catalog_container;
+    //gester this new container has listener
+    StatusFlagElementContainerOrderedIndex& ordered_index = boost::multi_index::get<mitag_ordered>(catalog_container);
+    for(StatusFlagElementContainerOrderedIndexIterator it = ordered_index.begin(),
+        end = ordered_index.end();
+        it != end;
+        it++){
+        
+        (*it)->status_flag->addListener(this);
+    }
+    return *this;
 }

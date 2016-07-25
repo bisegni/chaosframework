@@ -44,9 +44,15 @@ namespace chaos {
                                  const std::string flag_description,
                                  const StateLevel& off_level,
                                  const StateLevel& on_level);
-                void addLevelFlag(const std::string flag_name,
-                                 const std::string flag_description,
-                                  const StateLevelContainer& map_code_level_state);
+                void addLevelFlagWithStates(const std::string flag_name,
+                                            const std::string flag_description,
+                                            const StateLevelContainer& map_code_level_state);
+                void addFlag(const std::string flag_name,
+                             const std::string flag_description);
+                void addStateToFlag(const std::string flag_name,
+                                    const StateLevel& new_state);
+                void setFlagState(const std::string flag_name,
+                                  const int8_t set_state);
             };
             
         }

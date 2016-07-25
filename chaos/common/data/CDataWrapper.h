@@ -77,7 +77,7 @@ namespace chaos {
 				char *buffer;
 			public:
 				bool disposeOnDelete;
-				SerializationBuffer(const char *iBuff, size_t iSize){
+				SerializationBuffer(const char *iBuff, size_t iSize) {
 					bSize = iSize;
 					buffer = 0L;
 					disposeOnDelete = true;

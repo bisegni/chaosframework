@@ -83,7 +83,7 @@ namespace chaos {
                     // modify_key() requires return type to be non-const
                     const result_type &operator()(const StatusFlagElementPtr &p) const
                     {
-                        return p->status_flag->flag_uuid;
+                        return p->status_flag->getFlagUUID();
                     }
                 };
             };
@@ -122,10 +122,14 @@ namespace chaos {
             //!define a vector for status flag
             CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<StatusFlag>, VectorStatusFlag);
             
+            //!forward decalration
+            class StatusFlagCatalogSDWrapper;
+            
             //! define a set of status flag with usefull operation on it
             class StatusFlagCatalog:
             public StatusFlagListener {
-                const std::string catalog_name;
+                friend class StatusFlagCatalogSDWrapper;
+                std::string catalog_name;
                 //define the catalog where is assigned an unique id to a flag
                 StatusFlagElementContainer  catalog_container;
                 mutable boost::shared_mutex mutex_catalog;
@@ -144,6 +148,7 @@ namespace chaos {
                 
                 void addMemberToSeverityMap(boost::shared_ptr<StatusFlag> new_status_flag);
             public:
+                StatusFlagCatalog();
                 StatusFlagCatalog(const std::string& _catalog_name);
                 virtual ~StatusFlagCatalog();
                 
@@ -168,6 +173,13 @@ namespace chaos {
                 
                 //!set the falg value base on array description
                 void setApplyRawFlagsValue(std::auto_ptr<chaos::common::data::CDataBuffer> raw_level);
+                
+                //!return the number of status flag in the catalog
+                const size_t size() const;
+                //!return the name fo the catalog
+                const std::string& getName() const;
+                
+                StatusFlagCatalog& operator=(StatusFlagCatalog const &rhs);
             };
             
         }
