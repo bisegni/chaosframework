@@ -62,6 +62,9 @@ SET(common_lib_src ${common_lib_src}
         data/CDataVariant.cpp
         data/CUSchemaDB.cpp
         data/DatasetDB.cpp
+        data/structured/List.cpp
+        data/structured/Dataset.cpp
+        data/structured/DatasetAttribute.cpp
         data/entity_db/EntityDB.cpp
         data/entity_db/sqlite_impl/sqlite3.c
         data/entity_db/sqlite_impl/SQLiteEntityDB.cpp

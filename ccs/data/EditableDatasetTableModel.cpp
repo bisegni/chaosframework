@@ -1,7 +1,7 @@
 #include "EditableDatasetTableModel.h"
 #include "editor/dataset/EditableDatasetTableModelEditDialog.h"
 using namespace chaos;
-using namespace chaos::service_common::data::dataset;
+using namespace chaos::common::data::structured;
 
 EditableDatasetTableModel::EditableDatasetTableModel(QObject *parent):
     ChaosAbstractTableModel(parent),
@@ -41,7 +41,7 @@ void EditableDatasetTableModel::editDatasetAttributeAtIndex(unsigned int dsattr_
     }
 }
 
-void EditableDatasetTableModel::setDatasetAttributeList(chaos::service_common::data::dataset::DatasetAttributeList *master_attribute_list) {
+void EditableDatasetTableModel::setDatasetAttributeList(chaos::common::data::structured::DatasetAttributeList *master_attribute_list) {
     beginResetModel();
     attribute_list = master_attribute_list;
     endResetModel();

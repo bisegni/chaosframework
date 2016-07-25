@@ -25,7 +25,7 @@
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/data/TemplatedDataSDWrapper.h>
 
-#include <chaos_service_common/data/dataset/DatasetAttribute.h>
+#include <chaos/common/data/structured/DatasetAttribute.h>
 #include <chaos_service_common/data/dataset/AlgorithmVariable.h>
 
 namespace chaos {
@@ -121,7 +121,7 @@ namespace chaos {
                     chaos::service_common::data::dataset::AlgorithmVariableList variable_list;
                     
                     //!dataset attribute list
-                    chaos::service_common::data::dataset::DatasetAttributeList dataset_attribute_list;
+                    common::data::structured::DatasetAttributeList dataset_attribute_list;
                     
                     Script():
                     script_description(),
@@ -165,7 +165,7 @@ namespace chaos {
                         if(serialized_data == NULL) return;
                         CHAOS_DECLARE_SD_WRAPPER_VAR(ScriptBaseDescription, sd_dw);
                         CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::dataset::AlgorithmVariable, algo_var_dw);
-                        CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::dataset::DatasetAttribute, ds_attr_dw);
+                        CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::common::data::structured::DatasetAttribute, ds_attr_dw);
 
                         //clear all ol data on the list
                         dataWrapped().variable_list.clear();
@@ -235,7 +235,7 @@ namespace chaos {
                     std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0) {
                         CHAOS_DECLARE_SD_WRAPPER_VAR(ScriptBaseDescription, sd_dw)(dataWrapped().script_description);
                         CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::dataset::AlgorithmVariable, algo_var_dw);
-                        CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::dataset::DatasetAttribute, ds_attr_dw);
+                        CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::common::data::structured::DatasetAttribute, ds_attr_dw);
                         
                         std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized = sd_dw.serialize(sequence);
                         
@@ -282,7 +282,7 @@ namespace chaos {
                         if(dataWrapped().dataset_attribute_list.size()) {
                             //we have some attribute for dataset
                             std::auto_ptr<chaos::common::data::CDataWrapper> variable_definition(new chaos::common::data::CDataWrapper());
-                            for(chaos::service_common::data::dataset::DatasetAttributeListIterator it = dataWrapped().dataset_attribute_list.begin(),
+                            for(chaos::common::data::structured::DatasetAttributeListIterator it = dataWrapped().dataset_attribute_list.begin(),
                                 end = dataWrapped().dataset_attribute_list.end();
                                 it != end;
                                 it++) {

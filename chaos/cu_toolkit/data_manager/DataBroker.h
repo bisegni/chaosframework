@@ -1,10 +1,10 @@
 /*
- *	data.h
+ *	DataBroker.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 15/06/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 25/07/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,16 +19,22 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__1BA8927_9D5A_4782_83F3_C932C2CD5061_data_h
-#define __CHAOSFramework__1BA8927_9D5A_4782_83F3_C932C2CD5061_data_h
+#ifndef __CHAOSFramework__555554A_6C80_44FA_B263_6A03AA133D4D_DataBroker_h
+#define __CHAOSFramework__555554A_6C80_44FA_B263_6A03AA133D4D_DataBroker_h
 
-#include <chaos/common/data/TemplatedDataSDWrapper.h>
-#include <chaos/common/data/structured/Lists.h>
 #include <chaos/common/data/structured/DatasetAttribute.h>
 
-#include <chaos_service_common/data/node/Node.h>
-#include <chaos_service_common/data/script/Script.h>
+namespace chaos {
+    namespace cu {
+        namespace data_manager {
+            
+            //! main class for the data broker functionality
+            class DataBroker {
+                
+            };
+            
+        }
+    }
+}
 
-#include <chaos_service_common/data/dataset/AlgorithmVariable.h>
-
-#endif /* __CHAOSFramework__1BA8927_9D5A_4782_83F3_C932C2CD5061_data_h */
+#endif /* __CHAOSFramework__555554A_6C80_44FA_B263_6A03AA133D4D_DataBroker_h */

@@ -27,58 +27,28 @@
 #include <chaos/common/data/TemplatedDataSDWrapper.h>
 
 namespace chaos {
-    namespace service_common {
+    namespace common {
         namespace data {
-            namespace general {
+            namespace structured {
                 
                 //! Implementation of a SDWrapepr for a string list
                 CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(ChaosStringVector) {
                 public:
                     const std::string serialization_postfix;
                     
-                    ChaosStringVectorSDWrapper():
-                    ChaosStringVectorSDWrapperSubclass(){}
+                    ChaosStringVectorSDWrapper();
                     
-                    ChaosStringVectorSDWrapper(const ChaosStringVector& copy_source):
-                    ChaosStringVectorSDWrapperSubclass(copy_source){}
+                    ChaosStringVectorSDWrapper(const ChaosStringVector& copy_source);
                     
-                    ChaosStringVectorSDWrapper(chaos::common::data::CDataWrapper *serialized_data):
-                    ChaosStringVectorSDWrapperSubclass(serialized_data){deserialize(serialized_data);}
+                    ChaosStringVectorSDWrapper(chaos::common::data::CDataWrapper *serialized_data);
                     
-                    void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
-                        if(serialized_data == NULL) return;
-                        ChaosStringVectorSDWrapperSubclass::dataWrapped().clear();
-                        const std::string ser_key = "std_vector_"+serialization_postfix;
-                        if(serialized_data->hasKey(ser_key) &&
-                           serialized_data->isVectorValue(ser_key)) {
-                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(ser_key));
-                            for(int idx = 0;
-                                idx < serialized_array->size();
-                                idx++) {
-                                const std::string element(serialized_array->getStringElementAtIndex(idx));
-                                ChaosStringVectorSDWrapperSubclass::dataWrapped().push_back(element);
-                            }
-                        }
-                    }
+                    void deserialize(chaos::common::data::CDataWrapper *serialized_data);
                     
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0) {
-                        std::auto_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
-                        const std::string ser_key = "std_vector_"+serialization_postfix;
-                        for(ChaosStringVectorIterator it = ChaosStringVectorSDWrapperSubclass::dataWrapped().begin(),
-                            end = ChaosStringVectorSDWrapperSubclass::dataWrapped().end();
-                            it != end;
-                            it++) {
-                            result->appendStringToArray(*it);
-                        }
-                        result->finalizeArrayForKey(ser_key);
-                        return result;
-                    }
-                };
+                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0);                };
                 
                 template<typename T, typename W>
                 class StdVectorSDWrapper:
                 public chaos::common::data::TemplatedDataSDWrapper< std::vector<T> > {
-                    
                     W embedded_data_serializer;
                 public:
                     const std::string serialization_postfix;
@@ -91,7 +61,7 @@ namespace chaos {
                     
                     StdVectorSDWrapper(chaos::common::data::CDataWrapper *serialized_data):
                     chaos::common::data::TemplatedDataSDWrapper< std::vector<T> >(serialized_data){deserialize(serialized_data);}
-                 
+                    
                     void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                         if(serialized_data == NULL) return;
                         chaos::common::data::TemplatedDataSDWrapper< std::vector<T> >::dataWrapped().clear();

@@ -845,6 +845,18 @@ namespace chaos {
             
             Undefined
         } DataSetAttributeIOAttribute;
+        
+        //!define the differt types of a dataset
+        typedef enum DatasetType {
+            //!define an input dataset
+            DatasetTypeInput = 0,
+            //!define an output dataset
+            DatasetTypeOutput=1,
+            //!define an anum variable dataset that define states
+            DatasetTypeState=2,
+            //!undefined dataset
+            DatasetTypeUndefined
+        } DatasetType;
     }
     
     /** @defgroup CUStateKey Control Unit State

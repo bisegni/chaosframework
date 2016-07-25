@@ -34,8 +34,10 @@ using namespace chaos::common::data;
 using namespace chaos::common::network;
 using namespace chaos::common::utility;
 using namespace chaos::common::event::channel;
+using namespace chaos::common::data::structured;
+
 using namespace chaos::service_common::data::script;
-using namespace chaos::service_common::data::general;
+
 using namespace chaos::metadata_service::api::script;
 using namespace chaos::metadata_service::persistence::data_access;
 

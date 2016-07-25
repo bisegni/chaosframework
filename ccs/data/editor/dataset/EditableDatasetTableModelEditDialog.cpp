@@ -16,7 +16,7 @@ EditableDatasetTableModelEditDialog::~EditableDatasetTableModelEditDialog() {
     delete ui;
 }
 
-void EditableDatasetTableModelEditDialog::setDatsetAttribute(const chaos::service_common::data::dataset::DatasetAttribute& dataset_attribute) {
+void EditableDatasetTableModelEditDialog::setDatsetAttribute(const chaos::common::data::structured::DatasetAttribute& dataset_attribute) {
     editable_dataset_attribute = dataset_attribute;
     ui->widgetSubtypesEditor->setSubtypeListPtr(&editable_dataset_attribute.binary_subtype_list);
     fillUIFromAttribute();
@@ -36,7 +36,7 @@ void EditableDatasetTableModelEditDialog::fillAttributeFromUI() {
     editable_dataset_attribute.direction = (chaos::DataType::DataSetAttributeIOAttribute)ui->comboBoxAttributeDirection->currentIndex();
 }
 
-const chaos::service_common::data::dataset::DatasetAttribute& EditableDatasetTableModelEditDialog::getDatasetAttribute() {
+const chaos::common::data::structured::DatasetAttribute& EditableDatasetTableModelEditDialog::getDatasetAttribute() {
     return editable_dataset_attribute;
 }
 

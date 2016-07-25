@@ -3,7 +3,7 @@
 
 #include "ChaosAbstractTableModel.h"
 
-#include <chaos_service_common/data/dataset/DatasetAttribute.h>
+#include <chaos/common/data/structured/DatasetAttribute.h>
 
 class EditableDatasetTableModel:
         public ChaosAbstractTableModel {
@@ -12,9 +12,9 @@ public:
     void addNewDatasetAttribute();
     void editDatasetAttributeAtIndex(unsigned int dsattr_index);
     void removeElementFromDatasetAtIndex(unsigned int var_index);
-    void setDatasetAttributeList(chaos::service_common::data::dataset::DatasetAttributeList *master_attribute_list);
+    void setDatasetAttributeList(chaos::common::data::structured::DatasetAttributeList *master_attribute_list);
 protected:
-    void addNewElemenToToDataset(const chaos::service_common::data::dataset::DatasetAttribute& new_dataset_attribute);
+    void addNewElemenToToDataset(const chaos::common::data::structured::DatasetAttribute& new_dataset_attribute);
     void removeElementFromDataset(const QString& attribute_name,
                                   const chaos::DataType::DataSetAttributeIOAttribute direction);
 
@@ -28,7 +28,7 @@ protected:
     bool isCellSelectable(const QModelIndex &index) const;
 private:
     //! reference to attribute list
-    chaos::service_common::data::dataset::DatasetAttributeList *attribute_list;
+    chaos::common::data::structured::DatasetAttributeList *attribute_list;
 };
 
 #endif // EditableDatasetTableModel_H

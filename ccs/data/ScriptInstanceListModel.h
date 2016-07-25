@@ -27,7 +27,7 @@ private:
     //description of the script parent of the found instance
     chaos::service_common::data::script::ScriptBaseDescription script_description;
     //list of the current pag contained the found instances
-    chaos::service_common::data::general::StdVectorSDWrapper<chaos::service_common::data::node::NodeInstance,
+    chaos::common::data::structured::StdVectorSDWrapper<chaos::service_common::data::node::NodeInstance,
     chaos::service_common::data::node::NodeInstanceSDWrapper> ni_list_wrapper;
 };
 

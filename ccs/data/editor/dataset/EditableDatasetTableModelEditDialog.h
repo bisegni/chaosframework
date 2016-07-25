@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include <chaos_service_common/data/dataset/DatasetAttribute.h>
+#include <chaos/common/data/structured/DatasetAttribute.h>
 
 namespace Ui {
 class EditableDatasetTableModelEditDialog;
@@ -16,8 +16,8 @@ class EditableDatasetTableModelEditDialog : public QDialog
 public:
     explicit EditableDatasetTableModelEditDialog(QWidget *parent = 0);
     ~EditableDatasetTableModelEditDialog();
-    void setDatsetAttribute(const chaos::service_common::data::dataset::DatasetAttribute &dataset_attribute);
-    const chaos::service_common::data::dataset::DatasetAttribute& getDatasetAttribute();
+    void setDatsetAttribute(const chaos::common::data::structured::DatasetAttribute &dataset_attribute);
+    const chaos::common::data::structured::DatasetAttribute& getDatasetAttribute();
 private slots:
     void on_pushButtonOk_clicked();
 
@@ -28,7 +28,7 @@ private slots:
 private:
     void fillUIFromAttribute();
     void fillAttributeFromUI();
-    chaos::service_common::data::dataset::DatasetAttribute editable_dataset_attribute;
+    chaos::common::data::structured::DatasetAttribute editable_dataset_attribute;
     Ui::EditableDatasetTableModelEditDialog *ui;
 };
 
