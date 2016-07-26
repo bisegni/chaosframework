@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
-IF (DEFINED ENV{CHAOS_BUNDLE} )
-  include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
-ENDIF()
+# IF (DEFINED ENV{CHAOS_BUNDLE} )
+#   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
+# ENDIF()
 
 SET(chaos_perf_tester_src main.cpp)
 
