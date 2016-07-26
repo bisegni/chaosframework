@@ -123,9 +123,9 @@ namespace chaos {
                 //! submit a new instance of the default command
                 /*!
                     Submit a new instance of the default command if it has been set
-                 \param when_cmd_queue_empty if true ensure that a new instance is submitted only if the cmd queue is empty
+                 \param when_no_other_command if true ensure that a new instance is submitted only in sandbx are not present command anymore
                 */
-                void submitDefaultCommand(bool when_cmd_queue_empty = true);
+                void submitDefaultCommand(bool when_no_other_command = true);
             protected:
                 //command event handler
                 virtual void handleCommandEvent(uint64_t command_seq,

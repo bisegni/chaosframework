@@ -366,8 +366,38 @@ void BatchCommandSandbox::checkNextCommand() {
                     continue;
                 }
                 
-                switch ((current_check_value = CHECK_RUNNING_VS_SUBMISSION(currentExecutingCommand->element->cmdImpl->runningProperty,
-                                                                           next_available_command->element->cmdImpl->submissionRule))) {
+                //check what we need to do according to runng and submission property
+                current_check_value = CHECK_RUNNING_VS_SUBMISSION(currentExecutingCommand->element->cmdImpl->runningProperty,
+                                                                  next_available_command->element->cmdImpl->submissionRule);
+                //execute the handler
+                switch (current_check_value) {
+                    case RSR_KILL_KURRENT_COMMAND:
+                        if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
+                                                                                                  command_to_delete->element->cmdImpl->unique_id,
+                                                                                                  BatchCommandEventType::EVT_KILLED,
+                                                                                                  NULL);
+                        break;
+                        
+                    case RSR_CURRENT_CMD_HAS_ENDED:
+                        if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
+                                                                                                  command_to_delete->element->cmdImpl->unique_id,
+                                                                                                  BatchCommandEventType::EVT_COMPLETED,
+                                                                                                  static_cast<void*>(command_to_delete->element->cmdInfo));
+                        break;
+                        
+                    case RSR_CURRENT_CMD_HAS_FAULTED:
+                        if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
+                                                                                                  command_to_delete->element->cmdImpl->unique_id,
+                                                                                                  BatchCommandEventType::EVT_FAULT,
+                                                                                                  static_cast<FaultDescription*> (&command_to_delete->element->cmdImpl->fault_description),
+                                                                                                  sizeof (FaultDescription));
+                        break;
+                        
+                    default:
+                        break;
+                }
+                //manage the situation
+                switch (current_check_value) {
                     case RSR_NO_CHANGE:
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] RSR_NO_CHANGE";)
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] so wait for awake signal by other submission or command fault or end";)
@@ -456,34 +486,6 @@ void BatchCommandSandbox::checkNextCommand() {
                 }
                 
                 lockForCurrentCommandMutex.unlock();
-                
-                //execute the set handler in this separate thread
-                switch (current_check_value) {
-                    case RSR_KILL_KURRENT_COMMAND:
-                        if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
-                                                                                                  command_to_delete->element->cmdImpl->unique_id,
-                                                                                                  BatchCommandEventType::EVT_KILLED,
-                                                                                                  NULL);
-                        break;
-                        
-                    case RSR_CURRENT_CMD_HAS_ENDED:
-                        if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
-                                                                                                  command_to_delete->element->cmdImpl->unique_id,
-                                                                                                  BatchCommandEventType::EVT_COMPLETED,
-                                                                                                  static_cast<void*>(command_to_delete->element->cmdInfo));
-                        break;
-                        
-                    case RSR_CURRENT_CMD_HAS_FAULTED:
-                        if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
-                                                                                                  command_to_delete->element->cmdImpl->unique_id,
-                                                                                                  BatchCommandEventType::EVT_FAULT,
-                                                                                                  static_cast<FaultDescription*> (&command_to_delete->element->cmdImpl->fault_description),
-                                                                                                  sizeof (FaultDescription));
-                        break;
-                        
-                    default:
-                        break;
-                }
                 //delete
                 if (command_to_delete) DELETE_OBJ_POINTER(command_to_delete);
             } else {
@@ -510,7 +512,25 @@ void BatchCommandSandbox::checkNextCommand() {
                 boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand);
                 DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] lock acquired on mutextAccessCurrentCommand";)
                 if (!commandStack.empty()) {
+                    //keep track of running property that needs to be deleted
                     PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = currentExecutingCommand;
+                    switch (command_to_delete->element->cmdImpl->runningProperty) {
+                        case RunningPropertyType::RP_End:
+                            if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
+                                                                                 command_to_delete->element->cmdImpl->unique_id,
+                                                                                 BatchCommandEventType::EVT_COMPLETED,
+                                                                                 static_cast<void*>(command_to_delete->element->cmdInfo));
+                            break;
+                        case RunningPropertyType::RP_Fault:
+                            if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
+                                                                                 command_to_delete->element->cmdImpl->unique_id,
+                                                                                 BatchCommandEventType::EVT_FAULT,
+                                                                                 static_cast<FaultDescription*> (&command_to_delete->element->cmdImpl->fault_description),
+                                                                                 sizeof (FaultDescription));
+                            
+                            break;
+                    }
+                    //manage paused command
                     DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] get and install paused command";)
                     PRIORITY_ELEMENT(CommandInfoAndImplementation) * nextAvailableCommand = commandStack.top();
                     DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Install command with pointer " << std::hex << nextAvailableCommand << std::dec;)
@@ -519,29 +539,9 @@ void BatchCommandSandbox::checkNextCommand() {
                     commandStack.pop();
                     DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in commandStack " << commandStack.size();)
                     threadSchedulerPauseCondition.unlock();
-                    
-                    switch (command_to_delete->element->cmdImpl->runningProperty) {
-                        case RunningPropertyType::RP_End:
-                            if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
-                                                                                 command_to_delete->element->cmdImpl->unique_id,
-                                                                                 BatchCommandEventType::EVT_COMPLETED,
-                                                                                 static_cast<void*>(command_to_delete->element->cmdInfo));
-                            break;
-                        case RunningPropertyType::RP_Fault:
-                            if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
-                                                                                 command_to_delete->element->cmdImpl->unique_id,
-                                                                                 BatchCommandEventType::EVT_FAULT,
-                                                                                 static_cast<FaultDescription*> (&command_to_delete->element->cmdImpl->fault_description),
-                                                                                 sizeof (FaultDescription));
-                            
-                            break;
-                    }
                     DELETE_OBJ_POINTER(command_to_delete);
                 } else {
                     PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = currentExecutingCommand;
-                    DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Current command ended or fault without no other command to execute ";)
-                    removeHandler(command_to_delete);
-                    installHandler(NULL);
                     switch (command_to_delete->element->cmdImpl->runningProperty) {
                         case RunningPropertyType::RP_End:
                             if (event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
@@ -558,6 +558,9 @@ void BatchCommandSandbox::checkNextCommand() {
                             
                             break;
                     }
+                    DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Current command ended or fault without no other command to execute ";)
+                    removeHandler(command_to_delete);
+                    installHandler(NULL);
                     DELETE_OBJ_POINTER(command_to_delete);
                 }
             }
@@ -616,12 +619,6 @@ void BatchCommandSandbox::runCommand() {
             //call the correlation and commit phase();
             correlationHandlerFunctor();
             
-            if (event_handler) {
-                //signal the step of the run
-                event_handler->handleSandboxEvent(identification,
-                                                  BatchSandboxEventType::EVT_RUN_END);
-            }
-            
             //compute step duration
             stat.last_cmd_step_duration_usec = TimingUtil::getTimeStampInMicrosends() - stat.last_cmd_step_start_usec;
             
@@ -629,6 +626,12 @@ void BatchCommandSandbox::runCommand() {
             curr_executing_impl->commandPost();
             
             lockForCurrentCommand.unlock();
+            
+            if (event_handler) {
+                //signal the step of the run
+                event_handler->handleSandboxEvent(identification,
+                                                  BatchSandboxEventType::EVT_RUN_END);
+            }
             
             //check runnin property
             if (!scheduleWorkFlag && curr_executing_impl->runningProperty) {
@@ -816,6 +819,10 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
 unsigned long BatchCommandSandbox::getNumberOfEnqueuedCommand() {
     boost::unique_lock<boost::mutex> lock_next_command_queue(mutex_next_command_queue);
     return command_submitted_queue.size();
+}
+
+unsigned long BatchCommandSandbox::getNumberOfPausedCommand() {
+    return commandStack.size();
 }
 
 //! Command features modification rpc action

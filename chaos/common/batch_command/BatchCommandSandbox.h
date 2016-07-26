@@ -214,6 +214,9 @@ namespace chaos{
 
                 //! return the number of enqueued command
                 unsigned long getNumberOfEnqueuedCommand();
+                
+                //!return the number of command paused
+                unsigned long getNumberOfPausedCommand();
             public:
                 ~BatchCommandSandbox();
                 //! Command features modification rpc action

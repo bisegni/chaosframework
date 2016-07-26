@@ -428,8 +428,9 @@ const std::string& BatchCommandExecutor::getDefaultCommand() {
     return default_command_alias;
 }
 
-void BatchCommandExecutor::submitDefaultCommand(bool when_cmd_queue_empty) {
+void BatchCommandExecutor::submitDefaultCommand(bool when_no_other_command) {
     unsigned long enqueued_command = 0;
+    unsigned long paused_command = 0;
     if(default_command_alias.size() == 0) {
         DEBUG_CODE(BCELDBG_ << "No default command to execute successfully installed";)
         return;
@@ -438,8 +439,12 @@ void BatchCommandExecutor::submitDefaultCommand(bool when_cmd_queue_empty) {
     WriteLock       lock(sandbox_map_mutex);
     
     //check for empry queue
-    if(when_cmd_queue_empty && (enqueued_command = sandbox_map[default_command_sandbox_instance]->getNumberOfEnqueuedCommand()))  {
-        DEBUG_CODE(BCELDBG_ << CHAOS_FORMAT("Command must be installed only if there are nocommand in queue that now have %1% element",%enqueued_command);)
+    enqueued_command = sandbox_map[default_command_sandbox_instance]->getNumberOfEnqueuedCommand();
+    paused_command = sandbox_map[default_command_sandbox_instance]->getNumberOfPausedCommand();
+    if(when_no_other_command &&
+       (enqueued_command ||
+       paused_command))  {
+        DEBUG_CODE(BCELDBG_ << CHAOS_FORMAT("Command must be installed only if there are no command in queue(%1%) or stack(%2%)",%enqueued_command%paused_command);)
         return;
     }
     BCELAPP_ << "Submit the default command ->"<<"\""<<default_command_alias<<"\"";
