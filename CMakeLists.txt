@@ -2,6 +2,87 @@ cmake_minimum_required(VERSION 2.6)
 option(CHAOS_MEMCACHE_TEST "Memcached test" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" ON)
 
+SET(GITSOURCE https://github.com/amichelotti)
+
+macro (GitClone arg)
+  message(STATUS "[${arg}] Cloning into ${CMAKE_CURRENT_SOURCE_DIR}/external")
+  file(REMOVE_RECURSE  ${CMAKE_CURRENT_SOURCE_DIR}/external)
+  file(MAKE_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/external)
+  execute_process(
+    COMMAND git clone ${GITSOURCE}/${arg}.git
+    WORKING_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/external
+    RESULT_VARIABLE err
+    OUTPUT_VARIABLE mod
+    )
+  if( err)
+    message(FATAL_ERROR "[${arg}] cloning  error: ${err}")
+  endif()
+endmacro()
+
+macro (GitCheckout arg arg1)
+  message(STATUS "[${arg}] Checkout branch ${arg1}")
+
+  execute_process(
+    COMMAND git checkout ${arg1}
+    WORKING_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
+    RESULT_VARIABLE err
+    OUTPUT_VARIABLE out)
+  if( err)
+    message(FATAL_ERROR "[${arg}] checkout  error: ${err}")
+  endif()
+endmacro()
+
+macro (ConfigureAndBuild arg arg1)
+  IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/CMakeLists.txt")
+    SET(CONFPARM cmake ${arg1} ${CMAKE_CHAOS} .)
+  ELSE()
+    IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/autogen.sh")
+      message(STATUS "[${arg}] generation of configuration")
+      execute_process(
+	COMMAND ./autogen.sh
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
+	RESULT_VARIABLE err
+	OUTPUT_VARIABLE mod
+	)
+
+      IF( err)
+	message(FATAL_ERROR "[${arg}] performing generation of configuration: ${err}")
+      ENDIF()
+    ENDIF()
+    SET(CONFPARM ./configure --prefix=${CMAKE_INSTALL_PREFIX} ${arg1} ${CROSS_HOST})
+  ENDIF()
+   #  SET(CONFPARM ./configure ${CROSS_HOST} ${arg1} --prefix=${CMAKE_INSTALL_PREFIX})
+
+   separate_arguments(CONFPARM)
+   message(STATUS "[${arg}] configuring with \"${CONFPARM}\"")
+
+  execute_process(
+    COMMAND ${CONFPARM}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
+    RESULT_VARIABLE err
+    OUTPUT_VARIABLE out
+    )
+
+  if( err)
+    message(FATAL_ERROR "[${arg}] configuring ${arg} :${err}")
+  endif()
+
+  message(STATUS "[${arg}] compiling (${PROCESSOR_COUNT})")
+  execute_process(
+    COMMAND make install -j ${PROCESSOR_COUNT}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
+    RESULT_VARIABLE err2
+    OUTPUT_VARIABLE out2
+    )
+
+  if( err2)
+    message(FATAL_ERROR "[${arg}] compiling ${out2}: ${err2}")
+  endif()
+
+
+endmacro()
+
+
 IF (DEFINED ENV{CHAOS_BUNDLE} )
   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 ELSE()
