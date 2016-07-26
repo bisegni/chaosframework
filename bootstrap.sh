@@ -17,7 +17,7 @@
 #*    	limitations under the License.
 #*/
 #!/bin/bash
-nmake=0
+#nmake=0
 
 pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd -P`
@@ -34,8 +34,6 @@ chaos_exclude(){
     done
     return 1
 }
-
-
 
 if [ -z "$CHAOS_BUNDLE" ];then
     export CHAOS_BUNDLE=$SCRIPTPATH/../
@@ -143,10 +141,10 @@ else
 		export LD=i686-nptl-linux-gnu-ld
 		export CHAOS_CROSS_HOST=i686-nptl-linux-gnu
 		if [ -z "$CHAOS_EXCLUDE_DIR" ];then
-		    
+
 		    export CHAOS_EXCLUDE_DIR="oscilloscopes mongo chaos_services"
 		fi
-		
+
 		CHAOS_DISABLE_EVENTFD=true
 		export CFLAGS="$CFLAGS -DBOOST_ASIO_DISABLE_EVENTFD -Wcast-align -static-libgcc"
 		export CXXFLAGS="$CXXFLAGS -DBOOST_ASIO_DISABLE_EVENTFD -Wcast-align  -static-libstdc++ -static-libgcc"
@@ -855,11 +853,11 @@ fi
 
 echo "Compile !CHAOS"
 cd $SCRIPTPATH
-if [ $nmake -gt 0 ];then
+#if [ $nmake > 0 ]; then
     cmake $CHAOS_CMAKE_FLAGS $CMAKE_CHAOS_FRAMEWORK .
-else
-    echo "* nothing changed"
-fi
+# else
+#     echo "* nothing changed"
+# fi
 
 do_make "!CHAOS"
 if [ -e /usr/local/chaos/qt5.6-static-x86_64/ ];then
