@@ -42,8 +42,7 @@ namespace chaos{
                  This class collect a set on key with the repsective ValueSetting creating a domain o
                  values.
                  */
-                class AttributeCache :
-                public utility::InizializableService {
+                class AttributeCache {
                         //!global index for this set
                     VariableIndexType index;
 
@@ -79,11 +78,8 @@ namespace chaos{
                         //! get all attribute name in this set
                     void getAttributeNames(std::vector<std::string>& names);
 
-                        //! Initialize instance
-                    void init(void *initData) throw(chaos::CException);
-
                         //! Deinit the implementation
-                    void deinit() throw(chaos::CException);
+                    void reset();
 
                         //! return the changed id into the vector
                     void getChangedIndex(std::vector<VariableIndexType>& changed_index);

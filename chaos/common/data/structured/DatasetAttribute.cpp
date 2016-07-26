@@ -32,6 +32,18 @@ type(chaos::DataType::TYPE_UNDEFINED),
 binary_subtype_list(),
 binary_cardinality(0){}
 
+DatasetAttribute::DatasetAttribute(const std::string& attr_name,
+                                   const std::string& attr_description,
+                                   const chaos::DataType::DataType& attr_type):
+name(attr_name),
+description(attr_description),
+direction(chaos::DataType::Bidirectional),
+type(attr_type),
+binary_subtype_list(),
+binary_cardinality(0){
+    
+}
+
 DatasetAttribute::DatasetAttribute(const DatasetAttribute& copy_src):
 name(copy_src.name),
 description(copy_src.description),

@@ -39,8 +39,6 @@ collector_name(_collector_name),
 current_slot_index(0),
 last_stat_call(0),
 stat_intervall(update_time_in_sec*1000){
-    caching_slot[1].metric_attribute_cache.init(NULL);
-    caching_slot[0].metric_attribute_cache.init(NULL);
     
     if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_METRIC_ON_CONSOLE)) {
         //set the time interval to one second of default
@@ -57,8 +55,8 @@ stat_intervall(update_time_in_sec*1000){
 
 MetricCollector::~MetricCollector() {
     stopLogging();
-    caching_slot[1].metric_attribute_cache.deinit();
-    caching_slot[0].metric_attribute_cache.deinit();
+    caching_slot[1].metric_attribute_cache.reset();
+    caching_slot[0].metric_attribute_cache.reset();
 }
 
 void MetricCollector::addBackend(MetricBackendPointer backend) {

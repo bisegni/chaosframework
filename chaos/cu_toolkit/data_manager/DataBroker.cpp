@@ -20,3 +20,17 @@
  */
 
 #include <chaos/cu_toolkit/data_manager/DataBroker.h>
+
+using namespace chaos::cu::data_manager;
+
+
+#pragma mark DataBroker
+
+DataBroker::DataBroker():
+editor() {}
+
+DataBroker::~DataBroker() {}
+
+manipulation::DataBrokerEditor& DataBroker::getEditor() {
+    return editor;
+}

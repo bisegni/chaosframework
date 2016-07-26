@@ -86,7 +86,6 @@
 		3214EF101D466F95004DB689 /* DataBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214EF0E1D466F95004DB689 /* DataBroker.cpp */; };
 		3214EF111D466F95004DB689 /* DataBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3214EF0F1D466F95004DB689 /* DataBroker.h */; };
 		3214EF161D46792B004DB689 /* DatasetAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214EF151D46792B004DB689 /* DatasetAttribute.cpp */; };
-		3214EF1C1D467E4F004DB689 /* DataBrokerEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214EF1A1D467E4F004DB689 /* DataBrokerEditor.cpp */; };
 		3214EF1F1D467FE1004DB689 /* Dataset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214EF1D1D467FE1004DB689 /* Dataset.cpp */; };
 		3214EF201D467FE1004DB689 /* Dataset.h in Headers */ = {isa = PBXBuildFile; fileRef = 3214EF1E1D467FE1004DB689 /* Dataset.h */; };
 		3214EF241D468209004DB689 /* Lists.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214EF231D468209004DB689 /* Lists.cpp */; };
@@ -274,6 +273,8 @@
 		32502C7F1923BAF30073E4AB /* VFSStageFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32502C7D1923BAF30073E4AB /* VFSStageFile.cpp */; };
 		32502C831923C6F60073E4AB /* VFSStageWriteableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32502C811923C6F60073E4AB /* VFSStageWriteableFile.cpp */; };
 		3250884D18E49975001C9733 /* VFSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3250884B18E49975001C9733 /* VFSFile.cpp */; };
+		325168CC1D47935D00E877DF /* DataBrokerEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3214EF1A1D467E4F004DB689 /* DataBrokerEditor.cpp */; };
+		325168CE1D479BAB00E877DF /* data_manager_types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325168CD1D479BAB00E877DF /* data_manager_types.cpp */; };
 		3251B5131A768A9E00EF3F82 /* HashMapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3251B5111A768A9E00EF3F82 /* HashMapTest.cpp */; };
 		3251B5141A768A9E00EF3F82 /* HashMapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3251B5111A768A9E00EF3F82 /* HashMapTest.cpp */; };
 		3251B5151A768A9E00EF3F82 /* HashMapTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 3251B5121A768A9E00EF3F82 /* HashMapTest.h */; };
@@ -1204,6 +1205,7 @@
 		3214EF1E1D467FE1004DB689 /* Dataset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dataset.h; sourceTree = "<group>"; };
 		3214EF211D4681FE004DB689 /* Lists.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lists.h; sourceTree = "<group>"; };
 		3214EF231D468209004DB689 /* Lists.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lists.cpp; sourceTree = "<group>"; };
+		3214EF261D477CAD004DB689 /* data_manager_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = data_manager_types.h; sourceTree = "<group>"; };
 		3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriverPlugin.cpp; sourceTree = "<group>"; };
 		3215860E17875FDB0090E7E6 /* DriverPluginLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverPluginLoader.cpp; sourceTree = "<group>"; };
 		3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverPluginLoader.h; sourceTree = "<group>"; };
@@ -1431,6 +1433,7 @@
 		3250884418E46C4B001C9733 /* vfs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vfs.h; sourceTree = "<group>"; };
 		3250884B18E49975001C9733 /* VFSFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSFile.cpp; sourceTree = "<group>"; };
 		3250884C18E49975001C9733 /* VFSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSFile.h; sourceTree = "<group>"; };
+		325168CD1D479BAB00E877DF /* data_manager_types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = data_manager_types.cpp; sourceTree = "<group>"; };
 		3251B5111A768A9E00EF3F82 /* HashMapTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HashMapTest.cpp; sourceTree = "<group>"; };
 		3251B5121A768A9E00EF3F82 /* HashMapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashMapTest.h; sourceTree = "<group>"; };
 		3252A30D1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractAttributeHandler.cpp; sourceTree = "<group>"; };
@@ -3715,6 +3718,8 @@
 				326DB4B214B3A3E50018A8D0 /* DataManagerException.h */,
 				326DB4B314B3A3E50018A8D0 /* KeyDataStorage.cpp */,
 				326DB4B414B3A3E50018A8D0 /* KeyDataStorage.h */,
+				325168CD1D479BAB00E877DF /* data_manager_types.cpp */,
+				3214EF261D477CAD004DB689 /* data_manager_types.h */,
 			);
 			path = data_manager;
 			sourceTree = "<group>";
@@ -5696,7 +5701,6 @@
 				32A116491D117F0700FF44ED /* ManageScriptInstance.cpp in Sources */,
 				32D90D561CF4A4E500996F09 /* ScriptGroupApi.cpp in Sources */,
 				32809C821A9C84F900C02C12 /* MongoDBControlUnitDataAccess.cpp in Sources */,
-				3214EF1C1D467E4F004DB689 /* DataBrokerEditor.cpp in Sources */,
 				3235FDD61A6FF8A800EC83A9 /* MongoDBUnitServerDataAccess.cpp in Sources */,
 				325D2FDE1AFB65DE00B2A706 /* HealtApiGroup.cpp in Sources */,
 				32B1E7EC1B297CF800221E49 /* CommandTemplateSearch.cpp in Sources */,
@@ -6012,6 +6016,7 @@
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
 				3214EF101D466F95004DB689 /* DataBroker.cpp in Sources */,
+				325168CC1D47935D00E877DF /* DataBrokerEditor.cpp in Sources */,
 				3270D5E81CCFAC4F0072017B /* AbstractExecutionUnit.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
 				3214EF0A1D466CF6004DB689 /* DataBrokerManager.cpp in Sources */,
@@ -6024,6 +6029,7 @@
 				3252A30F1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
+				325168CE1D479BAB00E877DF /* data_manager_types.cpp in Sources */,
 				3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */,
 				326DB4CB14B3A3E50018A8D0 /* KeyDataStorage.cpp in Sources */,
 				32CFC5C51AF55FED00E2A0B6 /* IOCU.cpp in Sources */,

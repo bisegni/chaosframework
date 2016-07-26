@@ -50,48 +50,23 @@ AttributeValueSharedCache::~AttributeValueSharedCache() {
  
  ---------------------------------------------------------------------------------*/
 void AttributeValueSharedCache::init(void *initData) throw(chaos::CException) {
-    //initialize the input channel setting
-    utility::InizializableService::initImplementation(input_set,
-                                                      initData,
-                                                      "AttributeValueSharedCache[Input set]",
-                                                      __PRETTY_FUNCTION__);
-    //initialize the output channel setting
-    utility::InizializableService::initImplementation(output_set,
-                                                      initData,
-                                                      "AttributeValueSharedCache[Output set]",
-                                                      __PRETTY_FUNCTION__);
-    //initialize the custom channel setting
-    utility::InizializableService::initImplementation(system_set,
-                                                      initData,
-                                                      "AttributeValueSharedCache[System set]",
-                                                      __PRETTY_FUNCTION__);
-    //initialize the custom channel setting
-    utility::InizializableService::initImplementation(custom_set,
-                                                      initData,
-                                                      "AttributeValueSharedCache[Custom set]",
-                                                      __PRETTY_FUNCTION__);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
 void AttributeValueSharedCache::deinit() throw(chaos::CException) {
-    //initialize the input channel setting
-    utility::InizializableService::deinitImplementation(input_set,
-                                                        "AttributeValueSharedCache[Input Set]",
-                                                        __PRETTY_FUNCTION__);
-    //initialize the output channel setting
-    utility::InizializableService::deinitImplementation(output_set,
-                                                        "AttributeValueSharedCache[Output Set]",
-                                                        __PRETTY_FUNCTION__);
-    //initialize the output channel setting
-    utility::InizializableService::deinitImplementation(system_set,
-                                                        "AttributeValueSharedCache[System Set]",
-                                                        __PRETTY_FUNCTION__);
-    //initialize the custom channel setting
-    utility::InizializableService::deinitImplementation(custom_set,
-                                                        "AttributeValueSharedCache[Custom Set]",
-                                                        __PRETTY_FUNCTION__);
+    //reset the input channel setting
+    input_set.reset();
+    
+    //reset the output channel setting
+    output_set.reset();
+    
+    //reset the output channel setting
+    output_set.reset();
+    
+    //reset the custom channel setting
+    output_set.reset();
 }
 
 /*---------------------------------------------------------------------------------

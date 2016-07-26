@@ -804,6 +804,7 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
                                                                                              priority,
                                                                                              true));
         SCSLDBG_ << "New command enqueued:\"" << command_impl->command_alias.c_str() << "\" \"" << ((command_to_info) ? command_to_info->getJSONString() : "") << "\"";
+        SCSLDBG_ << "Queue size:" << command_submitted_queue.size();
         
     }
     //fire the waiting command

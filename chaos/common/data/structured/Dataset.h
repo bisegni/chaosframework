@@ -27,28 +27,105 @@
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/data/structured/DatasetAttribute.h>
 
+#include <boost/shared_ptr.hpp>
+
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/hashed_index.hpp>
+#include <boost/multi_index/composite_key.hpp>
+
 namespace chaos {
     namespace common {
         namespace data {
             namespace structured {
+            
+                typedef boost::shared_ptr<DatasetAttribute> DatasetAttributePtr;
                 
+                //! define the contaner for the dataset within the boost multi index set
+                struct DatasetAttributeElement {
+                    
+                    typedef boost::shared_ptr<DatasetAttributeElement> DatasetAttributeElementPtr;
+                    
+                    //!keep track of ordering id
+                    unsigned int seq_id;
+                    
+                    //dataset pointer
+                    DatasetAttributePtr dataset_attribute;
+                    
+                    DatasetAttributeElement(unsigned int _seq_id,
+                                            DatasetAttributePtr _dataset);
+                    
+                    struct less {
+                        bool operator()(const DatasetAttributeElementPtr& h1, const DatasetAttributeElementPtr& h2);
+                    };
+                    
+                    struct extract_key {
+                        typedef std::string result_type;
+                        // modify_key() requires return type to be non-const
+                        const result_type &operator()(const DatasetAttributeElementPtr &p) const;
+                    };
+                    
+                    struct extract_type {
+                        typedef chaos::DataType::DataType result_type;
+                        // modify_key() requires return type to be non-const
+                        const result_type &operator()(const DatasetAttributeElementPtr &p) const;
+                    };
+                    
+                    struct extract_ordered_id {
+                        typedef unsigned int result_type;
+                        // modify_key() requires return type to be non-const
+                        const result_type &operator()(const DatasetAttributeElementPtr &p) const;
+                    };
+                };
                 
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(DatasetAttribute, DatasetAttributeVector);
+                //tag
+                struct DAETagName{};
+                struct DAETagOrderedId{};
+                
+                //multi-index set
+                typedef boost::multi_index_container<
+                DatasetAttributeElement::DatasetAttributeElementPtr,
+                boost::multi_index::indexed_by<
+                boost::multi_index::ordered_unique<boost::multi_index::tag<DAETagOrderedId>,  DatasetAttributeElement::extract_ordered_id>,
+                boost::multi_index::hashed_unique<boost::multi_index::tag<DAETagName>,  DatasetAttributeElement::extract_key>
+                >
+                > DatasetAttributeElementContainer;
+                
+                //!priority index and iterator
+                typedef boost::multi_index::index<DatasetAttributeElementContainer, DAETagOrderedId>::type                      DECOrderedIndex;
+                typedef boost::multi_index::index<DatasetAttributeElementContainer, DAETagOrderedId>::type::iterator            DECOrderedIndexIterator;
+                typedef boost::multi_index::index<DatasetAttributeElementContainer, DAETagOrderedId>::type::reverse_iterator    DECOrderedIndexReverseIterator;
+                
+                //!name index and iterator
+                typedef boost::multi_index::index<DatasetAttributeElementContainer, DAETagName>::type                           DECNameIndex;
+                typedef boost::multi_index::index<DatasetAttributeElementContainer, DAETagName>::type::iterator                 DECNameIndexIterator;
+
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(DatasetAttributePtr ,DatasetPtrVector);
                 
                 //! The description of a complete dataset with his attribute and property
                 struct Dataset {
                     //is the name of the dataset
-                    std::string                     name;
-                    //is the postfix associated with the key that represent the dataset into the shared memory
-                    std::string                     post_fix;
+                    std::string                         name;
                     //is the type of the dataset
-                    chaos::DataType::DatasetType    type;
+                    chaos::DataType::DatasetType        type;
+                    //is the postfix associated with the key that represent the dataset into the shared memory
+                    std::string                         post_fix;
                     //is the ocmplete list of the attribute of the dataset
-                    DatasetAttributeVector          attribute_list;
+                    DatasetAttributeElementContainer    attribute_set;
                     
                     Dataset();
+                    Dataset(const std::string& _name,
+                            const chaos::DataType::DatasetType& _type);
                     Dataset(const Dataset& copy_src);
                     Dataset& operator=(Dataset const &rhs);
+                    
+                    int addAttribute(DatasetAttributePtr new_attribute);
+                    
+                    DatasetAttributePtr getAttributebyName(const std::string& attr_name);
+                    
+                    DatasetAttributePtr getAttributebyOrderedIDe(const unsigned int ordered_id);
+
                 };
                 
             }

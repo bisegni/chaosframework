@@ -22,15 +22,24 @@
 #ifndef __CHAOSFramework__555554A_6C80_44FA_B263_6A03AA133D4D_DataBroker_h
 #define __CHAOSFramework__555554A_6C80_44FA_B263_6A03AA133D4D_DataBroker_h
 
-#include <chaos/common/data/structured/DatasetAttribute.h>
+#include <chaos/cu_toolkit/data_manager/data_manager_types.h>
+#include <chaos/cu_toolkit/data_manager/manipulation/DataBrokerEditor.h>
 
 namespace chaos {
     namespace cu {
         namespace data_manager {
-            
+
             //! main class for the data broker functionality
             class DataBroker {
+                //!dataset editing interface
+                manipulation::DataBrokerEditor editor;
                 
+            public:
+                DataBroker();
+                ~DataBroker();
+                
+                //!return the dataset editor
+                manipulation::DataBrokerEditor& getEditor();
             };
             
         }

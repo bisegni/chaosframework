@@ -38,18 +38,7 @@ mutex(new boost::shared_mutex()){
 AttributeCache::~AttributeCache() {
 }
 
-
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
-void AttributeCache::init(void *initData) throw(chaos::CException) {
-}
-
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
-void AttributeCache::deinit() throw(chaos::CException) {
-        //remove all ValueSetting instance
+void AttributeCache::reset() {
     index = 0;
     mapAttributeNameIndex.clear();
     mapAttributeIndex.clear();

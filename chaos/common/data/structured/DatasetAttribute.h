@@ -45,6 +45,9 @@ namespace chaos {
                     uint32_t                                        binary_cardinality;
                     
                     DatasetAttribute();
+                    DatasetAttribute(const std::string& attr_name,
+                                     const std::string& attr_description,
+                                     const chaos::DataType::DataType& attr_type);
                     DatasetAttribute(const DatasetAttribute& copy_src);
                     DatasetAttribute& operator=(DatasetAttribute const &rhs);
                 };
