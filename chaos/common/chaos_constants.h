@@ -552,6 +552,18 @@ namespace chaos {
         //!key for dataset description (array of per-attribute document)
         static const char * const CONTROL_UNIT_DATASET_DESCRIPTION                  = "cudk_ds_desc";
         
+        //!key for dataset name
+        static const char * const CONTROL_UNIT_DATASET_NAME                         = "cudk_ds_name";
+        
+        //!key for dataset type as @chaos::DataType::DatasetType
+        static const char * const CONTROL_UNIT_DATASET_TYPE                         = "cudk_ds_type";
+        
+        //!key that represent the key to use to search dataset on the shared memory
+        static const char * const CONTROL_UNIT_DATASET_SEARCH_KEY                   = "cudk_ds_search_key";
+        
+        //!key that represent the key to use to search dataset on the shared memory
+        static const char * const CONTROL_UNIT_DATASET_ATTRIBUTE_LIST               = "cudk_ds_search_attribute_list";
+        
         //!key for dataset timestampt validity[uint64_t]
         static const char * const CONTROL_UNIT_DATASET_TIMESTAMP                    = "cudk_ds_timestamp";
         

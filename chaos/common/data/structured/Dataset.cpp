@@ -21,9 +21,10 @@
 
 #include <chaos/common/data/structured/Dataset.h>
 
+using namespace chaos::common::data;
 using namespace chaos::common::data::structured;
 
-#pragma mark DatasetElement
+#pragma mark DatasetAttributeElement
 DatasetAttributeElement::DatasetAttributeElement(unsigned int _seq_id,
                                                  DatasetAttributePtr _dataset_attribute):
 seq_id(_seq_id),
@@ -56,17 +57,17 @@ type(_type){}
 
 Dataset::Dataset():
 name(),
-post_fix(),
+dataset_key(),
 type(chaos::DataType::DatasetTypeUndefined){}
 
 Dataset::Dataset(const Dataset& copy_src):
 name(copy_src.name),
-post_fix(copy_src.post_fix),
+dataset_key(copy_src.dataset_key),
 type(copy_src.type){}
 
 Dataset& Dataset::operator=(Dataset const &rhs) {
     name = rhs.name;
-    post_fix = rhs.post_fix;
+    dataset_key = rhs.dataset_key;
     type = rhs.type;
     attribute_set = rhs.attribute_set;
     return *this;
@@ -94,4 +95,42 @@ DatasetAttributePtr Dataset::getAttributebyOrderedIDe(const unsigned int ordered
     DECOrderedIndexIterator it = ordered_index.find(ordered_id);
     if(it == ordered_index.end()) return DatasetAttributePtr();
     return (*it)->dataset_attribute;
+}
+
+#pragma mark DatasetSDWrapper
+CHAOS_DEFINE_SD_WRAPPER_CONSTRUCTOR(Dataset)
+
+void DatasetSDWrapper::deserialize(chaos::common::data::CDataWrapper *serialized_data) {
+    //remove all attribute
+    dataWrapped().attribute_set.clear();
+    dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, "");
+    dataWrapped().type = static_cast<chaos::DataType::DatasetType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TYPE, chaos::DataType::DatasetTypeUndefined));
+    dataWrapped().dataset_key = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_SEARCH_KEY, "");
+    if(serialized_data->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST) &&
+       serialized_data->isVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST)) {
+        DatasetAttributeSDWrapper attribute_wrapper;
+        std::auto_ptr<CMultiTypeDataArrayWrapper> attr_vec(serialized_data->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST));
+        for(int idx = 0;
+            idx < attr_vec->size();
+            idx++) {
+            std::auto_ptr<CDataWrapper> attr_ser(attr_vec->getCDataWrapperElementAtIndex(idx));
+            attribute_wrapper.deserialize(attr_ser.get());
+            dataWrapped().attribute_set.insert(DatasetAttributeElement::DatasetAttributeElementPtr(new DatasetAttributeElement((unsigned int)dataWrapped().attribute_set.size(),
+                                                                                                                               DatasetAttributePtr(new DatasetAttribute(attribute_wrapper())))));
+        }
+    }
+}
+
+std::auto_ptr<CDataWrapper> DatasetSDWrapper::serialize() {
+    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+    DatasetAttributeSDWrapper attribute_wrapper;
+    DECOrderedIndex& ordered_index = dataWrapped().attribute_set.get<DAETagOrderedId>();
+    for(DECOrderedIndexIterator it = ordered_index.begin(),
+        end = ordered_index.end();
+        it != end;
+        it++) {
+        //set the wrapper as the
+        attribute_wrapper() = *(*it)->dataset_attribute;
+    }
+    return result;
 }

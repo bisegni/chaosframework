@@ -71,11 +71,12 @@ namespace chaos {
                     return wrapper.data;
                 }
                 
-                const T& dataWrapped() const {
+                //!assign operation overload with wrapper
+                T& operator()() {
                     return wrapper.data;
                 }
                 
-                T& operator()() {
+                const T& dataWrapped() const {
                     return wrapper.data;
                 }
                 
@@ -102,7 +103,20 @@ CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS_WITH_ALIAS(x,x)
 #define CHAOS_DEFINE_SD_WRAPPER(x)  x ## SDWrapper
 #define CHAOS_DECLARE_SD_WRAPPER_VAR(x, v)  CHAOS_DEFINE_SD_WRAPPER(x) v
 
+#define CHAOS_DECLARE_SD_WRAPPER_CONSTRUCTOR(x)\
+CHAOS_DEFINE_SD_WRAPPER(x)();\
+CHAOS_DEFINE_SD_WRAPPER(x)(const Dataset& copy_source);\
+CHAOS_DEFINE_SD_WRAPPER(x)(CDataWrapper *serialized_data);
 
+            
+#define CHAOS_DEFINE_SD_WRAPPER_CONSTRUCTOR(x)\
+CHAOS_DEFINE_SD_WRAPPER(x)::CHAOS_DEFINE_SD_WRAPPER(x)():\
+chaos::common::data::TemplatedDataSDWrapper<x>(){}\
+CHAOS_DEFINE_SD_WRAPPER(x)::CHAOS_DEFINE_SD_WRAPPER(x)(const Dataset& copy_source):\
+chaos::common::data::TemplatedDataSDWrapper<x>(copy_source){}\
+CHAOS_DEFINE_SD_WRAPPER(x)::CHAOS_DEFINE_SD_WRAPPER(x)(chaos::common::data::CDataWrapper *serialized_data):\
+chaos::common::data::TemplatedDataSDWrapper<x>(serialized_data){deserialize(serialized_data);}\
+            
             template<typename T,
                     typename DW>
             class TemplatedDataListWrapper {

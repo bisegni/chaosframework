@@ -25,6 +25,7 @@
 #include <chaos/common/chaos_constants.h>
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/data/TemplatedDataSDWrapper.h>
 #include <chaos/common/data/structured/DatasetAttribute.h>
 
 #include <boost/shared_ptr.hpp>
@@ -109,8 +110,8 @@ namespace chaos {
                     std::string                         name;
                     //is the type of the dataset
                     chaos::DataType::DatasetType        type;
-                    //is the postfix associated with the key that represent the dataset into the shared memory
-                    std::string                         post_fix;
+                    //is the key that need to be used to searh dataset on the shared memory
+                    std::string                         dataset_key;
                     //is the ocmplete list of the attribute of the dataset
                     DatasetAttributeElementContainer    attribute_set;
                     
@@ -125,9 +126,17 @@ namespace chaos {
                     DatasetAttributePtr getAttributebyName(const std::string& attr_name);
                     
                     DatasetAttributePtr getAttributebyOrderedIDe(const unsigned int ordered_id);
-
                 };
                 
+                //! define serialization wrapper for dataset type
+                CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(Dataset) {
+                public:
+                    CHAOS_DECLARE_SD_WRAPPER_CONSTRUCTOR(Dataset)
+                    
+                    void deserialize(chaos::common::data::CDataWrapper *serialized_data);
+                    
+                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize();
+                };
             }
         }
     }
