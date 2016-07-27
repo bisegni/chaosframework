@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-IF (DEFINED ENV{CHAOS_BUNDLE} )
-  include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
-ENDIF()
+project(ChaosDataService)
 
 SET(src main.cpp)
 
@@ -49,14 +47,15 @@ SET(src  ${src} vfs/VFSManager.cpp
 SET(src  ${src} vfs/query/DataBlockCache.cpp
                 vfs/query/DataBlockFetcher.cpp)
 
-ADD_EXECUTABLE(ChaosDataService ${src})
-find_library(couchbaseS LIB_NEED PATHS ${PROJECT_SOURCE_DIR}/usr/local/lib ${CMAKE_INSTALL_PREFIX}/lib /usr/lib DOC "libcouchbase library")
+ADD_EXECUTABLE(${PROJECT_NAME} ${src})
+
+find_library(LIB_NEED couchbaseS)
 
 if(NOT LIB_NEED)
+  MESG("library not found downloading...")
   GitClone(libcouchbase)
   GitCheckout(libcouchbase chaos-0.1)
   ConfigureAndBuild(libcouchbase  "-DLCB_NO_SSL=true -DLCB_NO_TESTS=true -DLCB_NO_TOOLS=true -DLCB_NO_PLUGINS=true")
-
 endif()
 
 
@@ -64,5 +63,5 @@ IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
 
-TARGET_LINK_LIBRARIES(ChaosDataService mongoclient couchbaseS chaos_common ${FrameworkLib})
-INSTALL_TARGETS(/bin ChaosDataService)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} mongoclient couchbaseS chaos_common ${FrameworkLib})
+INSTALL_TARGETS(/bin ${PROJECT_NAME})

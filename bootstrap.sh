@@ -622,70 +622,70 @@ if [ ! -f "$PREFIX/include/zlib.h" ] || [ ! -f "$PREFIX/lib/libz.a" ]; then
 fi
 
 
-if [ ! -d "$PREFIX/include/boost" ]; then
-    echo "* need boost"
-    if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
-        echo "Download boost $BOOST_VERSION source"
-        if !( wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://download.sourceforge.net/project/boost/boost/$BOOST_VERSION_IN_PATH/boost_$BOOST_VERSION.tar.gz" ); then
-	    echo "## cannot download boost_$BOOST_VERSION.tar.gz"
-	    exit 1
-	fi
+# if [ ! -d "$PREFIX/include/boost" ]; then
+#     echo "* need boost"
+#     if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
+#         echo "Download boost $BOOST_VERSION source"
+#         if !( wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://download.sourceforge.net/project/boost/boost/$BOOST_VERSION_IN_PATH/boost_$BOOST_VERSION.tar.gz" ); then
+# 	    echo "## cannot download boost_$BOOST_VERSION.tar.gz"
+# 	    exit 1
+# 	fi
 
-    fi
+#     fi
 
-    if [ ! -e $BASE_EXTERNAL/boost ]; then
-        tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
-        mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
-	if [ -e $CHAOS_BUNDLE/tools/patches/boost-1.55.0-atomic-check_lock_free_flag.patch ];then
-	    cp $CHAOS_BUNDLE/tools/patches/boost-1.55.0-atomic-check_lock_free_flag.patch $BASE_EXTERNAL/boost
-	fi
+#     if [ ! -e $BASE_EXTERNAL/boost ]; then
+#         tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
+#         mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
+# 	if [ -e $CHAOS_BUNDLE/tools/patches/boost-1.55.0-atomic-check_lock_free_flag.patch ];then
+# 	    cp $CHAOS_BUNDLE/tools/patches/boost-1.55.0-atomic-check_lock_free_flag.patch $BASE_EXTERNAL/boost
+# 	fi
 
-    fi
+#     fi
 
-    #install old version of boost log
-    if [ $BOOST_NUMBER_VERSION -le 1530 ] && [ ! -d "$BASE_EXTERNAL/boost_log" ]; then
-        if !(git clone https://cvs.lnf.infn.it/boost_log $BASE_EXTERNAL/boost_log); then
-            echo "## cannot git clone  https://cvs.lnf.infn.it/boost_log"
-            exit 1
-        fi
+#     #install old version of boost log
+#     if [ $BOOST_NUMBER_VERSION -le 1530 ] && [ ! -d "$BASE_EXTERNAL/boost_log" ]; then
+#         if !(git clone https://cvs.lnf.infn.it/boost_log $BASE_EXTERNAL/boost_log); then
+#             echo "## cannot git clone  https://cvs.lnf.infn.it/boost_log"
+#             exit 1
+#         fi
 
-        if [ ! -d "$BASE_EXTERNAL/boost/boost/log" ]; then
-            echo "link $BASE_EXTERNAL/boost/boost/log -> $BASE_EXTERNAL/boost_log/boost/log"
-            ln -s $BASE_EXTERNAL/boost_log/boost/log $BASE_EXTERNAL/boost/boost/log
-        fi
+#         if [ ! -d "$BASE_EXTERNAL/boost/boost/log" ]; then
+#             echo "link $BASE_EXTERNAL/boost/boost/log -> $BASE_EXTERNAL/boost_log/boost/log"
+#             ln -s $BASE_EXTERNAL/boost_log/boost/log $BASE_EXTERNAL/boost/boost/log
+#         fi
 
-        if [ ! -d "$BASE_EXTERNAL/boost/libs/log" ]; then
-            echo "link $BASE_EXTERNAL/boost/libs/log -> $BASE_EXTERNAL/boost_log/libs/log"
-            ln -s $BASE_EXTERNAL/boost_log/libs/log $BASE_EXTERNAL/boost/libs/log
-        fi
-    fi
-
-
-    echo "Boostrapping boost"
-    cd $BASE_EXTERNAL/boost
-    if [ -e boost-1.55.0-atomic-check_lock_free_flag.patch ];then
-	patch -p1 < boost-1.55.0-atomic-check_lock_free_flag.patch >& /dev/null
-    fi
-    if !( ./bootstrap.sh ); then
-	echo "## cannot bootstrap boost"
-	exit 1;
-    fi
-
-    if [ -n "$CHAOS_CROSS_HOST" ]; then
-	echo "* Patching project-config.jam to cross compile for $CHAOS_CROSS_HOST"
-	sed -i .bak -e "s/using gcc/using gcc : arm : $CXX/" project-config.jam
-    fi
+#         if [ ! -d "$BASE_EXTERNAL/boost/libs/log" ]; then
+#             echo "link $BASE_EXTERNAL/boost/libs/log -> $BASE_EXTERNAL/boost_log/libs/log"
+#             ln -s $BASE_EXTERNAL/boost_log/libs/log $BASE_EXTERNAL/boost/libs/log
+#         fi
+#     fi
 
 
-    cd $BASE_EXTERNAL/boost
-    echo "Compile and install boost libraries into $PREFIX/"
-    ./b2 --clean
-    echo "using zlib : $ZLIB_VERSION : $CHAOS_PREFIX ;" > user-config.jam
-    ./b2 $CHAOS_BOOST_FLAGS -j $NPROC
+#     echo "Boostrapping boost"
+#     cd $BASE_EXTERNAL/boost
+#     if [ -e boost-1.55.0-atomic-check_lock_free_flag.patch ];then
+# 	patch -p1 < boost-1.55.0-atomic-check_lock_free_flag.patch >& /dev/null
+#     fi
+#     if !( ./bootstrap.sh ); then
+# 	echo "## cannot bootstrap boost"
+# 	exit 1;
+#     fi
 
-else
-    echo "Boost Already present"
-fi
+#     if [ -n "$CHAOS_CROSS_HOST" ]; then
+# 	echo "* Patching project-config.jam to cross compile for $CHAOS_CROSS_HOST"
+# 	sed -i .bak -e "s/using gcc/using gcc : arm : $CXX/" project-config.jam
+#     fi
+
+
+#     cd $BASE_EXTERNAL/boost
+#     echo "Compile and install boost libraries into $PREFIX/"
+#     ./b2 --clean
+#     echo "using zlib : $ZLIB_VERSION : $CHAOS_PREFIX ;" > user-config.jam
+#     ./b2 $CHAOS_BOOST_FLAGS -j $NPROC
+
+# else
+#     echo "Boost Already present"
+# fi
 
 # #install lua language
 # if [ ! -f "$PREFIX/include/lua.h" ]; then

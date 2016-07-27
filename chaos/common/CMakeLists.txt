@@ -1,3 +1,4 @@
+project(chaos_common)
 SET(common_lib_src chaos_errors.cpp
                    log/LogManager.cpp)
 
@@ -226,15 +227,15 @@ ENDIF ()
 # separate_arguments(common_lib_library)
 
 IF (BUILD_FORCE_STATIC)
-    ADD_LIBRARY(chaos_common STATIC ${common_lib_src})
+    ADD_LIBRARY(${PROJECT_NAME} STATIC ${common_lib_src})
 ELSE ()
-    ADD_LIBRARY(chaos_common SHARED ${common_lib_src})
+    ADD_LIBRARY(${PROJECT_NAME} SHARED ${common_lib_src})
 ENDIF ()
 
 #SET_TARGET_PROPERTIES(chaos_common_static PROPERTIES OUTPUT_NAME chaos_common)
 
 #set_target_properties(chaos_common PROPERTIES VERSION 1.0.0 SOVERSION 1)
-TARGET_LINK_LIBRARIES(chaos_common mongoose ${FrameworkLib})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} mongoose ${FrameworkLib})
 
 
 FILE(GLOB files "*.h")
@@ -346,7 +347,7 @@ INSTALL(FILES ${files} DESTINATION include/chaos/common/script/lua)
 FILE(GLOB files "script/lua/core/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/script/lua/core)
 
-INSTALL(TARGETS chaos_common
+INSTALL(TARGETS ${PROJECT_NAME}
         DESTINATION "lib"
         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 
