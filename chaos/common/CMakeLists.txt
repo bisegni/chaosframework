@@ -1,4 +1,15 @@
 project(chaos_common)
+#### required libraries
+
+IF( NOT CHAOS_DISABLE_EVENTFD)
+  CheckConfigureBuild(event libevent "--disable-openssl;--enable-static" https://github.com/libevent )
+ELSE()
+  SET(ZMQ_FLAGS "")
+ENDIF()
+CheckConfigureBuild(zmq zeromq4-x "${ZMQ_FLAGS}" https://github.com/zeromq)
+
+####
+
 SET(common_lib_src chaos_errors.cpp
                    log/LogManager.cpp)
 

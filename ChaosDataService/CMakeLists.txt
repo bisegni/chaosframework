@@ -48,16 +48,8 @@ SET(src  ${src} vfs/query/DataBlockCache.cpp
                 vfs/query/DataBlockFetcher.cpp)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${src})
-unset(LIB_NEED CACHE)
-find_library(LIB_NEED couchbaseS)
 
-if(NOT LIB_NEED)
-  MESG("library not found downloading...")
-  GitClone(libcouchbase)
-  GitCheckout(libcouchbase chaos-0.1)
-  ConfigureAndBuild(libcouchbase  "-DLCB_NO_SSL=true;-DLCB_NO_TESTS=true;-DLCB_NO_TOOLS=true;-DLCB_NO_PLUGINS=true")
-endif()
-
+CheckConfigureBuild(couchbaseS libcouchbase:chaos-0.1 "-DLCB_NO_SSL=true;-DLCB_NO_TESTS=true;-DLCB_NO_TOOLS=true;-DLCB_NO_PLUGINS=true" https://github.com/amichelotti)
 
 IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")

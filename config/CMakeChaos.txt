@@ -73,50 +73,58 @@ macro (GitCheckout arg arg1)
 endmacro()
 
 macro (ConfigureAndBuild arg arg1)
-  IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/b2")
-    MESG("b2 configuration/build tool")
-    execute_process(
-      COMMAND ./b2 --clean
+  unset(SKIPBUILD CACHE)
+  IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/autogen.sh")
+    MESG("generation of configuration")
+    execute_process( 
+      COMMAND ./autogen.sh
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
       RESULT_VARIABLE err
-      OUTPUT_VARIABLE out
+      OUTPUT_VARIABLE mod
       )
-    IF (err) 
-      ERROR("cleaning b2: ${out}")
-    ENDIF()
     
-    SET(CONFPARM "./b2;${arg1}")
-    unset(SKIPBUILD CACHE)
-    SET(SKIPBUILD ON)
+    IF( err)
+      ERROR("performing generation of configuration: ${err}")
+    ENDIF()
+  ENDIF()
+ 
+  IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/configure")
+    MESG("configure tool")
+    SET(CONFPARM ./configure CXXFLAGS=${CMAKE_CXX_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} ${arg1} ${CROSS_HOST})
   ELSE()
-    IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/CMakeLists.txt")
-      MESG("cmake configuration tool")
-      SET(CONFPARM cmake ${arg1} ${CMAKE_CHAOS} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} .)
+    IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/b2")
+      MESG("b2 configuration/build tool")
+      execute_process(
+	COMMAND ./b2 --clean
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
+	RESULT_VARIABLE err
+	OUTPUT_VARIABLE out
+	)
+      IF (err) 
+	ERROR("cleaning b2: ${out}")
+      ENDIF()
+      
+      SET(CONFPARM "./b2;${arg1}")
+
+      SET(SKIPBUILD ON)
     ELSE()
-      IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/autogen.sh")
-	MESG("generation of configuration")
-	execute_process( 
-	  COMMAND ./autogen.sh
-	  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
-	  RESULT_VARIABLE err
-	  OUTPUT_VARIABLE mod
-	  )
-	
-	IF( err)
-	  ERROR("performing generation of configuration: ${err}")
-	ENDIF()
+      IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/CMakeLists.txt")
+	MESG("cmake configuration tool")
+	SET(CONFPARM cmake ${arg1} ${CMAKE_CHAOS} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} .)
       ELSE()
-	IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/configure")
-	  SET(CONFPARM ./configure --prefix=${CMAKE_INSTALL_PREFIX} ${arg1} ${CROSS_HOST})
+	IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/SConstruct")
+	  MESG("scons configuration tool")
+	  SET(CONFPARM scons --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cxx=${CHAOS_CXX_COMPILER} --cc=${CHAOS_C_COMPILER} --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} -j ${PROCESSOR_COUNT} ${arg1} )
+	  SET(SKIPBUILD ON)
 	ENDIF()
       ENDIF()
     ENDIF()
   ENDIF()
   
   MESG("configuring with \"${CONFPARM}\"")
-#  separate_arguments(CONFPARM)
-#  MESG("configuring separated with \"${CONFPARM}\"")
-    
+  #  separate_arguments(CONFPARM)
+  #  MESG("configuring separated with \"${CONFPARM}\"")
+  
   execute_process( 
     COMMAND ${CONFPARM}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
@@ -127,7 +135,7 @@ macro (ConfigureAndBuild arg arg1)
   if( err)
     ERROR("configuring ${arg} :${out}")
   endif()
-    
+  
   IF(NOT SKIPBUILD)
     message(STATUS "[${arg}] compiling (${PROCESSOR_COUNT})")
     execute_process( 
@@ -163,16 +171,28 @@ macro (BoostInstall ver url arg)
 endmacro()
 
 macro (CheckConfigureBuild libcheck lib conf url)
-unset(LIB_NEED CACHE)
-find_library(LIB_NEED NAMES ${libcheck} )
+  unset(LIB_NEED CACHE)
+  find_library(LIB_NEED NAMES ${libcheck} )
 
-if(NOT LIB_NEED)
-  MESG("${libcheck} library not found downloading...")
-  GitCloneUrl(${lib} ${url})
-  ConfigureAndBuild(${lib} "${conf}")
-else()
-  MESG("${libcheck} library found ${LIB_NEED} !")
-endif()
+  if(NOT LIB_NEED)
+    STRING(REPLACE ":" ";" GITLIST ${lib})
+    list(GET GITLIST 0 GITNAME)
+    list(LENGTH GITLIST len)
+    if(len EQUAL 2) 
+      list(GET GITLIST 1 GITVER)
+    ELSE()
+      unset(GITVER)
+    ENDIF()
+    MESG("${libcheck} library not found downloading ${GITNAME}...")
+    GitCloneUrl(${GITNAME} ${url})
+    if(GITVER)
+      MESG("git name ${GITNAME} version ${GITVER}")
+      GitCheckout(${GITNAME} ${GITVER})
+    ENDIF()
+    ConfigureAndBuild(${GITNAME} "${conf}")
+  else()
+    MESG("${libcheck} library found ${LIB_NEED} !")
+  endif()
 
 endmacro()
 ##########
@@ -191,7 +211,7 @@ ENDIF()
 option(CHAOS_FORCE32 "Set to ON to enable 32 bit compilation" OFF)
 option(CHAOS_STATIC "Set static compilation" OFF)
 option(CHAOS_DEBUG "Enable Debug" ON)
-
+option(CHAOS_DISABLE_EVENTFD "Disable EventFD" OFF)
 EXECUTE_PROCESS(COMMAND uname -s OUTPUT_VARIABLE CHAOS_SYSTEM_NAME)
 
 IF(${SYSTEM_NAME} MATCHES "Darwin")
@@ -237,9 +257,10 @@ IF (CHAOS_TARGET)
       find_program(CMAKE_CXX_COMPILER arm-infn-linux-gnueabi-g++)
       find_program(CMAKE_C_COMPILER arm-infn-linux-gnueabi-gcc)
       SET(CHAOS_CROSS_HOST arm-infn-linux-gnueabi)
+
       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBOOST_ASIO_DISABLE_EVENTFD -D__BSON_USEMEMCPY__ -mcpu=xscale -D__BSON_USEMEMCPY__ -DBOOST_ASIO_DISABLE_EVENTFD -mno-unaligned-access -DDISABLE_COMPARE_AND_SWAP -mfloat-abi=soft") 
       SET(CHAOS_BOOST_FLAGS toolset=gcc-arm target-os=linux)
-      
+      SET(CHAOS_DISABLE_EVENTFD ON)
     ELSE()
       IF(${CHAOS_TARGET} MATCHES "i686-linux26") 
 	MESG("Cross compiling for i686 platforms on linux 2.6")
@@ -248,11 +269,13 @@ IF (CHAOS_TARGET)
 	SET(CHAOS_CROSS_HOST i686-nptl-linux-gnu)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBOOST_ASIO_DISABLE_EVENTFD") 
 	SET(CHAOS_BOOST_FLAGS target-os=linux)
+	SET(CHAOS_DISABLE_EVENTFD ON)
       ELSE()
 	IF(${CHAOS_TARGET} MATCHES "crio90xx") 
 	  MESG("Cross compiling for crio90xx")
 	  find_program(CMAKE_CXX_COMPILER arm-nilrt-linux-gnueabi-g++)
 	  find_program(CMAKE_C_COMPILER arm-nilrt-linux-gnueabi-gcc)
+	  SET(CHAOS_DISABLE_EVENTFD ON)
 	  SET(CMAKE_EXE_LINKER_FLAGS -L/usr/local/chaos/oecore-x86_64/sysroots/armv7a-vfp-neon-nilrt-linux-gnueabi/lib)
 	  SET(CHAOS_CROSS_HOST arm-nilrt-linux-gnueabi)
 	  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=armv7-a -mthumb-interwork -mfloat-abi=softfp -mfpu=neon -mno-unaligned-access --sysroot=/usr/local/chaos/oecore-x86_64/sysroots/armv7a-vfp-neon-nilrt-linux-gnueabi -L/usr/local/chaos/oecore-x86_64/sysroots/armv7a-vfp-neon-nilrt-linux-gnueabi/lib -DBOOST_ASIO_DISABLE_EVENTFD") 
@@ -269,6 +292,8 @@ IF (CHAOS_TARGET)
 ENDIF()
 SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} cxxflags="${CMAKE_CXX_FLAGS}" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer link=static install "-j ${PROCESSOR_COUNT}" -d+2)
 
+get_filename_component(CHAOS_CXX_COMPILER ${CMAKE_CXX_COMPILER} NAME)
+get_filename_component(CHAOS_C_COMPILER ${CMAKE_C_COMPILER} NAME)
 ######
 
 #### TOOL VERSIONS
@@ -421,12 +446,5 @@ else()
   # ENDIF()
 
 endif()
-
-
-CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
-CheckConfigureBuild(mongoose mongoose-cpp "-DHAS_JSONCPP=ON;-DENABLE_PIC=ON" https://github.com/bisegni )
-
-CheckConfigureBuild(libevent libevent "-DEVENT__DISABLE_SAMPLES=ON;-DEVENT__DISABLE_REGRESS=ON;-DEVENT__DISABLE_OPENSSL=ON" https://github.com/libevent )
-
 
 

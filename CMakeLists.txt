@@ -8,7 +8,14 @@ option(CHAOS_MDS "Chaos MetaData Service" ON)
 option(CHAOS_WAN "Chaos Wan Service" ON)
 option(CHAOS_DATA_EXPORT "Chaos Data Export" ON)
 option(CHAOS_EXAMPLES "Chaos Examples" ON)
+option(CHAOS_CCS "Chaos CCS Compile needs qt5.6-static-x86_64 installed" OFF)
 
+###### Required Libraries
+CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
+CheckConfigureBuild(mongoose mongoose-cpp "-DHAS_JSONCPP=ON;-DENABLE_PIC=ON" https://github.com/bisegni )
+CheckConfigureBuild(mongoclient mongo-cxx-driver:legacy-1.0.0-rc0 "--extralib=boost_system;--disable-warnings-as-errors;install-mongoclient" https://github.com/mongodb)
+
+#########
 
 
 SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
@@ -69,11 +76,11 @@ IF(CHAOS_EXAMPLES)
 
   MESG("Configure Chaos Performance Tester")
   ADD_SUBDIRECTORY(example/ChaosPerformanceTester)
-#MESG("Configure Control Unit Test examples")
-#ADD_SUBDIRECTORY(example/ControlUnitTest bin/bin_example_cutest)
+  #MESG("Configure Control Unit Test examples")
+  #ADD_SUBDIRECTORY(example/ControlUnitTest bin/bin_example_cutest)
 
-#MESG("Configure BenchTest simulation excutable")
-#ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
+  #MESG("Configure BenchTest simulation excutable")
+  #ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
 
 ENDIF()
 
@@ -93,3 +100,44 @@ MESG("Done")
 
 #MESG("Configure Plugin Test")
 #ADD_SUBDIRECTORY(test/PluginTest bin/plugin_test)
+FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/usr/)
+execute_process(
+  COMMAND ln -sf ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  RESULT_VARIABLE err
+  OUTPUT_VARIABLE out
+  )
+IF(err)
+  ERROR("cannot create symlink ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local"
+  ELSE()
+    MESG("created symlink ${CMAKE_INSTALL_PREFIX}->${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+  ENDIF()
+  
+  IF(CHAOS_CCS)
+    MESG("CCS compilation ENABLED")
+    IF(EXISTS "/usr/local/chaos/qt5.6-static-x86_64/bin/qmake")
+      execute_process(
+	COMMAND /usr/local/chaos/qt5.6-static-x86_64/bin/qmake
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
+	RESULT_VARIABLE err
+	OUTPUT_VARIABLE out
+	)
+      if( err)
+	ERROR("error generating QT stubs error: ${out}")
+      endif()
+
+      execute_process(
+	COMMAND make -j ${PROCESSOR_COUNT}
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ccs
+	RESULT_VARIABLE err
+	OUTPUT_VARIABLE out
+	)
+      if( err)
+	ERROR("error compiling: ${out}")
+      endif()
+      FILE(GLOB exe ccs/ccs ccs/ccs.sh)
+      INSTALL(FILES ${exe} DESTINATION bin/)
+    ELSE()
+      ERROR("missing /usr/local/chaos/qt5.6-static-x86_64/bin/qmake")
+    ENDIF()
+  ENDIF()
