@@ -74,7 +74,7 @@ endmacro()
 
 macro (ConfigureAndBuild arg arg1)
   IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/b2")
-    MESG("b2 configuration/build tool ${arg} ${arg1}")
+    MESG("b2 configuration/build tool")
     execute_process(
       COMMAND ./b2 --clean
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
@@ -85,7 +85,7 @@ macro (ConfigureAndBuild arg arg1)
       ERROR("cleaning b2: ${out}")
     ENDIF()
     
-    SET(CONFPARM ./b2 "${arg1}")
+    SET(CONFPARM "./b2;${arg1}")
     unset(SKIPBUILD CACHE)
     SET(SKIPBUILD ON)
   ELSE()
@@ -115,7 +115,7 @@ macro (ConfigureAndBuild arg arg1)
   
   MESG("configuring with \"${CONFPARM}\"")
 #  separate_arguments(CONFPARM)
-  MESG("configuring separated with \"${CONFPARM}\"")
+#  MESG("configuring separated with \"${CONFPARM}\"")
     
   execute_process( 
     COMMAND ${CONFPARM}
@@ -125,7 +125,7 @@ macro (ConfigureAndBuild arg arg1)
     )
   
   if( err)
-    ERROR("configuring ${arg} :${err}")
+    ERROR("configuring ${arg} :${out}")
   endif()
     
   IF(NOT SKIPBUILD)
@@ -147,7 +147,7 @@ endmacro()
 
 
 macro (BoostInstall ver url arg)
-
+  MESG("Boost install arg: ${arg}")
   wget(boost_1_${ver}_0.tar.gz  https://sourceforge.net/projects/boost/files/boost/1.${ver}.0)
   tar(xf boost_1_${ver}_0.tar.gz)
   execute_process(
@@ -159,20 +159,19 @@ macro (BoostInstall ver url arg)
   if( err)
     ERROR("bootstrapping boost  failed  error: ${out}")
   endif()
-  ConfigureAndBuild(boost_1_${ver}_0 ${arg})
+  ConfigureAndBuild(boost_1_${ver}_0 "${arg}")
 endmacro()
 
-macro (CheckConfigureBuild lib conf url)
+macro (CheckConfigureBuild libcheck lib conf url)
 unset(LIB_NEED CACHE)
-find_library(LIB_NEED NAMES ${lib} )
+find_library(LIB_NEED NAMES ${libcheck} )
 
 if(NOT LIB_NEED)
-  MESG("${lib} library not found downloading...")
+  MESG("${libcheck} library not found downloading...")
   GitCloneUrl(${lib} ${url})
-  ConfigureAndBuild(${lib}  ${conf})
+  ConfigureAndBuild(${lib} "${conf}")
 else()
-  MESG("${lib} library found ${LIB_NEED} !")
-
+  MESG("${libcheck} library found ${LIB_NEED} !")
 endif()
 
 endmacro()
@@ -185,6 +184,9 @@ SET(GITSOURCE https://github.com/amichelotti)
 SET (CHAOS_FRAMEWORK ${CMAKE_CURRENT_LIST_DIR}/..)
 set (CMAKE_C_FLAGS "-fPIC")
 set (CMAKE_CXX_FLAGS "-fPIC")
+IF(NOT DEFINED PROCESSOR_COUNT)
+  SET(PROCESSOR_COUNT 4)
+ENDIF()
 
 option(CHAOS_FORCE32 "Set to ON to enable 32 bit compilation" OFF)
 option(CHAOS_STATIC "Set static compilation" OFF)
@@ -196,7 +198,7 @@ IF(${SYSTEM_NAME} MATCHES "Darwin")
   # Mac OS X specific code
   MESG("enabling MAC compilation")
   SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic zmq.a jsoncpp pthread dl)
-  SET(CHAOS_BOOST_FLAGS "toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++ link=static runtime-link=shared variant=release")
+  SET(CHAOS_BOOST_FLAGS toolset=clang linkflags=-stdlib=libstdc++)
   SET(CMAKE_CXXFLAGS "-stdlib=libstdc++")
   SET(CMAKE_CFLAGS="-stdlib=libstdc++")
 ELSE()
@@ -235,8 +237,8 @@ IF (CHAOS_TARGET)
       find_program(CMAKE_CXX_COMPILER arm-infn-linux-gnueabi-g++)
       find_program(CMAKE_C_COMPILER arm-infn-linux-gnueabi-gcc)
       SET(CHAOS_CROSS_HOST arm-infn-linux-gnueabi)
-      SET(COMP_FLAGS "-D__BSON_USEMEMCPY__ -mcpu=xscale -D__BSON_USEMEMCPY__ -DBOOST_ASIO_DISABLE_EVENTFD -mno-unaligned-access -DDISABLE_COMPARE_AND_SWAP -mfloat-abi=soft")
-      SET(CHAOS_BOOST_FLAGS "toolset=gcc-arm target-os=linux cxxflags=-DBOOST_ASIO_DISABLE_EVENTFD")
+      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBOOST_ASIO_DISABLE_EVENTFD -D__BSON_USEMEMCPY__ -mcpu=xscale -D__BSON_USEMEMCPY__ -DBOOST_ASIO_DISABLE_EVENTFD -mno-unaligned-access -DDISABLE_COMPARE_AND_SWAP -mfloat-abi=soft") 
+      SET(CHAOS_BOOST_FLAGS toolset=gcc-arm target-os=linux)
       
     ELSE()
       IF(${CHAOS_TARGET} MATCHES "i686-linux26") 
@@ -244,8 +246,8 @@ IF (CHAOS_TARGET)
 	find_program(CMAKE_CXX_COMPILER i686-nptl-linux-gnu-g++)
 	find_program(CMAKE_C_COMPILER i686-nptl-linux-gnu-gcc)
 	SET(CHAOS_CROSS_HOST i686-nptl-linux-gnu)
-	SET(COMP_FLAGS "-DBOOST_ASIO_DISABLE_EVENTFD -Wcast-align  -static-libstdc++ -static-libgcc")
-	SET(CHAOS_BOOST_FLAGS "target-os=linux cxxflags=-DBOOST_ASIO_DISABLE_EVENTFD link=static")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBOOST_ASIO_DISABLE_EVENTFD") 
+	SET(CHAOS_BOOST_FLAGS target-os=linux)
       ELSE()
 	IF(${CHAOS_TARGET} MATCHES "crio90xx") 
 	  MESG("Cross compiling for crio90xx")
@@ -253,8 +255,8 @@ IF (CHAOS_TARGET)
 	  find_program(CMAKE_C_COMPILER arm-nilrt-linux-gnueabi-gcc)
 	  SET(CMAKE_EXE_LINKER_FLAGS -L/usr/local/chaos/oecore-x86_64/sysroots/armv7a-vfp-neon-nilrt-linux-gnueabi/lib)
 	  SET(CHAOS_CROSS_HOST arm-nilrt-linux-gnueabi)
-	  SET(COMP_FLAGS "-march=armv7-a -mthumb-interwork -mfloat-abi=softfp -mfpu=neon -mno-unaligned-access --sysroot=/usr/local/chaos/oecore-x86_64/sysroots/armv7a-vfp-neon-nilrt-linux-gnueabi -L/usr/local/chaos/oecore-x86_64/sysroots/armv7a-vfp-neon-nilrt-linux-gnueabi/lib")
-	  SET(CHAOS_BOOST_FLAGS "target-os=linux cxxflags=-DBOOST_ASIO_DISABLE_EVENTFD")
+	  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=armv7-a -mthumb-interwork -mfloat-abi=softfp -mfpu=neon -mno-unaligned-access --sysroot=/usr/local/chaos/oecore-x86_64/sysroots/armv7a-vfp-neon-nilrt-linux-gnueabi -L/usr/local/chaos/oecore-x86_64/sysroots/armv7a-vfp-neon-nilrt-linux-gnueabi/lib -DBOOST_ASIO_DISABLE_EVENTFD") 
+	  SET(CHAOS_BOOST_FLAGS target-os=linux)
 	ELSE()
 	  ERROR("UNSUPPORTED CHAOS_TARGET ${CHAOS_TARGET}")
 	ENDIF()
@@ -265,7 +267,7 @@ IF (CHAOS_TARGET)
     ERROR("CANNOT FOND COMPILER FOR ${CHAOS_TARGET}, \"${CHAOS_CROSS_HOST}-g++\" should be found in path")
   ENDIF()
 ENDIF()
-SET(CHAOS_BOOST_FLAGS "${CHAOS_BOOST_FLAGS} --cxxflags=-fPIC -DCHAOS --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options  --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer link=static install")
+SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} cxxflags="${CMAKE_CXX_FLAGS}" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer link=static install "-j ${PROCESSOR_COUNT}" -d+2)
 
 ######
 
@@ -298,9 +300,6 @@ ELSE()
 ENDIF()
 
 
-IF(NOT DEFINED PROCESSOR_COUNT)
-  SET(PROCESSOR_COUNT 4)
-ENDIF()
 
 
 IF( ( DEFINED ENV{CHAOS32}) OR CHAOS_FORCE_32 )
@@ -351,8 +350,6 @@ IF(CHAOS_STATIC)
   SET(BUILD_SHARED_LIBRARIES OFF)
   SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
   SET(CMAKE_SHARED_LIBRARY_LINK_CC_FLAGS)
-ELSE()
-  add_definitions(-DBOOST_ALL_DYN_LINK)
 ENDIF()
 
 SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
@@ -426,8 +423,10 @@ else()
 endif()
 
 
-CheckConfigureBuild(jsoncpp "-DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
-CheckConfigureBuild(mongoose-cpp "-DHAS_JSONCPP=ON -DENABLE_PIC=ON" https://github.com/bisegni )
+CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
+CheckConfigureBuild(mongoose mongoose-cpp "-DHAS_JSONCPP=ON;-DENABLE_PIC=ON" https://github.com/bisegni )
+
+CheckConfigureBuild(libevent libevent "-DEVENT__DISABLE_SAMPLES=ON;-DEVENT__DISABLE_REGRESS=ON;-DEVENT__DISABLE_OPENSSL=ON" https://github.com/libevent )
 
 
 

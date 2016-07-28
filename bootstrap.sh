@@ -753,25 +753,25 @@ fi
 #     echo "Lua already installed"
 # fi
 
-echo "Setup LIBEVENT  $CHAOS_LIBEVENT_CONFIGURE :$LIB_EVENT_VERSION"
-if [ ! -d "$PREFIX/include/event2" ]; then
-    echo "* need libevent"
-    if [ ! -d "$BASE_EXTERNAL/libevent" ]; then
-	echo "Installing LibEvent"
-	if !(git clone https://github.com/libevent/libevent.git $BASE_EXTERNAL/libevent); then
-	    echo "## cannot clone http://git.code.sf.net/p/levent/libevent"
-	    exit 1
-	fi
-    fi
-    cd $BASE_EXTERNAL/libevent
-    git checkout $LIB_EVENT_VERSION
-    git pull
-    ./autogen.sh
+# echo "Setup LIBEVENT  $CHAOS_LIBEVENT_CONFIGURE :$LIB_EVENT_VERSION"
+# if [ ! -d "$PREFIX/include/event2" ]; then
+#     echo "* need libevent"
+#     if [ ! -d "$BASE_EXTERNAL/libevent" ]; then
+# 	echo "Installing LibEvent"
+# 	if !(git clone https://github.com/libevent/libevent.git $BASE_EXTERNAL/libevent); then
+# 	    echo "## cannot clone http://git.code.sf.net/p/levent/libevent"
+# 	    exit 1
+# 	fi
+#     fi
+#     cd $BASE_EXTERNAL/libevent
+#     git checkout $LIB_EVENT_VERSION
+#     git pull
+#     ./autogen.sh
 
-    ./configure $CHAOS_LIBEVENT_CONFIGURE
-    do_make "LIBEVENT" 1
-    echo "LIBEVENT done"
-fi
+#     ./configure $CHAOS_LIBEVENT_CONFIGURE
+#     do_make "LIBEVENT" 1
+#     echo "LIBEVENT done"
+# fi
 
 # if [ -z "$CHAOS_NO_COUCHBASE" ]; then
 # echo "Setup Couchbase sdk, $CHAOS_CB_CONFIGURE"
