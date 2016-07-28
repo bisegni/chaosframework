@@ -108,10 +108,10 @@ execute_process(
   OUTPUT_VARIABLE out
   )
 IF(err)
-  ERROR("cannot create symlink ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local"
-  ELSE()
-    MESG("created symlink ${CMAKE_INSTALL_PREFIX}->${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
-  ENDIF()
+  ERROR("cannot create symlink ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+ELSE()
+  MESG("created symlink ${CMAKE_INSTALL_PREFIX}->${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+ENDIF()
   
   IF(CHAOS_CCS)
     MESG("CCS compilation ENABLED")
