@@ -100,6 +100,7 @@ namespace chaos {
                 
                 //!name index and iterator
                 typedef boost::multi_index::index<DatasetAttributeElementContainer, DAETagName>::type                           DECNameIndex;
+                typedef boost::multi_index::index<DatasetAttributeElementContainer, DAETagName>::type::const_iterator           DECNameIndexConstIterator;
                 typedef boost::multi_index::index<DatasetAttributeElementContainer, DAETagName>::type::iterator                 DECNameIndexIterator;
 
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(DatasetAttributePtr ,DatasetPtrVector);
@@ -113,7 +114,7 @@ namespace chaos {
                     //is the key that need to be used to searh dataset on the shared memory
                     std::string                         dataset_key;
                     //is the ocmplete list of the attribute of the dataset
-                    DatasetAttributeElementContainer    attribute_set;
+                    mutable DatasetAttributeElementContainer    attribute_set;
                     
                     Dataset();
                     Dataset(const std::string& _name,
@@ -125,7 +126,11 @@ namespace chaos {
                     
                     DatasetAttributePtr getAttributebyName(const std::string& attr_name);
                     
-                    DatasetAttributePtr getAttributebyOrderedIDe(const unsigned int ordered_id);
+                    DatasetAttributePtr getAttributebyOrderedID(const unsigned int ordered_id);
+                    
+                    const unsigned int getAttributeSize() const;
+                    
+                    bool hasAttribute(const std::string& attr_name) const;
                 };
                 
                 //! define serialization wrapper for dataset type
@@ -133,10 +138,10 @@ namespace chaos {
                     void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                         
                         //remove all attribute
-                        Subclass().attribute_set.clear();
-                        Subclass().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, "");
-                        Subclass().type = static_cast<chaos::DataType::DatasetType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TYPE, chaos::DataType::DatasetTypeUndefined));
-                        Subclass().dataset_key = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_SEARCH_KEY, "");
+                        Subclass::dataWrapped().attribute_set.clear();
+                        Subclass::dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, "");
+                        Subclass::dataWrapped().type = static_cast<chaos::DataType::DatasetType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TYPE, chaos::DataType::DatasetTypeUndefined));
+                        Subclass::dataWrapped().dataset_key = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_SEARCH_KEY, "");
                         if(serialized_data->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST) &&
                            serialized_data->isVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST)) {
                             DatasetAttributeSDWrapper<> attribute_wrapper;
@@ -146,7 +151,7 @@ namespace chaos {
                                 idx++) {
                                 std::auto_ptr<CDataWrapper> attr_ser(attr_vec->getCDataWrapperElementAtIndex(idx));
                                 attribute_wrapper.deserialize(attr_ser.get());
-                                Subclass::dataWrapped().attribute_set.insert(DatasetAttributeElement::DatasetAttributeElementPtr(new DatasetAttributeElement((unsigned int)Subclass().attribute_set.size(),
+                                Subclass::dataWrapped().attribute_set.insert(DatasetAttributeElement::DatasetAttributeElementPtr(new DatasetAttributeElement((unsigned int)Subclass::dataWrapped().attribute_set.size(),
                                                                                                                                                    DatasetAttributePtr(new DatasetAttribute(attribute_wrapper())))));
                             }
                         }
@@ -154,8 +159,8 @@ namespace chaos {
                     
                     std::auto_ptr<CDataWrapper> serialize() {
                         std::auto_ptr<CDataWrapper> result(new CDataWrapper());
-                        result->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, Subclass().name);
-                        DatasetAttributeSDWrapper<> attribute_wrapper;
+                        result->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, Subclass::dataWrapped().name);
+                        DatasetAttributeSDWrapper< ReferenceSDWrapper<DatasetAttribute> > attribute_reference_wrapper;
                         DatasetAttributeElementContainer& cnt = Subclass::dataWrapped().attribute_set;
                         DECOrderedIndex& ordered_index = cnt.get<DAETagOrderedId>();
                         for(DECOrderedIndexIterator it = ordered_index.begin(),
@@ -163,7 +168,7 @@ namespace chaos {
                             it != end;
                             it++) {
                             //set the wrapper as the
-                            Subclass() = *(*it)->dataset_attribute;
+                            attribute_reference_wrapper() = *(*it)->dataset_attribute;
                         }
                         return result;
                     }

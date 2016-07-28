@@ -30,7 +30,7 @@ namespace chaos {
     namespace common {
         namespace data {
             namespace structured {
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(unsigned int, DatasetSubtypeList)
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::DataType::BinarySubtype, DatasetSubtypeList)
                 
                 //! The description of a n attribute of a CHAOS dataset
                 struct DatasetAttribute {
@@ -39,6 +39,7 @@ namespace chaos {
                     std::string                                     min_value;
                     std::string                                     max_value;
                     std::string                                     default_value;
+                    uint32_t                                        max_size;
                     chaos::DataType::DataSetAttributeIOAttribute    direction;
                     chaos::DataType::DataType                       type;
                     DatasetSubtypeList                              binary_subtype_list;
@@ -65,6 +66,7 @@ namespace chaos {
                         Subclass::dataWrapped().min_value = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, "");
                         Subclass::dataWrapped().max_value = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, "");
                         Subclass::dataWrapped().default_value = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, "");
+                        Subclass::dataWrapped().max_size = (uint32_t)CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE, 0);
                         Subclass::dataWrapped().binary_cardinality = CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY, 0);
                         
                         if(Subclass::dataWrapped().type == DataType::TYPE_BYTEARRAY) {
@@ -95,6 +97,7 @@ namespace chaos {
                         data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, Subclass::dataWrapped().min_value);
                         data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, Subclass::dataWrapped().max_value);
                         data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, Subclass::dataWrapped().default_value);
+                        data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_VALUE_MAX_SIZE, Subclass::dataWrapped().max_size);
                         data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY, Subclass::dataWrapped().binary_cardinality);
                         if((Subclass::dataWrapped().type == DataType::TYPE_BYTEARRAY) &&
                            Subclass::dataWrapped().binary_subtype_list.size()) {

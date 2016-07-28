@@ -39,8 +39,12 @@ namespace chaos {
             
             template<typename T>
             struct ReferenceSDWrapper {
-            protected:
+            private:
+                T private_deafault_data;
+            public:
                 T& data;
+                ReferenceSDWrapper():
+                data(private_deafault_data){}
             };
             
             template<typename T>

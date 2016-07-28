@@ -30,6 +30,7 @@ description(),
 direction(chaos::DataType::Bidirectional),
 type(chaos::DataType::TYPE_UNDEFINED),
 binary_subtype_list(),
+max_size(0),
 binary_cardinality(0){}
 
 DatasetAttribute::DatasetAttribute(const std::string& attr_name,
@@ -40,6 +41,7 @@ description(attr_description),
 direction(chaos::DataType::Bidirectional),
 type(attr_type),
 binary_subtype_list(),
+max_size(0),
 binary_cardinality(0){
     
 }
@@ -50,6 +52,10 @@ description(copy_src.description),
 direction(copy_src.direction),
 type(copy_src.type),
 binary_subtype_list(copy_src.binary_subtype_list),
+min_value(copy_src.min_value),
+max_value(copy_src.max_value),
+default_value(copy_src.default_value),
+max_size(copy_src.max_size),
 binary_cardinality(copy_src.binary_cardinality){}
 
 DatasetAttribute& DatasetAttribute::operator=(DatasetAttribute const &rhs) {

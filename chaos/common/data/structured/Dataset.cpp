@@ -90,11 +90,19 @@ DatasetAttributePtr Dataset::getAttributebyName(const std::string& attr_name) {
     return (*it)->dataset_attribute;
 }
 
-DatasetAttributePtr Dataset::getAttributebyOrderedIDe(const unsigned int ordered_id) {
+DatasetAttributePtr Dataset::getAttributebyOrderedID(const unsigned int ordered_id) {
     DECOrderedIndex& ordered_index = attribute_set.get<DAETagOrderedId>();
     DECOrderedIndexIterator it = ordered_index.find(ordered_id);
     if(it == ordered_index.end()) return DatasetAttributePtr();
     return (*it)->dataset_attribute;
 }
 
+const unsigned int Dataset::getAttributeSize() const {
+    return (unsigned int)attribute_set.size();
+}
+
+bool Dataset::hasAttribute(const std::string& attr_name) const {
+    DECNameIndex& name_index = attribute_set.get<DAETagName>();
+    return (name_index.find(attr_name) != name_index.end());
+}
 #pragma mark DatasetSDWrapper

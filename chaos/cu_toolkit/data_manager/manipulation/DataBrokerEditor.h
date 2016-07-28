@@ -40,9 +40,19 @@ namespace chaos {
                     //reference to root dataset element
                     DatasetElementContainer container_dataset;
                     
-                    DECNameIndex&        index_name;
-                    DECOrderedIndex&     index_ordered;
-                    DECTypeNameIndex&    index_type_name;
+                    DECNameIndex&        ds_index_name;
+                    DECOrderedIndex&     ds_index_ordered;
+                    DECTypeNameIndex&    ds_index_type_name;
+                    
+                    //add new dataset
+                    /*!
+                     New dataset is added checking if no other dataset has the same name and type.
+                     In case dataset already exists it attribute will be updated with new values
+                     */
+                    int addNewDataset(chaos::common::data::structured::Dataset& new_dataset);
+                    
+                    void updateAttributePorertyForDataset(chaos::common::data::structured::DatasetAttribute attr_src,
+                                                          chaos::common::data::structured::DatasetAttribute attr_dst);
                 protected:
                     DataBrokerEditor();
                     ~DataBrokerEditor();
@@ -105,6 +115,85 @@ namespace chaos {
                                                               const std::string& attr_name,
                                                               const std::string& attr_description,
                                                               const std::string& attr_mime_type);
+                    
+                    //! Set the value for a determinated attribute of a dataset
+                    int setOutputAttributeValue(const std::string&  ds_name,
+                                                const std::string&  attr_name,
+                                                void * value,
+                                                uint32_t size);
+                    
+                    //! Set the value for a determinated attribute of a dataset
+                    int setOutputAttributeValue(const std::string& ds_name,
+                                                const unsigned int attr_index,
+                                                void * value,
+                                                uint32_t size);
+                    
+                    //! Return the value object for the domain and the string key
+                    template<typename T>
+                    int getReadonlyCachedAttributeValue(const std::string& ds_name,
+                                                        const std::string& attr_name,
+                                                        const T*** value_ptr) {
+                        DECNameIndexIterator nit = ds_index_name.find(ds_name);
+                        if(nit == ds_index_name.end()) return -1;
+                        //we have the dataset
+                        chaos::common::data::cache::AttributeValue *value_setting = (*nit)->dataset_value_cache.getValueSettingByName(attr_name);
+                        if(value_setting) {
+                            *value_ptr = (const T**)&value_setting->value_buffer;
+                        }
+                    }
+                    
+                    //! Return the value object for the domain and the index of the variable
+                    template<typename T>
+                    int getReadonlyCachedAttributeValue(const std::string& ds_name,
+                                                        unsigned int attr_index,
+                                                        const T*** value_ptr) {
+                        DECNameIndexIterator nit = ds_index_name.find(ds_name);
+                        if(nit == ds_index_name.end()) return -1;
+                        
+                        //we have the dataset
+                        chaos::common::data::cache::AttributeValue *value_setting = (*nit)->dataset_value_cache.getValueSettingForIndex(attr_index);
+                        if(value_setting) {
+                            *value_ptr = (const T**)&value_setting->value_buffer;
+                        }
+                    }
+                    
+                    //! Return the value object for the domain and the string key
+                    template<typename T>
+                    int getCachedCustomAttributeValue(const std::string& ds_name,
+                                                      const std::string& attr_name,
+                                                      T*** value_ptr) {
+                        DECNameIndexIterator nit = ds_index_name.find(ds_name);
+                        if(nit == ds_index_name.end()) return -1;
+                        //we have the dataset
+                        chaos::common::data::cache::AttributeValue *value_setting = (*nit)->dataset_value_cache.getValueSettingByName(attr_name);
+                        if(value_setting) {
+                            *value_ptr = (const T**)&value_setting->value_buffer;
+                        }
+                    }
+                    
+                    //! Return the value object for the domain and the index of the variable
+                    template<typename T>
+                    int getCachedCustomAttributeValue(const std::string& ds_name,
+                                                      unsigned int attr_index,
+                                                      T*** value_ptr) {
+                        DECNameIndexIterator nit = ds_index_name.find(ds_name);
+                        if(nit == ds_index_name.end()) return -1;
+                        
+                        //check if dataset is of an input type
+                        if((*nit)->dataset->type != chaos::DataType::DatasetTypeInput) return -2;
+                        
+                        //we have the dataset
+                        chaos::common::data::cache::AttributeValue *value_setting = (*nit)->dataset_value_cache.getValueSettingForIndex(attr_index);
+                        if(value_setting) {
+                            *value_ptr = (const T**)&value_setting->value_buffer;
+                        }
+                    }
+                    
+                    //! return a CDataWrapper pointr with the dataset serialization
+                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize();
+                    
+                    //! fille curren databrocker with serialization
+                    void deserialize(chaos::common::data::CDataWrapper& serialization);
                 };
             }
         }
