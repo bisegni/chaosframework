@@ -64,7 +64,7 @@ namespace chaos {
                 virtual void deserialize(chaos::common::data::CDataWrapper *serialized_data) = 0;
                 
                 //!serialize the container
-                virtual std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0) = 0;
+                virtual std::auto_ptr<chaos::common::data::CDataWrapper> serialize() = 0;
                 
                 //!return the container
                 T& dataWrapped(){
@@ -91,34 +91,64 @@ namespace chaos {
                     return *this;
                 }
             };
+            
+            
+#define CHAOS_SD_WRAPPER_NAME(x)  x ## SDWrapper
+#define CHAOS_SD_WRAPPER_NAME_VAR(x, v)  CHAOS_SD_WRAPPER_NAME(x) v
+            
+#define CHAOS_OPEN_SDWRAPPER(x)\
+template<typename W = chaos::common::data::CopySDWrapper<x> >\
+class x ## SDWrapper:\
+public chaos::common::data::TemplatedDataSDWrapper<x, W> {\
+typedef chaos::common::data::TemplatedDataSDWrapper<x, W> Subclass; public:\
+CHAOS_SD_WRAPPER_NAME(x)():\
+Subclass(){}\
+CHAOS_SD_WRAPPER_NAME(x)(const x& copy_source):\
+Subclass(copy_source){}\
+CHAOS_SD_WRAPPER_NAME(x)(chaos::common::data::CDataWrapper *serialized_data):\
+Subclass(serialized_data){deserialize(serialized_data);}
+            
+#define CHAOS_CLOSE_SDWRAPPER() };
+            
+#define CHAOS_DEFINE_SDWRAPPER_CONSTRUCTOR(x)\
+CHAOS_SD_WRAPPER_NAME(x)():\
+chaos::common::data::TemplatedDataSDWrapper<x, W>(){}\
+CHAOS_SD_WRAPPER_NAME(x)(const x& copy_source):\
+chaos::common::data::TemplatedDataSDWrapper<x, W>(copy_source){}\
+CHAOS_SD_WRAPPER_NAME(x)(chaos::common::data::CDataWrapper *serialized_data):\
+chaos::common::data::TemplatedDataSDWrapper<x, W>(serialized_data){deserialize(serialized_data);}
 
-#define CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS_WITH_ALIAS(a,x)\
+#define CHAOS_DEFINE_TEMPLATED_SDWRAPPER_ALIAS_AND_WRAPPER(wrp, a, x)\
+typedef chaos::common::data::TemplatedDataSDWrapper<x,w> a ## SDWrapperSubclass;\
+template<typename w= wrp>\
+class a ## SDWrapper:\
+public a ## SDWrapperSubclass
+            
+#define CHAOS_DEFINE_TEMPLATED_SDWRAPPER_ALIAS(a,x)\
 typedef chaos::common::data::TemplatedDataSDWrapper<x> a ## SDWrapperSubclass;\
 class a ## SDWrapper:\
 public a ## SDWrapperSubclass
-
-#define CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(x)\
-CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS_WITH_ALIAS(x,x)
-
-#define CHAOS_DEFINE_SD_WRAPPER(x)  x ## SDWrapper
-#define CHAOS_DECLARE_SD_WRAPPER_VAR(x, v)  CHAOS_DEFINE_SD_WRAPPER(x) v
-
+            
+#define CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(x)\
+CHAOS_DEFINE_TEMPLATED_SDWRAPPER_ALIAS(x,x)
+            
+#define CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS_W(w,x)\
+CHAOS_DEFINE_TEMPLATED_SDWRAPPER_ALIAS(w,x,x)
+            
+            
 #define CHAOS_DECLARE_SD_WRAPPER_CONSTRUCTOR(x)\
-CHAOS_DEFINE_SD_WRAPPER(x)();\
-CHAOS_DEFINE_SD_WRAPPER(x)(const Dataset& copy_source);\
-CHAOS_DEFINE_SD_WRAPPER(x)(CDataWrapper *serialized_data);
+CHAOS_DEFINE_SD_WRAPPER(x)():\
+chaos::common::data::TemplatedDataSDWrapper<x>(){}\
+CHAOS_SD_WRAPPER_NAME(x)(const Dataset& copy_source):\
+chaos::common::data::TemplatedDataSDWrapper<x>(copy_source){}\
+CHAOS_SD_WRAPPER_NAME(x)(chaos::common::data::CDataWrapper *serialized_data):\
+chaos::common::data::TemplatedDataSDWrapper<x>(serialized_data){deserialize(serialized_data);}\
 
             
-#define CHAOS_DEFINE_SD_WRAPPER_CONSTRUCTOR(x)\
-CHAOS_DEFINE_SD_WRAPPER(x)::CHAOS_DEFINE_SD_WRAPPER(x)():\
-chaos::common::data::TemplatedDataSDWrapper<x>(){}\
-CHAOS_DEFINE_SD_WRAPPER(x)::CHAOS_DEFINE_SD_WRAPPER(x)(const Dataset& copy_source):\
-chaos::common::data::TemplatedDataSDWrapper<x>(copy_source){}\
-CHAOS_DEFINE_SD_WRAPPER(x)::CHAOS_DEFINE_SD_WRAPPER(x)(chaos::common::data::CDataWrapper *serialized_data):\
-chaos::common::data::TemplatedDataSDWrapper<x>(serialized_data){deserialize(serialized_data);}\
+            
             
             template<typename T,
-                    typename DW>
+            typename DW>
             class TemplatedDataListWrapper {
                 const std::string instance_serialization_key;
                 static const std::string master_serialization_key;
@@ -180,7 +210,7 @@ chaos::common::data::TemplatedDataSDWrapper<x>(serialized_data){deserialize(seri
                 T& operator[](const int& i) {
                     return data_list[i];
                 }
-
+                
                 const T& operator[](const int& i) const {
                     return data_list[i];
                 }
@@ -231,7 +261,7 @@ chaos::common::data::TemplatedDataSDWrapper<x>(serialized_data){deserialize(seri
             };
             
             template<typename T, typename DW>
-	      const  std::string TemplatedDataListWrapper<T,DW>::master_serialization_key = GET_TYPE_NAME(T);
+            const  std::string TemplatedDataListWrapper<T,DW>::master_serialization_key = GET_TYPE_NAME(T);
             
 #define CHAOS_DEFINE_SD_LIST_WRAPPER(x, serializer_wrapper)  chaos::common::data::TemplatedDataListWrapper<x,serializer_wrapper>
             

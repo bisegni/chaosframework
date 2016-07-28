@@ -32,7 +32,7 @@ namespace chaos {
             namespace structured {
                 
                 //! Implementation of a SDWrapepr for a string list
-                CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(ChaosStringVector) {
+                CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(ChaosStringVector) {
                 public:
                     const std::string serialization_postfix;
                     
@@ -79,7 +79,7 @@ namespace chaos {
                         }
                     }
                     
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0) {
+                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
                         std::auto_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
                         const std::string ser_key = "std_vector_"+serialization_postfix;
                         for(typename std::vector<T>::iterator it = chaos::common::data::TemplatedDataSDWrapper< std::vector<T> >::dataWrapped().begin(),

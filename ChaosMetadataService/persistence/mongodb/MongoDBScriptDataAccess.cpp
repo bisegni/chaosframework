@@ -116,7 +116,7 @@ int MongoDBScriptDataAccess::updateScript(Script& script) {
                                 CHAOS_SBD_NAME << script.script_description.name);
         
         //compose bson update
-        CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::script::Script, s_dw);
+        ScriptSDWrapper s_dw;
         s_dw.dataWrapped() = script;
         
         std::auto_ptr<CDataWrapper> serialization = s_dw.serialize();
@@ -327,7 +327,7 @@ int MongoDBScriptDataAccess::loadScript(const uint64_t unique_id,
                 SDA_ERR << CHAOS_FORMAT("The script %1%[%2%] has not been found", %unique_id%name);
             } else {
                 // fill script with base description
-                CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::script::Script, s_dw);
+                ScriptSDWrapper s_dw;
                 CDataWrapper element_found_cdw(element_found.objdata());
                 s_dw.deserialize(&element_found_cdw);
                 script = s_dw.dataWrapped();

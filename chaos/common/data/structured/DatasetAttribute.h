@@ -54,23 +54,70 @@ namespace chaos {
                 
                 
                 //!helper for create or read the script description
-                CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(DatasetAttribute) {
-                public:
-                    DatasetAttributeSDWrapper();
+                CHAOS_OPEN_SDWRAPPER(DatasetAttribute)
+                    void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
+                        if(serialized_data == NULL) return;
+                        Subclass::dataWrapped().binary_subtype_list.clear();
+                        Subclass::dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, "");
+                        Subclass::dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, "");
+                        Subclass::dataWrapped().direction = static_cast<chaos::DataType::DataSetAttributeIOAttribute>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION, chaos::DataType::Bidirectional));
+                        Subclass::dataWrapped().type = static_cast<chaos::DataType::DataType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, chaos::DataType::TYPE_UNDEFINED));
+                        Subclass::dataWrapped().min_value = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, "");
+                        Subclass::dataWrapped().max_value = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, "");
+                        Subclass::dataWrapped().default_value = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, "");
+                        Subclass::dataWrapped().binary_cardinality = CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY, 0);
+                        
+                        if(Subclass::dataWrapped().type == DataType::TYPE_BYTEARRAY) {
+                            if(serialized_data->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
+                                if(serialized_data->isVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)) {
+                                    //multiple subtype
+                                    std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE));
+                                    for(int idx = 0;
+                                        idx < serialized_array->size();
+                                        idx++) {
+                                        chaos::DataType::BinarySubtype sub_type = static_cast<chaos::DataType::BinarySubtype>(serialized_array->getInt32ElementAtIndex(idx));
+                                        Subclass::dataWrapped().binary_subtype_list.push_back(sub_type);
+                                    }
+                                } else {
+                                    //single subtype
+                                    Subclass::dataWrapped().binary_subtype_list.push_back(static_cast<chaos::DataType::BinarySubtype>(serialized_data->getInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE)));
+                                }
+                            }
+                        }
+                    }
                     
-                    DatasetAttributeSDWrapper(const DatasetAttribute& copy_source);
-                    
-                    DatasetAttributeSDWrapper(chaos::common::data::CDataWrapper *serialized_data);
-                    
-                    void deserialize(chaos::common::data::CDataWrapper *serialized_data);
-                    
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0);
-                };
+                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                        std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                        data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_NAME, Subclass::dataWrapped().name);
+                        data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION, Subclass::dataWrapped().description);
+                        data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DIRECTION, Subclass::dataWrapped().direction);
+                        data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_TYPE, Subclass::dataWrapped().type);
+                        data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MIN_RANGE, Subclass::dataWrapped().min_value);
+                        data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_MAX_RANGE, Subclass::dataWrapped().max_value);
+                        data_serialized->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DEFAULT_VALUE, Subclass::dataWrapped().default_value);
+                        data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_CARDINALITY, Subclass::dataWrapped().binary_cardinality);
+                        if((Subclass::dataWrapped().type == DataType::TYPE_BYTEARRAY) &&
+                           Subclass::dataWrapped().binary_subtype_list.size()) {
+                            if(Subclass::dataWrapped().binary_subtype_list.size() > 1) {
+                                //multiple value
+                                for(DatasetSubtypeListIterator it = Subclass::dataWrapped().binary_subtype_list.begin(),
+                                    end = Subclass::dataWrapped().binary_subtype_list.end();
+                                    it != end;
+                                    it++) {
+                                    data_serialized->appendInt32ToArray(*it);
+                                }
+                                data_serialized->finalizeArrayForKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE);
+                            } else {
+                                data_serialized->addInt32Value(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_BINARY_SUBTYPE, Subclass::dataWrapped().binary_subtype_list[0]);
+                            }
+                        }
+                        return data_serialized;
+                    }
+                CHAOS_CLOSE_SDWRAPPER()
                 
                 //!a list of a script base information usefullt for search operation
-                CHAOS_DEFINE_TYPE_FOR_SD_LIST_WRAPPER(DatasetAttribute,
-                                                      DatasetAttributeSDWrapper,
-                                                      DatasetAttributeListWrapper);
+//                template<typename W = chaos::common::data::CopySDWrapper<DatasetAttribute> >
+//                chaos::common::data::TemplatedDataListWrapper<DatasetAttribute, DatasetAttributeSDWrapper<W> > DatasetAttributeListWrapper;
                 
                 
                 //Definition of dataset attribute list

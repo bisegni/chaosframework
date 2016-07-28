@@ -129,14 +129,45 @@ namespace chaos {
                 };
                 
                 //! define serialization wrapper for dataset type
-                CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(Dataset) {
-                public:
-                    CHAOS_DECLARE_SD_WRAPPER_CONSTRUCTOR(Dataset)
+                CHAOS_OPEN_SDWRAPPER(Dataset)
+                    void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
+                        
+                        //remove all attribute
+                        Subclass().attribute_set.clear();
+                        Subclass().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, "");
+                        Subclass().type = static_cast<chaos::DataType::DatasetType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TYPE, chaos::DataType::DatasetTypeUndefined));
+                        Subclass().dataset_key = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_SEARCH_KEY, "");
+                        if(serialized_data->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST) &&
+                           serialized_data->isVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST)) {
+                            DatasetAttributeSDWrapper<> attribute_wrapper;
+                            std::auto_ptr<CMultiTypeDataArrayWrapper> attr_vec(serialized_data->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST));
+                            for(int idx = 0;
+                                idx < attr_vec->size();
+                                idx++) {
+                                std::auto_ptr<CDataWrapper> attr_ser(attr_vec->getCDataWrapperElementAtIndex(idx));
+                                attribute_wrapper.deserialize(attr_ser.get());
+                                Subclass::dataWrapped().attribute_set.insert(DatasetAttributeElement::DatasetAttributeElementPtr(new DatasetAttributeElement((unsigned int)Subclass().attribute_set.size(),
+                                                                                                                                                   DatasetAttributePtr(new DatasetAttribute(attribute_wrapper())))));
+                            }
+                        }
+                    }
                     
-                    void deserialize(chaos::common::data::CDataWrapper *serialized_data);
-                    
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize();
-                };
+                    std::auto_ptr<CDataWrapper> serialize() {
+                        std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+                        result->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, Subclass().name);
+                        DatasetAttributeSDWrapper<> attribute_wrapper;
+                        DatasetAttributeElementContainer& cnt = Subclass::dataWrapped().attribute_set;
+                        DECOrderedIndex& ordered_index = cnt.get<DAETagOrderedId>();
+                        for(DECOrderedIndexIterator it = ordered_index.begin(),
+                            end = ordered_index.end();
+                            it != end;
+                            it++) {
+                            //set the wrapper as the
+                            Subclass() = *(*it)->dataset_attribute;
+                        }
+                        return result;
+                    }
+                CHAOS_CLOSE_SDWRAPPER()
             }
         }
     }

@@ -31,7 +31,7 @@ namespace chaos {
         namespace status_manager {
             
             //!serialization wrapepr for status flag catalog
-            CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(StatusFlagCatalog) {
+            CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(StatusFlagCatalog) {
             public:
                 StatusFlagCatalogSDWrapper();
                 

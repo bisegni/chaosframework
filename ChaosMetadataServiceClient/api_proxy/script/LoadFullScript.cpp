@@ -29,7 +29,7 @@ using namespace chaos::metadata_service_client::api_proxy::script;
 API_PROXY_CD_DEFINITION(LoadFullScript, "script", "loadFullScript")
 
 ApiProxyResult LoadFullScript::execute(const chaos::service_common::data::script::ScriptBaseDescription& sbd) {
-    CHAOS_DECLARE_SD_WRAPPER_VAR(ScriptBaseDescription, script_description_sdw);
+    ScriptBaseDescriptionSDWrapper script_description_sdw;
     script_description_sdw = sbd;
     return callApi(script_description_sdw.serialize().release());
 }

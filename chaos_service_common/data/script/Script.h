@@ -65,7 +65,7 @@ namespace chaos {
                 };
                 
                 //!helper for create or read the script description
-                CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(ScriptBaseDescription) {
+                CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(ScriptBaseDescription) {
                 public:
                     ScriptBaseDescriptionSDWrapper():
                     ScriptBaseDescriptionSDWrapperSubclass(){}
@@ -87,9 +87,9 @@ namespace chaos {
                         dataWrapped().language = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE, "");
                     }
                     
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0) {
+                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
                         std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
-                        data_serialized->addInt64Value("seq", (sequence?sequence:dataWrapped().unique_id));
+                        data_serialized->addInt64Value("seq", dataWrapped().unique_id);
                         data_serialized->addStringValue(CHAOS_SBD_NAME, dataWrapped().name);
                         data_serialized->addStringValue(CHAOS_SBD_DESCRIPTION, dataWrapped().description);
                         data_serialized->addStringValue(chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE, dataWrapped().language);
@@ -147,7 +147,7 @@ namespace chaos {
                 };
                 
                 //!heper for script class
-                CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(Script) {
+                CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(Script) {
                 public:
                     ScriptSDWrapper():
                     ScriptSDWrapperSubclass(){}
@@ -163,9 +163,9 @@ namespace chaos {
                     //! deserialization
                     void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                         if(serialized_data == NULL) return;
-                        CHAOS_DECLARE_SD_WRAPPER_VAR(ScriptBaseDescription, sd_dw);
-                        CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::dataset::AlgorithmVariable, algo_var_dw);
-                        CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::common::data::structured::DatasetAttribute, ds_attr_dw);
+                        ScriptBaseDescriptionSDWrapper sd_dw;
+                        chaos::service_common::data::dataset::AlgorithmVariableSDWrapper algo_var_dw;
+                        chaos::common::data::structured::DatasetAttributeSDWrapper<> ds_attr_dw;
 
                         //clear all ol data on the list
                         dataWrapped().variable_list.clear();
@@ -232,12 +232,12 @@ namespace chaos {
                     }
                     
                     //serialization
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0) {
-                        CHAOS_DECLARE_SD_WRAPPER_VAR(ScriptBaseDescription, sd_dw)(dataWrapped().script_description);
-                        CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::service_common::data::dataset::AlgorithmVariable, algo_var_dw);
-                        CHAOS_DECLARE_SD_WRAPPER_VAR(chaos::common::data::structured::DatasetAttribute, ds_attr_dw);
+                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                        ScriptBaseDescriptionSDWrapper  sd_dw(dataWrapped().script_description);
+                        chaos::service_common::data::dataset::AlgorithmVariableSDWrapper algo_var_dw;
+                        chaos::common::data::structured::DatasetAttributeSDWrapper<> ds_attr_dw;
                         
-                        std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized = sd_dw.serialize(sequence);
+                        std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized = sd_dw.serialize();
                         
                         //add script content
                         data_serialized->addStringValue(chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_CONTENT, dataWrapped().script_content);

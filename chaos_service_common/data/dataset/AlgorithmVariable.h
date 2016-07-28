@@ -110,7 +110,7 @@ namespace chaos {
                 };
                 
                 //!helper for create or read the script description
-                CHAOS_DEFINE_TEMPLATED_DATA_SDWRAPPER_CLASS(AlgorithmVariable) {
+                CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(AlgorithmVariable) {
                 public:
                     AlgorithmVariableSDWrapper():
                     AlgorithmVariableSDWrapperSubclass(){}
@@ -147,7 +147,7 @@ namespace chaos {
                         }
                     }
                     
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0) {
+                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
                         std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                         data_serialized->addStringValue(CHAOS_ALGO_NAME, dataWrapped().name);
                         data_serialized->addStringValue(CHAOS_ALGO_DESCRIPTION, dataWrapped().description);

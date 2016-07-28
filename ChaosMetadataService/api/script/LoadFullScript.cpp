@@ -45,8 +45,8 @@ chaos::common::data::CDataWrapper *LoadFullScript::execute(CDataWrapper *api_dat
     //check for mandatory attributes
     CHECK_CDW_THROW_AND_LOG(api_data, ERR, -1, "No parameter found");
     //get scrip description
-    CHAOS_DECLARE_SD_WRAPPER_VAR(Script, script_sdw)(api_data);
-    CHAOS_DECLARE_SD_WRAPPER_VAR(ScriptBaseDescription, script_description_sdw)(api_data);
+    ScriptSDWrapper script_sdw(api_data);
+    ScriptBaseDescriptionSDWrapper script_description_sdw(api_data);
     
     //fetch dataaccess for the script managment
     GET_DATA_ACCESS(ScriptDataAccess, s_da, -2)

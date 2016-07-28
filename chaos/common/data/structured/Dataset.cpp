@@ -98,39 +98,3 @@ DatasetAttributePtr Dataset::getAttributebyOrderedIDe(const unsigned int ordered
 }
 
 #pragma mark DatasetSDWrapper
-CHAOS_DEFINE_SD_WRAPPER_CONSTRUCTOR(Dataset)
-
-void DatasetSDWrapper::deserialize(chaos::common::data::CDataWrapper *serialized_data) {
-    //remove all attribute
-    dataWrapped().attribute_set.clear();
-    dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, "");
-    dataWrapped().type = static_cast<chaos::DataType::DatasetType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_TYPE, chaos::DataType::DatasetTypeUndefined));
-    dataWrapped().dataset_key = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_SEARCH_KEY, "");
-    if(serialized_data->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST) &&
-       serialized_data->isVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST)) {
-        DatasetAttributeSDWrapper attribute_wrapper;
-        std::auto_ptr<CMultiTypeDataArrayWrapper> attr_vec(serialized_data->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST));
-        for(int idx = 0;
-            idx < attr_vec->size();
-            idx++) {
-            std::auto_ptr<CDataWrapper> attr_ser(attr_vec->getCDataWrapperElementAtIndex(idx));
-            attribute_wrapper.deserialize(attr_ser.get());
-            dataWrapped().attribute_set.insert(DatasetAttributeElement::DatasetAttributeElementPtr(new DatasetAttributeElement((unsigned int)dataWrapped().attribute_set.size(),
-                                                                                                                               DatasetAttributePtr(new DatasetAttribute(attribute_wrapper())))));
-        }
-    }
-}
-
-std::auto_ptr<CDataWrapper> DatasetSDWrapper::serialize() {
-    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
-    DatasetAttributeSDWrapper attribute_wrapper;
-    DECOrderedIndex& ordered_index = dataWrapped().attribute_set.get<DAETagOrderedId>();
-    for(DECOrderedIndexIterator it = ordered_index.begin(),
-        end = ordered_index.end();
-        it != end;
-        it++) {
-        //set the wrapper as the
-        attribute_wrapper() = *(*it)->dataset_attribute;
-    }
-    return result;
-}
