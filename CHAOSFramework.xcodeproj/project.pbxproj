@@ -182,6 +182,16 @@
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
+		324544F41D4A54E80081F90B /* AttributeCacheHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324544F21D4A54E80081F90B /* AttributeCacheHandler.cpp */; };
+		324544F51D4A54E80081F90B /* AttributeCacheHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 324544F31D4A54E80081F90B /* AttributeCacheHandler.h */; };
+		324544F81D4A55ED0081F90B /* AbstractListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324544F61D4A55ED0081F90B /* AbstractListener.cpp */; };
+		324544F91D4A55ED0081F90B /* AbstractListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 324544F71D4A55ED0081F90B /* AbstractListener.h */; };
+		324544FC1D4A56170081F90B /* AbstractListenerContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324544FA1D4A56170081F90B /* AbstractListenerContainer.cpp */; };
+		324544FD1D4A56170081F90B /* AbstractListenerContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 324544FB1D4A56170081F90B /* AbstractListenerContainer.h */; };
+		324545011D4A676A0081F90B /* EventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324544FF1D4A676A0081F90B /* EventDispatcher.cpp */; };
+		324545021D4A676A0081F90B /* EventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 324545001D4A676A0081F90B /* EventDispatcher.h */; };
+		324545051D4A68380081F90B /* AbstractEventConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324545031D4A68380081F90B /* AbstractEventConsumer.cpp */; };
+		324545061D4A68380081F90B /* AbstractEventConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 324545041D4A68380081F90B /* AbstractEventConsumer.h */; };
 		32460520179C55FC00B075DA /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3246051E179C55FC00B075DA /* sqlite3.c */; };
 		32460521179C55FC00B075DA /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3246051F179C55FC00B075DA /* sqlite3.h */; };
 		324A4B0D191A3F6A00975394 /* disallow_copying.h in Headers */ = {isa = PBXBuildFile; fileRef = 324A4B03191A3F6A00975394 /* disallow_copying.h */; };
@@ -1331,6 +1341,16 @@
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
+		324544F21D4A54E80081F90B /* AttributeCacheHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttributeCacheHandler.cpp; sourceTree = "<group>"; };
+		324544F31D4A54E80081F90B /* AttributeCacheHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeCacheHandler.h; sourceTree = "<group>"; };
+		324544F61D4A55ED0081F90B /* AbstractListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractListener.cpp; sourceTree = "<group>"; };
+		324544F71D4A55ED0081F90B /* AbstractListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractListener.h; sourceTree = "<group>"; };
+		324544FA1D4A56170081F90B /* AbstractListenerContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractListenerContainer.cpp; sourceTree = "<group>"; };
+		324544FB1D4A56170081F90B /* AbstractListenerContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractListenerContainer.h; sourceTree = "<group>"; };
+		324544FF1D4A676A0081F90B /* EventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDispatcher.cpp; sourceTree = "<group>"; };
+		324545001D4A676A0081F90B /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcher.h; sourceTree = "<group>"; };
+		324545031D4A68380081F90B /* AbstractEventConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEventConsumer.cpp; sourceTree = "<group>"; };
+		324545041D4A68380081F90B /* AbstractEventConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEventConsumer.h; sourceTree = "<group>"; };
 		3246051E179C55FC00B075DA /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
 		3246051F179C55FC00B075DA /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
 		324A4B00191947BD00975394 /* MongodbIndex */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MongodbIndex; sourceTree = "<group>"; };
@@ -2894,6 +2914,17 @@
 			path = entity;
 			sourceTree = "<group>";
 		};
+		324544FE1D4A67250081F90B /* event */ = {
+			isa = PBXGroup;
+			children = (
+				324544FF1D4A676A0081F90B /* EventDispatcher.cpp */,
+				324545001D4A676A0081F90B /* EventDispatcher.h */,
+				324545031D4A68380081F90B /* AbstractEventConsumer.cpp */,
+				324545041D4A68380081F90B /* AbstractEventConsumer.h */,
+			);
+			path = event;
+			sourceTree = "<group>";
+		};
 		324A4B17191A402A00975394 /* murmurhash3 */ = {
 			isa = PBXGroup;
 			children = (
@@ -3648,6 +3679,10 @@
 				32502C841924FC7E0073E4AB /* Delegate.h */,
 				32C7EADF1A5E868C0008DFE8 /* UrlAccessibleService.h */,
 				3283B8881C7E0CCE0019255B /* Bimap.h */,
+				324544F61D4A55ED0081F90B /* AbstractListener.cpp */,
+				324544F71D4A55ED0081F90B /* AbstractListener.h */,
+				324544FA1D4A56170081F90B /* AbstractListenerContainer.cpp */,
+				324544FB1D4A56170081F90B /* AbstractListenerContainer.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -3711,6 +3746,7 @@
 				3214EF091D466CF6004DB689 /* DataBrokerManager.h */,
 				3214EF0E1D466F95004DB689 /* DataBroker.cpp */,
 				3214EF0F1D466F95004DB689 /* DataBroker.h */,
+				324544FE1D4A67250081F90B /* event */,
 				3214EF0D1D466F53004DB689 /* publishing */,
 				3214EF0C1D466F41004DB689 /* manipulation */,
 				326DB4B014B3A3E50018A8D0 /* DataManager.cpp */,
@@ -4594,6 +4630,8 @@
 				32FB20171A3F0FAB00307A86 /* AttributeValue.h */,
 				32FB201A1A3F11C400307A86 /* AttributeCache.cpp */,
 				32FB201B1A3F11C400307A86 /* AttributeCache.h */,
+				324544F21D4A54E80081F90B /* AttributeCacheHandler.cpp */,
+				324544F31D4A54E80081F90B /* AttributeCacheHandler.h */,
 				32FB201E1A3F2E7300307A86 /* AbstractSharedDomainCache.cpp */,
 				32FB201F1A3F2E7300307A86 /* AbstractSharedDomainCache.h */,
 				3296030F1876B45000CDCADA /* AttributeValueSharedCache.cpp */,
@@ -4911,6 +4949,7 @@
 				324A4B7E191A428500975394 /* safe_num-inl.h in Headers */,
 				326DB47C14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h in Headers */,
 				326DB47D14B38BC00018A8D0 /* CObjectProcessingQueue.h in Headers */,
+				324544F51D4A54E80081F90B /* AttributeCacheHandler.h in Headers */,
 				32C3546A178860EB009ED581 /* decl.hpp in Headers */,
 				324A4B79191A428500975394 /* misc.h in Headers */,
 				32612ACA1CE210BC00F3B8F3 /* script_types.h in Headers */,
@@ -5045,6 +5084,7 @@
 				326CDBB718D860430054EF19 /* SpinLock.h in Headers */,
 				3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */,
 				32A88BEA1CF8228A001DBAF5 /* lua.h in Headers */,
+				324544F91D4A55ED0081F90B /* AbstractListener.h in Headers */,
 				329603291876B45000CDCADA /* BatchCommandSandbox.h in Headers */,
 				322D990218A95F9200C0864C /* QueryDataConsumer.h in Headers */,
 				32EBDEFF1B4E6FC700278C42 /* RpcClientMetricCollector.h in Headers */,
@@ -5127,6 +5167,7 @@
 				32640A2C169DCC5800450962 /* EmbeddedDataTransform.h in Headers */,
 				32640A2D169DCC5800450962 /* AbstractDeviceTracker.h in Headers */,
 				325D2FCE1AFA19E500B2A706 /* HealtManager.h in Headers */,
+				324544FD1D4A56170081F90B /* AbstractListenerContainer.h in Headers */,
 				32543B1B1AFA6D28008D58EC /* HealtMetric.h in Headers */,
 				32640A30169DCC5800450962 /* FetcherDeviceTracker.h in Headers */,
 				32640A31169DCC5800450962 /* TrackerListener.h in Headers */,
@@ -5212,7 +5253,9 @@
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
 				326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */,
 				3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */,
+				324545061D4A68380081F90B /* AbstractEventConsumer.h in Headers */,
 				326DB4C914B3A3E50018A8D0 /* DataManager.h in Headers */,
+				324545021D4A676A0081F90B /* EventDispatcher.h in Headers */,
 				326DB4CA14B3A3E50018A8D0 /* DataManagerException.h in Headers */,
 				3270D5E91CCFAC4F0072017B /* AbstractExecutionUnit.h in Headers */,
 				3252A3141C8ED6BD00900FF2 /* DatasetAttributeHandler.h in Headers */,
@@ -5900,6 +5943,7 @@
 				324A4B10191A3F6A00975394 /* parse_number.cpp in Sources */,
 				3253F2FE189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp in Sources */,
 				325013DC15E9843D00DCB13E /* AsioEventForwarder.cpp in Sources */,
+				324544FC1D4A56170081F90B /* AbstractListenerContainer.cpp in Sources */,
 				3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */,
 				32E0EF3718CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp in Sources */,
 				32A88BCE1CF8228A001DBAF5 /* linit.c in Sources */,
@@ -5957,6 +6001,7 @@
 				32A91FCE1A49B37300DCF364 /* HTTPRpcSyncServer.cpp in Sources */,
 				32B159CD18AE08720096B58B /* ZMQSocketFeeder.cpp in Sources */,
 				32460520179C55FC00B075DA /* sqlite3.c in Sources */,
+				324544F41D4A54E80081F90B /* AttributeCacheHandler.cpp in Sources */,
 				32C4C2AD1C8D9A8600D74E0F /* CException.cpp in Sources */,
 				32A88BBB1CF8228A001DBAF5 /* lauxlib.c in Sources */,
 				324A4B54191A41EF00975394 /* random.cpp in Sources */,
@@ -5967,6 +6012,7 @@
 				32EBDF061B4FCA6F00278C42 /* ConsoleMetricBackend.cpp in Sources */,
 				324A4B71191A428500975394 /* bson_extract.cpp in Sources */,
 				32067EA11CABEE8800DE568A /* CDataVariant.cpp in Sources */,
+				324544F81D4A55ED0081F90B /* AbstractListener.cpp in Sources */,
 				32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */,
 				32A88BDC1CF8228A001DBAF5 /* lparser.c in Sources */,
 				329603221876B45000CDCADA /* BatchCommand.cpp in Sources */,
@@ -6013,6 +6059,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				324545051D4A68380081F90B /* AbstractEventConsumer.cpp in Sources */,
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
 				3214EF101D466F95004DB689 /* DataBroker.cpp in Sources */,
@@ -6026,6 +6073,7 @@
 				32CFC5CC1AF5601300E2A0B6 /* BasicIODriverInterface.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
+				324545011D4A676A0081F90B /* EventDispatcher.cpp in Sources */,
 				3252A30F1C8ED2A800900FF2 /* AbstractAttributeHandler.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
