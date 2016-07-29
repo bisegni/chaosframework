@@ -1,10 +1,29 @@
 cmake_policy(VERSION 2.8)
 cmake_minimum_required(VERSION 2.8)
 cmake_policy(SET CMP0011 NEW)
+SET(CACHE_DIR ${CMAKE_CURRENT_LIST_DIR}/CACHE)
+SET(EXTERNAL_BUILD_DIR ${CMAKE_CURRENT_LIST_DIR}/../external)
 
 ### MACRO 
 macro (MESG parm)
   MESSAGE(STATUS "[${PROJECT_NAME}] ${parm}")
+endmacro()
+macro (CheckCompiler what name)
+  unset(comp CACHE)
+  find_program(comp NAMES ${name})
+  if(comp)
+    if(${what} MATCHES "CXX")
+      MESG("found CXX compiler in ${comp}")
+      SET(CMAKE_CXX_COMPILER ${comp})
+      set(ENV(CXX) ${CMAKE_CXX_COMPILER})
+    else()
+      MESG("found C compiler in ${comp}")
+      SET(CMAKE_C_COMPILER ${comp})
+      set(ENV(CC) ${CMAKE_C_COMPILER})
+    endif()
+  else()
+    ERROR("no ${name} (${what} compiler) found in PATH")
+  endif()
 endmacro()
 
 macro (ERROR parm)
@@ -12,18 +31,38 @@ macro (ERROR parm)
 endmacro()
 
 macro (GitCloneUrl arg arg1)
-  MESG("Cloning ${arg} from ${arg1} into ${CMAKE_CURRENT_SOURCE_DIR}/external")
-  file(REMOVE_RECURSE  ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg})
-  file(MAKE_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg})
-  execute_process( 
-    COMMAND git clone ${arg1}/${arg}.git 
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external
-    RESULT_VARIABLE err
-    OUTPUT_VARIABLE out
-    )
-  if( err)
-    ERROR("cloning  from ${arg1} error: ${out}")
-  endif()
+  MESG("Cloning ${arg} from ${arg1} into ${EXTERNAL_BUILD_DIR}")
+  file(REMOVE_RECURSE  ${EXTERNAL_BUILD_DIR}/${arg})
+  file(MAKE_DIRECTORY  ${EXTERNAL_BUILD_DIR}/${arg})
+  IF(CHAOS_BUILD_CACHE)
+    IF(EXISTS "${CACHE_DIR}/${arg}")
+      MESG("copy from cache ${CACHE_DIR}/${arg}")
+      FILE(COPY ${CACHE_DIR}/${arg} DESTINATION ${EXTERNAL_BUILD_DIR})
+    ELSE()
+      execute_process( 
+	COMMAND git clone ${arg1}/${arg}.git 
+	WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}
+	RESULT_VARIABLE err
+	OUTPUT_VARIABLE out
+	)
+      if( err)
+	ERROR("cloning  from ${arg1} error: ${out}")
+      ELSE()
+	MESG("save in cache ${EXTERNAL_BUILD_DIR}/${arg}")
+	FILE(COPY ${EXTERNAL_BUILD_DIR}/${arg} DESTINATION ${CACHE_DIR} )	
+      endif()
+    ENDIF()
+  ELSE()
+    execute_process( 
+      COMMAND git clone ${arg1}/${arg}.git 
+      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}
+      RESULT_VARIABLE err
+      OUTPUT_VARIABLE out
+      )
+    if( err)
+      ERROR("cloning  from ${arg1} error: ${out}")
+    ENDIF()
+  ENDIF()
 endmacro()
 
 macro (GitClone arg)
@@ -31,16 +70,30 @@ macro (GitClone arg)
 endmacro()
 
 macro (wget what url)
-  file(MAKE_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/external/)
-  IF(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${what}")
-    MESG("wget ${url}/${what} in ${CMAKE_CURRENT_SOURCE_DIR}/external/${what}")
+  file(MAKE_DIRECTORY  ${EXTERNAL_BUILD_DIR}/)
+  IF(CHAOS_BUILD_CACHE)
+    
+    IF(EXISTS "${CACHE_DIR}/${what}")
+      MESG("copy from cache ${CACHE_DIR}/${what}")
+      FILE(COPY ${CACHE_DIR}/${what} DESTINATION ${EXTERNAL_BUILD_DIR})
+    ELSE()
+      MESG("not present in cache ${CACHE_DIR}/${what}")
+    ENDIF()
+  ENDIF()
+  IF(NOT EXISTS "${EXTERNAL_BUILD_DIR}/${what}")
+    MESG("wget ${url}/${what} in ${EXTERNAL_BUILD_DIR}/${what}")
     execute_process( 
       COMMAND wget ${url}/${what} --no-check-certificate -O ${what}
-      WORKING_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/external
+      WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}
       RESULT_VARIABLE err
       OUTPUT_VARIABLE out)
     if( err)
       ERROR("wget failed  error: ${out}")
+    ELSE()
+      IF(CHAOS_BUILD_CACHE)
+	MESG("copy to cache ${CACHE_DIR}/${what}")
+	FILE(COPY ${EXTERNAL_BUILD_DIR}/${what} DESTINATION ${CACHE_DIR})
+      ENDIF()
     endif()
   else()
     MESG("already downloaded ${what}")
@@ -51,7 +104,7 @@ macro (tar opt what)
   MESG("tar ${opt} ${what}")
   execute_process( 
     COMMAND tar ${opt} ${what}
-    WORKING_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/external
+    WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}
     RESULT_VARIABLE err
     OUTPUT_VARIABLE out)
   if( err)
@@ -64,7 +117,7 @@ macro (GitCheckout arg arg1)
   MESG("Checkout branch ${arg1}")
   execute_process( 
     COMMAND git checkout ${arg1}
-    WORKING_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
+    WORKING_DIRECTORY  ${EXTERNAL_BUILD_DIR}/${arg}
     RESULT_VARIABLE err
     OUTPUT_VARIABLE out)
   if( err)
@@ -74,47 +127,48 @@ endmacro()
 
 macro (ConfigureAndBuild arg arg1)
   unset(SKIPBUILD CACHE)
-  IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/autogen.sh")
-    MESG("generation of configuration")
+  IF (EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/autogen.sh")
+    MESG("[${arg}] generation of configuration")
     execute_process( 
       COMMAND ./autogen.sh
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
+      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
       RESULT_VARIABLE err
       OUTPUT_VARIABLE mod
       )
     
     IF( err)
-      ERROR("performing generation of configuration: ${err}")
+      ERROR("[${arg}] performing generation of configuration: ${err}")
     ENDIF()
   ENDIF()
  
-  IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/configure")
-    MESG("configure tool")
-    SET(CONFPARM ./configure CXXFLAGS=${CMAKE_CXX_FLAGS} --prefix=${CMAKE_INSTALL_PREFIX} ${arg1} ${CROSS_HOST})
+  IF (EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/configure")
+    MESG("[${arg}] CONFIGURE tool")
+    SET(CONFPARM ./configure CXXFLAGS=${CMAKE_CXX_FLAGS} CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} --prefix=${CMAKE_INSTALL_PREFIX} ${arg1} ${CROSS_HOST})
   ELSE()
-    IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/b2")
-      MESG("b2 configuration/build tool")
+    IF (EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/b2")
+      MESG("[${arg}] B2 configuration/build tool")
       execute_process(
 	COMMAND ./b2 --clean
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
+	WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
 	RESULT_VARIABLE err
 	OUTPUT_VARIABLE out
 	)
       IF (err) 
-	ERROR("cleaning b2: ${out}")
+	ERROR("[${arg}] cleaning b2: ${out}")
       ENDIF()
       
       SET(CONFPARM "./b2;${arg1}")
 
       SET(SKIPBUILD ON)
     ELSE()
-      IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/CMakeLists.txt")
-	MESG("cmake configuration tool")
-	SET(CONFPARM cmake ${arg1} ${CMAKE_CHAOS} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} .)
+      IF (EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/CMakeLists.txt")
+	MESG("[${arg}] CMAKE configuration tool")
+	SET(CONFPARM cmake ${arg1} ${CMAKE_CHAOS} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} -DCMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME} -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER} .)
+	
       ELSE()
-	IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}/SConstruct")
-	  MESG("scons configuration tool")
-	  SET(CONFPARM scons --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cxx=${CHAOS_CXX_COMPILER} --cc=${CHAOS_C_COMPILER} --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} -j ${PROCESSOR_COUNT} ${arg1} )
+	IF(EXISTS "${EXTERNAL_BUILD_DIR}/${arg}/SConstruct")
+	  MESG("[${arg}] SCONS configuration tool")
+	  SET(CONFPARM scons --prefix=${CMAKE_INSTALL_PREFIX} --libpath=${CMAKE_INSTALL_PREFIX}/lib --cxx=${CHAOS_CXX_COMPILER_REL} --cc=${CHAOS_C_COMPILER_REL} --cpppath=${CMAKE_INSTALL_PREFIX}/include --extrapath=${CMAKE_INSTALL_PREFIX} -j ${PROCESSOR_COUNT} ${arg1} )
 	  SET(SKIPBUILD ON)
 	ENDIF()
       ENDIF()
@@ -127,26 +181,26 @@ macro (ConfigureAndBuild arg arg1)
   
   execute_process( 
     COMMAND ${CONFPARM}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
+    WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
     RESULT_VARIABLE err
     OUTPUT_VARIABLE out
     )
   
   if( err)
-    ERROR("configuring ${arg} :${out}")
+    ERROR("[${arg}] configuring ${arg} :${out}")
   endif()
   
   IF(NOT SKIPBUILD)
     message(STATUS "[${arg}] compiling (${PROCESSOR_COUNT})")
     execute_process( 
       COMMAND make install -j ${PROCESSOR_COUNT}
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/${arg}
+      WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/${arg}
       RESULT_VARIABLE err2
       OUTPUT_VARIABLE out2
       )
     
     if( err2)
-      ERROR("compiling ${out2}: ${err2}")
+      ERROR("[${arg}] compiling ${out2}: ${err2}")
     endif()
   ENDIF()
 
@@ -155,17 +209,31 @@ endmacro()
 
 
 macro (BoostInstall ver url arg)
-  MESG("Boost install arg: ${arg}")
+  MESG("[BOOST] install arg: ${arg}")
   wget(boost_1_${ver}_0.tar.gz  https://sourceforge.net/projects/boost/files/boost/1.${ver}.0)
+  STRING(REPLACE "/" "\\/" SEDARG ${CMAKE_CXX_COMPILER})
+
   tar(xf boost_1_${ver}_0.tar.gz)
+
   execute_process(
-    COMMAND ./bootstrap.sh
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/boost_1_${ver}_0
+    COMMAND ./bootstrap.sh 
+    WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_0
     RESULT_VARIABLE err
     OUTPUT_VARIABLE out
     )
   if( err)
-    ERROR("bootstrapping boost  failed  error: ${out}")
+    ERROR("[BOOST] bootstrapping boost  failed  error: ${out}")
+  endif()
+
+
+  execute_process(
+    COMMAND sed -i -e "s/using gcc/using gcc : arm : ${SEDARG}/" project-config.jam
+    WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost_1_${ver}_0
+    RESULT_VARIABLE err
+    OUTPUT_VARIABLE out
+    )
+  if( err)
+    ERROR("[BOOST] error patching boost project-config.jam error: ${out}")
   endif()
   ConfigureAndBuild(boost_1_${ver}_0 "${arg}")
 endmacro()
@@ -212,6 +280,12 @@ option(CHAOS_FORCE32 "Set to ON to enable 32 bit compilation" OFF)
 option(CHAOS_STATIC "Set static compilation" OFF)
 option(CHAOS_DEBUG "Enable Debug" ON)
 option(CHAOS_DISABLE_EVENTFD "Disable EventFD" OFF)
+option(CHAOS_BUILD_CACHE "Keep third part sources" ON)
+
+IF(CHAOS_BUILD_CACHE)
+  MESG("activated chaos build cache ${CACHE_DIR}") 
+  FILE(MAKE_DIRECTORY ${CACHE_DIR})
+ENDIF()
 EXECUTE_PROCESS(COMMAND uname -s OUTPUT_VARIABLE CHAOS_SYSTEM_NAME)
 
 IF(${SYSTEM_NAME} MATCHES "Darwin")
@@ -246,26 +320,32 @@ ENDIF()
 IF (CHAOS_TARGET)
   IF(${CHAOS_TARGET} MATCHES "armhf") 
     MESG("checking armhf cross compilation chain....")
-    find_program(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++-4.8)
-    find_program(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc-4.8)
-    
+
+    CheckCompiler("CXX" arm-linux-gnueabihf-g++-4.8)
+    CheckCompiler("C" arm-linux-gnueabihf-gcc-4.8)
+    SET(CMAKE_SYSTEM_NAME "Linux")
+    SET(CMAKE_SYSTEM_PROCESSOR "arm")
+    #    SET(CMAKE_FIND_ROOT_PATH  /usr/arm-linux-gnueabihf/) 
+
     SET(COMP_FLAGS "-D__BSON_USEMEMCPY__ -mcpu=xscale -D__BSON_USEM")
     SET(CHAOS_CROSS_HOST arm-linux-gnueabihf)
   ELSE()
     IF(${CHAOS_TARGET} MATCHES "arm-linux-2.6") 
       MESG("Cross compiling for ARM(soft float) platforms on linux 2.6")
-      find_program(CMAKE_CXX_COMPILER arm-infn-linux-gnueabi-g++)
-      find_program(CMAKE_C_COMPILER arm-infn-linux-gnueabi-gcc)
+      CheckCompiler("CXX" arm-infn-linux-gnueabi-g++)
+      CheckCompiler("C" arm-infn-linux-gnueabi-gcc)
+
+      SET(CMAKE_C_COMPILER arm-infn-linux-gnueabi-gcc)
       SET(CHAOS_CROSS_HOST arm-infn-linux-gnueabi)
 
       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBOOST_ASIO_DISABLE_EVENTFD -D__BSON_USEMEMCPY__ -mcpu=xscale -D__BSON_USEMEMCPY__ -DBOOST_ASIO_DISABLE_EVENTFD -mno-unaligned-access -DDISABLE_COMPARE_AND_SWAP -mfloat-abi=soft") 
-      SET(CHAOS_BOOST_FLAGS toolset=gcc-arm target-os=linux)
+      SET(CHAOS_BOOST_FLAGS toolset=gcc-arm target-os=linux compiler=)
       SET(CHAOS_DISABLE_EVENTFD ON)
     ELSE()
       IF(${CHAOS_TARGET} MATCHES "i686-linux26") 
 	MESG("Cross compiling for i686 platforms on linux 2.6")
-	find_program(CMAKE_CXX_COMPILER i686-nptl-linux-gnu-g++)
-	find_program(CMAKE_C_COMPILER i686-nptl-linux-gnu-gcc)
+	CheckCompiler("CXX" i686-nptl-linux-gnu-g++)
+	CheckCompiler("C" i686-nptl-linux-gnu-gcc)
 	SET(CHAOS_CROSS_HOST i686-nptl-linux-gnu)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBOOST_ASIO_DISABLE_EVENTFD") 
 	SET(CHAOS_BOOST_FLAGS target-os=linux)
@@ -273,8 +353,9 @@ IF (CHAOS_TARGET)
       ELSE()
 	IF(${CHAOS_TARGET} MATCHES "crio90xx") 
 	  MESG("Cross compiling for crio90xx")
-	  find_program(CMAKE_CXX_COMPILER arm-nilrt-linux-gnueabi-g++)
-	  find_program(CMAKE_C_COMPILER arm-nilrt-linux-gnueabi-gcc)
+	  CheckCompiler("CXX" arm-nilrt-linux-gnueabi-g++)
+	  CheckCompiler("C" arm-nilrt-linux-gnueabi-gcc)
+
 	  SET(CHAOS_DISABLE_EVENTFD ON)
 	  SET(CMAKE_EXE_LINKER_FLAGS -L/usr/local/chaos/oecore-x86_64/sysroots/armv7a-vfp-neon-nilrt-linux-gnueabi/lib)
 	  SET(CHAOS_CROSS_HOST arm-nilrt-linux-gnueabi)
@@ -292,8 +373,12 @@ IF (CHAOS_TARGET)
 ENDIF()
 SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} cxxflags="${CMAKE_CXX_FLAGS}" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer link=static install "-j ${PROCESSOR_COUNT}" -d+2)
 
-get_filename_component(CHAOS_CXX_COMPILER ${CMAKE_CXX_COMPILER} NAME)
-get_filename_component(CHAOS_C_COMPILER ${CMAKE_C_COMPILER} NAME)
+IF(CHAOS_CROSS_HOST)
+  SET( CROSS_HOST "--host=${CHAOS_CROSS_HOST}")
+ENDIF()
+
+get_filename_component(CHAOS_CXX_COMPILER_REL ${CMAKE_CXX_COMPILER} NAME)
+get_filename_component(CHAOS_C_COMPILER_REL ${CMAKE_C_COMPILER} NAME)
 ######
 
 #### TOOL VERSIONS
@@ -316,13 +401,13 @@ MESG("C compiler   : ${CMAKE_C_COMPILER}")
 
 
 
-IF( DEFINED ENV{CHAOS_CROSS_HOST})
+# IF( DEFINED ENV{CHAOS_CROSS_HOST})
   
-  SET( CROSS_HOST "--host=$ENV{CHAOS_CROSS_HOST}")
-  MESG("cross parameters ${CROSS_HOST} CMAKE: ${CMAKE_CHAOS}")
-ELSE()
-  SET( CROSS_HOST "")
-ENDIF()
+#   SET( CROSS_HOST "--host=$ENV{CHAOS_CROSS_HOST}")
+#   MESG("cross parameters ${CROSS_HOST} CMAKE: ${CMAKE_CHAOS}")
+# ELSE()
+#   SET( CROSS_HOST "")
+# ENDIF()
 
 
 
@@ -343,10 +428,10 @@ INCLUDE_DIRECTORIES(${CHAOS_FRAMEWORK})
 #     INCLUDE_DIRECTORIES($ENV{CHAOS_BUNDLE}/chaosframework)
 # ENDIF()
 
-If(CHAOS_C_COMPILER)
-  MESG("Setting C compiler ${CHAOS_C_COMPILER}")
-  SET(CMAKE_C_COMPILER ${CHAOS_C_COMPILER})
-ENDIF()
+#If(CHAOS_C_COMPILER)
+#  MESG("Setting C compiler ${CHAOS_C_COMPILER}")
+#  SET(CMAKE_C_COMPILER ${CHAOS_C_COMPILER})
+#ENDIF()
 
 IF(CHAOS_CC_COMPILER)
   MESG("Setting CC compiler ${CHAOS_CC_COMPILER}")
@@ -426,10 +511,12 @@ ENDIF()
 SET(CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
 SET(CMAKE_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib)
 unset(Boost_FOUND CACHE)
-find_package( Boost COMPONENTS program_options regex date_time system chrono regex log_setup log filesystem thread atomic)
-if(Boost_FOUND)
-  MESG("boost found in ${Boost_INCLUDE_DIRS}")
-  include_directories(${Boost_INCLUDE_DIRS}) 
+#find_package( Boost COMPONENTS program_options regex date_time system chrono regex log_setup log filesystem thread atomic)
+unset(LIB_NEED CACHE)
+find_library( LIB_NEED NAMES program_options regex date_time system chrono regex log_setup log filesystem thread atomic)
+if(LIB_NEED)
+  MESG("boost found ")
+#  include_directories(${Boost_INCLUDE_DIRS}) 
 else()
   MESG("boost not found downloading...")
   boostInstall(${BOOST_VERSION} http://download.sourceforge.net/project/boost/boost/1.${BOOST_VERSION}.0 "${CHAOS_BOOST_FLAGS}")
@@ -437,7 +524,7 @@ else()
   # gitCheckOut(boost boost-1.${BOOST_VERSION}.0)
   # execute_process(
   #   COMMAND ./bootstrap.sh
-  #   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/boost
+  #   WORKING_DIRECTORY ${EXTERNAL_BUILD_DIR}/boost
   #   RESULT_VARIABLE err
   #   OUTPUT_VARIABLE out
   #   )
