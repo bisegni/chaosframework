@@ -23,6 +23,8 @@
 #define __CHAOSFramework__5E877DE_5866_4F13_9762_9D4BBF1143EE_DataBrokerEditor_h
 
 #include <chaos/cu_toolkit/data_manager/data_manager_types.h>
+#include <chaos/cu_toolkit/data_manager/manipulation/DatasetEditor.h>
+#include <chaos/cu_toolkit/data_manager/manipulation/DatasetCacheWrapper.h>
 
 namespace chaos {
     namespace cu {
@@ -71,123 +73,11 @@ namespace chaos {
                     
                     
                     
-                    //!Add a new attribute
-                    /*!
-                     Add the new attribute to a dataset
-                     \ingroup Dataset_Editor_Api
-                     \ingroup Control_Unit_Definition_Api
-                     \param ds_name the name of the dataset that is parent of the attribute
-                     \param attr_name the name of the new attribute
-                     \param attribute_description the description of the attribute
-                     \param attr_type the type of the new attribute
-                     */
-                    int addAttributeToDataset(const std::string& ds_name,
-                                              const std::string& attr_name,
-                                              const std::string& attr_description,
-                                              const chaos::DataType::DataType attr_type,
-                                              uint32_t maxSize = 0);
+                    //!Return editor for the specified dataset
+                    std::auto_ptr<DatasetEditor> getDatasetEditorFor(const std::string& ds_name);
                     
-                    /*!
-                     \ingroup Dataset_Editor_Api
-                     \ingroup Control_Unit_Definition_Api
-                     */
-                    int addBinaryAttributeAsSubtypeToDataSet(const std::string&        ds_name,
-                                                             const std::string&        attr_name,
-                                                             const std::string&        attr_description,
-                                                             DataType::BinarySubtype   attr_subtype,
-                                                             int32_t                   attr_cardinality);
-                    
-                    /*!
-                     \ingroup Dataset_Editor_Api
-                     \ingroup Control_Unit_Definition_Api
-                     */
-                    int addBinaryAttributeAsSubtypeToDataSet(const std::string&                             ds_name,
-                                                             const std::string&                             attr_name,
-                                                             const std::string&                             attr_description,
-                                                             const std::vector<DataType::BinarySubtype>&    attr_subtype_list,
-                                                             int32_t                                        attr_cardinality);
-                    
-                    /*!
-                     \ingroup Dataset_Editor_Api
-                     \ingroup Control_Unit_Definition_Api
-                     */
-                    int addBinaryAttributeAsMIMETypeToDataSet(const std::string& ds_name,
-                                                              const std::string& attr_name,
-                                                              const std::string& attr_description,
-                                                              const std::string& attr_mime_type);
-                    
-                    //! Set the value for a determinated attribute of a dataset
-                    int setOutputAttributeValue(const std::string&  ds_name,
-                                                const std::string&  attr_name,
-                                                void * value,
-                                                uint32_t size);
-                    
-                    //! Set the value for a determinated attribute of a dataset
-                    int setOutputAttributeValue(const std::string& ds_name,
-                                                const unsigned int attr_index,
-                                                void * value,
-                                                uint32_t size);
-                    
-                    //! Return the value object for the domain and the string key
-                    template<typename T>
-                    int getReadonlyCachedAttributeValue(const std::string& ds_name,
-                                                        const std::string& attr_name,
-                                                        const T*** value_ptr) {
-                        DECNameIndexIterator nit = ds_index_name.find(ds_name);
-                        if(nit == ds_index_name.end()) return -1;
-                        //we have the dataset
-                        chaos::common::data::cache::AttributeValue *value_setting = (*nit)->dataset_value_cache.getValueSettingByName(attr_name);
-                        if(value_setting) {
-                            *value_ptr = (const T**)&value_setting->value_buffer;
-                        }
-                    }
-                    
-                    //! Return the value object for the domain and the index of the variable
-                    template<typename T>
-                    int getReadonlyCachedAttributeValue(const std::string& ds_name,
-                                                        unsigned int attr_index,
-                                                        const T*** value_ptr) {
-                        DECNameIndexIterator nit = ds_index_name.find(ds_name);
-                        if(nit == ds_index_name.end()) return -1;
-                        
-                        //we have the dataset
-                        chaos::common::data::cache::AttributeValue *value_setting = (*nit)->dataset_value_cache.getValueSettingForIndex(attr_index);
-                        if(value_setting) {
-                            *value_ptr = (const T**)&value_setting->value_buffer;
-                        }
-                    }
-                    
-                    //! Return the value object for the domain and the string key
-                    template<typename T>
-                    int getCachedCustomAttributeValue(const std::string& ds_name,
-                                                      const std::string& attr_name,
-                                                      T*** value_ptr) {
-                        DECNameIndexIterator nit = ds_index_name.find(ds_name);
-                        if(nit == ds_index_name.end()) return -1;
-                        //we have the dataset
-                        chaos::common::data::cache::AttributeValue *value_setting = (*nit)->dataset_value_cache.getValueSettingByName(attr_name);
-                        if(value_setting) {
-                            *value_ptr = (const T**)&value_setting->value_buffer;
-                        }
-                    }
-                    
-                    //! Return the value object for the domain and the index of the variable
-                    template<typename T>
-                    int getCachedCustomAttributeValue(const std::string& ds_name,
-                                                      unsigned int attr_index,
-                                                      T*** value_ptr) {
-                        DECNameIndexIterator nit = ds_index_name.find(ds_name);
-                        if(nit == ds_index_name.end()) return -1;
-                        
-                        //check if dataset is of an input type
-                        if((*nit)->dataset->type != chaos::DataType::DatasetTypeInput) return -2;
-                        
-                        //we have the dataset
-                        chaos::common::data::cache::AttributeValue *value_setting = (*nit)->dataset_value_cache.getValueSettingForIndex(attr_index);
-                        if(value_setting) {
-                            *value_ptr = (const T**)&value_setting->value_buffer;
-                        }
-                    }
+                    //!Return wrapper for the specified dataset cache
+                    std::auto_ptr<DatasetCacheWrapper> getDatasetCacheWrapperFor(const std::string& ds_name);
                     
                     //! return a CDataWrapper pointr with the dataset serialization
                     std::auto_ptr<chaos::common::data::CDataWrapper> serialize();

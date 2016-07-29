@@ -1,10 +1,10 @@
 /*
- *	AbstractEventConsumer.cpp
+ *	trigger_system_types.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 28/07/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 29/07/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,6 +19,17 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/data_manager/event/AbstractEventConsumer.h>
+#ifndef __CHAOSFramework_F51EAA5C_833E_40F9_A315_AB754895AC25_trigger_system_types_h
+#define __CHAOSFramework_F51EAA5C_833E_40F9_A315_AB754895AC25_trigger_system_types_h
 
-using namespace chaos::cu::data_manager::event;
+namespace chaos {
+    namespace cu {
+        namespace data_manager {
+            namespace trigger_system {
+
+            }
+        }
+    }
+}
+
+#endif /* __CHAOSFramework_F51EAA5C_833E_40F9_A315_AB754895AC25_trigger_system_types_h */

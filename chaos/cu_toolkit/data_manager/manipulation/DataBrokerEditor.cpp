@@ -53,120 +53,26 @@ int DataBrokerEditor::addNewDataset(const std::string& name,
     return 0;
 }
 
-int DataBrokerEditor::addAttributeToDataset(const std::string& ds_name,
-                                            const std::string& attr_name,
-                                            const std::string& attr_description,
-                                            const chaos::DataType::DataType attr_type,
-                                            uint32_t maxSize) {
-    int err = 0;
+std::auto_ptr<DatasetEditor> DataBrokerEditor::getDatasetEditorFor(const std::string& ds_name) {
+    std::auto_ptr<DatasetEditor> result;
     DECNameIndexIterator nit = ds_index_name.find(ds_name);
-    if(nit != ds_index_name.end()) {
-        //a dataset with name already exists
+    if(nit == ds_index_name.end()) {
         ERR << CHAOS_FORMAT("No dataset with name %1% found", %ds_name);
-        err = -1;
     } else {
-        //we can manipualte dataset adding new attrbiute
-        DatasetAttributePtr new_attribute(new DatasetAttribute(attr_name,
-                                                               attr_description,
-                                                               attr_type));
-        //add new attribute
-        if((err = (*nit)->dataset->addAttribute(new_attribute))) {
-            ERR << CHAOS_FORMAT("Error adding new attribute %1% into the dataset %2%", %attr_name%ds_name);
-        } else {
-            //add new cache for attribute
-            (*nit)->dataset_value_cache.addAttribute(attr_name,
-                                                     maxSize,
-                                                     attr_type);
-        }
+        result.reset(new DatasetEditor((DatasetElement::DatasetElementPtr&)*nit));
     }
-    return err;
+    return result;
 }
 
-int DataBrokerEditor::addBinaryAttributeAsSubtypeToDataSet(const std::string&          ds_name,
-                                                           const std::string&          attr_name,
-                                                           const std::string&          attr_description,
-                                                           DataType::BinarySubtype     attr_subtype,
-                                                           int32_t                     attr_cardinality) {
-    //add the attribute
-    int err = addAttributeToDataset(ds_name,
-                                    attr_name,
-                                    attr_description,
-                                    DataType::TYPE_BYTEARRAY);
-    if(err) {return err;}
-    
-    //set other value of the attribute
+std::auto_ptr<DatasetCacheWrapper> DataBrokerEditor::getDatasetCacheWrapperFor(const std::string& ds_name) {
+    std::auto_ptr<DatasetCacheWrapper> result;
     DECNameIndexIterator nit = ds_index_name.find(ds_name);
-    DatasetAttributePtr attribute_ptr = (*nit)->dataset->getAttributebyName(attr_name);
-    attribute_ptr->binary_subtype_list.push_back(attr_subtype);
-    attribute_ptr->binary_cardinality = attr_cardinality;
-    return err;
-}
-
-int DataBrokerEditor::addBinaryAttributeAsSubtypeToDataSet(const std::string&           ds_name,
-                                                           const std::string&           attr_name,
-                                                           const std::string&           attr_description,
-                                                           const DatasetSubtypeList&    attr_subtype_list,
-                                                           int32_t                      attr_cardinality) {
-    //add the attribute
-    int err = addAttributeToDataset(ds_name,
-                                    attr_name,
-                                    attr_description,
-                                    DataType::TYPE_BYTEARRAY);
-    if(err) {return err;}
-    
-    //set other value of the attribute
-    DECNameIndexIterator nit = ds_index_name.find(ds_name);
-    DatasetAttributePtr attribute_ptr = (*nit)->dataset->getAttributebyName(attr_name);
-    attribute_ptr->binary_subtype_list = attr_subtype_list;
-    attribute_ptr->binary_cardinality = attr_cardinality;
-    return err;
-}
-
-int DataBrokerEditor::addBinaryAttributeAsMIMETypeToDataSet(const std::string& ds_name,
-                                                            const std::string& attr_name,
-                                                            const std::string& attr_description,
-                                                            const std::string& attr_mime_type) {
-    //add the attribute
-    int err = addAttributeToDataset(ds_name,
-                                    attr_name,
-                                    attr_description,
-                                    DataType::TYPE_BYTEARRAY);
-    if(err) {return err;}
-    
-    //set other value of the attribute
-    DECNameIndexIterator nit = ds_index_name.find(ds_name);
-    DatasetAttributePtr attribute_ptr = (*nit)->dataset->getAttributebyName(attr_name);
-    return err;
-}
-
-int DataBrokerEditor::setOutputAttributeValue(const std::string&  ds_name,
-                                              const std::string&  attr_name,
-                                              void * value,
-                                              uint32_t size) {
-    DECNameIndexIterator nit = ds_index_name.find(ds_name);
-    if(nit == ds_index_name.end()) return -1;
-    //we have the dataset
-    chaos::common::data::cache::AttributeValue *value_setting = (*nit)->dataset_value_cache.getValueSettingByName(attr_name);
-    if(value_setting) {
-        value_setting->setValue(value,
-                                size);
+    if(nit == ds_index_name.end()) {
+        ERR << CHAOS_FORMAT("No dataset with name %1% found", %ds_name);
+    } else {
+        result.reset(new DatasetCacheWrapper((DatasetElement::DatasetElementPtr&)*nit));
     }
-    return 0;
-}
-
-int DataBrokerEditor::setOutputAttributeValue(const std::string& ds_name,
-                                              const unsigned int attr_index,
-                                              void * value,
-                                              uint32_t size) {
-    DECNameIndexIterator nit = ds_index_name.find(ds_name);
-    if(nit == ds_index_name.end()) return -1;
-    //we have the dataset
-    chaos::common::data::cache::AttributeValue *value_setting = (*nit)->dataset_value_cache.getValueSettingForIndex(attr_index);
-    if(value_setting) {
-        value_setting->setValue(value,
-                                size);
-    }
-    return 0;
+    return result;
 }
 
 std::auto_ptr<CDataWrapper> DataBrokerEditor::serialize() {

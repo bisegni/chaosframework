@@ -1,10 +1,10 @@
 /*
- *	EventDispatcher.cpp
+ *	trigger_system_types.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 28/07/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 29/07/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,6 +19,4 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/data_manager/event/AbstractEventConsumer.h>
-
-using namespace chaos::cu::data_manager::event;
+#include "trigger_system_types.h"
