@@ -24,28 +24,27 @@
 using namespace chaos::common::data;
 using namespace chaos::cu::data_manager::trigger_system;
 
-#pragma mark TriggerEventSetDSAttribute
-TriggerEventSetDSAttribute::TriggerEventSetDSAttribute(const ETDatasetAttributeChangePhase _phase):
-TriggerEvent("TriggerEventPreSetDSAttribute", 0),
-phase(_phase){}
+#pragma mark AbstractEventDSAttribute
+AbstractEventDSAttribute::AbstractEventDSAttribute(const std::string& _event_name,
+                                                   const ETDatasetAttributeType _type):
+AbstractEvent("EventDatasetAttribute."+_event_name, 0),
+type(_type){}
 
-
-
-#pragma mark EventConsumerSetDSAttribute
-EventConsumerSetDSAttribute::EventConsumerSetDSAttribute():
-AbstractEventConsumer("EventConsumerSetDSAttribute"){}
-
-EventConsumerSetDSAttribute::~EventConsumerSetDSAttribute(){}
-
-#pragma smark EventConsumerSetDSAttributeMaxMin
-
-ETDatasetAttributeChangeResult EventConsumerSetDSAttributeMaxMin::executePre(ETDatasetAttributeChangePhase event_type,
-                                                                             CDataVariant attribute_new_value,
-                                                                             CDataVariant attribute_converted_value) {
-    return ETDatasetAttributeChangeResultOK;
+const ETDatasetAttributeType AbstractEventDSAttribute::getType() const {
+    return type;
 }
 
-ETDatasetAttributeChangeResult EventConsumerSetDSAttributeMaxMin::executePost(ETDatasetAttributeChangePhase event_type,
-                                                                              CDataVariant attribute_values) {
-    return ETDatasetAttributeChangeResultOK;
+
+#pragma mark EventConsumerDSAttribute
+EventConsumerDSAttribute::EventConsumerDSAttribute():
+AbstractConsumer("EventConsumerDSAttribute"){}
+
+EventConsumerDSAttribute::~EventConsumerDSAttribute(){}
+
+#pragma smark EventConsumerDSAttributeMaxMin
+
+ETDatasetAttributeResult EventConsumerDSAttributeMaxMin::execute(ETDatasetAttributeType event_type,
+                                                                             CDataVariant attribute_new_value,
+                                                                             CDataVariant attribute_converted_value) {
+    return ETDatasetAttributeResultOK;
 }

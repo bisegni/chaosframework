@@ -188,9 +188,9 @@
 		324544FD1D4A56170081F90B /* AbstractListenerContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 324544FB1D4A56170081F90B /* AbstractListenerContainer.h */; };
 		324545011D4A676A0081F90B /* EventManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324544FF1D4A676A0081F90B /* EventManager.cpp */; };
 		324545021D4A676A0081F90B /* EventManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 324545001D4A676A0081F90B /* EventManager.h */; };
-		324545051D4A68380081F90B /* AbstractEventConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324545031D4A68380081F90B /* AbstractEventConsumer.cpp */; };
-		324545061D4A68380081F90B /* AbstractEventConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 324545041D4A68380081F90B /* AbstractEventConsumer.h */; };
-		3245450A1D4B443B0081F90B /* AbstractEventType.h in Headers */ = {isa = PBXBuildFile; fileRef = 324545081D4B443B0081F90B /* AbstractEventType.h */; };
+		324545051D4A68380081F90B /* AbstractConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324545031D4A68380081F90B /* AbstractConsumer.cpp */; };
+		324545061D4A68380081F90B /* AbstractConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 324545041D4A68380081F90B /* AbstractConsumer.h */; };
+		3245450A1D4B443B0081F90B /* AbstractEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 324545081D4B443B0081F90B /* AbstractEvent.h */; };
 		32460520179C55FC00B075DA /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3246051E179C55FC00B075DA /* sqlite3.c */; };
 		32460521179C55FC00B075DA /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3246051F179C55FC00B075DA /* sqlite3.h */; };
 		324A4B0D191A3F6A00975394 /* disallow_copying.h in Headers */ = {isa = PBXBuildFile; fileRef = 324A4B03191A3F6A00975394 /* disallow_copying.h */; };
@@ -858,7 +858,7 @@
 		32C4C2AD1C8D9A8600D74E0F /* CException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4C2AC1C8D9A8600D74E0F /* CException.cpp */; };
 		32C4C86D193491F2002DA741 /* URLServiceFeeder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4C86B193491F2002DA741 /* URLServiceFeeder.cpp */; };
 		32C4C86E193491F2002DA741 /* URLServiceFeeder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4C86C193491F2002DA741 /* URLServiceFeeder.h */; };
-		32C4EF1A1D4B812D0014F3D3 /* AbstractEventType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4EF191D4B812D0014F3D3 /* AbstractEventType.cpp */; };
+		32C4EF1A1D4B812D0014F3D3 /* AbstractEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4EF191D4B812D0014F3D3 /* AbstractEvent.cpp */; };
 		32C4EF1E1D4B8AFE0014F3D3 /* trigger_system_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF1C1D4B8AFE0014F3D3 /* trigger_system_types.h */; };
 		32C4EF211D4B99D80014F3D3 /* EventConsumerDatasetChange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4EF1F1D4B99D80014F3D3 /* EventConsumerDatasetChange.cpp */; };
 		32C4EF221D4B99D80014F3D3 /* EventConsumerDatasetChange.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF201D4B99D80014F3D3 /* EventConsumerDatasetChange.h */; };
@@ -1004,6 +1004,8 @@
 		32FB201D1A3F11C400307A86 /* AttributeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FB201B1A3F11C400307A86 /* AttributeCache.h */; };
 		32FB20201A3F2E7300307A86 /* AbstractSharedDomainCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB201E1A3F2E7300307A86 /* AbstractSharedDomainCache.cpp */; };
 		32FB20211A3F2E7300307A86 /* AbstractSharedDomainCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FB201F1A3F2E7300307A86 /* AbstractSharedDomainCache.h */; };
+		32FB67B51D4E1F94003962BD /* RegisterEventConsumerEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB67B31D4E1F94003962BD /* RegisterEventConsumerEnvironment.cpp */; settings = {ASSET_TAGS = (); }; };
+		32FB67B61D4E1F94003962BD /* RegisterEventConsumerEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FB67B41D4E1F94003962BD /* RegisterEventConsumerEnvironment.h */; settings = {ASSET_TAGS = (); }; };
 		32FC2EA91D09864F00475B25 /* service_error.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC2EA71D09864F00475B25 /* service_error.h */; };
 		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
@@ -1354,9 +1356,9 @@
 		324544FB1D4A56170081F90B /* AbstractListenerContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractListenerContainer.h; sourceTree = "<group>"; };
 		324544FF1D4A676A0081F90B /* EventManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventManager.cpp; sourceTree = "<group>"; };
 		324545001D4A676A0081F90B /* EventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventManager.h; sourceTree = "<group>"; };
-		324545031D4A68380081F90B /* AbstractEventConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEventConsumer.cpp; sourceTree = "<group>"; };
-		324545041D4A68380081F90B /* AbstractEventConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEventConsumer.h; sourceTree = "<group>"; };
-		324545081D4B443B0081F90B /* AbstractEventType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEventType.h; sourceTree = "<group>"; };
+		324545031D4A68380081F90B /* AbstractConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractConsumer.cpp; sourceTree = "<group>"; };
+		324545041D4A68380081F90B /* AbstractConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractConsumer.h; sourceTree = "<group>"; };
+		324545081D4B443B0081F90B /* AbstractEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEvent.h; sourceTree = "<group>"; };
 		3246051E179C55FC00B075DA /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
 		3246051F179C55FC00B075DA /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
 		324A4B00191947BD00975394 /* MongodbIndex */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MongodbIndex; sourceTree = "<group>"; };
@@ -2178,7 +2180,7 @@
 		32C4C2AC1C8D9A8600D74E0F /* CException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CException.cpp; sourceTree = "<group>"; };
 		32C4C86B193491F2002DA741 /* URLServiceFeeder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLServiceFeeder.cpp; sourceTree = "<group>"; };
 		32C4C86C193491F2002DA741 /* URLServiceFeeder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLServiceFeeder.h; sourceTree = "<group>"; };
-		32C4EF191D4B812D0014F3D3 /* AbstractEventType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEventType.cpp; sourceTree = "<group>"; };
+		32C4EF191D4B812D0014F3D3 /* AbstractEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEvent.cpp; sourceTree = "<group>"; };
 		32C4EF1C1D4B8AFE0014F3D3 /* trigger_system_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trigger_system_types.h; sourceTree = "<group>"; };
 		32C4EF1F1D4B99D80014F3D3 /* EventConsumerDatasetChange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventConsumerDatasetChange.cpp; sourceTree = "<group>"; };
 		32C4EF201D4B99D80014F3D3 /* EventConsumerDatasetChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventConsumerDatasetChange.h; sourceTree = "<group>"; };
@@ -2372,6 +2374,8 @@
 		32FB201B1A3F11C400307A86 /* AttributeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeCache.h; sourceTree = "<group>"; };
 		32FB201E1A3F2E7300307A86 /* AbstractSharedDomainCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractSharedDomainCache.cpp; sourceTree = "<group>"; };
 		32FB201F1A3F2E7300307A86 /* AbstractSharedDomainCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSharedDomainCache.h; sourceTree = "<group>"; };
+		32FB67B31D4E1F94003962BD /* RegisterEventConsumerEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegisterEventConsumerEnvironment.cpp; sourceTree = "<group>"; };
+		32FB67B41D4E1F94003962BD /* RegisterEventConsumerEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterEventConsumerEnvironment.h; sourceTree = "<group>"; };
 		32FC2EA71D09864F00475B25 /* service_error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = service_error.h; sourceTree = "<group>"; };
 		32FC7EDF1A7008780029C2A2 /* mds_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_constants.h; sourceTree = "<group>"; };
 		32FC7EE01A7008FA0029C2A2 /* mds_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_types.h; sourceTree = "<group>"; };
@@ -2937,13 +2941,15 @@
 			children = (
 				324544FF1D4A676A0081F90B /* EventManager.cpp */,
 				324545001D4A676A0081F90B /* EventManager.h */,
-				324545031D4A68380081F90B /* AbstractEventConsumer.cpp */,
-				324545041D4A68380081F90B /* AbstractEventConsumer.h */,
-				32C4EF191D4B812D0014F3D3 /* AbstractEventType.cpp */,
-				324545081D4B443B0081F90B /* AbstractEventType.h */,
+				324545031D4A68380081F90B /* AbstractConsumer.cpp */,
+				324545041D4A68380081F90B /* AbstractConsumer.h */,
+				32C4EF191D4B812D0014F3D3 /* AbstractEvent.cpp */,
+				324545081D4B443B0081F90B /* AbstractEvent.h */,
 				32C4EF1C1D4B8AFE0014F3D3 /* trigger_system_types.h */,
 				32C4EF1F1D4B99D80014F3D3 /* EventConsumerDatasetChange.cpp */,
 				32C4EF201D4B99D80014F3D3 /* EventConsumerDatasetChange.h */,
+				32FB67B31D4E1F94003962BD /* RegisterEventConsumerEnvironment.cpp */,
+				32FB67B41D4E1F94003962BD /* RegisterEventConsumerEnvironment.h */,
 			);
 			path = trigger_system;
 			sourceTree = "<group>";
@@ -5262,7 +5268,7 @@
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
 				325FC8571AF7670200DB9D66 /* BasicIODriverInterface.h in Headers */,
 				32995C431BAC57A300F68148 /* SCWaitCommand.h in Headers */,
-				3245450A1D4B443B0081F90B /* AbstractEventType.h in Headers */,
+				3245450A1D4B443B0081F90B /* AbstractEvent.h in Headers */,
 				32CFC5CB1AF5601300E2A0B6 /* BasicIODriver.h in Headers */,
 				326DB4BB14B3A3E50018A8D0 /* CommandManager.h in Headers */,
 				32234D40176E045100525E0C /* SlowCommandExecutor.h in Headers */,
@@ -5275,9 +5281,10 @@
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
 				326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */,
 				3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */,
-				324545061D4A68380081F90B /* AbstractEventConsumer.h in Headers */,
+				324545061D4A68380081F90B /* AbstractConsumer.h in Headers */,
 				326DB4C914B3A3E50018A8D0 /* DataManager.h in Headers */,
 				324545021D4A676A0081F90B /* EventManager.h in Headers */,
+				32FB67B61D4E1F94003962BD /* RegisterEventConsumerEnvironment.h in Headers */,
 				32C4EF1E1D4B8AFE0014F3D3 /* trigger_system_types.h in Headers */,
 				326DB4CA14B3A3E50018A8D0 /* DataManagerException.h in Headers */,
 				3270D5E91CCFAC4F0072017B /* AbstractExecutionUnit.h in Headers */,
@@ -6084,8 +6091,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				32C4EF211D4B99D80014F3D3 /* EventConsumerDatasetChange.cpp in Sources */,
-				32C4EF1A1D4B812D0014F3D3 /* AbstractEventType.cpp in Sources */,
-				324545051D4A68380081F90B /* AbstractEventConsumer.cpp in Sources */,
+				32C4EF1A1D4B812D0014F3D3 /* AbstractEvent.cpp in Sources */,
+				324545051D4A68380081F90B /* AbstractConsumer.cpp in Sources */,
+				32FB67B51D4E1F94003962BD /* RegisterEventConsumerEnvironment.cpp in Sources */,
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
 				3214EF101D466F95004DB689 /* DataBroker.cpp in Sources */,

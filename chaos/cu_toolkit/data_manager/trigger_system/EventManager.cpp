@@ -33,7 +33,7 @@ EventManager::~EventManager() {
     
 }
 
-void EventManager::addEvent(TriggerEventShrdPtr trigger_event) {
+void EventManager::addEvent(AbstractEventShrdPtr trigger_event) {
     boost::unique_lock<boost::shared_mutex> wl(mutex_event_container);
     event_container.insert(trigger_event);
 }

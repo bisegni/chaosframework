@@ -22,66 +22,58 @@
 #ifndef __CHAOSFramework__F658651_325A_4E8C_8657_CEF5771A520B_EventConsumerDatasetChange_h
 #define __CHAOSFramework__F658651_325A_4E8C_8657_CEF5771A520B_EventConsumerDatasetChange_h
 
-#include <chaos/cu_toolkit//data_manager/trigger_system/AbstractEventType.h>
-#include <chaos/cu_toolkit//data_manager/trigger_system/AbstractEventConsumer.h>
+#include <chaos/cu_toolkit//data_manager/trigger_system/AbstractEvent.h>
+#include <chaos/cu_toolkit//data_manager/trigger_system/AbstractConsumer.h>
 
 namespace chaos {
     namespace cu {
         namespace data_manager {
             namespace trigger_system {
                 
-                //! define the phases of the change attribute event
-                typedef enum ETDatasetAttributeChangePhase {
-                    ETDatasetAttributeChangePhasePre,
-                    ETDatasetAttributeChangePhasePost
-                }ETDatasetAttributeChangePhase;
+                //! define the types for the event target dataset attribute
+                typedef enum ETDatasetAttributeType {
+                    ETDatasetAttributePreChange,
+                    ETDatasetAttributePostChange
+                }ETDatasetAttributeType;
                 
                 //! define the result of a attribute change event/consumer operation
-                typedef enum ETDatasetAttributeChangeResult {
+                typedef enum ETDatasetAttributeResult {
                     //!value has been accepted
-                    ETDatasetAttributeChangeResultOK,
-                    ETDatasetAttributeChangeResultRejected
-                }ETDatasetAttributeChangeResult;
+                    ETDatasetAttributeResultOK,
+                    ETDatasetAttributeResultRejected
+                }ETDatasetAttributeResult;
                 
                 
                 
                 //!define the event for attribute change
-                class TriggerEventSetDSAttribute:
-                public TriggerEvent {
-                    ETDatasetAttributeChangePhase phase;
+                class AbstractEventDSAttribute:
+                public AbstractEvent {
+                    ETDatasetAttributeType type;
                 public:
-                    TriggerEventSetDSAttribute(const ETDatasetAttributeChangePhase phase);
+                    AbstractEventDSAttribute(const std::string& _event_name,
+                                             const ETDatasetAttributeType _type);
+                    const ETDatasetAttributeType getType() const;
                 };
                 
                 
-                //!define the abstract consumer for TriggerEventSetDSAttribute
-                class EventConsumerSetDSAttribute:
-                public AbstractEventConsumer {
+                //!define the abstract consumer for AbstractEventSetDSAttribute
+                class EventConsumerDSAttribute:
+                public AbstractConsumer {
                 public:
-                    EventConsumerSetDSAttribute();
-                    ~EventConsumerSetDSAttribute();
-                    virtual ETDatasetAttributeChangeResult executePre(ETDatasetAttributeChangePhase event_type,
+                    EventConsumerDSAttribute();
+                    ~EventConsumerDSAttribute();
+                    virtual ETDatasetAttributeResult execute(ETDatasetAttributeType event_type,
                                                                       common::data::CDataVariant attribute_new_value,
                                                                       common::data::CDataVariant attribute_converted_value) = 0;
-                    
-                    virtual ETDatasetAttributeChangeResult executePost(ETDatasetAttributeChangePhase event_type,
-                                                                       common::data::CDataVariant attribute_values) = 0;
                 };
 
                 //!Implement the consumer max/min check
-                class EventConsumerSetDSAttributeMaxMin:
-                public EventConsumerSetDSAttribute {
+                class EventConsumerDSAttributeMaxMin:
+                public EventConsumerDSAttribute {
                 public:
-                    ETDatasetAttributeChangeResult executePre(ETDatasetAttributeChangePhase event_type,
-                                                                      common::data::CDataVariant attribute_new_value,
-                                                                      common::data::CDataVariant attribute_converted_value);
-                    
-                    ETDatasetAttributeChangeResult executePost(ETDatasetAttributeChangePhase event_type,
-                                                                       common::data::CDataVariant attribute_values);
-                };
-                
-                class EventConsumerSetDSAttributeTrigger {
-                    
+                    ETDatasetAttributeResult execute(ETDatasetAttributeType event_type,
+                                                                  common::data::CDataVariant attribute_new_value,
+                                                                  common::data::CDataVariant attribute_converted_value);
                 };
             }
         }

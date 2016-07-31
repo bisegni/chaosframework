@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework_C1346138_0E86_4813_9DE2_2C2B525C6C1C_EventManager_h
 #define __CHAOSFramework_C1346138_0E86_4813_9DE2_2C2B525C6C1C_EventManager_h
 
-#include <chaos/cu_toolkit/data_manager/trigger_system/AbstractEventType.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/AbstractEvent.h>
 
 #include <boost/thread.hpp>
 
@@ -38,7 +38,7 @@ namespace chaos {
                  */
                 class EventManager {
                     boost::shared_mutex     mutex_event_container;
-                    TriggerEventContainer   event_container;
+                    AbstractEventContainer   event_container;
                     
                     TECodeIndex& index_event_code;
                     TENameIndex& index_event_name;
@@ -46,7 +46,7 @@ namespace chaos {
                     EventManager();
                     ~EventManager();
                     
-                    void addEvent(TriggerEventShrdPtr trigger_event);
+                    void addEvent(AbstractEventShrdPtr trigger_event);
                 };
                 
             }
