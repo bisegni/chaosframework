@@ -16,6 +16,8 @@ function cleandir(){
 
 cleandir $chaos_bundle/external
 cleandir $chaos_bundle/usr
+cleandir $chaos_bundle/chaosframwork/external
+cleandir $chaos_bundle/chaosframwork/external_${CHAOS_TARGET}
 cleandir $chaos_bundle/chaosframwork/usr
 cleandir $chaos_bundle/chaosframework/bin
 cleandir $chaos_bundle/chaosframework/build
