@@ -199,12 +199,15 @@ macro (ConfigureAndBuild arg arg1)
       RESULT_VARIABLE err2
       OUTPUT_VARIABLE out2
       )
-    unset(SKIPBUILD CACHE)    
     if( err2)
       ERROR("[${arg}] compiling ${out2}: ${err2}")
     endif()
+  ELSE()
+    message(STATUS "[${arg}] compilation skipped...")
+    SET(SKIPBUILD OFF)    
+    unset(SKIPBUILD CACHE)    
   ENDIF()
-
+  
 
 endmacro()
 
@@ -399,7 +402,7 @@ MESG("System : ${CHAOS_SYSTEM_NAME}")
 MESG("Installation Dir : ${CMAKE_INSTALL_PREFIX}")
 MESG("CXX compiler : ${CMAKE_CXX_COMPILER}")
 MESG("C compiler   : ${CMAKE_C_COMPILER}")
-
+FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX})
 
 
 
@@ -520,7 +523,7 @@ unset(Boost_FOUND CACHE)
 unset(LIB_NEED CACHE)
 find_library(LIB_NEED NAMES boost_program_options boost_regex boost_date_time boost_system boost_chrono boost_log_setup boost_log boost_filesystem boost_thread boost_atomic)
 if(LIB_NEED)
-  MESG("boost found ")
+  MESG("BOOST found !!")
 #  include_directories(${Boost_INCLUDE_DIRS}) 
 else()
   MESG("boost not found in ${CMAKE_INSTALL_PREFIX}/lib downloading...")
