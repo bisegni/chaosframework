@@ -139,7 +139,7 @@ for dir in ${on_dir[@]}; do
 	s)
 	    git fetch
 	    info_mesg "directory " "$dir"
-	    git status
+	    git status | head -2
 	    ;;
 
 	c)
