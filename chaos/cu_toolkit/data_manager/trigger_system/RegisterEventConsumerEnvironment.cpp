@@ -6,4 +6,4 @@
 //  Copyright © 2016 INFN. All rights reserved.
 //
 
-#include "RegisterEventConsumerEnvironment.h"
+#include <chaos/cu_toolkit/data_manager/trigger_system/RegisterEventConsumerEnvironment.h>

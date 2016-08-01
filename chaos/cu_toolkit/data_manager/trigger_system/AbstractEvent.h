@@ -24,7 +24,7 @@
 
 #include <chaos/cu_toolkit/data_manager/trigger_system/trigger_system_types.h>
 #include <chaos/cu_toolkit/data_manager/trigger_system/AbstractConsumer.h>
-
+#include <chaos/cu_toolkit/data_manager/trigger_system/AbstractSubjectReceiver.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index_container.hpp>
@@ -43,7 +43,7 @@ namespace chaos {
                 //!forward decalration
                 struct AbstractEventMIExstractName;
                 struct AbstractEventMIExstractCode;
-                
+                struct AbstractEventMIExstractDomain;
                 
                 //! define a base event description that can trigger some executio
                 /*!
@@ -53,15 +53,23 @@ namespace chaos {
                 class AbstractEvent {
                     friend struct AbstractEventMIExstractName;
                     friend struct AbstractEventMIExstractCode;
-                    const std::string    event_name;
-                    const unsigned int   event_code;
+                    friend struct AbstractEventMIExstractDomain;
+                    
+                    const std::string   event_name;
+                    const std::string   event_domain;
+                    const unsigned int  event_code;
                     
                 public:
-                    AbstractEvent(const std::string& _event_name,
-                                 const unsigned int _event_code);
+                    AbstractEvent(const std::string& _event_domain,
+                                  const std::string& _event_name,
+                                  const unsigned int _event_code);
                     
-                    const std::string& getName() const;
-                    const unsigned int& getCode() const;
+                    const std::string& getEventName() const;
+                    const std::string& getEventDomain() const;
+                    const unsigned int& getEventCode() const;
+                    
+                    virtual ConsumerResult executeConsumerOnTarget(AbstractSubjectReceiver *subject_instance,
+                                                                   AbstractConsumer *consumer_instance) = 0;
                 };
                 
                 
@@ -74,6 +82,11 @@ namespace chaos {
                     const result_type &operator()(const AbstractEventShrdPtr &p) const;
                 };
                 
+                struct AbstractEventMIExstractDomain {
+                    typedef std::string result_type;
+                    const result_type &operator()(const AbstractEventShrdPtr &p) const;
+                };
+                
                 struct AbstractEventMIExstractCode {
                     typedef unsigned int result_type;
                     const result_type &operator()(const AbstractEventShrdPtr &p) const;
@@ -81,27 +94,30 @@ namespace chaos {
                 
                 
                 //tag
-                struct TEMITagCode{};
-                struct TEMITagName{};
+                struct EMITagCode{};
+                struct EMITagName{};
+                struct EMITagDomain{};
                 
                 //multi-index set
                 typedef boost::multi_index_container<
                 AbstractEventShrdPtr,
                 boost::multi_index::indexed_by<
-                boost::multi_index::ordered_non_unique<boost::multi_index::tag<TEMITagCode>,  AbstractEventMIExstractCode>,
-                boost::multi_index::hashed_non_unique<boost::multi_index::tag<TEMITagName>,  AbstractEventMIExstractName>
+                boost::multi_index::ordered_non_unique<boost::multi_index::tag<EMITagCode>,  AbstractEventMIExstractCode>,
+                boost::multi_index::hashed_non_unique<boost::multi_index::tag<EMITagName>,  AbstractEventMIExstractName>,
+                boost::multi_index::hashed_non_unique<boost::multi_index::tag<EMITagDomain>,  AbstractEventMIExstractDomain>
                 >
                 > AbstractEventContainer;
                 
                 //!index for container
                 //code
-                typedef boost::multi_index::index<AbstractEventContainer, TEMITagCode>::type             TECodeIndex;
-                typedef boost::multi_index::index<AbstractEventContainer, TEMITagCode>::type::iterator   TECodeIndexIterator;
+                typedef boost::multi_index::index<AbstractEventContainer, EMITagCode>::type                TECodeIndex;
+                typedef boost::multi_index::index<AbstractEventContainer, EMITagCode>::type::iterator      TECodeIndexIterator;
                 //name
-                typedef boost::multi_index::index<AbstractEventContainer, TEMITagName>::type             TENameIndex;
-                typedef boost::multi_index::index<AbstractEventContainer, TEMITagName>::type::iterator   TENameIndexIterator;
-                
-                
+                typedef boost::multi_index::index<AbstractEventContainer, EMITagName>::type                TENameIndex;
+                typedef boost::multi_index::index<AbstractEventContainer, EMITagName>::type::iterator      TENameIndexIterator;
+                //domain
+                typedef boost::multi_index::index<AbstractEventContainer, EMITagDomain>::type              TEDomainIndex;
+                typedef boost::multi_index::index<AbstractEventContainer, EMITagDomain>::type::iterator    TEDomainIndexIterator;
                 
             }
         }

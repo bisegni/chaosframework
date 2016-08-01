@@ -22,11 +22,15 @@
 #ifndef __CHAOSFramework_F51EAA5C_833E_40F9_A315_AB754895AC25_trigger_system_types_h
 #define __CHAOSFramework_F51EAA5C_833E_40F9_A315_AB754895AC25_trigger_system_types_h
 
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/data/CDataVariant.h>
 namespace chaos {
     namespace cu {
         namespace data_manager {
             namespace trigger_system {
 
+                
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::CDataVariant, CDataVariantVector)
             }
         }
     }

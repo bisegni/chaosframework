@@ -77,9 +77,6 @@ namespace chaos {
             
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<chaos::common::data::CDataWrapper>, BatchCommandMapParamter);
             CHAOS_DEFINE_VECTOR_FOR_TYPE(std::string, BatchCommandParameterNameList);
-
-            
-            
             
             //! provide a set of method that permit to declare a batch command
             /*!

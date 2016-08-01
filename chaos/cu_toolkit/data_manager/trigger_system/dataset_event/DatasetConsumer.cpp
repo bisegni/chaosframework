@@ -1,10 +1,10 @@
 /*
- *	EventManager.cpp
+ *	DatasetConsumer.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 28/07/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 01/08/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,17 +19,11 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/data_manager/trigger_system/EventManager.h>
+#include <chaos/cu_toolkit//data_manager/trigger_system/dataset_event/DatasetConsumer.h>
 
-using namespace chaos::cu::data_manager::trigger_system;
+using namespace chaos::cu::data_manager::trigger_system::dataset_event;
+#pragma mark DatasetConsumer
+DatasetConsumer::DatasetConsumer():
+AbstractConsumer("DatasetConsumer"){}
 
-EventManager::EventManager():
-index_event_code(event_container.get<EMITagCode>()),
-index_event_name(event_container.get<EMITagName>()){}
-
-EventManager::~EventManager() {}
-
-void EventManager::addEvent(AbstractEventShrdPtr trigger_event) {
-    boost::unique_lock<boost::shared_mutex> wl(mutex_event_container);
-    event_container.insert(trigger_event);
-}
+DatasetConsumer::~DatasetConsumer(){}

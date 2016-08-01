@@ -1,10 +1,10 @@
 /*
- *	EventManager.cpp
+ *	AbstractSubjectReceiver.cpp
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 28/07/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 01/08/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,17 +19,16 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/data_manager/trigger_system/EventManager.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/AbstractSubjectReceiver.h>
 
 using namespace chaos::cu::data_manager::trigger_system;
 
-EventManager::EventManager():
-index_event_code(event_container.get<EMITagCode>()),
-index_event_name(event_container.get<EMITagName>()){}
+AbstractSubjectReceiver::AbstractSubjectReceiver(const std::string& _recevier_name) {
+    
+}
 
-EventManager::~EventManager() {}
+AbstractSubjectReceiver::~AbstractSubjectReceiver() {}
 
-void EventManager::addEvent(AbstractEventShrdPtr trigger_event) {
-    boost::unique_lock<boost::shared_mutex> wl(mutex_event_container);
-    event_container.insert(trigger_event);
+const std::string& AbstractSubjectReceiver::getSubjectUUID() const {
+    return receiver_uuid;
 }

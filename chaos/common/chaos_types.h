@@ -41,6 +41,11 @@ typedef std::vector< t >                   n;\
 typedef std::vector< t >::iterator         n ## Iterator;\
 typedef std::vector< t >::const_iterator   n ## ConstIterator;
 
+#define  CHAOS_DEFINE_VECTOR_FOR_TYPE_IN_TEMPLATE(t, n)\
+typedef std::vector< t >                    n;\
+typedef typename std::vector< t >::iterator         n ## Iterator;\
+typedef typename std::vector< t >::const_iterator   n ## ConstIterator;
+
 #define  CHAOS_DEFINE_QUEUE_FOR_TYPE(t, n)\
 typedef std::queue< t >                   n;\
 typedef std::queue< t >::iterator         n ## Iterator;\
@@ -61,6 +66,12 @@ typedef std::map< t1, t2 >                   n;\
 typedef std::map< t1, t2 >::iterator         n ## Iterator;\
 typedef std::map< t1, t2 >::const_iterator   n ## ConstIterator;\
 typedef std::pair< t1, t2 >                  n ## Pair;
+
+#define  CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(t1, t2, n)\
+typedef std::map< t1, t2 >                      n;\
+typedef typename std::map< t1, t2 >::iterator           n ## Iterator;\
+typedef typename std::map< t1, t2 >::const_iterator     n ## ConstIterator;\
+typedef typename std::pair< t1, t2 >                    n ## Pair;
 
 #define  CHAOS_DEFINE_MMAP_FOR_TYPE(t1, t2, n)\
 typedef std::multimap< t1, t2 >                   n;\

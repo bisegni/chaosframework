@@ -77,7 +77,6 @@ namespace chaos {
                 typedef boost::shared_lock<RWMutex>	ReadLock;
                 typedef boost::unique_lock<RWMutex>	WriteLock;
 
-
                 //! executor identifier
                 std::string executorID;
 
@@ -96,6 +95,7 @@ namespace chaos {
 
                 //! shared mutext foe the command event history
                 RWMutex								command_state_rwmutex;
+                
                 //! command state queue dimension
                 uint16_t							command_state_queue_max_size;
 

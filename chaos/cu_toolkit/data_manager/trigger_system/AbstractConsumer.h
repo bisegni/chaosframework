@@ -36,7 +36,6 @@ namespace chaos {
         namespace data_manager {
             namespace trigger_system {
                 
-                
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::CDataVariant, TriggerEventValues);
                 
                 typedef enum ConsumerResult {

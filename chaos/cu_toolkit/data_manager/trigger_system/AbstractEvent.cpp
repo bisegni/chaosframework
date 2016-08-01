@@ -27,15 +27,20 @@ using namespace chaos::common::utility;
 using namespace chaos::cu::data_manager::trigger_system;
 
 #pragma mark AbstractEvent
-AbstractEvent::AbstractEvent(const std::string&       _event_name,
-                           const unsigned int  _event_code):
+AbstractEvent::AbstractEvent(const std::string& _event_domain,
+                             const std::string& _event_name,
+                             const unsigned int _event_code):
 event_name(_event_name),
+event_domain(_event_domain),
 event_code(_event_code){}
 
-const std::string& AbstractEvent::getName() const {
+const std::string& AbstractEvent::getEventName() const {
     return event_name;
 }
-const unsigned int& AbstractEvent::getCode() const {
+const std::string& AbstractEvent::getEventDomain() const {
+    return event_name;
+}
+const unsigned int& AbstractEvent::getEventCode() const {
     return event_code;
 }
 
@@ -44,7 +49,9 @@ const AbstractEventMIExstractName::result_type&
 AbstractEventMIExstractName::operator()(const AbstractEventShrdPtr &p) const {
     return p->event_name;
 }
-
+const AbstractEventMIExstractDomain::result_type& AbstractEventMIExstractDomain::operator()(const AbstractEventShrdPtr &p) const {
+    return p->event_domain;
+}
 const AbstractEventMIExstractCode::result_type&
 AbstractEventMIExstractCode::operator()(const AbstractEventShrdPtr &p) const {
     return p->event_code;
