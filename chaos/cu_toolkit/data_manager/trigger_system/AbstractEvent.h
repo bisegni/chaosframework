@@ -24,7 +24,7 @@
 
 #include <chaos/cu_toolkit/data_manager/trigger_system/trigger_system_types.h>
 #include <chaos/cu_toolkit/data_manager/trigger_system/AbstractConsumer.h>
-#include <chaos/cu_toolkit/data_manager/trigger_system/AbstractSubjectReceiver.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/AbstractSubject.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index_container.hpp>
@@ -68,7 +68,7 @@ namespace chaos {
                     const std::string& getEventDomain() const;
                     const unsigned int& getEventCode() const;
                     
-                    virtual ConsumerResult executeConsumerOnTarget(AbstractSubjectReceiver *subject_instance,
+                    virtual ConsumerResult executeConsumerOnTarget(AbstractSubject *subject_instance,
                                                                    AbstractConsumer *consumer_instance) = 0;
                 };
                 

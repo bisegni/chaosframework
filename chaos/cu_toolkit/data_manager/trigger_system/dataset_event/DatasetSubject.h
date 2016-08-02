@@ -25,7 +25,7 @@
 
 #include <chaos/common/data/cache/AttributeValue.h>
 #include <chaos/common/data/structured/DatasetAttribute.h>
-#include <chaos/cu_toolkit//data_manager/trigger_system/AbstractSubjectReceiver.h>
+#include <chaos/cu_toolkit//data_manager/trigger_system/AbstractSubject.h>
 #include <chaos/cu_toolkit//data_manager/trigger_system/dataset_event/dataset_event_types.h>
 
 namespace chaos {
@@ -35,7 +35,7 @@ namespace chaos {
                 namespace dataset_event {
                     
                     class DatasetSubject:
-                    public AbstractSubjectReceiver {
+                    public AbstractSubject {
                         chaos::common::data::structured::DatasetAttribute *attribute_description;
                         chaos::common::data::cache::AttributeValue *attribute_cache;
                     public:

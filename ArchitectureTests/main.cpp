@@ -12,6 +12,7 @@
 #include "thread/ObjectQueueTest.h"
 #include "thread/ObjectPriorityQueueTest.h"
 #include "queue/PriorityTest.h"
+#include "trigger/TestEvent.h"
 #include <cassert>
 #include <chaos/common/property/PropertyCollector.h>
 
@@ -64,6 +65,9 @@ int main(int argc, const char * argv[]) {
 
     tp.property_one = "1500";
     i = tp.property_one;
+    
+    chaos::test::trigger_system::TestEvent test_event;
+    if(!test_event.test()) return 1;
     
     chaos::common::utility::test::StatusFlagCatalogTest sft;
     if(!sft.test()) return 1;

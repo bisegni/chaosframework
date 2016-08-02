@@ -28,9 +28,8 @@ namespace chaos {
     namespace cu {
         namespace data_manager {
             namespace trigger_system {
-
-                
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::CDataVariant, CDataVariantVector)
+                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, chaos::common::data::CDataVariant, MapKeyCDataVariant)
             }
         }
     }

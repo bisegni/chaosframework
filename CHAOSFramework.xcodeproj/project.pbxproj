@@ -403,6 +403,12 @@
 		3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE32161608D100FCDB10 /* ZMQClient.h */; };
 		3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE33161608D100FCDB10 /* ZMQServer.cpp */; };
 		3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE34161608D100FCDB10 /* ZMQServer.h */; };
+		326933E21D5088150033D9E9 /* data_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326933E01D5088150033D9E9 /* data_manager.h */; };
+		326933E61D5088BD0033D9E9 /* manipulation.h in Headers */ = {isa = PBXBuildFile; fileRef = 326933E41D5088BD0033D9E9 /* manipulation.h */; };
+		326933EA1D5089420033D9E9 /* publishing.h in Headers */ = {isa = PBXBuildFile; fileRef = 326933E81D5089420033D9E9 /* publishing.h */; };
+		326933EE1D5089590033D9E9 /* trigger_system.h in Headers */ = {isa = PBXBuildFile; fileRef = 326933EC1D5089590033D9E9 /* trigger_system.h */; };
+		326933F21D5089C20033D9E9 /* dataset_event.h in Headers */ = {isa = PBXBuildFile; fileRef = 326933F01D5089C20033D9E9 /* dataset_event.h */; };
+		326933F61D508A510033D9E9 /* TestEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326933F41D508A510033D9E9 /* TestEvent.cpp */; };
 		326CADCA18EAFD1200E74CEA /* VFSManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326CADC818EAFD1200E74CEA /* VFSManager.cpp */; };
 		326CDBB718D860430054EF19 /* SpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 326CDBB518D860430054EF19 /* SpinLock.h */; };
 		326DB43014B38BC00018A8D0 /* ActionDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3B614B38BC00018A8D0 /* ActionDescriptor.cpp */; };
@@ -864,8 +870,8 @@
 		32C4EF261D4BA7060014F3D3 /* DatasetEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF241D4BA7060014F3D3 /* DatasetEditor.h */; };
 		32C4EF291D4BB0A60014F3D3 /* DatasetCacheWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4EF271D4BB0A60014F3D3 /* DatasetCacheWrapper.cpp */; };
 		32C4EF2A1D4BB0A60014F3D3 /* DatasetCacheWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF281D4BB0A60014F3D3 /* DatasetCacheWrapper.h */; };
-		32C4EF2D1D4F34DF0014F3D3 /* AbstractSubjectReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4EF2B1D4F34DF0014F3D3 /* AbstractSubjectReceiver.cpp */; };
-		32C4EF2E1D4F34DF0014F3D3 /* AbstractSubjectReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF2C1D4F34DF0014F3D3 /* AbstractSubjectReceiver.h */; };
+		32C4EF2D1D4F34DF0014F3D3 /* AbstractSubject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4EF2B1D4F34DF0014F3D3 /* AbstractSubject.cpp */; };
+		32C4EF2E1D4F34DF0014F3D3 /* AbstractSubject.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF2C1D4F34DF0014F3D3 /* AbstractSubject.h */; };
 		32C4EF361D4F71370014F3D3 /* DatasetEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4EF341D4F71370014F3D3 /* DatasetEvent.cpp */; };
 		32C4EF371D4F71370014F3D3 /* DatasetEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF351D4F71370014F3D3 /* DatasetEvent.h */; };
 		32C4EF3A1D4F71440014F3D3 /* DatasetConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4EF381D4F71440014F3D3 /* DatasetConsumer.cpp */; };
@@ -1612,6 +1618,13 @@
 		3268CE32161608D100FCDB10 /* ZMQClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQClient.h; sourceTree = "<group>"; };
 		3268CE33161608D100FCDB10 /* ZMQServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQServer.cpp; sourceTree = "<group>"; };
 		3268CE34161608D100FCDB10 /* ZMQServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQServer.h; sourceTree = "<group>"; };
+		326933E01D5088150033D9E9 /* data_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = data_manager.h; sourceTree = "<group>"; };
+		326933E41D5088BD0033D9E9 /* manipulation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = manipulation.h; sourceTree = "<group>"; };
+		326933E81D5089420033D9E9 /* publishing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = publishing.h; sourceTree = "<group>"; };
+		326933EC1D5089590033D9E9 /* trigger_system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trigger_system.h; sourceTree = "<group>"; };
+		326933F01D5089C20033D9E9 /* dataset_event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dataset_event.h; sourceTree = "<group>"; };
+		326933F41D508A510033D9E9 /* TestEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestEvent.cpp; sourceTree = "<group>"; };
+		326933F51D508A510033D9E9 /* TestEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestEvent.h; sourceTree = "<group>"; };
 		326CADC618EAB64600E74CEA /* DataBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlock.h; sourceTree = "<group>"; };
 		326CADC818EAFD1200E74CEA /* VFSManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSManager.cpp; sourceTree = "<group>"; };
 		326CADC918EAFD1200E74CEA /* VFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSManager.h; sourceTree = "<group>"; };
@@ -2195,8 +2208,8 @@
 		32C4EF241D4BA7060014F3D3 /* DatasetEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetEditor.h; sourceTree = "<group>"; };
 		32C4EF271D4BB0A60014F3D3 /* DatasetCacheWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetCacheWrapper.cpp; sourceTree = "<group>"; };
 		32C4EF281D4BB0A60014F3D3 /* DatasetCacheWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetCacheWrapper.h; sourceTree = "<group>"; };
-		32C4EF2B1D4F34DF0014F3D3 /* AbstractSubjectReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractSubjectReceiver.cpp; sourceTree = "<group>"; };
-		32C4EF2C1D4F34DF0014F3D3 /* AbstractSubjectReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSubjectReceiver.h; sourceTree = "<group>"; };
+		32C4EF2B1D4F34DF0014F3D3 /* AbstractSubject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractSubject.cpp; sourceTree = "<group>"; };
+		32C4EF2C1D4F34DF0014F3D3 /* AbstractSubject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSubject.h; sourceTree = "<group>"; };
 		32C4EF341D4F71370014F3D3 /* DatasetEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetEvent.cpp; sourceTree = "<group>"; };
 		32C4EF351D4F71370014F3D3 /* DatasetEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetEvent.h; sourceTree = "<group>"; };
 		32C4EF381D4F71440014F3D3 /* DatasetConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetConsumer.cpp; sourceTree = "<group>"; };
@@ -2616,6 +2629,7 @@
 				32C4EF241D4BA7060014F3D3 /* DatasetEditor.h */,
 				32C4EF271D4BB0A60014F3D3 /* DatasetCacheWrapper.cpp */,
 				32C4EF281D4BB0A60014F3D3 /* DatasetCacheWrapper.h */,
+				326933E41D5088BD0033D9E9 /* manipulation.h */,
 			);
 			path = manipulation;
 			sourceTree = "<group>";
@@ -2623,6 +2637,7 @@
 		3214EF0D1D466F53004DB689 /* publishing */ = {
 			isa = PBXGroup;
 			children = (
+				326933E81D5089420033D9E9 /* publishing.h */,
 			);
 			path = publishing;
 			sourceTree = "<group>";
@@ -2960,15 +2975,16 @@
 				32C4EF2F1D4F70E40014F3D3 /* dataset_event */,
 				324544FF1D4A676A0081F90B /* EventManager.cpp */,
 				324545001D4A676A0081F90B /* EventManager.h */,
-				32C4EF2B1D4F34DF0014F3D3 /* AbstractSubjectReceiver.cpp */,
-				32C4EF2C1D4F34DF0014F3D3 /* AbstractSubjectReceiver.h */,
+				32C4EF2B1D4F34DF0014F3D3 /* AbstractSubject.cpp */,
+				32C4EF2C1D4F34DF0014F3D3 /* AbstractSubject.h */,
 				324545031D4A68380081F90B /* AbstractConsumer.cpp */,
 				324545041D4A68380081F90B /* AbstractConsumer.h */,
 				32C4EF191D4B812D0014F3D3 /* AbstractEvent.cpp */,
 				324545081D4B443B0081F90B /* AbstractEvent.h */,
-				32C4EF1C1D4B8AFE0014F3D3 /* trigger_system_types.h */,
 				32FB67B31D4E1F94003962BD /* RegisterEventConsumerEnvironment.cpp */,
 				32FB67B41D4E1F94003962BD /* RegisterEventConsumerEnvironment.h */,
+				32C4EF1C1D4B8AFE0014F3D3 /* trigger_system_types.h */,
+				326933EC1D5089590033D9E9 /* trigger_system.h */,
 			);
 			path = trigger_system;
 			sourceTree = "<group>";
@@ -3153,6 +3169,7 @@
 			children = (
 				3258AF091935EE9700A66D44 /* CMakeLists.txt */,
 				3258AF021935EE4D00A66D44 /* main.cpp */,
+				326933F31D508A1F0033D9E9 /* trigger */,
 				3251B5101A768A0C00EF3F82 /* utility */,
 				32EE00CE19387E0B00621776 /* network */,
 				3222EE561C56C52F002DE19D /* queue */,
@@ -3416,6 +3433,15 @@
 				3268CE34161608D100FCDB10 /* ZMQServer.h */,
 			);
 			path = zmq;
+			sourceTree = "<group>";
+		};
+		326933F31D508A1F0033D9E9 /* trigger */ = {
+			isa = PBXGroup;
+			children = (
+				326933F41D508A510033D9E9 /* TestEvent.cpp */,
+				326933F51D508A510033D9E9 /* TestEvent.h */,
+			);
+			path = trigger;
 			sourceTree = "<group>";
 		};
 		32698D46179E8C3300D6638C /* command */ = {
@@ -3804,6 +3830,7 @@
 				326DB4B414B3A3E50018A8D0 /* KeyDataStorage.h */,
 				325168CD1D479BAB00E877DF /* data_manager_types.cpp */,
 				3214EF261D477CAD004DB689 /* data_manager_types.h */,
+				326933E01D5088150033D9E9 /* data_manager.h */,
 			);
 			path = data_manager;
 			sourceTree = "<group>";
@@ -4616,6 +4643,7 @@
 				32C4EF401D4F7F9E0014F3D3 /* RegisterEnviroment.cpp */,
 				32C4EF411D4F7F9E0014F3D3 /* RegisterEnviroment.h */,
 				32C4EF3D1D4F716A0014F3D3 /* dataset_event_types.h */,
+				326933F01D5089C20033D9E9 /* dataset_event.h */,
 			);
 			path = dataset_event;
 			sourceTree = "<group>";
@@ -5299,7 +5327,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				32C4EF2E1D4F34DF0014F3D3 /* AbstractSubjectReceiver.h in Headers */,
+				32C4EF2E1D4F34DF0014F3D3 /* AbstractSubject.h in Headers */,
 				32CFC5C61AF55FED00E2A0B6 /* IOCU.h in Headers */,
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
 				32C4EF3F1D4F716A0014F3D3 /* dataset_event_types.h in Headers */,
@@ -5312,6 +5340,7 @@
 				3252A3101C8ED2A800900FF2 /* AbstractAttributeHandler.h in Headers */,
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
 				32C4EF2A1D4BB0A60014F3D3 /* DatasetCacheWrapper.h in Headers */,
+				326933EA1D5089420033D9E9 /* publishing.h in Headers */,
 				3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */,
 				32A116AE1D181D2500FF44ED /* ExecutionPool.h in Headers */,
 				322A3BC91CEE1AA900FAD9DA /* EUScriptableWrapper.h in Headers */,
@@ -5324,12 +5353,15 @@
 				324545021D4A676A0081F90B /* EventManager.h in Headers */,
 				32FB67B61D4E1F94003962BD /* RegisterEventConsumerEnvironment.h in Headers */,
 				32C4EF371D4F71370014F3D3 /* DatasetEvent.h in Headers */,
+				326933E21D5088150033D9E9 /* data_manager.h in Headers */,
 				32C4EF1E1D4B8AFE0014F3D3 /* trigger_system_types.h in Headers */,
 				326DB4CA14B3A3E50018A8D0 /* DataManagerException.h in Headers */,
 				3270D5E91CCFAC4F0072017B /* AbstractExecutionUnit.h in Headers */,
+				326933EE1D5089590033D9E9 /* trigger_system.h in Headers */,
 				3252A3141C8ED6BD00900FF2 /* DatasetAttributeHandler.h in Headers */,
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
 				3252A31C1C9021DE00900FF2 /* handler.h in Headers */,
+				326933F21D5089C20033D9E9 /* dataset_event.h in Headers */,
 				32C4EF261D4BA7060014F3D3 /* DatasetEditor.h in Headers */,
 				3287F7E717B27621009DD6ED /* DriverManager.h in Headers */,
 				325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */,
@@ -5343,6 +5375,7 @@
 				32F2241C179AE3BC00853F62 /* RTAbstractControlUnit.h in Headers */,
 				32F22420179AEED500853F62 /* SCAbstractControlUnit.h in Headers */,
 				3250106019E2DB4A00809415 /* AttributeSharedCacheWrapper.h in Headers */,
+				326933E61D5088BD0033D9E9 /* manipulation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5906,6 +5939,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				326933F61D508A510033D9E9 /* TestEvent.cpp in Sources */,
 				32E5D24D1A75664C0001E97F /* ObjectQueueTest.cpp in Sources */,
 				3222EE591C56C55D002DE19D /* PriorityTest.cpp in Sources */,
 				3251B5141A768A9E00EF3F82 /* HashMapTest.cpp in Sources */,
@@ -6154,7 +6188,7 @@
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
 				325168CE1D479BAB00E877DF /* data_manager_types.cpp in Sources */,
 				3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */,
-				32C4EF2D1D4F34DF0014F3D3 /* AbstractSubjectReceiver.cpp in Sources */,
+				32C4EF2D1D4F34DF0014F3D3 /* AbstractSubject.cpp in Sources */,
 				326DB4CB14B3A3E50018A8D0 /* KeyDataStorage.cpp in Sources */,
 				32CFC5C51AF55FED00E2A0B6 /* IOCU.cpp in Sources */,
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
@@ -6683,7 +6717,10 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				OTHER_LDFLAGS = "-lchaos_common";
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-lchaos_cutoolkit",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -6723,7 +6760,10 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				OTHER_LDFLAGS = "-lchaos_common";
+				OTHER_LDFLAGS = (
+					"-lchaos_common",
+					"-lchaos_cutoolkit",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};

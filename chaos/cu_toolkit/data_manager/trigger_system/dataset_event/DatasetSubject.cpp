@@ -25,7 +25,7 @@ using namespace chaos::cu::data_manager::trigger_system::dataset_event;
 
 DatasetSubject::DatasetSubject(chaos::common::data::structured::DatasetAttribute *_attribute_description,
                                chaos::common::data::cache::AttributeValue *_attribute_cache):
-AbstractSubjectReceiver("DatasetSubject"),
+AbstractSubject("DatasetSubject"),
 attribute_description(_attribute_description),
 attribute_cache(_attribute_cache){}
 

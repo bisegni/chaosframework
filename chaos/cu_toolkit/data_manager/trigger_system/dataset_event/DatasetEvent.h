@@ -54,7 +54,7 @@ namespace chaos {
                                                  const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType _type);
                         const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType getType() const;
                         
-                        cu_trigger::ConsumerResult executeConsumerOnTarget(AbstractSubjectReceiver *subject_instance,
+                        cu_trigger::ConsumerResult executeConsumerOnTarget(AbstractSubject *subject_instance,
                                                                            cu_trigger::AbstractConsumer *consumer_instance);
                     };
                     

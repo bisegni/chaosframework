@@ -1,5 +1,5 @@
 /*
- *	AbstractSubjectReceiver.h
+ *	AbstractSubject.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
@@ -37,15 +37,17 @@ namespace chaos {
                  receiver receive event of a determinated type and permit to 
                  attach to it some consumer for a determinated event
                  */
-                class AbstractSubjectReceiver {
+                class AbstractSubject {
                     const std::string receiver_name;
                     const std::string receiver_uuid;
                     
                 public:
-                    AbstractSubjectReceiver(const std::string& _recevier_name);
-                    virtual ~AbstractSubjectReceiver();
+                    AbstractSubject(const std::string& _recevier_name);
+                    virtual ~AbstractSubject();
                     
                     const std::string& getSubjectUUID() const;
+                    
+                    const std::string& getSubjectName() const;
                 };
                 
             }
@@ -53,4 +55,4 @@ namespace chaos {
     }
 }
 
-#endif /* __CHAOSFramework__F95AD0C_755D_4EE8_8709_A0118CE00CAB_AbstractSubjectReceiver_h */
+#endif /* __CHAOSFramework__F95AD0C_755D_4EE8_8709_A0118CE00CAB_AbstractSubject_h */

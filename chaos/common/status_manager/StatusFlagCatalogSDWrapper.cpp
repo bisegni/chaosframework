@@ -71,7 +71,7 @@ void StatusFlagCatalogSDWrapper::deserialize(CDataWrapper *serialized_data) {
 }
 
 
-std::auto_ptr<CDataWrapper> StatusFlagCatalogSDWrapper::serialize(const uint64_t sequence) {
+std::auto_ptr<CDataWrapper> StatusFlagCatalogSDWrapper::serialize() {
     std::auto_ptr<CDataWrapper> data_serialized(new CDataWrapper());
     data_serialized->addStringValue(NodeStatusFlagDefinitionKey::NODE_SF_CATALOG_NAME, dataWrapped().catalog_name);
     

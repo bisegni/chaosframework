@@ -41,7 +41,7 @@ const ETDatasetAttributeType DatasetEvent::getType() const {
     return static_cast<ETDatasetAttributeType>(AbstractEvent::getEventCode());
 }
 
-ConsumerResult DatasetEvent::executeConsumerOnTarget(AbstractSubjectReceiver *subject_instance,
+ConsumerResult DatasetEvent::executeConsumerOnTarget(AbstractSubject *subject_instance,
                                                                  AbstractConsumer *consumer_instance) {
     return _executeConsumerOnTarget(static_cast<DatasetSubject*>(subject_instance),
                                     static_cast<DatasetConsumer*>(consumer_instance));

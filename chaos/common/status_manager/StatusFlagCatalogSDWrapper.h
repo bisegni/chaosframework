@@ -41,7 +41,7 @@ namespace chaos {
                 
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data);
                 
-                std::auto_ptr<chaos::common::data::CDataWrapper> serialize(const uint64_t sequence = 0);
+                std::auto_ptr<chaos::common::data::CDataWrapper> serialize();
             };
         }
     }

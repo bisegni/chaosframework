@@ -1,0 +1,35 @@
+/*
+ *	data_manager.h
+ *
+ *	!CHAOS [CHAOSFramework]
+ *	Created by bisegni.
+ *
+ *    	Copyright 02/08/16 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
+
+#ifndef __CHAOSFramework_D7B1D740_6BB7_4A81_A872_A040D3AC9019_data_manager_h
+#define __CHAOSFramework_D7B1D740_6BB7_4A81_A872_A040D3AC9019_data_manager_h
+
+#include <chaos/cu_toolkit/data_manager/data_manager_types.h>
+#include <chaos/cu_toolkit/data_manager/DataBrokerManager.h>
+#include <chaos/cu_toolkit/data_manager/DataBroker.h>
+#include <chaos/cu_toolkit/data_manager/DataManager.h>
+#include <chaos/cu_toolkit/data_manager/DataManagerException.h>
+#include <chaos/cu_toolkit/data_manager/KeyDataStore.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/trigger_system.h>
+#include <chaos/cu_toolkit/data_manager/publishing/publishing.h>
+#include <chaos/cu_toolkit/data_manager/manipulation/manipulation.h>
+
+#endif /* __CHAOSFramework_D7B1D740_6BB7_4A81_A872_A040D3AC9019_data_manager_h */

@@ -1,10 +1,10 @@
 /*
- *	AbstractSubjectReceiver.cpp
+ *	publishing.h
  *
  *	!CHAOS [CHAOSFramework]
  *	Created by bisegni.
  *
- *    	Copyright 01/08/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 02/08/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,16 +19,9 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/data_manager/trigger_system/AbstractSubjectReceiver.h>
+#ifndef __CHAOSFramework__44CEA14_5610_4C66_B440_8C2D5765CAA4_publishing_h
+#define __CHAOSFramework__44CEA14_5610_4C66_B440_8C2D5765CAA4_publishing_h
 
-using namespace chaos::cu::data_manager::trigger_system;
+#include <stdio.h>
 
-AbstractSubjectReceiver::AbstractSubjectReceiver(const std::string& _recevier_name) {
-    
-}
-
-AbstractSubjectReceiver::~AbstractSubjectReceiver() {}
-
-const std::string& AbstractSubjectReceiver::getSubjectUUID() const {
-    return receiver_uuid;
-}
+#endif /* __CHAOSFramework__44CEA14_5610_4C66_B440_8C2D5765CAA4_publishing_h */
