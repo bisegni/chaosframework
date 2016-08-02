@@ -9,7 +9,7 @@ SCRIPTTESTABSPATH=`pwd -P`
 CHAOSFRAMEWORK=$SCRIPTTESTABSPATH/../
 popd > /dev/null
 tools=$CHAOSFRAMEWORK/tools
-
+echo "* $CHAOSFRAMEWORK - $tools"
 KERNEL_VER=$(uname -r)
 KERNEL_SHORT_VER=$(uname -r|cut -d\- -f1|tr -d '.'| tr -d '[A-Z][a-z]')
 PID=$$

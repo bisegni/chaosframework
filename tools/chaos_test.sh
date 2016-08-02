@@ -113,7 +113,7 @@ for test in ${final_test_list[@]};do
     pushd `dirname $test` >/dev/null
     start_profile_time
     echo "----------------------------------------------------------"
-    $test
+    eval ./$test_name
     res=$?
     status=$(($status + $res))
     echo "----------------------------------------------------------"

@@ -119,7 +119,35 @@ IF (NOT CACHE_DIR)
     endif()
   endmacro()
 
+  macro(InstallChaos)
+    MESG("installing chaos localhost minimal configuration in ${CMAKE_INSTALL_PREFIX}")
+    FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc)
+    FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/log)
+    FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/vfs)
+    FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/doc)
 
+    FILE(COPY ${CHAOS_FRAMEWORK}/config/localhost DESTINATION ${CMAKE_INSTALL_PREFIX}/etc/)
+    FILE(COPY ${CHAOS_FRAMEWORK}/tools DESTINATION ${CMAKE_INSTALL_PREFIX})
+    IF(EXISTS "${CHAOS_FRAMEWORK}/../service/webgui/w3chaos/public_html/")
+      FILE(COPY ${CHAOS_FRAMEWORK}/../service/webgui/w3chaos/public_html/ DESTINATION ${CMAKE_INSTALL_PREFIX}/html)
+
+    ELSE()
+      FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/www/html)
+    ENDIF()
+    execute_process(
+      COMMAND ln -sf ./localhost/cds.cfg ./cds.cfg
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc/
+      )
+    execute_process(
+      COMMAND ln -sf ./localhost/mds.cfg ./mds.cfg
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc
+      )
+    execute_process(
+      COMMAND ln -sf ./localhost/webui.cfg ./webui.cfg
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc
+      )
+
+  endmacro()
   macro (GitCheckout arg arg1)
     MESG("Checkout branch ${arg1}")
     execute_process( 
@@ -397,6 +425,11 @@ IF (NOT CACHE_DIR)
       ERROR("CANNOT FOND COMPILER FOR ${CHAOS_TARGET}, \"${CHAOS_CROSS_HOST}-g++\" should be found in path")
     ENDIF()
   ENDIF()
+
+    IF(NOT CMAKE_CXX_COMPILER)
+      project(config)
+    ENDIF()
+
   SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} cxxflags="${CHAOS_CXX_FLAGS}" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer link=static install "-j ${PROCESSOR_COUNT}" )
 
 
