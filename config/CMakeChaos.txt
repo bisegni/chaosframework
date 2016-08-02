@@ -385,7 +385,7 @@ IF (NOT CACHE_DIR)
       ERROR("CANNOT FOND COMPILER FOR ${CHAOS_TARGET}, \"${CHAOS_CROSS_HOST}-g++\" should be found in path")
     ENDIF()
   ENDIF()
-  SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} cxxflags="${CMAKE_CXX_FLAGS}" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer link=static install "-j ${PROCESSOR_COUNT}" -d+2)
+  SET(CHAOS_BOOST_FLAGS ${CHAOS_BOOST_FLAGS} cxxflags="${CMAKE_CXX_FLAGS}" --prefix=${CMAKE_INSTALL_PREFIX} --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer link=static install "-j ${PROCESSOR_COUNT}" )
 
   IF(CHAOS_CROSS_HOST)
     SET( CROSS_HOST "--host=${CHAOS_CROSS_HOST}")
