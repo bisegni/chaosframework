@@ -362,8 +362,11 @@ IF (NOT CACHE_DIR)
     MESG("enabling MAC compilation")
     SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic zmq.a jsoncpp pthread dl)
     SET(CHAOS_BOOST_FLAGS toolset=clang linkflags=-stdlib=libstdc++)
-    SET(CMAKE_CXXFLAGS "-stdlib=libstdc++")
-    SET(CMAKE_CFLAGS="-stdlib=libstdc++")
+    CheckCompiler("CXX" clang++)
+    CheckCompiler("C" clang)
+    SET(CHAOS_CXX_FLAGS "${CHAOS_CXX_FLAGS}")
+    SET(CHAOS_C_FLAGS="${CHAOS_C_FLAGS}")
+
   ELSE()
     SET(FrameworkLib boost_program_options boost_date_time boost_system  boost_chrono boost_regex boost_log_setup boost_log boost_filesystem boost_thread boost_atomic zmq.a jsoncpp pthread rt dl)
 

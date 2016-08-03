@@ -1,11 +1,11 @@
 
 OS=`uname -s`
 ARCH=`uname -m`
-realpath=`readlink -f $0`
-SCRIPTNAME=`basename $realpath`
+
 SCRIPTTESTPATH=$0
 pushd `dirname $0` > /dev/null
 SCRIPTTESTABSPATH=`pwd -P`
+SCRIPTNAME=`basename $SCRIPTTESTABSPATH`
 popd > /dev/null
 export LC_ALL="en_US.UTF-8"
 CHAOS_OVERALL_OPT=""

@@ -237,10 +237,10 @@ void ControlManager::deinit() throw(CException) {
     
     
     LCMAPP_  << "Deinit all the submitted Control Unit";
-    for (map<string, shared_ptr<WorkUnitManagement> >::iterator cuIter = map_cuid_registered_instance.begin();
+    for (map<string, boost::shared_ptr<WorkUnitManagement> >::iterator cuIter = map_cuid_registered_instance.begin();
          cuIter != map_cuid_registered_instance.end();
          cuIter++ ){
-        shared_ptr<WorkUnitManagement> cu = (*cuIter).second;
+        boost::shared_ptr<WorkUnitManagement> cu = (*cuIter).second;
         
         cu_identification_temp = WU_IDENTIFICATION(cu->work_unit_instance);
         LCMAPP_  << "Start deregistration for control unit " << cu_identification_temp;
@@ -351,7 +351,7 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
     
     //used the Mark Ransom Technique for avoid the temporary iterator
     //http://stackoverflow.com/questions/180516/how-to-filter-items-from-a-stdmap/180616#180616
-    for (map<string, shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
+    for (map<string, boost::shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
          i != map_cuid_reg_unreg_instance.end();) {
         
         if(!i->second->smNeedToSchedule()) {
@@ -404,7 +404,7 @@ void ControlManager::makeSMSteps() {
     //lock for read the registering map
     ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
     
-    for (map<string, shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
+    for (map<string, boost::shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
          i != map_cuid_reg_unreg_instance.end();
          i++ ){
         //make step
@@ -429,7 +429,7 @@ void ControlManager::manageControlUnit() {
         //try to consume all the submitted control unit instance (after the lock no other thread can submit new on)
         while(!queue_submitted_cu.empty()) {
             //we have new instance to manage
-            shared_ptr<WorkUnitManagement> wui(new WorkUnitManagement(queue_submitted_cu.front()));
+            boost::shared_ptr<WorkUnitManagement> wui(new WorkUnitManagement(queue_submitted_cu.front()));
             LCMAPP_  << "We have a new control unit instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
             
             //remove the oldest data
@@ -586,7 +586,7 @@ CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool
     IN_ACTION_PARAM_CHECK(!map_cuid_registered_instance.count(work_unit_id), -3, "Work unit not found on registered's map")
     
     //get the iterator for the work unit managment class
-    map<string, shared_ptr<WorkUnitManagement> >::iterator iter = map_cuid_registered_instance.find(work_unit_id);
+    map<string, boost::shared_ptr<WorkUnitManagement> >::iterator iter = map_cuid_registered_instance.find(work_unit_id);
     
     //migrate the workunit into the map for registering and unregistering instance
     map_cuid_reg_unreg_instance.insert(make_pair(work_unit_id, map_cuid_registered_instance[work_unit_id]));
@@ -606,7 +606,7 @@ CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool 
     unit_server_status.addInt32Value(NodeDefinitionKey::NODE_TIMESTAMP,  (uint32_t) TimingUtil::getTimeStamp());
     LCMDBG_ << "[Action] Get Unit State";
     
-    map<string, shared_ptr<WorkUnitManagement> >::iterator iter;
+    map<string, boost::shared_ptr<WorkUnitManagement> >::iterator iter;
     for(iter = map_cuid_registered_instance.begin();iter!=map_cuid_registered_instance.end();iter++){
         chaos_data::CDataWrapper item;
         std::string cusm_state_key = iter->first+"_sm_state";
