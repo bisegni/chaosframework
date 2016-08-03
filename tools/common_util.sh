@@ -6,10 +6,17 @@ SCRIPTNAME=`basename $realpath`
 SCRIPTTESTPATH=$0
 pushd `dirname $0` > /dev/null
 SCRIPTTESTABSPATH=`pwd -P`
-CHAOSFRAMEWORK=$SCRIPTTESTABSPATH/../
 popd > /dev/null
-tools=$CHAOSFRAMEWORK/tools
-echo "* $CHAOSFRAMEWORK - $tools"
+if [ -n "$CHAOS_TOOLS" ];then
+    tools=$CHAOS_TOOLS
+else
+    if [ -n "$CHAOS_FRAMEWORK" ];then
+	tools=$CHAOS_FRAMEWORK/tools
+    else
+	echo "## cannot find tools directory, please set CHAOS_TOOLS or CHAOS_FRAMEWORK"
+	exit 1
+    fi
+fi
 KERNEL_VER=$(uname -r)
 KERNEL_SHORT_VER=$(uname -r|cut -d\- -f1|tr -d '.'| tr -d '[A-Z][a-z]')
 PID=$$

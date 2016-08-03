@@ -1,6 +1,11 @@
 #!/bin/bash
 cmd=$1
-scriptdir=`dirname $0`
+pushd `dirname $0` > /dev/null
+scriptdir=`pwd -P`
+popd > /dev/null
+
+export CHAOS_TOOL=$scriptdir
+
 source $scriptdir/common_util.sh
 
 CDS_EXEC=ChaosDataService
@@ -15,7 +20,7 @@ cds_checks(){
 	error_mesg "CHAOS_PREFIX environment variables not set"
 	exit 1
     fi
-
+    export LD_LIBRARY_PATH=$CHAOS_PREFIX/lib
     if [ -x "$CHAOS_PREFIX/bin/$CDS_EXEC" ]; then
 	CDS_BIN=$CHAOS_PREFIX/bin/$CDS_EXEC
     else
@@ -64,7 +69,7 @@ start_mds(){
     info_mesg "starting MDS..."
     check_proc_then_kill "$MDS_EXEC"
     cd "$MDS_DIR"
-    run_proc "$MDS_BIN --conf-file $CHAOS_PREFIX/etc/mds.cfg > $CHAOS_PREFIX/log/$MDS_EXEC.std.out 2>&1 &" "$MDS_EXEC"
+    run_proc "$MDS_BIN --conf-file $CHAOS_PREFIX/etc/mds.cfg --log-file $CHAOS_PREFIX/log/$MDS_EXEC.log > $CHAOS_PREFIX/log/$MDS_EXEC.std.out 2>&1 &" "$MDS_EXEC"
     cd - > /dev/null
 }
 
@@ -72,8 +77,8 @@ start_cds(){
     cds_checks
     info_mesg "starting CDS..."
     check_proc_then_kill "$CDS_EXEC"
-    echo "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF" > $CHAOS_PREFIX/log/$CDS_EXEC.std.out
-    run_proc "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF >> $CHAOS_PREFIX/log/$CDS_EXEC.std.out 2>&1 &" "$CDS_EXEC"
+    echo "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF --log-file $CHAOS_PREFIX/log/cds.log" > $CHAOS_PREFIX/log/$CDS_EXEC.std.out
+    run_proc "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF --log-file $CHAOS_PREFIX/log/$CDS_EXEC.log >> $CHAOS_PREFIX/log/$CDS_EXEC.std.out 2>&1 &" "$CDS_EXEC"
 }
 start_ui(){
     port=8081
@@ -89,7 +94,7 @@ start_wan(){
 	     warn_mesg "Wan proxy configuration file not found in \"$CHAOS_PREFIX/etc/WanProxy.conf\" " "start skipped"
 	      return
     fi
-    run_proc "$CHAOS_PREFIX/bin/$WAN_EXEC --conf-file $CHAOS_PREFIX/etc/WanProxy.conf > $CHAOS_PREFIX/log/$WAN_EXEC.std.out 2>&1 &" "$WAN_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$WAN_EXEC --conf-file $CHAOS_PREFIX/etc/WanProxy.conf --log-on-file $CHAOS_PREFIX/log/$WAN_EXEC.log > $CHAOS_PREFIX/log/$WAN_EXEC.std.out 2>&1 &" "$WAN_EXEC"
 }
 
 ui_stop()

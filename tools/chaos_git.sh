@@ -1,9 +1,11 @@
 #!/bin/bash
 
 separator='-'
+
 pushd `dirname $0` > /dev/null
 dir=`pwd -P`
 popd > /dev/null
+export CHAOS_TOOLS=$dir
 
 source $dir/common_util.sh
 err=0

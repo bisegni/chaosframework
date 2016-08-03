@@ -3,6 +3,9 @@
 pushd `dirname $0` > /dev/null
 dir=`pwd -P`
 popd > /dev/null
+
+export CHAOS_TOOL=$dir
+
 source $dir/common_util.sh
 
 APT_DEST="chaosweb@opensource.lnf.infn.it:/var/www/html/apt/dists/unstable/main/binary-"

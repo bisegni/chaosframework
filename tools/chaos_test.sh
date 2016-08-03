@@ -1,14 +1,23 @@
 #!/bin/bash
 cmd=$1
-scriptdir=`dirname $0`
+
+scriptdir=$(dirname $0)
+export CHAOS_TOOLS=`cd $scriptdir && pwd`
 source $scriptdir/common_util.sh
-scriptdir=$(get_abs_parent_dir $0)
+
 testdir=$scriptdir/test
 testlists=()
 test_found=0
 report_file="/dev/null"
 stop_on_error=""
 CALLGRIND_OPT="valgrind --tool=callgrind"
+
+info_mesg "CHAOS_TOOLS=" "$CHAOS_TOOLS"
+if [ -z "$CHAOS_PREFIX" ];then
+    error_mesg "CHAOS_PREFIX " "must be defined"
+    exit 1
+fi
+
 export CHAOS_RUNPREFIX=""
 export CHAOS_RUNOUTPREFIX=""
 export CHAOS_RUNTYPE=""
@@ -62,7 +71,7 @@ done
 
 if [ ${#testlist[@]} -eq 0 ]; then
     if [ ! -d "$testdir" ]; then
-	error_mesg "invalid test directory $testdir"
+	error_mesg "invalid test directory $testdir" " (please specify -d <testdir>)"
 	exit 1
     fi
     lists=`ls $testdir/test_list_*.txt |sort -n`
@@ -71,7 +80,7 @@ if [ ${#testlist[@]} -eq 0 ]; then
     done
 fi
 
-export CHAOS_TOOLS=$scriptdir
+
 test_prefix;
 
 final_test_list=()
@@ -113,7 +122,7 @@ for test in ${final_test_list[@]};do
     pushd `dirname $test` >/dev/null
     start_profile_time
     echo "----------------------------------------------------------"
-    eval ./$test_name
+    ./$test_name
     res=$?
     status=$(($status + $res))
     echo "----------------------------------------------------------"

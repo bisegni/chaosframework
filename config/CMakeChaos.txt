@@ -134,6 +134,17 @@ IF (NOT CACHE_DIR)
     ELSE()
       FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/www/html)
     ENDIF()
+    FILE(WRITE ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "if [ -z \"\$CHAOS_PREFIX\" ];then\n")
+    FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export CHAOS_PREFIX=\$PWD\n")
+    FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "fi\n")
+    FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "echo \"* chaos \$CHAOS_PREFIX\"\n")
+    IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
+      FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export DYLD_LIBRARY_PATH=\$CHAOS_PREFIX/lib\n")
+    ELSE()
+      FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export LD_LIBRARY_PATH=$CHAOS_PREFIX/lib\n")
+    ENDIF()
+    FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export PATH=\$PATH:\$CHAOS_PREFIX/bin\n")
     execute_process(
       COMMAND ln -sf ./localhost/cds.cfg ./cds.cfg
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc/
