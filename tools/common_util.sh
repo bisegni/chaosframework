@@ -7,6 +7,8 @@ SCRIPTTESTPATH=$0
 pushd `dirname $0` > /dev/null
 SCRIPTTESTABSPATH=`pwd -P`
 popd > /dev/null
+export LC_ALL="en_US.UTF-8"
+
 if [ -n "$CHAOS_TOOLS" ];then
     tools=$CHAOS_TOOLS
 else
