@@ -103,6 +103,8 @@ namespace chaos {
                     interface_infos.push_back(InterfaceInfo("eth",""));
                     interface_infos.push_back(InterfaceInfo("tun",""));
                     interface_infos.push_back(InterfaceInfo("utun",""));
+		    // loopback if no other found
+		    interface_infos.push_back(InterfaceInfo("lo",""));
                     
                     LAPP_ << "Scan for local network interface and ip";
                     getifaddrs(&if_addr_struct);
