@@ -99,7 +99,7 @@ namespace chaos {
     }
     /** @} */ // end of ParamOption
     
-    /** @defgroup RpcConfigurationKey Rpc System Configuraiton
+    /** @defgroup RpcConfigurationKey Rpc System Configuration
      *  This is the collection of the key for the parameter used to configura rpc system
      *  @{
      */
@@ -1230,15 +1230,15 @@ namespace chaos {
             namespace EventConfiguration {
                 //!  for choice the implementation
                 static const char * const   OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION     = "evt_adpt_impl";
-                //! @Configuraiton for alert event multicast ip
+                //! @Configuration for alert event multicast ip
                 static const char * const   CONF_EVENT_ALERT_MADDRESS                   = "239.255.0.1";
-                //! @Configuraiton for instruments event multicast ip
+                //! @Configuration for instruments event multicast ip
                 static const char * const   CONF_EVENT_INSTRUMENT_MADDRESS              = "239.255.0.2";
-                //! @Configuraiton for command event multicast ip
+                //! @Configuration for command event multicast ip
                 static const char * const   CONF_EVENT_COMMAND_MADDRESS                 = "239.255.0.3";
-                //! @Configuraiton for custom event multicast ip
+                //! @Configuration for custom event multicast ip
                 static const char * const   CONF_EVENT_CUSTOM_MADDRESS                  = "239.255.0.4";
-                //! @Configuraiton for event multicast ip port
+                //! @Configuration for event multicast ip port
                 static const unsigned short CONF_EVENT_PORT                             = 50000;
             }
             /** @} */ // end of EventConfiguration

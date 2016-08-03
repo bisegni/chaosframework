@@ -1,7 +1,6 @@
-cmake_minimum_required(VERSION 2.6)
-# IF (DEFINED ENV{CHAOS_BUNDLE} )
-#   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
-# ENDIF()
+cmake_minimum_required(VERSION 2.8)
+project(chaos_metadata_service_client)
+
 INCLUDE_DIRECTORIES(../)
 
 SET(mcl_src ChaosMetadataServiceClient.cpp)
@@ -92,13 +91,13 @@ SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
                             monitor_system/QuantumTSTaggedAttributeHandler.cpp)
 
 IF(BUILD_FORCE_STATIC)
-ADD_LIBRARY(chaos_metadata_service_client STATIC ${mcl_src})
+ADD_LIBRARY(${PROJECT_NAME} STATIC ${mcl_src})
 ELSE()
-ADD_LIBRARY(chaos_metadata_service_client SHARED ${mcl_src})
+ADD_LIBRARY(${PROJECT_NAME} SHARED ${mcl_src})
 ENDIF()
 
 
-TARGET_LINK_LIBRARIES(chaos_metadata_service_client  chaos_common ${FrameworkLib})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}  chaos_common ${FrameworkLib})
 
 #install common header
 

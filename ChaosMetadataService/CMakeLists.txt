@@ -1,7 +1,9 @@
-cmake_minimum_required(VERSION 2.6)
-# IF (DEFINED ENV{CHAOS_BUNDLE} )
-#   include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
-# ENDIF()
+cmake_minimum_required(VERSION 2.8)
+project(ChaosMetadataService)
+IF (DEFINED ENV{CHAOS_BUNDLE} )
+  include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
+ENDIF()
+
 INCLUDE_DIRECTORIES(chaos/common ../)
 
 SET(cnd_src				main.cpp
@@ -139,10 +141,10 @@ SET(cnd_src  ${cnd_src}	batch/script/LoadInstanceOnUnitServer.cpp)
 
 SET(cnd_src  ${cnd_src}	batch/general/RestoreSnapshotBatch.cpp)
 
-ADD_EXECUTABLE(ChaosMetadataService ${cnd_src})
+ADD_EXECUTABLE(${PROJECT_NAME} ${cnd_src})
 
 IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
 ENDIF()
-TARGET_LINK_LIBRARIES(ChaosMetadataService chaos_common mongoclient ${FrameworkLib})
-INSTALL_TARGETS(/bin ChaosMetadataService)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} chaos_common mongoclient ${FrameworkLib})
+INSTALL_TARGETS(/bin ${PROJECT_NAME})
