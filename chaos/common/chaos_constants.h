@@ -1207,13 +1207,13 @@ namespace chaos {
                 //!  for choice the implementation
                 static const char * const   OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION     = "evt_adpt_impl";
                 //! @Configuration for alert event multicast ip
-                static const char * const   CONF_EVENT_ALERT_MADDRESS                   = "253.255.0.1";
+                static const char * const   CONF_EVENT_ALERT_MADDRESS                   = "239.255.0.1";
                 //! @Configuration for instruments event multicast ip
-                static const char * const   CONF_EVENT_INSTRUMENT_MADDRESS              = "253.255.0.2";
+                static const char * const   CONF_EVENT_INSTRUMENT_MADDRESS              = "239.255.0.2";
                 //! @Configuration for command event multicast ip
-                static const char * const   CONF_EVENT_COMMAND_MADDRESS                 = "253.255.0.3";
+                static const char * const   CONF_EVENT_COMMAND_MADDRESS                 = "239.255.0.3";
                 //! @Configuration for custom event multicast ip
-                static const char * const   CONF_EVENT_CUSTOM_MADDRESS                  = "253.255.0.4";
+                static const char * const   CONF_EVENT_CUSTOM_MADDRESS                  = "239.255.0.4";
                 //! @Configuration for event multicast ip port
                 static const unsigned short CONF_EVENT_PORT                             = 50000;
             }
