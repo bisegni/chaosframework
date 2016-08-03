@@ -32,9 +32,10 @@ using namespace chaos::cu::data_manager::trigger_system::dataset_event;
 
 #pragma mark DatasetEvent
 DatasetEvent::DatasetEvent(const std::string& _event_name,
-                                                   const ETDatasetAttributeType _type):
-AbstractEvent("EventDatasetAttribute",
-              _event_name,
+                           const std::string& _event_description,
+                           const ETDatasetAttributeType _type):
+AbstractEvent(_event_name,
+              _event_description,
               _type){}
 
 const ETDatasetAttributeType DatasetEvent::getType() const {
@@ -42,7 +43,7 @@ const ETDatasetAttributeType DatasetEvent::getType() const {
 }
 
 ConsumerResult DatasetEvent::executeConsumerOnTarget(AbstractSubject *subject_instance,
-                                                                 AbstractConsumer *consumer_instance) {
+                                                     AbstractConsumer *consumer_instance) {
     return _executeConsumerOnTarget(static_cast<DatasetSubject*>(subject_instance),
                                     static_cast<DatasetConsumer*>(consumer_instance));
 }
@@ -50,7 +51,8 @@ ConsumerResult DatasetEvent::executeConsumerOnTarget(AbstractSubject *subject_in
 #pragma mark EventDSAttributePreChange
 EventDSAttributePreChange::EventDSAttributePreChange(const CDataVariant& _new_value):
 DatasetEvent("EventDSAttributePreChange",
-                         ETDatasetAttributeTypePreChange) {consumer_input_value.push_back(_new_value);}
+             "Occures befor input dataset attribute is valorized",
+             ETDatasetAttributeTypePreChange) {consumer_input_value.push_back(_new_value);}
 
 EventDSAttributePreChange::~EventDSAttributePreChange() {}
 
@@ -58,17 +60,17 @@ ConsumerResult EventDSAttributePreChange::_executeConsumerOnTarget(DatasetSubjec
                                                                    DatasetConsumer *consumer_instance) {
     ConsumerResult err = ConsumerResultOK;
     //add to the vector the CDataVariant from attribute value
-    consumer_input_value.push_back(attribute_subject_instance->getDatasetCache()->getAsVariant());
     err = consumer_instance->consumeEvent(getType(),
                                           consumer_input_value,
-                                          consumer_output_value);
+                                          attribute_subject_instance->getDatasetCache());
     return err;
 }
 
 #pragma mark EventDSAttributePreChange
 EventDSAttributePostChange::EventDSAttributePostChange():
 DatasetEvent("EventDSAttributePostChange",
-                         ETDatasetAttributeTypePostChange){}
+             "Occures after the dataset attribute is valorized",
+             ETDatasetAttributeTypePostChange){}
 
 EventDSAttributePostChange::~EventDSAttributePostChange() {}
 
@@ -77,6 +79,6 @@ ConsumerResult EventDSAttributePostChange::_executeConsumerOnTarget(DatasetSubje
     consumer_input_value.push_back(attribute_subject_instance->getDatasetCache()->getAsVariant());
     ConsumerResult err = consumer_instance->consumeEvent(getType(),
                                                          consumer_input_value,
-                                                         consumer_output_value);
+                                                         attribute_subject_instance->getDatasetCache());
     return err;
 }

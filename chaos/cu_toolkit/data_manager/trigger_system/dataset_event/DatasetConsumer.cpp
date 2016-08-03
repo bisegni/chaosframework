@@ -23,7 +23,9 @@
 
 using namespace chaos::cu::data_manager::trigger_system::dataset_event;
 #pragma mark DatasetConsumer
-DatasetConsumer::DatasetConsumer():
-AbstractConsumer("DatasetConsumer"){}
+DatasetConsumer::DatasetConsumer(const std::string& name,
+                                 const std::string& description):
+AbstractConsumer(name,
+                 description){}
 
 DatasetConsumer::~DatasetConsumer(){}

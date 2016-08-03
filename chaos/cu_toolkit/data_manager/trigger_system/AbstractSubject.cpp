@@ -27,15 +27,15 @@ using namespace chaos::common::utility;
 using namespace chaos::cu::data_manager::trigger_system;
 
 AbstractSubject::AbstractSubject(const std::string& _recevier_name):
-receiver_name(_recevier_name),
-receiver_uuid(UUIDUtil::generateUUIDLite()){}
+subject_name(_recevier_name),
+subject_uuid(UUIDUtil::generateUUIDLite()){}
 
 AbstractSubject::~AbstractSubject() {}
 
 const std::string& AbstractSubject::getSubjectUUID() const {
-    return receiver_uuid;
+    return subject_uuid;
 }
 
 const std::string& AbstractSubject::getSubjectName() const {
-    return receiver_name;
+    return subject_name;
 }

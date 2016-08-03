@@ -38,8 +38,8 @@ namespace chaos {
                  attach to it some consumer for a determinated event
                  */
                 class AbstractSubject {
-                    const std::string receiver_name;
-                    const std::string receiver_uuid;
+                    const std::string subject_name;
+                    const std::string subject_uuid;
                     
                 public:
                     AbstractSubject(const std::string& _recevier_name);

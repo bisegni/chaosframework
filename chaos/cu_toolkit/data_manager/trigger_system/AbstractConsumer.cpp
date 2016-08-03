@@ -27,14 +27,22 @@ using namespace chaos::common::utility;
 using namespace chaos::common::data::structured;
 using namespace chaos::cu::data_manager::trigger_system;
 #pragma mark AbstractConsumer
-AbstractConsumer::AbstractConsumer(const std::string& consumer_name):
-consumer_uuid(UUIDUtil::generateUUIDLite()),
-configuration_dataset_element(new DatasetElement(0,
-                                                 DatasetPtr(new Dataset(consumer_name,
-                                                                        chaos::DataType::DatasetTypeInput)))){}
+AbstractConsumer::AbstractConsumer(const std::string& _consumer_name,
+                                   const std::string& _consumer_description):
+consumer_name(_consumer_name),
+consumer_description(_consumer_description),
+consumer_uuid(UUIDUtil::generateUUIDLite()){}
 
 AbstractConsumer::~AbstractConsumer() {}
 
 const std::string& AbstractConsumer::getConsumerUUID() const {
     return consumer_uuid;
+}
+
+const std::string& AbstractConsumer::getConsumerName() const {
+    return consumer_name;
+}
+
+const std::string& AbstractConsumer::getConsumerDescription() const {
+    return consumer_description;
 }

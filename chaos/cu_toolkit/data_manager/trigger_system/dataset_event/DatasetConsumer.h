@@ -36,11 +36,12 @@ namespace chaos {
                     class DatasetConsumer:
                     public ::chaos::cu::data_manager::trigger_system::AbstractConsumer {
                     public:
-                        DatasetConsumer();
+                        DatasetConsumer(const std::string& name,
+                                        const std::string& description);
                         ~DatasetConsumer();
                         virtual cu_trigger::ConsumerResult consumeEvent(ETDatasetAttributeType event_type,
                                                                         const ::chaos::cu::data_manager::trigger_system::CDataVariantVector& event_values,
-                                                                        ::chaos::cu::data_manager::trigger_system::CDataVariantVector& result_value) = 0;
+                                                                        chaos::common::data::cache::AttributeValue *attribute_cache) = 0;
                     };
                     
                     

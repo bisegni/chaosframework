@@ -86,14 +86,16 @@ namespace chaos {
                         subject_instance(subject_instance){}
                         
                         ConsumerResult fireEvent(const EventInstanceShrdPtr& event_to_fire) {
-                            for(VectorConsumerInstanceIterator it = consumer_instances.begin(),
-                                end = consumer_instances.end();
-                                it != end;
-                                it++) {
-                                event_to_fire->executeConsumerOnTarget(subject_instance.get(),
-                                                                       (*it).get());
+                            ConsumerResult result = ConsumerResultOK;
+                            VectorConsumerInstanceIterator it = consumer_instances.begin();
+                            VectorConsumerInstanceIterator end = consumer_instances.end();
+                            while(it != end &&
+                                  result != ConsumerResultCritical){
+                                //execute consumer phase
+                                result = event_to_fire->executeConsumerOnTarget(subject_instance.get(),
+                                                                                (*it++).get());
                             }
-                            return ConsumerResultOK;
+                            return result;
                         }
                     };
                     

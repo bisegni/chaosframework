@@ -30,7 +30,6 @@
 
 #include <string>
 
-
 namespace chaos {
     namespace cu {
         namespace data_manager {
@@ -38,27 +37,23 @@ namespace chaos {
                 
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::common::data::CDataVariant, TriggerEventValues);
                 
-                typedef enum ConsumerResult {
-                    //!value has been accepted
-                    ConsumerResultOK,
-                    ConsumerResultWarinig,
-                    ConsumerResultCritical
-                }ConsumerResult;
-                
                 //!base class for an algorith that can consume an event
                 /*!
                  An event consumer realize some fast check or converion
                  on event data.
                  */
                 class AbstractConsumer {
+                    const std::string consumer_name;
+                    const std::string consumer_description;
                     const std::string consumer_uuid;
-                    
-                    DatasetElement::DatasetElementPtr configuration_dataset_element;
                 public:
-                    AbstractConsumer(const std::string& consumer_name);
+                    AbstractConsumer(const std::string& _consumer_name,
+                                     const std::string& _consumer_description);
                     virtual ~AbstractConsumer();
                     
                     const std::string& getConsumerUUID() const;
+                    const std::string& getConsumerName() const;
+                    const std::string& getConsumerDescription() const;
                 };
              }
         }

@@ -45,13 +45,14 @@ namespace chaos {
                         //collect consumer input data
                         CDataVariantVector consumer_input_value;
                         CDataVariantVector consumer_output_value;
-
+                        
                     protected:
                         virtual cu_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attrbiute_subject_instance,
                                                                                     DatasetConsumer *consumer_instance) = 0;
                     public:
                         DatasetEvent(const std::string& _event_name,
-                                                 const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType _type);
+                                     const std::string& _event_description,
+                                     const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType _type);
                         const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType getType() const;
                         
                         cu_trigger::ConsumerResult executeConsumerOnTarget(AbstractSubject *subject_instance,

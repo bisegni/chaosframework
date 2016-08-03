@@ -37,10 +37,12 @@ namespace chaos {
                     //!define the register environmento for dataset attribute trigger
                     class DatasetRegisterEvenironment:
                     public RegisterEventConsumerEnvironment<DatasetEvent,
-                                                            DatasetConsumer,
-                                                            DatasetSubject,
-                                                            ETDatasetAttributeType> {
-                        
+                    DatasetConsumer,
+                    DatasetSubject,
+                    ETDatasetAttributeType> {
+                    public:
+                        DatasetRegisterEvenironment();
+                        ~DatasetRegisterEvenironment();
                     };
                 }
             }

@@ -887,6 +887,8 @@
 		32C7EADD1A5D9EE30008DFE8 /* ChaosWANProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EADB1A5D9EE30008DFE8 /* ChaosWANProxy.cpp */; };
 		32C7EAE71A5EC9980008DFE8 /* AbstractWANInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAE51A5EC9980008DFE8 /* AbstractWANInterface.cpp */; };
 		32C7ED161B6F8E480038BD26 /* GetFullDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7ED141B6F8E480038BD26 /* GetFullDescription.cpp */; };
+		32C9CD3C1D51F7D30048DB4A /* PropertyDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C9CD3A1D51F7D30048DB4A /* PropertyDescription.cpp */; };
+		32C9CD3D1D51F7D30048DB4A /* PropertyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C9CD3B1D51F7D30048DB4A /* PropertyDescription.h */; };
 		32CAC9E11AE6988200DC6AAB /* LoadUnloadControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CAC9DF1AE6988200DC6AAB /* LoadUnloadControlUnit.cpp */; };
 		32CAC9E41AE6991500DC6AAB /* LoadUnloadControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CAC9E21AE6991500DC6AAB /* LoadUnloadControlUnit.cpp */; };
 		32CAC9E81AE69F4400DC6AAB /* LoadUnloadControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CAC9E51AE69F3D00DC6AAB /* LoadUnloadControlUnit.cpp */; };
@@ -2231,6 +2233,8 @@
 		32C7EAE61A5EC9980008DFE8 /* AbstractWANInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractWANInterface.h; sourceTree = "<group>"; };
 		32C7ED141B6F8E480038BD26 /* GetFullDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetFullDescription.cpp; sourceTree = "<group>"; };
 		32C7ED151B6F8E480038BD26 /* GetFullDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetFullDescription.h; sourceTree = "<group>"; };
+		32C9CD3A1D51F7D30048DB4A /* PropertyDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyDescription.cpp; sourceTree = "<group>"; };
+		32C9CD3B1D51F7D30048DB4A /* PropertyDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyDescription.h; sourceTree = "<group>"; };
 		32CAC9DF1AE6988200DC6AAB /* LoadUnloadControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadUnloadControlUnit.cpp; sourceTree = "<group>"; };
 		32CAC9E01AE6988200DC6AAB /* LoadUnloadControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadUnloadControlUnit.h; sourceTree = "<group>"; };
 		32CAC9E21AE6991500DC6AAB /* LoadUnloadControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadUnloadControlUnit.cpp; sourceTree = "<group>"; };
@@ -2747,6 +2751,8 @@
 		322884421ADBB50300CA1F4B /* property */ = {
 			isa = PBXGroup;
 			children = (
+				32C9CD3A1D51F7D30048DB4A /* PropertyDescription.cpp */,
+				32C9CD3B1D51F7D30048DB4A /* PropertyDescription.h */,
 				322884431ADBB55400CA1F4B /* Property.h */,
 				325568511AE3A98B00CFA7C9 /* PropertyCollector.cpp */,
 				322884441ADBBA1400CA1F4B /* PropertyCollector.h */,
@@ -5100,6 +5106,7 @@
 				324A4B51191A41EF00975394 /* float_utils.h in Headers */,
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
 				3258AEEB1935C34000A66D44 /* URL.h in Headers */,
+				32C9CD3D1D51F7D30048DB4A /* PropertyDescription.h in Headers */,
 				32A88BEE1CF8228A001DBAF5 /* lualib.h in Headers */,
 				32BFF913176C862A00D27A04 /* StartableService.h in Headers */,
 				32B8C1A018292E51001CF714 /* DriverErogatorInterface.h in Headers */,
@@ -6055,6 +6062,7 @@
 				32A88BCE1CF8228A001DBAF5 /* linit.c in Sources */,
 				32A88BCC1CF8228A001DBAF5 /* lgc.c in Sources */,
 				3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */,
+				32C9CD3C1D51F7D30048DB4A /* PropertyDescription.cpp in Sources */,
 				327F51DE1952E81D00BA3D01 /* DirectIOURLManagment.cpp in Sources */,
 				32A88BE61CF8228A001DBAF5 /* ltablib.c in Sources */,
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,

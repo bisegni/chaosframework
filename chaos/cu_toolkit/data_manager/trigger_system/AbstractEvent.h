@@ -43,7 +43,6 @@ namespace chaos {
                 //!forward decalration
                 struct AbstractEventMIExstractName;
                 struct AbstractEventMIExstractCode;
-                struct AbstractEventMIExstractDomain;
                 
                 //! define a base event description that can trigger some executio
                 /*!
@@ -53,19 +52,18 @@ namespace chaos {
                 class AbstractEvent {
                     friend struct AbstractEventMIExstractName;
                     friend struct AbstractEventMIExstractCode;
-                    friend struct AbstractEventMIExstractDomain;
                     
                     const std::string   event_name;
-                    const std::string   event_domain;
+                    const std::string   event_description;
                     const unsigned int  event_code;
                     
                 public:
-                    AbstractEvent(const std::string& _event_domain,
-                                  const std::string& _event_name,
+                    AbstractEvent(const std::string& _event_name,
+                                  const std::string& _event_description,
                                   const unsigned int _event_code);
                     
                     const std::string& getEventName() const;
-                    const std::string& getEventDomain() const;
+                    const std::string& getEventDescription() const;
                     const unsigned int& getEventCode() const;
                     
                     virtual ConsumerResult executeConsumerOnTarget(AbstractSubject *subject_instance,
@@ -78,11 +76,6 @@ namespace chaos {
                 
                 //!multi index key extractor
                 struct AbstractEventMIExstractName {
-                    typedef std::string result_type;
-                    const result_type &operator()(const AbstractEventShrdPtr &p) const;
-                };
-                
-                struct AbstractEventMIExstractDomain {
                     typedef std::string result_type;
                     const result_type &operator()(const AbstractEventShrdPtr &p) const;
                 };
@@ -103,8 +96,7 @@ namespace chaos {
                 AbstractEventShrdPtr,
                 boost::multi_index::indexed_by<
                 boost::multi_index::ordered_non_unique<boost::multi_index::tag<EMITagCode>,  AbstractEventMIExstractCode>,
-                boost::multi_index::hashed_non_unique<boost::multi_index::tag<EMITagName>,  AbstractEventMIExstractName>,
-                boost::multi_index::hashed_non_unique<boost::multi_index::tag<EMITagDomain>,  AbstractEventMIExstractDomain>
+                boost::multi_index::hashed_non_unique<boost::multi_index::tag<EMITagName>,  AbstractEventMIExstractName>
                 >
                 > AbstractEventContainer;
                 
@@ -115,10 +107,6 @@ namespace chaos {
                 //name
                 typedef boost::multi_index::index<AbstractEventContainer, EMITagName>::type                TENameIndex;
                 typedef boost::multi_index::index<AbstractEventContainer, EMITagName>::type::iterator      TENameIndexIterator;
-                //domain
-                typedef boost::multi_index::index<AbstractEventContainer, EMITagDomain>::type              TEDomainIndex;
-                typedef boost::multi_index::index<AbstractEventContainer, EMITagDomain>::type::iterator    TEDomainIndexIterator;
-                
             }
         }
     }

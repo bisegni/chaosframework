@@ -55,7 +55,8 @@ namespace chaos {
             class SubjectConsumer:
             public AbstractConsumer {
             public:
-                SubjectConsumer(const std::string& consumer_name);
+                SubjectConsumer(const std::string& name,
+                                const std::string& description);
                 ~SubjectConsumer();
                 virtual ConsumerResult consumeEvent(TriggerDataEventType event_type,
                                                     TriggeredData& trigger_data,
@@ -72,6 +73,7 @@ namespace chaos {
                                                                 SubjectConsumer *consumer_instance) = 0;
             public:
                 SubjectEvent(const std::string& _event_name,
+                             const std::string& _event_description,
                              const TriggerDataEventType _type);
                 
                 ConsumerResult executeConsumerOnTarget(AbstractSubject *subject_instance,

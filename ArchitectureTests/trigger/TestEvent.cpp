@@ -33,9 +33,10 @@ subject_data(_subject_data){}
 //---------------------------------
 
 SubjectEvent::SubjectEvent(const std::string& _event_name,
+                           const std::string& _event_description,
                            const TriggerDataEventType _type):
-AbstractEvent("Subject",
-              _event_name,
+AbstractEvent(_event_name,
+              _event_description,
               _type){}
 
 ConsumerResult SubjectEvent::executeConsumerOnTarget(AbstractSubject *subject_instance,
@@ -44,15 +45,19 @@ ConsumerResult SubjectEvent::executeConsumerOnTarget(AbstractSubject *subject_in
                                     static_cast<SubjectConsumer*>(consumer_instance));
 }
 //---------------------------------
-SubjectConsumer::SubjectConsumer(const std::string& consumer_name):
-AbstractConsumer(consumer_name){}
+SubjectConsumer::SubjectConsumer(const std::string& name,
+                                 const std::string& description):
+AbstractConsumer(name,
+                 description){}
 SubjectConsumer::~SubjectConsumer(){}
 //---------------------------------
 SubjetEventOne::SubjetEventOne():
 SubjectEvent("SubjetEventOne",
+             "Occures on case two",
              TriggerDataEventTypeOne){}
 SubjetEventOne::SubjetEventOne(const int increment_grow_factor):
 SubjectEvent("SubjetEventOne",
+             "Occures on case two",
              TriggerDataEventTypeOne){
     consumer_input_value.push_back(CDataVariant(increment_grow_factor));
 }
@@ -66,10 +71,12 @@ ConsumerResult SubjetEventOne::_executeConsumerOnTarget(Subject *subject_instanc
 
 SubjetEventTwo::SubjetEventTwo():
 SubjectEvent("SubjetEventTwo",
+             "Occures on case two",
              TriggerDataEventTypeTwo){}
 
 SubjetEventTwo::SubjetEventTwo(const int decrement_grow_factor):
 SubjectEvent("SubjetEventTwo",
+             "Occures on case two",
              TriggerDataEventTypeTwo){
     consumer_input_value.push_back(CDataVariant(decrement_grow_factor));
 }
@@ -82,7 +89,8 @@ ConsumerResult SubjetEventTwo::_executeConsumerOnTarget(Subject *subject_instanc
 }
 //---------------------------------
 SubjectConsumerIncrement::SubjectConsumerIncrement():
-SubjectConsumer("SubjectConsumerIncrement"){}
+SubjectConsumer("SubjectConsumerIncrement",
+                "Preform integer increment"){}
 
 SubjectConsumerIncrement::~SubjectConsumerIncrement() {}
 
@@ -100,7 +108,8 @@ ConsumerResult SubjectConsumerIncrement::consumeEvent(TriggerDataEventType event
 
 //---------------------------------
 SubjectConsumerDecrement::SubjectConsumerDecrement():
-SubjectConsumer("SubjectConsumerDecrement") {}
+SubjectConsumer("SubjectConsumerDecrement",
+                "Preform integer increment") {}
 
 SubjectConsumerDecrement::~SubjectConsumerDecrement() {}
 
