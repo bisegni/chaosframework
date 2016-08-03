@@ -145,6 +145,8 @@ IF (NOT CACHE_DIR)
       FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export LD_LIBRARY_PATH=$CHAOS_PREFIX/lib\n")
     ENDIF()
     FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export PATH=\$PATH:\$CHAOS_PREFIX/bin\n")
+    FILE(APPEND ${CMAKE_INSTALL_PREFIX}/chaos_env.sh "export LC_ALL=\"en_US.UTF-8\"\n")
+
     execute_process(
       COMMAND ln -sf ./localhost/cds.cfg ./cds.cfg
       WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/etc/

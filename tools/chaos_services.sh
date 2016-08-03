@@ -14,7 +14,6 @@ MDS_EXEC=ChaosMetadataService
 UI_EXEC=CUIserver
 US_EXEC=UnitServer
 WAN_EXEC=ChaosWANProxy
-
 cds_checks(){
     if [ -z "$CHAOS_PREFIX" ]; then
 	error_mesg "CHAOS_PREFIX environment variables not set"
@@ -69,7 +68,7 @@ start_mds(){
     info_mesg "starting MDS..."
     check_proc_then_kill "$MDS_EXEC"
     cd "$MDS_DIR"
-    run_proc "$MDS_BIN --conf-file $CHAOS_PREFIX/etc/mds.cfg --log-file $CHAOS_PREFIX/log/$MDS_EXEC.log > $CHAOS_PREFIX/log/$MDS_EXEC.std.out 2>&1 &" "$MDS_EXEC"
+    run_proc "$MDS_BIN --conf-file $CHAOS_PREFIX/etc/mds.cfg $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$MDS_EXEC.log > $CHAOS_PREFIX/log/$MDS_EXEC.std.out 2>&1 &" "$MDS_EXEC"
     cd - > /dev/null
 }
 
@@ -78,13 +77,13 @@ start_cds(){
     info_mesg "starting CDS..."
     check_proc_then_kill "$CDS_EXEC"
     echo "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF --log-file $CHAOS_PREFIX/log/cds.log" > $CHAOS_PREFIX/log/$CDS_EXEC.std.out
-    run_proc "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF --log-file $CHAOS_PREFIX/log/$CDS_EXEC.log >> $CHAOS_PREFIX/log/$CDS_EXEC.std.out 2>&1 &" "$CDS_EXEC"
+    run_proc "$CDS_BIN --conf-file $CHAOS_PREFIX/etc/$CDS_CONF $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$CDS_EXEC.log >> $CHAOS_PREFIX/log/$CDS_EXEC.std.out 2>&1 &" "$CDS_EXEC"
 }
 start_ui(){
     port=8081
     info_mesg "starting UI Server on port " "$port"
     check_proc_then_kill "$UI_EXEC"
-    run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --direct-io-priority-server-port 1690 --direct-io-service-server-port 30200 --server_port $port --log-on-file --log-file $CHAOS_PREFIX/log/$UI_EXEC.log --log-level debug > $CHAOS_PREFIX/log/$UI_EXEC.std.out 2>&1 &" "$UI_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$UI_EXEC --direct-io-priority-server-port 1690 --direct-io-service-server-port 30200 --server_port $port --log-on-file --log-file $CHAOS_PREFIX/log/$UI_EXEC.log $CHAOS_OVERALL_OPT --log-level debug > $CHAOS_PREFIX/log/$UI_EXEC.std.out 2>&1 &" "$UI_EXEC"
 }
 start_wan(){
     port=8082
@@ -94,7 +93,7 @@ start_wan(){
 	     warn_mesg "Wan proxy configuration file not found in \"$CHAOS_PREFIX/etc/WanProxy.conf\" " "start skipped"
 	      return
     fi
-    run_proc "$CHAOS_PREFIX/bin/$WAN_EXEC --conf-file $CHAOS_PREFIX/etc/WanProxy.conf --log-on-file $CHAOS_PREFIX/log/$WAN_EXEC.log > $CHAOS_PREFIX/log/$WAN_EXEC.std.out 2>&1 &" "$WAN_EXEC"
+    run_proc "$CHAOS_PREFIX/bin/$WAN_EXEC --conf-file $CHAOS_PREFIX/etc/WanProxy.conf $CHAOS_OVERALL_OPT --log-on-file $CHAOS_PREFIX/log/$WAN_EXEC.log > $CHAOS_PREFIX/log/$WAN_EXEC.std.out 2>&1 &" "$WAN_EXEC"
 }
 
 ui_stop()

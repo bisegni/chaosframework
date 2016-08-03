@@ -39,7 +39,7 @@ while getopts i:o:u:c:n:hd:j: opt; do
 done;
 
 if [ ${#dataservers} -eq 0 ];then
-    dataservers+=("localhost:11211")
+    dataservers+=("localhost:1700:32000|0")
 fi
 
 for c in ${infile[@]}; do
