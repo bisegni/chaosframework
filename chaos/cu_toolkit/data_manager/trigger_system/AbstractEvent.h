@@ -58,6 +58,7 @@ namespace chaos {
                     const unsigned int  event_code;
                     
                 public:
+                    //! event constructor with default values
                     AbstractEvent(const std::string& _event_name,
                                   const std::string& _event_description,
                                   const unsigned int _event_code);

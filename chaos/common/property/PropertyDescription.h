@@ -29,15 +29,18 @@
 namespace chaos {
     namespace common {
         namespace property {
+            
+            class PropertyDescription;
+            
             //!define a porperty taht is rapresentated by haos base value
             class PropertyDescription {
+                
+                chaos::common::data::CDataVariant  property_values;
+            public:
                 std::string name;
                 std::string description;
                 DataType::DataType type;
                 uint32_t flag;
-                
-                std::auto_ptr<data::cache::AttributeValue>  cached_value_ptr;
-            public:
                 //! default constructor
                 PropertyDescription();
                 
@@ -49,7 +52,7 @@ namespace chaos {
                 
                 
                 ~PropertyDescription();
-               
+                
                 PropertyDescription& operator=(PropertyDescription const &rhs);
                 
                 //! return the alias of the command
@@ -64,7 +67,7 @@ namespace chaos {
                 
                 void updatePorpertyValue(const chaos::common::data::CDataVariant& new_property_value);
                 
-                chaos::common::data::CDataVariant getPropertyvalue();
+                const chaos::common::data::CDataVariant& getPropertyValue();
             };
             
             
@@ -74,8 +77,8 @@ namespace chaos {
                 if(serialized_data == NULL) return;
                 Subclass::dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "property_name", "");
                 Subclass::dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "property_description", "");
-                Subclass::dataWrapped().type = CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_type", 0);
-                Subclass::dataWrapped().type = (uint32_t)CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_flag", 0);
+                Subclass::dataWrapped().type = (DataType::DataType)CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_type", 0);
+                Subclass::dataWrapped().flag = (uint32_t)CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_flag", 0);
             }
             
             std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {

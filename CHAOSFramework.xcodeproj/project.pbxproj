@@ -734,6 +734,8 @@
 		32A91FCB1A49AF0700DCF364 /* RpcSyncServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A91FC91A49AF0700DCF364 /* RpcSyncServer.h */; };
 		32A91FCE1A49B37300DCF364 /* HTTPRpcSyncServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A91FCC1A49B37300DCF364 /* HTTPRpcSyncServer.cpp */; };
 		32A91FCF1A49B37300DCF364 /* HTTPRpcSyncServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A91FCD1A49B37300DCF364 /* HTTPRpcSyncServer.h */; };
+		32A968521D522FB800BD636C /* PropertyGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A968501D522FB800BD636C /* PropertyGroup.cpp */; };
+		32A968531D522FB800BD636C /* PropertyGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A968511D522FB800BD636C /* PropertyGroup.h */; };
 		32AAD78814CD660B005A097C /* RpcClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78714CD660B005A097C /* RpcClient.h */; };
 		32AAD78A14CD772F005A097C /* MessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78914CD772F005A097C /* MessageChannel.h */; };
 		32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AAD78B14CD773F005A097C /* MessageChannel.cpp */; };
@@ -2032,6 +2034,8 @@
 		32A91FC91A49AF0700DCF364 /* RpcSyncServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcSyncServer.h; sourceTree = "<group>"; };
 		32A91FCC1A49B37300DCF364 /* HTTPRpcSyncServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPRpcSyncServer.cpp; sourceTree = "<group>"; };
 		32A91FCD1A49B37300DCF364 /* HTTPRpcSyncServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPRpcSyncServer.h; sourceTree = "<group>"; };
+		32A968501D522FB800BD636C /* PropertyGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyGroup.cpp; sourceTree = "<group>"; };
+		32A968511D522FB800BD636C /* PropertyGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyGroup.h; sourceTree = "<group>"; };
 		32AAD78714CD660B005A097C /* RpcClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcClient.h; sourceTree = "<group>"; };
 		32AAD78914CD772F005A097C /* MessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32AAD78B14CD773F005A097C /* MessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageChannel.cpp; sourceTree = "<group>"; };
@@ -2753,6 +2757,8 @@
 			children = (
 				32C9CD3A1D51F7D30048DB4A /* PropertyDescription.cpp */,
 				32C9CD3B1D51F7D30048DB4A /* PropertyDescription.h */,
+				32A968501D522FB800BD636C /* PropertyGroup.cpp */,
+				32A968511D522FB800BD636C /* PropertyGroup.h */,
 				322884431ADBB55400CA1F4B /* Property.h */,
 				325568511AE3A98B00CFA7C9 /* PropertyCollector.cpp */,
 				322884441ADBBA1400CA1F4B /* PropertyCollector.h */,
@@ -3826,9 +3832,6 @@
 				3214EF091D466CF6004DB689 /* DataBrokerManager.h */,
 				3214EF0E1D466F95004DB689 /* DataBroker.cpp */,
 				3214EF0F1D466F95004DB689 /* DataBroker.h */,
-				324544FE1D4A67250081F90B /* trigger_system */,
-				3214EF0D1D466F53004DB689 /* publishing */,
-				3214EF0C1D466F41004DB689 /* manipulation */,
 				326DB4B014B3A3E50018A8D0 /* DataManager.cpp */,
 				326DB4B114B3A3E50018A8D0 /* DataManager.h */,
 				326DB4B214B3A3E50018A8D0 /* DataManagerException.h */,
@@ -3837,6 +3840,9 @@
 				325168CD1D479BAB00E877DF /* data_manager_types.cpp */,
 				3214EF261D477CAD004DB689 /* data_manager_types.h */,
 				326933E01D5088150033D9E9 /* data_manager.h */,
+				324544FE1D4A67250081F90B /* trigger_system */,
+				3214EF0D1D466F53004DB689 /* publishing */,
+				3214EF0C1D466F41004DB689 /* manipulation */,
 			);
 			path = data_manager;
 			sourceTree = "<group>";
@@ -5011,6 +5017,7 @@
 				32A88BF31CF8228A001DBAF5 /* lvm.h in Headers */,
 				32EE8978191A5AB000DE2F29 /* status_with.h in Headers */,
 				32D6C8981815293200E9689B /* DirectIOHandler.h in Headers */,
+				32A968531D522FB800BD636C /* PropertyGroup.h in Headers */,
 				32A88BDD1CF8228A001DBAF5 /* lparser.h in Headers */,
 				32A88BE21CF8228A001DBAF5 /* lstring.h in Headers */,
 				32460521179C55FC00B075DA /* sqlite3.h in Headers */,
@@ -6006,6 +6013,7 @@
 				32F5B0061B5F8EBF00457A63 /* FileMetricBackend.cpp in Sources */,
 				329C1EFD1B55286100A84D55 /* RpcServerMetricCollector.cpp in Sources */,
 				32C100FB191B847800478F40 /* TimerHandler.cpp in Sources */,
+				32A968521D522FB800BD636C /* PropertyGroup.cpp in Sources */,
 				324A4B9E191A569800975394 /* hex.cpp in Sources */,
 				32A88BC91CF8228A001DBAF5 /* ldump.c in Sources */,
 				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,

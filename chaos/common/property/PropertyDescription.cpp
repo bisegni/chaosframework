@@ -39,12 +39,7 @@ PropertyDescription::PropertyDescription(const std::string& _name,
 name(_name),
 description(_description),
 type(_type),
-flag(_flag){
-    cached_value_ptr.reset(new AttributeValue(name,
-                                              0,
-                                              0,
-                                              type));
-}
+flag(_flag){}
 
 
 PropertyDescription::~PropertyDescription() {}
@@ -74,10 +69,9 @@ const uint32_t PropertyDescription::getFlags() const {
 }
 
 void PropertyDescription::updatePorpertyValue(const CDataVariant& new_property_value) {
-    if(cached_value_ptr.get()) {cached_value_ptr->setValue(new_property_value);}
+    property_values = new_property_value;
 }
 
-CDataVariant PropertyDescription::getPropertyvalue() {
-    if(cached_value_ptr.get()) {return cached_value_ptr->getAsVariant();}
-    else {return CDataVariant();}
+const chaos::common::data::CDataVariant& PropertyDescription::getPropertyValue() {
+    return property_values;
 }

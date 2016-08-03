@@ -20,6 +20,9 @@
  */
 
 #include "TestEvent.h"
+
+#include <chaos/common/property/PropertyGroup.h>
+
 using namespace chaos::common::data;
 using namespace chaos::test::trigger_system;
 
@@ -206,5 +209,16 @@ bool TestEvent::test(){
     trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne(10)), subject_one);
     assert(subject_one->subject_data->data_value == 0);
 
+    
+    //test property group
+    common::property::PorpertyGroup p_group("test");
+    p_group.addRoperty("prop_a", "good property", chaos::DataType::TYPE_INT32);
+    p_group.addRoperty("prop_b", "good property", chaos::DataType::TYPE_INT64);
+    p_group.addRoperty("prop_c", "good property", chaos::DataType::TYPE_DOUBLE);
+    
+    common::property::PorpertyGroupSDWrapper< ReferenceSDWrapper<common::property::PorpertyGroup> > group_ref_wrapper;
+    
+    group_ref_wrapper.dataWrapped() = p_group;
+    std::cout << group_ref_wrapper.serialize()->getJSONString() << std::endl;
     return true;
 }
