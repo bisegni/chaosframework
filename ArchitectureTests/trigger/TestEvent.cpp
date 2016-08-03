@@ -160,14 +160,42 @@ bool TestEvent::test(){
     assert(subject_two->subject_data->data_value == 0);
     
     trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne(10)), subject_one);
-    assert(subject_one->subject_data->data_value == 11);
+    assert(subject_one->subject_data->data_value == 12);
     assert(subject_two->subject_data->data_value == 0);
     
     trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventTwo()), subject_two);
-    assert(subject_one->subject_data->data_value == 11);
+    assert(subject_one->subject_data->data_value == 12);
     assert(subject_two->subject_data->data_value == -1);
+    
     trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventTwo(10)), subject_two);
-    assert(subject_one->subject_data->data_value == 11);
-    assert(subject_two->subject_data->data_value == -11);
+    assert(subject_one->subject_data->data_value == 12);
+    assert(subject_two->subject_data->data_value == -12);
+    
+    //add xross consumer and fire event to reset the counter in the subject
+    trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeTwo,
+                                                     subject_one,
+                                                     "decrement");
+    
+    trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeOne,
+                                                     subject_two,
+                                                     "increment");
+    
+    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventTwo()), subject_one);
+    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventTwo(10)), subject_one);
+    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne()), subject_two);
+    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne(10)), subject_two);
+    assert(subject_one->subject_data->data_value == 0);
+    assert(subject_two->subject_data->data_value == 0);
+    
+    //add consumer decrement to event one to subject one in this case counter need to remain to 0
+    trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeOne,
+                                                     subject_one,
+                                                     "decrement");
+    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne()), subject_one);
+    assert(subject_one->subject_data->data_value == 0);
+
+    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne(10)), subject_one);
+    assert(subject_one->subject_data->data_value == 0);
+
     return true;
 }

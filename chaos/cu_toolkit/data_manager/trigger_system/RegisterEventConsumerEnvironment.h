@@ -80,10 +80,10 @@ namespace chaos {
                         SubjectInstanceShrdPtr   subject_instance;
                         VectorConsumerInstance   consumer_instances;
                         
-                        MappingEventConsumerOnSubject(const EventType event_type,
-                                                      const SubjectInstanceShrdPtr&   subject_instance){
-                            
-                        }
+                        MappingEventConsumerOnSubject(const EventType _event_type,
+                                                      const SubjectInstanceShrdPtr&   subject_instance):
+                        event_type(_event_type),
+                        subject_instance(subject_instance){}
                         
                         ConsumerResult fireEvent(const EventInstanceShrdPtr& event_to_fire) {
                             for(VectorConsumerInstanceIterator it = consumer_instances.begin(),
@@ -136,14 +136,14 @@ namespace chaos {
                     MECTypeSubjectIndex&            type_subject_index;
                     
                     VectorConsumerInstance& getConsumerInstanceListFor(EventType event_code,
-                                                                                    const std::string& subject_uuid) {
+                                                                       const std::string& subject_uuid) {
                         MECTypeSubjectIndexIterator it = type_subject_index.find(boost::make_tuple(event_code,
                                                                                                    subject_uuid));
                         if(it != type_subject_index.end()) {
                             return (*it)->consumer_instances;
                         } else {
                             MappingEventConsumerOnSubjectShrdPtr mapping_instance(boost::make_shared<MappingEventConsumerOnSubject>(event_code,
-                                                                                                                    map_subject_instance[subject_uuid]));
+                                                                                                                                    map_subject_instance[subject_uuid]));
                             type_subject_container.insert(mapping_instance);
                             return mapping_instance->consumer_instances;
                         }
@@ -154,8 +154,8 @@ namespace chaos {
                                              const EventInstanceShrdPtr&    event_to_fire) {
                         MECTypeSubjectIndexIterator it = type_subject_index.find(boost::make_tuple(event_code,
                                                                                                    subject_uuid));
-                        if(it != type_subject_index.end()) return ConsumerResultOK;
-                         return (*it)->fireEvent(event_to_fire);
+                        if(it == type_subject_index.end()) return ConsumerResultOK;
+                        return (*it)->fireEvent(event_to_fire);
                     }
                 public:
                     
@@ -192,11 +192,10 @@ namespace chaos {
                         if(map_subject_instance.count(event_taget->getSubjectUUID()) == 0) return;
                         
                         VectorConsumerInstance& consumer_list_ref = getConsumerInstanceListFor(event_code,
-                                                                              event_taget->getSubjectUUID());
+                                                                                               event_taget->getSubjectUUID());
                         
                         //allocate a new instance for the  consumer and attach it to the vector for mapping
-                        ConsumerBaseClass *instance = map_consumer_name_instancer[consumer_name]->getInstance();
-                        consumer_list_ref.push_back(boost::shared_ptr<ConsumerBaseClass>(instance));
+                        consumer_list_ref.push_back(ConsumerShrdPtr(map_consumer_name_instancer[consumer_name]->getInstance()));
                     }
                     
                     
