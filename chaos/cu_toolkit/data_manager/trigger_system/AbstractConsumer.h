@@ -24,6 +24,8 @@
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataVariant.h>
+#include <chaos/common/property/PropertyGroup.h>
+#include <chaos/common/utility/ObjectInstancer.h>
 
 #include <chaos/cu_toolkit/data_manager/manipulation/DatasetEditor.h>
 #include <chaos/cu_toolkit/data_manager/trigger_system/trigger_system_types.h>
@@ -54,6 +56,19 @@ namespace chaos {
                     const std::string& getConsumerUUID() const;
                     const std::string& getConsumerName() const;
                     const std::string& getConsumerDescription() const;
+                };
+                
+                template<typename T, typename S>
+                class ConsumerDescription:
+                public chaos::common::property::PorpertyGroup {
+                    chaos::common::utility::TypedObjectInstancer<T, S> instancer;
+                public:
+                    ConsumerDescription(const std::string& name):
+                    PorpertyGroup(name){}
+                    
+                    std::auto_ptr<T> getInstance(){
+                        return std::auto_ptr<T>(instancer->getInstance());
+                    }
                 };
              }
         }

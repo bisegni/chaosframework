@@ -29,9 +29,9 @@ PorpertyGroup::PorpertyGroup() {}
 PorpertyGroup::PorpertyGroup(const std::string& _name):
 name(_name){}
 
-void PorpertyGroup::addRoperty(const std::string& property_name,
-                               const std::string& property_description,
-                               const DataType::DataType property_type) {
+void PorpertyGroup::addProperty(const std::string& property_name,
+                                const std::string& property_description,
+                                const DataType::DataType property_type) {
     //add property
     maps_properties.insert(MapPropertiesPair(property_name, PropertyDescription(property_name,
                                                                                 property_description,

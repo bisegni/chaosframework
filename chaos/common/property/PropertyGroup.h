@@ -33,16 +33,16 @@ namespace chaos {
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, PropertyDescription, MapProperties);
             
             class PorpertyGroup {
-
+                
             public:
                 std::string name;
                 MapProperties maps_properties;
                 PorpertyGroup();
                 PorpertyGroup(const std::string& _name);
                 
-                void addRoperty(const std::string& property_name,
-                                const std::string& property_description,
-                                const DataType::DataType property_type);
+                void addProperty(const std::string& property_name,
+                                 const std::string& property_description,
+                                 const DataType::DataType property_type);
                 
                 const chaos::common::data::CDataVariant& getPropertyValue(const std::string& property_name);
                 
@@ -68,12 +68,12 @@ namespace chaos {
                         idx++) {
                         std::auto_ptr<chaos::common::data::CDataWrapper> prop(prop_array->getCDataWrapperElementAtIndex(idx));
                         property_wrapper.deserialize(prop.get());
-                     
+                        
                         //insert new porperty
                         Subclass::dataWrapped().maps_properties.insert(MapPropertiesPair(property_wrapper.dataWrapped().getName(),
-                                                                 property_wrapper.dataWrapped()));
+                                                                                         property_wrapper.dataWrapped()));
                     }
-
+                    
                 }
             }
             

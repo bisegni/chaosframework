@@ -211,12 +211,12 @@ bool TestEvent::test(){
 
     
     //test property group
-    common::property::PorpertyGroup p_group("test");
-    p_group.addRoperty("prop_a", "good property", chaos::DataType::TYPE_INT32);
-    p_group.addRoperty("prop_b", "good property", chaos::DataType::TYPE_INT64);
-    p_group.addRoperty("prop_c", "good property", chaos::DataType::TYPE_DOUBLE);
-    
-    common::property::PorpertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PorpertyGroup, p_group));
+    //common::property::PorpertyGroup p_group("test");
+    //p_group.addProperty("prop_a", "good property", chaos::DataType::TYPE_INT32);
+    //p_group.addProperty("prop_b", "good property", chaos::DataType::TYPE_INT64);
+    //p_group.addProperty("prop_c", "good property", chaos::DataType::TYPE_DOUBLE);
+    SubjectConsumerIncrementDescription cons_desc;
+    common::property::PorpertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PorpertyGroup, cons_desc));
     std::cout << group_ref_wrapper.serialize()->getJSONString() << std::endl;
     return true;
 }

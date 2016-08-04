@@ -115,6 +115,16 @@ namespace chaos {
                                             const CDataVariantVector& event_values);
             };
             
+            struct SubjectConsumerIncrementDescription:
+            public chaos::cu::data_manager::trigger_system::ConsumerDescription<SubjectConsumerIncrement, SubjectConsumer> {
+                SubjectConsumerIncrementDescription():
+                ConsumerDescription<SubjectConsumerIncrement, SubjectConsumer>("SubjectConsumerIncrement") {
+                    addProperty("prop_a", "good property", chaos::DataType::TYPE_INT32);
+                    addProperty("prop_b", "good property", chaos::DataType::TYPE_INT64);
+                    addProperty("prop_c", "good property", chaos::DataType::TYPE_DOUBLE);
+                }
+            };
+            
             class SubjectConsumerDecrement:
             public SubjectConsumer {
             public:
