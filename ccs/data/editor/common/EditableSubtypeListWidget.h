@@ -18,7 +18,7 @@ class EditableSubtypeListWidget :
 public:
     explicit EditableSubtypeListWidget(QWidget *parent = 0);
     ~EditableSubtypeListWidget();
-    void setSubtypeListPtr(std::vector<unsigned int> *_editable_subtypes_list);
+    void setSubtypeListPtr(chaos::common::data::structured::DatasetSubtypeList *_editable_subtypes_list);
 private slots:
     void on_pushButtonAdd_clicked();
 

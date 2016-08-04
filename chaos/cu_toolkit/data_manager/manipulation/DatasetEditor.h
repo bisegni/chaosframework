@@ -65,10 +65,10 @@ namespace chaos {
                      \ingroup Dataset_Editor_Api
                      \ingroup Control_Unit_Definition_Api
                      */
-                    int addBinaryAttributeAsSubtypeToDataSet(const std::string&                             attr_name,
-                                                             const std::string&                             attr_description,
-                                                             const std::vector<DataType::BinarySubtype>&    attr_subtype_list,
-                                                             int32_t                                        attr_cardinality);
+                    int addBinaryAttributeAsSubtypeToDataSet(const std::string&                                     attr_name,
+                                                             const std::string&                                     attr_description,
+                                                             const common::data::structured::DatasetSubtypeList&    attr_subtype_list,
+                                                             int32_t                                                attr_cardinality);
                     
                     /*!
                      \ingroup Dataset_Editor_Api

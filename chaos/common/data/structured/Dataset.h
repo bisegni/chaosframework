@@ -144,7 +144,7 @@ namespace chaos {
                         Subclass::dataWrapped().dataset_key = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_SEARCH_KEY, "");
                         if(serialized_data->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST) &&
                            serialized_data->isVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST)) {
-                            DatasetAttributeSDWrapper<> attribute_wrapper;
+                            DatasetAttributeSDWrapper attribute_wrapper;
                             std::auto_ptr<CMultiTypeDataArrayWrapper> attr_vec(serialized_data->getVectorValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_LIST));
                             for(int idx = 0;
                                 idx < attr_vec->size();
@@ -160,7 +160,9 @@ namespace chaos {
                     std::auto_ptr<CDataWrapper> serialize() {
                         std::auto_ptr<CDataWrapper> result(new CDataWrapper());
                         result->addStringValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_NAME, Subclass::dataWrapped().name);
-                        DatasetAttributeSDWrapper< ReferenceSDWrapper<DatasetAttribute> > attribute_reference_wrapper;
+                        
+                        DatasetAttribute dataset_attribute_buf;
+                        DatasetAttributeSDWrapper attribute_reference_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(DatasetAttribute, dataset_attribute_buf));
                         DatasetAttributeElementContainer& cnt = Subclass::dataWrapped().attribute_set;
                         DECOrderedIndex& ordered_index = cnt.get<DAETagOrderedId>();
                         for(DECOrderedIndexIterator it = ordered_index.begin(),

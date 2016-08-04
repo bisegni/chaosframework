@@ -53,7 +53,7 @@ datasetDB(true) {
     channel_keys.push_back(device_id + DataPackPrefixID::HEALTH_DATASE_PREFIX);
     //  current_dataset.push_back(d);
     for(int cnt=0;cnt<channel_keys.size();cnt++)
-        current_dataset.push_back(new auto_ptr<chaos::common::data::CDataWrapper> ());
+        current_dataset.push_back(boost::shared_ptr<chaos::common::data::CDataWrapper>());
     
 }
 
@@ -75,9 +75,6 @@ DeviceController::~DeviceController() {
     if(ioLiveDataDriver){
         ioLiveDataDriver->deinit();
         delete(ioLiveDataDriver);
-    }
-    for(int cnt=0;cnt<channel_keys.size();cnt++){
-        delete current_dataset[cnt];
     }
 }
 
@@ -860,14 +857,14 @@ void DeviceController::addAttributeToTrack(string& attr) {
 
 //---------------------------------------------------------------------------------------------------
 CDataWrapper * DeviceController::getLiveCDataWrapperPtr() {
-    return current_dataset[DatasetDomainOutput]->get();
+    return current_dataset[DatasetDomainOutput].get();
 }
 
 
 //---------------------------------------------------------------------------------------------------
 CDataWrapper * DeviceController::getCurrentDatasetForDomain(DatasetDomain domain) {
     if(domain<current_dataset.size()){
-        return current_dataset[domain]->get();
+        return current_dataset[domain].get();
     }
     return NULL;
 }
@@ -882,7 +879,7 @@ chaos::common::data::CDataWrapper *  DeviceController::fetchCurrentDatatasetFrom
         value = ioLiveDataDriver->retriveRawData(channel_keys[domain],(size_t*)&value_len);
         if(value){
             chaos::common::data::CDataWrapper *tmp = new CDataWrapper(value);
-            current_dataset[domain]->reset(tmp);
+            current_dataset[domain].reset(tmp);
             free(value);
             return tmp;
         }
@@ -926,7 +923,7 @@ void DeviceController::fetchCurrentDeviceValue() {
     fetchCurrentDatatasetFromDomain(DatasetDomainOutput);
     
     if(trackingAttribute.size() == 0) return;
-    CDataWrapper *tmpPtr = current_dataset[DatasetDomainOutput]->get();
+    CDataWrapper *tmpPtr = current_dataset[DatasetDomainOutput].get();
     
     //add timestamp value
     int64_t got_ts = tmpPtr->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
@@ -965,7 +962,8 @@ void DeviceController::fetchCurrentDeviceValue() {
 }
 
 CDataWrapper *DeviceController::getCurrentData(){
-    return current_dataset[DatasetDomainOutput]->get();
+    return current_dataset[DatasetDomainOutput].
+    get();
 }
 
 //! get datapack between time itervall

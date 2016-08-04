@@ -2,6 +2,8 @@
 #include "ui_EditableSubtypeListWidget.h"
 #include "../../delegate/ComboBoxDelegate.h"
 
+using namespace chaos::common::data::structured;
+
 EditableSubtypeListWidget::EditableSubtypeListWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::EditableSubtypeListWidget){
@@ -18,7 +20,7 @@ EditableSubtypeListWidget::EditableSubtypeListWidget(QWidget *parent) :
             SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             SLOT(tableSelectionChanged(QItemSelection,QItemSelection)));
 }
-void EditableSubtypeListWidget::setSubtypeListPtr(std::vector<unsigned int> *_editable_subtypes_list) {
+void EditableSubtypeListWidget::setSubtypeListPtr(DatasetSubtypeList *_editable_subtypes_list) {
     if(_editable_subtypes_list == NULL) return;
     subtypes_table_model.setSubtypesList(_editable_subtypes_list);
 }

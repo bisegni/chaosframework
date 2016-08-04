@@ -110,63 +110,49 @@ namespace chaos {
                 };
                 
                 //!helper for create or read the script description
-                CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(AlgorithmVariable) {
-                public:
-                    AlgorithmVariableSDWrapper():
-                    AlgorithmVariableSDWrapperSubclass(){}
+                CHAOS_OPEN_SDWRAPPER(AlgorithmVariable)
+                void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
+                    if(serialized_data == NULL) return;
+                    dataWrapped().subtype_list.clear();
+                    dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_ALGO_NAME, "");
+                    dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_ALGO_DESCRIPTION, "");
+                    dataWrapped().type = static_cast<chaos::DataType::DataType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, CHAOS_ALGO_TYPE, chaos::DataType::TYPE_UNDEFINED));
+                    dataWrapped().node_dataset_attribute = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_ALGO_NODE_DS_ATTR, "");
+                    dataWrapped().node_uid = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_ALGO_NODE_UID, "");
+                    dataWrapped().mandatory = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, CHAOS_ALGO_MANDATORY, false);
                     
-                    AlgorithmVariableSDWrapper(const AlgorithmVariable& copy_source):
-                    AlgorithmVariableSDWrapperSubclass(copy_source){}
-                    
-                    AlgorithmVariableSDWrapper(chaos::common::data::CDataWrapper *serialized_data):
-                    AlgorithmVariableSDWrapperSubclass(serialized_data){
-                        deserialize(serialized_data);
-                    }
-                    
-                    
-                    void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
-                        if(serialized_data == NULL) return;
-                        dataWrapped().subtype_list.clear();
-                        dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_ALGO_NAME, "");
-                        dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_ALGO_DESCRIPTION, "");
-                        dataWrapped().type = static_cast<chaos::DataType::DataType>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, CHAOS_ALGO_TYPE, chaos::DataType::TYPE_UNDEFINED));
-                        dataWrapped().node_dataset_attribute = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_ALGO_NODE_DS_ATTR, "");
-                        dataWrapped().node_uid = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_ALGO_NODE_UID, "");
-                        dataWrapped().mandatory = CDW_GET_BOOL_WITH_DEFAULT(serialized_data, CHAOS_ALGO_MANDATORY, false);
-                        
-                        //we can deserialize data
-                        if(serialized_data->hasKey(CHAOS_ALGO_BIN_SUB_TYPE) &&
-                           serialized_data->isVectorValue(CHAOS_ALGO_BIN_SUB_TYPE)) {
-                            std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(CHAOS_ALGO_BIN_SUB_TYPE));
-                            for(int idx = 0;
-                                idx < serialized_array->size();
-                                idx++) {
-                                chaos::DataType::BinarySubtype sub_type = static_cast<chaos::DataType::BinarySubtype>(serialized_array->getInt32ElementAtIndex(idx));
-                                dataWrapped().subtype_list.push_back(sub_type);
-                            }
+                    //we can deserialize data
+                    if(serialized_data->hasKey(CHAOS_ALGO_BIN_SUB_TYPE) &&
+                       serialized_data->isVectorValue(CHAOS_ALGO_BIN_SUB_TYPE)) {
+                        std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> serialized_array(serialized_data->getVectorValue(CHAOS_ALGO_BIN_SUB_TYPE));
+                        for(int idx = 0;
+                            idx < serialized_array->size();
+                            idx++) {
+                            chaos::DataType::BinarySubtype sub_type = static_cast<chaos::DataType::BinarySubtype>(serialized_array->getInt32ElementAtIndex(idx));
+                            dataWrapped().subtype_list.push_back(sub_type);
                         }
                     }
+                }
+                
+                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                    std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                    data_serialized->addStringValue(CHAOS_ALGO_NAME, dataWrapped().name);
+                    data_serialized->addStringValue(CHAOS_ALGO_DESCRIPTION, dataWrapped().description);
+                    data_serialized->addInt32Value(CHAOS_ALGO_TYPE, dataWrapped().type);
+                    data_serialized->addStringValue(CHAOS_ALGO_NODE_DS_ATTR, dataWrapped().node_dataset_attribute);
+                    data_serialized->addStringValue(CHAOS_ALGO_NODE_UID, dataWrapped().node_uid);
+                    data_serialized->addBoolValue(CHAOS_ALGO_MANDATORY, dataWrapped().mandatory);
                     
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                        std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
-                        data_serialized->addStringValue(CHAOS_ALGO_NAME, dataWrapped().name);
-                        data_serialized->addStringValue(CHAOS_ALGO_DESCRIPTION, dataWrapped().description);
-                        data_serialized->addInt32Value(CHAOS_ALGO_TYPE, dataWrapped().type);
-                        data_serialized->addStringValue(CHAOS_ALGO_NODE_DS_ATTR, dataWrapped().node_dataset_attribute);
-                        data_serialized->addStringValue(CHAOS_ALGO_NODE_UID, dataWrapped().node_uid);
-                        data_serialized->addBoolValue(CHAOS_ALGO_MANDATORY, dataWrapped().mandatory);
-                        
-                        for(AlgorithmSubtypeListIterator it = dataWrapped().subtype_list.begin(),
-                            end = dataWrapped().subtype_list.end();
-                            it != end;
-                            it++) {
-                            data_serialized->appendInt32ToArray(*it);
-                        }
-                        data_serialized->finalizeArrayForKey(CHAOS_ALGO_BIN_SUB_TYPE);
-                        return data_serialized;
+                    for(AlgorithmSubtypeListIterator it = dataWrapped().subtype_list.begin(),
+                        end = dataWrapped().subtype_list.end();
+                        it != end;
+                        it++) {
+                        data_serialized->appendInt32ToArray(*it);
                     }
-                    
-                };
+                    data_serialized->finalizeArrayForKey(CHAOS_ALGO_BIN_SUB_TYPE);
+                    return data_serialized;
+                }
+                CHAOS_CLOSE_SDWRAPPER()
                 
                 //!a list of a script base information usefullt for search operation
                 CHAOS_DEFINE_TYPE_FOR_SD_LIST_WRAPPER(AlgorithmVariable,

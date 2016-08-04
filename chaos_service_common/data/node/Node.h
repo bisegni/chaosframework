@@ -54,20 +54,7 @@ namespace chaos {
                 };
                 
                 //sd wrapper for node instance class
-                CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(NodeInstance) {
-                public:
-                    NodeInstanceSDWrapper():
-                    NodeInstanceSDWrapperSubclass(){}
-                    
-                    NodeInstanceSDWrapper(const NodeInstance& copy_source):
-                    NodeInstanceSDWrapperSubclass(copy_source){}
-                    
-                    NodeInstanceSDWrapper(common::data::CDataWrapper *serialized_data):
-                    NodeInstanceSDWrapperSubclass(serialized_data){
-                        deserialize(serialized_data);
-                    }
-                    
-                    
+                CHAOS_OPEN_SDWRAPPER(NodeInstance)
                     void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                         if(serialized_data == NULL) return;
                         dataWrapped().instance_seq = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "instance_seq", 0);
@@ -80,8 +67,7 @@ namespace chaos {
                         data_serialized->addStringValue("instance_name", dataWrapped().instance_name);
                         return data_serialized;
                     }
-                };
-
+                CHAOS_CLOSE_SDWRAPPER()
             }
         }
     }

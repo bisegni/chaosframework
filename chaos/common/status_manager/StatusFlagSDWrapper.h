@@ -32,17 +32,7 @@ namespace chaos {
     namespace common {
         namespace status_manager {
             //!class for serialization of state level that belong to a status flag
-            CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(StateLevel) {
-            public:
-                StateLevelSDWrapper():
-                StateLevelSDWrapperSubclass(){}
-                
-                StateLevelSDWrapper(const StateLevel& copy_source):
-                StateLevelSDWrapperSubclass(copy_source){}
-                
-                StateLevelSDWrapper(chaos::common::data::CDataWrapper *serialized_data):
-                StateLevelSDWrapperSubclass(serialized_data){deserialize(serialized_data);}
-                
+            CHAOS_OPEN_SDWRAPPER(StateLevel)
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                     if(serialized_data == NULL) return;
                     dataWrapped().value = static_cast<int8_t>(CDW_GET_INT32_WITH_DEFAULT(serialized_data, chaos::NodeStatusFlagDefinitionKey::NODE_SF_LEVEL_VALUE, 0));
@@ -60,8 +50,8 @@ namespace chaos {
                     data_serialized->addInt32Value(chaos::NodeStatusFlagDefinitionKey::NODE_SF_LEVEL_SEVERITY, static_cast<StatusFlagServerity>(dataWrapped().severity));
                     return data_serialized;
                 }
-
-            };
+            CHAOS_CLOSE_SDWRAPPER()
+            
             
             //!class for serialization of status flag
             /*!
@@ -69,17 +59,7 @@ namespace chaos {
              and not runtime one, so only flag and level information will be
              encoded no listener no current value.
              */
-            CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(StatusFlag) {
-            public:
-                StatusFlagSDWrapper():
-                StatusFlagSDWrapperSubclass(){}
-                
-                StatusFlagSDWrapper(const StatusFlag& copy_source):
-                StatusFlagSDWrapperSubclass(copy_source){}
-                
-                StatusFlagSDWrapper(chaos::common::data::CDataWrapper *serialized_data):
-                StatusFlagSDWrapperSubclass(serialized_data){deserialize(serialized_data);}
-                
+            CHAOS_OPEN_SDWRAPPER(StatusFlag)
                 void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                     if(serialized_data == NULL) return;
                     dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, NodeStatusFlagDefinitionKey::NODE_SF_NAME, "");
@@ -132,8 +112,8 @@ namespace chaos {
                     }
                     return data_serialized;
                 }
+            CHAOS_CLOSE_SDWRAPPER()
 
-            };
         }
     }
 }

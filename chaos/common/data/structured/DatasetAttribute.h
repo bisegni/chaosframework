@@ -30,7 +30,7 @@ namespace chaos {
     namespace common {
         namespace data {
             namespace structured {
-                CHAOS_DEFINE_VECTOR_FOR_TYPE(chaos::DataType::BinarySubtype, DatasetSubtypeList)
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(unsigned int, DatasetSubtypeList)
                 
                 //! The description of a n attribute of a CHAOS dataset
                 struct DatasetAttribute {
@@ -77,8 +77,7 @@ namespace chaos {
                                     for(int idx = 0;
                                         idx < serialized_array->size();
                                         idx++) {
-                                        chaos::DataType::BinarySubtype sub_type = static_cast<chaos::DataType::BinarySubtype>(serialized_array->getInt32ElementAtIndex(idx));
-                                        Subclass::dataWrapped().binary_subtype_list.push_back(sub_type);
+                                        Subclass::dataWrapped().binary_subtype_list.push_back(static_cast<unsigned int>(serialized_array->getInt32ElementAtIndex(idx)));
                                     }
                                 } else {
                                     //single subtype

@@ -216,9 +216,7 @@ bool TestEvent::test(){
     p_group.addRoperty("prop_b", "good property", chaos::DataType::TYPE_INT64);
     p_group.addRoperty("prop_c", "good property", chaos::DataType::TYPE_DOUBLE);
     
-    common::property::PorpertyGroupSDWrapper< ReferenceSDWrapper<common::property::PorpertyGroup> > group_ref_wrapper;
-    
-    group_ref_wrapper.dataWrapped() = p_group;
+    common::property::PorpertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PorpertyGroup, p_group));
     std::cout << group_ref_wrapper.serialize()->getJSONString() << std::endl;
     return true;
 }

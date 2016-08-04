@@ -60,7 +60,7 @@ namespace chaos {
                 if(serialized_data->hasKey("property_g_plist") &&
                    serialized_data->isVectorValue("property_g_plist")){
                     //we have properties
-                    PropertyDescriptionSDWrapper<> property_wrapper;
+                    PropertyDescriptionSDWrapper property_wrapper;
                     std::auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> prop_array(serialized_data->getVectorValue("property_g_plist"));
                     
                     for(unsigned int idx = 0;
@@ -82,7 +82,8 @@ namespace chaos {
                 data_serialized->addStringValue("property_g_name", Subclass::dataWrapped().name);
                 if(Subclass::dataWrapped().maps_properties.size()) {
                     
-                    PropertyDescriptionSDWrapper< chaos::common::data::ReferenceSDWrapper<PorpertyGroup>  > property_ref_wrapper;
+                    PropertyDescription pd;
+                    PropertyDescriptionSDWrapper property_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyDescription, pd));
                     
                     for(MapPropertiesIterator it = Subclass::dataWrapped().maps_properties.begin(),
                         end = Subclass::dataWrapped().maps_properties.end();
@@ -95,7 +96,7 @@ namespace chaos {
                     //finalize array
                     data_serialized->finalizeArrayForKey("property_g_plist");
                 }
-                return data_serialized  ;
+                return data_serialized;
             }
             CHAOS_CLOSE_SDWRAPPER()
         }

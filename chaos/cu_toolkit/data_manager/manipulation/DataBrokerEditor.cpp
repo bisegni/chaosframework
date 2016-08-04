@@ -78,7 +78,8 @@ std::auto_ptr<DatasetCacheWrapper> DataBrokerEditor::getDatasetCacheWrapperFor(c
 std::auto_ptr<CDataWrapper> DataBrokerEditor::serialize() {
     std::auto_ptr<CDataWrapper> result(new CDataWrapper());
     //scan all dataset and every serialization will be added to global CDataWrapper as array
-    DatasetSDWrapper< ReferenceSDWrapper<Dataset> > reference_ser_wrap;
+    Dataset ds_buff;
+    DatasetSDWrapper reference_ser_wrap(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(Dataset, ds_buff));
     for(DECOrderedIndexIterator oit = ds_index_ordered.begin(),
         oend = ds_index_ordered.end();
         oit != oend;
@@ -100,8 +101,8 @@ void DataBrokerEditor::deserialize(CDataWrapper& serialization) {
     std::auto_ptr<CMultiTypeDataArrayWrapper> ser_ds_vec(serialization.getVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION));
     if(ser_ds_vec->size() == 0) return;
     
-    DatasetSDWrapper<> ds_wrapper;
-    for(int idx =0;
+    DatasetSDWrapper ds_wrapper;
+    for(int idx = 0;
         idx < ser_ds_vec->size();
         idx++) {
         std::auto_ptr<CDataWrapper> ds_ser(ser_ds_vec->getCDataWrapperElementAtIndex(idx));

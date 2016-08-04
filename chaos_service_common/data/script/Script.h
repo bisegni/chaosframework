@@ -65,43 +65,30 @@ namespace chaos {
                 };
                 
                 //!helper for create or read the script description
-                CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(ScriptBaseDescription) {
-                public:
-                    ScriptBaseDescriptionSDWrapper():
-                    ScriptBaseDescriptionSDWrapperSubclass(){}
-                    
-                    ScriptBaseDescriptionSDWrapper(const ScriptBaseDescription& copy_source):
-                    ScriptBaseDescriptionSDWrapperSubclass(copy_source){}
-                    
-                    ScriptBaseDescriptionSDWrapper(common::data::CDataWrapper *serialized_data):
-                    ScriptBaseDescriptionSDWrapperSubclass(serialized_data){
-                        deserialize(serialized_data);
-                    }
-                    
-                    
-                    void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
-                        if(serialized_data == NULL) return;
-                        dataWrapped().unique_id = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "seq", 0);
-                        dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_NAME, "");
-                        dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_DESCRIPTION, "");
-                        dataWrapped().language = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE, "");
-                    }
-                    
-                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                        std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
-                        data_serialized->addInt64Value("seq", dataWrapped().unique_id);
-                        data_serialized->addStringValue(CHAOS_SBD_NAME, dataWrapped().name);
-                        data_serialized->addStringValue(CHAOS_SBD_DESCRIPTION, dataWrapped().description);
-                        data_serialized->addStringValue(chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE, dataWrapped().language);
-                        return data_serialized;
-                    }
-                };
+                CHAOS_OPEN_SDWRAPPER(ScriptBaseDescription)
+                void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
+                    if(serialized_data == NULL) return;
+                    dataWrapped().unique_id = (uint64_t)CDW_GET_INT64_WITH_DEFAULT(serialized_data, "seq", 0);
+                    dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_NAME, "");
+                    dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, CHAOS_SBD_DESCRIPTION, "");
+                    dataWrapped().language = CDW_GET_SRT_WITH_DEFAULT(serialized_data, chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE, "");
+                }
+                
+                std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                    std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
+                    data_serialized->addInt64Value("seq", dataWrapped().unique_id);
+                    data_serialized->addStringValue(CHAOS_SBD_NAME, dataWrapped().name);
+                    data_serialized->addStringValue(CHAOS_SBD_DESCRIPTION, dataWrapped().description);
+                    data_serialized->addStringValue(chaos::ExecutionUnitNodeDefinitionKey::EXECUTION_SCRIPT_INSTANCE_LANGUAGE, dataWrapped().language);
+                    return data_serialized;
+                }
+                CHAOS_CLOSE_SDWRAPPER()
                 
                 //!a list of a script base information usefullt for search operation
                 CHAOS_DEFINE_TYPE_FOR_SD_LIST_WRAPPER(ScriptBaseDescription,
                                                       ScriptBaseDescriptionSDWrapper,
                                                       ScriptBaseDescriptionListWrapper);
-
+                
                 
                 //! Full script description
                 struct Script {
@@ -147,26 +134,14 @@ namespace chaos {
                 };
                 
                 //!heper for script class
-                CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(Script) {
-                public:
-                    ScriptSDWrapper():
-                    ScriptSDWrapperSubclass(){}
-                    
-                    ScriptSDWrapper(const Script& copy_source):
-                    ScriptSDWrapperSubclass(copy_source){}
-                    
-                    ScriptSDWrapper(chaos::common::data::CDataWrapper *serialized_data):
-                    ScriptSDWrapperSubclass(serialized_data){
-                        deserialize(serialized_data);
-                    }
-                    
+                CHAOS_OPEN_SDWRAPPER(Script)
                     //! deserialization
                     void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                         if(serialized_data == NULL) return;
                         ScriptBaseDescriptionSDWrapper sd_dw;
                         chaos::service_common::data::dataset::AlgorithmVariableSDWrapper algo_var_dw;
-                        chaos::common::data::structured::DatasetAttributeSDWrapper<> ds_attr_dw;
-
+                        chaos::common::data::structured::DatasetAttributeSDWrapper ds_attr_dw;
+                        
                         //clear all ol data on the list
                         dataWrapped().variable_list.clear();
                         dataWrapped().dataset_attribute_list.clear();
@@ -233,9 +208,11 @@ namespace chaos {
                     
                     //serialization
                     std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
-                        ScriptBaseDescriptionSDWrapper  sd_dw(dataWrapped().script_description);
+                        ScriptBaseDescriptionSDWrapper  sd_dw;
                         chaos::service_common::data::dataset::AlgorithmVariableSDWrapper algo_var_dw;
-                        chaos::common::data::structured::DatasetAttributeSDWrapper<> ds_attr_dw;
+                        chaos::common::data::structured::DatasetAttributeSDWrapper ds_attr_dw;
+                        
+                        sd_dw() = dataWrapped().script_description;
                         
                         std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized = sd_dw.serialize();
                         
@@ -272,7 +249,7 @@ namespace chaos {
                                 end = dataWrapped().variable_list.end();
                                 it != end;
                                 it++) {
-                                algo_var_dw = *it;
+                                algo_var_dw() = *it;
                                 data_serialized->appendCDataWrapperToArray(*algo_var_dw.serialize());
                             }
                             data_serialized->finalizeArrayForKey("variables");
@@ -286,14 +263,14 @@ namespace chaos {
                                 end = dataWrapped().dataset_attribute_list.end();
                                 it != end;
                                 it++) {
-                                ds_attr_dw = *it;
+                                ds_attr_dw() = *it;
                                 data_serialized->appendCDataWrapperToArray(*ds_attr_dw.serialize());
                             }
                             data_serialized->finalizeArrayForKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION);
                         }
                         return data_serialized;
                     }
-                };
+                CHAOS_CLOSE_SDWRAPPER()
                 
                 
                 CHAOS_DEFINE_TYPE_FOR_SD_LIST_WRAPPER(Script,

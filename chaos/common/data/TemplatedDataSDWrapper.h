@@ -37,31 +37,81 @@ namespace chaos {
     namespace common {
         namespace data {
             
-            template<typename T>
-            struct ReferenceSDWrapper {
-            private:
-                T private_deafault_data;
-            public:
+            //strcut that wrapper around a reference to a variable types
+            template <typename T>
+            struct DataWrapperReference {
                 T& data;
-                ReferenceSDWrapper():
-                data(private_deafault_data){}
+                
+                //!constructor with referenced objec
+                DataWrapperReference(T& referenced_instance):
+                data(referenced_instance){}
+                
+                //!return the container
+                T& dataWrapped(){
+                    return data;
+                }
+                
+                //!assign operation overload with wrapper
+                T& operator()() {
+                    return data;
+                }
+                
+                const T& dataWrapped() const {
+                    return data;
+                }
+                
+                //!assign operation overload with contained data
+                T& operator=(const T &rhs) {
+                    return data = rhs;
+                }
+                
+                DataWrapperReference<T>& operator=(const DataWrapperReference<T> &rhs) {
+                    data = rhs.data;
+                    return *this;
+                }
             };
             
-            template<typename T>
-            struct CopySDWrapper {
-                T data;
+            //! class that wrap a copy of a veriable types
+            template <typename T>
+            struct DataWrapperCopy:
+            public DataWrapperReference<T> {
+            private:
+                //!private copy for empty constructor
+                T private_copy;
+            public:
+                DataWrapperCopy():
+                DataWrapperReference<T>(private_copy){}
+                ~DataWrapperCopy(){}
+                
+                //!assign operation overload with contained data
+                T& operator=(const T &rhs) {
+                    return private_copy = rhs;
+                }
+                
+                DataWrapperCopy<T>& operator=(const DataWrapperCopy<T> &rhs) {
+                    private_copy = rhs.private_copy;
+                    return *this;
+                }
             };
+
             
             //! serializer deserializer wrap for class that embed data to transfer with cdata wrapper
-            template<typename T, typename W = CopySDWrapper<T> >
+            template<typename T>
             class TemplatedDataSDWrapper {
-                W wrapper;
-                //W wrapper;
+                //pointer todata wrapper
+                std::auto_ptr< DataWrapperReference<T> > wrapper;
             public:
                 //!constructor with the default container
-                TemplatedDataSDWrapper(){}
-                TemplatedDataSDWrapper(const T& data_src){wrapper.data = data_src;}
-                TemplatedDataSDWrapper(chaos::common::data::CDataWrapper *serialized_data){}
+                TemplatedDataSDWrapper(std::auto_ptr< DataWrapperReference<T> > _wrapper):
+                wrapper(_wrapper){}
+                
+                TemplatedDataSDWrapper(const T& copy_src,
+                                       std::auto_ptr< DataWrapperReference<T> > _wrapper):
+                wrapper(_wrapper){
+                    (*wrapper)() = copy_src;
+                }
+                
+                //destructor
                 virtual ~TemplatedDataSDWrapper(){};
                 
                 //!deserialize encoded data in container
@@ -72,84 +122,56 @@ namespace chaos {
                 
                 //!return the container
                 T& dataWrapped(){
-                    return wrapper.data;
+                    return (*wrapper)();
                 }
                 
                 //!assign operation overload with wrapper
                 T& operator()() {
-                    return wrapper.data;
+                    return (*wrapper)();;
                 }
                 
                 const T& dataWrapped() const {
-                    return wrapper.data;
+                    return (*wrapper)();
                 }
                 
                 //!assign operation overload with contained data
-                T& operator=(T const &rhs) {
-                    return (wrapper.data = rhs);
+                T& operator=(const T &rhs) {
+                    return (*wrapper)() = rhs;
                 }
                 
-                //!assign operation overload with wrapper
-                TemplatedDataSDWrapper<T>& operator=(TemplatedDataSDWrapper<T> const &rhs) {
-                    wrapper.data = rhs.wrapper.data;
+                DataWrapperReference<T>& operator=(const DataWrapperReference<T> &rhs) {
+                    wrapper = rhs.wrapper;
                     return *this;
                 }
             };
             
+
+#define CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(x, default_param)\
+std::auto_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperReference<x>(default_param))
             
 #define CHAOS_SD_WRAPPER_NAME(x)  x ## SDWrapper
+            
 #define CHAOS_SD_WRAPPER_NAME_VAR(x, v)  CHAOS_SD_WRAPPER_NAME(x) v
             
+#define CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x)\
+std::auto_ptr< chaos::common::data::DataWrapperReference<x> > _data = std::auto_ptr< chaos::common::data::DataWrapperReference<x> >(new chaos::common::data::DataWrapperCopy<x>())
+            
+#define CHAOS_SD_WRAPPER_DEFAULT_CONSTRUCTOR(x)\
+CHAOS_SD_WRAPPER_NAME(x)(CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x))
+            
 #define CHAOS_OPEN_SDWRAPPER(x)\
-template<typename W = chaos::common::data::CopySDWrapper<x> >\
-class x ## SDWrapper:\
-public chaos::common::data::TemplatedDataSDWrapper<x, W> {\
-typedef chaos::common::data::TemplatedDataSDWrapper<x, W> Subclass; public:\
-CHAOS_SD_WRAPPER_NAME(x)():\
-Subclass(){}\
-CHAOS_SD_WRAPPER_NAME(x)(const x& copy_source):\
-Subclass(copy_source){}\
-CHAOS_SD_WRAPPER_NAME(x)(chaos::common::data::CDataWrapper *serialized_data):\
-Subclass(serialized_data){deserialize(serialized_data);}
+struct CHAOS_SD_WRAPPER_NAME(x):\
+public chaos::common::data::TemplatedDataSDWrapper<x> {\
+typedef chaos::common::data::TemplatedDataSDWrapper<x> Subclass; public:\
+CHAOS_SD_WRAPPER_DEFAULT_CONSTRUCTOR(x):\
+Subclass(_data){}\
+CHAOS_SD_WRAPPER_NAME(x)(chaos::common::data::CDataWrapper *serialized_data, CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x)):\
+Subclass(_data){deserialize(serialized_data);}\
+CHAOS_SD_WRAPPER_NAME(x)(const x& copy_source, CHAOS_SD_WRAPPER_DEFAULT_PARAMETER(x)):\
+Subclass(copy_source, _data){}
+
             
 #define CHAOS_CLOSE_SDWRAPPER() };
-            
-#define CHAOS_DEFINE_SDWRAPPER_CONSTRUCTOR(x)\
-CHAOS_SD_WRAPPER_NAME(x)():\
-chaos::common::data::TemplatedDataSDWrapper<x, W>(){}\
-CHAOS_SD_WRAPPER_NAME(x)(const x& copy_source):\
-chaos::common::data::TemplatedDataSDWrapper<x, W>(copy_source){}\
-CHAOS_SD_WRAPPER_NAME(x)(chaos::common::data::CDataWrapper *serialized_data):\
-chaos::common::data::TemplatedDataSDWrapper<x, W>(serialized_data){deserialize(serialized_data);}
-
-#define CHAOS_DEFINE_TEMPLATED_SDWRAPPER_ALIAS_AND_WRAPPER(wrp, a, x)\
-typedef chaos::common::data::TemplatedDataSDWrapper<x,w> a ## SDWrapperSubclass;\
-template<typename w= wrp>\
-class a ## SDWrapper:\
-public a ## SDWrapperSubclass
-            
-#define CHAOS_DEFINE_TEMPLATED_SDWRAPPER_ALIAS(a,x)\
-typedef chaos::common::data::TemplatedDataSDWrapper<x> a ## SDWrapperSubclass;\
-class a ## SDWrapper:\
-public a ## SDWrapperSubclass
-            
-#define CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS(x)\
-CHAOS_DEFINE_TEMPLATED_SDWRAPPER_ALIAS(x,x)
-            
-#define CHAOS_DEFINE_TEMPLATED_SDWRAPPER_CLASS_W(w,x)\
-CHAOS_DEFINE_TEMPLATED_SDWRAPPER_ALIAS(w,x,x)
-            
-            
-#define CHAOS_DECLARE_SD_WRAPPER_CONSTRUCTOR(x)\
-CHAOS_DEFINE_SD_WRAPPER(x)():\
-chaos::common::data::TemplatedDataSDWrapper<x>(){}\
-CHAOS_SD_WRAPPER_NAME(x)(const Dataset& copy_source):\
-chaos::common::data::TemplatedDataSDWrapper<x>(copy_source){}\
-CHAOS_SD_WRAPPER_NAME(x)(chaos::common::data::CDataWrapper *serialized_data):\
-chaos::common::data::TemplatedDataSDWrapper<x>(serialized_data){deserialize(serialized_data);}\
-
-            
-            
             
             template<typename T,
             typename DW>
@@ -255,7 +277,7 @@ chaos::common::data::TemplatedDataSDWrapper<x>(serialized_data){deserialize(seri
                         end = TemplatedDataListWrapper<T,DW>::end();
                         it != end;
                         it++) {
-                        serializer_wrap = *it;
+                        serializer_wrap() = *it;
                         result->appendCDataWrapperToArray(*serializer_wrap.serialize());
                     }
                     result->finalizeArrayForKey(instance_serialization_key);

@@ -36,7 +36,6 @@ namespace chaos {
                 protected:
                     API_PROXY_CD_DECLARATION(SaveScript)
                 public:
-                    
                     /*!
                      Create a new script, the minimal information fro create it
                      are name and description from class @chaos::service_common::data::script::ScriptBaseInfo.

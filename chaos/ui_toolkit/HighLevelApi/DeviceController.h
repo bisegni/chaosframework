@@ -33,7 +33,7 @@
 #include <chaos/common/utility/SingleBufferCircularBuffer.h>
 #include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/chaos_types.h>
-
+#include <boost/shared_ptr.hpp>
 
 namespace chaos {
     namespace ui{
@@ -77,7 +77,7 @@ namespace chaos {
             //auto_ptr<CDataWrapper> lastDeviceDefinition;
             
             //!point to the freashest live value for this device dataset
-            std::vector<auto_ptr<chaos::common::data::CDataWrapper>* >current_dataset;
+            std::vector< boost::shared_ptr<chaos::common::data::CDataWrapper> >current_dataset;
             
             
             //mutext for multi threading track operation
