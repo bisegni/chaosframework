@@ -23,6 +23,10 @@ else
 	exit 1
     fi
 fi
+if [ -n "$CHAOS_PREFIX" ];then
+    export LD_LIBRARY_PATH=$CHAOS_PREFIX/lib
+    export DYLD_LIBRARY_PATH=$CHAOS_PREFIX/lib
+fi
 KERNEL_VER=$(uname -r)
 KERNEL_SHORT_VER=$(uname -r|cut -d\- -f1|tr -d '.'| tr -d '[A-Z][a-z]')
 PID=$$

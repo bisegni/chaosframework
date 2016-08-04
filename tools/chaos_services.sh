@@ -14,12 +14,15 @@ MDS_EXEC=ChaosMetadataService
 UI_EXEC=CUIserver
 US_EXEC=UnitServer
 WAN_EXEC=ChaosWANProxy
+if [ -z "$CHAOS_PREFIX" ]; then
+    error_mesg "CHAOS_PREFIX environment variables not set"
+    exit 1
+fi
+
+
+
 cds_checks(){
-    if [ -z "$CHAOS_PREFIX" ]; then
-	error_mesg "CHAOS_PREFIX environment variables not set"
-	exit 1
-    fi
-    export LD_LIBRARY_PATH=$CHAOS_PREFIX/lib
+
     if [ -x "$CHAOS_PREFIX/bin/$CDS_EXEC" ]; then
 	CDS_BIN=$CHAOS_PREFIX/bin/$CDS_EXEC
     else
