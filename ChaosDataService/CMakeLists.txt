@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(ChaosDataService)
 SET(src main.cpp)
-
 SET(src  ${src} ../chaos_service_common/persistence/mongodb/MongoDBHAConnectionManager.cpp)
 
 SET(src  ${src} ChaosDataService.cpp
