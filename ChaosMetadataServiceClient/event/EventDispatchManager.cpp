@@ -45,7 +45,8 @@ void EventDispatchManager::init(void *init_data) throw (chaos::CException) {
     
     //allcoate the event channel
     alert_event_channel = NetworkBroker::getInstance()->getNewAlertEventChannel();
-    alert_event_channel->activateChannelEventReception(this);
+    if(alert_event_channel)
+      alert_event_channel->activateChannelEventReception(this);
     
 }
 

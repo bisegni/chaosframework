@@ -443,7 +443,12 @@ channel::EventChannel *NetworkBroker::getNewEventChannelFromType(event::EventTyp
  \param deviceNetworkAddress device node address
  */
 AlertEventChannel *NetworkBroker::getNewAlertEventChannel() {
-    CHAOS_ASSERT(!GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE));
+  
+  if(GlobalConfiguration::getInstance()->getOption<bool>(InitOption::OPT_EVENT_DISABLE)){
+    MB_LAPP<<"No Event Alert Instanced, EVENTS are DISABLED";
+    return NULL;
+  }
+  
     return static_cast<event::channel::AlertEventChannel*>(NetworkBroker::getNewEventChannelFromType(event::EventTypeAlert));
 }
 

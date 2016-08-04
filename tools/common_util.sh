@@ -8,7 +8,7 @@ SCRIPTTESTABSPATH=`pwd -P`
 SCRIPTNAME=`basename $SCRIPTTESTABSPATH`
 popd > /dev/null
 export LC_ALL="en_US.UTF-8"
-CHAOS_OVERALL_OPT=""
+CHAOS_OVERALL_OPT="--event-disable 1"
 if [ -n "$CHAOS_INTERFACE" ];then
     CHAOS_OVERALL_OPT="$CHAOS_OVERALL_OPT --publishing-interface $CHAOS_INTERFACE"
 fi
