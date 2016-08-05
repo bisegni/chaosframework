@@ -4,8 +4,9 @@ pushd `dirname $0` > /dev/null
 scriptdir=`pwd -P`
 popd > /dev/null
 
-export CHAOS_TOOL=$scriptdir
-
+if [ -z "$CHAOS_TOOLS" ];then
+    export CHAOS_TOOLS=$scriptdir
+fi
 source $scriptdir/common_util.sh
 
 CDS_EXEC=ChaosDataService

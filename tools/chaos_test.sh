@@ -2,7 +2,10 @@
 cmd=$1
 
 scriptdir=$(dirname $0)
-export CHAOS_TOOLS=`cd $scriptdir && pwd`
+if [ -z "$CHAOS_TOOLS" ];then
+    export CHAOS_TOOLS=`cd $scriptdir && pwd`
+fi
+
 source $scriptdir/common_util.sh
 
 testdir=$scriptdir/test
