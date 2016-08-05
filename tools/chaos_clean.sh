@@ -13,14 +13,21 @@ function cleandir(){
     echo "* cleaning $1"
     rm -rf $1
 }
-
-cleandir $chaos_bundle/external
+sys=`uname -s`
+mac=`uname -m`
 cleandir $chaos_bundle/usr
-cleandir $chaos_bundle/chaosframwork/external
-cleandir $chaos_bundle/chaosframwork/external_${CHAOS_TARGET}
+
+if [ -n "$CHAOS_TARGET" ];then
+    cleandir $chaos_bundle/chaosframwork/external-${CHAOS_TARGET}
+    cleandir $chaos_bundle/build-${CHAOS_TARGET}
+else
+    cleandir $chaos_bundle/chaosframwork/external-$sys-$mac
+        cleandir $chaos_bundle/build-$sys-$mac
+fi
 cleandir $chaos_bundle/chaosframwork/usr
 cleandir $chaos_bundle/chaosframework/bin
 cleandir $chaos_bundle/chaosframework/build
+cleandir $chaos_bundle/build
 if [ -n "$CHAOS_PREFIX" ]; then
     echo "* cleaning CHAOS_PREFIX=$CHAOS_PREFIX" 
     cleandir $CHAOS_PREFIX
