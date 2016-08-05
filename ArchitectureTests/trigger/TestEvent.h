@@ -105,42 +105,43 @@ namespace chaos {
             //---------------------------------
             //create two consumer
             
-            class SubjectConsumerIncrement:
-            public SubjectConsumer {
-            public:
-                SubjectConsumerIncrement();
-                ~SubjectConsumerIncrement();
+            CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(SubjectConsumerIncrement, SubjectConsumer)
+            CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("prop_a", "good property", chaos::DataType::TYPE_INT32)
+            CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("prop_b", "good property", chaos::DataType::TYPE_INT64);
+            CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("prop_c", "good property", chaos::DataType::TYPE_DOUBLE);
+            CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION(SubjectConsumerIncrement,
+                                                  SubjectConsumer,
+                                                  "Preform integer increment")
+            //we need to declare the custom consumer event
+            ConsumerResult consumeEvent(TriggerDataEventType event_type,
+                                        TriggeredData& trigger_data,
+                                        const CDataVariantVector& event_values);
+            CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
+            
+            
+            CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(SubjectConsumerDecrement, SubjectConsumer)
+            CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("prop_d", "good property", chaos::DataType::TYPE_INT32)
+            CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("prop_e", "good property", chaos::DataType::TYPE_INT64);
+            CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("prop_f", "good property", chaos::DataType::TYPE_DOUBLE);
+            CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION(SubjectConsumerDecrement,
+                                                  SubjectConsumer,
+                                                  "Preform integer decrement")
                 ConsumerResult consumeEvent(TriggerDataEventType event_type,
                                             TriggeredData& trigger_data,
                                             const CDataVariantVector& event_values);
-            };
-            
-            struct SubjectConsumerIncrementDescription:
-            public chaos::cu::data_manager::trigger_system::ConsumerDescription<SubjectConsumerIncrement, SubjectConsumer> {
-                SubjectConsumerIncrementDescription():
-                ConsumerDescription<SubjectConsumerIncrement, SubjectConsumer>("SubjectConsumerIncrement") {
-                    addProperty("prop_a", "good property", chaos::DataType::TYPE_INT32);
-                    addProperty("prop_b", "good property", chaos::DataType::TYPE_INT64);
-                    addProperty("prop_c", "good property", chaos::DataType::TYPE_DOUBLE);
-                }
-            };
-            
-            class SubjectConsumerDecrement:
-            public SubjectConsumer {
-            public:
-                SubjectConsumerDecrement();
-                ~SubjectConsumerDecrement();
-                ConsumerResult consumeEvent(TriggerDataEventType event_type,
-                                            TriggeredData& trigger_data,
-                                            const CDataVariantVector& event_values);
-            };
+            CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
             
             //---------------------------------
             
             class SubjectTriggerEnviroment:
             public RegisterEventConsumerEnvironment<SubjectEvent, SubjectConsumer, Subject, TriggerDataEventType> {
             public:
-                SubjectTriggerEnviroment();
+                SubjectTriggerEnviroment():
+                RegisterEventConsumerEnvironment<SubjectEvent, SubjectConsumer, Subject, TriggerDataEventType>("SubjectName"){
+                    registerConsumerClass<SubjectConsumerIncrementPropertyDescription>();
+                    registerConsumerClass<SubjectConsumerDecrementPropertyDescription>();
+                }
+                ~SubjectTriggerEnviroment(){}
             };
             
             //---------------------------------

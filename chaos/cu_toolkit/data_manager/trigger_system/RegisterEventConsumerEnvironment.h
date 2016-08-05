@@ -45,23 +45,41 @@ namespace chaos {
                 namespace chaos_util = chaos::common::utility;
                 namespace cu_data_trigger = chaos::cu::data_manager::trigger_system;
                 
+                //Base trigger environment
+                class TriggerEnvironment {
+                    const std::string environment_name;
+                public:
+                    TriggerEnvironment(const std::string& _environment_name):
+                    environment_name(_environment_name){}
+                    ~TriggerEnvironment(){}
+                    
+                    const std::string& getEnvironmentName() {
+                        return environment_name;
+                    }
+                    
+                    virtual std::auto_ptr<chaos::common::data::CDataWrapper> serialize() = 0;
+                };
+                
                 //!define th emap taht correlata
                 template<typename EventBaseClass,
                 typename ConsumerBaseClass,
                 typename SubjectBaseClass,
                 typename EventType >
-                class RegisterEventConsumerEnvironment {
+                class RegisterEventConsumerEnvironment:
+                public TriggerEnvironment{
                 public:
                     //!comodity typedef
                     typedef boost::shared_ptr< EventBaseClass >     EventInstanceShrdPtr;
                     typedef boost::shared_ptr< SubjectBaseClass >   SubjectInstanceShrdPtr;
                     typedef boost::shared_ptr< ConsumerBaseClass >  ConsumerShrdPtr;
                     
-                    typedef boost::shared_ptr< chaos_util::ObjectInstancer<ConsumerBaseClass> > ConsumerInstancerShrdPtr;
+                    typedef boost::shared_ptr< ConsumerInstanceDescription<ConsumerBaseClass> > ConsumerInstancerShrdPtr;
+                   // typedef boost::shared_ptr< ConsumerInstanceDescription<EventBaseClass> > ConsumerInstancerShrdPtr;
                 protected:
                     //!map that correlate the consumer name to the instancer
                     CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, SubjectInstanceShrdPtr,      MapSubjectNameInstance);
                     CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, ConsumerInstancerShrdPtr,    MapConsumerNameInstancer);
+                    //CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, EventInstancerShrdPtr,    MapConsumerNameInstancer);
                     CHAOS_DEFINE_VECTOR_FOR_TYPE_IN_TEMPLATE(ConsumerShrdPtr, VectorConsumerInstance);
                     
                     boost::shared_mutex mutex;
@@ -72,6 +90,7 @@ namespace chaos {
                     //!map for consumer name vs instancer
                     MapConsumerNameInstancer map_consumer_name_instancer;
                     
+                    //MapEventNameInstancer map_event_name_instancer;
                     
                     //!define multiindex to permit the find operation of the aggregate event type/ subject
                     //!to forward the event to the attacched consumer
@@ -161,17 +180,32 @@ namespace chaos {
                     }
                 public:
                     
-                    RegisterEventConsumerEnvironment():
+                    RegisterEventConsumerEnvironment(const std::string& _environment_name):
+                    TriggerEnvironment(_environment_name),
                     type_subject_index(type_subject_container.template get<MECTagTypeSubjectUUID>()){}
                     
+                    ~RegisterEventConsumerEnvironment(){}
+                    
+                    
+                    
                     //! register the consumer class that are sublcass of @ConsumerBaseClass
-                    template<typename Consumer>
-                    void registerConsumerClass(const std::string& consumer_name){
+                    template<typename ConsumerDescriptor>
+                    void registerConsumerClass(){
                         boost::unique_lock<boost::shared_mutex> wl(mutex);
                         //register instance into the map
-                        map_consumer_name_instancer.insert(MapConsumerNameInstancerPair(consumer_name,
-                                                                                        ConsumerInstancerShrdPtr(new chaos_util::TypedObjectInstancer<Consumer, ConsumerBaseClass>())));
+                        ConsumerInstancerShrdPtr desc_shrd_ptr(new ConsumerDescriptor());
+                        map_consumer_name_instancer.insert(MapConsumerNameInstancerPair(desc_shrd_ptr->getGroupName(),
+                                                                                        desc_shrd_ptr));
                     }
+                    
+                    //template<typename EventDescriptor>
+                    //void registerEventClass(){
+                    //    boost::unique_lock<boost::shared_mutex> wl(mutex);
+                        //register instance into the map
+                    //    ConsumerInstancerShrdPtr desc_shrd_ptr(new EventDescriptor());
+                    //    map_consumer_name_instancer.insert(MapConsumerNameInstancerPair(desc_shrd_ptr->getGroupName(),
+                    //                                                                    desc_shrd_ptr));
+                    //}
                     
                     //!register all subject that can be target from event
                     /*!
@@ -185,19 +219,22 @@ namespace chaos {
                     
                     
                     //! register a consumer for a determinated event for a target instance
-                    void addConsumerOnSubjectForEvent(EventType                 event_code,
+                    bool addConsumerOnSubjectForEvent(EventType                 event_code,
                                                       SubjectInstanceShrdPtr&   event_taget,
                                                       const std::string&        consumer_name,
                                                       const MapKeyCDataVariant  *consumer_parameter = NULL){
                         boost::unique_lock<boost::shared_mutex> wl(mutex);
                         //check
-                        if(map_subject_instance.count(event_taget->getSubjectUUID()) == 0) return;
+                        if(map_subject_instance.count(event_taget->getSubjectUUID()) == 0 ||
+                           map_consumer_name_instancer[consumer_name] == 0) return false;
                         
                         VectorConsumerInstance& consumer_list_ref = getConsumerInstanceListFor(event_code,
                                                                                                event_taget->getSubjectUUID());
                         
                         //allocate a new instance for the  consumer and attach it to the vector for mapping
                         consumer_list_ref.push_back(ConsumerShrdPtr(map_consumer_name_instancer[consumer_name]->getInstance()));
+                        
+                        return true;
                     }
                     
                     
@@ -208,6 +245,15 @@ namespace chaos {
                                          event_subject->getSubjectUUID(),
                                          event_to_fire);
                     }
+                    
+                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
+                        std::auto_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
+                        //describe subject
+                        //describe event
+                        //describe consumer
+                        return result;
+                    }
+                    
                 };
                 
             }

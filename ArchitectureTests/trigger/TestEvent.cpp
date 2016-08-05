@@ -91,12 +91,6 @@ ConsumerResult SubjetEventTwo::_executeConsumerOnTarget(Subject *subject_instanc
                                            consumer_input_value);
 }
 //---------------------------------
-SubjectConsumerIncrement::SubjectConsumerIncrement():
-SubjectConsumer("SubjectConsumerIncrement",
-                "Preform integer increment"){}
-
-SubjectConsumerIncrement::~SubjectConsumerIncrement() {}
-
 ConsumerResult SubjectConsumerIncrement::consumeEvent(TriggerDataEventType event_type,
                                                       TriggeredData& trigger_data,
                                                       const CDataVariantVector& event_values) {
@@ -110,12 +104,6 @@ ConsumerResult SubjectConsumerIncrement::consumeEvent(TriggerDataEventType event
 }
 
 //---------------------------------
-SubjectConsumerDecrement::SubjectConsumerDecrement():
-SubjectConsumer("SubjectConsumerDecrement",
-                "Preform integer increment") {}
-
-SubjectConsumerDecrement::~SubjectConsumerDecrement() {}
-
 ConsumerResult SubjectConsumerDecrement::consumeEvent(TriggerDataEventType event_type,
                                                       TriggeredData& trigger_data,
                                                       const CDataVariantVector& event_values) {
@@ -126,13 +114,6 @@ ConsumerResult SubjectConsumerDecrement::consumeEvent(TriggerDataEventType event
     }
     trigger_data.data_value -= (1+incremnet_size);
     return ConsumerResultOK;
-}
-
-//---------------------------------
-SubjectTriggerEnviroment::SubjectTriggerEnviroment() {
-    //register the consumer
-    registerConsumerClass<SubjectConsumerIncrement>("increment");
-    registerConsumerClass<SubjectConsumerDecrement>("decrement");
 }
 
 //---------------------------------
@@ -156,13 +137,13 @@ bool TestEvent::test(){
     trigger_environment.registerSubject(subject_two);
     
     //attach conusmer to subject
-    trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeOne,
-                                                     subject_one,
-                                                     "increment");
+    assert(trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeOne,
+                                                            subject_one,
+                                                            "SubjectConsumerIncrement"));
     
-    trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeTwo,
-                                                     subject_two,
-                                                     "decrement");
+    assert(trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeTwo,
+                                                            subject_two,
+                                                            "SubjectConsumerDecrement"));
     
     assert(subject_one->subject_data->data_value == 0);
     assert(subject_two->subject_data->data_value == 0);
@@ -184,13 +165,13 @@ bool TestEvent::test(){
     assert(subject_two->subject_data->data_value == -12);
     
     //add xross consumer and fire event to reset the counter in the subject
-    trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeTwo,
-                                                     subject_one,
-                                                     "decrement");
+    assert(trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeTwo,
+                                                            subject_one,
+                                                            "SubjectConsumerDecrement"));
     
-    trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeOne,
-                                                     subject_two,
-                                                     "increment");
+    assert(trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeOne,
+                                                            subject_two,
+                                                            "SubjectConsumerIncrement"));
     
     trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventTwo()), subject_one);
     trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventTwo(10)), subject_one);
@@ -200,22 +181,22 @@ bool TestEvent::test(){
     assert(subject_two->subject_data->data_value == 0);
     
     //add consumer decrement to event one to subject one in this case counter need to remain to 0
-    trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeOne,
-                                                     subject_one,
-                                                     "decrement");
+    assert(trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeOne,
+                                                            subject_one,
+                                                            "SubjectConsumerDecrement"));
     trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne()), subject_one);
     assert(subject_one->subject_data->data_value == 0);
-
+    
     trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne(10)), subject_one);
     assert(subject_one->subject_data->data_value == 0);
-
+    
     
     //test property group
     //common::property::PorpertyGroup p_group("test");
     //p_group.addProperty("prop_a", "good property", chaos::DataType::TYPE_INT32);
     //p_group.addProperty("prop_b", "good property", chaos::DataType::TYPE_INT64);
     //p_group.addProperty("prop_c", "good property", chaos::DataType::TYPE_DOUBLE);
-    SubjectConsumerIncrementDescription cons_desc;
+    SubjectConsumerIncrementPropertyDescription cons_desc;
     common::property::PorpertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PorpertyGroup, cons_desc));
     std::cout << group_ref_wrapper.serialize()->getJSONString() << std::endl;
     return true;

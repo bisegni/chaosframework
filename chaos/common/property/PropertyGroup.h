@@ -33,7 +33,6 @@ namespace chaos {
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, PropertyDescription, MapProperties);
             
             class PorpertyGroup {
-                
             public:
                 std::string name;
                 MapProperties maps_properties;

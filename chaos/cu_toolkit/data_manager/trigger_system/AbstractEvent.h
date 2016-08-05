@@ -108,6 +108,7 @@ namespace chaos {
                 //name
                 typedef boost::multi_index::index<AbstractEventContainer, EMITagName>::type                TENameIndex;
                 typedef boost::multi_index::index<AbstractEventContainer, EMITagName>::type::iterator      TENameIndexIterator;
+                
             }
         }
     }

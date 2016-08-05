@@ -24,6 +24,10 @@
 
 #include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataVariant.h>
+
+#include <chaos/common/property/PropertyGroup.h>
+#include <chaos/common/utility/ObjectInstancer.h>
+
 namespace chaos {
     namespace cu {
         namespace data_manager {
@@ -37,6 +41,70 @@ namespace chaos {
                     ConsumerResultWarinig,
                     ConsumerResultCritical
                 } ConsumerResult;
+                
+                template<typename B>
+                class ConsumerInstanceDescription:
+                public chaos::common::property::PorpertyGroup {
+                    std::auto_ptr< chaos::common::utility::ObjectInstancer<B> > consumer_instancer;
+                protected:
+                    ConsumerInstanceDescription(const std::string& name,
+                                                std::auto_ptr< chaos::common::utility::ObjectInstancer<B> > auto_instancer):
+                    PorpertyGroup(name),
+                    consumer_instancer(auto_instancer){}
+                    
+                public:
+                    std::auto_ptr<B> getAutoInstance(){
+                        return std::auto_ptr<B>(consumer_instancer->getInstance());
+                    }
+                    
+                    B* getInstance(){
+                        return consumer_instancer->getInstance();
+                    }
+                };
+                
+                //!consumer description
+                /*!
+                 Permit to collect the list of porperty taht permit to configure
+                 the execution of the consumer
+                 */
+                template<typename I, typename B>
+                class ConsumerPropertyDescription:
+                public ConsumerInstanceDescription<B> {
+                public:
+                    ConsumerPropertyDescription(const std::string& name):
+                    ConsumerInstanceDescription<B>(name,
+                                                   std::auto_ptr< chaos::common::utility::ObjectInstancer<B> >(new chaos::common::utility::TypedObjectInstancer<I, B>())) {}
+                    
+                };
+                
+                //!helper macro
+#define CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(impl, base)\
+class impl;\
+class impl ## PropertyDescription:\
+public chaos::cu::data_manager::trigger_system::ConsumerPropertyDescription<impl, base> {\
+public: impl ## PropertyDescription():\
+ConsumerPropertyDescription<impl, base>(#impl) {
+                
+                
+#define CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY(name, desc, type)\
+addProperty(name, desc, type);
+                
+#define CHAOS_TRIGGER_CONSUMER_CLOSE_DESCRIPTION()\
+}\
+};
+                
+                
+#define CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION(impl, base, desc)\
+CHAOS_TRIGGER_CONSUMER_CLOSE_DESCRIPTION()\
+class impl:\
+public base {\
+public:\
+impl():base(#impl, desc){};\
+~impl(){};\
+
+#define CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()\
+};
+
             }
         }
     }
