@@ -181,6 +181,10 @@ DataType::DataType CDataVariant::getType() const{
     return type;
 }
 
+bool CDataVariant::isValid() const{
+    return (type != DataType::TYPE_UNDEFINED);
+}
+
 CDataVariant& CDataVariant::operator=(const CDataVariant& arg) {
     type = arg.type;
     _internal_variant = arg._internal_variant;

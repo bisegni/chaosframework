@@ -32,28 +32,38 @@ namespace chaos {
             
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string, PropertyDescription, MapProperties);
             
-            class PorpertyGroup {
+            class PropertyGroup {
+                chaos::common::data::CDataVariant default_null_value;
             public:
                 std::string name;
-                MapProperties maps_properties;
-                PorpertyGroup();
-                PorpertyGroup(const std::string& _name);
+                MapProperties map_properties;
+                PropertyGroup();
+                PropertyGroup(const std::string& _name);
                 
                 void addProperty(const std::string& property_name,
                                  const std::string& property_description,
                                  const DataType::DataType property_type);
                 
+                void setPropertyValue(const std::string& property_name,
+                                      const chaos::common::data::CDataVariant& new_value);
+                
                 const chaos::common::data::CDataVariant& getPropertyValue(const std::string& property_name);
                 
                 const std::string& getGroupName() const;
+                
+                void copyPropertiesFromGroup(const PropertyGroup& src_group);
+                
+                const MapProperties getAllProperties() const;
+                
+                void resetProperiesValues();
             };
             
-            CHAOS_OPEN_SDWRAPPER(PorpertyGroup)
+            CHAOS_OPEN_SDWRAPPER(PropertyGroup)
             void deserialize(chaos::common::data::CDataWrapper *serialized_data) {
                 if(serialized_data == NULL) return;
                 
                 //clear map
-                Subclass::dataWrapped().maps_properties.clear();
+                Subclass::dataWrapped().map_properties.clear();
                 
                 Subclass::dataWrapped().name = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "property_g_name", "");
                 if(serialized_data->hasKey("property_g_plist") &&
@@ -69,7 +79,7 @@ namespace chaos {
                         property_wrapper.deserialize(prop.get());
                         
                         //insert new porperty
-                        Subclass::dataWrapped().maps_properties.insert(MapPropertiesPair(property_wrapper.dataWrapped().getName(),
+                        Subclass::dataWrapped().map_properties.insert(MapPropertiesPair(property_wrapper.dataWrapped().getName(),
                                                                                          property_wrapper.dataWrapped()));
                     }
                     
@@ -79,13 +89,13 @@ namespace chaos {
             std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
                 std::auto_ptr<chaos::common::data::CDataWrapper> data_serialized(new chaos::common::data::CDataWrapper());
                 data_serialized->addStringValue("property_g_name", Subclass::dataWrapped().name);
-                if(Subclass::dataWrapped().maps_properties.size()) {
+                if(Subclass::dataWrapped().map_properties.size()) {
                     
                     PropertyDescription pd;
                     PropertyDescriptionSDWrapper property_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(PropertyDescription, pd));
                     
-                    for(MapPropertiesIterator it = Subclass::dataWrapped().maps_properties.begin(),
-                        end = Subclass::dataWrapped().maps_properties.end();
+                    for(MapPropertiesIterator it = Subclass::dataWrapped().map_properties.begin(),
+                        end = Subclass::dataWrapped().map_properties.end();
                         it != end;
                         it++) {
                         property_ref_wrapper.dataWrapped() = it->second;

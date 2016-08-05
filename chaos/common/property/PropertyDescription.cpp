@@ -68,10 +68,10 @@ const uint32_t PropertyDescription::getFlags() const {
     return flag;
 }
 
-void PropertyDescription::updatePorpertyValue(const CDataVariant& new_property_value) {
+void PropertyDescription::updatePropertyValue(const CDataVariant& new_property_value) {
     property_values = new_property_value;
 }
 
-const chaos::common::data::CDataVariant& PropertyDescription::getPropertyValue() {
+const chaos::common::data::CDataVariant& PropertyDescription::getPropertyValue() const {
     return property_values;
 }

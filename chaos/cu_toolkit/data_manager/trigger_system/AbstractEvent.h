@@ -22,9 +22,12 @@
 #ifndef __CHAOSFramework__1DFC893_F993_4167_A7E9_D5E470648BA8_event_system_types_h
 #define __CHAOSFramework__1DFC893_F993_4167_A7E9_D5E470648BA8_event_system_types_h
 
+#include <chaos/common/property/PropertyGroup.h>
+
 #include <chaos/cu_toolkit/data_manager/trigger_system/trigger_system_types.h>
 #include <chaos/cu_toolkit/data_manager/trigger_system/AbstractConsumer.h>
 #include <chaos/cu_toolkit/data_manager/trigger_system/AbstractSubject.h>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index_container.hpp>
@@ -49,7 +52,8 @@ namespace chaos {
                  an event is defined by a name and a code and they are unique
                  within the data broker instance
                  */
-                class AbstractEvent {
+                class AbstractEvent:
+                public chaos::common::property::PropertyGroup {
                     friend struct AbstractEventMIExstractName;
                     friend struct AbstractEventMIExstractCode;
                     

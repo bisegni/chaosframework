@@ -44,21 +44,27 @@ namespace chaos {
                 
                 template<typename B>
                 class ConsumerInstanceDescription:
-                public chaos::common::property::PorpertyGroup {
+                public chaos::common::property::PropertyGroup {
                     std::auto_ptr< chaos::common::utility::ObjectInstancer<B> > consumer_instancer;
                 protected:
                     ConsumerInstanceDescription(const std::string& name,
                                                 std::auto_ptr< chaos::common::utility::ObjectInstancer<B> > auto_instancer):
-                    PorpertyGroup(name),
+                    PropertyGroup(name),
                     consumer_instancer(auto_instancer){}
                     
                 public:
                     std::auto_ptr<B> getAutoInstance(){
-                        return std::auto_ptr<B>(consumer_instancer->getInstance());
+                        return std::auto_ptr<B>(getInstance());
                     }
                     
                     B* getInstance(){
-                        return consumer_instancer->getInstance();
+                        B* new_instance = consumer_instancer->getInstance();
+                        //copy property from twhi group
+                        chaos::common::property::PropertyGroup *pg_instance = dynamic_cast<chaos::common::property::PropertyGroup*>(new_instance);
+                        if(pg_instance) {
+                            new_instance->copyPropertiesFromGroup(*this);
+                        }
+                        return new_instance;
                     }
                 };
                 
@@ -100,6 +106,14 @@ class impl:\
 public base {\
 public:\
 impl():base(#impl, desc){};\
+~impl(){};\
+
+#define CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION_1P(impl, base, desc, param)\
+CHAOS_TRIGGER_CONSUMER_CLOSE_DESCRIPTION()\
+class impl:\
+public base {\
+public:\
+impl():base(#impl, desc, param){};\
 ~impl(){};\
 
 #define CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()\

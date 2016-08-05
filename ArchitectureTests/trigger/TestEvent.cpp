@@ -54,50 +54,25 @@ AbstractConsumer(name,
                  description){}
 SubjectConsumer::~SubjectConsumer(){}
 //---------------------------------
-SubjetEventOne::SubjetEventOne():
-SubjectEvent("SubjetEventOne",
-             "Occures on case two",
-             TriggerDataEventTypeOne){}
-SubjetEventOne::SubjetEventOne(const int increment_grow_factor):
-SubjectEvent("SubjetEventOne",
-             "Occures on case two",
-             TriggerDataEventTypeOne){
-    consumer_input_value.push_back(CDataVariant(increment_grow_factor));
-}
-ConsumerResult SubjetEventOne::_executeConsumerOnTarget(Subject *subject_instance,
+ConsumerResult SubjectEventOne::_executeConsumerOnTarget(Subject *subject_instance,
                                                         SubjectConsumer *consumer_instance) {
     return consumer_instance->consumeEvent(static_cast<TriggerDataEventType>(getEventCode()),
-                                           *subject_instance->subject_data,
-                                           consumer_input_value);
+                                           *subject_instance->subject_data);
 }
 //---------------------------------
-
-SubjetEventTwo::SubjetEventTwo():
-SubjectEvent("SubjetEventTwo",
-             "Occures on case two",
-             TriggerDataEventTypeTwo){}
-
-SubjetEventTwo::SubjetEventTwo(const int decrement_grow_factor):
-SubjectEvent("SubjetEventTwo",
-             "Occures on case two",
-             TriggerDataEventTypeTwo){
-    consumer_input_value.push_back(CDataVariant(decrement_grow_factor));
-}
-
-ConsumerResult SubjetEventTwo::_executeConsumerOnTarget(Subject *subject_instance,
+ConsumerResult SubjectEventTwo::_executeConsumerOnTarget(Subject *subject_instance,
                                                         SubjectConsumer *consumer_instance) {
     return consumer_instance->consumeEvent(static_cast<TriggerDataEventType>(getEventCode()),
-                                           *subject_instance->subject_data,
-                                           consumer_input_value);
+                                           *subject_instance->subject_data);
 }
 //---------------------------------
 ConsumerResult SubjectConsumerIncrement::consumeEvent(TriggerDataEventType event_type,
-                                                      TriggeredData& trigger_data,
-                                                      const CDataVariantVector& event_values) {
+                                                      TriggeredData& trigger_data) {
     int32_t incremnet_size = 0;
-    if(event_values.size() == 1) {
+    const CDataVariant& inc_value = getPropertyValue("offset");
+    if(inc_value.isValid()) {
         //get increment size
-        incremnet_size = event_values[0].asInt32();
+        incremnet_size = inc_value.asInt32();
     }
     trigger_data.data_value += (1+incremnet_size);
     return ConsumerResultOK;
@@ -105,12 +80,13 @@ ConsumerResult SubjectConsumerIncrement::consumeEvent(TriggerDataEventType event
 
 //---------------------------------
 ConsumerResult SubjectConsumerDecrement::consumeEvent(TriggerDataEventType event_type,
-                                                      TriggeredData& trigger_data,
-                                                      const CDataVariantVector& event_values) {
+                                                      TriggeredData& trigger_data) {
     int32_t incremnet_size = 0;
-    if(event_values.size() == 1) {
+    const CDataVariant& dec_value = getPropertyValue("offset");
+    if(dec_value.isValid()) {
+
         //get increment size
-        incremnet_size = event_values[0].asInt32();
+        incremnet_size = dec_value.asInt32();
     }
     trigger_data.data_value -= (1+incremnet_size);
     return ConsumerResultOK;
@@ -137,67 +113,77 @@ bool TestEvent::test(){
     trigger_environment.registerSubject(subject_two);
     
     //attach conusmer to subject
-    assert(trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeOne,
+    assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
                                                             subject_one,
                                                             "SubjectConsumerIncrement"));
     
-    assert(trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeTwo,
+    assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeTwo,
                                                             subject_two,
                                                             "SubjectConsumerDecrement"));
+    
+    SubjectTriggerEnviroment::EventInstanceShrdPtr event_one = trigger_environment.getEventInstance("SubjectEventOne");
+    assert(event_one.get());
+    SubjectTriggerEnviroment::EventInstanceShrdPtr event_two = trigger_environment.getEventInstance("SubjectEventTwo");
+    assert(event_two.get());
     
     assert(subject_one->subject_data->data_value == 0);
     assert(subject_two->subject_data->data_value == 0);
     
-    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne()), subject_one);
+    trigger_environment.fireEventOnSubject(event_one, subject_one);
     assert(subject_one->subject_data->data_value == 1);
     assert(subject_two->subject_data->data_value == 0);
     
-    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne(10)), subject_one);
+    event_one->setPropertyValue("offset", CDataVariant(10));
+    trigger_environment.fireEventOnSubject(event_one, subject_one);
     assert(subject_one->subject_data->data_value == 12);
     assert(subject_two->subject_data->data_value == 0);
     
-    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventTwo()), subject_two);
+    trigger_environment.fireEventOnSubject(event_two, subject_two);
     assert(subject_one->subject_data->data_value == 12);
     assert(subject_two->subject_data->data_value == -1);
     
-    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventTwo(10)), subject_two);
+    event_two->setPropertyValue("offset", CDataVariant(10));
+    trigger_environment.fireEventOnSubject(event_two, subject_two);
     assert(subject_one->subject_data->data_value == 12);
     assert(subject_two->subject_data->data_value == -12);
     
     //add xross consumer and fire event to reset the counter in the subject
-    assert(trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeTwo,
+    assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeTwo,
                                                             subject_one,
                                                             "SubjectConsumerDecrement"));
     
-    assert(trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeOne,
+    assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
                                                             subject_two,
                                                             "SubjectConsumerIncrement"));
+    event_two->resetProperiesValues();
+    trigger_environment.fireEventOnSubject(event_two, subject_one);
     
-    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventTwo()), subject_one);
-    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventTwo(10)), subject_one);
-    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne()), subject_two);
-    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne(10)), subject_two);
+    event_two->setPropertyValue("offset", CDataVariant(10));
+    trigger_environment.fireEventOnSubject(event_two, subject_one);
+    
+    event_one->resetProperiesValues();
+    trigger_environment.fireEventOnSubject(event_one, subject_two);
+    event_one->setPropertyValue("offset", CDataVariant(10));
+    trigger_environment.fireEventOnSubject(event_one, subject_two);
     assert(subject_one->subject_data->data_value == 0);
     assert(subject_two->subject_data->data_value == 0);
     
     //add consumer decrement to event one to subject one in this case counter need to remain to 0
-    assert(trigger_environment.addConsumerOnSubjectForEvent(TriggerDataEventTypeOne,
+    assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
                                                             subject_one,
                                                             "SubjectConsumerDecrement"));
-    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne()), subject_one);
+    event_one->resetProperiesValues();
+    trigger_environment.fireEventOnSubject(event_one, subject_one);
     assert(subject_one->subject_data->data_value == 0);
     
-    trigger_environment.fireEventOnSubject(SubjectTriggerEnviroment::EventInstanceShrdPtr(new SubjetEventOne(10)), subject_one);
+    event_one->setPropertyValue("offset", CDataVariant(10));
+    trigger_environment.fireEventOnSubject(event_one, subject_one);
     assert(subject_one->subject_data->data_value == 0);
     
     
     //test property group
-    //common::property::PorpertyGroup p_group("test");
-    //p_group.addProperty("prop_a", "good property", chaos::DataType::TYPE_INT32);
-    //p_group.addProperty("prop_b", "good property", chaos::DataType::TYPE_INT64);
-    //p_group.addProperty("prop_c", "good property", chaos::DataType::TYPE_DOUBLE);
     SubjectConsumerIncrementPropertyDescription cons_desc;
-    common::property::PorpertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PorpertyGroup, cons_desc));
+    common::property::PropertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PropertyGroup, cons_desc));
     std::cout << group_ref_wrapper.serialize()->getJSONString() << std::endl;
     return true;
 }

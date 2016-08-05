@@ -23,9 +23,8 @@
 #define __CHAOSFramework__A3F7AA7_069E_4235_B2D7_F8944A455374_AbstractConsumer_h
 
 #include <chaos/common/chaos_types.h>
-#include <chaos/common/data/CDataVariant.h>
+#include <chaos/common/property/PropertyGroup.h>
 
-#include <chaos/cu_toolkit/data_manager/manipulation/DatasetEditor.h>
 #include <chaos/cu_toolkit/data_manager/trigger_system/trigger_system_types.h>
 
 #include <string>
@@ -42,7 +41,8 @@ namespace chaos {
                  An event consumer realize some fast check or converion
                  on event data.
                  */
-                class AbstractConsumer {
+                class AbstractConsumer:
+                public chaos::common::property::PropertyGroup {
                     const std::string consumer_name;
                     const std::string consumer_description;
                     const std::string consumer_uuid;
@@ -54,6 +54,8 @@ namespace chaos {
                     const std::string& getConsumerUUID() const;
                     const std::string& getConsumerName() const;
                     const std::string& getConsumerDescription() const;
+                    
+                    void updateProperty(const PropertyGroup& property_group);
                 };
              }
         }

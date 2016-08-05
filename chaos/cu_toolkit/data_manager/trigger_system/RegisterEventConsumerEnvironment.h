@@ -74,12 +74,12 @@ namespace chaos {
                     typedef boost::shared_ptr< ConsumerBaseClass >  ConsumerShrdPtr;
                     
                     typedef boost::shared_ptr< ConsumerInstanceDescription<ConsumerBaseClass> > ConsumerInstancerShrdPtr;
-                   // typedef boost::shared_ptr< ConsumerInstanceDescription<EventBaseClass> > ConsumerInstancerShrdPtr;
+                    typedef boost::shared_ptr< ConsumerInstanceDescription<EventBaseClass> >    EventInstancerShrdPtr;
                 protected:
-                    //!map that correlate the consumer name to the instancer
+                    //!map for data
                     CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, SubjectInstanceShrdPtr,      MapSubjectNameInstance);
                     CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, ConsumerInstancerShrdPtr,    MapConsumerNameInstancer);
-                    //CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, EventInstancerShrdPtr,    MapConsumerNameInstancer);
+                    CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, EventInstancerShrdPtr,       MapEventNameInstancer);
                     CHAOS_DEFINE_VECTOR_FOR_TYPE_IN_TEMPLATE(ConsumerShrdPtr, VectorConsumerInstance);
                     
                     boost::shared_mutex mutex;
@@ -90,7 +90,7 @@ namespace chaos {
                     //!map for consumer name vs instancer
                     MapConsumerNameInstancer map_consumer_name_instancer;
                     
-                    //MapEventNameInstancer map_event_name_instancer;
+                    MapEventNameInstancer map_event_name_instancer;
                     
                     //!define multiindex to permit the find operation of the aggregate event type/ subject
                     //!to forward the event to the attacched consumer
@@ -110,6 +110,9 @@ namespace chaos {
                             VectorConsumerInstanceIterator end = consumer_instances.end();
                             while(it != end &&
                                   result != ConsumerResultCritical){
+                                //update consuer properties
+                                (*it)->updateProperty(*event_to_fire);
+                                
                                 //execute consumer phase
                                 result = event_to_fire->executeConsumerOnTarget(subject_instance.get(),
                                                                                 (*it++).get());
@@ -198,14 +201,21 @@ namespace chaos {
                                                                                         desc_shrd_ptr));
                     }
                     
-                    //template<typename EventDescriptor>
-                    //void registerEventClass(){
-                    //    boost::unique_lock<boost::shared_mutex> wl(mutex);
+                    template<typename EventDescriptor>
+                    void registerEventClass(){
+                        boost::unique_lock<boost::shared_mutex> wl(mutex);
                         //register instance into the map
-                    //    ConsumerInstancerShrdPtr desc_shrd_ptr(new EventDescriptor());
-                    //    map_consumer_name_instancer.insert(MapConsumerNameInstancerPair(desc_shrd_ptr->getGroupName(),
-                    //                                                                    desc_shrd_ptr));
-                    //}
+                        EventInstancerShrdPtr desc_shrd_ptr(new EventDescriptor());
+                        map_event_name_instancer.insert(MapEventNameInstancerPair(desc_shrd_ptr->getGroupName(),
+                                                                                  desc_shrd_ptr));
+                    }
+                    
+                    EventInstanceShrdPtr getEventInstance(const std::string& event_name) {
+                        if(map_event_name_instancer[event_name] == 0) return EventInstanceShrdPtr();
+                        
+                        //we have the instancer so we can create the instance of event
+                        return EventInstanceShrdPtr(map_event_name_instancer[event_name]->getInstance());
+                    }
                     
                     //!register all subject that can be target from event
                     /*!

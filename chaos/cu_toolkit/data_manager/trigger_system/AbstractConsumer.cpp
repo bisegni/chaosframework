@@ -24,11 +24,12 @@
 #include <chaos/common/utility/UUIDUtil.h>
 
 using namespace chaos::common::utility;
-using namespace chaos::common::data::structured;
+using namespace chaos::common::property;
 using namespace chaos::cu::data_manager::trigger_system;
 #pragma mark AbstractConsumer
 AbstractConsumer::AbstractConsumer(const std::string& _consumer_name,
                                    const std::string& _consumer_description):
+PropertyGroup(_consumer_name),
 consumer_name(_consumer_name),
 consumer_description(_consumer_description),
 consumer_uuid(UUIDUtil::generateUUIDLite()){}
@@ -45,4 +46,14 @@ const std::string& AbstractConsumer::getConsumerName() const {
 
 const std::string& AbstractConsumer::getConsumerDescription() const {
     return consumer_description;
+}
+
+void AbstractConsumer::updateProperty(const PropertyGroup& property_group) {
+    //we need to reaset all values
+    for (MapPropertiesConstIterator it = property_group.getAllProperties().begin(),
+         end = property_group.getAllProperties().end();
+         it != end;
+         it++) {
+        PropertyGroup::setPropertyValue(it->first, it->second.getPropertyValue());
+    }
 }

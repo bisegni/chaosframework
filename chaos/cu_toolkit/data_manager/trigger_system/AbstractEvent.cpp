@@ -30,6 +30,7 @@ using namespace chaos::cu::data_manager::trigger_system;
 AbstractEvent::AbstractEvent(const std::string& _event_name,
                              const std::string& _event_description,
                              const unsigned int _event_code):
+PropertyGroup(_event_name),
 event_name(_event_name),
 event_description(_event_description),
 event_code(_event_code){}

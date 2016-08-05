@@ -89,6 +89,7 @@ namespace chaos {
                 CDataVariant& operator=(const CDataVariant& arg);
                 
                 DataType::DataType getType() const;
+                bool isValid() const;
                 
                 int32_t asInt32() const;
                 uint32_t asUInt32() const;

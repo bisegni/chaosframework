@@ -65,9 +65,9 @@ namespace chaos {
                 
                 const uint32_t getFlags() const;
                 
-                void updatePorpertyValue(const chaos::common::data::CDataVariant& new_property_value);
+                void updatePropertyValue(const chaos::common::data::CDataVariant& new_property_value);
                 
-                const chaos::common::data::CDataVariant& getPropertyValue();
+                const chaos::common::data::CDataVariant& getPropertyValue() const;
             };
             
             

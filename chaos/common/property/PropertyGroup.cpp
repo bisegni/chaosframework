@@ -24,24 +24,57 @@
 using namespace chaos::common::data;
 using namespace chaos::common::property;
 
-PorpertyGroup::PorpertyGroup() {}
+PropertyGroup::PropertyGroup() {}
 
-PorpertyGroup::PorpertyGroup(const std::string& _name):
+PropertyGroup::PropertyGroup(const std::string& _name):
 name(_name){}
 
-void PorpertyGroup::addProperty(const std::string& property_name,
+void PropertyGroup::addProperty(const std::string& property_name,
                                 const std::string& property_description,
                                 const DataType::DataType property_type) {
     //add property
-    maps_properties.insert(MapPropertiesPair(property_name, PropertyDescription(property_name,
-                                                                                property_description,
-                                                                                property_type)));
+    map_properties.insert(MapPropertiesPair(property_name, PropertyDescription(property_name,
+                                                                               property_description,
+                                                                               property_type)));
 }
 
-const CDataVariant& PorpertyGroup::getPropertyValue(const std::string& property_name) {
-    return maps_properties[property_name].getPropertyValue();
+const CDataVariant& PropertyGroup::getPropertyValue(const std::string& property_name) {
+    if(map_properties.count(property_name) == 0) return default_null_value;
+    return map_properties[property_name].getPropertyValue();
 }
 
-const std::string& PorpertyGroup::getGroupName() const {
+void PropertyGroup::setPropertyValue(const std::string& property_name,
+                                     const chaos::common::data::CDataVariant& new_value) {
+    if(map_properties.count(property_name) == 0) return;
+    map_properties[property_name].updatePropertyValue(new_value);
+}
+
+const std::string& PropertyGroup::getGroupName() const {
     return name;
+}
+
+void PropertyGroup::copyPropertiesFromGroup(const PropertyGroup& src_group) {
+    for (MapPropertiesConstIterator it = src_group.map_properties.begin(),
+         end = src_group.map_properties.end();
+         it != end;
+         it++) {
+        //!check if variabl eis present in case add it
+        if(map_properties.count(it->first) != 0 ) continue;
+        
+        //we can add property
+        map_properties.insert(*it);
+    }
+}
+
+const MapProperties PropertyGroup::getAllProperties() const {
+    return map_properties;
+}
+
+void PropertyGroup::resetProperiesValues() {
+    for (MapPropertiesIterator it = map_properties.begin(),
+         end = map_properties.end();
+         it != end;
+         it++) {
+        it->second.updatePropertyValue(CDataVariant());
+    }
 }
