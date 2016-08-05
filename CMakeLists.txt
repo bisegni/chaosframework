@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 include(config/CMakeChaos.txt)
+project(chaosframework)
 
 option(CHAOS_MEMCACHE_TEST "Memcached test" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
