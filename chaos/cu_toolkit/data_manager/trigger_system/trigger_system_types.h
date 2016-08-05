@@ -66,6 +66,10 @@ namespace chaos {
                         }
                         return new_instance;
                     }
+                    
+                    const std::string& getInstanceDescriptionName() const {
+                        return getGroupName();
+                    }
                 };
                 
                 //!consumer description

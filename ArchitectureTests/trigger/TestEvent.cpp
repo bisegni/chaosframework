@@ -182,8 +182,8 @@ bool TestEvent::test(){
     
     
     //test property group
-    SubjectConsumerIncrementPropertyDescription cons_desc;
-    common::property::PropertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PropertyGroup, cons_desc));
-    std::cout << group_ref_wrapper.serialize()->getJSONString() << std::endl;
+    //SubjectConsumerIncrementPropertyDescription cons_desc;
+    //common::property::PropertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PropertyGroup, cons_desc));
+    std::cout << trigger_environment.serialize()->getJSONString() << std::endl;
     return true;
 }

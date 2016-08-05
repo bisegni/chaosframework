@@ -90,6 +90,7 @@ namespace chaos {
                     //!map for consumer name vs instancer
                     MapConsumerNameInstancer map_consumer_name_instancer;
                     
+                    //! event map
                     MapEventNameInstancer map_event_name_instancer;
                     
                     //!define multiindex to permit the find operation of the aggregate event type/ subject
@@ -258,9 +259,43 @@ namespace chaos {
                     
                     std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
                         std::auto_ptr<chaos::common::data::CDataWrapper> result(new chaos::common::data::CDataWrapper());
-                        //describe subject
+                        
+                        common::property::PropertyGroup tmp_property_group;
+                        common::property::PropertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PropertyGroup, tmp_property_group));
+                        
+                        //add enviroment_name
+                        result->addStringValue("trg_env_name", getEnvironmentName());
+                        
+                        //describe subjects
+                        for(MapSubjectNameInstanceIterator it = map_subject_instance.begin(),
+                            end = map_subject_instance.end();
+                            it != end;
+                            it++) {
+                            result->appendStringToArray(it->second->getSubjectName());
+                        }
+                        result->finalizeArrayForKey("trg_env_subjects");
+
                         //describe event
+                        for(MapEventNameInstancerIterator it = map_event_name_instancer.begin(),
+                            end = map_event_name_instancer.end();
+                            it != end;
+                            it++) {
+                            group_ref_wrapper() = *it->second;
+                            result->appendCDataWrapperToArray(*group_ref_wrapper.serialize());
+                            
+                        }
+                        result->finalizeArrayForKey("trg_env_events");
+                        
                         //describe consumer
+                        for(MapConsumerNameInstancerIterator it = map_consumer_name_instancer.begin(),
+                            end = map_consumer_name_instancer.end();
+                            it != end;
+                            it++) {
+                            group_ref_wrapper() = *it->second;
+                            result->appendCDataWrapperToArray(*group_ref_wrapper.serialize());
+                            
+                        }
+                        result->finalizeArrayForKey("trg_env_consumers");
                         return result;
                     }
                     
