@@ -1,3 +1,7 @@
+build-*/
+chaos-distrib/
+config/CACHE/
+external-*/
 ccs/*.cpp_parameters
 ccs/ccs.app/Contents/*
 ccs/*.autosave
