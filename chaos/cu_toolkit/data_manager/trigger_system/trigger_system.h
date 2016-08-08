@@ -22,12 +22,9 @@
 #ifndef __CHAOSFramework__8486584_5A86_4A0D_8EB2_D67C827F081A_trigger_system_h
 #define __CHAOSFramework__8486584_5A86_4A0D_8EB2_D67C827F081A_trigger_system_h
 
-#include <chaos/cu_toolkit/data_manager/trigger_system/EventManager.h>
-#include <chaos/cu_toolkit/data_manager/trigger_system/AbstractConsumer.h>
-#include <chaos/cu_toolkit/data_manager/trigger_system/AbstractEvent.h>
-#include <chaos/cu_toolkit/data_manager/trigger_system/AbstractSubject.h>
-#include <chaos/cu_toolkit/data_manager/trigger_system/RegisterEventConsumerEnvironment.h>
-#include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/dataset_event.h>
+#include <chaos/common/trigger/trigger.h>
 
+#include <chaos/cu_toolkit/data_manager/trigger_system/EventManager.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/dataset_event.h>
 
 #endif /* __CHAOSFramework__8486584_5A86_4A0D_8EB2_D67C827F081A_trigger_system_h */

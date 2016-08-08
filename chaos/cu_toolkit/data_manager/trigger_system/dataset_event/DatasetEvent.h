@@ -23,9 +23,9 @@
 #define __CHAOSFramework__A590BCD_051A_4197_B57E_AE8E49060FB7_DatasetEvent_h
 
 #include <chaos/common/data/cache/AttributeValue.h>
-#include <chaos/cu_toolkit//data_manager/trigger_system/AbstractEvent.h>
-#include <chaos/cu_toolkit//data_manager/trigger_system/dataset_event/DatasetSubject.h>
-#include <chaos/cu_toolkit//data_manager/trigger_system/dataset_event/dataset_event_types.h>
+#include <chaos/common/trigger/AbstractEvent.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/DatasetSubject.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/dataset_event_types.h>
 
 namespace chaos {
     namespace cu {
@@ -33,30 +33,30 @@ namespace chaos {
             namespace trigger_system {
                 namespace dataset_event {
                     namespace chaos_data = chaos::common::data;
-                    namespace cu_trigger = ::chaos::cu::data_manager::trigger_system;
+                    namespace chaos_trigger = chaos::common::trigger;
                     
                     //!forward decalration
                     class DatasetConsumer;
                     
                     //!define the event for attribute change
                     class DatasetEvent:
-                    public ::chaos::cu::data_manager::trigger_system::AbstractEvent {
+                    public ::chaos::common::trigger::AbstractEvent {
                     protected:
                         //collect consumer input data
-                        CDataVariantVector consumer_input_value;
-                        CDataVariantVector consumer_output_value;
+                        chaos_trigger::CDataVariantVector consumer_input_value;
+                        chaos_trigger::CDataVariantVector consumer_output_value;
                         
                     protected:
-                        virtual cu_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attrbiute_subject_instance,
-                                                                                    DatasetConsumer *consumer_instance) = 0;
+                        virtual chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attrbiute_subject_instance,
+                                                                                       DatasetConsumer *consumer_instance) = 0;
                     public:
                         DatasetEvent(const std::string& _event_name,
                                      const std::string& _event_description,
                                      const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType _type);
                         const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType getType() const;
                         
-                        cu_trigger::ConsumerResult executeConsumerOnTarget(AbstractSubject *subject_instance,
-                                                                           cu_trigger::AbstractConsumer *consumer_instance);
+                        chaos_trigger::ConsumerResult executeConsumerOnTarget(chaos_trigger::AbstractSubject *subject_instance,
+                                                                              chaos_trigger::AbstractConsumer *consumer_instance);
                     };
                     
                     //! the event is forwarded befor an attribute value is changed
@@ -68,8 +68,8 @@ namespace chaos {
                     class EventDSAttributePreChange:
                     public DatasetEvent {
                     protected:
-                        cu_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attribute_value,
-                                                                            DatasetConsumer *consumer_instance);
+                        chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attribute_value,
+                                                                               DatasetConsumer *consumer_instance);
                     public:
                         EventDSAttributePreChange(const chaos_data::CDataVariant& _new_value);
                         ~EventDSAttributePreChange();
@@ -79,8 +79,8 @@ namespace chaos {
                     class EventDSAttributePostChange:
                     public DatasetEvent {
                     protected:
-                        cu_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attribute_value,
-                                                                            DatasetConsumer *consumer_instance);
+                        chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attribute_value,
+                                                                               DatasetConsumer *consumer_instance);
                     public:
                         EventDSAttributePostChange();
                         ~EventDSAttributePostChange();

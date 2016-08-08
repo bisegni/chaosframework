@@ -22,8 +22,6 @@
 #ifndef __CHAOSFramework_EBE81686_95F6_480A_BC26_6F5F0609F348_dataset_event_types_h
 #define __CHAOSFramework_EBE81686_95F6_480A_BC26_6F5F0609F348_dataset_event_types_h
 
-#include <chaos/cu_toolkit//data_manager/trigger_system/trigger_system_types.h>
-
 namespace chaos {
     namespace cu {
         namespace data_manager {

@@ -23,13 +23,7 @@
 
 using namespace chaos::cu::data_manager::trigger_system;
 
-EventManager::EventManager():
-index_event_code(event_container.get<EMITagCode>()),
-index_event_name(event_container.get<EMITagName>()){}
+EventManager::EventManager(){}
 
 EventManager::~EventManager() {}
 
-void EventManager::addEvent(AbstractEventShrdPtr trigger_event) {
-    boost::unique_lock<boost::shared_mutex> wl(mutex_event_container);
-    event_container.insert(trigger_event);
-}

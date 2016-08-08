@@ -24,7 +24,7 @@
 using namespace chaos::cu::data_manager::trigger_system::dataset_event;
 
 DatasetRegisterEvenironment::DatasetRegisterEvenironment():
-RegisterEventConsumerEnvironment<DatasetEvent,
+TriggerExecutionEnviroment<DatasetEvent,
 DatasetConsumer,
 DatasetSubject,
 ETDatasetAttributeType>("DatasetAttribute") {

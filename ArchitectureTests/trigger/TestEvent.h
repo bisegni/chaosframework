@@ -24,7 +24,7 @@
 
 #include <chaos/cu_toolkit/data_manager/trigger_system/trigger_system.h>
 
-using namespace chaos::cu::data_manager::trigger_system;
+using namespace chaos::common::trigger;
 
 namespace chaos {
     namespace test {
@@ -129,10 +129,10 @@ namespace chaos {
             //---------------------------------
             
             class SubjectTriggerEnviroment:
-            public RegisterEventConsumerEnvironment<SubjectEvent, SubjectConsumer, Subject, TriggerDataEventType> {
+            public TriggerExecutionEnviroment<SubjectEvent, SubjectConsumer, Subject, TriggerDataEventType> {
             public:
                 SubjectTriggerEnviroment():
-                RegisterEventConsumerEnvironment<SubjectEvent, SubjectConsumer, Subject, TriggerDataEventType>("SubjectName"){
+                TriggerExecutionEnviroment<SubjectEvent, SubjectConsumer, Subject, TriggerDataEventType>("SubjectName"){
                     
                     registerEventClass<SubjectEventOnePropertyDescription>();
                     registerEventClass<SubjectEventTwoPropertyDescription>();

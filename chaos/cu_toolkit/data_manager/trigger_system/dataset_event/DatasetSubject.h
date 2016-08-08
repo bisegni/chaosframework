@@ -22,11 +22,9 @@
 #ifndef __CHAOSFramework_CDACC42E_F9DD_4ADE_A55A_04DFD76CC498_DatasetSubject_h
 #define __CHAOSFramework_CDACC42E_F9DD_4ADE_A55A_04DFD76CC498_DatasetSubject_h
 
-
+#include <chaos/common/trigger/trigger.h>
 #include <chaos/common/data/cache/AttributeValue.h>
 #include <chaos/common/data/structured/DatasetAttribute.h>
-#include <chaos/cu_toolkit//data_manager/trigger_system/AbstractSubject.h>
-#include <chaos/cu_toolkit//data_manager/trigger_system/dataset_event/dataset_event_types.h>
 
 namespace chaos {
     namespace cu {
@@ -35,7 +33,7 @@ namespace chaos {
                 namespace dataset_event {
                     
                     class DatasetSubject:
-                    public AbstractSubject {
+                    public chaos::common::trigger::AbstractSubject {
                         chaos::common::data::structured::DatasetAttribute *attribute_description;
                         chaos::common::data::cache::AttributeValue *attribute_cache;
                     public:

@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework_C1346138_0E86_4813_9DE2_2C2B525C6C1C_EventManager_h
 #define __CHAOSFramework_C1346138_0E86_4813_9DE2_2C2B525C6C1C_EventManager_h
 
-#include <chaos/cu_toolkit/data_manager/trigger_system/AbstractEvent.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/trigger_system.h>
 
 #include <boost/thread.hpp>
 
@@ -37,16 +37,14 @@ namespace chaos {
                  Event dispatcher collect even fired by other sublayer and attach it to algorithm execution
                  */
                 class EventManager {
-                    boost::shared_mutex     mutex_event_container;
-                    AbstractEventContainer   event_container;
+                    boost::shared_mutex                         mutex_event_container;
+                    common::trigger::AbstractEventContainer     event_container;
                     
-                    TECodeIndex& index_event_code;
-                    TENameIndex& index_event_name;
+
                 public:
                     EventManager();
                     ~EventManager();
-                    
-                    void addEvent(AbstractEventShrdPtr trigger_event);
+
                 };
                 
             }

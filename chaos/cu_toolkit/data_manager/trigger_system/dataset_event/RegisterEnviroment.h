@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework_EC1AE67E_A602_4C78_9F15_67A55883D782_RegisterEnviroment_h
 #define __CHAOSFramework_EC1AE67E_A602_4C78_9F15_67A55883D782_RegisterEnviroment_h
 
-#include <chaos/cu_toolkit/data_manager/trigger_system/RegisterEventConsumerEnvironment.h>
+#include <chaos/common/trigger/TriggerExecutionEnviroment.h>
 
 #include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/DatasetEvent.h>
 #include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/DatasetConsumer.h>
@@ -36,7 +36,7 @@ namespace chaos {
                     
                     //!define the register environmento for dataset attribute trigger
                     class DatasetRegisterEvenironment:
-                    public RegisterEventConsumerEnvironment<DatasetEvent,
+                    public chaos::common::trigger::TriggerExecutionEnviroment<DatasetEvent,
                     DatasetConsumer,
                     DatasetSubject,
                     ETDatasetAttributeType> {

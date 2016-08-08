@@ -21,6 +21,8 @@
 
 #include <chaos/cu_toolkit//data_manager/trigger_system/dataset_event/DatasetConsumer.h>
 
+using namespace chaos::common::trigger;
+
 using namespace chaos::cu::data_manager::trigger_system::dataset_event;
 #pragma mark DatasetConsumer
 DatasetConsumer::DatasetConsumer(const std::string& name,

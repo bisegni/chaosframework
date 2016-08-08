@@ -22,8 +22,8 @@
 #ifndef __CHAOSFramework__A1E8B6A_044F_48C2_B53B_93FBD4647091_DatasetConsumer_h
 #define __CHAOSFramework__A1E8B6A_044F_48C2_B53B_93FBD4647091_DatasetConsumer_h
 
+#include <chaos/common/trigger/AbstractConsumer.h>
 #include <chaos/common/data/cache/AttributeValue.h>
-#include <chaos/cu_toolkit//data_manager/trigger_system/AbstractEvent.h>
 #include <chaos/cu_toolkit//data_manager/trigger_system/dataset_event/dataset_event_types.h>
 
 namespace chaos {
@@ -31,16 +31,16 @@ namespace chaos {
         namespace data_manager {
             namespace trigger_system {
                 namespace dataset_event {
-                    namespace cu_trigger = ::chaos::cu::data_manager::trigger_system;
+                    namespace chaos_trigger = chaos::common::trigger;
                     //!define the abstract consumer for AbstractEventSetDSAttribute
                     class DatasetConsumer:
-                    public ::chaos::cu::data_manager::trigger_system::AbstractConsumer {
+                    public chaos_trigger::AbstractConsumer {
                     public:
                         DatasetConsumer(const std::string& name,
                                         const std::string& description);
                         ~DatasetConsumer();
-                        virtual cu_trigger::ConsumerResult consumeEvent(ETDatasetAttributeType event_type,
-                                                                        const ::chaos::cu::data_manager::trigger_system::CDataVariantVector& event_values,
+                        virtual chaos_trigger::ConsumerResult consumeEvent(ETDatasetAttributeType event_type,
+                                                                        const chaos_trigger::CDataVariantVector& event_values,
                                                                         chaos::common::data::cache::AttributeValue *attribute_cache) = 0;
                     };
                     
