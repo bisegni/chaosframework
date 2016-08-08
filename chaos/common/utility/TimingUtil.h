@@ -20,6 +20,7 @@
 #ifndef ChaosFramework_TimingUtil_h
 #define ChaosFramework_TimingUtil_h
 #include <chaos/common/global.h>
+
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #define TU_HEADER "[TimingUtil]- "
@@ -31,26 +32,14 @@
 namespace chaos {
 	namespace common {
 		namespace utility {
-			
-			const std::locale formats[] = {
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%S.%f")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M:%S.%f")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M:%S")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%S")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y"))};
-			const size_t formats_n = sizeof(formats)/sizeof(formats[0]);
-			
 			/*
 			 Class for give some method util for timing purpose
 			 */
 			class TimingUtil {
+                static const std::locale formats[];
+                static const size_t formats_n;
 			public:
+                
 				//!Return the current timestamp in milliseconds
 				static inline uint64_t getTimeStamp() {
 					try{

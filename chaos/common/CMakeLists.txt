@@ -197,7 +197,7 @@ SET(common_lib_src ${common_lib_src}
         utility/SWEService.cpp
         utility/CheckList.cpp
         utility/AggregatedCheckList.cpp
-)
+        utility/TimingUtil.cpp)
 
 SET(common_lib_src ${common_lib_src}
         batch_command/BatchCommandExecutor.cpp
