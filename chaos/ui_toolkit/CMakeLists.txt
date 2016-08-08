@@ -8,6 +8,7 @@ IF(BUILD_FORCE_STATIC)
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${ui_lib_src})
 ELSE()
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${ui_lib_src})
+set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF()
 #set_target_properties(${PROJECT_NAME}_static PROPERTIES output_name chaos_uitoolkit) 
 

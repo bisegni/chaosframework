@@ -11,6 +11,19 @@ option(CHAOS_DATA_EXPORT "Chaos Data Export" ON)
 option(CHAOS_EXAMPLES "Chaos Examples" ON)
 option(CHAOS_CCS "Chaos CCS Compile needs qt5.6-static-x86_64 installed" OFF)
 
+
+EXECUTE_PROCESS(
+COMMAND ./version.sh
+WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/chaos/common/
+RESULT_VARIABLE err
+    OUTPUT_VARIABLE out
+)
+if(err)
+	ERROR("CANNOT generate ${CMAKE_CURRENT_LIST_DIR}/chaos/common/version.h: ${out}")
+	ELSE()
+	MESG("created version.h")
+ENDIF()
+
 ###### Required Libraries
 CheckConfigureBuild(jsoncpp jsoncpp "-DJSONCPP_WITH_TESTS=OFF;-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF" https://github.com/bisegni )
 CheckConfigureBuild(mongoose mongoose-cpp "-DHAS_JSONCPP=ON;-DENABLE_PIC=ON" https://github.com/bisegni )
@@ -26,7 +39,6 @@ SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
 
 
-EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
 INCLUDE_DIRECTORIES(. ../ ../../ ${CMAKE_INSTALL_PREFIX}/include)
 LINK_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/lib)
