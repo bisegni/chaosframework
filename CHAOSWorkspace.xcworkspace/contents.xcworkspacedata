@@ -2,16 +2,10 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:bootstrap.sh">
-   </FileRef>
-   <FileRef
       location = "group:README.md">
    </FileRef>
    <FileRef
       location = "group:APACHE-2.0.txt">
-   </FileRef>
-   <FileRef
-      location = "group:CMakeLists.txt">
    </FileRef>
    <Group
       location = "container:"
