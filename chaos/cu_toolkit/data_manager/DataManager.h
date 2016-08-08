@@ -23,6 +23,7 @@
 #include <map>
 #include <string>
 #include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/Singleton.h>
@@ -49,7 +50,7 @@ namespace chaos{
 				friend class common::utility::Singleton<DataManager>;
 				//mutex for lock operation on service request
 				boost::mutex managing_data_mutex;
-				shared_ptr<chaos_io::IODataDriver> liveDriver;
+				boost::shared_ptr<chaos_io::IODataDriver> liveDriver;
 				std::map<std::string, KeyDataStorage*>  deviceIDKeyDataStorageMap;
 				
 				/*
