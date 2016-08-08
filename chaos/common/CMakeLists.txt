@@ -244,12 +244,14 @@ IF (BUILD_FORCE_STATIC)
     ADD_LIBRARY(${PROJECT_NAME} STATIC ${common_lib_src})
 ELSE ()
     ADD_LIBRARY(${PROJECT_NAME} SHARED ${common_lib_src})
+    set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF ()
 
 #SET_TARGET_PROPERTIES(chaos_common_static PROPERTIES OUTPUT_NAME chaos_common)
 
-#set_target_properties(chaos_common PROPERTIES VERSION 1.0.0 SOVERSION 1)
+
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} mongoose ${FrameworkLib})
+
 
 
 FILE(GLOB files "*.h")
