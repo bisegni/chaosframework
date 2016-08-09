@@ -25,7 +25,7 @@ ChaosMDSLite/RecServer.jardesc
 *xccheckout*
 xcshareddata
 CMakeCache.txt
-CMakeFiles
+CMakeFiles/
 Makefile
 bin
 cmake_install.cmake
