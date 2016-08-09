@@ -1920,6 +1920,7 @@
 		32A862141D58C79900A7D707 /* trigger_types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = trigger_types.cpp; sourceTree = "<group>"; };
 		32A862151D58C79900A7D707 /* trigger_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trigger_types.h; sourceTree = "<group>"; };
 		32A862211D58CB2300A7D707 /* trigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trigger.h; sourceTree = "<group>"; };
+		32A862241D59C5BB00A7D707 /* test */ = {isa = PBXFileReference; lastKnownFileType = folder; path = test; sourceTree = "<group>"; };
 		32A88B7B1CF8228A001DBAF5 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32A88B7C1CF8228A001DBAF5 /* lapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lapi.c; sourceTree = "<group>"; };
 		32A88B7D1CF8228A001DBAF5 /* lapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lapi.h; sourceTree = "<group>"; };
@@ -3109,7 +3110,7 @@
 				32ABC2671A73FB43008DB3A7 /* thread */,
 			);
 			name = ArchitectureTest;
-			path = ArchitectureTests;
+			path = test/ArchitectureTests;
 			sourceTree = "<group>";
 		};
 		325963951D216AE300D94853 /* script */ = {
@@ -3183,6 +3184,7 @@
 				323236D8164573F50052CE06 /* ChaosDataService */,
 				32C7EAD51A5D9E450008DFE8 /* ChaosWANProxy */,
 				3258AF011935EE4D00A66D44 /* ArchitectureTest */,
+				32A862241D59C5BB00A7D707 /* test */,
 				3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */,
 				3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */,
 				3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */,
@@ -6557,11 +6559,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					.,
-					usr/local/include,
-				);
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				HEADER_SEARCH_PATHS = ../usr/local/include;
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = (
 					"-lchaos_common",
@@ -6600,11 +6599,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					.,
-					usr/local/include,
-				);
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/usr/local/lib";
+				HEADER_SEARCH_PATHS = ../usr/local/include;
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/../usr/local/lib";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = (
 					"-lchaos_common",

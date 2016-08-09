@@ -94,7 +94,6 @@ IF(CHAOS_EXAMPLES)
 
   #MESG("Configure BenchTest simulation excutable")
   #ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
-
 ENDIF()
 
 IF (CHAOS_MEMCACHE_TEST)
@@ -104,12 +103,11 @@ ENDIF()
 
 IF (CHAOS_ARCHITECTURE_TEST)
   MESG("Configure ChaosArchitectureTests test excutable")
-  ADD_SUBDIRECTORY(ArchitectureTests)
+    ENABLE_TESTING()
+  ADD_SUBDIRECTORY(test/ArchitectureTests)
 ENDIF()
 
 MESG("Done")
-# MESG("Configure Chaos Snapshot Utility")
-# ADD_SUBDIRECTORY(ChaosSnapshotUtility/ChaosSnapshotUtility bin/chaos_snap_util)
 
 #MESG("Configure Plugin Test")
 #ADD_SUBDIRECTORY(test/PluginTest bin/plugin_test)
@@ -155,3 +153,5 @@ ENDIF()
       ERROR("missing /usr/local/chaos/qt5.6-static-x86_64/bin/qmake")
     ENDIF()
   ENDIF()
+
+#add test

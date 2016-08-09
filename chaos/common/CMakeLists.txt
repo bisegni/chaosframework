@@ -212,7 +212,9 @@ SET(common_lib_src ${common_lib_src}
         plugin/PluginLoader.cpp)
 
 SET(common_lib_src ${common_lib_src}
-        property/PropertyCollector.cpp)
+        property/PropertyCollector.cpp
+        property/PropertyGroup.cpp
+        property/PropertyDescription.cpp)
 
 SET(common_lib_src ${common_lib_src}
         script/ScriptManager.cpp
@@ -225,6 +227,13 @@ SET(common_lib_src ${common_lib_src}
         status_manager/DeclareStatusFlag.cpp
         status_manager/StatusFlagSDWrapper.cpp
         status_manager/StatusFlagCatalogSDWrapper.cpp)
+
+SET(common_lib_src ${common_lib_src}
+        trigger/AbstractConsumer.cpp
+        trigger/AbstractEvent.cpp
+        trigger/AbstractSubject.cpp
+        trigger/TriggerExecutionEnviroment.cpp
+        trigger/trigger_types.cpp)
 
 #compile lua chaos vm and core files
 INCLUDE_DIRECTORIES(script/lua/core ./chaos/common ./chaos/common/metadata_logging ../../)
