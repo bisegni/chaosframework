@@ -50,36 +50,20 @@ ConsumerResult DatasetEvent::executeConsumerOnTarget(AbstractSubject *subject_in
 }
 
 #pragma mark EventDSAttributePreChange
-EventDSAttributePreChange::EventDSAttributePreChange(const CDataVariant& _new_value):
-DatasetEvent("EventDSAttributePreChange",
-             "Occures befor input dataset attribute is valorized",
-             ETDatasetAttributeTypePreChange) {consumer_input_value.push_back(_new_value);}
-
-EventDSAttributePreChange::~EventDSAttributePreChange() {}
-
 ConsumerResult EventDSAttributePreChange::_executeConsumerOnTarget(DatasetSubject *attribute_subject_instance,
                                                                    DatasetConsumer *consumer_instance) {
     ConsumerResult err = ConsumerResultOK;
     //add to the vector the CDataVariant from attribute value
     err = consumer_instance->consumeEvent(getType(),
-                                          consumer_input_value,
-                                          attribute_subject_instance->getDatasetCache());
+                                          *attribute_subject_instance);
     return err;
 }
 
 #pragma mark EventDSAttributePreChange
-EventDSAttributePostChange::EventDSAttributePostChange():
-DatasetEvent("EventDSAttributePostChange",
-             "Occures after the dataset attribute is valorized",
-             ETDatasetAttributeTypePostChange){}
-
-EventDSAttributePostChange::~EventDSAttributePostChange() {}
-
 ConsumerResult EventDSAttributePostChange::_executeConsumerOnTarget(DatasetSubject *attribute_subject_instance,
                                                                     DatasetConsumer *consumer_instance) {
-    consumer_input_value.push_back(attribute_subject_instance->getDatasetCache()->getAsVariant());
+
     ConsumerResult err = consumer_instance->consumeEvent(getType(),
-                                                         consumer_input_value,
-                                                         attribute_subject_instance->getDatasetCache());
+                                                         *attribute_subject_instance);
     return err;
 }

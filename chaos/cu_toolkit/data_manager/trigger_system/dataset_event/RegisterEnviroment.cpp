@@ -28,7 +28,7 @@ TriggerExecutionEnviroment<DatasetEvent,
 DatasetConsumer,
 DatasetSubject,
 ETDatasetAttributeType>("DatasetAttribute") {
-    //registerConsumerClass<<#typename Consumer#>>(<#const std::string &consumer_name#>)
+    
 }
 
 DatasetRegisterEvenironment::~DatasetRegisterEvenironment() {

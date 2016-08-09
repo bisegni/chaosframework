@@ -24,7 +24,8 @@
 
 #include <chaos/common/trigger/AbstractConsumer.h>
 #include <chaos/common/data/cache/AttributeValue.h>
-#include <chaos/cu_toolkit//data_manager/trigger_system/dataset_event/dataset_event_types.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/DatasetSubject.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/dataset_event_types.h>
 
 namespace chaos {
     namespace cu {
@@ -40,11 +41,20 @@ namespace chaos {
                                         const std::string& description);
                         ~DatasetConsumer();
                         virtual chaos_trigger::ConsumerResult consumeEvent(ETDatasetAttributeType event_type,
-                                                                        const chaos_trigger::CDataVariantVector& event_values,
-                                                                        chaos::common::data::cache::AttributeValue *attribute_cache) = 0;
+                                                                           DatasetSubject& event_subject) = 0;
                     };
                     
-                    
+                    //------create the consumer
+//                    CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(SubjectConsumerIncrement,
+//                                                            SubjectConsumer)
+//                    CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("offset", "good property", chaos::DataType::TYPE_INT32);
+//                    CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION(SubjectConsumerIncrement,
+//                                                          SubjectConsumer,
+//                                                          "Preform integer increment")
+//                    //we need to declare the custom consumer event
+//                    ConsumerResult consumeEvent(TriggerDataEventType event_type,
+//                                                TriggeredData& trigger_data);
+//                    CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
                 }
             }
         }

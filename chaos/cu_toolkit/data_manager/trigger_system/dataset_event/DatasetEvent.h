@@ -42,9 +42,6 @@ namespace chaos {
                     class DatasetEvent:
                     public ::chaos::common::trigger::AbstractEvent {
                     protected:
-                        //collect consumer input data
-                        chaos_trigger::CDataVariantVector consumer_input_value;
-                        chaos_trigger::CDataVariantVector consumer_output_value;
                         
                     protected:
                         virtual chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attrbiute_subject_instance,
@@ -60,31 +57,29 @@ namespace chaos {
                     };
                     
                     //! the event is forwarded befor an attribute value is changed
-                    /*!
-                     Pre change event collect into the CDataVariant vector for consumer these information:
-                     [0]->new value
-                     [1]->current_value
-                     */
-                    class EventDSAttributePreChange:
-                    public DatasetEvent {
-                    protected:
-                        chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attribute_value,
-                                                                               DatasetConsumer *consumer_instance);
-                    public:
-                        EventDSAttributePreChange(const chaos_data::CDataVariant& _new_value);
-                        ~EventDSAttributePreChange();
-                    };
+                    CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(EventDSAttributePreChange,
+                                                            DatasetEvent)
+                    //CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("offset", "amount of int's added to 1", chaos::DataType::TYPE_INT32);
+                    CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION_1P(EventDSAttributePreChange,
+                                                             DatasetEvent,
+                                                             "Signal for pre change attribute value",
+                                                             ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeTypePreChange)
+                    chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attribute_value,
+                                                                           DatasetConsumer *consumer_instance);
+                    CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
+
                     
                     //! this event is forwarded befor an attribute value has been changed
-                    class EventDSAttributePostChange:
-                    public DatasetEvent {
-                    protected:
-                        chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attribute_value,
-                                                                               DatasetConsumer *consumer_instance);
-                    public:
-                        EventDSAttributePostChange();
-                        ~EventDSAttributePostChange();
-                    };
+                    CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(EventDSAttributePostChange,
+                                                            DatasetEvent)
+                    //CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("offset", "amount of int's added to 1", chaos::DataType::TYPE_INT32);
+                    CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION_1P(EventDSAttributePostChange,
+                                                             DatasetEvent,
+                                                             "Signal for pre change attribute value",
+                                                             ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeTypePostChange)
+                    chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attribute_value,
+                                                                           DatasetConsumer *consumer_instance);
+                    CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
                 }
             }
         }
