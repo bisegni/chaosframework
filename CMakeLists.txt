@@ -113,18 +113,20 @@ MESG("Done")
 #MESG("Configure Plugin Test")
 #ADD_SUBDIRECTORY(test/PluginTest bin/plugin_test)
 if( NOT ${CMAKE_INSTALL_PREFIX} MATCHES ${CMAKE_CURRENT_SOURCE_DIR}/usr/local)
-  FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/usr/)
-  execute_process(
-    COMMAND ln -sf ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    RESULT_VARIABLE err
-    OUTPUT_VARIABLE out
-    )
-  IF(err)
-    ERROR("cannot create symlink ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
-  ELSE()
+  IF(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/usr/local" )
+   FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/usr/)
+   execute_process(
+     COMMAND ln -sf ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local
+     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+     RESULT_VARIABLE err
+     OUTPUT_VARIABLE out
+     )
+   IF(err)
+     ERROR("cannot create symlink ${CMAKE_INSTALL_PREFIX} ${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
+   ELSE()
     MESG("created symlink ${CMAKE_INSTALL_PREFIX}->${CMAKE_CURRENT_SOURCE_DIR}/usr/local")
   ENDIF()
+ENDIF()
 ENDIF()
   IF(CHAOS_CCS)
     MESG("CCS compilation ENABLED")
