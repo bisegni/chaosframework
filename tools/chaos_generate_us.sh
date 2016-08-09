@@ -33,6 +33,18 @@ while getopts i:o:n:hs: opt; do
     esac
    
 done
+OS=`uname -s`
+if [ $OS == "Darwin" ];then
+    if gsed --v >& /dev/null;then
+	echo "using gsed"
+	SED=gsed
+    else 
+	echo "## error gsed is required, please install brew install gnu-sed"
+	exit 1
+    fi
+else
+    SED=sed
+fi
 if ! [[ "$outdir" =~ ^/ ]] ; then
     outdir=$curr/$outdir
     
@@ -104,12 +116,12 @@ for c in $listah; do
 	continue;
     fi
     
-    header=`echo $c | sed 's/src\///' | sed 's/source\///' | sed "s/\.\//$prefix\//g"`;
+    header=`echo $c | $SED 's/src\///' | $SED 's/source\///' | $SED "s/\.\//$prefix\//g"`;
     filenamespace=""
-#    namespace=`grep -o 'namespace\s\+\w\+\s*{' $c |sed 's/namespace\s\+\(\w\+\)\s*{/\1/g'`;
-    namespace=`grep -o 'namespace\s\+\w\+\s*{' $c | sed 's/namespace\ *//g' |sed 's/[\ {]//g'`
-  #  namespace=`grep -o 'namespace\s\+\w\+' $c | sed 's/^namespace //g'`
-#`grep -o 'namespace\s\+\w\+' $c | sed 's/namespace\ *//g' | tr '\n' ' '`;
+#    namespace=`grep -o 'namespace\s\+\w\+\s*{' $c |$SED 's/namespace\s\+\(\w\+\)\s*{/\1/g'`;
+    namespace=`grep -o 'namespace\s\+\w\+\s*{' $c | $SED 's/namespace\ *//g' |$SED 's/[\ {]//g'`
+  #  namespace=`grep -o 'namespace\s\+\w\+' $c | $SED 's/^namespace //g'`
+#`grep -o 'namespace\s\+\w\+' $c | $SED 's/namespace\ *//g' | tr '\n' ' '`;
     oldbb=$bb
     bb=$(dirname $c)
    # if [ "$bb" != "." ] && [ "$bb" != "$oldbb" ]; then
@@ -140,7 +152,7 @@ for c in $listah; do
     if [ -n "$filenamespace" ];then
 	filenamespace="$filenamespace::"
     fi
-    cu=`grep -s -o "PUBLISHABLE_CONTROL_UNIT_INTERFACE(.\+)" $c | sed 's/[:alpha:_]\+:://g'|sed "s/PUBLISHABLE_CONTROL_UNIT_INTERFACE(\(\w\+\))$/REGISTER_CU($filenamespace\1)/g"`;
+    cu=`grep -s -o "PUBLISHABLE_CONTROL_UNIT_INTERFACE(.\+)" $c | $SED 's/[:alpha:_]\+:://g'|$SED "s/PUBLISHABLE_CONTROL_UNIT_INTERFACE(\(\w\+\))$/REGISTER_CU($filenamespace\1)/g"`;
     if [ -n "$cu" ]; then
 	echo "* got CU in $header"
 	lista_cu+=("$cu");
@@ -150,14 +162,15 @@ done
  for c in $listacpp; do
      
 
-     plugin=`grep -s -o "OPEN_CU_DRIVER_PLUGIN_CLASS_DEFINITION(.\+)" $c| sed "s/OPEN_CU_DRIVER_PLUGIN_CLASS_DEFINITION(\(\w\+\),.\+,\(.*\)::\(.\+\))/REGISTER_DRIVER(\2,\3)/g"| sed "s/OPEN_CU_DRIVER_PLUGIN_CLASS_DEFINITION(\(\w\+\),.\+,\(.\+\))/REGISTER_DRIVER(,\2)/g"| sed s/\ //g`
+     plugin=`grep -s -o "OPEN_CU_DRIVER_PLUGIN_CLASS_DEFINITION(.\+)" $c| $SED "s/OPEN_CU_DRIVER_PLUGIN_CLASS_DEFINITION(\(\w\+\),.\+,\(.*\)::\(.\+\))/REGISTER_DRIVER(\2,\3)/g"| $SED "s/OPEN_CU_DRIVER_PLUGIN_CLASS_DEFINITION(\(\w\+\),.\+,\(.\+\))/REGISTER_DRIVER(,\2)/g"| $SED  s/\ //g`
+#     echo "===> plugin: $plugin"
      if [[ "$plugin" =~ REGISTER_DRIVER\(.*,.+\) ]];then
 	 lista_driver="$lista_driver $plugin"
 
-	 nameh=`echo $c | sed s/\.cpp/\.h/|sed 's/src\///' | sed 's/source\///' | sed "s/\.\//$prefix\//g"`;
+	 nameh=`echo $c | $SED s/\.cpp/\.h/|$SED 's/src\///' | $SED 's/source\///' | $SED "s/\.\//$prefix\//g"`;
 	 lista_hd+=($nameh)
      fi
-#     drv=`grep -s REGISTER_PLUGIN\( $c | sed s/REGISTER_PLUGIN\(/REGISTER_DRIVER\(/`;
+#     drv=`grep -s REGISTER_PLUGIN\( $c | $SED s/REGISTER_PLUGIN\(/REGISTER_DRIVER\(/`;
 #     rr=`basename $startdir`
 
 
@@ -195,7 +208,7 @@ for c in $listcmake;do
     if [[ "$project_name_tmp" =~ \(([a-zA-Z0-9_]+)\) ]];then
 	project_name=${BASH_REMATCH[1]}
        
-	cat $c| sed "s/\${PROJECT_NAME}/$project_name/g" > $TEMP_CMAKE
+	cat $c| $SED "s/\${PROJECT_NAME}/$project_name/g" > $TEMP_CMAKE
 	CL="$TEMP_CMAKE"
 	echo "replacing $project_name"
     fi

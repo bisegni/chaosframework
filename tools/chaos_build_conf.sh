@@ -39,6 +39,7 @@ while getopts i:o:u:c:n:hd:j: opt; do
 done;
 
 if [ ${#dataservers} -eq 0 ];then
+    echo "* no dataserver given assuming localhost"
     dataservers+=("localhost:1700:32000|0")
 fi
 
