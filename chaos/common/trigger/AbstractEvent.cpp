@@ -45,6 +45,10 @@ const unsigned int& AbstractEvent::getEventCode() const {
     return event_code;
 }
 
+chaos::common::property::PropertyGroup& AbstractEvent::getProperties() {
+    return *this;
+}
+
 #pragma mark MultiIndex Key Extractor
 const AbstractEventMIExstractName::result_type&
 AbstractEventMIExstractName::operator()(const AbstractEventShrdPtr &p) const {

@@ -133,7 +133,7 @@ bool TestEvent::test(){
     assert(subject_one->subject_data->data_value == 1);
     assert(subject_two->subject_data->data_value == 0);
     
-    event_one->setPropertyValue("offset", CDataVariant(10));
+    event_one->getProperties()("offset", 10);
     trigger_environment.fireEventOnSubject(event_one, subject_one);
     assert(subject_one->subject_data->data_value == 12);
     assert(subject_two->subject_data->data_value == 0);
@@ -142,7 +142,7 @@ bool TestEvent::test(){
     assert(subject_one->subject_data->data_value == 12);
     assert(subject_two->subject_data->data_value == -1);
     
-    event_two->setPropertyValue("offset", CDataVariant(10));
+    event_two->getProperties()("offset", 10);
     trigger_environment.fireEventOnSubject(event_two, subject_two);
     assert(subject_one->subject_data->data_value == 12);
     assert(subject_two->subject_data->data_value == -12);
@@ -155,15 +155,15 @@ bool TestEvent::test(){
     assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
                                                             subject_two,
                                                             "SubjectConsumerIncrement"));
-    event_two->resetProperiesValues();
+    event_two->getProperties()();//reset the values;
     trigger_environment.fireEventOnSubject(event_two, subject_one);
     
-    event_two->setPropertyValue("offset", CDataVariant(10));
+    event_two->getProperties()("offset", 10);
     trigger_environment.fireEventOnSubject(event_two, subject_one);
     
-    event_one->resetProperiesValues();
+    event_one->getProperties()();//reset the value
     trigger_environment.fireEventOnSubject(event_one, subject_two);
-    event_one->setPropertyValue("offset", CDataVariant(10));
+    event_one->getProperties()("offset", 10);
     trigger_environment.fireEventOnSubject(event_one, subject_two);
     assert(subject_one->subject_data->data_value == 0);
     assert(subject_two->subject_data->data_value == 0);
@@ -172,11 +172,11 @@ bool TestEvent::test(){
     assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
                                                             subject_one,
                                                             "SubjectConsumerDecrement"));
-    event_one->resetProperiesValues();
+    event_one->getProperties()();
     trigger_environment.fireEventOnSubject(event_one, subject_one);
     assert(subject_one->subject_data->data_value == 0);
     
-    event_one->setPropertyValue("offset", CDataVariant(10));
+    event_one->getProperties()("offset", 10);
     trigger_environment.fireEventOnSubject(event_one, subject_one);
     assert(subject_one->subject_data->data_value == 0);
     

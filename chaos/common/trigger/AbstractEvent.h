@@ -69,6 +69,8 @@ namespace chaos {
                 const std::string& getEventDescription() const;
                 const unsigned int& getEventCode() const;
                 
+                chaos::common::property::PropertyGroup& getProperties();
+                
                 virtual ConsumerResult executeConsumerOnTarget(AbstractSubject *subject_instance,
                                                                AbstractConsumer *consumer_instance) = 0;
             };

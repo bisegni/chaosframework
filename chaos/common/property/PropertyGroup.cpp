@@ -78,3 +78,50 @@ void PropertyGroup::resetProperiesValues() {
         it->second.updatePropertyValue(CDataVariant());
     }
 }
+
+PropertyGroup& PropertyGroup::operator()() {
+    resetProperiesValues();
+    return *this;
+}
+
+PropertyGroup& PropertyGroup::operator()(const std::string& property_name,
+                                         const bool property_value) {
+    setPropertyValue(property_name,
+                     CDataVariant(property_value));
+    return *this;
+}
+
+PropertyGroup& PropertyGroup::operator()(const std::string& property_name,
+                                         const int32_t property_value) {
+    setPropertyValue(property_name,
+                     CDataVariant(property_value));
+    return *this;
+}
+
+PropertyGroup& PropertyGroup::operator()(const std::string& property_name,
+                                         const int64_t property_value) {
+    setPropertyValue(property_name,
+                     CDataVariant(property_value));
+    return *this;
+}
+
+PropertyGroup& PropertyGroup::operator()(const std::string& property_name,
+                                         const double property_value) {
+    setPropertyValue(property_name,
+                     CDataVariant(property_value));
+    return *this;
+}
+
+PropertyGroup& PropertyGroup::operator()(const std::string& property_name,
+                                         const std::string& property_value) {
+    setPropertyValue(property_name,
+                     CDataVariant(property_value));
+    return *this;
+}
+
+PropertyGroup& PropertyGroup::operator()(const std::string& property_name,
+                                         chaos::common::data::CDataBuffer *property_value) {
+    setPropertyValue(property_name,
+                     CDataVariant(property_value));
+    return *this;
+}
