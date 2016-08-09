@@ -72,7 +72,7 @@ done
 
 cmd="find . -name \"*.h\" $findopt"
 listah=$(eval $cmd)
-cmdh="find . -name \"*.cpp\" $findopt"
+cmd="find . -name \"*.cpp\" $findopt"
 listacpp=$(eval $cmd)
 
 project_dir=$outdir/$pname
