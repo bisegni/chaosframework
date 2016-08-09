@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
-include(config/CMakeChaos.txt)
+
 project(chaosframework)
+include(config/CMakeChaos.txt)
+include(CTest)
 
 option(CHAOS_MEMCACHE_TEST "Memcached test" OFF)
 option(CHAOS_ARCHITECTURE_TEST "Architecture tests" OFF)
@@ -103,7 +105,6 @@ ENDIF()
 
 IF (CHAOS_ARCHITECTURE_TEST)
   MESG("Configure ChaosArchitectureTests test excutable")
-    ENABLE_TESTING()
   ADD_SUBDIRECTORY(test/ArchitectureTests)
 ENDIF()
 
