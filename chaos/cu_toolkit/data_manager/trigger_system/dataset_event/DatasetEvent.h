@@ -34,48 +34,23 @@ namespace chaos {
                 namespace dataset_event {
                     namespace chaos_data = chaos::common::data;
                     namespace chaos_trigger = chaos::common::trigger;
+
+                    CHAOS_TRIGGER_EVENT_OPEN_DESCRIPTION(EventDSAttributePreChange,
+                                                         "Signal for pre change attribute value",
+                                                         ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeTypePreChange,
+                                                         chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType,
+                                                         DatasetSubject)
+                    //CHAOS_TRIGGER_EVENT_ADD_PROPERTY("offset", "amount of int's added to 1", chaos::DataType::TYPE_INT32);
+                    CHAOS_TRIGGER_EVENT_CLOSE_DESCRIPTION()
                     
-                    //!forward decalration
-                    class DatasetConsumer;
+                    CHAOS_TRIGGER_EVENT_OPEN_DESCRIPTION(EventDSAttributePostChange,
+                                                         "Signal for post change attribute value",
+                                                         ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeTypePostChange,
+                                                         chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType,
+                                                         DatasetSubject)
+                    //CHAOS_TRIGGER_EVENT_ADD_PROPERTY("offset", "amount of int's added to 1", chaos::DataType::TYPE_INT32);
+                    CHAOS_TRIGGER_EVENT_CLOSE_DESCRIPTION()
                     
-                    //!define the event for attribute change
-                    class DatasetEvent:
-                    public ::chaos::common::trigger::AbstractEvent<chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType, DatasetSubject> {
-                    protected:
-                        
-                    protected:
-                        
-                    public:
-                        DatasetEvent(const std::string& _event_name,
-                                     const std::string& _event_description,
-                                     const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType _type);
-                        const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType getType() const;
-                    };
-                    
-                    //! the event is forwarded befor an attribute value is changed
-                    CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(EventDSAttributePreChange,
-                                                            DatasetEvent)
-                    //CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("offset", "amount of int's added to 1", chaos::DataType::TYPE_INT32);
-                    CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION_1P(EventDSAttributePreChange,
-                                                             DatasetEvent,
-                                                             "Signal for pre change attribute value",
-                                                             ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeTypePreChange)
-                    chaos_trigger::ConsumerResult executeConsumerOnTarget(DatasetSubject *attribute_value,
-                                                                          chaos_trigger::AbstractConsumer<chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType, DatasetSubject> *consumer_instance);
-                    CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
-                    
-                    
-                    //! this event is forwarded befor an attribute value has been changed
-                    CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(EventDSAttributePostChange,
-                                                            DatasetEvent)
-                    //CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("offset", "amount of int's added to 1", chaos::DataType::TYPE_INT32);
-                    CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION_1P(EventDSAttributePostChange,
-                                                             DatasetEvent,
-                                                             "Signal for pre change attribute value",
-                                                             ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeTypePostChange)
-                    chaos_trigger::ConsumerResult executeConsumerOnTarget(DatasetSubject *attribute_value,
-                                                                          chaos_trigger::AbstractConsumer<chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType, DatasetSubject> *consumer_instance);
-                    CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
                 }
             }
         }
