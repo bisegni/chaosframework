@@ -22,7 +22,7 @@
 #ifndef __CHAOSFramework_F0DCD41F_00FB_479F_A2F9_DB04B820DD8F_TestEvent_h
 #define __CHAOSFramework_F0DCD41F_00FB_479F_A2F9_DB04B820DD8F_TestEvent_h
 
-#include <chaos/cu_toolkit/data_manager/trigger_system/trigger_system.h>
+#include <chaos/common/trigger/trigger.h>
 
 using namespace chaos::common::trigger;
 
@@ -53,28 +53,20 @@ namespace chaos {
             //---------------------------------
             
             class SubjectConsumer:
-            public AbstractConsumer {
+            public AbstractConsumer<TriggerDataEventType, Subject> {
             public:
                 SubjectConsumer(const std::string& name,
                                 const std::string& description);
                 ~SubjectConsumer();
-                virtual ConsumerResult consumeEvent(TriggerDataEventType event_type,
-                                                    TriggeredData& trigger_data) = 0;
             };
             //---------------------------------
             
             class SubjectEvent:
-            public AbstractEvent {
-            protected:
-                virtual ConsumerResult _executeConsumerOnTarget(Subject *subject_instance,
-                                                                SubjectConsumer *consumer_instance) = 0;
+            public AbstractEvent<TriggerDataEventType, Subject> {
             public:
                 SubjectEvent(const std::string& _event_name,
                              const std::string& _event_description,
                              const TriggerDataEventType _type);
-                
-                ConsumerResult executeConsumerOnTarget(AbstractSubject *subject_instance,
-                                                       AbstractConsumer *consumer_instance);
             };
             
             //---------------------------------
@@ -86,8 +78,9 @@ namespace chaos {
                                                      SubjectEvent,
                                                      "Signal for int increment event",
                                                      kTriggerDataEventTypeOne)
-            ConsumerResult _executeConsumerOnTarget(Subject *subject_instance,
-                                                    SubjectConsumer *consumer_instance);
+            ConsumerResult executeConsumerOnTarget(Subject *subject_instance,
+                                                   AbstractConsumer<TriggerDataEventType, Subject> *consumer_instance);
+            
             CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
             
             
@@ -98,8 +91,8 @@ namespace chaos {
                                                      SubjectEvent,
                                                      "Signal for int increment event",
                                                      kTriggerDataEventTypeTwo)
-            ConsumerResult _executeConsumerOnTarget(Subject *subject_instance,
-                                                    SubjectConsumer *consumer_instance);
+            ConsumerResult executeConsumerOnTarget(Subject *subject_instance,
+                                                   AbstractConsumer<TriggerDataEventType, Subject> *consumer_instance);
             CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
             //---------------------------------
             //create two consumer
@@ -112,7 +105,7 @@ namespace chaos {
                                                   "Preform integer increment")
             //we need to declare the custom consumer event
             ConsumerResult consumeEvent(TriggerDataEventType event_type,
-                                        TriggeredData& trigger_data);
+                                        Subject& trigger_data);
             CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
             
             
@@ -123,7 +116,7 @@ namespace chaos {
                                                   SubjectConsumer,
                                                   "Preform integer decrement")
             ConsumerResult consumeEvent(TriggerDataEventType event_type,
-                                        TriggeredData& trigger_data);
+                                        Subject& trigger_data);
             CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
             
             //---------------------------------

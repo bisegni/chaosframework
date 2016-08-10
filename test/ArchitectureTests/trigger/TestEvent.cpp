@@ -41,12 +41,6 @@ SubjectEvent::SubjectEvent(const std::string& _event_name,
 AbstractEvent(_event_name,
               _event_description,
               _type){}
-
-ConsumerResult SubjectEvent::executeConsumerOnTarget(AbstractSubject *subject_instance,
-                                                     AbstractConsumer *consumer_instance) {
-    return _executeConsumerOnTarget(static_cast<Subject*>(subject_instance),
-                                    static_cast<SubjectConsumer*>(consumer_instance));
-}
 //---------------------------------
 SubjectConsumer::SubjectConsumer(const std::string& name,
                                  const std::string& description):
@@ -54,41 +48,41 @@ AbstractConsumer(name,
                  description){}
 SubjectConsumer::~SubjectConsumer(){}
 //---------------------------------
-ConsumerResult SubjectEventOne::_executeConsumerOnTarget(Subject *subject_instance,
-                                                        SubjectConsumer *consumer_instance) {
+ConsumerResult SubjectEventOne::executeConsumerOnTarget(Subject *subject_instance,
+                                                        AbstractConsumer<TriggerDataEventType, Subject> *consumer_instance) {
     return consumer_instance->consumeEvent(static_cast<TriggerDataEventType>(getEventCode()),
-                                           *subject_instance->subject_data);
+                                           *subject_instance);
 }
 //---------------------------------
-ConsumerResult SubjectEventTwo::_executeConsumerOnTarget(Subject *subject_instance,
-                                                        SubjectConsumer *consumer_instance) {
+ConsumerResult SubjectEventTwo::executeConsumerOnTarget(Subject *subject_instance,
+                                                        AbstractConsumer<TriggerDataEventType, Subject> *consumer_instance) {
     return consumer_instance->consumeEvent(static_cast<TriggerDataEventType>(getEventCode()),
-                                           *subject_instance->subject_data);
+                                           *subject_instance);
 }
 //---------------------------------
 ConsumerResult SubjectConsumerIncrement::consumeEvent(TriggerDataEventType event_type,
-                                                      TriggeredData& trigger_data) {
+                                                      Subject& trigger_data) {
     int32_t incremnet_size = 0;
     const CDataVariant& inc_value = getPropertyValue("offset");
     if(inc_value.isValid()) {
         //get increment size
         incremnet_size = inc_value.asInt32();
     }
-    trigger_data.data_value += (1+incremnet_size);
+    trigger_data.subject_data->data_value += (1+incremnet_size);
     return ConsumerResultOK;
 }
 
 //---------------------------------
 ConsumerResult SubjectConsumerDecrement::consumeEvent(TriggerDataEventType event_type,
-                                                      TriggeredData& trigger_data) {
+                                                      Subject& trigger_data) {
     int32_t incremnet_size = 0;
     const CDataVariant& dec_value = getPropertyValue("offset");
     if(dec_value.isValid()) {
-
+        
         //get increment size
         incremnet_size = dec_value.asInt32();
     }
-    trigger_data.data_value -= (1+incremnet_size);
+    trigger_data.subject_data->data_value -= (1+incremnet_size);
     return ConsumerResultOK;
 }
 

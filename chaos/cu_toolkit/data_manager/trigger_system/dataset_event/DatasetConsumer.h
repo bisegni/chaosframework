@@ -35,13 +35,11 @@ namespace chaos {
                     namespace chaos_trigger = chaos::common::trigger;
                     //!define the abstract consumer for AbstractEventSetDSAttribute
                     class DatasetConsumer:
-                    public chaos_trigger::AbstractConsumer {
+                    public chaos_trigger::AbstractConsumer<ETDatasetAttributeType, DatasetSubject> {
                     public:
                         DatasetConsumer(const std::string& name,
                                         const std::string& description);
                         ~DatasetConsumer();
-                        virtual chaos_trigger::ConsumerResult consumeEvent(ETDatasetAttributeType event_type,
-                                                                           DatasetSubject& event_subject) = 0;
                     };
                     
                     //------create the consumer

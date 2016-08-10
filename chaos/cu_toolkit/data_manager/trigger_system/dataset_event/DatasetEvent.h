@@ -40,20 +40,16 @@ namespace chaos {
                     
                     //!define the event for attribute change
                     class DatasetEvent:
-                    public ::chaos::common::trigger::AbstractEvent {
+                    public ::chaos::common::trigger::AbstractEvent<chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType, DatasetSubject> {
                     protected:
                         
                     protected:
-                        virtual chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attrbiute_subject_instance,
-                                                                                       DatasetConsumer *consumer_instance) = 0;
+                        
                     public:
                         DatasetEvent(const std::string& _event_name,
                                      const std::string& _event_description,
                                      const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType _type);
                         const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType getType() const;
-                        
-                        chaos_trigger::ConsumerResult executeConsumerOnTarget(chaos_trigger::AbstractSubject *subject_instance,
-                                                                              chaos_trigger::AbstractConsumer *consumer_instance);
                     };
                     
                     //! the event is forwarded befor an attribute value is changed
@@ -64,10 +60,10 @@ namespace chaos {
                                                              DatasetEvent,
                                                              "Signal for pre change attribute value",
                                                              ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeTypePreChange)
-                    chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attribute_value,
-                                                                           DatasetConsumer *consumer_instance);
+                    chaos_trigger::ConsumerResult executeConsumerOnTarget(DatasetSubject *attribute_value,
+                                                                          chaos_trigger::AbstractConsumer<chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType, DatasetSubject> *consumer_instance);
                     CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
-
+                    
                     
                     //! this event is forwarded befor an attribute value has been changed
                     CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(EventDSAttributePostChange,
@@ -77,8 +73,8 @@ namespace chaos {
                                                              DatasetEvent,
                                                              "Signal for pre change attribute value",
                                                              ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeTypePostChange)
-                    chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attribute_value,
-                                                                           DatasetConsumer *consumer_instance);
+                    chaos_trigger::ConsumerResult executeConsumerOnTarget(DatasetSubject *attribute_value,
+                                                                          chaos_trigger::AbstractConsumer<chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType, DatasetSubject> *consumer_instance);
                     CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
                 }
             }
