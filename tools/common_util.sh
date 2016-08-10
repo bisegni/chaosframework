@@ -19,8 +19,17 @@ else
     if [ -n "$CHAOS_FRAMEWORK" ];then
 	tools=$CHAOS_FRAMEWORK/tools
     else
-	echo "## cannot find tools directory, please set CHAOS_TOOLS or CHAOS_FRAMEWORK"
-	exit 1
+	if [ -e $SCRIPTTESTABSPATH/common_util.sh ];then
+	    tools=$SCRIPTTESTABSPATH
+	else
+	    if [ -n "$CHAOS_PREFIX" ];then
+		tools=$CHAOS_PREFIX/tools
+	    else
+		echo "## cannot find tools directory, please set CHAOS_TOOLS or CHAOS_FRAMEWORK"
+	    
+		exit 1
+	    fi
+	fi
     fi
 fi
 if [ -n "$CHAOS_PREFIX" ];then
