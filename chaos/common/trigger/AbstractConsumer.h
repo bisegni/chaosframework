@@ -41,15 +41,10 @@ namespace chaos {
             template<typename EventType, typename SubjectImpl>
             class AbstractConsumer:
             public chaos::common::property::PropertyGroup {
-                const std::string consumer_name;
-                const std::string consumer_description;
                 const std::string consumer_uuid;
             public:
-                AbstractConsumer(const std::string& _consumer_name,
-                                 const std::string& _consumer_description):
-                PropertyGroup(_consumer_name),
-                consumer_name(_consumer_name),
-                consumer_description(_consumer_description),
+                AbstractConsumer(const std::string& consumer_name):
+                PropertyGroup(consumer_name),
                 consumer_uuid(utility::UUIDUtil::generateUUIDLite()){}
                 
                 virtual ~AbstractConsumer(){}
@@ -59,11 +54,7 @@ namespace chaos {
                 }
                 
                 const std::string& getConsumerName() const {
-                    return consumer_name;
-                }
-                
-                const std::string& getConsumerDescription() const {
-                    return consumer_description;
+                    return PropertyGroup::getGroupName();
                 }
                 
                 void updateProperty(const PropertyGroup& property_group) {
@@ -80,6 +71,77 @@ namespace chaos {
                 virtual ConsumerResult consumeEvent(EventType event_type,
                                                     SubjectImpl& trigger_data) = 0;
             };
+            
+            
+            
+            
+            template<typename EventType,
+            typename SubjectImpl>
+            class ConsumerInstancerDescription:
+            public chaos::common::property::PropertyGroup {
+                const std::string consumer_description;
+            protected:
+                ConsumerInstancerDescription(const std::string& name,
+                                             const std::string& description):
+                consumer_description(description),
+                PropertyGroup(name){}
+                
+            public:
+                typedef AbstractConsumer<EventType, SubjectImpl > ConcreteConsumer;
+                typedef boost::shared_ptr< ConcreteConsumer > ConsumerShrdPtr;
+                typedef boost::shared_ptr< ConsumerInstancerDescription<EventType, SubjectImpl> > ConsumerInstancerShrdPtr;
+                
+                const std::string& getConsumerName() const {
+                    return PropertyGroup::getGroupName();
+                }
+                
+                const std::string& getConsumerDescription() const {
+                    return consumer_description;
+                }
+                
+                virtual ConcreteConsumer* getInstance() = 0;
+            };
+            
+            template<typename impl,typename EventType, typename SubjectImpl>
+            class ImplementationConsumerInstancerDescription:
+            public ConsumerInstancerDescription<EventType, SubjectImpl> {
+            public:
+                ImplementationConsumerInstancerDescription(const std::string& name,
+                                                           const std::string& description):
+                ConsumerInstancerDescription<EventType, SubjectImpl>(name,
+                                                                     description){}
+                
+                typename ConsumerInstancerDescription<EventType, SubjectImpl>::ConcreteConsumer* getInstance() {
+                    typename ConsumerInstancerDescription<EventType, SubjectImpl>::ConcreteConsumer* new_instance = new impl(ConsumerInstancerDescription<EventType, SubjectImpl>::getConsumerName());
+                    //copy property from twhi group
+                    chaos::common::property::PropertyGroup *pg_instance = dynamic_cast<chaos::common::property::PropertyGroup*>(new_instance);
+                    if(pg_instance) {
+                        new_instance->copyPropertiesFromGroup(*this);
+                    }
+                    return new_instance;
+                }
+            };
+            
+#define CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(impl, description, EventType, SubjectImpl)\
+class impl:\
+public chaos::common::trigger::AbstractConsumer<EventType, SubjectImpl> {\
+public:\
+impl(const std::string& consumer_name):AbstractConsumer<EventType, SubjectImpl>(consumer_name){}\
+chaos::common::trigger::ConsumerResult consumeEvent(EventType event_type, SubjectImpl& trigger_data);};\
+\
+class impl ## TriggerConsumerDescription:\
+public chaos::common::trigger::ImplementationConsumerInstancerDescription< impl, EventType, SubjectImpl> {\
+public:\
+impl ## TriggerConsumerDescription():\
+chaos::common::trigger::ImplementationConsumerInstancerDescription< impl, EventType, SubjectImpl >(#impl, description) {
+            
+#define CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY(name, desc, type)\
+addProperty(name, desc, type);
+            
+#define CHAOS_TRIGGER_CONSUMER_CLOSE_DESCRIPTION()\
+}\
+};
+            
         }
     }
 }

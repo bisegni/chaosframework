@@ -87,40 +87,6 @@ namespace chaos {
                 };
                 
                 //!helper macro
-#define CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(impl, base)\
-class impl;\
-class impl ## PropertyDescription:\
-public chaos::common::trigger::ConsumerPropertyDescription<impl, base> {\
-public: impl ## PropertyDescription():\
-ConsumerPropertyDescription<impl, base>(#impl) {
-                
-                
-#define CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY(name, desc, type)\
-addProperty(name, desc, type);
-                
-#define CHAOS_TRIGGER_CONSUMER_CLOSE_DESCRIPTION()\
-}\
-};
-                
-                
-#define CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION(impl, base, desc)\
-CHAOS_TRIGGER_CONSUMER_CLOSE_DESCRIPTION()\
-class impl:\
-public base {\
-public:\
-impl():base(#impl, desc){};\
-~impl(){};\
-
-#define CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION_1P(impl, base, desc, param)\
-CHAOS_TRIGGER_CONSUMER_CLOSE_DESCRIPTION()\
-class impl:\
-public base {\
-public:\
-impl():base(#impl, desc, param){};\
-~impl(){};\
-
-#define CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()\
-};
         }
     }
 }

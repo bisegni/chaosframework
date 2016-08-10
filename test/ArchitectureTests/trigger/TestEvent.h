@@ -50,18 +50,7 @@ namespace chaos {
                 TriggeredDataShrdPtr subject_data;
                 Subject(const TriggeredDataShrdPtr& _subject_data);
             };
-            //---------------------------------
             
-            class SubjectConsumer:
-            public AbstractConsumer<TriggerDataEventType, Subject> {
-            public:
-                SubjectConsumer(const std::string& name,
-                                const std::string& description);
-                ~SubjectConsumer();
-            };
-            //---------------------------------
-            
-
             //---------------------------------
             //create two event
             CHAOS_TRIGGER_EVENT_OPEN_DESCRIPTION(SubjectEventOne,
@@ -82,42 +71,34 @@ namespace chaos {
             
             //---------------------------------
             //create two consumer
-            
             CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(SubjectConsumerIncrement,
-                                                    SubjectConsumer)
-            CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("offset", "good property", chaos::DataType::TYPE_INT32);
-            CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION(SubjectConsumerIncrement,
-                                                  SubjectConsumer,
-                                                  "Preform integer increment")
-            //we need to declare the custom consumer event
-            ConsumerResult consumeEvent(TriggerDataEventType event_type,
-                                        Subject& trigger_data);
-            CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
+                                                    "Preform integer increment",
+                                                    TriggerDataEventType,
+                                                    Subject)
             
+            CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("offset", "good property", chaos::DataType::TYPE_INT32);
+            CHAOS_TRIGGER_CONSUMER_CLOSE_DESCRIPTION()
             
             CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(SubjectConsumerDecrement,
-                                                    SubjectConsumer)
+                                                    "Preform integer decrement",
+                                                    TriggerDataEventType,
+                                                    Subject)
             CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("offset", "good property", chaos::DataType::TYPE_INT32);
-            CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION(SubjectConsumerDecrement,
-                                                  SubjectConsumer,
-                                                  "Preform integer decrement")
-            ConsumerResult consumeEvent(TriggerDataEventType event_type,
-                                        Subject& trigger_data);
-            CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
+            CHAOS_TRIGGER_CONSUMER_CLOSE_DESCRIPTION()
             
             //---------------------------------
             
             class SubjectTriggerEnviroment:
-            public TriggerExecutionEnviroment<SubjectConsumer, Subject, TriggerDataEventType> {
+            public TriggerExecutionEnviroment<Subject, TriggerDataEventType> {
             public:
                 SubjectTriggerEnviroment():
-                TriggerExecutionEnviroment<SubjectConsumer, Subject, TriggerDataEventType>("SubjectName"){
+                TriggerExecutionEnviroment<Subject, TriggerDataEventType>("SubjectName"){
                     
                     registerEventClass<SubjectEventOneTriggerEventDescription>();
                     registerEventClass<SubjectEventTwoTriggerEventDescription>();
                     
-                    registerConsumerClass<SubjectConsumerIncrementPropertyDescription>();
-                    registerConsumerClass<SubjectConsumerDecrementPropertyDescription>();
+                    registerConsumerClass<SubjectConsumerIncrementTriggerConsumerDescription>();
+                    registerConsumerClass<SubjectConsumerDecrementTriggerConsumerDescription>();
                 }
                 ~SubjectTriggerEnviroment(){}
             };

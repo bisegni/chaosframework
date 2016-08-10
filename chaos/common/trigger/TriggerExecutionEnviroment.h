@@ -60,19 +60,18 @@ namespace chaos {
             };
             
             //!define th emap taht correlata
-            template<typename ConsumerBaseClass,
-            typename SubjectBaseClass,
+            template<typename SubjectBaseClass,
             typename EventType >
             class TriggerExecutionEnviroment:
             public AbstractTriggerEnvironment {
             public:
                 //!comodity typedef
-                typedef boost::shared_ptr< common_trigger::AbstractEvent<EventType, SubjectBaseClass> >     EventInstanceShrdPtr;
-                typedef boost::shared_ptr< SubjectBaseClass >   SubjectInstanceShrdPtr;
-                typedef boost::shared_ptr< ConsumerBaseClass >  ConsumerShrdPtr;
+                typedef boost::shared_ptr< SubjectBaseClass >                                                                               SubjectInstanceShrdPtr;
+                typedef typename boost::shared_ptr< typename EventInstancerDescription<EventType, SubjectBaseClass>::ConcreteEvent >        EventInstanceShrdPtr;
+                typedef typename boost::shared_ptr< typename ConsumerInstancerDescription<EventType, SubjectBaseClass>::ConcreteConsumer >  ConsumerShrdPtr;
                 
-                typedef boost::shared_ptr< ConsumerInstanceDescription<ConsumerBaseClass> >                         ConsumerInstancerShrdPtr;
-                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::EventInstancerShrdPtr      EventInstancerShrdPtr;
+                typedef typename ConsumerInstancerDescription<EventType, SubjectBaseClass>::ConsumerInstancerShrdPtr                ConsumerInstancerShrdPtr;
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::EventInstancerShrdPtr                      EventInstancerShrdPtr;
             protected:
                 //!map for data
                 CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, SubjectInstanceShrdPtr,      MapSubjectNameInstance);

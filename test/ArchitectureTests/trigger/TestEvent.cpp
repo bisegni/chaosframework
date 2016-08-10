@@ -35,12 +35,6 @@ AbstractSubject("TriggeredData"),
 subject_data(_subject_data){}
 
 //---------------------------------
-SubjectConsumer::SubjectConsumer(const std::string& name,
-                                 const std::string& description):
-AbstractConsumer(name,
-                 description){}
-SubjectConsumer::~SubjectConsumer(){}
-//---------------------------------
 ConsumerResult SubjectConsumerIncrement::consumeEvent(TriggerDataEventType event_type,
                                                       Subject& trigger_data) {
     int32_t incremnet_size = 0;
