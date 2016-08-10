@@ -71,8 +71,8 @@ namespace chaos {
                 typedef boost::shared_ptr< SubjectBaseClass >   SubjectInstanceShrdPtr;
                 typedef boost::shared_ptr< ConsumerBaseClass >  ConsumerShrdPtr;
                 
-                typedef boost::shared_ptr< ConsumerInstanceDescription<ConsumerBaseClass> >             ConsumerInstancerShrdPtr;
-                typedef boost::shared_ptr< EventInstancerDescription<EventType, SubjectBaseClass> >     EventInstancerShrdPtr;
+                typedef boost::shared_ptr< ConsumerInstanceDescription<ConsumerBaseClass> >                         ConsumerInstancerShrdPtr;
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::EventInstancerShrdPtr      EventInstancerShrdPtr;
             protected:
                 //!map for data
                 CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, SubjectInstanceShrdPtr,      MapSubjectNameInstance);
@@ -88,9 +88,16 @@ namespace chaos {
                 //!map for consumer name vs instancer
                 MapConsumerNameInstancer map_consumer_name_instancer;
                 
-                //! event map
-                MapEventNameInstancer map_event_name_instancer;
+                //! container for event descriptor
+                typename EventInstancerDescription<EventType, SubjectBaseClass>::EventDescriptionContainer      event_descriptor_container;
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::TriggerEventTagCode    TriggerEventTagCode;
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::TriggerEventTagName    TriggerEventTagName;
                 
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::TENameIndex            EventInstanceDescriptorNameIndex;
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::TENameIndexIterator    EventInstanceDescriptorNameIndexIterator;
+                
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::TECodeIndex            EventInstanceDescriptorCodeIndex;
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::TECodeIndexIterator    EventInstanceDescriptorCodeIndexIterator;
                 //!define multiindex to permit the find operation of the aggregate event type/ subject
                 //!to forward the event to the attacched consumer
                 struct MappingEventConsumerOnSubject {
@@ -205,22 +212,25 @@ namespace chaos {
                     boost::unique_lock<boost::shared_mutex> wl(mutex);
                     //register instance into the map
                     EventInstancerShrdPtr desc_shrd_ptr(new EventDescriptor());
-                    map_event_name_instancer.insert(MapEventNameInstancerPair(desc_shrd_ptr->getEventName(),
-                                                                              desc_shrd_ptr));
+                    event_descriptor_container.insert(desc_shrd_ptr);
                 }
                 
                 EventInstanceShrdPtr getEventInstance(const std::string& event_name) {
-                    if(map_event_name_instancer[event_name] == 0) return EventInstanceShrdPtr();
+                    EventInstanceDescriptorNameIndex& index = event_descriptor_container.template get<TriggerEventTagName>();
+                    EventInstanceDescriptorNameIndexIterator index_it = index.find(event_name);
+                    if(index_it == index.end()) return EventInstanceShrdPtr();
                     
                     //we have the instancer so we can create the instance of event
-                    return EventInstanceShrdPtr(map_event_name_instancer[event_name]->getInstance());
+                    return EventInstanceShrdPtr((*index_it)->getInstance());
                 }
                 
                 EventInstanceShrdPtr getEventInstance(const EventType& event_type) {
-                    //if(map_event_name_instancer[event_name] == 0) return EventInstanceShrdPtr();
+                    EventInstanceDescriptorCodeIndex& index = event_descriptor_container.template get<TriggerEventTagCode>();
+                    EventInstanceDescriptorCodeIndexIterator index_it = index.find(event_type);
+                    if(index_it == index.end()) return EventInstanceShrdPtr();
                     
                     //we have the instancer so we can create the instance of event
-                    //return EventInstanceShrdPtr(map_event_name_instancer[event_name]->getInstance());
+                    return EventInstanceShrdPtr((*index_it)->getInstance());
                 }
                 
                 //!register all subject that can be target from event
@@ -281,11 +291,12 @@ namespace chaos {
                     result->finalizeArrayForKey("trg_env_subjects");
                     
                     //describe event
-                    for(MapEventNameInstancerIterator it = map_event_name_instancer.begin(),
-                        end = map_event_name_instancer.end();
+                    EventInstanceDescriptorCodeIndex& event_code_index = event_descriptor_container.template get<TriggerEventTagCode>();
+                    for(EventInstanceDescriptorCodeIndexIterator it = event_code_index.begin(),
+                        end = event_code_index.end();
                         it != end;
                         it++) {
-                        group_ref_wrapper() = *it->second;
+                        group_ref_wrapper() = *(*it);
                         result->appendCDataWrapperToArray(*group_ref_wrapper.serialize());
                         
                     }

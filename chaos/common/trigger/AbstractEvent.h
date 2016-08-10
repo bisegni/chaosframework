@@ -40,26 +40,6 @@ namespace chaos {
     namespace common {
         namespace trigger {
             
-            //!forward decalration
-            struct AbstractEventMIExstractName;
-            struct AbstractEventMIExstractCode;
-            
-            class Event {
-                friend struct AbstractEventMIExstractName;
-                friend struct AbstractEventMIExstractCode;
-            protected:
-                const std::string&  event_name;
-                const unsigned int  event_code;
-            public:
-                Event(const std::string& _event_name,
-                      const unsigned int _event_code):
-                event_name(_event_name),
-                event_code(_event_code){}
-                virtual ~Event(){}
-                typedef boost::shared_ptr< Event > AbstractEventShrdPtr;
-                
-            };
-            
             //! define a base event description that can trigger some executio
             /*!
              an event is defined by a name and a code and they are unique
@@ -67,25 +47,22 @@ namespace chaos {
              */
             template<typename EventType, typename SubjectImpl>
             class AbstractEvent:
-            public Event,
             public chaos::common::property::PropertyGroup {
-                
+                EventType event_code;
             public:
 
                 //! event constructor with default values
                 AbstractEvent(const std::string& _event_name,
                               const EventType _event_code):
-                Event(_event_name,
-                      _event_code),
-                PropertyGroup(_event_name){}
+                PropertyGroup(_event_name),
+                event_code(_event_code){}
 
-                
                 const std::string& getEventName() const {
                     return PropertyGroup::getGroupName();
                 }
 
                 const EventType getEventCode() const {
-                    return static_cast<EventType>(event_code);
+                    return event_code;
                 }
 
                 
@@ -101,76 +78,96 @@ namespace chaos {
                 }
             };
             
+            //!forward decalration
+            struct AbstractEventMIExstractName;
+            struct AbstractEventMIExstractCode;
+            
+            class BaseEventInstancerDescription {
+                friend struct AbstractEventMIExstractName;
+                friend struct AbstractEventMIExstractCode;
+            protected:
+                const std::string   event_name;
+                const std::string   event_description;
+                const unsigned int  event_code;
+            public:
+                BaseEventInstancerDescription(const std::string& _event_name,
+                                              const std::string& _event_description,
+                                              const unsigned int _event_code):
+                event_name(_event_name),
+                event_description(_event_description),
+                event_code(_event_code){}
+                virtual ~BaseEventInstancerDescription(){}
+                typedef boost::shared_ptr< BaseEventInstancerDescription > AbstractEventShrdPtr;
+                
+            };
 
-            //!multi index key extractor
             struct AbstractEventMIExstractName {
                 typedef std::string result_type;
-                const result_type &operator()(const Event::AbstractEventShrdPtr &p) const {
+                const result_type &operator()(const BaseEventInstancerDescription::AbstractEventShrdPtr &p) const {
                     return p->event_name;
                 }
             };
             
             struct AbstractEventMIExstractCode {
                 typedef unsigned int result_type;
-                const result_type &operator()(const Event::AbstractEventShrdPtr &p) const {
+                const result_type &operator()(const BaseEventInstancerDescription::AbstractEventShrdPtr &p) const {
                     return p->event_code;
                 }
             };
-            
-            
-            //tag
-            struct TriggerEventTagCode{};
-            struct TriggerEventTagName{};
-            
-            //multi-index set
-            typedef boost::multi_index_container<
-            Event::AbstractEventShrdPtr,
-            boost::multi_index::indexed_by<
-            boost::multi_index::ordered_non_unique<boost::multi_index::tag<TriggerEventTagCode>,  AbstractEventMIExstractCode>,
-            boost::multi_index::hashed_non_unique<boost::multi_index::tag<TriggerEventTagName>,  AbstractEventMIExstractName>
-            >
-            > EventContainer;
-            
-            //!index for container
-            //code
-            typedef boost::multi_index::index<EventContainer, TriggerEventTagCode>::type                TECodeIndex;
-            typedef boost::multi_index::index<EventContainer, TriggerEventTagCode>::type::iterator      TECodeIndexIterator;
-            //name
-            typedef boost::multi_index::index<EventContainer, TriggerEventTagName>::type                TENameIndex;
-            typedef boost::multi_index::index<EventContainer, TriggerEventTagName>::type::iterator      TENameIndexIterator;
-
             
             //!consumer description
             template<typename EventType,
             typename SubjectImpl>
             class EventInstancerDescription:
+            public BaseEventInstancerDescription,
             public property::PropertyGroup {
-                const std::string description;
-                const EventType event_type;
             public:
+                typedef boost::shared_ptr< EventInstancerDescription<EventType, SubjectImpl> > EventInstancerShrdPtr;
+            public:
+                //tag
+                struct TriggerEventTagCode{};
+                struct TriggerEventTagName{};
+                //multi-index set
+                typedef boost::multi_index_container<
+                EventInstancerShrdPtr,
+                boost::multi_index::indexed_by<
+                boost::multi_index::ordered_non_unique<boost::multi_index::tag<TriggerEventTagCode>,  AbstractEventMIExstractCode>,
+                boost::multi_index::hashed_non_unique<boost::multi_index::tag<TriggerEventTagName>,  AbstractEventMIExstractName>
+                >
+                > EventDescriptionContainer;
+                
+                //!index for container
+                //code
+                typedef typename boost::multi_index::index<EventDescriptionContainer, TriggerEventTagCode>::type                TECodeIndex;
+                typedef typename boost::multi_index::index<EventDescriptionContainer, TriggerEventTagCode>::type::iterator      TECodeIndexIterator;
+                //name
+                typedef typename boost::multi_index::index<EventDescriptionContainer, TriggerEventTagName>::type                TENameIndex;
+                typedef typename boost::multi_index::index<EventDescriptionContainer, TriggerEventTagName>::type::iterator      TENameIndexIterator;
+                
                 typedef AbstractEvent<EventType, SubjectImpl > ConcreteEvent;
                 
                 EventInstancerDescription(const std::string& name,
                                           const std::string& description,
-                                          const EventType _event_type):
+                                          const EventType   event_type):
                 PropertyGroup(name),
-                description(description),
-                event_type(_event_type){}
+                BaseEventInstancerDescription(name,
+                                              description,
+                                              event_type){}
                 
                 const std::string& getEventName() const {
-                    return PropertyGroup::getGroupName();
+                    return event_name;
                 }
                 
-                const EventType getEventDescription() const {
-                    return description;
+                const std::string getEventDescription() const {
+                    return event_description;
                 }
                 
                 const EventType getEventType() const {
-                    return event_type;
+                    return static_cast<EventType>(event_code);
                 }
                 
                 ConcreteEvent* getInstance() {
-                    ConcreteEvent* new_instance = new ConcreteEvent(getEventName(), event_type);
+                    ConcreteEvent* new_instance = new ConcreteEvent(event_name, static_cast<EventType>(event_code));
                     //copy property from twhi group
                     property::PropertyGroup *pg_instance = dynamic_cast<property::PropertyGroup*>(new_instance);
                     if(pg_instance) {

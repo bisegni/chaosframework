@@ -96,9 +96,9 @@ bool TestEvent::test(){
                                                             subject_two,
                                                             "SubjectConsumerDecrement"));
     
-    SubjectTriggerEnviroment::EventInstanceShrdPtr event_one = trigger_environment.getEventInstance("SubjectEventOne");
+    SubjectTriggerEnviroment::EventInstanceShrdPtr event_one = trigger_environment.getEventInstance(kTriggerDataEventTypeOne);
     assert(event_one.get());
-    SubjectTriggerEnviroment::EventInstanceShrdPtr event_two = trigger_environment.getEventInstance("SubjectEventTwo");
+    SubjectTriggerEnviroment::EventInstanceShrdPtr event_two = trigger_environment.getEventInstance(kTriggerDataEventTypeTwo);
     assert(event_two.get());
     
     assert(subject_one->subject_data->data_value == 0);
