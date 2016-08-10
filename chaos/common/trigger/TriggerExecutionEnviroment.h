@@ -60,20 +60,19 @@ namespace chaos {
             };
             
             //!define th emap taht correlata
-            template<typename EventBaseClass,
-            typename ConsumerBaseClass,
+            template<typename ConsumerBaseClass,
             typename SubjectBaseClass,
             typename EventType >
             class TriggerExecutionEnviroment:
             public AbstractTriggerEnvironment {
             public:
                 //!comodity typedef
-                typedef boost::shared_ptr< EventBaseClass >     EventInstanceShrdPtr;
+                typedef boost::shared_ptr< common_trigger::AbstractEvent<EventType, SubjectBaseClass> >     EventInstanceShrdPtr;
                 typedef boost::shared_ptr< SubjectBaseClass >   SubjectInstanceShrdPtr;
                 typedef boost::shared_ptr< ConsumerBaseClass >  ConsumerShrdPtr;
                 
-                typedef boost::shared_ptr< ConsumerInstanceDescription<ConsumerBaseClass> > ConsumerInstancerShrdPtr;
-                typedef boost::shared_ptr< ConsumerInstanceDescription<EventBaseClass> >    EventInstancerShrdPtr;
+                typedef boost::shared_ptr< ConsumerInstanceDescription<ConsumerBaseClass> >             ConsumerInstancerShrdPtr;
+                typedef boost::shared_ptr< EventInstancerDescription<EventType, SubjectBaseClass> >     EventInstancerShrdPtr;
             protected:
                 //!map for data
                 CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, SubjectInstanceShrdPtr,      MapSubjectNameInstance);
@@ -206,7 +205,7 @@ namespace chaos {
                     boost::unique_lock<boost::shared_mutex> wl(mutex);
                     //register instance into the map
                     EventInstancerShrdPtr desc_shrd_ptr(new EventDescriptor());
-                    map_event_name_instancer.insert(MapEventNameInstancerPair(desc_shrd_ptr->getGroupName(),
+                    map_event_name_instancer.insert(MapEventNameInstancerPair(desc_shrd_ptr->getEventName(),
                                                                               desc_shrd_ptr));
                 }
                 
@@ -215,6 +214,13 @@ namespace chaos {
                     
                     //we have the instancer so we can create the instance of event
                     return EventInstanceShrdPtr(map_event_name_instancer[event_name]->getInstance());
+                }
+                
+                EventInstanceShrdPtr getEventInstance(const EventType& event_type) {
+                    //if(map_event_name_instancer[event_name] == 0) return EventInstanceShrdPtr();
+                    
+                    //we have the instancer so we can create the instance of event
+                    //return EventInstanceShrdPtr(map_event_name_instancer[event_name]->getInstance());
                 }
                 
                 //!register all subject that can be target from event

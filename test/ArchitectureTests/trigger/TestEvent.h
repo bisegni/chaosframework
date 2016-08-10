@@ -61,39 +61,25 @@ namespace chaos {
             };
             //---------------------------------
             
-            class SubjectEvent:
-            public AbstractEvent<TriggerDataEventType, Subject> {
-            public:
-                SubjectEvent(const std::string& _event_name,
-                             const std::string& _event_description,
-                             const TriggerDataEventType _type);
-            };
-            
+
             //---------------------------------
             //create two event
-            CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(SubjectEventOne,
-                                                    SubjectEvent)
-            CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("offset", "amount of int's added to 1", chaos::DataType::TYPE_INT32);
-            CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION_1P(SubjectEventOne,
-                                                     SubjectEvent,
-                                                     "Signal for int increment event",
-                                                     kTriggerDataEventTypeOne)
-            ConsumerResult executeConsumerOnTarget(Subject *subject_instance,
-                                                   AbstractConsumer<TriggerDataEventType, Subject> *consumer_instance);
+            CHAOS_TRIGGER_EVENT_OPEN_DESCRIPTION(SubjectEventOne,
+                                                 "Signal for int increment event",
+                                                 kTriggerDataEventTypeOne,
+                                                 TriggerDataEventType,
+                                                 Subject)
+            CHAOS_TRIGGER_EVENT_ADD_PROPERTY("offset", "amount of int's added to 1", chaos::DataType::TYPE_INT32);
+            CHAOS_TRIGGER_EVENT_CLOSE_DESCRIPTION()
             
-            CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
+            CHAOS_TRIGGER_EVENT_OPEN_DESCRIPTION(SubjectEventTwo,
+                                                 "Signal for int increment event",
+                                                 kTriggerDataEventTypeTwo,
+                                                 TriggerDataEventType,
+                                                 Subject)
+            CHAOS_TRIGGER_EVENT_ADD_PROPERTY("offset", "amount of int's added to 1", chaos::DataType::TYPE_INT32);
+            CHAOS_TRIGGER_EVENT_CLOSE_DESCRIPTION()
             
-            
-            CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(SubjectEventTwo,
-                                                    SubjectEvent)
-            CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("offset", "amount of int's added to 1", chaos::DataType::TYPE_INT32);
-            CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION_1P(SubjectEventTwo,
-                                                     SubjectEvent,
-                                                     "Signal for int increment event",
-                                                     kTriggerDataEventTypeTwo)
-            ConsumerResult executeConsumerOnTarget(Subject *subject_instance,
-                                                   AbstractConsumer<TriggerDataEventType, Subject> *consumer_instance);
-            CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
             //---------------------------------
             //create two consumer
             
@@ -122,13 +108,13 @@ namespace chaos {
             //---------------------------------
             
             class SubjectTriggerEnviroment:
-            public TriggerExecutionEnviroment<SubjectEvent, SubjectConsumer, Subject, TriggerDataEventType> {
+            public TriggerExecutionEnviroment<SubjectConsumer, Subject, TriggerDataEventType> {
             public:
                 SubjectTriggerEnviroment():
-                TriggerExecutionEnviroment<SubjectEvent, SubjectConsumer, Subject, TriggerDataEventType>("SubjectName"){
+                TriggerExecutionEnviroment<SubjectConsumer, Subject, TriggerDataEventType>("SubjectName"){
                     
-                    registerEventClass<SubjectEventOnePropertyDescription>();
-                    registerEventClass<SubjectEventTwoPropertyDescription>();
+                    registerEventClass<SubjectEventOneTriggerEventDescription>();
+                    registerEventClass<SubjectEventTwoTriggerEventDescription>();
                     
                     registerConsumerClass<SubjectConsumerIncrementPropertyDescription>();
                     registerConsumerClass<SubjectConsumerDecrementPropertyDescription>();

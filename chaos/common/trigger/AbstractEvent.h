@@ -28,11 +28,37 @@
 #include <chaos/common/trigger/AbstractConsumer.h>
 #include <chaos/common/trigger/AbstractSubject.h>
 
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/hashed_index.hpp>
+#include <boost/multi_index/composite_key.hpp>
+
 #include <string>
 
 namespace chaos {
     namespace common {
         namespace trigger {
+            
+            //!forward decalration
+            struct AbstractEventMIExstractName;
+            struct AbstractEventMIExstractCode;
+            
+            class Event {
+                friend struct AbstractEventMIExstractName;
+                friend struct AbstractEventMIExstractCode;
+            protected:
+                const std::string&  event_name;
+                const unsigned int  event_code;
+            public:
+                Event(const std::string& _event_name,
+                      const unsigned int _event_code):
+                event_name(_event_name),
+                event_code(_event_code){}
+                virtual ~Event(){}
+                typedef boost::shared_ptr< Event > AbstractEventShrdPtr;
+                
+            };
             
             //! define a base event description that can trigger some executio
             /*!
@@ -41,33 +67,25 @@ namespace chaos {
              */
             template<typename EventType, typename SubjectImpl>
             class AbstractEvent:
+            public Event,
             public chaos::common::property::PropertyGroup {
                 
-                const std::string   event_name;
-                const std::string   event_description;
-                const unsigned int  event_code;
-                
             public:
+
                 //! event constructor with default values
                 AbstractEvent(const std::string& _event_name,
-                              const std::string& _event_description,
-                              const unsigned int _event_code):
-                PropertyGroup(_event_name),
-                event_name(_event_name),
-                event_description(_event_description),
-                event_code(_event_code){}
+                              const EventType _event_code):
+                Event(_event_name,
+                      _event_code),
+                PropertyGroup(_event_name){}
 
                 
                 const std::string& getEventName() const {
-                    return event_name;
+                    return PropertyGroup::getGroupName();
                 }
 
-                const std::string& getEventDescription() const {
-                    return event_description;
-                }
-
-                const unsigned int& getEventCode() const {
-                    return event_code;
+                const EventType getEventCode() const {
+                    return static_cast<EventType>(event_code);
                 }
 
                 
@@ -76,9 +94,104 @@ namespace chaos {
                 }
 
                 
-                virtual ConsumerResult executeConsumerOnTarget(SubjectImpl *subject_instance,
-                                                               AbstractConsumer<EventType, SubjectImpl> *consumer_instance) = 0;
+                ConsumerResult executeConsumerOnTarget(SubjectImpl *subject_instance,
+                                                       AbstractConsumer<EventType, SubjectImpl> *consumer_instance) {
+                    return consumer_instance->consumeEvent(static_cast<EventType>(getEventCode()),
+                                                           *subject_instance);
+                }
             };
+            
+
+            //!multi index key extractor
+            struct AbstractEventMIExstractName {
+                typedef std::string result_type;
+                const result_type &operator()(const Event::AbstractEventShrdPtr &p) const {
+                    return p->event_name;
+                }
+            };
+            
+            struct AbstractEventMIExstractCode {
+                typedef unsigned int result_type;
+                const result_type &operator()(const Event::AbstractEventShrdPtr &p) const {
+                    return p->event_code;
+                }
+            };
+            
+            
+            //tag
+            struct TriggerEventTagCode{};
+            struct TriggerEventTagName{};
+            
+            //multi-index set
+            typedef boost::multi_index_container<
+            Event::AbstractEventShrdPtr,
+            boost::multi_index::indexed_by<
+            boost::multi_index::ordered_non_unique<boost::multi_index::tag<TriggerEventTagCode>,  AbstractEventMIExstractCode>,
+            boost::multi_index::hashed_non_unique<boost::multi_index::tag<TriggerEventTagName>,  AbstractEventMIExstractName>
+            >
+            > EventContainer;
+            
+            //!index for container
+            //code
+            typedef boost::multi_index::index<EventContainer, TriggerEventTagCode>::type                TECodeIndex;
+            typedef boost::multi_index::index<EventContainer, TriggerEventTagCode>::type::iterator      TECodeIndexIterator;
+            //name
+            typedef boost::multi_index::index<EventContainer, TriggerEventTagName>::type                TENameIndex;
+            typedef boost::multi_index::index<EventContainer, TriggerEventTagName>::type::iterator      TENameIndexIterator;
+
+            
+            //!consumer description
+            template<typename EventType,
+            typename SubjectImpl>
+            class EventInstancerDescription:
+            public property::PropertyGroup {
+                const std::string description;
+                const EventType event_type;
+            public:
+                typedef AbstractEvent<EventType, SubjectImpl > ConcreteEvent;
+                
+                EventInstancerDescription(const std::string& name,
+                                          const std::string& description,
+                                          const EventType _event_type):
+                PropertyGroup(name),
+                description(description),
+                event_type(_event_type){}
+                
+                const std::string& getEventName() const {
+                    return PropertyGroup::getGroupName();
+                }
+                
+                const EventType getEventDescription() const {
+                    return description;
+                }
+                
+                const EventType getEventType() const {
+                    return event_type;
+                }
+                
+                ConcreteEvent* getInstance() {
+                    ConcreteEvent* new_instance = new ConcreteEvent(getEventName(), event_type);
+                    //copy property from twhi group
+                    property::PropertyGroup *pg_instance = dynamic_cast<property::PropertyGroup*>(new_instance);
+                    if(pg_instance) {
+                        new_instance->copyPropertiesFromGroup(*this);
+                    }
+                    return new_instance;
+                }
+            };
+#define CHAOS_TRIGGER_EVENT_OPEN_DESCRIPTION(impl, description, event_code, EventType, SubjectImpl)\
+class impl ## TriggerEventDescription:\
+public chaos::common::trigger::EventInstancerDescription< EventType, SubjectImpl> {\
+public:\
+impl ## TriggerEventDescription():\
+chaos::common::trigger::EventInstancerDescription< EventType, SubjectImpl >(#impl, description, event_code) {
+            
+#define CHAOS_TRIGGER_EVENT_ADD_PROPERTY(name, desc, type)\
+addProperty(name, desc, type);
+            
+#define CHAOS_TRIGGER_EVENT_CLOSE_DESCRIPTION()\
+}\
+};
         }
     }
 }

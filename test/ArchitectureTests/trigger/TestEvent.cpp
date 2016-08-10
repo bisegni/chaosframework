@@ -33,32 +33,13 @@ data_value(_new_value){}
 Subject::Subject(const TriggeredDataShrdPtr& _subject_data):
 AbstractSubject("TriggeredData"),
 subject_data(_subject_data){}
-//---------------------------------
 
-SubjectEvent::SubjectEvent(const std::string& _event_name,
-                           const std::string& _event_description,
-                           const TriggerDataEventType _type):
-AbstractEvent(_event_name,
-              _event_description,
-              _type){}
 //---------------------------------
 SubjectConsumer::SubjectConsumer(const std::string& name,
                                  const std::string& description):
 AbstractConsumer(name,
                  description){}
 SubjectConsumer::~SubjectConsumer(){}
-//---------------------------------
-ConsumerResult SubjectEventOne::executeConsumerOnTarget(Subject *subject_instance,
-                                                        AbstractConsumer<TriggerDataEventType, Subject> *consumer_instance) {
-    return consumer_instance->consumeEvent(static_cast<TriggerDataEventType>(getEventCode()),
-                                           *subject_instance);
-}
-//---------------------------------
-ConsumerResult SubjectEventTwo::executeConsumerOnTarget(Subject *subject_instance,
-                                                        AbstractConsumer<TriggerDataEventType, Subject> *consumer_instance) {
-    return consumer_instance->consumeEvent(static_cast<TriggerDataEventType>(getEventCode()),
-                                           *subject_instance);
-}
 //---------------------------------
 ConsumerResult SubjectConsumerIncrement::consumeEvent(TriggerDataEventType event_type,
                                                       Subject& trigger_data) {
