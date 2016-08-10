@@ -292,7 +292,7 @@ for h in ${lista_hd[@]};do
     
     echo "#include<$h>" >> $project_dir/main.cpp
 done
-lista_unica=`echo -e $listadep| sed 's/ /\n/g'|tr '\n' ' '`
+lista_unica=`echo -e $listadep| $SED 's/ /\n/g'|tr '\n' ' '`
 
 echo -e "\n\nint main(int argc,char**argv){">>$project_dir/main.cpp
 echo -e "\ttry{\n">>$project_dir/main.cpp
