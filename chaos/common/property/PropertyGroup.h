@@ -39,6 +39,7 @@ namespace chaos {
                 MapProperties map_properties;
                 PropertyGroup();
                 PropertyGroup(const std::string& _name);
+                PropertyGroup(const PropertyGroup& src);
                 
                 void addProperty(const std::string& property_name,
                                  const std::string& property_description,
@@ -47,11 +48,14 @@ namespace chaos {
                 void setPropertyValue(const std::string& property_name,
                                       const chaos::common::data::CDataVariant& new_value);
                 
+                PropertyDescription& getProperty(const std::string& property_name);
+                
                 const chaos::common::data::CDataVariant& getPropertyValue(const std::string& property_name);
                 
                 const std::string& getGroupName() const;
                 
-                void copyPropertiesFromGroup(const PropertyGroup& src_group);
+                void copyPropertiesFromGroup(const PropertyGroup& src_group,
+                                             bool copy_value = false);
                 
                 const MapProperties getAllProperties() const;
                 

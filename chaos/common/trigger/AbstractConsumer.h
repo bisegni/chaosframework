@@ -29,6 +29,8 @@
 
 #include <string>
 
+#define CHAOS_TRIGGER_CONSUMER_PROPERTY_ENABLED "enabled"
+
 namespace chaos {
     namespace common {
         namespace trigger {
@@ -42,10 +44,18 @@ namespace chaos {
             class AbstractConsumer:
             public chaos::common::property::PropertyGroup {
                 const std::string consumer_uuid;
+                //!reference to CHAOS_TRIGGER_CONSUMER_PROPERTY_ENABLED property
+                chaos::common::property::PropertyDescription& enabled_prop_ref;
             public:
-                AbstractConsumer(const std::string& consumer_name):
-                PropertyGroup(consumer_name),
-                consumer_uuid(utility::UUIDUtil::generateUUIDLite()){}
+               // AbstractConsumer(const std::string& consumer_name):
+               // PropertyGroup(consumer_name),
+               // consumer_uuid(utility::UUIDUtil::generateUUIDLite()),
+               // enabled_prop_ptr(NULL){}
+                
+                AbstractConsumer(const chaos::common::property::PropertyGroup& src_pg):
+                PropertyGroup(src_pg),
+                consumer_uuid(utility::UUIDUtil::generateUUIDLite()),
+                enabled_prop_ref(PropertyGroup::getProperty(CHAOS_TRIGGER_CONSUMER_PROPERTY_ENABLED)){}
                 
                 virtual ~AbstractConsumer(){}
                 
@@ -67,6 +77,9 @@ namespace chaos {
                     }
                 }
                 
+                bool isEnabled() {
+                    return enabled_prop_ref.getPropertyValue().asBool();
+                }
                 
                 virtual ConsumerResult consumeEvent(EventType event_type,
                                                     SubjectImpl& trigger_data) = 0;
@@ -112,12 +125,14 @@ namespace chaos {
                                                                      description){}
                 
                 typename ConsumerInstancerDescription<EventType, SubjectImpl>::ConcreteConsumer* getInstance() {
-                    typename ConsumerInstancerDescription<EventType, SubjectImpl>::ConcreteConsumer* new_instance = new impl(ConsumerInstancerDescription<EventType, SubjectImpl>::getConsumerName());
+                    typename ConsumerInstancerDescription<EventType, SubjectImpl>::ConcreteConsumer* new_instance = new impl(*this);
                     //copy property from twhi group
-                    chaos::common::property::PropertyGroup *pg_instance = dynamic_cast<chaos::common::property::PropertyGroup*>(new_instance);
-                    if(pg_instance) {
-                        new_instance->copyPropertiesFromGroup(*this);
-                    }
+                    //chaos::common::property::PropertyGroup *pg_instance = dynamic_cast<chaos::common::property::PropertyGroup*>(new_instance);
+                    //if(pg_instance) {
+                        //copy all properties from description to consumer
+                      //  new_instance->copyPropertiesFromGroup(*this,
+                         //                                     true);
+                    //}
                     return new_instance;
                 }
             };
@@ -126,14 +141,16 @@ namespace chaos {
 class impl:\
 public chaos::common::trigger::AbstractConsumer<EventType, SubjectImpl> {\
 public:\
-impl(const std::string& consumer_name):AbstractConsumer<EventType, SubjectImpl>(consumer_name){}\
+impl(const chaos::common::property::PropertyGroup& src_pg):AbstractConsumer<EventType, SubjectImpl>(src_pg){}\
 chaos::common::trigger::ConsumerResult consumeEvent(EventType event_type, SubjectImpl& trigger_data);};\
 \
 class impl ## TriggerConsumerDescription:\
 public chaos::common::trigger::ImplementationConsumerInstancerDescription< impl, EventType, SubjectImpl> {\
 public:\
 impl ## TriggerConsumerDescription():\
-chaos::common::trigger::ImplementationConsumerInstancerDescription< impl, EventType, SubjectImpl >(#impl, description) {
+chaos::common::trigger::ImplementationConsumerInstancerDescription< impl, EventType, SubjectImpl >(#impl, description) {\
+addProperty(CHAOS_TRIGGER_CONSUMER_PROPERTY_ENABLED, "Enable the consumer activity", chaos::DataType::TYPE_BOOLEAN);\
+setPropertyValue(CHAOS_TRIGGER_CONSUMER_PROPERTY_ENABLED, chaos::common::data::CDataVariant(true));
             
 #define CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY(name, desc, type)\
 addProperty(name, desc, type);

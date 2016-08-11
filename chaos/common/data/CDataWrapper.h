@@ -166,6 +166,10 @@ namespace chaos {
 				//set a binary data value
 				void addBinaryValue(const std::string&, const char *, int);
                 
+                //!add a value from variant
+                void addVariantValue(const std::string& key,
+                                     const CDataVariant& variant_value);
+                
 				//get a integer value
 				int32_t getInt32Value(const std::string& key);
 				

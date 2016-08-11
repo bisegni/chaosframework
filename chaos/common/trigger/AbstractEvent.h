@@ -50,29 +50,33 @@ namespace chaos {
             public chaos::common::property::PropertyGroup {
                 EventType event_code;
             public:
-
+                
                 //! event constructor with default values
                 AbstractEvent(const std::string& _event_name,
                               const EventType _event_code):
                 PropertyGroup(_event_name),
                 event_code(_event_code){}
-
+                
                 const std::string& getEventName() const {
                     return PropertyGroup::getGroupName();
                 }
-
+                
                 const EventType getEventCode() const {
                     return event_code;
                 }
-
+                
                 
                 chaos::common::property::PropertyGroup& getProperties() {
                     return *this;
                 }
-
+                
                 
                 ConsumerResult executeConsumerOnTarget(SubjectImpl *subject_instance,
                                                        AbstractConsumer<EventType, SubjectImpl> *consumer_instance) {
+                    //check if consumer is enabled
+                    if(consumer_instance->isEnabled() == false) return ConsumerResultOK;
+                    
+                    //we can run th consumer
                     return consumer_instance->consumeEvent(static_cast<EventType>(getEventCode()),
                                                            *subject_instance);
                 }
@@ -100,7 +104,7 @@ namespace chaos {
                 typedef boost::shared_ptr< BaseEventInstancerDescription > AbstractEventShrdPtr;
                 
             };
-
+            
             struct AbstractEventMIExstractName {
                 typedef std::string result_type;
                 const result_type &operator()(const BaseEventInstancerDescription::AbstractEventShrdPtr &p) const {
@@ -171,7 +175,9 @@ namespace chaos {
                     //copy property from twhi group
                     property::PropertyGroup *pg_instance = dynamic_cast<property::PropertyGroup*>(new_instance);
                     if(pg_instance) {
-                        new_instance->copyPropertiesFromGroup(*this);
+                        //copy all properties from description to event
+                        new_instance->copyPropertiesFromGroup(*this,
+                                                              true);
                     }
                     return new_instance;
                 }

@@ -40,53 +40,6 @@ namespace chaos {
                     ConsumerResultWarinig,
                     ConsumerResultCritical
                 } ConsumerResult;
-                
-                template<typename B>
-                class ConsumerInstanceDescription:
-                public chaos::common::property::PropertyGroup {
-                    std::auto_ptr< chaos::common::utility::ObjectInstancer<B> > consumer_instancer;
-                protected:
-                    ConsumerInstanceDescription(const std::string& name,
-                                                std::auto_ptr< chaos::common::utility::ObjectInstancer<B> > auto_instancer):
-                    PropertyGroup(name),
-                    consumer_instancer(auto_instancer){}
-                    
-                public:
-                    std::auto_ptr<B> getAutoInstance(){
-                        return std::auto_ptr<B>(getInstance());
-                    }
-                    
-                    B* getInstance(){
-                        B* new_instance = consumer_instancer->getInstance();
-                        //copy property from twhi group
-                        chaos::common::property::PropertyGroup *pg_instance = dynamic_cast<chaos::common::property::PropertyGroup*>(new_instance);
-                        if(pg_instance) {
-                            new_instance->copyPropertiesFromGroup(*this);
-                        }
-                        return new_instance;
-                    }
-                    
-                    const std::string& getInstanceDescriptionName() const {
-                        return getGroupName();
-                    }
-                };
-                
-                //!consumer description
-                /*!
-                 Permit to collect the list of porperty taht permit to configure
-                 the execution of the consumer
-                 */
-                template<typename I, typename B>
-                class ConsumerPropertyDescription:
-                public ConsumerInstanceDescription<B> {
-                public:
-                    ConsumerPropertyDescription(const std::string& name):
-                    ConsumerInstanceDescription<B>(name,
-                                                   std::auto_ptr< chaos::common::utility::ObjectInstancer<B> >(new chaos::common::utility::TypedObjectInstancer<I, B>())) {}
-                    
-                };
-                
-                //!helper macro
         }
     }
 }

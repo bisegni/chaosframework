@@ -66,7 +66,7 @@ namespace chaos {
             public AbstractTriggerEnvironment {
             public:
                 //!comodity typedef
-                typedef boost::shared_ptr< SubjectBaseClass >                                                                               SubjectInstanceShrdPtr;
+                typedef boost::shared_ptr< SubjectBaseClass >                 SubjectInstanceShrdPtr;
                 typedef typename boost::shared_ptr< typename EventInstancerDescription<EventType, SubjectBaseClass>::ConcreteEvent >        EventInstanceShrdPtr;
                 typedef typename boost::shared_ptr< typename ConsumerInstancerDescription<EventType, SubjectBaseClass>::ConcreteConsumer >  ConsumerShrdPtr;
                 
@@ -164,8 +164,8 @@ namespace chaos {
                 MappingEventConsumerContainer   type_subject_container;
                 MECTypeSubjectIndex&            type_subject_index;
                 
-                VectorConsumerInstance& getConsumerInstanceListFor(EventType event_code,
-                                                                   const std::string& subject_uuid) {
+                inline VectorConsumerInstance& getConsumerInstanceListFor(EventType event_code,
+                                                                          const std::string& subject_uuid) {
                     MECTypeSubjectIndexIterator it = type_subject_index.find(boost::make_tuple(event_code,
                                                                                                subject_uuid));
                     if(it != type_subject_index.end()) {
@@ -176,6 +176,19 @@ namespace chaos {
                         type_subject_container.insert(mapping_instance);
                         return mapping_instance->consumer_instances;
                     }
+                }
+                
+                inline ConsumerShrdPtr getConsumerFromList(EventType                                       event_code,
+                                                           SubjectInstanceShrdPtr&                         event_taget,
+                                                           const std::string&                              consumer_uuid){
+                    boost::unique_lock<boost::shared_mutex> wl(mutex);
+                    //check
+                    if(map_subject_instance.count(event_taget->getSubjectUUID()) == 0) return ConsumerShrdPtr();
+                    
+                    //get all consumer
+                    VectorConsumerInstance& consumer_list_ref = getConsumerInstanceListFor(event_code,
+                                                                                           event_taget->getSubjectUUID());
+                    
                 }
                 
                 ConsumerResult fireEvent(const EventType&               event_code,
@@ -243,25 +256,76 @@ namespace chaos {
                 }
                 
                 
-                //! register a consumer for a determinated event for a target instance
                 bool addConsumerOnSubjectForEvent(EventType                 event_code,
                                                   SubjectInstanceShrdPtr&   event_taget,
-                                                  const std::string&        consumer_name,
-                                                  const MapKeyCDataVariant  *consumer_parameter = NULL){
+                                                  const std::string&        consumer_name){
+                    std::string new_consumer_uuid;
+                    return addConsumerOnSubjectForEvent(event_code,
+                                                        event_taget,
+                                                        consumer_name,
+                                                        new_consumer_uuid);
+                }
+                
+                //! register a consumer for a determinated event for a target instance
+                bool addConsumerOnSubjectForEvent(EventType                                     event_code,
+                                                  SubjectInstanceShrdPtr&                       event_taget,
+                                                  const std::string&                            consumer_name,
+                                                  std::string&                                  new_consumer_uuid){
                     boost::unique_lock<boost::shared_mutex> wl(mutex);
                     //check
                     if(map_subject_instance.count(event_taget->getSubjectUUID()) == 0 ||
                        map_consumer_name_instancer[consumer_name] == 0) return false;
-                    
+                    //reset the string
+                    new_consumer_uuid.clear();
                     VectorConsumerInstance& consumer_list_ref = getConsumerInstanceListFor(event_code,
                                                                                            event_taget->getSubjectUUID());
                     
                     //allocate a new instance for the  consumer and attach it to the vector for mapping
-                    consumer_list_ref.push_back(ConsumerShrdPtr(map_consumer_name_instancer[consumer_name]->getInstance()));
-                    
+                    ConsumerShrdPtr new_consumer_instance(map_consumer_name_instancer[consumer_name]->getInstance());
+                    consumer_list_ref.push_back(new_consumer_instance);
+                    //get new consumer uuid
+                    new_consumer_uuid = new_consumer_instance->getConsumerUUID();
                     return true;
                 }
                 
+                bool updateConsumerPropertiesBy(EventType                                       event_code,
+                                                SubjectInstanceShrdPtr&                         event_taget,
+                                                const std::string&                              consumer_uuid,
+                                                chaos::common::property::PropertyGroup&         consumer_properties){
+                    boost::unique_lock<boost::shared_mutex> wl(mutex);
+                    //check
+                    if(map_subject_instance.count(event_taget->getSubjectUUID()) == 0) return false;
+                    
+                    //get all consumer
+                    ConsumerShrdPtr consumer_shrd_ptr = getConsumerFromList(event_code,
+                                                                            event_taget->getSubjectUUID(),
+                                                                            consumer_uuid);
+                    if(consumer_shrd_ptr.get()) {
+                        consumer_shrd_ptr->updateProperty(consumer_properties);
+                    }
+                    
+                }
+                
+                bool getConsumerListBy(EventType                   event_code,
+                                       SubjectInstanceShrdPtr&     event_taget,
+                                       VectorConsumerInstance&     attached_consumer) {
+                    boost::unique_lock<boost::shared_mutex> wl(mutex);
+                    //check
+                    if(map_subject_instance.count(event_taget->getSubjectUUID()) == 0) return false;
+                    
+                    //get all consumer
+                    VectorConsumerInstance& consumer_list_ref = getConsumerInstanceListFor(event_code,
+                                                                                           event_taget->getSubjectUUID());
+                    
+                    //fill vector with all consumer instance
+                    for(VectorConsumerInstanceIterator it = consumer_list_ref.begin(),
+                        end = consumer_list_ref.end();
+                        it != end;
+                        it++){
+                        //update consuer properties
+                        attached_consumer.push_back(*it);
+                    }
+                }
                 
                 ConsumerResult fireEventOnSubject(const EventInstanceShrdPtr&       event_to_fire,
                                                   const SubjectInstanceShrdPtr&     event_subject) {
