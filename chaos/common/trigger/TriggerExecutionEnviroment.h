@@ -72,13 +72,13 @@ namespace chaos {
                 
                 typedef typename ConsumerInstancerDescription<EventType, SubjectBaseClass>::ConsumerInstancerShrdPtr                ConsumerInstancerShrdPtr;
                 typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::EventInstancerShrdPtr                      EventInstancerShrdPtr;
-            protected:
+                
                 //!map for data
                 CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, SubjectInstanceShrdPtr,      MapSubjectNameInstance);
                 CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, ConsumerInstancerShrdPtr,    MapConsumerNameInstancer);
                 CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, EventInstancerShrdPtr,       MapEventNameInstancer);
                 CHAOS_DEFINE_VECTOR_FOR_TYPE_IN_TEMPLATE(ConsumerShrdPtr, VectorConsumerInstance);
-                
+            protected:
                 boost::shared_mutex mutex;
                 
                 //! hav all instance of subject mapped with the UUID
@@ -318,13 +318,10 @@ namespace chaos {
                                                                                            event_taget->getSubjectUUID());
                     
                     //fill vector with all consumer instance
-                    for(VectorConsumerInstanceIterator it = consumer_list_ref.begin(),
-                        end = consumer_list_ref.end();
-                        it != end;
-                        it++){
-                        //update consuer properties
-                        attached_consumer.push_back(*it);
-                    }
+                    attached_consumer.insert(attached_consumer.end(),
+                                             consumer_list_ref.begin(),
+                                             consumer_list_ref.end());
+                    return true;
                 }
                 
                 ConsumerResult fireEventOnSubject(const EventInstanceShrdPtr&       event_to_fire,

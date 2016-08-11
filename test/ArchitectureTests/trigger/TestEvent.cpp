@@ -149,7 +149,23 @@ bool TestEvent::test(){
     trigger_environment.fireEventOnSubject(event_one, subject_one);
     assert(subject_one->subject_data->data_value == 0);
     
-    
+    int idx = 0;
+    SubjectTriggerEnviroment::VectorConsumerInstance consumer_list;
+    trigger_environment.getConsumerListBy(kTriggerDataEventTypeOne, subject_one, consumer_list);
+    for(SubjectTriggerEnviroment::VectorConsumerInstanceIterator it = consumer_list.begin(),
+        end = consumer_list.end();
+        it != end;
+        it++, idx++) {
+        switch (idx) {
+            case 0:
+                assert((*it)->getConsumerName().compare("SubjectConsumerIncrement") == 0);
+                break;
+            case 1:
+                assert((*it)->getConsumerName().compare("SubjectConsumerDecrement") == 0);
+                break;
+        }
+        
+    }
     //test property group
     //SubjectConsumerIncrementPropertyDescription cons_desc;
     //common::property::PropertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PropertyGroup, cons_desc));
