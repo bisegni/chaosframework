@@ -32,44 +32,6 @@ namespace chaos{
 		namespace data {
 			namespace cache {
 				
-				class SharedCacheLockDomain {
-				protected:
-					boost::shared_ptr<boost::shared_mutex>	mutex;
-				public:
-					SharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex> _mutex);
-					
-					virtual ~SharedCacheLockDomain();
-					
-					virtual void lock() = 0;
-					
-					virtual void unlock() = 0;
-				};
-				
-				class WriteSharedCacheLockDomain : public SharedCacheLockDomain {
-					boost::unique_lock<boost::shared_mutex> w_lock;
-				public:
-					WriteSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex> _mutex);
-					
-					~WriteSharedCacheLockDomain();
-					
-					void lock();
-					
-					void unlock();
-				};
-				
-				class ReadSharedCacheLockDomain : public SharedCacheLockDomain {
-					boost::shared_lock<boost::shared_mutex> r_lock;
-				public:
-					ReadSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex> _mutex);
-					
-					~ReadSharedCacheLockDomain();
-					
-					void lock();
-					
-					void unlock();
-				};
-				
-				
 				typedef enum SharedCacheDomain {
 					DOMAIN_OUTPUT = 0,
 					DOMAIN_INPUT,

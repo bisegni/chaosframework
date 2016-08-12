@@ -105,8 +105,11 @@ namespace chaos {
 
                 CHAOS_DEFINE_VECTOR_FOR_TYPE(DatasetAttributePtr ,DatasetPtrVector);
                 
+                class DatasetSDWrapper;
+                
                 //! The description of a complete dataset with his attribute and property
-                struct Dataset {
+                class Dataset {
+                    friend class DatasetSDWrapper;
                     //is the name of the dataset
                     std::string                         name;
                     //is the type of the dataset
@@ -115,7 +118,7 @@ namespace chaos {
                     std::string                         dataset_key;
                     //is the ocmplete list of the attribute of the dataset
                     mutable DatasetAttributeElementContainer    attribute_set;
-                    
+                public:
                     Dataset();
                     Dataset(const std::string& _name,
                             const chaos::DataType::DatasetType& _type);
@@ -131,6 +134,14 @@ namespace chaos {
                     const unsigned int getAttributeSize() const;
                     
                     bool hasAttribute(const std::string& attr_name) const;
+                    
+                    const std::string& getDatasetName() const;
+                    
+                    const chaos::DataType::DatasetType& getDatasetType() const;
+                    
+                    void setDatasetKey(const std::string& ds_key);
+                    
+                    const std::string& getDatasetKey() const;
                 };
                 
                 //! define serialization wrapper for dataset type

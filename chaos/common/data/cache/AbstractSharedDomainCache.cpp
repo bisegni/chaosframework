@@ -22,52 +22,6 @@
 
 using namespace chaos::common::data::cache;
 
-SharedCacheLockDomain::SharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex> _mutex):
-mutex(_mutex){
-}
+AbstractSharedDomainCache::AbstractSharedDomainCache() {}
 
-SharedCacheLockDomain::~SharedCacheLockDomain(){
-}
-
-
-
-WriteSharedCacheLockDomain::WriteSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex> _mutex):
-SharedCacheLockDomain(_mutex),
-w_lock(*mutex.get(), boost::defer_lock){
-}
-
-WriteSharedCacheLockDomain::~WriteSharedCacheLockDomain() {
-}
-
-void WriteSharedCacheLockDomain::lock() {
-	w_lock.lock();
-}
-
-void WriteSharedCacheLockDomain::unlock() {
-	w_lock.unlock();
-}
-
-
-ReadSharedCacheLockDomain::ReadSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex> _mutex):
-SharedCacheLockDomain(_mutex),
-r_lock(*mutex.get(), boost::defer_lock){
-}
-
-ReadSharedCacheLockDomain::~ReadSharedCacheLockDomain() {
-}
-
-void ReadSharedCacheLockDomain::lock() {
-	r_lock.lock();
-}
-
-void ReadSharedCacheLockDomain::unlock() {
-	r_lock.unlock();
-}
-
-AbstractSharedDomainCache::AbstractSharedDomainCache() {
-	
-}
-
-AbstractSharedDomainCache::~AbstractSharedDomainCache() {
-	
-}
+AbstractSharedDomainCache::~AbstractSharedDomainCache() {}

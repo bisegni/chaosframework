@@ -46,6 +46,7 @@ namespace chaos {
             
             //! define the contaner for the dataset within the boost multi index set
             struct DatasetElement {
+                friend struct extract_key;
                 
                 typedef boost::shared_ptr<DatasetElement> DatasetElementPtr;
                 //!keep track of ordering id

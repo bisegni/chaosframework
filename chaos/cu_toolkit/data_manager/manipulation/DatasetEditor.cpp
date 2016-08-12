@@ -34,7 +34,7 @@ dataset_element(_dataset_element){}
 DatasetEditor::~DatasetEditor(){}
 
 const chaos::DataType::DatasetType DatasetEditor::getType() const {
-    return dataset_element->dataset->type;
+    return dataset_element->dataset->getDatasetType();
 }
 
 int DatasetEditor::addAttributeToDataset(const std::string& attr_name,
@@ -49,7 +49,7 @@ int DatasetEditor::addAttributeToDataset(const std::string& attr_name,
    //add new attribute
     if((err = dataset_element->dataset->addAttribute(new_attribute))) {
         ERR << CHAOS_FORMAT("Error adding new attribute %1% into the dataset %2%",
-                            %attr_name%dataset_element->dataset->name);
+                            %attr_name%dataset_element->dataset->getDatasetName());
     } else {
         //add new cache for attribute
         dataset_element->dataset_value_cache.addAttribute(attr_name,
