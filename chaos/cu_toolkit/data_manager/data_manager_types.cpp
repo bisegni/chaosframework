@@ -38,12 +38,12 @@ bool DatasetElement::less::operator()(const DatasetElementPtr& h1, const Dataset
 
 const DatasetElement::extract_key::result_type&
 DatasetElement::extract_key::operator()(const DatasetElementPtr &p) const {
-    return p->dataset->name;
+    return p->dataset->getDatasetName();
 }
 
 const DatasetElement::extract_type::result_type&
 DatasetElement::extract_type::operator()(const DatasetElementPtr &p) const {
-    return p->dataset->type;
+    return p->dataset->getDatasetType();
 }
 
 const DatasetElement::extract_ordered_id::result_type&

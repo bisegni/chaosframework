@@ -39,6 +39,7 @@ namespace chaos {
                 MapProperties map_properties;
                 PropertyGroup();
                 PropertyGroup(const std::string& _name);
+                PropertyGroup(const PropertyGroup& src);
                 
                 void addProperty(const std::string& property_name,
                                  const std::string& property_description,
@@ -47,15 +48,38 @@ namespace chaos {
                 void setPropertyValue(const std::string& property_name,
                                       const chaos::common::data::CDataVariant& new_value);
                 
+                PropertyDescription& getProperty(const std::string& property_name);
+                
                 const chaos::common::data::CDataVariant& getPropertyValue(const std::string& property_name);
                 
                 const std::string& getGroupName() const;
                 
-                void copyPropertiesFromGroup(const PropertyGroup& src_group);
+                void copyPropertiesFromGroup(const PropertyGroup& src_group,
+                                             bool copy_value = false);
                 
                 const MapProperties getAllProperties() const;
                 
                 void resetProperiesValues();
+                
+                PropertyGroup& operator()();
+                
+                PropertyGroup& operator()(const std::string& property_name,
+                                          const bool property_value);
+                
+                PropertyGroup& operator()(const std::string& property_name,
+                                          const int32_t property_value);
+                
+                PropertyGroup& operator()(const std::string& property_name,
+                                          const int64_t property_value);
+                
+                PropertyGroup& operator()(const std::string& property_name,
+                                          const double property_value);
+                
+                PropertyGroup& operator()(const std::string& property_name,
+                                          const std::string& property_value);
+                
+                PropertyGroup& operator()(const std::string& property_name,
+                                          chaos::common::data::CDataBuffer *property_value);
             };
             
             CHAOS_OPEN_SDWRAPPER(PropertyGroup)
@@ -80,7 +104,7 @@ namespace chaos {
                         
                         //insert new porperty
                         Subclass::dataWrapped().map_properties.insert(MapPropertiesPair(property_wrapper.dataWrapped().getName(),
-                                                                                         property_wrapper.dataWrapped()));
+                                                                                        property_wrapper.dataWrapped()));
                     }
                     
                 }

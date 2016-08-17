@@ -33,62 +33,31 @@ data_value(_new_value){}
 Subject::Subject(const TriggeredDataShrdPtr& _subject_data):
 AbstractSubject("TriggeredData"),
 subject_data(_subject_data){}
-//---------------------------------
 
-SubjectEvent::SubjectEvent(const std::string& _event_name,
-                           const std::string& _event_description,
-                           const TriggerDataEventType _type):
-AbstractEvent(_event_name,
-              _event_description,
-              _type){}
-
-ConsumerResult SubjectEvent::executeConsumerOnTarget(AbstractSubject *subject_instance,
-                                                     AbstractConsumer *consumer_instance) {
-    return _executeConsumerOnTarget(static_cast<Subject*>(subject_instance),
-                                    static_cast<SubjectConsumer*>(consumer_instance));
-}
-//---------------------------------
-SubjectConsumer::SubjectConsumer(const std::string& name,
-                                 const std::string& description):
-AbstractConsumer(name,
-                 description){}
-SubjectConsumer::~SubjectConsumer(){}
-//---------------------------------
-ConsumerResult SubjectEventOne::_executeConsumerOnTarget(Subject *subject_instance,
-                                                        SubjectConsumer *consumer_instance) {
-    return consumer_instance->consumeEvent(static_cast<TriggerDataEventType>(getEventCode()),
-                                           *subject_instance->subject_data);
-}
-//---------------------------------
-ConsumerResult SubjectEventTwo::_executeConsumerOnTarget(Subject *subject_instance,
-                                                        SubjectConsumer *consumer_instance) {
-    return consumer_instance->consumeEvent(static_cast<TriggerDataEventType>(getEventCode()),
-                                           *subject_instance->subject_data);
-}
 //---------------------------------
 ConsumerResult SubjectConsumerIncrement::consumeEvent(TriggerDataEventType event_type,
-                                                      TriggeredData& trigger_data) {
+                                                      Subject& trigger_data) {
     int32_t incremnet_size = 0;
     const CDataVariant& inc_value = getPropertyValue("offset");
     if(inc_value.isValid()) {
         //get increment size
         incremnet_size = inc_value.asInt32();
     }
-    trigger_data.data_value += (1+incremnet_size);
+    trigger_data.subject_data->data_value += (1+incremnet_size);
     return ConsumerResultOK;
 }
 
 //---------------------------------
 ConsumerResult SubjectConsumerDecrement::consumeEvent(TriggerDataEventType event_type,
-                                                      TriggeredData& trigger_data) {
+                                                      Subject& trigger_data) {
     int32_t incremnet_size = 0;
     const CDataVariant& dec_value = getPropertyValue("offset");
     if(dec_value.isValid()) {
-
+        
         //get increment size
         incremnet_size = dec_value.asInt32();
     }
-    trigger_data.data_value -= (1+incremnet_size);
+    trigger_data.subject_data->data_value -= (1+incremnet_size);
     return ConsumerResultOK;
 }
 
@@ -121,9 +90,9 @@ bool TestEvent::test(){
                                                             subject_two,
                                                             "SubjectConsumerDecrement"));
     
-    SubjectTriggerEnviroment::EventInstanceShrdPtr event_one = trigger_environment.getEventInstance("SubjectEventOne");
+    SubjectTriggerEnviroment::EventInstanceShrdPtr event_one = trigger_environment.getEventInstance(kTriggerDataEventTypeOne);
     assert(event_one.get());
-    SubjectTriggerEnviroment::EventInstanceShrdPtr event_two = trigger_environment.getEventInstance("SubjectEventTwo");
+    SubjectTriggerEnviroment::EventInstanceShrdPtr event_two = trigger_environment.getEventInstance(kTriggerDataEventTypeTwo);
     assert(event_two.get());
     
     assert(subject_one->subject_data->data_value == 0);
@@ -133,7 +102,7 @@ bool TestEvent::test(){
     assert(subject_one->subject_data->data_value == 1);
     assert(subject_two->subject_data->data_value == 0);
     
-    event_one->setPropertyValue("offset", CDataVariant(10));
+    event_one->getProperties()("offset", 10);
     trigger_environment.fireEventOnSubject(event_one, subject_one);
     assert(subject_one->subject_data->data_value == 12);
     assert(subject_two->subject_data->data_value == 0);
@@ -142,7 +111,7 @@ bool TestEvent::test(){
     assert(subject_one->subject_data->data_value == 12);
     assert(subject_two->subject_data->data_value == -1);
     
-    event_two->setPropertyValue("offset", CDataVariant(10));
+    event_two->getProperties()("offset", 10);
     trigger_environment.fireEventOnSubject(event_two, subject_two);
     assert(subject_one->subject_data->data_value == 12);
     assert(subject_two->subject_data->data_value == -12);
@@ -155,15 +124,15 @@ bool TestEvent::test(){
     assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
                                                             subject_two,
                                                             "SubjectConsumerIncrement"));
-    event_two->resetProperiesValues();
+    event_two->getProperties()();//reset the values;
     trigger_environment.fireEventOnSubject(event_two, subject_one);
     
-    event_two->setPropertyValue("offset", CDataVariant(10));
+    event_two->getProperties()("offset", 10);
     trigger_environment.fireEventOnSubject(event_two, subject_one);
     
-    event_one->resetProperiesValues();
+    event_one->getProperties()();//reset the value
     trigger_environment.fireEventOnSubject(event_one, subject_two);
-    event_one->setPropertyValue("offset", CDataVariant(10));
+    event_one->getProperties()("offset", 10);
     trigger_environment.fireEventOnSubject(event_one, subject_two);
     assert(subject_one->subject_data->data_value == 0);
     assert(subject_two->subject_data->data_value == 0);
@@ -172,15 +141,31 @@ bool TestEvent::test(){
     assert(trigger_environment.addConsumerOnSubjectForEvent(kTriggerDataEventTypeOne,
                                                             subject_one,
                                                             "SubjectConsumerDecrement"));
-    event_one->resetProperiesValues();
+    event_one->getProperties()();
     trigger_environment.fireEventOnSubject(event_one, subject_one);
     assert(subject_one->subject_data->data_value == 0);
     
-    event_one->setPropertyValue("offset", CDataVariant(10));
+    event_one->getProperties()("offset", 10);
     trigger_environment.fireEventOnSubject(event_one, subject_one);
     assert(subject_one->subject_data->data_value == 0);
     
-    
+    int idx = 0;
+    SubjectTriggerEnviroment::VectorConsumerInstance consumer_list;
+    trigger_environment.getConsumerListBy(kTriggerDataEventTypeOne, subject_one, consumer_list);
+    for(SubjectTriggerEnviroment::VectorConsumerInstanceIterator it = consumer_list.begin(),
+        end = consumer_list.end();
+        it != end;
+        it++, idx++) {
+        switch (idx) {
+            case 0:
+                assert((*it)->getConsumerName().compare("SubjectConsumerIncrement") == 0);
+                break;
+            case 1:
+                assert((*it)->getConsumerName().compare("SubjectConsumerDecrement") == 0);
+                break;
+        }
+        
+    }
     //test property group
     //SubjectConsumerIncrementPropertyDescription cons_desc;
     //common::property::PropertyGroupSDWrapper group_ref_wrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(common::property::PropertyGroup, cons_desc));

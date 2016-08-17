@@ -30,11 +30,11 @@ namespace chaos {
     namespace common {
         namespace property {
             
-            class PropertyDescription;
+            class PropertyDescriptionSDWrapper;
             
             //!define a porperty taht is rapresentated by haos base value
             class PropertyDescription {
-                
+                friend class PropertyDescriptionSDWrapper;
                 chaos::common::data::CDataVariant  property_values;
             public:
                 std::string name;
@@ -79,6 +79,9 @@ namespace chaos {
                 Subclass::dataWrapped().description = CDW_GET_SRT_WITH_DEFAULT(serialized_data, "property_description", "");
                 Subclass::dataWrapped().type = (DataType::DataType)CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_type", 0);
                 Subclass::dataWrapped().flag = (uint32_t)CDW_GET_INT32_WITH_DEFAULT(serialized_data, "property_flag", 0);
+                if(serialized_data->hasKey("property_value")){
+                    Subclass::dataWrapped().property_values = serialized_data->getVariantValue("property_value");
+                }
             }
             
             std::auto_ptr<chaos::common::data::CDataWrapper> serialize() {
@@ -87,6 +90,7 @@ namespace chaos {
                 data_serialized->addStringValue("property_description", Subclass::dataWrapped().description);
                 data_serialized->addInt32Value("property_type", Subclass::dataWrapped().type);
                 data_serialized->addInt32Value("property_flag", Subclass::dataWrapped().flag);
+                data_serialized->addVariantValue("property_value", Subclass::dataWrapped().property_values);
                 return data_serialized;
             }
             CHAOS_CLOSE_SDWRAPPER()

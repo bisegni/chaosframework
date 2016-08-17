@@ -105,4 +105,21 @@ bool Dataset::hasAttribute(const std::string& attr_name) const {
     DECNameIndex& name_index = attribute_set.get<DAETagName>();
     return (name_index.find(attr_name) != name_index.end());
 }
-#pragma mark DatasetSDWrapper
+
+
+const std::string& Dataset::getDatasetName() const {
+    return name;
+}
+
+const chaos::DataType::DatasetType& Dataset::getDatasetType() const {
+    return type;
+}
+
+void Dataset::setDatasetKey(const std::string& ds_key) {
+    dataset_key = ds_key;
+}
+
+const std::string& Dataset::getDatasetKey() const {
+    return dataset_key;
+}
+

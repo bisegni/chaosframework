@@ -222,6 +222,34 @@ void CDataWrapper::addBinaryValue(const std::string& key, const char *buff, int 
     bsonBuilder->appendBinData(key, bufLen, BinDataGeneral, buff);
 }
 
+void CDataWrapper::addVariantValue(const std::string& key,
+                                   const CDataVariant& variant_value) {
+    //create variant using the typed data
+    switch (variant_value.getType()) {
+        case DataType::TYPE_BOOLEAN:
+            addBoolValue(key, variant_value.asBool());
+            break;
+        case DataType::TYPE_INT32:
+            addInt32Value(key, variant_value.asInt32());
+            break;
+        case DataType::TYPE_INT64:
+            addInt64Value(key, variant_value.asInt64());
+            break;
+        case DataType::TYPE_DOUBLE:
+            addDoubleValue(key, variant_value.asDouble());
+            break;
+        case DataType::TYPE_STRING:
+            addStringValue(key, variant_value.asString());
+            break;
+        case DataType::TYPE_BYTEARRAY:
+            addBinaryValue(key,
+                           variant_value.asCDataBuffer()->getBuffer(),
+                           variant_value.asCDataBuffer()->getBufferSize());
+            break;
+    }
+    
+}
+
 //return the binary data value
 const char* CDataWrapper::getBinaryValue(const std::string& key, int& bufLen)  {
     return bsonBuilder->asTempObj().getField(key).binData(bufLen);

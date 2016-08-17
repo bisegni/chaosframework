@@ -578,6 +578,8 @@
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
 		32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32919A091764E68F00724874 /* DriverAccessor.cpp */; };
 		32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32919A0A1764E68F00724874 /* DriverAccessor.h */; };
+		3291D5181D5DEE890077CBB3 /* PublishTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3291D5161D5DEE890077CBB3 /* PublishTarget.cpp */; };
+		3291D5191D5DEE890077CBB3 /* PublishTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 3291D5171D5DEE890077CBB3 /* PublishTarget.h */; };
 		3296031E1876B45000CDCADA /* AttributeValueSharedCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3296030F1876B45000CDCADA /* AttributeValueSharedCache.cpp */; };
 		3296031F1876B45000CDCADA /* AttributeValueSharedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 329603101876B45000CDCADA /* AttributeValueSharedCache.h */; };
 		329603221876B45000CDCADA /* BatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329603141876B45000CDCADA /* BatchCommand.cpp */; };
@@ -1813,6 +1815,8 @@
 		32919A091764E68F00724874 /* DriverAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DriverAccessor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32919A0A1764E68F00724874 /* DriverAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DriverAccessor.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32919A0D17650F4500724874 /* DriverTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DriverTypes.h; sourceTree = "<group>"; };
+		3291D5161D5DEE890077CBB3 /* PublishTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublishTarget.cpp; sourceTree = "<group>"; };
+		3291D5171D5DEE890077CBB3 /* PublishTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublishTarget.h; sourceTree = "<group>"; };
 		3294905A159AF4BF00E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3294905B159AF4D700E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3294905C159AF4E600E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -2577,6 +2581,8 @@
 			isa = PBXGroup;
 			children = (
 				326933E81D5089420033D9E9 /* publishing.h */,
+				3291D5161D5DEE890077CBB3 /* PublishTarget.cpp */,
+				3291D5171D5DEE890077CBB3 /* PublishTarget.h */,
 			);
 			path = publishing;
 			sourceTree = "<group>";
@@ -5301,6 +5307,7 @@
 				322A3BCB1CEE1AA900FAD9DA /* ScriptableExecutionUnit.h in Headers */,
 				32C4EF3B1D4F71440014F3D3 /* DatasetConsumer.h in Headers */,
 				3214EF111D466F95004DB689 /* DataBroker.h in Headers */,
+				3291D5191D5DEE890077CBB3 /* PublishTarget.h in Headers */,
 				32F2241C179AE3BC00853F62 /* RTAbstractControlUnit.h in Headers */,
 				32F22420179AEED500853F62 /* SCAbstractControlUnit.h in Headers */,
 				3250106019E2DB4A00809415 /* AttributeSharedCacheWrapper.h in Headers */,
@@ -6075,6 +6082,7 @@
 				32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */,
 				32C4EF3A1D4F71440014F3D3 /* DatasetConsumer.cpp in Sources */,
 				32C4EF291D4BB0A60014F3D3 /* DatasetCacheWrapper.cpp in Sources */,
+				3291D5181D5DEE890077CBB3 /* PublishTarget.cpp in Sources */,
 				32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */,
 				32995C421BAC57A300F68148 /* SCWaitCommand.cpp in Sources */,
 				322A3BC81CEE1AA900FAD9DA /* EUScriptableWrapper.cpp in Sources */,

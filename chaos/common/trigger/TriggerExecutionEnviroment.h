@@ -60,27 +60,25 @@ namespace chaos {
             };
             
             //!define th emap taht correlata
-            template<typename EventBaseClass,
-            typename ConsumerBaseClass,
-            typename SubjectBaseClass,
+            template<typename SubjectBaseClass,
             typename EventType >
             class TriggerExecutionEnviroment:
             public AbstractTriggerEnvironment {
             public:
                 //!comodity typedef
-                typedef boost::shared_ptr< EventBaseClass >     EventInstanceShrdPtr;
-                typedef boost::shared_ptr< SubjectBaseClass >   SubjectInstanceShrdPtr;
-                typedef boost::shared_ptr< ConsumerBaseClass >  ConsumerShrdPtr;
+                typedef boost::shared_ptr< SubjectBaseClass >                 SubjectInstanceShrdPtr;
+                typedef typename boost::shared_ptr< typename EventInstancerDescription<EventType, SubjectBaseClass>::ConcreteEvent >        EventInstanceShrdPtr;
+                typedef typename boost::shared_ptr< typename ConsumerInstancerDescription<EventType, SubjectBaseClass>::ConcreteConsumer >  ConsumerShrdPtr;
                 
-                typedef boost::shared_ptr< ConsumerInstanceDescription<ConsumerBaseClass> > ConsumerInstancerShrdPtr;
-                typedef boost::shared_ptr< ConsumerInstanceDescription<EventBaseClass> >    EventInstancerShrdPtr;
-            protected:
+                typedef typename ConsumerInstancerDescription<EventType, SubjectBaseClass>::ConsumerInstancerShrdPtr                ConsumerInstancerShrdPtr;
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::EventInstancerShrdPtr                      EventInstancerShrdPtr;
+                
                 //!map for data
                 CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, SubjectInstanceShrdPtr,      MapSubjectNameInstance);
                 CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, ConsumerInstancerShrdPtr,    MapConsumerNameInstancer);
                 CHAOS_DEFINE_MAP_FOR_TYPE_IN_TEMPLATE(std::string, EventInstancerShrdPtr,       MapEventNameInstancer);
                 CHAOS_DEFINE_VECTOR_FOR_TYPE_IN_TEMPLATE(ConsumerShrdPtr, VectorConsumerInstance);
-                
+            protected:
                 boost::shared_mutex mutex;
                 
                 //! hav all instance of subject mapped with the UUID
@@ -89,9 +87,16 @@ namespace chaos {
                 //!map for consumer name vs instancer
                 MapConsumerNameInstancer map_consumer_name_instancer;
                 
-                //! event map
-                MapEventNameInstancer map_event_name_instancer;
+                //! container for event descriptor
+                typename EventInstancerDescription<EventType, SubjectBaseClass>::EventDescriptionContainer      event_descriptor_container;
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::TriggerEventTagCode    TriggerEventTagCode;
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::TriggerEventTagName    TriggerEventTagName;
                 
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::TENameIndex            EventInstanceDescriptorNameIndex;
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::TENameIndexIterator    EventInstanceDescriptorNameIndexIterator;
+                
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::TECodeIndex            EventInstanceDescriptorCodeIndex;
+                typedef typename EventInstancerDescription<EventType, SubjectBaseClass>::TECodeIndexIterator    EventInstanceDescriptorCodeIndexIterator;
                 //!define multiindex to permit the find operation of the aggregate event type/ subject
                 //!to forward the event to the attacched consumer
                 struct MappingEventConsumerOnSubject {
@@ -159,8 +164,8 @@ namespace chaos {
                 MappingEventConsumerContainer   type_subject_container;
                 MECTypeSubjectIndex&            type_subject_index;
                 
-                VectorConsumerInstance& getConsumerInstanceListFor(EventType event_code,
-                                                                   const std::string& subject_uuid) {
+                inline VectorConsumerInstance& getConsumerInstanceListFor(EventType event_code,
+                                                                          const std::string& subject_uuid) {
                     MECTypeSubjectIndexIterator it = type_subject_index.find(boost::make_tuple(event_code,
                                                                                                subject_uuid));
                     if(it != type_subject_index.end()) {
@@ -171,6 +176,19 @@ namespace chaos {
                         type_subject_container.insert(mapping_instance);
                         return mapping_instance->consumer_instances;
                     }
+                }
+                
+                inline ConsumerShrdPtr getConsumerFromList(EventType                                       event_code,
+                                                           SubjectInstanceShrdPtr&                         event_taget,
+                                                           const std::string&                              consumer_uuid){
+                    boost::unique_lock<boost::shared_mutex> wl(mutex);
+                    //check
+                    if(map_subject_instance.count(event_taget->getSubjectUUID()) == 0) return ConsumerShrdPtr();
+                    
+                    //get all consumer
+                    VectorConsumerInstance& consumer_list_ref = getConsumerInstanceListFor(event_code,
+                                                                                           event_taget->getSubjectUUID());
+                    
                 }
                 
                 ConsumerResult fireEvent(const EventType&               event_code,
@@ -206,15 +224,25 @@ namespace chaos {
                     boost::unique_lock<boost::shared_mutex> wl(mutex);
                     //register instance into the map
                     EventInstancerShrdPtr desc_shrd_ptr(new EventDescriptor());
-                    map_event_name_instancer.insert(MapEventNameInstancerPair(desc_shrd_ptr->getGroupName(),
-                                                                              desc_shrd_ptr));
+                    event_descriptor_container.insert(desc_shrd_ptr);
                 }
                 
                 EventInstanceShrdPtr getEventInstance(const std::string& event_name) {
-                    if(map_event_name_instancer[event_name] == 0) return EventInstanceShrdPtr();
+                    EventInstanceDescriptorNameIndex& index = event_descriptor_container.template get<TriggerEventTagName>();
+                    EventInstanceDescriptorNameIndexIterator index_it = index.find(event_name);
+                    if(index_it == index.end()) return EventInstanceShrdPtr();
                     
                     //we have the instancer so we can create the instance of event
-                    return EventInstanceShrdPtr(map_event_name_instancer[event_name]->getInstance());
+                    return EventInstanceShrdPtr((*index_it)->getInstance());
+                }
+                
+                EventInstanceShrdPtr getEventInstance(const EventType& event_type) {
+                    EventInstanceDescriptorCodeIndex& index = event_descriptor_container.template get<TriggerEventTagCode>();
+                    EventInstanceDescriptorCodeIndexIterator index_it = index.find(event_type);
+                    if(index_it == index.end()) return EventInstanceShrdPtr();
+                    
+                    //we have the instancer so we can create the instance of event
+                    return EventInstanceShrdPtr((*index_it)->getInstance());
                 }
                 
                 //!register all subject that can be target from event
@@ -228,25 +256,73 @@ namespace chaos {
                 }
                 
                 
-                //! register a consumer for a determinated event for a target instance
                 bool addConsumerOnSubjectForEvent(EventType                 event_code,
                                                   SubjectInstanceShrdPtr&   event_taget,
-                                                  const std::string&        consumer_name,
-                                                  const MapKeyCDataVariant  *consumer_parameter = NULL){
+                                                  const std::string&        consumer_name){
+                    std::string new_consumer_uuid;
+                    return addConsumerOnSubjectForEvent(event_code,
+                                                        event_taget,
+                                                        consumer_name,
+                                                        new_consumer_uuid);
+                }
+                
+                //! register a consumer for a determinated event for a target instance
+                bool addConsumerOnSubjectForEvent(EventType                                     event_code,
+                                                  SubjectInstanceShrdPtr&                       event_taget,
+                                                  const std::string&                            consumer_name,
+                                                  std::string&                                  new_consumer_uuid){
                     boost::unique_lock<boost::shared_mutex> wl(mutex);
                     //check
                     if(map_subject_instance.count(event_taget->getSubjectUUID()) == 0 ||
                        map_consumer_name_instancer[consumer_name] == 0) return false;
-                    
+                    //reset the string
+                    new_consumer_uuid.clear();
                     VectorConsumerInstance& consumer_list_ref = getConsumerInstanceListFor(event_code,
                                                                                            event_taget->getSubjectUUID());
                     
                     //allocate a new instance for the  consumer and attach it to the vector for mapping
-                    consumer_list_ref.push_back(ConsumerShrdPtr(map_consumer_name_instancer[consumer_name]->getInstance()));
-                    
+                    ConsumerShrdPtr new_consumer_instance(map_consumer_name_instancer[consumer_name]->getInstance());
+                    consumer_list_ref.push_back(new_consumer_instance);
+                    //get new consumer uuid
+                    new_consumer_uuid = new_consumer_instance->getConsumerUUID();
                     return true;
                 }
                 
+                bool updateConsumerPropertiesBy(EventType                                       event_code,
+                                                SubjectInstanceShrdPtr&                         event_taget,
+                                                const std::string&                              consumer_uuid,
+                                                chaos::common::property::PropertyGroup&         consumer_properties){
+                    boost::unique_lock<boost::shared_mutex> wl(mutex);
+                    //check
+                    if(map_subject_instance.count(event_taget->getSubjectUUID()) == 0) return false;
+                    
+                    //get all consumer
+                    ConsumerShrdPtr consumer_shrd_ptr = getConsumerFromList(event_code,
+                                                                            event_taget->getSubjectUUID(),
+                                                                            consumer_uuid);
+                    if(consumer_shrd_ptr.get()) {
+                        consumer_shrd_ptr->updateProperty(consumer_properties);
+                    }
+                    
+                }
+                
+                bool getConsumerListBy(EventType                   event_code,
+                                       SubjectInstanceShrdPtr&     event_taget,
+                                       VectorConsumerInstance&     attached_consumer) {
+                    boost::unique_lock<boost::shared_mutex> wl(mutex);
+                    //check
+                    if(map_subject_instance.count(event_taget->getSubjectUUID()) == 0) return false;
+                    
+                    //get all consumer
+                    VectorConsumerInstance& consumer_list_ref = getConsumerInstanceListFor(event_code,
+                                                                                           event_taget->getSubjectUUID());
+                    
+                    //fill vector with all consumer instance
+                    attached_consumer.insert(attached_consumer.end(),
+                                             consumer_list_ref.begin(),
+                                             consumer_list_ref.end());
+                    return true;
+                }
                 
                 ConsumerResult fireEventOnSubject(const EventInstanceShrdPtr&       event_to_fire,
                                                   const SubjectInstanceShrdPtr&     event_subject) {
@@ -275,11 +351,12 @@ namespace chaos {
                     result->finalizeArrayForKey("trg_env_subjects");
                     
                     //describe event
-                    for(MapEventNameInstancerIterator it = map_event_name_instancer.begin(),
-                        end = map_event_name_instancer.end();
+                    EventInstanceDescriptorCodeIndex& event_code_index = event_descriptor_container.template get<TriggerEventTagCode>();
+                    for(EventInstanceDescriptorCodeIndexIterator it = event_code_index.begin(),
+                        end = event_code_index.end();
                         it != end;
                         it++) {
-                        group_ref_wrapper() = *it->second;
+                        group_ref_wrapper() = *(*it);
                         result->appendCDataWrapperToArray(*group_ref_wrapper.serialize());
                         
                     }

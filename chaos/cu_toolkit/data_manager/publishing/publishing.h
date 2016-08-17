@@ -22,6 +22,6 @@
 #ifndef __CHAOSFramework__44CEA14_5610_4C66_B440_8C2D5765CAA4_publishing_h
 #define __CHAOSFramework__44CEA14_5610_4C66_B440_8C2D5765CAA4_publishing_h
 
-#include <stdio.h>
+#include <chaos/cu_toolkit/data_manager/publishing/PublishTarget.h>
 
 #endif /* __CHAOSFramework__44CEA14_5610_4C66_B440_8C2D5765CAA4_publishing_h */

@@ -38,9 +38,6 @@ namespace chaos {
                  */
                 class EventManager {
                     boost::shared_mutex                         mutex_event_container;
-                    common::trigger::AbstractEventContainer     event_container;
-                    
-
                 public:
                     EventManager();
                     ~EventManager();

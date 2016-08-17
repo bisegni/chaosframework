@@ -34,57 +34,23 @@ namespace chaos {
                 namespace dataset_event {
                     namespace chaos_data = chaos::common::data;
                     namespace chaos_trigger = chaos::common::trigger;
+
+                    CHAOS_TRIGGER_EVENT_OPEN_DESCRIPTION(EventDSAttributePreChange,
+                                                         "Signal for pre change attribute value",
+                                                         ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeTypePreChange,
+                                                         chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType,
+                                                         DatasetSubject)
+                    //CHAOS_TRIGGER_EVENT_ADD_PROPERTY("offset", "amount of int's added to 1", chaos::DataType::TYPE_INT32);
+                    CHAOS_TRIGGER_EVENT_CLOSE_DESCRIPTION()
                     
-                    //!forward decalration
-                    class DatasetConsumer;
+                    CHAOS_TRIGGER_EVENT_OPEN_DESCRIPTION(EventDSAttributePostChange,
+                                                         "Signal for post change attribute value",
+                                                         ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeTypePostChange,
+                                                         chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType,
+                                                         DatasetSubject)
+                    //CHAOS_TRIGGER_EVENT_ADD_PROPERTY("offset", "amount of int's added to 1", chaos::DataType::TYPE_INT32);
+                    CHAOS_TRIGGER_EVENT_CLOSE_DESCRIPTION()
                     
-                    //!define the event for attribute change
-                    class DatasetEvent:
-                    public ::chaos::common::trigger::AbstractEvent {
-                    protected:
-                        //collect consumer input data
-                        chaos_trigger::CDataVariantVector consumer_input_value;
-                        chaos_trigger::CDataVariantVector consumer_output_value;
-                        
-                    protected:
-                        virtual chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attrbiute_subject_instance,
-                                                                                       DatasetConsumer *consumer_instance) = 0;
-                    public:
-                        DatasetEvent(const std::string& _event_name,
-                                     const std::string& _event_description,
-                                     const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType _type);
-                        const ::chaos::cu::data_manager::trigger_system::dataset_event::ETDatasetAttributeType getType() const;
-                        
-                        chaos_trigger::ConsumerResult executeConsumerOnTarget(chaos_trigger::AbstractSubject *subject_instance,
-                                                                              chaos_trigger::AbstractConsumer *consumer_instance);
-                    };
-                    
-                    //! the event is forwarded befor an attribute value is changed
-                    /*!
-                     Pre change event collect into the CDataVariant vector for consumer these information:
-                     [0]->new value
-                     [1]->current_value
-                     */
-                    class EventDSAttributePreChange:
-                    public DatasetEvent {
-                    protected:
-                        chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attribute_value,
-                                                                               DatasetConsumer *consumer_instance);
-                    public:
-                        EventDSAttributePreChange(const chaos_data::CDataVariant& _new_value);
-                        ~EventDSAttributePreChange();
-                    };
-                    
-                    //! this event is forwarded befor an attribute value has been changed
-                    class EventDSAttributePostChange:
-                    public DatasetEvent {
-                    protected:
-                        chaos_trigger::ConsumerResult _executeConsumerOnTarget(DatasetSubject *attribute_value,
-                                                                               DatasetConsumer *consumer_instance);
-                    public:
-                        EventDSAttributePostChange();
-                        ~EventDSAttributePostChange();
-                    };
                 }
             }
         }

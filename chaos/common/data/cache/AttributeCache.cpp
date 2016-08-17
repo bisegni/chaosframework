@@ -24,30 +24,22 @@
 
 using namespace chaos::common::data::cache;
 using namespace std;
-/*---------------------------------------------------------------------------------
 
- ---------------------------------------------------------------------------------*/
+#pragma mark AttributeCache
+
 AttributeCache::AttributeCache():
 index(0),
-mutex(new boost::shared_mutex()){
-}
+mutex(new boost::shared_mutex()){}
 
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
-AttributeCache::~AttributeCache() {
-}
+AttributeCache::~AttributeCache() {}
 
 void AttributeCache::reset() {
     index = 0;
     mapAttributeNameIndex.clear();
-    mapAttributeIndex.clear();
+    vector_attribute_value.clear();
     bitmapChangedAttribute.clear();
 }
 
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
 void AttributeCache::addAttribute(const string& name,
                                   uint32_t size,
                                   chaos::DataType::DataType type) {
@@ -82,12 +74,9 @@ void AttributeCache::addAttribute(const string& name,
     bitmapChangedAttribute.push_back(false);
     tmpSP->sharedBitmapChangedAttribute = &bitmapChangedAttribute;
 
-    mapAttributeIndex.insert(make_pair<VariableIndexType, boost::shared_ptr<AttributeValue> >(tmpIndex, tmpSP));
+    vector_attribute_value.push_back(tmpSP);
 }
 
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
 void AttributeCache::getAttributeNames(std::vector<std::string>& names) {
 
         //get all names
@@ -98,27 +87,21 @@ void AttributeCache::getAttributeNames(std::vector<std::string>& names) {
     }
 }
 
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
 void AttributeCache::setValueForAttribute(VariableIndexType n,
                                           const void * value,
                                           uint32_t size) {
-    CHAOS_ASSERT(n<mapAttributeIndex.size());
-    CHAOS_ASSERT(mapAttributeIndex[n].get());
-    mapAttributeIndex[n]->setValue(value, size);
+    CHAOS_ASSERT(n<vector_attribute_value.size());
+    CHAOS_ASSERT(vector_attribute_value[n].get());
+    vector_attribute_value[n]->setValue(value, size);
 }
 
 void AttributeCache::setValueForAttribute(const std::string& name,
                                           const void * value,
                                           uint32_t size) {
     CHAOS_ASSERT(mapAttributeNameIndex.count(name));
-    mapAttributeIndex[mapAttributeNameIndex[name]]->setValue(value, size);
+    vector_attribute_value[mapAttributeNameIndex[name]]->setValue(value, size);
 }
 
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
 VariableIndexType AttributeCache::getIndexForName(const std::string& name ) {
     if(!mapAttributeNameIndex.count(name)) {
         throw chaos::CException(-1, boost::str(boost::format("No \"%1%\" name present in Attribute cache") %name), __PRETTY_FUNCTION__);
@@ -130,36 +113,24 @@ bool AttributeCache::hasName(const std::string& name) {
     return mapAttributeNameIndex.count(name) != 0;
 }
 
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
 AttributeValue *AttributeCache::getValueSettingForIndex(VariableIndexType index) {
-    if(!mapAttributeIndex.count(index)) {
+    if(index>=vector_attribute_value.size()) {
         throw chaos::CException(-1, boost::str(boost::format("No \"%1%\" index present in Attribute cache") %index), __PRETTY_FUNCTION__);
     }
-    return mapAttributeIndex[index].get();
+    return vector_attribute_value[index].get();
 }
 
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
 AttributeValue *AttributeCache::getValueSettingByName(const std::string& name) {
-    if(!mapAttributeIndex.count(index)) {
+    if(index>=vector_attribute_value.size()) {
         throw chaos::CException(-1, boost::str(boost::format("No \"%1%\" index present in Attribute cache") %index), __PRETTY_FUNCTION__);
     }
-    return mapAttributeIndex[mapAttributeNameIndex[name]].get();
+    return vector_attribute_value[mapAttributeNameIndex[name]].get();
 }
 
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
 VariableIndexType AttributeCache::getNumberOfAttributes() {
     return index;
 }
 
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
 void AttributeCache::getChangedIndex(std::vector<VariableIndexType>& changed_index) {
     size_t index = 0;
     index = bitmapChangedAttribute.find_first();
@@ -169,58 +140,95 @@ void AttributeCache::getChangedIndex(std::vector<VariableIndexType>& changed_ind
     }
 }
 
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
 void AttributeCache::resetChangedIndex() {
     bitmapChangedAttribute.reset();
 }
 
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
 void AttributeCache::markAllAsChanged() {
     bitmapChangedAttribute.set();
 }
 
-/*---------------------------------------------------------------------------------
-
- ---------------------------------------------------------------------------------*/
-bool AttributeCache::hasChanged() {
+bool AttributeCache::hasChanged() const {
     return bitmapChangedAttribute.any();
 }
-/*---------------------------------------------------------------------------------
 
- ---------------------------------------------------------------------------------*/
 bool AttributeCache::setNewSize(VariableIndexType attribute_index,
                                 uint32_t new_size,
                                 bool clear_mem) {
-    if(!mapAttributeIndex.count(attribute_index)) {
+    if(attribute_index>=vector_attribute_value.size()) {
         throw chaos::CException(-1, boost::str(boost::format("No \"%1%\" index present in Attribute cache") %index), __PRETTY_FUNCTION__);
     }
-    return mapAttributeIndex[attribute_index]->setNewSize(new_size,
+    return vector_attribute_value[attribute_index]->setNewSize(new_size,
                                                           clear_mem);
 }
-/*---------------------------------------------------------------------------------
 
- ---------------------------------------------------------------------------------*/
 bool AttributeCache::setNewSize(const std::string& attribute_name,
                                 uint32_t new_size,
                                 bool clear_mem) {
     if(!mapAttributeNameIndex.count(attribute_name)) {
         throw chaos::CException(-1, boost::str(boost::format("No \"%1%\" name present in Attribute cache") %index), __PRETTY_FUNCTION__);
     }
-    return mapAttributeIndex[mapAttributeNameIndex[attribute_name]]->setNewSize(new_size,
+    return vector_attribute_value[mapAttributeNameIndex[attribute_name]]->setNewSize(new_size,
                                                           clear_mem);
 }
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
+
 bool AttributeCache::hasAttribute(const std::string& attribute_name) {
     return mapAttributeNameIndex.count(attribute_name) != 0;
 }
 
-    //!fill the CDataWrapper representig the set
-void AttributeCache::fillDataWrapper(CDataWrapper& data_wrapper) {
-    
+void AttributeCache::writeAttributeToCDataWrapper(const std::string& attribute_name,
+                                                  CDataWrapper& dest_dw) {
+    if(mapAttributeNameIndex.count(attribute_name) == 0) return;
+    //we can fill the cdatawrapper with key value
+    vector_attribute_value[mapAttributeNameIndex[attribute_name]]->writeToCDataWrapper(dest_dw);
+}
+
+void AttributeCache::exportToCDataWrapper(CDataWrapper& dest_dw) const {
+    for(AttributeValueVectorConstIterator it = vector_attribute_value.begin(),
+        end = vector_attribute_value.end();
+        it != end;
+        it++) {
+        //add attribute to the cdata wrapper
+        (*it)->writeToCDataWrapper(dest_dw);
+    }
+}
+
+#pragma mark SharedCacheLockDomain
+SharedCacheLockDomain::SharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex>& _mutex):
+mutex(_mutex){}
+
+SharedCacheLockDomain::~SharedCacheLockDomain(){}
+
+
+#pragma mark WriteSharedCacheLockDomain
+
+WriteSharedCacheLockDomain::WriteSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex>& _mutex,
+                                                       bool lock):
+SharedCacheLockDomain(_mutex),
+w_lock(*mutex.get(), boost::defer_lock){if(lock)w_lock.lock();}
+
+WriteSharedCacheLockDomain::~WriteSharedCacheLockDomain() {}
+
+void WriteSharedCacheLockDomain::lock() {
+    w_lock.lock();
+}
+
+void WriteSharedCacheLockDomain::unlock() {
+    w_lock.unlock();
+}
+
+
+ReadSharedCacheLockDomain::ReadSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex>& _mutex,
+                                                     bool lock):
+SharedCacheLockDomain(_mutex),
+r_lock(*mutex.get(), boost::defer_lock){if(lock)r_lock.lock();}
+
+ReadSharedCacheLockDomain::~ReadSharedCacheLockDomain() {}
+
+void ReadSharedCacheLockDomain::lock() {
+    r_lock.lock();
+}
+
+void ReadSharedCacheLockDomain::unlock() {
+    r_lock.unlock();
 }

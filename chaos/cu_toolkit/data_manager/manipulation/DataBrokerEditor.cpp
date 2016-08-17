@@ -114,8 +114,8 @@ void DataBrokerEditor::deserialize(CDataWrapper& serialization) {
 #pragma mark Private Methods
 int DataBrokerEditor::addNewDataset(Dataset& new_dataset) {
     int err = 0;
-    DECTypeNameIndexIterator dit = ds_index_type_name.find(boost::make_tuple(new_dataset.type,
-                                                                             new_dataset.name));
+    DECTypeNameIndexIterator dit = ds_index_type_name.find(boost::make_tuple(new_dataset.getDatasetType(),
+                                                                             new_dataset.getDatasetName()));
     if(dit == ds_index_type_name.end()) {
         // dataset already exists
         container_dataset.insert(DatasetElement::DatasetElementPtr(new DatasetElement((unsigned int)container_dataset.size(),
@@ -138,7 +138,7 @@ int DataBrokerEditor::addNewDataset(Dataset& new_dataset) {
                 //add new attribute
                 //add new attribute
                 if((err = (*dit)->dataset->addAttribute(attr_new_ds))) {
-                    ERR << CHAOS_FORMAT("Error adding new attribute %1% into the dataset %2%", %attr_new_ds->name%new_dataset.name);
+                    ERR << CHAOS_FORMAT("Error adding new attribute %1% into the dataset %2%", %attr_new_ds->name%new_dataset.getDatasetName());
                 } else {
                     //add new cache for attribute
                     (*dit)->dataset_value_cache.addAttribute(attr_new_ds->name,

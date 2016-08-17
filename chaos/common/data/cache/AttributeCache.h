@@ -37,6 +37,8 @@ namespace chaos{
                     //! the range of index
                 typedef  uint16_t VariableIndexType;
 
+                CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<AttributeValue>, AttributeValueVector);
+                
                     //! this class is a set of key with a ValueSetting class associated
                 /*!
                  This class collect a set on key with the repsective ValueSetting creating a domain o
@@ -49,11 +51,11 @@ namespace chaos{
                     boost::dynamic_bitset<BitBlockDimension> bitmapChangedAttribute;
 
                     std::map<std::string, VariableIndexType> mapAttributeNameIndex;
-                    std::map<VariableIndexType, boost::shared_ptr<AttributeValue> > mapAttributeIndex;
-
-
+                    
+                    //attribute vector
+                    AttributeValueVector vector_attribute_value;
                 public:
-                    boost::shared_ptr<boost::shared_mutex>	mutex;
+                    mutable boost::shared_ptr<boost::shared_mutex>	mutex;
 
                     AttributeCache();
 
@@ -90,9 +92,6 @@ namespace chaos{
                         //! get the ValueSetting for the index
                     AttributeValue *getValueSettingByName(const std::string& name);
 
-                        //!fill the CDataWrapper representig the set
-                    void fillDataWrapper(CDataWrapper& data_wrapper);
-
                         //! return the number of the attribute into the domain
                     VariableIndexType getNumberOfAttributes();
                     
@@ -103,7 +102,7 @@ namespace chaos{
                     void markAllAsChanged();
                     
                         //! return true if some attribute has change it's value
-                    bool hasChanged();
+                    bool hasChanged() const;
                     
                         //! set new size on attribute by index
                     bool setNewSize(VariableIndexType attribute_index,
@@ -115,7 +114,55 @@ namespace chaos{
                                     bool clear_mem);
                         //! check if an attribute is present
                     bool hasAttribute(const std::string& attribute_name);
+                    
+                    void writeAttributeToCDataWrapper(const std::string& attribute_name,
+                                                      CDataWrapper& dest_dw);
+                    //!export all attribute into a cdata wrapper
+                    /*!
+                     th einsertion into the cdata wrapper follow the creation order of the
+                     attribute
+                     */
+                    void exportToCDataWrapper(CDataWrapper& dest_dw) const;
                 };
+                
+                
+                class SharedCacheLockDomain {
+                protected:
+                    boost::shared_ptr<boost::shared_mutex>	mutex;
+                public:
+                    SharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex>& _mutex);
+                    
+                    virtual ~SharedCacheLockDomain();
+                    
+                    virtual void lock() = 0;
+                    
+                    virtual void unlock() = 0;
+                };
+                
+                class WriteSharedCacheLockDomain : public SharedCacheLockDomain {
+                    boost::unique_lock<boost::shared_mutex> w_lock;
+                public:
+                    WriteSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex>& _mutex, bool lock = false);
+                    
+                    ~WriteSharedCacheLockDomain();
+                    
+                    void lock();
+                    
+                    void unlock();
+                };
+                
+                class ReadSharedCacheLockDomain : public SharedCacheLockDomain {
+                    boost::shared_lock<boost::shared_mutex> r_lock;
+                public:
+                    ReadSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex>& _mutex, bool lock = false);
+                    
+                    ~ReadSharedCacheLockDomain();
+                    
+                    void lock();
+                    
+                    void unlock();
+                };
+                
             }
         }
     }

@@ -49,6 +49,7 @@ PropertyDescription& PropertyDescription::operator=(PropertyDescription const &r
     description=rhs.description;
     type=rhs.type;
     flag=rhs.flag;
+    property_values=rhs.property_values;
     return *this;
 }
 
