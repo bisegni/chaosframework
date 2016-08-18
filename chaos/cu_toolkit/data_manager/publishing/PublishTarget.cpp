@@ -42,8 +42,6 @@ connection_feeder(target_name, this),
 publishing_mode(DirectIODeviceClientChannelPutModeLiveOnly){}
 
 PublishTarget::~PublishTarget() {
-    //remove all service url
-    
 }
 
 void PublishTarget::clear() {
