@@ -26,8 +26,9 @@ SET(cu_lib_src ${cu_lib_src}
         data_manager/trigger_system/dataset_event/DatasetEvent.cpp
         data_manager/trigger_system/dataset_event/DatasetSubject.cpp
         data_manager/trigger_system/dataset_event/RegisterEnviroment.cpp
-        data_manager/publishing/DataBrokerEditor.cpp
+        data_manager/publishing/publishing_types.cpp
         data_manager/publishing/PublishTarget.cpp
+        data_manager/publishing/PublishingManager.cpp
         data_manager/manipulation/DataBrokerEditor.cpp
         data_manager/manipulation/DatasetCacheWrapper.cpp
         data_manager/manipulation/DatasetEditor.cpp)

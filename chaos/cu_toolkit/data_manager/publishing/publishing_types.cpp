@@ -20,22 +20,9 @@
  */
 
 #include <chaos/cu_toolkit/data_manager/publishing/publishing_types.h>
-
+using namespace chaos::cu::data_manager;
 using namespace chaos::cu::data_manager::publishing;
 
-PublishableElement::PublishableElement():
-dataset_ptr(NULL),
-publishing_mode(common::direct_io::channel::DirectIODeviceClientChannelPutModeStoricizeAnLive),
-publish_rate(0){}
+using namespace chaos::common::direct_io::channel;
 
-PublishableElement::PublishableElement(const PublishableElement& _dataset_element):
-dataset_ptr(_dataset_element.dataset_ptr),
-publishing_mode(_dataset_element.publishing_mode),
-publish_rate(_dataset_element.publish_rate){}
 
-PublishableElement::PublishableElement(const chaos::cu::data_manager::DatasetElement& _dataset_reference,
-                                       const common::direct_io::channel::DirectIODeviceClientChannelPutMode _publishing_mode,
-                                       const uint64_t _publish_rate):
-dataset_ptr(&_dataset_reference),
-publishing_mode(_publishing_mode),
-publish_rate(_publish_rate){}

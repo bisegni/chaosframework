@@ -394,6 +394,8 @@
 		326933F21D5089C20033D9E9 /* dataset_event.h in Headers */ = {isa = PBXBuildFile; fileRef = 326933F01D5089C20033D9E9 /* dataset_event.h */; };
 		326933F61D508A510033D9E9 /* TestEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326933F41D508A510033D9E9 /* TestEvent.cpp */; };
 		326CADCA18EAFD1200E74CEA /* VFSManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326CADC818EAFD1200E74CEA /* VFSManager.cpp */; };
+		326CD5AB1D66F975003AD071 /* PublishingManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326CD5A91D66F975003AD071 /* PublishingManager.cpp */; };
+		326CD5AC1D66F975003AD071 /* PublishingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326CD5AA1D66F975003AD071 /* PublishingManager.h */; };
 		326CDBB718D860430054EF19 /* SpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 326CDBB518D860430054EF19 /* SpinLock.h */; };
 		326DB43014B38BC00018A8D0 /* ActionDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3B614B38BC00018A8D0 /* ActionDescriptor.cpp */; };
 		326DB43114B38BC00018A8D0 /* ActionDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3B714B38BC00018A8D0 /* ActionDescriptor.h */; };
@@ -1582,6 +1584,8 @@
 		326CADC618EAB64600E74CEA /* DataBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlock.h; sourceTree = "<group>"; };
 		326CADC818EAFD1200E74CEA /* VFSManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSManager.cpp; sourceTree = "<group>"; };
 		326CADC918EAFD1200E74CEA /* VFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSManager.h; sourceTree = "<group>"; };
+		326CD5A91D66F975003AD071 /* PublishingManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublishingManager.cpp; sourceTree = "<group>"; };
+		326CD5AA1D66F975003AD071 /* PublishingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublishingManager.h; sourceTree = "<group>"; };
 		326CDBB518D860430054EF19 /* SpinLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpinLock.h; sourceTree = "<group>"; };
 		326D3A5F17B0CD01004601A8 /* DriverManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DriverManager.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326D3A6017B0CD01004601A8 /* DriverManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DriverManager.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -2587,6 +2591,8 @@
 				326933E81D5089420033D9E9 /* publishing.h */,
 				32D4ACE61D66010100EF14E4 /* publishing_types.cpp */,
 				32C43BB91D65FDE8007F5864 /* publishing_types.h */,
+				326CD5A91D66F975003AD071 /* PublishingManager.cpp */,
+				326CD5AA1D66F975003AD071 /* PublishingManager.h */,
 				3291D5161D5DEE890077CBB3 /* PublishTarget.cpp */,
 				3291D5171D5DEE890077CBB3 /* PublishTarget.h */,
 			);
@@ -5275,6 +5281,7 @@
 			files = (
 				32CFC5C61AF55FED00E2A0B6 /* IOCU.h in Headers */,
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
+				326CD5AC1D66F975003AD071 /* PublishingManager.h in Headers */,
 				32C4EF3F1D4F716A0014F3D3 /* dataset_event_types.h in Headers */,
 				325FC8571AF7670200DB9D66 /* BasicIODriverInterface.h in Headers */,
 				32995C431BAC57A300F68148 /* SCWaitCommand.h in Headers */,
@@ -6058,6 +6065,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
+				326CD5AB1D66F975003AD071 /* PublishingManager.cpp in Sources */,
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
 				3214EF101D466F95004DB689 /* DataBroker.cpp in Sources */,
 				325168CC1D47935D00E877DF /* DataBrokerEditor.cpp in Sources */,

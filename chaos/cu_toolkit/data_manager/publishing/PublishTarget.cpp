@@ -36,7 +36,36 @@ using namespace chaos::common::direct_io::channel;
 
 using namespace chaos::cu::data_manager::publishing;
 
-#pragma mark Public Methods
+#pragma mark PublishElementAttribute
+PublishElementAttribute::PublishElementAttribute():
+publishing_mode(DirectIODeviceClientChannelPutModeStoricizeAnLive),
+publish_rate(0){}
+
+PublishElementAttribute::PublishElementAttribute(const PublishElementAttribute& src):
+publishing_mode(src.publishing_mode),
+publish_rate(src.publish_rate){}
+
+PublishElementAttribute& PublishElementAttribute::operator=(const PublishElementAttribute& src) {
+    publishing_mode = src.publishing_mode;
+    publish_rate = src.publish_rate;
+    return *this;
+}
+
+#pragma mark PublishableElement
+PublishableElement::PublishableElement():
+dataset_ptr(NULL),
+attribute(){}
+
+PublishableElement::PublishableElement(const PublishableElement& _dataset_element):
+dataset_ptr(_dataset_element.dataset_ptr),
+attribute(_dataset_element.attribute){}
+
+PublishableElement::PublishableElement(const DatasetElement& _dataset_reference,
+                                       const PublishElementAttribute& _attribute):
+dataset_ptr(&_dataset_reference),
+attribute(_attribute){}
+
+#pragma mark PublishTarget Public Methods
 PublishTarget::PublishTarget(const std::string &target_name):
 connection_feeder(target_name, this) {}
 
@@ -72,32 +101,21 @@ bool PublishTarget::removeServer(const std::string &server_url_erase) {
     return true;
 }
 
-void PublishTarget::setPublishingModeOnDataset(const std::string& dataset_name,
-                                               DirectIODeviceClientChannelPutMode new_publishing_mode) {
+void PublishTarget::setAttributeModeOnDataset(const std::string& dataset_name,
+                                              const PublishElementAttribute& publishable_attribute) {
     ChaosWriteLock rl(mutext_map_pub);
 
     if(map_publishable_element.count(dataset_name) == 0) return;
     
-    map_publishable_element[dataset_name].publishing_mode = new_publishing_mode;
-}
-
-void PublishTarget::setPublishingRateOnDataset(const std::string& dataset_name,
-                                               const uint64_t new_rate) {
-    ChaosWriteLock rl(mutext_map_pub);
-    
-    if(map_publishable_element.count(dataset_name) == 0) return;
-    
-    map_publishable_element[dataset_name].publish_rate = new_rate;
+    map_publishable_element[dataset_name].attribute = publishable_attribute;
 }
 
 void PublishTarget::addDataset(const DatasetElement &publishable_dataset,
-                               const DirectIODeviceClientChannelPutMode  new_publishing_mode,
-                               const uint64_t push_rate) {
+                               const PublishElementAttribute& publishable_attribute) {
     ChaosWriteLock rl(mutext_map_pub);
     map_publishable_element.insert(PublishableElementMapPair(publishable_dataset.dataset->getDatasetName(),
                                                              PublishableElement(publishable_dataset,
-                                                                                new_publishing_mode,
-                                                                                push_rate)));
+                                                                                publishable_attribute)));
 }
 
 void PublishTarget::removeDataset(const std::string& dataset_name) {
@@ -121,7 +139,7 @@ void PublishTarget::publish() {
         }
     }
 }
-#pragma mark Private Methods
+#pragma mark PublishTarget Private Methods
 bool PublishTarget::publish(const PublishableElement& publishable_element) {
     int err = 0;
     
@@ -143,7 +161,7 @@ bool PublishTarget::publish(const PublishableElement& publishable_element) {
         if ((err = (int)next_client->device_client_channel->storeAndCacheDataOutputChannel(publishable_element.dataset_ptr->dataset->getDatasetKey(),
                                                                                            (void *)serialization->getBufferPtr(),
                                                                                            (uint32_t)serialization->getBufferLen(),
-                                                                                           publishable_element.publishing_mode))) {
+                                                                                           publishable_element.attribute.publishing_mode))) {
             ERR << CHAOS_FORMAT("Error storing data into data service %1% with code: %2%",
                                 %next_client->connection->getServerDescription()%err);
         }

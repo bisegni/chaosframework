@@ -38,6 +38,52 @@ namespace chaos {
         namespace data_manager {
             namespace publishing {
                 
+                //identify a direct-io connection to an element of the target
+                struct PublishTargetClientChannel {
+                    chaos::common::direct_io::DirectIOClientConnection *connection;
+                    chaos::common::direct_io::channel::DirectIODeviceClientChannel *device_client_channel;
+                };
+                
+                struct PublishElementAttribute {
+                    //!determinate the publishing mode for this dataset
+                    common::direct_io::channel::DirectIODeviceClientChannelPutMode publishing_mode;
+                    //!publish rate for dataset in the endpoint
+                    uint64_t publish_rate;
+                    
+                    PublishElementAttribute();
+                    
+                    PublishElementAttribute(const PublishElementAttribute& src);
+                    
+                    //!overload assignement oeprator
+                    PublishElementAttribute& operator=(const PublishElementAttribute& src);
+                };
+                
+                //!represent a daataset that need to be publish into an endpoint
+                /*!
+                 correlate some publish information for the dataset for a specific endpoint
+                 
+                 */
+                struct PublishableElement {
+                    //! dataset to publish
+                    const chaos::cu::data_manager::DatasetElement *dataset_ptr;
+                    
+                    PublishElementAttribute attribute;
+                    
+                    //!is the last timestamp when the dataset has been publishen into the endpoint
+                    uint64_t last_publish_ts;
+                    
+                    PublishableElement();
+                    
+                    PublishableElement(const PublishableElement& _dataset_element);
+                    
+                    PublishableElement(const chaos::cu::data_manager::DatasetElement& _dataset_reference,
+                                       const PublishElementAttribute& _attribute);
+                };
+                
+                
+                //!define a map between a string and a dataset publishable element
+                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, PublishableElement, PublishableElementMap);
+                
                 //!identify the target wehe need to be published the dataset
                 /*!
                  Thi class identify an endpoint where one or more dataaccess need to be published. An endopoint
@@ -47,22 +93,21 @@ namespace chaos {
                 class PublishTarget:
                 public chaos::common::network::URLServiceFeederHandler,
                 public chaos::common::utility::InizializableService,
-                protected chaos_direct_io::DirectIOClientConnectionEventHandler {
+                protected chaos::common::direct_io::DirectIOClientConnectionEventHandler {
                     //feed the rule to use the right directio channel for endpoint urls
-                    ChaosSharedMutex mutext_feeder;
-                    chaos::common::network::URLServiceFeeder connection_feeder;
-
+                    ChaosSharedMutex                            mutext_feeder;
+                    chaos::common::network::URLServiceFeeder    connection_feeder;
+                    
                     //!map for correlate the name with the dataset publishable element
-                    ChaosSharedMutex mutext_map_pub;
-                    PublishableElementMap map_publishable_element;
-
+                    ChaosSharedMutex        mutext_map_pub;
+                    PublishableElementMap   map_publishable_element;
                 protected:
                     void disposeService(void *service_ptr);
                     
                     void *serviceForURL(const chaos::common::network::URL &url, uint32_t service_index);
                     
-                    void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
-                                     chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
+                    void handleEvent(chaos::common::direct_io::DirectIOClientConnection *client_connection,
+                                     chaos::common::direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
                     
                     inline std::auto_ptr<chaos::common::data::CDataWrapper> getDataPack(const chaos::common::data::cache::AttributeCache &ac);
                     
@@ -82,18 +127,16 @@ namespace chaos {
                     bool removeServer(const std::string &server_url_erase);
                     
                     //!change the publishing mode for this target
-                    void setPublishingModeOnDataset(const std::string& dataset_name,
-                                                    common::direct_io::channel::DirectIODeviceClientChannelPutMode new_publishing_mode);
-                    void setPublishingRateOnDataset(const std::string& dataset_name,
-                                                    const uint64_t new_rate);
+                    void setAttributeModeOnDataset(const std::string& dataset_name,
+                                                   const PublishElementAttribute& publishable_attribute);
+                    
                     //! add a new dataset to the end point
                     void addDataset(const chaos::cu::data_manager::DatasetElement &publishable_dataset,
-                                    const common::direct_io::channel::DirectIODeviceClientChannelPutMode  new_publishing_mode,
-                                    const uint64_t push_rate);
+                                    const PublishElementAttribute& publishable_attribute);
                     
                     //! remove a dataset by his name
                     void removeDataset(const std::string& dataset_name);
-                  
+                    
                     //!publish all registered dataset into the endpoint
                     void publish();
                 };
