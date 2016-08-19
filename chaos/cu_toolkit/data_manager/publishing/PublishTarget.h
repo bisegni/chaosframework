@@ -127,8 +127,8 @@ namespace chaos {
                     bool removeServer(const std::string &server_url_erase);
                     
                     //!change the publishing mode for this target
-                    void setAttributeModeOnDataset(const std::string& dataset_name,
-                                                   const PublishElementAttribute& publishable_attribute);
+                    void setAttributeOnDataset(const std::string& dataset_name,
+                                               const PublishElementAttribute& publishable_attribute);
                     
                     //! add a new dataset to the end point
                     void addDataset(const chaos::cu::data_manager::DatasetElement &publishable_dataset,

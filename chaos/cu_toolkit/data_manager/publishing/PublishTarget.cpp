@@ -85,6 +85,7 @@ bool PublishTarget::addServer(const std::string &server_url_new) {
     }
     //add new url to connection feeder
     connection_feeder.addURL(URL(server_url_new));
+    INFO << CHAOS_FORMAT("Added new url %1% into the endpoint", %server_url_new%connection_feeder.getName());
     return true;
 }
 
@@ -98,13 +99,14 @@ bool PublishTarget::removeServer(const std::string &server_url_erase) {
     }
     //remove server
     connection_feeder.removeURL(connection_feeder.getIndexFromURL(server_url_erase));
+    INFO << CHAOS_FORMAT("Remove url %1% from the endpoint", %server_url_erase%connection_feeder.getName());
     return true;
 }
 
-void PublishTarget::setAttributeModeOnDataset(const std::string& dataset_name,
-                                              const PublishElementAttribute& publishable_attribute) {
+void PublishTarget::setAttributeOnDataset(const std::string& dataset_name,
+                                          const PublishElementAttribute& publishable_attribute) {
     ChaosWriteLock rl(mutext_map_pub);
-
+    
     if(map_publishable_element.count(dataset_name) == 0) return;
     
     map_publishable_element[dataset_name].attribute = publishable_attribute;

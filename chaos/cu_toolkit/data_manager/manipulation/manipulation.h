@@ -22,8 +22,8 @@
 #ifndef __CHAOSFramework__E506CA6_E1AA_4DC9_A183_033BA0C288CC_manipulation_h
 #define __CHAOSFramework__E506CA6_E1AA_4DC9_A183_033BA0C288CC_manipulation_h
 
-#include <chaos/cu_toolkit/data_manager/publishing/DatasetEditor.h>
-#include <chaos/cu_toolkit/data_manager/publishing/DataBrokerEditor.h>
-#include <chaos/cu_toolkit/data_manager/publishing/DatasetCacheWrapper.h>
+#include <chaos/cu_toolkit/data_manager/manipulation/DatasetEditor.h>
+#include <chaos/cu_toolkit/data_manager/manipulation/DataBrokerEditor.h>
+#include <chaos/cu_toolkit/data_manager/manipulation/DatasetCacheWrapper.h>
 
 #endif /* __CHAOSFramework__E506CA6_E1AA_4DC9_A183_033BA0C288CC_manipulation_h */

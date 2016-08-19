@@ -24,6 +24,9 @@
 using namespace chaos::DataType;
 using namespace chaos::common::data;
 using namespace chaos::common::data::structured;
+
+using namespace chaos::common::utility;
+
 using namespace chaos::cu::data_manager::manipulation;
 
 #define INFO INFO_LOG(DataBrokerEditor)
@@ -31,15 +34,17 @@ using namespace chaos::cu::data_manager::manipulation;
 #define ERR ERR_LOG(DataBrokerEditor)
 
 DataBrokerEditor::DataBrokerEditor():
-ds_index_name(container_dataset.get<DatasetElementTagName>()),
-ds_index_ordered(container_dataset.get<DatasetElementTagOrderedId>()),
-ds_index_type_name(container_dataset.get<DatasetElementTagTypeName>()){}
+ds_index_name(container_dataset().get<DatasetElementTagName>()),
+ds_index_ordered(container_dataset().get<DatasetElementTagOrderedId>()),
+ds_index_type_name(container_dataset().get<DatasetElementTagTypeName>()){}
 
 DataBrokerEditor::~DataBrokerEditor() {}
 
 int DataBrokerEditor::addNewDataset(const std::string& name,
                                     const DatasetType type,
                                     const std::string& shared_key) {
+    LockableObjectWriteLock wl;
+    container_dataset.getWriteLock(wl);
     DECNameIndexIterator nit = ds_index_name.find(name);
     if(nit != ds_index_name.end()) {
         //a dataset with name already exists
@@ -48,12 +53,15 @@ int DataBrokerEditor::addNewDataset(const std::string& name,
     }
     
     //add new dataset
-    container_dataset.insert(DatasetElement::DatasetElementPtr(new DatasetElement((unsigned int)container_dataset.size(),
-                                                                                  DatasetPtr(new Dataset(name, type)))));
+    container_dataset().insert(DatasetElement::DatasetElementPtr(new DatasetElement((unsigned int)container_dataset().size(),
+                                                                                    DatasetPtr(new Dataset(name, type)))));
     return 0;
 }
 
 std::auto_ptr<DatasetEditor> DataBrokerEditor::getDatasetEditorFor(const std::string& ds_name) {
+    LockableObjectReadLock wl;
+    container_dataset.getReadLock(wl);
+    
     std::auto_ptr<DatasetEditor> result;
     DECNameIndexIterator nit = ds_index_name.find(ds_name);
     if(nit == ds_index_name.end()) {
@@ -65,6 +73,8 @@ std::auto_ptr<DatasetEditor> DataBrokerEditor::getDatasetEditorFor(const std::st
 }
 
 std::auto_ptr<DatasetCacheWrapper> DataBrokerEditor::getDatasetCacheWrapperFor(const std::string& ds_name) {
+    LockableObjectReadLock wl;
+    container_dataset.getReadLock(wl);
     std::auto_ptr<DatasetCacheWrapper> result;
     DECNameIndexIterator nit = ds_index_name.find(ds_name);
     if(nit == ds_index_name.end()) {
@@ -76,6 +86,8 @@ std::auto_ptr<DatasetCacheWrapper> DataBrokerEditor::getDatasetCacheWrapperFor(c
 }
 
 std::auto_ptr<CDataWrapper> DataBrokerEditor::serialize() {
+    LockableObjectReadLock wl;
+    container_dataset.getReadLock(wl);
     std::auto_ptr<CDataWrapper> result(new CDataWrapper());
     //scan all dataset and every serialization will be added to global CDataWrapper as array
     Dataset ds_buff;
@@ -94,6 +106,8 @@ std::auto_ptr<CDataWrapper> DataBrokerEditor::serialize() {
 }
 
 void DataBrokerEditor::deserialize(CDataWrapper& serialization) {
+    LockableObjectWriteLock wl;
+    container_dataset.getWriteLock(wl);
     if( !serialization.hasKey(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION) ||
        serialization.isVectorValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_ATTRIBUTE_DESCRIPTION)) return;
     
@@ -118,8 +132,8 @@ int DataBrokerEditor::addNewDataset(Dataset& new_dataset) {
                                                                              new_dataset.getDatasetName()));
     if(dit == ds_index_type_name.end()) {
         // dataset already exists
-        container_dataset.insert(DatasetElement::DatasetElementPtr(new DatasetElement((unsigned int)container_dataset.size(),
-                                                                                      DatasetPtr(new Dataset(new_dataset)))));
+        container_dataset().insert(DatasetElement::DatasetElementPtr(new DatasetElement((unsigned int)container_dataset().size(),
+                                                                                        DatasetPtr(new Dataset(new_dataset)))));
     } else {
         //scan all new dataset attribute if there are new attribute they will be added
         //! if attribute is found, property are updated with new daset one.

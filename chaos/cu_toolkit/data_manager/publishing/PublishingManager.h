@@ -24,6 +24,9 @@
 
 #include <chaos/common/chaos_types.h>
 
+#include <chaos/common/utility/LockableObject.h>
+
+#include <chaos/cu_toolkit/data_manager/data_manager_types.h>
 #include <chaos/cu_toolkit/data_manager/publishing/PublishTarget.h>
 #include <chaos/cu_toolkit/data_manager/publishing/publishing_types.h>
 
@@ -45,28 +48,51 @@ namespace chaos {
                 };
                 
                 //!hash table that collect publishtarget shared pointer with theyr names
-                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, boost::shared_ptr<PublishableTargetManagerElement>, PublishableElementNameMap);
-
+                typedef boost::shared_ptr<PublishableTargetManagerElement>  PublishableTargetManagerElementShrdPtr;
+                CHAOS_DEFINE_MAP_FOR_TYPE(std::string, PublishableTargetManagerElementShrdPtr, PublishableElementNameMap);
+                
                 //! is the central class that collect all endpoint and manages they lifetime
                 class PublishingManager {
+                    
+                    //! reference to master dataset container
+                    chaos::common::utility::LockableObject<DatasetElementContainer>& container_dataset;
+                    
                     //!map that correlate target name with publishable target instance
-                    PublishableElementNameMap   map_name_target;
-                    ChaosSharedMutex            mutex_map_name_target;
+                    chaos::common::utility::LockableObject<PublishableElementNameMap>  map_name_target;
+                public:
+                    
+                    PublishingManager(chaos::common::utility::LockableObject<DatasetElementContainer>& container_dataset);
+                    
+                    ~PublishingManager();
                     
                     //!add a new target givin the name
                     bool addNewTarget(const std::string& target_name,
                                       bool auto_remove);
                     
                     //! remove a target givin his name
-                    bool removeNewTarget(const std::string& target_name);
+                    bool removeTarget(const std::string& target_name);
+                    
+                    //! add a new endpoint to the target
+                    bool addURLToTarget(const std::string& target_name,
+                                        const std::string& server_url_new);
+                    
+                    //! remove and endpoint identified by url form the target
+                    bool removeURLServer(const std::string& target_name,
+                                         const std::string& server_url_erase);
                     
                     //!add a dataset into a target
                     bool addDatasetToTarget(const std::string& target_name,
-                                            const chaos::cu::data_manager::DatasetElement &publishable_dataset);
+                                            const std::string& dataset_name,
+                                            const PublishElementAttribute& publishable_attribute);
                     
                     //!remove a dataset from a target
                     bool removeDatasetFromTarget(const std::string& target_name,
-                                                 const chaos::cu::data_manager::DatasetElement &publishable_dataset);
+                                                 const std::string& dataset_name);
+                    
+                    //!change the publishing mode for this target
+                    void setPublishAttributeOnDataset(const std::string& target_name,
+                                                      const std::string& dataset_name,
+                                                      const PublishElementAttribute& publishable_attribute);
                 };
                 
             }

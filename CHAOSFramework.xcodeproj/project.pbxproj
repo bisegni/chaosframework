@@ -1586,6 +1586,7 @@
 		326CADC918EAFD1200E74CEA /* VFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSManager.h; sourceTree = "<group>"; };
 		326CD5A91D66F975003AD071 /* PublishingManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublishingManager.cpp; sourceTree = "<group>"; };
 		326CD5AA1D66F975003AD071 /* PublishingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublishingManager.h; sourceTree = "<group>"; };
+		326CD5AE1D673EB5003AD071 /* LockableObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LockableObject.h; sourceTree = "<group>"; };
 		326CDBB518D860430054EF19 /* SpinLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpinLock.h; sourceTree = "<group>"; };
 		326D3A5F17B0CD01004601A8 /* DriverManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DriverManager.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326D3A6017B0CD01004601A8 /* DriverManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DriverManager.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -3706,6 +3707,7 @@
 				324544F71D4A55ED0081F90B /* AbstractListener.h */,
 				324544FA1D4A56170081F90B /* AbstractListenerContainer.cpp */,
 				324544FB1D4A56170081F90B /* AbstractListenerContainer.h */,
+				326CD5AE1D673EB5003AD071 /* LockableObject.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
