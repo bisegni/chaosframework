@@ -1,10 +1,10 @@
 /*
- *	publishing.h
+ *	publishing_type.h
  *
  *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ *	Created by Claudio Bisegni.
  *
- *    	Copyright 02/08/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 18/08/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,10 +19,24 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__44CEA14_5610_4C66_B440_8C2D5765CAA4_publishing_h
-#define __CHAOSFramework__44CEA14_5610_4C66_B440_8C2D5765CAA4_publishing_h
+#ifndef __CHAOSFramework_B829D1BF_E7DA_40E8_96F6_E91815C2ADAB_publishing_type_h
+#define __CHAOSFramework_B829D1BF_E7DA_40E8_96F6_E91815C2ADAB_publishing_type_h
 
-#include <chaos/cu_toolkit/data_manager/publishing/publishing_types.h>
+#include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
+
+#include <chaos/cu_toolkit/data_manager/data_manager_types.h>
 #include <chaos/cu_toolkit/data_manager/publishing/PublishTarget.h>
-#include <chaos/cu_toolkit/data_manager/publishing/PublishingManager.h>
-#endif /* __CHAOSFramework__44CEA14_5610_4C66_B440_8C2D5765CAA4_publishing_h */
+
+#include <boost/shared_ptr.hpp>
+
+namespace chaos {
+    namespace cu {
+        namespace data_manager {
+            namespace publishing {
+
+            }
+        }
+    }
+}
+
+#endif /* __CHAOSFramework_B829D1BF_E7DA_40E8_96F6_E91815C2ADAB_publishing_type_h */

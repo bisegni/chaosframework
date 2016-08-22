@@ -1,10 +1,10 @@
 /*
- *	DataBrokerEditor.h
+ *	publishing_types.cpp
  *
  *	!CHAOS [CHAOSFramework]
- *	Created by bisegni.
+ *	Created by Claudio Bisegni.
  *
- *    	Copyright 25/07/16 INFN, National Institute of Nuclear Physics
+ *    	Copyright 18/08/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,9 +19,10 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__5E877DE_5866_4F13_9762_9D4BBF1143EE_DataBrokerEditor_h
-#define __CHAOSFramework__5E877DE_5866_4F13_9762_9D4BBF1143EE_DataBrokerEditor_h
+#include <chaos/cu_toolkit/data_manager/publishing/publishing_types.h>
+using namespace chaos::cu::data_manager;
+using namespace chaos::cu::data_manager::publishing;
 
-#include <stdio.h>
+using namespace chaos::common::direct_io::channel;
 
-#endif /* __CHAOSFramework__5E877DE_5866_4F13_9762_9D4BBF1143EE_DataBrokerEditor_h */
+

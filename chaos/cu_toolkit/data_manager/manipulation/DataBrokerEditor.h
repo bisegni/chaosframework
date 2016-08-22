@@ -22,6 +22,8 @@
 #ifndef __CHAOSFramework__5E877DE_5866_4F13_9762_9D4BBF1143EE_DataBrokerEditor_h
 #define __CHAOSFramework__5E877DE_5866_4F13_9762_9D4BBF1143EE_DataBrokerEditor_h
 
+#include <chaos/common/utility/LockableObject.h>
+
 #include <chaos/cu_toolkit/data_manager/data_manager_types.h>
 #include <chaos/cu_toolkit/data_manager/manipulation/DatasetEditor.h>
 #include <chaos/cu_toolkit/data_manager/manipulation/DatasetCacheWrapper.h>
@@ -40,7 +42,7 @@ namespace chaos {
                     friend class chaos::cu::data_manager::DataBroker;
                     
                     //reference to root dataset element
-                    DatasetElementContainer container_dataset;
+                    chaos::common::utility::LockableObject<DatasetElementContainer> container_dataset;
                     
                     DECNameIndex&        ds_index_name;
                     DECOrderedIndex&     ds_index_ordered;

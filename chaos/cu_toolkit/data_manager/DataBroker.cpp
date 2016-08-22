@@ -21,16 +21,46 @@
 
 #include <chaos/cu_toolkit/data_manager/DataBroker.h>
 
+using namespace chaos;
 using namespace chaos::cu::data_manager;
+using namespace chaos::cu::data_manager::publishing;
+using namespace chaos::cu::data_manager::manipulation;
+using namespace chaos::cu::data_manager::trigger_system;
 
-
+using namespace chaos::common::direct_io::channel::opcode_headers;
 #pragma mark DataBroker
-
 DataBroker::DataBroker():
-editor() {}
+dataset_manager(),
+publishing_manager(dataset_manager.container_dataset){}
 
 DataBroker::~DataBroker() {}
 
-manipulation::DataBrokerEditor& DataBroker::getEditor() {
-    return editor;
+void DataBroker::init(void* init_data) throw(CException) {
+    
+}
+
+void DataBroker::deinit() throw(CException) {
+    
+}
+
+#pragma mark DataBroker Protected Method
+int DataBroker::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
+                                void *channel_data,
+                                uint32_t channel_data_len) {
+    return -1;
+}
+
+int DataBroker::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
+                                void *channel_data,
+                                uint32_t channel_data_len,
+                                DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
+                                void **result_value) {
+    return -1;
+}
+
+int DataBroker::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud *header,
+                                      const std::string& search_key,
+                                      uint64_t search_start_ts,
+                                      uint64_t search_end_ts) {
+    return -1;
 }

@@ -36,81 +36,144 @@ using namespace chaos::common::direct_io::channel;
 
 using namespace chaos::cu::data_manager::publishing;
 
-#pragma mark Public Methods
-PublishTarget::PublishTarget(const std::string& target_name):
-connection_feeder(target_name, this),
-publishing_mode(DirectIODeviceClientChannelPutModeLiveOnly){}
+#pragma mark PublishElementAttribute
+PublishElementAttribute::PublishElementAttribute():
+publishing_mode(DirectIODeviceClientChannelPutModeStoricizeAnLive),
+publish_rate(0){}
 
-PublishTarget::~PublishTarget() {
-    //remove all service url
-    
+PublishElementAttribute::PublishElementAttribute(const PublishElementAttribute& src):
+publishing_mode(src.publishing_mode),
+publish_rate(src.publish_rate){}
+
+PublishElementAttribute& PublishElementAttribute::operator=(const PublishElementAttribute& src) {
+    publishing_mode = src.publishing_mode;
+    publish_rate = src.publish_rate;
+    return *this;
 }
+
+#pragma mark PublishableElement
+PublishableElement::PublishableElement():
+dataset_ptr(NULL),
+attribute(){}
+
+PublishableElement::PublishableElement(const PublishableElement& _dataset_element):
+dataset_ptr(_dataset_element.dataset_ptr),
+attribute(_dataset_element.attribute){}
+
+PublishableElement::PublishableElement(const DatasetElement& _dataset_reference,
+                                       const PublishElementAttribute& _attribute):
+dataset_ptr(&_dataset_reference),
+attribute(_attribute){}
+
+#pragma mark PublishTarget Public Methods
+PublishTarget::PublishTarget(const std::string &target_name):
+connection_feeder(target_name, this) {}
+
+PublishTarget::~PublishTarget() {}
 
 void PublishTarget::clear() {
     connection_feeder.clear(true);
 }
 
-bool PublishTarget::addServer(const std::string& server_url_new) {
+bool PublishTarget::addServer(const std::string &server_url_new) {
     //lock the feeder
-    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+    ChaosWriteLock wl(mutext_feeder);
     
-    if(!DirectIOClient::checkURL(server_url_new)) {
+    if (!DirectIOClient::checkURL(server_url_new)) {
         ERR << CHAOS_FORMAT("Url %1% non well formed", %server_url_new);
         return false;
     }
     //add new url to connection feeder
     connection_feeder.addURL(URL(server_url_new));
+    INFO << CHAOS_FORMAT("Added new url %1% into the endpoint", %server_url_new%connection_feeder.getName());
     return true;
 }
 
-bool PublishTarget::removeServer(const std::string& server_url_erase) {
+bool PublishTarget::removeServer(const std::string &server_url_erase) {
     //lock the feeder
-    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+    ChaosWriteLock wl(mutext_feeder);
     
-    if(!DirectIOClient::checkURL(server_url_erase)) {
+    if (!DirectIOClient::checkURL(server_url_erase)) {
         ERR << CHAOS_FORMAT("Url %1% non well formed", %server_url_erase);
         return false;
     }
     //remove server
     connection_feeder.removeURL(connection_feeder.getIndexFromURL(server_url_erase));
+    INFO << CHAOS_FORMAT("Remove url %1% from the endpoint", %server_url_erase%connection_feeder.getName());
     return true;
 }
 
-void PublishTarget::setPublishingMode(DirectIODeviceClientChannelPutMode new_publishing_mode) {
-    publishing_mode = new_publishing_mode;
+void PublishTarget::setAttributeOnDataset(const std::string& dataset_name,
+                                          const PublishElementAttribute& publishable_attribute) {
+    ChaosWriteLock rl(mutext_map_pub);
+    
+    if(map_publishable_element.count(dataset_name) == 0) return;
+    
+    map_publishable_element[dataset_name].attribute = publishable_attribute;
 }
 
-bool PublishTarget::publish(const DatasetElement& publishable_dataset) {
+void PublishTarget::addDataset(const DatasetElement &publishable_dataset,
+                               const PublishElementAttribute& publishable_attribute) {
+    ChaosWriteLock rl(mutext_map_pub);
+    map_publishable_element.insert(PublishableElementMapPair(publishable_dataset.dataset->getDatasetName(),
+                                                             PublishableElement(publishable_dataset,
+                                                                                publishable_attribute)));
+}
+
+void PublishTarget::removeDataset(const std::string& dataset_name) {
+    ChaosWriteLock rl(mutext_map_pub);
+    map_publishable_element.erase(dataset_name);
+    
+}
+
+void PublishTarget::publish() {
+    ChaosReadLock rl(mutext_map_pub);
+    
+    //scan all elements
+    for(PublishableElementMapIterator it = map_publishable_element.begin(),
+        end = map_publishable_element.end();
+        it != end;
+        it++) {
+        //check the rate for this dataset
+        if(publish(it->second) == false) {
+            ERR << CHAOS_FORMAT("Error push dataset %1% into the endpoint %2%",
+                                %it->first%connection_feeder.getName());
+        }
+    }
+}
+#pragma mark PublishTarget Private Methods
+bool PublishTarget::publish(const PublishableElement& publishable_element) {
     int err = 0;
     
     //check if dataset has been changed
-    if(publishable_dataset.dataset_value_cache.hasChanged()) return false;
+    if (publishable_element.dataset_ptr->dataset_value_cache.hasChanged())
+        return false;
     
     //lock feeder
-    boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+    ChaosReadLock rl(mutext_feeder);
     
-    std::auto_ptr<SerializationBuffer> serialization(getDataPack(publishable_dataset.dataset_value_cache)->getBSONData());
+    std::auto_ptr<SerializationBuffer> serialization(getDataPack(publishable_element.dataset_ptr->dataset_value_cache)->getBSONData());
     
     //get next available client
-    PublishTargetClientChannel	*next_client = static_cast<PublishTargetClientChannel*>(connection_feeder.getService());
+    PublishTargetClientChannel *next_client = static_cast<PublishTargetClientChannel *>(connection_feeder.getService());
     serialization->disposeOnDelete = !next_client;
-    if(next_client) {
+    if (next_client) {
         //free the packet
         serialization->disposeOnDelete = false;
-        if((err = (int)next_client->device_client_channel->storeAndCacheDataOutputChannel(publishable_dataset.dataset->getDatasetKey(),
-                                                                                          (void*)serialization->getBufferPtr(),
-                                                                                          (uint32_t)serialization->getBufferLen(),
-                                                                                          publishing_mode))) {
-            ERR << "Error storing data into data service "<<next_client->connection->getServerDescription()<<" with code:" << err;
+        if ((err = (int)next_client->device_client_channel->storeAndCacheDataOutputChannel(publishable_element.dataset_ptr->dataset->getDatasetKey(),
+                                                                                           (void *)serialization->getBufferPtr(),
+                                                                                           (uint32_t)serialization->getBufferLen(),
+                                                                                           publishable_element.attribute.publishing_mode))) {
+            ERR << CHAOS_FORMAT("Error storing data into data service %1% with code: %2%",
+                                %next_client->connection->getServerDescription()%err);
         }
     } else {
-        DEBUG_CODE(DBG << "No available socket->loose packet");
+        DEBUG_CODE(DBG << "No available socket for publish data");
     }
     return true;
 }
 
-#pragma mark Private Methods
-std::auto_ptr<CDataWrapper> PublishTarget::getDataPack(const chaos::common::data::cache::AttributeCache& attribute_cache) {
+std::auto_ptr<CDataWrapper> PublishTarget::getDataPack(const chaos::common::data::cache::AttributeCache &attribute_cache) {
     //clock the cache
     ReadSharedCacheLockDomain read_lock_on_cache(attribute_cache.mutex);
     
@@ -125,26 +188,30 @@ std::auto_ptr<CDataWrapper> PublishTarget::getDataPack(const chaos::common::data
 void PublishTarget::disposeService(void *service_ptr) {
     CHAOS_ASSERT(service_ptr);
     
-    PublishTargetClientChannel	*next_client = static_cast<PublishTargetClientChannel*>(service_ptr);
-    if(next_client->device_client_channel) next_client->connection->releaseChannelInstance(next_client->device_client_channel);
+    PublishTargetClientChannel *next_client = static_cast<PublishTargetClientChannel *>(service_ptr);
+    if (next_client->device_client_channel)
+        next_client->connection->releaseChannelInstance(next_client->device_client_channel);
     NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->releaseConnection(next_client->connection);
-    delete(next_client);
+    delete (next_client);
 }
 
-void* PublishTarget::serviceForURL(const URL& url, uint32_t service_index) {
+void *PublishTarget::serviceForURL(const URL &url, uint32_t service_index) {
     INFO << "try to add connection for " << url.getURL();
     std::auto_ptr<PublishTargetClientChannel> endpoint_connection(new PublishTargetClientChannel());
-    endpoint_connection->connection = NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->getNewConnection(url.getURL());
-    if(endpoint_connection->connection) {
+    endpoint_connection->connection =
+    NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->getNewConnection(url.getURL());
+    if (endpoint_connection->connection) {
         
         
         //allocate the client channel
-        endpoint_connection->device_client_channel = static_cast<DirectIODeviceClientChannel*>(endpoint_connection->connection->getNewChannelInstance("DirectIODeviceClientChannel"));
-        if(endpoint_connection->device_client_channel == NULL) {
+        endpoint_connection->device_client_channel =
+        static_cast<DirectIODeviceClientChannel *>(endpoint_connection->connection->getNewChannelInstance("DirectIODeviceClientChannel"));
+        if (endpoint_connection->device_client_channel == NULL) {
             ERR << "Error creating client device channel for " << url.getURL();
             
             //release conenction
-            NetworkBroker::getInstance()->getSharedDirectIOClientInstance()->releaseConnection(endpoint_connection->connection);
+            NetworkBroker::getInstance()->getSharedDirectIOClientInstance()
+            ->releaseConnection(endpoint_connection->connection);
             return NULL;
         }
         
@@ -163,14 +230,20 @@ void PublishTarget::handleEvent(chaos_direct_io::DirectIOClientConnection *clien
     //if the channel has bee disconnected turn the relative index offline, if onli reput it online
     boost::shared_lock<boost::shared_mutex>(mutext_feeder);
     uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
-    switch(event) {
-        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:
-            DEBUG_CODE(INFO << CHAOS_FORMAT("Manage Connected event to service with index %1% and url %2%", %service_index%client_connection->getURL());)
+    switch (event) {
+        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:DEBUG_CODE(INFO <<
+                                                                                                                   CHAOS_FORMAT("Manage Connected event to service with index %1% and url %2%",
+                                                                                                                                % service_index
+                                                                                                                                % client_connection
+                                                                                                                                ->getURL());)
             connection_feeder.setURLOnline(service_index);
             break;
             
-        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:
-            DEBUG_CODE(INFO << CHAOS_FORMAT("Manage Disconnected event to service with index %1% and url %2%", %service_index%client_connection->getURL());)
+        case chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:DEBUG_CODE(INFO <<
+                                                                                                                      CHAOS_FORMAT("Manage Disconnected event to service with index %1% and url %2%",
+                                                                                                                                   % service_index
+                                                                                                                                   % client_connection
+                                                                                                                                   ->getURL());)
             connection_feeder.setURLOffline(service_index);
             break;
     }
