@@ -426,6 +426,9 @@ namespace chaos {
             
             //! release a query
             void releaseQuery(chaos::common::io::QueryFuture *query_future);
+
+	    //! get profile info
+	    cu_prof_t getProfileInfo();
         };
     }
 }

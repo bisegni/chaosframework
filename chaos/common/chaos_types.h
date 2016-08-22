@@ -102,4 +102,11 @@ typedef boost::shared_mutex                     ChaosSharedMutex;
 typedef boost::shared_lock<boost::shared_mutex> ChaosReadLock;
 typedef boost::unique_lock<boost::shared_mutex> ChaosWriteLock;
 
+typedef struct {
+  float push_rate; // push rate
+  float sys_time; // time spent in system
+  float usr_time; // time spent in user
+  uint64_t upt_time; // uptime seconds
+  uint64_t metric_time; // timestamp of the metric
+} cu_prof_t;
 #endif

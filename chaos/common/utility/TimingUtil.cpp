@@ -23,16 +23,19 @@
 
 using namespace chaos::common::utility;
 
-const std::locale TimingUtil::formats[] = {
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%S.%f")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M:%S.%f")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M:%S")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%S")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m")),
-				std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y"))};
+const char* TimingUtil::formats[]={
+  "%Y-%m-%dT%H:%M:%S.%f",
+  "%Y-%m-%d %H:%M:%S.%f",
+  "%Y-%m-%d %H:%M:%S",
+  "%Y-%m-%dT%H:%M:%S",
+  "%Y-%m-%d %H:%M",
+  "%Y-%m-%dT%H:%M",
+  "%Y-%m-%d %H",
+  "%Y-%m-%dT%H",
+  "%Y-%m-%d",
+  "%Y-%m",
+  "%Y"
+};
+
+
 const size_t TimingUtil::formats_n = 11;

@@ -966,6 +966,21 @@ CDataWrapper *DeviceController::getCurrentData(){
     get();
 }
 
+//! get profile info
+cu_prof_t DeviceController::getProfileInfo(){
+  chaos::common::data::CDataWrapper *prof=  fetchCurrentDatatasetFromDomain(DatasetDomainHealth);
+  cu_prof_t p;
+  bzero(&p,sizeof(cu_prof_t));
+  if(prof){
+    p.push_rate=prof->getDoubleValue(ControlUnitHealtDefinitionValue::CU_HEALT_OUTPUT_DATASET_PUSH_RATE);
+    p.sys_time =prof->getDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_SYSTEM_TIME);
+    p.usr_time = prof->getDoubleValue(NodeHealtDefinitionKey::NODE_HEALT_USER_TIME);
+    p.upt_time = prof->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_PROCESS_UPTIME);
+    p.metric_time = prof->getInt64Value(NodeHealtDefinitionKey::NODE_HEALT_TIMESTAMP_LAST_METRIC);
+  }
+  return p;
+}
+
 //! get datapack between time itervall
 void DeviceController::executeTimeIntervallQuery(uint64_t start_ts, uint64_t end_ts, QueryFuture **query_future) {
     *query_future = ioLiveDataDriver->performQuery(device_id, start_ts, end_ts);
