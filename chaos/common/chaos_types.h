@@ -25,6 +25,8 @@
 
 #include <boost/ptr_container/ptr_container.hpp>
 
+#include <boost/thread.hpp>
+
 #include <set>
 #include <map>
 #include <queue>
@@ -95,5 +97,9 @@ it != vec.end();\
 it++) {\
    to_execute \
 }\
+
+typedef boost::shared_mutex                     ChaosSharedMutex;
+typedef boost::shared_lock<boost::shared_mutex> ChaosReadLock;
+typedef boost::unique_lock<boost::shared_mutex> ChaosWriteLock;
 
 #endif
