@@ -110,8 +110,8 @@ namespace chaos {
             template<typename T>
             class CObjectProcessingPriorityQueue {
                 typedef std::priority_queue< PRIORITY_ELEMENT(T)*,
-                        std::vector< PRIORITY_ELEMENT(T)* >,
-                        PriorityElementCompare<T> > ChaosPriorityQueue;
+                std::vector< PRIORITY_ELEMENT(T)* >,
+                PriorityElementCompare<T> > ChaosPriorityQueue;
                 
                 std::string uid;
                 ChaosPriorityQueue bufferQueue;

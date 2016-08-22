@@ -33,7 +33,42 @@ number_of_production(0) {
 ObjectPriorityQueueTest::~ObjectPriorityQueueTest() {
 }
 
-bool ObjectPriorityQueueTest::test(int _number_of_producer,
+bool ObjectPriorityQueueTest::testPriority(int _max_priority,
+                        int _number_of_production) {
+    std::srand(std::time(0));
+    std::cout << "Generate "<< _number_of_production <<" number of iteration of sequences of data with rando priority of max value "<<_max_priority<<"--------------------------" << std::endl;
+    for(int idx = 0; idx < _number_of_production; idx++) {
+        command_submitted_queue.push(new PriorityQueuedElement<TestElement>(new TestElement(chaos::common::utility::UUIDUtil::generateUUID()), idx, std::rand()%_max_priority+1, true));
+    }
+    uint64_t last_sequence = 0;
+    int last_priority = 100;
+    std::cout << "Checking ------------------------------------------------------------------------" << _max_priority << std::endl;
+    while (command_submitted_queue.size()) {
+        current_element = command_submitted_queue.top();
+        command_submitted_queue.pop();
+        if(last_priority != current_element->priority) {
+            if(last_priority<current_element->priority) {
+                std::cerr << "Bad priority sequence"<< std::endl;
+                return false;
+            }
+            last_priority = current_element->priority;
+            last_sequence = 0;
+        }
+        if(last_sequence != current_element->sequence_id) {
+            if(last_sequence>current_element->sequence_id) {
+                std::cerr << "Bad sequence order"<< std::endl;
+                return false;
+            }
+            last_sequence = current_element->sequence_id;
+        }
+        std::cout << current_element->element->element_value << "[P:" << current_element->priority << " seq:"<< current_element->sequence_id << "]" << std::endl;
+        delete(current_element);
+    }
+    std::cout << "No error during Checking ------------------------------------------------------------------------" << _max_priority << std::endl;
+    return true;
+}
+
+bool ObjectPriorityQueueTest::testConcurency(int _number_of_producer,
 						   int _number_of_production,
 						   int _number_of_consumer,
 						   unsigned int _sec_to_whait,

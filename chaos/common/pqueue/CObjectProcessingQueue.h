@@ -40,7 +40,7 @@
 namespace chaos {
 	
 	
-	typedef struct {
+	typedef struct ElementManagingPolicy {
 		bool elementHasBeenDetached;
 	} ElementManagingPolicy;
 	

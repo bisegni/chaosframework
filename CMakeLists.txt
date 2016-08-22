@@ -104,8 +104,18 @@ IF (CHAOS_MEMCACHE_TEST)
 ENDIF()
 
 IF (CHAOS_ARCHITECTURE_TEST)
-  MESG("Configure ChaosArchitectureTests test excutable")
-  ADD_SUBDIRECTORY(test/ArchitectureTests)
+#scan all subdirectory of test directory
+    MESG("Configure infrastructure tests")
+    SET(CHAOS_TEST_DIRECTORY "CHAOSFrameworkTests")
+
+    SUBDIRLIST(TEST_SUBDIRS ${CHAOS_TEST_DIRECTORY})
+    FOREACH(_TEST_DIRECTORY ${TEST_SUBDIRS})
+        IF(EXISTS "${_TEST_DIRECTORY}/CMakeLists.txt")
+            get_filename_component(_TEST_DIR_NAME ${_TEST_DIRECTORY} NAME)
+            MESG("Configure ${_TEST_DIR_NAME} test")
+            ADD_SUBDIRECTORY(${_TEST_DIRECTORY})
+        ENDIF()
+    ENDFOREACH()
 ENDIF()
 
 MESG("Done")

@@ -52,11 +52,13 @@ namespace chaos {
 				public:
 					ObjectPriorityQueueTest();
 					virtual ~ObjectPriorityQueueTest();
-					bool test(int _number_of_producer,
-							  int _number_of_production,
-							  int _number_of_consumer,
-							  unsigned int _sec_to_whait = 0,
+					bool testConcurency(int _number_of_producer,
+                                        int _number_of_production,
+                                        int _number_of_consumer,
+                                        unsigned int _sec_to_whait = 0,
 							  bool _whait_to_finish = true);
+                    bool testPriority(int _max_priority,
+                                      int _number_of_production);
 				};
 			}
 		}
