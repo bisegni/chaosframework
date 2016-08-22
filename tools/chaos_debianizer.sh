@@ -57,6 +57,10 @@ while getopts p:i:v:dt:sac,r opt; do
     esac
 	
 done
+if [ -z "$SOURCE_DIR" ] && [ -n "$CHAOS_PREFIX" ];then
+    SOURCE_DIR=$CHAOS_PREFIX
+fi
+    
 if [  ! -f "$SOURCE_DIR/chaos_env.sh" ];then
     error_mesg "please specify a valid CHAOS INSTALL DIRECTORY missing " "$SOURCE_DIR/chaos_env.sh"
     exit 1
@@ -71,7 +75,14 @@ if [ ! -d "$SOURCE_DIR" ];then
 fi
 source $SOURCE_DIR/chaos_env.sh
 
+if [ -z "$CHAOS_TARGET" ];then
+    os=`uname -s`
+    arch=`uname -m`
+    CHAOS_TARGET=$os-$arch
+fi
+
 if [ "$CHAOS_TARGET" != "Linux-i386" ] && [ "$CHAOS_TARGET" != "Linux-x86_64" ] && [ "$CHAOS_TARGET" != "Linux-armhf" ];then
+    
     error_mesg "bad target " "$CHAOS_TARGET"
     Usage;
 fi
@@ -137,7 +148,7 @@ fi
 
 if [ -n "$SERVER" ];then
    if mkdir -p $PACKAGE_DEST/bin;then
-       copy $SOURCE_DIR/www/html $PACKAGE_DEST
+       copy $SOURCE_DIR/html $PACKAGE_DEST
        copy $SOURCE_DIR/bin $PACKAGE_DEST
        DEPENDS="$DEPENDS, apache2(>=2.4), libapache2-mod-php5"
    else
@@ -174,7 +185,7 @@ echo "Section: base" >> $DEBIAN_DIR/control
 echo "Priority: optional" >> $DEBIAN_DIR/control
 echo "Architecture: $ARCH" >> $DEBIAN_DIR/control
 echo "Depends: $DEPENDS" >> $DEBIAN_DIR/control
-echo "Maintainer: claudio bisegni claudio.bisegni@lnf.infn.it, Andrea Michelotti andrea.michelotti@lnf.infn.it" >> $DEBIAN_DIR/control
+echo "Maintainer: Claudio Bisegni claudio.bisegni@lnf.infn.it, Andrea Michelotti andrea.michelotti@lnf.infn.it" >> $DEBIAN_DIR/control
 echo "Description: $desc" >> $DEBIAN_DIR/control
 APT_DEST="$APT_DEST$ARCH"
 
