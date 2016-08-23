@@ -29,7 +29,7 @@
 #define CouchbaseCacheDriver_LOG_HEAD "[CouchbaseCacheDriver] - "
 
 #define CCDLAPP_ LAPP_ << CouchbaseCacheDriver_LOG_HEAD
-#define CCDLDBG_ LDBG_ << CouchbaseCacheDriver_LOG_HEAD << __FUNCTION__ << " - "
+#define CCDLDBG_ LDBG_ << CouchbaseCacheDriver_LOG_HEAD << __PRETTY_FUNCTION__ << " - "
 #define CCDLERR_ LERR_ << CouchbaseCacheDriver_LOG_HEAD
 
 using namespace chaos::common::utility;
@@ -213,11 +213,12 @@ int CouchbaseCacheDriver::removeServer(std::string server_desc) {
 int CouchbaseCacheDriver::updateConfig() {
 	//lock for other access
 	//boost::unique_lock<boost::shared_mutex> lock(mutex_server);
-	CCDLAPP_ << "Conenct to all setupped server";
+	CCDLAPP_ << "Connect to all servers";
 	//destroy the instance in case we have used it
 	if(instance) {
 		CCDLAPP_ << "Destroy last session";
 		lcb_destroy(instance);
+        instance = NULL;
 	}
 	//clear the configuration
 	memset(&create_options, 0, sizeof(create_options));
@@ -247,8 +248,10 @@ int CouchbaseCacheDriver::updateConfig() {
 	//create the instance
 	last_err = lcb_create(&instance, &create_options);
     if (last_err != LCB_SUCCESS) {
-		CCDLERR_<< "Error initializing the session -> "<< lcb_strerror(NULL, last_err);
+		CCDLERR_<< "Error initializing the session params:\""<<create_options.v.v3.connstr<<"\" -> "<< lcb_strerror(NULL, last_err);
         return -1;
+    } else {
+        CCDLDBG_ << "session params:"<<create_options.v.v3.connstr;
     }
 	
 	lcb_set_cookie(instance, this);
@@ -266,13 +269,18 @@ int CouchbaseCacheDriver::updateConfig() {
     }
 	
 	/* run the event loop and wait until we've connected */
-    lcb_wait(instance);
+    last_err = lcb_wait(instance);
 	
 	if(last_err == LCB_SUCCESS) {
+        CCDLDBG_ << "connection ok";
 		/* set up a callback for our get and set requests  */
 		lcb_set_get_callback(instance, CouchbaseCacheDriver::getCallback);
 		lcb_set_store_callback(instance, CouchbaseCacheDriver::setCallback);
-	}
+    } else {
+        CCDLERR_<< "Error connecting -> " << lcb_strerror(NULL, last_err);
+        return -2;
+
+    }
 	lcb_size_t num_events = 0;
 	lcb_cntl(instance, LCB_CNTL_GET, LCB_CNTL_CONFERRTHRESH, &num_events);
 	num_events = 1;
