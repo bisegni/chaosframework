@@ -96,6 +96,7 @@ namespace chaos {
                 //!priority index and iterator
                 typedef boost::multi_index::index<DatasetAttributeElementContainer, DAETagOrderedId>::type                      DECOrderedIndex;
                 typedef boost::multi_index::index<DatasetAttributeElementContainer, DAETagOrderedId>::type::iterator            DECOrderedIndexIterator;
+                typedef boost::multi_index::index<DatasetAttributeElementContainer, DAETagOrderedId>::type::const_iterator      DECOrderedIndexConstIterator;
                 typedef boost::multi_index::index<DatasetAttributeElementContainer, DAETagOrderedId>::type::reverse_iterator    DECOrderedIndexReverseIterator;
                 
                 //!name index and iterator
@@ -142,6 +143,10 @@ namespace chaos {
                     void setDatasetKey(const std::string& ds_key);
                     
                     const std::string& getDatasetKey() const;
+                    
+                    DECOrderedIndexConstIterator getOrderedBeginIterator() const;
+                    
+                    DECOrderedIndexConstIterator getOrderedEndIterator() const;
                 };
                 
                 //! define serialization wrapper for dataset type

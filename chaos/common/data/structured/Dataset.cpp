@@ -123,3 +123,12 @@ const std::string& Dataset::getDatasetKey() const {
     return dataset_key;
 }
 
+DECOrderedIndexConstIterator Dataset::getOrderedBeginIterator() const {
+    DECOrderedIndex& ordered_index = attribute_set.get<DAETagOrderedId>();
+    return ordered_index.begin();
+}
+
+DECOrderedIndexConstIterator Dataset::getOrderedEndIterator() const {
+    DECOrderedIndex& ordered_index = attribute_set.get<DAETagOrderedId>();
+    return ordered_index.begin();
+}

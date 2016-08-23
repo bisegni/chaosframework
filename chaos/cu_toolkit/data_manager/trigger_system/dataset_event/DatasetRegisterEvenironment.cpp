@@ -19,7 +19,7 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/RegisterEnviroment.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/DatasetRegisterEvenironment.h>
 
 using namespace chaos::cu::data_manager::trigger_system::dataset_event;
 

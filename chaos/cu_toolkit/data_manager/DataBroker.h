@@ -22,6 +22,7 @@
 #ifndef __CHAOSFramework__555554A_6C80_44FA_B263_6A03AA133D4D_DataBroker_h
 #define __CHAOSFramework__555554A_6C80_44FA_B263_6A03AA133D4D_DataBroker_h
 
+#include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/InizializableService.h>
 
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
@@ -34,13 +35,14 @@
 namespace chaos {
     namespace cu {
         namespace data_manager {
-
+            
             //! main class for the data broker functionality
             class DataBroker:
             public chaos::common::utility::InizializableService  {
                 //!dataset editing interface
                 manipulation::DataBrokerEditor  dataset_manager;
                 publishing::PublishingManager   publishing_manager;
+                trigger_system::EventManager    event_manager;
             protected:
                 //---------------- DirectIODeviceServerChannelHandler -----------------------
                 int consumePutEvent(chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
@@ -67,6 +69,8 @@ namespace chaos {
                 
                 //!return the dataset editor
                 manipulation::DataBrokerEditor& getEditor();
+                
+                void getDeclaredActionInstance(std::vector<const DeclareAction *>& declared_action_list);
             };
             
         }

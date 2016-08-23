@@ -31,7 +31,8 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 #pragma mark DataBroker
 DataBroker::DataBroker():
 dataset_manager(),
-publishing_manager(dataset_manager.container_dataset){}
+publishing_manager(dataset_manager.container_dataset),
+event_manager(dataset_manager.container_dataset){}
 
 DataBroker::~DataBroker() {}
 
@@ -40,6 +41,10 @@ void DataBroker::init(void* init_data) throw(CException) {
 }
 
 void DataBroker::deinit() throw(CException) {
+    
+}
+
+void DataBroker::getDeclaredActionInstance(std::vector<const DeclareAction *>& declared_action_list) {
     
 }
 

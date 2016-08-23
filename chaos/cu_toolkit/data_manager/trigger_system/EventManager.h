@@ -22,7 +22,10 @@
 #ifndef __CHAOSFramework_C1346138_0E86_4813_9DE2_2C2B525C6C1C_EventManager_h
 #define __CHAOSFramework_C1346138_0E86_4813_9DE2_2C2B525C6C1C_EventManager_h
 
-#include <chaos/cu_toolkit/data_manager/trigger_system/trigger_system.h>
+#include <chaos/common/utility/LockableObject.h>
+
+#include <chaos/cu_toolkit/data_manager/data_manager_types.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/dataset_event/dataset_event.h>
 
 #include <boost/thread.hpp>
 
@@ -31,17 +34,22 @@ namespace chaos {
         namespace data_manager {
             namespace trigger_system {
 
-                
                 //!this is the main class where all other sublayer fire event with data
                 /*!
                  Event dispatcher collect even fired by other sublayer and attach it to algorithm execution
                  */
                 class EventManager {
-                    boost::shared_mutex                         mutex_event_container;
+                    //! reference to master dataset container
+                    chaos::common::utility::LockableObject<DatasetElementContainer>& container_dataset;
+                    
+                    //!trigger environment
+                    chaos::cu::data_manager::trigger_system::dataset_event::DatasetRegisterEvenironment dataset_trigger_environment;
                 public:
-                    EventManager();
+                    EventManager(chaos::common::utility::LockableObject<DatasetElementContainer>& _container_dataset);
                     ~EventManager();
 
+                    //!scan all adataset and fetch all attribute to register it as subject
+                    int registerDatasetAttributeAsSubject();
                 };
                 
             }

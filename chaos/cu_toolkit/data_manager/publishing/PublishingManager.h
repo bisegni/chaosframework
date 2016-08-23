@@ -61,7 +61,7 @@ namespace chaos {
                     chaos::common::utility::LockableObject<PublishableElementNameMap>  map_name_target;
                 public:
                     
-                    PublishingManager(chaos::common::utility::LockableObject<DatasetElementContainer>& container_dataset);
+                    PublishingManager(chaos::common::utility::LockableObject<DatasetElementContainer>& _container_dataset);
                     
                     ~PublishingManager();
                     

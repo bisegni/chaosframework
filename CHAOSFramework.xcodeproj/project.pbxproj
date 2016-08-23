@@ -857,8 +857,8 @@
 		32C4EF3A1D4F71440014F3D3 /* DatasetConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4EF381D4F71440014F3D3 /* DatasetConsumer.cpp */; };
 		32C4EF3B1D4F71440014F3D3 /* DatasetConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF391D4F71440014F3D3 /* DatasetConsumer.h */; };
 		32C4EF3F1D4F716A0014F3D3 /* dataset_event_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF3D1D4F716A0014F3D3 /* dataset_event_types.h */; };
-		32C4EF421D4F7F9E0014F3D3 /* RegisterEnviroment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4EF401D4F7F9E0014F3D3 /* RegisterEnviroment.cpp */; };
-		32C4EF431D4F7F9E0014F3D3 /* RegisterEnviroment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF411D4F7F9E0014F3D3 /* RegisterEnviroment.h */; };
+		32C4EF421D4F7F9E0014F3D3 /* DatasetRegisterEvenironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4EF401D4F7F9E0014F3D3 /* DatasetRegisterEvenironment.cpp */; };
+		32C4EF431D4F7F9E0014F3D3 /* DatasetRegisterEvenironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF411D4F7F9E0014F3D3 /* DatasetRegisterEvenironment.h */; };
 		32C4EF461D4F88ED0014F3D3 /* DatasetSubject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4EF441D4F88ED0014F3D3 /* DatasetSubject.cpp */; };
 		32C4EF471D4F88ED0014F3D3 /* DatasetSubject.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4EF451D4F88ED0014F3D3 /* DatasetSubject.h */; };
 		32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C5A42518D9959800C0435C /* DirectIOPerformanceSession.cpp */; };
@@ -2129,8 +2129,8 @@
 		32C4EF381D4F71440014F3D3 /* DatasetConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetConsumer.cpp; sourceTree = "<group>"; };
 		32C4EF391D4F71440014F3D3 /* DatasetConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetConsumer.h; sourceTree = "<group>"; };
 		32C4EF3D1D4F716A0014F3D3 /* dataset_event_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dataset_event_types.h; sourceTree = "<group>"; };
-		32C4EF401D4F7F9E0014F3D3 /* RegisterEnviroment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegisterEnviroment.cpp; sourceTree = "<group>"; };
-		32C4EF411D4F7F9E0014F3D3 /* RegisterEnviroment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterEnviroment.h; sourceTree = "<group>"; };
+		32C4EF401D4F7F9E0014F3D3 /* DatasetRegisterEvenironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetRegisterEvenironment.cpp; sourceTree = "<group>"; };
+		32C4EF411D4F7F9E0014F3D3 /* DatasetRegisterEvenironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetRegisterEvenironment.h; sourceTree = "<group>"; };
 		32C4EF441D4F88ED0014F3D3 /* DatasetSubject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetSubject.cpp; sourceTree = "<group>"; };
 		32C4EF451D4F88ED0014F3D3 /* DatasetSubject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetSubject.h; sourceTree = "<group>"; };
 		32C5A42518D9959800C0435C /* DirectIOPerformanceSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOPerformanceSession.cpp; sourceTree = "<group>"; };
@@ -2530,10 +2530,10 @@
 			isa = PBXGroup;
 			children = (
 				326933E81D5089420033D9E9 /* publishing.h */,
-				32D4ACE61D66010100EF14E4 /* publishing_types.cpp */,
-				32C43BB91D65FDE8007F5864 /* publishing_types.h */,
 				326CD5A91D66F975003AD071 /* PublishingManager.cpp */,
 				326CD5AA1D66F975003AD071 /* PublishingManager.h */,
+				32D4ACE61D66010100EF14E4 /* publishing_types.cpp */,
+				32C43BB91D65FDE8007F5864 /* publishing_types.h */,
 				3291D5161D5DEE890077CBB3 /* PublishTarget.cpp */,
 				3291D5171D5DEE890077CBB3 /* PublishTarget.h */,
 			);
@@ -4473,8 +4473,8 @@
 				32C4EF351D4F71370014F3D3 /* DatasetEvent.h */,
 				32C4EF381D4F71440014F3D3 /* DatasetConsumer.cpp */,
 				32C4EF391D4F71440014F3D3 /* DatasetConsumer.h */,
-				32C4EF401D4F7F9E0014F3D3 /* RegisterEnviroment.cpp */,
-				32C4EF411D4F7F9E0014F3D3 /* RegisterEnviroment.h */,
+				32C4EF401D4F7F9E0014F3D3 /* DatasetRegisterEvenironment.cpp */,
+				32C4EF411D4F7F9E0014F3D3 /* DatasetRegisterEvenironment.h */,
 				32C4EF3D1D4F716A0014F3D3 /* dataset_event_types.h */,
 				326933F01D5089C20033D9E9 /* dataset_event.h */,
 			);
@@ -5187,7 +5187,7 @@
 				32C4EF261D4BA7060014F3D3 /* DatasetEditor.h in Headers */,
 				3287F7E717B27621009DD6ED /* DriverManager.h in Headers */,
 				325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */,
-				32C4EF431D4F7F9E0014F3D3 /* RegisterEnviroment.h in Headers */,
+				32C4EF431D4F7F9E0014F3D3 /* DatasetRegisterEvenironment.h in Headers */,
 				3214EF0B1D466CF6004DB689 /* DataBrokerManager.h in Headers */,
 				328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */,
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
@@ -5913,7 +5913,7 @@
 				3214EF0A1D466CF6004DB689 /* DataBrokerManager.cpp in Sources */,
 				3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */,
 				32A116AD1D181D2500FF44ED /* ExecutionPool.cpp in Sources */,
-				32C4EF421D4F7F9E0014F3D3 /* RegisterEnviroment.cpp in Sources */,
+				32C4EF421D4F7F9E0014F3D3 /* DatasetRegisterEvenironment.cpp in Sources */,
 				322A3BCA1CEE1AA900FAD9DA /* ScriptableExecutionUnit.cpp in Sources */,
 				32CFC5CC1AF5601300E2A0B6 /* BasicIODriverInterface.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
