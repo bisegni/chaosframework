@@ -36,7 +36,9 @@ DEFINE_MDS_COMAMND_ALIAS(UnitServerAckCommand)
 UnitServerAckCommand::UnitServerAckCommand():
 MDSBatchCommand(),
 message_data(NULL),
-phase(USAP_ACK_US){}
+phase(USAP_ACK_US){
+    list_autoload_cu_current = list_autoload_cu.end();
+}
 
 UnitServerAckCommand::~UnitServerAckCommand() {}
 
