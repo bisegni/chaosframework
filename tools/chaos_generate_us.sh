@@ -39,8 +39,8 @@ if [ $OS == "Darwin" ];then
 	echo "using gsed"
 	SED=gsed
     else 
-	echo "## error gsed is required, please install brew install gnu-sed"
-	exit 1
+	echo "%% warning  gsed is required, scripts may misbehave, please install brew install gnu-sed"
+	SED=sed
     fi
 else
     SED=sed

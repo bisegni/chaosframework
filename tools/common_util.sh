@@ -46,6 +46,16 @@ if [ -z "$NPROC" ];then
     NPROC=$(getconf _NPROCESSORS_ONLN)
 fi
 
+if [ $OS == "Darwin" ];then
+    if gsed --v >& /dev/null;then
+	SED=gsed
+    else 
+	echo "%% warning  gsed is required, scripts may misbehave, please install brew install gnu-sed"
+	SED=sed
+    fi
+else
+    SED=sed
+fi
 declare -a __testinfo__
 for ((cnt=0;cnt<4;cnt++));do
     if [ -z "${__testinfo__[$cnt]}" ];then
@@ -165,7 +175,7 @@ function setEnv(){
 	    exit 1
 	fi
 	if [ -e "$CHAOS_BUNDLE/.chaos_config" ]; then
-	    cat $CHAOS_BUNDLE/.chaos_config | sed 's/CHAOS_BUNDLE=.*//g'|sed 's/CHAOS_PREFIX=.*//g'|sed 's/CHAOS_BUNDLE=.*//g'|sed 's/CHAOS_STATIC=.*//g'|sed 's/CHAOS_TARGET=.*//g'|sed 's/CHAOS_DEVELOPMENT=.*//g' > /tmp/.chaos_config
+	    cat $CHAOS_BUNDLE/.chaos_config | $SED 's/CHAOS_BUNDLE=.*//g'|$SED 's/CHAOS_PREFIX=.*//g'|$SED 's/CHAOS_BUNDLE=.*//g'|$SED 's/CHAOS_STATIC=.*//g'|$SED 's/CHAOS_TARGET=.*//g'|$SED 's/CHAOS_DEVELOPMENT=.*//g' > /tmp/.chaos_config
 	    mv /tmp/.chaos_config $CHAOS_BUNDLE/.chaos_config
 	fi
 	echo "CHAOS_BUNDLE=$CHAOS_BUNDLE" >> $CHAOS_BUNDLE/.chaos_config
@@ -241,15 +251,15 @@ function chaos_configure(){
 
     mkdir -p $PREFIX/www/html
     
-    path=`echo $PREFIX/vfs|sed 's/\//\\\\\//g'`
-    logpath=`echo $PREFIX/log/cds.log|sed 's/\//\\\\\//g'`
+    path=`echo $PREFIX/vfs|$SED 's/\//\\\\\//g'`
+    logpath=`echo $PREFIX/log/cds.log|$SED 's/\//\\\\\//g'`
     echo -e "metadata-server=localhost:5000\nlog-level=debug\nevent-disable=1\n" > $PREFIX/etc/cu-localhost.cfg
     echo -e "metadata-server=localhost:5000\nlog-level=debug\nserver_port=8081\nevent-disable=1\n" > $PREFIX/etc/cuiserver-localhost.cfg
 
     cp -r $CHAOS_BUNDLE/chaosframework/Documentation/html $PREFIX/doc/ >& /dev/null
     cp -r $CHAOS_BUNDLE/service/webgui/w3chaos/public_html/* $PREFIX/www/html
     
-    cat $CHAOS_BUNDLE/chaosframework/ChaosDataService/__template__cds.conf | sed s/_CACHESERVER_/localhost/|sed s/_DOMAIN_/$tgt/|sed s/_VFSPATH_/$path/g |sed s/_CDSLOG_/$logpath/g > $PREFIX/etc/cds-localhost.cfg
+    cat $CHAOS_BUNDLE/chaosframework/ChaosDataService/__template__cds.conf | $SED s/_CACHESERVER_/localhost/|$SED s/_DOMAIN_/$tgt/|$SED s/_VFSPATH_/$path/g |$SED s/_CDSLOG_/$logpath/g > $PREFIX/etc/cds-localhost.cfg
     pushd $PREFIX/etc > /dev/null
     ln -sf cds-localhost.cfg cds.cfg
     ln -sf cuiserver-localhost.cfg webui.cfg
@@ -261,7 +271,7 @@ function chaos_configure(){
     ln -sf ChaosDataService cds
     ln -sf ChaosMetadataService mds
     popd > /dev/null
-    sed 's/run_mode=.*/run_mode=1/' $PREFIX/etc/cds-localhost.cfg | sed 's/vfs_storage_driver_kvp=.*/vfs_storage_driver_kvp=posix_root_path:\/dev\/null/g' > $PREFIX/etc/cds_noidx.cfg
+    $SED 's/run_mode=.*/run_mode=1/' $PREFIX/etc/cds-localhost.cfg | $SED 's/vfs_storage_driver_kvp=.*/vfs_storage_driver_kvp=posix_root_path:\/dev\/null/g' > $PREFIX/etc/cds_noidx.cfg
     if [ -e $CHAOS_BUNDLE/chaosframework/ChaosMDSLite ]; then
 	ln -sf $CHAOS_BUNDLE/chaosframework/ChaosMDSLite $PREFIX/chaosframework
     fi
@@ -272,17 +282,17 @@ function chaos_configure(){
     if [ -e $CHAOS_BUNDLE/chaosframework/ChaosMetadataService/__template_mds.cfg ]; then
 	
 
-	logpath=`echo $PREFIX/log/mds.log|sed 's/\//\\\\\//g'`
+	logpath=`echo $PREFIX/log/mds.log|$SED 's/\//\\\\\//g'`
 
-	cat $CHAOS_BUNDLE/chaosframework/ChaosMetadataService/__template_mds.cfg | sed s/_MDSSERVER_/localhost/|sed s/_MDSLOG_/mds.log/g > $PREFIX/etc/mds.cfg
+	cat $CHAOS_BUNDLE/chaosframework/ChaosMetadataService/__template_mds.cfg | $SED s/_MDSSERVER_/localhost/|$SED s/_MDSLOG_/mds.log/g > $PREFIX/etc/mds.cfg
 
     fi
     find $PREFIX -name ".git" -exec rm -rf \{\} \; >& /dev/null
 }
 
 get_pid(){
-    local execname=`echo $1 | sed 's/\(.\)/[\1]/'`
-    ps -fe |grep -v "$SCRIPTNAME" |grep "$execname" | sed 's/\ \+/\ /g'| cut -d ' ' -f 2|tr '\n' ' '
+    local execname=`echo $1 | $SED 's/\(.\)/[\1]/'`
+    ps -fe |grep -v "$SCRIPTNAME" |grep "$execname" | $SED 's/\ \+/\ /g'| $SED 's/^ //'  | cut -d ' ' -f 2|tr '\n' ' '
 
 }
 time_format="+%s.%N"
@@ -818,7 +828,7 @@ launch_us_cu(){
 	info_mesg "launching US[$us] alias " "$REAL_ALIAS"
 	rm $CHAOS_PREFIX/log/$USNAME-$us.log >& /dev/null
 
-	FILE_NAME=`echo $REAL_ALIAS|sed 's/\//_/g'`
+	FILE_NAME=`echo $REAL_ALIAS|$SED 's/\//_/g'`
 	echo "$CHAOS_PREFIX/bin/$USNAME $CHAOS_OVERALL_OPT --log-on-file $CHAOS_TEST_DEBUG --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log --unit-server-alias $REAL_ALIAS $META"  > $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.stdout
 	if run_proc "$CHAOS_PREFIX/bin/$USNAME --log-on-file $CHAOS_TEST_DEBUG $CHAOS_OVERALL_OPT --log-file $CHAOS_PREFIX/log/$USNAME-$FILE_NAME.log --unit-server-alias $REAL_ALIAS $META >> $CHAOS_PREFIX/log/$USNAME-$FILE_NAME-$us.stdout 2>&1 &" "$USNAME"; then
 	    ok_mesg "$USNAME \"$REAL_ALIAS\" ($proc_pid) started"
