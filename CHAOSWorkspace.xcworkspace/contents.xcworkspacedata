@@ -32,10 +32,4 @@
    <FileRef
       location = "group:example/ChaosPerformanceTester/ChaosPerformanceTester.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:test/CachingTest/CachingTest.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:test/PluginTest/PluginTest.xcodeproj">
-   </FileRef>
 </Workspace>
