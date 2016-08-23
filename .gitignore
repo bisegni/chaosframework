@@ -20,8 +20,6 @@ build
 *~
 #*
 CUSchemaDB*
-ChaosMDSLite/RecCommon.jardesc
-ChaosMDSLite/RecServer.jardesc
 *xccheckout*
 xcshareddata
 CMakeCache.txt
@@ -46,13 +44,6 @@ example/UIToolkitTest/testui.pbproj/qt*.mak
 *.o
 *.d
 *.a
-EclipseWS/.metadata
-EclipseWS/ChaosCU/Debug
-EclipseWS/ChaosLib/Debug
-EclipseWS/ChaosCU/Release
-EclipseWS/ChaosLib/Release
-ControlSystemLibTest/.sconsign.dblite
-ControlSystemLib/.sconsign.dblite
 out.txt
 EclipseWS/ChaosCU/out.txt
 DerivedData
@@ -66,14 +57,8 @@ Documentation/html
 Documentation/latex
 ControlUnitTest/ChaosCUTest
 *mwb.bak
-MetadataServer/.settings/org.eclipse.wst.ws.service.policy.prefs
 example/UIToolkitTest/testui.app
-MetadataServer/WebContent/META-INF/context.xml
 *application.log
-MetadataServer/.settings/*
-ChaosMDSLite/target*
-ChaosMDSLite/src/main/webapp/META-INF/context.xml
-ChaosMDSLite/target/m2e-wtp*
 Documentation/uml/CHAOS.mdzip.bak
 external
 usr
