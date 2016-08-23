@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
-project(TestObjectProcessingPriorityQueue)
+project(TestLockFreeEmbeddedCache)
 
-SET(src main.cpp TestObjectProcessingPriorityQueue.cpp TestObjectProcessingPriorityQueueForPriority.cpp)
+SET(src main.cpp)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${src})
 

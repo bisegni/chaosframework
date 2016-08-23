@@ -1,10 +1,11 @@
 //
 //  main.cpp
-//  MemcachedEmbeddedTest
+//  TestLockFreeEmbeddedCache
 //
-//  Created by Claudio Bisegni on 3/24/13.
-//  Copyright (c) 2013 Claudio Bisegni. All rights reserved.
+//  Created by bisegni on 23/08/16.
+//  Copyright © 2016 bisegni. All rights reserved.
 //
+
 #include <iostream>
 #include <string>
 
@@ -16,7 +17,6 @@
 #include <boost/chrono.hpp>
 #include <boost/random.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/timer/timer.hpp>
 #include <boost/program_options/option.hpp>
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -28,7 +28,7 @@ namespace po = boost::program_options;
 #define READ_THREAD_NUMBER 1
 #define READ_THREAD_UPDATE_RATE_MS_MAX 2
 #define GARBAGE_THREAD_UPDATE_RATE_MS 100
-#define TEST_DURATION_IN_SEC 10
+#define TEST_DURATION_IN_SEC 5
 
 #define INT32_TEST_VALUE std::numeric_limits<int32_t>::max()
 
@@ -57,13 +57,9 @@ void cacheReader(chaos::common::data::cache::KeyGroupCache *cPtr) {
         cPtr->getCurrentKeyAccessor((uint16_t)0, accessor);
         int32_t readed = *accessor.getValuePtr<int32_t>();
         if(readed) {
-            if(readed != INT32_TEST_VALUE) {
-                std::cout << "wrong value readed " << readed << std::endl;
-            }
-        } else {
-            std::cout << "value not read" << readed << std::endl;
+            assert(readed == INT32_TEST_VALUE);
+            readCount++;
         }
-        readCount++;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(rUpdateMs));
     } while (threadReadExecution);
 }
@@ -95,12 +91,11 @@ int main(int argc, const char * argv[]) {
     po::notify(vm);
     
     if (vm.count("help")) {
-      std::cout << desc << "\n";
+        std::cout << desc << "\n";
         return 1;
     }
     
     try {
-        boost::timer::auto_cpu_timer cpuTimer;
         uint16_t readersNumber = vm["n_reader"].as<uint16_t>();
         rUpdateMs = vm["r_update_ms"].as<uint16_t>();
         wUpdateMs = vm["w_update_ms"].as<uint16_t>();
@@ -111,7 +106,7 @@ int main(int argc, const char * argv[]) {
         std::cout << "Number of reader " << readersNumber << " at rate of " << rUpdateMs << " ms" << std::endl;
         std::cout << "Garbager at rate of " << gUpdateMs << " ms" << std::endl;
         
-	std::auto_ptr<chaos::common::data::cache::KeyGroupCache> dsCache(new chaos::common::data::cache::KeyGroupCache());
+        std::auto_ptr<chaos::common::data::cache::KeyGroupCache> dsCache(new chaos::common::data::cache::KeyGroupCache());
         dsCache->addKeyInfo("ch_i32", chaos::DataType::TYPE_INT32);
         dsCache->init(NULL);
         dsCache->start();

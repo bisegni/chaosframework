@@ -27,9 +27,9 @@
 /* Begin PBXFileReference section */
 		32875FA5177640D000E33D6F /* PluginTest.extension */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = PluginTest.extension; sourceTree = BUILT_PRODUCTS_DIR; };
 		32875FAE177640DF00E33D6F /* PluginLoader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PluginLoader; sourceTree = BUILT_PRODUCTS_DIR; };
-		32C353F4178828CD009ED581 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = main.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		32C353F4178828CD009ED581 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = main.cpp; sourceTree = SOURCE_ROOT; };
 		32C353F6178828D7009ED581 /* PluginTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginTest.cpp; sourceTree = SOURCE_ROOT; };
-		32C353F7178828D7009ED581 /* PluginTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = PluginTest.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		32C353F7178828D7009ED581 /* PluginTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = PluginTest.h; sourceTree = SOURCE_ROOT; };
 		32C353FA1788299E009ED581 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 

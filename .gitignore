@@ -16,7 +16,6 @@ ccs/ccs.pro.user
 build-ccs-*
 *nbproject/private/*
 build
-*.txt
 *~
 #*
 CUSchemaDB*
