@@ -331,14 +331,11 @@ void BatchCommandSandbox::checkNextCommand() {
                 PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = NULL;
                 PRIORITY_ELEMENT(CommandInfoAndImplementation) *next_available_command = NULL;
                 //compute the runnig state or fault
-                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] try to acquire lock";)
                 boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand);
-                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] lock acquired";)
                 // cehck waht we need to do with current and submitted command
                 lock_next_command_queue.lock();
                 next_available_command = command_submitted_queue.top();
-                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] got next command";)
-                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] check installation for enw command with pointer =" << std::hex << next_available_command << std::dec;)
+                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] check installation for new command with pointer =" << std::hex << next_available_command << std::dec;)
                 
                 if (next_available_command->element->cmdImpl->implementedHandler() <= 1) {
                     DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] we have only a set handler";)
@@ -373,21 +370,17 @@ void BatchCommandSandbox::checkNextCommand() {
                 switch (current_check_value) {
                     case RSR_NO_CHANGE:
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] RSR_NO_CHANGE";)
-                        DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] so wait for awake signal by other submission or command fault or end";)
                         lockForCurrentCommandMutex.unlock();
                         lock_next_command_queue.unlock();
                         WAIT_ON_NEXT_CMD
-                        DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] awaked " << __LINE__;)
                         continue; //we must recontorl the top element because it could be have changed
                         break;
                         
                     case RSR_TIMED_RETRY:
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] RSR_TIMED_RETRY";)
-                        DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] wait the command submission retry period";)
                         lockForCurrentCommandMutex.unlock();
                         lock_next_command_queue.unlock();
                         TIMED_WAIT_ON_NEXT_CMD(next_available_command->element->cmdImpl->commandFeatures.featureSubmissionRetryDelay);
-                        DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] awaked " << __LINE__;)
                         continue; //we must recontorl the top element because it could be have changed
                         break;
                         
@@ -396,13 +389,12 @@ void BatchCommandSandbox::checkNextCommand() {
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] RSR_STACK_CURENT_COMMAND";)
                         command_submitted_queue.pop();
                         lock_next_command_queue.unlock();
-                        DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in command_submitted_queue " << command_submitted_queue.size();)
+                        DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] element in command_submitted_queue " << command_submitted_queue.size();)
                         tmp_command = currentExecutingCommand;
                         if (installHandler(next_available_command)) {
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] installed command with pointer " << std::hex << next_available_command << std::dec;)
-                            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] push last command into stack";)
                             commandStack.push(tmp_command);
-                            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in commandStack " << commandStack.size();)
+                            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] element in commandStack " << commandStack.size();)
                             if (event_handler) event_handler->handleCommandEvent(tmp_command->element->cmdImpl->command_alias,
                                                                                  tmp_command->element->cmdImpl->unique_id,
                                                                                  BatchCommandEventType::EVT_PAUSED, NULL);
@@ -457,7 +449,7 @@ void BatchCommandSandbox::checkNextCommand() {
 
                         command_submitted_queue.pop();
                         lock_next_command_queue.unlock();
-                        DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in command_submitted_queue " << command_submitted_queue.size();)
+                        DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] element in command_submitted_queue " << command_submitted_queue.size();)
                         
                         removeHandler(tmp_command);
                         
@@ -475,26 +467,17 @@ void BatchCommandSandbox::checkNextCommand() {
             } else {
                 lock_next_command_queue.lock();
                 PRIORITY_ELEMENT(CommandInfoAndImplementation) *nextAvailableCommand = command_submitted_queue.top();
-                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] there isn't any current running command";)
-                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Install command with pointer " << std::hex << nextAvailableCommand << std::dec;)
                 installHandler(nextAvailableCommand);
                 command_submitted_queue.pop();
                 //lock the command queue access
                 lock_next_command_queue.unlock();
-                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in command_submitted_queue " << command_submitted_queue.size();)
                 threadSchedulerPauseCondition.unlock();
             }
         } else {
-            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] command submitted queue is empty";)
-            
-            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] checking current running command";)
             bool curre_cmd_ended = currentExecutingCommand && (currentExecutingCommand->element->cmdImpl->runningProperty >= RunningPropertyType::RP_End);
             
             if (curre_cmd_ended) {
-                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] we have no running or halted command";)
-                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] try to acquire lock";)
                 boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand);
-                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] lock acquired on mutextAccessCurrentCommand";)
                 if (!commandStack.empty()) {
                     //keep track of running property that needs to be deleted
                     PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = currentExecutingCommand;
@@ -515,13 +498,10 @@ void BatchCommandSandbox::checkNextCommand() {
                             break;
                     }
                     //manage paused command
-                    DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] get and install paused command";)
                     PRIORITY_ELEMENT(CommandInfoAndImplementation) * nextAvailableCommand = commandStack.top();
-                    DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Install command with pointer " << std::hex << nextAvailableCommand << std::dec;)
                     removeHandler(command_to_delete);
                     installHandler(nextAvailableCommand);
                     commandStack.pop();
-                    DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in commandStack " << commandStack.size();)
                     threadSchedulerPauseCondition.unlock();
                     DELETE_OBJ_POINTER(command_to_delete);
                 } else {
@@ -542,18 +522,12 @@ void BatchCommandSandbox::checkNextCommand() {
                             
                             break;
                     }
-                    DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Current command ended or fault without no other command to execute ";)
-                    removeHandler(command_to_delete);
+                     removeHandler(command_to_delete);
                     installHandler(NULL);
                     DELETE_OBJ_POINTER(command_to_delete);
                 }
             }
-            //            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] unlock the mutextAccessCurrentCommand";)
-            //unloc current command mutex
-            //            lockForCurrentCommandMutex.unlock();
-            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] wait undefinitly";)
             WAIT_ON_NEXT_CMD
-            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] awaked " << __LINE__;)
         }
         
         if (!scheduleWorkFlag) {
@@ -562,8 +536,7 @@ void BatchCommandSandbox::checkNextCommand() {
     }
     
     SCSLAPP_ << "[checkNextCommand] Check next command thread ended";
-    SCSLDBG_ << "[checkNextCommand] so we need to -> Notify conditionWaithSchedulerEnd";
-    //notify the end of the thread
+     //notify the end of the thread
     conditionWaithSchedulerEnd.notify_one();
     
 }
@@ -619,7 +592,6 @@ void BatchCommandSandbox::runCommand() {
             
             //check runnin property
             if (!scheduleWorkFlag && curr_executing_impl->runningProperty) {
-                DEBUG_CODE(SCSLDBG_ << "[runCommand need to exit] - The command is not int the exec state...we stop scheduler";)
                 canWork = false;
             } else {
                 switch (curr_executing_impl->runningProperty) {
@@ -627,7 +599,6 @@ void BatchCommandSandbox::runCommand() {
                     case RunningPropertyType::RP_Normal:
                     {
                         int64_t timeToWaith = (curr_executing_impl->commandFeatures.featureSchedulerStepsDelay) - (stat.last_cmd_step_duration_usec + next_prediction_error);
-                        DEBUG_CODE(SCSLDBG_ << "[runCommand] - wait the delay needed by current command " << timeToWaith << "us "<< " exec time "<<stat.last_cmd_step_duration_usec<<"us";)
                         //adjust a little bit the jitter
                         if (timeToWaith > 0) {
                             next_predicted_run = TimingUtil::getTimeStampInMicrosends() + timeToWaith;
@@ -643,45 +614,29 @@ void BatchCommandSandbox::runCommand() {
                     case RunningPropertyType::RP_End:
                         //put this at null because someone can change it
                         curr_executing_impl = NULL;
-                        DEBUG_CODE(SCSLDBG_ << "[runCommand] - current has ended or fault waitForNextCheck notify";)
-                        DEBUG_CODE(SCSLDBG_ << "[runCommand] - unlock waitForNextCheck";)
                         waithForNextCheck.unlock();
-                        DEBUG_CODE(SCSLDBG_ << "[runCommand] - wait for new command";)
                         threadSchedulerPauseCondition.wait();
-                        DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler is awaked - 1";)
                         break;
                 }
                 
             }
-            DEBUG_CODE(SCSLDBG_ << "[runCommand] - lock lockForCurrentCommand";)
             lockForCurrentCommand.lock();
-            DEBUG_CODE(SCSLDBG_ << "[runCommand] - lockForCurrentCommand acquired with currentExecutingCommand pointer =" << std::hex << currentExecutingCommand << std::dec;)
         } else {
             //unloc
             if (!scheduleWorkFlag) {
-                DEBUG_CODE(SCSLDBG_ << "[runCommand] - no running command and scheduler has been stopped we need to exit";)
                 canWork = false;
             } else {
                 //no more command to scehdule
                 
                 //reset the statistic befor sleep
                 std::memset(&stat, 0, sizeof (SandboxStat));
-                
-                DEBUG_CODE(SCSLDBG_ << "[runCommand] - unlock lockForCurrentCommand";)
                 lockForCurrentCommand.unlock();
-                DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler need sleep because no command to run waitForNextCheck notify";)
                 waithForNextCheck.unlock();
-                DEBUG_CODE(SCSLDBG_ << "[runCommand] - wait for new command";)
                 threadSchedulerPauseCondition.wait();
-                DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler is awaked - 2";)
-                DEBUG_CODE(SCSLDBG_ << "[runCommand] - lock lockForCurrentCommand";)
                 lockForCurrentCommand.lock();
-                DEBUG_CODE(SCSLDBG_ << "[runCommand] - lockForCurrentCommand acquired with currentExecutingCommand pointer =" << std::hex << currentExecutingCommand << std::dec;)
             }
         }
-        
     } while (canWork);
-    
     SCSLDBG_ << "Scheduler thread has finished";
 }
 
