@@ -7,5 +7,6 @@
         <file>green_circle_indicator.png</file>
         <file>red_circle_indicator.png</file>
         <file>white_circle_indicator.png</file>
+        <file>ccs_icon.icns</file>
     </qresource>
 </RCC>

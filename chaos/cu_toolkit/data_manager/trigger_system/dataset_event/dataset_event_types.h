@@ -33,13 +33,6 @@ namespace chaos {
                         ETDatasetAttributeTypePreChange,
                         ETDatasetAttributeTypePostChange
                     }ETDatasetAttributeType;
-                    
-                    //! define the result of a attribute change event/consumer operation
-                    typedef enum ETDatasetAttributeResult {
-                        //!value has been accepted
-                        ETDatasetAttributeResultOK,
-                        ETDatasetAttributeResultRejected
-                    }ETDatasetAttributeResult;
                 }
             }
         }

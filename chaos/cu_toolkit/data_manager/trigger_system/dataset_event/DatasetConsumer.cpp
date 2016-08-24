@@ -21,7 +21,19 @@
 
 #include <chaos/cu_toolkit//data_manager/trigger_system/dataset_event/DatasetConsumer.h>
 
+using namespace chaos::common::data;
 using namespace chaos::common::trigger;
-
 using namespace chaos::cu::data_manager::trigger_system::dataset_event;
-#pragma mark DatasetConsumer
+
+#pragma mark DatasetConsumerTest
+ConsumerResult DatasetConsumerTest::consumeEvent(ETDatasetAttributeType event_type,
+                                                 DatasetSubject& subject) {
+    //int32_t incremnet_size = 0;
+    //const CDataVariant& inc_value = getPropertyValue("property name");
+    //if(inc_value.isValid()) {
+        //get increment size
+        //incremnet_size = inc_value.asInt32();
+    //}
+    
+    return ConsumerResultOK;
+}

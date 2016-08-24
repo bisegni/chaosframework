@@ -33,19 +33,16 @@ namespace chaos {
             namespace trigger_system {
                 namespace dataset_event {
                     namespace chaos_trigger = chaos::common::trigger;
-                    //!define the abstract consumer for AbstractEventSetDSAttribute
                     
                     //------create the consumer
-//                    CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(SubjectConsumerIncrement,
-//                                                            SubjectConsumer)
-//                    CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY("offset", "good property", chaos::DataType::TYPE_INT32);
-//                    CHAOS_TRIGGER_CONSUMER_ADD_DEFINITION(SubjectConsumerIncrement,
-//                                                          SubjectConsumer,
-//                                                          "Preform integer increment")
-//                    //we need to declare the custom consumer event
-//                    ConsumerResult consumeEvent(TriggerDataEventType event_type,
-//                                                TriggeredData& trigger_data);
-//                    CHAOS_TRIGGER_CONSUMER_CLOSE_DEFINITION()
+                    CHAOS_TRIGGER_CONSUMER_OPEN_DESCRIPTION(DatasetConsumerTest,
+                                                            "Consumer test on dataset attribute",
+                                                            ETDatasetAttributeType,
+                                                            DatasetSubject)
+                    
+                    CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY_WFLAG("in_ds_name", "Input variable dataset name", chaos::DataType::TYPE_STRING, 1);
+                    CHAOS_TRIGGER_CONSUMER_ADD_PROPERTY_WFLAG("in_attr_name", "Input variable attribute name", chaos::DataType::TYPE_STRING, 1);
+                    CHAOS_TRIGGER_CONSUMER_CLOSE_DESCRIPTION()
                 }
             }
         }

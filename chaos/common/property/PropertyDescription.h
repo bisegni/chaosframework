@@ -36,6 +36,14 @@ namespace chaos {
             class PropertyDescription {
                 friend class PropertyDescriptionSDWrapper;
                 chaos::common::data::CDataVariant  property_values;
+                
+                //!poin to some data that can be used by implementationtio of property
+                /*!
+                 this pointer can be used to pass complex data to property and
+                 will be used only by implementation. Infrastructure neve use this
+                 filed and never deallocate it.
+                 */
+                void *user_ptr;
             public:
                 std::string name;
                 std::string description;
@@ -61,13 +69,21 @@ namespace chaos {
                 //! return the alias of the command
                 const std::string& getDescription() const;
                 
+                //!return the type of the porperty
                 const DataType::DataType getType() const;
                 
+                //!retur the porperties flag
                 const uint32_t getFlags() const;
                 
+                //!update the property value using a chaos variant
                 void updatePropertyValue(const chaos::common::data::CDataVariant& new_property_value);
                 
+                //!return property value as chaos variant
                 const chaos::common::data::CDataVariant& getPropertyValue() const;
+                
+                void setUserPtr(void *_user_ptr);
+                
+                void *getUserPtr();
             };
             
             

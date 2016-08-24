@@ -43,7 +43,7 @@ namespace chaos {
                     chaos::common::utility::LockableObject<DatasetElementContainer>& container_dataset;
                     
                     //!trigger environment
-                    chaos::cu::data_manager::trigger_system::dataset_event::DatasetRegisterEvenironment dataset_trigger_environment;
+                    chaos::cu::data_manager::trigger_system::dataset_event::DatasetRegisterEnviroment dataset_trigger_environment;
                 public:
                     EventManager(chaos::common::utility::LockableObject<DatasetElementContainer>& _container_dataset);
                     ~EventManager();

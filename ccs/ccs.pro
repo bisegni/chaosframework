@@ -17,30 +17,21 @@ RESOURCES = qdarkstyle/style.qrc \
 INCLUDEPATH += $$PWD/../
 INCLUDEPATH += $$PWD/../usr/local/include
 
-LIBS += -L$$PWD/../usr/local/lib
-
-
-LIBS +=     -lchaos_metadata_service_client
+LIBS += -L$$_PRO_FILE_PWD_/../usr/local/lib
 
 unix:!macx {
     LIBS +=  -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive
 }
 
 macx:{
+#    ICON = ccs_icon.icns
     LIBS +=  -lchaos_common
 }
 
-LIBS +=     -ljsoncpp\
+LIBS +=     -lchaos_metadata_service_client\
+            -ljsoncpp\
             -lzmq\
             -lpthread\
-            -lboost_system\
-            -lboost_thread\
-            -lboost_program_options\
-            -lboost_regex\
-            -lboost_chrono\
-            -lboost_filesystem\
-            -lboost_log\
-            -lboost_log_setup\
             -lmongoose
 
 SOURCES += main.cpp\

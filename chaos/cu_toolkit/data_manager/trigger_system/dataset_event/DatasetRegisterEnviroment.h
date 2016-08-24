@@ -35,11 +35,11 @@ namespace chaos {
                 namespace dataset_event {
                     
                     //!define the register environmento for dataset attribute trigger
-                    class DatasetRegisterEvenironment:
+                    class DatasetRegisterEnviroment:
                     public chaos::common::trigger::TriggerExecutionEnviroment<DatasetSubject, ETDatasetAttributeType> {
                     public:
-                        DatasetRegisterEvenironment();
-                        ~DatasetRegisterEvenironment();
+                        DatasetRegisterEnviroment();
+                        ~DatasetRegisterEnviroment();
                     };
                 }
             }

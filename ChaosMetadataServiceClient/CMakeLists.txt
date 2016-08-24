@@ -91,9 +91,10 @@ SET(mcl_src ${mcl_src}      monitor_system/MonitorManager.cpp
                             monitor_system/QuantumTSTaggedAttributeHandler.cpp)
 
 IF(BUILD_FORCE_STATIC)
-ADD_LIBRARY(${PROJECT_NAME} STATIC ${mcl_src})
+    ADD_LIBRARY(${PROJECT_NAME} STATIC ${mcl_src})
 ELSE()
-ADD_LIBRARY(${PROJECT_NAME} SHARED ${mcl_src})
+    ADD_LIBRARY(${PROJECT_NAME} SHARED ${mcl_src})
+    set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 ENDIF()
 
 

@@ -35,11 +35,13 @@ map_properties(src.map_properties){}
 
 void PropertyGroup::addProperty(const std::string& property_name,
                                 const std::string& property_description,
-                                const DataType::DataType property_type) {
+                                const DataType::DataType property_type,
+                                const uint32_t property_flag) {
     //add property
     map_properties.insert(MapPropertiesPair(property_name, PropertyDescription(property_name,
                                                                                property_description,
-                                                                               property_type)));
+                                                                               property_type,
+                                                                               property_flag)));
 }
 
 const CDataVariant& PropertyGroup::getPropertyValue(const std::string& property_name) {

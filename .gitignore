@@ -2,6 +2,7 @@ DartConfiguration.tcl
 Testing
 *CTestTest*
 build-*/
+build_*
 chaos-distrib*/
 config/CACHE/
 external-*/

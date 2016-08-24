@@ -27,9 +27,12 @@ using namespace chaos::common::property;
 using namespace chaos::common::data::cache;
 
 //! default constructor
-PropertyDescription::PropertyDescription(){
-    
-}
+PropertyDescription::PropertyDescription():
+user_ptr(NULL),
+name(),
+description(),
+type(DataType::TYPE_UNDEFINED),
+flag(0){}
 
 //! default constructor with the alias of the command
 PropertyDescription::PropertyDescription(const std::string& _name,
@@ -53,12 +56,10 @@ PropertyDescription& PropertyDescription::operator=(PropertyDescription const &r
     return *this;
 }
 
-//! return the alias of the command
 const std::string& PropertyDescription::getName() const {
     return name;
 }
 
-//! return the alias of the command
 const std::string& PropertyDescription::getDescription() const {
     return description;
 }
@@ -75,4 +76,12 @@ void PropertyDescription::updatePropertyValue(const CDataVariant& new_property_v
 
 const chaos::common::data::CDataVariant& PropertyDescription::getPropertyValue() const {
     return property_values;
+}
+
+void PropertyDescription::setUserPtr(void *_user_ptr) {
+    user_ptr = _user_ptr;
+}
+
+void *PropertyDescription::getUserPtr() {
+    return user_ptr;
 }

@@ -74,7 +74,7 @@ int EventManager::registerDatasetAttributeAsSubject() {
                 continue;
             }
             //create subject class
-            DatasetRegisterEvenironment::SubjectInstanceShrdPtr subjec_for_attribute(boost::make_shared<DatasetSubject>(attribute_ptr, attribute_cache_value_ptr));
+            DatasetRegisterEnviroment::SubjectInstanceShrdPtr subjec_for_attribute(boost::make_shared<DatasetSubject>(attribute_ptr, attribute_cache_value_ptr));
             
             //register subject within environment
             dataset_trigger_environment.registerSubject(subjec_for_attribute);

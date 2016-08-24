@@ -4,8 +4,7 @@
 CreateEditDataService::CreateEditDataService() :
     QDialog(NULL),
     current_row(-1),
-    ui(new Ui::CreateEditDataService)
-{
+    ui(new Ui::CreateEditDataService) {
     ui->setupUi(this);
     ui->lineEditEndpoint->setValidator(new QIntValidator(0,255, this));
     connect(ui->buttonBox, SIGNAL(accepted()),
@@ -21,8 +20,7 @@ CreateEditDataService::CreateEditDataService(int _current_row,
                                              int direct_io_endpoint):
     QDialog(NULL),
     current_row(_current_row),
-    ui(new Ui::CreateEditDataService)
-{
+    ui(new Ui::CreateEditDataService) {
     ui->setupUi(this);
     ui->lineEditEndpoint->setValidator(new QIntValidator(0,255, this));
     connect(ui->buttonBox, SIGNAL(accepted()),
@@ -34,8 +32,7 @@ CreateEditDataService::CreateEditDataService(int _current_row,
     ui->lineEditEndpoint->setText(QString::number(direct_io_endpoint));
 }
 
-CreateEditDataService::~CreateEditDataService()
-{
+CreateEditDataService::~CreateEditDataService() {
     delete ui;
 }
 
