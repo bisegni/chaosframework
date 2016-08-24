@@ -369,33 +369,6 @@ void BatchCommandSandbox::checkNextCommand() {
                 //check what we need to do according to runng and submission property
                 current_check_value = CHECK_RUNNING_VS_SUBMISSION(currentExecutingCommand->element->cmdImpl->runningProperty,
                                                                   next_available_command->element->cmdImpl->submissionRule);
-                //execute the handler
-                switch (current_check_value) {
-                    case RSR_KILL_KURRENT_COMMAND:
-                        if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
-                                                                                                  command_to_delete->element->cmdImpl->unique_id,
-                                                                                                  BatchCommandEventType::EVT_KILLED,
-                                                                                                  NULL);
-                        break;
-                        
-                    case RSR_CURRENT_CMD_HAS_ENDED:
-                        if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
-                                                                                                  command_to_delete->element->cmdImpl->unique_id,
-                                                                                                  BatchCommandEventType::EVT_COMPLETED,
-                                                                                                  static_cast<void*>(command_to_delete->element->cmdInfo));
-                        break;
-                        
-                    case RSR_CURRENT_CMD_HAS_FAULTED:
-                        if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
-                                                                                                  command_to_delete->element->cmdImpl->unique_id,
-                                                                                                  BatchCommandEventType::EVT_FAULT,
-                                                                                                  static_cast<FaultDescription*> (&command_to_delete->element->cmdImpl->fault_description),
-                                                                                                  sizeof (FaultDescription));
-                        break;
-                        
-                    default:
-                        break;
-                }
                 //manage the situation
                 switch (current_check_value) {
                     case RSR_NO_CHANGE:
@@ -453,8 +426,35 @@ void BatchCommandSandbox::checkNextCommand() {
                         
                     case RSR_KILL_KURRENT_COMMAND:
                     case RSR_CURRENT_CMD_HAS_ENDED:
-                    case RSR_CURRENT_CMD_HAS_FAULTED:
-                        tmp_command = currentExecutingCommand;
+                    case RSR_CURRENT_CMD_HAS_FAULTED: {
+                        //execute the handler
+                        command_to_delete = currentExecutingCommand;
+#pragma GCC diagnostic ignored "-Wswitch"
+                        switch (current_check_value) {
+                            case RSR_KILL_KURRENT_COMMAND:
+                                if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
+                                                                                                          command_to_delete->element->cmdImpl->unique_id,
+                                                                                                          BatchCommandEventType::EVT_KILLED,
+                                                                                                          NULL);
+                                break;
+                                
+                            case RSR_CURRENT_CMD_HAS_ENDED:
+                                if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
+                                                                                                          command_to_delete->element->cmdImpl->unique_id,
+                                                                                                          BatchCommandEventType::EVT_COMPLETED,
+                                                                                                          static_cast<void*>(command_to_delete->element->cmdInfo));
+                                break;
+                                
+                            case RSR_CURRENT_CMD_HAS_FAULTED:
+                                if (event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->command_alias,
+                                                                                                          command_to_delete->element->cmdImpl->unique_id,
+                                                                                                          BatchCommandEventType::EVT_FAULT,
+                                                                                                          static_cast<FaultDescription*> (&command_to_delete->element->cmdImpl->fault_description),
+                                                                                                          sizeof (FaultDescription));
+                                break;
+                        }
+#pragma GCC diagnostic pop
+
                         command_submitted_queue.pop();
                         lock_next_command_queue.unlock();
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in command_submitted_queue " << command_submitted_queue.size();)
@@ -463,26 +463,10 @@ void BatchCommandSandbox::checkNextCommand() {
                         
                         if (installHandler(next_available_command)) {
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] installed command with pointer " << std::hex << next_available_command << std::dec;)
-                            command_to_delete = tmp_command;
-                        } else {
-                            //install has not been done
-                            if (event_handler && //there is an handler
-                                next_available_command) { //the command in not null
-                                if (next_available_command->element->cmdImpl->runningProperty & RunningPropertyType::RP_Fault) {
-                                    event_handler->handleCommandEvent(next_available_command->element->cmdImpl->command_alias,
-                                                                      next_available_command->element->cmdImpl->unique_id,
-                                                                      BatchCommandEventType::EVT_FAULT,
-                                                                      static_cast<FaultDescription*> (&next_available_command->element->cmdImpl->fault_description),
-                                                                      sizeof (FaultDescription));
-                                }
-                                DELETE_OBJ_POINTER(next_available_command);
-                            }
-                            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] something goes wrong n set handler reinstall command wit pointer " << std::hex << tmp_command << std::dec;)
-                            installHandler(tmp_command);
                         }
-                        
                         threadSchedulerPauseCondition.unlock();
                         break;
+                    }
                 }
                 
                 lockForCurrentCommandMutex.unlock();
