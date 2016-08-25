@@ -73,7 +73,8 @@ namespace chaos {
                                       const chaos::DataType::DatasetType type,
                                       const std::string& shared_key);
                     
-                    
+                    //!check if a dataset is present by his name
+                    bool hasDataset(const std::string& dataset_name);
                     
                     //!Return editor for the specified dataset
                     std::auto_ptr<DatasetEditor> getDatasetEditorFor(const std::string& ds_name);

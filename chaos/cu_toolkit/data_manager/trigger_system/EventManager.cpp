@@ -43,7 +43,7 @@ int EventManager::registerDatasetAttributeAsSubject() {
     
     //we can use the container
     DECOrderedIndex&   ds_index_ordered = container_dataset().get<DatasetElementTagOrderedId>();
-
+    
     //we can proceed to scan dataset and attribute
     for (DECOrderedIndexIterator it = ds_index_ordered.begin(),
          end = ds_index_ordered.end();
@@ -78,8 +78,17 @@ int EventManager::registerDatasetAttributeAsSubject() {
             
             //register subject within environment
             dataset_trigger_environment.registerSubject(subjec_for_attribute);
+            
+            //add subject to locak map
+            map_ds_attr_subject.insert(SubjectMapPair(SubjectMapKey((*it)->dataset->getDatasetName(),
+                                                                    (*it_attribute)->dataset_attribute->name),
+                                                      subjec_for_attribute));
             INFO << CHAOS_FORMAT("Event subject for attribute %1%[%2%] has been registered", %(*it_attribute)->dataset_attribute->name%(*it)->dataset->getDatasetName());
         }
     }
     return 0;
+}
+
+std::auto_ptr<chaos::common::data::CDataWrapper> EventManager::serialize() {
+    return dataset_trigger_environment.serialize();
 }

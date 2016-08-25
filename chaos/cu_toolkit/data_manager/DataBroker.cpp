@@ -22,12 +22,14 @@
 #include <chaos/cu_toolkit/data_manager/DataBroker.h>
 
 using namespace chaos;
+using namespace chaos::common::data;
+using namespace chaos::common::direct_io::channel::opcode_headers;
+
 using namespace chaos::cu::data_manager;
 using namespace chaos::cu::data_manager::publishing;
 using namespace chaos::cu::data_manager::manipulation;
 using namespace chaos::cu::data_manager::trigger_system;
 
-using namespace chaos::common::direct_io::channel::opcode_headers;
 #pragma mark DataBroker
 DataBroker::DataBroker():
 dataset_manager(),
@@ -46,6 +48,49 @@ void DataBroker::deinit() throw(CException) {
 
 void DataBroker::getDeclaredActionInstance(std::vector<const DeclareAction *>& declared_action_list) {
     
+}
+
+int DataBroker::addNewDataset(const std::string& name,
+                              const DataType::DatasetType type,
+                              const std::string& shared_key) {
+    return dataset_manager.addNewDataset(name,
+                                         type,
+                                         shared_key);
+}
+
+std::auto_ptr<DatasetEditor> DataBroker::getEditorForDataset(const std::string& dataset_name) {
+    if(dataset_manager.hasDataset(dataset_name) == false){
+        //we need to creare the dataset because it it not present
+        return std::auto_ptr<DatasetEditor>();
+    }
+    return dataset_manager.getDatasetEditorFor(dataset_name);
+}
+
+std::auto_ptr<manipulation::DatasetCacheWrapper> DataBroker::getDatasetCacheForDataset(const std::string& dataset_name) {
+    return dataset_manager.getDatasetCacheWrapperFor(dataset_name);
+}
+
+std::auto_ptr<CDataWrapper> DataBroker::serialize() {
+    std::auto_ptr<CDataWrapper> result(new CDataWrapper());
+    std::auto_ptr<CDataWrapper>  tmp_ser = dataset_manager.serialize();
+    if(tmp_ser.get()) {
+        result->addCSDataValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION,  *tmp_ser);
+    }
+    tmp_ser = event_manager.serialize();
+    if(tmp_ser.get()) {
+        result->addCSDataValue("dataset_trigger",  *tmp_ser);
+    }
+    return result;
+}
+
+void DataBroker::deserialize(std::auto_ptr<chaos::common::data::CDataWrapper> data_serailization) {
+    if(data_serailization.get() == NULL) return;
+    //check if we have dataset serialized data
+    if(data_serailization->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION) &&
+       data_serailization->isCDataWrapperValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION)){
+        std::auto_ptr<chaos::common::data::CDataWrapper> dataset_serialization(data_serailization->getCSDataValue(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DATASET_DESCRIPTION));
+        dataset_manager.deserialize(*dataset_serialization);
+    }
 }
 
 #pragma mark DataBroker Protected Method

@@ -58,6 +58,11 @@ int DataBrokerEditor::addNewDataset(const std::string& name,
     return 0;
 }
 
+bool DataBrokerEditor::hasDataset(const std::string& dataset_name) {
+    DECNameIndexIterator nit = ds_index_name.find(dataset_name);
+    return (nit != ds_index_name.end());
+}
+
 std::auto_ptr<DatasetEditor> DataBrokerEditor::getDatasetEditorFor(const std::string& ds_name) {
     LockableObjectReadLock wl;
     container_dataset.getReadLock(wl);

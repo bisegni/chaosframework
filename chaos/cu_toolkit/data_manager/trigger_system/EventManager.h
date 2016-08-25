@@ -22,6 +22,7 @@
 #ifndef __CHAOSFramework_C1346138_0E86_4813_9DE2_2C2B525C6C1C_EventManager_h
 #define __CHAOSFramework_C1346138_0E86_4813_9DE2_2C2B525C6C1C_EventManager_h
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/utility/LockableObject.h>
 
 #include <chaos/cu_toolkit/data_manager/data_manager_types.h>
@@ -34,6 +35,10 @@ namespace chaos {
         namespace data_manager {
             namespace trigger_system {
 
+                //!define the map that correlate the (dataset name, attribute name)->subject
+                typedef std::pair<std::string, std::string> SubjectMapKey;
+                CHAOS_DEFINE_MAP_FOR_TYPE(SubjectMapKey, chaos::cu::data_manager::trigger_system::dataset_event::DatasetRegisterEnviroment::SubjectInstanceShrdPtr, SubjectMap);
+                
                 //!this is the main class where all other sublayer fire event with data
                 /*!
                  Event dispatcher collect even fired by other sublayer and attach it to algorithm execution
@@ -42,14 +47,20 @@ namespace chaos {
                     //! reference to master dataset container
                     chaos::common::utility::LockableObject<DatasetElementContainer>& container_dataset;
                     
+                    SubjectMap map_ds_attr_subject;
+                    
                     //!trigger environment
                     chaos::cu::data_manager::trigger_system::dataset_event::DatasetRegisterEnviroment dataset_trigger_environment;
+                    
+                    
                 public:
                     EventManager(chaos::common::utility::LockableObject<DatasetElementContainer>& _container_dataset);
                     ~EventManager();
 
                     //!scan all adataset and fetch all attribute to register it as subject
                     int registerDatasetAttributeAsSubject();
+                    
+                    std::auto_ptr<chaos::common::data::CDataWrapper> serialize();
                 };
                 
             }

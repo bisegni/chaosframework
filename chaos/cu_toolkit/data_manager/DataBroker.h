@@ -67,10 +67,29 @@ namespace chaos {
                 
                 void deinit() throw(CException);
                 
-                //!return the dataset editor
-                manipulation::DataBrokerEditor& getEditor();
+                int addNewDataset(const std::string& name,
+                                  const DataType::DatasetType type,
+                                  const std::string& shared_key);
                 
+                //!Return the dataset editor
+                /*!
+                 Return the dataset identified by the name,
+                 if dataset is not present it will be created
+                 \param dataset_name the dataset name
+                 \param create if true, in case the dataset is not present it will be created.
+                 \return teh datase editor
+                 */
+                std::auto_ptr<manipulation::DatasetEditor> getEditorForDataset(const std::string& dataset_name);
+                
+                //!Return the cache wrapper for the determinated dataset
+                std::auto_ptr<manipulation::DatasetCacheWrapper> getDatasetCacheForDataset(const std::string& dataset_name);
+                
+                //!return all the rpc action inplemented by overall sub layers
                 void getDeclaredActionInstance(std::vector<const DeclareAction *>& declared_action_list);
+                
+                std::auto_ptr<chaos::common::data::CDataWrapper> serialize();
+                
+                void deserialize(std::auto_ptr<chaos::common::data::CDataWrapper> data_serailization);
             };
             
         }
