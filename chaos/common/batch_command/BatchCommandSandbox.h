@@ -42,7 +42,7 @@ namespace chaos{
             //! Base functor for the command handler
             struct BaseFunctor {
                 std::string sandbox_identifier;
-                BatchCommand *cmdInstance;
+                BatchCommand *cmd_instance;
             };
             
             //! Functor implementation
@@ -106,25 +106,25 @@ namespace chaos{
                 BatchCommandSandboxEventHandler *event_handler;
                 
                 //-------shared data beetwen scheduler and checker thread------
-                bool            scheduleWorkFlag;
+                bool            schedule_work_flag;
                 
                 //! default sticky command
                 std::auto_ptr<PRIORITY_ELEMENT(CommandInfoAndImplementation)>   default_sticky_command;
                 
                 //!point to the current executing command
-                PRIORITY_ELEMENT(CommandInfoAndImplementation)   *currentExecutingCommand;
+                PRIORITY_ELEMENT(CommandInfoAndImplementation)   *current_executing_command;
                 
-                boost::mutex                    mutextAccessCurrentCommand;
+                boost::mutex                    mutext_access_current_command;
                 //boost::condition_variable_any   waithForNextCheck;
-                WaitSemaphore					waithForNextCheck;
+                WaitSemaphore					whait_for_next_check;
                 
                 //------------------scheduler---------------------
                 //internal ascheduling thread
-                std::auto_ptr<boost::thread> threadScheduler;
+                std::auto_ptr<boost::thread> thread_scheduler;
                 //! delay for the next beat of scheduler
                 //uint64_t schedulerStepDelay;
                 //! Thread for whait until the queue is empty
-                WaitSemaphore  threadSchedulerPauseCondition;
+                WaitSemaphore  thread_scheduler_pause_condition;
                 //bool   threadSchedulerPauseConditionFlag;
                 //boost::condition_variable   threadSchedulerPauseCondition;
                 
@@ -138,10 +138,10 @@ namespace chaos{
                 boost::mutex          mutex_next_command_queue;
                 
                 //! instance to the checker thread
-                std::auto_ptr<boost::thread>    threadNextCommandChecker;
+                std::auto_ptr<boost::thread>    thread_next_command_checker;
                 
                 //! Thread for whait until the queue is empty
-                boost::condition_variable_any  conditionWaithSchedulerEnd;
+                boost::condition_variable_any  condition_waith_scheduler_end;
                 
                 //! Shared Channel Setting
                 /*!
@@ -152,14 +152,14 @@ namespace chaos{
                 AttributeValueSharedCache *shared_attribute_cache;
                 
                 //! contain the paused command
-                std::stack<PRIORITY_ELEMENT(CommandInfoAndImplementation)*> commandStack;
+                std::stack<PRIORITY_ELEMENT(CommandInfoAndImplementation)*> command_stack;
                 
                 //-------------------- handler poiter --------------------
                 //! Pointer to the acquire pahse handler's of the current command
-                AcquireFunctor acquireHandlerFunctor;
+                AcquireFunctor acquire_handler_functor;
                 
                 //! Pointer to the correlation and commit pahse handler's of the current command
-                CorrelationFunctor correlationHandlerFunctor;
+                CorrelationFunctor correlation_handler_functor;
                 //-------------------- handler poiter --------------------
                 
                 //!install the handler of the command
@@ -214,12 +214,6 @@ namespace chaos{
                 
                 //! enqueue a new command
                 bool enqueueCommand(CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
-
-                //! return the number of enqueued command
-                unsigned long getNumberOfEnqueuedCommand();
-                
-                //!return the number of command paused
-                unsigned long getNumberOfPausedCommand();
                 
                 //! set the deafutl sticky command
                 /*!

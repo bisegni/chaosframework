@@ -665,29 +665,29 @@ CDataWrapper* BatchCommandExecutor::setCommandFeatures(CDataWrapper *params, boo
     boost::shared_ptr<BatchCommandSandbox> tmp_ptr = sandbox_map[execution_channel];
     
     //lock the scheduler
-    boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutextAccessCurrentCommand);
+    boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutext_access_current_command);
     
-    if(!tmp_ptr->currentExecutingCommand)
+    if(!tmp_ptr->current_executing_command)
         throw CException(2, "No Current running command", "BatchCommandExecutor::setCommandFeatures");
     
     //check wath feature we need to setup
     if(params->hasKey(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL)) {
         //has lock information to setup
-        tmp_ptr->currentExecutingCommand->element->cmdImpl->lockFeaturePropertyFlag[0] = params->getBoolValue(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
+        tmp_ptr->current_executing_command->element->cmdImpl->lockFeaturePropertyFlag[0] = params->getBoolValue(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
     }
     
     if(params->hasKey(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64)) {
         //has scheduler step wait
-        tmp_ptr->currentExecutingCommand->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = params->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64);
+        tmp_ptr->current_executing_command->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = params->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64);
     }
     
     //recheck current command
-    if(!tmp_ptr->currentExecutingCommand) return NULL;
+    if(!tmp_ptr->current_executing_command) return NULL;
     
     
     lockForCurrentCommand.unlock();
-    if(tmp_ptr->threadSchedulerPauseCondition.isInWait())
-        tmp_ptr->threadSchedulerPauseCondition.unlock();
+    if(tmp_ptr->thread_scheduler_pause_condition.isInWait())
+        tmp_ptr->thread_scheduler_pause_condition.unlock();
     return NULL;
 }
 
@@ -708,7 +708,7 @@ CDataWrapper* BatchCommandExecutor::killCurrentCommand(CDataWrapper *params, boo
     
     boost::shared_ptr<BatchCommandSandbox> tmp_ptr = sandbox_map[0];
     
-    if(!tmp_ptr->currentExecutingCommand) return NULL;
+    if(!tmp_ptr->current_executing_command) return NULL;
     BCELAPP_ << "Kill current command into the executor id: " << executorID;
     tmp_ptr->killCurrentCommand();
     return NULL;
