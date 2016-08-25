@@ -33,6 +33,7 @@ using namespace chaos::common::batch_command;
 
 // default constructor
 BatchCommand::BatchCommand():
+sticky(false),
 already_setupped(false),
 runningProperty(RunningPropertyType::RP_Normal),
 submissionRule(SubmissionRuleType::SUBMIT_NORMAL){

@@ -108,6 +108,9 @@ namespace chaos{
                 //-------shared data beetwen scheduler and checker thread------
                 bool            scheduleWorkFlag;
                 
+                //! default sticky command
+                std::auto_ptr<PRIORITY_ELEMENT(CommandInfoAndImplementation)>   default_sticky_command;
+                
                 //!point to the current executing command
                 PRIORITY_ELEMENT(CommandInfoAndImplementation)   *currentExecutingCommand;
                 
@@ -217,6 +220,13 @@ namespace chaos{
                 
                 //!return the number of command paused
                 unsigned long getNumberOfPausedCommand();
+                
+                //! set the deafutl sticky command
+                /*!
+                 this comamnd is the one that is run when no other command
+                 are presente neither into commadn queue or command stack
+                 */
+                void setDefaultStickyCommand(BatchCommand *instance);
             public:
                 ~BatchCommandSandbox();
                 //! Command features modification rpc action
