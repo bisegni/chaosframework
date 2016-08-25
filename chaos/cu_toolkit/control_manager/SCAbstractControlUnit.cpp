@@ -348,7 +348,7 @@ void SCAbstractControlUnit::_forwardCommandInstanceByInputAttribute(CDataWrapper
         boost::shared_ptr<BatchCommandDescription> current_description = *it;
         
         command_alias = current_description->getAlias();
-        SCACU_LAPP_ << " Compose command with alias:" << command_alias;
+        DEBUG_CODE(SCACU_LDBG_ << " Compose command with alias:" << command_alias;);
         parameter_name_list.clear();
         current_description->getParameters(parameter_name_list);
         if(parameter_name_list.size() == 0) {
@@ -373,7 +373,7 @@ void SCAbstractControlUnit::_forwardCommandInstanceByInputAttribute(CDataWrapper
                     dataset_attribute_values->copyKeyToNewKey(iattr_constructed,
                                                               *it_param,
                                                               *command_datapack);
-                    SCACU_LAPP_ << " Compose parameter:"<< *it_param << " for command:" << command_alias;
+                    SCACU_LDBG_ << " Compose parameter:"<< *it_param << " for command:" << command_alias;
                 } else {
                     SCACU_LERR_ << " Attribute"<< iattr_constructed << " for command:" << command_alias << " not autorized by handler";
                 }
