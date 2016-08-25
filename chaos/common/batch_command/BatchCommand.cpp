@@ -33,6 +33,7 @@ using namespace chaos::common::batch_command;
 
 // default constructor
 BatchCommand::BatchCommand():
+sticky(false),
 already_setupped(false),
 runningProperty(RunningPropertyType::RP_Normal),
 submissionRule(SubmissionRuleType::SUBMIT_NORMAL){
@@ -81,14 +82,14 @@ uint8_t BatchCommand::getRunningProperty() {
 void BatchCommand::setHandler(CDataWrapper *data) {}
 
 /*
- implemente thee data acquisition for the command
+ implement the data acquisition handler
  */
-void BatchCommand::acquireHandler() {}
+void BatchCommand::acquireHandler() {BC_END_RUNNIG_PROPERTY;}
 
 /*
- Performe correlation and send command to the driver
+ implement the data correlation handler
  */
-void BatchCommand::ccHandler() {}
+void BatchCommand::ccHandler() {BC_END_RUNNIG_PROPERTY;}
 
 //timeout handler
 bool BatchCommand::timeoutHandler() {return true;}

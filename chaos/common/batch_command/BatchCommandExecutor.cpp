@@ -157,8 +157,8 @@ BatchCommandExecutor::~BatchCommandExecutor() {
 // Initialize instance
 void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
     
-    //reset the command sequence on initialization
-    command_sequence_id = 0;
+    //reset the command sequence on initialization(id 0 is used for stiky command by sandboxes)
+    command_sequence_id = 1;
     
     //broadcast init sequence to base class
     StartableService::init(initData);
@@ -185,7 +185,6 @@ void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
         }
     }
     BCELAPP_ << "Check if we need to use the default command or we have pause instance";
-    submitDefaultCommand();
 }
 
 // Start the implementation
@@ -292,16 +291,12 @@ void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
                 cmd_state->last_event = type;
                 cmd_state->fault_description = *static_cast<FaultDescription*>(type_value_ptr);
             }
-            //check for defautl resubmizion
-            if(default_command_stickyness) submitDefaultCommand(true);
             break;
         }
             
-        case BatchCommandEventType::EVT_COMPLETED:
-            //in case of comamnd has ended, befor go to the deafult switch
-            //we need to check if we need to submit a new instance
-            //of the dauflt command
-            if(default_command_stickyness) submitDefaultCommand(true);
+        case BatchCommandEventType::EVT_COMPLETED: {
+            break;
+        }
             
         default: {
             ReadLock lock(command_state_rwmutex);
@@ -421,36 +416,24 @@ void BatchCommandExecutor::setDefaultCommand(const string& command_alias,
     default_command_alias = command_alias;
     default_command_stickyness = sticky;
     default_command_sandbox_instance = sandbox_instance;
-    BCELAPP_ << "Install the default command with alias: " << default_command_alias;
+    installDefaultCommand();
 }
 
 const std::string& BatchCommandExecutor::getDefaultCommand() {
     return default_command_alias;
 }
 
-void BatchCommandExecutor::submitDefaultCommand(bool when_no_other_command) {
-    unsigned long enqueued_command = 0;
-    unsigned long paused_command = 0;
+void BatchCommandExecutor::installDefaultCommand() {
     if(default_command_alias.size() == 0) {
         DEBUG_CODE(BCELDBG_ << "No default command to execute successfully installed";)
         return;
     }
     //lock submission queue
     WriteLock       lock(sandbox_map_mutex);
-    
-    //check for empry queue
-    enqueued_command = sandbox_map[default_command_sandbox_instance]->getNumberOfEnqueuedCommand();
-    paused_command = sandbox_map[default_command_sandbox_instance]->getNumberOfPausedCommand();
-    if(when_no_other_command &&
-       (enqueued_command ||
-       paused_command))  {
-        DEBUG_CODE(BCELDBG_ << CHAOS_FORMAT("Command must be installed only if there are no command in queue(%1%) or stack(%2%)",%enqueued_command%paused_command);)
-        return;
-    }
-    BCELAPP_ << "Submit the default command ->"<<"\""<<default_command_alias<<"\"";
+    BCELAPP_ << "Install the default command ->"<<"\""<<default_command_alias<<"\"";
     BatchCommand * def_cmd_impl = instanceCommandInfo(default_command_alias, (CDataWrapper*)NULL);
     def_cmd_impl->unique_id = ++command_sequence_id;
-    sandbox_map[default_command_sandbox_instance]->enqueueCommand(NULL, def_cmd_impl, 50);
+    sandbox_map[default_command_sandbox_instance]->setDefaultStickyCommand(def_cmd_impl);
     DEBUG_CODE(BCELDBG_ << "Command \"" << default_command_alias << "\" successfully installed";)
     
 }
@@ -682,29 +665,29 @@ CDataWrapper* BatchCommandExecutor::setCommandFeatures(CDataWrapper *params, boo
     boost::shared_ptr<BatchCommandSandbox> tmp_ptr = sandbox_map[execution_channel];
     
     //lock the scheduler
-    boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutextAccessCurrentCommand);
+    boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutext_access_current_command);
     
-    if(!tmp_ptr->currentExecutingCommand)
+    if(!tmp_ptr->current_executing_command)
         throw CException(2, "No Current running command", "BatchCommandExecutor::setCommandFeatures");
     
     //check wath feature we need to setup
     if(params->hasKey(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL)) {
         //has lock information to setup
-        tmp_ptr->currentExecutingCommand->element->cmdImpl->lockFeaturePropertyFlag[0] = params->getBoolValue(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
+        tmp_ptr->current_executing_command->element->cmdImpl->lockFeaturePropertyFlag[0] = params->getBoolValue(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
     }
     
     if(params->hasKey(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64)) {
         //has scheduler step wait
-        tmp_ptr->currentExecutingCommand->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = params->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64);
+        tmp_ptr->current_executing_command->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = params->getUInt64Value(BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64);
     }
     
     //recheck current command
-    if(!tmp_ptr->currentExecutingCommand) return NULL;
+    if(!tmp_ptr->current_executing_command) return NULL;
     
     
     lockForCurrentCommand.unlock();
-    if(tmp_ptr->threadSchedulerPauseCondition.isInWait())
-        tmp_ptr->threadSchedulerPauseCondition.unlock();
+    if(tmp_ptr->thread_scheduler_pause_condition.isInWait())
+        tmp_ptr->thread_scheduler_pause_condition.unlock();
     return NULL;
 }
 
@@ -725,7 +708,7 @@ CDataWrapper* BatchCommandExecutor::killCurrentCommand(CDataWrapper *params, boo
     
     boost::shared_ptr<BatchCommandSandbox> tmp_ptr = sandbox_map[0];
     
-    if(!tmp_ptr->currentExecutingCommand) return NULL;
+    if(!tmp_ptr->current_executing_command) return NULL;
     BCELAPP_ << "Kill current command into the executor id: " << executorID;
     tmp_ptr->killCurrentCommand();
     return NULL;

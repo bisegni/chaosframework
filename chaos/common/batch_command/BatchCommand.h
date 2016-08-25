@@ -81,6 +81,7 @@ namespace chaos{
                 friend struct AcquireFunctor;
                 friend struct CorrelationFunctor;
                 friend struct CommandInfoAndImplementation;
+                bool sticky;
                 //!unique command id
                 uint64_t unique_id;
                 
