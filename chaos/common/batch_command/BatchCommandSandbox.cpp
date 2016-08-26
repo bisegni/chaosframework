@@ -334,7 +334,7 @@ void BatchCommandSandbox::checkNextCommand() {
         lock_next_command_queue.lock();
         queue_empty = command_submitted_queue.empty();
         lock_next_command_queue.unlock();
-        //check for emotness
+        //check for emptiness
         if (!queue_empty) {
             if (current_executing_command) {
                 PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = NULL;
@@ -432,7 +432,7 @@ void BatchCommandSandbox::checkNextCommand() {
                 
                 lockForCurrentCommandMutex.unlock();
                 //delete
-                if (command_to_delete && command_to_delete->element->cmdImpl->sticky == false) {
+                if (command_to_delete && !command_to_delete->element->cmdImpl->sticky) {
                     DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command with pointer " << std::hex << command_to_delete << std::dec;)
                     DELETE_OBJ_POINTER(command_to_delete);
                 }
@@ -470,13 +470,16 @@ void BatchCommandSandbox::checkNextCommand() {
                         }
                         //manage paused command
                         PRIORITY_ELEMENT(CommandInfoAndImplementation) * nextAvailableCommand = command_stack.top();
+                        
                         removeHandler(command_to_delete);
                         installHandler(nextAvailableCommand);
                         command_stack.pop();
                         thread_scheduler_pause_condition.unlock();
-                        
-                        DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command with pointer " << std::hex << command_to_delete << std::dec;)
-                        DELETE_OBJ_POINTER(command_to_delete);
+                        if(command_to_delete->element->cmdImpl->sticky == false){
+                            
+                            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command with pointer " << std::hex << command_to_delete << std::dec;)
+                            DELETE_OBJ_POINTER(command_to_delete);
+                        }
                     } else {
                         PRIORITY_ELEMENT(CommandInfoAndImplementation) *command_to_delete = current_executing_command;
                         switch (command_to_delete->element->cmdImpl->runningProperty) {
@@ -495,10 +498,15 @@ void BatchCommandSandbox::checkNextCommand() {
                                 
                                 break;
                         }
-                        removeHandler(command_to_delete);
-                        installHandler(NULL);
-                        DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command with pointer " << std::hex << command_to_delete << std::dec;)
-                        DELETE_OBJ_POINTER(command_to_delete);
+                        if(command_to_delete->element->cmdImpl->sticky==false){
+
+                            removeHandler(command_to_delete);
+                            
+                            installHandler(NULL);
+                            
+                            DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Delete command with pointer " << std::hex << command_to_delete << std::dec;)
+                            DELETE_OBJ_POINTER(command_to_delete);
+                        }
                     }
                 }
             }
@@ -628,7 +636,7 @@ void BatchCommandSandbox::runCommand() {
 
 bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation) * cmd_to_install) {
     //set current command
-    if (cmd_to_install) {
+    if (cmd_to_install && cmd_to_install->element->cmdInfo) {
         chaos_data::CDataWrapper *tmp_info = cmd_to_install->element->cmdInfo;
         BatchCommand *tmp_impl = cmd_to_install->element->cmdImpl;
         
@@ -680,7 +688,7 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
 }
 
 void BatchCommandSandbox::removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation) * cmd_to_install) {
-    if (!cmd_to_install) return;
+    if (!cmd_to_install ) return;
     BatchCommand *tmp_impl = cmd_to_install->element->cmdImpl;
     uint8_t handlerMask = tmp_impl->implementedHandler();
     if (handlerMask <= 1) {
