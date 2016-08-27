@@ -31,10 +31,7 @@ new chaos::common::utility::TypedObjectInstancer<BatchCommandClass, TestBatchCom
 
 TestCommandExecutor::TestCommandExecutor():
 BatchCommandExecutor("exec_id"),
-create_ts_total(0),
-set_ts_total(0),
-end_ts_total(0),
-cicle_count_total(0),
+last_end_time(0),
 completed_count(0),
 fault_count(0){
     installCommand("TestCommandSetOnly", BATCH_COMMAND_INSTANCER(TestCommandSetOnly));
@@ -79,29 +76,22 @@ void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
         case common::batch_command::BatchCommandEventType::EVT_COMPLETED: {
             TestBatchCommand *instance = map_id_command[command_seq];
             completed_count++;
-            create_ts_total += instance->create_ts;
-            set_ts_total += instance->set_ts-instance->create_ts;
-            end_ts_total += instance->end_ts-instance->create_ts;
-            cicle_count_total += instance->cicle_count;
-            std::cout << CHAOS_FORMAT("[Completed]Command with id %1% completed %5% with st:%2% ed:%3% count:%4%",%command_seq
-                                      %(set_ts_total/command_seq)
-                                      %(end_ts_total/command_seq)
-                                      %(cicle_count_total/command_seq)
-                                      %completed_count) << std::endl;
+            uint64_t end_to_set_time = 0;
+            if(last_end_time){
+                end_to_set_time = instance->set_ts - last_end_time;
+            }
+            last_end_time = instance->end_ts;
+            uint64_t set_ts_total = instance->set_ts-instance->create_ts;
+            uint64_t end_ts_total = instance->end_ts-instance->create_ts;
+            std::cout << CHAOS_FORMAT("[Completed]Command with id %1% completed with st:%2% ed:%3% count:%4% ETS:%5%",%command_seq
+                                      %(set_ts_total)
+                                      %(end_ts_total)
+                                      %instance->cicle_count
+                                      %end_to_set_time) << std::endl;
             break;
         }
         case common::batch_command::BatchCommandEventType::EVT_FAULT:{
-            TestBatchCommand *instance = map_id_command[command_seq];
             fault_count++;
-            create_ts_total += instance->create_ts;
-            set_ts_total += instance->set_ts-instance->create_ts;
-            end_ts_total += instance->end_ts-instance->create_ts;
-            cicle_count_total += instance->cicle_count;
-            std::cout << CHAOS_FORMAT("[Fault]Command with id %1% faulted %5% with st:%2% ed:%3% count:%4%",%command_seq
-                                      %(set_ts_total/command_seq)
-                                      %(end_ts_total/command_seq)
-                                      %(cicle_count_total/command_seq)
-                                      %completed_count) << std::endl;
             break;
         }
         case common::batch_command::BatchCommandEventType::EVT_KILLED:

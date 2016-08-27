@@ -26,7 +26,7 @@ using namespace chaos::common::batch_command;
 using namespace chaos::common::batch_command::test;
 
 TestBatchCommand::TestBatchCommand():
-create_ts(TimingUtil::getTimeStamp()),
+create_ts(TimingUtil::getTimeStampInMicrosends()),
 set_ts(0),
 end_ts(0),
 cicle_count(0){}
@@ -34,7 +34,7 @@ cicle_count(0){}
 TestBatchCommand::~TestBatchCommand() {}
 
 void TestBatchCommand::setHandler(CDataWrapper *data) {
-    set_ts = TimingUtil::getTimeStamp();
+    set_ts = TimingUtil::getTimeStampInMicrosends();
     
     //se cicle to 10 usec
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)10);
@@ -50,7 +50,7 @@ void TestBatchCommand::ccHandler() {
 }
 
 bool TestBatchCommand::timeoutHandler() {
-    end_ts = TimingUtil::getTimeStamp();
+    end_ts = TimingUtil::getTimeStampInMicrosends();
     BC_END_RUNNIG_PROPERTY;
     return false;
 }

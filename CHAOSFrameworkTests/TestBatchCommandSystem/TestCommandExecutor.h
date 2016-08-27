@@ -42,10 +42,7 @@ namespace chaos{
                 public BatchCommandExecutor {
                     IDCommandMap map_id_command;
                     
-                    uint64_t create_ts_total;
-                    uint64_t set_ts_total;
-                    uint64_t end_ts_total;
-                    uint64_t cicle_count_total;
+                    uint64_t last_end_time;
                     uint64_t completed_count;
                     uint64_t fault_count;
                 protected:

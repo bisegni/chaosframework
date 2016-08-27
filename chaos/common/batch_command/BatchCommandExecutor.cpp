@@ -158,7 +158,7 @@ BatchCommandExecutor::~BatchCommandExecutor() {
 void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
     
     //reset the command sequence on initialization(id 0 is used for stiky command by sandboxes)
-    command_sequence_id = 1;
+    command_sequence_id = 0;
     
     //broadcast init sequence to base class
     StartableService::init(initData);
