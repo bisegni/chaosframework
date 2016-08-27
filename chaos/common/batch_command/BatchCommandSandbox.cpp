@@ -636,7 +636,7 @@ void BatchCommandSandbox::runCommand() {
 
 bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation) * cmd_to_install) {
     //set current command
-    if (cmd_to_install && cmd_to_install->element->cmdInfo) {
+    if (cmd_to_install && cmd_to_install->element->cmdImpl) {
         chaos_data::CDataWrapper *tmp_info = cmd_to_install->element->cmdInfo;
         BatchCommand *tmp_impl = cmd_to_install->element->cmdImpl;
         
