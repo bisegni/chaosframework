@@ -287,7 +287,7 @@ namespace chaos {
                  \param batch_command_alias alias of the batch command to submit
                  \param command_data the data of the command
                  \param execution_channel is the index tha tidentify the sandbox where run the command
-                 \param is the priority respect to other waiting instances
+                 \param priority is the priority respect to other waiting instances
                  \param submission_rule, is the rule taht detarminate what appen to the current executing command,
                         when this instance nede to be executed within the sandbox
                  \param submission_retry_delay is the daly between a retry and another that the sandbox do for install command

@@ -226,16 +226,7 @@ void BatchCommandSandbox::stop() throw (chaos::CException) {
     SCSLAPP_ << "Notify pauseCondition variable";
     thread_scheduler_pause_condition.unlock();
     whait_for_next_check.unlock();
-    
-    //waith that the current command will terminate the work
-    //SCSLDBG_ << "Wait on condition_waith_scheduler_end";
-    /*	try{
-     condition_waith_scheduler_end.wait(lockScheduler);
-     
-     }catch(boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::condition_error> >& ex) {
-     SCSLDBG_<< ex.what();
-     }
-     */
+
     if (thread_scheduler->joinable()) {
         SCSLAPP_ << "Join on schedulerThread";
         
