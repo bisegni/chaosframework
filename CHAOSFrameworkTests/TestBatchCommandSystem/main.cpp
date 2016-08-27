@@ -21,7 +21,7 @@ int main(int argc, const char * argv[]) {
     for(int idx = 0;
         idx < 60;
         idx++) {
-        executor.submitCommand("TestCommandComplete", NULL, command_id);
+        executor.submitCommand("TestCommandComplete", NULL, command_id, 0);
     }
     sleep(60);
     StartableService::stopImplementation(executor, "TestCommandExecutor", __PRETTY_FUNCTION__);

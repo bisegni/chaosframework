@@ -51,6 +51,7 @@ void TestBatchCommand::ccHandler() {
 
 bool TestBatchCommand::timeoutHandler() {
     end_ts = TimingUtil::getTimeStamp();
+    BC_END_RUNNIG_PROPERTY;
     return false;
 }
 
