@@ -19,6 +19,7 @@
  */
 
 
+#include <chaos/common/global.h>
 #include <chaos/common/utility/endianess.h>
 #include <chaos/common/direct_io/channel/DirectIOPerformanceServerChannel.h>
 

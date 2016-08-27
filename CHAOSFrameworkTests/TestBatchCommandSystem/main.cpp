@@ -8,11 +8,17 @@
 
 #include "TestCommandExecutor.h"
 
+
+#include <chaos/common/log/LogManager.h>
+
+
 using namespace chaos::common::utility;
 using namespace chaos::common::batch_command::test;
 
 int main(int argc, const char * argv[]) {
     TestCommandExecutor executor;
+    
+    chaos::common::log::LogManager::getInstance()->init();
     
     StartableService::initImplementation(executor, NULL, "TestCommandExecutor", __PRETTY_FUNCTION__);
     StartableService::startImplementation(executor, "TestCommandExecutor", __PRETTY_FUNCTION__);

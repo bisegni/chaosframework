@@ -23,39 +23,43 @@
 
 #include <iostream>
 #include <chaos/common/exception/exception.h>
+#include <chaos/common/utility/Singleton.h>
+
 namespace chaos {
     template<class T>
     class ChaosCommon;
-    
-    //! Define the level of the log
-    namespace log {
-        
-        namespace level {
+    namespace common{
+        //! Define the level of the log
+        namespace log {
             
-            typedef enum LogSeverityLevel {
-                /// Enable the debugging information
-                LSLDebug = 0,    // 1
-                /// Normal debugging information
-                LSLInfo  = 1,    // 2
-                /// Normal debugging information
-                LSLNotice  = 2,    // 2
-                /// Log all error that occour but that don't prevent the killing of the toolkit
-                LSLWarning = 3,    // 3
-                /// Log the error the force the toolkit process to closs
-                LSLFatal = 4      // 4
-            } LogSeverityLevel;
+            namespace level {
+                
+                typedef enum LogSeverityLevel {
+                    /// Enable the debugging information
+                    LSLDebug = 0,    // 1
+                    /// Normal debugging information
+                    LSLInfo  = 1,    // 2
+                    /// Normal debugging information
+                    LSLNotice  = 2,    // 2
+                    /// Log all error that occour but that don't prevent the killing of the toolkit
+                    LSLWarning = 3,    // 3
+                    /// Log the error the force the toolkit process to closs
+                    LSLFatal = 4      // 4
+                } LogSeverityLevel;
+            }
+            
+            class LogManager:
+            public chaos::common::utility::Singleton<LogManager>{
+                friend class Singleton<LogManager>;
+                template<class T>
+                friend class chaos::ChaosCommon;
+                
+                LogManager(){}
+            public:
+                void init() throw(CException);
+            };
+            
         }
-        
-        class LogManager {
-            template<class T>
-            friend class chaos::ChaosCommon;
-            
-            LogManager(){}
-        public:
-            void init() throw(CException);
-        };
-        
-        
     }
 }
 #endif /* defined(__CHAOSFramework__LogManager__) */

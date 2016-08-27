@@ -30,6 +30,11 @@
  * \section install_sec Installation
  * Read the README.txt file in the root of source code folder
  */
+
+
+#include <chaos/common/endian.h>
+#include <chaos/common/log/LogManager.h>
+
 #include <boost/version.hpp>
 #include <boost/format.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -40,8 +45,6 @@
 #include <boost/log/sources/global_logger_storage.hpp>
 
 
-#include <chaos/common/endian.h>
-#include <chaos/common/log/LogManager.h>
 
 #include <cassert>
 
@@ -51,9 +54,9 @@
 
 #if BOOST_VERSION > 105300
     //allocate the logger
-BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
+BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::common::log::level::LogSeverityLevel > )
 #else
-BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
+BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::common::log::level::LogSeverityLevel > )
 #endif
 
 #define CHAOS_BOOST_LOCK_EXCEPTION_CACTH(exception_name, exception_code)\
@@ -68,11 +71,11 @@ code\
 return_code\
 }
 
-#define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLFatal)
-#define LDBG_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLDebug)
-#define LWRN_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLWarning)
-#define LNOTE_      BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLNotice)
-#define LAPP_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLInfo)
+#define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::common::log::level::LSLFatal)
+#define LDBG_       BOOST_LOG_SEV(chaosLogger::get(), chaos::common::log::level::LSLDebug)
+#define LWRN_       BOOST_LOG_SEV(chaosLogger::get(), chaos::common::log::level::LSLWarning)
+#define LNOTE_      BOOST_LOG_SEV(chaosLogger::get(), chaos::common::log::level::LSLNotice)
+#define LAPP_       BOOST_LOG_SEV(chaosLogger::get(), chaos::common::log::level::LSLInfo)
 
 #define DEFINE_LOG_HEADER(x) "[" #x "] - "
 #define DEFINE_LOG_HEADER_1_P(x,y) "[" #x "-" << y << "] - "

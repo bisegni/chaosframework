@@ -17,8 +17,10 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include <chaos/common/direct_io/channel/DirectIOSystemAPIClientChannel.h>
 
+#include <chaos/common/global.h>
+
+#include <chaos/common/direct_io/channel/DirectIOSystemAPIClientChannel.h>
 namespace chaos_data = chaos::common::data;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;

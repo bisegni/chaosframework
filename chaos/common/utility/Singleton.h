@@ -23,7 +23,7 @@
 
 #include <boost/thread/once.hpp>
 #include <boost/noncopyable.hpp>
-#include <chaos/common/global.h>
+//#include <chaos/common/global.h>
 
 namespace chaos {
     namespace common {

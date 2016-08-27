@@ -18,9 +18,9 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/global.h>
 #include <chaos/common/utility/endianess.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
-
 
 namespace chaos_data = chaos::common::data;
 using namespace chaos::common::direct_io;

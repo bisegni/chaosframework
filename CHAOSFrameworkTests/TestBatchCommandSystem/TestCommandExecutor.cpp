@@ -80,14 +80,13 @@ void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
             TestBatchCommand *instance = map_id_command[command_seq];
             completed_count++;
             create_ts_total += instance->create_ts;
-            set_ts_total += instance->set_ts;
-            end_ts_total += instance->end_ts;
+            set_ts_total += instance->set_ts-instance->create_ts;
+            end_ts_total += instance->end_ts-instance->create_ts;
             cicle_count_total += instance->cicle_count;
-            std::cout << CHAOS_FORMAT("[Completed]Command with id %1% completed %10% with ct:%2%(%3%) st:%4%(%5%) ed:%6%(%7%) count:%8%(%9%)",%command_seq
-                                      %instance->create_ts%(create_ts_total/command_seq)
-                                      %instance->set_ts%(set_ts_total/command_seq)
-                                      %instance->end_ts%(end_ts_total/command_seq)
-                                      %instance->cicle_count%(cicle_count_total/command_seq)
+            std::cout << CHAOS_FORMAT("[Completed]Command with id %1% completed %5% with st:%2% ed:%3% count:%4%",%command_seq
+                                      %(set_ts_total/command_seq)
+                                      %(end_ts_total/command_seq)
+                                      %(cicle_count_total/command_seq)
                                       %completed_count) << std::endl;
             break;
         }
@@ -95,15 +94,14 @@ void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
             TestBatchCommand *instance = map_id_command[command_seq];
             fault_count++;
             create_ts_total += instance->create_ts;
-            set_ts_total += instance->set_ts;
-            end_ts_total += instance->end_ts;
+            set_ts_total += instance->set_ts-instance->create_ts;
+            end_ts_total += instance->end_ts-instance->create_ts;
             cicle_count_total += instance->cicle_count;
-            std::cout << CHAOS_FORMAT("[Fault]Command with id %1% faulted %10% with ct:%2%(%3%) st:%4%(%5%) ed:%6%(%7%) count:%8%(%9%)",%command_seq
-                                      %instance->create_ts%(create_ts_total/command_seq)
-                                      %instance->set_ts%(set_ts_total/command_seq)
-                                      %instance->end_ts%(end_ts_total/command_seq)
-                                      %instance->cicle_count%(cicle_count_total/command_seq)
-                                      %fault_count) << std::endl;
+            std::cout << CHAOS_FORMAT("[Fault]Command with id %1% faulted %5% with st:%2% ed:%3% count:%4%",%command_seq
+                                      %(set_ts_total/command_seq)
+                                      %(end_ts_total/command_seq)
+                                      %(cicle_count_total/command_seq)
+                                      %completed_count) << std::endl;
             break;
         }
         case common::batch_command::BatchCommandEventType::EVT_KILLED:
