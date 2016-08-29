@@ -524,7 +524,7 @@ void BatchCommandSandbox::checkNextCommand() {
                 //we have no commando so we need to apply the default command
                 installHandler(default_sticky_command.get());
                 thread_scheduler_pause_condition.unlock();
-                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Use sticky default command " << std::hex << default_sticky_command.get() << std::dec;)
+		//                DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Use sticky default command " << std::hex << default_sticky_command.get() << std::dec;)
             }
             WAIT_ON_NEXT_CMD
         }

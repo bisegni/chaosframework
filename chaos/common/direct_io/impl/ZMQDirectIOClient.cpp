@@ -169,7 +169,7 @@ void ZMQDirectIOClient::deinit() throw(chaos::CException) {
 
 DirectIOClientConnection *ZMQDirectIOClient::_getNewConnectionImpl(std::string server_description, uint16_t endpoint) {
     int err = 0;
-    const int output_buffer_dim = 10;
+    const int output_buffer_dim = 1;
     const int linger_period = 0;
     const int timeout = 5000;
     const int min_reconnection_ivl = 5000;
