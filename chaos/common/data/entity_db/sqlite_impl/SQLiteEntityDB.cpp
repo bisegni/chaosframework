@@ -19,6 +19,8 @@
  */
 
 
+#include <chaos/common/global.h>
+
 #include "SQLiteEntityDB.h"
 
 using namespace chaos;

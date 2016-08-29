@@ -25,6 +25,7 @@
 /* Begin PBXFileReference section */
 		323E66601A1E40CC009CDDB7 /* ChaosSnapshotUtility */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosSnapshotUtility; sourceTree = BUILT_PRODUCTS_DIR; };
 		323E666A1A1E40E6009CDDB7 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
+		327A28591D71D6A000DFDD2C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +43,7 @@
 			isa = PBXGroup;
 			children = (
 				323E66621A1E40CC009CDDB7 /* ChaosSnapshotUtility */,
+				327A28581D71D6A000DFDD2C /* TestBatchCommandSystem */,
 				323E66611A1E40CC009CDDB7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -60,6 +62,14 @@
 				323E666A1A1E40E6009CDDB7 /* main.cpp */,
 			);
 			path = ChaosSnapshotUtility;
+			sourceTree = "<group>";
+		};
+		327A28581D71D6A000DFDD2C /* TestBatchCommandSystem */ = {
+			isa = PBXGroup;
+			children = (
+				327A28591D71D6A000DFDD2C /* main.cpp */,
+			);
+			path = TestBatchCommandSystem;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

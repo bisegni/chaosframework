@@ -104,18 +104,18 @@ void GlobalConfiguration::parseStringStream(std::istream &sStreamOptions) throw 
  Conver the string into enumeration for the log level
  */
 int32_t GlobalConfiguration::filterLogLevel(string& levelStr) throw (CException) {
-    chaos::log::level::LogSeverityLevel level = chaos::log::level::LSLInfo;
+    chaos::common::log::level::LogSeverityLevel level = chaos::common::log::level::LSLInfo;
     
     if (levelStr == "info")
-        level = chaos::log::level::LSLInfo;
+        level = chaos::common::log::level::LSLInfo;
     else if (levelStr == "debug")
-        level = chaos::log::level::LSLDebug;
+        level = chaos::common::log::level::LSLDebug;
     else if (levelStr == "notice")
-        level = chaos::log::level::LSLNotice;
+        level = chaos::common::log::level::LSLNotice;
     else if (levelStr == "warning")
-        level = chaos::log::level::LSLWarning;
+        level = chaos::common::log::level::LSLWarning;
     else if (levelStr == "fatal")
-        level = chaos::log::level::LSLFatal;
+        level = chaos::common::log::level::LSLFatal;
     else
         throw chaos::CException(1, "Invalid log level", "GlobalConfiguration::filterLogLevel");
     

@@ -84,7 +84,6 @@ namespace chaos {
     class ChaosCommon:
     public common::utility::Singleton<T>,
     public common::utility::StartableService {
-        log::LogManager logManager;
     protected:
             //! Constructor Method
         /*!
@@ -175,7 +174,7 @@ namespace chaos {
                 }
 
                     //startup logger
-                logManager.init();
+                chaos::common::log::LogManager::getInstance()->init();
 
                     //print chaos library header
                 PRINT_LIB_HEADER

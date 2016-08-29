@@ -21,8 +21,11 @@
 #ifndef ChaosFramework_DispatcherRegister_h
 #define ChaosFramework_DispatcherRegister_h
 
-#include <string>
 #include <chaos/common/utility/Singleton.h>
+
+#include <map>
+#include <string>
+#include <vector>
 
 namespace chaos {
 	namespace common{

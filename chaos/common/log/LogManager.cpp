@@ -1,4 +1,4 @@
- /*
+/*
  *	LogManager.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
@@ -61,7 +61,7 @@ namespace fmt = boost::log::formatters;
 #define EXTENDEND_LOG_FORMAT    "[%TimeStamp%][%Severity%][%ProcessID%][%ThreadID%]: %_%"
 
 using namespace chaos;
-using namespace chaos::log;
+using namespace chaos::common::log;
 
 std::ostream& operator<<(std::ostream& out, const level::LogSeverityLevel& level )
 {
@@ -88,14 +88,17 @@ std::ostream& operator<<(std::ostream& out, const level::LogSeverityLevel& level
 
 void LogManager::init() throw(CException) {
     //get the log configuration
-    level::LogSeverityLevel     logLevel                =   static_cast<level::LogSeverityLevel>(GlobalConfiguration::getInstance()->getConfiguration()->getInt32Value(InitOption::OPT_LOG_LEVEL));
+    level::LogSeverityLevel     logLevel                =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_LEVEL)?
+    static_cast<level::LogSeverityLevel>(GlobalConfiguration::getInstance()->getConfiguration()->getInt32Value(InitOption::OPT_LOG_LEVEL)):
+    level::LSLInfo;
     bool                        logOnConsole            =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?
-                                                            GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE):false;
+    GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE):false;
     bool                        logOnFile               =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?
-                                                            GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE):false;
-    string                      logFileName             =   GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);
-    uint32_t                    log_file_max_size_mb    =   GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_LOG_MAX_SIZE_MB);
-
+    GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE):false;
+    string                      logFileName             =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_FILE)?
+    GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE):"";
+    uint32_t                    log_file_max_size_mb    =   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_MAX_SIZE_MB)?GlobalConfiguration::getInstance()->getConfiguration()->getUInt32Value(InitOption::OPT_LOG_MAX_SIZE_MB):1;
+    
     logging::add_common_attributes();
     boost::shared_ptr< logging::core > logger = boost::log::core::get();
     // Create a backend
@@ -106,7 +109,7 @@ void LogManager::init() throw(CException) {
     logging::register_simple_formatter_factory< level::LogSeverityLevel  >("Severity");
     logger->set_filter(logging::filters::attr< level::LogSeverityLevel >("Severity") >= logLevel);
 #endif
-
+    
     
     if(logOnConsole){
 #if (BOOST_VERSION / 100000) >= 1 && ((BOOST_VERSION / 100) % 1000) >= 54
@@ -135,4 +138,4 @@ void LogManager::init() throw(CException) {
     
     //enable the log in case of needs
     logger->set_logging_enabled(logOnConsole || logOnFile);
- }
+}

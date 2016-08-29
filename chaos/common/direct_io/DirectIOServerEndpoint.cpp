@@ -17,8 +17,11 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
+#include <chaos/common/global.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
+
 #include <boost/format.hpp>
 
 using namespace chaos::common::utility;
