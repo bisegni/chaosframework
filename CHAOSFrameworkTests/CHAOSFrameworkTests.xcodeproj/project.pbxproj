@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		321E59321D7457FF00365F57 /* TestBatchDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321E59301D7457FF00365F57 /* TestBatchDefault.cpp */; };
 		327A28651D71D6D100DFDD2C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A28641D71D6D100DFDD2C /* main.cpp */; };
 		327A286B1D71D72700DFDD2C /* TestCommandExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A28691D71D72700DFDD2C /* TestCommandExecutor.cpp */; };
 		327A286E1D71D73300DFDD2C /* TestBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327A286C1D71D73300DFDD2C /* TestBatchCommand.cpp */; };
@@ -124,6 +125,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		321E59301D7457FF00365F57 /* TestBatchDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestBatchDefault.cpp; sourceTree = "<group>"; };
+		321E59311D7457FF00365F57 /* TestBatchDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBatchDefault.h; sourceTree = "<group>"; };
+		3235DB521D74A46B009D016E /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		327A28621D71D6D100DFDD2C /* TestBatchCommandSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestBatchCommandSystem; sourceTree = BUILT_PRODUCTS_DIR; };
 		327A28641D71D6D100DFDD2C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		327A28691D71D72700DFDD2C /* TestCommandExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestCommandExecutor.cpp; sourceTree = "<group>"; };
@@ -261,11 +265,14 @@
 		327A28631D71D6D100DFDD2C /* TestBatchCommandSystem */ = {
 			isa = PBXGroup;
 			children = (
+				3235DB521D74A46B009D016E /* CMakeLists.txt */,
 				327A28641D71D6D100DFDD2C /* main.cpp */,
 				327A28691D71D72700DFDD2C /* TestCommandExecutor.cpp */,
 				327A286A1D71D72700DFDD2C /* TestCommandExecutor.h */,
 				327A286C1D71D73300DFDD2C /* TestBatchCommand.cpp */,
 				327A286D1D71D73300DFDD2C /* TestBatchCommand.h */,
+				321E59301D7457FF00365F57 /* TestBatchDefault.cpp */,
+				321E59311D7457FF00365F57 /* TestBatchDefault.h */,
 			);
 			path = TestBatchCommandSystem;
 			sourceTree = "<group>";
@@ -709,6 +716,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				321E59321D7457FF00365F57 /* TestBatchDefault.cpp in Sources */,
 				327A286B1D71D72700DFDD2C /* TestCommandExecutor.cpp in Sources */,
 				327A28651D71D6D100DFDD2C /* main.cpp in Sources */,
 				327A286E1D71D73300DFDD2C /* TestBatchCommand.cpp in Sources */,
@@ -808,7 +816,7 @@
 		327A28661D71D6D100DFDD2C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -816,7 +824,7 @@
 		327A28671D71D6D100DFDD2C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1130,6 +1138,7 @@
 				327A28671D71D6D100DFDD2C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		329943391D6B38CC008DBAE9 /* Build configuration list for PBXProject "CHAOSFrameworkTests" */ = {
 			isa = XCConfigurationList;

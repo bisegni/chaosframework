@@ -404,7 +404,6 @@ std::auto_ptr<CommandState> BatchCommandExecutor::getStateForCommandID(uint64_t 
 
 //! Perform a command registration
 void BatchCommandExecutor::setDefaultCommand(const string& command_alias,
-                                             bool sticky,
                                              unsigned int sandbox_instance) {
     // check if we can set the default, the condition are:
     // the executor and the sandbox are in the init state or in stop state
@@ -414,29 +413,22 @@ void BatchCommandExecutor::setDefaultCommand(const string& command_alias,
     }
     
     default_command_alias = command_alias;
-    default_command_stickyness = sticky;
-    default_command_sandbox_instance = sandbox_instance;
-    installDefaultCommand();
+    WriteLock       lock(sandbox_map_mutex);
+    BCELAPP_ << "Install the default command ->"<<"\""<<default_command_alias<<"\"";
+    BatchCommand * def_cmd_impl = instanceCommandInfo(default_command_alias, (CDataWrapper*)NULL);
+    if(def_cmd_impl) {
+        def_cmd_impl->unique_id = ++command_sequence_id;
+        sandbox_map[default_command_sandbox_instance]->setDefaultStickyCommand(def_cmd_impl);
+        DEBUG_CODE(BCELDBG_ << "Command \"" << default_command_alias << "\" successfully installed";)
+    }else {
+        DEBUG_CODE(BCELERR_ << "Command \"" << default_command_alias << "\" Not found";)
+    }
 }
 
 const std::string& BatchCommandExecutor::getDefaultCommand() {
     return default_command_alias;
 }
 
-void BatchCommandExecutor::installDefaultCommand() {
-    if(default_command_alias.size() == 0) {
-        DEBUG_CODE(BCELDBG_ << "No default command to execute successfully installed";)
-        return;
-    }
-    //lock submission queue
-    WriteLock       lock(sandbox_map_mutex);
-    BCELAPP_ << "Install the default command ->"<<"\""<<default_command_alias<<"\"";
-    BatchCommand * def_cmd_impl = instanceCommandInfo(default_command_alias, (CDataWrapper*)NULL);
-    def_cmd_impl->unique_id = ++command_sequence_id;
-    sandbox_map[default_command_sandbox_instance]->setDefaultStickyCommand(def_cmd_impl);
-    DEBUG_CODE(BCELDBG_ << "Command \"" << default_command_alias << "\" successfully installed";)
-    
-}
 //! return all the command description
 void BatchCommandExecutor::getCommandsDescriptions(std::vector< boost::shared_ptr<BatchCommandDescription> >& descriptions) {
     for(MapCommandDescriptionIterator it = map_command_description.begin();

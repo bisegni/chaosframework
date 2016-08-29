@@ -26,17 +26,14 @@ using namespace chaos::common::utility;
 using namespace chaos::common::batch_command;
 using namespace chaos::common::batch_command::test;
 
-#define BATCH_COMMAND_INSTANCER(BatchCommandClass) new NestedObjectInstancer<TestBatchCommand, BatchCommand>(\
-new chaos::common::utility::TypedObjectInstancer<BatchCommandClass, TestBatchCommand>())
-
 TestCommandExecutor::TestCommandExecutor():
 BatchCommandExecutor("exec_id"),
 last_end_time(0),
 completed_count(0),
-fault_count(0){
-    installCommand("TestCommandSetOnly", BATCH_COMMAND_INSTANCER(TestCommandSetOnly));
-    installCommand("TestCommandComplete", BATCH_COMMAND_INSTANCER(TestCommandComplete));
-}
+fault_count(0),
+killed_count(0),
+paused_count(0),
+has_default(false){}
 
 TestCommandExecutor::~TestCommandExecutor() {
     
@@ -54,7 +51,9 @@ BatchCommand *  TestCommandExecutor::instanceCommandInfo(const std::string& comm
     
     //customize the newly create batch command
     if(result) {
-        map_id_command.insert(IDCommandMapPair(result->getUID(), result));
+        LockableObjectWriteLock wr;
+        map_id_command.getWriteLock(wr);
+        map_id_command().insert(IDCommandMapPair(result->getUID(), TestElement(result)));
     }
     return result;
 }
@@ -64,6 +63,11 @@ void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
                                              common::batch_command::BatchCommandEventType::BatchCommandEventType type,
                                              void* type_value_ptr,
                                              uint32_t type_value_size) {
+    LockableObjectWriteLock wl;
+    map_id_command.getWriteLock(wl);
+    if(map_id_command().count(command_seq) == 0) return;
+    TestElement& element = map_id_command()[command_seq];
+    element.last_event = type;
     switch(type){
         case common::batch_command::BatchCommandEventType::EVT_QUEUED:
             break;
@@ -72,29 +76,34 @@ void TestCommandExecutor::handleCommandEvent(const std::string& command_alias,
         case common::batch_command::BatchCommandEventType::EVT_RUNNING:
             break;
         case common::batch_command::BatchCommandEventType::EVT_PAUSED:
+            paused_count++;
             break;
         case common::batch_command::BatchCommandEventType::EVT_COMPLETED: {
-            TestBatchCommand *instance = map_id_command[command_seq];
+            element.has_completed = true;
             completed_count++;
             uint64_t end_to_set_time = 0;
             if(last_end_time){
-                end_to_set_time = instance->set_ts - last_end_time;
+                end_to_set_time = element.command_instance->set_ts - last_end_time;
             }
-            last_end_time = instance->end_ts;
-            uint64_t set_ts_total = instance->set_ts-instance->create_ts;
-            uint64_t end_ts_total = instance->end_ts-instance->create_ts;
-            std::cout << CHAOS_FORMAT("[Completed]Command with id %1% completed with st:%2% ed:%3% count:%4% ETS:%5%",%command_seq
-                                      %(set_ts_total)
-                                      %(end_ts_total)
-                                      %instance->cicle_count
-                                      %end_to_set_time) << std::endl;
+            last_end_time = element.command_instance->end_ts;
+            uint64_t set_ts_total = element.command_instance->set_ts-element.command_instance->create_ts;
+            uint64_t end_ts_total = element.command_instance->end_ts-element.command_instance->set_ts;
+            //std::cout << CHAOS_FORMAT("[Completed]Command with id %1% completed with st:%2% ed:%3% count:%4% ETS:%5%",%command_seq
+            //                          %(set_ts_total)
+            //                          %(end_ts_total)
+            //                          %element.command_instance->cicle_count
+            //                          %end_to_set_time) << std::endl;
+            map_id_command().erase(command_seq);
             break;
         }
         case common::batch_command::BatchCommandEventType::EVT_FAULT:{
+            map_id_command().erase(command_seq);
             fault_count++;
             break;
         }
         case common::batch_command::BatchCommandEventType::EVT_KILLED:
+            map_id_command().erase(command_seq);
+            killed_count++;
             break;
     }
 }
@@ -105,3 +114,18 @@ void TestCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
                                              uint32_t type_value_size) {
 }
 
+uint64_t TestCommandExecutor::getRunningElement() {
+    LockableObjectWriteLock wr;
+    map_id_command.getWriteLock(wr);
+    return map_id_command().size();
+}
+
+void TestCommandExecutor::resetMap() {
+    LockableObjectWriteLock wr;
+    map_id_command.getWriteLock(wr);
+    map_id_command().clear();
+}
+
+void TestCommandExecutor::printStatistic() {
+    std::cout << CHAOS_FORMAT("Test terminated with\nTerminated:%1% Killed:%2% Faulted:%3% Number of Pause:%4% total:%5%", %completed_count%killed_count%fault_count%paused_count%(completed_count+killed_count+fault_count)) << std::endl;
+}

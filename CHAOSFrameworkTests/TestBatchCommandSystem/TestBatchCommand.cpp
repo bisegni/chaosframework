@@ -38,7 +38,7 @@ void TestBatchCommand::setHandler(CDataWrapper *data) {
     
     //se cicle to 10 usec
     setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, (uint64_t)10);
-    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)1000000);
+    setFeatures(common::batch_command::features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT, (uint64_t)10000000);
 }
 void TestBatchCommand::acquireHandler() {
     
@@ -46,7 +46,7 @@ void TestBatchCommand::acquireHandler() {
 }
 
 void TestBatchCommand::ccHandler() {
-    
+    if(cicle_count > 100) {BC_END_RUNNIG_PROPERTY;}
 }
 
 bool TestBatchCommand::timeoutHandler() {

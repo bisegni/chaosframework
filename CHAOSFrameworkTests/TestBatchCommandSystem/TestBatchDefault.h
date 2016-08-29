@@ -1,10 +1,10 @@
 /*
- *	TestBatchCommand.h
+ *	TestBatchDefault.h
  *
  *	!CHAOS [CHAOSFrameworkTests]
- *	Created by Claudio Bisegni.
+ *	Created by bisegni.
  *
- *    	Copyright 27/08/2016 INFN, National Institute of Nuclear Physics
+ *    	Copyright 29/08/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -19,11 +19,12 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFrameworkTests__5083295_046E_406A_8A00_87FE658807DE_TestBatchCommand_h
-#define __CHAOSFrameworkTests__5083295_046E_406A_8A00_87FE658807DE_TestBatchCommand_h
+#ifndef __CHAOSFrameworkTests_EA26A8EF_AE10_48EE_B28D_D8770E555D71_TestBatchDefault_h
+#define __CHAOSFrameworkTests_EA26A8EF_AE10_48EE_B28D_D8770E555D71_TestBatchDefault_h
+
+#include "TestBatchCommand.h"
 
 #include <chaos/common/utility/TimingUtil.h>
-#include <chaos/common/batch_command/BatchCommand.h>
 
 namespace chaos {
     namespace common {
@@ -32,23 +33,16 @@ namespace chaos {
                 class TestCommandExecutor;
                 
                 //batch comand test
-                class TestBatchCommand:
-                public chaos::common::batch_command::BatchCommand {
+                class TestBatchDefaultCommand:
+                public TestBatchCommand {
                     friend class TestCommandExecutor;
-                    
-                    uint64_t create_ts;
-                    
-                    uint64_t set_ts;
-                    
-                    uint64_t end_ts;
-                    
-                    uint64_t cicle_count;
-                protected:
+
+                public:
                     //! default constructor
-                    TestBatchCommand();
+                    TestBatchDefaultCommand();
                     
                     //! default destructor
-                    ~TestBatchCommand();
+                    ~TestBatchDefaultCommand();
                     
                     void setHandler(chaos::common::data::CDataWrapper *data);
                     
@@ -60,22 +54,13 @@ namespace chaos {
                     
                     // inherited method
                     bool timeoutHandler();
-                };
-                
-                class TestCommandSetOnly:
-                public TestBatchCommand {
-                    // inherited method
+                    
                     uint8_t implementedHandler();
                 };
                 
-                class TestCommandComplete:
-                public TestBatchCommand {
-                    // inherited method
-                    uint8_t implementedHandler();
-                };
             }
         }
     }
 }
 
-#endif /* __CHAOSFrameworkTests__5083295_046E_406A_8A00_87FE658807DE_TestBatchCommand_h */
+#endif /* __CHAOSFrameworkTests_EA26A8EF_AE10_48EE_B28D_D8770E555D71_TestBatchDefault_h */
