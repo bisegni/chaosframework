@@ -223,7 +223,6 @@ void SCAbstractControlUnit::setDefaultCommand(const std::string& dafaultCommandN
                                               bool sticky,
                                               unsigned int sandbox_instance) {
     slow_command_executor->setDefaultCommand(dafaultCommandName,
-                                             sticky,
                                              sandbox_instance);
 }
 

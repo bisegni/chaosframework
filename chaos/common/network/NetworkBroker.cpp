@@ -259,12 +259,15 @@ void NetworkBroker::deinit() throw(CException) {
              channnelIter++) {
             
             event::channel::EventChannel *eventChannelToDispose = channnelIter->second;
+
+	    if(eventChannelToDispose){
             
-            //deinit channel
-            eventChannelToDispose->deinit();
-            
-            //dispose it
-            delete(eventChannelToDispose);
+	      //deinit channel
+	      eventChannelToDispose->deinit();
+	      
+	      //dispose it
+	      delete(eventChannelToDispose);
+	    }
         }
         MB_LAPP  << "Clear event channel map";
         active_event_channel.clear();
