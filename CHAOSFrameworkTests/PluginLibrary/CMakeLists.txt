@@ -12,9 +12,6 @@ ENDIF()
 
 SET(plugin_src PluginLibrary.cpp )
 
-INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/usr/local/include /usr/local/include /usr/include)
-LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/usr/local/lib /usr/local/lib)
-
 ADD_LIBRARY(PluginLibrary SHARED ${plugin_src})
 set_target_properties(PluginLibrary PROPERTIES PREFIX "" SUFFIX ".chaos_extension")
 

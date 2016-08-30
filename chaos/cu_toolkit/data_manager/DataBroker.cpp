@@ -31,7 +31,8 @@ using namespace chaos::cu::data_manager::manipulation;
 using namespace chaos::cu::data_manager::trigger_system;
 
 #pragma mark DataBroker
-DataBroker::DataBroker():
+DataBroker::DataBroker(const std::string& _owner_node_uid):
+owner_node_uid(_owner_node_uid),
 dataset_manager(),
 publishing_manager(dataset_manager.container_dataset),
 event_manager(dataset_manager.container_dataset){}
