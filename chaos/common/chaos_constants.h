@@ -529,6 +529,27 @@ namespace chaos {
     }
     /** @} */ // end of DataServiceNodeDomainAndActionRPC
     
+    /** @defgroup DataBrokerNodeDomainDefinitionKey !CHAOS databroker layer
+     *  This is the collection of all key used by databroker for serialize the needed data
+     *  Dataset, endpoint and trigger description
+     *  @{
+     */
+    namespace DataBrokerNodeDomainDefinitionKey {
+        //!action for alter dataset rpc call encoded with @ chaos::common::data::structured::AlterDatasetAttributeActionType
+        static const char * const ALTER_DATASET_ACTION                  = "dbndk_alter_ds_act";
+        
+        //action for alter dataset attribute rcp call
+        static const char * const ALTER_DATASET_ATTRIBUTE_ACTION        = "dbndk_alter_dsaatr_act";
+        
+        //identify the dataset attribute value
+        static const char * const ALTER_DATASET_ATTRIBUTE_VALUE         = "dbndk_alter_dsattr_value";
+        
+        //action for alter endpoint rpc call
+        static const char * const ALTER_PUBLISHING_ENDPOINT_ACTION      = "dbndk_alter_pub_endpoint_act";
+
+    }
+    /** @} */ // end of DataBrokerNodeDomainDefinitionKey
+    
     /** @defgroup ControlUnitNodeDefinitionKey List of control unit node type attribute key
      *  @{
      */

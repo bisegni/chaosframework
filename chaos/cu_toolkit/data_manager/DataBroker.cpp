@@ -94,7 +94,7 @@ void DataBroker::deserialize(std::auto_ptr<chaos::common::data::CDataWrapper> da
     }
 }
 
-#pragma mark DataBroker Protected Method
+#pragma mark DataBroker Protected Method DirectIO Handler
 int DataBroker::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
                                 void *channel_data,
                                 uint32_t channel_data_len) {
@@ -114,4 +114,21 @@ int DataBroker::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryData
                                       uint64_t search_start_ts,
                                       uint64_t search_end_ts) {
     return -1;
+}
+
+#pragma mark DataBroker Protected Method RPC Handler
+CDataWrapper* DataBroker::alterDataset(CDataWrapper *set_data,
+                                       bool& detach_data) {
+    return NULL;
+}
+
+CDataWrapper* DataBroker::alterDatasetAttributeValue(CDataWrapper *set_data,
+                                                     bool& detach_data) {
+    return NULL;
+}
+
+
+CDataWrapper* DataBroker::alterPublishingEndpoint(CDataWrapper *set_data,
+                                                  bool& detach_data) {
+    return NULL;
 }

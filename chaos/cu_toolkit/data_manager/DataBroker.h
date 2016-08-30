@@ -24,7 +24,6 @@
 
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/InizializableService.h>
-
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 
 #include <chaos/cu_toolkit/data_manager/data_manager_types.h>
@@ -35,14 +34,15 @@
 namespace chaos {
     namespace cu {
         namespace data_manager {
-
+            
             //! main class for the data broker
             /*!
              DatBroker is a multilayer architecture that manage and publish
-             dataset iwth thei attribute. Has also functionality for trigger algorithm on 
+             dataset iwth thei attribute. Has also functionality for trigger algorithm on
              determinated dataset's attribute.
              */
             class DataBroker:
+            public chaos::DeclareAction,
             public chaos::common::utility::InizializableService,
             public chaos::common::direct_io::channel::DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler {
                 //! is the node uid that host the databrker and will be sed as
@@ -68,6 +68,16 @@ namespace chaos {
                                           const std::string& search_key,
                                           uint64_t search_start_ts,
                                           uint64_t search_end_ts);
+                
+                //---------------- RPC Action -----------------------
+                chaos::common::data::CDataWrapper* alterDataset(chaos::common::data::CDataWrapper *set_data,
+                                                                bool& detach_data);
+                //!RPC action that permit to change dataset attribute value
+                chaos::common::data::CDataWrapper* alterDatasetAttributeValue(chaos::common::data::CDataWrapper *set_data,
+                                                                              bool& detach_data);
+                //!RPC action that permit to manipulate the endpoint for a dataset
+                chaos::common::data::CDataWrapper* alterPublishingEndpoint(chaos::common::data::CDataWrapper *set_data,
+                                                                           bool& detach_data);
             public:
                 DataBroker(const std::string& _owner_node_uid);
                 ~DataBroker();
