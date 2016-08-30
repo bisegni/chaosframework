@@ -35,10 +35,20 @@ namespace chaos {
     namespace cu {
         namespace data_manager {
 
-            //! main class for the data broker functionality
+            
+            //! main class for the data broker
+            /*!
+             DatBroker is a multilayer architecture that manage and publish
+             dataset iwth thei attribute. Has also functionality for trigger algorithm on 
+             determinated dataset's attribute.
+             */
             class DataBroker:
-            public chaos::common::utility::InizializableService  {
-                //!dataset editing interface
+            public chaos::common::utility::InizializableService,
+            public chaos::common::direct_io::channel::DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler {
+                //! is the node uid that host the databrker and will be sed as
+                //! rpc domain
+                const std::string owner_node_uid;
+                //!root sublayer managment
                 manipulation::DataBrokerEditor  dataset_manager;
                 publishing::PublishingManager   publishing_manager;
             protected:
@@ -58,7 +68,7 @@ namespace chaos {
                                           uint64_t search_start_ts,
                                           uint64_t search_end_ts);
             public:
-                DataBroker();
+                DataBroker(const std::string& _owner_node_uid);
                 ~DataBroker();
                 
                 void init(void* init_data) throw(CException);
