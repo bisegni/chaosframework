@@ -28,3 +28,11 @@ DataBrokerAction::DataBrokerAction(const std::string& action_name):
 NamedService(action_name){}
 
 DataBrokerAction::~DataBrokerAction() {}
+
+void DataBrokerAction::setManagers(manipulation::DataBrokerEditor *_data_broker_editor,
+                                   publishing::PublishingManager *_publishing_manager,
+                                   trigger_system::EventManager *_event_manager) {
+    data_broker_editor =  _data_broker_editor;
+    publishing_manager =  _publishing_manager;
+    event_manager = _event_manager;
+}

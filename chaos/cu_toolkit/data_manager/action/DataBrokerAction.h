@@ -24,6 +24,9 @@
 
 #include <chaos/common/utility/NamedService.h>
 
+#include <chaos/cu_toolkit/data_manager/manipulation/DataBrokerEditor.h>
+#include <chaos/cu_toolkit/data_manager/publishing/PublishingManager.h>
+#include <chaos/cu_toolkit/data_manager/trigger_system/EventManager.h>
 namespace chaos {
     namespace cu {
         namespace data_manager {
@@ -31,10 +34,17 @@ namespace chaos {
                 
                 class DataBrokerAction:
                 public chaos::common::utility::NamedService {
-                    
+                protected:
+                    manipulation::DataBrokerEditor *data_broker_editor;
+                    publishing::PublishingManager *publishing_manager;
+                    trigger_system::EventManager *event_manager;
                 public:
                     DataBrokerAction(const std::string& action_name);
                     ~DataBrokerAction();
+
+                    void setManagers(manipulation::DataBrokerEditor *_data_broker_editor,
+                                     publishing::PublishingManager *_publishing_manager,
+                                     trigger_system::EventManager *_event_manager);
                 };
                 
             }

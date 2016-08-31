@@ -75,6 +75,9 @@ namespace chaos {
                         //we need to create new action
                         boost::shared_ptr<action::DataBrokerAction> tmp_ptr(chaos::common::utility::ObjectFactoryRegister<action::DataBrokerAction>::getInstance()->getNewInstanceByName(action_name));
                         CHAOS_ASSERT(tmp_ptr.get());
+                        tmp_ptr->setManagers(&dataset_manager,
+                                             &publishing_manager,
+                                             &event_manager);
                         map_databroker_action().insert(MapDataBrokerActionPair(tmp_ptr->getName(),
                                                                                tmp_ptr));
                         return static_cast<T*>(tmp_ptr.get());
