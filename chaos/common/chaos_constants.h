@@ -536,16 +536,27 @@ namespace chaos {
      */
     namespace DataBrokerNodeDomainDefinitionKey {
         //!action for alter dataset rpc call encoded with @ chaos::common::data::structured::AlterDatasetAttributeActionType
-        static const char * const ALTER_DATASET_ACTION                  = "dbndk_alter_ds_act";
+        static const char * const ALTER_DATASET_ACTION                  = "dbndk_alt_ds_act";
         
-        //action for alter dataset attribute rcp call
-        static const char * const ALTER_DATASET_ATTRIBUTE_ACTION        = "dbndk_alter_dsaatr_act";
+        //!action for alter dataset attribute rcp call
+        static const char * const ALTER_DATASET_ATTRIBUTE_ACTION        = "dbndk_alt_dsaatr_act";
+        
+        //!serialization of the anction indicated by @AlterDatasetAttributeActionType
+        static const char * const ALTER_DATASET_ATTRIBUTE_ACTION_SER        = "dbndk_alt_dsaatr_act_ser";
+        
+        //!is the event name that can occour on the dataset attribute
+        static const char * const ALTER_DATASET_ATTRIBUTE_EVENT_NAME    = "dbndk_alt_dsaatr_evt_name";
+
+        //!is the event name that need to be add, remove or configured on dataset attribute
+        static const char * const ALTER_DATASET_ATTRIBUTE_TRIGGER_NAME  = "dbndk_alt_dsaatr_trg_name";
+
+        static const char * const ALTER_DATASET_ATTRIBUTE_TRIGGER_PROPERTIES = "dbndk_alt_dsaatr_trg_prop";
         
         //identify the dataset attribute value
-        static const char * const ALTER_DATASET_ATTRIBUTE_VALUE         = "dbndk_alter_dsattr_value";
+        static const char * const ALTER_DATASET_ATTRIBUTE_VALUE         = "dbndk_alt_dsattr_value";
         
         //action for alter endpoint rpc call
-        static const char * const ALTER_PUBLISHING_ENDPOINT_ACTION      = "dbndk_alter_pub_endpoint_act";
+        static const char * const ALTER_PUBLISHING_ENDPOINT_ACTION      = "dbndk_alt_pub_endpoint_act";
 
     }
     /** @} */ // end of DataBrokerNodeDomainDefinitionKey

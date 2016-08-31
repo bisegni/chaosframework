@@ -94,10 +94,20 @@ namespace chaos {
                 }
             };
 
+            class SDWrapper {
+            public:
+                
+                //!deserialize encoded data in container
+                virtual void deserialize(chaos::common::data::CDataWrapper *serialized_data) = 0;
+                
+                //!serialize the container
+                virtual std::auto_ptr<chaos::common::data::CDataWrapper> serialize() = 0;
+            };
             
             //! serializer deserializer wrap for class that embed data to transfer with cdata wrapper
             template<typename T>
-            class TemplatedDataSDWrapper {
+            class TemplatedDataSDWrapper:
+            public SDWrapper {
                 //pointer todata wrapper
                 std::auto_ptr< DataWrapperReference<T> > wrapper;
             public:
@@ -113,12 +123,6 @@ namespace chaos {
                 
                 //destructor
                 virtual ~TemplatedDataSDWrapper(){};
-                
-                //!deserialize encoded data in container
-                virtual void deserialize(chaos::common::data::CDataWrapper *serialized_data) = 0;
-                
-                //!serialize the container
-                virtual std::auto_ptr<chaos::common::data::CDataWrapper> serialize() = 0;
                 
                 //!return the container
                 T& dataWrapped(){

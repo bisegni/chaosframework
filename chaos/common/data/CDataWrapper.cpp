@@ -175,6 +175,10 @@ CDataWrapper *CDataWrapper::getCSDataValue(const std::string& key) {
     return result;
 }
 
+std::auto_ptr<CDataWrapper> CDataWrapper::getCSDataValueAsAutoPtr(const std::string& key) {
+    return std::auto_ptr<CDataWrapper>(getCSDataValue(key));
+}
+
 //get string value
 string  CDataWrapper::getStringValue(const std::string& key) {
     return bsonBuilder->asTempObj().getField(key).String();

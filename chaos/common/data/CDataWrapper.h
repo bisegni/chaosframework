@@ -114,8 +114,11 @@ namespace chaos {
 				void addCSDataValue(const std::string&, CDataWrapper&);
 				
 				//get a csdata value
-				CDataWrapper *getCSDataValue(const std::string&);
+				CDataWrapper *getCSDataValue(const std::string& key);
 				
+                //get a csdata value
+                std::auto_ptr<CDataWrapper> getCSDataValueAsAutoPtr(const std::string& key);
+                
 				//add a string value
 				//void addStringValue(const char *, const char *);
 				
