@@ -37,21 +37,18 @@ namespace chaos {
                     
                     
                     //! Set the value for a determinated attribute of a dataset
-                    int setAttributeValue(const std::string&  ds_name,
-                                          const std::string&  attr_name,
+                    int setAttributeValue(const std::string&  attr_name,
                                           void * value,
                                           uint32_t size);
                     
                     //! Set the value for a determinated attribute of a dataset
-                    int setAttributeValue(const std::string& ds_name,
-                                          const unsigned int attr_index,
+                    int setAttributeValue(const unsigned int attr_index,
                                           void * value,
                                           uint32_t size);
                     
                     //! Return the value object for the domain and the string key
                     template<typename T>
-                    int getReadonlyCachedAttributeValue(const std::string& ds_name,
-                                                        const std::string& attr_name,
+                    int getReadonlyCachedAttributeValue(const std::string& attr_name,
                                                         const T*** value_ptr) {
                         chaos::common::data::cache::AttributeValue *value_setting = dataset_element->dataset_value_cache.getValueSettingByName(attr_name);
                         if(value_setting) {
@@ -61,8 +58,7 @@ namespace chaos {
                     
                     //! Return the value object for the domain and the index of the variable
                     template<typename T>
-                    int getReadonlyCachedAttributeValue(const std::string& ds_name,
-                                                        unsigned int attr_index,
+                    int getReadonlyCachedAttributeValue(unsigned int attr_index,
                                                         const T*** value_ptr) {
                         chaos::common::data::cache::AttributeValue *value_setting = dataset_element->dataset_value_cache.getValueSettingForIndex(attr_index);
                         if(value_setting) {
@@ -72,8 +68,7 @@ namespace chaos {
                     
                     //! Return the value object for the domain and the string key
                     template<typename T>
-                    int getCachedCustomAttributeValue(const std::string& ds_name,
-                                                      const std::string& attr_name,
+                    int getCachedCustomAttributeValue(const std::string& attr_name,
                                                       T*** value_ptr) {
                         chaos::common::data::cache::AttributeValue *value_setting = dataset_element->dataset_value_cache.getValueSettingByName(attr_name);
                         if(value_setting) {
@@ -83,8 +78,7 @@ namespace chaos {
                     
                     //! Return the value object for the domain and the index of the variable
                     template<typename T>
-                    int getCachedCustomAttributeValue(const std::string& ds_name,
-                                                      unsigned int attr_index,
+                    int getCachedCustomAttributeValue(unsigned int attr_index,
                                                       T*** value_ptr) {
                         //we have the dataset
                         chaos::common::data::cache::AttributeValue *value_setting = dataset_element->dataset_value_cache.getValueSettingForIndex(attr_index);

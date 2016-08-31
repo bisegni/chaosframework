@@ -240,16 +240,24 @@ namespace chaos {
                 CHAOS_CLOSE_SDWRAPPER()
                 
 #pragma mark AlterDatasetAttributeAction
+                class AlterDatasetAttributeActionSDWrapper;
                 //collect the dataset attribute action descriptions
                 struct AlterDatasetAttributeAction {
-                    //type of the action
-                    AlterDatasetAttributeActionType action_type;
-                    
+                    friend class AlterDatasetAttributeActionSDWrapper;
+                private:
                     //action descriptions
                     boost::variant<AlterDatasetAttributeSetValue,
                     AlterDatasetAttributeAddTrigger,
                     AlterDatasetAttributeRemoveTrigger,
                     AlterDatasetAttributeConfigureTrigger> action_description;
+                public:
+                    //type of the action
+                    AlterDatasetAttributeActionType action_type;
+                    
+                    AlterDatasetAttributeSetValue&  getSetValueAction();
+                    AlterDatasetAttributeAddTrigger& getAddTriggerAction();
+                    AlterDatasetAttributeRemoveTrigger& getRemoveTriggerAction();
+                    AlterDatasetAttributeConfigureTrigger& getConfigureTriggerAction();
                 };
                 
                 CHAOS_OPEN_SDWRAPPER(AlterDatasetAttributeAction)
@@ -267,23 +275,22 @@ namespace chaos {
                         switch (Subclass::dataWrapped().action_type) {
                             case AlterDatasetAttributeActionTypeSetValue: {
                                 sd_wrapper.reset(new AlterDatasetAttributeSetValueSDWrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AlterDatasetAttributeSetValue,
-                                                                                                                                  boost::get<AlterDatasetAttributeSetValue>(Subclass::dataWrapped().action_description))));
-                                //;
+                                                                                                                                  Subclass::dataWrapped().getSetValueAction())));
                                 break;
                             }
                             case AlterDatasetAttributeActionTypeAddTrigger: {
                                 sd_wrapper.reset(new AlterDatasetAttributeAddTriggerSDWrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AlterDatasetAttributeAddTrigger,
-                                                                                                                                    boost::get<AlterDatasetAttributeAddTrigger>(Subclass::dataWrapped().action_description))));
+                                                                                                                                    Subclass::dataWrapped().getAddTriggerAction())));
                                 break;
                             }
                             case AlterDatasetAttributeActionTypeRemoveTrigger: {
                                 sd_wrapper.reset(new AlterDatasetAttributeRemoveTriggerSDWrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AlterDatasetAttributeRemoveTrigger,
-                                                                                                                                       boost::get<AlterDatasetAttributeRemoveTrigger>(Subclass::dataWrapped().action_description))));
+                                                                                                                                       Subclass::dataWrapped().getRemoveTriggerAction())));
                                 break;
                             }
                             case AlterDatasetAttributeActionTypeConfigureTrigger: {
                                 sd_wrapper.reset(new AlterDatasetAttributeConfigureTriggerSDWrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AlterDatasetAttributeConfigureTrigger,
-                                                                                                                                          boost::get<AlterDatasetAttributeConfigureTrigger>(Subclass::dataWrapped().action_description))));
+                                                                                                                                          Subclass::dataWrapped().getConfigureTriggerAction())));
                                 break;
                             }
                             default:
@@ -301,31 +308,30 @@ namespace chaos {
                     
                     //serialize the action descirption
                     std::auto_ptr<chaos::common::data::SDWrapper> sd_wrapper;
-                        switch (Subclass::dataWrapped().action_type) {
-                            case AlterDatasetAttributeActionTypeSetValue: {
-                                sd_wrapper.reset(new AlterDatasetAttributeSetValueSDWrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AlterDatasetAttributeSetValue,
-                                                                                                                                  boost::get<AlterDatasetAttributeSetValue>(Subclass::dataWrapped().action_description))));
-                                 break;
-                            }
-                            case AlterDatasetAttributeActionTypeAddTrigger: {
-                                sd_wrapper.reset(new AlterDatasetAttributeAddTriggerSDWrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AlterDatasetAttributeAddTrigger,
-                                                                                                                                    boost::get<AlterDatasetAttributeAddTrigger>(Subclass::dataWrapped().action_description))));
-                                break;
-                            }
-                            case AlterDatasetAttributeActionTypeRemoveTrigger: {
-                                sd_wrapper.reset(new AlterDatasetAttributeRemoveTriggerSDWrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AlterDatasetAttributeRemoveTrigger,
-                                                                                                                                       boost::get<AlterDatasetAttributeRemoveTrigger>(Subclass::dataWrapped().action_description))));
-                                break;
-                            }
-                            case AlterDatasetAttributeActionTypeConfigureTrigger: {
-                                sd_wrapper.reset(new AlterDatasetAttributeConfigureTriggerSDWrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AlterDatasetAttributeConfigureTrigger,
-                                                                                                                                          boost::get<AlterDatasetAttributeConfigureTrigger>(Subclass::dataWrapped().action_description))));
-                                break;
-                            }
-                                
-                            default:
-                                break;
+                    switch (Subclass::dataWrapped().action_type) {
+                        case AlterDatasetAttributeActionTypeSetValue: {
+                            sd_wrapper.reset(new AlterDatasetAttributeSetValueSDWrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AlterDatasetAttributeSetValue,
+                                                                                                                              Subclass::dataWrapped().getSetValueAction())));
+                            break;
                         }
+                        case AlterDatasetAttributeActionTypeAddTrigger: {
+                            sd_wrapper.reset(new AlterDatasetAttributeAddTriggerSDWrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AlterDatasetAttributeAddTrigger,
+                                                                                                                                Subclass::dataWrapped().getAddTriggerAction())));
+                            break;
+                        }
+                        case AlterDatasetAttributeActionTypeRemoveTrigger: {
+                            sd_wrapper.reset(new AlterDatasetAttributeRemoveTriggerSDWrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AlterDatasetAttributeRemoveTrigger,
+                                                                                                                                   Subclass::dataWrapped().getRemoveTriggerAction())));
+                            break;
+                        }
+                        case AlterDatasetAttributeActionTypeConfigureTrigger: {
+                            sd_wrapper.reset(new AlterDatasetAttributeConfigureTriggerSDWrapper(CHAOS_DATA_WRAPPER_REFERENCE_AUTO_PTR(AlterDatasetAttributeConfigureTrigger,
+                                                                                                                                      Subclass::dataWrapped().getConfigureTriggerAction())));
+                            break;
+                        }
+                        default:
+                            break;
+                    }
                     if(sd_wrapper.get()) {
                         result->addCSDataValue(chaos::DataBrokerNodeDomainDefinitionKey::ALTER_DATASET_ATTRIBUTE_ACTION_SER, *sd_wrapper->serialize());
                     }

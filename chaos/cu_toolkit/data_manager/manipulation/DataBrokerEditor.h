@@ -76,6 +76,15 @@ namespace chaos {
                     //!check if a dataset is present by his name
                     bool hasDataset(const std::string& dataset_name);
                     
+                    //!update an attribute value
+                    /*!
+                     update and attribute start the pre and post event on
+                     trigger associated with that attribute
+                     */
+                    void updateDatasetAttributeValue(const std::string& dataset_name,
+                                                     const std::string& attribute_name,
+                                                     const chaos::common::data::CDataVariant& attribute_value);
+                    
                     //!Return editor for the specified dataset
                     std::auto_ptr<DatasetEditor> getDatasetEditorFor(const std::string& ds_name);
                     

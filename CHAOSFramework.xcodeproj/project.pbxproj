@@ -785,8 +785,13 @@
 		32B4193F1B18A6EE00C3CA7D /* BatchCommandDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B4193D1B18A6EE00C3CA7D /* BatchCommandDescription.h */; };
 		32B516191D75942B00FB27AC /* DatabrokerAlterDataset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B516171D75942B00FB27AC /* DatabrokerAlterDataset.cpp */; };
 		32B5161A1D75942B00FB27AC /* DatabrokerAlterDataset.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B516181D75942B00FB27AC /* DatabrokerAlterDataset.h */; };
-		32B5161D1D75961F00FB27AC /* DatabrokerAlterDSAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B5161B1D75961F00FB27AC /* DatabrokerAlterDSAttribute.cpp */; };
-		32B5161E1D75961F00FB27AC /* DatabrokerAlterDSAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5161C1D75961F00FB27AC /* DatabrokerAlterDSAttribute.h */; };
+		32B5161D1D75961F00FB27AC /* AlterDatasetAttributeAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B5161B1D75961F00FB27AC /* AlterDatasetAttributeAction.cpp */; };
+		32B5161E1D75961F00FB27AC /* AlterDatasetAttributeAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5161C1D75961F00FB27AC /* AlterDatasetAttributeAction.h */; };
+		32B516221D77072000FB27AC /* DataBrokerAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B516201D77072000FB27AC /* DataBrokerAction.cpp */; };
+		32B516231D77072000FB27AC /* DataBrokerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B516211D77072000FB27AC /* DataBrokerAction.h */; };
+		32B516261D7709D200FB27AC /* AttributeDatasetAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B516241D7709D200FB27AC /* AttributeDatasetAction.cpp */; };
+		32B516271D7709D200FB27AC /* AttributeDatasetAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B516251D7709D200FB27AC /* AttributeDatasetAction.h */; };
+		32B5162B1D770DB000FB27AC /* action.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B516291D770DB000FB27AC /* action.h */; };
 		32B571ED168E02C30002A198 /* bson_builder_base.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E4168E02C20002A198 /* bson_builder_base.h */; };
 		32B571EE168E02C30002A198 /* bson_db.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E5168E02C20002A198 /* bson_db.h */; };
 		32B571F0168E02C30002A198 /* bson_field.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B571E7168E02C20002A198 /* bson_field.h */; };
@@ -2053,8 +2058,13 @@
 		32B4193D1B18A6EE00C3CA7D /* BatchCommandDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchCommandDescription.h; sourceTree = "<group>"; };
 		32B516171D75942B00FB27AC /* DatabrokerAlterDataset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabrokerAlterDataset.cpp; sourceTree = "<group>"; };
 		32B516181D75942B00FB27AC /* DatabrokerAlterDataset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabrokerAlterDataset.h; sourceTree = "<group>"; };
-		32B5161B1D75961F00FB27AC /* DatabrokerAlterDSAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabrokerAlterDSAttribute.cpp; sourceTree = "<group>"; };
-		32B5161C1D75961F00FB27AC /* DatabrokerAlterDSAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabrokerAlterDSAttribute.h; sourceTree = "<group>"; };
+		32B5161B1D75961F00FB27AC /* AlterDatasetAttributeAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlterDatasetAttributeAction.cpp; sourceTree = "<group>"; };
+		32B5161C1D75961F00FB27AC /* AlterDatasetAttributeAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlterDatasetAttributeAction.h; sourceTree = "<group>"; };
+		32B516201D77072000FB27AC /* DataBrokerAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataBrokerAction.cpp; sourceTree = "<group>"; };
+		32B516211D77072000FB27AC /* DataBrokerAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBrokerAction.h; sourceTree = "<group>"; };
+		32B516241D7709D200FB27AC /* AttributeDatasetAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttributeDatasetAction.cpp; sourceTree = "<group>"; };
+		32B516251D7709D200FB27AC /* AttributeDatasetAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeDatasetAction.h; sourceTree = "<group>"; };
+		32B516291D770DB000FB27AC /* action.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = action.h; sourceTree = "<group>"; };
 		32B571E4168E02C20002A198 /* bson_builder_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_builder_base.h; sourceTree = "<group>"; };
 		32B571E5168E02C20002A198 /* bson_db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_db.h; sourceTree = "<group>"; };
 		32B571E7168E02C20002A198 /* bson_field.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_field.h; sourceTree = "<group>"; };
@@ -2559,8 +2569,8 @@
 				3214EF1E1D467FE1004DB689 /* Dataset.h */,
 				32B516171D75942B00FB27AC /* DatabrokerAlterDataset.cpp */,
 				32B516181D75942B00FB27AC /* DatabrokerAlterDataset.h */,
-				32B5161B1D75961F00FB27AC /* DatabrokerAlterDSAttribute.cpp */,
-				32B5161C1D75961F00FB27AC /* DatabrokerAlterDSAttribute.h */,
+				32B5161B1D75961F00FB27AC /* AlterDatasetAttributeAction.cpp */,
+				32B5161C1D75961F00FB27AC /* AlterDatasetAttributeAction.h */,
 			);
 			path = structured;
 			sourceTree = "<group>";
@@ -3684,6 +3694,7 @@
 				325168CD1D479BAB00E877DF /* data_manager_types.cpp */,
 				3214EF261D477CAD004DB689 /* data_manager_types.h */,
 				326933E01D5088150033D9E9 /* data_manager.h */,
+				32B5161F1D7706DB00FB27AC /* action */,
 				324544FE1D4A67250081F90B /* trigger_system */,
 				3214EF0D1D466F53004DB689 /* publishing */,
 				3214EF0C1D466F41004DB689 /* manipulation */,
@@ -4327,6 +4338,18 @@
 				325963951D216AE300D94853 /* script */,
 			);
 			path = batch;
+			sourceTree = "<group>";
+		};
+		32B5161F1D7706DB00FB27AC /* action */ = {
+			isa = PBXGroup;
+			children = (
+				32B516201D77072000FB27AC /* DataBrokerAction.cpp */,
+				32B516211D77072000FB27AC /* DataBrokerAction.h */,
+				32B516241D7709D200FB27AC /* AttributeDatasetAction.cpp */,
+				32B516251D7709D200FB27AC /* AttributeDatasetAction.h */,
+				32B516291D770DB000FB27AC /* action.h */,
+			);
+			path = action;
 			sourceTree = "<group>";
 		};
 		32B5714A168DF4750002A198 /* util */ = {
@@ -5111,7 +5134,7 @@
 				324A4B80191A428500975394 /* safe_num.h in Headers */,
 				32EBDF031B4FBD8800278C42 /* AbstractMetricBackend.h in Headers */,
 				32640A39169DCC5800450962 /* IdFactory.h in Headers */,
-				32B5161E1D75961F00FB27AC /* DatabrokerAlterDSAttribute.h in Headers */,
+				32B5161E1D75961F00FB27AC /* AlterDatasetAttributeAction.h in Headers */,
 				32640A3A169DCC5800450962 /* MillisTime.h in Headers */,
 				32E86E441CD8A75F0038DE76 /* MessageRequestDomain.h in Headers */,
 				32640A3B169DCC5800450962 /* IteratorBase.h in Headers */,
@@ -5171,6 +5194,8 @@
 				326CD5AC1D66F975003AD071 /* PublishingManager.h in Headers */,
 				32C4EF3F1D4F716A0014F3D3 /* dataset_event_types.h in Headers */,
 				325FC8571AF7670200DB9D66 /* BasicIODriverInterface.h in Headers */,
+				32B516231D77072000FB27AC /* DataBrokerAction.h in Headers */,
+				32B5162B1D770DB000FB27AC /* action.h in Headers */,
 				32995C431BAC57A300F68148 /* SCWaitCommand.h in Headers */,
 				32CFC5CB1AF5601300E2A0B6 /* BasicIODriver.h in Headers */,
 				326DB4BB14B3A3E50018A8D0 /* CommandManager.h in Headers */,
@@ -5207,6 +5232,7 @@
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
 				322A3BCB1CEE1AA900FAD9DA /* ScriptableExecutionUnit.h in Headers */,
 				32C4EF3B1D4F71440014F3D3 /* DatasetConsumer.h in Headers */,
+				32B516271D7709D200FB27AC /* AttributeDatasetAction.h in Headers */,
 				3214EF111D466F95004DB689 /* DataBroker.h in Headers */,
 				3291D5191D5DEE890077CBB3 /* PublishTarget.h in Headers */,
 				32F2241C179AE3BC00853F62 /* RTAbstractControlUnit.h in Headers */,
@@ -5731,7 +5757,7 @@
 				32A8621E1D58C79900A7D707 /* trigger_types.cpp in Sources */,
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,
 				32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */,
-				32B5161D1D75961F00FB27AC /* DatabrokerAlterDSAttribute.cpp in Sources */,
+				32B5161D1D75961F00FB27AC /* AlterDatasetAttributeAction.cpp in Sources */,
 				32B5C9541C6B8FDC0021159C /* AbstractMetadataLogChannel.cpp in Sources */,
 				32B73E9618D9A74600F0B187 /* DirectIOPerformanceClientChannel.cpp in Sources */,
 				3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */,
@@ -5918,6 +5944,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32B516221D77072000FB27AC /* DataBrokerAction.cpp in Sources */,
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
 				326CD5AB1D66F975003AD071 /* PublishingManager.cpp in Sources */,
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
@@ -5953,6 +5980,7 @@
 				32C4EF3A1D4F71440014F3D3 /* DatasetConsumer.cpp in Sources */,
 				32C4EF291D4BB0A60014F3D3 /* DatasetCacheWrapper.cpp in Sources */,
 				3291D5181D5DEE890077CBB3 /* PublishTarget.cpp in Sources */,
+				32B516261D7709D200FB27AC /* AttributeDatasetAction.cpp in Sources */,
 				32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */,
 				32995C421BAC57A300F68148 /* SCWaitCommand.cpp in Sources */,
 				322A3BC81CEE1AA900FAD9DA /* EUScriptableWrapper.cpp in Sources */,

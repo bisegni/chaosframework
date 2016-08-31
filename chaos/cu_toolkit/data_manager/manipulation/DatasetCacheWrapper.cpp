@@ -34,10 +34,9 @@ dataset_element(_dataset_element){}
 DatasetCacheWrapper::~DatasetCacheWrapper(){}
 
 
-int DatasetCacheWrapper::setAttributeValue(const std::string&  ds_name,
-                                              const std::string&  attr_name,
-                                              void * value,
-                                              uint32_t size) {
+int DatasetCacheWrapper::setAttributeValue(const std::string&  attr_name,
+                                           void * value,
+                                           uint32_t size) {
     chaos::common::data::cache::AttributeValue *value_setting = dataset_element->dataset_value_cache.getValueSettingByName(attr_name);
     if(value_setting) {
         value_setting->setValue(value,
@@ -46,10 +45,9 @@ int DatasetCacheWrapper::setAttributeValue(const std::string&  ds_name,
     return 0;
 }
 
-int DatasetCacheWrapper::setAttributeValue(const std::string& ds_name,
-                                              const unsigned int attr_index,
-                                              void * value,
-                                              uint32_t size) {
+int DatasetCacheWrapper::setAttributeValue(const unsigned int attr_index,
+                                           void * value,
+                                           uint32_t size) {
     chaos::common::data::cache::AttributeValue *value_setting = dataset_element->dataset_value_cache.getValueSettingForIndex(attr_index);
     if(value_setting) {
         value_setting->setValue(value,

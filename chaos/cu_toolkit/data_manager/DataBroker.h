@@ -23,6 +23,7 @@
 #define __CHAOSFramework__555554A_6C80_44FA_B263_6A03AA133D4D_DataBroker_h
 
 #include <chaos/common/action/DeclareAction.h>
+#include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 
@@ -31,9 +32,16 @@
 #include <chaos/cu_toolkit/data_manager/manipulation/manipulation.h>
 #include <chaos/cu_toolkit/data_manager/trigger_system/trigger_system.h>
 
+#include <chaos/cu_toolkit/data_manager/action/action.h>
+
+#include <boost/shared_ptr.hpp>
 namespace chaos {
     namespace cu {
         namespace data_manager {
+            
+            CHAOS_DEFINE_MAP_FOR_TYPE(std::string,
+                                      boost::shared_ptr<action::DataBrokerAction>,
+                                      MapDataBrokerAction);
             
             //! main class for the data broker
             /*!
@@ -52,6 +60,26 @@ namespace chaos {
                 manipulation::DataBrokerEditor  dataset_manager;
                 publishing::PublishingManager   publishing_manager;
                 trigger_system::EventManager    event_manager;
+                
+                //!contain instance of action used by remote service that act on data broker sublayer
+                chaos::common::utility::LockableObject<MapDataBrokerAction> map_databroker_action;
+                
+                template<typename T>
+                T* getAction(const std::string& action_name) {
+                    chaos::common::utility::LockableObjectWriteLock wl;
+                    map_databroker_action.getWriteLock(wl);
+                    
+                    if(map_databroker_action().count(action_name)) {
+                        return static_cast<T*>(map_databroker_action()[action_name].get());
+                    } else {
+                        //we need to create new action
+                        boost::shared_ptr<action::DataBrokerAction> tmp_ptr(chaos::common::utility::ObjectFactoryRegister<action::DataBrokerAction>::getInstance()->getNewInstanceByName(action_name));
+                        CHAOS_ASSERT(tmp_ptr.get());
+                        map_databroker_action().insert(MapDataBrokerActionPair(tmp_ptr->getName(),
+                                                                               tmp_ptr));
+                        return static_cast<T*>(tmp_ptr.get());
+                    }
+                }
             protected:
                 //---------------- DirectIODeviceServerChannelHandler -----------------------
                 int consumePutEvent(chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,

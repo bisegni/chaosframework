@@ -20,7 +20,9 @@ SET(cu_lib_src ${cu_lib_src}
         data_manager/KeyDataStorage.cpp
         data_manager/DataBrokerManager.cpp
         data_manager/DataBroker.cpp
-        data_manager/data_manager_types.cpp
+        data_manager/data_manager_types.cpp)
+
+SET(cu_lib_src ${cu_lib_src}
         data_manager/trigger_system/EventManager.cpp
         data_manager/trigger_system/dataset_event/DatasetConsumer.cpp
         data_manager/trigger_system/dataset_event/DatasetEvent.cpp
@@ -31,8 +33,8 @@ SET(cu_lib_src ${cu_lib_src}
         data_manager/publishing/PublishingManager.cpp
         data_manager/manipulation/DataBrokerEditor.cpp
         data_manager/manipulation/DatasetCacheWrapper.cpp
-        data_manager/manipulation/DatasetEditor.cpp)
-
+        data_manager/manipulation/DatasetEditor.cpp
+        data_manager/action/DataBrokerAction.cpp)
 
 SET(cu_lib_src ${cu_lib_src}
         control_manager/AbstractControlUnit.cpp

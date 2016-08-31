@@ -21,8 +21,11 @@
 
 #include <chaos/cu_toolkit/data_manager/DataBroker.h>
 
+#include <chaos/common/data/structured/AlterDatasetAttributeAction.h>
+
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::data::structured;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
 using namespace chaos::cu::data_manager;
@@ -124,6 +127,8 @@ CDataWrapper* DataBroker::alterDataset(CDataWrapper *set_data,
 
 CDataWrapper* DataBroker::alterDatasetAttributeValue(CDataWrapper *set_data,
                                                      bool& detach_data) {
+    AlterDatasetAttributeActionSDWrapper action_wrap(set_data);
+    getAction<action::AttributeDatasetAction>("AttributeDatasetAction")->executeAction(action_wrap());
     return NULL;
 }
 

@@ -19,7 +19,7 @@
  *    	limitations under the License.
  */
 
-#include "DatabrokerAlterDSAttribute.h"
+#include <chaos/common/data/structured/AlterDatasetAttributeAction.h>
 
 using namespace chaos::common::data::structured;
 
@@ -74,3 +74,20 @@ attribute_name(src.attribute_name),
 event_name(src.event_name),
 trigger_name_uid(src.trigger_name_uid),
 trigger_properties(src.trigger_properties){}
+
+#pragma mark AlterDatasetAttributeAction
+AlterDatasetAttributeSetValue&  AlterDatasetAttributeAction::getSetValueAction() {
+    return boost::get<AlterDatasetAttributeSetValue>(action_description);
+}
+
+AlterDatasetAttributeAddTrigger& AlterDatasetAttributeAction::getAddTriggerAction() {
+    return boost::get<AlterDatasetAttributeAddTrigger>(action_description);
+}
+
+AlterDatasetAttributeRemoveTrigger& AlterDatasetAttributeAction::getRemoveTriggerAction() {
+    return boost::get<AlterDatasetAttributeRemoveTrigger>(action_description);
+}
+
+AlterDatasetAttributeConfigureTrigger& AlterDatasetAttributeAction::getConfigureTriggerAction()  {
+    return boost::get<AlterDatasetAttributeConfigureTrigger>(action_description);
+}
