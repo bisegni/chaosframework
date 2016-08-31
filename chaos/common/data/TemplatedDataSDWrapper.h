@@ -94,6 +94,7 @@ namespace chaos {
                 }
             };
 
+            //abstract class for serialization and deserialization base abstraction
             class SDWrapper {
             public:
                 
