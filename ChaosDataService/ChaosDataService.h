@@ -64,9 +64,6 @@ namespace chaos{
             ~ChaosDataService();
             static void signalHanlder(int);
 			
-			//root pointer of the index driver
-			db_system::DBDriver *db_driver_ptr;
-			
 			//! CDS data consumer that respond to data api
 			common::utility::StartableServiceContainer<QueryDataConsumer> data_consumer;
 			

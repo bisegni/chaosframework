@@ -46,10 +46,9 @@ static const boost::regex KVParamRegex("[a-zA-Z0-9/_-]+:.+");
 //boost::condition ChaosCUToolkit::endWaithCondition;
 WaitSemaphore ChaosDataService::waitCloseSemaphore;
 
-ChaosDataService::ChaosDataService():
-db_driver_ptr(NULL) {}
+ChaosDataService::ChaosDataService(){}
 
-ChaosDataService::~ChaosDataService() {}
+ChaosDataService::~ChaosDataService(){}
 
 //! C and C++ attribute parser
 /*!
@@ -160,16 +159,8 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
             throw CException(-1, "Invalid database implementation", __PRETTY_FUNCTION__);
             
         }
-        //we have a db driver setuped
-        std::string db_driver_class_name = boost::str(boost::format("%1%DBDriver") % setting.db_driver_impl);
-        CDSLAPP_ << "Allocate index driver of type "<<db_driver_class_name;
-        db_driver_ptr = ObjectFactoryRegister<db_system::DBDriver>::getInstance()->getNewInstanceByName(db_driver_class_name);
-        if(!db_driver_ptr) throw chaos::CException(-6, "No index driver found", __PRETTY_FUNCTION__);
-        InizializableService::initImplementation(db_driver_ptr, &setting.db_driver_setting, db_driver_ptr->getName(), __PRETTY_FUNCTION__);
-        
         //initilize driver pool manager
         InizializableService::initImplementation(DriverPoolManager::getInstance(), NULL, "DriverPoolManager", __PRETTY_FUNCTION__);
-        
         
         if(run_mode == QUERY ||
            run_mode == BOTH) {
@@ -195,10 +186,6 @@ void ChaosDataService::start() throw(CException) {
         if(run_mode == QUERY ||
            run_mode == BOTH) {
             data_consumer.start( __PRETTY_FUNCTION__);
-        }
-        if(run_mode == INDEXER ||
-           run_mode == BOTH) {
-            stage_data_consumer.start(__PRETTY_FUNCTION__);
         }
         
         //print information header on CDS address
@@ -231,10 +218,6 @@ void ChaosDataService::stop() throw(CException) {
        run_mode == BOTH) {
         data_consumer.stop( __PRETTY_FUNCTION__);
     }
-    if(run_mode == INDEXER ||
-       run_mode == BOTH) {
-        stage_data_consumer.stop(__PRETTY_FUNCTION__);
-    }
     
     ChaosCommon<ChaosDataService>::stop();
 }
@@ -250,24 +233,6 @@ void ChaosDataService::deinit() throw(CException) {
         data_consumer.deinit(__PRETTY_FUNCTION__);
         CDSLAPP_ << "Release the endpoint associated to the Data Consumer";
         NetworkBroker::getInstance()->releaseDirectIOServerEndpoint(data_consumer->server_endpoint);
-    }
-    if((run_mode == INDEXER ||
-        run_mode == BOTH ) &&
-       stage_data_consumer.get()) {
-        stage_data_consumer.deinit(__PRETTY_FUNCTION__);
-    }
-    
-    //deinitialize vfs file manager
-    vfs_file_manager.deinit(__PRETTY_FUNCTION__);
-    
-    if(db_driver_ptr) {
-        CDSLAPP_ << "Deallocate index driver";
-        try {
-            InizializableService::deinitImplementation(db_driver_ptr, db_driver_ptr->getName(), __PRETTY_FUNCTION__);
-        } catch (chaos::CException e) {
-            CDSLAPP_ << e.what();
-        }
-        delete (db_driver_ptr);
     }
     
     //deinitilize driver pool manager

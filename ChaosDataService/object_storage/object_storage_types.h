@@ -25,7 +25,6 @@
 #include <chaos/common/chaos_types.h>
 
 #include <chaos/common/configuration/GlobalConfiguration.h>
-#include "../ChaosDataService.h"
 
 namespace chaos {
     namespace data_service {
@@ -34,7 +33,7 @@ namespace chaos {
             CHAOS_DEFINE_MAP_FOR_TYPE(std::string,
                                       std::string,
                                       MapKVP);
- 
+            
 #define OPT_OBJ_STORAGE_DRIVER                      "obj-storage-driver"
 #define OPT_OBJ_STORAGE_SERVER_URL                  "obj-storage-driver-server_url"
 #define OPT_OBJ_STORAGE_LOG_METRIC                  "obj-storage-driver-log-metric"
@@ -45,7 +44,7 @@ namespace chaos {
             struct ObjStorageSetting {
                 std::string			driver_impl;
                 ChaosStringVector   url_list;
-                MapKVP&             key_value_custom_param;
+                MapKVP              key_value_custom_param;
             };
         }
     }

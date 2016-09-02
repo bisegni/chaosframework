@@ -62,7 +62,7 @@ namespace chaos{
 			std::string db_impl_name;
 			
 			NetworkBroker							*network_broker;
-			
+            db_system::DBDriver                     *db_driver;
             DirectIOServerEndpoint					*server_endpoint;
 			DirectIODeviceServerChannel				*device_channel;
 			DirectIOSystemAPIServerChannel			*system_api_channel;

@@ -627,7 +627,6 @@
 		32A273FB1BB7235200572083 /* tracey.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32A273F91BB7235200572083 /* tracey.hpp */; };
 		32A391C418FE923E001C5A73 /* TemplatedKeyValueHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A391C218FE923E001C5A73 /* TemplatedKeyValueHashMap.h */; };
 		32A40D471A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A40D451A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp */; };
-		32A40D481A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A40D451A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp */; };
 		32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
@@ -892,6 +891,10 @@
 		32D90D561CF4A4E500996F09 /* ScriptGroupApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D90D541CF4A4E500996F09 /* ScriptGroupApi.cpp */; };
 		32D90D591CF4A6DC00996F09 /* SearchScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D90D571CF4A6DC00996F09 /* SearchScript.cpp */; };
 		32D90D601CF4AA8200996F09 /* Script.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D90D5D1CF4AA8200996F09 /* Script.h */; };
+		32DB38071D799F8200F84687 /* AbstractDataAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B9F3EF1AC3E74C00380FE9 /* AbstractDataAccess.cpp */; };
+		32DB38081D799F8200F84687 /* AbstractPersistenceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B9F3F11AC3E74C00380FE9 /* AbstractPersistenceDriver.cpp */; };
+		32DB380A1D799F8900F84687 /* MongoDBAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323386B31AD3C45E008863DC /* MongoDBAccessor.cpp */; };
+		32DB380B1D799F8900F84687 /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A40D451A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp */; };
 		32DBAFCB1C9C1745003E2769 /* NodeMonitorHandlerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBAFC91C9C1745003E2769 /* NodeMonitorHandlerTest.cpp */; };
 		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
 		32DD7F711C60F97C003032DE /* MetadataLoggingManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD7F6F1C60F97C003032DE /* MetadataLoggingManager.cpp */; };
@@ -5552,19 +5555,22 @@
 				32F158641B7B4B5400B6A5DF /* CacheDriverSharedMetricIO.cpp in Sources */,
 				327D5E4B192DE3430043ED21 /* MongoDBDriver.cpp in Sources */,
 				3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */,
+				32DB380A1D799F8900F84687 /* MongoDBAccessor.cpp in Sources */,
 				327D5E49192DE3430043ED21 /* DBDriver.cpp in Sources */,
 				32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */,
-				32A40D481A9CD751000D9A35 /* MongoDBHAConnectionManager.cpp in Sources */,
 				3214792D1D7970FF00F6DDA6 /* MongoDBObjectStorageDataAccess.cpp in Sources */,
 				32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */,
 				323236DA164573F50052CE06 /* main.cpp in Sources */,
 				32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */,
+				32DB380B1D799F8900F84687 /* MongoDBHAConnectionManager.cpp in Sources */,
 				3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */,
+				32DB38081D799F8200F84687 /* AbstractPersistenceDriver.cpp in Sources */,
 				3228142B1B8B552200EC86C4 /* DriverPoolManager.cpp in Sources */,
 				321479301D79711B00F6DDA6 /* MongoDBObjectStorageDriver.cpp in Sources */,
 				3247A94F1D797A750085BA4F /* ObjectStorageDataAccess.cpp in Sources */,
 				322D990118A95F9200C0864C /* QueryDataConsumer.cpp in Sources */,
 				329C1F1F1B5E9EDF00A84D55 /* DeviceSharedDataWorkerMetricCollector.cpp in Sources */,
+				32DB38071D799F8200F84687 /* AbstractDataAccess.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

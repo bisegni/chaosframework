@@ -78,7 +78,7 @@ namespace chaos{
 			unsigned int				indexer_scan_delay;
 			
 			//----------object storage configuration----------------
-            object_storage::ObjStorageSetting		object_storage_setting;
+            chaos::data_service::object_storage::ObjStorageSetting		object_storage_setting;
 			
 			//-------------index system------------------
 			//! current db driver implementaiton to use

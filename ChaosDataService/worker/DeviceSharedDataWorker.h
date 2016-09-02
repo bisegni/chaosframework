@@ -31,7 +31,6 @@
 
 #include <boost/thread.hpp>
 
-namespace chaos_vfs			= chaos::data_service::vfs;
 namespace chaos_utility		= chaos::common::utility;
 namespace chaos_direct_io	= chaos::common::direct_io;
 

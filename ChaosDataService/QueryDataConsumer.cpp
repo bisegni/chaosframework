@@ -55,19 +55,24 @@ QueryDataConsumer::~QueryDataConsumer() {}
 
 void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     
+    db_driver = ObjectFactoryRegister<db_system::DBDriver>::getInstance()->getNewInstanceByName(ChaosDataService::getInstance()->setting.db_driver_impl+"DBDriver");
+    if(!db_driver) throw chaos::CException(-1, "No index driver found", __PRETTY_FUNCTION__);
+    InizializableService::initImplementation(db_driver, &ChaosDataService::getInstance()->setting.db_driver_setting, db_driver->getName(), __PRETTY_FUNCTION__);
+
+    
     //get new chaos direct io endpoint
     server_endpoint = network_broker->getDirectIOServerEndpoint();
-    if(!server_endpoint) throw chaos::CException(-4, "Invalid server endpoint", __FUNCTION__);
+    if(!server_endpoint) throw chaos::CException(-2, "Invalid server endpoint", __FUNCTION__);
     QDCAPP_ << "QueryDataConsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
     
     QDCAPP_ << "Allocating DirectIODeviceServerChannel";
     device_channel = (DirectIODeviceServerChannel*)server_endpoint->getNewChannelInstance("DirectIODeviceServerChannel");
-    if(!device_channel) throw chaos::CException(-5, "Error allocating device server channel", __FUNCTION__);
+    if(!device_channel) throw chaos::CException(-3, "Error allocating device server channel", __FUNCTION__);
     device_channel->setHandler(this);
     
     QDCAPP_ << "Allocating DirectIOSystemAPIServerChannel";
     system_api_channel = (DirectIOSystemAPIServerChannel*)server_endpoint->getNewChannelInstance("DirectIOSystemAPIServerChannel");
-    if(!system_api_channel) throw chaos::CException(-5, "Error allocating system api server channel", __FUNCTION__);
+    if(!system_api_channel) throw chaos::CException(-4, "Error allocating system api server channel", __FUNCTION__);
     system_api_channel->setHandler(this);
     
     //Shared data worker
@@ -100,9 +105,9 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     
     QDCAPP_ << "Allocating Snapshot worker";
     
-    snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(ChaosDataService::getInstance()->setting.db_driver_impl,
+    snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(db_driver,
                                                                                    network_broker);
-    if(!snapshot_data_worker) throw chaos::CException(-5, "Error allocating snapshot worker", __FUNCTION__);
+    if(!snapshot_data_worker) throw chaos::CException(-6, "Error allocating snapshot worker", __FUNCTION__);
     StartableService::initImplementation(snapshot_data_worker, init_data, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
     
     //start virtual file mantainers timer
@@ -127,9 +132,6 @@ void QueryDataConsumer::stop() throw (chaos::CException) {
     if(snapshot_data_worker) {
         StartableService::stopImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
     }
-    
-    //stop query engine
-    if(query_engine) StartableService::stopImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
 }
 
 void QueryDataConsumer::deinit() throw (chaos::CException) {
@@ -141,11 +143,6 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
     if(server_endpoint) {
         QDCAPP_ << "Release direct io device channel into the endpoint";
         server_endpoint->releaseChannelInstance(device_channel);
-    }
-    
-    if(query_engine) {
-        StartableService::deinitImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
-        DELETE_OBJ_POINTER(query_engine)
     }
     
     QDCAPP_ << "Deallocating device push data worker list";
@@ -168,6 +165,16 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
         QDCAPP_ << "Deallocating Snapshot data worker";
         delete(snapshot_data_worker);
         snapshot_data_worker = NULL;
+    }
+    
+    if(db_driver) {
+        QDCAPP_ << "Deallocate index driver";
+        try {
+            InizializableService::deinitImplementation(db_driver, db_driver->getName(), __PRETTY_FUNCTION__);
+        } catch (chaos::CException e) {
+            QDCAPP_ << e.what();
+        }
+        delete (db_driver);
     }
 }
 
@@ -236,8 +243,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
                                              const std::string& search_key,
                                              uint64_t search_start_ts,
                                              uint64_t search_end_ts) {
-    //debug check
-    CHAOS_ASSERT(query_engine)
+
     
     //compose the DirectIO endpoint where forward the answer
     std::string answer_server_description = boost::str(boost::format("%1%:%2%:%3%|%4%") %
@@ -248,12 +254,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
     //compose the id of the query
     std::string query_id(header->field.query_id, 8);
     //execute the query
-    query_engine->executeQuery(new query_engine::DataCloudQuery(query_id,
-                                                                db_system::DataPackIndexQuery(search_key,
-                                                                                              search_start_ts,
-                                                                                              search_end_ts,
-                                                                                              chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT),
-                                                                answer_server_description));
+
     //delete header and
     if(header) free(header);
     return 0;
