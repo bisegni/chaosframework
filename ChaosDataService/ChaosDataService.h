@@ -25,10 +25,8 @@
 
 #include "dataservice_global.h"
 #include "QueryDataConsumer.h"
-#include "StageDataConsumer.h"
 #include "worker/DataWorker.h"
 #include "cache_system/CacheDriver.h"
-#include "vfs/vfs.h"
 #include "db_system/db_system.h"
 #include <map>
 #include <string>
@@ -69,14 +67,8 @@ namespace chaos{
 			//root pointer of the index driver
 			db_system::DBDriver *db_driver_ptr;
 			
-			//! CDS virtual file system manager
-			common::utility::InizializableServiceContainer<vfs::VFSManager> vfs_file_manager;
-
 			//! CDS data consumer that respond to data api
 			common::utility::StartableServiceContainer<QueryDataConsumer> data_consumer;
-			
-			//! CDS index part that elaborate stage file
-			common::utility::StartableServiceContainer<StageDataConsumer> stage_data_consumer;
 			
 			//! convert param_key to a string of string hash map
 			void fillKVParameter(std::map<std::string, std::string>& kvmap,

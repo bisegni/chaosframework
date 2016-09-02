@@ -13,10 +13,9 @@
 #include <string>
 #include <vector>
 
-#include "vfs/vfs.h"
 #include "db_system/db_system.h"
 #include "cache_system/cache_system.h"
-
+#include "object_storage/object_storage.h"
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -56,15 +55,6 @@ namespace chaos{
 #define OPT_INDEXER_SCAN_DELAY			"indexer-scan-delay"
 #define INDEXER_DEFAULT_WORKER_NUMBER	1
 #define INDEXER_DEFAULT_SCAN_DELAY		60
-		
-		//vfs driver configuration
-#define OPT_VFS_STORAGE_DRIVER_IMPL                 "vfs-storage-drvr-impl"
-#define OPT_VFS_STORAGE_DOMAIN                      "vfs-storage-domain"
-#define OPT_VFS_STORAGE_DRIVER_KVP                  "vfs-storage-driver-kvp"
-#define OPT_VFS_STORAGE_MAX_BLOCK_LIFETIME          "vfs-max-block-lifetime"
-#define OPT_VFS_STORAGE_MAX_BLOCK_SIZE              "vfs-max-block-size"
-#define OPT_VFS_STORAGE_LOG_METRIC                  "vfs-storage-driver-log-metric"
-#define OPT_VFS_STORAGE_LOG_METRIC_UPDATE_INTERVAL  "vfs-storage-driver-log-metric-update-interval"
         
 #define OPT_DB_DRIVER_IMPL		"db-drvr-impl"
 #define OPT_DB_DRIVER_SERVERS	"db-servers"
@@ -87,8 +77,8 @@ namespace chaos{
 			unsigned int				indexer_worker_num;
 			unsigned int				indexer_scan_delay;
 			
-			//----------vfs configuration----------------
-			vfs::VFSManagerSetting		file_manager_setting;
+			//----------object storage configuration----------------
+            object_storage::ObjStorageSetting		object_storage_setting;
 			
 			//-------------index system------------------
 			//! current db driver implementaiton to use

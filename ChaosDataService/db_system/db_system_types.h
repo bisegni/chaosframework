@@ -25,80 +25,9 @@
 #include <vector>
 #include <stdint.h>
 
-#include "../vfs/DataBlock.h"
-
 namespace chaos {
 	namespace data_service {
 		namespace db_system {
-			
-			//! definition of the datapack index
-			/*!
-			 Structure for the managment of the datapack index
-			 */
-			struct DataPackIndex {
-				//! unique identification of the instrumentation that has produced the data
-				std::string did;
-				
-				//! datapack type as @chaos::DataPackCommonKey::DPCK_DATASET_TYPE
-				uint32_t	ds_type;
-				
-				//! the timestamp that identifying the time qhen the data pack has been collected
-				uint64_t	acquisition_ts;
-				
-				//! location whithin the destination file
-				chaos::data_service::vfs::FileLocationPointer dst_location;
-				
-				//! size of the pack
-				uint32_t	datapack_size;
-			};
-			
-			//! data pack locato returned by the cursor
-			struct DataPackIndexQueryResult {
-				//location of the found data pack
-				chaos::data_service::vfs::PathFileLocation *dst_location;
-				
-				//! size of the pack
-				uint32_t	datapack_size;
-				
-				DataPackIndexQueryResult():dst_location(NULL), datapack_size(0){};
-				~DataPackIndexQueryResult(){if(dst_location) delete dst_location;}
-			};
-			
-			typedef enum DataPackIndexQueryState {
-				DataPackIndexQueryStateCreated = 0,
-				DataPackIndexQueryStateQuerable
-			}DataPackIndexQueryState;
-			
-			//! define the query that can be applied to the DataPackINdex
-			struct DataPackIndexQuery {
-				
-				//! device identification
-				std::string did;
-				
-				//! a value of type chaos::DataPackCommonKey::DPCK_DATASET_TYPE that represent the desered dataset domain
-				uint32_t	ds_type;
-				
-				//! start timestamp
-				uint64_t	start_ts;
-				
-				//! end timestamp
-				uint64_t	end_ts;
-
-				//! default constructor
-				DataPackIndexQuery():
-				did(""), start_ts(0), end_ts(0)
-				{};
-
-				//! copy constructor
-				DataPackIndexQuery(const std::string & _did,
-								   uint64_t _start_ts,
-								   uint64_t _end_ts,
-								   int _ds_type):
-				did(_did),
-				start_ts(_start_ts),
-				end_ts(_end_ts),
-				ds_type(_ds_type){};
-			};
 			
 			//! db server list type
 			typedef std::vector<std::string>			DBDriverServerList;

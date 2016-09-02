@@ -19,7 +19,6 @@
  */
 
 #include "DBDriver.h"
-#include "../vfs/DataBlock.h"
 
 using namespace chaos::data_service::db_system;
 using namespace chaos::data_service::vfs;
@@ -40,12 +39,4 @@ void DBDriver::init(void *init_data) throw (chaos::CException) {
 
 //!deinit
 void DBDriver::deinit() throw (chaos::CException) {
-}
-
-DataBlock *DBDriver::getDataBlockFromFileLocation(const FileLocationPointer& file_location) {
-	return file_location.data_block;
-}
-
-uint64_t DBDriver::getDataBlockOffsetFromFileLocation(const FileLocationPointer & file_location) {
-	return file_location.offset;
 }

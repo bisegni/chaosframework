@@ -145,9 +145,9 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
                             getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_CACHE_DRIVER_KVP));
         }
         
-        if(!setting.cache_only && getGlobalConfigurationInstance()->hasOption(OPT_VFS_STORAGE_DRIVER_KVP)) {
-            fillKVParameter(setting.file_manager_setting.storage_driver_setting.key_value_custom_param,
-                            getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_VFS_STORAGE_DRIVER_KVP));
+        if(!setting.cache_only && getGlobalConfigurationInstance()->hasOption(OPT_OBJ_STORAGE_DRIVER_KVP)) {
+            fillKVParameter(setting.object_storage_setting.key_value_custom_param,
+                            getGlobalConfigurationInstance()->getOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP));
         }
         
         if(getGlobalConfigurationInstance()->hasOption(OPT_DB_DRIVER_KVP)) {
@@ -170,33 +170,14 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
         //initilize driver pool manager
         InizializableService::initImplementation(DriverPoolManager::getInstance(), NULL, "DriverPoolManager", __PRETTY_FUNCTION__);
         
-        //check if we are in cache only
-        if(!setting.cache_only) {
-            //configure the domain url equal to the directio io server one plus the deafult endpoint "0"
-            setting.file_manager_setting.storage_driver_setting.domain.local_url = NetworkBroker::getInstance()->getDirectIOUrl();
-            setting.file_manager_setting.storage_driver_setting.domain.local_url.append("|0");
-            
-            //initialize vfs file manager
-            CDSLAPP_ << "Allocate VFS Manager";
-            vfs_file_manager.reset(new vfs::VFSManager(db_driver_ptr), "VFSFileManager");
-            vfs_file_manager.init(&setting.file_manager_setting, __PRETTY_FUNCTION__);
-            
-        }
         
         if(run_mode == QUERY ||
            run_mode == BOTH) {
             CDSLAPP_ << "Allocate the Query Data Consumer";
-            data_consumer.reset(new QueryDataConsumer(vfs_file_manager.get(), db_driver_ptr), "QueryDataConsumer");
+            data_consumer.reset(new QueryDataConsumer(), "QueryDataConsumer");
             if(!data_consumer.get()) throw chaos::CException(-7, "Error instantiating data consumer", __PRETTY_FUNCTION__);
             data_consumer->network_broker = NetworkBroker::getInstance();
             data_consumer.init(NULL, __PRETTY_FUNCTION__);
-        }
-        if(run_mode == INDEXER ||
-           run_mode == BOTH) {
-            CDSLAPP_ << "Allocate the Data Consumer";
-            stage_data_consumer.reset(new StageDataConsumer(vfs_file_manager.get(), db_driver_ptr, &setting), "StageDataConsumer");
-            if(!stage_data_consumer.get()) throw chaos::CException(-8, "Error instantiating stage data consumer", __PRETTY_FUNCTION__);
-            stage_data_consumer.init(NULL, __PRETTY_FUNCTION__);
         }
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)

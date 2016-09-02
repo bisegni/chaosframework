@@ -52,7 +52,7 @@ int main(int argc, char * argv[]) {
 
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CACHE_DRIVER,
 																									"Cache driver implementation",
-																									"Memcached",
+																									"Couchbase",
 																									&ChaosDataService::getInstance()->setting.cache_driver_setting.cache_driver_impl);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CACHE_SERVER_LIST,
@@ -106,47 +106,25 @@ int main(int argc, char * argv[]) {
 																								 "The repeat delay for virtual system scan in seconds",
 																								 INDEXER_DEFAULT_SCAN_DELAY,
 																								 &ChaosDataService::getInstance()->setting.indexer_scan_delay);
-		
-		//vfs conf
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DRIVER_IMPL,
-																									"The name of the vfs storage implementation [Posix]",
-																									"Posix",
-																									&ChaosDataService::getInstance()->setting.file_manager_setting.storage_driver_impl);
-		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DOMAIN,
-																									"The name of the domain exposed by the driver",
-																									"CHAOS_DOMAIN",
-																									&ChaosDataService::getInstance()->setting.file_manager_setting.storage_driver_setting.domain.name);
-		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_VFS_STORAGE_DRIVER_KVP,
-																												 "The key value parameter for storage implementation driver (ex k:v-k1:v1)");
-		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_VFS_STORAGE_MAX_BLOCK_LIFETIME,
-																								 "Is the lifetime that every bloc is valid to accept data",
-																								 VFSManager_MAX_BLOCK_LIFETIME,
-																								 &ChaosDataService::getInstance()->setting.file_manager_setting.max_block_lifetime);
-		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_VFS_STORAGE_MAX_BLOCK_SIZE,
-																								 "Is the max size that a block can reach",
-																								 VFSManager_MAX_BLOCK_SIZE,
-																								 &ChaosDataService::getInstance()->setting.file_manager_setting.max_block_size);
+        //object storage
+        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_OBJ_STORAGE_DRIVER,
+                                                                                                    "Object storage driver implementation",
+                                                                                                    "MongoDB",
+                                                                                                    &ChaosDataService::getInstance()->setting.object_storage_setting.driver_impl);
         
-        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_VFS_STORAGE_LOG_METRIC,
-                                                                                             "Enable log metric on file system driver",
-                                                                                             false,
-                                                                                             &ChaosDataService::getInstance()->setting.file_manager_setting.storage_driver_setting.log_metric);
+        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_OBJ_STORAGE_SERVER_URL,
+                                                                                                                 "The list of the obj storage servers",
+                                                                                                                 &ChaosDataService::getInstance()->setting.object_storage_setting.url_list);
         
-        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_VFS_STORAGE_LOG_METRIC_UPDATE_INTERVAL,
-                                                                                                 "Specify the file update interval, in second, for the metric of the system driver",
-                                                                                                 1,
-                                                                                                 &ChaosDataService::getInstance()->setting.file_manager_setting.storage_driver_setting.log_metric_update_interval);
+        ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_OBJ_STORAGE_DRIVER_KVP,
+                                                                                                                 "The key value multitoken for obj storage implementation driver (k:v)");
         
 		//db
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_DB_DRIVER_IMPL,
 																									"The name of the index driver implementation [MongoDB]",
 																									"Mongo",
 																									&ChaosDataService::getInstance()->setting.db_driver_impl);
-		
+        
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_DB_DRIVER_SERVERS,
 																												 "The list of the index servers",
 																												 &ChaosDataService::getInstance()->setting.db_driver_setting.servers);

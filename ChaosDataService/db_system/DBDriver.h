@@ -29,7 +29,6 @@
 #include <chaos/common/utility/InizializableService.h>
 
 #include "db_system_types.h"
-#include "DBIndexCursor.h"
 
 namespace chaos {
 	namespace data_service {
@@ -57,8 +56,6 @@ namespace chaos {
 			protected:
 				DBDriverSetting *setting;
 				
-				chaos_vfs::DataBlock *getDataBlockFromFileLocation(const vfs::FileLocationPointer& data_block);
-				uint64_t getDataBlockOffsetFromFileLocation(const vfs::FileLocationPointer& data_block);
 			public:
 				
 				//! public destructor
@@ -72,180 +69,7 @@ namespace chaos {
 				
 				//!deinit
 				void deinit() throw (chaos::CException);
-				
-				
-				//! Register a new domain
-				/*!
-				 Register a new domain adding an url. Different data service that
-				 share the same domain wil register their own url
-				 */
-				virtual int vfsAddDomain(vfs::VFSDomain domain) = 0;
-				
-				//! Give an heart beat for a domain
-				/*!
-				 Give an heart beat for a domain
-				 \param domain_name the name of the domain that the hb
-				 */
-				virtual int vfsDomainHeartBeat(vfs::VFSDomain domain) = 0;
-				
-				//! Register a new data block wrote on stage area
-				/*!
-				 Registration of a new datablock in stage area is achieved directly to the DataService process
-				 after the block has been created.
-				 \param vfs_file the vfs file for wich we need to create the new data block
-				 \param data_block Newly created data block
-				 */
-				virtual int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
-											   chaos_vfs::DataBlock *data_block,
-											   vfs::data_block_state::DataBlockState new_block_state = vfs::data_block_state::DataBlockStateNone) = 0;
-				
-				//! Delete a virtual file datablock
-				/*!
-				 Delete a datablock associated to a virtual file
-				 */
-				virtual int vfsDeleteDataBlock(chaos_vfs::VFSFile *vfs_file,
-											   chaos_vfs::DataBlock *data_block) = 0;
-				
-				//! Set the state for a datablock
-				/*!
-				 Set the current state for a datablock in the stage area
-				 \param vfs_file owner of the datablock
-				 \param data_block Data block for wich need to be changed the state
-				 \param state new state to set (chaos::data_service::vfs::data_block_state::DataBlockState)
-				 */
-				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
-												   chaos_vfs::DataBlock *data_block,
-												   int state) = 0;
-				
-				//! Set the state for a datablock
-				/*!
-				 Set the current state for a datablock if is current state
-				 is equal to function param'cur_state'. The operation is done
-				 only if the current state of the datablock is equal to the
-				 given parameter, and the update is done atomically
-				 \param vfs_file owner of the datablock
-				 \param data_block Data block for wich need to be changed the state
-				 \param cur_state current state of the block (chaos::data_service::vfs::data_block_state::DataBlockState)
-				 \param new_state new state of the block (chaos::data_service::vfs::data_block_state::DataBlockState)
-				 */
-				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
-												   chaos_vfs::DataBlock *data_block,
-												   int cur_state,
-												   int new_state,
-												   bool& success) = 0;
-				
-				//! Set the datablock current position
-				virtual int vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
-													   chaos_vfs::DataBlock *data_block,
-													   uint64_t timestamp = 0) = 0;
-				
-				
-				//! update the current datablock size
-				virtual int vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile *vfs_file,
-																  chaos_vfs::DataBlock *data_block) = 0;
-				
-				//! Return the path of the vfile that contains the oldest block with info
-				/*!
-				 Find wich block has the the state in input and if belong to data or state
-				 and return the oldest.
-				 \param domain is the domain in wich need to be search
-				 \param data_area is the area in wich need to belong the datablock
-				 \param state is the state that need to have the datablock returned
-				 \param data_block is the datablock handler which contains the new datablock (if found) otherwise 
-				 NULL is returned
-				 */
-				virtual int vfsGetFilePathForOldestBlockState(const std::string& domain,
-															  const std::string& data_area,
-															  int state,
-															  std::string& vfile_path) = 0;
-				
-				//! Change the state to all datablock that are in timeout
-				/*!
-				 Datablock are found combining the timeout_state_in_sec delay of "valid until"
-				 field and timeout_state. All datablock that match this rule, will have 
-				 their state changed to new_state.
-				 \param domain the domain where search
-				 \param data_areai sthe ared of the domain where search
-				 \param timeout_state_in_sec, is the dealy(in seconds) for wich a datablock need to be
-				 considere in timeout
-				 \param timeout_state is the state to filter the datablock that are in timout
-				 \param new_state is the new state that the mathced datablock will have
-				 */
-				virtual int vfsChangeStateToOutdatedChunck(const std::string& domain,
-														   const std::string& data_area,
-														   uint32_t timeout_state_in_sec,
-														   int timeout_state,
-														   int new_state) = 0;
-				
-				//! Return the next available datablock created since timestamp
-				/*!
-				 The rule on how select the Datablock is regulated by direction flag. It set the next or prev, starting from
-				 the timestamp, datablock to select that match the state. The api is atomic
-				 \param vfs_file virtual file at wich the datablock belowng
-				 \param timestamp the timestamp form wich search
-				 \param direction true -> enxt or false -> prev
-				 \param state the state for the selection of the datablock (chaos::data_service::vfs::data_block_state::DataBlockState)
-				 \param data_block the returned, if found, datablock
-				 \return the error code
-				 */
-				virtual int vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
-													  uint64_t timestamp,
-													  bool direction,
-													  int state,
-													  chaos_vfs::DataBlock **data_block) = 0;
-				
-				//! Check if the vfs file exists
-				/*!
-				 Check on vfs index db if the file exists
-				 */
-				virtual int vfsFileExist(chaos_vfs::VFSFile *vfs_file,
-										 bool& exists_flag) = 0;
-				
-				//! Create a file entry into the vfat
-				/*!
-				 allocate an entry on the database for vfile
-				 */
-				virtual int vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file) = 0;
-				
-				//! Return a list of vfs path of the file belong to a domain
-				/*!
-				 The returned vfs file paths are filtered using the prefix, so all
-				 path are of the form PREFIX_other_character
-				 \param vfs_domain the domain that we wan't to selct
-				 \param prefix_filter the prefix of the path used for filter the result
-				 \param result_vfs_file_path array contains the found vfs paths.
-				 */
-				virtual int vfsGetFilePathForDomain(const std::string& vfs_domain,
-													const std::string& prefix_filter,
-													std::vector<std::string>& result_vfs_file_path,
-													int limit_to_size = 100) = 0;
-				
-				//! add the default index for a unique instrument identification and a timestamp
-				/*!
-				 whitin !CHAOS every data pack has, by default, an unique identification and a timestamp that represet
-				 the time when the data into packet have been colelcted. This api write the default index on database
-				 that permit to find the data pack whhitin the destination virtula file.
-				 \param index the index to be stored for a new datapack
-				 */
-				virtual int idxAddDataPackIndex(const DataPackIndex& index) = 0;
-				
-				//! remove the index for a unique instrument identification and a timestamp
-				virtual int idxDeleteDataPackIndex(const DataPackIndex& index) = 0;
-				
-				//! set the state on all datapack index for an datablock
-				virtual int idxSetDataPackIndexStateByDataBlock(const std::string& vfs_datablock_domain,
-																const std::string& vfs_datablock_path,
-																DataPackIndexQueryState dp_index_state) = 0;
-				
-				//! perform a search on data pack indexes
-				/*!
-				 start a query on index database  and return the cursor for paging the result
-				 \param _query the query
-				 \param index_cursor paged cursor for retrieve the result
-				 */
-				virtual int idxStartSearchDataPack(const chaos::data_service::db_system::DataPackIndexQuery& _query,
-												   DBIndexCursor **index_cursor) = 0;
-				
+								
 				//! Create a new snapshot
 				/*!
 				 Create a new snapshot with the name

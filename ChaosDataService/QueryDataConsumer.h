@@ -23,11 +23,9 @@
 
 #include "dataservice_global.h"
 #include "db_system/DBDriver.h"
-#include "vfs/VFSManager.h"
 #include "worker/DataWorker.h"
 #include "cache_system/cache_system.h"
 #include "db_system/db_system.h"
-#include "query_engine/QueryEngine.h"
 
 #include <chaos/common/utility/ObjectSlot.h>
 #include <chaos/common/utility/StartableService.h>
@@ -69,13 +67,10 @@ namespace chaos{
 			DirectIODeviceServerChannel				*device_channel;
 			DirectIOSystemAPIServerChannel			*system_api_channel;
 			
-			db_system::DBDriver						*db_driver;
-			vfs::VFSManager                         *vfs_manager_instance;
             
 			boost::atomic<uint16_t>                 device_data_worker_index;
 			chaos::data_service::worker::DataWorker	**device_data_worker;
 			chaos::data_service::worker::DataWorker	*snapshot_data_worker;
-			query_engine::QueryEngine               *query_engine;
 			
 			//---------------- DirectIODeviceServerChannelHandler -----------------------
             int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
@@ -113,7 +108,7 @@ namespace chaos{
 			//async central timer hook
 			void timeout();
         public:
-			QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance, db_system::DBDriver *_db_driver);
+			QueryDataConsumer();
             ~QueryDataConsumer();
             void init(void *init_data) throw (chaos::CException);
             void start() throw (chaos::CException);

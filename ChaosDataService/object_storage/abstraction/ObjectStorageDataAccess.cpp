@@ -1,9 +1,10 @@
 /*
- *	storage_system.h
- *	!CHAOS
- *	Created by Bisegni Claudio.
+ *	ObjectStorageDataAccess.cpp
  *
- *    	Copyright 2014 INFN, National Institute of Nuclear Physics
+ *	!CHAOS [CHAOSFramework]
+ *	Created by bisegni.
+ *
+ *    	Copyright 02/09/16 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,11 +18,18 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_storage_system_h
-#define CHAOSFramework_storage_system_h
 
-#include "StorageDriver.h"
-#include "PosixStorageDriver.h"
-#include "StorageDriverMetricCollector.h"
+#include "ObjectStorageDataAccess.h"
 
-#endif
+using namespace chaos::data_service::object_storage::abstraction;
+
+DEFINE_DA_NAME(ObjectStorageDataAccess)
+
+ObjectStorageDataAccess::ObjectStorageDataAccess():
+AbstractDataAccess("ObjectStorageDataAccess") {
+    
+}
+
+ObjectStorageDataAccess::~ObjectStorageDataAccess() {
+    
+}

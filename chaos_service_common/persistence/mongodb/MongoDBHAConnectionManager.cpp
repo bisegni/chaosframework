@@ -115,7 +115,7 @@ DriverScopedConnection::~DriverScopedConnection() {
 
 //-----------------------------------------------------------------------------------------------------------
 
-MongoDBHAConnectionManager::MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list,
+MongoDBHAConnectionManager::MongoDBHAConnectionManager(ChaosStringVector monogs_routers_list,
 													   std::map<std::string,std::string>& key_value_custom_param):
 server_number((uint32_t)monogs_routers_list.size()),
 next_retrive_intervall(0),

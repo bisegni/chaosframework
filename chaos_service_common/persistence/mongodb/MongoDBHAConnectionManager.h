@@ -23,6 +23,8 @@
 
 #include <mongo/client/dbclient.h>
 
+#include <chaos/common/chaos_types.h>
+
 #include <vector>
 #include <string>
 #include <queue>
@@ -81,7 +83,8 @@ namespace chaos {
                     bool getConnection(MongoDBHAConnection *connection_sptr);
                     
                 public:
-                    MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list, std::map<std::string,std::string>& key_value_custom_param);
+                    MongoDBHAConnectionManager(ChaosStringVector monogs_routers_list,
+                                               std::map<std::string, std::string>& key_value_custom_param);
                     ~MongoDBHAConnectionManager();
                     const std::string& getDatabaseName();
                     int insert(const std::string &ns,

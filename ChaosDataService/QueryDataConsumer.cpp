@@ -37,20 +37,14 @@ using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
-#define QueryDataConsumer_LOG_HEAD "[QueryDataConsumer] - "
-
-#define QDCAPP_ LAPP_ << QueryDataConsumer_LOG_HEAD
-#define QDCDBG_ LDBG_ << QueryDataConsumer_LOG_HEAD << __FUNCTION__ << " - "
-#define QDCERR_ LERR_ << QueryDataConsumer_LOG_HEAD << __FUNCTION__ << "(" << __LINE__ << ") - "
+#define QDCAPP_ INFO_LOG(QueryDataConsumer)
+#define QDCDBG_ DBG_LOG(QueryDataConsumer)
+#define QDCERR_ ERR_LOG(QueryDataConsumer)
 
 boost::shared_ptr<worker::DeviceSharedDataWorkerMetric> dsdwm_metric;
 
 //constructor
-QueryDataConsumer::QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance,
-                                     db_system::DBDriver *_db_driver):
-vfs_manager_instance(_vfs_manager_instance),
-db_driver(_db_driver),
-query_engine(NULL),
+QueryDataConsumer::QueryDataConsumer():
 server_endpoint(NULL),
 device_channel(NULL),
 system_api_channel(NULL),
@@ -76,14 +70,6 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     if(!system_api_channel) throw chaos::CException(-5, "Error allocating system api server channel", __FUNCTION__);
     system_api_channel->setHandler(this);
     
-    //allocate query manager
-    if(!ChaosDataService::getInstance()->setting.cache_only) {
-        query_engine = new query_engine::QueryEngine(network_broker->getNewDirectIOClientInstance(),
-                                                     ChaosDataService::getInstance()->setting.query_manager_thread_poll_size,
-                                                     vfs_manager_instance);
-        if(!query_engine) throw chaos::CException(-5, "Error allocating Query Engine", __FUNCTION__);
-        StartableService::initImplementation(query_engine, init_data, "QueryEngine", __PRETTY_FUNCTION__);
-    }
     //Shared data worker
     if(ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
         QDCAPP_ << "Init Device shared data worker metric";
@@ -101,12 +87,12 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
         if(ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
             QDCAPP_ << "Enable caching worker log metric";
             //install the data worker taht grab the metric
-            device_data_worker[idx] = tmp = new worker::DeviceSharedDataWorkerMetricCollector(cache_impl_name,
-                                                                                              vfs_manager_instance,
+            device_data_worker[idx] = tmp = new worker::DeviceSharedDataWorkerMetricCollector(ChaosDataService::getInstance()->setting.cache_driver_setting.cache_driver_impl,
+                                                                                              ChaosDataService::getInstance()->setting.object_storage_setting.driver_impl,
                                                                                               dsdwm_metric);
         } else {
-            device_data_worker[idx] = tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name,
-                                                                                                    vfs_manager_instance);
+            device_data_worker[idx] = tmp = new chaos::data_service::worker::DeviceSharedDataWorker(ChaosDataService::getInstance()->setting.cache_driver_setting.cache_driver_impl,
+                                                                                                    ChaosDataService::getInstance()->setting.object_storage_setting.driver_impl);
         }
         tmp->init(&ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_setting);
         tmp->start();
@@ -114,7 +100,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     
     QDCAPP_ << "Allocating Snapshot worker";
     
-    snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(db_driver,
+    snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(ChaosDataService::getInstance()->setting.db_driver_impl,
                                                                                    network_broker);
     if(!snapshot_data_worker) throw chaos::CException(-5, "Error allocating snapshot worker", __FUNCTION__);
     StartableService::initImplementation(snapshot_data_worker, init_data, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
@@ -129,8 +115,6 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 }
 
 void QueryDataConsumer::start() throw (chaos::CException) {
-    //start query engine
-    if(query_engine) StartableService::startImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
     
     //! start the snapshot creation worker
     if(snapshot_data_worker) {

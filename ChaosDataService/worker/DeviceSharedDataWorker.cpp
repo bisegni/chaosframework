@@ -39,103 +39,76 @@ namespace chaos_vfs = chaos::data_service::vfs;
 //------------------------------------------------------------------------------------------------------------------------
 
 DeviceSharedDataWorker::DeviceSharedDataWorker(const std::string& _cache_impl_name,
-											   vfs::VFSManager *_vfs_manager_instance):
+                                               const std::string& _object_impl_name):
 cache_impl_name(_cache_impl_name),
-last_stage_file_hb(0),
-vfs_manager_instance(_vfs_manager_instance){}
+object_impl_name(_object_impl_name){}
 
 DeviceSharedDataWorker::~DeviceSharedDataWorker() {}
 
 void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
-	DataWorker::init(init_data);
-	
-	last_stage_file_hb = 0;
-	
-	//generate random path for this worker
-	std::string path(UUIDUtil::generateUUIDLite());
-	
-	DSDW_LAPP_ << "allocating cache driver for every thread";
-	if(vfs_manager_instance) {
-		//we have the file manager configure
-		for(int idx = 0; idx < settings.job_thread_number; idx++) {
-			std::string stage_file_name("/thread_");
-			stage_file_name.append(boost::lexical_cast<std::string>(idx));
-			
-			ThreadCookie *_tc_ptr = new ThreadCookie();
-			if(vfs_manager_instance->getWriteableStageFile(path+stage_file_name, &_tc_ptr->vfs_stage_file)) {
-				//we have got an error
-				DSDW_LERR_ << "Error getting vfs file for " << path+stage_file_name;
-				throw chaos::CException(-2, "Error creating vfs stage file", __PRETTY_FUNCTION__);
-			}
-			//associate the thread cooky for the idx value
-			thread_cookie[idx] = _tc_ptr;
-		}
-	}
+    DataWorker::init(init_data);
+    
+    DSDW_LAPP_ << "allocating cache driver for every thread";
+    
+    for(int idx = 0; idx < settings.job_thread_number; idx++) {
+        ThreadCookie *_tc_ptr = new ThreadCookie();
+        _tc_ptr->persistence_driver = NULL;
+        _tc_ptr->obj_storage_da = NULL;
+        //associate the thread cooky for the idx value
+        thread_cookie[idx] = _tc_ptr;
+    }
 }
 
 void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
-	if(vfs_manager_instance) {
-		for(int idx = 0; idx < settings.job_thread_number; idx++) {
-			ThreadCookie *tmp_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
-			vfs_manager_instance->releaseFile(tmp_cookie->vfs_stage_file);
-		}
-		
-		std::memset(thread_cookie, 0, sizeof(void*)*settings.job_thread_number);
-	}
-	DataWorker::deinit();
+    
+    for(int idx = 0; idx < settings.job_thread_number; idx++) {
+        ThreadCookie *tmp_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
+        
+    }
+    
+    std::memset(thread_cookie, 0, sizeof(void*)*settings.job_thread_number);
+    DataWorker::deinit();
 }
 
 void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
-	int err = 0;
-	DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
-	ThreadCookie *this_thread_cookie = reinterpret_cast<ThreadCookie *>(cookie);
+    int err = 0;
+    DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
+    ThreadCookie *this_thread_cookie = reinterpret_cast<ThreadCookie *>(cookie);
     
     CHAOS_ASSERT(job_ptr)
     CHAOS_ASSERT(job_ptr->request_header);
     CHAOS_ASSERT(job_ptr->data_pack);
     CHAOS_ASSERT(this_thread_cookie)
-    CHAOS_ASSERT(this_thread_cookie->vfs_stage_file)
+    //CHAOS_ASSERT(this_thread_cookie->vfs_stage_file)
     
-	//check what kind of push we have
-	//read lock on mantainance mutex
-	boost::shared_lock<boost::shared_mutex> rl(this_thread_cookie->mantainance_mutex);
-	switch(job_ptr->request_header->tag) {
-		case 0:// storicize only
-		case 2:// storicize and live
-			//write data on stage file
-			if((err = this_thread_cookie->vfs_stage_file->write(job_ptr->data_pack, job_ptr->data_pack_len))) {
-				DSDW_LERR_<< "Error writing data to file " << this_thread_cookie->vfs_stage_file->getVFSFileInfo()->vfs_fpath;
-			}
-			
-            //check for timeout
-			if((TimingUtil::getTimeStamp() - last_stage_file_hb) > 1000) {
-				last_stage_file_hb = TimingUtil::getTimeStamp();
-				if((err = this_thread_cookie->vfs_stage_file->giveHeartbeat())){
-					DSDW_LERR_<< "Error giving heartbeat to data "  << this_thread_cookie->vfs_stage_file->getVFSFileInfo()->vfs_fpath;
-				}
-			}
-			
-			free(job_ptr->request_header);
-			free(job_ptr->data_pack);
-			free(job_ptr);
-			break;
-			
-		case 1:{// live only
-			break;
-		}
-	}
+    //check what kind of push we have
+    //read lock on mantainance mutex
+    switch(job_ptr->request_header->tag) {
+        case 0:// storicize only
+        case 2:// storicize and live
+            //write data on object storage
+            
+            free(job_ptr->request_header);
+            free(job_ptr->data_pack);
+            free(job_ptr);
+            break;
+            
+        case 1:{// live only
+            break;
+        }
+    }
 }
 
 //!
 void DeviceSharedDataWorker::mantain() throw (chaos::CException) {
-	// lock for mantains
-	for(int idx = 0; idx < settings.job_thread_number; idx++) {
-		ThreadCookie *current_tread_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
-        CHAOS_ASSERT(current_tread_cookie)
-		//write lock on mantainance mutex
-		boost::unique_lock<boost::shared_mutex> rl(current_tread_cookie->mantainance_mutex);
-		
-		//mantainance on virtual file
-		current_tread_cookie->vfs_stage_file->mantain();
-	}
+    // lock for mantains
+    for(int idx = 0; idx < settings.job_thread_number; idx++) {
+        //ThreadCookie *current_tread_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
+        // CHAOS_ASSERT(current_tread_cookie)
+        //write lock on mantainance mutex
+        //boost::unique_lock<boost::shared_mutex> rl(current_tread_cookie->mantainance_mutex);
+        
+        //mantainance on virtual file
+        //current_tread_cookie->vfs_stage_file->mantain();
+    }
 }

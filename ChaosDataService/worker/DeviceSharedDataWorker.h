@@ -22,9 +22,8 @@
 #define __CHAOSFramework__DeviceDataWorker__
 
 #include "DataWorker.h"
-#include "../vfs/VFSManager.h"
-#include "../vfs/VFSStageWriteableFile.h"
 #include "../cache_system/cache_system.h"
+#include "../object_storage/object_storage.h"
 
 #include <string>
 #include <chaos/common/direct_io/DirectIODataPack.h>
@@ -38,51 +37,42 @@ namespace chaos_direct_io	= chaos::common::direct_io;
 
 namespace chaos{
     namespace data_service {
-		namespace worker {
+        namespace worker {
             //forward declaration
             class DeviceSharedDataWorkerMetricCollector;
             
-			//! worker information for the device live storage
-			struct DeviceSharedWorkerJob : public WorkerJob {
-				common::direct_io::channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *request_header;
-				int	put_operation; //0 -storicize only, 1-live only, 2-storicize and live
-				uint32_t data_pack_len;
-				void * data_pack;
-			};
-			
-			//! struct for regolate the access to the vfs file in multithread usage of DeviceSharedWorkerJob
-			struct VFSFileSlot {
-				//! vfs file ptr
-				vfs::VFSFile		*file_ptr;
-				//! mutext to lock on possible threads collision
-				boost::shared_mutex	mutex_slot;
-			};
-			
-			//! Thread cookier for collect need staff to process the request
-			struct ThreadCookie {
-				boost::shared_mutex mantainance_mutex;
-				chaos_vfs::VFSStageWriteableFile *vfs_stage_file;
-			};
-			
-			//! worker for live device sharing
-			class DeviceSharedDataWorker : public DataWorker {
+            //! worker information for the device live storage
+            struct DeviceSharedWorkerJob :
+            public WorkerJob {
+                common::direct_io::channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *request_header;
+                int	put_operation; //0 -storicize only, 1-live only, 2-storicize and live
+                uint32_t data_pack_len;
+                void * data_pack;
+            };
+            
+            struct ThreadCookie {
+                chaos::service_common::persistence::data_access::AbstractPersistenceDriver *persistence_driver;
+                chaos::data_service::object_storage::abstraction::ObjectStorageDataAccess *obj_storage_da;
+            };
+            
+            //! worker for live device sharing
+            class DeviceSharedDataWorker : public DataWorker {
                 friend class DeviceSharedDataWorkerMetricCollector;
-				std::string					cache_impl_name;
-				vfs::VFSManager				*vfs_manager_instance;
-				uint64_t					last_stage_file_hb;
-			protected:
-				void executeJob(WorkerJobPtr job_info,
-								void* cookie);
-			public:
-				DeviceSharedDataWorker(const std::string& _cache_impl_name,
-									   vfs::VFSManager *_vfs_manager_instance);
-				~DeviceSharedDataWorker();
-				void init(void *init_data) throw (chaos::CException);
-				void deinit() throw (chaos::CException);
-				void mantain() throw (chaos::CException);
-			};
-		}
-	}
+                const std::string   cache_impl_name;
+                const std::string   object_impl_name;
+            protected:
+                void executeJob(WorkerJobPtr job_info,
+                                void* cookie);
+            public:
+                DeviceSharedDataWorker(const std::string& _cache_impl_name,
+                                       const std::string& _object_impl_name);
+                ~DeviceSharedDataWorker();
+                void init(void *init_data) throw (chaos::CException);
+                void deinit() throw (chaos::CException);
+                void mantain() throw (chaos::CException);
+            };
+        }
+    }
 }
 
 #endif /* defined(__CHAOSFramework__DeviceDataWorker__) */
