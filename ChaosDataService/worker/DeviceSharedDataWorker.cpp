@@ -29,6 +29,9 @@
 #include <boost/lexical_cast.hpp>
 using namespace chaos::common::utility;
 using namespace chaos::data_service::worker;
+using namespace chaos::service_common::persistence::data_access;
+using namespace chaos::data_service::object_storage::abstraction;
+
 namespace chaos_vfs = chaos::data_service::vfs;
 
 #define DSDW_LAPP_ INFO_LOG(DeviceSharedDataWorker)
@@ -52,8 +55,8 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
     
     for(int idx = 0; idx < settings.job_thread_number; idx++) {
         ThreadCookie *_tc_ptr = new ThreadCookie();
-        _tc_ptr->persistence_driver = NULL;
-        _tc_ptr->obj_storage_da = NULL;
+        _tc_ptr->object_storage_driver.reset(ObjectFactoryRegister<AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(object_impl_name+"ObjectStorageDriver"));
+        _tc_ptr->obj_storage_da = _tc_ptr->object_storage_driver->getDataAccess<ObjectStorageDataAccess>();
         //associate the thread cooky for the idx value
         thread_cookie[idx] = _tc_ptr;
     }
@@ -63,7 +66,7 @@ void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
     
     for(int idx = 0; idx < settings.job_thread_number; idx++) {
         ThreadCookie *tmp_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
-        
+        delete(tmp_cookie);
     }
     
     std::memset(thread_cookie, 0, sizeof(void*)*settings.job_thread_number);
