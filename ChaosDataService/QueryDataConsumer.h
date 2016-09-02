@@ -30,7 +30,6 @@
 #include <chaos/common/utility/ObjectSlot.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
-#include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 #include <chaos/common/direct_io/channel/DirectIOSystemAPIServerChannel.h>
 #include <chaos/common/utility/TimingUtil.h>
@@ -52,7 +51,6 @@ namespace chaos{
         class ChaosDataService;
         
         class QueryDataConsumer:
-		protected chaos::common::async_central::TimerHandler,
 		protected DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
 		protected DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelHandler,
 		public StartableService {
@@ -105,8 +103,6 @@ namespace chaos{
 											   void **channel_found_data,
 											   uint32_t& channel_found_data_length,
 											   DirectIOSystemAPISnapshotResultHeader& api_result);
-			//async central timer hook
-			void timeout();
         public:
 			QueryDataConsumer();
             ~QueryDataConsumer();

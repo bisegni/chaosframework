@@ -46,7 +46,6 @@ void MongoDBObjectStorageDriver::init(void *init_data) throw (chaos::CException)
     AbstractPersistenceDriver::init(init_data);
     
     
-    
     //we can configura the connection
     connection.reset(new MongoDBHAConnectionManager(ChaosDataService::getInstance()->setting.object_storage_setting.url_list,
                                                     ChaosDataService::getInstance()->setting.object_storage_setting.key_value_custom_param));

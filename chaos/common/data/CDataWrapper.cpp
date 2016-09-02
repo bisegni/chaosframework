@@ -348,7 +348,7 @@ SerializationBuffer* CDataWrapper::getBSONData(){
  Return the pointer of the data and the size. th eownership of data remain
  of the CDataWrapper
  */
-const char* CDataWrapper::getBSONRawData(int& size) {
+const char* CDataWrapper::getBSONRawData(int& size) const {
     //finalize the bson object
     if( bsonBuilder->len()==0 ) return NULL;
     

@@ -23,89 +23,81 @@ work(false),
 job_queue(1000),
 job_in_queue(0),
 max_element(1000){
-	std::memset(&settings, 0, sizeof(DataWorkerSetting));
+    std::memset(&settings, 0, sizeof(DataWorkerSetting));
 }
 
 DataWorker::~DataWorker() {
-	
+    
 }
 
 WorkerJobPtr DataWorker::getNextOrWait(boost::unique_lock<boost::mutex>& lock) {
-	WorkerJobPtr new_job = NULL;
-	while(!job_queue.pop(new_job) && work) {
-		job_condition.wait(lock);
-	}
-	return new_job;
+    WorkerJobPtr new_job = NULL;
+    while(!job_queue.pop(new_job) && work) {
+        job_condition.wait(lock);
+    }
+    return new_job;
 }
 
 void DataWorker::consumeJob(void *cookie) {
-	WorkerJobPtr thread_job = NULL;
-	boost::unique_lock<boost::mutex> lock(mutex_job);
-	DCLAPP_<< "Entering in working cicle";
-	while(work) {
-		thread_job = getNextOrWait(lock);
-		if(thread_job) executeJob(thread_job, cookie);
-		job_in_queue--;
-	}
-	DCLAPP_<< "Working cicle temrinated";
+    WorkerJobPtr thread_job = NULL;
+    boost::unique_lock<boost::mutex> lock(mutex_job);
+    while(work) {
+        thread_job = getNextOrWait(lock);
+        if(thread_job) executeJob(thread_job, cookie);
+        job_in_queue--;
+    }
 }
 
 void DataWorker::init(void *init_data) throw (chaos::CException) {
-	DCLAPP_<< "Get the settings";
-	if(init_data) {
-		std::memcpy(&settings, init_data, sizeof(DataWorkerSetting));
-	} else {
-		settings.job_thread_number = DEFAULT_JOB_THREAD;
-	}
-	
-	thread_cookie = (void**)calloc(1, sizeof(void*)*settings.job_thread_number);
-	DCLAPP_ << " Using " << settings.job_thread_number << " thread for consuming job";
+    if(init_data) {
+        std::memcpy(&settings, init_data, sizeof(DataWorkerSetting));
+    } else {
+        settings.job_thread_number = DEFAULT_JOB_THREAD;
+    }
+    
+    thread_cookie = (void**)calloc(1, sizeof(void*)*settings.job_thread_number);
+    DCLAPP_ << " Using " << settings.job_thread_number << " thread for consuming job";
 }
 
 void DataWorker::start() throw (chaos::CException) {
-	DCLAPP_ << " Starting " << settings.job_thread_number << " thread for consuming job";
-	work = true;
-	for(int idx = 0; idx <settings.job_thread_number; idx++) {
-		job_thread_group.create_thread(boost::bind(&DataWorker::consumeJob, this, thread_cookie[idx]));
-	}
+    work = true;
+    for(int idx = 0; idx <settings.job_thread_number; idx++) {
+        job_thread_group.create_thread(boost::bind(&DataWorker::consumeJob, this, thread_cookie[idx]));
+    }
 }
 
 void DataWorker::stop() throw (chaos::CException) {
-	DCLAPP_ << " Stopping " << settings.job_thread_number << " thread for consuming job";
-	work = false;
-	//for(int idx = 0; idx <settings.job_thread_number; idx++) {
-	job_condition.notify_all();
-	//}
-	job_thread_group.join_all();
-
+    work = false;
+    job_condition.notify_all();
+    job_thread_group.join_all();
 }
 
 void DataWorker::deinit() throw (chaos::CException) {
-	WorkerJobPtr thread_job = NULL;
-	//empty the job queue deleting the non executed job
-	DCLAPP_ << "delete all remaining job";
-	while(job_queue.pop(thread_job)) {
-		DCLAPP_ << "delete worker job";
-		delete(thread_job);
-	}
-	
-	if(thread_cookie) free(thread_cookie);
-	DCLAPP_ << "job queue is empty";
+    WorkerJobPtr thread_job = NULL;
+    //empty the job queue deleting the non executed job
+    if(job_queue.empty() == false) {
+        DCLAPP_ << "delete all remaining job";
+        while(job_queue.pop(thread_job)) {
+            DCLAPP_ << "delete worker job";
+            delete(thread_job);
+        }
+    } else {
+        DCLAPP_ << "job queue is empty";
+    }
+    if(thread_cookie) free(thread_cookie);
+    
 }
 
 int DataWorker::submitJobInfo(WorkerJobPtr job_info) {
     //check if we are out of max element in queue, in other case go out
     if(job_in_queue > max_element) return -1000;
-	if(job_in_queue++ % 1000) {
-		DCLDBG_ << "Job in queue " << job_in_queue;
-	}
-	if( job_queue.push(job_info) ) {
-		job_condition.notify_one();
-		return 0;
-	}
-	return -2;
+    if( job_queue.push(job_info) ) {
+        job_condition.notify_one();
+        return 0;
+    }
+    return -2;
 }
 
 void DataWorker::mantain() throw (chaos::CException) {
-	
+    
 }

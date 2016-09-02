@@ -34,9 +34,9 @@ using namespace chaos::data_service::object_storage::abstraction;
 
 namespace chaos_vfs = chaos::data_service::vfs;
 
-#define DSDW_LAPP_ INFO_LOG(DeviceSharedDataWorker)
-#define DSDW_LDBG_ DBG_LOG(DeviceSharedDataWorker)
-#define DSDW_LERR_ ERR_LOG(DeviceSharedDataWorker)
+#define INFO INFO_LOG(DeviceSharedDataWorker)
+#define DBG DBG_LOG(DeviceSharedDataWorker)
+#define ERR ERR_LOG(DeviceSharedDataWorker)
 
 
 //------------------------------------------------------------------------------------------------------------------------
@@ -51,12 +51,18 @@ DeviceSharedDataWorker::~DeviceSharedDataWorker() {}
 void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
     DataWorker::init(init_data);
     
-    DSDW_LAPP_ << "allocating cache driver for every thread";
+    INFO << "allocating cache driver for every thread";
     
     for(int idx = 0; idx < settings.job_thread_number; idx++) {
         ThreadCookie *_tc_ptr = new ThreadCookie();
         _tc_ptr->object_storage_driver.reset(ObjectFactoryRegister<AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(object_impl_name+"ObjectStorageDriver"));
+        
+        //init the driver
+        _tc_ptr->object_storage_driver->init(init_data);
+        
+        //get the data access
         _tc_ptr->obj_storage_da = _tc_ptr->object_storage_driver->getDataAccess<ObjectStorageDataAccess>();
+        
         //associate the thread cooky for the idx value
         thread_cookie[idx] = _tc_ptr;
     }
@@ -88,14 +94,23 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
     //read lock on mantainance mutex
     switch(job_ptr->request_header->tag) {
         case 0:// storicize only
-        case 2:// storicize and live
+        case 2:{// storicize and live
             //write data on object storage
-            
+            CDataWrapper data_pack((char *)job_ptr->data_pack);
+            if(data_pack.hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP)) return;
+            std::string storage_key((const char *)job_ptr->request_header->key_data,
+                                    job_ptr->request_header->key_len);
+            //push received datapack into object storage
+            if((err = this_thread_cookie->obj_storage_da->pushObject(storage_key,
+                                                                     data_pack.getUInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP),
+                                                                     data_pack))) {
+                ERR << "Error pushing datapack into object storage driver";
+            }
             free(job_ptr->request_header);
             free(job_ptr->data_pack);
             free(job_ptr);
             break;
-            
+        }
         case 1:{// live only
             break;
         }

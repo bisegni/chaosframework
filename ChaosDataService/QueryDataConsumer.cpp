@@ -99,7 +99,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
             device_data_worker[idx] = tmp = new chaos::data_service::worker::DeviceSharedDataWorker(ChaosDataService::getInstance()->setting.cache_driver_setting.cache_driver_impl,
                                                                                                     ChaosDataService::getInstance()->setting.object_storage_setting.driver_impl);
         }
-        tmp->init(&ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_setting);
+        tmp->init(NULL);
         tmp->start();
     }
     
@@ -109,14 +109,6 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
                                                                                    network_broker);
     if(!snapshot_data_worker) throw chaos::CException(-6, "Error allocating snapshot worker", __FUNCTION__);
     StartableService::initImplementation(snapshot_data_worker, init_data, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
-    
-    //start virtual file mantainers timer
-    if(!ChaosDataService::getInstance()->setting.cache_only) {
-        QDCAPP_ << "Start virtual file mantainers timer with a timeout of " << ChaosDataService::getInstance()->setting.vfile_mantainer_delay*1000 << "seconds";
-        chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this,
-                                                                                   ChaosDataService::getInstance()->setting.vfile_mantainer_delay*1000,
-                                                                                   ChaosDataService::getInstance()->setting.vfile_mantainer_delay*1000);
-    }
 }
 
 void QueryDataConsumer::start() throw (chaos::CException) {
@@ -135,11 +127,6 @@ void QueryDataConsumer::stop() throw (chaos::CException) {
 }
 
 void QueryDataConsumer::deinit() throw (chaos::CException) {
-    if(!ChaosDataService::getInstance()->setting.cache_only) {
-        QDCAPP_ << "Remove virtual file mantainers timer";
-        chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
-    }
-    
     if(server_endpoint) {
         QDCAPP_ << "Release direct io device channel into the endpoint";
         server_endpoint->releaseChannelInstance(device_channel);
@@ -175,14 +162,6 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
             QDCAPP_ << e.what();
         }
         delete (db_driver);
-    }
-}
-
-
-//async central timer hook
-void QueryDataConsumer::timeout() {
-    for (int idx = 0; idx < ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_num; idx++) {
-        device_data_worker[idx]->mantain();
     }
 }
 

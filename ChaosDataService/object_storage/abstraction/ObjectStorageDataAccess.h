@@ -61,9 +61,10 @@ namespace chaos {
                     
                     //!search object into object persistence layer
                     virtual int findObject(const std::string& key,
-                                           const uint64_t& timestamp_from,
-                                           const uint64_t& timestamp_to,
-                                           const uint64_t& last_got_ts,
+                                           const uint64_t timestamp_from,
+                                           const uint64_t timestamp_to,
+                                           const bool from_is_included,
+                                           const int page_len,
                                            VectorObject& found_object_page) = 0;
                 };
             }

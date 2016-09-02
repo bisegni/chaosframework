@@ -215,7 +215,7 @@ namespace chaos {
 				//return the bson data
 				SerializationBuffer* getBSONData();
 
-                const char* getBSONRawData(int& size);
+                const char* getBSONRawData(int& size) const;
 
 				//return the json data
 				SerializationBuffer* getJSONData();
