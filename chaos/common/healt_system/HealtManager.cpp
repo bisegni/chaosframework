@@ -127,10 +127,10 @@ void HealtManager::init(void *init_data) throw (chaos::CException) {
     io_data_driver->init(NULL);
 }
 
-void HealtManager::sayHello() throw (chaos::CException) {
+int HealtManager::sayHello() throw (chaos::CException) {
     int retry = 0;
     bool saying_hello = true;
-    HM_INFO << "Start hello phase throward metadata services";
+    HM_INFO << "Start hello, searching metadata services";
     CDataWrapper *hello_pack = new CDataWrapper();
     //add node id
     hello_pack->addStringValue(NodeDefinitionKey::NODE_UNIQUE_ID,
@@ -164,36 +164,41 @@ void HealtManager::sayHello() throw (chaos::CException) {
                 } else {
                     //we have result and need to update the driver
                     io_data_driver->updateConfiguration(future->getResult());
+		    return 0;
                 }
             }
         } else {
-            if(retry++ >= 3) {
+            if(retry++ >= 10) {
                 throw CException(-3,
-                                 "Exiceed the maximum number of retry to wait the answer",
+                                 "Exceed the maximum number of retry  to wait the answer",
                                  __PRETTY_FUNCTION__);
             } else {
-                HM_INFO << "Retry waiting answer";
+	      HM_INFO << "Retry waiting answer ("<<retry<<")";
+
             }
         }
+	sleep(1);
     }while(saying_hello);
+    return -1;
 }
 
 void HealtManager::start() throw (chaos::CException) {
     //say hello to mds
-    for(int retry = 0;
-        retry < 3;
-        retry ++) {
-        try{
-            sayHello();
-        } catch(chaos::CException& ex) {
-            DECODE_CHAOS_EXCEPTION(ex)
-            throw ex;
-        }
-        break;
+  int32_t retry =HELLO_PHASE_RETRY;
+  while(retry--){
+    try{
+      if(sayHello()==0){
+	HM_INFO << "Found ("<<retry<<")";
+	//add timer to publish all node healt very 5 second
+	AsyncCentralManager::getInstance()->addTimer(this, 0, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
+	return;
+      }
+    } catch(chaos::CException& ex) {
+      DECODE_CHAOS_EXCEPTION(ex);
     }
-    
-    //add timer to publish all node healt very 5 second
-    AsyncCentralManager::getInstance()->addTimer(this, 0, (HEALT_FIRE_TIMEOUT / HEALT_FIRE_SLOTS)*1000);
+    HM_INFO << "Retry hello again ("<<retry<<")";
+  }
+  throw CException(-4, "Cannot find a valid MDS node" , __PRETTY_FUNCTION__);
 }
 
 void HealtManager::stop() throw (chaos::CException) {

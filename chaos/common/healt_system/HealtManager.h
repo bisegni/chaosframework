@@ -39,7 +39,8 @@
 namespace chaos {
     namespace common{
         namespace healt_system {
-            
+	  //retry for 12h
+#define HELLO_PHASE_RETRY            12*3600
             struct ProcInfo {
                 double usr_time;
                 double sys_time;
@@ -153,7 +154,7 @@ namespace chaos {
                                                                        uint64_t push_timestamp);
                 
                 //!protected mehoto to talk with mds to receive the cds server where publish the data
-                void sayHello() throw (chaos::CException);
+                int sayHello() throw (chaos::CException);
             public:
                 //! inherited method
                 void init(void *init_data) throw (chaos::CException);
