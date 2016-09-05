@@ -97,12 +97,10 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
         case 2:{// storicize and live
             //write data on object storage
             CDataWrapper data_pack((char *)job_ptr->data_pack);
-            if(data_pack.hasKey(chaos::DataPackCommonKey::DPCK_TIMESTAMP)) return;
-            std::string storage_key((const char *)job_ptr->request_header->key_data,
+            std::string storage_key((const char *)GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
                                     job_ptr->request_header->key_len);
             //push received datapack into object storage
             if((err = this_thread_cookie->obj_storage_da->pushObject(storage_key,
-                                                                     data_pack.getUInt64Value(chaos::DataPackCommonKey::DPCK_TIMESTAMP),
                                                                      data_pack))) {
                 ERR << "Error pushing datapack into object storage driver";
             }

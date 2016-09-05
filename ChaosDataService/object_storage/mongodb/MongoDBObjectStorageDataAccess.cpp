@@ -31,10 +31,13 @@ using namespace chaos::data_service::object_storage::mongodb;
 #define DBG  DBG_LOG(MongoDBObjectStorageDataAccess)
 #define ERR  ERR_LOG(MongoDBObjectStorageDataAccess)
 
-#define MONGODB_DAQ_COLL_NAME "daq"
+#define MONGODB_DAQ_COLL_NAME       "daq"
+#define MONGODB_DAQ_TS_FIELD        "daq_sys_ts"
+#define MONGODB_DAQ_DATA_FIELD      "data"
 
 using namespace boost;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::batch_command;
 using namespace chaos::service_common::persistence::mongodb;
 using namespace chaos::data_service::object_storage::mongodb;
@@ -46,7 +49,6 @@ MongoDBAccessor(_connection){}
 MongoDBObjectStorageDataAccess::~MongoDBObjectStorageDataAccess() {}
 
 int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
-                                               const uint64_t& timestamp,
                                                const CDataWrapper& stored_object) {
     int err = 0;
     int bson_raw_data_size = 0;
@@ -56,13 +58,16 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
         bson_raw_data = stored_object.getBSONRawData(bson_raw_data_size);
         
         mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                                chaos::DataPackCommonKey::DPCK_TIMESTAMP << mongo::Date_t(timestamp) <<
-                                "data" << mongo::BSONObj(bson_raw_data));
-        
+                                MONGODB_DAQ_TS_FIELD << mongo::Date_t(TimingUtil::getTimeStamp()) <<
+                                MONGODB_DAQ_DATA_FIELD << mongo::BSONObj(bson_raw_data));
+        uint64_t s_time = TimingUtil::getTimeStampInMicrosends();
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
-                                     q))){
-            ERR << "Error fetching node description";
+                                     q,
+                                     mongo::WriteConcern::unacknowledged))){
+            ERR << "Error pushing object";
         }
+        uint64_t exe_time_in_usec = TimingUtil::getTimeStampInMicrosends() - s_time;
+        INFO<< "End Insert in usec:" << exe_time_in_usec;
     } catch (const mongo::DBException &e) {
         ERR << e.what();
         err = e.getCode();
@@ -77,8 +82,8 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
     mongo::BSONObj result;
     try {
         mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                                chaos::DataPackCommonKey::DPCK_TIMESTAMP << mongo::Date_t(timestamp));
-        mongo::BSONObj p = BSON("data.$" << 1);
+                                MONGODB_DAQ_TS_FIELD << mongo::Date_t(TimingUtil::getTimeStamp()));
+        mongo::BSONObj p = BSON(CHAOS_FORMAT("%1%.$",%MONGODB_DAQ_DATA_FIELD) << 1);
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
                                       q,

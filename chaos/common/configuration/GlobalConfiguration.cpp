@@ -65,6 +65,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"DirectIO server thread number");
+        addOption(InitOption::OPT_DIRECT_IO_IMPL_KV_PARAM, po::value< std::vector<std::string> >(),"DirectIO implementation key value parameters[k|v]");
         addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC, po::value< bool >()->default_value(false), "Enable the logging of the DirectIO metric");
         addOption(InitOption::OPT_DIRECT_IO_LOG_METRIC_UPDATE_INTERVAL, po::value< uint64_t >()->default_value(5), "The time intervall between metric samples");
         addOption(InitOption::OPT_DIRECT_IO_CLIENT_LOG_METRIC_MERGED_ENDPOINT, po::value< bool >()->default_value(true), "Merge the metric values(of all endpoint) together");
@@ -76,7 +77,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_RPC_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the rpc implementation");
         addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(_RPC_PORT), "RPC server port");
         addOption(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"RPC server thread number");
-        addOption(InitOption::OPT_RPC_IMPL_KV_PARAM, po::value<string>(),"RPC implementation key value parameter[k|v-k1|v1]");
+        addOption(InitOption::OPT_RPC_IMPL_KV_PARAM, po::value<string>(),"RPC implementation key value parameter[k|v]");
         addOption(InitOption::OPT_EVENT_DISABLE, po::value< bool >()->default_value(false), "Disable the event system [by default it is enable]");
         addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
         addOption(InitOption::OPT_PUBLISHING_INTERFACE, po::value< string >(), "Specify the interface where to publish the framework rpc system");
@@ -280,6 +281,12 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, direct_io_server_thread_number, InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, 2)
     configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVER_THREAD_NUMBER, direct_io_server_thread_number);
     
+    CHECK_AND_DEFINE_OPTION(std::vector<std::string>, directio_impl_kv_param, InitOption::OPT_DIRECT_IO_IMPL_KV_PARAM)
+    //fill the key value list
+    if(directio_impl_kv_param.size()) {
+        fillKVParameter(map_kv_param_directio_impl, directio_impl_kv_param, "");
+    }
+    
     CHECK_AND_DEFINE_OPTION(string, direct_io_server_impl, InitOption::OPT_DIRECT_IO_IMPLEMENTATION)
     configuration.addStringValue(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE, direct_io_server_impl);
     
@@ -351,7 +358,8 @@ void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kv
                                           const std::string& regex) {
     //no cache server provided
     std::string tmp = kv_string;
-    if(!regex_match(tmp, boost::regex(regex.c_str()))) {
+    if(regex.size() &&
+       !regex_match(tmp, boost::regex(regex.c_str()))) {
         throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);
     }
     std::vector<std::string> kvtokens;
@@ -374,6 +382,39 @@ void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kv
         // add key/value pair
         kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));
     }
+}
+
+void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kvmap,
+                                          const std::vector<std::string>& kv_vector,
+                                          const std::string& regex) {
+    //no cache server provided
+    //clear previosly pair
+    std::vector<std::string> kv_splitted;
+    for(std::vector<std::string>::const_iterator it = kv_vector.begin(),
+        end = kv_vector.end();
+        it != end;
+        it++) {
+        
+        const std::string& kv_param_value = *it;
+        
+        if(regex.size() &&
+           !boost::regex_match(kv_param_value,
+                               boost::regex(regex))) {
+            throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);
+        }
+        
+        //clear previosly pair
+        kv_splitted.clear();
+        
+        //get new pair
+        boost::algorithm::split(kv_splitted,
+                                kv_param_value,
+                                boost::algorithm::is_any_of(":"),
+                                boost::algorithm::token_compress_on);
+        // add key/value pair
+        kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));
+    }
+    
 }
 
 /**
@@ -473,4 +514,8 @@ bool GlobalConfiguration::isMEtadataServerConfigured() {
 
 std::map<std::string, std::string>& GlobalConfiguration::getRpcImplKVParam() {
     return map_kv_param_rpc_impl;
+}
+
+std::map<std::string, std::string>& GlobalConfiguration::getDirectIOImplKVParam() {
+    return map_kv_param_directio_impl;
 }

@@ -89,6 +89,7 @@ namespace chaos {
                     const std::string& getDatabaseName();
                     int insert(const std::string &ns,
                                mongo::BSONObj obj,
+                               mongo::WriteConcern wc = mongo::WriteConcern::journaled,
                                int flags=0);
 
                     int findOne(mongo::BSONObj& result,

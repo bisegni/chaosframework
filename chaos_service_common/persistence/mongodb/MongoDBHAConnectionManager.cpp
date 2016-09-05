@@ -185,12 +185,9 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
     //get the number of valid server
     uint32_t valid_server_num = (uint32_t)valid_connection_queue.size();
     
-    DEBUG_CODE(MDBHAC_LDBG_ << "Try " << valid_server_num << " connections";)
-    
     //try fo find a good conncetion
     while(!nextCS && cur_index < valid_server_num) {
         cur_index++;
-        DEBUG_CODE(MDBHAC_LDBG_ << "Try server " << cur_index;)
         
         // get next available server connection string
         if((nextCS = valid_connection_queue.front())) {
@@ -199,11 +196,6 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
             try {
                 DriverScopedConnection c(*nextCS, 1);
                 connection_is_good = c.ok();
-                DEBUG_CODE(MDBHAC_LDBG_ << "(idx:" << cur_index << ") connection_is_good:" << connection_is_good;)
-                if(connection_is_good) {
-                    DEBUG_CODE(MDBHAC_LDBG_ << "(idx:" << cur_index << ") set default write concern";)
-                    c.get()->setWriteConcern(mongo::WriteConcern::journaled);
-                }
             } catch (std::exception &ex) {
                 DEBUG_CODE(MDBHAC_LERR_ << "(idx:" << cur_index << ") exception:" << ex.what();)
                 
@@ -214,7 +206,6 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
                 continue;
             }
             if(connection_is_good) {
-                DEBUG_CODE(MDBHAC_LDBG_ << "(idx:" << cur_index << ") connection is good";)
                 //put the used description at the end of the queue
                 valid_connection_queue.push(nextCS);
             } else {
@@ -238,12 +229,13 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
 
 int MongoDBHAConnectionManager::insert( const std::string &ns,
                                        mongo::BSONObj obj,
+                                       mongo::WriteConcern wc,
                                        int flags) {
     int err = -1;
     MongoDBHAConnection conn = NULL;
     while (getConnection(&conn)) {
         try {
-            conn->conn().insert(ns, obj, flags);
+            conn->conn().insert(ns, obj, flags, &wc);
             MONGO_DB_GET_ERROR(conn, err);
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();

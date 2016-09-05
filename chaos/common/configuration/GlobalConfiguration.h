@@ -1,8 +1,8 @@
-/*	
+/*
  *	GlobalConfiguration.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,7 +45,7 @@ namespace chaos_data = chaos::common::data;
 namespace chaos {
     
     using namespace std;
-	
+    
 #define CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(t,x,y,z)\
 t x;\
 if(hasOption(y)){\
@@ -81,10 +81,10 @@ x = hasOption(y);
      */
     class GlobalConfiguration:
     public chaos::common::utility::Singleton<GlobalConfiguration>{
-            //for program option
+        //for program option
         po::variables_map vm;
         po::options_description desc;
-            //for contain program option value and other usefull think
+        //for contain program option value and other usefull think
         chaos_data::CDataWrapper configuration;
         friend class chaos::common::utility::Singleton<GlobalConfiguration>;
         
@@ -106,26 +106,33 @@ x = hasOption(y);
         //! contains the key value pair for the rpc implementation
         std::map<std::string, std::string> map_kv_param_rpc_impl;
         
+        //! contains the key value pair for the rpc implementation
+        std::map<std::string, std::string> map_kv_param_directio_impl;
+        
         //fill the rpc
         void fillKVParameter(std::map<std::string, std::string>& kvmap,
                              const std::string& kv_string,
                              const std::string& regex);
+        
+        void fillKVParameter(std::map<std::string, std::string>& kvmap,
+                             const std::vector<std::string>& kv_vector,
+                             const std::string& regex);
     public:
-		void loadStartupParameter(int, char* argv[]) throw (CException);
-		void loadStreamParameter(std::istream &config_file) throw (CException);
-		void scanOption() throw (CException);
-		void checkDefaultOption() throw (CException);
-            //! startup parameter pre setup
+        void loadStartupParameter(int, char* argv[]) throw (CException);
+        void loadStreamParameter(std::istream &config_file) throw (CException);
+        void scanOption() throw (CException);
+        void checkDefaultOption() throw (CException);
+        //! startup parameter pre setup
         /*
          Set up all stardard input attribute map
          */
         void preParseStartupParameters() throw (CException);
-            //! C and C++ attribute parser
+        //! C and C++ attribute parser
         /*!
          Specialized option for startup c and cpp program main options parameter
          */
         void parseStartupParameters(int, char* argv[]) throw (CException);
-            //!stringbuffer parser
+        //!stringbuffer parser
         /*
          specialized option for string stream buffer with boost semantics
          */
@@ -137,7 +144,7 @@ x = hasOption(y);
         void addOption(const char* name,
                        const po::value_semantic* s,
                        const char* description) throw (CException);
-		/*
+        /*
          Add a custom option
          */
         void addOption(const char* name,
@@ -145,63 +152,63 @@ x = hasOption(y);
         /*
          Add a custom option
          */
-		template<typename T>
-        void addOption(const char* name, 
+        template<typename T>
+        void addOption(const char* name,
                        const char* description)  throw (CException) {
-			try{//po::value<T>(&timeout)->default_value(2000)
-				const po::value_semantic* s = po::value<T>();
-				desc.add_options()(name, s, description);
-			}catch (po::error &e) {
-				throw CException(0, e.what(), "GlobalConfiguration::addOption");
-			}
-		}
-		
-		/*
+            try{//po::value<T>(&timeout)->default_value(2000)
+                const po::value_semantic* s = po::value<T>();
+                desc.add_options()(name, s, description);
+            }catch (po::error &e) {
+                throw CException(0, e.what(), "GlobalConfiguration::addOption");
+            }
+        }
+        
+        /*
          Add a custom option
          */
-		template<typename T>
+        template<typename T>
         void addOption(const char* name,
-						const char* description,
-						T default_value,
-					   bool multivalue = false)  throw (CException) {
-			try{//po::value<T>(&timeout)->default_value(2000)
-				const po::value_semantic* s = multivalue?po::value<T>()->default_value(default_value)->multitoken():po::value<T>()->default_value(default_value);
-				desc.add_options()(name, s, description);
-			}catch (po::error &e) {
-				throw CException(0, e.what(), "GlobalConfiguration::addOption");
-			}
-		}
-		/*
+                       const char* description,
+                       T default_value,
+                       bool multivalue = false)  throw (CException) {
+            try{//po::value<T>(&timeout)->default_value(2000)
+                const po::value_semantic* s = multivalue?po::value<T>()->default_value(default_value)->multitoken():po::value<T>()->default_value(default_value);
+                desc.add_options()(name, s, description);
+            }catch (po::error &e) {
+                throw CException(0, e.what(), "GlobalConfiguration::addOption");
+            }
+        }
+        /*
          Add a custom option
          */
-		template<typename T>
+        template<typename T>
         void addOption(const char* name,
-						const char* description,
-						T default_value,
-						T *default_variable,
-					   bool multivalue = false)  throw (CException) {
-			try{
-				const po::value_semantic* s = multivalue?po::value<T>(default_variable)->default_value(default_value)->multitoken():po::value<T>(default_variable)->default_value(default_value);
-				desc.add_options()(name, s, description);
-			}catch (po::error &e) {
-				throw CException(0, e.what(), "GlobalConfiguration::addOption");
-			}
-		}
-		/*
+                       const char* description,
+                       T default_value,
+                       T *default_variable,
+                       bool multivalue = false)  throw (CException) {
+            try{
+                const po::value_semantic* s = multivalue?po::value<T>(default_variable)->default_value(default_value)->multitoken():po::value<T>(default_variable)->default_value(default_value);
+                desc.add_options()(name, s, description);
+            }catch (po::error &e) {
+                throw CException(0, e.what(), "GlobalConfiguration::addOption");
+            }
+        }
+        /*
          Add a custom option
          */
-		template<typename T>
+        template<typename T>
         void addOption(const char* name,
-					   const char* description,
-					   T *default_variable,
-					   bool multivalue = false)  throw (CException) {
-			try{
-				const po::value_semantic* s = multivalue?po::value<T>(default_variable)->multitoken():po::value<T>(default_variable);
-				desc.add_options()(name, s, description);
-			}catch (po::error &e) {
-				throw CException(0, e.what(), "GlobalConfiguration::addOption");
-			}
-		}
+                       const char* description,
+                       T *default_variable,
+                       bool multivalue = false)  throw (CException) {
+            try{
+                const po::value_semantic* s = multivalue?po::value<T>(default_variable)->multitoken():po::value<T>(default_variable);
+                desc.add_options()(name, s, description);
+            }catch (po::error &e) {
+                throw CException(0, e.what(), "GlobalConfiguration::addOption");
+            }
+        }
         /*
          return the presence of the option name
          */
@@ -212,12 +219,12 @@ x = hasOption(y);
         
         template<typename T>
         T getOption(const char* optName) throw (CException){
-			if(vm.count(optName)==0) {
+            if(vm.count(optName)==0) {
                 string opt=string("option:") + "\""+optName + "\"" + string(" not given");
                 throw CException(2,opt.c_str(),"GlobalConfiguration::getOption");
             }
-			return vm[optName].as<T>();
-		}
+            return vm[optName].as<T>();
+        }
         
         /**
          *return the cdatawrapper that contains the global configuration
@@ -274,6 +281,9 @@ x = hasOption(y);
         
         //! return the rpc implementation kevy value map
         std::map<std::string, std::string>& getRpcImplKVParam();
-    };  
+        
+        //! return the directio implementation kevy value map
+        std::map<std::string, std::string>& getDirectIOImplKVParam();
+    };
 }
 #endif

@@ -51,7 +51,6 @@ namespace chaos {
                     
                     //!Put an object within the object persistence layer
                     virtual int pushObject(const std::string& key,
-                                           const uint64_t& timestamp,
                                            const chaos::common::data::CDataWrapper& stored_object) = 0;
                     
                     //!Retrieve an object from the object persistence layer

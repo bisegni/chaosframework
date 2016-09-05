@@ -10,6 +10,8 @@
 #include "DataWorker.h"
 #include <boost/thread/lock_options.hpp>
 #include <chaos/common/global.h>
+
+using namespace chaos::common::utility;
 using namespace chaos::data_service::worker;
 
 #define DataWorker_LOG_HEAD "[DataWorker] - "
@@ -21,7 +23,6 @@ using namespace chaos::data_service::worker;
 DataWorker::DataWorker():
 work(false),
 job_queue(1000),
-job_in_queue(0),
 max_element(1000){
     std::memset(&settings, 0, sizeof(DataWorkerSetting));
 }
@@ -44,11 +45,13 @@ void DataWorker::consumeJob(void *cookie) {
     while(work) {
         thread_job = getNextOrWait(lock);
         if(thread_job) executeJob(thread_job, cookie);
-        job_in_queue--;
+        job_in_queue()--;
+        DCLDBG_ << "job_in_queue:" << job_in_queue();
     }
 }
 
 void DataWorker::init(void *init_data) throw (chaos::CException) {
+    job_in_queue() = 0;
     if(init_data) {
         std::memcpy(&settings, init_data, sizeof(DataWorkerSetting));
     } else {
@@ -89,8 +92,14 @@ void DataWorker::deinit() throw (chaos::CException) {
 }
 
 int DataWorker::submitJobInfo(WorkerJobPtr job_info) {
+    LockableObjectWriteLock wl;
+    job_in_queue.getWriteLock(wl);
     //check if we are out of max element in queue, in other case go out
-    if(job_in_queue > max_element) return -1000;
+    if(job_in_queue() > max_element) return -1000;
+    
+    //ad this element
+    job_in_queue()++;
+    
     if( job_queue.push(job_info) ) {
         job_condition.notify_one();
         return 0;

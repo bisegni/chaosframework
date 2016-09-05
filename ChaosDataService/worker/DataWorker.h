@@ -23,6 +23,7 @@
 
 //#include "../dataservice_global.h"
 
+#include <chaos/common/utility/LockableObject.h>
 #include <chaos/common/utility/StartableService.h>
 
 #include <boost/thread.hpp>
@@ -60,7 +61,7 @@ namespace chaos {
 				
 				bool work;
 				
-				boost::atomic<uint64_t> job_in_queue;
+                chaos::common::utility::LockableObject< boost::atomic<uint64_t> > job_in_queue;
                 
                 unsigned int max_element;
 			protected:
