@@ -24,6 +24,7 @@
 #include <mongo/client/dbclient.h>
 
 #include <chaos/common/chaos_types.h>
+#include <chaos/common/network/URLServiceFeeder.h>
 
 #include <vector>
 #include <string>
@@ -39,18 +40,18 @@ namespace chaos {
                 /*!
                  Class that encapsulat ethe mongodb conenction for safe deallocation
                  */
-                class DriverScopedConnection : public mongo::ScopedDbConnection {
-                    
+                class DriverScopedConnection:
+                public mongo::DBClientConnection  {
                 public:
-                    DriverScopedConnection(mongo::ConnectionString _conn);
-                    DriverScopedConnection(mongo::ConnectionString _conn,
-                                           double timeout);
+                    int service_index;
+                    DriverScopedConnection();
                     ~DriverScopedConnection();
                 };
                 
                 typedef DriverScopedConnection *MongoDBHAConnection;
                 
-                class MongoAuthHook : public mongo::DBConnectionHook {
+                struct MongoAuthHook :
+                public mongo::DBConnectionHook {
                     std::string user;
                     std::string pwd;
                     std::string db;
@@ -68,36 +69,47 @@ namespace chaos {
                  Implementation for the high availability with multiple
                  mongos router instance
                  */
-                class MongoDBHAConnectionManager {
+                class MongoDBHAConnectionManager:
+                public common::network::URLServiceFeederHandler {
                     MongoAuthHook *hook;
+                    
+                    common::network::URLServiceFeeder service_feeder;
+                    std::queue< uint32_t > offline_connection_queue;
                     uint32_t server_number;
                     
                     uint64_t next_retrive_intervall;
                     
-                    boost::shared_mutex mutext_queue;
-                    std::queue< boost::shared_ptr<mongo::ConnectionString> > valid_connection_queue;
-                    std::queue< boost::shared_ptr<mongo::ConnectionString> > offline_connection_queue;
-                    
                     inline bool canRetry();
                     
-                    bool getConnection(MongoDBHAConnection *connection_sptr);
+                    inline DriverScopedConnection* getConnection();
                     
+                    //inherithed by service feeder
+                    void disposeService(void *service_ptr);
+                    
+                    void* serviceForURL(const common::network::URL& url,
+                                        uint32_t service_index);
                 public:
                     MongoDBHAConnectionManager(ChaosStringVector monogs_routers_list,
                                                std::map<std::string, std::string>& key_value_custom_param);
                     ~MongoDBHAConnectionManager();
                     const std::string& getDatabaseName();
+                    
+                    int fastInsert(const std::string &ns,
+                                   mongo::BSONObj obj,
+                                   mongo::WriteConcern wc = mongo::WriteConcern::journaled,
+                                   int flags=0);
+                    
                     int insert(const std::string &ns,
                                mongo::BSONObj obj,
                                mongo::WriteConcern wc = mongo::WriteConcern::journaled,
                                int flags=0);
-
+                    
                     int findOne(mongo::BSONObj& result,
                                 const std::string &ns,
                                 const mongo::Query& query,
                                 const mongo::BSONObj *fields_to_return = 0,
                                 int queryOptions = 0);
-
+                    
                     void findN(std::vector<mongo::BSONObj>& out,
                                const std::string& ns,
                                mongo::Query query,
@@ -105,7 +117,7 @@ namespace chaos {
                                int nToSkip = 0,
                                const mongo::BSONObj *fields_to_return = 0,
                                int queryOptions = 0);
-
+                    
                     int findAndModify(mongo::BSONObj& result,
                                       const std::string& ns,
                                       const mongo::BSONObj& query,
@@ -114,25 +126,25 @@ namespace chaos {
                                       bool returnNew = false,
                                       const mongo::BSONObj& sort = mongo::BSONObj(),
                                       const mongo::BSONObj& fields = mongo::BSONObj());
-
+                    
                     int findAndRemove(mongo::BSONObj& result,
                                       const std::string& ns,
                                       const mongo::BSONObj& query,
                                       const mongo::BSONObj& sort = mongo::BSONObj(),
                                       const mongo::BSONObj& fields = mongo::BSONObj());
-
+                    
                     int runCommand(mongo::BSONObj& result,
                                    const std::string &ns,
                                    const mongo::BSONObj& comand,
                                    int queryOptions = 0);
-
+                    
                     int update(const std::string &ns,
                                mongo::Query query,
                                mongo::BSONObj obj,
                                bool upsert = false,
                                bool multi = false,
                                const mongo::WriteConcern* wc=NULL );
-
+                    
                     int remove(const std::string &ns ,
                                mongo::Query q,
                                bool justOne = 0,
@@ -151,7 +163,7 @@ namespace chaos {
                                     bool background = false,
                                     int v = -1,
                                     int ttl = 0 );
-
+                    
                     std::auto_ptr<mongo::DBClientCursor> query(const std::string &ns,
                                                                mongo::Query query,
                                                                int nToReturn = 0,
@@ -159,7 +171,7 @@ namespace chaos {
                                                                const mongo::BSONObj *fieldsToReturn = 0,
                                                                int queryOptions = 0,
                                                                int batchSize = 0 );
-
+                    
                     int count(unsigned long long & result,
                               const std::string &ns,
                               const mongo::Query& query = mongo::Query(),

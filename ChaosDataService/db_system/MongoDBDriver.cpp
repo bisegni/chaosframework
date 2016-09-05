@@ -38,10 +38,8 @@ MongoDBDriver::~MongoDBDriver() {}
 //! init
 void MongoDBDriver::init(void *init_data) throw (chaos::CException) {
 	DBDriver::init(init_data);
-	int err = 0;
 	std::string errmsg;
 	std::string servers;
-	chaos_data::CDataWrapper driver_custom_init;
 	//allcoate ha pool class
 	ha_connection_pool = new service_common::persistence::mongodb::MongoDBHAConnectionManager(setting->servers, setting->key_value_custom_param);
 	if(setting->key_value_custom_param.count("db")) {
