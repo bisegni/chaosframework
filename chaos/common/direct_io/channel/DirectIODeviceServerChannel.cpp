@@ -72,6 +72,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header = (DirectIODeviceChannelHeaderGetOpcodeResult*)calloc(sizeof(DirectIODeviceChannelHeaderGetOpcodeResult), 1);
             
             //decode the endianes off the data
+            //TODO: this need to be removed because answer is synchronous
             header->field.endpoint = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.endpoint);
             header->field.p_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.p_port);
             header->field.s_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.s_port);
@@ -94,73 +95,43 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             break;
         }
         case opcode::DeviceChannelOpcodeQueryDataCloud: {
-            chaos_data::CDataWrapper *query = NULL;
             opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud*>(dataPack->channel_header_data);
             
             try {
-                query = new chaos_data::CDataWrapper((char *)dataPack->channel_data);
-                if (query && header) {
+                if (dataPack &&
+                    dataPack->channel_data) {
+                    void *result_data = NULL;
+                    chaos_data::CDataWrapper query((char *)dataPack->channel_data);
+                    opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr result_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult), 1);
                     //decode the endianes off the data
-                    header->field.endpoint = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.endpoint);
-                    header->field.p_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.p_port);
-                    header->field.s_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.s_port);
-                    header->field.address = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.address);
-                    
-                    std::string key = query->hasKey(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING)?query->getStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING):"";
-                    uint64_t start_ts = query->hasKey(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64)?query->getUInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64):0;
-                    uint64_t end_ts = query->hasKey(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64)?query->getUInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64):0;
-                    
+                    std::string key = CDW_GET_SRT_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, "");
+                    uint64_t start_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, getUInt64Value, 0);
+                    uint64_t end_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, getUInt64Value, 0);
+                    bool start_ts_is_included = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_START_TS_INCLUDED, getBoolValue, false);
                     //call server api if we have at least the key
-                    if((key.compare("") != 0)) err = handler->consumeDataCloudQuery(header, key, start_ts, end_ts);
-                }else {
-                    
+                    if((key.compare("") != 0)) err = handler->consumeDataCloudQuery(key,
+                                                                                    start_ts,
+                                                                                    end_ts,
+                                                                                    start_ts_is_included,
+                                                                                    &result_data);
+                    if(err == 0){
+                        //set the result header and data
+                        //DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderGetOpcodeResult))
+                        //DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->value_len)
+                        //result_header->value_len = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->value_len);
+                    } else {
+                        if(result_data) free(result_data);
+                        if(result_header) free(result_header);
+                    }
                 }
             } catch (...) {
                 // inca se of error header an cdatawrapper are cleaned here
-                
-                if(header) free(header);
+
             }
-            
-            //data and query are deleted in anyway server api manage only the header
+            if(header) free(header);
             if(dataPack->channel_data) free(dataPack->channel_data);
-            if(query) delete(query);
             break;
         }
-            
-        case opcode::DeviceChannelOpcodeQueryDataCloudStartResult:{
-            opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResultPtr header =
-            reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResultPtr>(dataPack->channel_header_data);
-            header->field.total_element_found = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.total_element_found);
-            err = handler->consumeDataCloudQueryStartResult(header);
-            break;
-        }
-            
-        case opcode::DeviceChannelOpcodeQueryDataCloudResult: {
-            opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr header =
-            reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr>(dataPack->channel_header_data);
-            
-            //decode the endianes off the data
-            
-            header->field.element_index = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.element_index);
-            
-            //call server api
-            err = handler->consumeDataCloudQueryResult(header,
-                                                       dataPack->channel_data,
-                                                       dataPack->header.channel_data_size);
-            break;
-        }
-            
-        case opcode::DeviceChannelOpcodeQueryDataCloudEndResult:{
-            opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResultPtr header =
-            reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResultPtr>(dataPack->channel_header_data);
-            header->field.error = FROM_LITTLE_ENDNS_NUM(int32_t, header->field.error);
-            header->field.error_message_length = FROM_LITTLE_ENDNS_NUM(int32_t, header->field.error_message_length);
-            err = handler->consumeDataCloudQueryEndResult(header,
-                                                          dataPack->channel_data,
-                                                          dataPack->header.channel_data_size);
-            break;
-        }
-            
         default:
             break;
     }

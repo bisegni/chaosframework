@@ -39,8 +39,6 @@
 		32067EA21CABEE8800DE568A /* CDataVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 32067EA01CABEE8800DE568A /* CDataVariant.h */; };
 		32067EA51CABEF0300DE568A /* CDataBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32067EA31CABEF0300DE568A /* CDataBuffer.cpp */; };
 		32067EA61CABEF0300DE568A /* CDataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32067EA41CABEF0300DE568A /* CDataBuffer.h */; };
-		3206F1AD19C18A8D00C437D8 /* QueryFuture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3206F1AB19C18A8D00C437D8 /* QueryFuture.cpp */; };
-		3206F1AE19C18A8D00C437D8 /* QueryFuture.h in Headers */ = {isa = PBXBuildFile; fileRef = 3206F1AC19C18A8D00C437D8 /* QueryFuture.h */; };
 		3208AAB91AC56A51000860D9 /* ApiProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3208AAB71AC56A51000860D9 /* ApiProxy.cpp */; };
 		3208AABA1AC56A51000860D9 /* ApiProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3208AAB81AC56A51000860D9 /* ApiProxy.h */; };
 		3208AABD1AC56C1C000860D9 /* GetNodeDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3208AABB1AC56C1C000860D9 /* GetNodeDescription.cpp */; };
@@ -53,6 +51,8 @@
 		320CA9551C29D71A00894AAA /* DeleteUS.h in Headers */ = {isa = PBXBuildFile; fileRef = 320CA9531C29D71A00894AAA /* DeleteUS.h */; };
 		320DF98D14E17E2700251621 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 320DF98C14E17E2700251621 /* DeviceController.h */; };
 		320DF99114E190BB00251621 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320DF98F14E17E3D00251621 /* DeviceController.cpp */; };
+		320E2FBF1D7EB9CB0077E8FE /* QueryCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320E2FBD1D7EB9CB0077E8FE /* QueryCursor.cpp */; };
+		320E2FC01D7EB9CB0077E8FE /* QueryCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 320E2FBE1D7EB9CB0077E8FE /* QueryCursor.h */; };
 		320E773E1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320E773C1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp */; };
 		320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0EB18A39E650014CDB3 /* DirectIO.h */; };
 		3210EE1E1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3210EE1C1AE7DE15006ADC0B /* RegistrationAckBatchCommand.cpp */; };
@@ -1098,8 +1098,6 @@
 		32067EA01CABEE8800DE568A /* CDataVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDataVariant.h; sourceTree = "<group>"; };
 		32067EA31CABEF0300DE568A /* CDataBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDataBuffer.cpp; sourceTree = "<group>"; };
 		32067EA41CABEF0300DE568A /* CDataBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDataBuffer.h; sourceTree = "<group>"; };
-		3206F1AB19C18A8D00C437D8 /* QueryFuture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryFuture.cpp; sourceTree = "<group>"; };
-		3206F1AC19C18A8D00C437D8 /* QueryFuture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryFuture.h; sourceTree = "<group>"; };
 		3208AAB71AC56A51000860D9 /* ApiProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiProxy.cpp; sourceTree = "<group>"; };
 		3208AAB81AC56A51000860D9 /* ApiProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiProxy.h; sourceTree = "<group>"; };
 		3208AABB1AC56C1C000860D9 /* GetNodeDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetNodeDescription.cpp; sourceTree = "<group>"; };
@@ -1115,6 +1113,8 @@
 		320DEA6319CC77F200ED66AB /* ThreadSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadSemaphore.h; sourceTree = "<group>"; };
 		320DF98C14E17E2700251621 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
 		320DF98F14E17E3D00251621 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
+		320E2FBD1D7EB9CB0077E8FE /* QueryCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryCursor.cpp; sourceTree = "<group>"; };
+		320E2FBE1D7EB9CB0077E8FE /* QueryCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryCursor.h; sourceTree = "<group>"; };
 		320E773C1A7FBD84001FB8BC /* UnitServerAckBatchCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitServerAckBatchCommand.cpp; sourceTree = "<group>"; };
 		320E773D1A7FBD84001FB8BC /* UnitServerAckBatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitServerAckBatchCommand.h; sourceTree = "<group>"; };
 		320E773F1A7FC561001FB8BC /* unit_server_batch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unit_server_batch.h; sourceTree = "<group>"; };
@@ -3390,8 +3390,8 @@
 				326DB40314B38BC00018A8D0 /* IODataDriver.h */,
 				32EFCD6418BDE3A400B5EB77 /* IODirectIODriver.cpp */,
 				32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */,
-				3206F1AB19C18A8D00C437D8 /* QueryFuture.cpp */,
-				3206F1AC19C18A8D00C437D8 /* QueryFuture.h */,
+				320E2FBD1D7EB9CB0077E8FE /* QueryCursor.cpp */,
+				320E2FBE1D7EB9CB0077E8FE /* QueryCursor.h */,
 			);
 			path = io;
 			sourceTree = "<group>";
@@ -4819,7 +4819,6 @@
 				3253F303189AEF8000959CA7 /* DirectIOVirtualServerChannel.h in Headers */,
 				329603271876B45000CDCADA /* BatchCommandExecutor.h in Headers */,
 				32612ABE1CE209BB00F3B8F3 /* ScriptManager.h in Headers */,
-				3206F1AE19C18A8D00C437D8 /* QueryFuture.h in Headers */,
 				32556B0919B5F2FA0004ABC5 /* DBDriver.h in Headers */,
 				32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */,
 				3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */,
@@ -4944,6 +4943,7 @@
 				32B571F5168E02C30002A198 /* bson.h in Headers */,
 				32B571FD168E02CE0002A198 /* bsonelement.h in Headers */,
 				3220F98218A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h in Headers */,
+				320E2FC01D7EB9CB0077E8FE /* QueryCursor.h in Headers */,
 				32B571FE168E02CE0002A198 /* bsonmisc.h in Headers */,
 				32B571FF168E02CE0002A198 /* bsonobj.h in Headers */,
 				32612ABA1CE2058100F3B8F3 /* AbstractScriptableClass.h in Headers */,
@@ -5697,7 +5697,6 @@
 				328E36EB1786B89500C1564D /* PluginLoader.cpp in Sources */,
 				3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */,
 				32A88BBE1CF8228A001DBAF5 /* lbitlib.c in Sources */,
-				3206F1AD19C18A8D00C437D8 /* QueryFuture.cpp in Sources */,
 				325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */,
 				3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */,
 				32B89C9D15F39DB500B17AAA /* ActionExecutionSafetySystem.cpp in Sources */,
@@ -5709,6 +5708,7 @@
 				32FB201C1A3F11C400307A86 /* AttributeCache.cpp in Sources */,
 				32A88BF21CF8228A001DBAF5 /* lvm.c in Sources */,
 				324A4B12191A3F6A00975394 /* status.cpp in Sources */,
+				320E2FBF1D7EB9CB0077E8FE /* QueryCursor.cpp in Sources */,
 				32661C711AA7606400F1A721 /* NodeMessageChannel.cpp in Sources */,
 				3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */,
 				3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */,

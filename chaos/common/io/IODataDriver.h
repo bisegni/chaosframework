@@ -27,7 +27,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/utility/ArrayPointer.h>
-#include <chaos/common/io/QueryFuture.h>
+#include <chaos/common/io/QueryCursor.h>
 
 namespace chaos_data = chaos::common::data;
 
@@ -41,15 +41,12 @@ namespace chaos{
              */
             class IODataDriver: public Configurable {
             protected:
-                QueryFuture *_getNewQueryFutureForQueryID(const std::string& query_id);
+                QueryCursor *_getNewQueryFutureForQueryID(const std::string& query_id,
+                                                          const std::string& key,
+                                                          uint64_t start_ts,
+                                                          uint64_t end_ts);
                 
-                void _releaseQueryFuture(QueryFuture *query_future_ptr);
-                
-                void _startQueryFutureResult(QueryFuture& query_future, uint64_t _total_element_found);
-                
-                void _pushResultToQueryFuture(QueryFuture& query_future, chaos_data::CDataWrapper *data_pack, uint64_t element_index);
-                
-                void _endQueryFutureResult(QueryFuture& query_future, int32_t _error, const std::string& _error_message = std::string(""));
+                void _releaseQueryFuture(QueryCursor *query_future_ptr);
             public:
                 virtual ~IODataDriver(){};
                 /*!
@@ -123,12 +120,11 @@ namespace chaos{
                 
                 
                 //! perform a query since and
-                virtual QueryFuture *performQuery(const std::string& key,
+                virtual QueryCursor *performQuery(const std::string& key,
                                                   uint64_t start_ts,
-                                                  uint64_t end_ts);
+                                                  uint64_t end_ts) = 0;
                 
-                //! close a query 
-                virtual void releaseQuery(QueryFuture *query_future);
+                virtual void releaseQuery(QueryCursor *query) = 0;
             };
             
         }

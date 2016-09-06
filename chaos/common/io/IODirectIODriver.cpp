@@ -28,6 +28,7 @@
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common//global.h>
 #include <chaos/common/utility/InizializableService.h>
+#include <chaos/common/utility/UUIDUtil.h>
 
 #include <chaos/common/direct_io/impl/ZMQDirectIOClientConnection.h>
 
@@ -128,7 +129,7 @@ void IODirectIODriver::deinit() throw(CException) {
     boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
     
     //scan all remained query
-    for(std::map<string, QueryFuture*>::iterator it = map_query_future.begin();
+    for(std::map<string, QueryCursor*>::iterator it = map_query_future.begin();
         it != map_query_future.end();
         it++) {
         releaseQuery(it->second);
@@ -422,24 +423,20 @@ void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-QueryFuture *IODirectIODriver::performQuery(const std::string& key,
+QueryCursor *IODirectIODriver::performQuery(const std::string& key,
                                             uint64_t start_ts,
                                             uint64_t end_ts) {
-    IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
-    if(!next_client) return NULL;
-    
-    QueryFuture *q = NULL;
-    std::string query_id;
-    if(!next_client->device_client_channel->queryDataCloud(key, start_ts, end_ts, query_id)) {
-        //acquire write lock
+    QueryCursor *q = new QueryCursor(UUIDUtil::generateUUID(),
+                                     connectionFeeder,
+                                     key,
+                                     start_ts,
+                                     end_ts);
+    if(q) {
+        //add query to map
         boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
-        q = _getNewQueryFutureForQueryID(query_id);
-        if(q) {
-            //add query to map
-            map_query_future.insert(make_pair<string, QueryFuture*>(query_id, q));
-        } else {
-            releaseQuery(q);
-        }
+        map_query_future.insert(make_pair<string, QueryCursor*>(q->queryID(), q));
+    } else {
+        releaseQuery(q);
     }
     return q;
 }
@@ -447,91 +444,11 @@ QueryFuture *IODirectIODriver::performQuery(const std::string& key,
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IODirectIODriver::releaseQuery(QueryFuture *query_future) {
+void IODirectIODriver::releaseQuery(QueryCursor *query_cursor) {
     //acquire write lock
-    if(query_future == NULL) return;
+    if(query_cursor == NULL) return;
     boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
-    if(map_query_future.count(query_future->getQueryID())) {
-        map_query_future.erase(query_future->getQueryID());
+    if(map_query_future.count(query_cursor->queryID())) {
+        map_query_future.erase(query_cursor->queryID());
     }
-    //delete query
-    IODataDriver::releaseQuery(query_future);
-}
-
-
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-int IODirectIODriver::consumeDataCloudQueryStartResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult *header) {
-    
-    //get the query id
-    std::string query_id(header->field.query_id, 8);
-    
-    //acquire read lock
-    boost::shared_lock<boost::shared_mutex> rmap_loc(map_query_future_mutex);
-    
-    //get qeury iterator on map
-    std::map<string, QueryFuture*>::iterator it = map_query_future.find(query_id);
-    if(it != map_query_future.end()) {
-        //initialize the query for for the result receivement
-        _startQueryFutureResult(*it->second, header->field.total_element_found);
-    }
-    return 0;
-}
-
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-int IODirectIODriver::consumeDataCloudQueryResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *header,
-                                                  void *data_found,
-                                                  uint32_t data_lenght){
-    std::string query_id(header->field.query_id, 8);
-    
-    //acquire read lock
-    boost::shared_lock<boost::shared_mutex> rmap_loc(map_query_future_mutex);
-    
-    //get qeury iterator on map
-    std::map<string, QueryFuture*>::iterator it = map_query_future.find(query_id);
-    if(it != map_query_future.end()) {
-        try{
-            chaos_data::CDataWrapper *data_pack = new chaos_data::CDataWrapper((char *)data_found);
-            //we have map so we will add the new packet
-            _pushResultToQueryFuture(*it->second, data_pack, header->field.element_index);
-        }catch(...) {
-            IODirectIODriver_LERR_ << "error parsing reuslt data pack";
-        }
-    }
-    
-    //deelte received data
-    free(data_found);
-    free(header);
-    return 0;
-}
-
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-int IODirectIODriver::consumeDataCloudQueryEndResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult *header,
-                                                     void *error_message_string_data,
-                                                     uint32_t error_message_string_data_length) {
-    int err = 0;
-    //get the query id
-    std::string query_id(header->field.query_id, 8);
-    
-    //acquire read lock
-    boost::shared_lock<boost::shared_mutex> rmap_loc(map_query_future_mutex);
-    
-    //get qeury iterator on map
-    std::map<string, QueryFuture*>::iterator it = map_query_future.find(query_id);
-    if(it != map_query_future.end()) {
-        if(error_message_string_data_length) {
-            std::string error_message((char*)error_message_string_data, error_message_string_data_length);
-            //initialize the query for for the result receivement
-            _endQueryFutureResult(*it->second, header->field.error, error_message);
-        } else {
-            //initialize the query for for the result receivement
-            _endQueryFutureResult(*it->second, header->field.error);
-        }
-    }
-    return err;
 }

@@ -21,19 +21,19 @@
 #ifndef CHAOSFramework_DeviceLiveDataFetcher_h
 #define CHAOSFramework_DeviceLiveDataFetcher_h
 
-#include <map>
+#include <chaos/common/chaos_types.h>
+#include <chaos/common/data/DatasetDB.h>
+#include <chaos/common/io/IODataDriver.h>
+#include <chaos/common/exception/exception.h>
+#include <chaos/common/message/MDSMessageChannel.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
+#include <chaos/common/message/DeviceMessageChannel.h>
+#include <chaos/common/utility/SingleBufferCircularBuffer.h>
 
 #include <boost/thread/mutex.hpp>
-
-#include <chaos/common/network/CNodeNetworkAddress.h>
-#include <chaos/common/io/IODataDriver.h>
-#include <chaos/common/message/MDSMessageChannel.h>
-#include <chaos/common/message/DeviceMessageChannel.h>
-#include <chaos/common/exception/exception.h>
-#include <chaos/common/utility/SingleBufferCircularBuffer.h>
-#include <chaos/common/data/DatasetDB.h>
-#include <chaos/common/chaos_types.h>
 #include <boost/shared_ptr.hpp>
+
+#include <map>
 
 namespace chaos {
     namespace ui{
@@ -422,10 +422,10 @@ namespace chaos {
                          uint32_t timeout = 1000);
             
             //! get datapack between time itervall
-            void executeTimeIntervallQuery(uint64_t start_ts, uint64_t end_ts, chaos::common::io::QueryFuture **query_future);
+            void executeTimeIntervallQuery(uint64_t start_ts, uint64_t end_ts, chaos::common::io::QueryCursor **query_cursor);
             
             //! release a query
-            void releaseQuery(chaos::common::io::QueryFuture *query_future);
+            void releaseQuery(chaos::common::io::QueryCursor *query_cursor);
 
 	    //! get profile info
 	    cu_prof_t getProfileInfo();

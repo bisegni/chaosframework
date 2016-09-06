@@ -79,7 +79,8 @@ namespace chaos {
 														   DirectIODeviceClientChannelPutMode _put_mode = DirectIODeviceClientChannelPutModeLiveOnly);
 					
 					//! Send a request for the last output data
-                    int64_t requestLastOutputData(const std::string& key, void **result, uint32_t &size);
+                    int64_t requestLastOutputData(const std::string& key,
+                                                  void **result, uint32_t &size);
 					
 					//! Perform a temporal query on a key
 					/*!
@@ -87,43 +88,17 @@ namespace chaos {
 					 \param key to search
 					 \param start_ts start of timestamp to search
 					 \param end_ts end of the timestamp where limit the search
+                     \param start_is_included when the start_ts need to be considering including or not
 					 \param query_id the newly associated query id is returned.
+                     \param result_handler has the found element page
 					 \return error
 					 */
-					int64_t queryDataCloud(const std::string& key, uint64_t start_ts, uint64_t end_ts, std::string& query_id);
-					
-					//! start the answering sequence to a query
-					/*!
-					 Start the answering sequence of query sending information about query metadata(number of result and ohter information in the future)
-					 \param query_id the unique id of the query whitch the result refer to
-					 \param total_element_found the total element found b ythe query
-					 */
-					int64_t startQueryDataCloudResult(const std::string& query_id, uint64_t total_element_found);
-					
-					//! Send the single result of the temporal query to requester
-					/*!
-					 Return to requester the answer to temporal query
-					 \param the query id of the associated query
-					 \param element_idx the idnex of the current element
-					 \param data the datapack of the found element
-					 \param data_len the lenght of the element
-					 */
-                    int64_t sendResultToQueryDataCloud(const std::string& query_id,
-													   uint64_t element_index,
-													   void *data,
-													   uint32_t data_len,
-													   DirectIODeallocationHandler *data_deallocator = NULL);
-					
-					//! Set the end of the answer to a query
-					/*!
-					 Notify the remote endpoint tha the result has finisched
-					 \param query_id is the unique id of the query
-					 \param is the error if there is one
-					 \param error_message is the message of the error, if one
-					 */
-					int64_t endQueryDataCloudResult(const std::string& query_id,
-													int32_t error,
-													const std::string& error_message=std::string(""));
+					int64_t queryDataCloud(const std::string& key,
+                                           uint64_t start_ts,
+                                           uint64_t end_ts,
+                                           uint32_t page_dimension,
+                                           bool start_is_included,
+                                           opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr *result_handler);
 				};
 
 				

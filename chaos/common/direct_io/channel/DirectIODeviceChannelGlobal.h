@@ -25,11 +25,8 @@ namespace chaos {
                      */
                     typedef enum DeviceChannelOpcode {
                         DeviceChannelOpcodePutOutput				= 1,	/**< send the output dataset [synchronous]*/
-                        DeviceChannelOpcodeGetLastOutput             = 2,	/**< request the last output dataset from live cache [synchronous]*/
-                        DeviceChannelOpcodeQueryDataCloud			= 4,	/**< query the chaos data cloud [async]*/
-                        DeviceChannelOpcodeQueryDataCloudStartResult = 8,	/**< Start the answering sequence to the endpoint [async]*/
-                        DeviceChannelOpcodeQueryDataCloudResult		= 16,/**< contain the answer of the query [async]*/
-                        DeviceChannelOpcodeQueryDataCloudEndResult	= 24	/**< End the answering sequence [async]*/
+                        DeviceChannelOpcodeGetLastOutput            = 2,	/**< request the last output dataset from live cache [synchronous]*/
+                        DeviceChannelOpcodeQueryDataCloud			= 4,	/**< query the chaos data cloud [synchronous]*/
                     } DeviceChannelOpcode;
                     
                     /*!
@@ -57,9 +54,14 @@ namespace chaos {
                  Parameter for the query used in CDataWrapper structure
                  */
                 namespace DeviceChannelOpcodeQueryDataCloudParam {
-                    static const char * const QUERY_PARAM_STAR_TS_I64			= "qp_data_cloud_start_ts";
-                    static const char * const QUERY_PARAM_END_TS_I64			= "qp_data_cloud_end_ts";
-                    static const char * const QUERY_PARAM_SEARCH_KEY_STRING		= "qp_data_cloud_key";
+                    //!is the timestamp for wich we want to search our key
+                    static const char * const QUERY_PARAM_STAR_TS_I64                   = "qp_data_cloud_start_ts";
+                    //!is the timestamp that close the time offset of the search [packet that are <= are included into the result]
+                    static const char * const QUERY_PARAM_END_TS_I64                    = "qp_data_cloud_end_ts";
+                    //!is the node unique id for wich we whant the results
+                    static const char * const QUERY_PARAM_SEARCH_KEY_STRING             = "qp_data_cloud_key";
+                    //if true the data pack will be '>=' otherwhise '>' in timestamp respect to qp_data_cloud_start_ts key
+                    static const char * const QUERY_PARAM_SEARCH_START_TS_INCLUDED		= "qp_data_cloud_start_ts_included";
                 }
                 
                 //! Name space for grupping the varius headers for every DeviceChannelOpcode
@@ -127,90 +129,38 @@ namespace chaos {
                     //#define QUERY_DATA_CLOUD_OPCODE_HEADER_LEN 24
                     //! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode
                     /*!
-                     this is the header for query on data cloud. The header contains information
-                     for answer to a determinated ip:sport:pport:end:endpoint respecting the
-                     directIO formalism.
+                     this is the header for query on data cloud. The header contains information to
+                     execute the query in a synchronous way. Every query need to be delimited into
+                     a time offset [start-end times stamp]
                      */
                     typedef	union DirectIODeviceChannelHeaderOpcodeQueryDataCloud {
                         //raw data representation of the header
-                        char raw_data[24];
+                        char raw_data[12];
                         struct header {
-                            //! The endpoint where the channel is published
-                            uint16_t	endpoint;
-                            //! The priority port value for the device that we need to get
-                            uint16_t	p_port;
-                            //! The priority port value for the device that we need to get
-                            uint16_t	s_port;
-                            //! padding
-                            uint16_t	unused;
-                            //! The 32bit representation for the ip where send the answer
-                            uint64_t	address;
                             //! is the query id associated to the request
-                            char		query_id[8];
+                            char        query_id[8];
+                            //the maximum number of record that need to have the result page
+                            uint32_t    record_for_page;
                         } field;
                     } DirectIODeviceChannelHeaderOpcodeQueryDataCloud,
                     *DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr;
                     
-                    //#define QUERY_DATA_CLOUD_START_RESULT_OPCODE_HEADER_LEN 16
-                    //! Header for the DeviceChannelOpcodeQueryDataCloudStartAnswer opcode
+                    //! Header for DirectIODeviceChannelHeaderGetOpcode asynchronous result
                     /*!
-                     This header bring information about the initialization of the answer to
-                     a query.
+                     the found data is sent as data part of direct io protocol
                      */
-                    typedef	union DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult {
-                        //raw data representation of the header
-                        char raw_data[16];
-                        struct header {
-                            //! is the query id relative to the request
-                            char		query_id[8];
-                            
-                            //!the number of total element found for query id
-                            uint64_t	total_element_found;
-                        } field;
-                    } DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult,
-                    *DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResultPtr;
-                    
-                    //#define QUERY_DATA_CLOUD_RESULT_OPCODE_HEADER_LEN 24
-                    //! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode
-                    /*!
-                     this is the header for query on data cloud. The header contains information
-                     for answer to a determinated ip:sport:pport:end:endpoint respecting the
-                     directIO formalism.
-                     */
-                    typedef	union DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult {
-                        //raw data representation of the header
-                        char raw_data[24];
-                        struct header {
-                            //! is the query id relative to the request
-                            char		query_id[8];
-                            
-                            //! the number, relative to the total, of the current element
-                            uint64_t	element_index;
-                        } field;
+                    typedef struct DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult {
+                        //! The numer of element found
+                        uint32_t numer_of_record_found;
                     } DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult,
                     *DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr;
                     
-                    //#define QUERY_DATA_CLOUD_END_RESULT_OPCODE_HEADER_LEN 24
-                    //! Header for the DeviceChannelOpcodeQueryDataCloudEndAnswer opcode
-                    /*!
-                     This header bring information about the initialization of the answer to
-                     a query.
-                     */
-                    typedef	union DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult {
-                        //raw data representation of the header
-                        char raw_data[24];
-                        struct header {
-                            //! is the query id relative to the request
-                            char	query_id[8];
-                            
-                            //! error occured ifthere was one
-                            int32_t	error;
-                            
-                            //!string error message passed as data(if there is one)
-                            uint32_t error_message_length;
-                        } field;
-                    } DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult,
-                    *DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResultPtr;
+                    //! resutl structure that hase the
+                    typedef struct DirectIODeviceChannelOpcodeQueryDataCloudResult {
+                        DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult header;
+                        char *results;
+                    } DirectIODeviceChannelOpcodeQueryDataCloudResult,
+                    *DirectIODeviceChannelOpcodeQueryDataCloudResultPtr;
                     
                     //-----------------------------------PERFORMANCE CHANNEL--------------------------------
                     //#define PERFORMANCE_CHANNEL_ROUND_TRIP_HEADER_LEN 16

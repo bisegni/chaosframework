@@ -340,7 +340,7 @@ int DeviceController::setAttributeValue(const char *attributeName, double attrib
 int DeviceController::setAttributeToValue(const char *attributeName, const char *attributeValue, bool noWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper attributeValuePack;
-    cc_data::RangeValueInfo range_info;
+    RangeValueInfo range_info;
     
     //get type for the value
     if((err = datasetDB.getAttributeRangeValueInfo(attributeName, range_info)))
@@ -383,7 +383,7 @@ int DeviceController::setAttributeToValue(const char *attributeName, const char 
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeToValue(const char *attributeName, void *attributeValue, bool noWait, int32_t bufferValuedDim) {
-    cc_data::RangeValueInfo range_info;
+    RangeValueInfo range_info;
     
     //get type for the value
     datasetDB.getAttributeRangeValueInfo(attributeName, range_info);
@@ -982,11 +982,15 @@ cu_prof_t DeviceController::getProfileInfo(){
 }
 
 //! get datapack between time itervall
-void DeviceController::executeTimeIntervallQuery(uint64_t start_ts, uint64_t end_ts, QueryFuture **query_future) {
-    *query_future = ioLiveDataDriver->performQuery(device_id, start_ts, end_ts);
+void DeviceController::executeTimeIntervallQuery(uint64_t start_ts,
+                                                 uint64_t end_ts,
+                                                 QueryCursor **query_cursor) {
+    *query_cursor = ioLiveDataDriver->performQuery(device_id,
+                                                   start_ts,
+                                                   end_ts);
 }
 
 //! release a query
-void DeviceController::releaseQuery(QueryFuture *query_future) {
-    ioLiveDataDriver->releaseQuery(query_future);
+void DeviceController::releaseQuery(QueryCursor *query_cursor) {
+    ioLiveDataDriver->releaseQuery(query_cursor);
 }

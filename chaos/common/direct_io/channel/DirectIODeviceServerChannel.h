@@ -94,47 +94,12 @@ namespace chaos {
 						 \param search_end_ts the end of the time stamp that delimit the upper time stamp of result
 						 \param synchronous_answer the synchronous answer (not used at the moment)
 						 */
-						virtual int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud *header,
-														  const std::string& search_key,
+						virtual int consumeDataCloudQuery(const std::string& search_key,
 														  uint64_t search_start_ts,
-														  uint64_t search_end_ts)
-						{DELETE_HEADER(header) return -1;};
-						
-						//! Receive the start result answering sequence for a query from the quered node
-						/*!
-						 This message start the answering sequence composed by many consumeDataCloudQueryAnswer method call. It bring infromation
-						 about overall query metadata like the total number of element found. In future this will be used to inform clinet
-						 to the query splitting across server.
-						 */
-						virtual int consumeDataCloudQueryStartResult(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult *header)
-						{DELETE_HEADER(header) return -1;}
-						
-						//! Receive the result to a submitted query
-						/*!
-						 the query id is contained into header and the data point to the single data pack
-						 \param header the hader fo the answer
-						 \param data_found the single datapack found
-						 \param data_lenght the lenght of the data pack
-						 \param synchronous_answer the synchronous answer (not used at the moment)
-						 */
-						virtual int consumeDataCloudQueryResult(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *header,
-																void *data_found,
-																uint32_t data_lenght)
-						{DELETE_HEADER_DATA(header, data_found) return -1;};
-						
-						//! Receive the end message for the results answering sequence from the answering node
-						/*!
-						 This is need to manage the error occurend on the server ansering node, to permit the request node
-						 to not way any further result.
-						 \param header the header of the end result phase
-						 \param error_message_string_data the error messag eif there is one
-						 \param error_message_string_data_length error message lenght
-						 */
-						virtual int consumeDataCloudQueryEndResult(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult *header,
-																   void *error_message_string_data,
-																   uint32_t error_message_string_data_length)
-						{DELETE_HEADER_DATA(header, error_message_string_data) return -1;}
-
+														  uint64_t search_end_ts,
+                                                          bool start_ts_is_included,
+                                                          void **result_value)
+						{return -1;};
 					} DirectIODeviceServerChannelHandler;
 
                     void setHandler(DirectIODeviceServerChannelHandler *_handler);
