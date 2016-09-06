@@ -103,22 +103,31 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                     void *result_data = NULL;
                     chaos_data::CDataWrapper query((char *)dataPack->channel_data);
                     opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr result_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult), 1);
+                    
+                     header->field.record_for_page = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.record_for_page);
+                    
                     //decode the endianes off the data
                     std::string key = CDW_GET_SRT_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, "");
                     uint64_t start_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, getUInt64Value, 0);
                     uint64_t end_ts = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, getUInt64Value, 0);
                     bool start_ts_is_included = CDW_GET_VALUE_WITH_DEFAULT(&query, DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_START_TS_INCLUDED, getBoolValue, false);
                     //call server api if we have at least the key
-                    if((key.compare("") != 0)) err = handler->consumeDataCloudQuery(key,
-                                                                                    start_ts,
-                                                                                    end_ts,
-                                                                                    start_ts_is_included,
-                                                                                    &result_data);
+                    if((key.compare("") != 0)) {err = handler->consumeDataCloudQuery(header,
+                                                                                     key,
+                                                                                     start_ts,
+                                                                                     end_ts,
+                                                                                     start_ts_is_included,
+                                                                                     result_header,
+                                                                                     &result_data);}
                     if(err == 0){
                         //set the result header and data
-                        //DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderGetOpcodeResult))
-                        //DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->value_len)
-                        //result_header->value_len = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->value_len);
+                        DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderGetOpcodeResult));
+                        DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->result_data_size);
+
+                        result_header->result_data_size = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->result_data_size);
+                        result_header->numer_of_record_found = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->numer_of_record_found);
+                        result_header->last_daq_ts = TO_LITTEL_ENDNS_NUM(uint64_t, result_header->last_daq_ts);
+
                     } else {
                         if(result_data) free(result_data);
                         if(result_header) free(result_header);
@@ -126,7 +135,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                 }
             } catch (...) {
                 // inca se of error header an cdatawrapper are cleaned here
-
+                
             }
             if(header) free(header);
             if(dataPack->channel_data) free(dataPack->channel_data);

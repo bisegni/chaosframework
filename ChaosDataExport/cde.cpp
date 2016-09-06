@@ -67,17 +67,8 @@ void sendBackForNPos(int position = 1) {
     std::cout << std::flush;
 }
 
-void printPercendDone(int percend_done) {
-    std::cout << " " << setfill('0') << setw(3) << percend_done << "% " <<std::flush;
-}
-
-void printStat(chaos::common::io::QueryFuture *query_future) {
-    std::cout << "--------------------------------------------------------------------------" << std::endl;
-    std::cout << "Total found: " << query_future->getTotalElementFound() <<std::endl;
-    std::cout << "Last element fetched: " << query_future->getCurrentElementIndex() <<std::endl;
-    std::cout << "Error code: " << query_future->getError() <<std::endl;
-    std::cout << "Error message: " << query_future->getErrorMessage() <<std::endl;
-    std::cout << "--------------------------------------------------------------------------" << std::endl;
+void printNumberOfExportedElement(uint32_t done) {
+    std::cout << done <<std::flush;
 }
 
 void printStep() {
@@ -161,10 +152,8 @@ chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& cont
     return result;
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     char buf[255];
-    
     uint32_t timeout;
     string device_id;
     string dst_file;
@@ -194,13 +183,11 @@ int main(int argc, char* argv[])
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DST_FILE, "Destination file for save found datapack", &dst_file);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_START_TIME, "Time for first datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &start_time);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_END_TIME, "Time for last datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &end_time);
-        
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
         //! [UIToolkit Init]
-        
         
         if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CU_ID)){
             throw CException(-1, "invalid device identification string", "check param");
@@ -270,8 +257,8 @@ int main(int argc, char* argv[])
         if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
         
         
-        common::io::QueryFuture *query_future = NULL;
-        controller->executeTimeIntervallQuery(start_ts, end_ts, &query_future);
+        chaos::common::io::QueryCursor *query_cursor = NULL;
+        controller->executeTimeIntervallQuery(start_ts, end_ts, &query_cursor);
         
         std::vector<std::string> output_element_name;
         //fetche the output element of the device
@@ -293,11 +280,11 @@ int main(int argc, char* argv[])
             (*destination_stream) << std::endl;
         }
         
-        if(query_future) {
-            bool run = true;
-            query_future->waitForBeginResult();
-            do{
-                auto_ptr<CDataWrapper> q_result(query_future->getDataPack(true, timeout));
+        if(query_cursor) {
+            uint32_t exported = 0;
+            while(query_cursor->hasNext()) {
+                exported++;
+                boost::shared_ptr<CDataWrapper> q_result(query_cursor->next());
                 if(q_result.get()) {
                     retry = 0;
                     auto_ptr<chaos::common::data::SerializationBuffer> ser;
@@ -328,32 +315,17 @@ int main(int argc, char* argv[])
                 
                 cicle_number++;
                 
-                if(!(cicle_number % 10)) {
+                if(!(exported % 10)) {
                     std::cout << "Exporting ";
-                    printPercendDone(computePercent(cicle_number, query_future->getTotalElementFound()));
+                    printNumberOfExportedElement(exported);
                     sendBackOnRow();
                 }
-                
-                run = q_result.get()!=NULL?true:(query_future->getState() != chaos::common::io::QueryFutureStateError);
-            }while(run);
-            //print the statistic
-            //print last percent
-            if(query_future->getState() != chaos::common::io::QueryFutureStateError) {
-                std::cout << "Exporting ";
-                printPercendDone(computePercent(cicle_number, query_future->getTotalElementFound()));
-                std::cout << std::endl;
-            }
-            printStat(query_future);
-
-            if(query_future->getTotalElementFound()==0){
-                rett=10;
             }
             std::cout << "Releasing query" << std::endl;
-            //release the query
-            controller->releaseQuery(query_future);
-            std::cout << "Releasing controller" << std::endl;
-            HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
+            controller->releaseQuery(query_cursor);
         }
+        std::cout << "Releasing controller" << std::endl;
+        HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
     } catch (CException& e) {
         std::cout << "\x1B[?25h";
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
@@ -363,7 +335,7 @@ int main(int argc, char* argv[])
         std::cerr << "General error " << std::endl;
         return -2;
     }
-
+    
     try {
         //! [UIToolkit Deinit]
         ChaosUIToolkit::getInstance()->deinit();

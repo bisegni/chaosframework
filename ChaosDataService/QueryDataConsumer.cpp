@@ -33,6 +33,8 @@
 #include <boost/thread.hpp>
 
 using namespace chaos::data_service;
+using namespace chaos::data_service::object_storage::abstraction;
+
 using namespace chaos::common::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
@@ -49,7 +51,9 @@ server_endpoint(NULL),
 device_channel(NULL),
 system_api_channel(NULL),
 device_data_worker_index(0),
-snapshot_data_worker(NULL){}
+snapshot_data_worker(NULL),
+db_driver(NULL),
+object_storage_driver(NULL){}
 
 QueryDataConsumer::~QueryDataConsumer() {}
 
@@ -58,7 +62,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     db_driver = ObjectFactoryRegister<db_system::DBDriver>::getInstance()->getNewInstanceByName(ChaosDataService::getInstance()->setting.db_driver_impl+"DBDriver");
     if(!db_driver) throw chaos::CException(-1, "No index driver found", __PRETTY_FUNCTION__);
     InizializableService::initImplementation(db_driver, &ChaosDataService::getInstance()->setting.db_driver_setting, db_driver->getName(), __PRETTY_FUNCTION__);
-
+    
     
     //get new chaos direct io endpoint
     server_endpoint = network_broker->getDirectIOServerEndpoint();
@@ -74,6 +78,11 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     system_api_channel = (DirectIOSystemAPIServerChannel*)server_endpoint->getNewChannelInstance("DirectIOSystemAPIServerChannel");
     if(!system_api_channel) throw chaos::CException(-4, "Error allocating system api server channel", __FUNCTION__);
     system_api_channel->setHandler(this);
+    
+    //get local object storage driver
+    object_storage_driver = ObjectFactoryRegister<service_common::persistence::data_access::AbstractPersistenceDriver>::getInstance()->getNewInstanceByName(ChaosDataService::getInstance()->setting.object_storage_setting.driver_impl+"ObjectStorageDriver");
+    if(!object_storage_driver) throw chaos::CException(-1, "No Object Storage driver found", __PRETTY_FUNCTION__);
+    InizializableService::initImplementation(object_storage_driver, NULL, object_storage_driver->getName(), __PRETTY_FUNCTION__);
     
     //Shared data worker
     if(ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
@@ -104,7 +113,6 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
     }
     
     QDCAPP_ << "Allocating Snapshot worker";
-    
     snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(db_driver,
                                                                                    network_broker);
     if(!snapshot_data_worker) throw chaos::CException(-6, "Error allocating snapshot worker", __FUNCTION__);
@@ -143,6 +151,12 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
     if(ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_log_metric) {
         dsdwm_metric.reset();
     }
+    
+    if(object_storage_driver){
+        InizializableService::deinitImplementation(object_storage_driver, object_storage_driver->getName(), __PRETTY_FUNCTION__);
+        delete(object_storage_driver);
+    }
+    
     //! deinit the snapshot creation worker
     if(snapshot_data_worker) {
         try{
@@ -175,21 +189,21 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
     //! if tag is == 1 the datapack is in liveonly
     bool send_to_storage_layer = (header->tag != 1) && (ChaosDataService::getInstance()->setting.cache_only == false);
     switch(header->tag) {
-            case 0:// storicize only
+        case 0:// storicize only
             
             break;
             
-            case 2:// storicize and live
-            case 1:{// live only only
-                //protected access to cached driver
-                CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
-                err = cache_slot->resource_pooled->putData(GET_PUT_OPCODE_KEY_PTR(header),
-                                                           header->key_len,
-                                                           channel_data,
-                                                           channel_data_len);
-                DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
-                break;
-            }
+        case 2:// storicize and live
+        case 1:{// live only only
+            //protected access to cached driver
+            CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
+            err = cache_slot->resource_pooled->putData(GET_PUT_OPCODE_KEY_PTR(header),
+                                                       header->key_len,
+                                                       channel_data,
+                                                       channel_data_len);
+            DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
+            break;
+        }
         default: {
             QDCERR_ << "Bad storage tag: " << header->tag;
             break;
@@ -218,25 +232,51 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
     return err;
 }
 
-int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud *header,
+int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
                                              const std::string& search_key,
                                              uint64_t search_start_ts,
-                                             uint64_t search_end_ts) {
-
+                                             uint64_t search_end_ts,
+                                             bool start_ts_is_included,
+                                             DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult * result_header,
+                                             void **result_value) {
     
-    //compose the DirectIO endpoint where forward the answer
-    std::string answer_server_description = boost::str(boost::format("%1%:%2%:%3%|%4%") %
-                                                       UI64_TO_STRIP(header->field.address) %
-                                                       header->field.p_port %
-                                                       header->field.s_port %
-                                                       header->field.endpoint);
-    //compose the id of the query
-    std::string query_id(header->field.query_id, 8);
+    int err = 0;
     //execute the query
+    VectorObject reuslt_object_found;
+    ObjectStorageDataAccess *obj_storage_da = object_storage_driver->getDataAccess<object_storage::abstraction::ObjectStorageDataAccess>();
+    if((err = obj_storage_da->findObject(search_key,
+                                         search_start_ts,
+                                         search_end_ts,
+                                         start_ts_is_included,
+                                         query_header->field.record_for_page,
+                                         reuslt_object_found,
+                                         result_header->last_daq_ts))) {
+        QDCERR_ << CHAOS_FORMAT("Error performing lcoud query with code %1%", %err);
+    } else if(reuslt_object_found.size()){
+        //we successfully have perform query
+        result_header->result_data_size = 0;
+        for(VectorObjectIterator it = reuslt_object_found.begin(),
+            end = reuslt_object_found.end();
+            it != end;
+            it++) {
+            //write result into mresults memory
+            int element_bson_size = 0;
+            const char * element_bson_mem = (*it)->getBSONRawData(element_bson_size);
+            
+            //enlarge buffer
+            *result_value = std::realloc(*result_value, (result_header->result_data_size + element_bson_size));
+            
+            //copy bson elelment in memory location
+            char *mem_start_copy = ((char*)*result_value)+result_header->result_data_size;
 
-    //delete header and
-    if(header) free(header);
-    return 0;
+            //copy
+            std::memcpy(mem_start_copy, element_bson_mem, element_bson_size);
+            
+            //keep track of the full size of the result
+            result_header->result_data_size +=element_bson_size;
+        }
+    }
+    return err;
 }
 
 int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
@@ -285,11 +325,11 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
     if((err = snapshot_data_worker->submitJobInfo(job))) {
         api_result.error = err;
         switch (err) {
-                case 1: {
-                    //there is already a snapshot with same name managed tha other job
-                    std::strncpy(api_result.error_message, "There is already a snapshot with same name managed tha other job", 255);
-                    break;
-                }
+            case 1: {
+                //there is already a snapshot with same name managed tha other job
+                std::strncpy(api_result.error_message, "There is already a snapshot with same name managed tha other job", 255);
+                break;
+            }
             default:
                 //other errors
                 std::strncpy(api_result.error_message, "Error creating new snapshot", 255);
@@ -341,16 +381,16 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
     
     //trduce int to postfix channel type
     switch(header->field.channel_type) {
-            case 0:
+        case 0:
             channel_type = DataPackPrefixID::OUTPUT_DATASE_PREFIX;
             break;
-            case 1:
+        case 1:
             channel_type = DataPackPrefixID::INPUT_DATASE_PREFIX;
             break;
-            case 2:
+        case 2:
             channel_type = DataPackPrefixID::CUSTOM_DATASE_PREFIX;
             break;
-            case 3:
+        case 3:
             channel_type = DataPackPrefixID::SYSTEM_DATASE_PREFIX;
             break;
     }

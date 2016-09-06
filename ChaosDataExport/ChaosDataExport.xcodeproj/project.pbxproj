@@ -208,18 +208,8 @@
 					"$(SRCROOT)/../../usr/local/lib",
 				);
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_regex",
-					"-lboost_filesystem",
-					"-lboost_log",
-					"-lboost_log_setup",
 					"-lchaos_uitoolkit",
 					"-lchaos_common",
-					"-lboost_date_time",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -241,18 +231,8 @@
 					"$(SRCROOT)/../../usr/local/lib",
 				);
 				OTHER_LDFLAGS = (
-					"-lboost_chrono",
-					"-lmemcached",
-					"-lboost_system",
-					"-lboost_thread",
-					"-lboost_program_options",
-					"-lboost_regex",
-					"-lboost_filesystem",
-					"-lboost_log",
-					"-lboost_log_setup",
 					"-lchaos_uitoolkit",
 					"-lchaos_common",
-					"-lboost_date_time",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

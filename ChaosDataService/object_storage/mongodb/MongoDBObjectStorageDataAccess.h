@@ -57,7 +57,8 @@ namespace chaos {
                                    const uint64_t timestamp_to,
                                    const bool from_is_included,
                                    const int page_len,
-                                   object_storage::abstraction::VectorObject& found_object_page);
+                                   object_storage::abstraction::VectorObject& found_object_page,
+                                   uint64_t& last_daq_timestamp);
                 };
             }
         }

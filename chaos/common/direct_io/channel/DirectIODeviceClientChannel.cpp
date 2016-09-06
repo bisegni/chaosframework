@@ -165,10 +165,8 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, (int64_t)start_ts);
     query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
     query_description.addBoolValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_START_TS_INCLUDED, start_is_included);
-    
 
     //copy the query id on header
-    std::strncpy(query_data_cloud_header->field.query_id, "12345678", 8);
     query_data_cloud_header->field.record_for_page = TO_LITTEL_ENDNS_NUM(uint32_t, page_dimension);
     //set opcode
     data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloud);
@@ -192,9 +190,10 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
             //get the header
             (*result_handler)->header = *static_cast<opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult*>(answer->channel_header_data);
 
-            
+            (*result_handler)->header.result_data_size = FROM_LITTLE_ENDNS_NUM(uint32_t, (*result_handler)->header.result_data_size);
             (*result_handler)->header.numer_of_record_found = FROM_LITTLE_ENDNS_NUM(uint32_t, (*result_handler)->header.numer_of_record_found);
-            if((*result_handler)->header.numer_of_record_found > 0) {
+            (*result_handler)->header.last_daq_ts = FROM_LITTLE_ENDNS_NUM(uint64_t, (*result_handler)->header.last_daq_ts);
+            if((*result_handler)->header.result_data_size > 0) {
                 (*result_handler)->results = (char*)answer->channel_data;
             }
         }

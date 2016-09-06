@@ -61,6 +61,7 @@ namespace chaos{
 			
 			NetworkBroker							*network_broker;
             db_system::DBDriver                     *db_driver;
+            service_common::persistence::data_access::AbstractPersistenceDriver *object_storage_driver;
             DirectIOServerEndpoint					*server_endpoint;
 			DirectIODeviceServerChannel				*device_channel;
 			DirectIOSystemAPIServerChannel			*system_api_channel;
@@ -81,10 +82,13 @@ namespace chaos{
                                 opcode_headers::DirectIODeviceChannelHeaderGetOpcodeResult *result_header,
                                 void **result_value);
 			
-			int consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud *header,
-									  const std::string& search_key,
-									  uint64_t search_start_ts,
-									  uint64_t search_end_ts);
+            int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
+                                      const std::string& search_key,
+                                      uint64_t search_start_ts,
+                                      uint64_t search_end_ts,
+                                      bool start_ts_is_included,
+                                      opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult * result_header,
+                                      void **result_value);
 			
 			//---------------- DirectIOSystemAPIServerChannelHandler -----------------------
 			// Manage the creation of a snapshot

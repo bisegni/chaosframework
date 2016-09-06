@@ -64,7 +64,8 @@ namespace chaos {
                                            const uint64_t timestamp_to,
                                            const bool from_is_included,
                                            const int page_len,
-                                           VectorObject& found_object_page) = 0;
+                                           VectorObject& found_object_page,
+                                           uint64_t& last_daq_timestamp) = 0;
                 };
             }
         }

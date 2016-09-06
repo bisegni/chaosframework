@@ -32,7 +32,6 @@ using namespace chaos::data_service::object_storage::mongodb;
 #define ERR  ERR_LOG(MongoDBObjectStorageDataAccess)
 
 #define MONGODB_DAQ_COLL_NAME       "daq"
-#define MONGODB_DAQ_TS_FIELD        "daq_sys_ts"
 #define MONGODB_DAQ_DATA_FIELD      "data"
 
 using namespace boost;
@@ -58,7 +57,7 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
         bson_raw_data = stored_object.getBSONRawData(bson_raw_data_size);
         
         mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                                MONGODB_DAQ_TS_FIELD << mongo::Date_t(TimingUtil::getTimeStamp()) <<
+                                chaos::DataPackCommonKey::DPCK_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp()) <<
                                 MONGODB_DAQ_DATA_FIELD << mongo::BSONObj(bson_raw_data));
         if((err = connection->fastInsert(MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
                                          q,
@@ -79,7 +78,7 @@ int MongoDBObjectStorageDataAccess::getObject(const std::string& key,
     mongo::BSONObj result;
     try {
         mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
-                                MONGODB_DAQ_TS_FIELD << mongo::Date_t(TimingUtil::getTimeStamp()));
+                                chaos::DataPackCommonKey::DPCK_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp()));
         mongo::BSONObj p = BSON(CHAOS_FORMAT("%1%.$",%MONGODB_DAQ_DATA_FIELD) << 1);
         if((err = connection->findOne(result,
                                       MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
@@ -103,7 +102,8 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
                                                const uint64_t timestamp_to,
                                                const bool from_is_included,
                                                const int page_len,
-                                               object_storage::abstraction::VectorObject& found_object_page) {
+                                               object_storage::abstraction::VectorObject& found_object_page,
+                                               uint64_t& last_daq_timestamp) {
     int err = 0;
     std::vector<mongo::BSONObj> object_found;
     try {
@@ -121,13 +121,15 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
             ERR << "No data has been found";
             err = -2;
         } else {
-            for(std::vector<mongo::BSONObj>::iterator it = object_found.begin(),
-                end = object_found.end();
-                it != end;
-                it++) {
-                found_object_page.push_back(ObjectSharedPtr(new CDataWrapper(it->objdata())));
+            if(object_found.size()) {
+                for(std::vector<mongo::BSONObj>::iterator it = object_found.begin(),
+                    end = object_found.end();
+                    it != end;
+                    it++) {
+                    found_object_page.push_back(ObjectSharedPtr(new CDataWrapper(it->getObjectField(MONGODB_DAQ_DATA_FIELD).objdata())));
+                }
+                last_daq_timestamp = object_found[object_found.size()-1].getField(chaos::DataPackCommonKey::DPCK_TIMESTAMP).Long();
             }
-            
         }
     } catch (const mongo::DBException &e) {
         ERR << e.what();

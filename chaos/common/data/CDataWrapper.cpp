@@ -28,6 +28,7 @@ using namespace bson;
 using namespace chaos;
 using namespace chaos::common::data;
 
+#pragma mark CMultiTypeDataArrayWrapper
 CMultiTypeDataArrayWrapper::CMultiTypeDataArrayWrapper(vector< BSONElement > src) {
     elementsArray = src;
 }
@@ -53,15 +54,18 @@ vector<BSONElement>::size_type CMultiTypeDataArrayWrapper::size() const{
     return elementsArray.size();
 }
 
-CDataWrapper::CDataWrapper():bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
-}
+#pragma mark CDataWrapper
+CDataWrapper::CDataWrapper():
+bsonArrayBuilder(new BSONArrayBuilder()),
+bsonBuilder(new BSONObjBuilder()){}
 
-CDataWrapper::CDataWrapper(const char* serializationBuffer):bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
+CDataWrapper::CDataWrapper(const char* serializationBuffer):
+bsonArrayBuilder(new BSONArrayBuilder()),
+bsonBuilder(new BSONObjBuilder()){
     bsonBuilder->appendElements(BSONObj(serializationBuffer));
 }
 
-CDataWrapper::~CDataWrapper() {
-}
+CDataWrapper::~CDataWrapper() {}
 
 CDataWrapper *CDataWrapper::clone() {
     CDataWrapper *result = new CDataWrapper(bsonBuilder->asTempObj().objdata());
@@ -358,6 +362,13 @@ const char* CDataWrapper::getBSONRawData(int& size) const {
     size = bsonObject.objsize();
     //recreate bson builder for next fill
     return bsonObject.objdata();
+}
+
+const int CDataWrapper::getBSONRawSize() const {
+    //finalize the bson object
+    if( bsonBuilder->len()==0 ) return NULL;
+    
+    return bsonBuilder->asTempObj().objsize();
 }
 
 //return the json data

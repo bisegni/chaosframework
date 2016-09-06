@@ -19,6 +19,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/io/QueryCursor.h>
 #include <chaos/common/io/IODirectIODriver.h>
 
@@ -33,11 +34,11 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 #define ERR     ERR_LOG(QueryCursor)
 
 #pragma mark QueryCursor
-ResultPage::ResultPage():
+QueryCursor::ResultPage::ResultPage():
 query_result(NULL),
 current_fetched(0){}
 
-void ResultPage::reset(DirectIODeviceChannelOpcodeQueryDataCloudResultPtr new_query_result) {
+void QueryCursor::ResultPage::reset(DirectIODeviceChannelOpcodeQueryDataCloudResultPtr new_query_result) {
     if(query_result) {
         free(query_result);
         query_result = NULL;
@@ -45,16 +46,25 @@ void ResultPage::reset(DirectIODeviceChannelOpcodeQueryDataCloudResultPtr new_qu
     current_fetched = 0;
     decoded_page.clear();
     query_result = new_query_result;
-    
+    last_ts_received = query_result->header.last_daq_ts;
     //scan all result
-}
-
-const bool ResultPage::done() const {
-    return current_fetched >= decoded_page.size();
-}
-
-boost::shared_ptr<chaos::common::data::CDataWrapper> ResultPage::next() {
+    char *current_data_prt = query_result->results;
+    boost::shared_ptr<CDataWrapper> last_record;
+    while(decoded_page.size() < new_query_result->header.numer_of_record_found){
+        last_record.reset(new CDataWrapper(current_data_prt));
+        decoded_page.push_back(last_record);
+        current_data_prt += last_record->getBSONRawSize();
+    }
     
+}
+
+const bool QueryCursor::ResultPage::hasNext() const {
+    return current_fetched < decoded_page.size()+1;
+}
+
+boost::shared_ptr<chaos::common::data::CDataWrapper> QueryCursor::ResultPage::next() throw (chaos::CException){
+    if(hasNext() == false) {throw CException(-1, "Cursor endend", __PRETTY_FUNCTION__);}
+    return decoded_page[current_fetched++];
 }
 
 #pragma mark QueryCursor
@@ -69,27 +79,29 @@ node_id(_node_id),
 start_ts(_start_ts),
 end_ts(_end_ts),
 phase(QueryPhaseNotStarted),
-last_ts_received(0),
 api_error(0){}
 
 QueryCursor::~QueryCursor() {}
-
-bool QueryCursor::isOk() {
-    return true;
-}
 
 const std::string& QueryCursor::queryID() const {
     return query_id;
 }
 
 const bool QueryCursor::hasNext() {
-    if(result_page.done()) {
-        fetchNewPage();
+    switch(phase) {
+        case QueryPhaseNotStarted:
+        case QueryPhaseStarted:
+            if(result_page.hasNext() == false) {
+                fetchNewPage();
+            }
+            return result_page.hasNext();
+            break;
+        case QueryPhaseEnded:
+            return false;
     }
-    return result_page.done() == false;
 }
 
-boost::shared_ptr<chaos::common::data::CDataWrapper>  QueryCursor::next() {
+boost::shared_ptr<chaos::common::data::CDataWrapper>  QueryCursor::next() throw (chaos::CException) {
     return result_page.next();
 }
 
@@ -104,7 +116,7 @@ int64_t QueryCursor::fetchNewPage() {
     switch(phase) {
         case QueryPhaseNotStarted:
             DBG << "Start Search";
-            last_ts_received = start_ts;
+            result_page.last_ts_received = start_ts;
             //change to the next phase
             phase = QueryPhaseStarted;
             break;
@@ -118,7 +130,7 @@ int64_t QueryCursor::fetchNewPage() {
     }
     
     if((api_error = next_client->device_client_channel->queryDataCloud(node_id,
-                                                                       last_ts_received,
+                                                                       result_page.last_ts_received,
                                                                        end_ts,
                                                                        30,
                                                                        phase == QueryPhaseNotStarted,

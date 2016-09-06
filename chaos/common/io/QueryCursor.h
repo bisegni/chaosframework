@@ -41,22 +41,23 @@ namespace chaos {
             
             CHAOS_DEFINE_VECTOR_FOR_TYPE(boost::shared_ptr<chaos::common::data::CDataWrapper>, ResultPageDecodedPacket);
             
-            struct ResultPage {
-                unsigned int current_fetched;
-                ResultPageDecodedPacket decoded_page;
-                chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr query_result;
-                
-                ResultPage();
-                
-                void reset(chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr new_query_result);
-                
-                const bool done() const;
-                
-                boost::shared_ptr<chaos::common::data::CDataWrapper> next();
-            };
-            
             class QueryCursor {
                 friend class IODirectIODriver;
+                
+                struct ResultPage {
+                    unsigned int current_fetched;
+                    ResultPageDecodedPacket decoded_page;
+                    uint64_t last_ts_received;
+                    chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr query_result;
+                    
+                    ResultPage();
+                    
+                    void reset(chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr new_query_result);
+                    
+                    const bool hasNext() const;
+                    
+                    boost::shared_ptr<chaos::common::data::CDataWrapper> next()  throw (CException);
+                };
                 
                 const std::string query_id;
                 const std::string node_id;
@@ -65,7 +66,6 @@ namespace chaos {
                 
                 QueryPhase phase;
                 ResultPage result_page;
-                uint64_t last_ts_received;
                 int64_t api_error;
                 chaos::common::network::URLServiceFeeder& connection_feeder;
                 
@@ -79,14 +79,11 @@ namespace chaos {
                 int64_t fetchNewPage();
                 
             public:
-                
-                bool isOk();
-                
                 const std::string& queryID() const;
                 
                 const bool hasNext();
                 
-                boost::shared_ptr<chaos::common::data::CDataWrapper> next();
+                boost::shared_ptr<chaos::common::data::CDataWrapper> next() throw (CException);
             };
             
         }

@@ -94,10 +94,12 @@ namespace chaos {
 						 \param search_end_ts the end of the time stamp that delimit the upper time stamp of result
 						 \param synchronous_answer the synchronous answer (not used at the moment)
 						 */
-						virtual int consumeDataCloudQuery(const std::string& search_key,
+						virtual int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud *query_header,
+                                                          const std::string& search_key,
 														  uint64_t search_start_ts,
 														  uint64_t search_end_ts,
                                                           bool start_ts_is_included,
+                                                          opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult * result_header,
                                                           void **result_value)
 						{return -1;};
 					} DirectIODeviceServerChannelHandler;

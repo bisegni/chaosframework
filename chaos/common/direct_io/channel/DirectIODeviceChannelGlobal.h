@@ -135,10 +135,8 @@ namespace chaos {
                      */
                     typedef	union DirectIODeviceChannelHeaderOpcodeQueryDataCloud {
                         //raw data representation of the header
-                        char raw_data[12];
+                        char raw_data[4];
                         struct header {
-                            //! is the query id associated to the request
-                            char        query_id[8];
                             //the maximum number of record that need to have the result page
                             uint32_t    record_for_page;
                         } field;
@@ -150,8 +148,12 @@ namespace chaos {
                      the found data is sent as data part of direct io protocol
                      */
                     typedef struct DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult {
+                        //! The size of returned data
+                        uint32_t result_data_size;
                         //! The numer of element found
                         uint32_t numer_of_record_found;
+                        //!last acquisition timestamp found in result element
+                        uint64_t last_daq_ts;
                     } DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult,
                     *DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr;
                     
