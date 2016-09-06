@@ -59,9 +59,9 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
         mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
                                 chaos::DataPackCommonKey::DPCK_TIMESTAMP << mongo::Date_t(TimingUtil::getTimeStamp()) <<
                                 MONGODB_DAQ_DATA_FIELD << mongo::BSONObj(bson_raw_data));
-        if((err = connection->fastInsert(MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
-                                         q,
-                                         mongo::WriteConcern::unacknowledged))){
+        if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
+                                     q,
+                                     mongo::WriteConcern::unacknowledged))){
             ERR << "Error pushing object";
         }
     } catch (const mongo::DBException &e) {
