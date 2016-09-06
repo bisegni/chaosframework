@@ -59,7 +59,7 @@ void QueryCursor::ResultPage::reset(DirectIODeviceChannelOpcodeQueryDataCloudRes
 }
 
 const bool QueryCursor::ResultPage::hasNext() const {
-    return current_fetched < decoded_page.size()+1;
+    return current_fetched < decoded_page.size();
 }
 
 boost::shared_ptr<chaos::common::data::CDataWrapper> QueryCursor::ResultPage::next() throw (chaos::CException){

@@ -94,11 +94,6 @@ namespace chaos {
                     ~MongoDBHAConnectionManager();
                     const std::string& getDatabaseName();
                     
-                    int fastInsert(const std::string &ns,
-                                   mongo::BSONObj obj,
-                                   mongo::WriteConcern wc = mongo::WriteConcern::journaled,
-                                   int flags=0);
-                    
                     int insert(const std::string &ns,
                                mongo::BSONObj obj,
                                mongo::WriteConcern wc = mongo::WriteConcern::journaled,

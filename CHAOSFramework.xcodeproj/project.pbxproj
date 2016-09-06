@@ -986,6 +986,7 @@
 		32FB201D1A3F11C400307A86 /* AttributeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FB201B1A3F11C400307A86 /* AttributeCache.h */; };
 		32FB20201A3F2E7300307A86 /* AbstractSharedDomainCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB201E1A3F2E7300307A86 /* AbstractSharedDomainCache.cpp */; };
 		32FB20211A3F2E7300307A86 /* AbstractSharedDomainCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FB201F1A3F2E7300307A86 /* AbstractSharedDomainCache.h */; };
+		32FBC78E1D7F2BEC001F9170 /* TimingUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FBC78D1D7F2BEC001F9170 /* TimingUtil.cpp */; };
 		32FC2EA91D09864F00475B25 /* service_error.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FC2EA71D09864F00475B25 /* service_error.h */; };
 		32FC7EE51A70FDB70029C2A2 /* ApiManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FC7EE31A70FDB70029C2A2 /* ApiManagment.cpp */; };
 		32FFA3EC1B00D43900C57E07 /* QuantumSlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FFA3EA1B00D43900C57E07 /* QuantumSlot.cpp */; };
@@ -2271,6 +2272,7 @@
 		32FB201B1A3F11C400307A86 /* AttributeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeCache.h; sourceTree = "<group>"; };
 		32FB201E1A3F2E7300307A86 /* AbstractSharedDomainCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractSharedDomainCache.cpp; sourceTree = "<group>"; };
 		32FB201F1A3F2E7300307A86 /* AbstractSharedDomainCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSharedDomainCache.h; sourceTree = "<group>"; };
+		32FBC78D1D7F2BEC001F9170 /* TimingUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimingUtil.cpp; sourceTree = "<group>"; };
 		32FC2EA71D09864F00475B25 /* service_error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = service_error.h; sourceTree = "<group>"; };
 		32FC7EDF1A7008780029C2A2 /* mds_constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_constants.h; sourceTree = "<group>"; };
 		32FC7EE01A7008FA0029C2A2 /* mds_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mds_types.h; sourceTree = "<group>"; };
@@ -3486,6 +3488,7 @@
 				326DB42514B38BC00018A8D0 /* ArrayPointer.h */,
 				326DB42914B38BC00018A8D0 /* ObjectFactoryRegister.h */,
 				326DB42A14B38BC00018A8D0 /* Singleton.h */,
+				32FBC78D1D7F2BEC001F9170 /* TimingUtil.cpp */,
 				326DB42C14B38BC00018A8D0 /* TimingUtil.h */,
 				326DB42D14B38BC00018A8D0 /* UUIDUtil.h */,
 				32AAD78D14CD95FD005A097C /* Atomic.h */,
@@ -5737,6 +5740,7 @@
 				32A91FCE1A49B37300DCF364 /* HTTPRpcSyncServer.cpp in Sources */,
 				32B159CD18AE08720096B58B /* ZMQSocketFeeder.cpp in Sources */,
 				32460520179C55FC00B075DA /* sqlite3.c in Sources */,
+				32FBC78E1D7F2BEC001F9170 /* TimingUtil.cpp in Sources */,
 				32C4C2AD1C8D9A8600D74E0F /* CException.cpp in Sources */,
 				32A88BBB1CF8228A001DBAF5 /* lauxlib.c in Sources */,
 				324A4B54191A41EF00975394 /* random.cpp in Sources */,

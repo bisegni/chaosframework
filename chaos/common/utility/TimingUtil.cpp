@@ -37,5 +37,4 @@ const char* TimingUtil::formats[]={
   "%Y"
 };
 
-
 const size_t TimingUtil::formats_n = 11;

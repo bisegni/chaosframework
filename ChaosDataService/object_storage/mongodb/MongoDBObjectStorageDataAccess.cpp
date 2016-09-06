@@ -110,13 +110,10 @@ int MongoDBObjectStorageDataAccess::findObject(const std::string& key,
         mongo::BSONObj q = BSON(chaos::DataPackCommonKey::DPCK_DEVICE_ID << key <<
                                 chaos::DataPackCommonKey::DPCK_TIMESTAMP << BSON((from_is_included?"$gte":"$gt") << mongo::Date_t(timestamp_from) <<
                                                                                  "$lte" << mongo::Date_t(timestamp_to)));
-        mongo::BSONObj p = BSON("data.$" << 1);
         connection->findN(object_found,
                           MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
                           q,
-                          page_len,
-                          0,
-                          &p);
+                          page_len);
         if(object_found.size() == 0) {
             ERR << "No data has been found";
             err = -2;

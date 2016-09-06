@@ -181,26 +181,6 @@ DriverScopedConnection* MongoDBHAConnectionManager::getConnection() {
     return static_cast<DriverScopedConnection*>(service_feeder.getService());
 }
 
-int MongoDBHAConnectionManager::fastInsert( const std::string &ns,
-                                           mongo::BSONObj obj,
-                                           mongo::WriteConcern wc,
-                                           int flags) {
-    int err = 0;
-    DriverScopedConnection *conn = NULL;
-    while((conn = getConnection())) {
-        try {
-            conn->insert(ns, obj, flags, &wc);
-            break;
-        } catch (std::exception& ex) {
-            MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
-            MONGO_DB_GET_ERROR(conn, err);
-            CONTINUE_ON_NEXT_CONNECTION(err)
-        }
-    }
-    //if(conn) delete(conn);
-    return err;
-}
-
 int MongoDBHAConnectionManager::insert( const std::string &ns,
                                        mongo::BSONObj obj,
                                        mongo::WriteConcern wc,
@@ -232,8 +212,6 @@ int MongoDBHAConnectionManager::findOne(mongo::BSONObj& result,
     while((conn = getConnection())) {
         try {
             result = conn->findOne(ns, query, fields_to_return, queryOptions);
-            MONGO_DB_GET_ERROR(conn, err);
-            break;
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);
@@ -255,8 +233,6 @@ void MongoDBHAConnectionManager::findN(std::vector<mongo::BSONObj>& out,
     while((conn = getConnection())) {
         try {
             conn->findN(out, ns, query, nToReturn, nToSkip, fields_to_return, queryOptions);
-            MONGO_DB_GET_ERROR(conn, err);
-            break;
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);
@@ -278,8 +254,6 @@ std::auto_ptr<mongo::DBClientCursor> MongoDBHAConnectionManager::query(const std
     while((conn = getConnection())) {
         try {
             result = conn->query(ns, query, nToReturn, nToSkip, fieldsToReturn, queryOptions, batchSize);
-            MONGO_DB_GET_ERROR(conn, err);
-            break;
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);
@@ -301,8 +275,6 @@ int MongoDBHAConnectionManager::runCommand(mongo::BSONObj& result,
             if(!conn->runCommand(ns, command, result, queryOptions)) {
                 MDBHAC_LERR_ << "Error executing MongoDBHAConnectionManager::runCommand" << " -> " << command.toString();
             }
-            MONGO_DB_GET_ERROR(conn, err);
-            break;
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);
@@ -323,8 +295,6 @@ int MongoDBHAConnectionManager::update( const std::string &ns,
     while((conn = getConnection())) {
         try {
             conn->update(ns, query, obj, upsert, multi, wc);
-            MONGO_DB_GET_ERROR(conn, err);
-            break;
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);
@@ -353,8 +323,6 @@ int MongoDBHAConnectionManager::findAndModify(mongo::BSONObj& result,
                                          returnNew,
                                          sort,
                                          fields);
-            MONGO_DB_GET_ERROR(conn, err);
-            break;
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);
@@ -379,8 +347,6 @@ int MongoDBHAConnectionManager::findAndRemove(mongo::BSONObj& result,
                                          sort,
                                          fields);
             
-            MONGO_DB_GET_ERROR(conn, err);
-            break;
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);
@@ -397,8 +363,6 @@ int MongoDBHAConnectionManager::remove( const std::string &ns , mongo::Query q ,
         try {
             conn->remove(ns, q, justOne, wc);
             
-            MONGO_DB_GET_ERROR(conn, err);
-            break;
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);
@@ -419,8 +383,6 @@ mongo::BSONObj MongoDBHAConnectionManager::distinct(const std::string &ns,
             result = conn->distinct(ns,
                                     field,
                                     query);
-            MONGO_DB_GET_ERROR(conn, err);
-            break;
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);
@@ -441,8 +403,6 @@ int MongoDBHAConnectionManager::count(unsigned long long & result,
     while((conn = getConnection())) {
         try {
             result = conn->count(ns, query, options, limit, skip);
-            MONGO_DB_GET_ERROR(conn, err);
-            break;
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);
@@ -494,8 +454,6 @@ int MongoDBHAConnectionManager::ensureIndex( const std::string &database,
                 toSave.append( "expireAfterSeconds", ttl );
             
             err = insert(database+".system.indexes", toSave.obj());
-            MONGO_DB_GET_ERROR(conn, err);
-            break;
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);
