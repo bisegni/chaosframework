@@ -255,6 +255,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
     } else if(reuslt_object_found.size()){
         //we successfully have perform query
         result_header->result_data_size = 0;
+        result_header->numer_of_record_found = reuslt_object_found.size();
         for(VectorObjectIterator it = reuslt_object_found.begin(),
             end = reuslt_object_found.end();
             it != end;

@@ -199,7 +199,7 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key,
         }
     }
     if(answer) {
-        if(answer->channel_data) free(answer->channel_data);
+        if(answer->channel_header_data) free(answer->channel_header_data);
         free(answer);
     }
     return err;

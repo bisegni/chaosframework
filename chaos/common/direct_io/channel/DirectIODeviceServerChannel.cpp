@@ -95,6 +95,7 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
             break;
         }
         case opcode::DeviceChannelOpcodeQueryDataCloud: {
+            if(synchronous_answer == NULL) return -1000;
             opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud*>(dataPack->channel_header_data);
             
             try {
@@ -121,13 +122,11 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack,
                                                                                      &result_data);}
                     if(err == 0){
                         //set the result header and data
-                        DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderGetOpcodeResult));
+                        DIRECT_IO_SET_CHANNEL_HEADER(synchronous_answer, result_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult));
                         DIRECT_IO_SET_CHANNEL_DATA(synchronous_answer, result_data, result_header->result_data_size);
-
                         result_header->result_data_size = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->result_data_size);
                         result_header->numer_of_record_found = TO_LITTEL_ENDNS_NUM(uint32_t, result_header->numer_of_record_found);
                         result_header->last_daq_ts = TO_LITTEL_ENDNS_NUM(uint64_t, result_header->last_daq_ts);
-
                     } else {
                         if(result_data) free(result_data);
                         if(result_header) free(result_header);

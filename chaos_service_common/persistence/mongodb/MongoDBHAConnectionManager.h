@@ -83,6 +83,8 @@ namespace chaos {
                     
                     inline DriverScopedConnection* getConnection();
                     
+                    inline bool isConnectionError(int error);
+                    
                     //inherithed by service feeder
                     void disposeService(void *service_ptr);
                     

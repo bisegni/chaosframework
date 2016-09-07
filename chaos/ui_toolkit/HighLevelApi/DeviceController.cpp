@@ -982,10 +982,11 @@ cu_prof_t DeviceController::getProfileInfo(){
 }
 
 //! get datapack between time itervall
-void DeviceController::executeTimeIntervallQuery(uint64_t start_ts,
+void DeviceController::executeTimeIntervallQuery(DatasetDomain domain,
+                                                 uint64_t start_ts,
                                                  uint64_t end_ts,
                                                  QueryCursor **query_cursor) {
-    *query_cursor = ioLiveDataDriver->performQuery(device_id,
+    *query_cursor = ioLiveDataDriver->performQuery(channel_keys[domain],
                                                    start_ts,
                                                    end_ts);
 }

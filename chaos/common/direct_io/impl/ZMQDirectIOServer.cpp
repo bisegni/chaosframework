@@ -81,7 +81,7 @@ void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
 //! Start the implementation
 void ZMQDirectIOServer::start() throw(chaos::CException) {
     int direct_io_thread_number = 2;
-    int custom_zmq_context_number = 2;
+    int custom_zmq_context_number = 1;
     DirectIOServer::start();
     run_server = true;
     
@@ -142,7 +142,7 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 
 #define PS_STR(x) (x?"service":"priority")
 void ZMQDirectIOServer::worker(bool priority_service) {
-    int							_ZMQ_LINGER			= 0;
+    int							_ZMQ_LINGER			= 500;
     int							_ZMQ_RCVHWM			= 1000;
     int							_ZMQ_SNDHWM			= 1000;
     int							_ZMQ_RCVTIMEO       = -1;
@@ -184,40 +184,35 @@ void ZMQDirectIOServer::worker(bool priority_service) {
     ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Setting linger for %1% socket to: %2%",%_ZMQ_LINGER%PS_STR(priority_service));
     err = zmq_setsockopt (socket, ZMQ_LINGER, &_ZMQ_LINGER, sizeof(int));
     if(err) {
-        std::string msg = CHAOS_FORMAT("Error Setting ZMQ_LINGER to %1% socket",%PS_STR(priority_service));
-        ZMQDIO_SRV_LAPP_ << msg;
+        ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Error Setting ZMQ_LINGER to %1% socket",%PS_STR(priority_service));
         return;
     }
     
     ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Setting ZMQ_RCVHWM for %1% socket to: %2%",%_ZMQ_RCVHWM%PS_STR(priority_service));
     err = zmq_setsockopt (socket, ZMQ_RCVHWM, &_ZMQ_RCVHWM, sizeof(int));
     if(err) {
-        std::string msg = CHAOS_FORMAT("Error Setting watermark to %1% socket",%PS_STR(priority_service));
-        ZMQDIO_SRV_LAPP_ << msg;
+        ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Error Setting watermark to %1% socket",%PS_STR(priority_service));
         return;
     }
     
     ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Setting ZMQ_SNDHWM for %1% socket to: %2%",%_ZMQ_SNDHWM%PS_STR(priority_service));
     err = zmq_setsockopt (socket, ZMQ_SNDHWM, &_ZMQ_SNDHWM, sizeof(int));
     if(err) {
-        std::string msg = CHAOS_FORMAT("Error Setting watermark to %1% socket",%PS_STR(priority_service));
-        ZMQDIO_SRV_LAPP_ << msg;
+        ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Error Setting watermark to %1% socket",%PS_STR(priority_service));
         return;
     }
     
     ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Setting ZMQ_SNDTIMEO for %1% socket to: %2%",%_ZMQ_SNDTIMEO%PS_STR(priority_service));
     err = zmq_setsockopt (socket, ZMQ_SNDTIMEO, &_ZMQ_SNDTIMEO, sizeof(int));
     if(err) {
-        std::string msg = CHAOS_FORMAT("Error Setting ZMQ_SNDTIMEO to %1% socket",%PS_STR(priority_service));
-        ZMQDIO_SRV_LAPP_ << msg;
+        ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Error Setting ZMQ_SNDTIMEO to %1% socket",%PS_STR(priority_service));
         return;
     }
     
     ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Setting ZMQ_RCVTIMEO for %1% socket to: %2%",%_ZMQ_RCVTIMEO%PS_STR(priority_service));
     err = zmq_setsockopt (socket, ZMQ_RCVTIMEO, &_ZMQ_RCVTIMEO, sizeof(int));
     if(err) {
-        std::string msg = CHAOS_FORMAT("Error Setting ZMQ_RCVTIMEO to %1% socket",%PS_STR(priority_service));
-        ZMQDIO_SRV_LAPP_ << msg;
+        ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Error Setting ZMQ_RCVTIMEO to %1% socket",%PS_STR(priority_service));
         return;
     }
     
@@ -277,10 +272,14 @@ void ZMQDirectIOServer::worker(bool priority_service) {
             DECODE_CHAOS_EXCEPTION(ex)
         }
     }
-    ZMQDIO_SRV_LAPP_ << "Leaving the thread loop for " << (priority_service?"service":"priority") << " socket";
-    ZMQDIO_SRV_LAPP_ << "Stopping priority socket";
-    if(socket) {
-        zmq_close(socket);
-        socket = NULL;
+    ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Leaving the thread loop for socket %1%", %(priority_service?"service":"priority"));
+    ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Stopping %1% socket",%PS_STR(priority_service));
+    if(priority_service) {
+        err = zmq_unbind(socket, priority_socket_bind_str.c_str());
+    } else {
+        err = zmq_unbind(socket, service_socket_bind_str.c_str());
+    }
+    if((err = zmq_close(socket))) {
+        ZMQDIO_SRV_LAPP_ << CHAOS_FORMAT("Error closing socker %1% with error %2%",%PS_STR(priority_service)%err);
     }
 }

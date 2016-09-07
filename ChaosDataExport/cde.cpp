@@ -1,3 +1,4 @@
+
 /*
  *	cde.cpp
  *	!CHAOS
@@ -258,7 +259,8 @@ int main(int argc, char* argv[]) {
         
         
         chaos::common::io::QueryCursor *query_cursor = NULL;
-        controller->executeTimeIntervallQuery(start_ts, end_ts, &query_cursor);
+        controller->executeTimeIntervallQuery(DatasetDomainOutput,
+                                              start_ts, end_ts, &query_cursor);
         
         std::vector<std::string> output_element_name;
         //fetche the output element of the device
@@ -321,9 +323,16 @@ int main(int argc, char* argv[]) {
                     sendBackOnRow();
                 }
             }
+            if(exported % 10) {
+                std::cout << "Exporting ";
+                printNumberOfExportedElement(exported);
+                sendBackOnRow();
+            }
+
             std::cout << "Releasing query" << std::endl;
             controller->releaseQuery(query_cursor);
         }
+        destination_stream->flush();
         std::cout << "Releasing controller" << std::endl;
         HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
     } catch (CException& e) {

@@ -107,6 +107,7 @@ boost::shared_ptr<chaos::common::data::CDataWrapper>  QueryCursor::next() throw 
 
 #pragma mark private methods
 int64_t QueryCursor::fetchNewPage() {
+    bool from_included = false;
     IODirectIODriverClientChannels	*next_client = NULL;
     chaos::common::direct_io::channel::opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr query_result = NULL;
     
@@ -119,6 +120,7 @@ int64_t QueryCursor::fetchNewPage() {
             result_page.last_ts_received = start_ts;
             //change to the next phase
             phase = QueryPhaseStarted;
+            from_included = true;
             break;
         case QueryPhaseStarted:
             DBG << "Continue on next page";
@@ -133,8 +135,8 @@ int64_t QueryCursor::fetchNewPage() {
                                                                        result_page.last_ts_received,
                                                                        end_ts,
                                                                        30,
-                                                                       phase == QueryPhaseNotStarted,
-                                                                       &result_page.query_result))) {
+                                                                       from_included,
+                                                                       &query_result))) {
         ERR << CHAOS_FORMAT("Error during fetchin query page with code %1%", %api_error);
         return api_error;
     } else if(query_result) {

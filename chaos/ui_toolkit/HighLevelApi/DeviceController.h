@@ -422,7 +422,10 @@ namespace chaos {
                          uint32_t timeout = 1000);
             
             //! get datapack between time itervall
-            void executeTimeIntervallQuery(uint64_t start_ts, uint64_t end_ts, chaos::common::io::QueryCursor **query_cursor);
+            void executeTimeIntervallQuery(DatasetDomain domain,
+                                           uint64_t start_ts,
+                                           uint64_t end_ts,
+                                           chaos::common::io::QueryCursor **query_cursor);
             
             //! release a query
             void releaseQuery(chaos::common::io::QueryCursor *query_cursor);

@@ -24,17 +24,17 @@
 using namespace chaos::common::utility;
 
 const char* TimingUtil::formats[]={
-  "%Y-%m-%dT%H:%M:%S.%f",
-  "%Y-%m-%d %H:%M:%S.%f",
-  "%Y-%m-%d %H:%M:%S",
-  "%Y-%m-%dT%H:%M:%S",
-  "%Y-%m-%d %H:%M",
-  "%Y-%m-%dT%H:%M",
-  "%Y-%m-%d %H",
-  "%Y-%m-%dT%H",
-  "%Y-%m-%d",
-  "%Y-%m",
-  "%Y"
+  "%Y-%m-%dT%H:%M:%S.%fZ",
+  "%Y-%m-%d %H:%M:%S.%fZ",
+  "%Y-%m-%d %H:%M:%SZ",
+  "%Y-%m-%dT%H:%M:%SZ",
+  "%Y-%m-%d %H:%MZ",
+  "%Y-%m-%dT%H:%MZ",
+  "%Y-%m-%d %HZ",
+  "%Y-%m-%dT%HZ",
+  "%Y-%m-%dZ",
+  "%Y-%mZ",
+  "%YZ"
 };
 
 const size_t TimingUtil::formats_n = 11;

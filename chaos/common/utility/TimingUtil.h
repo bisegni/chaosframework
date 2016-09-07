@@ -22,23 +22,32 @@
 #include <chaos/common/global.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-
-#define TU_HEADER "[TimingUtil]- "
-#define TU_LAPP LAPP_ << TU_HEADER
-#define TU_LDBG LDBG_ << TU_HEADER << __PRETTY_FUNCTION__
-#define TU_LERR LERR_ << TU_HEADER << __PRETTY_FUNCTION__ <<"("<<__LINE__<<") "
-
+#include <boost/date_time/c_time.hpp>
+#include <boost/date_time/local_time_adjustor.hpp>
+#include <boost/date_time/c_local_time_adjustor.hpp>
+#define TU_LAPP INFO_LOG(TimingUtil)
+#define TU_LDBG DBG_LOG(TimingUtil)
+#define TU_LERR ERR_LOG(TimingUtil)
 
 namespace chaos {
     namespace common {
         namespace utility {
-
+            
             /*
              Class for give some method util for timing purpose
              */
             class TimingUtil {
                 static const char* formats[];
                 static const size_t formats_n;
+                
+                static inline boost::posix_time::time_duration getUTCOffset() {
+                    using namespace boost::posix_time;
+                    typedef boost::date_time::c_local_adjustor<ptime> local_adj;
+                    const ptime utc_now = second_clock::universal_time();
+                    const ptime now = local_adj::utc_to_local(utc_now);
+                    return now - utc_now;
+                }
+                
             public:
                 
                 //!Return the current timestamp in milliseconds
@@ -116,7 +125,7 @@ namespace chaos {
                         if(time != boost::posix_time::ptime()) break;
                     }
                     if(i != formats_n) {
-                        return (time-EPOCH).total_milliseconds();
+                        return ((time-getUTCOffset())-EPOCH).total_milliseconds();
                     } else {
                         return 0;
                     }
