@@ -26,9 +26,9 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::control_unit;
 using namespace chaos::metadata_service::persistence::data_access;
 
-#define CU_GCD_INFO INFO_LOG(StartStop)
-#define CU_GCD_DBG  DBG_LOG(StartStop)
-#define CU_GCD_ERR  ERR_LOG(StartStop)
+#define CU_GCD_INFO INFO_LOG(GetCurrentDataset)
+#define CU_GCD_DBG  DBG_LOG(GetCurrentDataset)
+#define CU_GCD_ERR  ERR_LOG(GetCurrentDataset)
 
 GetCurrentDataset::GetCurrentDataset():
 AbstractApi("getCurrentDataset"){

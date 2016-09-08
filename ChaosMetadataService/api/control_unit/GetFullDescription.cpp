@@ -27,9 +27,9 @@ using namespace chaos::common::data;
 using namespace chaos::metadata_service::api::control_unit;
 using namespace chaos::metadata_service::persistence::data_access;
 
-#define CU_GCD_INFO INFO_LOG(StartStop)
-#define CU_GCD_DBG  DBG_LOG(StartStop)
-#define CU_GCD_ERR  ERR_LOG(StartStop)
+#define CU_GCD_INFO INFO_LOG(GetFullDescription)
+#define CU_GCD_DBG  DBG_LOG(GetFullDescription)
+#define CU_GCD_ERR  ERR_LOG(GetFullDescription)
 
 GetFullDescription::GetFullDescription():
 AbstractApi("getFullDescription"){
@@ -154,7 +154,6 @@ CDataWrapper *GetFullDescription::execute(CDataWrapper *api_data,
         }
         init_datapack->finalizeArrayForKey(DataServiceNodeDefinitionKey::DS_DIRECT_IO_FULL_ADDRESS_LIST);
     }
-    CU_GCD_INFO << init_datapack->getJSONString();
     return init_datapack.release();
 }
 
