@@ -22,6 +22,7 @@
 
 #include <string>
 #include <stdint.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
@@ -42,9 +43,10 @@ namespace chaos {
 				}AnswerServerInfo;
 							
 				typedef enum DirectIODeviceClientChannelPutMode {
-					DirectIODeviceClientChannelPutModeStoricizeOnly		= 0,
-					DirectIODeviceClientChannelPutModeLiveOnly			= 1,
-					DirectIODeviceClientChannelPutModeStoricizeAnLive	= 2
+                    DirectIODeviceClientChannelPutModeStoricizeOnly		= chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory,
+					DirectIODeviceClientChannelPutModeLiveOnly			= chaos::DataServiceNodeDefinitionType::DSStorageTypeLive,
+					DirectIODeviceClientChannelPutModeStoricizeAnLive	= chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
+                    DirectIODeviceClientChannelPutModeUndefined         = chaos::DataServiceNodeDefinitionType::DSStorageTypeUndefined
 				}DirectIODeviceClientChannelPutMode;
 				
 				//! Class for the managment of pushing data for the device dataset

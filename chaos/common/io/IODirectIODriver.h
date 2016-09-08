@@ -100,7 +100,8 @@ namespace chaos{
                 boost::shared_mutex mutext_feeder;
                 
                 IODData data_cache;
-                boost::atomic<uint8_t> read_write_index;
+                DataServiceNodeDefinitionType::DSStorageType storage_type;
+                uint64_t storage_history_time;
                 chaos::common::network::URLServiceFeeder connectionFeeder;
                 
                 //query future management
