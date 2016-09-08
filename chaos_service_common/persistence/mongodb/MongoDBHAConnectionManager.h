@@ -98,7 +98,7 @@ namespace chaos {
                     
                     int insert(const std::string &ns,
                                mongo::BSONObj obj,
-                               mongo::WriteConcern wc = mongo::WriteConcern::journaled,
+                               const mongo::WriteConcern& wc = mongo::WriteConcern::journaled,
                                int flags=0);
                     
                     int findOne(mongo::BSONObj& result,
@@ -140,12 +140,12 @@ namespace chaos {
                                mongo::BSONObj obj,
                                bool upsert = false,
                                bool multi = false,
-                               const mongo::WriteConcern* wc=NULL );
+                               const mongo::WriteConcern& wc = mongo::WriteConcern::journaled);
                     
                     int remove(const std::string &ns ,
                                mongo::Query q,
                                bool justOne = 0,
-                               const mongo::WriteConcern* wc=NULL );
+                               const mongo::WriteConcern& wc = mongo::WriteConcern::journaled);
                     
                     mongo::BSONObj distinct(const std::string &ns,
                                             const std::string &field,

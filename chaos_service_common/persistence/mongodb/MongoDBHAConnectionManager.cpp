@@ -15,10 +15,9 @@
 #define RETRIVE_MIN_TIME 500
 #define RETRIVE_MAX_TIME 10000
 
-#define MongoDBHAConnection_LOG_HEAD "[MongoDBHAConnection] - "
-#define MDBHAC_LAPP_ LAPP_ << MongoDBHAConnection_LOG_HEAD
-#define MDBHAC_LDBG_ LDBG_ << MongoDBHAConnection_LOG_HEAD << __FUNCTION__ << " - "
-#define MDBHAC_LERR_ LERR_ << MongoDBHAConnection_LOG_HEAD << __FUNCTION__ << " - "
+#define MDBHAC_LAPP_ INFO_LOG(MongoDBHAConnection)
+#define MDBHAC_LDBG_ DBG_LOG(MongoDBHAConnection)
+#define MDBHAC_LERR_ ERR_LOG(MongoDBHAConnection)
 
 #define MONGO_DB_CHECK_ERROR_CODE(b) b["code"].numberInt()
 #define MONGO_DB_CHECK_ERROR_MESSAGE(b) b["errmsg"].valuestrsafe()
@@ -33,7 +32,7 @@ e = MONGO_DB_CHECK_ERROR_CODE(_error);\
 m = MONGO_DB_CHECK_ERROR_MESSAGE(_error);
 
 #define EXECUTE_MONGOAPI(x)\
-{x}break;
+{uint64_t start_time = chaos::common::utility::TimingUtil::getTimeStamp();x;MDBHAC_LAPP_ << CHAOS_FORMAT("insert execution time(usec): %1%", %(chaos::common::utility::TimingUtil::getTimeStamp() - start_time));}break;
 
 #define CONTINUE_ON_NEXT_CONNECTION(x) \
 if(isConnectionError(err)) {\
@@ -190,7 +189,7 @@ bool MongoDBHAConnectionManager::isConnectionError(int error) {
 
 int MongoDBHAConnectionManager::insert( const std::string &ns,
                                        mongo::BSONObj obj,
-                                       mongo::WriteConcern wc,
+                                       const mongo::WriteConcern& wc,
                                        int flags) {
     int err = 0;
     DriverScopedConnection *conn = NULL;
@@ -294,12 +293,12 @@ int MongoDBHAConnectionManager::update( const std::string &ns,
                                        mongo::BSONObj obj,
                                        bool upsert,
                                        bool multi,
-                                       const mongo::WriteConcern* wc) {
+                                       const mongo::WriteConcern& wc) {
     int err = 0;
     DriverScopedConnection *conn = NULL;
     while((conn = getConnection())) {
         try {
-            EXECUTE_MONGOAPI(conn->update(ns, query, obj, upsert, multi, wc););
+            EXECUTE_MONGOAPI(conn->update(ns, query, obj, upsert, multi, &wc););
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);
@@ -360,12 +359,12 @@ int MongoDBHAConnectionManager::findAndRemove(mongo::BSONObj& result,
     return err;
 }
 
-int MongoDBHAConnectionManager::remove( const std::string &ns , mongo::Query q , bool justOne, const mongo::WriteConcern* wc) {
+int MongoDBHAConnectionManager::remove( const std::string &ns , mongo::Query q , bool justOne, const mongo::WriteConcern& wc) {
     int err = 0;
     DriverScopedConnection *conn = NULL;
     while((conn = getConnection())) {
         try {
-            EXECUTE_MONGOAPI(conn->remove(ns, q, justOne, wc);)
+            EXECUTE_MONGOAPI(conn->remove(ns, q, justOne, &wc);)
         } catch (std::exception& ex) {
             MDBHAC_LERR_ << "MongoDBHAConnectionManager::findOne" << " -> " << ex.what();
             MONGO_DB_GET_ERROR(conn, err);

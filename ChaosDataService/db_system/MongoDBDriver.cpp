@@ -113,7 +113,7 @@ int MongoDBDriver::snapshotAddElementToSnapshot(const std::string& working_job_u
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotCreateNewWithName insert ---------------------------------------------";)
 		
 		//update and waith until the data is on the server
-		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q, u, true, false, &mongo::WriteConcern::acknowledged);
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q, u, true, false);
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;
@@ -142,7 +142,7 @@ int MongoDBDriver::snapshotIncrementJobCounter(const std::string& working_job_un
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotIncrementJobCounter insert ---------------------------------------------";)
 		
 		//update and waith until the data is on the server
-		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q, u, false, false, &mongo::WriteConcern::acknowledged);
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q, u, false, false);
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;
