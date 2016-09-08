@@ -69,7 +69,7 @@ void sendBackForNPos(int position = 1) {
 }
 
 void printNumberOfExportedElement(uint32_t done) {
-    std::cout << done <<std::flush;
+    std::cout << CHAOS_FORMAT("\rExported %1% record", %done) << std::flush;
 }
 
 void printStep() {
@@ -174,9 +174,12 @@ int main(int argc, char* argv[]) {
     //clear buffer
     memset(buf, 0, 255);
     
+    //disable buffer
+    std::setvbuf(stdout, NULL, _IONBF, 0);
+    
     CDeviceNetworkAddress deviceNetworkAddress;
     try{
-        std::cout << "\x1B[?25l";
+        //std::cout << "\x1B[?25l";
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_CU_ID, "The identification string of the device", &device_id);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout for wait the answer in milliseconds", 2000, &timeout);
@@ -284,6 +287,7 @@ int main(int argc, char* argv[]) {
         
         if(query_cursor) {
             uint32_t exported = 0;
+            std::cout << "Exported " << std::flush;
             while(query_cursor->hasNext()) {
                 exported++;
                 boost::shared_ptr<CDataWrapper> q_result(query_cursor->next());
@@ -314,21 +318,10 @@ int main(int argc, char* argv[]) {
                 } else {
                     break;
                 }
-                
-                cicle_number++;
-                
-                if(!(exported % 10)) {
-                    std::cout << "Exporting ";
-                    printNumberOfExportedElement(exported);
-                    sendBackOnRow();
-                }
-            }
-            if(exported % 10) {
-                std::cout << "Exporting ";
                 printNumberOfExportedElement(exported);
-                sendBackOnRow();
             }
-
+            printNumberOfExportedElement(exported);
+            std::cout << std::endl;
             std::cout << "Releasing query" << std::endl;
             controller->releaseQuery(query_cursor);
         }
