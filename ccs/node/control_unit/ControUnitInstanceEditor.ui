@@ -584,26 +584,99 @@
           <string>Run Porperty</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item row="1" column="0" alignment="Qt::AlignRight">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Storage Type:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" alignment="Qt::AlignRight">
+           <widget class="QLabel" name="label_5">
+            <property name="toolTip">
+             <string>Time after which th data is erased form history</string>
+            </property>
+            <property name="text">
+             <string>History Ageing:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLineEdit" name="lineEditDefaultScheduleTime">
+            <property name="text">
+             <string>1000000</string>
+            </property>
+            <property name="placeholderText">
+             <string>1000000</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLineEdit" name="lineEditHistoryAgeing">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QComboBox" name="comboBoxStorageType">
+            <property name="minimumSize">
+             <size>
+              <width>500</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="currentIndex">
+             <number>3</number>
+            </property>
             <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Step Schedule Time(in microseconds)</string>
-              </property>
-             </widget>
+             <property name="text">
+              <string>History</string>
+             </property>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEditDefaultScheduleTime">
-              <property name="text">
-               <string>1000000</string>
-              </property>
-              <property name="placeholderText">
-               <string>1000000</string>
-              </property>
-             </widget>
+             <property name="text">
+              <string>Live</string>
+             </property>
             </item>
-           </layout>
+            <item>
+             <property name="text">
+              <string>History &amp; Live</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Not Set</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="0" alignment="Qt::AlignRight">
+           <widget class="QLabel" name="label_2">
+            <property name="toolTip">
+             <string>In microseconds</string>
+            </property>
+            <property name="text">
+             <string>Step Schedule Time</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="lineEditHistoryTime">
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" alignment="Qt::AlignRight">
+           <widget class="QLabel" name="label_6">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Is the time betwheen a storicized packet and the next storicized one. COnsidered only if storage type has &amp;quot;History&amp;quot; or &amp;quot;Live And History&amp;quot; selected&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>History time:</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>

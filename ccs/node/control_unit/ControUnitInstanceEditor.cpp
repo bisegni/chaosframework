@@ -130,6 +130,10 @@ control_unit::SetInstanceDescriptionHelper& ControUnitInstanceEditor::prepareSet
     //schedule delay
     set_instance_api_hepler.default_schedule_delay = ui->lineEditDefaultScheduleTime->text().toULongLong();
 
+    //storage configuration
+    set_instance_api_hepler.storage_type = static_cast<chaos::DataServiceNodeDefinitionType::DSStorageType>(ui->comboBoxStorageType->currentIndex());
+    set_instance_api_hepler.history_ageing = ui->lineEditHistoryAgeing->text().toUInt();
+    set_instance_api_hepler.history_time = ui->lineEditHistoryTime->text().toULongLong();
     //add all driver description
     set_instance_api_hepler.clearAllDriverDescriptions();
     for(int idx = 0;
@@ -170,7 +174,7 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
     table_model_dataset_attribute_setup->setRowCount(0);
     if(api_result->hasKey("control_unit_implementation") &&
             api_result->isStringValue("control_unit_implementation")) {
-       ui->textEditLoadParameter->setEnabled(api_result->getStringValue("control_unit_implementation").compare("ScriptableExecutionUnit") != 0);
+        ui->textEditLoadParameter->setEnabled(api_result->getStringValue("control_unit_implementation").compare("ScriptableExecutionUnit") != 0);
     }
     CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_PARENT, ui->labelUnitServer)
             CHECK_AND_SET_LABEL(chaos::NodeDefinitionKey::NODE_UNIQUE_ID, ui->lineEditControlUnitUniqueID)
@@ -179,8 +183,17 @@ void ControUnitInstanceEditor::fillUIFromInstanceInfo(QSharedPointer<chaos::comm
             CHECK_AND_SET_CHECK("auto_init", ui->checkBoxAutoInit)
             CHECK_AND_SET_CHECK("auto_start", ui->checkBoxAutoStart)
             CHECK_AND_SET_LABEL(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, ui->textEditLoadParameter)
-            if(api_result->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
+    if(api_result->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)){
         ui->lineEditDefaultScheduleTime->setText(QString::number(api_result->getUInt64Value(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)));
+    }
+    if(api_result->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)){
+        ui->comboBoxStorageType->setCurrentIndex(api_result->getUInt32Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE));
+    }
+    if(api_result->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)){
+        ui->lineEditHistoryAgeing->setText(QString::number(api_result->getUInt32Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)));
+    }
+    if(api_result->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)){
+        ui->lineEditHistoryTime->setText(QString::number(api_result->getUInt64Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)));
     }
     //add driverdesc
     if(api_result->hasKey(chaos::ControlUnitNodeDefinitionKey::CONTROL_UNIT_DRIVER_DESCRIPTION)) {

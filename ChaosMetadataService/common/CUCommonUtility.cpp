@@ -195,6 +195,7 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
         if((err = cu_da->getInstanceDescription(cu_uid, &result))) {
             LOG_AND_TROW(CUCU_ERR, err, boost::str(boost::format("Error fetching the isntance for control unit %1%") % cu_uid));
         } else if(result != NULL) {
+            instance_description.reset(result);
             std::auto_ptr<CDataWrapper> init_dataset(new CDataWrapper());
             if(instance_description->hasKey("attribute_value_descriptions") &&
                instance_description->isVectorValue("attribute_value_descriptions")) {
@@ -263,6 +264,21 @@ std::auto_ptr<CDataWrapper> CUCommonUtility::initDataPack(const std::string& cu_
     if(instance_description->hasKey(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY) &&
        instance_description->isInt64Value(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY)) {
         instance_description->copyKeyTo(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, *init_datapack);
+    }
+    
+    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) &&
+       instance_description->isInt32Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)) {
+        instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, *init_datapack);
+    }
+    
+    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING) &&
+       instance_description->isInt32Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING)) {
+        instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, *init_datapack);
+    }
+    
+    if(instance_description->hasKey(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME) &&
+       instance_description->isInt64Value(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)) {
+        instance_description->copyKeyTo(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, *init_datapack);
     }
     //set the action type
     init_datapack->addInt32Value("action", (int32_t)0);

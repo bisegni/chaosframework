@@ -57,7 +57,12 @@ ApiProxyResult SetInstanceDescription::execute(SetInstanceDescriptionHelper& api
     instance_description.addStringValue(ControlUnitNodeDefinitionKey::CONTROL_UNIT_LOAD_PARAM, api_data.load_parameter);
         //add the deafult scheduler delay
     instance_description.addInt64Value(ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY, api_data.default_schedule_delay);
-    
+    //add the storage type
+    instance_description.addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE, api_data.storage_type);
+    //add the ageing
+    instance_description.addInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_AGEING, api_data.history_ageing);
+    //add the history rate
+    instance_description.addInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME, api_data.history_time);
         //add driver description
     if(api_data.driver_descriptions.size()>0) {
         for(CDWListIterator it = api_data.driver_descriptions.begin();

@@ -514,12 +514,46 @@ namespace chaos {
      */
     //! This is the collection of the key to configura history and live channel
     namespace DataServiceNodeDefinitionKey {
-        static const char * const DS_DIRECT_IO_FULL_ADDRESS_LIST                            = "dsndk_direct_io_full";
+        static const char * const DS_DIRECT_IO_FULL_ADDRESS_LIST                    = "dsndk_direct_io_full";
         //!lis the endpoitwhere is published the direct io[uint32_t]
-        static const char * const DS_DIRECT_IO_ENDPOINT                        = "dsndk_direct_io_ep";
+        static const char * const DS_DIRECT_IO_ENDPOINT                             = "dsndk_direct_io_ep";
+        //!define the type of storage(history only = 0, cache only	= 1, both	= 2) [uint32_t]
+        static const char * const DS_STORAGE_TYPE                                   = "dsndk_storage_type";
+        //!define the numbers of second for the ageing time, that is maximu number of second
+        //!for wich the data need to remain archive within the !CHAOS storage system. A value
+        //! of 0 mean infinit persistence[uint32_t]
+        static const char * const DS_STORAGE_HISTORY_AGEING                         = "dsndk_storage_history_ageing";
+        /*!
+         storage time [in msecods uint64] the time that need to pass before 
+         store another datapack into the history system[uint64]
+         */
+        static const char * const DS_STORAGE_HISTORY_TIME                           = "dsndk_storage_history_time";
     }
     /** @} */ // end of DataServiceNodeDefinitionKey
     
+    /** @defgroup DataServiceNodeDefinitionType !CHAOS data service node typ for key
+     *  This is the collection of the type used as value for one or more configuration
+     *  @{
+     */
+    namespace DataServiceNodeDefinitionType {
+        //!define the type of storage within a datasource
+        /*!
+         The direct io can be configura to change the storage option
+         so every datapack can be considere with different store behaviour
+         */
+        typedef enum DSStorageType {
+            //!the datapack is store into the storage system and not in live
+            DSStorageTypeHistory,
+            //!the datapack is publish in live shared memory
+            DSStorageTypeLive,
+            //!datapack is published and stored in live and history
+            DSStorageTypeLiveHistory,
+            //!no storage behaviour defined
+            DSStorageTypeUndefined
+        } DSStorageType;
+        
+    }
+    /** @} */ // end of DataServiceNodeDefinitionType
     
     /** @defgroup DataServiceNodeDomainAndActionRPC !CHAOS data service rpc key description
      *  This is the collection of all key used only by unit server
