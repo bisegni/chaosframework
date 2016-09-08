@@ -61,7 +61,7 @@ int MongoDBObjectStorageDataAccess::pushObject(const std::string& key,
                                 MONGODB_DAQ_DATA_FIELD << mongo::BSONObj(bson_raw_data));
         if((err = connection->insert(MONGO_DB_COLLECTION_NAME(MONGODB_DAQ_COLL_NAME),
                                      q,
-                                     mongo::WriteConcern::acknowledged))){
+                                     mongo::WriteConcern::unacknowledged))){
             ERR << "Error pushing object";
         }
     } catch (const mongo::DBException &e) {

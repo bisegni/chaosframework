@@ -31,8 +31,7 @@ mongo::BSONObj _error = c->getLastErrorDetailed(); \
 e = MONGO_DB_CHECK_ERROR_CODE(_error);\
 m = MONGO_DB_CHECK_ERROR_MESSAGE(_error);
 
-#define EXECUTE_MONGOAPI(x)\
-{uint64_t start_time = chaos::common::utility::TimingUtil::getTimeStamp();x;MDBHAC_LAPP_ << CHAOS_FORMAT("insert execution time(usec): %1%", %(chaos::common::utility::TimingUtil::getTimeStamp() - start_time));}break;
+#define EXECUTE_MONGOAPI(x) {x}break;
 
 #define CONTINUE_ON_NEXT_CONNECTION(x) \
 if(isConnectionError(err)) {\
