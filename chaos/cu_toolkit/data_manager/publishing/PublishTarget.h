@@ -22,6 +22,7 @@
 #ifndef __CHAOSFramework__4C248F9_A814_4D6F_AA2A_279CC936E1D8_PublishTarget_h
 #define __CHAOSFramework__4C248F9_A814_4D6F_AA2A_279CC936E1D8_PublishTarget_h
 
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/network/URLServiceFeeder.h>
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/data/cache/AttributeCache.h>
@@ -46,7 +47,7 @@ namespace chaos {
                 
                 struct PublishElementAttribute {
                     //!determinate the publishing mode for this dataset
-                    common::direct_io::channel::DirectIODeviceClientChannelPutMode publishing_mode;
+                    chaos::DataServiceNodeDefinitionType::DSStorageType publishing_mode;
                     //!publish rate for dataset in the endpoint
                     uint64_t publish_rate;
                     

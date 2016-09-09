@@ -61,11 +61,11 @@ namespace chaos{
                 
                 /*!
                  * This method cache all object passed to driver
-                 * \param store_hint history only = 0, cache only	= 1, both	= 2
+                 * \param storage_type one of values as @DataServiceNodeDefinitionType::DSStorageType
                  */
                 void storeData(const std::string& key,
                                chaos_data::CDataWrapper *dataToStore,
-                               int store_hint = 2) throw(CException);
+                               DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException);
                 
                 /*!
                  * This method retrive the cached object by CSDawrapperUsed as query key and
@@ -86,7 +86,7 @@ namespace chaos{
                  */
                 virtual void storeRawData(const std::string& key,
                                           chaos_data::SerializationBuffer *serialization,
-                                          int store_hint = 1)  throw(CException) = 0;
+                                          DataServiceNodeDefinitionType::DSStorageType storage_type)  throw(CException) = 0;
                 
                 /*!
                  * This method retrive the cached object by CSDawrapperUsed as query key and

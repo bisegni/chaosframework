@@ -100,8 +100,6 @@ namespace chaos{
                 boost::shared_mutex mutext_feeder;
                 
                 IODData data_cache;
-                DataServiceNodeDefinitionType::DSStorageType storage_type;
-                uint64_t storage_history_time;
                 chaos::common::network::URLServiceFeeder connectionFeeder;
                 
                 //query future management
@@ -137,7 +135,7 @@ namespace chaos{
                  */
                 void storeRawData(const std::string& key,
                                   chaos_data::SerializationBuffer *serialization,
-                                  int store_hint)  throw(CException);
+                                  DataServiceNodeDefinitionType::DSStorageType storage_type)  throw(CException);
                 
                 /*
                  * retriveRawData

@@ -46,7 +46,6 @@ void DataWorker::consumeJob(void *cookie) {
         thread_job = getNextOrWait(lock);
         if(thread_job) executeJob(thread_job, cookie);
         job_in_queue()--;
-        DCLDBG_ << "job_in_queue:" << job_in_queue();
     }
 }
 

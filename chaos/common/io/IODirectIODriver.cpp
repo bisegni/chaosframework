@@ -63,9 +63,7 @@ current_endpoint_p_port(0),
 current_endpoint_s_port(0),
 current_endpoint_index(0),
 connectionFeeder(alias, this),
-uuid(UUIDUtil::generateUUIDLite()),
-storage_type(DataServiceNodeDefinitionType::DSStorageTypeLive),
-storage_history_time(0){
+uuid(UUIDUtil::generateUUIDLite()){
     //clear
     std::memset(&init_parameter, 0, sizeof(IODirectIODriverInitParam));
     
@@ -165,7 +163,7 @@ void IODirectIODriver::deinit() throw(CException) {
  ---------------------------------------------------------------------------------*/
 void IODirectIODriver::storeRawData(const std::string& key,
                                     chaos::common::data::SerializationBuffer *serialization,
-                                    int store_hint)  throw(CException) {
+                                    DataServiceNodeDefinitionType::DSStorageType storage_type)  throw(CException) {
     CHAOS_ASSERT(serialization)
     int err = 0;
     boost::shared_lock<boost::shared_mutex>(mutext_feeder);
@@ -178,7 +176,7 @@ void IODirectIODriver::storeRawData(const std::string& key,
         if((err = (int)next_client->device_client_channel->storeAndCacheDataOutputChannel(key,
                                                                                           (void*)serialization->getBufferPtr(),
                                                                                           (uint32_t)serialization->getBufferLen(),
-                                                                                          (direct_io::channel::DirectIODeviceClientChannelPutMode)storage_type))) {
+                                                                                          storage_type))) {
             IODirectIODriver_LERR_ << "Error storing data into data service "<<next_client->connection->getServerDescription()<<" with code:" << err;
         }
     } else {
@@ -332,17 +330,6 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
             //add new url to connection feeder
             connectionFeeder.addURL(chaos::common::network::URL(serverDesc));
         }
-    }
-    
-    if(newConfigration->hasKey(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE) &&
-       newConfigration->isInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE)){
-        storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(newConfigration->getInt32Value(DataServiceNodeDefinitionKey::DS_STORAGE_TYPE));
-        IODirectIODriver_LINFO_ << CHAOS_FORMAT("Set storage type to %1%", %storage_type);
-    }
-    
-    if(newConfigration->isInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME)){
-        storage_history_time = newConfigration->getUInt64Value(DataServiceNodeDefinitionKey::DS_STORAGE_HISTORY_TIME);
-        IODirectIODriver_LINFO_ << CHAOS_FORMAT("Set storage history time to %1%", %storage_history_time);
     }
     return NULL;
 }

@@ -39,12 +39,12 @@ void IODataDriver::deinit() throw(CException) {
  ---------------------------------------------------------------------------------*/
 void IODataDriver::storeData(const std::string& key,
                              CDataWrapper *dataToStore,
-                             int store_hint) throw(CException){
+                             DataServiceNodeDefinitionType::DSStorageType storage_type) throw(CException){
     CHAOS_ASSERT(dataToStore)
     
     SerializationBuffer* serialization = dataToStore->getBSONData();
     
-    storeRawData(key, serialization, store_hint);
+    storeRawData(key, serialization, storage_type);
     
     delete(dataToStore);
 }

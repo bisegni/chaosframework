@@ -75,7 +75,7 @@ void DirectIODeviceClientChannel::setAnswerServerInfo(uint16_t p_server_port, ui
 int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::string& key,
                                                                     void *buffer,
                                                                     uint32_t buffer_len,
-                                                                    DirectIODeviceClientChannelPutMode _put_mode) {
+                                                                    DataServiceNodeDefinitionType::DSStorageType _put_mode) {
     DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
     DirectIODeviceChannelHeaderPutOpcode *put_opcode_header = (opcode_headers::DirectIODeviceChannelHeaderPutOpcode *)calloc((PUT_HEADER_LEN(key)+key.size()), 1);
     

@@ -30,83 +30,76 @@
 
 namespace chaos_data = chaos::common::data;
 namespace chaos {
-	namespace common {
-		namespace direct_io {
-			namespace channel {
-				
-				typedef struct AnswerServerInfo {
-					uint16_t p_server_port;
-					uint16_t s_server_port;
+    namespace common {
+        namespace direct_io {
+            namespace channel {
+                
+                typedef struct AnswerServerInfo {
+                    uint16_t p_server_port;
+                    uint16_t s_server_port;
                     uint16_t endpoint;
-					uint64_t ip;
-					uint32_t hash;
-				}AnswerServerInfo;
-							
-				typedef enum DirectIODeviceClientChannelPutMode {
-                    DirectIODeviceClientChannelPutModeStoricizeOnly		= chaos::DataServiceNodeDefinitionType::DSStorageTypeHistory,
-					DirectIODeviceClientChannelPutModeLiveOnly			= chaos::DataServiceNodeDefinitionType::DSStorageTypeLive,
-					DirectIODeviceClientChannelPutModeStoricizeAnLive	= chaos::DataServiceNodeDefinitionType::DSStorageTypeLiveHistory,
-                    DirectIODeviceClientChannelPutModeUndefined         = chaos::DataServiceNodeDefinitionType::DSStorageTypeUndefined
-				}DirectIODeviceClientChannelPutMode;
-				
-				//! Class for the managment of pushing data for the device dataset
-				/*!
-				 This class manage the forwarding of data that represent the device dataset channels (i/O)
-				 */
-				DECLARE_CLASS_FACTORY(DirectIODeviceClientChannel, DirectIOVirtualClientChannel) {
-					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceClientChannel)
-					
-					class DirectIODeviceClientChannelDeallocator:
-					public DirectIODeallocationHandler {
-					protected:
-						void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
-					};
-					//static deallocator forthis channel
-					static DirectIODeviceClientChannelDeallocator STATIC_DirectIODeviceClientChannelDeallocator;
-					
-					AnswerServerInfo answer_server_info;
-				protected:
-					DirectIODeviceClientChannel(std::string alias);
-
-				public:
-					~DirectIODeviceClientChannel();
-					
-					//! set the information on witch port forward the answer(the ip is the ip of the machine)
-					void setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port, uint16_t answer_enpoint);
-					
-					//! Send device serialization with priority
-					int64_t storeAndCacheDataOutputChannel(const std::string& key,
-														   void *buffer,
-														   uint32_t buffer_len,
-														   DirectIODeviceClientChannelPutMode _put_mode = DirectIODeviceClientChannelPutModeLiveOnly);
-					
-					//! Send a request for the last output data
+                    uint64_t ip;
+                    uint32_t hash;
+                }AnswerServerInfo;
+                
+                //! Class for the managment of pushing data for the device dataset
+                /*!
+                 This class manage the forwarding of data that represent the device dataset channels (i/O)
+                 */
+                DECLARE_CLASS_FACTORY(DirectIODeviceClientChannel, DirectIOVirtualClientChannel) {
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceClientChannel)
+                    
+                    class DirectIODeviceClientChannelDeallocator:
+                    public DirectIODeallocationHandler {
+                    protected:
+                        void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
+                    };
+                    //static deallocator forthis channel
+                    static DirectIODeviceClientChannelDeallocator STATIC_DirectIODeviceClientChannelDeallocator;
+                    
+                    AnswerServerInfo answer_server_info;
+                protected:
+                    DirectIODeviceClientChannel(std::string alias);
+                    
+                public:
+                    ~DirectIODeviceClientChannel();
+                    
+                    //! set the information on witch port forward the answer(the ip is the ip of the machine)
+                    void setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port, uint16_t answer_enpoint);
+                    
+                    //! Send device serialization with priority
+                    int64_t storeAndCacheDataOutputChannel(const std::string& key,
+                                                           void *buffer,
+                                                           uint32_t buffer_len,
+                                                           DataServiceNodeDefinitionType::DSStorageType _put_mode);
+                    
+                    //! Send a request for the last output data
                     int64_t requestLastOutputData(const std::string& key,
                                                   void **result, uint32_t &size);
-					
-					//! Perform a temporal query on a key
-					/*!
-					 Perform a query on a data cloud key(aka device id)
-					 \param key to search
-					 \param start_ts start of timestamp to search
-					 \param end_ts end of the timestamp where limit the search
+                    
+                    //! Perform a temporal query on a key
+                    /*!
+                     Perform a query on a data cloud key(aka device id)
+                     \param key to search
+                     \param start_ts start of timestamp to search
+                     \param end_ts end of the timestamp where limit the search
                      \param start_is_included when the start_ts need to be considering including or not
-					 \param query_id the newly associated query id is returned.
+                     \param query_id the newly associated query id is returned.
                      \param result_handler has the found element page
-					 \return error
-					 */
-					int64_t queryDataCloud(const std::string& key,
+                     \return error
+                     */
+                    int64_t queryDataCloud(const std::string& key,
                                            uint64_t start_ts,
                                            uint64_t end_ts,
                                            uint32_t page_dimension,
                                            bool start_is_included,
                                            opcode_headers::DirectIODeviceChannelOpcodeQueryDataCloudResultPtr *result_handler);
-				};
-
-				
-			}
-		}
-	}
+                };
+                
+                
+            }
+        }
+    }
 }
 
 #endif /* defined(__CHAOSFramework__DirectIODeviceClientChannel__) */

@@ -491,9 +491,12 @@ void ControlUnitEditor::on_pushButtonSetRunScheduleDelay_clicked() {
     chaos::metadata_service_client::api_proxy::node::NodePropertyGroupList property_list;
     boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> thread_run_schedule(new chaos::common::data::CDataWrapperInt64KeyValueSetter(chaos::ControlUnitDatapackSystemKey::THREAD_SCHEDULE_DELAY,
                                                                                                                                                     ui->lineEditRunScheduleDelay->text().toLongLong()));
+    boost::shared_ptr<chaos::common::data::CDataWrapperKeyValueSetter> storage_type(new chaos::common::data::CDataWrapperInt32KeyValueSetter(chaos::DataServiceNodeDefinitionKey::DS_STORAGE_TYPE,
+                                                                                                                                             ui->comboBoxStorageType->currentIndex()));
     boost::shared_ptr<chaos::metadata_service_client::api_proxy::node::NodePropertyGroup> cu_property_group(new chaos::metadata_service_client::api_proxy::node::NodePropertyGroup());
     cu_property_group->group_name = "property_abstract_control_unit";
     cu_property_group->group_property_list.push_back(thread_run_schedule);
+    cu_property_group->group_property_list.push_back(storage_type);
 
     property_list.push_back(cu_property_group);
 
@@ -557,11 +560,11 @@ void ControlUnitEditor::nodeChangedInternalState(const std::string& node_uid,
         if(restarted && (new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_LOAD) == 0 ||
                          new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_INIT) == 0 ||
                          new_state.compare(chaos::NodeHealtDefinitionValue::NODE_HEALT_STATUS_START) == 0 )) {
-             qDebug() << "Load dataset for Node" << QString::fromStdString(node_uid) << " that has been restarted";
+            qDebug() << "Load dataset for Node" << QString::fromStdString(node_uid) << " that has been restarted";
             //update
-             updateAllControlUnitInfomration();
-//            submitApiResult(QString(TAG_CU_DATASET),
-//                            GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(control_unit_unique_id.toStdString()));
+            updateAllControlUnitInfomration();
+            //            submitApiResult(QString(TAG_CU_DATASET),
+            //                            GET_CHAOS_API_PTR(control_unit::GetCurrentDataset)->execute(control_unit_unique_id.toStdString()));
             restarted = false;
         }
 

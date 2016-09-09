@@ -973,19 +973,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="4">
-        <widget class="QPushButton" name="pushButtonSetRunScheduleDelay">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Apply</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="5">
+       <item row="0" column="8">
         <spacer name="horizontalSpacer_5">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -1049,6 +1037,54 @@
          </property>
          <property name="text">
           <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QLabel" name="label_13">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Storage Type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QComboBox" name="comboBoxStorageType">
+         <item>
+          <property name="text">
+           <string>History</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Live</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>LiveHistory</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Undefined</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="9">
+        <widget class="QPushButton" name="pushButtonSetRunScheduleDelay">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Apply</string>
          </property>
         </widget>
        </item>

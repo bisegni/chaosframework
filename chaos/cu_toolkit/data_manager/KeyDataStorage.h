@@ -52,11 +52,21 @@ namespace chaos{
 				
 				//restore poitn map
 				std::map<std::string, std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> > > restore_point_map;
-				
+
 				chaos_io::IODataDriver *io_data_driver;
-				
+                
+                //storage type
+                DataServiceNodeDefinitionType::DSStorageType storage_type;
+                
+                //history time
+                uint64_t storage_history_time;
+                uint64_t storage_history_time_last_push;
 				//mutex to protect access to data io driver
 				boost::mutex mutex_push_data;
+                
+                void pushDataWithControlOnHistoryTime(const std::string& key,
+                                                      chaos::common::data::CDataWrapper *dataToStore,
+                                                      chaos::DataServiceNodeDefinitionType::DSStorageType storage_type);
 			public:
 				KeyDataStorage(const std::string& _key,
 							   chaos_io::IODataDriver *_io_data_driver);

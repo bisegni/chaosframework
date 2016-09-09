@@ -92,9 +92,9 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
     
     //check what kind of push we have
     //read lock on mantainance mutex
-    switch(job_ptr->request_header->tag) {
-        case 0:// storicize only
-        case 2:{// storicize and live
+    switch(static_cast<DataServiceNodeDefinitionType::DSStorageType>(job_ptr->request_header->tag)) {
+        case DataServiceNodeDefinitionType::DSStorageTypeHistory:// storicize only
+        case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:{// storicize and live
             //write data on object storage
             CDataWrapper data_pack((char *)job_ptr->data_pack);
             std::string storage_key((const char *)GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
@@ -109,7 +109,8 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
             free(job_ptr);
             break;
         }
-        case 1:{// live only
+        case DataServiceNodeDefinitionType::DSStorageTypeLive:
+        case DataServiceNodeDefinitionType::DSStorageTypeUndefined:{// live only
             break;
         }
     }

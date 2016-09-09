@@ -186,15 +186,17 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
     CHAOS_ASSERT(header)
     CHAOS_ASSERT(channel_data)
     int err = 0;
+    
+    DataServiceNodeDefinitionType::DSStorageType storage_type = static_cast<DataServiceNodeDefinitionType::DSStorageType>(header->tag);
     //! if tag is == 1 the datapack is in liveonly
-    bool send_to_storage_layer = (header->tag != 1) && (ChaosDataService::getInstance()->setting.cache_only == false);
-    switch(header->tag) {
-        case 0:// storicize only
-            
-            break;
-            
-        case 2:// storicize and live
-        case 1:{// live only only
+    bool send_to_storage_layer = (storage_type != DataServiceNodeDefinitionType::DSStorageTypeLive &&
+                                  storage_type != DataServiceNodeDefinitionType::DSStorageTypeUndefined) && (ChaosDataService::getInstance()->setting.cache_only == false);
+    /*QDCAPP_ << CHAOS_FORMAT("Storage for key:%1% and type %2%", %std::string((char*)GET_PUT_OPCODE_KEY_PTR(header),
+                                                                            header->key_len)%storage_type);*/
+
+    switch(storage_type) {
+        case DataServiceNodeDefinitionType::DSStorageTypeLiveHistory:
+        case DataServiceNodeDefinitionType::DSStorageTypeLive:{
             //protected access to cached driver
             CachePoolSlot *cache_slot = DriverPoolManager::getInstance()->getCacheDriverInstance();
             err = cache_slot->resource_pooled->putData(GET_PUT_OPCODE_KEY_PTR(header),
@@ -204,6 +206,10 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
             DriverPoolManager::getInstance()->releaseCacheDriverInstance(cache_slot);
             break;
         }
+        case DataServiceNodeDefinitionType::DSStorageTypeHistory:
+        case DataServiceNodeDefinitionType::DSStorageTypeUndefined:
+            break;
+            
         default: {
             QDCERR_ << "Bad storage tag: " << header->tag;
             break;

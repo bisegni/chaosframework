@@ -38,7 +38,7 @@ using namespace chaos::cu::data_manager::publishing;
 
 #pragma mark PublishElementAttribute
 PublishElementAttribute::PublishElementAttribute():
-publishing_mode(DirectIODeviceClientChannelPutModeStoricizeAnLive),
+publishing_mode(chaos::DataServiceNodeDefinitionType::DSStorageTypeUndefined),
 publish_rate(0){}
 
 PublishElementAttribute::PublishElementAttribute(const PublishElementAttribute& src):
